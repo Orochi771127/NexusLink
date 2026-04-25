@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NexusLink Prototype</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="hud-bar">
+        <h1>NexusLink: Pulse Runner</h1>
+        <p>← → 或 A / D 移動，躲避資料脈衝並盡可能存活。</p>
+      </header>
+      <div id="game-root" aria-label="NexusLink PixiJS Game"></div>
+      <footer class="hud-footer">
+        <span id="status-text">載入中...</span>
+      </footer>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/pixi.js@8.8.1/dist/pixi.min.js"></script>
+    <script src="./main.js"></script>
+  </body>
+</html>

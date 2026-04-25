@@ -5,6 +5,43 @@
 
 ---
 
+## Web Game Prototype（可部署到 GitHub Pages）
+
+此 repo 現在包含一個可直接執行的 PixiJS Web 遊戲原型：**NexusLink: Pulse Runner**。
+
+### 技術符合需求
+
+- HTML / CSS / JavaScript（Vanilla）
+- PixiJS（CDN 載入）
+- 不使用 React / Vue 等框架
+- 靜態檔案結構，可直接部署到 GitHub Pages
+
+### 本機執行
+
+使用任一靜態伺服器（例如 Python）：
+
+```bash
+python3 -m http.server 5173
+```
+
+然後開啟：
+
+```text
+http://localhost:5173
+```
+
+### GitHub Pages 部署
+
+1. 推送 `index.html`、`style.css`、`main.js` 到預設分支。
+2. 到 GitHub Repo 設定頁：`Settings → Pages`。
+3. 在 `Build and deployment` 選擇：
+   - **Source**: `Deploy from a branch`
+   - **Branch**: `main`（或你的預設分支）
+   - **Folder**: `/ (root)`
+4. 儲存後等待 GitHub Pages 建置完成，即可從公開 URL 進入遊戲。
+
+---
+
 ## 1. Project Overview
 
 **Nexus Link（心核連結）** 是一款以 **AI 夥伴、像素怪獸養成、關係進化** 為核心的 Web-Based AI Companion Game。
