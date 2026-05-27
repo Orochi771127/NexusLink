@@ -1,75 +1,239 @@
 :root {
   color-scheme: dark;
-  --bg: #090b18;
-  --panel: #131a33;
-  --accent: #67e8f9;
-  --text: #e2e8f0;
-  --danger: #fb7185;
+  --bg: #070a14;
+  --panel: rgb(9 14 28 / 72%);
+  --panel-strong: rgb(13 19 38 / 88%);
+  --line: rgb(126 232 255 / 20%);
+  --accent: #7ee8ff;
+  --warm: #ffb86b;
+  --text: #e8f1ff;
+  --muted: #9fb3c8;
 }
 
 * {
   box-sizing: border-box;
 }
 
+html,
 body {
   margin: 0;
+  min-height: 100%;
+  background:
+    radial-gradient(circle at 50% 15%, rgb(45 70 118 / 60%), transparent 34rem),
+    linear-gradient(180deg, #060914, #0a1020 42%, #070a14);
+  color: var(--text);
+  font-family: Inter, "Noto Sans TC", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+body {
   min-height: 100dvh;
   display: grid;
   place-items: center;
-  background: radial-gradient(circle at 50% 20%, #16203f, var(--bg));
-  color: var(--text);
-  font-family: Inter, "Noto Sans TC", system-ui, -apple-system, sans-serif;
-}
-
-.app-shell {
-  width: min(100%, 900px);
   padding: 1rem;
 }
 
-.hud-bar,
-.hud-footer {
-  background: color-mix(in srgb, var(--panel) 80%, black);
-  border: 1px solid rgb(103 232 249 / 20%);
-  border-radius: 12px;
-  padding: 0.75rem 1rem;
+button,
+input {
+  font: inherit;
 }
 
-.hud-bar h1 {
+.app-shell {
+  width: min(100%, 430px);
+  min-height: min(100dvh, 860px);
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: 0.75rem;
+}
+
+.status-panel {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.45rem;
+}
+
+.status-panel > div {
+  min-width: 0;
+  padding: 0.6rem 0.45rem;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--panel);
+  backdrop-filter: blur(12px);
+  text-align: center;
+  box-shadow: 0 10px 32px rgb(0 0 0 / 22%);
+}
+
+.label {
+  display: block;
+  margin-bottom: 0.2rem;
+  color: var(--muted);
+  font-size: 0.72rem;
+  letter-spacing: 0.02em;
+}
+
+.status-panel strong {
+  display: block;
+  overflow: hidden;
+  color: var(--accent);
+  font-size: 1rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.world-card {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  overflow: hidden;
+  border: 1px solid rgb(126 232 255 / 24%);
+  border-radius: 24px;
+  background: linear-gradient(180deg, rgb(12 18 38 / 78%), rgb(7 10 20 / 90%));
+  box-shadow:
+    0 22px 70px rgb(0 0 0 / 44%),
+    inset 0 1px 0 rgb(255 255 255 / 6%);
+}
+
+.world-header,
+.world-footer {
+  position: relative;
+  z-index: 2;
+  padding: 0.8rem 1rem;
+  background: rgb(5 8 16 / 46%);
+  backdrop-filter: blur(12px);
+}
+
+.world-header p {
+  margin: 0 0 0.2rem;
+  color: var(--muted);
+  font-size: 0.76rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.world-header h1 {
   margin: 0;
-  font-size: 1.1rem;
-}
-
-.hud-bar p {
-  margin: 0.35rem 0 0;
-  font-size: 0.9rem;
-  opacity: 0.9;
+  color: var(--text);
+  font-size: 1.25rem;
+  letter-spacing: 0.02em;
 }
 
 #game-root {
-  margin: 0.9rem 0;
-  border-radius: 12px;
-  overflow: hidden;
-  border: 1px solid rgb(103 232 249 / 35%);
-  box-shadow: 0 12px 40px rgb(0 0 0 / 40%);
+  min-height: 520px;
+  background: #07111f;
 }
 
 canvas {
   display: block;
   width: 100%;
   height: auto;
+  image-rendering: pixelated;
 }
 
-#status-text {
+.world-footer {
   color: var(--accent);
-  font-weight: 600;
+  font-size: 0.84rem;
+  font-weight: 650;
 }
 
-@media (max-width: 700px) {
-  .app-shell {
-    padding: 0.75rem;
+.chat-panel {
+  display: grid;
+  gap: 0.65rem;
+  padding: 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: var(--panel-strong);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 16px 50px rgb(0 0 0 / 30%);
+}
+
+.chat-log {
+  max-height: 142px;
+  overflow-y: auto;
+  display: grid;
+  gap: 0.45rem;
+  padding-right: 0.25rem;
+}
+
+.chat-line {
+  width: fit-content;
+  max-width: 92%;
+  padding: 0.55rem 0.7rem;
+  border-radius: 14px;
+  line-height: 1.45;
+  font-size: 0.88rem;
+}
+
+.chat-line.player {
+  justify-self: end;
+  background: rgb(126 232 255 / 16%);
+  color: #e6fbff;
+}
+
+.chat-line.fox {
+  justify-self: start;
+  background: rgb(255 184 107 / 14%);
+  color: #fff1dc;
+}
+
+.chat-input-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.55rem;
+}
+
+#message-input {
+  width: 100%;
+  border: 1px solid rgb(126 232 255 / 18%);
+  border-radius: 999px;
+  outline: none;
+  padding: 0.75rem 1rem;
+  background: rgb(255 255 255 / 7%);
+  color: var(--text);
+}
+
+#message-input::placeholder {
+  color: rgb(232 241 255 / 46%);
+}
+
+#message-input:focus {
+  border-color: rgb(126 232 255 / 58%);
+  box-shadow: 0 0 0 3px rgb(126 232 255 / 12%);
+}
+
+#send-button {
+  border: 0;
+  border-radius: 999px;
+  padding: 0.75rem 1rem;
+  background: linear-gradient(180deg, #ffd18a, #ff9f43);
+  color: #2b1604;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+#send-button:active {
+  transform: translateY(1px);
+}
+
+@media (max-width: 430px) {
+  body {
+    padding: 0.55rem;
   }
 
-  .hud-bar p {
-    font-size: 0.82rem;
+  .app-shell {
+    gap: 0.55rem;
+  }
+
+  #game-root {
+    min-height: 500px;
+  }
+
+  .status-panel > div {
+    padding: 0.5rem 0.25rem;
+  }
+
+  .status-panel strong {
+    font-size: 0.9rem;
+  }
+
+  .chat-log {
+    max-height: 126px;
   }
 }
