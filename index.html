@@ -3,22 +3,56 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>NexusLink Prototype</title>
-    <link rel="stylesheet" href="./style.css" />
+    <title>Nexus Link / 心核連結</title>
+    <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
     <main class="app-shell">
-      <header class="hud-bar">
-        <h1>NexusLink: Pulse Runner</h1>
-        <p>← → 或 A / D 移動，躲避資料脈衝並盡可能存活。</p>
-      </header>
-      <div id="game-root" aria-label="NexusLink PixiJS Game"></div>
-      <footer class="hud-footer">
-        <span id="status-text">載入中...</span>
-      </footer>
+      <section class="status-panel" aria-label="Companion status">
+        <div>
+          <span class="label">Bond</span>
+          <strong id="bond-value">0</strong>
+        </div>
+        <div>
+          <span class="label">Trust</span>
+          <strong id="trust-value">5</strong>
+        </div>
+        <div>
+          <span class="label">Mood</span>
+          <strong id="mood-value">calm</strong>
+        </div>
+        <div>
+          <span class="label">Energy</span>
+          <strong id="energy-value">10</strong>
+        </div>
+      </section>
+
+      <section class="world-card">
+        <header class="world-header">
+          <p>Nexus Link Prototype</p>
+          <h1 id="fox-name">焰尾狐</h1>
+        </header>
+        <div id="game-root" aria-label="Nexus Link emotional habitat scene"></div>
+        <footer class="world-footer">
+          <span id="status-text">載入中...</span>
+        </footer>
+      </section>
+
+      <section class="chat-panel" aria-label="Companion chat panel">
+        <div id="chat-log" class="chat-log"></div>
+        <div class="chat-input-row">
+          <input
+            id="message-input"
+            type="text"
+            placeholder="對焰尾狐說一句話..."
+            autocomplete="off"
+          />
+          <button id="send-button" type="button">送出</button>
+        </div>
+      </section>
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/pixi.js@8.8.1/dist/pixi.min.js"></script>
-    <script src="./main.js"></script>
+    <script src="./script.js"></script>
   </body>
 </html>
