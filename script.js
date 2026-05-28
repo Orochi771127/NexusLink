@@ -1,5 +1,5 @@
 (() => {
-  const STORAGE_KEY = "nexusLinkPrototypeState:v1";
+  const STORAGE_KEY = "nexusLinkPrototypeState:v2";
 
   const defaultState = {
     bond: 0,
@@ -47,9 +47,9 @@
       resolution: Math.min(window.devicePixelRatio || 1, 2),
       autoDensity: true
     })
-    .then(() => {
+    .then(async () => {
       gameRoot.appendChild(app.canvas);
-      bootScene();
+      await bootScene();
       bindUI();
       renderHUD();
       renderChat();
@@ -59,7 +59,7 @@
       statusText.textContent = "場景初始化失敗，請重新整理頁面。";
     });
 
-  function bootScene() {
+  async function bootScene() {
     const world = new PIXI.Container();
     app.stage.addChild(world);
 
@@ -70,7 +70,7 @@
     const particles = createParticles();
     world.addChild(particles);
 
-    const fox = createFlametailFox();
+    const fox = await createFlametailFoxNode();
     fox.x = WORLD_WIDTH / 2;
     fox.y = 470;
     world.addChild(fox);
@@ -84,8 +84,14 @@
     let t = 0;
     app.ticker.add((ticker) => {
       t += ticker.deltaMS / 1000;
+
       fox.y = 470 + Math.sin(t * 2.1) * 4;
       fox.scale.set(1 + Math.sin(t * 1.5) * 0.015);
+
+      if (fox.__isSpriteFox && fox.__tailFlame) {
+        fox.__tailFlame.alpha = 0.7 + Math.sin(t * 5) * 0.25;
+      }
+
       particles.children.forEach((particle, index) => {
         particle.y -= (0.15 + index * 0.002) * ticker.deltaTime;
         particle.alpha = 0.25 + Math.sin(t + index) * 0.12;
@@ -94,34 +100,71 @@
     });
   }
 
+  async function createFlametailFoxNode() {
+    const ASSET_PATH = "./assets/flametail-fox.png";
+
+    try {
+      const texture = await PIXI.Assets.load(ASSET_PATH);
+      const spriteFox = createFoxSprite(texture);
+      statusText.textContent = "焰尾狐已出現（圖片資源）。";
+      return spriteFox;
+    } catch (error) {
+      console.warn("Fox image load failed, fallback to placeholder:", error);
+      statusText.textContent = "焰尾狐圖片載入失敗，已改用預設造型。";
+      return createFlametailFoxPlaceholder();
+    }
+  }
+
+  function createFoxSprite(texture) {
+    const fox = new PIXI.Container();
+
+    const shadow = new PIXI.Graphics();
+    shadow.ellipse(0, 54, 58, 14).fill({ color: 0x000000, alpha: 0.25 });
+    fox.addChild(shadow);
+
+    const sprite = new PIXI.Sprite(texture);
+    sprite.anchor.set(0.5, 0.82);
+
+    const maxW = 220;
+    const maxH = 220;
+    const scale = Math.min(maxW / sprite.width, maxH / sprite.height);
+    sprite.scale.set(scale);
+
+    fox.addChild(sprite);
+
+    const flame = new PIXI.Graphics();
+    flame.moveTo(0, -108).lineTo(-15, -76).lineTo(15, -76).closePath().fill("#ff7a2f");
+    flame.moveTo(2, -98).lineTo(-6, -77).lineTo(10, -77).closePath().fill("#ffd166");
+    fox.addChild(flame);
+
+    fox.__isSpriteFox = true;
+    fox.__tailFlame = flame;
+
+    return fox;
+  }
+
   function drawLakeCamp(g) {
     g.clear();
 
     g.rect(0, 0, WORLD_WIDTH, WORLD_HEIGHT).fill("#07111f");
 
-    // night sky glow
     g.circle(300, 92, 58).fill({ color: 0x9fd7ff, alpha: 0.22 });
     g.circle(300, 92, 28).fill({ color: 0xe3f6ff, alpha: 0.46 });
 
-    // distant mountains
     g.moveTo(0, 240).lineTo(70, 150).lineTo(150, 240).closePath().fill("#12233a");
     g.moveTo(80, 240).lineTo(205, 132).lineTo(330, 240).closePath().fill("#152a45");
     g.moveTo(230, 240).lineTo(330, 162).lineTo(410, 240).closePath().fill("#102136");
 
-    // forest line
     for (let x = -20; x < WORLD_WIDTH + 30; x += 38) {
       g.moveTo(x, 300).lineTo(x + 18, 225).lineTo(x + 36, 300).closePath().fill("#0d2a24");
     }
 
-    // lake
     g.ellipse(WORLD_WIDTH / 2, 360, 250, 92).fill("#103852");
     g.ellipse(WORLD_WIDTH / 2, 354, 230, 66).fill({ color: 0x1d5c7a, alpha: 0.5 });
 
-    // ground
     g.roundRect(-20, 415, WORLD_WIDTH + 40, 300, 32).fill("#1a2d25");
     g.roundRect(50, 430, 290, 165, 28).fill("#26382d");
 
-    // campfire base
     g.ellipse(195, 545, 62, 22).fill("#15120d");
     g.rect(168, 552, 60, 8).fill("#5b351a");
     g.circle(195, 530, 30).fill({ color: 0xff9f43, alpha: 0.2 });
@@ -142,7 +185,7 @@
     return layer;
   }
 
-  function createFlametailFox() {
+  function createFlametailFoxPlaceholder() {
     const fox = new PIXI.Container();
 
     const shadow = new PIXI.Graphics();
@@ -170,8 +213,17 @@
     fox.addChild(face);
 
     const tail = new PIXI.Graphics();
-    tail.moveTo(38, 0).quadraticCurveTo(92, -32, 66, -82).quadraticCurveTo(110, -40, 78, 22).closePath().fill("#f9733a");
-    tail.moveTo(76, -72).quadraticCurveTo(104, -38, 76, 2).quadraticCurveTo(94, -42, 76, -72).fill("#ffd166");
+    tail
+      .moveTo(38, 0)
+      .quadraticCurveTo(92, -32, 66, -82)
+      .quadraticCurveTo(110, -40, 78, 22)
+      .closePath()
+      .fill("#f9733a");
+    tail
+      .moveTo(76, -72)
+      .quadraticCurveTo(104, -38, 76, 2)
+      .quadraticCurveTo(94, -42, 76, -72)
+      .fill("#ffd166");
     fox.addChildAt(tail, 1);
 
     const flame = new PIXI.Graphics();
@@ -227,26 +279,16 @@
   }
 
   function mockAIResponse(message, repeated) {
-    if (repeated) {
-      return "你剛剛一直重複同一句話……我有點不安。我想慢一點。";
-    }
-    if (state.energy <= 1) {
-      return "我有點累了。可以陪我安靜待一下嗎？";
-    }
-    if (/累|悶|難過|不想|孤單|寂寞/.test(message)) {
-      return "今天的空氣好像有點重。我先不吵你，你可以在這裡待一下。";
-    }
-    if (/摸|摸摸|陪/.test(message)) {
-      return "嗯……火變得比較暖了。你還在，這件事我有感覺到。";
-    }
+    if (repeated) return "你剛剛一直重複同一句話……我有點不安。我想慢一點。";
+    if (state.energy <= 1) return "我有點累了。可以陪我安靜待一下嗎？";
+    if (/累|悶|難過|不想|孤單|寂寞/.test(message)) return "今天的空氣好像有點重。我先不吵你，你可以在這裡待一下。";
+    if (/摸|摸摸|陪/.test(message)) return "嗯……火變得比較暖了。你還在，這件事我有感覺到。";
     return "我聽見了。這句話會留在火光裡一小段時間。";
   }
 
   function addChat(role, text) {
     state.chatHistory.push({ role, text });
-    if (state.chatHistory.length > 24) {
-      state.chatHistory.shift();
-    }
+    if (state.chatHistory.length > 24) state.chatHistory.shift();
   }
 
   function renderHUD() {
