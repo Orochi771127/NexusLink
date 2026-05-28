@@ -123,7 +123,7 @@
     fox.addChild(shadow);
 
     const sprite = new PIXI.Sprite(texture);
-    sprite.anchor.set(0.5, 0.82);
+    sprite.anchor.set(0.5, 1);
 
     const maxW = 220;
     const maxH = 220;
