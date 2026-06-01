@@ -1,5 +1,17 @@
 (() => {
   const STORAGE_KEY = "nexusLinkPrototypeState:v2";
+  const CREATURES_PATH = "./data/creatures.json";
+  const currentCreatureId = "greyshade-cat";
+  const FALLBACK_CREATURE = {
+    id: "flametail-fox",
+    name: "焰尾狐",
+    element: "fire",
+    image: "./assets/flametail-fox.png",
+    defaultMood: "warm",
+    description: "火屬性的陪伴型 AI 小怪獸。"
+  };
+
+  let currentCreature = FALLBACK_CREATURE;
 
   const defaultState = {
     bond: 0,
@@ -10,8 +22,8 @@
     lastMessage: "",
     chatHistory: [
       {
-        role: "fox",
-        text: "火還亮著。我在這裡。"
+        role: "companion",
+        text: "我在這裡，安靜地看著你。"
       }
     ]
   };
@@ -49,6 +61,8 @@
     })
     .then(async () => {
       gameRoot.appendChild(app.canvas);
+      currentCreature = await loadCurrentCreature();
+      applyCreatureText();
       await bootScene();
       bindUI();
       renderHUD();
@@ -70,26 +84,26 @@
     const particles = createParticles();
     world.addChild(particles);
 
-    const fox = await createFlametailFoxNode();
-    fox.x = WORLD_WIDTH / 2;
-    fox.y = 470;
-    world.addChild(fox);
+    const companion = await createCreatureNode(currentCreature);
+    companion.x = WORLD_WIDTH / 2;
+    companion.y = 470;
+    world.addChild(companion);
 
-    fox.eventMode = "static";
-    fox.cursor = "pointer";
-    fox.on("pointertap", () => {
-      handlePlayerMessage("摸摸焰尾狐");
+    companion.eventMode = "static";
+    companion.cursor = "pointer";
+    companion.on("pointertap", () => {
+      handlePlayerMessage(`摸摸${currentCreature.name}`);
     });
 
     let t = 0;
     app.ticker.add((ticker) => {
       t += ticker.deltaMS / 1000;
 
-      fox.y = 470 + Math.sin(t * 2.1) * 4;
-      fox.scale.set(1 + Math.sin(t * 1.5) * 0.015);
+      companion.y = 470 + Math.sin(t * 2.1) * 4;
+      companion.scale.set(1 + Math.sin(t * 1.5) * 0.015);
 
-      if (fox.__isSpriteFox && fox.__tailFlame) {
-        fox.__tailFlame.alpha = 0.7 + Math.sin(t * 5) * 0.25;
+      if (companion.__isSpriteCreature && companion.__accentFlame) {
+        companion.__accentFlame.alpha = 0.7 + Math.sin(t * 5) * 0.25;
       }
 
       particles.children.forEach((particle, index) => {
@@ -100,22 +114,37 @@
     });
   }
 
-  async function createFlametailFoxNode() {
-    const ASSET_PATH = "./assets/flametail-fox.png";
-
+  async function loadCurrentCreature() {
     try {
-      const texture = await PIXI.Assets.load(ASSET_PATH);
-      const spriteFox = createFoxSprite(texture);
-      statusText.textContent = "焰尾狐已出現（圖片資源）。";
-      return spriteFox;
+      const response = await fetch(CREATURES_PATH, { cache: "no-cache" });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+      const creatures = await response.json();
+      const creature = creatures.find((item) => item.id === currentCreatureId);
+      if (!creature) throw new Error(`Creature not found: ${currentCreatureId}`);
+
+      return creature;
     } catch (error) {
-      console.warn("Fox image load failed, fallback to placeholder:", error);
-      statusText.textContent = "焰尾狐圖片載入失敗，已改用預設造型。";
-      return createFlametailFoxPlaceholder();
+      console.warn("Creature data load failed, fallback to default creature:", error);
+      statusText.textContent = "角色資料載入失敗，已改用預設夥伴。";
+      return FALLBACK_CREATURE;
     }
   }
 
-  function createFoxSprite(texture) {
+  async function createCreatureNode(creature) {
+    try {
+      const texture = await PIXI.Assets.load(creature.image);
+      const spriteCreature = createCreatureSprite(texture);
+      statusText.textContent = `${creature.name}已出現（圖片資源）。`;
+      return spriteCreature;
+    } catch (error) {
+      console.warn("Creature image load failed, fallback to placeholder:", error);
+      statusText.textContent = `${creature.name}圖片載入失敗，已改用預設造型。`;
+      return createCreaturePlaceholder();
+    }
+  }
+
+  function createCreatureSprite(texture) {
     const fox = new PIXI.Container();
 
     const shadow = new PIXI.Graphics();
@@ -137,8 +166,8 @@
     flame.moveTo(2, -98).lineTo(-6, -77).lineTo(10, -77).closePath().fill("#ffd166");
     fox.addChild(flame);
 
-    fox.__isSpriteFox = true;
-    fox.__tailFlame = flame;
+    fox.__isSpriteCreature = true;
+    fox.__accentFlame = flame;
 
     return fox;
   }
@@ -185,7 +214,7 @@
     return layer;
   }
 
-  function createFlametailFoxPlaceholder() {
+  function createCreaturePlaceholder() {
     const fox = new PIXI.Container();
 
     const shadow = new PIXI.Graphics();
@@ -234,6 +263,11 @@
     return fox;
   }
 
+  function applyCreatureText() {
+    foxName.textContent = currentCreature.name;
+    messageInput.placeholder = `對${currentCreature.name}說一句話...`;
+  }
+
   function bindUI() {
     sendButton.addEventListener("click", () => {
       const value = messageInput.value.trim();
@@ -272,7 +306,7 @@
     }
 
     const reply = mockAIResponse(message, repeated);
-    addChat("fox", reply);
+    addChat("companion", reply);
     saveState();
     renderHUD();
     renderChat();
@@ -296,7 +330,7 @@
     trustEl.textContent = state.trust;
     moodEl.textContent = state.mood;
     energyEl.textContent = state.energy;
-    foxName.textContent = state.mood === "defensive" ? "焰尾狐 · 有點防備" : "焰尾狐";
+    foxName.textContent = state.mood === "defensive" ? `${currentCreature.name} · 有點防備` : currentCreature.name;
     statusText.textContent = `狀態：${state.mood}｜SpamScore：${state.spamScore}`;
   }
 
@@ -304,8 +338,9 @@
     chatLog.innerHTML = "";
     for (const item of state.chatHistory) {
       const line = document.createElement("div");
-      line.className = `chat-line ${item.role}`;
-      line.textContent = item.role === "player" ? `你：${item.text}` : `焰尾狐：${item.text}`;
+      const role = item.role === "fox" ? "companion" : item.role;
+      line.className = `chat-line ${role}`;
+      line.textContent = role === "player" ? `你：${item.text}` : `${currentCreature.name}：${item.text}`;
       chatLog.appendChild(line);
     }
     chatLog.scrollTop = chatLog.scrollHeight;
