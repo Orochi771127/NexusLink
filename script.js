@@ -48,8 +48,8 @@
   }
 
   const WORLD_WIDTH = 390;
-  const WORLD_HEIGHT = 694;
-  const COMPANION_GROUND_Y = 400;
+  const WORLD_HEIGHT = 844;
+  const COMPANION_GROUND_Y = 525;
   const app = new PIXI.Application();
 
   app
@@ -111,7 +111,7 @@
       particles.children.forEach((particle, index) => {
         particle.y -= (0.15 + index * 0.002) * ticker.deltaTime;
         particle.alpha = 0.25 + Math.sin(t + index) * 0.12;
-        if (particle.y < 110) particle.y = 610;
+        if (particle.y < 110) particle.y = 760;
       });
     });
   }
@@ -137,7 +137,7 @@
     try {
       const texture = await PIXI.Assets.load(creature.image);
       const spriteCreature = createCreatureSprite(texture);
-      statusText.textContent = `${creature.name}已出現（圖片資源）。`;
+      statusText.textContent = `${creature.name}已進入夜間湖畔棲地。`;
       return spriteCreature;
     } catch (error) {
       console.warn("Creature image load failed, fallback to placeholder:", error);
@@ -156,8 +156,8 @@
     const sprite = new PIXI.Sprite(texture);
     sprite.anchor.set(0.5, 1);
 
-    const maxW = Math.min(170, WORLD_WIDTH * 0.44);
-    const maxH = Math.min(170, WORLD_HEIGHT * 0.25);
+    const maxW = Math.min(200, WORLD_WIDTH * 0.5);
+    const maxH = Math.min(200, WORLD_HEIGHT * 0.25);
     const scale = Math.min(maxW / sprite.width, maxH / sprite.height);
     sprite.scale.set(scale);
 
@@ -180,40 +180,40 @@
     g.rect(0, 0, WORLD_WIDTH, WORLD_HEIGHT).fill("#06101d");
     g.rect(0, 0, WORLD_WIDTH, WORLD_HEIGHT).fill({ color: 0x0b1f33, alpha: 0.35 });
 
-    g.circle(302, 84, 72).fill({ color: 0x8deeff, alpha: 0.12 });
-    g.circle(302, 84, 34).fill({ color: 0xdffbff, alpha: 0.32 });
-    g.circle(294, 76, 27).fill({ color: 0xffffff, alpha: 0.12 });
+    g.circle(302, 104, 78).fill({ color: 0x8deeff, alpha: 0.12 });
+    g.circle(302, 104, 36).fill({ color: 0xdffbff, alpha: 0.32 });
+    g.circle(294, 96, 29).fill({ color: 0xffffff, alpha: 0.12 });
 
-    g.moveTo(0, 246).lineTo(68, 154).lineTo(150, 246).closePath().fill("#0c1d31");
-    g.moveTo(76, 246).lineTo(206, 126).lineTo(334, 246).closePath().fill("#102844");
-    g.moveTo(226, 246).lineTo(332, 156).lineTo(414, 246).closePath().fill("#0a1a2d");
-    g.rect(0, 238, WORLD_WIDTH, 86).fill({ color: 0x07111f, alpha: 0.42 });
+    g.moveTo(0, 286).lineTo(68, 174).lineTo(150, 286).closePath().fill("#0c1d31");
+    g.moveTo(76, 286).lineTo(206, 146).lineTo(334, 286).closePath().fill("#102844");
+    g.moveTo(226, 286).lineTo(332, 176).lineTo(414, 286).closePath().fill("#0a1a2d");
+    g.rect(0, 276, WORLD_WIDTH, 96).fill({ color: 0x07111f, alpha: 0.42 });
 
     for (let x = -28; x < WORLD_WIDTH + 40; x += 34) {
       const height = 68 + (x % 3) * 9;
-      g.moveTo(x, 318).lineTo(x + 17, 236 - height * 0.18).lineTo(x + 34, 318).closePath().fill("#09231e");
-      g.rect(x + 14, 290, 6, 44).fill("#081916");
+      g.moveTo(x, 368).lineTo(x + 17, 270 - height * 0.18).lineTo(x + 34, 368).closePath().fill("#09231e");
+      g.rect(x + 14, 338, 6, 48).fill("#081916");
     }
 
-    g.ellipse(WORLD_WIDTH / 2, 372, 260, 98).fill("#082c42");
-    g.ellipse(WORLD_WIDTH / 2, 362, 236, 62).fill({ color: 0x1a6a82, alpha: 0.42 });
-    g.ellipse(154, 354, 78, 10).fill({ color: 0x8deeff, alpha: 0.08 });
-    g.ellipse(268, 386, 92, 9).fill({ color: 0xffb86b, alpha: 0.1 });
-    g.rect(28, 362, 334, 2).fill({ color: 0xb7f7ff, alpha: 0.08 });
-    g.rect(72, 392, 246, 2).fill({ color: 0xb7f7ff, alpha: 0.07 });
+    g.ellipse(WORLD_WIDTH / 2, 432, 272, 108).fill("#082c42");
+    g.ellipse(WORLD_WIDTH / 2, 418, 246, 70).fill({ color: 0x1a6a82, alpha: 0.42 });
+    g.ellipse(154, 405, 78, 10).fill({ color: 0x8deeff, alpha: 0.08 });
+    g.ellipse(268, 448, 92, 9).fill({ color: 0xffb86b, alpha: 0.1 });
+    g.rect(28, 420, 334, 2).fill({ color: 0xb7f7ff, alpha: 0.08 });
+    g.rect(72, 456, 246, 2).fill({ color: 0xb7f7ff, alpha: 0.07 });
 
-    g.roundRect(-24, 428, WORLD_WIDTH + 48, 292, 34).fill("#102820");
-    g.roundRect(34, 432, 320, 178, 32).fill({ color: 0x1f3b2f, alpha: 0.86 });
-    g.ellipse(194, 458, 164, 24).fill({ color: 0x08130f, alpha: 0.18 });
+    g.roundRect(-24, 500, WORLD_WIDTH + 48, 380, 38).fill("#102820");
+    g.roundRect(34, 506, 320, 210, 32).fill({ color: 0x1f3b2f, alpha: 0.86 });
+    g.ellipse(194, 538, 164, 24).fill({ color: 0x08130f, alpha: 0.18 });
 
-    g.ellipse(195, 548, 72, 24).fill("#120e0b");
-    g.rect(162, 555, 72, 8).fill("#5b351a");
-    g.rect(168, 546, 62, 7).fill("#6f421e");
-    g.circle(195, 528, 54).fill({ color: 0xff9747, alpha: 0.13 });
-    g.circle(195, 526, 28).fill({ color: 0xffb86b, alpha: 0.34 });
-    g.moveTo(195, 494).lineTo(176, 538).lineTo(215, 538).closePath().fill("#ff7a2f");
-    g.moveTo(200, 506).lineTo(185, 539).lineTo(211, 539).closePath().fill("#ffd166");
-    g.moveTo(190, 512).lineTo(182, 540).lineTo(198, 540).closePath().fill({ color: 0xffffff, alpha: 0.34 });
+    g.ellipse(195, 686, 72, 24).fill("#120e0b");
+    g.rect(162, 693, 72, 8).fill("#5b351a");
+    g.rect(168, 684, 62, 7).fill("#6f421e");
+    g.circle(195, 666, 54).fill({ color: 0xff9747, alpha: 0.13 });
+    g.circle(195, 664, 28).fill({ color: 0xffb86b, alpha: 0.34 });
+    g.moveTo(195, 632).lineTo(176, 676).lineTo(215, 676).closePath().fill("#ff7a2f");
+    g.moveTo(200, 644).lineTo(185, 677).lineTo(211, 677).closePath().fill("#ffd166");
+    g.moveTo(190, 650).lineTo(182, 678).lineTo(198, 678).closePath().fill({ color: 0xffffff, alpha: 0.34 });
   }
 
   function createParticles() {
@@ -226,7 +226,7 @@
         alpha: isWarm ? 0.42 : 0.3
       });
       p.x = 20 + Math.random() * (WORLD_WIDTH - 40);
-      p.y = 100 + Math.random() * 520;
+      p.y = 100 + Math.random() * 660;
       layer.addChild(p);
     }
     return layer;
@@ -376,7 +376,8 @@
 
   function renderChat() {
     chatLog.innerHTML = "";
-    for (const item of state.chatHistory) {
+    const visibleHistory = state.chatHistory.slice(-2);
+    for (const item of visibleHistory) {
       const line = document.createElement("div");
       const role = item.role === "fox" ? "companion" : item.role;
       line.className = `chat-line ${role}`;
