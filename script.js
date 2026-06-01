@@ -41,12 +41,14 @@
   const trustEl = document.querySelector("#trust-value");
   const moodEl = document.querySelector("#mood-value");
   const energyEl = document.querySelector("#energy-value");
-  const bondBar = document.querySelector("#bond-bar");
-  const trustBar = document.querySelector("#trust-bar");
-  const moodBar = document.querySelector("#mood-bar");
-  const energyBar = document.querySelector("#energy-bar");
+  const bondFill = document.querySelector("#bond-fill");
+  const trustFill = document.querySelector("#trust-fill");
+  const moodFill = document.querySelector("#mood-fill");
+  const energyFill = document.querySelector("#energy-fill");
   const coreHud = document.querySelector(".core-hud");
   const coreHudToggle = document.querySelector(".core-hud-toggle");
+  const soulTalkPanel = document.querySelector(".soul-talk-panel");
+  const soulTalkToggle = document.querySelector(".soul-talk-toggle");
   const bottomNavButtons = document.querySelectorAll(".bottom-nav button[data-action]");
 
   if (!window.PIXI) {
@@ -337,7 +339,14 @@
       const isExpanded = coreHud.classList.toggle("is-expanded");
       coreHud.classList.toggle("is-collapsed", !isExpanded);
       coreHudToggle.setAttribute("aria-expanded", String(isExpanded));
-      coreHudToggle.setAttribute("aria-label", isExpanded ? "收合心核狀態" : "展開心核狀態");
+      coreHudToggle.setAttribute("aria-label", "切換核心資訊");
+    });
+
+    soulTalkToggle.addEventListener("click", () => {
+      const isExpanded = soulTalkPanel.dataset.expanded !== "true";
+      soulTalkPanel.dataset.expanded = String(isExpanded);
+      soulTalkToggle.setAttribute("aria-expanded", String(isExpanded));
+      soulTalkToggle.setAttribute("aria-label", isExpanded ? "收合靈魂聖域" : "展開靈魂聖域");
     });
 
     sendButton.addEventListener("click", () => {
@@ -426,10 +435,10 @@
     foxName.textContent = state.mood === "defensive" ? `${currentCreature.name} · 有點防備` : currentCreature.name;
     statusText.textContent = `狀態：${state.mood}｜SpamScore：${state.spamScore}`;
 
-    bondBar.style.width = `${clampPercent(state.bond, 24)}%`;
-    trustBar.style.width = `${clampPercent(state.trust, 12)}%`;
-    energyBar.style.width = `${clampPercent(state.energy, 10)}%`;
-    moodBar.style.width = `${moodPercent(state.mood)}%`;
+    bondFill.style.width = `${clampPercent(state.bond, 24)}%`;
+    trustFill.style.width = `${clampPercent(state.trust, 12)}%`;
+    energyFill.style.width = `${clampPercent(state.energy, 10)}%`;
+    moodFill.style.width = `${moodPercent(state.mood)}%`;
   }
 
   function clampPercent(value, max) {
