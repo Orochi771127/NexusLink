@@ -49,6 +49,7 @@
 
   const WORLD_WIDTH = 390;
   const WORLD_HEIGHT = 694;
+  const COMPANION_GROUND_Y = 400;
   const app = new PIXI.Application();
 
   app
@@ -87,7 +88,7 @@
 
     const companion = await createCreatureNode(currentCreature);
     companion.x = WORLD_WIDTH / 2;
-    companion.y = 470;
+    companion.y = COMPANION_GROUND_Y;
     world.addChild(companion);
 
     companion.eventMode = "static";
@@ -100,7 +101,7 @@
     app.ticker.add((ticker) => {
       t += ticker.deltaMS / 1000;
 
-      companion.y = 470 + Math.sin(t * 2.1) * 4;
+      companion.y = COMPANION_GROUND_Y + Math.sin(t * 2.1) * 3;
       companion.scale.set(1 + Math.sin(t * 1.5) * 0.015);
 
       if (companion.__isSpriteCreature && companion.__accentFlame) {
@@ -155,8 +156,8 @@
     const sprite = new PIXI.Sprite(texture);
     sprite.anchor.set(0.5, 1);
 
-    const maxW = 220;
-    const maxH = 220;
+    const maxW = Math.min(170, WORLD_WIDTH * 0.44);
+    const maxH = Math.min(170, WORLD_HEIGHT * 0.25);
     const scale = Math.min(maxW / sprite.width, maxH / sprite.height);
     sprite.scale.set(scale);
 
