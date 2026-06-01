@@ -56,7 +56,8 @@
 
   const WORLD_WIDTH = 390;
   const WORLD_HEIGHT = 844;
-  const COMPANION_GROUND_Y = 485;
+  const COMPANION_GROUND_Y = 505;
+  const PLATFORM_Y = 540;
   const app = new PIXI.Application();
 
   app
@@ -114,7 +115,7 @@
 
       companion.y = COMPANION_GROUND_Y + Math.sin(t * 2.1) * 3;
       companion.scale.set(1 + Math.sin(t * 1.5) * 0.015);
-      platform.alpha = 0.82 + Math.sin(t * 1.4) * 0.04;
+      platform.alpha = 0.76 + Math.sin(t * 1.4) * 0.03;
 
       if (companion.__accentFlame) {
         companion.__accentFlame.alpha = 0.7 + Math.sin(t * 5) * 0.25;
@@ -151,11 +152,11 @@
       const platform = new PIXI.Sprite(texture);
       platform.anchor.set(0.5);
       platform.x = WORLD_WIDTH / 2;
-      platform.y = COMPANION_GROUND_Y + 26;
+      platform.y = PLATFORM_Y;
       platform.eventMode = "none";
-      platform.alpha = 0.84;
+      platform.alpha = 0.76;
 
-      const targetWidth = WORLD_WIDTH * 0.68;
+      const targetWidth = 252;
       const targetHeight = WORLD_HEIGHT * 0.13;
       const scale = Math.min(targetWidth / platform.width, targetHeight / platform.height);
       platform.scale.set(scale);
@@ -163,8 +164,8 @@
     } catch (error) {
       console.warn("Platform image load failed, fallback to platform glow:", error);
       const platform = new PIXI.Graphics();
-      platform.ellipse(WORLD_WIDTH / 2, COMPANION_GROUND_Y + 28, 118, 34).fill({ color: 0x8deeff, alpha: 0.16 });
-      platform.ellipse(WORLD_WIDTH / 2, COMPANION_GROUND_Y + 28, 82, 18).stroke({ color: 0xb7f7ff, alpha: 0.36, width: 2 });
+      platform.ellipse(WORLD_WIDTH / 2, PLATFORM_Y, 118, 34).fill({ color: 0x8deeff, alpha: 0.14 });
+      platform.ellipse(WORLD_WIDTH / 2, PLATFORM_Y, 82, 18).stroke({ color: 0xb7f7ff, alpha: 0.32, width: 2 });
       platform.eventMode = "none";
       return platform;
     }
@@ -334,6 +335,7 @@
   function bindUI() {
     coreHudToggle.addEventListener("click", () => {
       const isExpanded = coreHud.classList.toggle("is-expanded");
+      coreHud.classList.toggle("is-collapsed", !isExpanded);
       coreHudToggle.setAttribute("aria-expanded", String(isExpanded));
       coreHudToggle.setAttribute("aria-label", isExpanded ? "收合心核狀態" : "展開心核狀態");
     });
