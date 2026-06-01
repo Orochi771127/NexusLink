@@ -40,7 +40,7 @@
           <button type="button" aria-label="settings">⚙</button>
         </section>
 
-        <div class="habitat-caption" id="status-text" aria-live="polite">正在建立心核連線...</div>
+        <div class="sr-only" id="status-text" aria-live="polite">正在建立心核連線...</div>
 
         <button class="soul-talk-launcher" type="button" data-panel-trigger="soulTalk" aria-label="開啟 Soul Talk">
           <span>
@@ -140,10 +140,7 @@
               <button type="button" class="panel-close" data-panel-close aria-label="關閉行動選單">×</button>
             </header>
             <p id="action-sheet-copy" class="action-sheet-copy">選擇一個行動，讓夥伴回應。</p>
-            <div class="sheet-action-grid">
-              <button type="button" data-sheet-choice="primary">開始</button>
-              <button type="button" data-sheet-choice="soulTalk">詢問夥伴</button>
-            </div>
+            <div id="action-sheet-actions" class="sheet-action-list" aria-label="行動選項"></div>
           </section>
         </div>
       </section>
