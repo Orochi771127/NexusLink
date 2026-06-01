@@ -49,7 +49,7 @@
 
   const WORLD_WIDTH = 390;
   const WORLD_HEIGHT = 844;
-  const COMPANION_GROUND_Y = 525;
+  const COMPANION_GROUND_Y = 485;
   const app = new PIXI.Application();
 
   app
@@ -79,10 +79,7 @@
     const world = new PIXI.Container();
     app.stage.addChild(world);
 
-    const background = new PIXI.Graphics();
-    drawLakeCamp(background);
-    world.addChild(background);
-
+    // CSS owns the lake-night camp backdrop; PixiJS is reserved for companion and ambient effects.
     const particles = createParticles();
     world.addChild(particles);
 
@@ -160,8 +157,8 @@
     const sprite = new PIXI.Sprite(texture);
     sprite.anchor.set(0.5, 1);
 
-    const maxW = Math.min(200, WORLD_WIDTH * 0.5);
-    const maxH = Math.min(200, WORLD_HEIGHT * 0.25);
+    const maxW = Math.min(170, WORLD_WIDTH * 0.46);
+    const maxH = Math.min(170, WORLD_HEIGHT * 0.2);
     const scale = Math.min(maxW / sprite.width, maxH / sprite.height);
     sprite.scale.set(scale);
 
