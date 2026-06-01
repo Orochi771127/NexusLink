@@ -4,6 +4,13 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>Nexus Link / 心核連結</title>
+    <link rel="preload" as="image" href="./assets/backgrounds/BG_01_LakeNightCamp.png" />
+    <link rel="preload" as="image" href="./assets/ui/panels/HUD_Background.png" />
+    <link rel="preload" as="image" href="./assets/ui/panels/UI_SoulTalkPanel.png" />
+    <link rel="preload" as="image" href="./assets/ui/buttons/BTN_Explore.png" />
+    <link rel="preload" as="image" href="./assets/ui/buttons/BTN_Care.png" />
+    <link rel="preload" as="image" href="./assets/ui/buttons/BTN_Growth.png" />
+    <link rel="preload" as="image" href="./assets/ui/buttons/BTN_Memory.png" />
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
@@ -11,7 +18,7 @@
       <section class="habitat-stage" aria-label="Nexus Link emotional habitat">
         <div id="game-root" aria-label="Nexus Link emotional habitat scene"></div>
 
-        <section class="hud-card core-hud" aria-label="Companion core status">
+        <section class="core-hud" aria-label="Companion core status">
           <div class="core-hud__title">
             <div>
               <p>NEXUS LINK</p>
@@ -70,10 +77,22 @@
         </section>
 
         <nav class="bottom-nav" aria-label="Primary actions">
-          <button type="button" data-action="explore"><span>✦</span>探索</button>
-          <button type="button" data-action="care"><span>♡</span>照顧</button>
-          <button type="button" data-action="grow"><span>⬡</span>成長</button>
-          <button type="button" data-action="memory"><span>◌</span>記憶</button>
+          <button type="button" data-action="explore">
+            <span class="nav-art" aria-hidden="true"></span>
+            <span class="nav-label">探索</span>
+          </button>
+          <button type="button" data-action="care">
+            <span class="nav-art" aria-hidden="true"></span>
+            <span class="nav-label">照顧</span>
+          </button>
+          <button type="button" data-action="grow">
+            <span class="nav-art" aria-hidden="true"></span>
+            <span class="nav-label">成長</span>
+          </button>
+          <button type="button" data-action="memory">
+            <span class="nav-art" aria-hidden="true"></span>
+            <span class="nav-label">記憶</span>
+          </button>
         </nav>
       </section>
     </main>
