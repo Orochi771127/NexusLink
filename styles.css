@@ -167,7 +167,8 @@ canvas {
   color: #e6fbff;
 }
 
-.chat-line.fox {
+.chat-line.fox,
+.chat-line.companion {
   justify-self: start;
   background: rgb(255 184 107 / 14%);
   color: #fff1dc;
