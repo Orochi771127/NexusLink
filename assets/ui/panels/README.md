@@ -4,8 +4,9 @@ This folder stores reusable panel art for Nexus Link UI.
 
 Expected files:
 
-- `UI_SoulTalkPanel.png` — floating SOUL TALK dialogue panel frame
-- `HUD_Background.png` — top HUD background frame
+- `UI_CoreHudCompact.png` — collapsed top-left NEXUS CORE frame
+- `UI_CoreHudExpanded_Prototype.png` — expanded top-left NEXUS CORE frame with stat rows
+- `UI_SoulTalkPanel_Compact.png` — compact floating SOUL TALK dialogue panel frame
 
 Guidelines:
 

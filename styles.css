@@ -15,8 +15,11 @@
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
   --asset-bg-lake: url("./assets/backgrounds/BG_01_LakeNightCamp.png");
-  --asset-hud-panel: url("./assets/ui/panels/HUD_Background.png");
-  --asset-soul-panel: url("./assets/ui/panels/UI_SoulTalkPanel.png");
+  --asset-core-hud-compact: url("./assets/ui/panels/UI_CoreHudCompact.png");
+  --asset-core-hud-expanded: url("./assets/ui/panels/UI_CoreHudExpanded_Prototype.png");
+  --asset-soul-panel-compact: url("./assets/ui/panels/UI_SoulTalkPanel_Compact.png");
+  --asset-platform-lake: url("./assets/platforms/Platform_LakeMagicCircle.png");
+  --asset-platform-assessment: url("./assets/platforms/Platform_NexusAssessmentCircle.png");
   --asset-btn-explore: url("./assets/ui/buttons/BTN_Explore.png");
   --asset-btn-care: url("./assets/ui/buttons/BTN_Care.png");
   --asset-btn-growth: url("./assets/ui/buttons/BTN_Growth.png");
@@ -142,29 +145,46 @@ canvas {
 .core-hud {
   top: calc(var(--safe-top) + 0.72rem);
   left: max(0.72rem, env(safe-area-inset-left, 0px));
-  width: min(58vw, 246px);
-  border: 1px solid rgb(126 232 255 / 22%);
-  border-radius: 24px;
-  padding: 0.78rem 0.82rem 0.74rem;
-  background:
-    linear-gradient(160deg, rgb(12 26 48 / 72%), rgb(4 10 23 / 58%)),
-    radial-gradient(circle at 16% 6%, rgb(126 232 255 / 18%), transparent 7rem),
-    var(--asset-hud-panel);
+  width: min(54vw, 212px);
+  border: 1px solid rgb(126 232 255 / 18%);
+  border-radius: 22px;
+  padding: 0.62rem 2.28rem 0.58rem 0.68rem;
+  background-image:
+    linear-gradient(160deg, rgb(12 26 48 / 16%), rgb(4 10 23 / 12%)),
+    var(--asset-core-hud-compact),
+    radial-gradient(circle at 16% 6%, rgb(126 232 255 / 10%), transparent 7rem);
   background-position: center;
   background-repeat: no-repeat;
-  background-size: cover, cover, 100% 100%;
+  background-size: 100% 100%, 100% 100%, cover;
   backdrop-filter: blur(18px) saturate(132%);
   -webkit-backdrop-filter: blur(18px) saturate(132%);
   box-shadow:
     0 18px 58px rgb(0 0 0 / 30%),
     inset 0 1px 0 rgb(255 255 255 / 9%);
+  transition:
+    width 180ms ease,
+    padding 180ms ease,
+    filter 180ms ease;
+}
+
+.core-hud.is-expanded {
+  width: min(62vw, 264px);
+  padding: 0.78rem 0.82rem 0.74rem;
+  background-image:
+    linear-gradient(160deg, rgb(12 26 48 / 20%), rgb(4 10 23 / 14%)),
+    var(--asset-core-hud-expanded),
+    radial-gradient(circle at 16% 6%, rgb(126 232 255 / 12%), transparent 7rem);
 }
 
 .core-identity {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-columns: auto minmax(0, 1fr) auto;
   gap: 0.58rem;
   align-items: center;
+  margin-bottom: 0;
+}
+
+.core-hud.is-expanded .core-identity {
   margin-bottom: 0.66rem;
 }
 
@@ -205,6 +225,7 @@ canvas {
 }
 
 .level-pill,
+.core-hud-toggle,
 .expand-chat-button {
   flex: 0 0 auto;
   border: 1px solid rgb(255 184 107 / 28%);
@@ -217,9 +238,34 @@ canvas {
   white-space: nowrap;
 }
 
-.core-stat-list {
+.core-hud-toggle {
+  position: absolute;
+  top: 0.58rem;
+  right: 0.58rem;
   display: grid;
+  place-items: center;
+  width: 1.62rem;
+  height: 1.62rem;
+  padding: 0;
+  color: var(--cyan-soft);
+  cursor: pointer;
+  transition:
+    transform 160ms ease,
+    background-color 160ms ease,
+    color 160ms ease;
+}
+
+.core-hud.is-expanded .core-hud-toggle {
+  transform: rotate(180deg);
+}
+
+.core-stat-list {
+  display: none;
   gap: 0.36rem;
+}
+
+.core-hud.is-expanded .core-stat-list {
+  display: grid;
 }
 
 .core-stat {
@@ -337,11 +383,11 @@ canvas {
   border-radius: 30px;
   padding: 0.82rem 0.9rem 0.72rem;
   background-image:
-    var(--asset-soul-panel),
-    linear-gradient(180deg, rgb(10 24 38 / 80%), rgb(7 12 24 / 72%));
+    linear-gradient(180deg, rgb(10 24 38 / 10%), rgb(7 12 24 / 8%)),
+    var(--asset-soul-panel-compact);
   background-position: center;
   background-repeat: no-repeat;
-  background-size: 100% 100%, cover;
+  background-size: 100% 100%, 100% 100%;
   filter: drop-shadow(0 18px 40px rgb(0 0 0 / 38%));
 }
 
@@ -448,6 +494,7 @@ canvas {
 #send-button:active,
 .bottom-nav button:active,
 .quick-hud button:active,
+.core-hud-toggle:active,
 .expand-chat-button:active {
   transform: translateY(1px) scale(0.99);
 }
@@ -532,6 +579,7 @@ canvas {
 
 .bottom-nav button:focus-visible,
 .quick-hud button:focus-visible,
+.core-hud-toggle:focus-visible,
 .expand-chat-button:focus-visible {
   outline: 2px solid rgb(255 184 107 / 58%);
   outline-offset: 2px;
@@ -554,12 +602,20 @@ canvas {
   .core-hud {
     top: calc(var(--safe-top) + 0.55rem);
     left: max(0.55rem, env(safe-area-inset-left, 0px));
-    width: min(58vw, 232px);
+    width: min(54vw, 206px);
+    padding: 0.58rem 2.1rem 0.54rem 0.62rem;
+  }
+
+  .core-hud.is-expanded {
+    width: min(64vw, 242px);
     padding: 0.68rem 0.68rem 0.62rem;
   }
 
   .core-identity {
     gap: 0.5rem;
+  }
+
+  .core-hud.is-expanded .core-identity {
     margin-bottom: 0.52rem;
   }
 
@@ -644,7 +700,12 @@ canvas {
   }
 
   .core-hud {
-    width: min(58vw, 208px);
+    width: min(56vw, 194px);
+    padding: 0.52rem 1.98rem 0.5rem 0.54rem;
+  }
+
+  .core-hud.is-expanded {
+    width: min(66vw, 218px);
     padding: 0.54rem;
   }
 
