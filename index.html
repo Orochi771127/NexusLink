@@ -2,71 +2,99 @@
 <html lang="zh-Hant">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>Nexus Link / 心核連結</title>
+    <link rel="preload" as="image" href="./assets/backgrounds/BG_01_LakeNightCamp.png" />
+    <link rel="preload" as="image" href="./assets/ui/panels/HUD_Background.png" />
+    <link rel="preload" as="image" href="./assets/ui/panels/UI_SoulTalkPanel.png" />
+    <link rel="preload" as="image" href="./assets/ui/buttons/BTN_Explore.png" />
+    <link rel="preload" as="image" href="./assets/ui/buttons/BTN_Care.png" />
+    <link rel="preload" as="image" href="./assets/ui/buttons/BTN_Growth.png" />
+    <link rel="preload" as="image" href="./assets/ui/buttons/BTN_Memory.png" />
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <main class="app-shell">
-      <section class="status-panel" aria-label="Companion status">
-        <div>
-          <span class="label">Bond</span>
-          <strong id="bond-value">0</strong>
-        </div>
-        <div>
-          <span class="label">Trust</span>
-          <strong id="trust-value">5</strong>
-        </div>
-        <div>
-          <span class="label">Mood</span>
-          <strong id="mood-value">calm</strong>
-        </div>
-        <div>
-          <span class="label">Energy</span>
-          <strong id="energy-value">10</strong>
-        </div>
-      </section>
-
-      <section class="world-card" aria-label="Nexus Link emotional habitat">
-        <header class="world-header">
-          <div>
-            <p>NEXUS LINK</p>
-            <h1 id="fox-name">載入中...</h1>
-          </div>
-          <span class="habitat-pill">夜間湖畔營地</span>
-        </header>
+    <main class="app-shell" aria-label="Nexus Link full-screen habitat home">
+      <section class="habitat-stage" aria-label="Nexus Link emotional habitat">
         <div id="game-root" aria-label="Nexus Link emotional habitat scene"></div>
-        <footer class="world-footer">
-          <span id="status-text">正在建立心核連線...</span>
-        </footer>
-      </section>
 
-      <section class="chat-panel" aria-label="Soul Talk companion chat panel">
-        <header class="chat-header">
-          <div>
-            <p>SOUL TALK</p>
-            <h2>靈魂聖域</h2>
+        <section class="hud-card core-hud" aria-label="Companion core status">
+          <div class="core-hud__title">
+            <div>
+              <p>NEXUS LINK</p>
+              <h1 id="fox-name">載入中...</h1>
+            </div>
+            <span class="level-pill">Lv 01</span>
           </div>
-          <span>低語模式</span>
-        </header>
-        <div id="chat-log" class="chat-log"></div>
-        <div class="chat-input-row">
-          <input
-            id="message-input"
-            type="text"
-            placeholder="對心核夥伴說一句話..."
-            autocomplete="off"
-          />
-          <button id="send-button" type="button">送出</button>
-        </div>
-      </section>
+          <div class="core-hud__stats">
+            <div>
+              <span class="label">Bond</span>
+              <strong id="bond-value">0</strong>
+            </div>
+            <div>
+              <span class="label">Trust</span>
+              <strong id="trust-value">5</strong>
+            </div>
+            <div>
+              <span class="label">Mood</span>
+              <strong id="mood-value">calm</strong>
+            </div>
+            <div>
+              <span class="label">Energy</span>
+              <strong id="energy-value">10</strong>
+            </div>
+          </div>
+        </section>
 
-      <nav class="bottom-nav" aria-label="Primary actions">
-        <button type="button" data-action="explore">探索</button>
-        <button type="button" data-action="care">照顧</button>
-        <button type="button" data-action="grow">成長</button>
-        <button type="button" data-action="memory">記憶</button>
-      </nav>
+        <section class="quick-hud" aria-label="Quick resources and actions">
+          <div class="resource-pill" aria-label="coins">◎ 1,280</div>
+          <div class="resource-pill" aria-label="crystals">◇ 36</div>
+          <button type="button" aria-label="notifications">🔔</button>
+          <button type="button" aria-label="mail">✉</button>
+          <button type="button" aria-label="settings">⚙</button>
+        </section>
+
+        <div class="habitat-caption" id="status-text" aria-live="polite">正在建立心核連線...</div>
+
+        <section class="soul-talk-panel" aria-label="Soul Talk floating companion chat panel" data-expanded="false">
+          <header class="chat-header">
+            <div>
+              <p>SOUL TALK</p>
+              <h2>靈魂聖域</h2>
+            </div>
+            <button class="expand-chat-button" type="button" aria-label="未來展開完整聊天">展開</button>
+          </header>
+          <div id="chat-log" class="chat-log" aria-live="polite"></div>
+          <div class="chat-input-row">
+            <input
+              id="message-input"
+              type="text"
+              placeholder="對心核夥伴說一句話..."
+              autocomplete="off"
+            />
+            <button id="send-button" type="button">送出</button>
+          </div>
+        </section>
+
+        <nav class="bottom-nav" aria-label="Primary actions">
+          <button type="button" data-action="explore">
+            <span class="nav-art" aria-hidden="true"></span>
+            <span class="nav-label">探索</span>
+          </button>
+          <button type="button" data-action="care">
+            <span class="nav-art" aria-hidden="true"></span>
+            <span class="nav-label">照顧</span>
+          </button>
+          <button type="button" data-action="grow">
+            <span class="nav-art" aria-hidden="true"></span>
+            <span class="nav-label">成長</span>
+          </button>
+          <button type="button" data-action="memory">
+            <span class="nav-art" aria-hidden="true"></span>
+            <span class="nav-label">記憶</span>
+          </button>
+        </nav>
+      </section>
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/pixi.js@8.8.1/dist/pixi.min.js"></script>
