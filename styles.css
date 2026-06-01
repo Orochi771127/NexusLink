@@ -97,8 +97,8 @@ canvas {
   top: calc(env(safe-area-inset-top) + 12px);
   left: 16px;
   z-index: 30;
-  width: min(390px, calc(100vw - 184px));
-  min-width: 190px;
+  width: min(390px, calc(100vw - 32px));
+  min-width: 0;
   background-repeat: no-repeat;
   background-position: center;
   background-size: 100% 100%;
@@ -334,10 +334,6 @@ canvas {
   transition: height 160ms ease;
 }
 
-.soul-talk-panel[data-expanded="true"] {
-  height: 244px;
-}
-
 .chat-header {
   position: absolute;
   top: 16px;
@@ -562,8 +558,7 @@ canvas {
 
 @media (max-width: 430px) {
   .core-hud {
-    width: min(390px, calc(100vw - 184px));
-    min-width: 190px;
+    width: min(390px, calc(100vw - 32px));
   }
 
   .quick-hud {
@@ -574,8 +569,7 @@ canvas {
 @media (max-width: 370px), (max-height: 720px) {
   .core-hud {
     left: 12px;
-    min-width: 178px;
-    width: min(390px, calc(100vw - 168px));
+    width: min(390px, calc(100vw - 24px));
   }
 
   .quick-hud {
