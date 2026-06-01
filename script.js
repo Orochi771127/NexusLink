@@ -93,8 +93,12 @@
 
     companion.eventMode = "static";
     companion.cursor = "pointer";
+    let lastTapAt = 0;
     companion.on("pointertap", () => {
-      handlePlayerMessage(`摸摸${currentCreature.name}`);
+      const now = Date.now();
+      const isDoubleTap = now - lastTapAt < 320;
+      lastTapAt = now;
+      handlePlayerMessage(isDoubleTap ? `抱抱${currentCreature.name}` : `摸摸${currentCreature.name}`);
     });
 
     let t = 0;
@@ -177,33 +181,33 @@
   function drawLakeCamp(g) {
     g.clear();
 
-    g.rect(0, 0, WORLD_WIDTH, WORLD_HEIGHT).fill("#06101d");
-    g.rect(0, 0, WORLD_WIDTH, WORLD_HEIGHT).fill({ color: 0x0b1f33, alpha: 0.35 });
+    g.rect(0, 0, WORLD_WIDTH, WORLD_HEIGHT).fill({ color: 0x06101d, alpha: 0.06 });
+    g.rect(0, 0, WORLD_WIDTH, WORLD_HEIGHT).fill({ color: 0x0b1f33, alpha: 0.08 });
 
     g.circle(302, 104, 78).fill({ color: 0x8deeff, alpha: 0.12 });
     g.circle(302, 104, 36).fill({ color: 0xdffbff, alpha: 0.32 });
     g.circle(294, 96, 29).fill({ color: 0xffffff, alpha: 0.12 });
 
-    g.moveTo(0, 286).lineTo(68, 174).lineTo(150, 286).closePath().fill("#0c1d31");
-    g.moveTo(76, 286).lineTo(206, 146).lineTo(334, 286).closePath().fill("#102844");
-    g.moveTo(226, 286).lineTo(332, 176).lineTo(414, 286).closePath().fill("#0a1a2d");
-    g.rect(0, 276, WORLD_WIDTH, 96).fill({ color: 0x07111f, alpha: 0.42 });
+    g.moveTo(0, 286).lineTo(68, 174).lineTo(150, 286).closePath().fill({ color: 0x0c1d31, alpha: 0.36 });
+    g.moveTo(76, 286).lineTo(206, 146).lineTo(334, 286).closePath().fill({ color: 0x102844, alpha: 0.34 });
+    g.moveTo(226, 286).lineTo(332, 176).lineTo(414, 286).closePath().fill({ color: 0x0a1a2d, alpha: 0.34 });
+    g.rect(0, 276, WORLD_WIDTH, 96).fill({ color: 0x07111f, alpha: 0.18 });
 
     for (let x = -28; x < WORLD_WIDTH + 40; x += 34) {
       const height = 68 + (x % 3) * 9;
-      g.moveTo(x, 368).lineTo(x + 17, 270 - height * 0.18).lineTo(x + 34, 368).closePath().fill("#09231e");
-      g.rect(x + 14, 338, 6, 48).fill("#081916");
+      g.moveTo(x, 368).lineTo(x + 17, 270 - height * 0.18).lineTo(x + 34, 368).closePath().fill({ color: 0x09231e, alpha: 0.48 });
+      g.rect(x + 14, 338, 6, 48).fill({ color: 0x081916, alpha: 0.5 });
     }
 
-    g.ellipse(WORLD_WIDTH / 2, 432, 272, 108).fill("#082c42");
+    g.ellipse(WORLD_WIDTH / 2, 432, 272, 108).fill({ color: 0x082c42, alpha: 0.2 });
     g.ellipse(WORLD_WIDTH / 2, 418, 246, 70).fill({ color: 0x1a6a82, alpha: 0.42 });
     g.ellipse(154, 405, 78, 10).fill({ color: 0x8deeff, alpha: 0.08 });
     g.ellipse(268, 448, 92, 9).fill({ color: 0xffb86b, alpha: 0.1 });
     g.rect(28, 420, 334, 2).fill({ color: 0xb7f7ff, alpha: 0.08 });
     g.rect(72, 456, 246, 2).fill({ color: 0xb7f7ff, alpha: 0.07 });
 
-    g.roundRect(-24, 500, WORLD_WIDTH + 48, 380, 38).fill("#102820");
-    g.roundRect(34, 506, 320, 210, 32).fill({ color: 0x1f3b2f, alpha: 0.86 });
+    g.roundRect(-24, 500, WORLD_WIDTH + 48, 380, 38).fill({ color: 0x102820, alpha: 0.32 });
+    g.roundRect(34, 506, 320, 210, 32).fill({ color: 0x1f3b2f, alpha: 0.34 });
     g.ellipse(194, 538, 164, 24).fill({ color: 0x08130f, alpha: 0.18 });
 
     g.ellipse(195, 686, 72, 24).fill("#120e0b");
