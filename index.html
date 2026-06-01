@@ -6,7 +6,6 @@
     <title>Nexus Link / 心核連結</title>
     <link rel="preload" as="image" href="./assets/backgrounds/BG_01_LakeNightCamp.png" />
     <link rel="preload" as="image" href="./assets/ui/panels/UI_CoreHudCompact.png" />
-    <link rel="preload" as="image" href="./assets/ui/panels/UI_CoreHudExpanded_Prototype.png" />
     <link rel="preload" as="image" href="./assets/ui/panels/UI_SoulTalkPanel_Compact.png" />
     <link rel="preload" as="image" href="./assets/platforms/Platform_LakeMagicCircle.png" />
     <link rel="preload" as="image" href="./assets/platforms/Platform_NexusAssessmentCircle.png" />
@@ -21,39 +20,16 @@
       <section class="habitat-stage" aria-label="Nexus Link emotional habitat">
         <div id="game-root" aria-label="Nexus Link emotional habitat scene"></div>
 
-        <section class="core-hud is-collapsed" aria-label="Companion core status">
-          <div class="core-identity">
-            <div class="avatar-orb" aria-hidden="true"></div>
-            <div class="core-copy">
-              <h1 id="fox-name">載入中...</h1>
-              <p>NEXUS CORE</p>
+        <section class="core-hud" aria-label="Companion core status">
+          <button class="core-hud-open" type="button" data-panel-trigger="character" aria-label="開啟角色詳情">
+            <span class="avatar-orb" aria-hidden="true"></span>
+            <span class="core-copy">
+              <span id="fox-name" class="core-name">載入中...</span>
+              <span class="core-kicker">NEXUS CORE</span>
               <span class="level-pill">Lv 01</span>
-            </div>
-            <button class="core-hud-toggle" type="button" aria-label="切換核心資訊" aria-expanded="false"></button>
-          </div>
-
-          <div class="core-stat-list">
-            <div class="core-stat-row">
-              <span class="core-stat-label">BOND</span>
-              <div class="core-stat-bar"><span id="bond-fill" class="core-stat-fill"></span></div>
-              <strong id="bond-value" class="core-stat-value">0</strong>
-            </div>
-            <div class="core-stat-row">
-              <span class="core-stat-label">MOOD</span>
-              <div class="core-stat-bar"><span id="mood-fill" class="core-stat-fill"></span></div>
-              <strong id="mood-value" class="core-stat-value">calm</strong>
-            </div>
-            <div class="core-stat-row">
-              <span class="core-stat-label">ENERGY</span>
-              <div class="core-stat-bar"><span id="energy-fill" class="core-stat-fill"></span></div>
-              <strong id="energy-value" class="core-stat-value">10</strong>
-            </div>
-            <div class="core-stat-row">
-              <span class="core-stat-label">TRUST</span>
-              <div class="core-stat-bar"><span id="trust-fill" class="core-stat-fill"></span></div>
-              <strong id="trust-value" class="core-stat-value">5</strong>
-            </div>
-          </div>
+            </span>
+            <span class="core-status-dot" aria-hidden="true"></span>
+          </button>
         </section>
 
         <section class="quick-hud" aria-label="Quick resources and actions">
@@ -66,25 +42,13 @@
 
         <div class="habitat-caption" id="status-text" aria-live="polite">正在建立心核連線...</div>
 
-        <section class="soul-talk-panel" aria-label="Soul Talk floating companion chat panel" data-expanded="false">
-          <header class="chat-header">
-            <div>
-              <p>SOUL TALK</p>
-              <h2>靈魂聖域</h2>
-            </div>
-          </header>
-          <button class="soul-talk-toggle" type="button" aria-label="展開靈魂聖域" aria-expanded="false"></button>
-          <div id="chat-log" class="chat-log" aria-live="polite"></div>
-          <div class="chat-input-row">
-            <input
-              id="message-input"
-              type="text"
-              placeholder="對心核夥伴說一句話..."
-              autocomplete="off"
-            />
-            <button id="send-button" type="button">送出</button>
-          </div>
-        </section>
+        <button class="soul-talk-launcher" type="button" data-panel-trigger="soulTalk" aria-label="開啟 Soul Talk">
+          <span>
+            <strong>SOUL TALK</strong>
+            <em id="soul-talk-preview">我在這裡，安靜地看著你。</em>
+          </span>
+          <b aria-hidden="true">開啟</b>
+        </button>
 
         <nav class="bottom-nav" aria-label="Primary actions">
           <button type="button" data-action="explore">
@@ -104,6 +68,84 @@
             <span class="nav-label">記憶</span>
           </button>
         </nav>
+
+        <div class="panel-layer" data-active-panel="none" aria-hidden="true">
+          <button class="panel-backdrop" type="button" data-panel-close aria-label="關閉面板"></button>
+
+          <section class="modal-panel character-modal" role="dialog" aria-modal="true" aria-labelledby="character-title" data-panel="character">
+            <header class="panel-header">
+              <div>
+                <p>NEXUS CORE</p>
+                <h2 id="character-title">角色詳情</h2>
+              </div>
+              <button type="button" class="panel-close" data-panel-close aria-label="關閉角色詳情">×</button>
+            </header>
+            <div class="character-summary">
+              <span class="avatar-orb avatar-orb-large" aria-hidden="true"></span>
+              <div>
+                <h3 id="modal-creature-name">載入中...</h3>
+                <p id="modal-creature-description">正在同步夥伴資料。</p>
+              </div>
+            </div>
+            <div class="core-stat-list" aria-label="Companion detail stats">
+              <div class="core-stat-row">
+                <span class="core-stat-label">BOND</span>
+                <div class="core-stat-bar"><span id="bond-fill" class="core-stat-fill"></span></div>
+                <strong id="bond-value" class="core-stat-value">0</strong>
+              </div>
+              <div class="core-stat-row">
+                <span class="core-stat-label">MOOD</span>
+                <div class="core-stat-bar"><span id="mood-fill" class="core-stat-fill"></span></div>
+                <strong id="mood-value" class="core-stat-value">calm</strong>
+              </div>
+              <div class="core-stat-row">
+                <span class="core-stat-label">ENERGY</span>
+                <div class="core-stat-bar"><span id="energy-fill" class="core-stat-fill"></span></div>
+                <strong id="energy-value" class="core-stat-value">10</strong>
+              </div>
+              <div class="core-stat-row">
+                <span class="core-stat-label">TRUST</span>
+                <div class="core-stat-bar"><span id="trust-fill" class="core-stat-fill"></span></div>
+                <strong id="trust-value" class="core-stat-value">5</strong>
+              </div>
+            </div>
+          </section>
+
+          <section class="modal-panel soul-talk-modal" role="dialog" aria-modal="true" aria-labelledby="soul-talk-title" data-panel="soulTalk">
+            <header class="panel-header">
+              <div>
+                <p>SOUL TALK</p>
+                <h2 id="soul-talk-title">靈魂聖域</h2>
+              </div>
+              <button type="button" class="panel-close" data-panel-close aria-label="關閉 Soul Talk">×</button>
+            </header>
+            <div id="chat-log" class="chat-log" aria-live="polite"></div>
+            <div class="chat-input-row">
+              <input
+                id="message-input"
+                type="text"
+                placeholder="對心核夥伴說一句話..."
+                autocomplete="off"
+              />
+              <button id="send-button" type="button">送出</button>
+            </div>
+          </section>
+
+          <section class="action-sheet" role="dialog" aria-modal="true" aria-labelledby="action-sheet-title" data-panel="actionSheet">
+            <header class="panel-header">
+              <div>
+                <p>HOME ACTION</p>
+                <h2 id="action-sheet-title">行動選單</h2>
+              </div>
+              <button type="button" class="panel-close" data-panel-close aria-label="關閉行動選單">×</button>
+            </header>
+            <p id="action-sheet-copy" class="action-sheet-copy">選擇一個行動，讓夥伴回應。</p>
+            <div class="sheet-action-grid">
+              <button type="button" data-sheet-choice="primary">開始</button>
+              <button type="button" data-sheet-choice="soulTalk">詢問夥伴</button>
+            </div>
+          </section>
+        </div>
       </section>
     </main>
 
