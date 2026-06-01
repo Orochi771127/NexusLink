@@ -6,8 +6,14 @@
   --warm-strong: #ff9747;
   --text: #ecf7ff;
   --muted: #92a9bd;
-  --safe-top: env(safe-area-inset-top, 0px);
-  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --edge: 16px;
+  --top-safe: max(env(safe-area-inset-top), 12px);
+  --bottom-safe: max(env(safe-area-inset-bottom), 12px);
+  --nav-height: 92px;
+  --nav-gap: 12px;
+  --panel-radius: 24px;
+  --safe-top: var(--top-safe);
+  --safe-bottom: var(--bottom-safe);
   --z-bg: 0;
   --z-pixi: 5;
   --z-home-ui: 20;
@@ -44,16 +50,17 @@ body.panel-open {
   width: 100%;
 }
 
+.visually-hidden,
 .sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0 0 0 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
 }
 
 button,
@@ -67,8 +74,7 @@ button {
 
 .app-shell {
   width: 100vw;
-  height: 100dvh;
-  min-height: 100dvh;
+  height: var(--app-height, 100dvh);
   overflow: hidden;
   display: block;
   padding: 0;
@@ -78,7 +84,7 @@ button {
 .habitat-stage {
   position: relative;
   width: 100vw;
-  height: 100dvh;
+  height: var(--app-height, 100dvh);
   overflow: hidden;
   background-color: #081421;
   background-image: var(--asset-bg-lake);
@@ -117,8 +123,8 @@ canvas {
 
 .core-hud {
   position: absolute;
-  top: calc(var(--safe-top) + 12px);
-  left: 16px;
+  top: var(--top-safe);
+  left: var(--edge);
   z-index: var(--z-home-ui);
   width: 220px;
   max-width: calc(100vw - 196px);
@@ -217,8 +223,8 @@ canvas {
 
 .quick-hud {
   position: absolute;
-  top: calc(var(--safe-top) + 14px);
-  right: 14px;
+  top: var(--top-safe);
+  right: var(--edge);
   z-index: var(--z-home-ui);
   display: flex;
   flex-wrap: wrap;
@@ -265,9 +271,9 @@ canvas {
 
 .soul-talk-launcher {
   position: absolute;
-  left: 16px;
-  right: 16px;
-  bottom: calc(var(--safe-bottom) + 112px);
+  left: var(--edge);
+  right: var(--edge);
+  bottom: calc(var(--bottom-safe) + var(--nav-height) + var(--nav-gap));
   z-index: var(--z-home-ui);
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -307,10 +313,10 @@ canvas {
 
 .bottom-nav {
   position: absolute;
-  left: 16px;
-  right: 16px;
-  bottom: calc(var(--safe-bottom) + 18px);
-  height: 84px;
+  left: var(--edge);
+  right: var(--edge);
+  bottom: var(--bottom-safe);
+  height: var(--nav-height);
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 12px;
@@ -417,8 +423,8 @@ canvas {
 .modal-panel,
 .action-sheet {
   position: absolute;
-  left: 16px;
-  right: 16px;
+  left: var(--edge);
+  right: var(--edge);
   max-width: 430px;
   margin-inline: auto;
   opacity: 0;
@@ -429,18 +435,19 @@ canvas {
 }
 
 .modal-panel {
-  top: max(calc(var(--safe-top) + 86px), 72px);
-  max-height: calc(100dvh - var(--safe-top) - var(--safe-bottom) - 160px);
-  border-radius: 28px;
+  top: calc(var(--top-safe) + 88px);
+  border-radius: var(--panel-radius);
   padding: 18px;
   overflow: hidden;
 }
 
 .action-sheet {
-  bottom: 0;
-  border-radius: 28px 28px 0 0;
-  padding: 18px 18px calc(var(--safe-bottom) + 20px);
-  transform: translateY(100%);
+  bottom: calc(var(--bottom-safe) + var(--nav-height) + var(--nav-gap));
+  max-height: min(52vh, 390px);
+  border-radius: var(--panel-radius);
+  padding: 18px;
+  overflow-y: auto;
+  transform: translateY(18px) scale(0.98);
 }
 
 .panel-layer[data-active-panel="character"] [data-panel="character"],
@@ -532,10 +539,18 @@ canvas {
   white-space: nowrap;
 }
 
+.character-modal {
+  max-height: calc(var(--app-height, 100dvh) - 180px);
+  overflow-y: auto;
+}
+
 .soul-talk-modal {
   display: grid;
   grid-template-rows: auto minmax(180px, 1fr) auto;
-  height: min(560px, calc(100dvh - var(--safe-top) - var(--safe-bottom) - 122px));
+  top: calc(var(--top-safe) + 88px);
+  bottom: calc(var(--bottom-safe) + var(--nav-height) + var(--nav-gap));
+  height: auto;
+  max-height: none;
 }
 
 .chat-log {
@@ -693,8 +708,12 @@ canvas {
 }
 
 @media (max-width: 370px), (max-height: 720px) {
+  :root {
+    --edge: 12px;
+  }
+
   .core-hud {
-    left: 12px;
+    left: var(--edge);
     width: 164px;
     max-width: calc(100vw - 166px);
     min-width: 148px;
@@ -736,7 +755,6 @@ canvas {
   }
 
   .modal-panel {
-    top: calc(var(--safe-top) + 56px);
-    max-height: calc(100dvh - var(--safe-top) - var(--safe-bottom) - 92px);
+    top: calc(var(--top-safe) + 72px);
   }
 }

@@ -58,6 +58,14 @@
   let activePanel = null;
   let queuedAction = null;
 
+  setViewportVars();
+  window.addEventListener("resize", setViewportVars);
+  window.addEventListener("orientationchange", setViewportVars);
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener("resize", setViewportVars);
+    window.visualViewport.addEventListener("scroll", setViewportVars);
+  }
+
   if (!window.PIXI) {
     statusText.textContent = "PixiJS 載入失敗，請檢查網路或 CDN。";
     return;
@@ -65,7 +73,7 @@
 
   const WORLD_WIDTH = 390;
   const WORLD_HEIGHT = 844;
-  const COMPANION_GROUND_Y = 505;
+  const COMPANION_GROUND_Y = 485;
   const PLATFORM_Y = 540;
   const app = new PIXI.Application();
 
@@ -91,6 +99,12 @@
       console.error(error);
       statusText.textContent = "場景初始化失敗，請重新整理頁面。";
     });
+
+
+  function setViewportVars() {
+    const height = window.visualViewport?.height || window.innerHeight;
+    document.documentElement.style.setProperty("--app-height", `${height}px`);
+  }
 
   async function bootScene() {
     const world = new PIXI.Container();
