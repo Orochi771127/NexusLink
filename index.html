@@ -29,35 +29,28 @@
               <p>NEXUS CORE</p>
               <span class="level-pill">Lv 01</span>
             </div>
-            <button
-              class="core-hud-toggle"
-              type="button"
-              aria-label="展開心核狀態"
-              aria-expanded="false"
-            >
-              ▾
-            </button>
+            <button class="core-hud-toggle" type="button" aria-label="切換核心資訊" aria-expanded="false"></button>
           </div>
 
           <div class="core-stat-list">
             <div class="core-stat-row">
-              <span class="core-stat-label">Bond</span>
-              <i class="core-stat-bar"><b id="bond-bar" class="core-stat-fill"></b></i>
+              <span class="core-stat-label">BOND</span>
+              <div class="core-stat-bar"><span id="bond-fill" class="core-stat-fill"></span></div>
               <strong id="bond-value" class="core-stat-value">0</strong>
             </div>
             <div class="core-stat-row">
-              <span class="core-stat-label">Mood</span>
-              <i class="core-stat-bar"><b id="mood-bar" class="core-stat-fill"></b></i>
+              <span class="core-stat-label">MOOD</span>
+              <div class="core-stat-bar"><span id="mood-fill" class="core-stat-fill"></span></div>
               <strong id="mood-value" class="core-stat-value">calm</strong>
             </div>
             <div class="core-stat-row">
-              <span class="core-stat-label">Energy</span>
-              <i class="core-stat-bar"><b id="energy-bar" class="core-stat-fill"></b></i>
+              <span class="core-stat-label">ENERGY</span>
+              <div class="core-stat-bar"><span id="energy-fill" class="core-stat-fill"></span></div>
               <strong id="energy-value" class="core-stat-value">10</strong>
             </div>
             <div class="core-stat-row">
-              <span class="core-stat-label">Trust</span>
-              <i class="core-stat-bar"><b id="trust-bar" class="core-stat-fill"></b></i>
+              <span class="core-stat-label">TRUST</span>
+              <div class="core-stat-bar"><span id="trust-fill" class="core-stat-fill"></span></div>
               <strong id="trust-value" class="core-stat-value">5</strong>
             </div>
           </div>
@@ -79,8 +72,8 @@
               <p>SOUL TALK</p>
               <h2>靈魂聖域</h2>
             </div>
-            <button class="expand-chat-button" type="button" aria-label="未來展開完整聊天">展開</button>
           </header>
+          <button class="soul-talk-toggle" type="button" aria-label="展開靈魂聖域" aria-expanded="false"></button>
           <div id="chat-log" class="chat-log" aria-live="polite"></div>
           <div class="chat-input-row">
             <input

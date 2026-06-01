@@ -9,9 +9,6 @@
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
   --asset-bg-lake: url("./assets/backgrounds/BG_01_LakeNightCamp.png");
-  --asset-core-hud-compact: url("./assets/ui/panels/UI_CoreHudCompact.png");
-  --asset-core-hud-expanded: url("./assets/ui/panels/UI_CoreHudExpanded_Prototype.png");
-  --asset-soul-panel-compact: url("./assets/ui/panels/UI_SoulTalkPanel_Compact.png");
   --asset-platform-lake: url("./assets/platforms/Platform_LakeMagicCircle.png");
   --asset-btn-explore: url("./assets/ui/buttons/BTN_Explore.png");
   --asset-btn-care: url("./assets/ui/buttons/BTN_Care.png");
@@ -113,12 +110,12 @@ canvas {
 
 .core-hud.is-collapsed {
   height: 118px;
-  background-image: var(--asset-core-hud-compact);
+  background-image: url("./assets/ui/panels/UI_CoreHudCompact.png");
 }
 
 .core-hud.is-expanded {
   height: 260px;
-  background-image: var(--asset-core-hud-expanded);
+  background-image: url("./assets/ui/panels/UI_CoreHudExpanded_Prototype.png");
 }
 
 .core-identity {
@@ -168,8 +165,7 @@ canvas {
   text-transform: uppercase;
 }
 
-.level-pill,
-.expand-chat-button {
+.level-pill {
   display: inline-grid;
   place-items: center;
   width: fit-content;
@@ -187,23 +183,13 @@ canvas {
   position: absolute;
   top: 12px;
   right: 12px;
-  display: grid;
-  place-items: center;
-  width: 34px;
-  height: 34px;
-  border: 1px solid rgb(126 232 255 / 26%);
-  border-radius: 10px;
-  z-index: 5;
+  width: 36px;
+  height: 36px;
+  border: 0;
   padding: 0;
-  background: rgb(8 20 33 / 62%);
-  color: #ddeeff;
+  background: transparent;
   cursor: pointer;
-  box-shadow: 0 8px 20px rgb(0 0 0 / 24%);
-  transition: transform 160ms ease, background-color 160ms ease, color 160ms ease;
-}
-
-.core-hud.is-expanded .core-hud-toggle {
-  transform: rotate(180deg);
+  z-index: 6;
 }
 
 .core-hud.is-collapsed .core-stat-list {
@@ -232,9 +218,10 @@ canvas {
 
 .core-stat-label {
   font-size: 11px;
+  line-height: 1;
   letter-spacing: 2px;
+  white-space: nowrap;
   color: rgba(221, 238, 255, 0.82);
-  text-transform: uppercase;
 }
 
 .core-stat-bar {
@@ -254,13 +241,11 @@ canvas {
 }
 
 .core-stat-value {
-  min-width: 0;
-  overflow: hidden;
   text-align: right;
-  text-overflow: ellipsis;
-  white-space: nowrap;
   font-size: 13px;
-  color: #ddeeff;
+  line-height: 1;
+  color: #DDEEFF;
+  white-space: nowrap;
 }
 
 .quick-hud {
@@ -338,14 +323,19 @@ canvas {
   z-index: 40;
   max-width: 430px;
   margin-inline: auto;
-  background-color: rgb(8 20 33 / 18%);
-  background-image: var(--asset-soul-panel-compact), linear-gradient(180deg, rgb(10 24 38 / 10%), rgb(7 12 24 / 8%));
-  background-size: 100% 100%, 100% 100%;
+  background-color: transparent;
+  background-image: url("./assets/ui/panels/UI_SoulTalkPanel_Compact.png");
+  background-size: 100% 100%;
   background-repeat: no-repeat;
   background-position: center;
   overflow: hidden;
   pointer-events: auto;
   filter: drop-shadow(0 18px 40px rgb(0 0 0 / 34%));
+  transition: height 160ms ease;
+}
+
+.soul-talk-panel[data-expanded="true"] {
+  height: 244px;
 }
 
 .chat-header {
@@ -363,12 +353,17 @@ canvas {
   font-size: 15px;
 }
 
-.expand-chat-button {
+.soul-talk-toggle {
   position: absolute;
-  top: 18px;
+  top: 16px;
   right: 18px;
-  z-index: 4;
+  width: 52px;
+  height: 44px;
+  border: 0;
+  padding: 0;
+  background: transparent;
   cursor: pointer;
+  z-index: 6;
 }
 
 .chat-log {
@@ -458,7 +453,7 @@ canvas {
   width: 92px;
   height: 52px;
   border-radius: 999px;
-  z-index: 4;
+  z-index: 7;
   background: linear-gradient(180deg, #ffd18a, var(--warm-strong));
   color: #2b1604;
   font-weight: 850;
@@ -469,7 +464,7 @@ canvas {
 .bottom-nav button:active,
 .quick-hud button:active,
 .core-hud-toggle:active,
-.expand-chat-button:active {
+.soul-talk-toggle:active {
   transform: translateY(1px) scale(0.99);
 }
 
@@ -552,7 +547,7 @@ canvas {
 .bottom-nav button:focus-visible,
 .quick-hud button:focus-visible,
 .core-hud-toggle:focus-visible,
-.expand-chat-button:focus-visible {
+.soul-talk-toggle:focus-visible {
   outline: 2px solid rgb(255 184 107 / 58%);
   outline-offset: 2px;
 }
