@@ -45,11 +45,17 @@
   const trustFill = document.querySelector("#trust-fill");
   const moodFill = document.querySelector("#mood-fill");
   const energyFill = document.querySelector("#energy-fill");
-  const coreHud = document.querySelector(".core-hud");
-  const coreHudToggle = document.querySelector(".core-hud-toggle");
-  const soulTalkPanel = document.querySelector(".soul-talk-panel");
-  const soulTalkToggle = document.querySelector(".soul-talk-toggle");
+  const modalCreatureName = document.querySelector("#modal-creature-name");
+  const modalCreatureDescription = document.querySelector("#modal-creature-description");
+  const soulTalkPreview = document.querySelector("#soul-talk-preview");
+  const panelLayer = document.querySelector(".panel-layer");
+  const panelTriggers = document.querySelectorAll("[data-panel-trigger]");
+  const panelCloseButtons = document.querySelectorAll("[data-panel-close]");
   const bottomNavButtons = document.querySelectorAll(".bottom-nav button[data-action]");
+  const actionSheetTitle = document.querySelector("#action-sheet-title");
+  const actionSheetCopy = document.querySelector("#action-sheet-copy");
+  const sheetChoiceButtons = document.querySelectorAll("[data-sheet-choice]");
+  let queuedAction = null;
 
   if (!window.PIXI) {
     statusText.textContent = "PixiJS 載入失敗，請檢查網路或 CDN。";
@@ -331,22 +337,22 @@
 
   function applyCreatureText() {
     foxName.textContent = currentCreature.name;
+    modalCreatureName.textContent = currentCreature.name;
+    modalCreatureDescription.textContent = currentCreature.description || "心核同步中的陪伴型 AI 小怪獸。";
     messageInput.placeholder = `對${currentCreature.name}說一句話...`;
   }
 
   function bindUI() {
-    coreHudToggle.addEventListener("click", () => {
-      const isExpanded = coreHud.classList.toggle("is-expanded");
-      coreHud.classList.toggle("is-collapsed", !isExpanded);
-      coreHudToggle.setAttribute("aria-expanded", String(isExpanded));
-      coreHudToggle.setAttribute("aria-label", "切換核心資訊");
+    panelTriggers.forEach((trigger) => {
+      trigger.addEventListener("click", () => openPanel(trigger.dataset.panelTrigger));
     });
 
-    soulTalkToggle.addEventListener("click", () => {
-      const isExpanded = soulTalkPanel.dataset.expanded !== "true";
-      soulTalkPanel.dataset.expanded = String(isExpanded);
-      soulTalkToggle.setAttribute("aria-expanded", String(isExpanded));
-      soulTalkToggle.setAttribute("aria-label", isExpanded ? "收合靈魂聖域" : "展開靈魂聖域");
+    panelCloseButtons.forEach((button) => {
+      button.addEventListener("click", closePanel);
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") closePanel();
     });
 
     sendButton.addEventListener("click", () => {
@@ -365,23 +371,77 @@
 
     bottomNavButtons.forEach((button) => {
       button.addEventListener("click", () => {
-        handleNavAction(button.dataset.action);
+        openActionSheet(button.dataset.action);
+      });
+    });
+
+    sheetChoiceButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        if (button.dataset.sheetChoice === "soulTalk") {
+          openPanel("soulTalk");
+          return;
+        }
+        commitNavAction(queuedAction);
+        closePanel();
       });
     });
   }
 
-  function handleNavAction(action) {
-    const messages = {
-      explore: "森林深處有微弱的光。",
-      care: "你靠近牠，牠的呼吸變得穩定。",
-      grow: "心核頻率正在緩慢同步。",
-      memory: "一段微弱的回憶被保存下來。"
+  function openPanel(panelName) {
+    if (!panelName) return;
+    panelLayer.dataset.activePanel = panelName;
+    panelLayer.setAttribute("aria-hidden", "false");
+    if (panelName === "soulTalk") {
+      requestAnimationFrame(() => messageInput.focus({ preventScroll: true }));
+    }
+  }
+
+  function closePanel() {
+    panelLayer.dataset.activePanel = "none";
+    panelLayer.setAttribute("aria-hidden", "true");
+    queuedAction = null;
+  }
+
+  function openActionSheet(action) {
+    const actionMeta = getActionMeta(action);
+    if (!actionMeta) return;
+    queuedAction = action;
+    actionSheetTitle.textContent = actionMeta.title;
+    actionSheetCopy.textContent = actionMeta.copy;
+    openPanel("actionSheet");
+  }
+
+  function getActionMeta(action) {
+    const actions = {
+      explore: {
+        title: "探索",
+        copy: "前往湖畔外圍偵測微弱光點，保持目前主畫面不切換到永久面板。",
+        message: "森林深處有微弱的光。"
+      },
+      care: {
+        title: "照顧",
+        copy: "用一次短行動安撫夥伴；更多對話可打開 Soul Talk。",
+        message: "你靠近牠，牠的呼吸變得穩定。"
+      },
+      grow: {
+        title: "成長",
+        copy: "查看一次心核同步提示，不在首頁展開大型 HUD。",
+        message: "心核頻率正在緩慢同步。"
+      },
+      memory: {
+        title: "記憶",
+        copy: "保存目前片刻，並將細節留給角色詳情或 Soul Talk。",
+        message: "一段微弱的回憶被保存下來。"
+      }
     };
+    return actions[action];
+  }
 
-    const text = messages[action];
-    if (!text) return;
-
-    addChat("system", text);
+  function commitNavAction(action) {
+    const actionMeta = getActionMeta(action);
+    if (!actionMeta) return;
+    addChat("system", actionMeta.message);
+    statusText.textContent = actionMeta.message;
     saveState();
     renderChat();
   }
@@ -433,7 +493,7 @@
     moodEl.textContent = state.mood;
     energyEl.textContent = state.energy;
     foxName.textContent = state.mood === "defensive" ? `${currentCreature.name} · 有點防備` : currentCreature.name;
-    statusText.textContent = `狀態：${state.mood}｜SpamScore：${state.spamScore}`;
+    statusText.textContent = `狀態：${state.mood}｜能量 ${state.energy}`;
 
     bondFill.style.width = `${clampPercent(state.bond, 24)}%`;
     trustFill.style.width = `${clampPercent(state.trust, 12)}%`;
@@ -457,7 +517,9 @@
 
   function renderChat() {
     chatLog.innerHTML = "";
-    const visibleHistory = state.chatHistory.slice(-1);
+    const visibleHistory = state.chatHistory.slice(-12);
+    const lastItem = state.chatHistory[state.chatHistory.length - 1];
+    soulTalkPreview.textContent = lastItem ? lastItem.text : "我在這裡，安靜地看著你。";
     for (const item of visibleHistory) {
       const line = document.createElement("div");
       const role = item.role === "fox" ? "companion" : item.role;
