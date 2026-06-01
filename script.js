@@ -54,7 +54,8 @@
   const bottomNavButtons = document.querySelectorAll(".bottom-nav button[data-action]");
   const actionSheetTitle = document.querySelector("#action-sheet-title");
   const actionSheetCopy = document.querySelector("#action-sheet-copy");
-  const sheetChoiceButtons = document.querySelectorAll("[data-sheet-choice]");
+  const actionSheetActions = document.querySelector("#action-sheet-actions");
+  let activePanel = null;
   let queuedAction = null;
 
   if (!window.PIXI) {
@@ -344,7 +345,10 @@
 
   function bindUI() {
     panelTriggers.forEach((trigger) => {
-      trigger.addEventListener("click", () => openPanel(trigger.dataset.panelTrigger));
+      trigger.addEventListener("click", () => {
+        if (trigger.dataset.panelTrigger === "character") openCharacterDetail();
+        if (trigger.dataset.panelTrigger === "soulTalk") openSoulTalk();
+      });
     });
 
     panelCloseButtons.forEach((button) => {
@@ -352,7 +356,7 @@
     });
 
     document.addEventListener("keydown", (event) => {
-      if (event.key === "Escape") closePanel();
+      if (event.key === "Escape" && activePanel) closePanel();
     });
 
     sendButton.addEventListener("click", () => {
@@ -375,31 +379,35 @@
       });
     });
 
-    sheetChoiceButtons.forEach((button) => {
-      button.addEventListener("click", () => {
-        if (button.dataset.sheetChoice === "soulTalk") {
-          openPanel("soulTalk");
-          return;
-        }
-        commitNavAction(queuedAction);
-        closePanel();
-      });
-    });
   }
 
   function openPanel(panelName) {
     if (!panelName) return;
+    activePanel = panelName;
     panelLayer.dataset.activePanel = panelName;
     panelLayer.setAttribute("aria-hidden", "false");
+    document.body.classList.add("panel-open");
     if (panelName === "soulTalk") {
       requestAnimationFrame(() => messageInput.focus({ preventScroll: true }));
     }
   }
 
   function closePanel() {
+    activePanel = null;
     panelLayer.dataset.activePanel = "none";
     panelLayer.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("panel-open");
     queuedAction = null;
+  }
+
+  function openCharacterDetail() {
+    renderHUD();
+    openPanel("character");
+  }
+
+  function openSoulTalk() {
+    renderChat();
+    openPanel("soulTalk");
   }
 
   function openActionSheet(action) {
@@ -408,40 +416,60 @@
     queuedAction = action;
     actionSheetTitle.textContent = actionMeta.title;
     actionSheetCopy.textContent = actionMeta.copy;
+    renderActionRows(actionMeta.rows);
     openPanel("actionSheet");
+  }
+
+  function renderActionRows(rows) {
+    actionSheetActions.innerHTML = "";
+    rows.forEach((label) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.textContent = label;
+      button.addEventListener("click", () => {
+        commitNavAction(queuedAction, label);
+        closePanel();
+      });
+      actionSheetActions.appendChild(button);
+    });
   }
 
   function getActionMeta(action) {
     const actions = {
       explore: {
         title: "探索",
-        copy: "前往湖畔外圍偵測微弱光點，保持目前主畫面不切換到永久面板。",
-        message: "森林深處有微弱的光。"
+        copy: "選擇一個短探索行動；首頁保持乾淨，不展開永久工具列表。",
+        message: "森林深處有微弱的光。",
+        rows: ["前往湖畔深處", "查看今日事件", "搜尋微光記號"]
       },
       care: {
         title: "照顧",
-        copy: "用一次短行動安撫夥伴；更多對話可打開 Soul Talk。",
-        message: "你靠近牠，牠的呼吸變得穩定。"
+        copy: "用一次短照顧行動安撫夥伴，詳細互動留在 Soul Talk。",
+        message: "你靠近牠，牠的呼吸變得穩定。",
+        rows: ["摸摸", "餵食", "休息", "安撫"]
       },
       grow: {
         title: "成長",
         copy: "查看一次心核同步提示，不在首頁展開大型 HUD。",
-        message: "心核頻率正在緩慢同步。"
+        message: "心核頻率正在緩慢同步。",
+        rows: ["查看同步率", "進化預覽", "能力培養"]
       },
       memory: {
         title: "記憶",
         copy: "保存目前片刻，並將細節留給角色詳情或 Soul Talk。",
-        message: "一段微弱的回憶被保存下來。"
+        message: "一段微弱的回憶被保存下來。",
+        rows: ["回憶紀錄", "對話片段", "羈絆節點"]
       }
     };
     return actions[action];
   }
 
-  function commitNavAction(action) {
+  function commitNavAction(action, choice) {
     const actionMeta = getActionMeta(action);
     if (!actionMeta) return;
-    addChat("system", actionMeta.message);
-    statusText.textContent = actionMeta.message;
+    const message = choice ? `${actionMeta.message}（${choice}）` : actionMeta.message;
+    addChat("system", message);
+    statusText.textContent = message;
     saveState();
     renderChat();
   }
@@ -492,8 +520,8 @@
     trustEl.textContent = state.trust;
     moodEl.textContent = state.mood;
     energyEl.textContent = state.energy;
-    foxName.textContent = state.mood === "defensive" ? `${currentCreature.name} · 有點防備` : currentCreature.name;
-    statusText.textContent = `狀態：${state.mood}｜能量 ${state.energy}`;
+    foxName.textContent = currentCreature.name;
+    statusText.textContent = `${currentCreature.name} mood ${state.mood}, energy ${state.energy}.`;
 
     bondFill.style.width = `${clampPercent(state.bond, 24)}%`;
     trustFill.style.width = `${clampPercent(state.trust, 12)}%`;
