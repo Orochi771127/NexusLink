@@ -40,6 +40,7 @@
   const trustEl = document.querySelector("#trust-value");
   const moodEl = document.querySelector("#mood-value");
   const energyEl = document.querySelector("#energy-value");
+  const bottomNavButtons = document.querySelectorAll(".bottom-nav button[data-action]");
 
   if (!window.PIXI) {
     statusText.textContent = "PixiJS 載入失敗，請檢查網路或 CDN。";
@@ -175,40 +176,56 @@
   function drawLakeCamp(g) {
     g.clear();
 
-    g.rect(0, 0, WORLD_WIDTH, WORLD_HEIGHT).fill("#07111f");
+    g.rect(0, 0, WORLD_WIDTH, WORLD_HEIGHT).fill("#06101d");
+    g.rect(0, 0, WORLD_WIDTH, WORLD_HEIGHT).fill({ color: 0x0b1f33, alpha: 0.35 });
 
-    g.circle(300, 92, 58).fill({ color: 0x9fd7ff, alpha: 0.22 });
-    g.circle(300, 92, 28).fill({ color: 0xe3f6ff, alpha: 0.46 });
+    g.circle(302, 84, 72).fill({ color: 0x8deeff, alpha: 0.12 });
+    g.circle(302, 84, 34).fill({ color: 0xdffbff, alpha: 0.32 });
+    g.circle(294, 76, 27).fill({ color: 0xffffff, alpha: 0.12 });
 
-    g.moveTo(0, 240).lineTo(70, 150).lineTo(150, 240).closePath().fill("#12233a");
-    g.moveTo(80, 240).lineTo(205, 132).lineTo(330, 240).closePath().fill("#152a45");
-    g.moveTo(230, 240).lineTo(330, 162).lineTo(410, 240).closePath().fill("#102136");
+    g.moveTo(0, 246).lineTo(68, 154).lineTo(150, 246).closePath().fill("#0c1d31");
+    g.moveTo(76, 246).lineTo(206, 126).lineTo(334, 246).closePath().fill("#102844");
+    g.moveTo(226, 246).lineTo(332, 156).lineTo(414, 246).closePath().fill("#0a1a2d");
+    g.rect(0, 238, WORLD_WIDTH, 86).fill({ color: 0x07111f, alpha: 0.42 });
 
-    for (let x = -20; x < WORLD_WIDTH + 30; x += 38) {
-      g.moveTo(x, 300).lineTo(x + 18, 225).lineTo(x + 36, 300).closePath().fill("#0d2a24");
+    for (let x = -28; x < WORLD_WIDTH + 40; x += 34) {
+      const height = 68 + (x % 3) * 9;
+      g.moveTo(x, 318).lineTo(x + 17, 236 - height * 0.18).lineTo(x + 34, 318).closePath().fill("#09231e");
+      g.rect(x + 14, 290, 6, 44).fill("#081916");
     }
 
-    g.ellipse(WORLD_WIDTH / 2, 360, 250, 92).fill("#103852");
-    g.ellipse(WORLD_WIDTH / 2, 354, 230, 66).fill({ color: 0x1d5c7a, alpha: 0.5 });
+    g.ellipse(WORLD_WIDTH / 2, 372, 260, 98).fill("#082c42");
+    g.ellipse(WORLD_WIDTH / 2, 362, 236, 62).fill({ color: 0x1a6a82, alpha: 0.42 });
+    g.ellipse(154, 354, 78, 10).fill({ color: 0x8deeff, alpha: 0.08 });
+    g.ellipse(268, 386, 92, 9).fill({ color: 0xffb86b, alpha: 0.1 });
+    g.rect(28, 362, 334, 2).fill({ color: 0xb7f7ff, alpha: 0.08 });
+    g.rect(72, 392, 246, 2).fill({ color: 0xb7f7ff, alpha: 0.07 });
 
-    g.roundRect(-20, 415, WORLD_WIDTH + 40, 300, 32).fill("#1a2d25");
-    g.roundRect(50, 430, 290, 165, 28).fill("#26382d");
+    g.roundRect(-24, 428, WORLD_WIDTH + 48, 292, 34).fill("#102820");
+    g.roundRect(34, 432, 320, 178, 32).fill({ color: 0x1f3b2f, alpha: 0.86 });
+    g.ellipse(194, 458, 164, 24).fill({ color: 0x08130f, alpha: 0.18 });
 
-    g.ellipse(195, 545, 62, 22).fill("#15120d");
-    g.rect(168, 552, 60, 8).fill("#5b351a");
-    g.circle(195, 530, 30).fill({ color: 0xff9f43, alpha: 0.2 });
-    g.circle(195, 526, 18).fill({ color: 0xffc15a, alpha: 0.65 });
-    g.moveTo(195, 500).lineTo(178, 536).lineTo(212, 536).closePath().fill("#ff7a2f");
-    g.moveTo(198, 510).lineTo(186, 537).lineTo(208, 537).closePath().fill("#ffd166");
+    g.ellipse(195, 548, 72, 24).fill("#120e0b");
+    g.rect(162, 555, 72, 8).fill("#5b351a");
+    g.rect(168, 546, 62, 7).fill("#6f421e");
+    g.circle(195, 528, 54).fill({ color: 0xff9747, alpha: 0.13 });
+    g.circle(195, 526, 28).fill({ color: 0xffb86b, alpha: 0.34 });
+    g.moveTo(195, 494).lineTo(176, 538).lineTo(215, 538).closePath().fill("#ff7a2f");
+    g.moveTo(200, 506).lineTo(185, 539).lineTo(211, 539).closePath().fill("#ffd166");
+    g.moveTo(190, 512).lineTo(182, 540).lineTo(198, 540).closePath().fill({ color: 0xffffff, alpha: 0.34 });
   }
 
   function createParticles() {
     const layer = new PIXI.Container();
-    for (let i = 0; i < 32; i += 1) {
+    for (let i = 0; i < 44; i += 1) {
       const p = new PIXI.Graphics();
-      p.circle(0, 0, 1 + Math.random() * 1.8).fill({ color: 0x8ee8ff, alpha: 0.35 });
-      p.x = 24 + Math.random() * (WORLD_WIDTH - 48);
-      p.y = 120 + Math.random() * 500;
+      const isWarm = i % 5 === 0;
+      p.circle(0, 0, 0.8 + Math.random() * 1.9).fill({
+        color: isWarm ? 0xffb86b : 0x8deeff,
+        alpha: isWarm ? 0.42 : 0.3
+      });
+      p.x = 20 + Math.random() * (WORLD_WIDTH - 40);
+      p.y = 100 + Math.random() * 520;
       layer.addChild(p);
     }
     return layer;
@@ -282,6 +299,28 @@
         sendButton.click();
       }
     });
+
+    bottomNavButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        handleNavAction(button.dataset.action);
+      });
+    });
+  }
+
+  function handleNavAction(action) {
+    const messages = {
+      explore: "森林深處有微弱的光。",
+      care: "你靠近牠，牠的呼吸變得穩定。",
+      grow: "心核頻率正在緩慢同步。",
+      memory: "一段微弱的回憶被保存下來。"
+    };
+
+    const text = messages[action];
+    if (!text) return;
+
+    addChat("system", text);
+    saveState();
+    renderChat();
   }
 
   function handlePlayerMessage(message) {
@@ -340,7 +379,13 @@
       const line = document.createElement("div");
       const role = item.role === "fox" ? "companion" : item.role;
       line.className = `chat-line ${role}`;
-      line.textContent = role === "player" ? `你：${item.text}` : `${currentCreature.name}：${item.text}`;
+      if (role === "player") {
+        line.textContent = `你：${item.text}`;
+      } else if (role === "system") {
+        line.textContent = `聖域：${item.text}`;
+      } else {
+        line.textContent = `${currentCreature.name}：${item.text}`;
+      }
       chatLog.appendChild(line);
     }
     chatLog.scrollTop = chatLog.scrollHeight;

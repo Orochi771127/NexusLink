@@ -27,18 +27,28 @@
         </div>
       </section>
 
-      <section class="world-card">
+      <section class="world-card" aria-label="Nexus Link emotional habitat">
         <header class="world-header">
-          <p>Nexus Link Prototype</p>
-          <h1 id="fox-name">載入中...</h1>
+          <div>
+            <p>NEXUS LINK</p>
+            <h1 id="fox-name">載入中...</h1>
+          </div>
+          <span class="habitat-pill">夜間湖畔營地</span>
         </header>
         <div id="game-root" aria-label="Nexus Link emotional habitat scene"></div>
         <footer class="world-footer">
-          <span id="status-text">載入中...</span>
+          <span id="status-text">正在建立心核連線...</span>
         </footer>
       </section>
 
-      <section class="chat-panel" aria-label="Companion chat panel">
+      <section class="chat-panel" aria-label="Soul Talk companion chat panel">
+        <header class="chat-header">
+          <div>
+            <p>SOUL TALK</p>
+            <h2>靈魂聖域</h2>
+          </div>
+          <span>低語模式</span>
+        </header>
         <div id="chat-log" class="chat-log"></div>
         <div class="chat-input-row">
           <input
@@ -50,6 +60,13 @@
           <button id="send-button" type="button">送出</button>
         </div>
       </section>
+
+      <nav class="bottom-nav" aria-label="Primary actions">
+        <button type="button" data-action="explore">探索</button>
+        <button type="button" data-action="care">照顧</button>
+        <button type="button" data-action="grow">成長</button>
+        <button type="button" data-action="memory">記憶</button>
+      </nav>
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/pixi.js@8.8.1/dist/pixi.min.js"></script>
