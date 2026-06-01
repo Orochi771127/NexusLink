@@ -19,29 +19,35 @@
         <div id="game-root" aria-label="Nexus Link emotional habitat scene"></div>
 
         <section class="core-hud" aria-label="Companion core status">
-          <div class="core-hud__title">
-            <div>
-              <p>NEXUS LINK</p>
+          <div class="core-identity">
+            <div class="avatar-orb" aria-hidden="true"></div>
+            <div class="core-copy">
               <h1 id="fox-name">載入中...</h1>
+              <p>NEXUS CORE</p>
+              <span class="level-pill">Lv 01</span>
             </div>
-            <span class="level-pill">Lv 01</span>
           </div>
-          <div class="core-hud__stats">
-            <div>
-              <span class="label">Bond</span>
+
+          <div class="core-stat-list">
+            <div class="core-stat">
+              <span>Bond</span>
               <strong id="bond-value">0</strong>
+              <i class="bar"><b id="bond-bar"></b></i>
             </div>
-            <div>
-              <span class="label">Trust</span>
-              <strong id="trust-value">5</strong>
-            </div>
-            <div>
-              <span class="label">Mood</span>
+            <div class="core-stat">
+              <span>Mood</span>
               <strong id="mood-value">calm</strong>
+              <i class="bar"><b id="mood-bar"></b></i>
             </div>
-            <div>
-              <span class="label">Energy</span>
+            <div class="core-stat">
+              <span>Energy</span>
               <strong id="energy-value">10</strong>
+              <i class="bar"><b id="energy-bar"></b></i>
+            </div>
+            <div class="core-stat">
+              <span>Trust</span>
+              <strong id="trust-value">5</strong>
+              <i class="bar"><b id="trust-bar"></b></i>
             </div>
           </div>
         </section>

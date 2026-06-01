@@ -40,6 +40,10 @@
   const trustEl = document.querySelector("#trust-value");
   const moodEl = document.querySelector("#mood-value");
   const energyEl = document.querySelector("#energy-value");
+  const bondBar = document.querySelector("#bond-bar");
+  const trustBar = document.querySelector("#trust-bar");
+  const moodBar = document.querySelector("#mood-bar");
+  const energyBar = document.querySelector("#energy-bar");
   const bottomNavButtons = document.querySelectorAll(".bottom-nav button[data-action]");
 
   if (!window.PIXI) {
@@ -105,7 +109,7 @@
       companion.y = COMPANION_GROUND_Y + Math.sin(t * 2.1) * 3;
       companion.scale.set(1 + Math.sin(t * 1.5) * 0.015);
 
-      if (companion.__isSpriteCreature && companion.__accentFlame) {
+      if (companion.__accentFlame) {
         companion.__accentFlame.alpha = 0.7 + Math.sin(t * 5) * 0.25;
       }
 
@@ -137,17 +141,17 @@
   async function createCreatureNode(creature) {
     try {
       const texture = await PIXI.Assets.load(creature.image);
-      const spriteCreature = createCreatureSprite(texture);
+      const spriteCreature = createCreatureSprite(texture, creature);
       statusText.textContent = `${creature.name}已進入夜間湖畔棲地。`;
       return spriteCreature;
     } catch (error) {
       console.warn("Creature image load failed, fallback to placeholder:", error);
       statusText.textContent = `${creature.name}圖片載入失敗，已改用預設造型。`;
-      return createCreaturePlaceholder();
+      return createCreaturePlaceholder(creature);
     }
   }
 
-  function createCreatureSprite(texture) {
+  function createCreatureSprite(texture, creature) {
     const fox = new PIXI.Container();
 
     const shadow = new PIXI.Graphics();
@@ -164,13 +168,13 @@
 
     fox.addChild(sprite);
 
-    const flame = new PIXI.Graphics();
-    flame.moveTo(0, -108).lineTo(-15, -76).lineTo(15, -76).closePath().fill("#ff7a2f");
-    flame.moveTo(2, -98).lineTo(-6, -77).lineTo(10, -77).closePath().fill("#ffd166");
-    fox.addChild(flame);
-
     fox.__isSpriteCreature = true;
-    fox.__accentFlame = flame;
+
+    if (creature.element === "fire") {
+      const flame = createFlameAccent();
+      fox.addChild(flame);
+      fox.__accentFlame = flame;
+    }
 
     return fox;
   }
@@ -233,7 +237,7 @@
     return layer;
   }
 
-  function createCreaturePlaceholder() {
+  function createCreaturePlaceholder(creature = FALLBACK_CREATURE) {
     const fox = new PIXI.Container();
 
     const shadow = new PIXI.Graphics();
@@ -274,12 +278,20 @@
       .fill("#ffd166");
     fox.addChildAt(tail, 1);
 
-    const flame = new PIXI.Graphics();
-    flame.moveTo(0, -108).lineTo(-16, -76).lineTo(16, -76).closePath().fill("#ff7a2f");
-    flame.moveTo(2, -98).lineTo(-7, -77).lineTo(11, -77).closePath().fill("#ffd166");
-    fox.addChild(flame);
+    if (creature.element === "fire") {
+      const flame = createFlameAccent();
+      fox.addChild(flame);
+      fox.__accentFlame = flame;
+    }
 
     return fox;
+  }
+
+  function createFlameAccent() {
+    const flame = new PIXI.Graphics();
+    flame.moveTo(0, -108).lineTo(-15, -76).lineTo(15, -76).closePath().fill("#ff7a2f");
+    flame.moveTo(2, -98).lineTo(-6, -77).lineTo(10, -77).closePath().fill("#ffd166");
+    return flame;
   }
 
   function applyCreatureText() {
@@ -373,11 +385,30 @@
     energyEl.textContent = state.energy;
     foxName.textContent = state.mood === "defensive" ? `${currentCreature.name} · 有點防備` : currentCreature.name;
     statusText.textContent = `狀態：${state.mood}｜SpamScore：${state.spamScore}`;
+
+    bondBar.style.width = `${clampPercent(state.bond, 24)}%`;
+    trustBar.style.width = `${clampPercent(state.trust, 12)}%`;
+    energyBar.style.width = `${clampPercent(state.energy, 10)}%`;
+    moodBar.style.width = `${moodPercent(state.mood)}%`;
+  }
+
+  function clampPercent(value, max) {
+    return Math.max(0, Math.min(100, (Number(value) / max) * 100));
+  }
+
+  function moodPercent(mood) {
+    const moodMap = {
+      defensive: 24,
+      tired: 38,
+      calm: 62,
+      warm: 82
+    };
+    return moodMap[mood] || 50;
   }
 
   function renderChat() {
     chatLog.innerHTML = "";
-    const visibleHistory = state.chatHistory.slice(-2);
+    const visibleHistory = state.chatHistory.slice(-1);
     for (const item of visibleHistory) {
       const line = document.createElement("div");
       const role = item.role === "fox" ? "companion" : item.role;
