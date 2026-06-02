@@ -26,6 +26,7 @@
     }
   };
   const DEFAULT_TOUCH_PERSONALITY = TOUCH_PERSONALITY_FALLBACKS[currentCreatureId];
+  const SUPPORTED_DEV_MOODS = new Set(["calm", "happy", "warm", "sad", "defensive", "distant", "tired"]);
 
   let currentCreature = FALLBACK_CREATURE;
 
@@ -50,7 +51,9 @@
     ]
   };
 
-  const state = applyOfflineRecovery(loadState());
+  const devQueryHooks = readDevQueryHooks();
+  applyDevResetHook(devQueryHooks);
+  const state = applyDevQueryHooks(applyOfflineRecovery(loadState()), devQueryHooks);
   saveState();
 
   const gameRoot = document.querySelector("#game-root");
@@ -854,6 +857,108 @@
       chatLog.appendChild(line);
     }
     chatLog.scrollTop = chatLog.scrollHeight;
+  }
+
+  function readDevQueryHooks() {
+    const hooks = { applied: false };
+
+    try {
+      const params = new URLSearchParams(window.location.search);
+
+      if (params.get("devReset") === "1") {
+        hooks.devReset = true;
+        hooks.applied = true;
+      }
+
+      const devMood = params.get("devMood");
+      if (SUPPORTED_DEV_MOODS.has(devMood)) {
+        hooks.mood = devMood;
+        hooks.applied = true;
+      }
+
+      readClampedDevNumber(params, "devDefense", 0, 100, (value) => {
+        hooks.defense = value;
+        hooks.applied = true;
+      });
+      readClampedDevNumber(params, "devFatigue", 0, 10, (value) => {
+        hooks.touchFatigue = value;
+        hooks.applied = true;
+      });
+      readClampedDevNumber(params, "devTrust", 0, 100, (value) => {
+        hooks.trust = value;
+        hooks.applied = true;
+      });
+      readClampedDevNumber(params, "devBond", 0, 100, (value) => {
+        hooks.bond = value;
+        hooks.applied = true;
+      });
+      readClampedDevNumber(params, "devEnergy", 0, 10, (value) => {
+        hooks.energy = value;
+        hooks.applied = true;
+      });
+
+      const devFirstTouch = params.get("devFirstTouch");
+      if (devFirstTouch === "0" || devFirstTouch === "1") {
+        hooks.firstTouchCompleted = devFirstTouch === "1";
+        hooks.applied = true;
+      }
+    } catch (error) {
+      console.warn("Failed to parse NexusLink dev query hooks", error);
+    }
+
+    return hooks;
+  }
+
+  function readClampedDevNumber(params, key, min, max, applyValue) {
+    if (!params.has(key)) return;
+
+    const rawValue = params.get(key);
+    if (rawValue === null || rawValue.trim() === "") return;
+
+    const parsedValue = Number(rawValue);
+    if (!Number.isFinite(parsedValue)) return;
+
+    applyValue(clampValue(parsedValue, min, max));
+  }
+
+  function applyDevResetHook(hooks) {
+    if (!hooks.devReset) return;
+
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch (error) {
+      console.warn("Failed to reset NexusLink save from dev query hook", error);
+    }
+  }
+
+  function applyDevQueryHooks(targetState, hooks) {
+    const nextState = normalizeState(targetState);
+    if (!hooks.applied) return nextState;
+
+    // Development-only QA hooks: controlled exclusively by URL query params.
+    // They must remain invisible and never render debug state on the home screen.
+    if (hooks.mood) nextState.mood = hooks.mood;
+    if (hooks.defense !== undefined) nextState.defense = hooks.defense;
+    if (hooks.touchFatigue !== undefined) nextState.touchFatigue = hooks.touchFatigue;
+    if (hooks.trust !== undefined) nextState.trust = hooks.trust;
+    if (hooks.bond !== undefined) nextState.bond = hooks.bond;
+    if (hooks.energy !== undefined) nextState.energy = hooks.energy;
+    if (hooks.firstTouchCompleted !== undefined) {
+      nextState.firstTouchCompleted = hooks.firstTouchCompleted;
+    }
+
+    console.info("[NexusLink dev hooks applied]", {
+      devReset: Boolean(hooks.devReset),
+      mood: hooks.mood,
+      defense: hooks.defense,
+      touchFatigue: hooks.touchFatigue,
+      trust: hooks.trust,
+      bond: hooks.bond,
+      energy: hooks.energy,
+      firstTouchCompleted: hooks.firstTouchCompleted
+    });
+
+    return normalizeState(nextState);
   }
 
   function saveState() {
