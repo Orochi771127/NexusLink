@@ -122,22 +122,26 @@
     companion.y = COMPANION_GROUND_Y;
     world.addChild(companion);
 
+    const companionMotion = createCompanionMotion(companion);
+
     companion.eventMode = "static";
     companion.cursor = "pointer";
     let lastTapAt = 0;
     companion.on("pointertap", () => {
+      if (activePanel) return;
       const now = Date.now();
       const isDoubleTap = now - lastTapAt < 320;
       lastTapAt = now;
-      handlePlayerMessage(isDoubleTap ? `抱抱${currentCreature.name}` : `摸摸${currentCreature.name}`);
+      const message = isDoubleTap ? `抱抱${currentCreature.name}` : `摸摸${currentCreature.name}`;
+      const interactionResult = handlePlayerMessage(message);
+      triggerCompanionTouchMotion(companionMotion, interactionResult);
     });
 
     let t = 0;
     app.ticker.add((ticker) => {
       t += ticker.deltaMS / 1000;
 
-      companion.y = COMPANION_GROUND_Y + Math.sin(t * 2.1) * 3;
-      companion.scale.set(1 + Math.sin(t * 1.5) * 0.015);
+      updateCompanionMotion(companion, companionMotion, t, performance.now());
       platform.alpha = 0.76 + Math.sin(t * 1.4) * 0.03;
 
       if (companion.__accentFlame) {
@@ -350,6 +354,143 @@
     return flame;
   }
 
+  function createCompanionMotion(companion) {
+    return {
+      state: getIdleMotionState(state.mood),
+      temporaryState: null,
+      temporaryStartedAt: 0,
+      temporaryUntil: 0,
+      baseX: companion.x,
+      baseY: companion.y,
+      baseScale: companion.scale.x || 1,
+      baseAlpha: companion.alpha,
+      baseRotation: companion.rotation || 0
+    };
+  }
+
+  function getIdleMotionState(mood) {
+    const moodToIdle = {
+      calm: "idle_calm",
+      defensive: "idle_defensive",
+      distant: "idle_distant",
+      sad: "idle_distant",
+      happy: "idle_calm",
+      tired: "idle_distant",
+      warm: "idle_calm"
+    };
+    return moodToIdle[mood] || "idle_calm";
+  }
+
+  function getTouchMotionState(mood) {
+    const moodToTouch = {
+      calm: "touch_guarded",
+      defensive: "touch_reject",
+      distant: "touch_reject",
+      sad: "touch_guarded",
+      happy: "touch_accept",
+      tired: "touch_guarded",
+      warm: "touch_accept"
+    };
+    return moodToTouch[mood] || "touch_guarded";
+  }
+
+  function triggerCompanionTouchMotion(motion, interactionResult = {}) {
+    const touchState = interactionResult.repeated
+      ? "touch_reject"
+      : getTouchMotionState(interactionResult.moodBefore || state.mood);
+    motion.temporaryState = touchState;
+    motion.temporaryStartedAt = performance.now();
+    motion.temporaryUntil = motion.temporaryStartedAt + 850;
+  }
+
+  function updateCompanionMotion(companion, motion, timeSeconds, nowMs) {
+    motion.state = getIdleMotionState(state.mood);
+    if (motion.temporaryState && nowMs >= motion.temporaryUntil) {
+      motion.temporaryState = null;
+      motion.temporaryStartedAt = 0;
+      motion.temporaryUntil = 0;
+    }
+
+    const activeState = motion.temporaryState || motion.state;
+    const transform = motion.temporaryState
+      ? getTemporaryMotionTransform(activeState, motion, nowMs)
+      : getIdleMotionTransform(activeState, timeSeconds);
+
+    companion.x = motion.baseX + transform.offsetX;
+    companion.y = motion.baseY + transform.offsetY;
+    companion.scale.set(motion.baseScale * transform.scaleMultiplier);
+    companion.alpha = motion.baseAlpha * transform.alphaMultiplier;
+    companion.rotation = motion.baseRotation + transform.rotation;
+  }
+
+  function getIdleMotionTransform(motionState, timeSeconds) {
+    if (motionState === "idle_defensive") {
+      const breath = Math.sin(timeSeconds * 1.7);
+      return {
+        offsetX: 0,
+        offsetY: 2 + breath * 1.6,
+        scaleMultiplier: 0.985 + breath * 0.004,
+        alphaMultiplier: 1,
+        rotation: 0
+      };
+    }
+
+    if (motionState === "idle_distant") {
+      const breath = Math.sin(timeSeconds * 1.25);
+      return {
+        offsetX: 0,
+        offsetY: 4 + breath * 1.4,
+        scaleMultiplier: 0.965 + breath * 0.0035,
+        alphaMultiplier: 0.98,
+        rotation: 0
+      };
+    }
+
+    const breath = Math.sin(timeSeconds * 1.55);
+    return {
+      offsetX: 0,
+      offsetY: breath * 2.5,
+      scaleMultiplier: 1 + breath * 0.007,
+      alphaMultiplier: 1,
+      rotation: 0
+    };
+  }
+
+  function getTemporaryMotionTransform(motionState, motion, nowMs) {
+    const duration = Math.max(1, motion.temporaryUntil - motion.temporaryStartedAt);
+    const progress = Math.min(1, Math.max(0, (nowMs - motion.temporaryStartedAt) / duration));
+    const pulse = Math.sin(progress * Math.PI);
+    const settle = 1 - progress;
+
+    if (motionState === "touch_accept") {
+      return {
+        offsetX: 0,
+        offsetY: -5 * pulse + 1.5 * settle,
+        scaleMultiplier: 1 + 0.012 * pulse,
+        alphaMultiplier: 1,
+        rotation: 0.012 * Math.sin(progress * Math.PI * 2)
+      };
+    }
+
+    if (motionState === "touch_reject") {
+      return {
+        offsetX: -3 * pulse,
+        offsetY: 3 * pulse + 3 * settle,
+        scaleMultiplier: 0.972 - 0.008 * pulse,
+        alphaMultiplier: 0.985,
+        rotation: -0.01 * pulse
+      };
+    }
+
+    return {
+      offsetX: 1.5 * Math.sin(progress * Math.PI * 4) * settle,
+      offsetY: -2 * pulse + 2 * settle,
+      scaleMultiplier: 0.99 + 0.006 * pulse,
+      alphaMultiplier: 1,
+      rotation: 0.006 * Math.sin(progress * Math.PI * 4) * settle
+    };
+  }
+
   function applyCreatureText() {
     foxName.textContent = currentCreature.name;
     modalCreatureName.textContent = currentCreature.name;
@@ -491,6 +632,7 @@
   function handlePlayerMessage(message) {
     addChat("player", message);
 
+    const moodBefore = state.mood;
     const repeated = message === state.lastMessage;
     state.lastMessage = message;
     state.bond += 1;
@@ -514,6 +656,12 @@
     saveState();
     renderHUD();
     renderChat();
+
+    return {
+      moodBefore,
+      moodAfter: state.mood,
+      repeated
+    };
   }
 
   function mockAIResponse(message, repeated) {
