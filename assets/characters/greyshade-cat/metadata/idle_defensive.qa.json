@@ -1,0 +1,21 @@
+{
+    "sheet":  "assets\\characters\\greyshade-cat\\spritesheets\\emotion\\greyshade-cat_idle-defensive_64x64_8f.png",
+    "dimensions":  {
+                       "height":  64,
+                       "width":  512
+                   },
+    "selectedSourceFrames":  [
+                                 5,
+                                 6,
+                                 7,
+                                 8,
+                                 7,
+                                 6,
+                                 5,
+                                 6
+                             ],
+    "warnings":  [
+                     "assembled from stable generated row frames 5-8 to avoid raw alternate-scale row jitter"
+                 ],
+    "frameCount":  8
+}

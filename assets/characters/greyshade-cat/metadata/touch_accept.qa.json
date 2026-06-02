@@ -1,0 +1,19 @@
+{
+    "sheet":  "assets\\characters\\greyshade-cat\\spritesheets\\touch\\greyshade-cat_touch-accept_64x64_6f.png",
+    "dimensions":  {
+                       "height":  64,
+                       "width":  384
+                   },
+    "selectedSourceFrames":  [
+                                 1,
+                                 2,
+                                 3,
+                                 2,
+                                 1,
+                                 2
+                             ],
+    "warnings":  [
+                     "assembled from stable generated top-row frames 1-3 to avoid raw bottom-row scale drift"
+                 ],
+    "frameCount":  6
+}

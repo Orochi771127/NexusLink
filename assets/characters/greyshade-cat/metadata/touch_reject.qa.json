@@ -1,0 +1,150 @@
+{
+    "sheet":  "assets\\characters\\greyshade-cat\\spritesheets\\touch\\greyshade-cat_touch-reject_64x64_6f.png",
+    "dimensions":  {
+                       "height":  64,
+                       "width":  384
+                   },
+    "frameWidth":  64,
+    "frameHeight":  64,
+    "frameCount":  6,
+    "framesDirectory":  "assets\\characters\\greyshade-cat\\frames\\touch\\touch_reject",
+    "rawCopy":  "assets\\characters\\greyshade-cat\\spritesheets\\touch\\greyshade-cat_touch-reject_raw-2x3-magenta.png",
+    "baselineY":  61,
+    "warnings":  [
+
+                 ],
+    "frameReports":  [
+                         {
+                             "index":  1,
+                             "sourceCell":  {
+                                                "y":  0,
+                                                "width":  512,
+                                                "height":  512,
+                                                "x":  0
+                                            },
+                             "sourceBBox":  {
+                                                "y":  137,
+                                                "width":  361,
+                                                "height":  321,
+                                                "x":  96
+                                            },
+                             "outputDraw":  {
+                                                "y":  10,
+                                                "width":  58,
+                                                "height":  51,
+                                                "x":  3
+                                            },
+                             "baselineY":  61
+                         },
+                         {
+                             "index":  2,
+                             "sourceCell":  {
+                                                "y":  0,
+                                                "width":  512,
+                                                "height":  512,
+                                                "x":  512
+                                            },
+                             "sourceBBox":  {
+                                                "y":  148,
+                                                "width":  356,
+                                                "height":  310,
+                                                "x":  60
+                                            },
+                             "outputDraw":  {
+                                                "y":  12,
+                                                "width":  57,
+                                                "height":  49,
+                                                "x":  4
+                                            },
+                             "baselineY":  61
+                         },
+                         {
+                             "index":  3,
+                             "sourceCell":  {
+                                                "y":  0,
+                                                "width":  512,
+                                                "height":  512,
+                                                "x":  1024
+                                            },
+                             "sourceBBox":  {
+                                                "y":  143,
+                                                "width":  364,
+                                                "height":  315,
+                                                "x":  24
+                                            },
+                             "outputDraw":  {
+                                                "y":  11,
+                                                "width":  58,
+                                                "height":  50,
+                                                "x":  3
+                                            },
+                             "baselineY":  61
+                         },
+                         {
+                             "index":  4,
+                             "sourceCell":  {
+                                                "y":  512,
+                                                "width":  512,
+                                                "height":  512,
+                                                "x":  0
+                                            },
+                             "sourceBBox":  {
+                                                "y":  87,
+                                                "width":  362,
+                                                "height":  315,
+                                                "x":  96
+                                            },
+                             "outputDraw":  {
+                                                "y":  11,
+                                                "width":  58,
+                                                "height":  50,
+                                                "x":  3
+                                            },
+                             "baselineY":  61
+                         },
+                         {
+                             "index":  5,
+                             "sourceCell":  {
+                                                "y":  512,
+                                                "width":  512,
+                                                "height":  512,
+                                                "x":  512
+                                            },
+                             "sourceBBox":  {
+                                                "y":  92,
+                                                "width":  353,
+                                                "height":  310,
+                                                "x":  63
+                                            },
+                             "outputDraw":  {
+                                                "y":  12,
+                                                "width":  56,
+                                                "height":  49,
+                                                "x":  4
+                                            },
+                             "baselineY":  61
+                         },
+                         {
+                             "index":  6,
+                             "sourceCell":  {
+                                                "y":  512,
+                                                "width":  512,
+                                                "height":  512,
+                                                "x":  1024
+                                            },
+                             "sourceBBox":  {
+                                                "y":  92,
+                                                "width":  358,
+                                                "height":  310,
+                                                "x":  24
+                                            },
+                             "outputDraw":  {
+                                                "y":  12,
+                                                "width":  57,
+                                                "height":  49,
+                                                "x":  4
+                                            },
+                             "baselineY":  61
+                         }
+                     ]
+}
