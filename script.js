@@ -41,6 +41,7 @@
     lastSeenAt: Date.now(),
     firstTouchCompleted: false,
     reactionPreview: "",
+    lastTouchReaction: "",
     spamScore: 0,
     lastMessage: "",
     chatHistory: [
@@ -51,6 +52,7 @@
     ]
   };
 
+  const isDevPanelEnabled = readDevPanelFlag();
   const devQueryHooks = readDevQueryHooks();
   applyDevResetHook(devQueryHooks);
   const state = applyDevQueryHooks(applyOfflineRecovery(loadState()), devQueryHooks);
@@ -82,6 +84,11 @@
   const actionSheetActions = document.querySelector("#action-sheet-actions");
   let activePanel = null;
   let queuedAction = null;
+  let devPanelRoot = null;
+  let devPanelReadout = null;
+  let devPanelCollapsed = false;
+  let companionMotionController = null;
+  let currentMotionState = getIdleMotionState(state.mood);
 
   setViewportVars();
   window.addEventListener("resize", setViewportVars);
@@ -119,6 +126,7 @@
       bindUI();
       renderHUD();
       renderChat();
+      setupDevPanel();
     })
     .catch((error) => {
       console.error(error);
@@ -148,6 +156,7 @@
     world.addChild(companion);
 
     const companionMotion = createCompanionMotion(companion);
+    companionMotionController = companionMotion;
 
     companion.eventMode = "static";
     companion.cursor = "pointer";
@@ -388,7 +397,9 @@
       baseY: companion.y,
       baseScale: companion.scale.x || 1,
       baseAlpha: companion.alpha,
-      baseRotation: companion.rotation || 0
+      baseRotation: companion.rotation || 0,
+      devForcedState: null,
+      devForcedUntil: 0
     };
   }
 
@@ -429,8 +440,13 @@
       motion.temporaryStartedAt = 0;
       motion.temporaryUntil = 0;
     }
+    if (motion.devForcedState && nowMs >= motion.devForcedUntil) {
+      motion.devForcedState = null;
+      motion.devForcedUntil = 0;
+    }
 
-    const activeState = motion.temporaryState || motion.state;
+    const activeState = motion.temporaryState || motion.devForcedState || motion.state;
+    currentMotionState = activeState;
     const transform = motion.temporaryState
       ? getTemporaryMotionTransform(activeState, motion, nowMs)
       : getIdleMotionTransform(activeState, timeSeconds);
@@ -440,6 +456,7 @@
     companion.scale.set(motion.baseScale * transform.scaleMultiplier);
     companion.alpha = motion.baseAlpha * transform.alphaMultiplier;
     companion.rotation = motion.baseRotation + transform.rotation;
+    renderDevReadout();
   }
 
   function getIdleMotionTransform(motionState, timeSeconds) {
@@ -455,12 +472,12 @@
     }
 
     if (motionState === "idle_distant") {
-      const breath = Math.sin(timeSeconds * 1.25);
+      const breath = Math.sin(timeSeconds * 0.9);
       return {
         offsetX: 0,
-        offsetY: 4 + breath * 1.4,
-        scaleMultiplier: 0.965 + breath * 0.0035,
-        alphaMultiplier: 0.98,
+        offsetY: -5 + breath * 1.05,
+        scaleMultiplier: 0.955 + breath * 0.0025,
+        alphaMultiplier: 0.9,
         rotation: 0
       };
     }
@@ -482,31 +499,35 @@
     const settle = 1 - progress;
 
     if (motionState === "touch_accept") {
+      const relaxedReturn = Math.sin(Math.min(1, progress * 0.82) * Math.PI);
       return {
         offsetX: 0,
-        offsetY: -5 * pulse + 1.5 * settle,
-        scaleMultiplier: 1 + 0.012 * pulse,
+        offsetY: -7 * relaxedReturn + 1 * settle,
+        scaleMultiplier: 1 + 0.018 * relaxedReturn,
         alphaMultiplier: 1,
-        rotation: 0.012 * Math.sin(progress * Math.PI * 2)
+        rotation: 0.007 * Math.sin(progress * Math.PI * 1.5)
       };
     }
 
     if (motionState === "touch_reject") {
+      const shake = Math.sin(progress * Math.PI * 8) * settle;
+      const flicker = progress < 0.55 ? Math.sin(progress * Math.PI * 12) * 0.035 : 0;
       return {
-        offsetX: -3 * pulse,
-        offsetY: 3 * pulse + 3 * settle,
-        scaleMultiplier: 0.972 - 0.008 * pulse,
-        alphaMultiplier: 0.985,
-        rotation: -0.01 * pulse
+        offsetX: -6 * pulse + 1.6 * shake,
+        offsetY: 5 * pulse + 2 * settle,
+        scaleMultiplier: 0.97 - 0.01 * pulse,
+        alphaMultiplier: 0.96 + flicker,
+        rotation: -0.012 * pulse + 0.004 * shake
       };
     }
 
+    const pause = progress < 0.28 ? 1 : settle;
     return {
-      offsetX: 1.5 * Math.sin(progress * Math.PI * 4) * settle,
-      offsetY: -2 * pulse + 2 * settle,
-      scaleMultiplier: 0.99 + 0.006 * pulse,
+      offsetX: -2.5 * pulse,
+      offsetY: 2.5 * pulse + 1.5 * pause,
+      scaleMultiplier: 0.986 + 0.004 * pulse,
       alphaMultiplier: 1,
-      rotation: 0.006 * Math.sin(progress * Math.PI * 4) * settle
+      rotation: -0.004 * pulse
     };
   }
 
@@ -571,12 +592,14 @@
     }
 
     state.lastTouchAt = now;
+    state.lastTouchReaction = reaction;
     applyTouchReactionMutation(reaction);
     state.reactionPreview = getTouchReactionText(reaction);
     statusText.textContent = state.reactionPreview;
     saveState();
     renderHUD();
     renderChat();
+    renderDevReadout();
 
     return {
       reaction,
@@ -624,6 +647,133 @@
     modalCreatureName.textContent = currentCreature.name;
     modalCreatureDescription.textContent = currentCreature.description || "心核同步中的陪伴型 AI 小怪獸。";
     messageInput.placeholder = `對${currentCreature.name}說一句話...`;
+  }
+
+  function setupDevPanel() {
+    if (!isDevPanelEnabled || devPanelRoot) return;
+
+    devPanelRoot = document.createElement("aside");
+    devPanelRoot.className = "dev-reaction-lab";
+    devPanelRoot.setAttribute("aria-label", "Nexus Dev Reaction Lab");
+    devPanelRoot.innerHTML = `
+      <header class="dev-lab-header">
+        <div>
+          <p>DEV ONLY</p>
+          <h2>Nexus Dev Reaction Lab</h2>
+        </div>
+        <button type="button" data-dev-collapse aria-label="Collapse dev reaction lab">−</button>
+      </header>
+      <div class="dev-lab-body">
+        <section>
+          <h3>State Tests</h3>
+          <div class="dev-lab-grid">
+            <button type="button" data-dev-preset="reset">Reset Save</button>
+            <button type="button" data-dev-preset="ftueGuarded">FTUE Guarded Test</button>
+            <button type="button" data-dev-preset="defensive">Defensive Test</button>
+            <button type="button" data-dev-preset="highFatigue">High Fatigue Reject Test</button>
+            <button type="button" data-dev-preset="positiveAccept">Positive Accept Test</button>
+            <button type="button" data-dev-preset="distantIdle">Distant Idle Test</button>
+          </div>
+        </section>
+        <section>
+          <h3>Motion Tests</h3>
+          <div class="dev-lab-grid">
+            <button type="button" data-dev-motion="idle_calm">Play idle_calm</button>
+            <button type="button" data-dev-motion="idle_defensive">Play idle_defensive</button>
+            <button type="button" data-dev-motion="idle_distant">Play idle_distant</button>
+            <button type="button" data-dev-motion="touch_guarded">Play touch_guarded</button>
+            <button type="button" data-dev-motion="touch_accept">Play touch_accept</button>
+            <button type="button" data-dev-motion="touch_reject">Play touch_reject</button>
+          </div>
+        </section>
+        <dl class="dev-lab-readout" data-dev-readout></dl>
+      </div>
+    `;
+
+    document.body.appendChild(devPanelRoot);
+    devPanelReadout = devPanelRoot.querySelector("[data-dev-readout]");
+    devPanelRoot.querySelector("[data-dev-collapse]").addEventListener("click", toggleDevPanel);
+    devPanelRoot.querySelectorAll("[data-dev-preset]").forEach((button) => {
+      button.addEventListener("click", () => applyDevPreset(button.dataset.devPreset));
+    });
+    devPanelRoot.querySelectorAll("[data-dev-motion]").forEach((button) => {
+      button.addEventListener("click", () => playDevMotion(button.dataset.devMotion));
+    });
+    renderDevReadout();
+  }
+
+  function toggleDevPanel() {
+    if (!devPanelRoot) return;
+    devPanelCollapsed = !devPanelCollapsed;
+    devPanelRoot.classList.toggle("is-collapsed", devPanelCollapsed);
+    const button = devPanelRoot.querySelector("[data-dev-collapse]");
+    button.textContent = devPanelCollapsed ? "+" : "−";
+    button.setAttribute("aria-label", devPanelCollapsed ? "Expand dev reaction lab" : "Collapse dev reaction lab");
+  }
+
+  function applyDevPreset(presetName) {
+    if (presetName === "reset") {
+      try {
+        localStorage.removeItem(STORAGE_KEY);
+      } catch (error) {
+        console.warn("Failed to reset NexusLink save from dev panel", error);
+      }
+      window.location.reload();
+      return;
+    }
+
+    const presets = {
+      ftueGuarded: { firstTouchCompleted: false, mood: "calm", defense: 45, touchFatigue: 0, trust: 5, bond: 0, energy: 10 },
+      defensive: { firstTouchCompleted: true, mood: "defensive", defense: 65, touchFatigue: 2, trust: 5, bond: 0, energy: 6 },
+      highFatigue: { firstTouchCompleted: true, mood: "calm", defense: 45, touchFatigue: 9, trust: 5, bond: 0, energy: 5 },
+      positiveAccept: { firstTouchCompleted: true, mood: "happy", defense: 20, touchFatigue: 0, trust: 30, bond: 30, energy: 10 },
+      distantIdle: { firstTouchCompleted: true, mood: "distant", defense: 65, touchFatigue: 1, trust: 5, bond: 5, energy: 6 }
+    };
+    const preset = presets[presetName];
+    if (!preset) return;
+
+    Object.assign(state, preset, {
+      lastTouchAt: null,
+      lastTouchReaction: "",
+      reactionPreview: ""
+    });
+    saveState();
+    renderHUD();
+    renderChat();
+    renderDevReadout();
+  }
+
+  function playDevMotion(motionState) {
+    if (!companionMotionController || !motionState) return;
+    const now = performance.now();
+    if (motionState.startsWith("touch_")) {
+      companionMotionController.temporaryState = motionState;
+      companionMotionController.temporaryStartedAt = now;
+      companionMotionController.temporaryUntil = now + 950;
+      return;
+    }
+    companionMotionController.devForcedState = motionState;
+    companionMotionController.devForcedUntil = now + 3000;
+  }
+
+  function renderDevReadout() {
+    if (!isDevPanelEnabled || !devPanelReadout) return;
+    const fields = {
+      mood: state.mood,
+      bond: state.bond,
+      trust: state.trust,
+      energy: state.energy,
+      defense: state.defense,
+      touchFatigue: state.touchFatigue,
+      firstTouchCompleted: state.firstTouchCompleted,
+      lastReaction: state.lastTouchReaction || "",
+      currentMotionState,
+      reactionPreview: state.reactionPreview || ""
+    };
+
+    devPanelReadout.innerHTML = Object.entries(fields)
+      .map(([label, value]) => `<div><dt>${label}</dt><dd>${String(value)}</dd></div>`)
+      .join("");
   }
 
   function bindUI() {
@@ -859,6 +1009,15 @@
     chatLog.scrollTop = chatLog.scrollHeight;
   }
 
+  function readDevPanelFlag() {
+    try {
+      return new URLSearchParams(window.location.search).get("devPanel") === "1";
+    } catch (error) {
+      console.warn("Failed to parse NexusLink dev panel flag", error);
+      return false;
+    }
+  }
+
   function readDevQueryHooks() {
     const hooks = { applied: false };
 
@@ -997,6 +1156,7 @@
       lastSeenAt: Number(targetState.lastSeenAt) || Date.now(),
       firstTouchCompleted: Boolean(targetState.firstTouchCompleted),
       reactionPreview: targetState.reactionPreview || "",
+      lastTouchReaction: targetState.lastTouchReaction || "",
       chatHistory: Array.isArray(targetState.chatHistory)
         ? targetState.chatHistory
         : createDefaultState().chatHistory
