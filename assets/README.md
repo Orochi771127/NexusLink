@@ -17,4 +17,4 @@ Current required runtime asset:
 assets/flametail-fox.png
 ```
 
-If `assets/flametail-fox.png` exists, `script.js` will load it as the companion image. If it does not exist, the prototype falls back to the PixiJS Graphics placeholder.
+If `assets/flametail-fox.png` exists, `src/pixi/companionRenderer.js` will load it as the companion image. If it does not exist, the prototype falls back to the PixiJS Graphics placeholder.

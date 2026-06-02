@@ -98,7 +98,8 @@ https://orochi771127.github.io/NexusLink/
 ```text
 index.html
 styles.css
-script.js
+src/app.js
+src/
 docs/NexusLink_Emotional_Habitat_Plan.md
 ```
 
@@ -106,7 +107,8 @@ docs/NexusLink_Emotional_Habitat_Plan.md
 
 - `index.html` — Web entry point.
 - `styles.css` — UI and mobile layout styling.
-- `script.js` — PixiJS scene, chat loop, mock AI response, state persistence.
+- `src/app.js` — ES module bootstrap for PixiJS, state, chat, HUD, panels, and persistence.
+- `src/` — Modular state, engine, PixiJS, UI, and utility code.
 - `docs/NexusLink_Emotional_Habitat_Plan.md` — formal product plan.
 
 ---
