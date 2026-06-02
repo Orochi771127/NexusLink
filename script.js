@@ -12,6 +12,21 @@
     description: "火屬性的陪伴型 AI 小怪獸。"
   };
 
+  // v0.2.4 fallback touch personality data. Keep this shape data-ready so it can move
+  // into data/creatures.json when creature-authored personalities are introduced.
+  const TOUCH_PERSONALITY_FALLBACKS = {
+    "greyshade-cat": {
+      baseDefense: 39,
+      trustWeight: 1.4,
+      bondWeight: 1.2,
+      energyWeight: 1.2,
+      fatigueSensitivity: 6.0,
+      defenseWeight: 0.65,
+      trustDefenseReduction: 1.4
+    }
+  };
+  const DEFAULT_TOUCH_PERSONALITY = TOUCH_PERSONALITY_FALLBACKS[currentCreatureId];
+
   let currentCreature = FALLBACK_CREATURE;
 
   const defaultState = {
@@ -19,6 +34,12 @@
     trust: 5,
     mood: "calm",
     energy: 10,
+    defense: 35,
+    touchFatigue: 0,
+    lastTouchAt: null,
+    lastSeenAt: Date.now(),
+    firstTouchCompleted: false,
+    reactionPreview: "",
     spamScore: 0,
     lastMessage: "",
     chatHistory: [
@@ -29,7 +50,8 @@
     ]
   };
 
-  const state = loadState();
+  const state = applyOfflineRecovery(loadState());
+  saveState();
 
   const gameRoot = document.querySelector("#game-root");
   const statusText = document.querySelector("#status-text");
@@ -132,8 +154,7 @@
       const now = Date.now();
       const isDoubleTap = now - lastTapAt < 320;
       lastTapAt = now;
-      const message = isDoubleTap ? `抱抱${currentCreature.name}` : `摸摸${currentCreature.name}`;
-      const interactionResult = handlePlayerMessage(message);
+      const interactionResult = handleCompanionTouch(isDoubleTap ? "hug" : "touch");
       triggerCompanionTouchMotion(companionMotion, interactionResult);
     });
 
@@ -381,23 +402,18 @@
     return moodToIdle[mood] || "idle_calm";
   }
 
-  function getTouchMotionState(mood) {
-    const moodToTouch = {
-      calm: "touch_guarded",
-      defensive: "touch_reject",
-      distant: "touch_reject",
-      sad: "touch_guarded",
-      happy: "touch_accept",
-      tired: "touch_guarded",
-      warm: "touch_accept"
+  function getTouchMotionState(reaction) {
+    const reactionToMotion = {
+      accept: "touch_accept",
+      guarded_accept: "touch_guarded",
+      hesitate: "touch_guarded",
+      reject: "touch_reject"
     };
-    return moodToTouch[mood] || "touch_guarded";
+    return reactionToMotion[reaction] || "touch_guarded";
   }
 
   function triggerCompanionTouchMotion(motion, interactionResult = {}) {
-    const touchState = interactionResult.repeated
-      ? "touch_reject"
-      : getTouchMotionState(interactionResult.moodBefore || state.mood);
+    const touchState = getTouchMotionState(interactionResult.reaction);
     motion.temporaryState = touchState;
     motion.temporaryStartedAt = performance.now();
     motion.temporaryUntil = motion.temporaryStartedAt + 850;
@@ -489,6 +505,115 @@
       alphaMultiplier: 1,
       rotation: 0.006 * Math.sin(progress * Math.PI * 4) * settle
     };
+  }
+
+
+  function getCurrentTouchPersonality() {
+    return (
+      currentCreature.touchPersonality ||
+      TOUCH_PERSONALITY_FALLBACKS[currentCreature.id] ||
+      DEFAULT_TOUCH_PERSONALITY
+    );
+  }
+
+  function getUniversalTouchReaction(targetState, personality) {
+    const moodModifiers = {
+      calm: 10,
+      happy: 20,
+      warm: 15,
+      sad: -10,
+      defensive: -25,
+      distant: -15,
+      tired: -12
+    };
+    const moodModifier = moodModifiers[targetState.mood] || 0;
+    const baseSafety = 30;
+    const safetyScore =
+      baseSafety +
+      targetState.trust * personality.trustWeight +
+      targetState.bond * personality.bondWeight +
+      moodModifier +
+      targetState.energy * personality.energyWeight -
+      targetState.touchFatigue * personality.fatigueSensitivity;
+    const defenseThreshold =
+      personality.baseDefense +
+      targetState.defense * personality.defenseWeight -
+      targetState.trust * personality.trustDefenseReduction;
+    const delta = safetyScore - defenseThreshold;
+
+    if (delta >= 25) return "accept";
+    if (delta >= 0) return "guarded_accept";
+    if (delta >= -20) return "hesitate";
+    return "reject";
+  }
+
+  function handleCompanionTouch(touchType = "touch") {
+    const now = Date.now();
+    const fatigueIncrease = touchType === "hug" ? 1.5 : 1;
+    let reaction;
+
+    if (!state.firstTouchCompleted) {
+      reaction = "guarded_accept";
+      state.firstTouchCompleted = true;
+      state.touchFatigue = clampValue(state.touchFatigue + 0.5, 0, 10);
+    } else {
+      state.touchFatigue = clampValue(state.touchFatigue + fatigueIncrease, 0, 10);
+      reaction = getUniversalTouchReaction(state, getCurrentTouchPersonality());
+
+      if (state.touchFatigue >= 8) {
+        reaction = "reject";
+      } else if (state.touchFatigue >= 6 && reaction === "accept") {
+        reaction = "hesitate";
+      }
+    }
+
+    state.lastTouchAt = now;
+    applyTouchReactionMutation(reaction);
+    state.reactionPreview = getTouchReactionText(reaction);
+    statusText.textContent = state.reactionPreview;
+    saveState();
+    renderHUD();
+    renderChat();
+
+    return {
+      reaction,
+      motionState: getTouchMotionState(reaction)
+    };
+  }
+
+  function applyTouchReactionMutation(reaction) {
+    if (reaction === "accept") {
+      state.bond += 1;
+      state.trust += 1;
+      state.defense -= 1;
+      state.mood = state.energy <= 2 ? "tired" : "warm";
+    } else if (reaction === "guarded_accept") {
+      state.bond += 1;
+      state.defense -= 1;
+      if (state.mood === "defensive") state.mood = "calm";
+    } else if (reaction === "hesitate") {
+      state.defense += 1;
+      if (state.energy <= 2) state.mood = "tired";
+    } else {
+      state.defense += 2;
+      state.mood = "defensive";
+    }
+
+    state.bond = clampValue(state.bond, 0, 100);
+    state.trust = clampValue(state.trust, 0, 100);
+    state.energy = clampValue(state.energy, 0, 10);
+    state.defense = clampValue(state.defense, 0, 100);
+    state.touchFatigue = clampValue(state.touchFatigue, 0, 10);
+  }
+
+  function getTouchReactionText(reaction) {
+    const reactionText = {
+      accept: "灰影貓閉上眼睛，短暫地放鬆下來。",
+      guarded_accept: "灰影貓耳朵動了動，但沒有躲開。",
+      hesitate: "灰影貓看著你，尾巴末端有些緊繃。",
+      reject: "灰影貓默默往後退了一點。"
+    };
+    return reactionText[reaction] || reactionText.guarded_accept;
   }
 
   function applyCreatureText() {
@@ -673,6 +798,7 @@
   }
 
   function addChat(role, text) {
+    state.reactionPreview = "";
     state.chatHistory.push({ role, text });
     if (state.chatHistory.length > 24) state.chatHistory.shift();
   }
@@ -683,7 +809,7 @@
     moodEl.textContent = state.mood;
     energyEl.textContent = state.energy;
     foxName.textContent = currentCreature.name;
-    statusText.textContent = `${currentCreature.name} mood ${state.mood}, energy ${state.energy}.`;
+    statusText.textContent = `${currentCreature.name}正在湖畔安靜呼吸。`;
 
     bondFill.style.width = `${clampPercent(state.bond, 24)}%`;
     trustFill.style.width = `${clampPercent(state.trust, 12)}%`;
@@ -693,6 +819,10 @@
 
   function clampPercent(value, max) {
     return Math.max(0, Math.min(100, (Number(value) / max) * 100));
+  }
+
+  function clampValue(value, min, max) {
+    return Math.max(min, Math.min(max, Number(value) || 0));
   }
 
   function moodPercent(mood) {
@@ -709,7 +839,7 @@
     chatLog.innerHTML = "";
     const visibleHistory = state.chatHistory.slice(-12);
     const lastItem = state.chatHistory[state.chatHistory.length - 1];
-    soulTalkPreview.textContent = lastItem ? lastItem.text : "我在這裡，安靜地看著你。";
+    soulTalkPreview.textContent = state.reactionPreview || (lastItem ? lastItem.text : "我在這裡，安靜地看著你。");
     for (const item of visibleHistory) {
       const line = document.createElement("div");
       const role = item.role === "fox" ? "companion" : item.role;
@@ -727,17 +857,65 @@
   }
 
   function saveState() {
+    state.lastSeenAt = Date.now();
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   }
 
   function loadState() {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return { ...defaultState, chatHistory: [...defaultState.chatHistory] };
-      return { ...defaultState, ...JSON.parse(raw) };
+      if (!raw) return createDefaultState();
+      return normalizeState({ ...createDefaultState(), ...JSON.parse(raw) });
     } catch (error) {
       console.warn("Failed to load save data", error);
-      return { ...defaultState, chatHistory: [...defaultState.chatHistory] };
+      return createDefaultState();
     }
+  }
+
+  function createDefaultState() {
+    return {
+      ...defaultState,
+      lastSeenAt: Date.now(),
+      chatHistory: defaultState.chatHistory.map((item) => ({ ...item }))
+    };
+  }
+
+  function normalizeState(targetState) {
+    return {
+      ...targetState,
+      bond: clampValue(targetState.bond, 0, 100),
+      trust: clampValue(targetState.trust, 0, 100),
+      energy: clampValue(targetState.energy, 0, 10),
+      defense: clampValue(targetState.defense ?? 35, 0, 100),
+      touchFatigue: clampValue(targetState.touchFatigue ?? 0, 0, 10),
+      lastTouchAt: targetState.lastTouchAt ?? null,
+      lastSeenAt: Number(targetState.lastSeenAt) || Date.now(),
+      firstTouchCompleted: Boolean(targetState.firstTouchCompleted),
+      reactionPreview: targetState.reactionPreview || "",
+      chatHistory: Array.isArray(targetState.chatHistory)
+        ? targetState.chatHistory
+        : createDefaultState().chatHistory
+    };
+  }
+
+  function applyOfflineRecovery(targetState) {
+    const recoveredState = normalizeState(targetState);
+    const now = Date.now();
+    const elapsedMs = Math.max(0, now - recoveredState.lastSeenAt);
+    const thirtyMinutes = 30 * 60 * 1000;
+    const twoHours = 2 * 60 * 60 * 1000;
+
+    if (elapsedMs >= thirtyMinutes) {
+      const fatigueRecovery = Math.floor(elapsedMs / thirtyMinutes);
+      recoveredState.touchFatigue = clampValue(recoveredState.touchFatigue - fatigueRecovery, 0, 10);
+    }
+
+    if (elapsedMs >= twoHours) {
+      const energyRecovery = Math.floor(elapsedMs / twoHours);
+      recoveredState.energy = clampValue(recoveredState.energy + energyRecovery, 0, 10);
+    }
+
+    recoveredState.lastSeenAt = now;
+    return recoveredState;
   }
 })();
