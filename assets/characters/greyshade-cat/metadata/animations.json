@@ -1,13 +1,4 @@
 {
-  "idle_calm": {
-    "type": "emotion",
-    "sheet": "./assets/characters/greyshade-cat/spritesheets/emotion/greyshade-cat_idle-calm_64x64_8f.png",
-    "frameWidth": 64,
-    "frameHeight": 64,
-    "frameCount": 8,
-    "fps": 8,
-    "loop": true
-  },
   "idle_defensive": {
     "type": "emotion",
     "sheet": "./assets/characters/greyshade-cat/spritesheets/emotion/greyshade-cat_idle-defensive_64x64_8f.png",

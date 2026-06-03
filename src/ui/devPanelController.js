@@ -7,6 +7,7 @@ const DEV_ANIMATION_NAMES = [
   "idle_calm",
   "idle_defensive",
   "idle_distant",
+  "ambient_walk",
   "blink",
   "touch_guarded",
   "touch_accept",
