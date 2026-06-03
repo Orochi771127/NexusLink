@@ -115,6 +115,12 @@ docs/NexusLink_Emotional_Habitat_Plan.md
 
 ## Product Plan
 
+Current planning package:
+
+[docs/README.md](docs/README.md)
+
+Start there for the active design brief, implementation-facing game plan, first-loop roadmap, production backlog, QA checklist, and local art pipeline.
+
 Read the full emotional habitat product plan here:
 
 [docs/NexusLink_Emotional_Habitat_Plan.md](docs/NexusLink_Emotional_Habitat_Plan.md)
