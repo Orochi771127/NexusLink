@@ -5,13 +5,18 @@ export function createSoulTalkController({ store, saveCurrentState }) {
   const messageInput = qs("#message-input");
   const sendButton = qs("#send-button");
   const soulTalkPreview = qs("#soul-talk-preview");
+  const soulTalkModal = qs(".soul-talk-modal");
   let currentCreature = null;
+  let waveformShell = null;
+  let thinkingTimer = null;
 
   function setCreature(creature) {
     currentCreature = creature;
   }
 
   function bind() {
+    ensureWaveformShell();
+
     sendButton.addEventListener("click", () => {
       const value = messageInput.value.trim();
       if (!value) return;
@@ -25,18 +30,26 @@ export function createSoulTalkController({ store, saveCurrentState }) {
         sendButton.click();
       }
     });
+
+    messageInput.addEventListener("focus", () => setSoulTalkState("active"));
+    messageInput.addEventListener("input", () => setSoulTalkState(messageInput.value.trim() ? "active" : "idle"));
+    messageInput.addEventListener("blur", () => setSoulTalkState("idle"));
   }
 
   function focusInput() {
+    setSoulTalkState("active");
     messageInput.focus({ preventScroll: true });
   }
 
   function openSoulTalk(panelManager) {
+    ensureWaveformShell();
+    setSoulTalkState("idle");
     renderChat();
     panelManager.openPanel("soulTalk");
   }
 
   function handlePlayerMessage(message) {
+    setSoulTalkState("thinking");
     addChat("player", message);
 
     let result;
@@ -69,7 +82,43 @@ export function createSoulTalkController({ store, saveCurrentState }) {
 
     saveCurrentState();
     renderChat();
+    window.clearTimeout(thinkingTimer);
+    thinkingTimer = window.setTimeout(() => setSoulTalkState("idle"), 720);
     return result;
+  }
+
+  function ensureWaveformShell() {
+    if (waveformShell || !soulTalkModal) return;
+
+    waveformShell = document.createElement("section");
+    waveformShell.className = "soul-waveform-panel";
+    waveformShell.setAttribute("aria-label", "Soul Talk listening waveform");
+    waveformShell.innerHTML = `
+      <div class="soul-waveform-copy">
+        <strong>SOUL TALK</strong>
+        <span>靈魂聖域</span>
+      </div>
+      <div class="soul-waveform" aria-hidden="true">
+        <div class="waveform-bar"></div>
+        <div class="waveform-bar"></div>
+        <div class="waveform-bar"></div>
+        <div class="waveform-bar"></div>
+        <div class="waveform-bar"></div>
+        <div class="waveform-bar"></div>
+        <div class="waveform-bar"></div>
+      </div>
+    `;
+
+    soulTalkModal.insertBefore(waveformShell, chatLog);
+    setSoulTalkState("idle");
+  }
+
+  function setSoulTalkState(state) {
+    if (!soulTalkModal) return;
+    if (state !== "thinking") window.clearTimeout(thinkingTimer);
+    soulTalkModal.classList.toggle("is-listening", state === "active");
+    soulTalkModal.classList.toggle("is-thinking", state === "thinking");
+    soulTalkModal.classList.toggle("is-idle", state === "idle");
   }
 
   function addChat(role, text) {
