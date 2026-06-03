@@ -1,206 +1,111 @@
 ﻿{
-    "character_id":  "greyshade-cat",
-    "animation_id":  "idle_calm",
-    "filename":  "greyshade-cat_idle-calm_64x64_8f.png",
+    "frame_height":  64,
     "path":  "assets\\characters\\greyshade-cat\\spritesheets\\emotion\\greyshade-cat_idle-calm_64x64_8f.png",
     "dimensions":  {
                        "height":  64,
                        "width":  512
                    },
+    "animation_id":  "idle_calm",
     "frame_width":  64,
-    "frame_height":  64,
-    "frame_count":  8,
-    "layout":  "strip_1x8",
-    "source_layout":  "raw_2x4",
-    "fps":  8,
     "loop":  true,
+    "warnings":  [
+
+                 ],
+    "character_id":  "greyshade-cat",
     "anchor":  "bottom",
+    "fps":  8,
+    "visual_notes":  "body-only idle; blue soul-core on chest; no floating aura/effects around body",
+    "layout":  "strip_1x8",
+    "filename":  "greyshade-cat_idle-calm_64x64_8f.png",
+    "frame_count":  8,
+    "source_layout":  "raw_2x4",
     "baseline_y":  61,
-    "transparency":  {
-                         "transparent_png":  true,
-                         "background_removed":  "generated magenta chroma key, tolerance R/B \u003e 220 and G \u003c 55"
-                     },
-    "source_raw":  "assets\\characters\\greyshade-cat\\spritesheets\\emotion\\greyshade-cat_idle-calm_raw-2x4-magenta.png",
-    "frames_directory":  "assets\\characters\\greyshade-cat\\frames\\emotion\\idle_calm",
     "frame_reports":  [
                           {
                               "index":  1,
-                              "source_cell":  {
-                                                  "y":  0,
-                                                  "width":  443,
-                                                  "height":  443,
-                                                  "x":  0
-                                              },
-                              "source_bbox":  {
-                                                  "y":  101,
-                                                  "width":  279,
-                                                  "height":  299,
-                                                  "x":  81
-                                              },
-                              "output_draw":  {
-                                                  "y":  4,
-                                                  "width":  53,
-                                                  "height":  57,
-                                                  "x":  6
-                                              },
-                              "baseline_y":  61
+                              "outputDraw":  {
+                                                 "y":  3,
+                                                 "width":  47,
+                                                 "height":  58,
+                                                 "x":  8
+                                             },
+                              "baselineY":  61
                           },
                           {
                               "index":  2,
-                              "source_cell":  {
-                                                  "y":  0,
-                                                  "width":  444,
-                                                  "height":  443,
-                                                  "x":  443
-                                              },
-                              "source_bbox":  {
-                                                  "y":  101,
-                                                  "width":  280,
-                                                  "height":  299,
-                                                  "x":  81
-                                              },
-                              "output_draw":  {
-                                                  "y":  4,
-                                                  "width":  53,
-                                                  "height":  57,
-                                                  "x":  6
-                                              },
-                              "baseline_y":  61
+                              "outputDraw":  {
+                                                 "y":  3,
+                                                 "width":  47,
+                                                 "height":  58,
+                                                 "x":  8
+                                             },
+                              "baselineY":  61
                           },
                           {
                               "index":  3,
-                              "source_cell":  {
-                                                  "y":  0,
-                                                  "width":  443,
-                                                  "height":  443,
-                                                  "x":  887
-                                              },
-                              "source_bbox":  {
-                                                  "y":  98,
-                                                  "width":  279,
-                                                  "height":  302,
-                                                  "x":  81
-                                              },
-                              "output_draw":  {
-                                                  "y":  4,
-                                                  "width":  53,
-                                                  "height":  57,
-                                                  "x":  6
-                                              },
-                              "baseline_y":  61
+                              "outputDraw":  {
+                                                 "y":  3,
+                                                 "width":  47,
+                                                 "height":  58,
+                                                 "x":  8
+                                             },
+                              "baselineY":  61
                           },
                           {
                               "index":  4,
-                              "source_cell":  {
-                                                  "y":  0,
-                                                  "width":  444,
-                                                  "height":  443,
-                                                  "x":  1330
-                                              },
-                              "source_bbox":  {
-                                                  "y":  101,
-                                                  "width":  280,
-                                                  "height":  299,
-                                                  "x":  81
-                                              },
-                              "output_draw":  {
-                                                  "y":  4,
-                                                  "width":  53,
-                                                  "height":  57,
-                                                  "x":  6
-                                              },
-                              "baseline_y":  61
+                              "outputDraw":  {
+                                                 "y":  3,
+                                                 "width":  47,
+                                                 "height":  58,
+                                                 "x":  8
+                                             },
+                              "baselineY":  61
                           },
                           {
                               "index":  5,
-                              "source_cell":  {
-                                                  "y":  443,
-                                                  "width":  443,
-                                                  "height":  444,
-                                                  "x":  0
-                                              },
-                              "source_bbox":  {
-                                                  "y":  82,
-                                                  "width":  280,
-                                                  "height":  299,
-                                                  "x":  80
-                                              },
-                              "output_draw":  {
-                                                  "y":  4,
-                                                  "width":  53,
-                                                  "height":  57,
-                                                  "x":  6
-                                              },
-                              "baseline_y":  61
+                              "outputDraw":  {
+                                                 "y":  3,
+                                                 "width":  46,
+                                                 "height":  58,
+                                                 "x":  9
+                                             },
+                              "baselineY":  61
                           },
                           {
                               "index":  6,
-                              "source_cell":  {
-                                                  "y":  443,
-                                                  "width":  444,
-                                                  "height":  444,
-                                                  "x":  443
-                                              },
-                              "source_bbox":  {
-                                                  "y":  82,
-                                                  "width":  280,
-                                                  "height":  299,
-                                                  "x":  81
-                                              },
-                              "output_draw":  {
-                                                  "y":  4,
-                                                  "width":  53,
-                                                  "height":  57,
-                                                  "x":  6
-                                              },
-                              "baseline_y":  61
+                              "outputDraw":  {
+                                                 "y":  3,
+                                                 "width":  46,
+                                                 "height":  58,
+                                                 "x":  9
+                                             },
+                              "baselineY":  61
                           },
                           {
                               "index":  7,
-                              "source_cell":  {
-                                                  "y":  443,
-                                                  "width":  443,
-                                                  "height":  444,
-                                                  "x":  887
-                                              },
-                              "source_bbox":  {
-                                                  "y":  82,
-                                                  "width":  305,
-                                                  "height":  299,
-                                                  "x":  81
-                                              },
-                              "output_draw":  {
-                                                  "y":  4,
-                                                  "width":  58,
-                                                  "height":  57,
-                                                  "x":  3
-                                              },
-                              "baseline_y":  61
+                              "outputDraw":  {
+                                                 "y":  3,
+                                                 "width":  48,
+                                                 "height":  58,
+                                                 "x":  8
+                                             },
+                              "baselineY":  61
                           },
                           {
                               "index":  8,
-                              "source_cell":  {
-                                                  "y":  443,
-                                                  "width":  444,
-                                                  "height":  444,
-                                                  "x":  1330
-                                              },
-                              "source_bbox":  {
-                                                  "y":  82,
-                                                  "width":  280,
-                                                  "height":  299,
-                                                  "x":  82
-                                              },
-                              "output_draw":  {
-                                                  "y":  4,
-                                                  "width":  53,
-                                                  "height":  57,
-                                                  "x":  6
-                                              },
-                              "baseline_y":  61
+                              "outputDraw":  {
+                                                 "y":  4,
+                                                 "width":  46,
+                                                 "height":  57,
+                                                 "x":  9
+                                             },
+                              "baselineY":  61
                           }
                       ],
-    "warnings":  [
-
-                 ]
+    "transparency":  {
+                         "fringe_pixels_removed":  4319,
+                         "cleanup":  "magenta chroma key plus purple fringe removal",
+                         "magenta_pixels_removed":  173675,
+                         "transparent_png":  true
+                     }
 }
