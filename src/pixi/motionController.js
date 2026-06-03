@@ -1,11 +1,27 @@
 import { getTouchMotionState } from "../engine/touchReactionEngine.js";
 
+const AMBIENT_WALK_STATE = "ambient_walk";
+const AMBIENT_COOLDOWN_MIN_MS = 60_000;
+const AMBIENT_COOLDOWN_MAX_MS = 180_000;
+const AMBIENT_DURATION_MIN_MS = 1_200;
+const AMBIENT_DURATION_MAX_MS = 2_500;
+const AMBIENT_RANGE_X = 60;
+const AMBIENT_RANGE_Y = 15;
+
 export function createCompanionMotion(companion, initialMood) {
-  return {
+  const motion = {
     state: getIdleMotionState(initialMood),
     temporaryState: null,
     temporaryStartedAt: 0,
     temporaryUntil: 0,
+    ambientState: null,
+    ambientStartedAt: 0,
+    ambientUntil: 0,
+    ambientNextAt: 0,
+    ambientFromOffsetX: 0,
+    ambientFromOffsetY: 0,
+    ambientTargetOffsetX: 0,
+    ambientTargetOffsetY: 0,
     baseX: companion.x,
     baseY: companion.y,
     baseScale: companion.scale.x || 1,
@@ -17,6 +33,8 @@ export function createCompanionMotion(companion, initialMood) {
     getAnimationDurationMs: (animationName) => companion.__animationController?.getAnimationDurationMs(animationName),
     getAnimationController: () => companion.__animationController || null
   };
+  scheduleNextAmbientWalk(motion, performance.now(), initialMood);
+  return motion;
 }
 
 export function getIdleMotionState(mood) {
@@ -34,6 +52,7 @@ export function getIdleMotionState(mood) {
 
 export function triggerCompanionTouchMotion(motion, interactionResult = {}) {
   const touchState = interactionResult.motionState || getTouchMotionState(interactionResult.reaction);
+  stopAmbientWalk(motion);
   motion.temporaryState = touchState;
   motion.temporaryStartedAt = performance.now();
   motion.temporaryUntil = motion.temporaryStartedAt + getMotionDurationMs(motion, touchState, 850);
@@ -42,7 +61,12 @@ export function triggerCompanionTouchMotion(motion, interactionResult = {}) {
 export function playDevMotion(motion, motionState) {
   if (!motion || !motionState) return;
   const now = performance.now();
+  if (motionState === AMBIENT_WALK_STATE) {
+    startAmbientWalk(motion, "calm", now, { forced: true });
+    return;
+  }
   if (motionState.startsWith("touch_")) {
+    stopAmbientWalk(motion);
     motion.temporaryState = motionState;
     motion.temporaryStartedAt = now;
     motion.temporaryUntil = now + getMotionDurationMs(motion, motionState, 950);
@@ -52,7 +76,7 @@ export function playDevMotion(motion, motionState) {
   motion.devForcedUntil = now + (motionState === "blink" ? getMotionDurationMs(motion, motionState, 700) : 3000);
 }
 
-export function updateCompanionMotion(companion, motion, timeSeconds, nowMs, mood, onStateChange = () => {}) {
+export function updateCompanionMotion(companion, motion, timeSeconds, nowMs, mood, onStateChange = () => {}, options = {}) {
   motion.state = getIdleMotionState(mood);
   if (motion.temporaryState && nowMs >= motion.temporaryUntil) {
     motion.temporaryState = null;
@@ -64,11 +88,31 @@ export function updateCompanionMotion(companion, motion, timeSeconds, nowMs, moo
     motion.devForcedUntil = 0;
   }
 
-  const activeState = motion.temporaryState || motion.devForcedState || motion.state;
+  const canAmbientWalk = options.canAmbientWalk !== false;
+  const isBattleActive = Boolean(options.isBattleActive);
+  const isSleeping = Boolean(options.isSleeping);
+  const isAmbientBlocked = !canAmbientWalk || Boolean(motion.temporaryState) || isBattleActive || isSleeping || mood === "tired";
+
+  if (motion.ambientState && (isAmbientBlocked || nowMs >= motion.ambientUntil)) {
+    stopAmbientWalk(motion);
+    scheduleNextAmbientWalk(motion, nowMs, mood);
+  }
+  if (!motion.ambientState && !motion.devForcedState && !isAmbientBlocked && nowMs >= motion.ambientNextAt) {
+    maybeStartAmbientWalk(motion, mood, nowMs);
+  }
+
+  const activeState = motion.temporaryState ||
+    (isBattleActive ? "battle" : null) ||
+    (isSleeping ? "sleep" : null) ||
+    motion.devForcedState ||
+    motion.ambientState ||
+    motion.state;
   const spriteAnimationPlayed = companion.__animationController?.play(activeState, { mood });
   const transform = motion.temporaryState
     ? getTemporaryMotionTransform(activeState, motion, nowMs)
-    : getIdleMotionTransform(activeState, timeSeconds);
+    : motion.ambientState
+      ? getAmbientWalkTransform(motion, nowMs)
+      : getIdleMotionTransform(activeState, timeSeconds);
 
   companion.x = motion.baseX + transform.offsetX;
   companion.y = motion.baseY + transform.offsetY;
@@ -81,6 +125,84 @@ export function updateCompanionMotion(companion, motion, timeSeconds, nowMs, moo
 
 function getMotionDurationMs(motion, motionState, fallbackDurationMs) {
   return motion?.getAnimationDurationMs?.(motionState) || fallbackDurationMs;
+}
+
+function scheduleNextAmbientWalk(motion, nowMs, mood) {
+  if (mood === "tired") {
+    motion.ambientNextAt = Number.POSITIVE_INFINITY;
+    return;
+  }
+  motion.ambientNextAt = nowMs + randomBetween(AMBIENT_COOLDOWN_MIN_MS, AMBIENT_COOLDOWN_MAX_MS);
+}
+
+function maybeStartAmbientWalk(motion, mood, nowMs) {
+  const moodPolicy = getAmbientMoodPolicy(mood);
+  if (moodPolicy.chance <= 0 || Math.random() > moodPolicy.chance) {
+    scheduleNextAmbientWalk(motion, nowMs, mood);
+    return;
+  }
+  startAmbientWalk(motion, mood, nowMs);
+}
+
+function startAmbientWalk(motion, mood, nowMs, { forced = false } = {}) {
+  const moodPolicy = getAmbientMoodPolicy(mood);
+  if (!forced && moodPolicy.chance <= 0) {
+    scheduleNextAmbientWalk(motion, nowMs, mood);
+    return;
+  }
+
+  motion.ambientState = AMBIENT_WALK_STATE;
+  motion.ambientStartedAt = nowMs;
+  motion.ambientUntil = nowMs + randomBetween(AMBIENT_DURATION_MIN_MS, AMBIENT_DURATION_MAX_MS);
+  motion.ambientFromOffsetX = 0;
+  motion.ambientFromOffsetY = 0;
+  motion.ambientTargetOffsetX = randomBetween(-AMBIENT_RANGE_X, AMBIENT_RANGE_X) * moodPolicy.rangeMultiplier;
+  motion.ambientTargetOffsetY = randomBetween(-AMBIENT_RANGE_Y, AMBIENT_RANGE_Y) * moodPolicy.rangeMultiplier;
+}
+
+function stopAmbientWalk(motion) {
+  motion.ambientState = null;
+  motion.ambientStartedAt = 0;
+  motion.ambientUntil = 0;
+  motion.ambientFromOffsetX = 0;
+  motion.ambientFromOffsetY = 0;
+  motion.ambientTargetOffsetX = 0;
+  motion.ambientTargetOffsetY = 0;
+}
+
+function getAmbientMoodPolicy(mood) {
+  const policies = {
+    calm: { chance: 0.45, rangeMultiplier: 1 },
+    happy: { chance: 0.65, rangeMultiplier: 1 },
+    warm: { chance: 0.65, rangeMultiplier: 1 },
+    defensive: { chance: 0.08, rangeMultiplier: 0.65 },
+    distant: { chance: 0.18, rangeMultiplier: 0.55 },
+    sad: { chance: 0.18, rangeMultiplier: 0.55 },
+    tired: { chance: 0, rangeMultiplier: 0 }
+  };
+  return policies[mood] || policies.calm;
+}
+
+function getAmbientWalkTransform(motion, nowMs) {
+  const duration = Math.max(1, motion.ambientUntil - motion.ambientStartedAt);
+  const progress = Math.min(1, Math.max(0, (nowMs - motion.ambientStartedAt) / duration));
+  const easedProgress = easeInOutSine(progress);
+  const returnProgress = Math.sin(progress * Math.PI);
+  return {
+    offsetX: motion.ambientFromOffsetX + (motion.ambientTargetOffsetX - motion.ambientFromOffsetX) * returnProgress,
+    offsetY: motion.ambientFromOffsetY + (motion.ambientTargetOffsetY - motion.ambientFromOffsetY) * returnProgress - 1.5 * easedProgress,
+    scaleMultiplier: 1,
+    alphaMultiplier: 1,
+    rotation: 0.006 * Math.sin(easedProgress * Math.PI * 2)
+  };
+}
+
+function easeInOutSine(value) {
+  return -(Math.cos(Math.PI * value) - 1) / 2;
+}
+
+function randomBetween(min, max) {
+  return min + Math.random() * (max - min);
 }
 
 function getIdleMotionTransform(motionState, timeSeconds) {

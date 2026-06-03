@@ -128,6 +128,8 @@ async function bootScene(app, panelManager, statusText, soulTalkController) {
     updateCompanionMotion(companion, companionMotionController, t, performance.now(), store.getState().mood, (motionState) => {
       currentMotionState = motionState;
       devPanelController?.renderReadout();
+    }, {
+      canAmbientWalk: !panelManager.isPanelOpen()
     });
     platform.alpha = 0.76 + Math.sin(t * 1.4) * 0.03;
 
