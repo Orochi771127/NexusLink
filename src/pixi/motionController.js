@@ -12,7 +12,10 @@ export function createCompanionMotion(companion, initialMood) {
     baseAlpha: companion.alpha,
     baseRotation: companion.rotation || 0,
     devForcedState: null,
-    devForcedUntil: 0
+    devForcedUntil: 0,
+    fallbackMotionActive: true,
+    getAnimationDurationMs: (animationName) => companion.__animationController?.getAnimationDurationMs(animationName),
+    getAnimationController: () => companion.__animationController || null
   };
 }
 
@@ -33,7 +36,7 @@ export function triggerCompanionTouchMotion(motion, interactionResult = {}) {
   const touchState = interactionResult.motionState || getTouchMotionState(interactionResult.reaction);
   motion.temporaryState = touchState;
   motion.temporaryStartedAt = performance.now();
-  motion.temporaryUntil = motion.temporaryStartedAt + 850;
+  motion.temporaryUntil = motion.temporaryStartedAt + getMotionDurationMs(motion, touchState, 850);
 }
 
 export function playDevMotion(motion, motionState) {
@@ -42,11 +45,11 @@ export function playDevMotion(motion, motionState) {
   if (motionState.startsWith("touch_")) {
     motion.temporaryState = motionState;
     motion.temporaryStartedAt = now;
-    motion.temporaryUntil = now + 950;
+    motion.temporaryUntil = now + getMotionDurationMs(motion, motionState, 950);
     return;
   }
   motion.devForcedState = motionState;
-  motion.devForcedUntil = now + 3000;
+  motion.devForcedUntil = now + (motionState === "blink" ? getMotionDurationMs(motion, motionState, 700) : 3000);
 }
 
 export function updateCompanionMotion(companion, motion, timeSeconds, nowMs, mood, onStateChange = () => {}) {
@@ -62,6 +65,7 @@ export function updateCompanionMotion(companion, motion, timeSeconds, nowMs, moo
   }
 
   const activeState = motion.temporaryState || motion.devForcedState || motion.state;
+  const spriteAnimationPlayed = companion.__animationController?.play(activeState, { mood });
   const transform = motion.temporaryState
     ? getTemporaryMotionTransform(activeState, motion, nowMs)
     : getIdleMotionTransform(activeState, timeSeconds);
@@ -71,7 +75,12 @@ export function updateCompanionMotion(companion, motion, timeSeconds, nowMs, moo
   companion.scale.set(motion.baseScale * transform.scaleMultiplier);
   companion.alpha = motion.baseAlpha * transform.alphaMultiplier;
   companion.rotation = motion.baseRotation + transform.rotation;
+  motion.fallbackMotionActive = !spriteAnimationPlayed;
   onStateChange(activeState);
+}
+
+function getMotionDurationMs(motion, motionState, fallbackDurationMs) {
+  return motion?.getAnimationDurationMs?.(motionState) || fallbackDurationMs;
 }
 
 function getIdleMotionTransform(motionState, timeSeconds) {
