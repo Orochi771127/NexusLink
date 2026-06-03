@@ -1,5 +1,7 @@
 import { getTouchMotionState } from "../engine/touchReactionEngine.js";
+import EventBus from "../utils/eventBus.js";
 
+const ENVIRONMENT_INTERACTION_EVENT = "ENVIRONMENT_INTERACTION";
 const AMBIENT_WALK_STATE = "ambient_walk";
 const AMBIENT_COOLDOWN_MIN_MS = 60_000;
 const AMBIENT_COOLDOWN_MAX_MS = 180_000;
@@ -7,6 +9,7 @@ const AMBIENT_DURATION_MIN_MS = 1_200;
 const AMBIENT_DURATION_MAX_MS = 2_500;
 const AMBIENT_RANGE_X = 60;
 const AMBIENT_RANGE_Y = 15;
+const TOUCH_ACCEPT_ENVIRONMENT_EVENT_PROGRESS = 0.5;
 
 export function createCompanionMotion(companion, initialMood) {
   const motion = {
@@ -14,6 +17,8 @@ export function createCompanionMotion(companion, initialMood) {
     temporaryState: null,
     temporaryStartedAt: 0,
     temporaryUntil: 0,
+    temporaryResolve: null,
+    temporaryEnvironmentEventEmitted: false,
     ambientState: null,
     ambientStartedAt: 0,
     ambientUntil: 0,
@@ -51,11 +56,18 @@ export function getIdleMotionState(mood) {
 }
 
 export function triggerCompanionTouchMotion(motion, interactionResult = {}) {
+  if (!motion) return Promise.resolve();
+
   const touchState = interactionResult.motionState || getTouchMotionState(interactionResult.reaction);
+  resolveTemporaryMotion(motion);
   stopAmbientWalk(motion);
   motion.temporaryState = touchState;
   motion.temporaryStartedAt = performance.now();
   motion.temporaryUntil = motion.temporaryStartedAt + getMotionDurationMs(motion, touchState, 850);
+  motion.temporaryEnvironmentEventEmitted = false;
+  return new Promise((resolve) => {
+    motion.temporaryResolve = resolve;
+  });
 }
 
 export function playDevMotion(motion, motionState) {
@@ -70,6 +82,7 @@ export function playDevMotion(motion, motionState) {
     motion.temporaryState = motionState;
     motion.temporaryStartedAt = now;
     motion.temporaryUntil = now + getMotionDurationMs(motion, motionState, 950);
+    motion.temporaryEnvironmentEventEmitted = false;
     return;
   }
   motion.devForcedState = motionState;
@@ -82,6 +95,7 @@ export function updateCompanionMotion(companion, motion, timeSeconds, nowMs, moo
     motion.temporaryState = null;
     motion.temporaryStartedAt = 0;
     motion.temporaryUntil = 0;
+    resolveTemporaryMotion(motion);
   }
   if (motion.devForcedState && nowMs >= motion.devForcedUntil) {
     motion.devForcedState = null;
@@ -119,12 +133,47 @@ export function updateCompanionMotion(companion, motion, timeSeconds, nowMs, moo
   companion.scale.set(motion.baseScale * transform.scaleMultiplier);
   companion.alpha = motion.baseAlpha * transform.alphaMultiplier;
   companion.rotation = motion.baseRotation + transform.rotation;
+  maybeEmitTemporaryEnvironmentInteraction(activeState, motion, companion, nowMs);
   motion.fallbackMotionActive = !spriteAnimationPlayed;
   onStateChange(activeState);
 }
 
 function getMotionDurationMs(motion, motionState, fallbackDurationMs) {
   return motion?.getAnimationDurationMs?.(motionState) || fallbackDurationMs;
+}
+
+function resolveTemporaryMotion(motion) {
+  if (!motion?.temporaryResolve) return;
+  const resolve = motion.temporaryResolve;
+  motion.temporaryResolve = null;
+  resolve();
+}
+
+function maybeEmitTemporaryEnvironmentInteraction(activeState, motion, companion, nowMs) {
+  if (
+    activeState !== "touch_accept" ||
+    !motion.temporaryState ||
+    motion.temporaryEnvironmentEventEmitted
+  ) {
+    return;
+  }
+
+  if (getTemporaryMotionProgress(motion, nowMs) < TOUCH_ACCEPT_ENVIRONMENT_EVENT_PROGRESS) {
+    return;
+  }
+
+  motion.temporaryEnvironmentEventEmitted = true;
+  EventBus.emit(ENVIRONMENT_INTERACTION_EVENT, {
+    type: "crystal_touch",
+    color: "#00CED1",
+    x: companion.x,
+    y: companion.y
+  });
+}
+
+function getTemporaryMotionProgress(motion, nowMs) {
+  const duration = Math.max(1, motion.temporaryUntil - motion.temporaryStartedAt);
+  return Math.min(1, Math.max(0, (nowMs - motion.temporaryStartedAt) / duration));
 }
 
 function scheduleNextAmbientWalk(motion, nowMs, mood) {
@@ -239,8 +288,7 @@ function getIdleMotionTransform(motionState, timeSeconds) {
 }
 
 function getTemporaryMotionTransform(motionState, motion, nowMs) {
-  const duration = Math.max(1, motion.temporaryUntil - motion.temporaryStartedAt);
-  const progress = Math.min(1, Math.max(0, (nowMs - motion.temporaryStartedAt) / duration));
+  const progress = getTemporaryMotionProgress(motion, nowMs);
   const pulse = Math.sin(progress * Math.PI);
   const settle = 1 - progress;
 

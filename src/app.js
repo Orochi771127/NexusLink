@@ -2,6 +2,7 @@ import { applyOfflineRecovery } from "./engine/offlineRecovery.js";
 import { CURRENT_CREATURE_ID, FALLBACK_CREATURE, getTouchPersonality } from "./engine/personalityProfile.js";
 import { evaluateTouchReaction } from "./engine/touchReactionEngine.js";
 import { bindViewportVars, qs } from "./utils/dom.js";
+import EventBus from "./utils/eventBus.js";
 import { loadState, saveState } from "./state/saveManager.js";
 import * as store from "./state/store.js";
 import {
@@ -26,6 +27,8 @@ import {
 } from "./pixi/motionController.js";
 
 const CREATURES_PATH = "./data/creatures.json";
+const ENVIRONMENT_INTERACTION_EVENT = "ENVIRONMENT_INTERACTION";
+const ENVIRONMENT_EFFECT_LIFETIME_MS = 720;
 let currentCreature = FALLBACK_CREATURE;
 let companionMotionController = null;
 let currentMotionState = "idle_calm";
@@ -105,6 +108,15 @@ async function bootScene(app, panelManager, statusText, soulTalkController) {
   const particles = createParticles();
   world.addChild(particles);
 
+  const environmentEffects = new PIXI.Container();
+  world.addChild(environmentEffects);
+  const activeEnvironmentEffects = [];
+
+  EventBus.on(ENVIRONMENT_INTERACTION_EVENT, (event) => {
+    if (event?.type !== "crystal_touch") return;
+    activeEnvironmentEffects.push(createCrystalTouchEffect(environmentEffects, event));
+  });
+
   const platform = await createPlatformNode();
   world.addChild(platform);
 
@@ -117,7 +129,7 @@ async function bootScene(app, panelManager, statusText, soulTalkController) {
     isInteractionBlocked: () => panelManager.isPanelOpen(),
     onTouch: (touchType) => {
       const interactionResult = handleCompanionTouch(touchType, statusText, soulTalkController);
-      triggerCompanionTouchMotion(companionMotionController, interactionResult);
+      return triggerCompanionTouchMotion(companionMotionController, interactionResult);
     }
   });
 
@@ -138,7 +150,63 @@ async function bootScene(app, panelManager, statusText, soulTalkController) {
     }
 
     animateParticles(particles, t, ticker);
+    updateEnvironmentEffects(activeEnvironmentEffects, ticker);
   });
+}
+
+function createCrystalTouchEffect(parent, event) {
+  const effect = new PIXI.Container();
+  effect.x = event.x;
+  effect.y = event.y - 38;
+  effect.__ageMs = 0;
+  effect.__baseY = effect.y;
+
+  const glow = new PIXI.Graphics();
+  glow.circle(0, 0, 18).fill({ color: event.color, alpha: 0.16 });
+  effect.addChild(glow);
+
+  const crystal = new PIXI.Graphics();
+  crystal
+    .moveTo(0, -18)
+    .lineTo(10, -2)
+    .lineTo(0, 18)
+    .lineTo(-10, -2)
+    .closePath()
+    .fill({ color: event.color, alpha: 0.58 });
+  crystal.circle(0, 0, 3).fill({ color: 0xffffff, alpha: 0.72 });
+  effect.addChild(crystal);
+
+  for (let index = 0; index < 6; index += 1) {
+    const angle = (Math.PI * 2 * index) / 6;
+    const mote = new PIXI.Graphics();
+    mote.circle(0, 0, 2.2).fill({ color: event.color, alpha: 0.75 });
+    mote.x = Math.cos(angle) * 22;
+    mote.y = Math.sin(angle) * 12;
+    effect.addChild(mote);
+  }
+
+  parent.addChild(effect);
+  return effect;
+}
+
+function updateEnvironmentEffects(activeEffects, ticker) {
+  for (let index = activeEffects.length - 1; index >= 0; index -= 1) {
+    const effect = activeEffects[index];
+    effect.__ageMs += ticker.deltaMS;
+    const progress = Math.min(1, effect.__ageMs / ENVIRONMENT_EFFECT_LIFETIME_MS);
+    const pulse = Math.sin(progress * Math.PI);
+
+    effect.alpha = 1 - progress;
+    effect.y = effect.__baseY - progress * 18;
+    effect.scale.set(0.7 + pulse * 0.35 + progress * 0.2);
+    effect.rotation = progress * 0.22;
+
+    if (progress >= 1) {
+      effect.parent?.removeChild(effect);
+      effect.destroy({ children: true });
+      activeEffects.splice(index, 1);
+    }
+  }
 }
 
 function getAnimationLabState() {

@@ -2,6 +2,9 @@ import { COMPANION_GROUND_Y, WORLD_HEIGHT, WORLD_WIDTH } from "./pixiApp.js";
 import { FALLBACK_CREATURE } from "../engine/personalityProfile.js";
 import { createAnimatedCompanionNode, loadGreyshadeCatAnimationPack } from "./spriteSheetAnimationLoader.js";
 
+const TOUCH_ANIMATION_LOCK_TIMEOUT_MS = 3000;
+let isAnimating = false;
+
 export async function createCreatureNode(creature, statusText) {
   if (creature.id === "greyshade-cat") {
     const animationPack = await loadGreyshadeCatAnimationPack();
@@ -35,12 +38,30 @@ export function bindCompanionTap(companion, { isInteractionBlocked, onTouch }) {
   companion.cursor = "pointer";
   let lastTapAt = 0;
 
-  companion.on("pointertap", () => {
+  companion.on("pointertap", async () => {
+    if (isAnimating) return;
     if (isInteractionBlocked()) return;
     const now = Date.now();
     const isDoubleTap = now - lastTapAt < 320;
     lastTapAt = now;
-    onTouch(isDoubleTap ? "hug" : "touch");
+    isAnimating = true;
+
+    try {
+      await Promise.race([
+        Promise.resolve(onTouch(isDoubleTap ? "hug" : "touch")),
+        createTouchAnimationTimeout()
+      ]);
+    } catch (error) {
+      console.warn("Companion touch interaction failed:", error);
+    } finally {
+      isAnimating = false;
+    }
+  });
+}
+
+function createTouchAnimationTimeout() {
+  return new Promise((resolve) => {
+    setTimeout(resolve, TOUCH_ANIMATION_LOCK_TIMEOUT_MS);
   });
 }
 
