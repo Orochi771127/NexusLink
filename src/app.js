@@ -88,6 +88,7 @@ async function bootstrap() {
       saveCurrentState,
       playMotion: (motionState) => playDevMotion(companionMotionController, motionState),
       getCurrentMotionState: () => currentMotionState,
+      getAnimationLabState: () => getAnimationLabState(),
       renderChat: () => soulTalkController.renderChat()
     });
     devPanelController.setup();
@@ -136,6 +137,18 @@ async function bootScene(app, panelManager, statusText, soulTalkController) {
 
     animateParticles(particles, t, ticker);
   });
+}
+
+function getAnimationLabState() {
+  const animationController = companionMotionController?.getAnimationController?.();
+  const status = animationController?.getStatus?.();
+  return {
+    metadataLoaded: Boolean(status?.metadataLoaded),
+    currentAnimationName: animationController?.getCurrentAnimationName?.() || "fallback_placeholder",
+    spriteSheetModeActive: Boolean(animationController),
+    fallbackMotionModeActive: !animationController || Boolean(companionMotionController?.fallbackMotionActive),
+    available: status?.available || {}
+  };
 }
 
 function handleCompanionTouch(touchType, statusText, soulTalkController) {

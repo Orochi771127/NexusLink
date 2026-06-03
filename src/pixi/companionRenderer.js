@@ -1,7 +1,18 @@
 import { COMPANION_GROUND_Y, WORLD_HEIGHT, WORLD_WIDTH } from "./pixiApp.js";
 import { FALLBACK_CREATURE } from "../engine/personalityProfile.js";
+import { createAnimatedCompanionNode, loadGreyshadeCatAnimationPack } from "./spriteSheetAnimationLoader.js";
 
 export async function createCreatureNode(creature, statusText) {
+  if (creature.id === "greyshade-cat") {
+    const animationPack = await loadGreyshadeCatAnimationPack();
+    const animatedCompanion = createAnimatedCompanionNode(animationPack, creature);
+    if (animatedCompanion) {
+      statusText.textContent = `${creature.name}已載入 idle_calm 動畫棲地。`;
+      return animatedCompanion;
+    }
+    statusText.textContent = `${creature.name}動畫載入失敗，已保留預設動態。`;
+  }
+
   try {
     const texture = await PIXI.Assets.load(creature.image);
     const spriteCreature = createCreatureSprite(texture, creature);

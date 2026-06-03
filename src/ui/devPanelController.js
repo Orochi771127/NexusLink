@@ -3,6 +3,16 @@ import { clearState } from "../state/saveManager.js";
 
 export const SUPPORTED_DEV_MOODS = new Set(["calm", "happy", "warm", "sad", "defensive", "distant", "tired"]);
 
+const DEV_ANIMATION_NAMES = [
+  "idle_calm",
+  "idle_defensive",
+  "idle_distant",
+  "blink",
+  "touch_guarded",
+  "touch_accept",
+  "touch_reject"
+];
+
 export function readDevPanelFlag() {
   try {
     return new URLSearchParams(window.location.search).get("devPanel") === "1";
@@ -95,9 +105,10 @@ export function applyDevQueryHooks(targetState, hooks) {
   return nextState;
 }
 
-export function createDevPanelController({ isEnabled, store, saveCurrentState, playMotion, getCurrentMotionState, renderChat }) {
+export function createDevPanelController({ isEnabled, store, saveCurrentState, playMotion, getCurrentMotionState, getAnimationLabState, renderChat }) {
   let devPanelRoot = null;
   let devPanelReadout = null;
+  let animationReadout = null;
   let devPanelCollapsed = false;
 
   function setup() {
@@ -127,15 +138,11 @@ export function createDevPanelController({ isEnabled, store, saveCurrentState, p
           </div>
         </section>
         <section>
-          <h3>Motion Tests</h3>
+          <h3>Nexus Dev Animation Lab</h3>
           <div class="dev-lab-grid">
-            <button type="button" data-dev-motion="idle_calm">Play idle_calm</button>
-            <button type="button" data-dev-motion="idle_defensive">Play idle_defensive</button>
-            <button type="button" data-dev-motion="idle_distant">Play idle_distant</button>
-            <button type="button" data-dev-motion="touch_guarded">Play touch_guarded</button>
-            <button type="button" data-dev-motion="touch_accept">Play touch_accept</button>
-            <button type="button" data-dev-motion="touch_reject">Play touch_reject</button>
+            ${DEV_ANIMATION_NAMES.map((name) => `<button type="button" data-dev-motion="${name}">Play ${name}</button>`).join("")}
           </div>
+          <dl class="dev-lab-readout" data-animation-readout></dl>
         </section>
         <dl class="dev-lab-readout" data-dev-readout></dl>
       </div>
@@ -143,6 +150,7 @@ export function createDevPanelController({ isEnabled, store, saveCurrentState, p
 
     document.body.appendChild(devPanelRoot);
     devPanelReadout = devPanelRoot.querySelector("[data-dev-readout]");
+    animationReadout = devPanelRoot.querySelector("[data-animation-readout]");
     devPanelRoot.querySelector("[data-dev-collapse]").addEventListener("click", toggleDevPanel);
     devPanelRoot.querySelectorAll("[data-dev-preset]").forEach((button) => {
       button.addEventListener("click", () => applyDevPreset(button.dataset.devPreset));
@@ -207,6 +215,29 @@ export function createDevPanelController({ isEnabled, store, saveCurrentState, p
     };
 
     devPanelReadout.innerHTML = Object.entries(fields)
+      .map(([label, value]) => `<div><dt>${label}</dt><dd>${String(value)}</dd></div>`)
+      .join("");
+
+    renderAnimationReadout();
+  }
+
+  function renderAnimationReadout() {
+    if (!isEnabled || !animationReadout) return;
+
+    const labState = getAnimationLabState?.() || {};
+    const availability = DEV_ANIMATION_NAMES.map((name) => {
+      const available = Boolean(labState.available?.[name]);
+      return `${name}: ${available ? "available" : "missing"}`;
+    }).join(" | ");
+    const fields = {
+      currentAnimationName: labState.currentAnimationName || "fallback_placeholder",
+      spriteSheetModeActive: Boolean(labState.spriteSheetModeActive),
+      fallbackMotionModeActive: Boolean(labState.fallbackMotionModeActive),
+      animationsJsonLoaded: Boolean(labState.metadataLoaded),
+      animationAvailability: availability
+    };
+
+    animationReadout.innerHTML = Object.entries(fields)
       .map(([label, value]) => `<div><dt>${label}</dt><dd>${String(value)}</dd></div>`)
       .join("");
   }
