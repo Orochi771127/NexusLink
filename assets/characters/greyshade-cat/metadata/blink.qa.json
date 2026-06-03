@@ -1,0 +1,54 @@
+﻿{
+    "sheet":  "assets\\characters\\greyshade-cat\\spritesheets\\emotion\\greyshade-cat_blink_64x64_4f.png",
+    "frameReports":  [
+                         {
+                             "index":  1,
+                             "outputDraw":  {
+                                                "y":  3,
+                                                "width":  54,
+                                                "height":  58,
+                                                "x":  5
+                                            },
+                             "baselineY":  61
+                         },
+                         {
+                             "index":  2,
+                             "outputDraw":  {
+                                                "y":  3,
+                                                "width":  54,
+                                                "height":  58,
+                                                "x":  5
+                                            },
+                             "baselineY":  61
+                         },
+                         {
+                             "index":  3,
+                             "outputDraw":  {
+                                                "y":  3,
+                                                "width":  54,
+                                                "height":  58,
+                                                "x":  5
+                                            },
+                             "baselineY":  61
+                         },
+                         {
+                             "index":  4,
+                             "outputDraw":  {
+                                                "y":  3,
+                                                "width":  54,
+                                                "height":  58,
+                                                "x":  5
+                                            },
+                             "baselineY":  61
+                         }
+                     ],
+    "frameCount":  4,
+    "dimensions":  {
+                       "height":  64,
+                       "width":  256
+                   },
+    "baselineY":  61,
+    "warnings":  [
+
+                 ]
+}

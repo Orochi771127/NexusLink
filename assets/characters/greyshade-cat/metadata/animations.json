@@ -26,6 +26,15 @@
     "fps": 7,
     "loop": true
   },
+  "blink": {
+    "type": "emotion",
+    "sheet": "./assets/characters/greyshade-cat/spritesheets/emotion/greyshade-cat_blink_64x64_4f.png",
+    "frameWidth": 64,
+    "frameHeight": 64,
+    "frameCount": 4,
+    "fps": 8,
+    "loop": false
+  },
   "touch_guarded": {
     "type": "touch",
     "sheet": "./assets/characters/greyshade-cat/spritesheets/touch/greyshade-cat_touch-guarded_64x64_6f.png",

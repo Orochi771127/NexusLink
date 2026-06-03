@@ -2,12 +2,11 @@
 
 Generated and validated sheets now exist for:
 
-- Emotion: `idle_calm`, `idle_defensive`, `idle_distant`
+- Emotion: `idle_calm`, `idle_defensive`, `idle_distant`, `blink`
 - Touch: `touch_guarded`, `touch_accept`, `touch_reject`
 
 Remaining planned missing sheets:
 
-- Emotion: `blink`
 - Touch: `hug`
 - Movement: `sit`, `sleep`
 - Battle: `attack_basic`, `defend`, `hit`
