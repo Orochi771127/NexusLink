@@ -1,0 +1,59 @@
+{
+  "target": "creature",
+  "mode": "single",
+  "prompt": "greyshade-cat approved standalone sitting seed frame, premium pixel art, grey tabby, warm yellow eyes, subtle soul-core",
+  "role": "",
+  "input": "assets\\characters\\greyshade-cat\\concept\\greyshade-cat_single-approved_raw-magenta.png",
+  "threshold": 100,
+  "edge_threshold": 150,
+  "duration": 120,
+  "rows": 1,
+  "cols": 1,
+  "cell_size": 256,
+  "fit_scale": 0.92,
+  "trim_border": 4,
+  "edge_clean_depth": 3,
+  "align": "bottom",
+  "shared_scale": true,
+  "component_mode": "all",
+  "component_padding": 4,
+  "min_component_area": 24,
+  "edge_touch_margin": 1,
+  "frame_labels": [
+    "greyshade-cat_single-approved-1"
+  ],
+  "frames": [
+    {
+      "grid": [
+        0,
+        0
+      ],
+      "source_box": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "component_mode": "all",
+      "component_count": 8,
+      "selected_component_area": null,
+      "selected_component_bbox": null,
+      "crop_bbox": [
+        307,
+        103,
+        1023,
+        1146
+      ],
+      "edge_touch": false,
+      "output_size": [
+        161,
+        235
+      ],
+      "paste_position": [
+        47,
+        11
+      ]
+    }
+  ],
+  "edge_touch_frames": []
+}

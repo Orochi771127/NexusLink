@@ -1,0 +1,47 @@
+{
+  "raw_grid": "C:\\Users\\User\\AIForgeNexus2\\NexusLink\\assets\\characters\\greyshade-cat\\metadata\\raw\\greyshade-cat_idle-defensive_raw-2x4-magenta.png",
+  "raw_grid_size": [
+    887,
+    1774
+  ],
+  "layout": {
+    "columns": 2,
+    "rows": 4,
+    "frames": 8
+  },
+  "temp_transparent_strip": "C:\\Users\\User\\AIForgeNexus2\\NexusLink\\assets\\characters\\greyshade-cat\\processing\\idle_defensive_from_2x4_grid_transparent_strip.png",
+  "temp_strip_size": [
+    3552,
+    444
+  ],
+  "content_widths": [
+    234,
+    238,
+    236,
+    238,
+    237,
+    238,
+    238,
+    235
+  ],
+  "content_heights": [
+    313,
+    314,
+    314,
+    314,
+    313,
+    313,
+    308,
+    313
+  ],
+  "width_range": [
+    234,
+    238
+  ],
+  "height_range": [
+    308,
+    314
+  ],
+  "height_drift_ratio": 0.019184652278177457,
+  "edge_touch_frames": []
+}
