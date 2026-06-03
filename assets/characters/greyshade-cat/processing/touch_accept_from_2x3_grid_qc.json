@@ -1,0 +1,43 @@
+{
+  "raw_grid": "assets\\characters\\greyshade-cat\\metadata\\raw\\greyshade-cat_touch-accept_raw-2x3-magenta.png",
+  "raw_grid_size": [
+    1024,
+    1536
+  ],
+  "layout": {
+    "columns": 2,
+    "rows": 3,
+    "frames": 6
+  },
+  "temp_transparent_strip": "assets\\characters\\greyshade-cat\\processing\\touch_accept_from_2x3_grid_transparent_strip.png",
+  "temp_strip_size": [
+    3072,
+    512
+  ],
+  "content_widths": [
+    284,
+    285,
+    282,
+    267,
+    272,
+    266
+  ],
+  "content_heights": [
+    407,
+    387,
+    379,
+    392,
+    395,
+    393
+  ],
+  "width_range": [
+    266,
+    285
+  ],
+  "height_range": [
+    379,
+    407
+  ],
+  "height_drift_ratio": 0.07139821504462388,
+  "edge_touch_frames": []
+}

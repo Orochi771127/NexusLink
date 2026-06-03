@@ -1,5 +1,16 @@
 {
+  "idle_calm": {
+    "id": "idle_calm",
+    "type": "emotion",
+    "sheet": "./assets/characters/greyshade-cat/spritesheets/emotion/greyshade-cat_idle-calm_64x64_8f.png",
+    "frameWidth": 64,
+    "frameHeight": 64,
+    "frameCount": 8,
+    "fps": 8,
+    "loop": true
+  },
   "idle_defensive": {
+    "id": "idle_defensive",
     "type": "emotion",
     "sheet": "./assets/characters/greyshade-cat/spritesheets/emotion/greyshade-cat_idle-defensive_64x64_8f.png",
     "frameWidth": 64,
@@ -9,6 +20,7 @@
     "loop": true
   },
   "idle_distant": {
+    "id": "idle_distant",
     "type": "emotion",
     "sheet": "./assets/characters/greyshade-cat/spritesheets/emotion/greyshade-cat_idle-distant_64x64_8f.png",
     "frameWidth": 64,
@@ -18,6 +30,7 @@
     "loop": true
   },
   "blink": {
+    "id": "blink",
     "type": "emotion",
     "sheet": "./assets/characters/greyshade-cat/spritesheets/emotion/greyshade-cat_blink_64x64_4f.png",
     "frameWidth": 64,
@@ -27,6 +40,7 @@
     "loop": false
   },
   "touch_guarded": {
+    "id": "touch_guarded",
     "type": "touch",
     "sheet": "./assets/characters/greyshade-cat/spritesheets/touch/greyshade-cat_touch-guarded_64x64_6f.png",
     "frameWidth": 64,
@@ -36,6 +50,7 @@
     "loop": false
   },
   "touch_accept": {
+    "id": "touch_accept",
     "type": "touch",
     "sheet": "./assets/characters/greyshade-cat/spritesheets/touch/greyshade-cat_touch-accept_64x64_6f.png",
     "frameWidth": 64,
