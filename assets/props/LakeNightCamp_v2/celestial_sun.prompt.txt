@@ -1,0 +1,9 @@
+Create one standalone morning sun sprite for PixiJS dynamic rendering on a SOLID #FF00FF magenta background for chroma-key extraction.
+
+Object: one bright early-morning sun, centered in a square canvas, warm golden core, soft orange-yellow radial glow, gentle bloom, smooth edge transition, readable circular silhouette without harsh rays. Calm and cozy, not harsh midday, not explosive, not a combat effect.
+
+Style: clean HD hand-painted 2D sprite, modern pixel-inspired clarity without chunky retro pixels, matching the Lake Night Camp v2 day-base atmosphere.
+
+Strict output: square 512x512 composition, sun centered, background must be flat solid #FF00FF only, no checkerboard, no sky, no clouds, no forest, no lake, no ground, no UI, no text, no labels. Leave safe padding around the bloom so the halo is not clipped.
+
+Postprocess note: the accepted raw image was chroma-keyed from #FF00FF into alpha, resized to 512x512 RGBA, and hue-smoothed into a continuous warm gold bloom.

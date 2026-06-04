@@ -16,9 +16,18 @@ import { createPanelManager } from "./ui/panelManager.js";
 import { createHudController } from "./ui/hudController.js";
 import { createSoulTalkController } from "./ui/soulTalkController.js";
 import { createActionSheetController } from "./ui/actionSheetController.js";
-import { animateParticles, createParticles, createPixiApp, createWorld } from "./pixi/pixiApp.js";
+import {
+  animateParticles,
+  createEnvironmentLayer,
+  createParticles,
+  createPixiApp,
+  getSceneLayers,
+  createWorld,
+  updateEnvironmentLayer
+} from "./pixi/pixiApp.js";
 import { createPlatformNode } from "./pixi/platformRenderer.js";
 import { bindCompanionTap, createCreatureNode, positionCompanion } from "./pixi/companionRenderer.js";
+import { enableEditorMode, readSceneEditorFlag } from "./tools/sceneEditor.js";
 import {
   createCompanionMotion,
   playDevMotion,
@@ -103,13 +112,16 @@ async function bootstrap() {
 
 async function bootScene(app, panelManager, statusText, soulTalkController) {
   const world = createWorld(app);
+  const layers = getSceneLayers(world);
 
-  // CSS owns the lake-night camp backdrop; PixiJS is reserved for companion and ambient effects.
+  const environmentLayer = await createEnvironmentLayer(layers);
+
   const particles = createParticles();
-  world.addChild(particles);
+  layers.layerForeground.addChild(particles);
 
   const environmentEffects = new PIXI.Container();
-  world.addChild(environmentEffects);
+  environmentEffects.name = "environment_effects";
+  layers.layerForeground.addChild(environmentEffects);
   const activeEnvironmentEffects = [];
 
   EventBus.on(ENVIRONMENT_INTERACTION_EVENT, (event) => {
@@ -118,11 +130,11 @@ async function bootScene(app, panelManager, statusText, soulTalkController) {
   });
 
   const platform = await createPlatformNode();
-  world.addChild(platform);
+  layers.layerPlatform.addChild(platform);
 
   const companion = await createCreatureNode(currentCreature, statusText);
   positionCompanion(companion);
-  world.addChild(companion);
+  layers.layerEntity.addChild(companion);
 
   companionMotionController = createCompanionMotion(companion, store.getState().mood);
   bindCompanionTap(companion, {
@@ -132,6 +144,10 @@ async function bootScene(app, panelManager, statusText, soulTalkController) {
       return triggerCompanionTouchMotion(companionMotionController, interactionResult);
     }
   });
+
+  if (readSceneEditorFlag()) {
+    enableEditorMode(app.stage);
+  }
 
   let t = 0;
   app.ticker.add((ticker) => {
@@ -143,12 +159,15 @@ async function bootScene(app, panelManager, statusText, soulTalkController) {
     }, {
       canAmbientWalk: !panelManager.isPanelOpen()
     });
-    platform.alpha = 0.76 + Math.sin(t * 1.4) * 0.03;
+    if (!platform.__sceneEditorOriginalAlpha) {
+      platform.alpha = 0.76 + Math.sin(t * 1.4) * 0.03;
+    }
 
     if (companion.__accentFlame) {
       companion.__accentFlame.alpha = 0.7 + Math.sin(t * 5) * 0.25;
     }
 
+    updateEnvironmentLayer(environmentLayer, ticker);
     animateParticles(particles, t, ticker);
     updateEnvironmentEffects(activeEnvironmentEffects, ticker);
   });

@@ -1,0 +1,7 @@
+Use the uploaded stage reference image and the Nexus Link LakeNightCamp_v2 foundation base style as visual references for art direction only. Create a single standalone transparent PNG object: a glowing crystal cluster prop.
+
+Object: several blue-purple crystals emerging from a small shared base, in 2.5D top-down diorama perspective matching the generated mobile habitat bases. The crystals should be uneven heights, faceted, translucent, and softly glowing with faint magical energy. Use blue, violet, cyan #00CED1 highlights, and a small amount of internal pale light. The object should feel mystical and Cyber-Taoist but natural enough for a forest lake camp.
+
+Style: clean HD hand-painted 2D game prop, modern pixel-inspired crispness without chunky retro pixels, moody magical habitat aesthetic, readable silhouette for mobile.
+
+Strict transparent prop rules: transparent background with alpha only; no checkerboard drawn into the image, no lake, no sand/soil patch, no grass background, no forest, no campfire, no magic circle, no characters, no UI, no labels, no text. Keep clean antialiased edges, object centered with padding, bottom edge clean with no extra environment background color.

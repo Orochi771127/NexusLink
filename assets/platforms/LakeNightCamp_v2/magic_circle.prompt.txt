@@ -1,0 +1,7 @@
+Use the uploaded stage reference image and the Nexus Link LakeNightCamp_v2 foundation base style as visual references for art direction only. Create a single standalone transparent PNG object: a Cyber-Taoist magic circle anchor platform.
+
+Object: a low circular stone dais / anchor platform with a 2.5D top-down diorama perspective matching the generated mobile habitat bases. It should look like a solid stone circular platform large enough for one small cat creature to stand on. The top surface has glowing Cyber-Taoist rune engravings, subtle circular geometry, and gentle sacred-tech energy. Use faint neon cyan #00CED1 and warm energy yellow #FFD858 glow, restrained and cozy, not combat-like.
+
+Style: clean HD hand-painted 2D game prop, modern pixel-inspired crispness without chunky retro pixels, moody Cyber-Taoism atmosphere, matching the Lake Night Camp v2 background.
+
+Strict transparent prop rules: transparent background with alpha only; no checkerboard drawn into the image, no lake, no forest floor, no sand, no grass, no scene background, no shadow patch that looks like terrain, no characters, no UI, no labels, no text. Keep the full object centered with clean antialiased edges and enough padding on all sides. Bottom edge should be clean with no extra environment color.
