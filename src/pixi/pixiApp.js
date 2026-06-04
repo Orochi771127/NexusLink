@@ -1,7 +1,32 @@
+import EnvironmentController from "../engine/environmentController.js";
+
 export const WORLD_WIDTH = 390;
 export const WORLD_HEIGHT = 844;
 export const COMPANION_GROUND_Y = 485;
 export const PLATFORM_Y = 540;
+
+export const SCENE_ASSETS = Object.freeze({
+  bgDay: "./assets/backgrounds/LakeNightCamp_v2/bg_day_base.png",
+  bgNight: "./assets/backgrounds/LakeNightCamp_v2/bg_night_base.png",
+  campfire: "./assets/props/LakeNightCamp_v2/prop_campfire.png",
+  crystal: "./assets/props/LakeNightCamp_v2/prop_crystal.png",
+  sun: "./assets/props/LakeNightCamp_v2/celestial_sun.png",
+  moon: "./assets/props/LakeNightCamp_v2/celestial_moon.png"
+});
+
+const SCENE_LAYER_NAMES = [
+  "layerBackground",
+  "layerCelestial",
+  "layerPlatform",
+  "layerEntity",
+  "layerForeground"
+];
+const SCREEN_BLEND_KEYWORDS = ["campfire", "crystal", "sun", "moon"];
+const CELESTIAL_START_X = -42;
+const CELESTIAL_END_X = WORLD_WIDTH + 42;
+const CELESTIAL_BASE_Y = 180;
+const CELESTIAL_ARC_HEIGHT = 118;
+const CAMPFIRE_FADE_SPEED = 0.075;
 
 export async function createPixiApp(gameRoot) {
   if (!window.PIXI) {
@@ -23,12 +48,84 @@ export async function createPixiApp(gameRoot) {
 
 export function createWorld(app) {
   const world = new PIXI.Container();
+  world.name = "world";
+  world.__sceneLayers = createSceneLayers(world);
   app.stage.addChild(world);
   return world;
 }
 
+export function getSceneLayers(world) {
+  return world.__sceneLayers;
+}
+
+export async function createEnvironmentLayer(layers) {
+  const bgDay = await createSceneSprite("bg_day", SCENE_ASSETS.bgDay, {
+    width: WORLD_WIDTH,
+    height: WORLD_HEIGHT,
+    editorEnabled: false
+  });
+  layers.layerBackground.addChild(bgDay);
+
+  const bgNight = await createSceneSprite("bg_night", SCENE_ASSETS.bgNight, {
+    width: WORLD_WIDTH,
+    height: WORLD_HEIGHT,
+    editorEnabled: false
+  });
+  bgNight.alpha = 0;
+  layers.layerBackground.addChild(bgNight);
+
+  const sun = await createSceneSprite("sun", SCENE_ASSETS.sun, {
+    anchor: 0.5,
+    targetWidth: 78,
+    x: CELESTIAL_START_X,
+    y: CELESTIAL_BASE_Y,
+    editorEnabled: true
+  });
+  layers.layerCelestial.addChild(sun);
+
+  const moon = await createSceneSprite("moon", SCENE_ASSETS.moon, {
+    anchor: 0.5,
+    targetWidth: 78,
+    x: CELESTIAL_START_X,
+    y: CELESTIAL_BASE_Y,
+    editorEnabled: true
+  });
+  layers.layerCelestial.addChild(moon);
+
+  const campfire = await createScenePropContainer("campfire", SCENE_ASSETS.campfire, {
+    x: WORLD_WIDTH * 0.73,
+    y: 592,
+    targetWidth: 92
+  });
+  campfire.container.alpha = 0;
+  layers.layerForeground.addChild(campfire.container);
+
+  const crystal = await createSceneSprite("crystal", SCENE_ASSETS.crystal, {
+    anchor: 0.5,
+    targetWidth: 76,
+    x: WORLD_WIDTH * 0.84,
+    y: 446,
+    editorEnabled: true
+  });
+  crystal.alpha = 0.86;
+  layers.layerForeground.addChild(crystal);
+
+  const environmentLayer = {
+    bgDay,
+    bgNight,
+    sun,
+    moon,
+    campfire,
+    crystal
+  };
+
+  updateEnvironmentLayer(environmentLayer, { deltaMS: 0 });
+  return environmentLayer;
+}
+
 export function createParticles() {
   const layer = new PIXI.Container();
+  layer.name = "ambient_particles";
   for (let i = 0; i < 44; i += 1) {
     const p = new PIXI.Graphics();
     const isWarm = i % 5 === 0;
@@ -49,4 +146,168 @@ export function animateParticles(particles, timeSeconds, ticker) {
     particle.alpha = 0.25 + Math.sin(timeSeconds + index) * 0.12;
     if (particle.y < 110) particle.y = 760;
   });
+}
+
+export function updateEnvironmentLayer(environmentLayer, ticker) {
+  if (!environmentLayer) return;
+
+  const state = EnvironmentController.getEnvironmentState();
+  const nightAlpha = state.nightAlpha;
+  environmentLayer.bgNight.alpha = nightAlpha;
+
+  updateCelestialSprite(environmentLayer.sun, state.celestialProgress, 1 - nightAlpha);
+  updateCelestialSprite(environmentLayer.moon, state.celestialProgress, nightAlpha);
+  updateCampfireLayer(environmentLayer.campfire, nightAlpha, ticker);
+  if (!environmentLayer.crystal.__sceneEditorSelected) {
+    environmentLayer.crystal.alpha = 0.58 + nightAlpha * 0.36;
+  }
+}
+
+function createSceneLayers(world) {
+  return Object.fromEntries(
+    SCENE_LAYER_NAMES.map((name) => {
+      const layer = new PIXI.Container();
+      layer.name = name;
+      layer.eventMode = "passive";
+      world.addChild(layer);
+      return [name, layer];
+    })
+  );
+}
+
+async function createSceneSprite(id, texturePath, options = {}) {
+  const texture = await PIXI.Assets.load(texturePath);
+  const sprite = new PIXI.Sprite(texture);
+  sprite.name = id;
+  sprite.anchor?.set?.(options.anchor ?? 0);
+  sprite.x = options.x ?? 0;
+  sprite.y = options.y ?? 0;
+
+  if (options.width && options.height) {
+    sprite.width = options.width;
+    sprite.height = options.height;
+  } else if (options.targetWidth) {
+    const scale = options.targetWidth / sprite.width;
+    sprite.scale.set(scale);
+  }
+
+  applySceneBlendMode(sprite, id);
+  registerSceneEditorObject(sprite, {
+    id,
+    texturePath,
+    editorEnabled: Boolean(options.editorEnabled)
+  });
+  return sprite;
+}
+
+async function createScenePropContainer(id, texturePath, options = {}) {
+  const sprite = await createSceneSprite(`${id}_sprite`, texturePath, {
+    anchor: 0.5,
+    targetWidth: options.targetWidth,
+    editorEnabled: false
+  });
+  sprite.name = id;
+
+  const container = new PIXI.Container();
+  container.name = id;
+  container.x = options.x ?? 0;
+  container.y = options.y ?? 0;
+  container.addChild(sprite);
+  registerSceneEditorObject(container, {
+    id,
+    texturePath,
+    editorEnabled: true
+  });
+
+  return {
+    container,
+    sprite,
+    sparks: [],
+    sparkCooldownMs: 0
+  };
+}
+
+export function registerSceneEditorObject(displayObject, metadata) {
+  displayObject.__sceneEditor = {
+    id: metadata.id,
+    texturePath: metadata.texturePath,
+    editorEnabled: Boolean(metadata.editorEnabled)
+  };
+  displayObject.label = metadata.id;
+  displayObject.eventMode = metadata.editorEnabled ? "static" : "none";
+  if (metadata.editorEnabled) {
+    displayObject.cursor = "move";
+    if (typeof window !== "undefined") {
+      window.__NEXUS_SCENE_EDITOR_OBJECTS = window.__NEXUS_SCENE_EDITOR_OBJECTS || [];
+      if (!window.__NEXUS_SCENE_EDITOR_OBJECTS.includes(displayObject)) {
+        window.__NEXUS_SCENE_EDITOR_OBJECTS.push(displayObject);
+      }
+    }
+  }
+  return displayObject;
+}
+
+export function applySceneBlendMode(displayObject, name) {
+  const normalizedName = String(name || displayObject?.name || "").toLowerCase();
+  const isScreenObject = SCREEN_BLEND_KEYWORDS.some((keyword) => normalizedName.includes(keyword));
+  if (!isScreenObject) {
+    displayObject.blendMode = PIXI.BLEND_MODES?.NORMAL ?? "normal";
+    return displayObject;
+  }
+
+  displayObject.blendMode = PIXI.BLEND_MODES?.SCREEN ?? "screen";
+  return displayObject;
+}
+
+function updateCelestialSprite(sprite, progress, targetAlpha) {
+  if (!sprite.__sceneEditorPinned) {
+    sprite.x = CELESTIAL_START_X + (CELESTIAL_END_X - CELESTIAL_START_X) * progress;
+    sprite.y = CELESTIAL_BASE_Y - Math.sin(progress * Math.PI) * CELESTIAL_ARC_HEIGHT;
+  }
+  if (!sprite.__sceneEditorSelected) {
+    sprite.alpha = Math.max(0, Math.min(1, targetAlpha));
+  }
+}
+
+function updateCampfireLayer(campfire, nightAlpha, ticker) {
+  const targetAlpha = nightAlpha > 0.5 ? 1 : 0;
+  if (!campfire.container.__sceneEditorSelected) {
+    campfire.container.alpha += (targetAlpha - campfire.container.alpha) * CAMPFIRE_FADE_SPEED;
+  }
+
+  const deltaMS = ticker?.deltaMS || 16.67;
+  campfire.sparkCooldownMs -= deltaMS;
+  if (campfire.container.alpha > 0.25 && campfire.sparkCooldownMs <= 0) {
+    emitCampfireSpark(campfire);
+    campfire.sparkCooldownMs = 70 + Math.random() * 90;
+  }
+
+  for (let index = campfire.sparks.length - 1; index >= 0; index -= 1) {
+    const spark = campfire.sparks[index];
+    spark.__ageMs += deltaMS;
+    const progress = Math.min(1, spark.__ageMs / spark.__lifetimeMs);
+    spark.x += spark.__vx * (deltaMS / 16.67);
+    spark.y += spark.__vy * (deltaMS / 16.67);
+    spark.alpha = (1 - progress) * campfire.container.alpha;
+    spark.scale.set(0.7 + progress * 0.45);
+
+    if (progress >= 1) {
+      spark.parent?.removeChild(spark);
+      spark.destroy();
+      campfire.sparks.splice(index, 1);
+    }
+  }
+}
+
+function emitCampfireSpark(campfire) {
+  const spark = new PIXI.Graphics();
+  spark.circle(0, 0, 1.4 + Math.random() * 1.6).fill({ color: 0xffd858, alpha: 0.86 });
+  spark.x = -5 + Math.random() * 10;
+  spark.y = -28 + Math.random() * 8;
+  spark.__vx = -0.32 + Math.random() * 0.64;
+  spark.__vy = -0.9 - Math.random() * 0.9;
+  spark.__ageMs = 0;
+  spark.__lifetimeMs = 520 + Math.random() * 380;
+  campfire.container.addChild(spark);
+  campfire.sparks.push(spark);
 }

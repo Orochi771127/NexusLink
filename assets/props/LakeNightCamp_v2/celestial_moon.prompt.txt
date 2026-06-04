@@ -1,0 +1,7 @@
+Use the uploaded stage reference image as style reference for the moon material, cool bloom, and mystical night atmosphere only. Create a standalone celestial moon sprite for PixiJS dynamic rendering.
+
+Object: one large centered full moon, cold blue-white color, clear crater and mare details, soft hand-painted surface texture, subtle cool cyan-blue rim light, gentle bloom halo around the moon. The moon should be circular and readable at game UI/sprite scale, with no moonbeam and no scene elements.
+
+Style: clean HD hand-painted 2D sprite, modern pixel-inspired clarity without chunky retro pixels, matching Nexus Link Lake Night Camp v2 atmosphere.
+
+Strict output: square 512x512 canvas, moon centered, transparent background with alpha, no sky, no stars, no clouds, no forest, no lake, no ground, no UI, no text, no labels, no checkerboard drawn into the image. Leave safe transparent padding around the bloom so the halo is not clipped.

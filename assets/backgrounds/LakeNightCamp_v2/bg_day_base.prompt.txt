@@ -1,0 +1,9 @@
+Use the visible revised night base image as the exact visual reference for terrain geometry, camera framing, vertical mobile composition, side-view diorama perspective, pine forest layout, mountain silhouettes, small distant lake position, shore/forest-floor shape, and open lower-middle placement area. Create a matching DAY / early morning foundation-only 2D game background for Nexus Link.
+
+Scene: the same 1080x1920 vertical mobile-first forest lake camp foundation background, but during bright calm morning/day. Keep the lake water range small: the lake should be visible only far away in the mid-background as a narrow daylight-reflective water band glimpsed through the forest. Do not let the lake occupy the mid-lower or foreground area. Most of the lower half should be clean sandy shore, compact earth, subtle forest floor, low rocks, and natural terrain suitable for later separate props. The sky is bright with soft morning haze, distant mountains are visible, and the forest keeps the same framing.
+
+Style: clean HD hand-painted 2D game art, modern pixel-inspired readability without chunky retro pixel art, calm cozy digital habitat, gentle Cyber-Taoism atmosphere through subtle color harmony only. Soft daylight blues, pale gold ambient warmth, clean distant lake reflection, low visual noise.
+
+STRICT FOUNDATION RULE: absolutely do not include the sun, moon, magic circle, stone dais, campfire, firelight source, crystals, lanterns, logs, stump, kettle, foreground props, characters, creatures, UI, text, labels, symbols, interactive objects, or runtime-controlled props. This must be pure stable scenery only: daylight sky, distant mountains, forest, a SMALL DISTANT lake, shore, mist, and terrain.
+
+Technical: PNG, exact 1080x1920, strict 9:16 mobile composition, no baked gameplay objects, no focal prop in the lower-middle area.

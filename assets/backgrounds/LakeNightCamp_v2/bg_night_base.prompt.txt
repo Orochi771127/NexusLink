@@ -1,0 +1,9 @@
+Use the visible current night base image as visual reference for style, vertical mobile framing, pine forest, distant mountain silhouettes, clean HD hand-painted Cyber-Taoism mood, and open lower-middle placement area. Regenerate a NEW night foundation-only base with the lake water range much smaller.
+
+Scene: a 1080x1920 vertical mobile-first night lake camp foundation background. Keep a starry dark blue/purple sky at top, distant mountains and pine forest in the upper-middle, and a small calm lake visible only far away in the mid-background as a narrow reflective water band. The lake should look like a distant lake glimpsed through the forest, not a large body of water occupying the foreground. Replace most of the previous mid-lower water area with clean sandy shore, compact earth, subtle forest floor, low rocks, and natural terrain suitable for later separate props. Depth progresses upward like a side-view diorama.
+
+Style: clean HD hand-painted 2D game art, modern pixel-inspired readability without chunky retro pixel art, moody atmospheric Cyber-Taoism feeling through palette and ambience only. Subtle cyan #00CED1 mist near the distant lake, soft deep blue night ambience, low visual noise.
+
+STRICT FOUNDATION RULE: completely remove and do not include the moon, moonbeam, sun, magic circle, stone dais, campfire, firelight source, crystals, lanterns, logs, stump, kettle, foreground props, characters, creatures, UI, text, labels, symbols, or any interactive/runtime-controlled object. This is pure stable scenery only: sky, distant mountains, forest, a SMALL DISTANT lake, shore, mist, and terrain.
+
+Technical: PNG, exact 1080x1920, strict 9:16 mobile composition, no baked gameplay objects, no focal prop in the lower-middle area.
