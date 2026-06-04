@@ -1,4 +1,4 @@
-import { COMPANION_GROUND_Y, WORLD_HEIGHT, WORLD_WIDTH } from "./pixiApp.js";
+import { COMPANION_GROUND_Y, registerSceneEditorObject, WORLD_HEIGHT, WORLD_WIDTH } from "./pixiApp.js";
 import { FALLBACK_CREATURE } from "../engine/personalityProfile.js";
 import { createAnimatedCompanionNode, loadGreyshadeCatAnimationPack } from "./spriteSheetAnimationLoader.js";
 
@@ -11,7 +11,7 @@ export async function createCreatureNode(creature, statusText) {
     const animatedCompanion = createAnimatedCompanionNode(animationPack, creature);
     if (animatedCompanion) {
       statusText.textContent = `${creature.name}已載入 idle_calm 動畫棲地。`;
-      return animatedCompanion;
+      return registerCompanionEditorObject(animatedCompanion);
     }
     statusText.textContent = `${creature.name}動畫載入失敗，已保留預設動態。`;
   }
@@ -20,11 +20,11 @@ export async function createCreatureNode(creature, statusText) {
     const texture = await PIXI.Assets.load(creature.image);
     const spriteCreature = createCreatureSprite(texture, creature);
     statusText.textContent = `${creature.name}已進入夜間湖畔棲地。`;
-    return spriteCreature;
+    return registerCompanionEditorObject(spriteCreature);
   } catch (error) {
     console.warn("Creature image load failed, fallback to placeholder:", error);
     statusText.textContent = `${creature.name}圖片載入失敗，已改用預設造型。`;
-    return createCreaturePlaceholder(creature);
+    return registerCompanionEditorObject(createCreaturePlaceholder(creature));
   }
 }
 
@@ -62,6 +62,14 @@ export function bindCompanionTap(companion, { isInteractionBlocked, onTouch }) {
 function createTouchAnimationTimeout() {
   return new Promise((resolve) => {
     setTimeout(resolve, TOUCH_ANIMATION_LOCK_TIMEOUT_MS);
+  });
+}
+
+function registerCompanionEditorObject(companion) {
+  return registerSceneEditorObject(companion, {
+    id: "companion",
+    texturePath: "dynamic_creature",
+    editorEnabled: true
   });
 }
 

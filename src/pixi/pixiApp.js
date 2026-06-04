@@ -10,6 +10,7 @@ export const PLATFORM_Y = 540;
 export const SCENE_ASSETS = Object.freeze({
   bgDay: "./assets/backgrounds/LakeNightCamp_v2/bg_day_base.png",
   bgNight: "./assets/backgrounds/LakeNightCamp_v2/bg_night_base.png",
+  magicCircle: "./assets/platforms/LakeNightCamp_v2/magic_circle.png",
   campfire: "./assets/props/LakeNightCamp_v2/prop_campfire.png",
   crystal: "./assets/props/LakeNightCamp_v2/prop_crystal.png",
   sun: "./assets/props/LakeNightCamp_v2/celestial_sun.png",
@@ -23,12 +24,12 @@ const SCENE_LAYER_NAMES = [
   "layerEntity",
   "layerForeground"
 ];
-const SCREEN_BLEND_KEYWORDS = ["campfire", "crystal", "sun", "moon"];
 const CELESTIAL_START_X = -42;
 const CELESTIAL_END_X = WORLD_WIDTH + 42;
 const CELESTIAL_BASE_Y = 180;
 const CELESTIAL_ARC_HEIGHT = 118;
 const CAMPFIRE_FADE_SPEED = 0.075;
+const MAGIC_CIRCLE_TARGET_WIDTH = 252;
 const MIN_SCREEN_WIDTH = 1;
 const MIN_SCREEN_HEIGHT = 1;
 
@@ -100,6 +101,16 @@ export async function createEnvironmentLayer(layers) {
   });
   layers.layerCelestial.addChild(moon);
 
+  const magicCircle = await createSceneSprite("magic_circle", SCENE_ASSETS.magicCircle, {
+    anchor: 0.5,
+    targetWidth: MAGIC_CIRCLE_TARGET_WIDTH,
+    x: WORLD_WIDTH / 2,
+    y: WORLD_HEIGHT * 0.7,
+    editorEnabled: true
+  });
+  magicCircle.alpha = 0.76;
+  layers.layerPlatform.addChild(magicCircle);
+
   const campfire = await createScenePropContainer("campfire", SCENE_ASSETS.campfire, {
     x: WORLD_WIDTH * 0.73,
     y: 592,
@@ -123,6 +134,7 @@ export async function createEnvironmentLayer(layers) {
     bgNight,
     sun,
     moon,
+    magicCircle,
     campfire,
     crystal
   };
@@ -162,13 +174,14 @@ export function updateEnvironmentLayer(environmentLayer, ticker) {
 
   const state = EnvironmentController.getEnvironmentState();
   const nightAlpha = state.nightAlpha;
+  const isEditor = isSceneEditorMode();
   environmentLayer.bgNight.alpha = nightAlpha;
 
   updateCelestialSprite(environmentLayer.sun, state.celestialProgress, 1 - nightAlpha);
   updateCelestialSprite(environmentLayer.moon, state.celestialProgress, nightAlpha);
   updateCampfireLayer(environmentLayer.campfire, nightAlpha, ticker);
   if (!environmentLayer.crystal.__sceneEditorSelected) {
-    environmentLayer.crystal.alpha = 0.58 + nightAlpha * 0.36;
+    environmentLayer.crystal.alpha = isEditor ? 1 : 0.58 + nightAlpha * 0.36;
   }
 }
 
@@ -323,14 +336,7 @@ export function registerSceneEditorObject(displayObject, metadata) {
 }
 
 export function applySceneBlendMode(displayObject, name) {
-  const normalizedName = String(name || displayObject?.name || "").toLowerCase();
-  const isScreenObject = SCREEN_BLEND_KEYWORDS.some((keyword) => normalizedName.includes(keyword));
-  if (!isScreenObject) {
-    displayObject.blendMode = PIXI.BLEND_MODES?.NORMAL ?? "normal";
-    return displayObject;
-  }
-
-  displayObject.blendMode = PIXI.BLEND_MODES?.SCREEN ?? "screen";
+  displayObject.blendMode = PIXI.BLEND_MODES?.NORMAL ?? "normal";
   return displayObject;
 }
 
@@ -345,8 +351,11 @@ function updateCelestialSprite(sprite, progress, targetAlpha) {
 }
 
 function updateCampfireLayer(campfire, nightAlpha, ticker) {
-  const targetAlpha = nightAlpha > 0.5 ? 1 : 0;
-  if (!campfire.container.__sceneEditorSelected) {
+  const isEditor = isSceneEditorMode();
+  const targetAlpha = isEditor || nightAlpha > 0.5 ? 1 : 0;
+  if (isEditor) {
+    campfire.container.alpha = 1;
+  } else if (!campfire.container.__sceneEditorSelected) {
     campfire.container.alpha += (targetAlpha - campfire.container.alpha) * CAMPFIRE_FADE_SPEED;
   }
 
@@ -385,4 +394,8 @@ function emitCampfireSpark(campfire) {
   spark.__lifetimeMs = 520 + Math.random() * 380;
   campfire.container.addChild(spark);
   campfire.sparks.push(spark);
+}
+
+function isSceneEditorMode() {
+  return typeof window !== "undefined" && window.location.search.includes("devSceneEditor=1");
 }
