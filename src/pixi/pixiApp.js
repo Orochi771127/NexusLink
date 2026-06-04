@@ -2,6 +2,8 @@ import EnvironmentController from "../engine/environmentController.js";
 
 export const WORLD_WIDTH = 390;
 export const WORLD_HEIGHT = 844;
+export const BACKGROUND_DESIGN_WIDTH = 1080;
+export const BACKGROUND_DESIGN_HEIGHT = 1920;
 export const COMPANION_GROUND_Y = 485;
 export const PLATFORM_Y = 540;
 
@@ -27,16 +29,19 @@ const CELESTIAL_END_X = WORLD_WIDTH + 42;
 const CELESTIAL_BASE_Y = 180;
 const CELESTIAL_ARC_HEIGHT = 118;
 const CAMPFIRE_FADE_SPEED = 0.075;
+const MIN_SCREEN_WIDTH = 1;
+const MIN_SCREEN_HEIGHT = 1;
 
 export async function createPixiApp(gameRoot) {
   if (!window.PIXI) {
     throw new Error("PixiJS is not available on window.PIXI");
   }
 
+  const initialSize = readGameRootSize(gameRoot);
   const app = new PIXI.Application();
   await app.init({
-    width: WORLD_WIDTH,
-    height: WORLD_HEIGHT,
+    width: initialSize.width,
+    height: initialSize.height,
     backgroundAlpha: 0,
     antialias: false,
     resolution: Math.min(window.devicePixelRatio || 1, 2),
@@ -49,8 +54,13 @@ export async function createPixiApp(gameRoot) {
 export function createWorld(app) {
   const world = new PIXI.Container();
   world.name = "world";
+  world.__sceneContainer = createSceneContainer(world);
   world.__sceneLayers = createSceneLayers(world);
+  world.__responsiveEnvironmentLayer = null;
+  world.__resizeScene = () => resizeWorld(app, world);
   app.stage.addChild(world);
+  window.addEventListener("resize", world.__resizeScene);
+  world.__resizeScene();
   return world;
 }
 
@@ -60,15 +70,13 @@ export function getSceneLayers(world) {
 
 export async function createEnvironmentLayer(layers) {
   const bgDay = await createSceneSprite("bg_day", SCENE_ASSETS.bgDay, {
-    width: WORLD_WIDTH,
-    height: WORLD_HEIGHT,
+    anchor: 0.5,
     editorEnabled: false
   });
   layers.layerBackground.addChild(bgDay);
 
   const bgNight = await createSceneSprite("bg_night", SCENE_ASSETS.bgNight, {
-    width: WORLD_WIDTH,
-    height: WORLD_HEIGHT,
+    anchor: 0.5,
     editorEnabled: false
   });
   bgNight.alpha = 0;
@@ -119,6 +127,7 @@ export async function createEnvironmentLayer(layers) {
     crystal
   };
 
+  registerResponsiveEnvironmentLayer(layers, environmentLayer);
   updateEnvironmentLayer(environmentLayer, { deltaMS: 0 });
   return environmentLayer;
 }
@@ -164,15 +173,81 @@ export function updateEnvironmentLayer(environmentLayer, ticker) {
 }
 
 function createSceneLayers(world) {
-  return Object.fromEntries(
-    SCENE_LAYER_NAMES.map((name) => {
-      const layer = new PIXI.Container();
-      layer.name = name;
-      layer.eventMode = "passive";
-      world.addChild(layer);
-      return [name, layer];
-    })
+  const layers = {};
+  SCENE_LAYER_NAMES.forEach((name) => {
+    const layer = new PIXI.Container();
+    layer.name = name;
+    layer.eventMode = "passive";
+
+    if (name === "layerBackground") {
+      world.addChildAt(layer, 0);
+    } else {
+      world.__sceneContainer.addChild(layer);
+    }
+
+    layers[name] = layer;
+  });
+  return layers;
+}
+
+function createSceneContainer(world) {
+  const sceneContainer = new PIXI.Container();
+  sceneContainer.name = "sceneContainer";
+  sceneContainer.eventMode = "passive";
+  world.addChild(sceneContainer);
+  return sceneContainer;
+}
+
+function registerResponsiveEnvironmentLayer(layers, environmentLayer) {
+  const world = layers.layerBackground?.parent;
+  if (!world) return;
+
+  world.__responsiveEnvironmentLayer = environmentLayer;
+  world.__resizeScene?.();
+}
+
+function resizeWorld(app, world) {
+  const nextSize = readGameRootSize(app.canvas?.parentElement);
+  if (app.screen.width !== nextSize.width || app.screen.height !== nextSize.height) {
+    app.renderer.resize(nextSize.width, nextSize.height);
+  }
+
+  resizeBackgroundCover(world.__responsiveEnvironmentLayer, app);
+  resizeSceneContainer(world.__sceneContainer, app);
+}
+
+function resizeBackgroundCover(environmentLayer, app) {
+  if (!environmentLayer) return;
+
+  const scale = Math.max(
+    app.screen.width / BACKGROUND_DESIGN_WIDTH,
+    app.screen.height / BACKGROUND_DESIGN_HEIGHT
   );
+  const x = app.screen.width / 2;
+  const y = app.screen.height / 2;
+
+  [environmentLayer.bgDay, environmentLayer.bgNight].forEach((background) => {
+    background.anchor.set(0.5);
+    background.scale.set(scale);
+    background.position.set(x, y);
+  });
+}
+
+function resizeSceneContainer(sceneContainer, app) {
+  if (!sceneContainer) return;
+
+  const scale = Math.max(app.screen.width / WORLD_WIDTH, app.screen.height / WORLD_HEIGHT);
+  sceneContainer.scale.set(scale);
+  sceneContainer.x = (app.screen.width - WORLD_WIDTH * scale) / 2;
+  sceneContainer.y = app.screen.height - WORLD_HEIGHT * scale;
+}
+
+function readGameRootSize(gameRoot) {
+  const bounds = gameRoot?.getBoundingClientRect?.();
+  return {
+    width: Math.max(MIN_SCREEN_WIDTH, Math.round(bounds?.width || window.innerWidth || WORLD_WIDTH)),
+    height: Math.max(MIN_SCREEN_HEIGHT, Math.round(bounds?.height || window.innerHeight || WORLD_HEIGHT))
+  };
 }
 
 async function createSceneSprite(id, texturePath, options = {}) {
