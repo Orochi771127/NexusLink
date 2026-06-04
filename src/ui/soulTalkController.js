@@ -1,11 +1,15 @@
 import { qs } from "../utils/dom.js";
 
+const DEFAULT_STATUS_TEXT = "SOUL TALK / 靈魂聖域";
+const DEFAULT_PREVIEW_TEXT = "我在這裡，安靜地看著你。";
+
 export function createSoulTalkController({ store, saveCurrentState }) {
   const chatLog = qs("#chat-log");
   const messageInput = qs("#message-input");
   const sendButton = qs("#send-button");
   const soulTalkPreview = qs("#soul-talk-preview");
   const soulTalkModal = qs(".soul-talk-modal");
+  const statusText = qs("#status-text");
   let currentCreature = null;
   let waveformShell = null;
   let thinkingTimer = null;
@@ -32,7 +36,9 @@ export function createSoulTalkController({ store, saveCurrentState }) {
     });
 
     messageInput.addEventListener("focus", () => setSoulTalkState("active"));
-    messageInput.addEventListener("input", () => setSoulTalkState(messageInput.value.trim() ? "active" : "idle"));
+    messageInput.addEventListener("input", () => {
+      setSoulTalkState(messageInput.value.trim() ? "active" : "idle");
+    });
     messageInput.addEventListener("blur", () => setSoulTalkState("idle"));
   }
 
@@ -50,6 +56,7 @@ export function createSoulTalkController({ store, saveCurrentState }) {
 
   function handlePlayerMessage(message) {
     setSoulTalkState("thinking");
+    setStatusText("正在聆聽心核回聲...");
     addChat("player", message);
 
     let result;
@@ -66,7 +73,7 @@ export function createSoulTalkController({ store, saveCurrentState }) {
         state.mood = "defensive";
       } else if (state.energy <= 2) {
         state.mood = "tired";
-      } else if (/累|悶|難過|不想|孤單|寂寞/.test(message)) {
+      } else if (/謝謝|安靜|陪我|晚安|休息/.test(message)) {
         state.mood = "calm";
         state.trust += 1;
       } else {
@@ -91,7 +98,7 @@ export function createSoulTalkController({ store, saveCurrentState }) {
     if (waveformShell || !soulTalkModal) return;
 
     waveformShell = document.createElement("section");
-    waveformShell.className = "soul-waveform-panel";
+    waveformShell.className = "soul-talk-waveform";
     waveformShell.setAttribute("aria-label", "Soul Talk listening waveform");
     waveformShell.innerHTML = `
       <div class="soul-waveform-copy">
@@ -109,6 +116,12 @@ export function createSoulTalkController({ store, saveCurrentState }) {
       </div>
     `;
 
+    const copy = waveformShell.querySelector(".soul-waveform-copy");
+    if (statusText && copy) {
+      statusText.textContent = statusText.textContent.trim() || DEFAULT_STATUS_TEXT;
+      copy.appendChild(statusText);
+    }
+
     soulTalkModal.insertBefore(waveformShell, chatLog);
     setSoulTalkState("idle");
   }
@@ -119,6 +132,11 @@ export function createSoulTalkController({ store, saveCurrentState }) {
     soulTalkModal.classList.toggle("is-listening", state === "active");
     soulTalkModal.classList.toggle("is-thinking", state === "thinking");
     soulTalkModal.classList.toggle("is-idle", state === "idle");
+  }
+
+  function setStatusText(text) {
+    if (!statusText) return;
+    statusText.textContent = text || DEFAULT_STATUS_TEXT;
   }
 
   function addChat(role, text) {
@@ -134,7 +152,7 @@ export function createSoulTalkController({ store, saveCurrentState }) {
     chatLog.innerHTML = "";
     const visibleHistory = state.chatHistory.slice(-12);
     const lastItem = state.chatHistory[state.chatHistory.length - 1];
-    soulTalkPreview.textContent = state.reactionPreview || (lastItem ? lastItem.text : "我在這裡，安靜地看著你。");
+    soulTalkPreview.textContent = state.reactionPreview || (lastItem ? lastItem.text : DEFAULT_PREVIEW_TEXT);
 
     for (const item of visibleHistory) {
       const line = document.createElement("div");
@@ -143,9 +161,10 @@ export function createSoulTalkController({ store, saveCurrentState }) {
       if (role === "player") {
         line.textContent = `你：${item.text}`;
       } else if (role === "system") {
-        line.textContent = `聖域：${item.text}`;
+        line.textContent = `系統：${item.text}`;
       } else {
-        line.textContent = `${currentCreature.name}：${item.text}`;
+        const name = currentCreature?.name || "夥伴";
+        line.textContent = `${name}：${item.text}`;
       }
       chatLog.appendChild(line);
     }
@@ -158,14 +177,15 @@ export function createSoulTalkController({ store, saveCurrentState }) {
     focusInput,
     openSoulTalk,
     addChat,
-    renderChat
+    renderChat,
+    setStatusText
   };
 }
 
 function mockAIResponse(message, repeated, energy) {
-  if (repeated) return "你剛剛一直重複同一句話……我有點不安。我想慢一點。";
-  if (energy <= 1) return "我有點累了。可以陪我安靜待一下嗎？";
-  if (/累|悶|難過|不想|孤單|寂寞/.test(message)) return "今天的空氣好像有點重。我先不吵你，你可以在這裡待一下。";
-  if (/摸|摸摸|陪/.test(message)) return "嗯……火變得比較暖了。你還在，這件事我有感覺到。";
-  return "我聽見了。這句話會留在火光裡一小段時間。";
+  if (repeated) return "我聽見同一句話反覆出現。先一起慢慢呼吸，好嗎？";
+  if (energy <= 1) return "我有點累了，可以陪我安靜待一下嗎？";
+  if (/謝謝|安靜|陪我|晚安|休息/.test(message)) return "謝謝你把聲音放輕。我會在這裡，陪你把心慢慢安放。";
+  if (/探索|去哪|外面/.test(message)) return "湖面上有微光在移動，也許那是下一段記憶的入口。";
+  return "我接住你的訊號了。讓我們把它變成一點更穩定的光。";
 }

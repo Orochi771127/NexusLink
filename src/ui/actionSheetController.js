@@ -10,6 +10,7 @@ export function createActionSheetController({ soulTalkController, saveCurrentSta
   function bind() {
     bottomNavButtons.forEach((button) => {
       button.addEventListener("click", () => {
+        setActiveNav(button.dataset.action);
         openActionSheet(button.dataset.action);
       });
     });
@@ -50,6 +51,14 @@ export function createActionSheetController({ soulTalkController, saveCurrentSta
     soulTalkController.renderChat();
   }
 
+  function setActiveNav(action) {
+    bottomNavButtons.forEach((button) => {
+      const isActive = button.dataset.action === action;
+      button.classList.toggle("active", isActive);
+      button.setAttribute("aria-current", isActive ? "true" : "false");
+    });
+  }
+
   return {
     bind,
     openActionSheet
@@ -60,27 +69,27 @@ function getActionMeta(action) {
   const actions = {
     explore: {
       title: "探索",
-      copy: "選擇一個短探索行動；首頁保持乾淨，不展開永久工具列表。",
-      message: "森林深處有微弱的光。",
-      rows: ["前往湖畔深處", "查看今日事件", "搜尋微光記號"]
+      copy: "選擇一個探索節點，讓夥伴感知棲地周圍的微光。",
+      message: "探索訊號已展開",
+      rows: ["湖畔微光", "星圖回廊", "靜默晶簇"]
     },
     care: {
       title: "照顧",
-      copy: "用一次短照顧行動安撫夥伴，詳細互動留在 Soul Talk。",
-      message: "你靠近牠，牠的呼吸變得穩定。",
-      rows: ["摸摸", "餵食", "休息", "安撫"]
+      copy: "用低干擾的照顧動作回應夥伴，不在主畫面展開大型 HUD。",
+      message: "照顧行動已同步",
+      rows: ["輕聲安撫", "能量補給", "陪伴休息", "清理雜訊"]
     },
     grow: {
       title: "成長",
-      copy: "查看一次心核同步提示，不在首頁展開大型 HUD。",
-      message: "心核頻率正在緩慢同步。",
-      rows: ["查看同步率", "進化預覽", "能力培養"]
+      copy: "查看一次心核同步提示，讓成長節點保留在面板內完成。",
+      message: "成長節點已記錄",
+      rows: ["信任校準", "情緒穩定", "技能回路"]
     },
     memory: {
       title: "記憶",
-      copy: "保存目前片刻，並將細節留給角色詳情或 Soul Talk。",
-      message: "一段微弱的回憶被保存下來。",
-      rows: ["回憶紀錄", "對話片段", "羈絆節點"]
+      copy: "把目前的互動沉澱成一段記憶，並回寫到 Soul Talk。",
+      message: "記憶片段已收束",
+      rows: ["湖面片段", "今日回聲", "夥伴筆記"]
     }
   };
   return actions[action];

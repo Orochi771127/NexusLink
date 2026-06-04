@@ -3,16 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <title>Nexus Link / 心核連結</title>
+    <title>Nexus Link / 情緒棲地</title>
     <link rel="preload" as="image" href="./assets/backgrounds/BG_01_LakeNightCamp.png" />
-    <link rel="preload" as="image" href="./assets/ui/panels/UI_CoreHudCompact.png" />
-    <link rel="preload" as="image" href="./assets/ui/panels/UI_SoulTalkPanel_Compact.png" />
     <link rel="preload" as="image" href="./assets/platforms/Platform_LakeMagicCircle.png" />
     <link rel="preload" as="image" href="./assets/platforms/Platform_NexusAssessmentCircle.png" />
-    <link rel="preload" as="image" href="./assets/ui/buttons/BTN_Explore.png" />
-    <link rel="preload" as="image" href="./assets/ui/buttons/BTN_Care.png" />
-    <link rel="preload" as="image" href="./assets/ui/buttons/BTN_Growth.png" />
-    <link rel="preload" as="image" href="./assets/ui/buttons/BTN_Memory.png" />
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
@@ -35,12 +29,10 @@
         <section class="quick-hud" aria-label="Quick resources and actions">
           <div class="resource-pill" aria-label="coins">◎ 1,280</div>
           <div class="resource-pill" aria-label="crystals">◇ 36</div>
-          <button type="button" aria-label="notifications">🔔</button>
-          <button type="button" aria-label="mail">✉</button>
+          <button type="button" aria-label="notifications">!</button>
+          <button type="button" aria-label="mail">@</button>
           <button type="button" aria-label="settings">⚙</button>
         </section>
-
-        <div class="visually-hidden" id="status-text" aria-live="polite">正在建立心核連線...</div>
 
         <button class="soul-talk-launcher" type="button" data-panel-trigger="soulTalk" aria-label="開啟 Soul Talk">
           <span>
@@ -52,19 +44,19 @@
 
         <nav class="bottom-nav" aria-label="Primary actions">
           <button type="button" data-action="explore">
-            <span class="nav-art" aria-hidden="true"></span>
+            <div class="nav-icon-geo" aria-hidden="true"></div>
             <span class="nav-label">探索</span>
           </button>
           <button type="button" data-action="care">
-            <span class="nav-art" aria-hidden="true"></span>
+            <div class="nav-icon-geo" aria-hidden="true"></div>
             <span class="nav-label">照顧</span>
           </button>
           <button type="button" data-action="grow">
-            <span class="nav-art" aria-hidden="true"></span>
+            <div class="nav-icon-geo" aria-hidden="true"></div>
             <span class="nav-label">成長</span>
           </button>
           <button type="button" data-action="memory">
-            <span class="nav-art" aria-hidden="true"></span>
+            <div class="nav-icon-geo" aria-hidden="true"></div>
             <span class="nav-label">記憶</span>
           </button>
         </nav>
@@ -88,22 +80,22 @@
               </div>
             </div>
             <div class="core-stat-list" aria-label="Companion detail stats">
-              <div class="core-stat-row">
+              <div class="core-stat-row" data-stat="bond">
                 <span class="core-stat-label">BOND</span>
                 <div class="core-stat-bar"><span id="bond-fill" class="core-stat-fill"></span></div>
                 <strong id="bond-value" class="core-stat-value">0</strong>
               </div>
-              <div class="core-stat-row">
+              <div class="core-stat-row" data-stat="mood">
                 <span class="core-stat-label">MOOD</span>
                 <div class="core-stat-bar"><span id="mood-fill" class="core-stat-fill"></span></div>
                 <strong id="mood-value" class="core-stat-value">calm</strong>
               </div>
-              <div class="core-stat-row">
+              <div class="core-stat-row" data-stat="energy">
                 <span class="core-stat-label">ENERGY</span>
                 <div class="core-stat-bar"><span id="energy-fill" class="core-stat-fill"></span></div>
                 <strong id="energy-value" class="core-stat-value">10</strong>
               </div>
-              <div class="core-stat-row">
+              <div class="core-stat-row" data-stat="trust">
                 <span class="core-stat-label">TRUST</span>
                 <div class="core-stat-bar"><span id="trust-fill" class="core-stat-fill"></span></div>
                 <strong id="trust-value" class="core-stat-value">5</strong>
@@ -111,7 +103,7 @@
             </div>
           </section>
 
-          <section class="modal-panel soul-talk-modal" role="dialog" aria-modal="true" aria-labelledby="soul-talk-title" data-panel="soulTalk">
+          <section id="soul-talk-panel" class="modal-panel soul-talk-modal" role="dialog" aria-modal="true" aria-labelledby="soul-talk-title" data-panel="soulTalk">
             <header class="panel-header">
               <div>
                 <p>SOUL TALK</p>
@@ -119,6 +111,7 @@
               </div>
               <button type="button" class="panel-close" data-panel-close aria-label="關閉 Soul Talk">×</button>
             </header>
+            <p id="status-text" class="soul-status-text" aria-live="polite">SOUL TALK / 靈魂聖域</p>
             <div id="chat-log" class="chat-log" aria-live="polite"></div>
             <div class="chat-input-row">
               <input
