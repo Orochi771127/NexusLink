@@ -20,8 +20,8 @@ export function createHudController({ store, statusText }) {
     currentCreature = creature;
     foxName.textContent = creature.name;
     modalCreatureName.textContent = creature.name;
-    modalCreatureDescription.textContent = creature.description || "心核同步中的陪伴型 AI 小怪獸。";
-    messageInput.placeholder = `對${creature.name}說一句話...`;
+    modalCreatureDescription.textContent = creature.description || "Nexus 棲地中的 AI 心核夥伴。";
+    messageInput.placeholder = `對 ${creature.name} 說一句話...`;
   }
 
   function renderHUD() {
@@ -33,7 +33,9 @@ export function createHudController({ store, statusText }) {
     moodEl.textContent = state.mood;
     energyEl.textContent = state.energy;
     foxName.textContent = currentCreature.name;
-    statusText.textContent = `${currentCreature.name}正在湖畔安靜呼吸。`;
+    if (!statusText.textContent || statusText.textContent === "SOUL TALK / 靈魂聖域") {
+      statusText.textContent = `${currentCreature.name} 正在棲地中安靜呼吸。`;
+    }
 
     bondFill.style.width = `${clampPercent(state.bond, 24)}%`;
     trustFill.style.width = `${clampPercent(state.trust, 12)}%`;
@@ -56,7 +58,9 @@ function moodPercent(mood) {
     defensive: 24,
     tired: 38,
     calm: 62,
-    warm: 82
+    warm: 82,
+    happy: 90,
+    distant: 36
   };
   return moodMap[mood] || 50;
 }
