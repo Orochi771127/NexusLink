@@ -25,7 +25,6 @@ import {
   createWorld,
   updateEnvironmentLayer
 } from "./pixi/pixiApp.js";
-import { createPlatformNode } from "./pixi/platformRenderer.js";
 import { bindCompanionTap, createCreatureNode, positionCompanion } from "./pixi/companionRenderer.js";
 import { enableEditorMode, readSceneEditorFlag } from "./tools/sceneEditor.js";
 import {
@@ -129,9 +128,6 @@ async function bootScene(app, panelManager, statusText, soulTalkController) {
     activeEnvironmentEffects.push(createCrystalTouchEffect(environmentEffects, event));
   });
 
-  const platform = await createPlatformNode();
-  layers.layerPlatform.addChild(platform);
-
   const companion = await createCreatureNode(currentCreature, statusText);
   positionCompanion(companion);
   layers.layerEntity.addChild(companion);
@@ -159,8 +155,8 @@ async function bootScene(app, panelManager, statusText, soulTalkController) {
     }, {
       canAmbientWalk: !panelManager.isPanelOpen()
     });
-    if (!platform.__sceneEditorOriginalAlpha) {
-      platform.alpha = 0.76 + Math.sin(t * 1.4) * 0.03;
+    if (!environmentLayer.magicCircle.__sceneEditorOriginalAlpha) {
+      environmentLayer.magicCircle.alpha = 0.76 + Math.sin(t * 1.4) * 0.03;
     }
 
     if (companion.__accentFlame) {

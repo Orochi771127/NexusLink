@@ -1,4 +1,6 @@
 const EXPORT_BUTTON_ID = "dev-export-json";
+const RESET_BUTTON_ID = "dev-reset-objects";
+const EXPORT_MODAL_ID = "dev-export-modal";
 const SCALE_STEP = 0.06;
 const MIN_SCALE = 0.05;
 const MAX_SCALE = 6;
@@ -149,25 +151,26 @@ function injectExportButton(state) {
     button = document.createElement("button");
     button.id = EXPORT_BUTTON_ID;
     button.type = "button";
-    button.textContent = "匯出場景 JSON";
-    button.style.cssText = [
-      "position:fixed",
-      "right:12px",
-      "bottom:12px",
-      "z-index:9999",
-      "padding:8px 10px",
-      "border:1px solid rgba(0,206,209,0.55)",
-      "border-radius:6px",
-      "background:rgba(2,6,12,0.86)",
-      "color:#eafcff",
-      "font:12px system-ui,sans-serif",
-      "cursor:pointer"
-    ].join(";");
+    button.textContent = "匯出 JSON";
+    button.style.cssText = createDevButtonStyle({ right: 12 });
     document.body.appendChild(button);
   }
 
   button.hidden = false;
   button.onclick = () => exportSceneJson(state);
+
+  let resetButton = document.getElementById(RESET_BUTTON_ID);
+  if (!resetButton) {
+    resetButton = document.createElement("button");
+    resetButton.id = RESET_BUTTON_ID;
+    resetButton.type = "button";
+    resetButton.textContent = "物件歸中";
+    resetButton.style.cssText = createDevButtonStyle({ right: 112 });
+    document.body.appendChild(resetButton);
+  }
+
+  resetButton.hidden = false;
+  resetButton.onclick = () => resetControlledObjects(state);
 }
 
 async function exportSceneJson(state) {
@@ -177,6 +180,7 @@ async function exportSceneJson(state) {
   };
   const json = JSON.stringify(payload, null, 2);
   console.log("[NexusLink scene export]", json);
+  showExportModal(json);
 
   try {
     await navigator.clipboard?.writeText(json);
@@ -186,6 +190,135 @@ async function exportSceneJson(state) {
   }
 
   return json;
+}
+
+function showExportModal(json) {
+  document.getElementById(EXPORT_MODAL_ID)?.remove();
+
+  const modal = document.createElement("div");
+  modal.id = EXPORT_MODAL_ID;
+  modal.style.cssText = [
+    "z-index:10000",
+    "position:fixed",
+    "inset:0",
+    "background:rgba(0,0,0,0.8)",
+    "display:flex",
+    "align-items:stretch",
+    "justify-content:center",
+    "box-sizing:border-box",
+    "padding:16px"
+  ].join(";");
+
+  const panel = document.createElement("div");
+  panel.style.cssText = [
+    "width:min(720px,100%)",
+    "display:flex",
+    "flex-direction:column",
+    "gap:12px",
+    "box-sizing:border-box",
+    "padding:14px",
+    "border:1px solid rgba(0,206,209,0.45)",
+    "border-radius:8px",
+    "background:rgba(2,6,12,0.96)",
+    "color:#eafcff",
+    "font:14px system-ui,sans-serif"
+  ].join(";");
+
+  const textarea = document.createElement("textarea");
+  textarea.value = json;
+  textarea.readOnly = true;
+  textarea.style.cssText = [
+    "flex:1",
+    "min-height:60vh",
+    "width:100%",
+    "box-sizing:border-box",
+    "resize:none",
+    "padding:10px",
+    "border:1px solid rgba(141,238,255,0.42)",
+    "border-radius:6px",
+    "background:#02060c",
+    "color:#eafcff",
+    "font:12px ui-monospace,SFMono-Regular,Consolas,monospace",
+    "line-height:1.45"
+  ].join(";");
+
+  const actions = document.createElement("div");
+  actions.style.cssText = [
+    "display:flex",
+    "gap:8px",
+    "justify-content:flex-end",
+    "flex-wrap:wrap"
+  ].join(";");
+
+  const downloadButton = document.createElement("button");
+  downloadButton.type = "button";
+  downloadButton.textContent = "下載檔案";
+  downloadButton.style.cssText = createModalButtonStyle();
+  downloadButton.onclick = () => downloadSceneJson(json);
+
+  const closeButton = document.createElement("button");
+  closeButton.type = "button";
+  closeButton.textContent = "關閉面板";
+  closeButton.style.cssText = createModalButtonStyle();
+  closeButton.onclick = () => modal.remove();
+
+  actions.append(downloadButton, closeButton);
+  panel.append(textarea, actions);
+  modal.appendChild(panel);
+  document.body.appendChild(modal);
+  textarea.focus();
+  textarea.select();
+}
+
+function downloadSceneJson(json) {
+  const blob = new Blob([json], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "scene_lake.json";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}
+
+function resetControlledObjects(state) {
+  const x = roundSceneNumber(window.innerWidth / 2);
+  const y = roundSceneNumber(window.innerHeight / 2);
+
+  state.controlledObjects.forEach((object) => {
+    object.x = x;
+    object.y = y;
+    object.__sceneEditorPinned = true;
+  });
+}
+
+function createDevButtonStyle({ right }) {
+  return [
+    "position:fixed",
+    `right:${right}px`,
+    "bottom:12px",
+    "z-index:9999",
+    "padding:8px 10px",
+    "border:1px solid rgba(0,206,209,0.55)",
+    "border-radius:6px",
+    "background:rgba(2,6,12,0.86)",
+    "color:#eafcff",
+    "font:12px system-ui,sans-serif",
+    "cursor:pointer"
+  ].join(";");
+}
+
+function createModalButtonStyle() {
+  return [
+    "padding:9px 12px",
+    "border:1px solid rgba(0,206,209,0.55)",
+    "border-radius:6px",
+    "background:rgba(0,206,209,0.16)",
+    "color:#eafcff",
+    "font:13px system-ui,sans-serif",
+    "cursor:pointer"
+  ].join(";");
 }
 
 function serializeSceneObject(object) {
