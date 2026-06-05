@@ -287,10 +287,14 @@ function resetControlledObjects(state) {
   const y = roundSceneNumber(window.innerHeight / 2);
 
   state.controlledObjects.forEach((object) => {
-    object.x = x;
-    object.y = y;
-    object.__sceneEditorPinned = true;
+    resetObjectPosition(object, x, y);
   });
+}
+
+function resetObjectPosition(object, x, y) {
+  object.x = x;
+  object.y = y;
+  object.__sceneEditorPinned = true;
 }
 
 function createDevButtonStyle({ right }) {
