@@ -299,6 +299,7 @@ async function createScenePropContainer(id, texturePath, options = {}) {
     editorEnabled: false
   });
   sprite.name = id;
+  sprite.eventMode = "passive";
 
   const container = new PIXI.Container();
   container.name = id;
