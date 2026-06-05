@@ -113,7 +113,7 @@ async function bootScene(app, panelManager, statusText, soulTalkController) {
   const world = createWorld(app);
   const layers = getSceneLayers(world);
 
-  const environmentLayer = await createEnvironmentLayer(layers);
+  const environmentLayer = await createEnvironmentLayer(layers, app);
 
   const particles = createParticles();
   layers.layerForeground.addChild(particles);
@@ -129,7 +129,7 @@ async function bootScene(app, panelManager, statusText, soulTalkController) {
   });
 
   const companion = await createCreatureNode(currentCreature, statusText);
-  positionCompanion(companion);
+  positionCompanion(companion, app);
   layers.layerEntity.addChild(companion);
 
   companionMotionController = createCompanionMotion(companion, store.getState().mood);
