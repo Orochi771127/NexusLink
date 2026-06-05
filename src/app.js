@@ -1,4 +1,5 @@
 import { applyOfflineRecovery } from "./engine/offlineRecovery.js";
+import AudioManager from "./audio/audioManager.js";
 import { CURRENT_CREATURE_ID, FALLBACK_CREATURE, getTouchPersonality } from "./engine/personalityProfile.js";
 import { evaluateTouchReaction } from "./engine/touchReactionEngine.js";
 import { bindViewportVars, qs } from "./utils/dom.js";
@@ -47,6 +48,8 @@ bootstrap();
 async function bootstrap() {
   const statusText = qs("#status-text");
   bindViewportVars();
+  AudioManager.initUnlock();
+  bindAudioControls();
 
   const isDevPanelEnabled = readDevPanelFlag();
   const devQueryHooks = readDevQueryHooks();
@@ -107,6 +110,17 @@ async function bootstrap() {
     console.error(error);
     statusText.textContent = "場景初始化失敗，請重新整理頁面。";
   }
+}
+
+function bindAudioControls() {
+  const audioToggleButton = qs("#btn-audio-toggle");
+  if (!audioToggleButton) return;
+
+  audioToggleButton.classList.toggle("muted", AudioManager.isMuted);
+  audioToggleButton.addEventListener("click", () => {
+    const isMuted = AudioManager.toggleMute();
+    audioToggleButton.classList.toggle("muted", isMuted);
+  });
 }
 
 async function bootScene(app, panelManager, statusText, soulTalkController) {
