@@ -181,7 +181,11 @@ export function updateEnvironmentLayer(environmentLayer, ticker) {
   updateCelestialSprite(environmentLayer.moon, state.celestialProgress, nightAlpha);
   updateCampfireLayer(environmentLayer.campfire, nightAlpha, ticker);
   if (!environmentLayer.crystal.__sceneEditorSelected) {
-    environmentLayer.crystal.alpha = isEditor ? 1 : 0.58 + nightAlpha * 0.36;
+    if (isEditor) {
+      environmentLayer.crystal.alpha = 1;
+    } else {
+      environmentLayer.crystal.alpha = 0.58 + nightAlpha * 0.36;
+    }
   }
 }
 
@@ -352,10 +356,10 @@ function updateCelestialSprite(sprite, progress, targetAlpha) {
 
 function updateCampfireLayer(campfire, nightAlpha, ticker) {
   const isEditor = isSceneEditorMode();
-  const targetAlpha = isEditor || nightAlpha > 0.5 ? 1 : 0;
   if (isEditor) {
     campfire.container.alpha = 1;
   } else if (!campfire.container.__sceneEditorSelected) {
+    const targetAlpha = nightAlpha > 0.5 ? 1 : 0;
     campfire.container.alpha += (targetAlpha - campfire.container.alpha) * CAMPFIRE_FADE_SPEED;
   }
 
@@ -397,5 +401,5 @@ function emitCampfireSpark(campfire) {
 }
 
 function isSceneEditorMode() {
-  return typeof window !== "undefined" && window.location.search.includes("devSceneEditor=1");
+  return typeof window !== "undefined" && new URLSearchParams(window.location.search).get("devSceneEditor") === "1";
 }

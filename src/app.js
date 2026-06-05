@@ -141,7 +141,8 @@ async function bootScene(app, panelManager, statusText, soulTalkController) {
     }
   });
 
-  if (readSceneEditorFlag()) {
+  const isSceneEditorMode = readSceneEditorFlag();
+  if (isSceneEditorMode) {
     enableEditorMode(app.stage);
   }
 
@@ -149,12 +150,14 @@ async function bootScene(app, panelManager, statusText, soulTalkController) {
   app.ticker.add((ticker) => {
     t += ticker.deltaMS / 1000;
 
-    updateCompanionMotion(companion, companionMotionController, t, performance.now(), store.getState().mood, (motionState) => {
-      currentMotionState = motionState;
-      devPanelController?.renderReadout();
-    }, {
-      canAmbientWalk: !panelManager.isPanelOpen()
-    });
+    if (!isSceneEditorMode) {
+      updateCompanionMotion(companion, companionMotionController, t, performance.now(), store.getState().mood, (motionState) => {
+        currentMotionState = motionState;
+        devPanelController?.renderReadout();
+      }, {
+        canAmbientWalk: !panelManager.isPanelOpen()
+      });
+    }
     if (!environmentLayer.magicCircle.__sceneEditorOriginalAlpha) {
       environmentLayer.magicCircle.alpha = 0.76 + Math.sin(t * 1.4) * 0.03;
     }

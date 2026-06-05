@@ -645,6 +645,13 @@ canvas {
   line-height: 1;
 }
 
+#soul-talk-panel .panel-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 10;
+}
+
 .character-summary {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
@@ -756,7 +763,7 @@ canvas {
   align-items: start;
   gap: 10px;
   min-height: 72px;
-  padding: 0 46px 6px 2px;
+  padding: 24px 50px 6px 2px;
   border: none;
   border-radius: 0;
   background: transparent;
