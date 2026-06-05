@@ -1,0 +1,17 @@
+{
+  "input": "assets\\characters\\greyshade-cat\\metadata\\raw\\greyshade-cat_touch-guarded_raw-2x3-magenta.png",
+  "output": "assets\\characters\\greyshade-cat\\processing\\touch_guarded_aggressive_clean_grid.png",
+  "size": [
+    1024,
+    1536
+  ],
+  "pixels": 1572864,
+  "decontaminated_pixels": 85520,
+  "fully_transparent_pixels": 1114399,
+  "visible_magenta_before": 11337,
+  "visible_magenta_after": 0,
+  "mean_alpha_before": 1.0,
+  "mean_alpha_after": 0.280204176902771,
+  "strictness": 0.4,
+  "spill_threshold": 0.01
+}

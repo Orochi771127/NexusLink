@@ -1,150 +1,180 @@
 {
-    "sheet":  "assets\\characters\\greyshade-cat\\spritesheets\\touch\\greyshade-cat_touch-guarded_64x64_6f.png",
-    "dimensions":  {
-                       "height":  64,
-                       "width":  384
-                   },
-    "frameWidth":  64,
-    "frameHeight":  64,
-    "frameCount":  6,
-    "framesDirectory":  "assets\\characters\\greyshade-cat\\frames\\touch\\touch_guarded",
-    "rawCopy":  "assets\\characters\\greyshade-cat\\spritesheets\\touch\\greyshade-cat_touch-guarded_raw-2x3-magenta.png",
-    "baselineY":  61,
-    "warnings":  [
-
-                 ],
-    "frameReports":  [
-                         {
-                             "index":  1,
-                             "sourceCell":  {
-                                                "y":  0,
-                                                "width":  512,
-                                                "height":  512,
-                                                "x":  0
-                                            },
-                             "sourceBBox":  {
-                                                "y":  0,
-                                                "width":  503,
-                                                "height":  504,
-                                                "x":  0
-                                            },
-                             "outputDraw":  {
-                                                "y":  4,
-                                                "width":  57,
-                                                "height":  57,
-                                                "x":  4
-                                            },
-                             "baselineY":  61
-                         },
-                         {
-                             "index":  2,
-                             "sourceCell":  {
-                                                "y":  0,
-                                                "width":  512,
-                                                "height":  512,
-                                                "x":  512
-                                            },
-                             "sourceBBox":  {
-                                                "y":  96,
-                                                "width":  425,
-                                                "height":  379,
-                                                "x":  1
-                                            },
-                             "outputDraw":  {
-                                                "y":  18,
-                                                "width":  48,
-                                                "height":  43,
-                                                "x":  8
-                                            },
-                             "baselineY":  61
-                         },
-                         {
-                             "index":  3,
-                             "sourceCell":  {
-                                                "y":  0,
-                                                "width":  512,
-                                                "height":  512,
-                                                "x":  1024
-                                            },
-                             "sourceBBox":  {
-                                                "y":  0,
-                                                "width":  442,
-                                                "height":  429,
-                                                "x":  70
-                                            },
-                             "outputDraw":  {
-                                                "y":  12,
-                                                "width":  50,
-                                                "height":  49,
-                                                "x":  7
-                                            },
-                             "baselineY":  61
-                         },
-                         {
-                             "index":  4,
-                             "sourceCell":  {
-                                                "y":  512,
-                                                "width":  512,
-                                                "height":  512,
-                                                "x":  0
-                                            },
-                             "sourceBBox":  {
-                                                "y":  88,
-                                                "width":  512,
-                                                "height":  424,
-                                                "x":  0
-                                            },
-                             "outputDraw":  {
-                                                "y":  13,
-                                                "width":  58,
-                                                "height":  48,
-                                                "x":  3
-                                            },
-                             "baselineY":  61
-                         },
-                         {
-                             "index":  5,
-                             "sourceCell":  {
-                                                "y":  512,
-                                                "width":  512,
-                                                "height":  512,
-                                                "x":  512
-                                            },
-                             "sourceBBox":  {
-                                                "y":  83,
-                                                "width":  512,
-                                                "height":  429,
-                                                "x":  0
-                                            },
-                             "outputDraw":  {
-                                                "y":  12,
-                                                "width":  58,
-                                                "height":  49,
-                                                "x":  3
-                                            },
-                             "baselineY":  61
-                         },
-                         {
-                             "index":  6,
-                             "sourceCell":  {
-                                                "y":  512,
-                                                "width":  512,
-                                                "height":  512,
-                                                "x":  1024
-                                            },
-                             "sourceBBox":  {
-                                                "y":  64,
-                                                "width":  512,
-                                                "height":  448,
-                                                "x":  0
-                                            },
-                             "outputDraw":  {
-                                                "y":  10,
-                                                "width":  58,
-                                                "height":  51,
-                                                "x":  3
-                                            },
-                             "baselineY":  61
-                         }
-                     ]
+  "animation": "touch_guarded",
+  "sheet": "assets\\characters\\greyshade-cat\\spritesheets\\touch\\greyshade-cat_touch-guarded_64x64_6f.png",
+  "raw": "assets\\characters\\greyshade-cat\\metadata\\raw\\greyshade-cat_touch-guarded_raw-2x3-magenta.png",
+  "cleanGrid": "assets\\characters\\greyshade-cat\\processing\\touch_guarded_aggressive_clean_grid.png",
+  "sheetSize": [
+    384,
+    64
+  ],
+  "frameWidth": 64,
+  "frameHeight": 64,
+  "frameCount": 6,
+  "gridSource": "3 rows x 2 columns, row-major",
+  "sharedScale": 0.14215686274509803,
+  "anchor": "bottom-center",
+  "componentMode": "largest",
+  "cleanupStrictness": 0.4,
+  "cleanupReport": "assets\\characters\\greyshade-cat\\processing\\touch_guarded_aggressive_clean_grid.report.json",
+  "visibleMagentaPixels": 0,
+  "visiblePurpleTintPixels": 0,
+  "edgeTouchFrames": [],
+  "frames": [
+    {
+      "grid": [
+        0,
+        0
+      ],
+      "sourceCell": [
+        0,
+        0,
+        512,
+        512
+      ],
+      "contentSize": [
+        280,
+        408
+      ],
+      "edgeTouch": false,
+      "outputSize": [
+        40,
+        58
+      ],
+      "pastePosition": [
+        12,
+        6
+      ],
+      "frame": "assets\\characters\\greyshade-cat\\frames\\touch\\touch_guarded\\greyshade-cat_touch-guarded_64x64_6f_01.png"
+    },
+    {
+      "grid": [
+        0,
+        1
+      ],
+      "sourceCell": [
+        512,
+        0,
+        1024,
+        512
+      ],
+      "contentSize": [
+        279,
+        388
+      ],
+      "edgeTouch": false,
+      "outputSize": [
+        40,
+        55
+      ],
+      "pastePosition": [
+        12,
+        9
+      ],
+      "frame": "assets\\characters\\greyshade-cat\\frames\\touch\\touch_guarded\\greyshade-cat_touch-guarded_64x64_6f_02.png"
+    },
+    {
+      "grid": [
+        1,
+        0
+      ],
+      "sourceCell": [
+        0,
+        512,
+        512,
+        1024
+      ],
+      "contentSize": [
+        293,
+        368
+      ],
+      "edgeTouch": false,
+      "outputSize": [
+        42,
+        52
+      ],
+      "pastePosition": [
+        11,
+        12
+      ],
+      "frame": "assets\\characters\\greyshade-cat\\frames\\touch\\touch_guarded\\greyshade-cat_touch-guarded_64x64_6f_03.png"
+    },
+    {
+      "grid": [
+        1,
+        1
+      ],
+      "sourceCell": [
+        512,
+        512,
+        1024,
+        1024
+      ],
+      "contentSize": [
+        299,
+        356
+      ],
+      "edgeTouch": false,
+      "outputSize": [
+        43,
+        51
+      ],
+      "pastePosition": [
+        10,
+        13
+      ],
+      "frame": "assets\\characters\\greyshade-cat\\frames\\touch\\touch_guarded\\greyshade-cat_touch-guarded_64x64_6f_04.png"
+    },
+    {
+      "grid": [
+        2,
+        0
+      ],
+      "sourceCell": [
+        0,
+        1024,
+        512,
+        1536
+      ],
+      "contentSize": [
+        281,
+        376
+      ],
+      "edgeTouch": false,
+      "outputSize": [
+        40,
+        53
+      ],
+      "pastePosition": [
+        12,
+        11
+      ],
+      "frame": "assets\\characters\\greyshade-cat\\frames\\touch\\touch_guarded\\greyshade-cat_touch-guarded_64x64_6f_05.png"
+    },
+    {
+      "grid": [
+        2,
+        1
+      ],
+      "sourceCell": [
+        512,
+        1024,
+        1024,
+        1536
+      ],
+      "contentSize": [
+        271,
+        392
+      ],
+      "edgeTouch": false,
+      "outputSize": [
+        39,
+        56
+      ],
+      "pastePosition": [
+        12,
+        8
+      ],
+      "frame": "assets\\characters\\greyshade-cat\\frames\\touch\\touch_guarded\\greyshade-cat_touch-guarded_64x64_6f_06.png"
+    }
+  ]
 }

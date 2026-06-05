@@ -29,6 +29,26 @@
     "fps": 7,
     "loop": true
   },
+  "movement_walk": {
+    "id": "movement_walk",
+    "type": "movement",
+    "sheet": "./assets/characters/greyshade-cat/spritesheets/movement/greyshade-cat_movement-walk_64x64_8f.png",
+    "frameWidth": 64,
+    "frameHeight": 64,
+    "frameCount": 8,
+    "fps": 8,
+    "loop": true
+  },
+  "sleep_idle": {
+    "id": "sleep_idle",
+    "type": "movement",
+    "sheet": "./assets/characters/greyshade-cat/spritesheets/movement/greyshade-cat_sleep-idle_64x64_8f.png",
+    "frameWidth": 64,
+    "frameHeight": 64,
+    "frameCount": 8,
+    "fps": 6,
+    "loop": true
+  },
   "blink": {
     "id": "blink",
     "type": "emotion",
@@ -60,6 +80,7 @@
     "loop": false
   },
   "touch_reject": {
+    "id": "touch_reject",
     "type": "touch",
     "sheet": "./assets/characters/greyshade-cat/spritesheets/touch/greyshade-cat_touch-reject_64x64_6f.png",
     "frameWidth": 64,

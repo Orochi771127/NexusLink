@@ -1,0 +1,18 @@
+{
+  "input": "assets\\characters\\greyshade-cat\\metadata\\raw\\greyshade-cat_sleep-idle_raw-2x4-magenta.png",
+  "output": "assets\\characters\\greyshade-cat\\processing\\sleep_idle_clean_grid.png",
+  "size": [
+    1774,
+    887
+  ],
+  "pixels": 1573538,
+  "decontaminated_pixels": 1117125,
+  "fully_transparent_pixels": 1111518,
+  "visible_magenta_before": 1100046,
+  "visible_magenta_after": 0,
+  "mean_alpha_before": 1.0,
+  "mean_alpha_after": 0.2911444902420044,
+  "strictness": 0.85,
+  "edge_softness": 0.18,
+  "decontam_strength": 1.0
+}
