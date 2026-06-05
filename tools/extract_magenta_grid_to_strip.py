@@ -11,6 +11,8 @@ from pathlib import Path
 
 from PIL import Image
 
+from cleanup_magenta_spill import decontaminate_magenta_image
+
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
@@ -21,21 +23,18 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--rows", required=True, type=int)
     parser.add_argument("--cols", required=True, type=int)
     parser.add_argument("--report", required=True, help="QC JSON output path.")
+    parser.add_argument("--strictness", type=float, default=0.92)
+    parser.add_argument("--edge-softness", type=float, default=0.18)
+    parser.add_argument("--decontam-strength", type=float, default=1.0)
     return parser.parse_args()
-
-
-def is_magenta_like(r: int, g: int, b: int) -> bool:
-    high_rb_low_g = r > 175 and b > 170 and g < 135 and (r - g) > 65 and (b - g) > 55
-    distance = ((r - 255) ** 2 + g**2 + (b - 255) ** 2) ** 0.5
-    return high_rb_low_g or distance < 150
 
 
 def is_gridline(r: int, g: int, b: int) -> bool:
     return r > 235 and g > 220 and b > 235
 
 
-def flood_remove_background(slot: Image.Image) -> Image.Image:
-    slot = slot.convert("RGBA")
+def remove_gridline_contamination(slot: Image.Image) -> Image.Image:
+    slot = slot.copy()
     pixels = slot.load()
     width, height = slot.size
     queue: deque[tuple[int, int]] = deque()
@@ -45,7 +44,7 @@ def flood_remove_background(slot: Image.Image) -> Image.Image:
         if seen[y][x]:
             return
         r, g, b, a = pixels[x, y]
-        if a == 0 or is_magenta_like(r, g, b) or is_gridline(r, g, b):
+        if a == 0 or is_gridline(r, g, b):
             seen[y][x] = True
             queue.append((x, y))
 
@@ -64,6 +63,16 @@ def flood_remove_background(slot: Image.Image) -> Image.Image:
                 enqueue(nx, ny)
 
     return slot
+
+
+def clean_slot(slot: Image.Image, args: argparse.Namespace) -> Image.Image:
+    clean, _report = decontaminate_magenta_image(
+        slot,
+        strictness=args.strictness,
+        edge_softness=args.edge_softness,
+        decontam_strength=args.decontam_strength,
+    )
+    return remove_gridline_contamination(clean)
 
 
 def keep_largest_component(slot: Image.Image) -> Image.Image:
@@ -119,7 +128,7 @@ def main() -> None:
             right = int(round((col + 1) * cell_w))
             lower = int(round((row + 1) * cell_h))
             slot = image.crop((left, upper, right, lower))
-            slot = keep_largest_component(flood_remove_background(slot))
+            slot = keep_largest_component(clean_slot(slot, args))
             bbox = slot.getchannel("A").getbbox()
             bboxes.append(bbox)
             if bbox:
@@ -150,6 +159,11 @@ def main() -> None:
         "height_range": [min(heights), max(heights)] if heights else None,
         "height_drift_ratio": (max(heights) - min(heights)) / statistics.mean(heights) if heights else None,
         "edge_touch_frames": [i + 1 for i, touched in enumerate(edge_touches) if touched],
+        "magenta_cleanup": {
+            "strictness": args.strictness,
+            "edge_softness": args.edge_softness,
+            "decontam_strength": args.decontam_strength,
+        },
     }
     report_path = Path(args.report)
     report_path.parent.mkdir(parents=True, exist_ok=True)
