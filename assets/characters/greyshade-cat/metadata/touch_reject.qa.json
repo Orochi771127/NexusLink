@@ -1,150 +1,180 @@
 {
-    "sheet":  "assets\\characters\\greyshade-cat\\spritesheets\\touch\\greyshade-cat_touch-reject_64x64_6f.png",
-    "dimensions":  {
-                       "height":  64,
-                       "width":  384
-                   },
-    "frameWidth":  64,
-    "frameHeight":  64,
-    "frameCount":  6,
-    "framesDirectory":  "assets\\characters\\greyshade-cat\\frames\\touch\\touch_reject",
-    "rawCopy":  "assets\\characters\\greyshade-cat\\spritesheets\\touch\\greyshade-cat_touch-reject_raw-2x3-magenta.png",
-    "baselineY":  61,
-    "warnings":  [
-
-                 ],
-    "frameReports":  [
-                         {
-                             "index":  1,
-                             "sourceCell":  {
-                                                "y":  0,
-                                                "width":  512,
-                                                "height":  512,
-                                                "x":  0
-                                            },
-                             "sourceBBox":  {
-                                                "y":  137,
-                                                "width":  361,
-                                                "height":  321,
-                                                "x":  96
-                                            },
-                             "outputDraw":  {
-                                                "y":  10,
-                                                "width":  58,
-                                                "height":  51,
-                                                "x":  3
-                                            },
-                             "baselineY":  61
-                         },
-                         {
-                             "index":  2,
-                             "sourceCell":  {
-                                                "y":  0,
-                                                "width":  512,
-                                                "height":  512,
-                                                "x":  512
-                                            },
-                             "sourceBBox":  {
-                                                "y":  148,
-                                                "width":  356,
-                                                "height":  310,
-                                                "x":  60
-                                            },
-                             "outputDraw":  {
-                                                "y":  12,
-                                                "width":  57,
-                                                "height":  49,
-                                                "x":  4
-                                            },
-                             "baselineY":  61
-                         },
-                         {
-                             "index":  3,
-                             "sourceCell":  {
-                                                "y":  0,
-                                                "width":  512,
-                                                "height":  512,
-                                                "x":  1024
-                                            },
-                             "sourceBBox":  {
-                                                "y":  143,
-                                                "width":  364,
-                                                "height":  315,
-                                                "x":  24
-                                            },
-                             "outputDraw":  {
-                                                "y":  11,
-                                                "width":  58,
-                                                "height":  50,
-                                                "x":  3
-                                            },
-                             "baselineY":  61
-                         },
-                         {
-                             "index":  4,
-                             "sourceCell":  {
-                                                "y":  512,
-                                                "width":  512,
-                                                "height":  512,
-                                                "x":  0
-                                            },
-                             "sourceBBox":  {
-                                                "y":  87,
-                                                "width":  362,
-                                                "height":  315,
-                                                "x":  96
-                                            },
-                             "outputDraw":  {
-                                                "y":  11,
-                                                "width":  58,
-                                                "height":  50,
-                                                "x":  3
-                                            },
-                             "baselineY":  61
-                         },
-                         {
-                             "index":  5,
-                             "sourceCell":  {
-                                                "y":  512,
-                                                "width":  512,
-                                                "height":  512,
-                                                "x":  512
-                                            },
-                             "sourceBBox":  {
-                                                "y":  92,
-                                                "width":  353,
-                                                "height":  310,
-                                                "x":  63
-                                            },
-                             "outputDraw":  {
-                                                "y":  12,
-                                                "width":  56,
-                                                "height":  49,
-                                                "x":  4
-                                            },
-                             "baselineY":  61
-                         },
-                         {
-                             "index":  6,
-                             "sourceCell":  {
-                                                "y":  512,
-                                                "width":  512,
-                                                "height":  512,
-                                                "x":  1024
-                                            },
-                             "sourceBBox":  {
-                                                "y":  92,
-                                                "width":  358,
-                                                "height":  310,
-                                                "x":  24
-                                            },
-                             "outputDraw":  {
-                                                "y":  12,
-                                                "width":  57,
-                                                "height":  49,
-                                                "x":  4
-                                            },
-                             "baselineY":  61
-                         }
-                     ]
+  "animation": "touch_reject",
+  "sheet": "assets\\characters\\greyshade-cat\\spritesheets\\touch\\greyshade-cat_touch-reject_64x64_6f.png",
+  "raw": "assets\\characters\\greyshade-cat\\metadata\\raw\\greyshade-cat_touch-reject_raw-2x3-magenta.png",
+  "cleanGrid": "assets\\characters\\greyshade-cat\\processing\\touch_reject_aggressive_clean_grid.png",
+  "sheetSize": [
+    384,
+    64
+  ],
+  "frameWidth": 64,
+  "frameHeight": 64,
+  "frameCount": 6,
+  "gridSource": "2 rows x 3 columns, row-major",
+  "sharedScale": 0.14987080103359174,
+  "anchor": "bottom-center",
+  "componentMode": "largest",
+  "cleanupStrictness": 0.4,
+  "cleanupReport": "assets\\characters\\greyshade-cat\\processing\\touch_reject_aggressive_clean_grid.report.json",
+  "visibleMagentaPixels": 0,
+  "visiblePurpleTintPixels": 0,
+  "edgeTouchFrames": [],
+  "frames": [
+    {
+      "grid": [
+        0,
+        0
+      ],
+      "sourceCell": [
+        0,
+        0,
+        512,
+        512
+      ],
+      "contentSize": [
+        319,
+        387
+      ],
+      "edgeTouch": false,
+      "outputSize": [
+        48,
+        58
+      ],
+      "pastePosition": [
+        8,
+        6
+      ],
+      "frame": "assets\\characters\\greyshade-cat\\frames\\touch\\touch_reject\\greyshade-cat_touch-reject_64x64_6f_01.png"
+    },
+    {
+      "grid": [
+        0,
+        1
+      ],
+      "sourceCell": [
+        512,
+        0,
+        1024,
+        512
+      ],
+      "contentSize": [
+        331,
+        338
+      ],
+      "edgeTouch": false,
+      "outputSize": [
+        50,
+        51
+      ],
+      "pastePosition": [
+        7,
+        13
+      ],
+      "frame": "assets\\characters\\greyshade-cat\\frames\\touch\\touch_reject\\greyshade-cat_touch-reject_64x64_6f_02.png"
+    },
+    {
+      "grid": [
+        0,
+        2
+      ],
+      "sourceCell": [
+        1024,
+        0,
+        1536,
+        512
+      ],
+      "contentSize": [
+        363,
+        319
+      ],
+      "edgeTouch": false,
+      "outputSize": [
+        54,
+        48
+      ],
+      "pastePosition": [
+        5,
+        16
+      ],
+      "frame": "assets\\characters\\greyshade-cat\\frames\\touch\\touch_reject\\greyshade-cat_touch-reject_64x64_6f_03.png"
+    },
+    {
+      "grid": [
+        1,
+        0
+      ],
+      "sourceCell": [
+        0,
+        512,
+        512,
+        1024
+      ],
+      "contentSize": [
+        352,
+        314
+      ],
+      "edgeTouch": false,
+      "outputSize": [
+        53,
+        47
+      ],
+      "pastePosition": [
+        5,
+        17
+      ],
+      "frame": "assets\\characters\\greyshade-cat\\frames\\touch\\touch_reject\\greyshade-cat_touch-reject_64x64_6f_04.png"
+    },
+    {
+      "grid": [
+        1,
+        1
+      ],
+      "sourceCell": [
+        512,
+        512,
+        1024,
+        1024
+      ],
+      "contentSize": [
+        353,
+        298
+      ],
+      "edgeTouch": false,
+      "outputSize": [
+        53,
+        45
+      ],
+      "pastePosition": [
+        5,
+        19
+      ],
+      "frame": "assets\\characters\\greyshade-cat\\frames\\touch\\touch_reject\\greyshade-cat_touch-reject_64x64_6f_05.png"
+    },
+    {
+      "grid": [
+        1,
+        2
+      ],
+      "sourceCell": [
+        1024,
+        512,
+        1536,
+        1024
+      ],
+      "contentSize": [
+        356,
+        290
+      ],
+      "edgeTouch": false,
+      "outputSize": [
+        53,
+        43
+      ],
+      "pastePosition": [
+        5,
+        21
+      ],
+      "frame": "assets\\characters\\greyshade-cat\\frames\\touch\\touch_reject\\greyshade-cat_touch-reject_64x64_6f_06.png"
+    }
+  ]
 }
