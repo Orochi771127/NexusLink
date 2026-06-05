@@ -34,6 +34,12 @@ export function positionCompanion(companion) {
 }
 
 export function bindCompanionTap(companion, { isInteractionBlocked, onTouch }) {
+  if (isSceneEditorMode()) {
+    companion.eventMode = "static";
+    companion.cursor = "grab";
+    return;
+  }
+
   companion.eventMode = "static";
   companion.cursor = "pointer";
   let lastTapAt = 0;
@@ -66,11 +72,18 @@ function createTouchAnimationTimeout() {
 }
 
 function registerCompanionEditorObject(companion) {
-  return registerSceneEditorObject(companion, {
+  registerSceneEditorObject(companion, {
     id: "companion",
     texturePath: "dynamic_creature",
     editorEnabled: true
   });
+  companion.eventMode = "static";
+  companion.cursor = "grab";
+  return companion;
+}
+
+function isSceneEditorMode() {
+  return typeof window !== "undefined" && new URLSearchParams(window.location.search).get("devSceneEditor") === "1";
 }
 
 function createCreatureSprite(texture, creature) {
