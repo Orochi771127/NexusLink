@@ -282,6 +282,28 @@ canvas {
   cursor: pointer;
 }
 
+.audio-toggle {
+  position: relative;
+  overflow: hidden;
+}
+
+.audio-toggle.muted::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 10%;
+  right: 10%;
+  height: 2px;
+  background-color: #ff3333;
+  transform: translateY(-50%) rotate(-45deg);
+}
+
+.audio-toggle:active {
+  border-color: rgba(0, 245, 255, 0.72);
+  color: var(--color-cyan);
+  box-shadow: 0 0 18px rgba(0, 245, 255, 0.72), var(--shadow-glass);
+}
+
 .soul-talk-launcher {
   position: absolute;
   left: var(--edge);
