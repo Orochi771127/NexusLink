@@ -1,5 +1,6 @@
-import { COMPANION_GROUND_Y, registerSceneEditorObject, WORLD_HEIGHT, WORLD_WIDTH } from "./pixiApp.js";
+import { applyResponsiveLayout, registerSceneEditorObject, WORLD_HEIGHT, WORLD_WIDTH } from "./pixiApp.js";
 import { FALLBACK_CREATURE } from "../engine/personalityProfile.js";
+import { SCENE_LAYOUT } from "../data/sceneLayout.js";
 import { createAnimatedCompanionNode, loadGreyshadeCatAnimationPack } from "./spriteSheetAnimationLoader.js";
 
 const TOUCH_ANIMATION_LOCK_TIMEOUT_MS = 3000;
@@ -28,9 +29,14 @@ export async function createCreatureNode(creature, statusText) {
   }
 }
 
-export function positionCompanion(companion) {
-  companion.x = WORLD_WIDTH / 2;
-  companion.y = COMPANION_GROUND_Y;
+export function positionCompanion(companion, app) {
+  applyCompanionResponsiveLayout(companion, app);
+  if (typeof window !== "undefined" && !companion.__responsiveLayoutBound) {
+    companion.__responsiveLayoutBound = true;
+    window.addEventListener("resize", () => {
+      requestAnimationFrame(() => applyCompanionResponsiveLayout(companion, app));
+    });
+  }
 }
 
 export function bindCompanionTap(companion, { isInteractionBlocked, onTouch }) {
@@ -80,6 +86,15 @@ function registerCompanionEditorObject(companion) {
   companion.eventMode = "static";
   companion.cursor = "grab";
   return companion;
+}
+
+function applyCompanionResponsiveLayout(companion, app) {
+  applyResponsiveLayout(
+    companion,
+    "companion",
+    app?.screen?.width ?? SCENE_LAYOUT.referenceWidth,
+    app?.screen?.height ?? SCENE_LAYOUT.referenceHeight
+  );
 }
 
 function isSceneEditorMode() {

@@ -1,10 +1,10 @@
 import EnvironmentController from "../engine/environmentController.js";
+import { SCENE_LAYOUT } from "../data/sceneLayout.js";
 
 export const WORLD_WIDTH = 390;
 export const WORLD_HEIGHT = 844;
 export const BACKGROUND_DESIGN_WIDTH = 1080;
 export const BACKGROUND_DESIGN_HEIGHT = 1920;
-export const COMPANION_GROUND_Y = 485;
 export const PLATFORM_Y = 540;
 
 export const SCENE_ASSETS = Object.freeze({
@@ -26,10 +26,9 @@ const SCENE_LAYER_NAMES = [
 ];
 const CELESTIAL_START_X = -42;
 const CELESTIAL_END_X = WORLD_WIDTH + 42;
-const CELESTIAL_BASE_Y = 180;
+const CELESTIAL_BASE_Y = getSceneLayoutObject("sun")?.y ?? 180;
 const CELESTIAL_ARC_HEIGHT = 118;
 const CAMPFIRE_FADE_SPEED = 0.075;
-const MAGIC_CIRCLE_TARGET_WIDTH = 252;
 const MIN_SCREEN_WIDTH = 1;
 const MIN_SCREEN_HEIGHT = 1;
 
@@ -69,7 +68,7 @@ export function getSceneLayers(world) {
   return world.__sceneLayers;
 }
 
-export async function createEnvironmentLayer(layers) {
+export async function createEnvironmentLayer(layers, app) {
   const bgDay = await createSceneSprite("bg_day", SCENE_ASSETS.bgDay, {
     anchor: 0.5,
     editorEnabled: false
@@ -85,47 +84,38 @@ export async function createEnvironmentLayer(layers) {
 
   const sun = await createSceneSprite("sun", SCENE_ASSETS.sun, {
     anchor: 0.5,
-    targetWidth: 78,
-    x: CELESTIAL_START_X,
-    y: CELESTIAL_BASE_Y,
     editorEnabled: true
   });
+  applyResponsiveLayout(sun, "sun", app.screen.width, app.screen.height);
   layers.layerCelestial.addChild(sun);
 
   const moon = await createSceneSprite("moon", SCENE_ASSETS.moon, {
     anchor: 0.5,
-    targetWidth: 78,
-    x: CELESTIAL_START_X,
-    y: CELESTIAL_BASE_Y,
     editorEnabled: true
   });
+  applyResponsiveLayout(moon, "moon", app.screen.width, app.screen.height);
   layers.layerCelestial.addChild(moon);
 
   const magicCircle = await createSceneSprite("magic_circle", SCENE_ASSETS.magicCircle, {
     anchor: 0.5,
-    targetWidth: MAGIC_CIRCLE_TARGET_WIDTH,
-    x: WORLD_WIDTH / 2,
-    y: WORLD_HEIGHT * 0.7,
     editorEnabled: true
   });
+  applyResponsiveLayout(magicCircle, "magic_circle", app.screen.width, app.screen.height);
   magicCircle.alpha = 0.76;
   layers.layerPlatform.addChild(magicCircle);
 
   const campfire = await createScenePropContainer("campfire", SCENE_ASSETS.campfire, {
-    x: WORLD_WIDTH * 0.73,
-    y: 592,
-    targetWidth: 92
+    anchor: 0.5
   });
+  applyResponsiveLayout(campfire.container, "campfire", app.screen.width, app.screen.height);
   campfire.container.alpha = 0;
   layers.layerForeground.addChild(campfire.container);
 
   const crystal = await createSceneSprite("crystal", SCENE_ASSETS.crystal, {
     anchor: 0.5,
-    targetWidth: 76,
-    x: WORLD_WIDTH * 0.84,
-    y: 446,
     editorEnabled: true
   });
+  applyResponsiveLayout(crystal, "crystal", app.screen.width, app.screen.height);
   crystal.alpha = 0.86;
   layers.layerForeground.addChild(crystal);
 
@@ -169,6 +159,19 @@ export function animateParticles(particles, timeSeconds, ticker) {
   });
 }
 
+export function applyResponsiveLayout(sprite, objectId, screenWidth, screenHeight) {
+  const layout = getSceneLayoutObject(objectId);
+  if (!layout || !sprite) return sprite;
+
+  const scaleRatio = screenWidth / SCENE_LAYOUT.referenceWidth;
+  sprite.__layoutScreenWidth = screenWidth;
+  sprite.__layoutScreenHeight = screenHeight;
+  sprite.scale.set(layout.scale.x * scaleRatio, layout.scale.y * scaleRatio);
+  sprite.x = (layout.x / SCENE_LAYOUT.referenceWidth) * screenWidth;
+  sprite.y = (layout.y / SCENE_LAYOUT.referenceHeight) * screenHeight;
+  return sprite;
+}
+
 export function updateEnvironmentLayer(environmentLayer, ticker) {
   if (!environmentLayer) return;
 
@@ -177,8 +180,8 @@ export function updateEnvironmentLayer(environmentLayer, ticker) {
   const isEditor = isSceneEditorMode();
   environmentLayer.bgNight.alpha = nightAlpha;
 
-  updateCelestialSprite(environmentLayer.sun, state.celestialProgress, 1 - nightAlpha);
-  updateCelestialSprite(environmentLayer.moon, state.celestialProgress, nightAlpha);
+  updateCelestialSprite(environmentLayer.sun, "sun", state.celestialProgress, 1 - nightAlpha);
+  updateCelestialSprite(environmentLayer.moon, "moon", state.celestialProgress, nightAlpha);
   updateCampfireLayer(environmentLayer.campfire, nightAlpha, ticker);
   if (!environmentLayer.crystal.__sceneEditorSelected) {
     if (isEditor) {
@@ -230,6 +233,7 @@ function resizeWorld(app, world) {
   }
 
   resizeBackgroundCover(world.__responsiveEnvironmentLayer, app);
+  resizeEnvironmentLayout(world.__responsiveEnvironmentLayer, app);
   resizeSceneContainer(world.__sceneContainer, app);
 }
 
@@ -253,10 +257,18 @@ function resizeBackgroundCover(environmentLayer, app) {
 function resizeSceneContainer(sceneContainer, app) {
   if (!sceneContainer) return;
 
-  const scale = Math.max(app.screen.width / WORLD_WIDTH, app.screen.height / WORLD_HEIGHT);
-  sceneContainer.scale.set(scale);
-  sceneContainer.x = (app.screen.width - WORLD_WIDTH * scale) / 2;
-  sceneContainer.y = app.screen.height - WORLD_HEIGHT * scale;
+  sceneContainer.scale.set(1);
+  sceneContainer.position.set(0, 0);
+}
+
+function resizeEnvironmentLayout(environmentLayer, app) {
+  if (!environmentLayer) return;
+
+  applyResponsiveLayout(environmentLayer.sun, "sun", app.screen.width, app.screen.height);
+  applyResponsiveLayout(environmentLayer.moon, "moon", app.screen.width, app.screen.height);
+  applyResponsiveLayout(environmentLayer.magicCircle, "magic_circle", app.screen.width, app.screen.height);
+  applyResponsiveLayout(environmentLayer.campfire.container, "campfire", app.screen.width, app.screen.height);
+  applyResponsiveLayout(environmentLayer.crystal, "crystal", app.screen.width, app.screen.height);
 }
 
 function readGameRootSize(gameRoot) {
@@ -345,10 +357,22 @@ export function applySceneBlendMode(displayObject, name) {
   return displayObject;
 }
 
-function updateCelestialSprite(sprite, progress, targetAlpha) {
+function updateCelestialSprite(sprite, objectId, progress, targetAlpha) {
   if (!sprite.__sceneEditorPinned) {
-    sprite.x = CELESTIAL_START_X + (CELESTIAL_END_X - CELESTIAL_START_X) * progress;
-    sprite.y = CELESTIAL_BASE_Y - Math.sin(progress * Math.PI) * CELESTIAL_ARC_HEIGHT;
+    const layout = getSceneLayoutObject(objectId);
+    const referenceWidth = SCENE_LAYOUT.referenceWidth;
+    const referenceHeight = SCENE_LAYOUT.referenceHeight;
+    const screenWidth = sprite.__layoutScreenWidth || referenceWidth;
+    const screenHeight = sprite.__layoutScreenHeight || referenceHeight;
+    const scaleRatio = screenWidth / referenceWidth;
+    const baseY = layout
+      ? (layout.y / referenceHeight) * screenHeight
+      : CELESTIAL_BASE_Y;
+    const startX = CELESTIAL_START_X * scaleRatio;
+    const endX = screenWidth + (CELESTIAL_END_X - WORLD_WIDTH) * scaleRatio;
+
+    sprite.x = startX + (endX - startX) * progress;
+    sprite.y = baseY - Math.sin(progress * Math.PI) * CELESTIAL_ARC_HEIGHT * scaleRatio;
   }
   if (!sprite.__sceneEditorSelected) {
     sprite.alpha = Math.max(0, Math.min(1, targetAlpha));
@@ -403,4 +427,8 @@ function emitCampfireSpark(campfire) {
 
 function isSceneEditorMode() {
   return typeof window !== "undefined" && new URLSearchParams(window.location.search).get("devSceneEditor") === "1";
+}
+
+function getSceneLayoutObject(objectId) {
+  return SCENE_LAYOUT.objects.find((object) => object.id === objectId) || null;
 }
