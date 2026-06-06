@@ -7,55 +7,67 @@
     <link rel="preload" as="image" href="./assets/backgrounds/LakeNightCamp_v2/bg_day_base.png" />
     <link rel="preload" as="image" href="./assets/backgrounds/LakeNightCamp_v2/bg_night_base.png" />
     <link rel="preload" as="image" href="./assets/platforms/LakeNightCamp_v2/magic_circle.png" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2064%2064%27%3E%3Ccircle%20cx%3D%2732%27%20cy%3D%2732%27%20r%3D%2730%27%20fill%3D%27%23050915%27%2F%3E%3Ccircle%20cx%3D%2732%27%20cy%3D%2732%27%20r%3D%2718%27%20fill%3D%27%2300ced1%27%2F%3E%3C%2Fsvg%3E" />
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <main class="app-shell" aria-label="Nexus Link home screen">
-      <section class="habitat-stage" aria-label="Nexus Link emotional habitat">
-        <div id="game-root" aria-label="Nexus Link emotional habitat scene"></div>
+    <main class="app-shell" aria-label="Nexus Link 心核連結主畫面">
+      <section class="habitat-stage" aria-label="Nexus Link 第一棲地">
+        <div id="game-root" aria-label="心核連結棲地場景"></div>
 
-        <section class="core-hud" aria-label="Companion core status">
-          <button class="core-hud-open" type="button" data-panel-trigger="character" aria-label="Open companion status">
+        <section class="core-hud" aria-label="夥伴心核狀態">
+          <button class="core-hud-open" type="button" data-panel-trigger="character" aria-label="開啟夥伴狀態">
             <span class="avatar-orb" aria-hidden="true"></span>
             <span class="core-copy">
-              <span id="fox-name" class="core-name">Loading...</span>
-              <span class="core-kicker">NEXUS CORE</span>
-              <span class="level-pill">Lv 01</span>
+              <span id="fox-name" class="core-name">載入中...</span>
+              <span class="core-kicker">心核夥伴</span>
+              <span class="level-pill">等級 01</span>
             </span>
             <span class="core-status-dot" aria-hidden="true"></span>
           </button>
         </section>
 
-        <section class="quick-hud" aria-label="Quick resources and actions">
-          <div class="resource-hud" aria-label="Resources">
-            <div class="resource-item coin" aria-label="coins">
+        <section class="quick-hud" aria-label="快速資源與設定">
+          <div class="resource-hud" aria-label="資源">
+            <div class="resource-item coin" aria-label="金幣">
               <span class="resource-icon" aria-hidden="true"></span>
               <span class="resource-value">1280</span>
             </div>
-            <div class="resource-item gem" aria-label="gems">
+            <div class="resource-item gem" aria-label="晶石">
               <span class="resource-icon" aria-hidden="true"></span>
               <span class="resource-value">36</span>
             </div>
           </div>
+          <button id="btn-audio-toggle" class="quick-icon-button audio-toggle" type="button" aria-label="切換音效">
+            <svg class="quick-icon-svg" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 9v6h4l5 4V5L8 9H4Z"></path>
+              <path d="M16 8.5a5 5 0 0 1 0 7"></path>
+              <path d="M18.5 6a8.5 8.5 0 0 1 0 12"></path>
+            </svg>
+          </button>
           <div class="settings-group">
-            <button id="btn-settings-toggle" type="button" aria-label="Settings" aria-expanded="false">...</button>
+            <button id="btn-settings-toggle" class="quick-icon-button" type="button" aria-label="開啟設定" aria-expanded="false">
+              <svg class="quick-icon-svg" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 8.2a3.8 3.8 0 1 0 0 7.6 3.8 3.8 0 0 0 0-7.6Z"></path>
+                <path d="M19.4 13.4a7.8 7.8 0 0 0 .05-2.7l2-1.45-2-3.46-2.42 1a8.2 8.2 0 0 0-2.33-1.35L14.4 3h-4l-.3 2.44A8.2 8.2 0 0 0 7.77 6.8l-2.42-1-2 3.46 2 1.45a7.8 7.8 0 0 0 .05 2.7l-2.02 1.43 2 3.46 2.45-1a8.1 8.1 0 0 0 2.28 1.3l.29 2.4h4l.29-2.4a8.1 8.1 0 0 0 2.28-1.3l2.45 1 2-3.46-2.02-1.43Z"></path>
+              </svg>
+            </button>
             <div id="settings-dropdown" class="settings-dropdown">
-              <button id="btn-audio-toggle" class="settings-item audio-toggle" type="button" aria-label="Toggle audio">Audio</button>
-              <button id="btn-mail" class="settings-item mail" type="button" aria-label="Mail"></button>
-              <button id="btn-support" class="settings-item support" type="button" aria-label="Support"></button>
+              <button id="btn-mail" class="settings-item mail" type="button" aria-label="信件"></button>
+              <button id="btn-support" class="settings-item support" type="button" aria-label="支援"></button>
             </div>
           </div>
         </section>
 
-        <button class="soul-talk-launcher" type="button" data-panel-trigger="soulTalk" aria-label="Open Soul Talk">
+        <button class="soul-talk-launcher" type="button" data-panel-trigger="soulTalk" aria-label="開啟心語對話">
           <span>
-            <strong>SOUL TALK</strong>
-            <em id="soul-talk-preview">The companion listens quietly.</em>
+            <strong>心語</strong>
+            <em id="soul-talk-preview">我在這裡，安靜地看著你。</em>
           </span>
-          <b aria-hidden="true">Talk</b>
+          <b aria-hidden="true">對話</b>
         </button>
 
-        <nav class="bottom-nav" aria-label="Primary actions">
+        <nav class="bottom-nav" aria-label="主要行動">
           <button type="button" data-action="explore">
             <div class="nav-icon-geo" aria-hidden="true"></div>
             <span class="nav-label">探索</span>
@@ -75,72 +87,72 @@
         </nav>
 
         <div class="panel-layer" data-active-panel="none" aria-hidden="true">
-          <button class="panel-backdrop" type="button" data-panel-close aria-label="Close panel"></button>
+          <button class="panel-backdrop" type="button" data-panel-close aria-label="關閉面板"></button>
 
           <section class="modal-panel character-modal" role="dialog" aria-modal="true" aria-labelledby="character-title" data-panel="character">
             <header class="panel-header">
               <div>
-                <p>NEXUS CORE</p>
-                <h2 id="character-title">Companion Status</h2>
+                <p>心核夥伴</p>
+                <h2 id="character-title">夥伴狀態</h2>
               </div>
-              <button type="button" class="panel-close" data-panel-close aria-label="Close companion status">X</button>
+              <button type="button" class="panel-close" data-panel-close aria-label="關閉夥伴狀態">X</button>
             </header>
             <div class="character-summary">
               <span class="avatar-orb avatar-orb-large" aria-hidden="true"></span>
               <div>
-                <h3 id="modal-creature-name">Loading...</h3>
-                <p id="modal-creature-description">Companion data is loading.</p>
+                <h3 id="modal-creature-name">載入中...</h3>
+                <p id="modal-creature-description">夥伴資料載入中。</p>
               </div>
             </div>
-            <div class="core-stat-list" aria-label="Companion detail stats">
+            <div class="core-stat-list" aria-label="夥伴詳細狀態">
               <div class="core-stat-row" data-stat="bond">
-                <span class="core-stat-label">BOND</span>
+                <span class="core-stat-label">羈絆</span>
                 <div class="core-stat-bar"><span id="bond-fill" class="core-stat-fill"></span></div>
                 <strong id="bond-value" class="core-stat-value">0</strong>
               </div>
               <div class="core-stat-row" data-stat="mood">
-                <span class="core-stat-label">MOOD</span>
+                <span class="core-stat-label">心情</span>
                 <div class="core-stat-bar"><span id="mood-fill" class="core-stat-fill"></span></div>
-                <strong id="mood-value" class="core-stat-value">calm</strong>
+                <strong id="mood-value" class="core-stat-value">平靜</strong>
               </div>
               <div class="core-stat-row" data-stat="energy">
-                <span class="core-stat-label">ENERGY</span>
+                <span class="core-stat-label">能量</span>
                 <div class="core-stat-bar"><span id="energy-fill" class="core-stat-fill"></span></div>
                 <strong id="energy-value" class="core-stat-value">10</strong>
               </div>
               <div class="core-stat-row" data-stat="trust">
-                <span class="core-stat-label">TRUST</span>
+                <span class="core-stat-label">信任</span>
                 <div class="core-stat-bar"><span id="trust-fill" class="core-stat-fill"></span></div>
                 <strong id="trust-value" class="core-stat-value">5</strong>
               </div>
             </div>
           </section>
 
-          <section id="soul-talk-panel" class="modal-panel soul-talk-modal" role="dialog" aria-modal="true" aria-label="Soul Talk" data-panel="soulTalk">
-            <button type="button" class="panel-close" data-panel-close aria-label="Close Soul Talk">X</button>
-            <p id="status-text" class="soul-status-text" aria-live="polite">SOUL TALK</p>
+          <section id="soul-talk-panel" class="modal-panel soul-talk-modal" role="dialog" aria-modal="true" aria-label="心語對話" data-panel="soulTalk">
+            <button type="button" class="panel-close" data-panel-close aria-label="關閉心語對話">X</button>
+            <p id="status-text" class="soul-status-text" aria-live="polite">心語</p>
             <div id="chat-log" class="chat-log" aria-live="polite"></div>
             <div class="chat-input-row">
               <input
                 id="message-input"
                 type="text"
-                placeholder="Say something softly..."
+                placeholder="輕聲說些什麼..."
                 autocomplete="off"
               />
-              <button id="send-button" type="button">Send</button>
+              <button id="send-button" type="button">送出</button>
             </div>
           </section>
 
           <section class="action-sheet" role="dialog" aria-modal="true" aria-labelledby="action-sheet-title" data-panel="actionSheet">
             <header class="panel-header">
               <div>
-                <p>HOME ACTION</p>
-                <h2 id="action-sheet-title">Action</h2>
+                <p>棲地行動</p>
+                <h2 id="action-sheet-title">行動</h2>
               </div>
-              <button type="button" class="panel-close" data-panel-close aria-label="Close action sheet">X</button>
+              <button type="button" class="panel-close" data-panel-close aria-label="關閉棲地行動">X</button>
             </header>
-            <p id="action-sheet-copy" class="action-sheet-copy">Choose one quiet action.</p>
-            <div id="action-sheet-actions" class="sheet-action-list" aria-label="Action choices"></div>
+            <p id="action-sheet-copy" class="action-sheet-copy">選擇一個安靜的行動。</p>
+            <div id="action-sheet-actions" class="sheet-action-list" aria-label="行動選項"></div>
           </section>
         </div>
       </section>

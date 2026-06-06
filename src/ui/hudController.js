@@ -1,6 +1,8 @@
 import { qs } from "../utils/dom.js";
 import { clampPercent } from "../utils/clamp.js";
 
+const DEFAULT_STATUS_TEXT = "心語 / 靈魂聖域";
+
 export function createHudController({ store, statusText }) {
   const foxName = qs("#fox-name");
   const bondEl = qs("#bond-value");
@@ -20,8 +22,8 @@ export function createHudController({ store, statusText }) {
     currentCreature = creature;
     foxName.textContent = creature.name;
     modalCreatureName.textContent = creature.name;
-    modalCreatureDescription.textContent = creature.description || "Nexus 棲地中的 AI 心核夥伴。";
-    messageInput.placeholder = `對 ${creature.name} 說一句話...`;
+    modalCreatureDescription.textContent = creature.description || "心核夥伴資料尚未完成。";
+    messageInput.placeholder = `對 ${creature.name} 輕聲說些什麼...`;
   }
 
   function renderHUD() {
@@ -30,11 +32,11 @@ export function createHudController({ store, statusText }) {
 
     bondEl.textContent = state.bond;
     trustEl.textContent = state.trust;
-    moodEl.textContent = state.mood;
+    moodEl.textContent = getMoodLabel(state.mood);
     energyEl.textContent = state.energy;
     foxName.textContent = currentCreature.name;
-    if (!statusText.textContent || statusText.textContent === "SOUL TALK / 靈魂聖域") {
-      statusText.textContent = `${currentCreature.name} 正在棲地中安靜呼吸。`;
+    if (!statusText.textContent || statusText.textContent === DEFAULT_STATUS_TEXT || statusText.textContent === "心語") {
+      statusText.textContent = `${currentCreature.name} 正在第一棲地安靜待命。`;
     }
 
     bondFill.style.width = `${clampPercent(state.bond, 24)}%`;
@@ -51,6 +53,21 @@ export function createHudController({ store, statusText }) {
       panelManager.openPanel("character");
     }
   };
+}
+
+function getMoodLabel(mood) {
+  const moodMap = {
+    defensive: "防備",
+    tired: "疲倦",
+    calm: "平靜",
+    warm: "溫暖",
+    happy: "開心",
+    distant: "疏離",
+    sad: "低落",
+    angry: "生氣",
+    sleeping: "睡眠"
+  };
+  return moodMap[mood] || "平衡";
 }
 
 function moodPercent(mood) {

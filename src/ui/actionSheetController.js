@@ -32,12 +32,12 @@ export function createActionSheetController({ soulTalkController, saveCurrentSta
 
   function renderActionRows(rows) {
     actionSheetActions.innerHTML = "";
-    rows.forEach((label) => {
+    rows.forEach((row) => {
       const button = document.createElement("button");
       button.type = "button";
-      button.textContent = label;
+      button.textContent = row.label;
       button.addEventListener("click", () => {
-        commitNavAction(queuedAction, label);
+        commitNavAction(queuedAction, row);
         queuedAction = null;
         panelManager.closePanel();
       });
@@ -45,13 +45,14 @@ export function createActionSheetController({ soulTalkController, saveCurrentSta
     });
   }
 
-  function commitNavAction(action, choice) {
+  function commitNavAction(action, row) {
     const actionMeta = getActionMeta(action);
     if (!actionMeta) return;
+    const choice = row?.choice;
     const result = evaluateActionEffect(store.getState(), action, choice);
     store.setState(result.statePatch);
     if (result.environmentEvent) EventBus.emit(ENVIRONMENT_INTERACTION_EVENT, result.environmentEvent);
-    const message = result.message || (choice ? `${actionMeta.message}: ${choice}` : actionMeta.message);
+    const message = row?.status || actionMeta.message;
     soulTalkController.addChat("system", message);
     statusText.textContent = message;
     saveCurrentState();
@@ -75,28 +76,45 @@ export function createActionSheetController({ soulTalkController, saveCurrentSta
 function getActionMeta(action) {
   const actions = {
     explore: {
-      title: "Explore",
-      copy: "Choose a quiet place in the first habitat.",
-      message: "Explore",
-      rows: ["Lake glow", "Star corridor", "Silent crystal"]
+      title: "探索",
+      copy: "選擇第一棲地裡一個安靜的地方。",
+      message: "探索完成。",
+      rows: [
+        { label: "湖畔微光", choice: "Lake glow", status: "湖畔留下了一圈柔和微光。" },
+        { label: "星圖回廊", choice: "Star corridor", status: "星圖回廊回應了一道安靜脈動。" },
+        { label: "靜默晶簇", choice: "Silent crystal", status: "晶簇亮起微光，空氣變得穩定。" }
+      ]
     },
     care: {
-      title: "Care",
-      copy: "Offer support without forcing closeness.",
-      message: "Care",
-      rows: ["Soft comfort", "Energy supply", "Rest together", "Clear static"]
+      title: "照顧",
+      copy: "提供支持，但不強迫靠近。",
+      message: "照顧完成。",
+      rows: [
+        { label: "輕聲安撫", choice: "Soft comfort", status: "灰影貓稍微放鬆了一點。" },
+        { label: "能量補給", choice: "Energy supply", status: "溫暖能量回到心核。" },
+        { label: "陪伴休息", choice: "Rest together", status: "棲地安靜下來，適合一起休息。" },
+        { label: "清理雜訊", choice: "Clear static", status: "空氣中的雜訊被清掉了一些。" }
+      ]
     },
     grow: {
-      title: "Grow",
-      copy: "Tune the bond without opening combat systems.",
-      message: "Grow",
-      rows: ["Trust tuning", "Emotional balance", "Skill circuit"]
+      title: "成長",
+      copy: "校準羈絆，不開啟戰鬥系統。",
+      message: "成長調整完成。",
+      rows: [
+        { label: "信任校準", choice: "Trust tuning", status: "信任回路略微對齊。" },
+        { label: "情緒穩定", choice: "Emotional balance", status: "心核回到更穩定的節奏。" },
+        { label: "技能回路", choice: "Skill circuit", status: "技能回路仍保持休眠。" }
+      ]
     },
     memory: {
-      title: "Memory",
-      copy: "Save a small trace from today.",
-      message: "Memory",
-      rows: ["Lake fragment", "Today echo", "Companion note"]
+      title: "記憶",
+      copy: "保存今天留下的一小段痕跡。",
+      message: "記憶已保存。",
+      rows: [
+        { label: "湖面片段", choice: "Lake fragment", status: "湖面片段被收入心核。" },
+        { label: "今日回聲", choice: "Today echo", status: "今天的回聲被輕輕記下。" },
+        { label: "夥伴筆記", choice: "Companion note", status: "夥伴筆記已保存。" }
+      ]
     }
   };
   return actions[action];

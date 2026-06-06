@@ -32,6 +32,9 @@ const CELESTIAL_START_X = -42;
 const CELESTIAL_END_X = WORLD_WIDTH + 42;
 const CELESTIAL_BASE_Y = getSceneLayoutObject("sun")?.y ?? 180;
 const CELESTIAL_ARC_HEIGHT = 118;
+const MOON_START_X = 230;
+const MOON_END_X = WORLD_WIDTH + 54;
+const MOON_ARC_HEIGHT = 76;
 const CAMPFIRE_FADE_SPEED = 0.075;
 const MIN_SCREEN_WIDTH = 1;
 const MIN_SCREEN_HEIGHT = 1;
@@ -380,11 +383,15 @@ function updateCelestialSprite(sprite, objectId, progress, targetAlpha) {
     const baseY = layout
       ? (layout.y / referenceHeight) * screenHeight
       : CELESTIAL_BASE_Y;
-    const startX = CELESTIAL_START_X * scaleRatio;
-    const endX = screenWidth + (CELESTIAL_END_X - WORLD_WIDTH) * scaleRatio;
+    const isMoon = objectId === "moon";
+    const startX = (isMoon ? MOON_START_X : CELESTIAL_START_X) * scaleRatio;
+    const endX = isMoon
+      ? screenWidth + (MOON_END_X - WORLD_WIDTH) * scaleRatio
+      : screenWidth + (CELESTIAL_END_X - WORLD_WIDTH) * scaleRatio;
+    const arcHeight = isMoon ? MOON_ARC_HEIGHT : CELESTIAL_ARC_HEIGHT;
 
     sprite.x = startX + (endX - startX) * progress;
-    sprite.y = baseY - Math.sin(progress * Math.PI) * CELESTIAL_ARC_HEIGHT * scaleRatio;
+    sprite.y = baseY - Math.sin(progress * Math.PI) * arcHeight * scaleRatio;
   }
   if (!sprite.__sceneEditorSelected) {
     sprite.visible = true;

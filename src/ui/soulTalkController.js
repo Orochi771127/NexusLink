@@ -1,6 +1,6 @@
 import { qs } from "../utils/dom.js";
 
-const DEFAULT_STATUS_TEXT = "SOUL TALK / 靈魂聖域";
+const DEFAULT_STATUS_TEXT = "心語 / 靈魂聖域";
 const DEFAULT_PREVIEW_TEXT = "我在這裡，安靜地看著你。";
 
 export function createSoulTalkController({ store, saveCurrentState }) {
@@ -56,7 +56,7 @@ export function createSoulTalkController({ store, saveCurrentState }) {
 
   function handlePlayerMessage(message) {
     setSoulTalkState("thinking");
-    setStatusText("正在聆聽心核回聲...");
+    setStatusText("心核正在聽你說話...");
     addChat("player", message);
 
     let result;
@@ -99,10 +99,10 @@ export function createSoulTalkController({ store, saveCurrentState }) {
 
     waveformShell = document.createElement("section");
     waveformShell.className = "soul-talk-waveform";
-    waveformShell.setAttribute("aria-label", "Soul Talk listening waveform");
+    waveformShell.setAttribute("aria-label", "心語聆聽波形");
     waveformShell.innerHTML = `
       <div class="soul-waveform-copy">
-        <strong>SOUL TALK</strong>
+        <strong>心語</strong>
         <span>靈魂聖域</span>
       </div>
       <div class="soul-waveform" aria-hidden="true">
@@ -161,7 +161,7 @@ export function createSoulTalkController({ store, saveCurrentState }) {
       if (role === "player") {
         line.textContent = `你：${item.text}`;
       } else if (role === "system") {
-        line.textContent = `系統：${item.text}`;
+        line.textContent = `棲地：${item.text}`;
       } else {
         const name = currentCreature?.name || "夥伴";
         line.textContent = `${name}：${item.text}`;
