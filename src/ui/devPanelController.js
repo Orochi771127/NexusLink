@@ -1,18 +1,10 @@
 import { clamp } from "../utils/clamp.js";
 import { clearState } from "../state/saveManager.js";
+import { ANIMATION_NAMES } from "../engine/interactionController.js";
 
 export const SUPPORTED_DEV_MOODS = new Set(["calm", "happy", "warm", "sad", "defensive", "distant", "tired"]);
 
-const DEV_ANIMATION_NAMES = [
-  "idle_calm",
-  "idle_defensive",
-  "idle_distant",
-  "ambient_walk",
-  "blink",
-  "touch_guarded",
-  "touch_accept",
-  "touch_reject"
-];
+const DEV_ANIMATION_NAMES = ["ambient_walk", ...ANIMATION_NAMES];
 
 export function readDevPanelFlag() {
   try {

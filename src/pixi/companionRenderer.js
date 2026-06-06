@@ -3,9 +3,6 @@ import { FALLBACK_CREATURE } from "../engine/personalityProfile.js";
 import { SCENE_LAYOUT } from "../data/sceneLayout.js";
 import { createAnimatedCompanionNode, loadGreyshadeCatAnimationPack } from "./spriteSheetAnimationLoader.js";
 
-const TOUCH_ANIMATION_LOCK_TIMEOUT_MS = 3000;
-let isAnimating = false;
-
 export async function createCreatureNode(creature, statusText) {
   if (creature.id === "greyshade-cat") {
     const animationPack = await loadGreyshadeCatAnimationPack();
@@ -50,30 +47,17 @@ export function bindCompanionTap(companion, { isInteractionBlocked, onTouch }) {
   companion.cursor = "pointer";
   let lastTapAt = 0;
 
-  companion.on("pointertap", async () => {
-    if (isAnimating) return;
+  companion.on("pointerdown", async () => {
     if (isInteractionBlocked()) return;
     const now = Date.now();
     const isDoubleTap = now - lastTapAt < 320;
     lastTapAt = now;
-    isAnimating = true;
 
     try {
-      await Promise.race([
-        Promise.resolve(onTouch(isDoubleTap ? "hug" : "touch")),
-        createTouchAnimationTimeout()
-      ]);
+      await Promise.resolve(onTouch(isDoubleTap ? "hug" : "touch"));
     } catch (error) {
       console.warn("Companion touch interaction failed:", error);
-    } finally {
-      isAnimating = false;
     }
-  });
-}
-
-function createTouchAnimationTimeout() {
-  return new Promise((resolve) => {
-    setTimeout(resolve, TOUCH_ANIMATION_LOCK_TIMEOUT_MS);
   });
 }
 

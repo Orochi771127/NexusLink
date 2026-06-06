@@ -1,7 +1,7 @@
 import { applyOfflineRecovery } from "./engine/offlineRecovery.js";
 import AudioManager from "./audio/audioManager.js";
-import { CURRENT_CREATURE_ID, FALLBACK_CREATURE, getTouchPersonality } from "./engine/personalityProfile.js";
-import { evaluateTouchReaction } from "./engine/touchReactionEngine.js";
+import { CURRENT_CREATURE_ID, FALLBACK_CREATURE } from "./engine/personalityProfile.js";
+import { createInteractionController } from "./engine/interactionController.js";
 import { bindViewportVars, qs } from "./utils/dom.js";
 import EventBus from "./utils/eventBus.js";
 import { loadState, saveState } from "./state/saveManager.js";
@@ -31,7 +31,6 @@ import { enableEditorMode, readSceneEditorFlag } from "./tools/sceneEditor.js";
 import {
   createCompanionMotion,
   playDevMotion,
-  triggerCompanionTouchMotion,
   updateCompanionMotion
 } from "./pixi/motionController.js";
 
@@ -40,6 +39,7 @@ const ENVIRONMENT_INTERACTION_EVENT = "ENVIRONMENT_INTERACTION";
 const ENVIRONMENT_EFFECT_LIFETIME_MS = 720;
 let currentCreature = FALLBACK_CREATURE;
 let companionMotionController = null;
+let interactionController = null;
 let currentMotionState = "idle_calm";
 let devPanelController = null;
 
@@ -170,14 +170,23 @@ async function bootScene(app, panelManager, statusText, soulTalkController) {
   const companion = await createCreatureNode(currentCreature, statusText);
   positionCompanion(companion, app);
   layers.layerEntity.addChild(companion);
+  exposeDevCompanion(companion);
 
   companionMotionController = createCompanionMotion(companion, store.getState().mood);
+  interactionController = createInteractionController({
+    companion,
+    creature: currentCreature,
+    store,
+    saveCurrentState,
+    statusText,
+    onStateChange: () => {
+      soulTalkController.renderChat();
+      devPanelController?.renderReadout();
+    }
+  });
   bindCompanionTap(companion, {
     isInteractionBlocked: () => panelManager.isPanelOpen(),
-    onTouch: (touchType) => {
-      const interactionResult = handleCompanionTouch(touchType, statusText, soulTalkController);
-      return triggerCompanionTouchMotion(companionMotionController, interactionResult);
-    }
+    onTouch: (touchType) => interactionController.handleTouch(touchType)
   });
 
   const isSceneEditorMode = readSceneEditorFlag();
@@ -278,19 +287,11 @@ function getAnimationLabState() {
   };
 }
 
-function handleCompanionTouch(touchType, statusText, soulTalkController) {
-  const interactionResult = evaluateTouchReaction(
-    store.getState(),
-    getTouchPersonality(currentCreature),
-    touchType
-  );
-
-  store.setState(interactionResult.statePatch);
-  statusText.textContent = interactionResult.previewText;
-  saveCurrentState();
-  soulTalkController.renderChat();
-  devPanelController?.renderReadout();
-  return interactionResult;
+function exposeDevCompanion(companion) {
+  if (typeof window === "undefined") return;
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("devPanel") !== "1" && params.get("devSceneEditor") !== "1") return;
+  window.__NEXUS_TEST_COMPANION__ = companion;
 }
 
 async function loadCurrentCreature(statusText) {

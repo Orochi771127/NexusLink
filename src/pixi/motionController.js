@@ -90,6 +90,15 @@ export function playDevMotion(motion, motionState) {
 }
 
 export function updateCompanionMotion(companion, motion, timeSeconds, nowMs, mood, onStateChange = () => {}, options = {}) {
+  if (companion.__interactionController?.isAnimationLocked?.()) {
+    stopAmbientWalk(motion);
+    motion.temporaryState = null;
+    motion.devForcedState = null;
+    motion.fallbackMotionActive = false;
+    onStateChange(companion.__animationController?.getCurrentAnimationName?.() || motion.state);
+    return;
+  }
+
   motion.state = getIdleMotionState(mood);
   if (motion.temporaryState && nowMs >= motion.temporaryUntil) {
     motion.temporaryState = null;
@@ -121,7 +130,15 @@ export function updateCompanionMotion(companion, motion, timeSeconds, nowMs, moo
     motion.devForcedState ||
     motion.ambientState ||
     motion.state;
-  const spriteAnimationPlayed = companion.__animationController?.play(activeState, { mood });
+  const animationController = companion.__animationController;
+  let spriteAnimationPlayed = false;
+  if (animationController?.hasAnimation?.(activeState)) {
+    spriteAnimationPlayed = animationController.play(activeState, { mood });
+  } else {
+    animationController?.loadAnimation?.(activeState).catch((error) => {
+      console.warn(`Companion motion lazy load failed: ${activeState}`, error);
+    });
+  }
   const transform = motion.temporaryState
     ? getTemporaryMotionTransform(activeState, motion, nowMs)
     : motion.ambientState
