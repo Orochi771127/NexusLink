@@ -1345,8 +1345,8 @@ body.panel-open .dev-reaction-lab {
 
 @media (max-width: 430px) {
   .core-hud {
-    width: 190px;
-    max-width: calc(100vw - 184px);
+    width: 172px;
+    max-width: calc(100vw - 206px);
     min-width: 164px;
   }
 

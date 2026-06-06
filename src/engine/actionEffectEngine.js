@@ -3,6 +3,22 @@ import { clamp } from "../utils/clamp.js";
 const MEMORY_DEDUPE_WINDOW_MS = 5 * 60 * 1000;
 const TRACE_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 
+const ACTION_CHOICE_ALIASES = Object.freeze({
+  "Lake glow": "lake_glow",
+  "Star corridor": "star_corridor",
+  "Silent crystal": "silent_crystal",
+  "Soft comfort": "soft_comfort",
+  "Energy supply": "energy_supply",
+  "Rest together": "rest_together",
+  "Clear static": "clear_static",
+  "Trust tuning": "trust_tuning",
+  "Emotional balance": "emotional_balance",
+  "Skill circuit": "skill_circuit",
+  "Lake fragment": "lake_fragment",
+  "Today echo": "today_echo",
+  "Companion note": "companion_note"
+});
+
 function createMemory(currentState, type, title, text, now = Date.now()) {
   return {
     id: `mem_${now}_${type}`,
@@ -59,9 +75,10 @@ function appendMemoryDeduped(memories, memory, now = Date.now()) {
 export function evaluateActionEffect(currentState, action, choice) {
   const statePatch = {};
   const now = Date.now();
+  const normalizedChoice = normalizeActionChoice(choice);
   const memories = Array.isArray(currentState.memories) ? currentState.memories : [];
   const habitatTraces = Array.isArray(currentState.habitatTraces) ? currentState.habitatTraces : [];
-  let message = "The habitat settles quietly.";
+  let message = "棲地安靜地穩定下來。";
   let environmentEvent = null;
 
   const setVitals = ({ energy = 0, bond = 0, trust = 0, defense = 0, touchFatigue = 0, mood } = {}) => {
@@ -74,68 +91,77 @@ export function evaluateActionEffect(currentState, action, choice) {
   };
 
   if (action === "explore") {
-    if (choice === "Lake glow") {
+    if (normalizedChoice === "lake_glow") {
       setVitals({ energy: -1, bond: 1, mood: currentState.mood === "distant" ? "calm" : "warm" });
       statePatch.memories = appendMemoryDeduped(
         memories,
-        createMemory(currentState, "explore_lake_glow", "Lake glow", "A soft glow stayed on the lake surface.", now)
+        createMemory(currentState, "explore_lake_glow", "湖畔微光", "湖面留下了一圈柔和微光。", now)
       );
-      message = "A quiet glow lingers by the lake.";
-    } else if (choice === "Star corridor") {
+      message = "湖畔留下了一圈柔和微光。";
+    } else if (normalizedChoice === "star_corridor") {
       setVitals({ energy: -2, trust: 1, mood: currentState.mood === "defensive" ? "calm" : "distant" });
       statePatch.memories = appendMemoryDeduped(
         memories,
-        createMemory(currentState, "explore_star_corridor", "Star corridor", "The star path answered with a faint pulse.", now)
+        createMemory(currentState, "explore_star_corridor", "星圖回廊", "星圖回廊回應了一道安靜脈動。", now)
       );
-      message = "The star corridor leaves a calm distance.";
+      message = "星圖回廊留下安靜的距離。";
     } else {
       setVitals({ energy: -1, defense: -1, mood: "calm" });
       statePatch.habitatTraces = [...habitatTraces, createTrace("crystal_trace", 0.55, now)];
       environmentEvent = { type: "crystal_touch", color: "#8deeff", x: 260, y: 500 };
-      message = "The crystal answers with a small glow.";
+      message = "晶簇亮起微光，空氣變得穩定。";
     }
   } else if (action === "care") {
-    if (choice === "Soft comfort") {
+    if (normalizedChoice === "soft_comfort") {
       setVitals({ defense: -2, trust: 1, mood: "calm" });
-      message = "The companion relaxes a little.";
-    } else if (choice === "Energy supply") {
+      message = "灰影貓稍微放鬆了一點。";
+    } else if (normalizedChoice === "energy_supply") {
       setVitals({ energy: 2, mood: "warm" });
-      message = "Warm energy returns to the core.";
-    } else if (choice === "Rest together") {
+      message = "溫暖能量回到心核。";
+    } else if (normalizedChoice === "rest_together") {
       setVitals({ energy: 1, touchFatigue: -2, mood: currentState.energy <= 3 ? "tired" : "calm" });
       statePatch.memories = appendMemoryDeduped(
         memories,
-        createMemory(currentState, "care_rest", "Rest together", "The habitat grew quiet enough to rest.", now)
+        createMemory(currentState, "care_rest", "陪伴休息", "棲地安靜下來，適合一起休息。", now)
       );
-      message = "The habitat grows quieter for rest.";
+      message = "棲地安靜下來，適合一起休息。";
     } else {
       setVitals({ defense: -1, touchFatigue: -1, mood: "calm" });
-      message = "Some static clears from the air.";
+      message = "空氣中的雜訊被清掉了一些。";
     }
   } else if (action === "grow") {
-    if (choice === "Trust tuning") {
+    if (normalizedChoice === "trust_tuning") {
       setVitals({ trust: 1, defense: -1 });
       statePatch.growthHint = "trust_tuning";
-      message = "The trust circuit aligns slightly.";
-    } else if (choice === "Emotional balance") {
+      message = "信任回路略微對齊。";
+    } else if (normalizedChoice === "emotional_balance") {
       setVitals({ energy: 1, mood: "calm" });
-      message = "The core returns to a steadier rhythm.";
+      message = "心核回到更穩定的節奏。";
     } else {
-      message = "Skill circuits remain dormant for now.";
+      message = "技能回路暫時維持休眠。";
     }
   } else if (action === "memory") {
     const recentChat = [...(currentState.chatHistory || [])].reverse().find((item) => item?.text)?.text || "";
-    const memoryText = choice === "Today echo"
-      ? recentChat.slice(0, 160) || "A quiet day is recorded."
-      : choice === "Companion note"
-        ? "A note records the current distance and trust."
-        : "A lake fragment is saved in the core.";
-    const type = choice === "Today echo" ? "today_echo" : choice === "Companion note" ? "companion_note" : "lake_fragment";
+    const memoryText = normalizedChoice === "today_echo"
+      ? recentChat.slice(0, 160) || "安靜的一天被記錄下來。"
+      : normalizedChoice === "companion_note"
+        ? "這則筆記記下了此刻的距離與信任。"
+        : "一枚湖面片段被保存在心核裡。";
+    const type = normalizedChoice === "today_echo"
+      ? "today_echo"
+      : normalizedChoice === "companion_note"
+        ? "companion_note"
+        : "lake_fragment";
+    const title = normalizedChoice === "today_echo"
+      ? "今日回聲"
+      : normalizedChoice === "companion_note"
+        ? "夥伴筆記"
+        : "湖面片段";
     statePatch.memories = appendMemoryDeduped(
       memories,
-      createMemory(currentState, type, choice || "Memory", memoryText, now)
+      createMemory(currentState, type, title, memoryText, now)
     );
-    message = "A memory is saved in the core.";
+    message = "記憶已收入心核。";
   }
 
   return {
@@ -147,4 +173,8 @@ export function evaluateActionEffect(currentState, action, choice) {
     },
     environmentEvent
   };
+}
+
+function normalizeActionChoice(choice) {
+  return ACTION_CHOICE_ALIASES[choice] || choice || "";
 }

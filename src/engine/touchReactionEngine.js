@@ -159,7 +159,7 @@ function getTouchReactionText(reaction) {
 }
 
 function getBlockedTouchText(blockedTouchCount) {
-  if (blockedTouchCount <= 1) return "Let it have a quiet moment.";
-  if (blockedTouchCount === 2) return "It stays still, asking for more space.";
-  return "It pulls its boundary closer. Wait before reaching again.";
+  if (blockedTouchCount <= 1) return "灰影貓把身體收得更小了一點。";
+  if (blockedTouchCount === 2) return "牠沒有再退後，但尾巴明顯繃緊了。";
+  return "灰影貓移開視線，像是在告訴你：現在不要再靠近。";
 }

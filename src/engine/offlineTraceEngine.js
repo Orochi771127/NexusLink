@@ -29,7 +29,7 @@ export function evaluateOfflineTrace(currentState, now = Date.now()) {
         timeAnomalyCount: (currentState.timeAnomalyCount || 0) + 1
       },
       traces,
-      statusMessage: "The habitat clock settles back into a quiet rhythm."
+      statusMessage: "棲地的時間訊號短暫偏移了一下。"
     };
   }
 
@@ -42,19 +42,19 @@ export function evaluateOfflineTrace(currentState, now = Date.now()) {
   if (elapsedMs < DAY_MS) {
     statePatch.energy = clamp(currentState.energy - 1, 0, 10);
     traces.push(createTrace("small_silence", 0.28, now));
-    statusMessage = "The lakeside is a little quieter than before.";
+    statusMessage = "湖邊比上次安靜了一點。";
   } else if (elapsedMs < THREE_DAYS_MS) {
     statePatch.energy = clamp(currentState.energy - 2, 0, 10);
     statePatch.defense = clamp(currentState.defense + 1, 0, 100);
     statePatch.mood = "distant";
     traces.push(createTrace("fallen_leaf", 0.42, now));
-    statusMessage = "A fallen leaf rests near the core.";
+    statusMessage = "一片落葉停在心核旁。";
   } else {
     statePatch.energy = clamp(currentState.energy - 3, 0, 10);
     statePatch.defense = clamp(currentState.defense + 2, 0, 100);
     statePatch.mood = "distant";
     traces.push(createTrace("campfire_dim", 0.5, now));
-    statusMessage = "The campfire is dim, but still warm.";
+    statusMessage = "營火暗了一些，但還留著微溫。";
   }
 
   return { statePatch, traces, statusMessage };
