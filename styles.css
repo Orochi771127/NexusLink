@@ -25,7 +25,7 @@
   --z-nav: 30;
   --z-overlay: 60;
   --z-panel: 70;
-  --asset-bg-lake: url("./assets/backgrounds/BG_01_LakeNightCamp.png");
+  --asset-bg-lake: url("./assets/backgrounds/LakeNightCamp_v2/bg_night_base.png");
 }
 
 * {
@@ -130,10 +130,10 @@ canvas {
   top: var(--top-safe);
   left: var(--edge);
   z-index: var(--z-home-ui);
-  width: 220px;
-  max-width: calc(100vw - 196px);
-  min-width: 184px;
-  height: 92px;
+  width: 206px;
+  max-width: calc(100vw - 188px);
+  min-width: 178px;
+  height: 86px;
   pointer-events: auto;
 }
 
@@ -154,20 +154,28 @@ canvas {
 
 .core-hud-open {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-columns: 46px minmax(0, 1fr) 10px;
   align-items: center;
   width: 100%;
   height: 100%;
-  gap: 10px;
-  border-radius: 16px;
-  padding: 17px 16px;
+  gap: 9px;
+  border-radius: 18px;
+  padding: 12px 13px;
   color: var(--text);
   cursor: pointer;
+  background:
+    radial-gradient(circle at 18% 50%, rgba(0, 206, 209, 0.16), transparent 42%),
+    linear-gradient(145deg, rgba(14, 22, 40, 0.7), rgba(5, 10, 22, 0.9));
+  border-color: rgba(93, 232, 255, 0.34);
+  box-shadow:
+    inset 0 1px 2px rgba(255, 255, 255, 0.1),
+    0 0 22px rgba(0, 206, 209, 0.14),
+    0 12px 34px rgba(0, 0, 0, 0.68);
 }
 
 .avatar-orb {
   display: block;
-  width: 44px;
+  width: 46px;
   aspect-ratio: 1;
   border: 1px solid rgba(0, 206, 209, 0.46);
   border-radius: 999px;
@@ -192,8 +200,8 @@ canvas {
   display: block;
   margin: 0;
   color: var(--text);
-  font-size: 17px;
-  line-height: 1.12;
+  font-size: 18px;
+  line-height: 1.2;
   letter-spacing: 0;
   white-space: nowrap;
   overflow: hidden;
@@ -204,17 +212,17 @@ canvas {
 .panel-header p,
 .soul-talk-launcher strong {
   display: block;
-  margin: 3px 0 5px;
+  margin: 4px 0 5px;
   width: fit-content;
   background: linear-gradient(to right, var(--color-neon-blue), var(--color-cyan));
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
   -webkit-text-fill-color: transparent;
-  font-size: 10px;
+  font-size: 10.5px;
   font-weight: 850;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  text-transform: none;
 }
 
 .level-pill {
@@ -223,10 +231,10 @@ canvas {
   width: fit-content;
   border: 1px solid rgba(255, 216, 88, 0.38);
   border-radius: 999px;
-  padding: 3px 8px;
+  padding: 3px 7px;
   background: rgba(255, 216, 88, 0.12);
   color: var(--color-energy);
-  font-size: 11px;
+  font-size: 10.5px;
   font-weight: 800;
   white-space: nowrap;
   box-shadow: 0 0 18px rgba(255, 216, 88, 0.18);
@@ -249,7 +257,7 @@ canvas {
   flex-wrap: wrap;
   justify-content: flex-end;
   gap: 8px;
-  max-width: 170px;
+  max-width: 174px;
   pointer-events: auto;
 }
 
@@ -286,15 +294,29 @@ canvas {
 }
 
 .resource-item.coin .resource-icon::before {
-  content: "🟡";
-  font-size: 16px;
-  line-height: 1;
+  content: "";
+  display: block;
+  width: 17px;
+  height: 17px;
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 36% 32%, rgba(255, 255, 255, 0.75), transparent 24%),
+    linear-gradient(145deg, #ffe57a, #d08b22);
+  box-shadow: 0 0 10px rgba(255, 216, 88, 0.6);
 }
 
 .resource-item.gem .resource-icon::before {
-  content: "💠";
-  font-size: 16px;
-  line-height: 1;
+  content: "";
+  display: block;
+  width: 16px;
+  height: 16px;
+  border: 1px solid rgba(210, 245, 255, 0.72);
+  border-radius: 3px;
+  background:
+    linear-gradient(45deg, rgba(255, 255, 255, 0.72), transparent 40%),
+    linear-gradient(135deg, #a0c8ff, #4ecbff 46%, #263f83);
+  box-shadow: 0 0 10px rgba(160, 200, 255, 0.52);
+  transform: rotate(45deg);
 }
 
 .resource-value {
@@ -306,7 +328,8 @@ canvas {
   line-height: 1;
 }
 
-.quick-hud button {
+.quick-hud button,
+.quick-icon-button {
   min-height: 32px;
   border-radius: 999px;
   color: var(--text);
@@ -314,12 +337,35 @@ canvas {
   font-weight: 850;
 }
 
-.quick-hud button {
+.quick-hud button,
+.quick-icon-button {
   display: grid;
   place-items: center;
   width: 32px;
   padding: 0;
   cursor: pointer;
+}
+
+.quick-icon-button {
+  position: relative;
+  border: 1px solid rgba(0, 245, 255, 0.34);
+  background:
+    radial-gradient(circle at 50% 36%, rgba(0, 206, 209, 0.18), transparent 50%),
+    rgba(8, 18, 32, 0.68);
+  box-shadow: 0 0 14px rgba(0, 245, 255, 0.18), var(--shadow-glass);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.quick-icon-svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  pointer-events: none;
 }
 
 .settings-group {
@@ -366,14 +412,16 @@ canvas {
 }
 
 .settings-item.mail::before {
-  content: '✉️';
-  font-size: 18px;
+  content: '信';
+  font-size: 13px;
+  font-weight: 900;
   line-height: 1;
 }
 
 .settings-item.support::before {
-  content: '🎧';
-  font-size: 18px;
+  content: '助';
+  font-size: 13px;
+  font-weight: 900;
   line-height: 1;
 }
 
@@ -1298,7 +1346,7 @@ body.panel-open .dev-reaction-lab {
 @media (max-width: 430px) {
   .core-hud {
     width: 190px;
-    max-width: calc(100vw - 188px);
+    max-width: calc(100vw - 184px);
     min-width: 164px;
   }
 
@@ -1315,7 +1363,7 @@ body.panel-open .dev-reaction-lab {
 
   .core-hud {
     left: var(--edge);
-    width: 164px;
+    width: 168px;
     max-width: calc(100vw - 166px);
     min-width: 148px;
     height: 82px;
@@ -1328,6 +1376,20 @@ body.panel-open .dev-reaction-lab {
 
   .avatar-orb {
     width: 38px;
+  }
+
+  .core-name {
+    font-size: 16px;
+  }
+
+  .core-kicker {
+    font-size: 9.5px;
+    letter-spacing: 0.08em;
+  }
+
+  .level-pill {
+    font-size: 9.5px;
+    padding-inline: 6px;
   }
 
   .quick-hud {
