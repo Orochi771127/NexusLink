@@ -1,4 +1,4 @@
-const BGM_SOURCE = "./assets/audio/nexus-core:-ethereal-lakefron.mp3";
+const BGM_SOURCE = "./assets/audio/bgm_lakefront.mp3";
 const FADE_IN_DURATION_MS = 2000;
 
 const bgmAudio = new Audio(BGM_SOURCE);
