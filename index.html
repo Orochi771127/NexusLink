@@ -29,10 +29,14 @@
         <section class="quick-hud" aria-label="Quick resources and actions">
           <div class="resource-pill" aria-label="coins">◎ 1,280</div>
           <div class="resource-pill" aria-label="crystals">◇ 36</div>
-          <button type="button" aria-label="notifications">!</button>
-          <button type="button" aria-label="mail">@</button>
-          <button id="btn-audio-toggle" class="audio-toggle" type="button" aria-label="音樂開關">🔊</button>
-          <button type="button" aria-label="settings">⚙</button>
+          <div class="settings-group">
+            <button id="btn-settings-toggle" type="button" aria-label="設定選單" aria-expanded="false">⚙</button>
+            <div id="settings-dropdown" class="settings-dropdown">
+              <button id="btn-audio-toggle" class="audio-toggle" type="button" aria-label="音樂開關">🔊</button>
+              <button type="button" aria-label="notifications">!</button>
+              <button type="button" aria-label="mail">@</button>
+            </div>
+          </div>
         </section>
 
         <button class="soul-talk-launcher" type="button" data-panel-trigger="soulTalk" aria-label="開啟 Soul Talk">

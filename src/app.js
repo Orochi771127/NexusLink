@@ -50,6 +50,7 @@ async function bootstrap() {
   bindViewportVars();
   AudioManager.initUnlock();
   bindAudioControls();
+  bindSettingsDropdown();
 
   const isDevPanelEnabled = readDevPanelFlag();
   const devQueryHooks = readDevQueryHooks();
@@ -120,6 +121,30 @@ function bindAudioControls() {
   audioToggleButton.addEventListener("click", () => {
     const isMuted = AudioManager.toggleMute();
     audioToggleButton.classList.toggle("muted", isMuted);
+  });
+}
+
+function bindSettingsDropdown() {
+  const settingsToggleButton = qs("#btn-settings-toggle");
+  const settingsDropdown = qs("#settings-dropdown");
+  if (!settingsToggleButton || !settingsDropdown) return;
+
+  const setDropdownExpanded = (isExpanded) => {
+    settingsDropdown.classList.toggle("expanded", isExpanded);
+    settingsToggleButton.setAttribute("aria-expanded", String(isExpanded));
+  };
+
+  settingsToggleButton.addEventListener("click", (event) => {
+    event.stopPropagation();
+    setDropdownExpanded(!settingsDropdown.classList.contains("expanded"));
+  });
+
+  settingsDropdown.addEventListener("click", (event) => {
+    event.stopPropagation();
+  });
+
+  document.addEventListener("click", () => {
+    setDropdownExpanded(false);
   });
 }
 

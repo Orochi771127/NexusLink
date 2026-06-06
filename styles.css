@@ -282,6 +282,33 @@ canvas {
   cursor: pointer;
 }
 
+.settings-group {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.settings-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 12px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-10px);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.settings-dropdown.expanded {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
 .audio-toggle {
   position: relative;
   overflow: hidden;
