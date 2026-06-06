@@ -1,15 +1,9 @@
 import { WORLD_HEIGHT, WORLD_WIDTH } from "./pixiApp.js";
+import { ANIMATION_NAMES, CORE_ANIMATION_NAMES } from "../engine/interactionController.js";
 
 export const GREYSHADE_CAT_ANIMATIONS_PATH = "./assets/characters/greyshade-cat/metadata/animations.json";
-export const GREYSHADE_CAT_ANIMATION_NAMES = [
-  "idle_calm",
-  "idle_defensive",
-  "idle_distant",
-  "blink",
-  "touch_guarded",
-  "touch_accept",
-  "touch_reject"
-];
+export const GREYSHADE_CAT_ANIMATION_NAMES = ANIMATION_NAMES;
+export const GREYSHADE_CAT_CORE_ANIMATION_NAMES = CORE_ANIMATION_NAMES;
 
 export async function loadGreyshadeCatAnimationPack() {
   const status = {
@@ -27,35 +21,20 @@ export async function loadGreyshadeCatAnimationPack() {
     status.metadataLoaded = true;
     const animations = new Map();
 
+    GREYSHADE_CAT_ANIMATION_NAMES.forEach((name) => {
+      if (!isValidAnimationDefinition(metadata[name])) {
+        status.missing.push(name);
+        status.errors.push(`${name}: missing or invalid metadata`);
+      }
+    });
+
     await Promise.all(
-      GREYSHADE_CAT_ANIMATION_NAMES.map(async (name) => {
-        const definition = metadata[name];
-        if (!isValidAnimationDefinition(definition)) {
-          status.missing.push(name);
-          status.errors.push(`${name}: missing or invalid metadata`);
-          return;
-        }
-
-        try {
-          const texture = await PIXI.Assets.load(definition.sheet);
-          const textures = sliceSpriteSheet(texture, definition);
-          if (textures.length !== definition.frameCount) {
-            throw new Error(`Expected ${definition.frameCount} frames, sliced ${textures.length}`);
-          }
-
-          animations.set(name, {
-            ...definition,
-            name,
-            textures,
-            durationMs: (definition.frameCount / Math.max(1, definition.fps || 8)) * 1000
-          });
-          status.available[name] = true;
-        } catch (error) {
-          console.warn(`Greyshade cat animation failed to load: ${name}`, error);
-          status.missing.push(name);
-          status.errors.push(`${name}: ${error.message}`);
-        }
-      })
+      GREYSHADE_CAT_CORE_ANIMATION_NAMES.map((name) => loadAnimationDefinition({
+        animations,
+        metadata,
+        status,
+        name
+      }).catch(() => null))
     );
 
     return { animations, metadata, status };
@@ -113,6 +92,23 @@ export function getMoodAnimationName(mood) {
 function createSpriteAnimationController(animationPack, animatedSprite, initialMood) {
   let currentAnimationName = "idle_calm";
   let lastMood = initialMood;
+  const pendingLoads = new Map();
+
+  function loadAnimation(animationName) {
+    if (animationPack.animations.has(animationName)) {
+      return Promise.resolve(animationPack.animations.get(animationName));
+    }
+    if (pendingLoads.has(animationName)) return pendingLoads.get(animationName);
+
+    const pendingLoad = loadAnimationDefinition({
+      animations: animationPack.animations,
+      metadata: animationPack.metadata,
+      status: animationPack.status,
+      name: animationName
+    }).finally(() => pendingLoads.delete(animationName));
+    pendingLoads.set(animationName, pendingLoad);
+    return pendingLoad;
+  }
 
   function play(animationName, options = {}) {
     lastMood = options.mood || lastMood;
@@ -123,23 +119,61 @@ function createSpriteAnimationController(animationPack, animatedSprite, initialM
 
     currentAnimationName = animationName;
     animatedSprite.textures = definition.textures;
-    animatedSprite.loop = Boolean(definition.loop);
+    animatedSprite.loop = options.loop === undefined ? Boolean(definition.loop) : Boolean(options.loop);
     animatedSprite.animationSpeed = getAnimationSpeed(definition);
     animatedSprite.gotoAndPlay(0);
     animatedSprite.onComplete = () => {
-      if (definition.loop) return;
+      if (animatedSprite.loop) return;
       play(getMoodAnimationName(lastMood), { mood: lastMood });
     };
     return true;
   }
 
   return {
+    loadAnimation,
     play,
     hasAnimation: (animationName) => animationPack.animations.has(animationName),
     getCurrentAnimationName: () => currentAnimationName,
     getStatus: () => animationPack.status,
+    getAnimatedSprite: () => animatedSprite,
     getAnimationDurationMs: (animationName) => animationPack.animations.get(animationName)?.durationMs || null
   };
+}
+
+async function loadAnimationDefinition({ animations, metadata, status, name }) {
+  if (animations.has(name)) return animations.get(name);
+
+  const definition = metadata?.[name];
+  if (!isValidAnimationDefinition(definition)) {
+    status.available[name] = false;
+    if (!status.missing.includes(name)) status.missing.push(name);
+    throw new Error(`${name}: missing or invalid metadata`);
+  }
+
+  try {
+    const texture = await PIXI.Assets.load(definition.sheet);
+    const textures = sliceSpriteSheet(texture, definition);
+    if (textures.length !== definition.frameCount) {
+      throw new Error(`Expected ${definition.frameCount} frames, sliced ${textures.length}`);
+    }
+
+    const loadedDefinition = {
+      ...definition,
+      name,
+      textures,
+      durationMs: (definition.frameCount / Math.max(1, definition.fps || 8)) * 1000
+    };
+    animations.set(name, loadedDefinition);
+    status.available[name] = true;
+    status.missing = status.missing.filter((missingName) => missingName !== name);
+    return loadedDefinition;
+  } catch (error) {
+    console.warn(`Greyshade cat animation failed to load: ${name}`, error);
+    status.available[name] = false;
+    if (!status.missing.includes(name)) status.missing.push(name);
+    status.errors.push(`${name}: ${error.message}`);
+    throw error;
+  }
 }
 
 function sliceSpriteSheet(texture, definition) {
