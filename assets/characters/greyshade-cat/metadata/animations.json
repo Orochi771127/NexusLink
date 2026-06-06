@@ -6,7 +6,7 @@
     "frameWidth": 64,
     "frameHeight": 64,
     "frameCount": 8,
-    "fps": 8,
+    "fps": 4,
     "loop": true,
     "anchor": {
       "x": 0.5,
@@ -22,7 +22,7 @@
     "frameWidth": 64,
     "frameHeight": 64,
     "frameCount": 8,
-    "fps": 8,
+    "fps": 4,
     "loop": true,
     "anchor": {
       "x": 0.5,
@@ -38,7 +38,7 @@
     "frameWidth": 64,
     "frameHeight": 64,
     "frameCount": 8,
-    "fps": 7,
+    "fps": 4,
     "loop": true,
     "anchor": {
       "x": 0.5,
@@ -54,7 +54,7 @@
     "frameWidth": 64,
     "frameHeight": 64,
     "frameCount": 3,
-    "fps": 10,
+    "fps": 1.5,
     "loop": false,
     "anchor": {
       "x": 0.5,
@@ -70,7 +70,7 @@
     "frameWidth": 64,
     "frameHeight": 64,
     "frameCount": 6,
-    "fps": 10,
+    "fps": 3,
     "loop": false,
     "anchor": {
       "x": 0.5,
@@ -86,7 +86,7 @@
     "frameWidth": 64,
     "frameHeight": 64,
     "frameCount": 6,
-    "fps": 10,
+    "fps": 3,
     "loop": false,
     "anchor": {
       "x": 0.5,
@@ -102,7 +102,7 @@
     "frameWidth": 64,
     "frameHeight": 64,
     "frameCount": 6,
-    "fps": 10,
+    "fps": 3,
     "loop": false,
     "anchor": {
       "x": 0.5,
@@ -118,7 +118,7 @@
     "frameWidth": 64,
     "frameHeight": 64,
     "frameCount": 6,
-    "fps": 10,
+    "fps": 3,
     "loop": false,
     "anchor": {
       "x": 0.5,
@@ -134,7 +134,7 @@
     "frameWidth": 64,
     "frameHeight": 64,
     "frameCount": 6,
-    "fps": 8,
+    "fps": 3,
     "loop": true,
     "anchor": {
       "x": 0.5,
@@ -150,7 +150,7 @@
     "frameWidth": 64,
     "frameHeight": 64,
     "frameCount": 8,
-    "fps": 6,
+    "fps": 4,
     "loop": true,
     "anchor": {
       "x": 0.5,
@@ -166,7 +166,7 @@
     "frameWidth": 64,
     "frameHeight": 64,
     "frameCount": 8,
-    "fps": 6,
+    "fps": 4,
     "loop": true,
     "anchor": {
       "x": 0.5,
@@ -182,7 +182,7 @@
     "frameWidth": 64,
     "frameHeight": 64,
     "frameCount": 6,
-    "fps": 12,
+    "fps": 3,
     "loop": false,
     "anchor": {
       "x": 0.5,
@@ -198,7 +198,7 @@
     "frameWidth": 64,
     "frameHeight": 64,
     "frameCount": 6,
-    "fps": 10,
+    "fps": 3,
     "loop": false,
     "anchor": {
       "x": 0.5,
@@ -214,7 +214,7 @@
     "frameWidth": 64,
     "frameHeight": 64,
     "frameCount": 4,
-    "fps": 12,
+    "fps": 2,
     "loop": false,
     "anchor": {
       "x": 0.5,
@@ -246,7 +246,7 @@
     "frameWidth": 64,
     "frameHeight": 64,
     "frameCount": 6,
-    "fps": 6,
+    "fps": 3,
     "loop": true,
     "anchor": {
       "x": 0.5,
@@ -262,7 +262,7 @@
     "frameWidth": 64,
     "frameHeight": 64,
     "frameCount": 6,
-    "fps": 5,
+    "fps": 3,
     "loop": true,
     "anchor": {
       "x": 0.5,
@@ -278,7 +278,7 @@
     "frameWidth": 64,
     "frameHeight": 64,
     "frameCount": 8,
-    "fps": 8,
+    "fps": 4,
     "loop": true,
     "anchor": {
       "x": 0.5,
@@ -294,7 +294,7 @@
     "frameWidth": 64,
     "frameHeight": 64,
     "frameCount": 8,
-    "fps": 8,
+    "fps": 4,
     "loop": true,
     "anchor": {
       "x": 0.5,
@@ -310,7 +310,7 @@
     "frameWidth": 64,
     "frameHeight": 64,
     "frameCount": 8,
-    "fps": 7,
+    "fps": 4,
     "loop": false,
     "anchor": {
       "x": 0.5,
@@ -326,7 +326,7 @@
     "frameWidth": 64,
     "frameHeight": 64,
     "frameCount": 8,
-    "fps": 7,
+    "fps": 4,
     "loop": true,
     "anchor": {
       "x": 0.5,
@@ -342,7 +342,7 @@
     "frameWidth": 64,
     "frameHeight": 64,
     "frameCount": 8,
-    "fps": 7,
+    "fps": 4,
     "loop": false,
     "anchor": {
       "x": 0.5,
@@ -358,7 +358,7 @@
     "frameWidth": 64,
     "frameHeight": 64,
     "frameCount": 8,
-    "fps": 6,
+    "fps": 4,
     "loop": true,
     "anchor": {
       "x": 0.5,
@@ -374,7 +374,7 @@
     "frameWidth": 64,
     "frameHeight": 64,
     "frameCount": 8,
-    "fps": 6,
+    "fps": 4,
     "loop": false,
     "anchor": {
       "x": 0.5,
@@ -390,7 +390,7 @@
     "frameWidth": 64,
     "frameHeight": 64,
     "frameCount": 6,
-    "fps": 8,
+    "fps": 3,
     "loop": false,
     "anchor": {
       "x": 0.5,
@@ -406,7 +406,7 @@
     "frameWidth": 64,
     "frameHeight": 64,
     "frameCount": 8,
-    "fps": 7,
+    "fps": 4,
     "loop": true,
     "anchor": {
       "x": 0.5,
@@ -422,7 +422,7 @@
     "frameWidth": 64,
     "frameHeight": 64,
     "frameCount": 6,
-    "fps": 6,
+    "fps": 3,
     "loop": false,
     "anchor": {
       "x": 0.5,
@@ -438,7 +438,7 @@
     "frameWidth": 64,
     "frameHeight": 64,
     "frameCount": 8,
-    "fps": 8,
+    "fps": 4,
     "loop": true,
     "anchor": {
       "x": 0.5,
@@ -454,7 +454,7 @@
     "frameWidth": 64,
     "frameHeight": 64,
     "frameCount": 8,
-    "fps": 8,
+    "fps": 4,
     "loop": false,
     "anchor": {
       "x": 0.5,
