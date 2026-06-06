@@ -1,0 +1,65 @@
+{
+  "exportedAt": "2026-06-06T03:15:50.316Z",
+  "objects": [
+    {
+      "id": "sun",
+      "x": 37.667,
+      "y": 234.667,
+      "scale": {
+        "x": 0.054,
+        "y": 0.054
+      },
+      "texture": "./assets/props/LakeNightCamp_v2/celestial_sun.png"
+    },
+    {
+      "id": "moon",
+      "x": 37.666,
+      "y": 236,
+      "scale": {
+        "x": 0.05,
+        "y": 0.05
+      },
+      "texture": "./assets/props/LakeNightCamp_v2/celestial_moon.png"
+    },
+    {
+      "id": "magic_circle",
+      "x": 229.667,
+      "y": 665.999,
+      "scale": {
+        "x": 0.226,
+        "y": 0.226
+      },
+      "texture": "./assets/platforms/LakeNightCamp_v2/magic_circle.png"
+    },
+    {
+      "id": "campfire",
+      "x": 79,
+      "y": 658,
+      "scale": {
+        "x": 0.095,
+        "y": 0.095
+      },
+      "texture": "./assets/props/LakeNightCamp_v2/prop_campfire.png"
+    },
+    {
+      "id": "crystal",
+      "x": 287,
+      "y": 566.666,
+      "scale": {
+        "x": 0.05,
+        "y": 0.05
+      },
+      "texture": "./assets/props/LakeNightCamp_v2/prop_crystal.png"
+    },
+    {
+      "id": "companion",
+      "x": 229,
+      "y": 660.667,
+      "scale": {
+        "x": 0.567,
+        "y": 0.567
+      },
+      "texture": "dynamic_creature"
+    }
+  ]
+}
