@@ -2,6 +2,8 @@
 
 This folder contains the planning and production references for NexusLink.
 
+本資料夾即為《Nexus Link / 心核連結》目前的正式企劃案、工程規格、製作流程與留存文件集合。
+
 ## Start Here
 
 1. `nexuslink-design-brief.md`
@@ -32,6 +34,16 @@ This folder contains the planning and production references for NexusLink.
    - Official local art and animation pipeline.
    - Use this before generating, processing, registering, or QAing any visual asset.
 
+## Full Planning Documents / 中文完整企劃留存
+
+- `NexusLink_Full_Game_Architecture_v1.md`
+  - 《Nexus Link》企劃案 v1.0：情緒棲地型 AI 夥伴養成遊戲完整架構書。
+  - Use this as the full Chinese planning archive for product vision, player target, companion personality matrix, memory, care, exploration, purification, AI direction, and version roadmap.
+
+- `NexusLink_Phase1_Engine_Refactor_Report.md`
+  - 《Nexus Link 心核連結》第一階段：物理棲地與底層引擎架構重構總結報告。
+  - Use this as the retained architecture summary for DOM/PixiJS separation, fixed projection, environment time engine, 2.5D layers, UI/audio foundation, state trust boundary, and next route decision.
+
 ## Legacy And Reference Docs
 
 - `Asset_Generation_Plan.md`
@@ -39,7 +51,7 @@ This folder contains the planning and production references for NexusLink.
 - `NexusLink_HomeScreen_DesignSpec_v1.md`
 - `prompts/`
 
-Some older documents may contain encoding issues. Prefer the new `nexuslink-*` documents and `asset-pipeline.md` for current implementation decisions.
+Some older documents may contain encoding issues. Prefer the new `nexuslink-*` documents and `asset-pipeline.md` for current implementation decisions. Use the two full planning documents above for long-form Chinese product memory and architectural continuity.
 
 ## Current Scope Rule
 
