@@ -4,6 +4,7 @@ import { ANIMATION_NAMES, CORE_ANIMATION_NAMES } from "../engine/interactionCont
 export const GREYSHADE_CAT_ANIMATIONS_PATH = "./assets/characters/greyshade-cat/metadata/animations.json";
 export const GREYSHADE_CAT_ANIMATION_NAMES = ANIMATION_NAMES;
 export const GREYSHADE_CAT_CORE_ANIMATION_NAMES = CORE_ANIMATION_NAMES;
+export const PIXEL_ANIMATION_SPEED = 0.15;
 
 export async function loadGreyshadeCatAnimationPack() {
   const status = {
@@ -59,12 +60,13 @@ export function createAnimatedCompanionNode(animationPack, creature) {
   const animatedSprite = new PIXI.AnimatedSprite(idleDefinition.textures);
   animatedSprite.anchor.set(0.5, 1);
   animatedSprite.loop = true;
-  animatedSprite.animationSpeed = getAnimationSpeed(idleDefinition);
+  animatedSprite.animationSpeed = PIXEL_ANIMATION_SPEED;
 
   const maxW = Math.min(170, WORLD_WIDTH * 0.46);
   const maxH = Math.min(170, WORLD_HEIGHT * 0.2);
   const scale = Math.min(maxW / idleDefinition.frameWidth, maxH / idleDefinition.frameHeight);
   animatedSprite.scale.set(scale);
+  animatedSprite.__baseFrameScale = scale;
   animatedSprite.play();
   companion.addChild(animatedSprite);
 
@@ -119,8 +121,10 @@ function createSpriteAnimationController(animationPack, animatedSprite, initialM
 
     currentAnimationName = animationName;
     animatedSprite.textures = definition.textures;
+    animatedSprite.anchor.set(0.5, 1);
+    animatedSprite.scale.set(animatedSprite.__baseFrameScale || 1);
     animatedSprite.loop = options.loop === undefined ? Boolean(definition.loop) : Boolean(options.loop);
-    animatedSprite.animationSpeed = getAnimationSpeed(definition);
+    animatedSprite.animationSpeed = PIXEL_ANIMATION_SPEED;
     animatedSprite.gotoAndPlay(0);
     animatedSprite.onComplete = () => {
       if (animatedSprite.loop) return;
@@ -206,8 +210,4 @@ function isValidAnimationDefinition(definition) {
       definition.frameHeight > 0 &&
       definition.frameCount > 0
   );
-}
-
-function getAnimationSpeed(definition) {
-  return (definition.fps || 8) / 60;
 }
