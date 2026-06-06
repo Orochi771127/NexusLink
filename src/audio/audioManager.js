@@ -1,7 +1,8 @@
-const BGM_SOURCE = "./assets/audio/bgm_lakefront.mp3";
+const MAX_BGM_VOLUME = 0.42;
 const FADE_IN_DURATION_MS = 2000;
+const FADE_INTERVAL_MS = 50;
 
-const bgmAudio = new Audio(BGM_SOURCE);
+const bgmAudio = new Audio("./assets/audio/nexus-core_-ethereal-lakefron.mp3");
 bgmAudio.loop = true;
 bgmAudio.volume = 0;
 
@@ -9,7 +10,7 @@ function createAudioManager() {
   let isMuted = false;
   let isUnlocked = false;
   let hasRegisteredUnlock = false;
-  let fadeFrameId = null;
+  let fadeIntervalId = null;
 
   function initUnlock() {
     if (hasRegisteredUnlock || isUnlocked || typeof document === "undefined") {
@@ -17,8 +18,8 @@ function createAudioManager() {
     }
 
     hasRegisteredUnlock = true;
-    document.addEventListener("click", unlockAudio, { once: true });
-    document.addEventListener("touchstart", unlockAudio, { once: true });
+    document.addEventListener("click", unlockAudio, { once: true, capture: true });
+    document.addEventListener("touchstart", unlockAudio, { once: true, capture: true });
   }
 
   function unlockAudio() {
@@ -41,7 +42,8 @@ function createAudioManager() {
     }
 
     if (isUnlocked) {
-      playBGM();
+      bgmAudio.volume = MAX_BGM_VOLUME;
+      bgmAudio.play().catch(console.warn);
     }
 
     return isMuted;
@@ -59,34 +61,30 @@ function createAudioManager() {
   }
 
   function fadeInVolume() {
-    const startTime = performance.now();
+    const startTime = Date.now();
 
-    function step(now) {
+    fadeIntervalId = setInterval(() => {
       if (isMuted) {
         bgmAudio.volume = 0;
-        fadeFrameId = null;
+        stopFadeIn();
         return;
       }
 
-      const progress = Math.min((now - startTime) / FADE_IN_DURATION_MS, 1);
-      bgmAudio.volume = progress;
+      const progress = Math.min((Date.now() - startTime) / FADE_IN_DURATION_MS, 1);
+      bgmAudio.volume = Math.min(progress * MAX_BGM_VOLUME, MAX_BGM_VOLUME);
 
-      if (progress < 1) {
-        fadeFrameId = requestAnimationFrame(step);
-        return;
+      if (progress >= 1) {
+        bgmAudio.volume = MAX_BGM_VOLUME;
+        stopFadeIn();
       }
-
-      fadeFrameId = null;
-    }
-
-    fadeFrameId = requestAnimationFrame(step);
+    }, FADE_INTERVAL_MS);
   }
 
   function stopFadeIn() {
-    if (fadeFrameId === null) return;
+    if (fadeIntervalId === null) return;
 
-    cancelAnimationFrame(fadeFrameId);
-    fadeFrameId = null;
+    clearInterval(fadeIntervalId);
+    fadeIntervalId = null;
   }
 
   return {
