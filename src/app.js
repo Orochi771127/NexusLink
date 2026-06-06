@@ -5,6 +5,7 @@ import { createInteractionController } from "./engine/interactionController.js";
 import { bindViewportVars, qs } from "./utils/dom.js";
 import EventBus from "./utils/eventBus.js";
 import { loadState, saveState } from "./state/saveManager.js";
+import { estimateSaveSizeKB } from "./engine/storageGuard.js";
 import * as store from "./state/store.js";
 import {
   applyDevQueryHooks,
@@ -42,6 +43,7 @@ let companionMotionController = null;
 let interactionController = null;
 let currentMotionState = "idle_calm";
 let devPanelController = null;
+let lastSaveStatus = { ok: true, emergency: false, estimatedSaveSizeKB: 0 };
 
 bootstrap();
 
@@ -66,7 +68,8 @@ async function bootstrap() {
     soulTalkController,
     saveCurrentState,
     statusText,
-    panelManager
+    panelManager,
+    store
   });
 
   panelManager.bind({
@@ -104,6 +107,7 @@ async function bootstrap() {
       playMotion: (motionState) => playDevMotion(companionMotionController, motionState),
       getCurrentMotionState: () => currentMotionState,
       getAnimationLabState: () => getAnimationLabState(),
+      getStorageDebugState: () => lastSaveStatus,
       renderChat: () => soulTalkController.renderChat()
     });
     devPanelController.setup();
@@ -155,11 +159,11 @@ async function bootScene(app, panelManager, statusText, soulTalkController) {
   const environmentLayer = await createEnvironmentLayer(layers, app);
 
   const particles = createParticles();
-  layers.layerForeground.addChild(particles);
+  layers.layerFX.addChild(particles);
 
   const environmentEffects = new PIXI.Container();
   environmentEffects.name = "environment_effects";
-  layers.layerForeground.addChild(environmentEffects);
+  layers.layerFX.addChild(environmentEffects);
   const activeEnvironmentEffects = [];
 
   EventBus.on(ENVIRONMENT_INTERACTION_EVENT, (event) => {
@@ -312,5 +316,11 @@ async function loadCurrentCreature(statusText) {
 }
 
 function saveCurrentState() {
-  saveState(store.getState());
+  const result = saveState(store.getState());
+  lastSaveStatus = {
+    ok: Boolean(result.ok),
+    emergency: Boolean(result.emergency),
+    estimatedSaveSizeKB: result.state ? estimateSaveSizeKB(result.state) : 0
+  };
+  return result;
 }

@@ -1,28 +1,32 @@
 import EnvironmentController from "../engine/environmentController.js";
+import { ASSET_MANIFEST } from "../data/assetManifest.js";
 import { SCENE_LAYOUT } from "../data/sceneLayout.js";
 
-export const WORLD_WIDTH = 390;
-export const WORLD_HEIGHT = 844;
+export const GAME_WIDTH = 390;
+export const GAME_HEIGHT = 844;
+export const WORLD_WIDTH = GAME_WIDTH;
+export const WORLD_HEIGHT = GAME_HEIGHT;
 export const BACKGROUND_DESIGN_WIDTH = 1080;
 export const BACKGROUND_DESIGN_HEIGHT = 1920;
 export const PLATFORM_Y = 540;
 
 export const SCENE_ASSETS = Object.freeze({
-  bgDay: "./assets/backgrounds/LakeNightCamp_v2/bg_day_base.png",
-  bgNight: "./assets/backgrounds/LakeNightCamp_v2/bg_night_base.png",
-  magicCircle: "./assets/platforms/LakeNightCamp_v2/magic_circle.png",
-  campfire: "./assets/props/LakeNightCamp_v2/prop_campfire.png",
-  crystal: "./assets/props/LakeNightCamp_v2/prop_crystal.png",
-  sun: "./assets/props/LakeNightCamp_v2/celestial_sun.png",
-  moon: "./assets/props/LakeNightCamp_v2/celestial_moon.png"
+  bgDay: ASSET_MANIFEST.backgrounds.lakeDay,
+  bgNight: ASSET_MANIFEST.backgrounds.lakeNight,
+  magicCircle: ASSET_MANIFEST.platforms.magicCircle,
+  campfire: ASSET_MANIFEST.props.campfire,
+  crystal: ASSET_MANIFEST.props.crystal,
+  sun: ASSET_MANIFEST.props.sun,
+  moon: ASSET_MANIFEST.props.moon
 });
 
 const SCENE_LAYER_NAMES = [
   "layerBackground",
-  "layerPlatform",
   "layerCelestial",
+  "layerPlatform",
   "layerEntity",
-  "layerForeground"
+  "layerForeground",
+  "layerFX"
 ];
 const CELESTIAL_START_X = -42;
 const CELESTIAL_END_X = WORLD_WIDTH + 42;
@@ -54,8 +58,10 @@ export async function createPixiApp(gameRoot) {
 export function createWorld(app) {
   const world = new PIXI.Container();
   world.name = "world";
-  world.__sceneContainer = createSceneContainer(world);
+  world.__safeZoneLayer = createSafeZoneLayer(world);
+  world.__sceneContainer = world.__safeZoneLayer;
   world.__sceneLayers = createSceneLayers(world);
+  world.__backgroundLayer = world.__sceneLayers.layerBackground;
   world.__responsiveEnvironmentLayer = null;
   world.__resizeScene = () => resizeWorld(app, world);
   app.stage.addChild(world);
@@ -86,14 +92,14 @@ export async function createEnvironmentLayer(layers, app) {
     anchor: 0.5,
     editorEnabled: true
   });
-  applyResponsiveLayout(sun, "sun", app.screen.width, app.screen.height);
+  applyResponsiveLayout(sun, "sun");
   layers.layerCelestial.addChild(sun);
 
   const moon = await createSceneSprite("moon", SCENE_ASSETS.moon, {
     anchor: 0.5,
     editorEnabled: true
   });
-  applyResponsiveLayout(moon, "moon", app.screen.width, app.screen.height);
+  applyResponsiveLayout(moon, "moon");
   moon.visible = true;
   layers.layerCelestial.addChild(moon);
 
@@ -101,14 +107,14 @@ export async function createEnvironmentLayer(layers, app) {
     anchor: 0.5,
     editorEnabled: true
   });
-  applyResponsiveLayout(magicCircle, "magic_circle", app.screen.width, app.screen.height);
+  applyResponsiveLayout(magicCircle, "magic_circle");
   magicCircle.alpha = 0.76;
   layers.layerPlatform.addChild(magicCircle);
 
   const campfire = await createScenePropContainer("campfire", SCENE_ASSETS.campfire, {
     anchor: 0.5
   });
-  applyResponsiveLayout(campfire.container, "campfire", app.screen.width, app.screen.height);
+  applyResponsiveLayout(campfire.container, "campfire");
   campfire.container.alpha = 0;
   layers.layerForeground.addChild(campfire.container);
 
@@ -116,7 +122,7 @@ export async function createEnvironmentLayer(layers, app) {
     anchor: 0.5,
     editorEnabled: true
   });
-  applyResponsiveLayout(crystal, "crystal", app.screen.width, app.screen.height);
+  applyResponsiveLayout(crystal, "crystal");
   crystal.alpha = 0.86;
   layers.layerForeground.addChild(crystal);
 
@@ -160,16 +166,15 @@ export function animateParticles(particles, timeSeconds, ticker) {
   });
 }
 
-export function applyResponsiveLayout(sprite, objectId, screenWidth, screenHeight) {
+export function applyResponsiveLayout(sprite, objectId) {
   const layout = getSceneLayoutObject(objectId);
   if (!layout || !sprite) return sprite;
 
-  const scaleRatio = screenWidth / SCENE_LAYOUT.referenceWidth;
-  sprite.__layoutScreenWidth = screenWidth;
-  sprite.__layoutScreenHeight = screenHeight;
-  sprite.scale.set(layout.scale.x * scaleRatio, layout.scale.y * scaleRatio);
-  sprite.x = (layout.x / SCENE_LAYOUT.referenceWidth) * screenWidth;
-  sprite.y = (layout.y / SCENE_LAYOUT.referenceHeight) * screenHeight;
+  sprite.__layoutScreenWidth = GAME_WIDTH;
+  sprite.__layoutScreenHeight = GAME_HEIGHT;
+  sprite.scale.set(layout.scale.x, layout.scale.y);
+  sprite.x = layout.x;
+  sprite.y = layout.y;
   return sprite;
 }
 
@@ -197,13 +202,13 @@ function createSceneLayers(world) {
   const layers = {};
   SCENE_LAYER_NAMES.forEach((name) => {
     const layer = new PIXI.Container();
-    layer.name = name;
+    layer.name = name === "layerBackground" ? "backgroundLayer" : name;
     layer.eventMode = "passive";
 
     if (name === "layerBackground") {
       world.addChildAt(layer, 0);
     } else {
-      world.__sceneContainer.addChild(layer);
+      world.__safeZoneLayer.addChild(layer);
     }
 
     layers[name] = layer;
@@ -211,12 +216,12 @@ function createSceneLayers(world) {
   return layers;
 }
 
-function createSceneContainer(world) {
-  const sceneContainer = new PIXI.Container();
-  sceneContainer.name = "sceneContainer";
-  sceneContainer.eventMode = "passive";
-  world.addChild(sceneContainer);
-  return sceneContainer;
+function createSafeZoneLayer(world) {
+  const safeZoneLayer = new PIXI.Container();
+  safeZoneLayer.name = "safeZoneLayer";
+  safeZoneLayer.eventMode = "passive";
+  world.addChild(safeZoneLayer);
+  return safeZoneLayer;
 }
 
 function registerResponsiveEnvironmentLayer(layers, environmentLayer) {
@@ -233,50 +238,56 @@ function resizeWorld(app, world) {
     app.renderer.resize(nextSize.width, nextSize.height);
   }
 
-  resizeBackgroundCover(world.__responsiveEnvironmentLayer, app);
+  resizeBackgroundCover(world.__backgroundLayer, world.__responsiveEnvironmentLayer, app);
   resizeEnvironmentLayout(world.__responsiveEnvironmentLayer, app);
-  resizeSceneContainer(world.__sceneContainer, app);
+  resizeSafeZoneLayer(world.__safeZoneLayer, app);
 }
 
-function resizeBackgroundCover(environmentLayer, app) {
+function resizeBackgroundCover(backgroundLayer, environmentLayer, app) {
   if (!environmentLayer) return;
 
-  const scale = Math.max(
+  const bgScale = Math.max(
     app.screen.width / BACKGROUND_DESIGN_WIDTH,
     app.screen.height / BACKGROUND_DESIGN_HEIGHT
   );
-  const x = app.screen.width / 2;
-  const y = app.screen.height / 2;
+
+  if (backgroundLayer) {
+    backgroundLayer.scale.set(bgScale);
+    backgroundLayer.x = app.screen.width / 2;
+    backgroundLayer.y = app.screen.height / 2;
+  }
 
   [environmentLayer.bgDay, environmentLayer.bgNight].forEach((background) => {
     background.anchor.set(0.5);
-    background.scale.set(scale);
-    background.position.set(x, y);
+    background.scale.set(1);
+    background.position.set(0, 0);
   });
 }
 
-function resizeSceneContainer(sceneContainer, app) {
-  if (!sceneContainer) return;
+function resizeSafeZoneLayer(safeZoneLayer, app) {
+  if (!safeZoneLayer) return;
 
-  sceneContainer.scale.set(1);
-  sceneContainer.position.set(0, 0);
+  const safeScale = Math.min(app.screen.width / GAME_WIDTH, app.screen.height / GAME_HEIGHT);
+  safeZoneLayer.scale.set(safeScale);
+  safeZoneLayer.x = (app.screen.width - GAME_WIDTH * safeScale) / 2;
+  safeZoneLayer.y = app.screen.height - GAME_HEIGHT * safeScale;
 }
 
 function resizeEnvironmentLayout(environmentLayer, app) {
   if (!environmentLayer) return;
 
-  applyResponsiveLayout(environmentLayer.sun, "sun", app.screen.width, app.screen.height);
-  applyResponsiveLayout(environmentLayer.moon, "moon", app.screen.width, app.screen.height);
-  applyResponsiveLayout(environmentLayer.magicCircle, "magic_circle", app.screen.width, app.screen.height);
-  applyResponsiveLayout(environmentLayer.campfire.container, "campfire", app.screen.width, app.screen.height);
-  applyResponsiveLayout(environmentLayer.crystal, "crystal", app.screen.width, app.screen.height);
+  applyResponsiveLayout(environmentLayer.sun, "sun");
+  applyResponsiveLayout(environmentLayer.moon, "moon");
+  applyResponsiveLayout(environmentLayer.magicCircle, "magic_circle");
+  applyResponsiveLayout(environmentLayer.campfire.container, "campfire");
+  applyResponsiveLayout(environmentLayer.crystal, "crystal");
 }
 
 function readGameRootSize(gameRoot) {
   const bounds = gameRoot?.getBoundingClientRect?.();
   return {
-    width: Math.max(MIN_SCREEN_WIDTH, Math.round(bounds?.width || window.innerWidth || WORLD_WIDTH)),
-    height: Math.max(MIN_SCREEN_HEIGHT, Math.round(bounds?.height || window.innerHeight || WORLD_HEIGHT))
+    width: Math.max(MIN_SCREEN_WIDTH, Math.round(window.innerWidth || bounds?.width || GAME_WIDTH)),
+    height: Math.max(MIN_SCREEN_HEIGHT, Math.round(window.innerHeight || bounds?.height || GAME_HEIGHT))
   };
 }
 

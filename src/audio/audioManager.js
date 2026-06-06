@@ -1,13 +1,16 @@
+import { ASSET_MANIFEST } from "../data/assetManifest.js";
+
 const MAX_BGM_VOLUME = 0.42;
 const FADE_IN_DURATION_MS = 2000;
 const FADE_INTERVAL_MS = 50;
+const MUTE_STORAGE_KEY = "nexusLinkAudioMuted:v1";
 
-const bgmAudio = new Audio("./assets/audio/nexus-core_-ethereal-lakefron.mp3");
+const bgmAudio = new Audio(ASSET_MANIFEST.audio.bgm);
 bgmAudio.loop = true;
 bgmAudio.volume = 0;
 
 function createAudioManager() {
-  let isMuted = false;
+  let isMuted = readStoredMuteState();
   let isUnlocked = false;
   let hasRegisteredUnlock = false;
   let fadeIntervalId = null;
@@ -33,6 +36,7 @@ function createAudioManager() {
 
   function toggleMute() {
     isMuted = !isMuted;
+    writeStoredMuteState(isMuted);
 
     if (isMuted) {
       stopFadeIn();
@@ -43,7 +47,7 @@ function createAudioManager() {
 
     if (isUnlocked) {
       bgmAudio.volume = MAX_BGM_VOLUME;
-      bgmAudio.play().catch(console.warn);
+      safePlay();
     }
 
     return isMuted;
@@ -56,8 +60,15 @@ function createAudioManager() {
 
     stopFadeIn();
     bgmAudio.volume = 0;
-    bgmAudio.play().catch(console.warn);
+    safePlay();
     fadeInVolume();
+  }
+
+  function safePlay() {
+    bgmAudio.play().catch((error) => {
+      if (error?.name === "NotAllowedError") return;
+      console.warn("BGM playback failed", error);
+    });
   }
 
   function fadeInVolume() {
@@ -98,6 +109,22 @@ function createAudioManager() {
       return isUnlocked;
     }
   };
+}
+
+function readStoredMuteState() {
+  try {
+    return localStorage.getItem(MUTE_STORAGE_KEY) === "true";
+  } catch {
+    return false;
+  }
+}
+
+function writeStoredMuteState(isMuted) {
+  try {
+    localStorage.setItem(MUTE_STORAGE_KEY, String(isMuted));
+  } catch (error) {
+    console.warn("Failed to save audio mute state", error);
+  }
 }
 
 export const AudioManager = createAudioManager();

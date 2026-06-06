@@ -1,4 +1,5 @@
 import { getTouchMotionState } from "../engine/touchReactionEngine.js";
+import { getAmbientWalkAnimation, getMoodIdleAnimationName } from "../engine/animationProfile.js";
 import EventBus from "../utils/eventBus.js";
 
 const ENVIRONMENT_INTERACTION_EVENT = "ENVIRONMENT_INTERACTION";
@@ -43,16 +44,7 @@ export function createCompanionMotion(companion, initialMood) {
 }
 
 export function getIdleMotionState(mood) {
-  const moodToIdle = {
-    calm: "idle_calm",
-    defensive: "idle_defensive",
-    distant: "idle_distant",
-    sad: "idle_distant",
-    happy: "idle_calm",
-    tired: "idle_distant",
-    warm: "idle_calm"
-  };
-  return moodToIdle[mood] || "idle_calm";
+  return getMoodIdleAnimationName(mood);
 }
 
 export function triggerCompanionTouchMotion(motion, interactionResult = {}) {
@@ -124,16 +116,22 @@ export function updateCompanionMotion(companion, motion, timeSeconds, nowMs, moo
     maybeStartAmbientWalk(motion, mood, nowMs);
   }
 
+  const ambientAnimation = motion.ambientState
+    ? getAmbientWalkAnimation(motion.ambientTargetOffsetX, (name) => companion.__animationController?.hasAnimation?.(name))
+    : null;
   const activeState = motion.temporaryState ||
     (isBattleActive ? "battle" : null) ||
     (isSleeping ? "sleep" : null) ||
     motion.devForcedState ||
-    motion.ambientState ||
+    ambientAnimation?.animationName ||
     motion.state;
   const animationController = companion.__animationController;
   let spriteAnimationPlayed = false;
   if (animationController?.hasAnimation?.(activeState)) {
-    spriteAnimationPlayed = animationController.play(activeState, { mood });
+    spriteAnimationPlayed = animationController.play(activeState, {
+      mood,
+      mirrorX: Boolean(ambientAnimation?.mirrorX)
+    });
   } else {
     animationController?.loadAnimation?.(activeState).catch((error) => {
       console.warn(`Companion motion lazy load failed: ${activeState}`, error);

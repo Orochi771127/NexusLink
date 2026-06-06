@@ -1,6 +1,10 @@
+import { evaluateActionEffect } from "../engine/actionEffectEngine.js";
+import EventBus from "../utils/eventBus.js";
 import { qs, qsa } from "../utils/dom.js";
 
-export function createActionSheetController({ soulTalkController, saveCurrentState, statusText, panelManager }) {
+const ENVIRONMENT_INTERACTION_EVENT = "ENVIRONMENT_INTERACTION";
+
+export function createActionSheetController({ soulTalkController, saveCurrentState, statusText, panelManager, store }) {
   const bottomNavButtons = qsa(".bottom-nav button[data-action]");
   const actionSheetTitle = qs("#action-sheet-title");
   const actionSheetCopy = qs("#action-sheet-copy");
@@ -44,7 +48,10 @@ export function createActionSheetController({ soulTalkController, saveCurrentSta
   function commitNavAction(action, choice) {
     const actionMeta = getActionMeta(action);
     if (!actionMeta) return;
-    const message = choice ? `${actionMeta.message}（${choice}）` : actionMeta.message;
+    const result = evaluateActionEffect(store.getState(), action, choice);
+    store.setState(result.statePatch);
+    if (result.environmentEvent) EventBus.emit(ENVIRONMENT_INTERACTION_EVENT, result.environmentEvent);
+    const message = result.message || (choice ? `${actionMeta.message}: ${choice}` : actionMeta.message);
     soulTalkController.addChat("system", message);
     statusText.textContent = message;
     saveCurrentState();
@@ -68,28 +75,28 @@ export function createActionSheetController({ soulTalkController, saveCurrentSta
 function getActionMeta(action) {
   const actions = {
     explore: {
-      title: "探索",
-      copy: "選擇一個探索節點，讓夥伴感知棲地周圍的微光。",
-      message: "探索訊號已展開",
-      rows: ["湖畔微光", "星圖回廊", "靜默晶簇"]
+      title: "Explore",
+      copy: "Choose a quiet place in the first habitat.",
+      message: "Explore",
+      rows: ["Lake glow", "Star corridor", "Silent crystal"]
     },
     care: {
-      title: "照顧",
-      copy: "用低干擾的照顧動作回應夥伴，不在主畫面展開大型 HUD。",
-      message: "照顧行動已同步",
-      rows: ["輕聲安撫", "能量補給", "陪伴休息", "清理雜訊"]
+      title: "Care",
+      copy: "Offer support without forcing closeness.",
+      message: "Care",
+      rows: ["Soft comfort", "Energy supply", "Rest together", "Clear static"]
     },
     grow: {
-      title: "成長",
-      copy: "查看一次心核同步提示，讓成長節點保留在面板內完成。",
-      message: "成長節點已記錄",
-      rows: ["信任校準", "情緒穩定", "技能回路"]
+      title: "Grow",
+      copy: "Tune the bond without opening combat systems.",
+      message: "Grow",
+      rows: ["Trust tuning", "Emotional balance", "Skill circuit"]
     },
     memory: {
-      title: "記憶",
-      copy: "把目前的互動沉澱成一段記憶，並回寫到 Soul Talk。",
-      message: "記憶片段已收束",
-      rows: ["湖面片段", "今日回聲", "夥伴筆記"]
+      title: "Memory",
+      copy: "Save a small trace from today.",
+      message: "Memory",
+      rows: ["Lake fragment", "Today echo", "Companion note"]
     }
   };
   return actions[action];

@@ -14,6 +14,11 @@ export async function createCreatureNode(creature, statusText) {
     statusText.textContent = `${creature.name}動畫載入失敗，已保留預設動態。`;
   }
 
+  if (!creature.image) {
+    console.warn("Creature has no fallback image; using generic placeholder.");
+    return registerCompanionEditorObject(createCreaturePlaceholder(creature));
+  }
+
   try {
     const texture = await PIXI.Assets.load(creature.image);
     const spriteCreature = createCreatureSprite(texture, creature);
@@ -120,22 +125,22 @@ function createCreaturePlaceholder(creature = FALLBACK_CREATURE) {
   companion.addChild(shadow);
 
   const body = new PIXI.Graphics();
-  body.roundRect(-42, -28, 84, 70, 24).fill("#d85f32");
-  body.roundRect(-29, -18, 58, 52, 18).fill("#f28b43");
+  body.roundRect(-42, -28, 84, 70, 24).fill("#5f6876");
+  body.roundRect(-29, -18, 58, 52, 18).fill("#8a93a3");
   companion.addChild(body);
 
   const head = new PIXI.Graphics();
-  head.roundRect(-36, -76, 72, 58, 22).fill("#e86d34");
-  head.moveTo(-28, -70).lineTo(-48, -104).lineTo(-4, -84).closePath().fill("#e86d34");
-  head.moveTo(28, -70).lineTo(48, -104).lineTo(4, -84).closePath().fill("#e86d34");
-  head.moveTo(-31, -78).lineTo(-41, -96).lineTo(-12, -84).closePath().fill("#ffd29b");
-  head.moveTo(31, -78).lineTo(41, -96).lineTo(12, -84).closePath().fill("#ffd29b");
+  head.roundRect(-36, -76, 72, 58, 22).fill("#6f7786");
+  head.moveTo(-28, -70).lineTo(-48, -104).lineTo(-4, -84).closePath().fill("#6f7786");
+  head.moveTo(28, -70).lineTo(48, -104).lineTo(4, -84).closePath().fill("#6f7786");
+  head.moveTo(-31, -78).lineTo(-41, -96).lineTo(-12, -84).closePath().fill("#a7afbd");
+  head.moveTo(31, -78).lineTo(41, -96).lineTo(12, -84).closePath().fill("#a7afbd");
   companion.addChild(head);
 
   const face = new PIXI.Graphics();
   face.circle(-14, -51, 4).fill("#1f1f2e");
   face.circle(14, -51, 4).fill("#1f1f2e");
-  face.roundRect(-10, -39, 20, 10, 5).fill("#ffe0b5");
+  face.roundRect(-10, -39, 20, 10, 5).fill("#cfd5df");
   face.circle(0, -39, 2.5).fill("#1f1f2e");
   companion.addChild(face);
 
@@ -145,12 +150,12 @@ function createCreaturePlaceholder(creature = FALLBACK_CREATURE) {
     .quadraticCurveTo(92, -32, 66, -82)
     .quadraticCurveTo(110, -40, 78, 22)
     .closePath()
-    .fill("#f9733a");
+    .fill("#707887");
   tail
     .moveTo(76, -72)
     .quadraticCurveTo(104, -38, 76, 2)
     .quadraticCurveTo(94, -42, 76, -72)
-    .fill("#ffd166");
+    .fill("#a7afbd");
   companion.addChildAt(tail, 1);
 
   if (creature.element === "fire") {

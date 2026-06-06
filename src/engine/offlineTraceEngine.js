@@ -1,0 +1,61 @@
+import { clamp } from "../utils/clamp.js";
+
+const SIX_HOURS_MS = 6 * 60 * 60 * 1000;
+const DAY_MS = 24 * 60 * 60 * 1000;
+const THREE_DAYS_MS = 72 * 60 * 60 * 1000;
+export const TIME_TRAVEL_TOLERANCE_MS = 1000 * 60 * 5;
+const SEVEN_DAYS_MS = 7 * DAY_MS;
+
+function createTrace(type, intensity, now, ttlMs = SEVEN_DAYS_MS) {
+  return {
+    id: `trace_${now}_${type}`,
+    type,
+    intensity,
+    createdAt: now,
+    expiresAt: ttlMs === null ? null : now + ttlMs
+  };
+}
+
+export function evaluateOfflineTrace(currentState, now = Date.now()) {
+  const lastSeenAt = Number.isFinite(currentState.lastSeenAt) ? currentState.lastSeenAt : now;
+  const traces = [];
+  const statePatch = { lastSeenAt: now };
+  let statusMessage = "";
+
+  if (now + TIME_TRAVEL_TOLERANCE_MS < lastSeenAt) {
+    return {
+      statePatch: {
+        lastSeenAt: now,
+        timeAnomalyCount: (currentState.timeAnomalyCount || 0) + 1
+      },
+      traces,
+      statusMessage: "The habitat clock settles back into a quiet rhythm."
+    };
+  }
+
+  const elapsedMs = Math.max(0, now - lastSeenAt);
+
+  if (elapsedMs < SIX_HOURS_MS) {
+    return { statePatch, traces, statusMessage };
+  }
+
+  if (elapsedMs < DAY_MS) {
+    statePatch.energy = clamp(currentState.energy - 1, 0, 10);
+    traces.push(createTrace("small_silence", 0.28, now));
+    statusMessage = "The lakeside is a little quieter than before.";
+  } else if (elapsedMs < THREE_DAYS_MS) {
+    statePatch.energy = clamp(currentState.energy - 2, 0, 10);
+    statePatch.defense = clamp(currentState.defense + 1, 0, 100);
+    statePatch.mood = "distant";
+    traces.push(createTrace("fallen_leaf", 0.42, now));
+    statusMessage = "A fallen leaf rests near the core.";
+  } else {
+    statePatch.energy = clamp(currentState.energy - 3, 0, 10);
+    statePatch.defense = clamp(currentState.defense + 2, 0, 100);
+    statePatch.mood = "distant";
+    traces.push(createTrace("campfire_dim", 0.5, now));
+    statusMessage = "The campfire is dim, but still warm.";
+  }
+
+  return { statePatch, traces, statusMessage };
+}

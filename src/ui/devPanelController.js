@@ -98,7 +98,7 @@ export function applyDevQueryHooks(targetState, hooks) {
   return nextState;
 }
 
-export function createDevPanelController({ isEnabled, store, saveCurrentState, playMotion, getCurrentMotionState, getAnimationLabState, renderChat }) {
+export function createDevPanelController({ isEnabled, store, saveCurrentState, playMotion, getCurrentMotionState, getAnimationLabState, getStorageDebugState, renderChat }) {
   let devPanelRoot = null;
   let devPanelReadout = null;
   let animationReadout = null;
@@ -194,6 +194,7 @@ export function createDevPanelController({ isEnabled, store, saveCurrentState, p
   function renderReadout() {
     if (!isEnabled || !devPanelReadout) return;
     const state = store.getState();
+    const storageDebug = getStorageDebugState?.() || {};
     const fields = {
       mood: state.mood,
       bond: state.bond,
@@ -203,6 +204,13 @@ export function createDevPanelController({ isEnabled, store, saveCurrentState, p
       touchFatigue: state.touchFatigue,
       firstTouchCompleted: state.firstTouchCompleted,
       lastReaction: state.lastTouchReaction || "",
+      memoriesLength: state.memories?.length || 0,
+      habitatTracesLength: state.habitatTraces?.length || 0,
+      chatHistoryLength: state.chatHistory?.length || 0,
+      estimatedSaveSizeKB: Number(storageDebug.estimatedSaveSizeKB || 0).toFixed(2),
+      lastSaveStatus: storageDebug.ok === false ? "failed" : storageDebug.emergency ? "emergency" : "ok",
+      timeAnomalyCount: state.timeAnomalyCount || 0,
+      blockedTouchCount: state.blockedTouchCount || 0,
       currentMotionState: getCurrentMotionState(),
       reactionPreview: state.reactionPreview || ""
     };
