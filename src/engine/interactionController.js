@@ -1,4 +1,4 @@
-import { evaluateTouchReaction } from "./touchReactionEngine.js";
+import { evaluateBlockedTouch, evaluateTouchReaction } from "./touchReactionEngine.js";
 import { getTouchPersonality } from "./personalityProfile.js";
 import { getMoodIdleAnimationName } from "./animationProfile.js";
 import { clamp } from "../utils/clamp.js";
@@ -44,7 +44,6 @@ const SPAM_THRESHOLD = 5;
 const SPAM_DECAY_MS = 1000;
 const ANIMATION_FAIL_OPEN_MS = 3000;
 const REJECT_TOUCH_COOLDOWN_MS = 3000;
-const BLOCKED_TOUCH_RESET_MS = 10_000;
 
 export class InteractionController {
   constructor({ companion, creature, store, saveCurrentState, statusText, onStateChange = () => {} }) {
@@ -204,23 +203,8 @@ export class InteractionController {
   }
 
   handleBlockedTouch(now = Date.now()) {
-    const currentState = this.store.getState();
-    const previousBlockedAt = Number(currentState.lastBlockedTouchAt) || 0;
-    const previousCount = now - previousBlockedAt >= BLOCKED_TOUCH_RESET_MS ? 0 : currentState.blockedTouchCount || 0;
-    const blockedTouchCount = previousCount + 1;
-    const statePatch = {
-      blockedTouchCount,
-      lastBlockedTouchAt: now,
-      reactionPreview: getBlockedTouchText(blockedTouchCount)
-    };
-
-    if (blockedTouchCount === 2) {
-      statePatch.touchFatigue = clamp(currentState.touchFatigue + 1, 0, 10);
-    } else if (blockedTouchCount >= 3) {
-      statePatch.touchFatigue = clamp(currentState.touchFatigue + 1, 0, 10);
-      statePatch.defense = clamp(currentState.defense + 1, 0, 100);
-      statePatch.trust = clamp(currentState.trust - 1, 0, 100);
-    }
+    const result = evaluateBlockedTouch(this.store.getState(), now);
+    const statePatch = result.statePatch;
 
     this.store.setState(statePatch);
     this.setStatusText(statePatch.reactionPreview);
@@ -231,12 +215,7 @@ export class InteractionController {
       statePatch
     });
 
-    return {
-      blocked: true,
-      reason: "recent_reject",
-      previewText: statePatch.reactionPreview,
-      statePatch
-    };
+    return result;
   }
 
 
@@ -263,12 +242,6 @@ export class InteractionController {
   getFailOpenDelay(animName) {
     return this.companion.__animationController?.getAnimationDurationMs?.(animName) || ANIMATION_FAIL_OPEN_MS;
   }
-}
-
-function getBlockedTouchText(blockedTouchCount) {
-  if (blockedTouchCount <= 1) return "Let it have a quiet moment.";
-  if (blockedTouchCount === 2) return "It stays still, asking for more space.";
-  return "It pulls its boundary closer. Wait before reaching again.";
 }
 
 export function createInteractionController(options) {

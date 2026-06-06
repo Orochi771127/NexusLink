@@ -1,6 +1,7 @@
 import { clamp } from "../utils/clamp.js";
 import { normalizeState } from "../state/store.js";
 import { getTouchAnimationName } from "./animationProfile.js";
+import { applyTouchRecovery, BLOCKED_TOUCH_RESET_MS, MAX_BLOCKED_TOUCH_RESET_MS } from "./recoveryEngine.js";
 
 export function getUniversalTouchReaction(targetState, personality) {
   const moodModifier = personality.moodModifiers[targetState.mood] || 0;
@@ -24,9 +25,8 @@ export function getUniversalTouchReaction(targetState, personality) {
   return "reject";
 }
 
-export function evaluateTouchReaction(targetState, personality, touchType = "touch") {
-  const nextState = normalizeState(targetState);
-  const now = Date.now();
+export function evaluateTouchReaction(targetState, personality, touchType = "touch", now = Date.now()) {
+  const nextState = normalizeState(applyTouchRecovery(targetState, now));
   const fatigueRules = personality.fatigueRules;
   const fatigueIncrease =
     touchType === "hug" ? fatigueRules.hugIncrease : fatigueRules.touchIncrease;
@@ -81,8 +81,41 @@ export function evaluateTouchReaction(targetState, personality, touchType = "tou
       lastTouchReaction: nextState.lastTouchReaction,
       firstTouchCompleted: nextState.firstTouchCompleted,
       firstHugCompleted: nextState.firstHugCompleted,
+      blockedTouchCount: nextState.blockedTouchCount,
+      lastBlockedTouchAt: nextState.lastBlockedTouchAt,
       reactionPreview: nextState.reactionPreview
     }
+  };
+}
+
+export function evaluateBlockedTouch(targetState, now = Date.now()) {
+  const currentState = normalizeState(targetState);
+  const previousBlockedAt = Number(currentState.lastBlockedTouchAt) || 0;
+  const resetWindowMs = Math.min(BLOCKED_TOUCH_RESET_MS, MAX_BLOCKED_TOUCH_RESET_MS);
+  const previousCount =
+    previousBlockedAt && now - previousBlockedAt < resetWindowMs
+      ? currentState.blockedTouchCount || 0
+      : 0;
+  const blockedTouchCount = previousCount + 1;
+  const statePatch = {
+    blockedTouchCount,
+    lastBlockedTouchAt: now,
+    reactionPreview: getBlockedTouchText(blockedTouchCount)
+  };
+
+  if (blockedTouchCount === 2) {
+    statePatch.touchFatigue = clamp(currentState.touchFatigue + 1, 0, 10);
+  } else if (blockedTouchCount >= 3) {
+    statePatch.touchFatigue = clamp(currentState.touchFatigue + 1, 0, 10);
+    statePatch.defense = clamp(currentState.defense + 1, 0, 100);
+    statePatch.trust = clamp(currentState.trust - 1, 0, 100);
+  }
+
+  return {
+    blocked: true,
+    reason: "recent_reject",
+    previewText: statePatch.reactionPreview,
+    statePatch
   };
 }
 
@@ -123,4 +156,10 @@ function getTouchReactionText(reaction) {
     reject: "灰影貓默默往後退了一點。"
   };
   return reactionText[reaction] || reactionText.guarded_accept;
+}
+
+function getBlockedTouchText(blockedTouchCount) {
+  if (blockedTouchCount <= 1) return "Let it have a quiet moment.";
+  if (blockedTouchCount === 2) return "It stays still, asking for more space.";
+  return "It pulls its boundary closer. Wait before reaching again.";
 }
