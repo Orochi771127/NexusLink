@@ -19,8 +19,8 @@ export const SCENE_ASSETS = Object.freeze({
 
 const SCENE_LAYER_NAMES = [
   "layerBackground",
-  "layerCelestial",
   "layerPlatform",
+  "layerCelestial",
   "layerEntity",
   "layerForeground"
 ];
@@ -94,6 +94,7 @@ export async function createEnvironmentLayer(layers, app) {
     editorEnabled: true
   });
   applyResponsiveLayout(moon, "moon", app.screen.width, app.screen.height);
+  moon.visible = true;
   layers.layerCelestial.addChild(moon);
 
   const magicCircle = await createSceneSprite("magic_circle", SCENE_ASSETS.magicCircle, {
@@ -181,7 +182,7 @@ export function updateEnvironmentLayer(environmentLayer, ticker) {
   environmentLayer.bgNight.alpha = nightAlpha;
 
   updateCelestialSprite(environmentLayer.sun, "sun", state.celestialProgress, 1 - nightAlpha);
-  updateCelestialSprite(environmentLayer.moon, "moon", state.celestialProgress, nightAlpha);
+  updateCelestialSprite(environmentLayer.moon, "moon", state.celestialProgress, state.phase === "night" ? 1 : nightAlpha);
   updateCampfireLayer(environmentLayer.campfire, nightAlpha, ticker);
   if (!environmentLayer.crystal.__sceneEditorSelected) {
     if (isEditor) {
@@ -375,6 +376,7 @@ function updateCelestialSprite(sprite, objectId, progress, targetAlpha) {
     sprite.y = baseY - Math.sin(progress * Math.PI) * CELESTIAL_ARC_HEIGHT * scaleRatio;
   }
   if (!sprite.__sceneEditorSelected) {
+    sprite.visible = true;
     sprite.alpha = Math.max(0, Math.min(1, targetAlpha));
   }
 }
