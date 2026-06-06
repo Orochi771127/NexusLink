@@ -52,7 +52,8 @@ export class InteractionController {
     this.statusText = statusText;
     this.onStateChange = onStateChange;
     this.isAnimating = false;
-    this.spamScore = Number(store.getState().spamScore) || 0;
+    this.spamScore = 0;
+    this.store.setState({ spamScore: this.spamScore });
     this.decayTimer = window.setInterval(() => this.decaySpamScore(), SPAM_DECAY_MS);
 
     companion.__interactionController = this;
@@ -90,9 +91,10 @@ export class InteractionController {
     return { ...interactionResult, motionState };
   }
 
-  playAnimation(animName) {
+  playAnimation(animName, interruptible = false) {
     const definition = ANIMATION_REGISTRY[animName] || ANIMATION_REGISTRY.idle_calm;
-    const shouldLock = !definition.interruptible;
+    const effectiveInterruptible = arguments.length > 1 ? interruptible : definition.interruptible;
+    const shouldLock = !effectiveInterruptible;
     const animationController = this.companion.__animationController;
     const idleAnimation = this.getIdleAnimationName();
 
