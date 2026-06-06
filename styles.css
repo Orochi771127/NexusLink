@@ -139,7 +139,6 @@ canvas {
 
 .glass-panel,
 .core-hud-open,
-.resource-pill,
 .quick-hud button,
 .soul-talk-launcher,
 .bottom-nav,
@@ -254,24 +253,65 @@ canvas {
   pointer-events: auto;
 }
 
-.resource-pill,
+.resource-hud {
+  display: flex;
+  flex: 0 0 100%;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.resource-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  background: rgba(13, 20, 38, 0.65);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 206, 209, 0.3);
+  border-radius: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.resource-icon {
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.resource-item.coin .resource-icon::before {
+  content: "🟡";
+  font-size: 16px;
+  line-height: 1;
+}
+
+.resource-item.gem .resource-icon::before {
+  content: "💠";
+  font-size: 16px;
+  line-height: 1;
+}
+
+.resource-value {
+  color: #eafcff;
+  text-shadow: 0 0 4px rgba(0, 206, 209, 0.5);
+  font-size: 12px;
+  font-weight: bold;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
 .quick-hud button {
   min-height: 32px;
   border-radius: 999px;
   color: var(--text);
   font-size: 12px;
   font-weight: 850;
-}
-
-.resource-pill {
-  display: inline-grid;
-  place-items: center;
-  padding: 4px 9px;
-  background: linear-gradient(to right, var(--color-neon-blue), var(--color-cyan));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  -webkit-text-fill-color: transparent;
 }
 
 .quick-hud button {
@@ -1268,9 +1308,21 @@ body.panel-open .dev-reaction-lab {
     gap: 6px;
   }
 
-  .resource-pill,
   .quick-hud button {
     min-height: 29px;
+    font-size: 11px;
+  }
+
+  .resource-hud {
+    gap: 8px;
+  }
+
+  .resource-item {
+    gap: 5px;
+    padding: 4px 9px;
+  }
+
+  .resource-value {
     font-size: 11px;
   }
 
