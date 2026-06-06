@@ -1,5 +1,6 @@
 import { clamp } from "../utils/clamp.js";
 import { normalizeState } from "../state/store.js";
+import { getTouchAnimationName } from "./animationProfile.js";
 
 export function getUniversalTouchReaction(targetState, personality) {
   const moodModifier = personality.moodModifiers[targetState.mood] || 0;
@@ -43,6 +44,10 @@ export function evaluateTouchReaction(targetState, personality, touchType = "tou
     nextState.touchFatigue = clamp(nextState.touchFatigue + fatigueIncrease, 0, 10);
     reaction = getUniversalTouchReaction(nextState, personality);
 
+    if (touchType === "hug" && !nextState.firstHugCompleted && reaction === "accept") {
+      reaction = "guarded_accept";
+    }
+
     if (nextState.touchFatigue >= fatigueRules.rejectAt) {
       reaction = "reject";
     } else if (
@@ -54,7 +59,9 @@ export function evaluateTouchReaction(targetState, personality, touchType = "tou
   }
 
   nextState.lastTouchAt = now;
+  if (touchType === "hug") nextState.firstHugCompleted = true;
   nextState.lastTouchReaction = reaction;
+  nextState.lastRejectAt = reaction === "reject" ? now : nextState.lastRejectAt;
   applyTouchReactionMutation(nextState, reaction);
   nextState.reactionPreview = getTouchReactionText(reaction);
 
@@ -70,8 +77,10 @@ export function evaluateTouchReaction(targetState, personality, touchType = "tou
       defense: nextState.defense,
       touchFatigue: nextState.touchFatigue,
       lastTouchAt: nextState.lastTouchAt,
+      lastRejectAt: nextState.lastRejectAt,
       lastTouchReaction: nextState.lastTouchReaction,
       firstTouchCompleted: nextState.firstTouchCompleted,
+      firstHugCompleted: nextState.firstHugCompleted,
       reactionPreview: nextState.reactionPreview
     }
   };
@@ -103,13 +112,7 @@ function applyTouchReactionMutation(nextState, reaction) {
 }
 
 export function getTouchMotionState(reaction) {
-  const reactionToMotion = {
-    accept: "touch_accept",
-    guarded_accept: "touch_guarded",
-    hesitate: "touch_guarded",
-    reject: "touch_reject"
-  };
-  return reactionToMotion[reaction] || "touch_guarded";
+  return getTouchAnimationName(reaction);
 }
 
 function getTouchReactionText(reaction) {

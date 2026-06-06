@@ -1,5 +1,6 @@
 import { evaluateTouchReaction } from "./touchReactionEngine.js";
 import { getTouchPersonality } from "./personalityProfile.js";
+import { getMoodIdleAnimationName } from "./animationProfile.js";
 import { clamp } from "../utils/clamp.js";
 
 export const ANIMATION_REGISTRY = Object.freeze({
@@ -42,6 +43,8 @@ export const CORE_ANIMATION_NAMES = Object.freeze(
 const SPAM_THRESHOLD = 5;
 const SPAM_DECAY_MS = 1000;
 const ANIMATION_FAIL_OPEN_MS = 3000;
+const REJECT_TOUCH_COOLDOWN_MS = 3000;
+const BLOCKED_TOUCH_RESET_MS = 10_000;
 
 export class InteractionController {
   constructor({ companion, creature, store, saveCurrentState, statusText, onStateChange = () => {} }) {
@@ -61,6 +64,12 @@ export class InteractionController {
 
   async handleTouch(touchType = "touch") {
     if (this.isAnimating) return { blocked: true, reason: "animation_locked" };
+    const currentState = this.store.getState();
+
+    const now = Date.now();
+    if (currentState.lastRejectAt && now - currentState.lastRejectAt < REJECT_TOUCH_COOLDOWN_MS) {
+      return this.handleBlockedTouch(now);
+    }
 
     const currentAnimation = this.getCurrentAnimationName();
     if (currentAnimation === "sleep") {
@@ -194,6 +203,43 @@ export class InteractionController {
     return { reaction: "spam_angry", motionState: "special_angry", statePatch: nextState };
   }
 
+  handleBlockedTouch(now = Date.now()) {
+    const currentState = this.store.getState();
+    const previousBlockedAt = Number(currentState.lastBlockedTouchAt) || 0;
+    const previousCount = now - previousBlockedAt >= BLOCKED_TOUCH_RESET_MS ? 0 : currentState.blockedTouchCount || 0;
+    const blockedTouchCount = previousCount + 1;
+    const statePatch = {
+      blockedTouchCount,
+      lastBlockedTouchAt: now,
+      reactionPreview: getBlockedTouchText(blockedTouchCount)
+    };
+
+    if (blockedTouchCount === 2) {
+      statePatch.touchFatigue = clamp(currentState.touchFatigue + 1, 0, 10);
+    } else if (blockedTouchCount >= 3) {
+      statePatch.touchFatigue = clamp(currentState.touchFatigue + 1, 0, 10);
+      statePatch.defense = clamp(currentState.defense + 1, 0, 100);
+      statePatch.trust = clamp(currentState.trust - 1, 0, 100);
+    }
+
+    this.store.setState(statePatch);
+    this.setStatusText(statePatch.reactionPreview);
+    this.saveCurrentState();
+    this.onStateChange({
+      blocked: true,
+      reason: "recent_reject",
+      statePatch
+    });
+
+    return {
+      blocked: true,
+      reason: "recent_reject",
+      previewText: statePatch.reactionPreview,
+      statePatch
+    };
+  }
+
+
   decaySpamScore() {
     if (this.isAnimating) return;
     if (this.spamScore <= 0) return;
@@ -211,21 +257,18 @@ export class InteractionController {
   }
 
   getIdleAnimationName() {
-    const moodToIdle = {
-      calm: "idle_calm",
-      happy: "idle_happy",
-      warm: "idle_calm",
-      defensive: "idle_defensive",
-      distant: "idle_distant",
-      sad: "idle_sad",
-      tired: "idle_sick"
-    };
-    return moodToIdle[this.store.getState().mood] || "idle_calm";
+    return getMoodIdleAnimationName(this.store.getState().mood);
   }
 
   getFailOpenDelay(animName) {
     return this.companion.__animationController?.getAnimationDurationMs?.(animName) || ANIMATION_FAIL_OPEN_MS;
   }
+}
+
+function getBlockedTouchText(blockedTouchCount) {
+  if (blockedTouchCount <= 1) return "Let it have a quiet moment.";
+  if (blockedTouchCount === 2) return "It stays still, asking for more space.";
+  return "It pulls its boundary closer. Wait before reaching again.";
 }
 
 export function createInteractionController(options) {

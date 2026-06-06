@@ -1,4 +1,5 @@
 import { createDefaultState, normalizeState } from "./store.js";
+import { getEmergencyStorageLimits, pruneStateForStorage } from "../engine/storageGuard.js";
 
 export const STORAGE_KEY = "nexusLinkPrototypeState:v2";
 const LEGACY_STORAGE_KEYS = ["nexusLinkPrototypeState", "nexusLinkState"];
@@ -15,13 +16,27 @@ export function loadState() {
 }
 
 export function saveState(state) {
+  const now = Date.now();
+  const nextState = normalizeState({ ...state, lastSeenAt: now });
+  const prunedState = pruneStateForStorage(nextState, now);
+
   try {
-    const nextState = normalizeState({ ...state, lastSeenAt: Date.now() });
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(nextState));
-    return nextState;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(prunedState));
+    return { ok: true, state: prunedState, emergency: false };
   } catch (error) {
-    console.warn("Failed to save NexusLink state", error);
-    return normalizeState(state);
+    if (error?.name !== "QuotaExceededError") {
+      console.warn("[saveManager] Save failed:", error);
+      return { ok: false, state: prunedState, emergency: false, error };
+    }
+
+    const emergencyState = pruneStateForStorage(prunedState, now, getEmergencyStorageLimits());
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(emergencyState));
+      return { ok: true, state: emergencyState, emergency: true };
+    } catch (retryError) {
+      console.warn("[saveManager] Emergency save failed:", retryError);
+      return { ok: false, state: emergencyState, emergency: true, error: retryError };
+    }
   }
 }
 

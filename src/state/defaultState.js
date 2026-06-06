@@ -14,10 +14,17 @@ const defaultState = {
   defense: 35,
   touchFatigue: 0,
   lastTouchAt: null,
+  lastRejectAt: null,
+  blockedTouchCount: 0,
+  lastBlockedTouchAt: null,
   lastSeenAt: Date.now(),
+  timeAnomalyCount: 0,
   firstTouchCompleted: false,
+  firstHugCompleted: false,
   reactionPreview: "",
-  lastTouchReaction: ""
+  lastTouchReaction: "",
+  memories: [],
+  habitatTraces: []
 };
 
 export default defaultState;

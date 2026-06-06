@@ -1,10 +1,16 @@
 import { WORLD_HEIGHT, WORLD_WIDTH } from "./pixiApp.js";
 import { ANIMATION_NAMES, CORE_ANIMATION_NAMES } from "../engine/interactionController.js";
+import { ASSET_MANIFEST } from "../data/assetManifest.js";
+import { getMoodIdleAnimationName, resolveMoodIdleAnimationName } from "../engine/animationProfile.js";
 
-export const GREYSHADE_CAT_ANIMATIONS_PATH = "./assets/characters/greyshade-cat/metadata/animations.json";
+export const GREYSHADE_CAT_ANIMATIONS_PATH = ASSET_MANIFEST.characters.greyshadeCat.animations;
 export const GREYSHADE_CAT_ANIMATION_NAMES = ANIMATION_NAMES;
 export const GREYSHADE_CAT_CORE_ANIMATION_NAMES = CORE_ANIMATION_NAMES;
-export const PIXEL_ANIMATION_SPEED = 0.15;
+
+export function getPixiAnimationSpeed(definition) {
+  const fps = Number.isFinite(definition?.fps) ? definition.fps : 8;
+  return Math.max(0.01, fps / 60);
+}
 
 export async function loadGreyshadeCatAnimationPack() {
   const status = {
@@ -60,7 +66,7 @@ export function createAnimatedCompanionNode(animationPack, creature) {
   const animatedSprite = new PIXI.AnimatedSprite(idleDefinition.textures);
   animatedSprite.anchor.set(0.5, 1);
   animatedSprite.loop = true;
-  animatedSprite.animationSpeed = PIXEL_ANIMATION_SPEED;
+  animatedSprite.animationSpeed = getPixiAnimationSpeed(idleDefinition);
 
   const maxW = Math.min(170, WORLD_WIDTH * 0.46);
   const maxH = Math.min(170, WORLD_HEIGHT * 0.2);
@@ -79,20 +85,12 @@ export function createAnimatedCompanionNode(animationPack, creature) {
 }
 
 export function getMoodAnimationName(mood) {
-  const moodToAnimation = {
-    calm: "idle_calm",
-    happy: "idle_calm",
-    warm: "idle_calm",
-    defensive: "idle_defensive",
-    distant: "idle_distant",
-    sad: "idle_distant",
-    tired: "idle_distant"
-  };
-  return moodToAnimation[mood] || "idle_calm";
+  return getMoodIdleAnimationName(mood);
 }
 
 function createSpriteAnimationController(animationPack, animatedSprite, initialMood) {
   let currentAnimationName = "idle_calm";
+  let currentMirrorX = false;
   let lastMood = initialMood;
   const pendingLoads = new Map();
 
@@ -117,18 +115,21 @@ function createSpriteAnimationController(animationPack, animatedSprite, initialM
     const definition = animationPack.animations.get(animationName);
     if (!definition) return false;
 
-    if (currentAnimationName === animationName && animatedSprite.playing) return true;
+    const mirrorX = Boolean(options.mirrorX);
+    if (currentAnimationName === animationName && currentMirrorX === mirrorX && animatedSprite.playing) return true;
 
     currentAnimationName = animationName;
+    currentMirrorX = mirrorX;
     animatedSprite.textures = definition.textures;
     animatedSprite.anchor.set(0.5, 1);
-    animatedSprite.scale.set(animatedSprite.__baseFrameScale || 1);
+    const baseFrameScale = animatedSprite.__baseFrameScale || 1;
+    animatedSprite.scale.set(mirrorX ? -baseFrameScale : baseFrameScale, baseFrameScale);
     animatedSprite.loop = options.loop === undefined ? Boolean(definition.loop) : Boolean(options.loop);
-    animatedSprite.animationSpeed = PIXEL_ANIMATION_SPEED;
+    animatedSprite.animationSpeed = getPixiAnimationSpeed(definition);
     animatedSprite.gotoAndPlay(0);
     animatedSprite.onComplete = () => {
       if (animatedSprite.loop) return;
-      play(getMoodAnimationName(lastMood), { mood: lastMood });
+      play(resolveMoodIdleAnimationName(lastMood, (name) => animationPack.animations.has(name)), { mood: lastMood });
     };
     return true;
   }
@@ -165,7 +166,8 @@ async function loadAnimationDefinition({ animations, metadata, status, name }) {
       ...definition,
       name,
       textures,
-      durationMs: (definition.frameCount / Math.max(1, definition.fps || 8)) * 1000
+      animationSpeed: getPixiAnimationSpeed(definition),
+      durationMs: (definition.frameCount / Math.max(0.01, Number.isFinite(definition.fps) ? definition.fps : 8)) * 1000
     };
     animations.set(name, loadedDefinition);
     status.available[name] = true;
