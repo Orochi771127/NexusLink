@@ -231,10 +231,14 @@ export function createDevPanelController({ isEnabled, store, saveCurrentState, p
       return `${name}: ${available ? "available" : "missing"}`;
     }).join(" | ");
     const fields = {
-      currentAnimationName: labState.currentAnimationName || "fallback_placeholder",
+      currentAnimation: labState.currentAnimationName || "fallback_placeholder",
+      currentMood: store.getState().mood,
       spriteSheetModeActive: Boolean(labState.spriteSheetModeActive),
       fallbackMotionModeActive: Boolean(labState.fallbackMotionModeActive),
       animationsJsonLoaded: Boolean(labState.metadataLoaded),
+      availableAnimations: Object.values(labState.available || {}).filter(Boolean).length,
+      missingAnimations: labState.missing?.length || 0,
+      lastAnimationError: labState.errors?.at?.(-1) || "",
       animationAvailability: availability
     };
 

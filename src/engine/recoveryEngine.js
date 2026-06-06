@@ -1,8 +1,9 @@
 import { clamp } from "../utils/clamp.js";
 
-const ONE_HOUR_MS = 60 * 60 * 1000;
-const FIVE_HOURS_MS = 5 * ONE_HOUR_MS;
-const BLOCKED_TOUCH_RESET_MS = 10_000;
+export const TOUCH_FATIGUE_RECOVERY_1_MS = 60 * 1000;
+export const TOUCH_FATIGUE_RECOVERY_3_MS = 5 * 60 * 1000;
+export const BLOCKED_TOUCH_RESET_MS = 10_000;
+export const MAX_BLOCKED_TOUCH_RESET_MS = 30_000;
 
 export function applyTouchRecovery(state, now = Date.now()) {
   const nextState = { ...state };
@@ -10,9 +11,9 @@ export function applyTouchRecovery(state, now = Date.now()) {
 
   if (lastTouchAt) {
     const elapsedMs = Math.max(0, now - lastTouchAt);
-    if (elapsedMs >= FIVE_HOURS_MS) {
+    if (elapsedMs >= TOUCH_FATIGUE_RECOVERY_3_MS) {
       nextState.touchFatigue = clamp((nextState.touchFatigue || 0) - 3, 0, 10);
-    } else if (elapsedMs >= ONE_HOUR_MS) {
+    } else if (elapsedMs >= TOUCH_FATIGUE_RECOVERY_1_MS) {
       nextState.touchFatigue = clamp((nextState.touchFatigue || 0) - 1, 0, 10);
     }
   }

@@ -287,7 +287,9 @@ function getAnimationLabState() {
     currentAnimationName: animationController?.getCurrentAnimationName?.() || "fallback_placeholder",
     spriteSheetModeActive: Boolean(animationController),
     fallbackMotionModeActive: !animationController || Boolean(companionMotionController?.fallbackMotionActive),
-    available: status?.available || {}
+    available: status?.available || {},
+    missing: status?.missing || [],
+    errors: status?.errors || []
   };
 }
 
