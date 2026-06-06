@@ -349,6 +349,34 @@ canvas {
   transform: translateY(0);
 }
 
+.settings-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  min-height: 36px;
+  padding: 0;
+  border: 1px solid rgba(0, 245, 255, 0.34);
+  border-radius: 999px;
+  background: rgba(8, 18, 32, 0.58);
+  box-shadow: 0 0 14px rgba(0, 245, 255, 0.22), var(--shadow-glass);
+  color: var(--text);
+  backdrop-filter: blur(14px);
+}
+
+.settings-item.mail::before {
+  content: '✉️';
+  font-size: 18px;
+  line-height: 1;
+}
+
+.settings-item.support::before {
+  content: '🎧';
+  font-size: 18px;
+  line-height: 1;
+}
+
 .audio-toggle {
   position: relative;
   overflow: hidden;
@@ -1374,4 +1402,11 @@ body.panel-open .dev-reaction-lab {
   .dev-lab-body {
     max-height: calc(46vh - 54px);
   }
+}
+
+.quick-hud .settings-item {
+  display: flex;
+  width: 36px;
+  height: 36px;
+  min-height: 36px;
 }
