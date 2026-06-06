@@ -27,8 +27,16 @@
         </section>
 
         <section class="quick-hud" aria-label="Quick resources and actions">
-          <div class="resource-pill" aria-label="coins">◎ 1,280</div>
-          <div class="resource-pill" aria-label="crystals">◇ 36</div>
+          <div class="resource-hud" aria-label="Resources">
+            <div class="resource-item coin" aria-label="coins">
+              <span class="resource-icon" aria-hidden="true"></span>
+              <span class="resource-value">1280</span>
+            </div>
+            <div class="resource-item gem" aria-label="gems">
+              <span class="resource-icon" aria-hidden="true"></span>
+              <span class="resource-value">36</span>
+            </div>
+          </div>
           <div class="settings-group">
             <button id="btn-settings-toggle" type="button" aria-label="設定選單" aria-expanded="false">⚙</button>
             <div id="settings-dropdown" class="settings-dropdown">
