@@ -2,11 +2,11 @@ export const SCENE_LAYOUT = {
   referenceWidth: 390,
   referenceHeight: 844,
   objects: [
-    { id: "sun", x: 381.94, y: 165.948, scale: { x: 0.192, y: 0.192 } },
-    { id: "moon", x: 381.94, y: 165.948, scale: { x: 0.165, y: 0.165 } },
-    { id: "magic_circle", x: 192.512, y: 424.419, scale: { x: 0.165, y: 0.165 } },
-    { id: "campfire", x: 97.21, y: 429.117, scale: { x: 0.05, y: 0.05 } },
-    { id: "crystal", x: 322.14, y: 377.488, scale: { x: 0.056, y: 0.056 } },
-    { id: "companion", x: 195.535, y: 417.605, scale: { x: 0.63, y: 0.63 } }
+    { id: "sun", x: 205, y: 140, scale: { x: 0.145, y: 0.145 } },
+    { id: "moon", x: 230, y: 120, scale: { x: 0.132, y: 0.132 } },
+    { id: "magic_circle", x: 195, y: 590, scale: { x: 0.255, y: 0.255 } },
+    { id: "campfire", x: 92, y: 620, scale: { x: 0.065, y: 0.065 } },
+    { id: "crystal", x: 284, y: 622, scale: { x: 0.052, y: 0.052 } },
+    { id: "companion", x: 195, y: 586, scale: { x: 0.72, y: 0.72 } }
   ]
 };
