@@ -7,6 +7,14 @@
     <link rel="preload" as="image" href="./assets/backgrounds/LakeNightCamp_v2/bg_day_base.png" />
     <link rel="preload" as="image" href="./assets/backgrounds/LakeNightCamp_v2/bg_night_base.png" />
     <link rel="preload" as="image" href="./assets/platforms/LakeNightCamp_v2/magic_circle.png" />
+    <link rel="preload" as="image" href="./assets/ui/nav/nav_explore_default.png" />
+    <link rel="preload" as="image" href="./assets/ui/nav/nav_explore_active.png" />
+    <link rel="preload" as="image" href="./assets/ui/nav/nav_care_default.png" />
+    <link rel="preload" as="image" href="./assets/ui/nav/nav_care_active.png" />
+    <link rel="preload" as="image" href="./assets/ui/nav/nav_grow_default.png" />
+    <link rel="preload" as="image" href="./assets/ui/nav/nav_grow_active.png" />
+    <link rel="preload" as="image" href="./assets/ui/nav/nav_memory_default.png" />
+    <link rel="preload" as="image" href="./assets/ui/nav/nav_memory_active.png" />
     <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2064%2064%27%3E%3Ccircle%20cx%3D%2732%27%20cy%3D%2732%27%20r%3D%2730%27%20fill%3D%27%23050915%27%2F%3E%3Ccircle%20cx%3D%2732%27%20cy%3D%2732%27%20r%3D%2718%27%20fill%3D%27%2300ced1%27%2F%3E%3C%2Fsvg%3E" />
     <link rel="stylesheet" href="./styles.css" />
   </head>
@@ -69,16 +77,28 @@
 
         <nav class="bottom-nav" aria-label="主要行動">
           <button type="button" data-action="explore" aria-label="探索">
-            <span class="nav-image" aria-hidden="true"></span>
+            <span class="nav-image" aria-hidden="true">
+              <img class="nav-art nav-art-default" src="./assets/ui/nav/nav_explore_default.png" width="512" height="388" alt="" decoding="async" draggable="false" />
+              <img class="nav-art nav-art-active" src="./assets/ui/nav/nav_explore_active.png" width="512" height="388" alt="" decoding="async" draggable="false" />
+            </span>
           </button>
           <button type="button" data-action="care" aria-label="照顧">
-            <span class="nav-image" aria-hidden="true"></span>
+            <span class="nav-image" aria-hidden="true">
+              <img class="nav-art nav-art-default" src="./assets/ui/nav/nav_care_default.png" width="512" height="388" alt="" decoding="async" draggable="false" />
+              <img class="nav-art nav-art-active" src="./assets/ui/nav/nav_care_active.png" width="512" height="388" alt="" decoding="async" draggable="false" />
+            </span>
           </button>
           <button type="button" data-action="grow" aria-label="成長">
-            <span class="nav-image" aria-hidden="true"></span>
+            <span class="nav-image" aria-hidden="true">
+              <img class="nav-art nav-art-default" src="./assets/ui/nav/nav_grow_default.png" width="512" height="388" alt="" decoding="async" draggable="false" />
+              <img class="nav-art nav-art-active" src="./assets/ui/nav/nav_grow_active.png" width="512" height="388" alt="" decoding="async" draggable="false" />
+            </span>
           </button>
           <button type="button" data-action="memory" aria-label="記憶">
-            <span class="nav-image" aria-hidden="true"></span>
+            <span class="nav-image" aria-hidden="true">
+              <img class="nav-art nav-art-default" src="./assets/ui/nav/nav_memory_default.png" width="512" height="388" alt="" decoding="async" draggable="false" />
+              <img class="nav-art nav-art-active" src="./assets/ui/nav/nav_memory_active.png" width="512" height="388" alt="" decoding="async" draggable="false" />
+            </span>
           </button>
         </nav>
 
