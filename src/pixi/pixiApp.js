@@ -24,10 +24,14 @@ const SCENE_LAYER_NAMES = [
   "layerBackground",
   "layerCelestial",
   "layerPlatform",
-  "layerEntity",
   "layerForeground",
+  "layerEntity",
   "layerFX"
 ];
+const CELESTIAL_PATHS = Object.freeze({
+  sun: Object.freeze({ startX: 60, endX: 350, horizonY: 290, arcHeight: 150 }),
+  moon: Object.freeze({ startX: 90, endX: 370, horizonY: 290, arcHeight: 170 })
+});
 const CAMPFIRE_FADE_SPEED = 0.075;
 const MIN_SCREEN_WIDTH = 1;
 const MIN_SCREEN_HEIGHT = 1;
@@ -182,8 +186,8 @@ export function updateEnvironmentLayer(environmentLayer, ticker) {
   const isEditor = isSceneEditorMode();
   environmentLayer.bgNight.alpha = nightAlpha;
 
-  updateCelestialSprite(environmentLayer.sun, "sun", state.celestialProgress, 1 - nightAlpha);
-  updateCelestialSprite(environmentLayer.moon, "moon", state.celestialProgress, state.phase === "night" ? 1 : nightAlpha);
+  updateCelestialSprite(environmentLayer.sun, "sun", state.sunProgress, state.sunAlpha);
+  updateCelestialSprite(environmentLayer.moon, "moon", state.moonProgress, state.moonAlpha);
   updateCampfireLayer(environmentLayer.campfire, nightAlpha, ticker);
   if (!environmentLayer.crystal.__sceneEditorSelected) {
     if (isEditor) {
@@ -368,10 +372,17 @@ export function applySceneBlendMode(displayObject, name) {
 function updateCelestialSprite(sprite, objectId, progress, targetAlpha) {
   if (!sprite.__sceneEditorPinned) {
     const layout = getSceneLayoutObject(objectId);
+    const path = CELESTIAL_PATHS[objectId];
     if (layout) {
+      sprite.scale.set(layout.scale.x, layout.scale.y);
+    }
+    if (path) {
+      const t = Math.max(0, Math.min(1, Number(progress) || 0));
+      sprite.x = path.startX + (path.endX - path.startX) * t;
+      sprite.y = path.horizonY - path.arcHeight * 4 * t * (1 - t);
+    } else if (layout) {
       sprite.x = layout.x;
       sprite.y = layout.y;
-      sprite.scale.set(layout.scale.x, layout.scale.y);
     }
   }
   if (!sprite.__sceneEditorSelected) {
