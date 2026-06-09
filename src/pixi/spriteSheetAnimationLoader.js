@@ -184,8 +184,19 @@ async function loadAnimationDefinition({ animations, metadata, status, name }) {
 
 function sliceSpriteSheet(texture, definition) {
   const textures = [];
-  const columns = Math.max(1, Math.floor(texture.width / definition.frameWidth));
+  const columns = Number.isFinite(definition.columns)
+    ? Math.max(1, Math.floor(definition.columns))
+    : Math.max(1, definition.frameCount);
+  const rows = Number.isFinite(definition.rows) ? Math.max(1, Math.floor(definition.rows)) : 1;
   const source = texture.source || texture.baseTexture;
+  const expectedWidth = columns * definition.frameWidth;
+  const expectedHeight = rows * definition.frameHeight;
+
+  if (texture.width < expectedWidth || texture.height < expectedHeight) {
+    throw new Error(
+      `Sheet ${texture.width}x${texture.height} is smaller than expected grid ${expectedWidth}x${expectedHeight}`
+    );
+  }
 
   for (let index = 0; index < definition.frameCount; index += 1) {
     const x = (index % columns) * definition.frameWidth;

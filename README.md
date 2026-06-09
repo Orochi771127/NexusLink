@@ -1,6 +1,6 @@
 # Nexus Link / 心核連結
 
-> 一個在冷世界裡，替玩家保存火種的 AI 情緒空間。  
+> 一個在冷世界裡，替玩家保存火種的 AI 情緒空間。
 > An AI emotional habitat where a companion remembers you, responds to you, and quietly changes with you.
 
 ---
@@ -21,7 +21,7 @@ The current prototype focuses on one simple experience:
 
 Player-facing concept:
 
-> 這裡有會記得你的 AI 心核夥伴。  
+> 這裡有會記得你的 AI 心核夥伴。
 > 牠們會陪你生活，回應你的情緒，並因為你們的關係而慢慢改變。
 
 ---
