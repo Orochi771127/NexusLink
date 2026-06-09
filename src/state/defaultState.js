@@ -24,7 +24,14 @@ const defaultState = {
   reactionPreview: "",
   lastTouchReaction: "",
   memories: [],
-  habitatTraces: []
+  habitatTraces: [],
+
+  // Phase 1.1 Emotional Sedimentation
+  memorySchemaVersion: 1,
+  emotionalMemories: [],
+  safeHarborMode: false,
+  lastEmotionTag: null,
+  habitatRepairFactor: 0
 };
 
 export default defaultState;
