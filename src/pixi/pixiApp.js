@@ -48,7 +48,8 @@ export async function createPixiApp(gameRoot) {
     height: initialSize.height,
     backgroundAlpha: 0,
     antialias: false,
-    resolution: Math.min(window.devicePixelRatio || 1, 2),
+    resolution: 1,
+    roundPixels: true,
     autoDensity: true
   });
   gameRoot.appendChild(app.canvas);
@@ -172,9 +173,10 @@ export function applyResponsiveLayout(sprite, objectId) {
 
   sprite.__layoutScreenWidth = GAME_WIDTH;
   sprite.__layoutScreenHeight = GAME_HEIGHT;
+  sprite.roundPixels = true;
   sprite.scale.set(layout.scale.x, layout.scale.y);
-  sprite.x = layout.x;
-  sprite.y = layout.y;
+  sprite.x = Math.round(layout.x);
+  sprite.y = Math.round(layout.y);
   return sprite;
 }
 
@@ -295,9 +297,10 @@ async function createSceneSprite(id, texturePath, options = {}) {
   const texture = await PIXI.Assets.load(texturePath);
   const sprite = new PIXI.Sprite(texture);
   sprite.name = id;
+  sprite.roundPixels = true;
   sprite.anchor?.set?.(options.anchor ?? 0);
-  sprite.x = options.x ?? 0;
-  sprite.y = options.y ?? 0;
+  sprite.x = Math.round(options.x ?? 0);
+  sprite.y = Math.round(options.y ?? 0);
 
   if (options.width && options.height) {
     sprite.width = options.width;
