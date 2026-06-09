@@ -108,10 +108,7 @@ function validateDefinition(animationId, definition) {
 }
 
 function validateOptionalPath(animationId, label, rawPath, isDirectory) {
-  if (!rawPath) {
-    warnings.push(`${animationId}: ${label} path is not set.`);
-    return;
-  }
+  if (!rawPath) return;
 
   const resolvedPath = resolveRepoPath(rawPath);
   if (!resolvedPath || !fs.existsSync(resolvedPath)) {
