@@ -1,0 +1,389 @@
+{
+  "animationsJsonValid": true,
+  "entryCount": 29,
+  "rowsColumnsPresent": [],
+  "invalid64FrameSizeCombos": [],
+  "sheetSizeResults": [
+    {
+      "id": "idle_calm",
+      "sheet": "./assets/characters/greyshade-cat/spritesheets/emotion/greyshade-cat_idle_calm_64x64_8f.png",
+      "actual": [
+        512,
+        64
+      ],
+      "expected": [
+        512,
+        64
+      ],
+      "valid": true
+    },
+    {
+      "id": "idle_defensive",
+      "sheet": "./assets/characters/greyshade-cat/spritesheets/emotion/greyshade-cat_idle_defensive_64x64_8f.png",
+      "actual": [
+        512,
+        64
+      ],
+      "expected": [
+        512,
+        64
+      ],
+      "valid": true
+    },
+    {
+      "id": "idle_distant",
+      "sheet": "./assets/characters/greyshade-cat/spritesheets/emotion/greyshade-cat_idle_distant_64x64_8f.png",
+      "actual": [
+        512,
+        64
+      ],
+      "expected": [
+        512,
+        64
+      ],
+      "valid": true
+    },
+    {
+      "id": "blink",
+      "sheet": "./assets/characters/greyshade-cat/spritesheets/emotion/greyshade-cat_blink_64x64_3f.png",
+      "actual": [
+        192,
+        64
+      ],
+      "expected": [
+        192,
+        64
+      ],
+      "valid": true
+    },
+    {
+      "id": "touch_guarded",
+      "sheet": "./assets/characters/greyshade-cat/spritesheets/touch/greyshade-cat_touch_guarded_64x64_6f.png",
+      "actual": [
+        384,
+        64
+      ],
+      "expected": [
+        384,
+        64
+      ],
+      "valid": true
+    },
+    {
+      "id": "touch_accept",
+      "sheet": "./assets/characters/greyshade-cat/spritesheets/touch/greyshade-cat_touch_accept_64x64_6f.png",
+      "actual": [
+        384,
+        64
+      ],
+      "expected": [
+        384,
+        64
+      ],
+      "valid": true
+    },
+    {
+      "id": "touch_reject",
+      "sheet": "./assets/characters/greyshade-cat/spritesheets/touch/greyshade-cat_touch_reject_64x64_6f.png",
+      "actual": [
+        384,
+        64
+      ],
+      "expected": [
+        384,
+        64
+      ],
+      "valid": true
+    },
+    {
+      "id": "hug",
+      "sheet": "./assets/characters/greyshade-cat/spritesheets/touch/greyshade-cat_hug_64x64_6f.png",
+      "actual": [
+        384,
+        64
+      ],
+      "expected": [
+        384,
+        64
+      ],
+      "valid": true
+    },
+    {
+      "id": "sit",
+      "sheet": "./assets/characters/greyshade-cat/spritesheets/movement/greyshade-cat_sit_64x64_6f.png",
+      "actual": [
+        384,
+        64
+      ],
+      "expected": [
+        384,
+        64
+      ],
+      "valid": true
+    },
+    {
+      "id": "sleep",
+      "sheet": "./assets/characters/greyshade-cat/spritesheets/movement/greyshade-cat_sleep_64x64_8f.png",
+      "actual": [
+        512,
+        64
+      ],
+      "expected": [
+        512,
+        64
+      ],
+      "valid": true
+    },
+    {
+      "id": "right_walk",
+      "sheet": "./assets/characters/greyshade-cat/spritesheets/movement/greyshade-cat_right_walk_64x64_8f.png",
+      "actual": [
+        512,
+        64
+      ],
+      "expected": [
+        512,
+        64
+      ],
+      "valid": true
+    },
+    {
+      "id": "attack_basic",
+      "sheet": "./assets/characters/greyshade-cat/spritesheets/battle/greyshade-cat_attack_basic_64x64_6f.png",
+      "actual": [
+        384,
+        64
+      ],
+      "expected": [
+        384,
+        64
+      ],
+      "valid": true
+    },
+    {
+      "id": "defend",
+      "sheet": "./assets/characters/greyshade-cat/spritesheets/battle/greyshade-cat_defend_64x64_6f.png",
+      "actual": [
+        384,
+        64
+      ],
+      "expected": [
+        384,
+        64
+      ],
+      "valid": true
+    },
+    {
+      "id": "hit",
+      "sheet": "./assets/characters/greyshade-cat/spritesheets/battle/greyshade-cat_hit_64x64_4f.png",
+      "actual": [
+        256,
+        64
+      ],
+      "expected": [
+        256,
+        64
+      ],
+      "valid": true
+    },
+    {
+      "id": "idle_sick",
+      "sheet": "./assets/characters/greyshade-cat/spritesheets/emotion/greyshade-cat_idle_sick_64x64_8f.png",
+      "actual": [
+        512,
+        64
+      ],
+      "expected": [
+        512,
+        64
+      ],
+      "valid": true
+    },
+    {
+      "id": "idle_angry",
+      "sheet": "./assets/characters/greyshade-cat/spritesheets/emotion/greyshade-cat_idle_angry_64x64_6f.png",
+      "actual": [
+        384,
+        64
+      ],
+      "expected": [
+        384,
+        64
+      ],
+      "valid": true
+    },
+    {
+      "id": "idle_sad",
+      "sheet": "./assets/characters/greyshade-cat/spritesheets/emotion/greyshade-cat_idle_sad_64x64_6f.png",
+      "actual": [
+        384,
+        64
+      ],
+      "expected": [
+        384,
+        64
+      ],
+      "valid": true
+    },
+    {
+      "id": "idle_dance",
+      "sheet": "./assets/characters/greyshade-cat/spritesheets/special/greyshade-cat_idle_dance_64x64_8f.png",
+      "actual": [
+        512,
+        64
+      ],
+      "expected": [
+        512,
+        64
+      ],
+      "valid": true
+    },
+    {
+      "id": "idle_wash",
+      "sheet": "./assets/characters/greyshade-cat/spritesheets/special/greyshade-cat_idle_wash_64x64_8f.png",
+      "actual": [
+        512,
+        64
+      ],
+      "expected": [
+        512,
+        64
+      ],
+      "valid": true
+    },
+    {
+      "id": "idle_wake",
+      "sheet": "./assets/characters/greyshade-cat/spritesheets/special/greyshade-cat_idle_wake_64x64_8f.png",
+      "actual": [
+        512,
+        64
+      ],
+      "expected": [
+        512,
+        64
+      ],
+      "valid": true
+    },
+    {
+      "id": "idle_happy",
+      "sheet": "./assets/characters/greyshade-cat/spritesheets/emotion/greyshade-cat_idle_happy_64x64_8f.png",
+      "actual": [
+        512,
+        64
+      ],
+      "expected": [
+        512,
+        64
+      ],
+      "valid": true
+    },
+    {
+      "id": "special_wake",
+      "sheet": "./assets/characters/greyshade-cat/spritesheets/special/greyshade-cat_special_wake_64x64_8f.png",
+      "actual": [
+        512,
+        64
+      ],
+      "expected": [
+        512,
+        64
+      ],
+      "valid": true
+    },
+    {
+      "id": "left_walk",
+      "sheet": "./assets/characters/greyshade-cat/spritesheets/movement/greyshade-cat_left_walk_64x64_8f.png",
+      "actual": [
+        512,
+        64
+      ],
+      "expected": [
+        512,
+        64
+      ],
+      "valid": true
+    },
+    {
+      "id": "special_left_walk",
+      "sheet": "./assets/characters/greyshade-cat/spritesheets/special/greyshade-cat_special_left_walk_64x64_8f.png",
+      "actual": [
+        512,
+        64
+      ],
+      "expected": [
+        512,
+        64
+      ],
+      "valid": true
+    },
+    {
+      "id": "special_angry",
+      "sheet": "./assets/characters/greyshade-cat/spritesheets/special/greyshade-cat_special_angry_64x64_6f.png",
+      "actual": [
+        384,
+        64
+      ],
+      "expected": [
+        384,
+        64
+      ],
+      "valid": true
+    },
+    {
+      "id": "idle_enjoy",
+      "sheet": "./assets/characters/greyshade-cat/spritesheets/emotion/greyshade-cat_idle_enjoy_64x64_8f.png",
+      "actual": [
+        512,
+        64
+      ],
+      "expected": [
+        512,
+        64
+      ],
+      "valid": true
+    },
+    {
+      "id": "special_sad",
+      "sheet": "./assets/characters/greyshade-cat/spritesheets/special/greyshade-cat_special_sad_64x64_6f.png",
+      "actual": [
+        384,
+        64
+      ],
+      "expected": [
+        384,
+        64
+      ],
+      "valid": true
+    },
+    {
+      "id": "special_dance",
+      "sheet": "./assets/characters/greyshade-cat/spritesheets/special/greyshade-cat_special_dance_64x64_8f.png",
+      "actual": [
+        512,
+        64
+      ],
+      "expected": [
+        512,
+        64
+      ],
+      "valid": true
+    },
+    {
+      "id": "special_wash",
+      "sheet": "./assets/characters/greyshade-cat/spritesheets/special/greyshade-cat_special_wash_64x64_8f.png",
+      "actual": [
+        512,
+        64
+      ],
+      "expected": [
+        512,
+        64
+      ],
+      "valid": true
+    }
+  ],
+  "problems": [],
+  "gitStatus": [
+    " M assets/characters/greyshade-cat/metadata/animations.json"
+  ]
+}
