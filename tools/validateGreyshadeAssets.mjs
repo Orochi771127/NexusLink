@@ -11,7 +11,7 @@ const metadataPath = path.join(
   "metadata",
   "animations.json"
 );
-const EXPECTED_FRAME_SIZE = 64;
+const EXPECTED_FRAME_SIZE = 128;
 
 const errors = [];
 const warnings = [];
@@ -49,6 +49,12 @@ function validateDefinition(animationId, definition) {
     fail(`${animationId}: frameCount must be a positive integer.`);
   }
 
+  const rows = Number.isInteger(definition.rows) && definition.rows > 0 ? definition.rows : 1;
+  const columns = Number.isInteger(definition.columns) && definition.columns > 0 ? definition.columns : definition.frameCount;
+  if (rows * columns < definition.frameCount) {
+    fail(`${animationId}: rows x columns must contain frameCount frames.`);
+  }
+
   if (!Number.isFinite(definition.fps) || definition.fps <= 0) {
     fail(`${animationId}: fps must be a positive number.`);
   }
@@ -72,8 +78,8 @@ function validateDefinition(animationId, definition) {
     return;
   }
 
-  const expectedWidth = definition.frameWidth * definition.frameCount;
-  const expectedHeight = definition.frameHeight;
+  const expectedWidth = definition.frameWidth * columns;
+  const expectedHeight = definition.frameHeight * rows;
   if (dimensions.width !== expectedWidth || dimensions.height !== expectedHeight) {
     fail(
       `${animationId}: sheet is ${dimensions.width}x${dimensions.height}, expected ${expectedWidth}x${expectedHeight}.`
