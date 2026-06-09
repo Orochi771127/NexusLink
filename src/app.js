@@ -6,6 +6,7 @@ import { bindViewportVars, qs } from "./utils/dom.js";
 import EventBus from "./utils/eventBus.js";
 import { loadState, saveState } from "./state/saveManager.js";
 import { estimateSaveSizeKB } from "./engine/storageGuard.js";
+import { startEnvironmentHeartbeat } from "./engine/environmentHeartbeat.js";
 import * as store from "./state/store.js";
 import {
   applyDevQueryHooks,
@@ -44,6 +45,7 @@ let interactionController = null;
 let currentMotionState = "idle_calm";
 let devPanelController = null;
 let lastSaveStatus = { ok: true, emergency: false, estimatedSaveSizeKB: 0 };
+let stopEnvironmentHeartbeat = null;
 
 bootstrap();
 
@@ -83,6 +85,13 @@ async function bootstrap() {
     hudController.renderHUD();
     soulTalkController.renderChat();
     devPanelController?.renderReadout();
+  });
+
+  stopEnvironmentHeartbeat?.();
+  stopEnvironmentHeartbeat = startEnvironmentHeartbeat({
+    store,
+    saveCurrentState,
+    onHeartbeat: () => devPanelController?.renderReadout()
   });
 
   if (!window.PIXI) {
