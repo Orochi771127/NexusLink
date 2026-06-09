@@ -1,4 +1,6 @@
+import { syncHabitatTracesFromMemories } from "./habitatTraceEngine.js";
 import { updateMemoryLifecycles } from "./memoryLifecycleEngine.js";
+import { buildReturnBehavior, getReturnMessage } from "./returnBehaviorEngine.js";
 
 export const DEFAULT_HEARTBEAT_INTERVAL_MS = 60 * 1000;
 
@@ -19,18 +21,37 @@ export function startEnvironmentHeartbeat({
     if (emotionalMemories.length === 0) return false;
 
     const now = Date.now();
-    const { updatedMemories, stateChanged } = updateMemoryLifecycles(emotionalMemories, now);
+
+    if (reason === "startup") {
+      applyReturnBehavior(state, now);
+    }
+
+    const { updatedMemories, stateChanged: memoriesChanged } = updateMemoryLifecycles(emotionalMemories, now);
+    const traceSync = syncHabitatTracesFromMemories(state.habitatTraces || [], updatedMemories, now);
+    const stateChanged = memoriesChanged || traceSync.changed;
 
     if (!stateChanged) return false;
 
     store.updateState((draft) => {
       draft.emotionalMemories = updatedMemories;
+      draft.habitatTraces = traceSync.habitatTraces;
       draft.habitatRepairFactor = calculateHabitatRepairFactor(updatedMemories);
     });
 
     saveCurrentState?.();
-    onHeartbeat?.({ reason, now, updatedMemories });
+    onHeartbeat?.({ reason, now, updatedMemories, habitatTraces: traceSync.habitatTraces });
     return true;
+  }
+
+  function applyReturnBehavior(state, now) {
+    const returnBehavior = buildReturnBehavior(state, now);
+    const message = getReturnMessage(returnBehavior);
+    if (!message || !returnBehavior?.shouldPersist) return;
+
+    store.updateState((draft) => {
+      if (draft.reactionPreview) return;
+      draft.reactionPreview = message;
+    });
   }
 
   tick("startup");

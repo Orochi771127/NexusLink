@@ -1,4 +1,9 @@
 import { processEmotionInput } from "../engine/emotionalSedimentationEngine.js";
+import {
+  createHabitatTraceFromMemory,
+  pruneHabitatTraces,
+  upsertHabitatTrace
+} from "../engine/habitatTraceEngine.js";
 import { updateMemoryLifecycles } from "../engine/memoryLifecycleEngine.js";
 import {
   buildSafeHarborReply,
@@ -105,8 +110,7 @@ export function createSoulTalkController({ store, saveCurrentState }) {
         state.mood = sedimentationResult.matchedEmotionKey === "fatigue" ? "tired" : "calm";
 
         if (sedimentationResult.shouldCreateMemory && sedimentationResult.memoryObject) {
-          state.emotionalMemories.push(sedimentationResult.memoryObject);
-          state.lastEmotionTag = sedimentationResult.memoryObject.emotion;
+          pushEmotionalMemoryWithTrace(state, sedimentationResult.memoryObject, now);
         }
 
         reply = buildSafeHarborReply(sedimentationResult);
@@ -118,8 +122,7 @@ export function createSoulTalkController({ store, saveCurrentState }) {
           state.bond += 2;
           state.trust += 1;
           state.mood = mapEmotionToMood(sedimentationResult.memoryObject.emotion);
-          state.emotionalMemories.push(sedimentationResult.memoryObject);
-          state.lastEmotionTag = sedimentationResult.memoryObject.emotion;
+          pushEmotionalMemoryWithTrace(state, sedimentationResult.memoryObject, now);
           reply = buildSedimentationReply(sedimentationResult);
         } else if (repeated) {
           state.safeHarborMode = false;
@@ -271,6 +274,16 @@ function mapEmotionToMood(emotion) {
   if (emotion === "gratitude") return "calm";
   if (emotion === "calm") return "calm";
   return "warm";
+}
+
+function pushEmotionalMemoryWithTrace(state, memoryObject, now) {
+  state.emotionalMemories.push(memoryObject);
+  state.lastEmotionTag = memoryObject.emotion;
+
+  const trace = createHabitatTraceFromMemory(memoryObject, now);
+  if (!trace) return;
+
+  state.habitatTraces = pruneHabitatTraces(upsertHabitatTrace(state.habitatTraces || [], trace));
 }
 
 function calculateHabitatRepairFactor(emotionalMemories = []) {
