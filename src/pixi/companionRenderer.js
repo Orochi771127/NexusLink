@@ -84,6 +84,8 @@ function applyCompanionResponsiveLayout(companion, app) {
     app?.screen?.width ?? SCENE_LAYOUT.referenceWidth,
     app?.screen?.height ?? SCENE_LAYOUT.referenceHeight
   );
+  companion.x = Math.round(companion.x);
+  companion.y = Math.round(companion.y);
 }
 
 function isSceneEditorMode() {
@@ -98,6 +100,7 @@ function createCreatureSprite(texture, creature) {
   companion.addChild(shadow);
 
   const sprite = new PIXI.Sprite(texture);
+  sprite.roundPixels = true;
   sprite.anchor.set(0.5, 1);
 
   const maxW = Math.min(170, WORLD_WIDTH * 0.46);

@@ -5,6 +5,8 @@ import { createInteractionController } from "./engine/interactionController.js";
 import { bindViewportVars, qs } from "./utils/dom.js";
 import EventBus from "./utils/eventBus.js";
 import { loadState, saveState } from "./state/saveManager.js";
+import { createSaveQueue, SAVE_LEVEL } from "./state/saveQueue.js";
+import { createRuntimeGuard } from "./engine/runtimeGuard.js";
 import { estimateSaveSizeKB } from "./engine/storageGuard.js";
 import { startEnvironmentHeartbeat } from "./engine/environmentHeartbeat.js";
 import * as store from "./state/store.js";
@@ -61,14 +63,17 @@ async function bootstrap() {
   applyDevResetHook(devQueryHooks);
   const initialState = applyDevQueryHooks(applyOfflineRecovery(loadState()), devQueryHooks);
   store.replaceState(initialState);
-  saveCurrentState();
+  const saveQueue = createSaveQueue(saveCurrentState);
+  saveQueue.enqueue(SAVE_LEVEL.CRITICAL);
+  const saveInteraction = () => saveQueue.enqueue(SAVE_LEVEL.INTERACTION);
+  const saveDebounced = () => saveQueue.enqueue(SAVE_LEVEL.DEBOUNCE);
 
   const hudController = createHudController({ store, statusText });
-  const soulTalkController = createSoulTalkController({ store, saveCurrentState });
+  const soulTalkController = createSoulTalkController({ store, saveCurrentState: saveInteraction });
   const panelManager = createPanelManager({ onSoulTalkFocus: () => soulTalkController.focusInput() });
   const actionSheetController = createActionSheetController({
     soulTalkController,
-    saveCurrentState,
+    saveCurrentState: saveInteraction,
     statusText,
     panelManager,
     store
@@ -90,7 +95,7 @@ async function bootstrap() {
   stopEnvironmentHeartbeat?.();
   stopEnvironmentHeartbeat = startEnvironmentHeartbeat({
     store,
-    saveCurrentState,
+    saveCurrentState: saveDebounced,
     onHeartbeat: () => devPanelController?.renderReadout()
   });
 
@@ -107,7 +112,7 @@ async function bootstrap() {
     hudController.renderHUD();
     soulTalkController.renderChat();
 
-    await bootScene(app, panelManager, statusText, soulTalkController);
+    await bootScene(app, panelManager, statusText, soulTalkController, saveQueue);
 
     devPanelController = createDevPanelController({
       isEnabled: isDevPanelEnabled,
@@ -161,7 +166,8 @@ function bindSettingsDropdown() {
   });
 }
 
-async function bootScene(app, panelManager, statusText, soulTalkController) {
+async function bootScene(app, panelManager, statusText, soulTalkController, saveQueue) {
+  const runtimeGuard = createRuntimeGuard(app);
   const world = createWorld(app);
   const layers = getSceneLayers(world);
 
@@ -190,7 +196,7 @@ async function bootScene(app, panelManager, statusText, soulTalkController) {
     companion,
     creature: currentCreature,
     store,
-    saveCurrentState,
+    saveCurrentState: () => saveQueue.enqueue(SAVE_LEVEL.INTERACTION),
     statusText,
     onStateChange: () => {
       soulTalkController.renderChat();
@@ -209,7 +215,10 @@ async function bootScene(app, panelManager, statusText, soulTalkController) {
 
   let t = 0;
   app.ticker.add((ticker) => {
-    t += ticker.deltaMS / 1000;
+    if (runtimeGuard.shouldSkipFrame()) return;
+
+    const safeTicker = runtimeGuard.getSafeTicker(ticker);
+    t += safeTicker.deltaMS / 1000;
 
     if (!isSceneEditorMode) {
       updateCompanionMotion(companion, companionMotionController, t, performance.now(), store.getState().mood, (motionState) => {
@@ -227,9 +236,9 @@ async function bootScene(app, panelManager, statusText, soulTalkController) {
       companion.__accentFlame.alpha = 0.7 + Math.sin(t * 5) * 0.25;
     }
 
-    updateEnvironmentLayer(environmentLayer, ticker);
-    animateParticles(particles, t, ticker);
-    updateEnvironmentEffects(activeEnvironmentEffects, ticker);
+    updateEnvironmentLayer(environmentLayer, safeTicker);
+    animateParticles(particles, t, safeTicker);
+    updateEnvironmentEffects(activeEnvironmentEffects, safeTicker);
   });
 }
 
