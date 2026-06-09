@@ -1,6 +1,6 @@
 # NexusLink Phase 1.1 Emotional Sedimentation Data Layer
 
-Version: RC2
+Version: RC3
 Scope: Pure front-end MVP
 Stack: HTML / CSS / JavaScript ES Modules / PixiJS CDN / localStorage / GitHub Pages
 
@@ -18,6 +18,7 @@ Player input
 → intensity calculation
 → emotionalMemory creation
 → memory lifecycle support
+→ environment heartbeat support
 → localStorage persistence
 → SafeHarborMode bypasses spam punishment when the input is emotionally high pressure
 ```
@@ -83,6 +84,7 @@ It must not:
 - Increase spamScore.
 - Lower trust.
 - Increase defense.
+- Drain companion energy.
 - Use mocking or corrective language.
 
 It may:
@@ -91,6 +93,21 @@ It may:
 - Increase trust slightly.
 - Give quiet support.
 - Store an emotionalMemory unless Safety Shield is high risk.
+
+### Environment Heartbeat
+
+Environment Heartbeat lets memory lifecycle flow without requiring new player input.
+
+It runs at low frequency and only updates state when lifecycle state actually changes.
+
+```text
+setInterval every 60 seconds
+→ read emotionalMemories
+→ update lifecycle with Date.now()
+→ if changed, update store and save localStorage
+```
+
+This keeps the habitat from freezing when the player leaves the page open silently.
 
 ---
 
@@ -102,6 +119,7 @@ src/data/safetyShieldDictionary.js
 src/engine/emotionalSedimentationEngine.js
 src/engine/memoryLifecycleEngine.js
 src/engine/safeHarborMode.js
+src/engine/environmentHeartbeat.js
 ```
 
 ---
@@ -113,6 +131,8 @@ src/state/defaultState.js
 src/state/store.js
 src/engine/storageGuard.js
 src/ui/soulTalkController.js
+src/ui/devPanelController.js
+src/app.js
 ```
 
 ---
@@ -139,6 +159,17 @@ Must accept `now` as a parameter for time-travel debugging.
 ```js
 updateMemoryLifecycles(emotionalMemories, futureNow);
 ```
+
+### environmentHeartbeat
+
+Must stay low-frequency and data-only.
+
+It must not:
+
+- Touch PixiJS.
+- Create visual symbols.
+- Run per frame.
+- Save localStorage unless lifecycle state changed.
 
 ### Safety Shield
 
@@ -178,20 +209,30 @@ console.table(result.updatedMemories);
 
 Expected status: `settled`.
 
+To inspect runtime state, open with:
+
+```text
+?devPanel=1
+```
+
+The dev panel shows emotional memory counts and lifecycle distribution.
+
 ---
 
 ## 8. Acceptance Criteria
 
 1. Input `我好累` creates a `fatigue` emotionalMemory.
 2. Repeated high-pressure emotional input enters SafeHarborMode and does not increase spamScore.
-3. Noise input does not create emotionalMemory.
-4. High-risk Safety Shield input does not create emotionalMemory.
-5. emotionalMemory includes `excerpt` but not full rawText.
-6. Reloading the page preserves emotionalMemories through localStorage.
-7. Missing emotionalMemories in old saves does not crash the app.
-8. `fresh` becomes `settled` after 12 hours when `now` is injected.
-9. `settled` becomes `transformed` after 3 days when `now` is injected.
-10. More than 12 visible memories archives the oldest visible active memories.
+3. SafeHarborMode does not drain companion energy.
+4. Noise input does not create emotionalMemory.
+5. High-risk Safety Shield input does not create emotionalMemory.
+6. emotionalMemory includes `excerpt` but not full rawText.
+7. Reloading the page preserves emotionalMemories through localStorage.
+8. Missing emotionalMemories in old saves does not crash the app.
+9. `fresh` becomes `settled` after 12 hours when `now` is injected.
+10. `settled` becomes `transformed` after 3 days when `now` is injected.
+11. More than 12 visible memories archives the oldest visible active memories.
+12. Environment Heartbeat updates lifecycle state without requiring new player input.
 
 ---
 
@@ -204,4 +245,7 @@ Phase 1.2 may add:
 - PixiJS memory symbol rendering.
 - Memory object click interaction.
 - system_alert UI treatment.
+- EventBus/store-subscribe driven memory renderer.
 - Optional object pooling only if performance requires it.
+
+Phase 1.2 should not poll emotionalMemories inside the PixiJS ticker. It should subscribe to state changes and update only when the emotional memory snapshot changes.
