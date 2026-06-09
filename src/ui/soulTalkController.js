@@ -83,12 +83,12 @@ export function createSoulTalkController({ store, saveCurrentState }) {
       });
 
       state.lastMessage = message;
-      state.energy = Math.max(0, state.energy - 1);
 
       let reply = "";
       let replyRole = "companion";
 
       if (sedimentationResult.safetyRisk?.riskLevel === "high") {
+        state.energy = Math.max(state.energy, 1);
         state.safeHarborMode = true;
         state.mood = "safe_harbor";
         state.trust = Math.max(state.trust, 5);
@@ -96,6 +96,7 @@ export function createSoulTalkController({ store, saveCurrentState }) {
         replyRole = "system";
         reply = buildSafetyShieldReply();
       } else if (sedimentationResult.triggerSafeHarbor) {
+        state.energy = Math.min(10, Math.max(state.energy, 1) + 0.5);
         state.safeHarborMode = true;
         state.spamScore = Math.max(0, state.spamScore - 1);
         state.trust += 1;
@@ -109,36 +110,40 @@ export function createSoulTalkController({ store, saveCurrentState }) {
         }
 
         reply = buildSafeHarborReply(sedimentationResult);
-      } else if (sedimentationResult.memoryObject) {
-        state.safeHarborMode = false;
-        state.bond += 2;
-        state.trust += 1;
-        state.mood = mapEmotionToMood(sedimentationResult.memoryObject.emotion);
-        state.emotionalMemories.push(sedimentationResult.memoryObject);
-        state.lastEmotionTag = sedimentationResult.memoryObject.emotion;
-        reply = buildSedimentationReply(sedimentationResult);
-      } else if (repeated) {
-        state.safeHarborMode = false;
-        state.spamScore += 1;
-        state.trust = Math.max(0, state.trust - 1);
-        state.mood = "defensive";
-        reply = mockAIResponse(message, repeated, state.energy);
-      } else if (state.energy <= 2) {
-        state.safeHarborMode = false;
-        state.bond += 1;
-        state.mood = "tired";
-        reply = mockAIResponse(message, repeated, state.energy);
-      } else if (/謝謝|安靜|陪我|晚安|休息/.test(message)) {
-        state.safeHarborMode = false;
-        state.bond += 1;
-        state.mood = "calm";
-        state.trust += 1;
-        reply = mockAIResponse(message, repeated, state.energy);
       } else {
-        state.safeHarborMode = false;
-        state.bond += 1;
-        state.mood = "warm";
-        reply = mockAIResponse(message, repeated, state.energy);
+        state.energy = Math.max(0, state.energy - 1);
+
+        if (sedimentationResult.memoryObject) {
+          state.safeHarborMode = false;
+          state.bond += 2;
+          state.trust += 1;
+          state.mood = mapEmotionToMood(sedimentationResult.memoryObject.emotion);
+          state.emotionalMemories.push(sedimentationResult.memoryObject);
+          state.lastEmotionTag = sedimentationResult.memoryObject.emotion;
+          reply = buildSedimentationReply(sedimentationResult);
+        } else if (repeated) {
+          state.safeHarborMode = false;
+          state.spamScore += 1;
+          state.trust = Math.max(0, state.trust - 1);
+          state.mood = "defensive";
+          reply = mockAIResponse(message, repeated, state.energy);
+        } else if (state.energy <= 2) {
+          state.safeHarborMode = false;
+          state.bond += 1;
+          state.mood = "tired";
+          reply = mockAIResponse(message, repeated, state.energy);
+        } else if (/謝謝|安靜|陪我|晚安|休息/.test(message)) {
+          state.safeHarborMode = false;
+          state.bond += 1;
+          state.mood = "calm";
+          state.trust += 1;
+          reply = mockAIResponse(message, repeated, state.energy);
+        } else {
+          state.safeHarborMode = false;
+          state.bond += 1;
+          state.mood = "warm";
+          reply = mockAIResponse(message, repeated, state.energy);
+        }
       }
 
       state.habitatRepairFactor = calculateHabitatRepairFactor(state.emotionalMemories);
