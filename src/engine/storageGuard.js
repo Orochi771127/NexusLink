@@ -23,14 +23,31 @@ export function sanitizeMemory(memory, now = Date.now()) {
 }
 
 export function sanitizeTrace(trace, now = Date.now()) {
+  const allowedStatuses = new Set(["fresh", "settled", "transformed", "archived", "released"]);
+  const id = String(trace?.id || `trace_${now}`);
   const createdAt = Number.isFinite(trace?.createdAt) ? trace.createdAt : now;
+  const lastUpdatedAt = Number.isFinite(trace?.lastUpdatedAt) ? trace.lastUpdatedAt : createdAt;
   const expiresAt = trace?.expiresAt === null || trace?.expiresAt === undefined ? null : Number(trace.expiresAt);
+  const inferredMemoryId =
+    typeof id === "string" && id.startsWith("htrace_") ? id.slice("htrace_".length) : null;
+  const memoryId = trace?.memoryId
+    ? String(trace.memoryId).slice(0, 80)
+    : inferredMemoryId
+      ? String(inferredMemoryId).slice(0, 80)
+      : null;
+
   return {
-    id: String(trace?.id || `trace_${createdAt}`),
-    type: String(trace?.type || "ambient"),
+    id,
+    memoryId,
+    type: String(trace?.type || "ambient").slice(0, 40),
+    emotion: String(trace?.emotion || "unknown").slice(0, 32),
     intensity: Number.isFinite(trace?.intensity) ? Math.max(0, Math.min(1, trace.intensity)) : 0.4,
+    status: allowedStatuses.has(trace?.status) ? trace.status : "fresh",
     createdAt,
-    expiresAt: Number.isFinite(expiresAt) ? expiresAt : null
+    lastUpdatedAt,
+    expiresAt: Number.isFinite(expiresAt) ? expiresAt : null,
+    visualHint: String(trace?.visualHint || "").slice(0, 40),
+    textHint: String(trace?.textHint || "").slice(0, 80)
   };
 }
 
