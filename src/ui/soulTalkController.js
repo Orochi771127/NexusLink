@@ -1,3 +1,10 @@
+import { processEmotionInput } from "../engine/emotionalSedimentationEngine.js";
+import { updateMemoryLifecycles } from "../engine/memoryLifecycleEngine.js";
+import {
+  buildSafeHarborReply,
+  buildSafetyShieldReply,
+  buildSedimentationReply
+} from "../engine/safeHarborMode.js";
 import { qs } from "../utils/dom.js";
 
 const DEFAULT_STATUS_TEXT = "心語 / 靈魂聖域";
@@ -60,31 +67,91 @@ export function createSoulTalkController({ store, saveCurrentState }) {
     addChat("player", message);
 
     let result;
+
     store.updateState((state) => {
       const moodBefore = state.mood;
       const repeated = message === state.lastMessage;
+      const now = Date.now();
+      const idSuffix = String(Math.floor(Math.random() * 1000)).padStart(3, "0");
+
+      const lifecycleResult = updateMemoryLifecycles(state.emotionalMemories || [], now);
+      state.emotionalMemories = lifecycleResult.updatedMemories;
+
+      const sedimentationResult = processEmotionInput(message, state, {
+        now,
+        idSuffix
+      });
+
       state.lastMessage = message;
-      state.bond += 1;
       state.energy = Math.max(0, state.energy - 1);
 
-      if (repeated) {
+      let reply = "";
+      let replyRole = "companion";
+
+      if (sedimentationResult.safetyRisk?.riskLevel === "high") {
+        state.safeHarborMode = true;
+        state.mood = "safe_harbor";
+        state.trust = Math.max(state.trust, 5);
+        state.reactionPreview = "";
+        replyRole = "system";
+        reply = buildSafetyShieldReply();
+      } else if (sedimentationResult.triggerSafeHarbor) {
+        state.safeHarborMode = true;
+        state.spamScore = Math.max(0, state.spamScore - 1);
+        state.trust += 1;
+        state.bond += 1;
+        state.defense = Math.max(0, state.defense - 2);
+        state.mood = sedimentationResult.matchedEmotionKey === "fatigue" ? "tired" : "calm";
+
+        if (sedimentationResult.shouldCreateMemory && sedimentationResult.memoryObject) {
+          state.emotionalMemories.push(sedimentationResult.memoryObject);
+          state.lastEmotionTag = sedimentationResult.memoryObject.emotion;
+        }
+
+        reply = buildSafeHarborReply(sedimentationResult);
+      } else if (sedimentationResult.memoryObject) {
+        state.safeHarborMode = false;
+        state.bond += 2;
+        state.trust += 1;
+        state.mood = mapEmotionToMood(sedimentationResult.memoryObject.emotion);
+        state.emotionalMemories.push(sedimentationResult.memoryObject);
+        state.lastEmotionTag = sedimentationResult.memoryObject.emotion;
+        reply = buildSedimentationReply(sedimentationResult);
+      } else if (repeated) {
+        state.safeHarborMode = false;
         state.spamScore += 1;
         state.trust = Math.max(0, state.trust - 1);
         state.mood = "defensive";
+        reply = mockAIResponse(message, repeated, state.energy);
       } else if (state.energy <= 2) {
+        state.safeHarborMode = false;
+        state.bond += 1;
         state.mood = "tired";
+        reply = mockAIResponse(message, repeated, state.energy);
       } else if (/謝謝|安靜|陪我|晚安|休息/.test(message)) {
+        state.safeHarborMode = false;
+        state.bond += 1;
         state.mood = "calm";
         state.trust += 1;
+        reply = mockAIResponse(message, repeated, state.energy);
       } else {
+        state.safeHarborMode = false;
+        state.bond += 1;
         state.mood = "warm";
+        reply = mockAIResponse(message, repeated, state.energy);
       }
 
-      const reply = mockAIResponse(message, repeated, state.energy);
+      state.habitatRepairFactor = calculateHabitatRepairFactor(state.emotionalMemories);
       state.reactionPreview = "";
-      state.chatHistory.push({ role: "companion", text: reply });
+      state.chatHistory.push({ role: replyRole, text: reply });
       if (state.chatHistory.length > 24) state.chatHistory.shift();
-      result = { moodBefore, moodAfter: state.mood, repeated };
+
+      result = {
+        moodBefore,
+        moodAfter: state.mood,
+        repeated,
+        sedimentationResult
+      };
     });
 
     saveCurrentState();
@@ -188,4 +255,25 @@ function mockAIResponse(message, repeated, energy) {
   if (/謝謝|安靜|陪我|晚安|休息/.test(message)) return "謝謝你把聲音放輕。我會在這裡，陪你把心慢慢安放。";
   if (/探索|去哪|外面/.test(message)) return "湖面上有微光在移動，也許那是下一段記憶的入口。";
   return "我接住你的訊號了。讓我們把它變成一點更穩定的光。";
+}
+
+function mapEmotionToMood(emotion) {
+  if (emotion === "fatigue") return "tired";
+  if (emotion === "sadness") return "soft";
+  if (emotion === "anxiety") return "alert";
+  if (emotion === "loneliness") return "warm";
+  if (emotion === "anger") return "defensive";
+  if (emotion === "gratitude") return "calm";
+  if (emotion === "calm") return "calm";
+  return "warm";
+}
+
+function calculateHabitatRepairFactor(emotionalMemories = []) {
+  if (!Array.isArray(emotionalMemories) || emotionalMemories.length === 0) return 0;
+
+  const transformedCount = emotionalMemories.filter((memory) => memory.status === "transformed").length;
+  const settledCount = emotionalMemories.filter((memory) => memory.status === "settled").length;
+  const total = emotionalMemories.length;
+
+  return Math.max(0, Math.min(1, (transformedCount * 0.08 + settledCount * 0.04) / Math.max(1, total)));
 }
