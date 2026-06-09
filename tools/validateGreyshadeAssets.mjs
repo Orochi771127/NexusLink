@@ -11,7 +11,7 @@ const metadataPath = path.join(
   "metadata",
   "animations.json"
 );
-const EXPECTED_FRAME_SIZE = 64;
+const EXPECTED_FRAME_SIZE = 128;
 
 const errors = [];
 const warnings = [];
@@ -45,8 +45,25 @@ function validateDefinition(animationId, definition) {
     fail(`${animationId}: frame size must be ${EXPECTED_FRAME_SIZE}x${EXPECTED_FRAME_SIZE}.`);
   }
 
+  if (!Number.isInteger(definition.rows) || definition.rows <= 0) {
+    fail(`${animationId}: rows must be a positive integer.`);
+  }
+
+  if (!Number.isInteger(definition.columns) || definition.columns <= 0) {
+    fail(`${animationId}: columns must be a positive integer.`);
+  }
+
   if (!Number.isInteger(definition.frameCount) || definition.frameCount <= 0) {
     fail(`${animationId}: frameCount must be a positive integer.`);
+  }
+
+  if (
+    Number.isInteger(definition.rows) &&
+    Number.isInteger(definition.columns) &&
+    Number.isInteger(definition.frameCount) &&
+    definition.rows * definition.columns < definition.frameCount
+  ) {
+    fail(`${animationId}: rows x columns must be greater than or equal to frameCount.`);
   }
 
   if (!Number.isFinite(definition.fps) || definition.fps <= 0) {
@@ -72,11 +89,17 @@ function validateDefinition(animationId, definition) {
     return;
   }
 
-  const expectedWidth = definition.frameWidth * definition.frameCount;
-  const expectedHeight = definition.frameHeight;
+  const expectedWidth = definition.columns * definition.frameWidth;
+  const expectedHeight = definition.rows * definition.frameHeight;
   if (dimensions.width !== expectedWidth || dimensions.height !== expectedHeight) {
     fail(
       `${animationId}: sheet is ${dimensions.width}x${dimensions.height}, expected ${expectedWidth}x${expectedHeight}.`
+    );
+  }
+
+  if (definition.sheet.includes("64x64")) {
+    warnings.push(
+      `${animationId}: sheet filename still contains 64x64. This is allowed temporarily if the PNG was replaced in-place, but the filename should be renamed later.`
     );
   }
 
