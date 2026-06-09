@@ -9,6 +9,7 @@ import { createSaveQueue, SAVE_LEVEL } from "./state/saveQueue.js";
 import { createRuntimeGuard } from "./engine/runtimeGuard.js";
 import { estimateSaveSizeKB } from "./engine/storageGuard.js";
 import { startEnvironmentHeartbeat } from "./engine/environmentHeartbeat.js";
+import { mapHabitatTracesToVisuals } from "./engine/traceVisualMapper.js";
 import * as store from "./state/store.js";
 import {
   applyDevQueryHooks,
@@ -31,6 +32,7 @@ import {
   updateEnvironmentLayer
 } from "./pixi/pixiApp.js";
 import { bindCompanionTap, createCreatureNode, positionCompanion } from "./pixi/companionRenderer.js";
+import { createHabitatTraceRenderer } from "./pixi/habitatTraceRenderer.js";
 import { enableEditorMode, readSceneEditorFlag } from "./tools/sceneEditor.js";
 import {
   createCompanionMotion,
@@ -181,6 +183,12 @@ async function bootScene(app, panelManager, statusText, soulTalkController, save
   layers.layerFX.addChild(environmentEffects);
   const activeEnvironmentEffects = [];
 
+  const habitatTraceRenderer = createHabitatTraceRenderer(PIXI, {
+    fx: layers.layerFX,
+    foreground: layers.layerForeground,
+    platform: layers.layerPlatform
+  });
+
   EventBus.on(ENVIRONMENT_INTERACTION_EVENT, (event) => {
     if (event?.type !== "crystal_touch") return;
     activeEnvironmentEffects.push(createCrystalTouchEffect(environmentEffects, event));
@@ -239,6 +247,10 @@ async function bootScene(app, panelManager, statusText, soulTalkController, save
     updateEnvironmentLayer(environmentLayer, safeTicker);
     animateParticles(particles, t, safeTicker);
     updateEnvironmentEffects(activeEnvironmentEffects, safeTicker);
+
+    const habitatTraceVisuals = mapHabitatTracesToVisuals(store.getState().habitatTraces || []);
+    habitatTraceRenderer.sync(habitatTraceVisuals);
+    habitatTraceRenderer.update(t);
   });
 }
 
