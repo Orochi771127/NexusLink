@@ -6,31 +6,35 @@ This folder contains the planning and production references for NexusLink.
 
 ## Start Here
 
-1. `nexuslink-design-brief.md`
+1. `nexuslink-development-direction.md`
+   - Current product direction and emotional habitat north star.
+   - Use this to understand the core positioning, emotional sedimentation system, companion principles, MVP scope guard, and current companion direction.
+
+2. `nexuslink-design-brief.md`
    - One-page product and design orientation.
    - Use this to understand the north star, player promise, design pillars, MVP loop, and first release gate.
 
-2. `nexuslink-game-plan.md`
+3. `nexuslink-game-plan.md`
    - Implementation-facing game plan.
    - Use this to understand the current runtime baseline, state model, companion motion priorities, UI surface, and acceptance criteria.
 
-3. `nexuslink-implementation-roadmap.md`
+4. `nexuslink-implementation-roadmap.md`
    - Ordered milestones for the first complete habitat loop.
    - Use this to sequence engineering and asset work without expanding scope too early.
 
-4. `nexuslink-production-backlog.md`
+5. `nexuslink-production-backlog.md`
    - Concrete work packages.
    - Use this to pick the next implementation or production task.
 
-5. `nexuslink-sprint-01.md`
+6. `nexuslink-sprint-01.md`
    - First execution slice.
    - Use this to run the baseline verification sprint before generating new art.
 
-6. `nexuslink-first-habitat-qa.md`
+7. `nexuslink-first-habitat-qa.md`
    - First-loop QA checklist.
    - Use this before deciding the habitat is ready for broader feature expansion.
 
-7. `asset-pipeline.md`
+8. `asset-pipeline.md`
    - Official local art and animation pipeline.
    - Use this before generating, processing, registering, or QAing any visual asset.
 
