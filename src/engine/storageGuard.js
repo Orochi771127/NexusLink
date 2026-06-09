@@ -1,9 +1,11 @@
 export const STORAGE_LIMITS = Object.freeze({
   memories: 50,
   habitatTraces: 50,
+  emotionalMemories: 60,
   chatHistory: 40,
   memoryTextMaxLength: 240,
   chatTextMaxLength: 300,
+  emotionalExcerptMaxLength: 40,
   traceMaxAgeMs: 1000 * 60 * 60 * 24 * 14
 });
 
@@ -32,6 +34,28 @@ export function sanitizeTrace(trace, now = Date.now()) {
   };
 }
 
+export function sanitizeEmotionalMemory(memory, now = Date.now()) {
+  if (!memory) return null;
+
+  const allowedStatuses = new Set(["fresh", "settled", "transformed", "archived", "released"]);
+
+  return {
+    id: String(memory.id || `emem_${now}`),
+    theme: String(memory.theme || "未命名情緒").slice(0, 20),
+    label: String(memory.label || "情緒回聲").slice(0, 40),
+    emotion: String(memory.emotion || "unknown").slice(0, 32),
+    intensity: Number.isFinite(memory.intensity) ? Math.max(0, Math.min(1, memory.intensity)) : 0.4,
+    symbol: String(memory.symbol || "faint_spark").slice(0, 40),
+    place: String(memory.place || "shore_side").slice(0, 40),
+    status: allowedStatuses.has(memory.status) ? memory.status : "fresh",
+    source: String(memory.source || "soul_talk").slice(0, 40),
+    excerpt: sanitizeExcerpt(memory.excerpt, STORAGE_LIMITS.emotionalExcerptMaxLength),
+    createdAt: Number.isFinite(memory.createdAt) ? memory.createdAt : now,
+    lastUpdatedAt: Number.isFinite(memory.lastUpdatedAt) ? memory.lastUpdatedAt : now,
+    isVisibleInHabitat: memory.isVisibleInHabitat !== false
+  };
+}
+
 export function applyRollingLimit(list, limit) {
   if (!Array.isArray(list)) return [];
   return list.slice(-limit);
@@ -57,6 +81,13 @@ export function pruneStateForStorage(state, now = Date.now(), limits = STORAGE_L
     limits.habitatTraces
   );
 
+  const emotionalMemories = applyRollingLimit(
+    (state.emotionalMemories || [])
+      .map((memory) => sanitizeEmotionalMemory(memory, now))
+      .filter(Boolean),
+    limits.emotionalMemories
+  );
+
   const chatHistory = applyRollingLimit(
     (state.chatHistory || []).map((entry) => ({
       role: entry?.role || "companion",
@@ -69,6 +100,7 @@ export function pruneStateForStorage(state, now = Date.now(), limits = STORAGE_L
     ...state,
     memories,
     habitatTraces,
+    emotionalMemories,
     chatHistory
   };
 }
@@ -86,6 +118,30 @@ export function getEmergencyStorageLimits() {
     ...STORAGE_LIMITS,
     memories: 25,
     habitatTraces: 25,
+    emotionalMemories: 30,
     chatHistory: 20
   };
+}
+
+function sanitizeExcerpt(value, maxLength) {
+  const normalized = String(value || "")
+    .replace(/[\u0000-\u001f\u007f]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .replace(/&/g, "＆")
+    .replace(/</g, "‹")
+    .replace(/>/g, "›")
+    .replace(/"/g, "＂")
+    .replace(/'/g, "＇")
+    .replace(/`/g, "｀");
+
+  if (normalized.length <= maxLength) return normalized;
+
+  const slice = normalized.slice(0, maxLength);
+  const lastSpaceIndex = slice.lastIndexOf(" ");
+  if (lastSpaceIndex >= Math.floor(maxLength * 0.65)) {
+    return `${slice.slice(0, lastSpaceIndex)}...`;
+  }
+
+  return `${slice}...`;
 }

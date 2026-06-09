@@ -8,6 +8,9 @@ export const GREYSHADE_CAT_ANIMATION_PROFILE = Object.freeze({
     defensive: "idle_defensive",
     distant: "idle_distant",
     sad: "idle_sad",
+    soft: "idle_sad",
+    alert: "idle_distant",
+    safe_harbor: "idle_calm",
     tired: "idle_sick",
     sleeping: "sleep",
     angry: "idle_angry"

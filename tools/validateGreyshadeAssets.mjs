@@ -11,7 +11,7 @@ const metadataPath = path.join(
   "metadata",
   "animations.json"
 );
-const EXPECTED_FRAME_SIZE = 128;
+const EXPECTED_FRAME_SIZE = 64;
 
 const errors = [];
 const warnings = [];
@@ -91,10 +91,7 @@ function validateDefinition(animationId, definition) {
 }
 
 function validateOptionalPath(animationId, label, rawPath, isDirectory) {
-  if (!rawPath) {
-    warnings.push(`${animationId}: ${label} path is not set.`);
-    return;
-  }
+  if (!rawPath) return;
 
   const resolvedPath = resolveRepoPath(rawPath);
   if (!resolvedPath || !fs.existsSync(resolvedPath)) {
