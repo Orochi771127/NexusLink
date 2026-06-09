@@ -157,7 +157,7 @@ async function loadAnimationDefinition({ animations, metadata, status, name }) {
 
   try {
     const texture = await PIXI.Assets.load(definition.sheet);
-    const textures = sliceSpriteSheet(texture, definition);
+    const textures = sliceSpriteSheet(texture, definition, name);
     if (textures.length !== definition.frameCount) {
       throw new Error(`Expected ${definition.frameCount} frames, sliced ${textures.length}`);
     }
@@ -182,29 +182,111 @@ async function loadAnimationDefinition({ animations, metadata, status, name }) {
   }
 }
 
-function sliceSpriteSheet(texture, definition) {
-  const textures = [];
-  const columns = Number.isFinite(definition.columns)
-    ? Math.max(1, Math.floor(definition.columns))
-    : Math.max(1, definition.frameCount);
-  const rows = Number.isFinite(definition.rows) ? Math.max(1, Math.floor(definition.rows)) : 1;
-  const source = texture.source || texture.baseTexture;
-  const expectedWidth = columns * definition.frameWidth;
-  const expectedHeight = rows * definition.frameHeight;
+function isPositiveInteger(value) {
+  return Number.isInteger(value) && value > 0;
+}
+
+function resolveGridDefinition(texture, definition) {
+  const frameWidth = definition.frameWidth;
+  const frameHeight = definition.frameHeight;
+  const frameCount = definition.frameCount;
+
+  if (!isPositiveInteger(frameWidth)) {
+    throw new Error("frameWidth must be a positive integer");
+  }
+  if (!isPositiveInteger(frameHeight)) {
+    throw new Error("frameHeight must be a positive integer");
+  }
+  if (!isPositiveInteger(frameCount)) {
+    throw new Error("frameCount must be a positive integer");
+  }
+
+  const hasRows = definition.rows !== undefined && definition.rows !== null;
+  const hasColumns = definition.columns !== undefined && definition.columns !== null;
+
+  if (hasRows && !isPositiveInteger(definition.rows)) {
+    throw new Error("rows must be a positive integer");
+  }
+  if (hasColumns && !isPositiveInteger(definition.columns)) {
+    throw new Error("columns must be a positive integer");
+  }
+
+  let rows;
+  let columns;
+
+  if (hasRows && hasColumns) {
+    rows = definition.rows;
+    columns = definition.columns;
+    if (rows * columns < frameCount) {
+      throw new Error(
+        `rows x columns (${rows} x ${columns}) must contain at least ${frameCount} frames`
+      );
+    }
+  } else if (!hasRows && !hasColumns) {
+    columns = Math.max(1, Math.floor(texture.width / frameWidth));
+    rows = Math.max(1, Math.ceil(frameCount / columns));
+  } else if (hasColumns) {
+    columns = definition.columns;
+    rows = Math.max(1, Math.ceil(frameCount / columns));
+  } else {
+    rows = definition.rows;
+    columns = Math.max(1, Math.floor(texture.width / frameWidth));
+    if (rows * columns < frameCount) {
+      throw new Error(
+        `rows x columns (${rows} x ${columns}) must contain at least ${frameCount} frames`
+      );
+    }
+  }
+
+  return {
+    frameWidth,
+    frameHeight,
+    frameCount,
+    rows,
+    columns
+  };
+}
+
+function validateSpriteSheetDimensions(texture, grid, animationName = "animation") {
+  const expectedWidth = grid.columns * grid.frameWidth;
+  const expectedHeight = grid.rows * grid.frameHeight;
 
   if (texture.width < expectedWidth || texture.height < expectedHeight) {
     throw new Error(
-      `Sheet ${texture.width}x${texture.height} is smaller than expected grid ${expectedWidth}x${expectedHeight}`
+      `${animationName}: sheet is ${texture.width}x${texture.height}, expected at least ${expectedWidth}x${expectedHeight}`
     );
   }
 
-  for (let index = 0; index < definition.frameCount; index += 1) {
-    const x = (index % columns) * definition.frameWidth;
-    const y = Math.floor(index / columns) * definition.frameHeight;
+  if (texture.width > expectedWidth || texture.height > expectedHeight) {
+    console.warn(
+      `${animationName}: sheet is ${texture.width}x${texture.height}, expected ${expectedWidth}x${expectedHeight}; extra pixels will be ignored`
+    );
+  }
+}
+
+function sliceSpriteSheet(texture, definition, animationName = "animation") {
+  const grid = resolveGridDefinition(texture, definition);
+  validateSpriteSheetDimensions(texture, grid, animationName);
+
+  const textures = [];
+  const source = texture.source || texture.baseTexture;
+
+  for (let index = 0; index < grid.frameCount; index += 1) {
+    const col = index % grid.columns;
+    const row = Math.floor(index / grid.columns);
+
+    if (row >= grid.rows) {
+      throw new Error(
+        `${animationName}: frame index ${index} maps to row ${row}, but rows is ${grid.rows}`
+      );
+    }
+
+    const x = col * grid.frameWidth;
+    const y = row * grid.frameHeight;
     textures.push(
       new PIXI.Texture({
         source,
-        frame: new PIXI.Rectangle(x, y, definition.frameWidth, definition.frameHeight)
+        frame: new PIXI.Rectangle(x, y, grid.frameWidth, grid.frameHeight)
       })
     );
   }
@@ -213,14 +295,28 @@ function sliceSpriteSheet(texture, definition) {
 }
 
 function isValidAnimationDefinition(definition) {
-  return Boolean(
-    definition &&
-      definition.sheet &&
-      Number.isFinite(definition.frameWidth) &&
-      Number.isFinite(definition.frameHeight) &&
-      Number.isFinite(definition.frameCount) &&
-      definition.frameWidth > 0 &&
-      definition.frameHeight > 0 &&
-      definition.frameCount > 0
-  );
+  if (
+    !definition ||
+    !definition.sheet ||
+    !isPositiveInteger(definition.frameWidth) ||
+    !isPositiveInteger(definition.frameHeight) ||
+    !isPositiveInteger(definition.frameCount)
+  ) {
+    return false;
+  }
+
+  const hasRows = definition.rows !== undefined && definition.rows !== null;
+  const hasColumns = definition.columns !== undefined && definition.columns !== null;
+
+  if (hasRows && !isPositiveInteger(definition.rows)) {
+    return false;
+  }
+  if (hasColumns && !isPositiveInteger(definition.columns)) {
+    return false;
+  }
+  if (hasRows && hasColumns && definition.rows * definition.columns < definition.frameCount) {
+    return false;
+  }
+
+  return true;
 }
