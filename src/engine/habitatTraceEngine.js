@@ -92,11 +92,7 @@ export function syncHabitatTracesFromMemories(habitatTraces = [], emotionalMemor
     traces = mergedTraces;
   }
 
-  const prunedTraces = traces.filter((trace) => {
-    const memoryId = resolveMemoryId(trace);
-    if (!memoryId) return isEmotionalHabitatTrace(trace);
-    return activeMemoryIds.has(memoryId);
-  });
+  const prunedTraces = traces.filter((trace) => shouldKeepTraceDuringSync(trace, activeMemoryIds, now));
 
   if (prunedTraces.length !== traces.length) {
     changed = true;
@@ -133,6 +129,19 @@ function buildTraceId(memoryId) {
 
 function buildTraceType(status, emotion) {
   return `em_${status || "fresh"}_${emotion || "unknown"}`;
+}
+
+function shouldKeepTraceDuringSync(trace, activeMemoryIds, now) {
+  if (!isEmotionalHabitatTrace(trace)) {
+    return isTraceVisible(trace, now);
+  }
+
+  const memoryId = resolveMemoryId(trace);
+  if (memoryId) {
+    return activeMemoryIds.has(memoryId);
+  }
+
+  return isTraceVisible(trace, now) && String(trace?.type || "").startsWith("em_");
 }
 
 function resolveMemoryId(trace) {
