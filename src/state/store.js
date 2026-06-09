@@ -1,5 +1,5 @@
 import defaultState from "./defaultState.js";
-import { sanitizeMemory, sanitizeTrace } from "../engine/storageGuard.js";
+import { sanitizeEmotionalMemory, sanitizeMemory, sanitizeTrace } from "../engine/storageGuard.js";
 import { clamp } from "../utils/clamp.js";
 
 let state = createDefaultState();
@@ -11,7 +11,8 @@ export function createDefaultState() {
     lastSeenAt: Date.now(),
     chatHistory: defaultState.chatHistory.map((item) => ({ ...item })),
     memories: defaultState.memories.map((item) => ({ ...item })),
-    habitatTraces: defaultState.habitatTraces.map((item) => ({ ...item }))
+    habitatTraces: defaultState.habitatTraces.map((item) => ({ ...item })),
+    emotionalMemories: defaultState.emotionalMemories.map((item) => ({ ...item }))
   };
 }
 
@@ -45,6 +46,9 @@ export function normalizeState(rawState = {}) {
   const chatHistory = Array.isArray(targetState.chatHistory) ? targetState.chatHistory : baseState.chatHistory;
   const memories = Array.isArray(targetState.memories) ? targetState.memories : baseState.memories;
   const habitatTraces = Array.isArray(targetState.habitatTraces) ? targetState.habitatTraces : baseState.habitatTraces;
+  const emotionalMemories = Array.isArray(targetState.emotionalMemories)
+    ? targetState.emotionalMemories
+    : baseState.emotionalMemories;
 
   return {
     ...targetState,
@@ -66,12 +70,17 @@ export function normalizeState(rawState = {}) {
     reactionPreview: targetState.reactionPreview || "",
     lastTouchReaction: targetState.lastTouchReaction || "",
     lastMessage: targetState.lastMessage || "",
+    memorySchemaVersion: Number(targetState.memorySchemaVersion) || 1,
+    safeHarborMode: Boolean(targetState.safeHarborMode),
+    lastEmotionTag: targetState.lastEmotionTag || null,
+    habitatRepairFactor: clamp(targetState.habitatRepairFactor ?? 0, 0, 1),
     chatHistory: chatHistory.map((item) => ({
       role: item.role === "fox" ? "companion" : item.role || "companion",
       text: String(item.text || "")
     })),
     memories: memories.map((item) => sanitizeMemory(item)).filter(Boolean),
-    habitatTraces: habitatTraces.map((item) => sanitizeTrace(item)).filter(Boolean)
+    habitatTraces: habitatTraces.map((item) => sanitizeTrace(item)).filter(Boolean),
+    emotionalMemories: emotionalMemories.map((item) => sanitizeEmotionalMemory(item)).filter(Boolean)
   };
 }
 
