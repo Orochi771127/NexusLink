@@ -10,6 +10,7 @@ import {
 } from "./memorySymbolLayout.js";
 
 const EXIT_FADE_MS = 1200;
+const MAX_ACTIVE_VISUAL_DELTA_MS = 100;
 
 export function createMemorySymbolRenderer({ app, layer, store } = {}) {
   if (!app?.ticker || !app?.renderer) {
@@ -67,26 +68,15 @@ export function createMemorySymbolRenderer({ app, layer, store } = {}) {
   function update(deltaMS = 16.67) {
     if (isPaused) return;
 
+    const now = getNowMs();
+    const visualDeltaMS = Math.min(Number(deltaMS) || 16.67, MAX_ACTIVE_VISUAL_DELTA_MS);
+
     for (const entry of activeSymbols.values()) {
-      entry.entity.updateVisual(deltaMS, entry.latestMemory);
+      entry.entity.updateVisual(visualDeltaMS, entry.latestMemory);
       snapDisplayObject(entry.entity.node);
     }
 
-    for (const [id, dying] of Array.from(dyingSymbols.entries())) {
-      dying.elapsedMs += deltaMS;
-      const progress = Math.min(1, dying.elapsedMs / Math.max(1, dying.durationMs));
-      const eased = easeOutCubic(progress);
-
-      dying.entry.entity.updateVisual(deltaMS, dying.entry.latestMemory);
-      dying.entry.entity.node.alpha = Math.max(0, dying.fromAlpha * (1 - eased));
-      dying.entry.entity.node.scale.set(1 - eased * 0.08);
-      snapDisplayObject(dying.entry.entity.node);
-
-      if (progress >= 1) {
-        dying.entry.entity.destroy();
-        dyingSymbols.delete(id);
-      }
-    }
+    sweepDyingSymbols(now, visualDeltaMS);
   }
 
   function subscribe() {
@@ -124,7 +114,24 @@ export function createMemorySymbolRenderer({ app, layer, store } = {}) {
     };
   }
 
+  function bindVisibilityRecovery() {
+    if (typeof document === "undefined" || !document.addEventListener) return () => {};
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        sweepDyingSymbols(getNowMs(), 0);
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }
+
   const unbindContextRecovery = bindContextRecovery();
+  const unbindVisibilityRecovery = bindVisibilityRecovery();
   const tickerUpdate = (ticker) => update(ticker.deltaMS);
   app.ticker.add(tickerUpdate);
 
@@ -140,6 +147,7 @@ export function createMemorySymbolRenderer({ app, layer, store } = {}) {
 
   function resume() {
     isPaused = false;
+    sweepDyingSymbols(getNowMs(), 0);
   }
 
   function destroy() {
@@ -147,6 +155,7 @@ export function createMemorySymbolRenderer({ app, layer, store } = {}) {
     unsubscribe = null;
     app.ticker.remove(tickerUpdate);
     unbindContextRecovery?.();
+    unbindVisibilityRecovery?.();
     destroyAllEntries();
     clearTextureCache();
   }
@@ -185,13 +194,15 @@ export function createMemorySymbolRenderer({ app, layer, store } = {}) {
   function moveToDying(id, entry, reason) {
     if (!entry || dyingSymbols.has(id)) return;
 
+    const now = getNowMs();
     activeSymbols.delete(id);
     entry.entity.node.__isDying = true;
     dyingSymbols.set(id, {
       id,
       entry,
       reason,
-      elapsedMs: 0,
+      startedAtMs: now,
+      deadlineAtMs: now + EXIT_FADE_MS,
       durationMs: EXIT_FADE_MS,
       fromAlpha: entry.entity.node.alpha
     });
@@ -207,6 +218,24 @@ export function createMemorySymbolRenderer({ app, layer, store } = {}) {
     dying.entry.entity.node.scale.set(1);
     activeSymbols.set(memory.id, dying.entry);
     return dying.entry;
+  }
+
+  function sweepDyingSymbols(now, visualDeltaMS) {
+    for (const [id, dying] of Array.from(dyingSymbols.entries())) {
+      const elapsedMs = Math.max(0, now - dying.startedAtMs);
+      const progress = Math.min(1, elapsedMs / Math.max(1, dying.durationMs));
+      const eased = easeOutCubic(progress);
+
+      dying.entry.entity.updateVisual(visualDeltaMS, dying.entry.latestMemory);
+      dying.entry.entity.node.alpha = Math.max(0, dying.fromAlpha * (1 - eased));
+      dying.entry.entity.node.scale.set(1 - eased * 0.08);
+      snapDisplayObject(dying.entry.entity.node);
+
+      if (progress >= 1 || now >= dying.deadlineAtMs) {
+        dying.entry.entity.destroy();
+        dyingSymbols.delete(id);
+      }
+    }
   }
 
   function playEnter(entry) {
@@ -230,6 +259,10 @@ export function createMemorySymbolRenderer({ app, layer, store } = {}) {
 function snapDisplayObject(displayObject) {
   displayObject.x = snapPixel(displayObject.x);
   displayObject.y = snapPixel(displayObject.y);
+}
+
+function getNowMs() {
+  return typeof performance !== "undefined" && performance.now ? performance.now() : Date.now();
 }
 
 function easeOutCubic(value) {
