@@ -195,6 +195,7 @@ export function createDevPanelController({ isEnabled, store, saveCurrentState, p
     if (!isEnabled || !devPanelReadout) return;
     const state = store.getState();
     const storageDebug = getStorageDebugState?.() || {};
+    const emotionalMemoryStats = summarizeEmotionalMemories(state.emotionalMemories || []);
     const fields = {
       mood: state.mood,
       bond: state.bond,
@@ -202,10 +203,20 @@ export function createDevPanelController({ isEnabled, store, saveCurrentState, p
       energy: state.energy,
       defense: state.defense,
       touchFatigue: state.touchFatigue,
+      safeHarborMode: Boolean(state.safeHarborMode),
+      lastEmotionTag: state.lastEmotionTag || "",
+      habitatRepairFactor: Number(state.habitatRepairFactor || 0).toFixed(3),
       firstTouchCompleted: state.firstTouchCompleted,
       lastReaction: state.lastTouchReaction || "",
       memoriesLength: state.memories?.length || 0,
       habitatTracesLength: state.habitatTraces?.length || 0,
+      emotionalMemoriesLength: emotionalMemoryStats.total,
+      emotionalMemoriesVisible: emotionalMemoryStats.visible,
+      emotionalFresh: emotionalMemoryStats.statusCounts.fresh,
+      emotionalSettled: emotionalMemoryStats.statusCounts.settled,
+      emotionalTransformed: emotionalMemoryStats.statusCounts.transformed,
+      emotionalArchived: emotionalMemoryStats.statusCounts.archived,
+      emotionalReleased: emotionalMemoryStats.statusCounts.released,
       chatHistoryLength: state.chatHistory?.length || 0,
       estimatedSaveSizeKB: Number(storageDebug.estimatedSaveSizeKB || 0).toFixed(2),
       lastSaveStatus: storageDebug.ok === false ? "failed" : storageDebug.emergency ? "emergency" : "ok",
@@ -215,10 +226,7 @@ export function createDevPanelController({ isEnabled, store, saveCurrentState, p
       reactionPreview: state.reactionPreview || ""
     };
 
-    devPanelReadout.innerHTML = Object.entries(fields)
-      .map(([label, value]) => `<div><dt>${label}</dt><dd>${String(value)}</dd></div>`)
-      .join("");
-
+    renderDefinitionList(devPanelReadout, fields);
     renderAnimationReadout();
   }
 
@@ -234,7 +242,7 @@ export function createDevPanelController({ isEnabled, store, saveCurrentState, p
       currentAnimation: labState.currentAnimationName || "fallback_placeholder",
       currentMood: store.getState().mood,
       spriteSheetModeActive: Boolean(labState.spriteSheetModeActive),
-      fallbackMotionModeActive: Boolean(labState.fallbackMotionModeActive),
+      fallbackMotionModeActive: !labState.spriteSheetModeActive || Boolean(labState.fallbackMotionModeActive),
       animationsJsonLoaded: Boolean(labState.metadataLoaded),
       availableAnimations: Object.values(labState.available || {}).filter(Boolean).length,
       missingAnimations: labState.missing?.length || 0,
@@ -242,9 +250,7 @@ export function createDevPanelController({ isEnabled, store, saveCurrentState, p
       animationAvailability: availability
     };
 
-    animationReadout.innerHTML = Object.entries(fields)
-      .map(([label, value]) => `<div><dt>${label}</dt><dd>${String(value)}</dd></div>`)
-      .join("");
+    renderDefinitionList(animationReadout, fields);
   }
 
   return {
@@ -263,4 +269,45 @@ function readClampedDevNumber(params, key, min, max, applyValue) {
   if (!Number.isFinite(parsedValue)) return;
 
   applyValue(clamp(parsedValue, min, max));
+}
+
+function summarizeEmotionalMemories(emotionalMemories) {
+  const statusCounts = {
+    fresh: 0,
+    settled: 0,
+    transformed: 0,
+    archived: 0,
+    released: 0
+  };
+  let visible = 0;
+
+  emotionalMemories.forEach((memory) => {
+    if (statusCounts[memory?.status] !== undefined) {
+      statusCounts[memory.status] += 1;
+    }
+    if (memory?.isVisibleInHabitat !== false && ["fresh", "settled", "transformed"].includes(memory?.status)) {
+      visible += 1;
+    }
+  });
+
+  return {
+    total: emotionalMemories.length,
+    visible,
+    statusCounts
+  };
+}
+
+function renderDefinitionList(target, fields) {
+  target.replaceChildren();
+
+  Object.entries(fields).forEach(([label, value]) => {
+    const row = document.createElement("div");
+    const term = document.createElement("dt");
+    const detail = document.createElement("dd");
+
+    term.textContent = label;
+    detail.textContent = String(value);
+    row.append(term, detail);
+    target.appendChild(row);
+  });
 }
