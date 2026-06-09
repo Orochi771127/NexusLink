@@ -1,11 +1,12 @@
 #!/usr/bin/env python
-"""Process greyshade-cat inbox animation grids into normalized web-game assets."""
+"""Process greyshade-cat inbox animation grids into 128x128 runtime assets."""
 
 from __future__ import annotations
 
 import json
 import math
 import re
+import subprocess
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -20,9 +21,9 @@ INBOX = CAT_ROOT / "inbox"
 METADATA = CAT_ROOT / "metadata"
 ANIMATIONS_JSON = METADATA / "animations.json"
 PREVIEWS = METADATA / "previews"
-REPORT_JSON = METADATA / "greyshade-cat_inbox_processing_report.json"
+REPORT_JSON = METADATA / "greyshade-cat_128_processing_report.json"
 
-FRAME_SIZE = 64
+FRAME_SIZE = 128
 ANCHOR = {"x": 0.5, "y": 1}
 
 
@@ -84,6 +85,15 @@ def parse_source_name(path: Path) -> tuple[str, int, int, int]:
     return animation_id, int(match.group("rows")), int(match.group("cols")), int(match.group("count"))
 
 
+def source_has_alpha(image: Image.Image) -> bool:
+    if image.mode in ("RGBA", "LA"):
+        alpha = image.getchannel("A")
+        return alpha.getextrema()[0] < 255
+    if image.mode == "P" and "transparency" in image.info:
+        return True
+    return False
+
+
 def choose_layout(image: Image.Image, rows: int, cols: int, frame_count: int) -> tuple[int, int, str]:
     expected_ratio = cols / rows
     actual_ratio = image.width / image.height
@@ -105,6 +115,32 @@ def choose_layout(image: Image.Image, rows: int, cols: int, frame_count: int) ->
     return inferred_rows, inferred_cols, "inferred_from_image_ratio"
 
 
+def pad_to_grid(image: Image.Image, rows: int, cols: int) -> tuple[Image.Image, dict[str, int | bool]]:
+    width, height = image.size
+    cell_width = math.ceil(width / cols)
+    cell_height = math.ceil(height / rows)
+    padded_width = cell_width * cols
+    padded_height = cell_height * rows
+    if padded_width == width and padded_height == height:
+        return image, {
+            "padded": False,
+            "padRight": 0,
+            "padBottom": 0,
+            "cellWidth": cell_width,
+            "cellHeight": cell_height,
+        }
+
+    padded = Image.new("RGBA", (padded_width, padded_height), (0, 0, 0, 0))
+    padded.alpha_composite(image.convert("RGBA"), (0, 0))
+    return padded, {
+        "padded": True,
+        "padRight": padded_width - width,
+        "padBottom": padded_height - height,
+        "cellWidth": cell_width,
+        "cellHeight": cell_height,
+    }
+
+
 def background_mask(array: np.ndarray) -> np.ndarray:
     rgb = array[..., :3].astype(np.int16)
     r = rgb[..., 0]
@@ -116,7 +152,8 @@ def background_mask(array: np.ndarray) -> np.ndarray:
     near_white = min_channel >= 246
     pink_or_magenta = (r >= 205) & (b >= 175) & (g <= 205) & ((r - g) >= 18)
     pale_pink = (r >= 230) & (b >= 220) & (g >= 205) & ((r - g) >= 8)
-    return neutral_light | near_white | pink_or_magenta | pale_pink
+    black_baked = max_channel <= 8
+    return neutral_light | near_white | pink_or_magenta | pale_pink | black_baked
 
 
 def connected_background_mask(mask: np.ndarray) -> np.ndarray:
@@ -170,15 +207,24 @@ def connected_background_mask(mask: np.ndarray) -> np.ndarray:
     return result
 
 
-def remove_connected_background(tile: Image.Image) -> tuple[Image.Image, dict[str, Any]]:
+def remove_connected_background(tile: Image.Image, do_background_removal: bool) -> tuple[Image.Image, dict[str, Any]]:
     image = tile.convert("RGBA")
+    if not do_background_removal:
+        return image, {
+            "backgroundPixelsRemoved": 0,
+            "fringePixelsRemoved": 0,
+            "hadBackgroundOrFringe": False,
+            "backgroundRemovalApplied": False,
+        }
+
     array = np.array(image)
     initial_alpha = array[..., 3] > 0
     rgb = array[..., :3].astype(np.int16)
     max_channel = rgb.max(axis=2)
     min_channel = rgb.min(axis=2)
     connected_gray = (min_channel >= 170) & ((max_channel - min_channel) <= 18)
-    bg = connected_background_mask((background_mask(array) | connected_gray) & initial_alpha)
+    removable = (background_mask(array) | connected_gray) & initial_alpha
+    bg = connected_background_mask(removable)
     removed = int(bg.sum())
     array[..., 3][bg] = 0
     image = Image.fromarray(array, "RGBA")
@@ -196,6 +242,7 @@ def remove_connected_background(tile: Image.Image) -> tuple[Image.Image, dict[st
         "backgroundPixelsRemoved": removed,
         "fringePixelsRemoved": fringe_removed,
         "hadBackgroundOrFringe": removed > 0 or fringe_removed > 0,
+        "backgroundRemovalApplied": True,
     }
 
 
@@ -246,16 +293,26 @@ def remove_background_like_pixels(image: Image.Image) -> Image.Image:
     return Image.fromarray(array, "RGBA")
 
 
+def residual_fringe_pixels(image: Image.Image) -> int:
+    image = image.convert("RGBA")
+    alpha = image.getchannel("A")
+    transparent_neighbors = alpha.filter(ImageFilter.MinFilter(size=3))
+    array = np.array(image)
+    near_transparent = np.array(transparent_neighbors) == 0
+    suspicious = (array[..., 3] > 0) & near_transparent & background_mask(array)
+    return int(suspicious.sum())
+
+
 def extract_grid_cell(image: Image.Image, row: int, col: int, rows: int, cols: int) -> Image.Image:
-    left = round(col * image.width / cols)
-    right = round((col + 1) * image.width / cols)
-    top = round(row * image.height / rows)
-    bottom = round((row + 1) * image.height / rows)
-    return image.crop((left, top, right, bottom))
+    cell_width = image.width // cols
+    cell_height = image.height // rows
+    left = col * cell_width
+    top = row * cell_height
+    return image.crop((left, top, left + cell_width, top + cell_height))
 
 
-def normalize_frame(tile: Image.Image, shared_scale: float) -> tuple[Image.Image, dict[str, Any]]:
-    cleaned, cleanup_report = remove_connected_background(tile)
+def normalize_frame(tile: Image.Image, shared_scale: float, do_background_removal: bool) -> tuple[Image.Image, dict[str, Any]]:
+    cleaned, cleanup_report = remove_connected_background(tile, do_background_removal)
     bbox = alpha_bbox(cleaned)
     canvas = Image.new("RGBA", (FRAME_SIZE, FRAME_SIZE), (0, 0, 0, 0))
     if bbox is None:
@@ -264,8 +321,11 @@ def normalize_frame(tile: Image.Image, shared_scale: float) -> tuple[Image.Image
             "empty": True,
             "sourceBbox": None,
             "normalizedBbox": None,
+            "scaledSize": None,
+            "paste": None,
             "clipped": False,
             "edgePixels": 0,
+            "residualFringePixels": 0,
         }
 
     sprite = cleaned.crop(bbox)
@@ -307,14 +367,15 @@ def normalize_frame(tile: Image.Image, shared_scale: float) -> tuple[Image.Image
         "normalizedBbox": list(normalized_bbox) if normalized_bbox else None,
         "clipped": clipped,
         "edgePixels": edge_pixels,
+        "residualFringePixels": residual_fringe_pixels(canvas),
     }
 
 
-def content_boxes(tiles: list[Image.Image]) -> tuple[list[tuple[int, int]], list[dict[str, Any]]]:
+def content_boxes(tiles: list[Image.Image], do_background_removal: bool) -> tuple[list[tuple[int, int]], list[dict[str, Any]]]:
     sizes: list[tuple[int, int]] = []
     cleanup_reports: list[dict[str, Any]] = []
     for tile in tiles:
-        cleaned, report = remove_connected_background(tile)
+        cleaned, report = remove_connected_background(tile, do_background_removal)
         cleanup_reports.append(report)
         bbox = alpha_bbox(cleaned)
         if bbox:
@@ -330,7 +391,7 @@ def build_strip(frames: list[Image.Image]) -> Image.Image:
 
 
 def build_preview(frames: list[Image.Image]) -> Image.Image:
-    scale = 4
+    scale = 3
     columns = min(4, len(frames))
     rows = math.ceil(len(frames) / columns)
     cell = FRAME_SIZE * scale
@@ -364,8 +425,13 @@ def process_one(path: Path, metadata: dict[str, Any]) -> dict[str, Any]:
         raise ValueError(f"Unknown animation id from {path.name}: {animation_id}")
 
     spec = SPECS[animation_id]
-    image = Image.open(path).convert("RGBA")
+    source_image = Image.open(path)
+    has_alpha = source_has_alpha(source_image)
+    input_mode = source_image.mode
+    do_background_removal = not has_alpha
+    image = source_image.convert("RGBA")
     rows, cols, layout_source = choose_layout(image, source_rows, source_cols, source_count)
+    padded_image, padding_report = pad_to_grid(image, rows, cols)
 
     tiles: list[Image.Image] = []
     for index in range(source_count):
@@ -373,22 +439,22 @@ def process_one(path: Path, metadata: dict[str, Any]) -> dict[str, Any]:
         col = index % cols
         if row >= rows:
             break
-        tiles.append(extract_grid_cell(image, row, col, rows, cols))
+        tiles.append(extract_grid_cell(padded_image, row, col, rows, cols))
 
-    boxes, preflight_cleanup = content_boxes(tiles)
+    boxes, preflight_cleanup = content_boxes(tiles, do_background_removal)
     max_width = max((width for width, _ in boxes), default=1)
     max_height = max((height for _, height in boxes), default=1)
-    shared_scale = min((FRAME_SIZE - 4) / max_width, (FRAME_SIZE - 2) / max_height, 1.0)
+    shared_scale = min((FRAME_SIZE - 8) / max_width, (FRAME_SIZE - 4) / max_height, 1.0)
 
     frames: list[Image.Image] = []
     frame_reports: list[dict[str, Any]] = []
     for tile in tiles:
-        frame, frame_report = normalize_frame(tile, shared_scale)
+        frame, frame_report = normalize_frame(tile, shared_scale, do_background_removal)
         frames.append(frame)
         frame_reports.append(frame_report)
 
     category = spec.category
-    sheet_path = CAT_ROOT / "spritesheets" / category / f"greyshade-cat_{animation_id}_64x64_{len(frames)}f.png"
+    sheet_path = CAT_ROOT / "spritesheets" / category / f"greyshade-cat_{animation_id}_128x128_{len(frames)}f.png"
     frames_dir = CAT_ROOT / "frames" / category / animation_id
     preview_path = PREVIEWS / f"greyshade-cat_{animation_id}_preview.png"
 
@@ -398,7 +464,8 @@ def process_one(path: Path, metadata: dict[str, Any]) -> dict[str, Any]:
 
     for index, frame in enumerate(frames, start=1):
         frame.save(frames_dir / f"frame_{index:02d}.png")
-    build_strip(frames).save(sheet_path)
+    sheet = build_strip(frames)
+    sheet.save(sheet_path)
     build_preview(frames).save(preview_path)
 
     metadata[animation_id] = {
@@ -423,19 +490,29 @@ def process_one(path: Path, metadata: dict[str, Any]) -> dict[str, Any]:
     clipped_frames = [index + 1 for index, item in enumerate(frame_reports) if item["clipped"]]
     empty_frames = [index + 1 for index, item in enumerate(frame_reports) if item["empty"]]
     edge_frames = [index + 1 for index, item in enumerate(frame_reports) if item["edgePixels"] > 0]
+    residual_frames = [index + 1 for index, item in enumerate(frame_reports) if item["residualFringePixels"] > 0]
     had_cleanup = any(item["hadBackgroundOrFringe"] for item in frame_reports) or any(
         item["hadBackgroundOrFringe"] for item in preflight_cleanup
     )
     layout_issue = layout_source == "inferred_from_image_ratio"
     alignment_issue = bool(clipped_frames or empty_frames or (bottoms and (max(bottoms) - min(bottoms) > 1)))
+    suspicious = bool(layout_issue or alignment_issue or residual_frames or edge_frames or not boxes)
+    expected_sheet_size = [FRAME_SIZE * len(frames), FRAME_SIZE]
+    actual_sheet_size = [sheet.width, sheet.height]
 
     return {
         "fileName": path.name,
+        "isPng": path.suffix.lower() == ".png",
+        "inputMode": input_mode,
+        "hasAlpha": has_alpha,
+        "backgroundType": "rgba_alpha" if has_alpha else "rgb_or_baked_background",
+        "backgroundRemovalApplied": do_background_removal,
         "animationId": animation_id,
         "category": category,
         "sourceGrid": f"{source_rows}x{source_cols}",
         "usedGrid": f"{rows}x{cols}",
         "usedGridSource": layout_source,
+        "gridPadding": padding_report,
         "sourceFrameCount": source_count,
         "expectedFrameCount": spec.frame_count,
         "actualFrameCount": len(frames),
@@ -444,19 +521,39 @@ def process_one(path: Path, metadata: dict[str, Any]) -> dict[str, Any]:
         "preview": str(preview_path.relative_to(ROOT)).replace("\\", "/"),
         "sharedScale": round(shared_scale, 6),
         "hadResidualEdgeOrBackground": had_cleanup,
-        "residualEdgeFixed": had_cleanup,
+        "residualEdgeFixed": had_cleanup and not residual_frames,
+        "residualFringeFrames": residual_frames,
         "alignmentIssue": alignment_issue,
         "layoutIssue": layout_issue,
+        "suspicious": suspicious,
         "baselineBottomRange": [min(bottoms), max(bottoms)] if bottoms else None,
         "clippedFrames": clipped_frames,
         "edgeTouchFrames": edge_frames,
         "emptyFrames": empty_frames,
+        "expectedSheetSize": expected_sheet_size,
+        "actualSheetSize": actual_sheet_size,
+        "sheetSizeValid": expected_sheet_size == actual_sheet_size,
         "frameReports": frame_reports,
     }
 
 
+def git_status_short() -> list[str]:
+    try:
+        completed = subprocess.run(
+            ["git", "status", "--short"],
+            cwd=ROOT,
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+        )
+    except OSError as exc:
+        return [f"git status failed: {exc}"]
+    return [line for line in completed.stdout.splitlines() if line]
+
+
 def main() -> None:
-    files = sorted(INBOX.glob("*.png"), key=natural_key)
+    files = sorted([path for path in INBOX.iterdir() if path.is_file() and path.suffix.lower() == ".png"], key=natural_key)
     metadata = load_metadata()
     processed: list[dict[str, Any]] = []
 
@@ -464,10 +561,19 @@ def main() -> None:
         processed.append(process_one(path, metadata))
 
     save_metadata(metadata)
+    updated_animations = [item["animationId"] for item in processed]
     report = {
         "inputCount": len(files),
-        "updatedAnimations": [item["animationId"] for item in processed],
+        "frameWidth": FRAME_SIZE,
+        "frameHeight": FRAME_SIZE,
+        "runtimeSheetLayout": "horizontal_strip",
+        "animationsJsonUpdated": True,
+        "updatedAnimations": updated_animations,
+        "processedAllExpected29": len(files) == 29 and len(updated_animations) == 29,
         "processed": processed,
+        "imagesWithResidualIssues": [
+            item for item in processed if item["residualFringeFrames"] or item["alignmentIssue"] or item["clippedFrames"]
+        ],
         "frameCountDifferences": [
             item
             for item in processed
@@ -478,6 +584,17 @@ def main() -> None:
             for item in processed
             if item["usedGrid"] != item["sourceGrid"] or item["usedGridSource"] == "inferred_from_image_ratio"
         ],
+        "sheetSizeValidation": [
+            {
+                "animationId": item["animationId"],
+                "sheet": item["sheet"],
+                "expected": item["expectedSheetSize"],
+                "actual": item["actualSheetSize"],
+                "valid": item["sheetSizeValid"],
+            }
+            for item in processed
+        ],
+        "gitStatus": git_status_short(),
     }
     METADATA.mkdir(parents=True, exist_ok=True)
     REPORT_JSON.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
