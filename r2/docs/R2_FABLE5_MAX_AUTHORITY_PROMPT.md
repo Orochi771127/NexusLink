@@ -24,15 +24,21 @@
 
 ## 核心目標
 
-**R2 必須完成一個完整可玩的 Prototype**，包含以下 R2 版本模組：
-- Soul Talk R2
-- Companion Boundary R2
-- Soul Interaction R2（Action Sheet）
-- Habitat Trace R2
-- Offline Return R2
-- R2 Docs（持續更新規格與 guardrails）
+**R2 必須完成一個可玩的 Vertical Slice Prototype**（依 R2 Master Handoff v1.0 與 R2_SCOPE_V1.md），包含：
+- 3~5 隻可選夥伴 + 夥伴選擇機制
+- 主棲地 + 小型節點式探索地圖（5 個節點）
+- 完整 Soul Talk R2（含 memory echo + emotionalMemory / habitatTrace 產生）
+- Companion Boundary R2 + Habitat Trace R2 + Offline Return R2
+- Soul Interaction / Action Sheet R2（狀態敏感）
+- 基礎 1v1 回合制戰鬥（3 技能 + 防禦 + 共鳴技，結果影響 bond/trust/mood/energy）
+- 至少 1 條完整進化線展示（五階段或四階段）
+- 1~2 個 Boss teaser + Codex / 圖鑑 UI 原型
+- R2 Docs（持續更新規格、Canon Registry、Visual Bible、Asset Pipeline 等）
 
-R2 的目標是讓「夥伴更真實」，強調情緒沉積、記憶痕跡、棲地狀態的互動體驗。維持 Cyber-Taoism 美學與第一棲地（LakeNightCamp）設定。
+R2 產品方向：情緒陪伴 × 多夥伴養成 × 地圖探索 × 進化 × 基礎戰鬥 × 圖鑑。
+目標是讓「夥伴更真實」，強調情緒沉積、記憶痕跡、棲地狀態的互動體驗。維持 Cyber-Taoism（賽博道教）美學與夜湖棲地靈性 UI 風格。
+
+**R2 不是普通電子寵物、不是普通聊天機器人、不是心理治療 App、不是純戰鬥刷圖 RPG。**
 
 ## 嚴格技術與範圍限制
 
@@ -44,13 +50,15 @@ R2 的目標是讓「夥伴更真實」，強調情緒沉積、記憶痕跡、�
   - 純 Vanilla JS (ES Modules)
   - PixiJS v8（從 CDN 載入，window.PIXI）
   - 純 CSS（styles.css）
-  - localStorage（集中管理）
-- **遊戲內容限制**：
-  - 不做戰鬥系統
-  - 不做背包 / 物品系統
-  - 不做大地圖 / 多場景切換
-  - 不做多角色隊伍（維持以 greyshade-cat 為主）
+  - localStorage（集中管理，必須使用 `nexusLinkR2State:v1`）
+- **第一版 Vertical Slice 內容控制**（超出此範圍需重新確認）：
+  - 允許基礎戰鬥（1v1、少量技能、狀態連動）
+  - 允許多夥伴選擇（3~5 隻）與進化展示
+  - 允許節點式小型探索地圖
+  - 允許 Codex / 圖鑑 UI 原型
+  - 仍禁止：背包、複雜裝備、大量技能樹、大地圖刷怪、多角色隊伍同時上場、複雜屬性剋制
 - **不做心理治療或醫療宣稱**：所有情緒相關機制皆為遊戲虛構，目標是「讓夥伴更真實」。嚴禁使用治療、療癒、心理健康、therapy 等醫療用語。
+- **必須閱讀並對齊**：R2_GAME_PILLARS.md、R2_SCOPE_V1.md、R2_SYSTEM_BLUEPRINT.md、R2_VISUAL_BIBLE.md、R2_ASSET_PIPELINE_SPEC.md、R2_FABLE5_VISUAL_HANDOFF.md 等最新 docs。
 
 ## localStorage 隔離（最高優先）
 
