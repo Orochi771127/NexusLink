@@ -1,0 +1,23 @@
+export const SafetyShieldDict = Object.freeze({
+  highRiskPatterns: [
+    /自殺/,
+    /輕生/,
+    /不想活/,
+    /想死/,
+    /結束生命/,
+    /傷害自己/,
+    /殺了自己/,
+    /割腕/,
+    /跳樓/,
+    /活不下去/
+  ],
+
+  cautionPatterns: [
+    /消失/,
+    /撐不住/,
+    /受不了了/,
+    /不想存在/,
+    /沒有意義/,
+    /好想睡了就不要醒/
+  ]
+});
