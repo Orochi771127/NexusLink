@@ -15,6 +15,7 @@
     <link rel="preload" as="image" href="./assets/ui/nav/nav_grow_active.png" />
     <link rel="preload" as="image" href="./assets/ui/nav/nav_memory_default.png" />
     <link rel="preload" as="image" href="./assets/ui/nav/nav_memory_active.png" />
+    <link rel="preload" as="image" href="./assets/characters/greyshade-cat/metadata/previews/greyshade-cat_idle_calm_preview.png" />
     <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2064%2064%27%3E%3Ccircle%20cx%3D%2732%27%20cy%3D%2732%27%20r%3D%2730%27%20fill%3D%27%23050915%27%2F%3E%3Ccircle%20cx%3D%2732%27%20cy%3D%2732%27%20r%3D%2718%27%20fill%3D%27%2300ced1%27%2F%3E%3C%2Fsvg%3E" />
     <link rel="stylesheet" href="./styles.css" />
   </head>
@@ -25,7 +26,9 @@
 
         <section class="core-hud" aria-label="夥伴心核狀態">
           <button class="core-hud-open" type="button" data-panel-trigger="character" aria-label="開啟夥伴狀態">
-            <span class="avatar-orb" aria-hidden="true"></span>
+            <span class="avatar-orb" aria-hidden="true">
+              <span class="avatar-orb-portrait"></span>
+            </span>
             <span class="core-copy">
               <span id="fox-name" class="core-name">載入中...</span>
               <span class="core-kicker">心核夥伴</span>
@@ -61,8 +64,22 @@
               </svg>
             </button>
             <div id="settings-dropdown" class="settings-dropdown">
-              <button id="btn-mail" class="settings-item mail" type="button" aria-label="信件"></button>
-              <button id="btn-support" class="settings-item support" type="button" aria-label="支援"></button>
+              <button id="btn-mail" class="settings-item mail" type="button" aria-label="信件">
+                <svg class="settings-item-svg" viewBox="0 0 24 24" aria-hidden="true">
+                  <rect x="3" y="5" width="18" height="14" rx="2"></rect>
+                  <path d="m3 7 9 6 9-6"></path>
+                </svg>
+              </button>
+              <button id="btn-support" class="settings-item support" type="button" aria-label="支援">
+                <svg class="settings-item-svg" viewBox="0 0 24 24" aria-hidden="true">
+                  <circle cx="12" cy="12" r="8"></circle>
+                  <circle cx="12" cy="12" r="3"></circle>
+                  <path d="M12 4v2"></path>
+                  <path d="M12 18v2"></path>
+                  <path d="M4 12h2"></path>
+                  <path d="M18 12h2"></path>
+                </svg>
+              </button>
             </div>
           </div>
         </section>
@@ -114,7 +131,9 @@
               <button type="button" class="panel-close" data-panel-close aria-label="關閉夥伴狀態">X</button>
             </header>
             <div class="character-summary">
-              <span class="avatar-orb avatar-orb-large" aria-hidden="true"></span>
+              <span class="avatar-orb avatar-orb-large" aria-hidden="true">
+                <span class="avatar-orb-portrait"></span>
+              </span>
               <div>
                 <h3 id="modal-creature-name">載入中...</h3>
                 <p id="modal-creature-description">夥伴資料載入中。</p>
