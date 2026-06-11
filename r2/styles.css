@@ -194,13 +194,14 @@ canvas {
   color: var(--text);
   cursor: pointer;
   background:
-    radial-gradient(circle at 18% 50%, rgba(0, 206, 209, 0.16), transparent 42%),
-    linear-gradient(145deg, rgba(14, 22, 40, 0.7), rgba(5, 10, 22, 0.9));
-  border-color: rgba(93, 232, 255, 0.34);
+    radial-gradient(circle at 18% 50%, rgba(36, 211, 255, 0.14), transparent 44%),
+    linear-gradient(150deg, var(--glass-bg) 0%, var(--glass-bg-strong) 100%);
+  border-color: rgba(36, 211, 255, 0.32);
   box-shadow:
-    inset 0 1px 2px rgba(255, 255, 255, 0.1),
-    0 0 22px rgba(0, 206, 209, 0.14),
-    0 12px 34px rgba(0, 0, 0, 0.68);
+    inset 0 1px 0 var(--glass-highlight),
+    inset 0 -1px 0 rgba(255, 214, 128, 0.12),
+    0 0 22px rgba(36, 211, 255, 0.12),
+    0 12px 34px var(--glass-shadow);
 }
 
 .avatar-orb {
@@ -333,12 +334,24 @@ canvas {
   align-items: center;
   gap: 6px;
   padding: 4px 12px;
-  background: rgba(13, 20, 38, 0.65);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(0, 206, 209, 0.3);
   border-radius: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+/* currency chips：玻璃基底 + 屬性色微光（coin 金 / gem 青） */
+.resource-item.coin {
+  border-color: rgba(255, 214, 128, 0.34);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 0 12px rgba(255, 214, 128, 0.16),
+    0 6px 16px var(--glass-shadow);
+}
+
+.resource-item.gem {
+  border-color: rgba(36, 211, 255, 0.34);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 0 12px rgba(36, 211, 255, 0.18),
+    0 6px 16px var(--glass-shadow);
 }
 
 .resource-icon {
@@ -407,13 +420,16 @@ canvas {
 
 .quick-icon-button {
   position: relative;
-  border: 1px solid rgba(0, 245, 255, 0.34);
+  border: 1px solid rgba(36, 211, 255, 0.3);
   background:
-    radial-gradient(circle at 50% 36%, rgba(0, 206, 209, 0.18), transparent 50%),
-    rgba(8, 18, 32, 0.68);
-  box-shadow: 0 0 14px rgba(0, 245, 255, 0.18), var(--shadow-glass);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+    radial-gradient(circle at 50% 36%, rgba(36, 211, 255, 0.16), transparent 52%),
+    var(--glass-bg-strong);
+  box-shadow:
+    inset 0 1px 0 var(--glass-highlight),
+    0 0 14px rgba(36, 211, 255, 0.16),
+    0 8px 20px var(--glass-shadow);
+  backdrop-filter: blur(var(--glass-blur-subtle));
+  -webkit-backdrop-filter: blur(var(--glass-blur-subtle));
 }
 
 .quick-icon-svg {
@@ -462,12 +478,16 @@ canvas {
   height: 36px;
   min-height: 36px;
   padding: 0;
-  border: 1px solid rgba(0, 245, 255, 0.34);
+  border: 1px solid rgba(36, 211, 255, 0.3);
   border-radius: 999px;
-  background: rgba(8, 18, 32, 0.58);
-  box-shadow: 0 0 14px rgba(0, 245, 255, 0.22), var(--shadow-glass);
+  background: var(--glass-bg);
+  box-shadow:
+    inset 0 1px 0 var(--glass-highlight),
+    0 0 14px rgba(36, 211, 255, 0.18),
+    0 8px 20px var(--glass-shadow);
   color: var(--text);
-  backdrop-filter: blur(14px);
+  backdrop-filter: blur(var(--glass-blur-subtle));
+  -webkit-backdrop-filter: blur(var(--glass-blur-subtle));
 }
 
 .settings-item-svg {
@@ -538,12 +558,17 @@ canvas {
   display: inline-grid;
   place-items: center;
   min-height: 34px;
+  border: 1px solid rgba(255, 214, 128, 0.42);
   border-radius: 999px;
-  padding: 0 12px;
-  background: rgba(255, 216, 88, 0.14);
+  padding: 0 13px;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255, 214, 128, 0.16), transparent 70%),
+    var(--glass-bg);
   color: var(--color-energy);
   font-size: 12px;
-  box-shadow: 0 0 18px rgba(255, 216, 88, 0.32);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 0 16px var(--glow-gold);
 }
 
 .bottom-nav {
@@ -580,23 +605,43 @@ canvas {
   min-width: 0;
   height: 68px;
   overflow: hidden;
-  border: 1px solid rgba(160, 200, 255, 0.16);
-  border-radius: 16px;
+  border: 1px solid var(--glass-border);
+  border-radius: 14px;
   background:
-    radial-gradient(circle at 50% 18%, rgba(0, 206, 209, 0.12), transparent 42%),
-    rgba(5, 12, 24, 0.28);
+    radial-gradient(circle at 50% 16%, rgba(36, 211, 255, 0.14), transparent 46%),
+    var(--glass-bg);
+  box-shadow:
+    inset 0 1px 0 var(--glass-highlight),
+    inset 0 -10px 18px rgba(0, 0, 0, 0.18);
   color: var(--text);
   font-size: 11px;
   font-weight: 900;
 }
 
+/* 符文內框：玻璃 button 內的能量層 */
 .bottom-nav button::before {
   position: absolute;
-  inset: 8px 10px 25px;
+  inset: 7px 9px 24px;
   content: "";
-  border-radius: 13px;
-  background: rgba(0, 206, 209, 0.06);
-  opacity: 0.78;
+  border-radius: 10px;
+  border: 1px solid rgba(36, 211, 255, 0.1);
+  background: rgba(36, 211, 255, 0.05);
+  opacity: 0.85;
+}
+
+/* 金色頂緣符文短線：Cyber-Taoism 角標 */
+.bottom-nav button::after {
+  position: absolute;
+  top: -1px;
+  left: 50%;
+  width: 18px;
+  height: 2px;
+  content: "";
+  border-radius: 2px;
+  background: linear-gradient(90deg, transparent, var(--glow-gold), transparent);
+  transform: translateX(-50%);
+  opacity: 0.55;
+  transition: opacity 200ms ease, width 200ms ease;
 }
 
 .nav-icon-geo {
@@ -725,28 +770,36 @@ canvas {
   white-space: nowrap;
 }
 
-.bottom-nav button:hover,
 .bottom-nav button:focus-visible,
 .bottom-nav button:active,
 .bottom-nav button.active,
 .bottom-nav button.is-active,
 .bottom-nav button[aria-current="true"],
 .bottom-nav button[aria-current="page"] {
-  border-color: rgba(0, 206, 209, 0.8);
+  border-color: rgba(36, 211, 255, 0.6);
   background:
-    radial-gradient(circle at 50% 18%, rgba(0, 206, 209, 0.2), transparent 46%),
-    rgba(5, 12, 24, 0.34);
-  box-shadow: 0 0 20px rgba(0, 206, 209, 0.4), inset 0 0 10px rgba(0, 206, 209, 0.3);
+    radial-gradient(circle at 50% 16%, rgba(36, 211, 255, 0.2), transparent 50%),
+    var(--glass-bg-strong);
+  box-shadow:
+    inset 0 1px 0 var(--glass-highlight),
+    0 0 18px var(--glow-cyan),
+    inset 0 0 12px rgba(36, 211, 255, 0.16);
 }
 
-.bottom-nav button:hover .nav-icon-geo,
+.bottom-nav button.active::after,
+.bottom-nav button.is-active::after,
+.bottom-nav button[aria-current="true"]::after,
+.bottom-nav button[aria-current="page"]::after {
+  width: 30px;
+  opacity: 0.95;
+}
+
 .bottom-nav button:focus-visible .nav-icon-geo,
 .bottom-nav button:active .nav-icon-geo,
 .bottom-nav button.active .nav-icon-geo,
 .bottom-nav button.is-active .nav-icon-geo,
 .bottom-nav button[aria-current="true"] .nav-icon-geo,
 .bottom-nav button[aria-current="page"] .nav-icon-geo,
-.bottom-nav button:hover .nav-label,
 .bottom-nav button:focus-visible .nav-label,
 .bottom-nav button:active .nav-label,
 .bottom-nav button.active .nav-label,
@@ -756,6 +809,26 @@ canvas {
   color: #00CED1;
   opacity: 1;
   filter: drop-shadow(0 0 12px rgba(0, 206, 209, 1));
+}
+
+@media (hover: hover) {
+  .bottom-nav button:hover {
+    border-color: rgba(36, 211, 255, 0.6);
+    background:
+      radial-gradient(circle at 50% 16%, rgba(36, 211, 255, 0.2), transparent 50%),
+      var(--glass-bg-strong);
+    box-shadow:
+      inset 0 1px 0 var(--glass-highlight),
+      0 0 18px var(--glow-cyan),
+      inset 0 0 12px rgba(36, 211, 255, 0.16);
+  }
+
+  .bottom-nav button:hover .nav-icon-geo,
+  .bottom-nav button:hover .nav-label {
+    color: #00CED1;
+    opacity: 1;
+    filter: drop-shadow(0 0 12px rgba(0, 206, 209, 1));
+  }
 }
 
 .bottom-nav button.active,
@@ -776,84 +849,6 @@ canvas {
     opacity: 1;
     transform: scaleY(1.03);
   }
-}
-
-.bottom-nav button {
-  display: block;
-  height: 68px;
-  padding: 0;
-  overflow: visible;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-  box-shadow: none;
-  color: inherit;
-}
-
-.bottom-nav button::before {
-  content: none;
-}
-
-.bottom-nav button:hover,
-.bottom-nav button:focus-visible,
-.bottom-nav button:active,
-.bottom-nav button.active,
-.bottom-nav button.is-active,
-.bottom-nav button[aria-current="true"],
-.bottom-nav button[aria-current="page"] {
-  border-color: transparent;
-  background: transparent;
-  box-shadow: none;
-  animation: none;
-}
-
-.nav-image {
-  position: relative;
-  display: block;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  transition: transform 160ms ease, filter 160ms ease;
-}
-
-.nav-art {
-  position: absolute;
-  inset: 0;
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  opacity: 1;
-  transition: opacity 120ms ease;
-  user-select: none;
-  -webkit-user-drag: none;
-}
-
-.nav-art-active {
-  opacity: 0;
-}
-
-.bottom-nav button:hover .nav-image,
-.bottom-nav button:focus-visible .nav-image {
-  filter: brightness(1.08);
-}
-
-.bottom-nav button:active .nav-image {
-  transform: scale(0.97);
-}
-
-.bottom-nav button.active .nav-art-default,
-.bottom-nav button.is-active .nav-art-default,
-.bottom-nav button[aria-current="true"] .nav-art-default,
-.bottom-nav button[aria-current="page"] .nav-art-default {
-  opacity: 0;
-}
-
-.bottom-nav button.active .nav-art-active,
-.bottom-nav button.is-active .nav-art-active,
-.bottom-nav button[aria-current="true"] .nav-art-active,
-.bottom-nav button[aria-current="page"] .nav-art-active {
-  opacity: 1;
 }
 
 .panel-layer {
@@ -1059,9 +1054,7 @@ canvas {
   height: auto;
   max-height: none;
   gap: 12px;
-  background: rgba(13, 20, 38, 0.65);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  /* 深色玻璃心語面板：基底交給 .glass-strong（HTML 已掛 class），此處只留佈局 */
 }
 
 .soul-talk-waveform {
@@ -2196,10 +2189,9 @@ body.panel-open .dev-reaction-lab {
 
 /* --- 符文邊框：主框 + 四角符文角標（無 mask-composite，跨瀏覽器安全） --- */
 
+/* 宿主需自帶 positioning context（本專案套用對象皆為 absolute/relative 元素） */
 .rune-border {
-  position: relative;
   border: 1px solid var(--glass-border);
-  border-radius: 14px;
 }
 
 .rune-border::before,
@@ -2531,6 +2523,13 @@ body.panel-open .dev-reaction-lab {
   }
 
   .feedback-pulse {
+    animation: none;
+  }
+
+  .bottom-nav button.active,
+  .bottom-nav button.is-active,
+  .bottom-nav button[aria-current="true"],
+  .bottom-nav button[aria-current="page"] {
     animation: none;
   }
 
