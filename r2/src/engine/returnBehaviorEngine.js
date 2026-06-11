@@ -81,6 +81,20 @@ export function getReturnMessage(returnBehavior) {
   return String(returnBehavior.message);
 }
 
+/**
+ * 回歸問候（寫進對話）：短離開輕聲招呼，長離開依最近的情緒語氣。
+ * 不責備、不情緒勒索；少於 30 分鐘不打招呼。
+ */
+export function buildReturnGreeting(elapsedMs, state = {}) {
+  if (!Number.isFinite(elapsedMs) || elapsedMs < SHORT_AWAY_MS) return null;
+
+  if (elapsedMs < SIX_HOURS_MS) {
+    return "你回來了。湖面的光還亮著，我有注意到你離開的方向。";
+  }
+
+  return buildGentleReturnMessage(state.lastEmotionTag, state.energy);
+}
+
 function estimateAwayMs(previousState, visibleTraces, emotionalMemories, now) {
   const lastSeenAt = Number(previousState.lastSeenAt) || now;
   const seenGap = Math.max(0, now - lastSeenAt);

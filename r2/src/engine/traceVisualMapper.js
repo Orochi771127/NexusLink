@@ -41,6 +41,16 @@ const STATUS_TO_KIND = Object.freeze({
   transformed: "repaired_light"
 });
 
+// 新鮮情緒痕跡的專屬視覺：藍燈籠／白燼／雜訊／金符文／漣漪。
+// 沉積後仍回到 settled→mist、transformed→repaired_light 的弧線。
+const EMOTION_TO_KIND = Object.freeze({
+  sadness: "blue_lantern",
+  fatigue: "white_ash",
+  anxiety: "glitch_noise",
+  gratitude: "golden_rune",
+  calm: "ripple"
+});
+
 const KIND_CONFIG = Object.freeze({
   glow: Object.freeze({
     layer: "fx",
@@ -82,6 +92,34 @@ const KIND_CONFIG = Object.freeze({
     pool: "foreground",
     maxAlpha: 0.34,
     pulseSpeed: 1.3,
+    scale: 1
+  }),
+  blue_lantern: Object.freeze({
+    layer: "fx",
+    pool: "lake",
+    maxAlpha: 0.34,
+    pulseSpeed: 0.6,
+    scale: 1
+  }),
+  white_ash: Object.freeze({
+    layer: "foreground",
+    pool: "foreground",
+    maxAlpha: 0.3,
+    pulseSpeed: 0.45,
+    scale: 1
+  }),
+  glitch_noise: Object.freeze({
+    layer: "fx",
+    pool: "crystal",
+    maxAlpha: 0.36,
+    pulseSpeed: 1.6,
+    scale: 1
+  }),
+  golden_rune: Object.freeze({
+    layer: "platform",
+    pool: "platform",
+    maxAlpha: 0.3,
+    pulseSpeed: 0.8,
     scale: 1
   })
 });
@@ -128,6 +166,9 @@ function resolveVisualKind(trace) {
   }
 
   if (type.startsWith("em_")) {
+    if (trace.status === "fresh" && EMOTION_TO_KIND[trace.emotion]) {
+      return EMOTION_TO_KIND[trace.emotion];
+    }
     if (STATUS_TO_KIND[trace.status]) {
       return STATUS_TO_KIND[trace.status];
     }

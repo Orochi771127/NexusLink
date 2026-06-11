@@ -160,7 +160,92 @@
                 <div class="core-stat-bar"><span id="trust-fill" class="core-stat-fill"></span></div>
                 <strong id="trust-value" class="core-stat-value">5</strong>
               </div>
+              <div class="core-stat-row boundary-row" data-stat="boundary">
+                <span class="core-stat-label">邊界</span>
+                <div class="boundary-copy">
+                  <strong id="boundary-state" class="core-stat-value">平常</strong>
+                  <em id="boundary-preview" class="boundary-preview">現在輕碰，牠大概會靠過來。</em>
+                </div>
+              </div>
             </div>
+            <div class="character-modal-actions">
+              <button type="button" class="ghost-button" data-panel-trigger="companionSelect">切換夥伴</button>
+              <button type="button" class="ghost-button" data-panel-trigger="codex">開啟圖鑑</button>
+            </div>
+          </section>
+
+          <section class="modal-panel companion-select-modal" role="dialog" aria-modal="true" aria-labelledby="companion-select-title" data-panel="companionSelect">
+            <header class="panel-header">
+              <div>
+                <p>心輝議會 ・ 樞核</p>
+                <h2 id="companion-select-title">選擇同行夥伴</h2>
+              </div>
+              <button type="button" class="panel-close" data-panel-close aria-label="關閉夥伴選擇">X</button>
+            </header>
+            <p class="panel-subcopy">夥伴會記得你們一起留下的痕跡。切換不會抹去任何記憶。</p>
+            <div id="companion-select-list" class="companion-select-list" aria-label="候選夥伴"></div>
+          </section>
+
+          <section class="modal-panel map-modal" role="dialog" aria-modal="true" aria-labelledby="map-title" data-panel="map">
+            <header class="panel-header">
+              <div>
+                <p>夜湖周邊</p>
+                <h2 id="map-title">探索地圖</h2>
+              </div>
+              <button type="button" class="panel-close" data-panel-close aria-label="關閉探索地圖">X</button>
+            </header>
+            <p class="panel-subcopy">選擇一個節點，和夥伴一起出發。</p>
+            <div id="map-node-list" class="map-node-list" aria-label="探索節點"></div>
+          </section>
+
+          <section class="modal-panel battle-modal" role="dialog" aria-modal="true" aria-labelledby="battle-title" data-panel="battle">
+            <header class="panel-header">
+              <div>
+                <p id="battle-node-label">遭遇</p>
+                <h2 id="battle-title">共鳴交鋒</h2>
+              </div>
+            </header>
+            <div class="battle-field">
+              <div class="battle-side battle-side-enemy">
+                <div class="battle-name-row">
+                  <strong id="battle-enemy-name">???</strong>
+                  <span id="battle-enemy-hp-text">--</span>
+                </div>
+                <div class="battle-hp-bar"><span id="battle-enemy-hp" class="battle-hp-fill enemy"></span></div>
+              </div>
+              <div class="battle-side battle-side-player">
+                <div class="battle-name-row">
+                  <strong id="battle-player-name">夥伴</strong>
+                  <span id="battle-player-hp-text">--</span>
+                </div>
+                <div class="battle-hp-bar"><span id="battle-player-hp" class="battle-hp-fill player"></span></div>
+                <div class="battle-energy-row" aria-label="共鳴能量">
+                  <span class="battle-energy-label">共鳴</span>
+                  <span id="battle-player-energy" class="battle-energy-pips"></span>
+                </div>
+              </div>
+            </div>
+            <div id="battle-log" class="battle-log" aria-live="polite"></div>
+            <div id="battle-skill-row" class="battle-skill-row" aria-label="戰鬥行動">
+              <button type="button" id="battle-skill-basic" data-skill="basic_attack">直覺爪擊</button>
+              <button type="button" id="battle-skill-guard" data-skill="guard">凝神防禦</button>
+              <button type="button" id="battle-skill-resonance" data-skill="resonance">情感共鳴</button>
+            </div>
+            <div class="battle-footer-row">
+              <button type="button" id="battle-retreat" class="ghost-button">先撤退</button>
+              <button type="button" id="battle-finish" class="ghost-button" hidden>回到棲地</button>
+            </div>
+          </section>
+
+          <section class="modal-panel codex-modal" role="dialog" aria-modal="true" aria-labelledby="codex-title" data-panel="codex">
+            <header class="panel-header">
+              <div>
+                <p>心核圖鑑</p>
+                <h2 id="codex-title">夥伴圖鑑</h2>
+              </div>
+              <button type="button" class="panel-close" data-panel-close aria-label="關閉圖鑑">X</button>
+            </header>
+            <div id="codex-body" class="codex-body" aria-label="圖鑑內容"></div>
           </section>
 
           <section id="soul-talk-panel" class="modal-panel soul-talk-modal" role="dialog" aria-modal="true" aria-label="心語對話" data-panel="soulTalk">

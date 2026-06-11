@@ -835,7 +835,11 @@ canvas {
 
 .panel-layer[data-active-panel="character"],
 .panel-layer[data-active-panel="soulTalk"],
-.panel-layer[data-active-panel="actionSheet"] {
+.panel-layer[data-active-panel="actionSheet"],
+.panel-layer[data-active-panel="companionSelect"],
+.panel-layer[data-active-panel="map"],
+.panel-layer[data-active-panel="battle"],
+.panel-layer[data-active-panel="codex"] {
   pointer-events: auto;
 }
 
@@ -888,7 +892,11 @@ canvas {
 
 .panel-layer[data-active-panel="character"] [data-panel="character"],
 .panel-layer[data-active-panel="soulTalk"] [data-panel="soulTalk"],
-.panel-layer[data-active-panel="actionSheet"] [data-panel="actionSheet"] {
+.panel-layer[data-active-panel="actionSheet"] [data-panel="actionSheet"],
+.panel-layer[data-active-panel="companionSelect"] [data-panel="companionSelect"],
+.panel-layer[data-active-panel="map"] [data-panel="map"],
+.panel-layer[data-active-panel="battle"] [data-panel="battle"],
+.panel-layer[data-active-panel="codex"] [data-panel="codex"] {
   opacity: 1;
   pointer-events: auto;
   transform: translateY(0) scale(1);
@@ -1575,4 +1583,567 @@ body.panel-open .dev-reaction-lab {
   width: 36px;
   height: 36px;
   min-height: 36px;
+}
+
+/* ======================================================
+   R2 Vertical Slice — companion select / map / battle / codex
+   ====================================================== */
+
+.panel-subcopy {
+  margin: 0 0 14px;
+  color: var(--muted);
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+
+.ghost-button {
+  border: var(--border-glass);
+  border-radius: 12px;
+  padding: 10px 14px;
+  background: rgba(0, 206, 209, 0.08);
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 160ms ease;
+}
+
+.ghost-button:hover,
+.ghost-button:focus-visible {
+  background: rgba(0, 206, 209, 0.18);
+}
+
+.character-modal-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 16px;
+}
+
+/* --- 邊界（語意化，不顯示原始數值） --- */
+
+.boundary-row {
+  align-items: start;
+}
+
+.boundary-copy {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.boundary-preview {
+  color: var(--muted);
+  font-size: 11.5px;
+  font-style: normal;
+  line-height: 1.45;
+}
+
+/* --- 夥伴選擇 --- */
+
+.companion-select-modal,
+.map-modal,
+.codex-modal {
+  max-height: min(72vh, 620px);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.companion-select-list {
+  display: grid;
+  gap: 10px;
+}
+
+.companion-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  border-radius: 14px;
+  padding: 12px 14px;
+  background: rgba(10, 15, 46, 0.7);
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 160ms ease, background 160ms ease;
+}
+
+.companion-card:hover,
+.companion-card:focus-visible {
+  background: rgba(14, 22, 60, 0.78);
+}
+
+.companion-card.is-active {
+  border-color: rgba(255, 215, 0, 0.55);
+  box-shadow: inset 0 0 12px rgba(255, 215, 0, 0.08);
+}
+
+.companion-card-badge {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 900;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.companion-card.element-fire .companion-card-badge { color: #ff8a52; border: 1px solid rgba(255, 107, 59, 0.5); }
+.companion-card.element-water .companion-card-badge { color: #5fd0ff; border: 1px solid rgba(0, 180, 255, 0.5); }
+.companion-card.element-wood .companion-card-badge { color: #6fe09b; border: 1px solid rgba(46, 204, 113, 0.5); }
+.companion-card.element-thunder .companion-card-badge { color: #c0a6ff; border: 1px solid rgba(155, 89, 255, 0.5); }
+.companion-card.element-neutral .companion-card-badge { color: #cfd9ea; border: 1px solid rgba(207, 217, 234, 0.4); }
+
+.companion-card-main {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.companion-card-name {
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.companion-card-name-en {
+  color: var(--muted);
+  font-size: 10.5px;
+  font-style: normal;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.companion-card-meta {
+  margin-top: 2px;
+  color: var(--color-memory);
+  font-size: 11.5px;
+}
+
+.companion-card-side {
+  display: grid;
+  gap: 4px;
+  justify-items: end;
+}
+
+.companion-card-status {
+  border-radius: 999px;
+  padding: 3px 8px;
+  background: rgba(0, 206, 209, 0.12);
+  color: var(--color-cyan);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+
+.companion-card-active {
+  color: var(--color-energy);
+  font-size: 11px;
+  font-weight: 900;
+}
+
+/* --- 探索地圖 --- */
+
+.map-node-list {
+  display: grid;
+  gap: 10px;
+}
+
+.map-node-card {
+  display: grid;
+  gap: 6px;
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  border-radius: 14px;
+  padding: 12px 14px;
+  background: rgba(10, 15, 46, 0.7);
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+  transition: background 160ms ease, border-color 160ms ease;
+}
+
+.map-node-card:hover,
+.map-node-card:focus-visible {
+  background: rgba(14, 22, 60, 0.78);
+}
+
+.map-node-card.tone-danger {
+  border-color: rgba(255, 70, 70, 0.42);
+}
+
+.map-node-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.map-node-name {
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.map-node-name-en {
+  color: var(--muted);
+  font-size: 10px;
+  font-style: normal;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.map-node-desc {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.map-node-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 10.5px;
+}
+
+.map-node-tag {
+  border-radius: 999px;
+  padding: 2px 8px;
+  background: rgba(0, 206, 209, 0.12);
+  color: var(--color-cyan);
+  font-weight: 800;
+}
+
+.map-node-card.tone-danger .map-node-tag {
+  background: rgba(255, 70, 70, 0.14);
+  color: #ff9b8a;
+}
+
+.map-node-visits {
+  color: var(--muted);
+}
+
+/* --- 戰鬥 --- */
+
+.battle-modal {
+  display: grid;
+  gap: 12px;
+  max-height: min(74vh, 640px);
+  overflow-y: auto;
+}
+
+.battle-field {
+  display: grid;
+  gap: 12px;
+}
+
+.battle-side {
+  display: grid;
+  gap: 6px;
+  border: 1px solid rgba(0, 212, 255, 0.22);
+  border-radius: 12px;
+  padding: 10px 12px;
+  background: rgba(10, 15, 46, 0.55);
+}
+
+.battle-side-enemy {
+  border-color: rgba(255, 70, 70, 0.34);
+}
+
+.battle-name-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 13.5px;
+}
+
+.battle-name-row span {
+  color: var(--muted);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+.battle-hp-bar {
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.battle-hp-fill {
+  display: block;
+  height: 100%;
+  width: 100%;
+  border-radius: inherit;
+  transition: width 240ms ease;
+}
+
+.battle-hp-fill.player {
+  background: linear-gradient(90deg, #00ced1, #43f6a3);
+}
+
+.battle-hp-fill.enemy {
+  background: linear-gradient(90deg, #ff5d5d, #ff9b52);
+}
+
+.battle-energy-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10.5px;
+  color: var(--muted);
+}
+
+.battle-energy-pips {
+  color: var(--color-energy);
+  font-size: 12px;
+  letter-spacing: 2px;
+}
+
+.battle-log {
+  display: grid;
+  gap: 6px;
+  align-content: start;
+  min-height: 96px;
+  max-height: 150px;
+  overflow-y: auto;
+  border: var(--border-glass);
+  border-radius: 12px;
+  padding: 10px 12px;
+  background: rgba(2, 6, 16, 0.5);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.battle-log p {
+  margin: 0;
+}
+
+.battle-log p.battle-log-enemy {
+  color: #ffb1a1;
+}
+
+.battle-log p.battle-log-system {
+  color: var(--color-memory);
+}
+
+.battle-skill-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.battle-skill-row button {
+  border: 1px solid rgba(0, 212, 255, 0.34);
+  border-radius: 12px;
+  padding: 12px 6px;
+  background: rgba(0, 206, 209, 0.1);
+  color: var(--text);
+  font-size: 12.5px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background 160ms ease, opacity 160ms ease;
+}
+
+.battle-skill-row button:hover:not(:disabled),
+.battle-skill-row button:focus-visible:not(:disabled) {
+  background: rgba(0, 206, 209, 0.2);
+}
+
+.battle-skill-row button:disabled {
+  opacity: 0.38;
+  cursor: default;
+}
+
+#battle-skill-resonance {
+  border-color: rgba(255, 215, 0, 0.42);
+  background: rgba(255, 215, 0, 0.08);
+}
+
+.battle-footer-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.battle-footer-row .ghost-button {
+  flex: 1;
+}
+
+/* --- 圖鑑 Codex --- */
+
+.codex-body {
+  display: grid;
+  gap: 10px;
+}
+
+.codex-list {
+  display: grid;
+  gap: 10px;
+}
+
+.codex-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  border-radius: 14px;
+  padding: 12px 14px;
+  background: rgba(10, 15, 46, 0.7);
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+}
+
+.codex-row:hover,
+.codex-row:focus-visible {
+  background: rgba(14, 22, 60, 0.78);
+}
+
+.codex-row-emblem {
+  color: var(--color-memory);
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.codex-back {
+  justify-self: start;
+}
+
+.codex-detail {
+  display: grid;
+  gap: 14px;
+}
+
+.codex-title-block h3 {
+  margin: 0;
+  font-size: 19px;
+}
+
+.codex-title-block em {
+  color: var(--muted);
+  font-size: 11px;
+  font-style: normal;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.codex-tag-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.codex-tag {
+  display: grid;
+  gap: 2px;
+  border: var(--border-glass);
+  border-radius: 10px;
+  padding: 8px 10px;
+  background: rgba(2, 6, 16, 0.45);
+}
+
+.codex-tag dt {
+  margin: 0;
+  color: var(--muted);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+}
+
+.codex-tag dd {
+  margin: 0;
+  font-size: 12.5px;
+  font-weight: 700;
+}
+
+.codex-section-title {
+  margin: 0 0 8px;
+  color: var(--color-cyan);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.codex-radar-wrap {
+  display: grid;
+  justify-items: center;
+  border: var(--border-glass);
+  border-radius: 14px;
+  padding: 12px;
+  background: rgba(2, 6, 16, 0.45);
+}
+
+.codex-radar-wrap svg {
+  width: min(220px, 70vw);
+  height: auto;
+}
+
+.codex-evolution-strip {
+  display: grid;
+  gap: 8px;
+}
+
+.codex-stage-chip {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  border: 1px solid rgba(0, 212, 255, 0.26);
+  border-radius: 12px;
+  padding: 10px 12px;
+  background: rgba(10, 15, 46, 0.6);
+}
+
+.codex-stage-chip.is-locked {
+  opacity: 0.45;
+}
+
+.codex-stage-index {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 215, 0, 0.4);
+  color: var(--color-energy);
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.codex-stage-copy {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+}
+
+.codex-stage-name {
+  font-size: 13.5px;
+  font-weight: 800;
+}
+
+.codex-stage-label {
+  color: var(--muted);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+}
+
+.codex-stage-lore {
+  margin: 2px 0 0;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.codex-lore {
+  margin: 0;
+  border-left: 2px solid rgba(255, 215, 0, 0.4);
+  padding-left: 10px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.6;
 }

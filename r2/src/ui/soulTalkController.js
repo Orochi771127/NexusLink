@@ -5,11 +5,8 @@ import {
   upsertHabitatTrace
 } from "../engine/habitatTraceEngine.js";
 import { updateMemoryLifecycles } from "../engine/memoryLifecycleEngine.js";
-import {
-  buildSafeHarborReply,
-  buildSafetyShieldReply,
-  buildSedimentationReply
-} from "../engine/safeHarborMode.js";
+import { buildSafetyShieldReply } from "../engine/safeHarborMode.js";
+import { composeCompanionReply, composeFallbackReply } from "../engine/soulTalkComposer.js";
 import { qs } from "../utils/dom.js";
 
 const DEFAULT_STATUS_TEXT = "心語 / 靈魂聖域";
@@ -113,7 +110,13 @@ export function createSoulTalkController({ store, saveCurrentState }) {
           pushEmotionalMemoryWithTrace(state, sedimentationResult.memoryObject, now);
         }
 
-        reply = buildSafeHarborReply(sedimentationResult);
+        reply = composeCompanionReply({
+          emotionKey: sedimentationResult.matchedEmotionKey || sedimentationResult.memoryObject?.emotion,
+          state,
+          companion: currentCreature,
+          now,
+          excludeMemoryId: sedimentationResult.memoryObject?.id || null
+        }).reply;
       } else {
         state.energy = Math.max(0, state.energy - 1);
 
@@ -123,7 +126,13 @@ export function createSoulTalkController({ store, saveCurrentState }) {
           state.trust += 1;
           state.mood = mapEmotionToMood(sedimentationResult.memoryObject.emotion);
           pushEmotionalMemoryWithTrace(state, sedimentationResult.memoryObject, now);
-          reply = buildSedimentationReply(sedimentationResult);
+          reply = composeCompanionReply({
+            emotionKey: sedimentationResult.memoryObject.emotion,
+            state,
+            companion: currentCreature,
+            now,
+            excludeMemoryId: sedimentationResult.memoryObject.id || null
+          }).reply;
         } else if (repeated) {
           state.safeHarborMode = false;
           state.spamScore += 1;
@@ -134,18 +143,18 @@ export function createSoulTalkController({ store, saveCurrentState }) {
           state.safeHarborMode = false;
           state.bond += 1;
           state.mood = "tired";
-          reply = mockAIResponse(message, repeated, state.energy);
+          reply = composeFallbackReply({ baseReply: mockAIResponse(message, repeated, state.energy), state, companion: currentCreature });
         } else if (/謝謝|安靜|陪我|晚安|休息/.test(message)) {
           state.safeHarborMode = false;
           state.bond += 1;
           state.mood = "calm";
           state.trust += 1;
-          reply = mockAIResponse(message, repeated, state.energy);
+          reply = composeFallbackReply({ baseReply: mockAIResponse(message, repeated, state.energy), state, companion: currentCreature });
         } else {
           state.safeHarborMode = false;
           state.bond += 1;
           state.mood = "warm";
-          reply = mockAIResponse(message, repeated, state.energy);
+          reply = composeFallbackReply({ baseReply: mockAIResponse(message, repeated, state.energy), state, companion: currentCreature });
         }
       }
 
