@@ -117,7 +117,9 @@ function assessInputQuality(text) {
   const repeatedSingleChar = /^(.)(\1{5,})$/.test(compact);
   if (repeatedSingleChar) return "noise";
 
-  const mostlyDigitsOrSymbols = /^[\d\W_]+$/.test(compact);
+  // 僅由數字／標點／符號組成才視為 noise。
+  // 注意：不能用無 u flag 的 \W —— 中日韓文字會被誤判為非文字字元。
+  const mostlyDigitsOrSymbols = /^[\d_\s\p{P}\p{S}]+$/u.test(compact);
   if (mostlyDigitsOrSymbols) return "noise";
 
   const repeatedLaugh = /^(哈|呵|嘻|ㄏ|w){6,}$/i.test(compact);

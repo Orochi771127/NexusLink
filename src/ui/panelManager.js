@@ -2,9 +2,9 @@ import { qs, qsa } from "../utils/dom.js";
 
 export function createPanelManager({ onSoulTalkFocus } = {}) {
   const panelLayer = qs(".panel-layer");
-  const panelTriggers = qsa("[data-panel-trigger]");
   const panelCloseButtons = qsa("[data-panel-close]");
   let activePanel = null;
+  const closeGuards = new Map();
 
   function openPanel(panelName) {
     if (!panelName) return;
@@ -17,23 +17,35 @@ export function createPanelManager({ onSoulTalkFocus } = {}) {
     }
   }
 
-  function closePanel() {
+  function closePanel({ force = false } = {}) {
+    if (!force && activePanel && closeGuards.has(activePanel)) {
+      const guard = closeGuards.get(activePanel);
+      const vetoed = guard?.();
+      if (vetoed) return;
+    }
     activePanel = null;
     panelLayer.dataset.activePanel = "none";
     panelLayer.setAttribute("aria-hidden", "true");
     document.body.classList.remove("panel-open");
   }
 
-  function bind({ openCharacterDetail, openSoulTalk }) {
-    panelTriggers.forEach((trigger) => {
+  function registerCloseGuard(panelName, guardFn) {
+    if (typeof guardFn === "function") {
+      closeGuards.set(panelName, guardFn);
+    }
+    return () => closeGuards.delete(panelName);
+  }
+
+  function bind(handlers = {}) {
+    qsa("[data-panel-trigger]").forEach((trigger) => {
       trigger.addEventListener("click", () => {
-        if (trigger.dataset.panelTrigger === "character") openCharacterDetail();
-        if (trigger.dataset.panelTrigger === "soulTalk") openSoulTalk();
+        const handler = handlers[trigger.dataset.panelTrigger];
+        if (typeof handler === "function") handler();
       });
     });
 
     panelCloseButtons.forEach((button) => {
-      button.addEventListener("click", closePanel);
+      button.addEventListener("click", () => closePanel());
     });
 
     document.addEventListener("keydown", (event) => {
@@ -45,6 +57,7 @@ export function createPanelManager({ onSoulTalkFocus } = {}) {
     bind,
     openPanel,
     closePanel,
+    registerCloseGuard,
     isPanelOpen: () => Boolean(activePanel),
     getActivePanel: () => activePanel
   };

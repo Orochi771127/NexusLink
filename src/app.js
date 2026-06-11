@@ -1,6 +1,7 @@
 import { applyOfflineRecovery } from "./engine/offlineRecovery.js";
 import AudioManager from "./audio/audioManager.js";
-import { CURRENT_CREATURE_ID, FALLBACK_CREATURE } from "./engine/personalityProfile.js";
+import { FALLBACK_CREATURE } from "./engine/personalityProfile.js";
+import { getCompanionById } from "./data/companionRegistry.js";
 import { createInteractionController } from "./engine/interactionController.js";
 import { bindViewportVars, qs } from "./utils/dom.js";
 import EventBus from "./utils/eventBus.js";
@@ -9,6 +10,7 @@ import { createSaveQueue, SAVE_LEVEL } from "./state/saveQueue.js";
 import { createRuntimeGuard } from "./engine/runtimeGuard.js";
 import { estimateSaveSizeKB } from "./engine/storageGuard.js";
 import { startEnvironmentHeartbeat } from "./engine/environmentHeartbeat.js";
+import { buildReturnGreeting } from "./engine/returnBehaviorEngine.js";
 import { mapHabitatTracesToVisuals } from "./engine/traceVisualMapper.js";
 import * as store from "./state/store.js";
 import {
@@ -22,6 +24,10 @@ import { createPanelManager } from "./ui/panelManager.js";
 import { createHudController } from "./ui/hudController.js";
 import { createSoulTalkController } from "./ui/soulTalkController.js";
 import { createActionSheetController } from "./ui/actionSheetController.js";
+import { createCompanionSelectController } from "./ui/companionSelectController.js";
+import { createMapController } from "./ui/mapController.js";
+import { createBattleController } from "./ui/battleController.js";
+import { createCodexController } from "./ui/codexController.js";
 import {
   animateParticles,
   createEnvironmentLayer,
@@ -40,7 +46,6 @@ import {
   updateCompanionMotion
 } from "./pixi/motionController.js";
 
-const CREATURES_PATH = "./data/creatures.json";
 const ENVIRONMENT_INTERACTION_EVENT = "ENVIRONMENT_INTERACTION";
 const ENVIRONMENT_EFFECT_LIFETIME_MS = 720;
 let currentCreature = FALLBACK_CREATURE;
@@ -63,7 +68,18 @@ async function bootstrap() {
   const isDevPanelEnabled = readDevPanelFlag();
   const devQueryHooks = readDevQueryHooks();
   applyDevResetHook(devQueryHooks);
-  const initialState = applyDevQueryHooks(applyOfflineRecovery(loadState()), devQueryHooks);
+  const loadedState = loadState();
+  const previousSeenAt = Number(loadedState.lastSeenAt) || Date.now();
+  const initialState = applyDevQueryHooks(applyOfflineRecovery(loadedState), devQueryHooks);
+
+  const returnGreeting = buildReturnGreeting(Date.now() - previousSeenAt, initialState);
+  if (returnGreeting) {
+    initialState.chatHistory = [
+      ...(Array.isArray(initialState.chatHistory) ? initialState.chatHistory : []),
+      { role: "companion", text: returnGreeting }
+    ].slice(-24);
+  }
+
   store.replaceState(initialState);
   const saveQueue = createSaveQueue(saveCurrentState);
   saveQueue.enqueue(SAVE_LEVEL.CRITICAL);
@@ -73,17 +89,52 @@ async function bootstrap() {
   const hudController = createHudController({ store, statusText });
   const soulTalkController = createSoulTalkController({ store, saveCurrentState: saveInteraction });
   const panelManager = createPanelManager({ onSoulTalkFocus: () => soulTalkController.focusInput() });
+  let sceneApi = null;
+  let mapController = null;
+  let codexController = null;
   const actionSheetController = createActionSheetController({
     soulTalkController,
     saveCurrentState: saveInteraction,
     statusText,
     panelManager,
-    store
+    store,
+    openMap: () => mapController?.open()
+  });
+  const battleController = createBattleController({
+    store,
+    panelManager,
+    soulTalkController,
+    saveCurrentState,
+    statusText
+  });
+  battleController.bind();
+  mapController = createMapController({
+    store,
+    panelManager,
+    soulTalkController,
+    saveCurrentState: saveInteraction,
+    battleController,
+    statusText
+  });
+  codexController = createCodexController({ store, panelManager });
+  const companionSelectController = createCompanionSelectController({
+    store,
+    panelManager,
+    saveCurrentState,
+    onCompanionChanged: async (companion) => {
+      currentCreature = companion;
+      hudController.setCreature(companion);
+      soulTalkController.setCreature(companion);
+      hudController.renderHUD();
+      await sceneApi?.swapCompanion(companion);
+    }
   });
 
   panelManager.bind({
-    openCharacterDetail: () => hudController.openCharacterDetail(panelManager),
-    openSoulTalk: () => soulTalkController.openSoulTalk(panelManager)
+    character: () => hudController.openCharacterDetail(panelManager),
+    soulTalk: () => soulTalkController.openSoulTalk(panelManager),
+    companionSelect: () => companionSelectController.open(),
+    codex: () => codexController?.open()
   });
   soulTalkController.bind();
   actionSheetController.bind();
@@ -101,6 +152,12 @@ async function bootstrap() {
     onHeartbeat: () => devPanelController?.renderReadout()
   });
 
+  currentCreature = getCompanionById(store.getState().activeCompanionId);
+  hudController.setCreature(currentCreature);
+  soulTalkController.setCreature(currentCreature);
+  hudController.renderHUD();
+  soulTalkController.renderChat();
+
   if (!window.PIXI) {
     statusText.textContent = "PixiJS 載入失敗，請檢查網路或 CDN。";
     return;
@@ -108,13 +165,7 @@ async function bootstrap() {
 
   try {
     const app = await createPixiApp(qs("#game-root"));
-    currentCreature = await loadCurrentCreature(statusText);
-    hudController.setCreature(currentCreature);
-    soulTalkController.setCreature(currentCreature);
-    hudController.renderHUD();
-    soulTalkController.renderChat();
-
-    await bootScene(app, panelManager, statusText, soulTalkController, saveQueue);
+    sceneApi = await bootScene(app, panelManager, statusText, soulTalkController, saveQueue);
 
     devPanelController = createDevPanelController({
       isEnabled: isDevPanelEnabled,
@@ -194,27 +245,44 @@ async function bootScene(app, panelManager, statusText, soulTalkController, save
     activeEnvironmentEffects.push(createCrystalTouchEffect(environmentEffects, event));
   });
 
-  const companion = await createCreatureNode(currentCreature, statusText);
-  positionCompanion(companion, app);
-  layers.layerEntity.addChild(companion);
-  exposeDevCompanion(companion);
+  let companion = await createCreatureNode(currentCreature, statusText);
 
-  companionMotionController = createCompanionMotion(companion, store.getState().mood);
-  interactionController = createInteractionController({
-    companion,
-    creature: currentCreature,
-    store,
-    saveCurrentState: () => saveQueue.enqueue(SAVE_LEVEL.INTERACTION),
-    statusText,
-    onStateChange: () => {
-      soulTalkController.renderChat();
-      devPanelController?.renderReadout();
+  function attachCompanion(node, creature) {
+    positionCompanion(node, app);
+    layers.layerEntity.addChild(node);
+    exposeDevCompanion(node);
+
+    companionMotionController = createCompanionMotion(node, store.getState().mood);
+    interactionController = createInteractionController({
+      companion: node,
+      creature,
+      store,
+      saveCurrentState: () => saveQueue.enqueue(SAVE_LEVEL.INTERACTION),
+      statusText,
+      onStateChange: () => {
+        soulTalkController.renderChat();
+        devPanelController?.renderReadout();
+      }
+    });
+    bindCompanionTap(node, {
+      isInteractionBlocked: () => panelManager.isPanelOpen(),
+      onTouch: (touchType) => interactionController.handleTouch(touchType)
+    });
+  }
+
+  attachCompanion(companion, currentCreature);
+
+  async function swapCompanion(nextCreature) {
+    const previousCompanion = companion;
+    const nextCompanion = await createCreatureNode(nextCreature, statusText);
+    companion = nextCompanion;
+    attachCompanion(nextCompanion, nextCreature);
+    if (previousCompanion && previousCompanion !== nextCompanion) {
+      previousCompanion.parent?.removeChild(previousCompanion);
+      previousCompanion.destroy({ children: true });
     }
-  });
-  bindCompanionTap(companion, {
-    isInteractionBlocked: () => panelManager.isPanelOpen(),
-    onTouch: (touchType) => interactionController.handleTouch(touchType)
-  });
+    statusText.textContent = `${nextCreature.name}來到了你身邊。`;
+  }
 
   const isSceneEditorMode = readSceneEditorFlag();
   if (isSceneEditorMode) {
@@ -252,6 +320,8 @@ async function bootScene(app, panelManager, statusText, soulTalkController, save
     habitatTraceRenderer.sync(habitatTraceVisuals);
     habitatTraceRenderer.update(t);
   });
+
+  return { swapCompanion };
 }
 
 function createCrystalTouchEffect(parent, event) {
@@ -328,23 +398,6 @@ function exposeDevCompanion(companion) {
   const params = new URLSearchParams(window.location.search);
   if (params.get("devPanel") !== "1" && params.get("devSceneEditor") !== "1") return;
   window.__NEXUS_TEST_COMPANION__ = companion;
-}
-
-async function loadCurrentCreature(statusText) {
-  try {
-    const response = await fetch(CREATURES_PATH, { cache: "no-cache" });
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-
-    const creatures = await response.json();
-    const creature = creatures.find((item) => item.id === CURRENT_CREATURE_ID);
-    if (!creature) throw new Error(`Creature not found: ${CURRENT_CREATURE_ID}`);
-
-    return creature;
-  } catch (error) {
-    console.warn("Creature data load failed, fallback to default creature:", error);
-    statusText.textContent = "角色資料載入失敗，已改用預設夥伴。";
-    return FALLBACK_CREATURE;
-  }
 }
 
 function saveCurrentState() {

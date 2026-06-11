@@ -31,7 +31,22 @@ const defaultState = {
   emotionalMemories: [],
   safeHarborMode: false,
   lastEmotionTag: null,
-  habitatRepairFactor: 0
+  habitatRepairFactor: 0,
+
+  // R2 vertical slice
+  activeCompanionId: "greyshade-cat",
+  battleRecord: {
+    wins: 0,
+    losses: 0,
+    retreats: 0,
+    lastResult: null,
+    lastBattleAt: null
+  },
+  explorationProgress: {
+    totalExplorations: 0,
+    lastNodeId: null,
+    visitCounts: {}
+  }
 };
 
 export default defaultState;

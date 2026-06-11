@@ -112,9 +112,12 @@ export function evaluateActionEffect(currentState, action, choice) {
       message = "晶簇亮起微光，空氣變得穩定。";
     }
   } else if (action === "care") {
-    if (normalizedChoice === "soft_comfort") {
+    if (normalizedChoice === "gentle_presence") {
+      setVitals({ defense: -6, trust: 1, mood: "calm" });
+      message = "你只是待在牠身邊，沒有伸手。牠的肩膀慢慢鬆了。";
+    } else if (normalizedChoice === "soft_comfort") {
       setVitals({ defense: -2, trust: 1, mood: "calm" });
-      message = "灰影貓稍微放鬆了一點。";
+      message = "夥伴稍微放鬆了一點。";
     } else if (normalizedChoice === "energy_supply") {
       setVitals({ energy: 2, mood: "warm" });
       message = "溫暖能量回到心核。";
@@ -130,7 +133,10 @@ export function evaluateActionEffect(currentState, action, choice) {
       message = "空氣中的雜訊被清掉了一些。";
     }
   } else if (action === "grow") {
-    if (normalizedChoice === "trust_tuning") {
+    if (normalizedChoice === "gentle_presence") {
+      setVitals({ defense: -6, trust: 1, mood: "calm" });
+      message = "你只是待在牠身邊，沒有伸手。牠的肩膀慢慢鬆了。";
+    } else if (normalizedChoice === "trust_tuning") {
       setVitals({ trust: 1, defense: -1 });
       statePatch.growthHint = "trust_tuning";
       message = "信任回路略微對齊。";
@@ -140,6 +146,22 @@ export function evaluateActionEffect(currentState, action, choice) {
     } else {
       message = "技能回路暫時維持休眠。";
     }
+  } else if (action === "memory" && normalizedChoice === "memory_echo") {
+    const emotionalMemories = Array.isArray(currentState.emotionalMemories) ? currentState.emotionalMemories : [];
+    const latestEmotional = emotionalMemories[emotionalMemories.length - 1];
+    const echoTheme = latestEmotional?.theme || "安靜";
+    setVitals({ mood: "calm", trust: 1 });
+    statePatch.memories = appendMemoryDeduped(
+      memories,
+      createMemory(
+        currentState,
+        "memory_echo",
+        "回聲整理",
+        `你們把「${echoTheme}」附近的回聲輕輕排好，棲地安靜了一點。`,
+        now
+      )
+    );
+    message = "回聲被輕輕整理好了。";
   } else if (action === "memory") {
     const recentChat = [...(currentState.chatHistory || [])].reverse().find((item) => item?.text)?.text || "";
     const memoryText = normalizedChoice === "today_echo"
