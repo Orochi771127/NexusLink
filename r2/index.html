@@ -189,13 +189,20 @@
           <section class="modal-panel map-modal" role="dialog" aria-modal="true" aria-labelledby="map-title" data-panel="map">
             <header class="panel-header">
               <div>
-                <p>夜湖周邊</p>
+                <p>心核路徑 ・ 夜湖周邊</p>
                 <h2 id="map-title">探索地圖</h2>
               </div>
               <button type="button" class="panel-close" data-panel-close aria-label="關閉探索地圖">X</button>
             </header>
-            <p class="panel-subcopy">選擇一個節點，和夥伴一起出發。</p>
-            <div id="map-node-list" class="map-node-list" aria-label="探索節點"></div>
+            <div id="map-canvas" class="soul-map rune-border" aria-label="探索節點地圖">
+              <svg id="map-paths" viewBox="0 0 100 132" preserveAspectRatio="none" aria-hidden="true"></svg>
+              <div id="map-node-layer"></div>
+            </div>
+            <div id="map-result" class="map-toast" role="status" aria-live="polite">
+              <p id="map-result-title" class="map-toast-title"></p>
+              <p id="map-result-text" class="map-toast-text"></p>
+              <div id="map-result-chips" class="map-toast-chips"></div>
+            </div>
           </section>
 
           <section class="modal-panel battle-modal" role="dialog" aria-modal="true" aria-labelledby="battle-title" data-panel="battle">

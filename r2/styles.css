@@ -6,10 +6,40 @@
   --color-mint: #43F6A3;
   --color-energy: #FFD858;
   --color-memory: #A0C8FF;
-  --bg-panel-glass: linear-gradient(145deg, rgba(15, 18, 36, 0.65) 0%, rgba(9, 10, 21, 0.85) 100%);
-  --border-glass: 1px solid rgba(0, 206, 209, 0.25);
-  --filter-glass: blur(20px);
-  --shadow-glass: inset 0 1px 2px rgba(255, 255, 255, 0.1), 0 12px 36px rgba(0, 0, 0, 0.7);
+
+  /* === Nexus Link Glassmorphism Tokens === */
+  --glass-bg: rgba(8, 13, 32, 0.58);
+  --glass-bg-strong: rgba(8, 13, 32, 0.72);
+  --glass-border: rgba(36, 211, 255, 0.18);
+  --glass-highlight: rgba(255, 255, 255, 0.12);
+  --glass-shadow: rgba(0, 0, 0, 0.35);
+  --glass-blur-subtle: 13px;
+  --glass-blur: 16px;
+  --glass-blur-strong: 22px;
+
+  /* === Cyber-Taoism Glow Tokens === */
+  --glow-cyan: rgba(36, 211, 255, 0.45);
+  --glow-gold: rgba(255, 214, 128, 0.4);
+  --glow-purple: rgba(167, 139, 250, 0.4);
+  --glow-danger: rgba(248, 113, 113, 0.45);
+  --glow-calm: rgba(103, 232, 249, 0.35);
+
+  /* === Game Feel Feedback Tokens === */
+  --feedback-bond: #a78bfa;
+  --feedback-trust: #fbbf24;
+  --feedback-progress: #60a5fa;
+  --feedback-success: #4ade80;
+  --feedback-danger: #f87171;
+
+  /* 既有 alias：重新指向新 token，18 處使用點自動升級 */
+  --bg-panel-glass: linear-gradient(145deg, rgba(13, 19, 40, 0.62) 0%, var(--glass-bg-strong) 100%);
+  --border-glass: 1px solid var(--glass-border);
+  --filter-glass: blur(var(--glass-blur));
+  --shadow-glass:
+    inset 0 1px 0 var(--glass-highlight),
+    inset 0 -14px 26px rgba(0, 0, 0, 0.16),
+    0 0 22px rgba(36, 211, 255, 0.07),
+    0 12px 36px var(--glass-shadow);
   --text: #ecf7ff;
   --muted: #9db3c9;
   --edge: 16px;
@@ -1744,86 +1774,7 @@ body.panel-open .dev-reaction-lab {
   font-weight: 900;
 }
 
-/* --- 探索地圖 --- */
-
-.map-node-list {
-  display: grid;
-  gap: 10px;
-}
-
-.map-node-card {
-  display: grid;
-  gap: 6px;
-  border: 1px solid rgba(0, 212, 255, 0.3);
-  border-radius: 14px;
-  padding: 12px 14px;
-  background: rgba(10, 15, 46, 0.7);
-  color: var(--text);
-  text-align: left;
-  cursor: pointer;
-  transition: background 160ms ease, border-color 160ms ease;
-}
-
-.map-node-card:hover,
-.map-node-card:focus-visible {
-  background: rgba(14, 22, 60, 0.78);
-}
-
-.map-node-card.tone-danger {
-  border-color: rgba(255, 70, 70, 0.42);
-}
-
-.map-node-head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 10px;
-}
-
-.map-node-name {
-  font-size: 15px;
-  font-weight: 800;
-}
-
-.map-node-name-en {
-  color: var(--muted);
-  font-size: 10px;
-  font-style: normal;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-
-.map-node-desc {
-  margin: 0;
-  color: var(--muted);
-  font-size: 12px;
-  line-height: 1.55;
-}
-
-.map-node-foot {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  font-size: 10.5px;
-}
-
-.map-node-tag {
-  border-radius: 999px;
-  padding: 2px 8px;
-  background: rgba(0, 206, 209, 0.12);
-  color: var(--color-cyan);
-  font-weight: 800;
-}
-
-.map-node-card.tone-danger .map-node-tag {
-  background: rgba(255, 70, 70, 0.14);
-  color: #ff9b8a;
-}
-
-.map-node-visits {
-  color: var(--muted);
-}
+/* --- 探索地圖（節點地圖樣式見檔尾 UI Polish 區） --- */
 
 /* --- 戰鬥 --- */
 
@@ -2146,4 +2097,449 @@ body.panel-open .dev-reaction-lab {
   color: var(--muted);
   font-size: 12px;
   line-height: 1.6;
+}
+
+/* ======================================================
+   R2 UI Polish v1-A — Glassmorphism utilities + Game Feel
+   ====================================================== */
+
+/* --- 玻璃厚度層：邊緣高光（::before 頂緣 1px 漸層光） --- */
+
+.modal-panel::before,
+.action-sheet::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--glass-highlight), transparent);
+  pointer-events: none;
+}
+
+/* --- Reusable glass tiers --- */
+
+.glass-subtle {
+  border: 1px solid rgba(36, 211, 255, 0.12);
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur-subtle));
+  -webkit-backdrop-filter: blur(var(--glass-blur-subtle));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 8px 24px var(--glass-shadow);
+}
+
+.glass-strong {
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg-strong);
+  backdrop-filter: blur(var(--glass-blur-strong));
+  -webkit-backdrop-filter: blur(var(--glass-blur-strong));
+  box-shadow:
+    inset 0 1px 0 var(--glass-highlight),
+    inset 0 -16px 30px rgba(0, 0, 0, 0.2),
+    0 0 26px rgba(36, 211, 255, 0.09),
+    0 14px 40px var(--glass-shadow);
+}
+
+.glass-interactive {
+  cursor: pointer;
+  transition: border-color 180ms ease, box-shadow 220ms ease, transform 140ms ease;
+}
+
+@media (hover: hover) {
+  .glass-interactive:hover,
+  .glass-interactive:focus-visible {
+    border-color: rgba(36, 211, 255, 0.38);
+    box-shadow:
+      inset 0 1px 0 var(--glass-highlight),
+      0 0 18px var(--glow-cyan),
+      0 12px 36px var(--glass-shadow);
+  }
+}
+
+.glass-interactive:active {
+  transform: scale(0.98);
+}
+
+/* --- 狀態回饋 glow --- */
+
+.state-feedback {
+  transition: box-shadow 260ms ease, border-color 260ms ease;
+}
+
+.bond-glow {
+  border-color: rgba(167, 139, 250, 0.45) !important;
+  box-shadow: 0 0 16px var(--glow-purple), inset 0 0 10px rgba(167, 139, 250, 0.1);
+}
+
+.trust-glow {
+  border-color: rgba(251, 191, 36, 0.45) !important;
+  box-shadow: 0 0 16px var(--glow-gold), inset 0 0 10px rgba(251, 191, 36, 0.1);
+}
+
+.progress-glow {
+  border-color: rgba(96, 165, 250, 0.45) !important;
+  box-shadow: 0 0 16px rgba(96, 165, 250, 0.35), inset 0 0 10px rgba(96, 165, 250, 0.1);
+}
+
+/* --- 一次性回饋脈動（只套小元素，不套 layout 容器） --- */
+
+@keyframes feedbackPulse {
+  0% { transform: scale(1); filter: brightness(1); }
+  35% { transform: scale(1.14); filter: brightness(1.35); }
+  100% { transform: scale(1); filter: brightness(1); }
+}
+
+.feedback-pulse {
+  animation: feedbackPulse 620ms ease-out 1;
+}
+
+/* --- 符文邊框：主框 + 四角符文角標（無 mask-composite，跨瀏覽器安全） --- */
+
+.rune-border {
+  position: relative;
+  border: 1px solid var(--glass-border);
+  border-radius: 14px;
+}
+
+.rune-border::before,
+.rune-border::after {
+  content: "";
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  pointer-events: none;
+}
+
+.rune-border::before {
+  top: -1px;
+  left: -1px;
+  border-top: 2px solid var(--glow-cyan);
+  border-left: 2px solid var(--glow-cyan);
+  border-top-left-radius: 14px;
+}
+
+.rune-border::after {
+  bottom: -1px;
+  right: -1px;
+  border-bottom: 2px solid var(--glow-gold);
+  border-right: 2px solid var(--glow-gold);
+  border-bottom-right-radius: 14px;
+}
+
+/* ======================================================
+   探索地圖 — 心核路徑節點地圖
+   ====================================================== */
+
+.soul-map {
+  position: relative;
+  width: 100%;
+  height: min(52vh, 460px);
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse at 50% 86%, rgba(36, 211, 255, 0.09), transparent 55%),
+    radial-gradient(ellipse at 74% 12%, rgba(167, 139, 250, 0.08), transparent 45%),
+    linear-gradient(180deg, rgba(8, 13, 32, 0.5) 0%, rgba(5, 9, 21, 0.72) 100%);
+}
+
+#map-paths {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.map-path {
+  fill: none;
+  stroke: rgba(36, 211, 255, 0.3);
+  stroke-width: 0.7;
+  stroke-linecap: round;
+  stroke-dasharray: 2.4 3.2;
+  animation: mapPathFlow 9s linear infinite;
+  transition: stroke 400ms ease;
+}
+
+.map-path.path-danger {
+  stroke: url(#riftGradient);
+}
+
+.soul-map.is-alert .map-path {
+  stroke: rgba(248, 113, 113, 0.45);
+}
+
+@keyframes mapPathFlow {
+  to { stroke-dashoffset: -56; }
+}
+
+#map-node-layer {
+  position: absolute;
+  inset: 0;
+}
+
+/* --- 節點 --- */
+
+.map-node {
+  position: absolute;
+  display: grid;
+  justify-items: center;
+  gap: 5px;
+  width: 84px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text);
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.map-node-orb {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 999px;
+  border: 1.5px dashed rgba(155, 195, 230, 0.35);
+  background:
+    radial-gradient(circle at 50% 42%, rgba(36, 211, 255, 0.16), transparent 64%),
+    var(--glass-bg);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  transition: border-color 260ms ease, box-shadow 300ms ease, background 300ms ease;
+}
+
+.map-node-glyph {
+  font-size: 19px;
+  line-height: 1;
+  opacity: 0.65;
+  transition: opacity 260ms ease;
+}
+
+.map-node-label {
+  display: grid;
+  justify-items: center;
+  gap: 1px;
+}
+
+.map-node-label strong {
+  font-size: 12.5px;
+  font-weight: 800;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.8);
+  white-space: nowrap;
+}
+
+.map-node-label em {
+  max-width: 88px;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 8.5px;
+  font-style: normal;
+  letter-spacing: 0.1em;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.map-node-visits {
+  position: absolute;
+  top: -4px;
+  right: 6px;
+  display: grid;
+  place-items: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 214, 128, 0.4);
+  background: var(--glass-bg-strong);
+  color: var(--color-energy);
+  font-size: 9.5px;
+  font-weight: 900;
+}
+
+.map-node-visits[hidden] {
+  display: none;
+}
+
+/* tone 狀態：safe / calm / discovery / danger */
+
+.map-node.tone-safe .map-node-orb { border-color: rgba(255, 214, 128, 0.5); }
+.map-node.tone-calm .map-node-orb { border-color: rgba(103, 232, 249, 0.42); }
+.map-node.tone-discovery .map-node-orb { border-color: rgba(36, 211, 255, 0.48); }
+.map-node.tone-danger .map-node-orb { border-color: rgba(248, 113, 113, 0.5); }
+
+/* visited：實心化 + glyph 亮起 */
+
+.map-node.is-visited .map-node-orb {
+  border-style: solid;
+}
+
+.map-node.is-visited .map-node-glyph {
+  opacity: 1;
+}
+
+.map-node.tone-safe.is-visited .map-node-orb { box-shadow: 0 0 16px var(--glow-gold), inset 0 1px 0 rgba(255, 255, 255, 0.1); }
+.map-node.tone-calm.is-visited .map-node-orb { box-shadow: 0 0 14px var(--glow-calm), inset 0 1px 0 rgba(255, 255, 255, 0.1); }
+.map-node.tone-discovery.is-visited .map-node-orb { box-shadow: 0 0 16px var(--glow-cyan), inset 0 1px 0 rgba(255, 255, 255, 0.1); }
+.map-node.tone-danger.is-visited .map-node-orb { box-shadow: 0 0 14px var(--glow-danger), inset 0 1px 0 rgba(255, 255, 255, 0.1); }
+
+/* current：金色呼吸環 */
+
+.map-node.is-current .map-node-orb::after {
+  content: "";
+  position: absolute;
+  inset: -7px;
+  border-radius: inherit;
+  border: 1.5px solid rgba(255, 214, 128, 0.55);
+  animation: currentBreath 3.2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes currentBreath {
+  0%, 100% { opacity: 0.4; transform: scale(0.97); }
+  50% { opacity: 0.9; transform: scale(1.04); }
+}
+
+/* danger：低頻符文微閃（柔和、不焦慮） */
+
+.map-node.tone-danger .map-node-glyph {
+  animation: runeFlicker 4.4s ease-in-out infinite;
+}
+
+@keyframes runeFlicker {
+  0%, 78%, 100% { opacity: 0.62; }
+  84% { opacity: 0.95; }
+  90% { opacity: 0.55; }
+  95% { opacity: 0.85; }
+}
+
+@media (hover: hover) {
+  .map-node:hover .map-node-orb,
+  .map-node:focus-visible .map-node-orb {
+    box-shadow: 0 0 20px var(--glow-cyan), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  }
+}
+
+/* --- 探索結果 toast --- */
+
+.map-toast {
+  margin-top: 12px;
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  padding: 11px 13px;
+  background: var(--glass-bg-strong);
+  backdrop-filter: blur(var(--glass-blur-subtle));
+  -webkit-backdrop-filter: blur(var(--glass-blur-subtle));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 280ms ease, transform 280ms ease, border-color 280ms ease, box-shadow 280ms ease;
+}
+
+.map-toast.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.map-toast.toast-success { border-color: rgba(74, 222, 128, 0.35); box-shadow: 0 0 14px rgba(74, 222, 128, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.08); }
+.map-toast.toast-danger { border-color: rgba(248, 113, 113, 0.4); box-shadow: 0 0 14px var(--glow-danger), inset 0 1px 0 rgba(255, 255, 255, 0.08); }
+.map-toast.toast-calm { border-color: rgba(103, 232, 249, 0.35); box-shadow: 0 0 14px var(--glow-calm), inset 0 1px 0 rgba(255, 255, 255, 0.08); }
+
+.map-toast-title {
+  margin: 0 0 4px;
+  color: var(--color-memory);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+}
+
+.map-toast-text {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.55;
+}
+
+.map-toast-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.map-toast-chips:empty {
+  display: none;
+}
+
+.map-toast-chip {
+  border-radius: 999px;
+  padding: 3px 9px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  border: 1px solid rgba(96, 165, 250, 0.4);
+  color: var(--feedback-progress);
+  background: rgba(96, 165, 250, 0.1);
+}
+
+.map-toast-chip.chip-success { border-color: rgba(74, 222, 128, 0.4); color: var(--feedback-success); background: rgba(74, 222, 128, 0.1); }
+.map-toast-chip.chip-bond { border-color: rgba(167, 139, 250, 0.4); color: var(--feedback-bond); background: rgba(167, 139, 250, 0.1); }
+.map-toast-chip.chip-trust { border-color: rgba(251, 191, 36, 0.4); color: var(--feedback-trust); background: rgba(251, 191, 36, 0.1); }
+.map-toast-chip.chip-danger { border-color: rgba(248, 113, 113, 0.4); color: var(--feedback-danger); background: rgba(248, 113, 113, 0.1); }
+
+/* 窄高螢幕：地圖縮高、節點縮小，保持間距與 panel 可用 */
+
+@media (max-height: 720px) {
+  .soul-map {
+    height: min(48vh, 380px);
+  }
+
+  .map-node-orb {
+    width: 46px;
+    height: 46px;
+  }
+
+  .map-node-glyph {
+    font-size: 16px;
+  }
+
+  .map-node-label strong {
+    font-size: 11px;
+  }
+
+  .map-node-label em {
+    display: none;
+  }
+}
+
+/* --- prefers-reduced-motion：關閉常駐動畫與 transform 回饋 --- */
+
+@media (prefers-reduced-motion: reduce) {
+  .map-path {
+    animation: none;
+  }
+
+  .map-node.is-current .map-node-orb::after {
+    animation: none;
+    opacity: 0.7;
+  }
+
+  .map-node.tone-danger .map-node-glyph {
+    animation: none;
+    opacity: 0.8;
+  }
+
+  .feedback-pulse {
+    animation: none;
+  }
+
+  .glass-interactive:active {
+    transform: none;
+  }
+
+  .map-toast {
+    transform: none;
+    transition: opacity 280ms ease;
+  }
 }
