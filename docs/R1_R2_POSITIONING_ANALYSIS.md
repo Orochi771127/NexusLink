@@ -309,6 +309,41 @@
 
 ---
 
+## 八、正式命名更正：Black Build / White Lab
+
+R1 / R2 僅為歷史稱呼，用於早期盤點、定位分析與 Hard/Soft Promotion 規劃階段（見本文件前七節及 promotion 相關內容）。
+
+目前已正式更正命名如下：
+
+- **黑版 / B版 / Black Build**
+  - Path: `/`（root）
+  - 定位：主展示版 / Stable Snapshot / 對外展示入口
+  - 來源：由目前白版 W / r2/ 晉升出來的穩定快照
+  - 用途：手機測試、對外展示、主要 GitHub Pages 入口
+  - 規則：不要直接在黑版做實驗性修改；只接收已在白版驗收過的內容
+
+- **白版 / W版 / White Lab**
+  - Path: `/r2/`
+  - 定位：Fable 實驗室 / Lab / 新功能試驗區
+  - 用途：UI polish、探索地圖、戰鬥、Codex、夥伴互動、VFX、實驗功能
+  - 規則：可以實驗，但通過 smoke check / 視覺驗收後，才 promotion 到黑版 B
+
+**重要更正說明**：
+- 不要再把黑版稱為「舊 R1」。
+- 黑版不是舊 R1。
+- 黑版是「從目前 R2 / 白版 W 晉升出來的主展示快照」。
+- `/r2/` 雖然路徑仍維持為 r2/（以相容歷史連結與 GitHub Pages 結構），但在文件、溝通與定位上一律稱「白版 W / White Lab」。
+- root `/` 雖然過去在規劃階段可能被暫稱 R1，但現在文件與溝通定位上改稱「黑版 B / Black Build」。
+- 黑版 B 來源於白版 W 的 promotion snapshot。兩者為兩份獨立檔案（不會自動同步）。
+
+詳細正式命名規範、Promotion Rule 與 Naming Rule，請參閱新建立的文件：
+
+[docs/VERSION_NAMING.md](VERSION_NAMING.md)
+
+本文件前述內容保留原始 R1/R2 盤點與分析原貌（作為歷史記錄），新增本節作為命名更正說明。
+
+---
+
 **本輪狀態**：僅產生計畫 + 更新本文件。**尚未執行任何檔案複製或覆寫**。
 
 如需我現在就把以上計畫內容補充進本 markdown 檔案，或調整任何細節，請指示。等你確認後才會進行實際操作。
