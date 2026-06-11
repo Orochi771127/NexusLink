@@ -1,5 +1,3 @@
-export const CURRENT_CREATURE_ID = "greyshade-cat";
-
 export const DEFAULT_TOUCH_PERSONALITY = {
   baseSafety: 30,
   baseDefense: 30,

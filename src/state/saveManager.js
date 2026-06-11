@@ -1,7 +1,7 @@
 import { createDefaultState, normalizeState } from "./store.js";
 import { getEmergencyStorageLimits, pruneStateForStorage } from "../engine/storageGuard.js";
 
-export const STORAGE_KEY = "nexusLinkPrototypeState:v2";
+export const STORAGE_KEY = "nexusLinkR2State:v1";
 const LEGACY_STORAGE_KEYS = ["nexusLinkPrototypeState", "nexusLinkState"];
 
 export function loadState() {

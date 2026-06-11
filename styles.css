@@ -6,10 +6,40 @@
   --color-mint: #43F6A3;
   --color-energy: #FFD858;
   --color-memory: #A0C8FF;
-  --bg-panel-glass: linear-gradient(145deg, rgba(15, 18, 36, 0.65) 0%, rgba(9, 10, 21, 0.85) 100%);
-  --border-glass: 1px solid rgba(0, 206, 209, 0.25);
-  --filter-glass: blur(20px);
-  --shadow-glass: inset 0 1px 2px rgba(255, 255, 255, 0.1), 0 12px 36px rgba(0, 0, 0, 0.7);
+
+  /* === Nexus Link Glassmorphism Tokens === */
+  --glass-bg: rgba(8, 13, 32, 0.58);
+  --glass-bg-strong: rgba(8, 13, 32, 0.72);
+  --glass-border: rgba(36, 211, 255, 0.18);
+  --glass-highlight: rgba(255, 255, 255, 0.12);
+  --glass-shadow: rgba(0, 0, 0, 0.35);
+  --glass-blur-subtle: 13px;
+  --glass-blur: 16px;
+  --glass-blur-strong: 22px;
+
+  /* === Cyber-Taoism Glow Tokens === */
+  --glow-cyan: rgba(36, 211, 255, 0.45);
+  --glow-gold: rgba(255, 214, 128, 0.4);
+  --glow-purple: rgba(167, 139, 250, 0.4);
+  --glow-danger: rgba(248, 113, 113, 0.45);
+  --glow-calm: rgba(103, 232, 249, 0.35);
+
+  /* === Game Feel Feedback Tokens === */
+  --feedback-bond: #a78bfa;
+  --feedback-trust: #fbbf24;
+  --feedback-progress: #60a5fa;
+  --feedback-success: #4ade80;
+  --feedback-danger: #f87171;
+
+  /* 既有 alias：重新指向新 token，18 處使用點自動升級 */
+  --bg-panel-glass: linear-gradient(145deg, rgba(13, 19, 40, 0.62) 0%, var(--glass-bg-strong) 100%);
+  --border-glass: 1px solid var(--glass-border);
+  --filter-glass: blur(var(--glass-blur));
+  --shadow-glass:
+    inset 0 1px 0 var(--glass-highlight),
+    inset 0 -14px 26px rgba(0, 0, 0, 0.16),
+    0 0 22px rgba(36, 211, 255, 0.07),
+    0 12px 36px var(--glass-shadow);
   --text: #ecf7ff;
   --muted: #9db3c9;
   --edge: 16px;
@@ -164,13 +194,14 @@ canvas {
   color: var(--text);
   cursor: pointer;
   background:
-    radial-gradient(circle at 18% 50%, rgba(0, 206, 209, 0.16), transparent 42%),
-    linear-gradient(145deg, rgba(14, 22, 40, 0.7), rgba(5, 10, 22, 0.9));
-  border-color: rgba(93, 232, 255, 0.34);
+    radial-gradient(circle at 18% 50%, rgba(36, 211, 255, 0.14), transparent 44%),
+    linear-gradient(150deg, var(--glass-bg) 0%, var(--glass-bg-strong) 100%);
+  border-color: rgba(36, 211, 255, 0.32);
   box-shadow:
-    inset 0 1px 2px rgba(255, 255, 255, 0.1),
-    0 0 22px rgba(0, 206, 209, 0.14),
-    0 12px 34px rgba(0, 0, 0, 0.68);
+    inset 0 1px 0 var(--glass-highlight),
+    inset 0 -1px 0 rgba(255, 214, 128, 0.12),
+    0 0 22px rgba(36, 211, 255, 0.12),
+    0 12px 34px var(--glass-shadow);
 }
 
 .avatar-orb {
@@ -303,12 +334,24 @@ canvas {
   align-items: center;
   gap: 6px;
   padding: 4px 12px;
-  background: rgba(13, 20, 38, 0.65);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(0, 206, 209, 0.3);
   border-radius: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+/* currency chips：玻璃基底 + 屬性色微光（coin 金 / gem 青） */
+.resource-item.coin {
+  border-color: rgba(255, 214, 128, 0.34);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 0 12px rgba(255, 214, 128, 0.16),
+    0 6px 16px var(--glass-shadow);
+}
+
+.resource-item.gem {
+  border-color: rgba(36, 211, 255, 0.34);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 0 12px rgba(36, 211, 255, 0.18),
+    0 6px 16px var(--glass-shadow);
 }
 
 .resource-icon {
@@ -377,13 +420,16 @@ canvas {
 
 .quick-icon-button {
   position: relative;
-  border: 1px solid rgba(0, 245, 255, 0.34);
+  border: 1px solid rgba(36, 211, 255, 0.3);
   background:
-    radial-gradient(circle at 50% 36%, rgba(0, 206, 209, 0.18), transparent 50%),
-    rgba(8, 18, 32, 0.68);
-  box-shadow: 0 0 14px rgba(0, 245, 255, 0.18), var(--shadow-glass);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+    radial-gradient(circle at 50% 36%, rgba(36, 211, 255, 0.16), transparent 52%),
+    var(--glass-bg-strong);
+  box-shadow:
+    inset 0 1px 0 var(--glass-highlight),
+    0 0 14px rgba(36, 211, 255, 0.16),
+    0 8px 20px var(--glass-shadow);
+  backdrop-filter: blur(var(--glass-blur-subtle));
+  -webkit-backdrop-filter: blur(var(--glass-blur-subtle));
 }
 
 .quick-icon-svg {
@@ -432,12 +478,16 @@ canvas {
   height: 36px;
   min-height: 36px;
   padding: 0;
-  border: 1px solid rgba(0, 245, 255, 0.34);
+  border: 1px solid rgba(36, 211, 255, 0.3);
   border-radius: 999px;
-  background: rgba(8, 18, 32, 0.58);
-  box-shadow: 0 0 14px rgba(0, 245, 255, 0.22), var(--shadow-glass);
+  background: var(--glass-bg);
+  box-shadow:
+    inset 0 1px 0 var(--glass-highlight),
+    0 0 14px rgba(36, 211, 255, 0.18),
+    0 8px 20px var(--glass-shadow);
   color: var(--text);
-  backdrop-filter: blur(14px);
+  backdrop-filter: blur(var(--glass-blur-subtle));
+  -webkit-backdrop-filter: blur(var(--glass-blur-subtle));
 }
 
 .settings-item-svg {
@@ -508,12 +558,17 @@ canvas {
   display: inline-grid;
   place-items: center;
   min-height: 34px;
+  border: 1px solid rgba(255, 214, 128, 0.42);
   border-radius: 999px;
-  padding: 0 12px;
-  background: rgba(255, 216, 88, 0.14);
+  padding: 0 13px;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255, 214, 128, 0.16), transparent 70%),
+    var(--glass-bg);
   color: var(--color-energy);
   font-size: 12px;
-  box-shadow: 0 0 18px rgba(255, 216, 88, 0.32);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 0 16px var(--glow-gold);
 }
 
 .bottom-nav {
@@ -550,23 +605,43 @@ canvas {
   min-width: 0;
   height: 68px;
   overflow: hidden;
-  border: 1px solid rgba(160, 200, 255, 0.16);
-  border-radius: 16px;
+  border: 1px solid var(--glass-border);
+  border-radius: 14px;
   background:
-    radial-gradient(circle at 50% 18%, rgba(0, 206, 209, 0.12), transparent 42%),
-    rgba(5, 12, 24, 0.28);
+    radial-gradient(circle at 50% 16%, rgba(36, 211, 255, 0.14), transparent 46%),
+    var(--glass-bg);
+  box-shadow:
+    inset 0 1px 0 var(--glass-highlight),
+    inset 0 -10px 18px rgba(0, 0, 0, 0.18);
   color: var(--text);
   font-size: 11px;
   font-weight: 900;
 }
 
+/* 符文內框：玻璃 button 內的能量層 */
 .bottom-nav button::before {
   position: absolute;
-  inset: 8px 10px 25px;
+  inset: 7px 9px 24px;
   content: "";
-  border-radius: 13px;
-  background: rgba(0, 206, 209, 0.06);
-  opacity: 0.78;
+  border-radius: 10px;
+  border: 1px solid rgba(36, 211, 255, 0.1);
+  background: rgba(36, 211, 255, 0.05);
+  opacity: 0.85;
+}
+
+/* 金色頂緣符文短線：Cyber-Taoism 角標 */
+.bottom-nav button::after {
+  position: absolute;
+  top: -1px;
+  left: 50%;
+  width: 18px;
+  height: 2px;
+  content: "";
+  border-radius: 2px;
+  background: linear-gradient(90deg, transparent, var(--glow-gold), transparent);
+  transform: translateX(-50%);
+  opacity: 0.55;
+  transition: opacity 200ms ease, width 200ms ease;
 }
 
 .nav-icon-geo {
@@ -695,28 +770,36 @@ canvas {
   white-space: nowrap;
 }
 
-.bottom-nav button:hover,
 .bottom-nav button:focus-visible,
 .bottom-nav button:active,
 .bottom-nav button.active,
 .bottom-nav button.is-active,
 .bottom-nav button[aria-current="true"],
 .bottom-nav button[aria-current="page"] {
-  border-color: rgba(0, 206, 209, 0.8);
+  border-color: rgba(36, 211, 255, 0.6);
   background:
-    radial-gradient(circle at 50% 18%, rgba(0, 206, 209, 0.2), transparent 46%),
-    rgba(5, 12, 24, 0.34);
-  box-shadow: 0 0 20px rgba(0, 206, 209, 0.4), inset 0 0 10px rgba(0, 206, 209, 0.3);
+    radial-gradient(circle at 50% 16%, rgba(36, 211, 255, 0.2), transparent 50%),
+    var(--glass-bg-strong);
+  box-shadow:
+    inset 0 1px 0 var(--glass-highlight),
+    0 0 18px var(--glow-cyan),
+    inset 0 0 12px rgba(36, 211, 255, 0.16);
 }
 
-.bottom-nav button:hover .nav-icon-geo,
+.bottom-nav button.active::after,
+.bottom-nav button.is-active::after,
+.bottom-nav button[aria-current="true"]::after,
+.bottom-nav button[aria-current="page"]::after {
+  width: 30px;
+  opacity: 0.95;
+}
+
 .bottom-nav button:focus-visible .nav-icon-geo,
 .bottom-nav button:active .nav-icon-geo,
 .bottom-nav button.active .nav-icon-geo,
 .bottom-nav button.is-active .nav-icon-geo,
 .bottom-nav button[aria-current="true"] .nav-icon-geo,
 .bottom-nav button[aria-current="page"] .nav-icon-geo,
-.bottom-nav button:hover .nav-label,
 .bottom-nav button:focus-visible .nav-label,
 .bottom-nav button:active .nav-label,
 .bottom-nav button.active .nav-label,
@@ -726,6 +809,26 @@ canvas {
   color: #00CED1;
   opacity: 1;
   filter: drop-shadow(0 0 12px rgba(0, 206, 209, 1));
+}
+
+@media (hover: hover) {
+  .bottom-nav button:hover {
+    border-color: rgba(36, 211, 255, 0.6);
+    background:
+      radial-gradient(circle at 50% 16%, rgba(36, 211, 255, 0.2), transparent 50%),
+      var(--glass-bg-strong);
+    box-shadow:
+      inset 0 1px 0 var(--glass-highlight),
+      0 0 18px var(--glow-cyan),
+      inset 0 0 12px rgba(36, 211, 255, 0.16);
+  }
+
+  .bottom-nav button:hover .nav-icon-geo,
+  .bottom-nav button:hover .nav-label {
+    color: #00CED1;
+    opacity: 1;
+    filter: drop-shadow(0 0 12px rgba(0, 206, 209, 1));
+  }
 }
 
 .bottom-nav button.active,
@@ -748,84 +851,6 @@ canvas {
   }
 }
 
-.bottom-nav button {
-  display: block;
-  height: 68px;
-  padding: 0;
-  overflow: visible;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-  box-shadow: none;
-  color: inherit;
-}
-
-.bottom-nav button::before {
-  content: none;
-}
-
-.bottom-nav button:hover,
-.bottom-nav button:focus-visible,
-.bottom-nav button:active,
-.bottom-nav button.active,
-.bottom-nav button.is-active,
-.bottom-nav button[aria-current="true"],
-.bottom-nav button[aria-current="page"] {
-  border-color: transparent;
-  background: transparent;
-  box-shadow: none;
-  animation: none;
-}
-
-.nav-image {
-  position: relative;
-  display: block;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  transition: transform 160ms ease, filter 160ms ease;
-}
-
-.nav-art {
-  position: absolute;
-  inset: 0;
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  opacity: 1;
-  transition: opacity 120ms ease;
-  user-select: none;
-  -webkit-user-drag: none;
-}
-
-.nav-art-active {
-  opacity: 0;
-}
-
-.bottom-nav button:hover .nav-image,
-.bottom-nav button:focus-visible .nav-image {
-  filter: brightness(1.08);
-}
-
-.bottom-nav button:active .nav-image {
-  transform: scale(0.97);
-}
-
-.bottom-nav button.active .nav-art-default,
-.bottom-nav button.is-active .nav-art-default,
-.bottom-nav button[aria-current="true"] .nav-art-default,
-.bottom-nav button[aria-current="page"] .nav-art-default {
-  opacity: 0;
-}
-
-.bottom-nav button.active .nav-art-active,
-.bottom-nav button.is-active .nav-art-active,
-.bottom-nav button[aria-current="true"] .nav-art-active,
-.bottom-nav button[aria-current="page"] .nav-art-active {
-  opacity: 1;
-}
-
 .panel-layer {
   position: absolute;
   inset: 0;
@@ -835,7 +860,11 @@ canvas {
 
 .panel-layer[data-active-panel="character"],
 .panel-layer[data-active-panel="soulTalk"],
-.panel-layer[data-active-panel="actionSheet"] {
+.panel-layer[data-active-panel="actionSheet"],
+.panel-layer[data-active-panel="companionSelect"],
+.panel-layer[data-active-panel="map"],
+.panel-layer[data-active-panel="battle"],
+.panel-layer[data-active-panel="codex"] {
   pointer-events: auto;
 }
 
@@ -888,7 +917,11 @@ canvas {
 
 .panel-layer[data-active-panel="character"] [data-panel="character"],
 .panel-layer[data-active-panel="soulTalk"] [data-panel="soulTalk"],
-.panel-layer[data-active-panel="actionSheet"] [data-panel="actionSheet"] {
+.panel-layer[data-active-panel="actionSheet"] [data-panel="actionSheet"],
+.panel-layer[data-active-panel="companionSelect"] [data-panel="companionSelect"],
+.panel-layer[data-active-panel="map"] [data-panel="map"],
+.panel-layer[data-active-panel="battle"] [data-panel="battle"],
+.panel-layer[data-active-panel="codex"] [data-panel="codex"] {
   opacity: 1;
   pointer-events: auto;
   transform: translateY(0) scale(1);
@@ -1021,9 +1054,7 @@ canvas {
   height: auto;
   max-height: none;
   gap: 12px;
-  background: rgba(13, 20, 38, 0.65);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  /* 深色玻璃心語面板：基底交給 .glass-strong（HTML 已掛 class），此處只留佈局 */
 }
 
 .soul-talk-waveform {
@@ -1575,4 +1606,939 @@ body.panel-open .dev-reaction-lab {
   width: 36px;
   height: 36px;
   min-height: 36px;
+}
+
+/* ======================================================
+   R2 Vertical Slice — companion select / map / battle / codex
+   ====================================================== */
+
+.panel-subcopy {
+  margin: 0 0 14px;
+  color: var(--muted);
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+
+.ghost-button {
+  border: var(--border-glass);
+  border-radius: 12px;
+  padding: 10px 14px;
+  background: rgba(0, 206, 209, 0.08);
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 160ms ease;
+}
+
+.ghost-button:hover,
+.ghost-button:focus-visible {
+  background: rgba(0, 206, 209, 0.18);
+}
+
+.character-modal-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 16px;
+}
+
+/* --- 邊界（語意化，不顯示原始數值） --- */
+
+.boundary-row {
+  align-items: start;
+}
+
+.boundary-copy {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.boundary-preview {
+  color: var(--muted);
+  font-size: 11.5px;
+  font-style: normal;
+  line-height: 1.45;
+}
+
+/* --- 夥伴選擇 --- */
+
+.companion-select-modal,
+.map-modal,
+.codex-modal {
+  max-height: min(72vh, 620px);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.companion-select-list {
+  display: grid;
+  gap: 10px;
+}
+
+.companion-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  border-radius: 14px;
+  padding: 12px 14px;
+  background: rgba(10, 15, 46, 0.7);
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 160ms ease, background 160ms ease;
+}
+
+.companion-card:hover,
+.companion-card:focus-visible {
+  background: rgba(14, 22, 60, 0.78);
+}
+
+.companion-card.is-active {
+  border-color: rgba(255, 215, 0, 0.55);
+  box-shadow: inset 0 0 12px rgba(255, 215, 0, 0.08);
+}
+
+.companion-card-badge {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 900;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.companion-card.element-fire .companion-card-badge { color: #ff8a52; border: 1px solid rgba(255, 107, 59, 0.5); }
+.companion-card.element-water .companion-card-badge { color: #5fd0ff; border: 1px solid rgba(0, 180, 255, 0.5); }
+.companion-card.element-wood .companion-card-badge { color: #6fe09b; border: 1px solid rgba(46, 204, 113, 0.5); }
+.companion-card.element-thunder .companion-card-badge { color: #c0a6ff; border: 1px solid rgba(155, 89, 255, 0.5); }
+.companion-card.element-neutral .companion-card-badge { color: #cfd9ea; border: 1px solid rgba(207, 217, 234, 0.4); }
+
+.companion-card-main {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.companion-card-name {
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.companion-card-name-en {
+  color: var(--muted);
+  font-size: 10.5px;
+  font-style: normal;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.companion-card-meta {
+  margin-top: 2px;
+  color: var(--color-memory);
+  font-size: 11.5px;
+}
+
+.companion-card-side {
+  display: grid;
+  gap: 4px;
+  justify-items: end;
+}
+
+.companion-card-status {
+  border-radius: 999px;
+  padding: 3px 8px;
+  background: rgba(0, 206, 209, 0.12);
+  color: var(--color-cyan);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+
+.companion-card-active {
+  color: var(--color-energy);
+  font-size: 11px;
+  font-weight: 900;
+}
+
+/* --- 探索地圖（節點地圖樣式見檔尾 UI Polish 區） --- */
+
+/* --- 戰鬥 --- */
+
+.battle-modal {
+  display: grid;
+  gap: 12px;
+  max-height: min(74vh, 640px);
+  overflow-y: auto;
+}
+
+.battle-field {
+  display: grid;
+  gap: 12px;
+}
+
+.battle-side {
+  display: grid;
+  gap: 6px;
+  border: 1px solid rgba(0, 212, 255, 0.22);
+  border-radius: 12px;
+  padding: 10px 12px;
+  background: rgba(10, 15, 46, 0.55);
+}
+
+.battle-side-enemy {
+  border-color: rgba(255, 70, 70, 0.34);
+}
+
+.battle-name-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 13.5px;
+}
+
+.battle-name-row span {
+  color: var(--muted);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+.battle-hp-bar {
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.battle-hp-fill {
+  display: block;
+  height: 100%;
+  width: 100%;
+  border-radius: inherit;
+  transition: width 240ms ease;
+}
+
+.battle-hp-fill.player {
+  background: linear-gradient(90deg, #00ced1, #43f6a3);
+}
+
+.battle-hp-fill.enemy {
+  background: linear-gradient(90deg, #ff5d5d, #ff9b52);
+}
+
+.battle-energy-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10.5px;
+  color: var(--muted);
+}
+
+.battle-energy-pips {
+  color: var(--color-energy);
+  font-size: 12px;
+  letter-spacing: 2px;
+}
+
+.battle-log {
+  display: grid;
+  gap: 6px;
+  align-content: start;
+  min-height: 96px;
+  max-height: 150px;
+  overflow-y: auto;
+  border: var(--border-glass);
+  border-radius: 12px;
+  padding: 10px 12px;
+  background: rgba(2, 6, 16, 0.5);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.battle-log p {
+  margin: 0;
+}
+
+.battle-log p.battle-log-enemy {
+  color: #ffb1a1;
+}
+
+.battle-log p.battle-log-system {
+  color: var(--color-memory);
+}
+
+.battle-skill-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.battle-skill-row button {
+  border: 1px solid rgba(0, 212, 255, 0.34);
+  border-radius: 12px;
+  padding: 12px 6px;
+  background: rgba(0, 206, 209, 0.1);
+  color: var(--text);
+  font-size: 12.5px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background 160ms ease, opacity 160ms ease;
+}
+
+.battle-skill-row button:hover:not(:disabled),
+.battle-skill-row button:focus-visible:not(:disabled) {
+  background: rgba(0, 206, 209, 0.2);
+}
+
+.battle-skill-row button:disabled {
+  opacity: 0.38;
+  cursor: default;
+}
+
+#battle-skill-resonance {
+  border-color: rgba(255, 215, 0, 0.42);
+  background: rgba(255, 215, 0, 0.08);
+}
+
+.battle-footer-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.battle-footer-row .ghost-button {
+  flex: 1;
+}
+
+/* --- 圖鑑 Codex --- */
+
+.codex-body {
+  display: grid;
+  gap: 10px;
+}
+
+.codex-list {
+  display: grid;
+  gap: 10px;
+}
+
+.codex-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  border-radius: 14px;
+  padding: 12px 14px;
+  background: rgba(10, 15, 46, 0.7);
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+}
+
+.codex-row:hover,
+.codex-row:focus-visible {
+  background: rgba(14, 22, 60, 0.78);
+}
+
+.codex-row-emblem {
+  color: var(--color-memory);
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.codex-back {
+  justify-self: start;
+}
+
+.codex-detail {
+  display: grid;
+  gap: 14px;
+}
+
+.codex-title-block h3 {
+  margin: 0;
+  font-size: 19px;
+}
+
+.codex-title-block em {
+  color: var(--muted);
+  font-size: 11px;
+  font-style: normal;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.codex-tag-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.codex-tag {
+  display: grid;
+  gap: 2px;
+  border: var(--border-glass);
+  border-radius: 10px;
+  padding: 8px 10px;
+  background: rgba(2, 6, 16, 0.45);
+}
+
+.codex-tag dt {
+  margin: 0;
+  color: var(--muted);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+}
+
+.codex-tag dd {
+  margin: 0;
+  font-size: 12.5px;
+  font-weight: 700;
+}
+
+.codex-section-title {
+  margin: 0 0 8px;
+  color: var(--color-cyan);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.codex-radar-wrap {
+  display: grid;
+  justify-items: center;
+  border: var(--border-glass);
+  border-radius: 14px;
+  padding: 12px;
+  background: rgba(2, 6, 16, 0.45);
+}
+
+.codex-radar-wrap svg {
+  width: min(220px, 70vw);
+  height: auto;
+}
+
+.codex-evolution-strip {
+  display: grid;
+  gap: 8px;
+}
+
+.codex-stage-chip {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  border: 1px solid rgba(0, 212, 255, 0.26);
+  border-radius: 12px;
+  padding: 10px 12px;
+  background: rgba(10, 15, 46, 0.6);
+}
+
+.codex-stage-chip.is-locked {
+  opacity: 0.45;
+}
+
+.codex-stage-index {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 215, 0, 0.4);
+  color: var(--color-energy);
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.codex-stage-copy {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+}
+
+.codex-stage-name {
+  font-size: 13.5px;
+  font-weight: 800;
+}
+
+.codex-stage-label {
+  color: var(--muted);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+}
+
+.codex-stage-lore {
+  margin: 2px 0 0;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.codex-lore {
+  margin: 0;
+  border-left: 2px solid rgba(255, 215, 0, 0.4);
+  padding-left: 10px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+/* ======================================================
+   R2 UI Polish v1-A — Glassmorphism utilities + Game Feel
+   ====================================================== */
+
+/* --- 玻璃厚度層：邊緣高光（::before 頂緣 1px 漸層光） --- */
+
+.modal-panel::before,
+.action-sheet::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--glass-highlight), transparent);
+  pointer-events: none;
+}
+
+/* --- Reusable glass tiers --- */
+
+.glass-subtle {
+  border: 1px solid rgba(36, 211, 255, 0.12);
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur-subtle));
+  -webkit-backdrop-filter: blur(var(--glass-blur-subtle));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 8px 24px var(--glass-shadow);
+}
+
+.glass-strong {
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg-strong);
+  backdrop-filter: blur(var(--glass-blur-strong));
+  -webkit-backdrop-filter: blur(var(--glass-blur-strong));
+  box-shadow:
+    inset 0 1px 0 var(--glass-highlight),
+    inset 0 -16px 30px rgba(0, 0, 0, 0.2),
+    0 0 26px rgba(36, 211, 255, 0.09),
+    0 14px 40px var(--glass-shadow);
+}
+
+.glass-interactive {
+  cursor: pointer;
+  transition: border-color 180ms ease, box-shadow 220ms ease, transform 140ms ease;
+}
+
+@media (hover: hover) {
+  .glass-interactive:hover,
+  .glass-interactive:focus-visible {
+    border-color: rgba(36, 211, 255, 0.38);
+    box-shadow:
+      inset 0 1px 0 var(--glass-highlight),
+      0 0 18px var(--glow-cyan),
+      0 12px 36px var(--glass-shadow);
+  }
+}
+
+.glass-interactive:active {
+  transform: scale(0.98);
+}
+
+/* --- 狀態回饋 glow --- */
+
+.state-feedback {
+  transition: box-shadow 260ms ease, border-color 260ms ease;
+}
+
+.bond-glow {
+  border-color: rgba(167, 139, 250, 0.45) !important;
+  box-shadow: 0 0 16px var(--glow-purple), inset 0 0 10px rgba(167, 139, 250, 0.1);
+}
+
+.trust-glow {
+  border-color: rgba(251, 191, 36, 0.45) !important;
+  box-shadow: 0 0 16px var(--glow-gold), inset 0 0 10px rgba(251, 191, 36, 0.1);
+}
+
+.progress-glow {
+  border-color: rgba(96, 165, 250, 0.45) !important;
+  box-shadow: 0 0 16px rgba(96, 165, 250, 0.35), inset 0 0 10px rgba(96, 165, 250, 0.1);
+}
+
+/* --- 一次性回饋脈動（只套小元素，不套 layout 容器） --- */
+
+@keyframes feedbackPulse {
+  0% { transform: scale(1); filter: brightness(1); }
+  35% { transform: scale(1.14); filter: brightness(1.35); }
+  100% { transform: scale(1); filter: brightness(1); }
+}
+
+.feedback-pulse {
+  animation: feedbackPulse 620ms ease-out 1;
+}
+
+/* --- 符文邊框：主框 + 四角符文角標（無 mask-composite，跨瀏覽器安全） --- */
+
+/* 宿主需自帶 positioning context（本專案套用對象皆為 absolute/relative 元素） */
+.rune-border {
+  border: 1px solid var(--glass-border);
+}
+
+.rune-border::before,
+.rune-border::after {
+  content: "";
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  pointer-events: none;
+}
+
+.rune-border::before {
+  top: -1px;
+  left: -1px;
+  border-top: 2px solid var(--glow-cyan);
+  border-left: 2px solid var(--glow-cyan);
+  border-top-left-radius: 14px;
+}
+
+.rune-border::after {
+  bottom: -1px;
+  right: -1px;
+  border-bottom: 2px solid var(--glow-gold);
+  border-right: 2px solid var(--glow-gold);
+  border-bottom-right-radius: 14px;
+}
+
+/* ======================================================
+   探索地圖 — 心核路徑節點地圖
+   ====================================================== */
+
+.soul-map {
+  position: relative;
+  width: 100%;
+  height: min(52vh, 460px);
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse at 50% 86%, rgba(36, 211, 255, 0.09), transparent 55%),
+    radial-gradient(ellipse at 74% 12%, rgba(167, 139, 250, 0.08), transparent 45%),
+    linear-gradient(180deg, rgba(8, 13, 32, 0.5) 0%, rgba(5, 9, 21, 0.72) 100%);
+}
+
+#map-paths {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.map-path {
+  fill: none;
+  stroke: rgba(36, 211, 255, 0.3);
+  stroke-width: 0.7;
+  stroke-linecap: round;
+  stroke-dasharray: 2.4 3.2;
+  animation: mapPathFlow 9s linear infinite;
+  transition: stroke 400ms ease;
+}
+
+.map-path.path-danger {
+  stroke: url(#riftGradient);
+}
+
+.soul-map.is-alert .map-path {
+  stroke: rgba(248, 113, 113, 0.45);
+}
+
+@keyframes mapPathFlow {
+  to { stroke-dashoffset: -56; }
+}
+
+#map-node-layer {
+  position: absolute;
+  inset: 0;
+}
+
+/* --- 節點 --- */
+
+.map-node {
+  position: absolute;
+  display: grid;
+  justify-items: center;
+  gap: 5px;
+  width: 84px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text);
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.map-node-orb {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 999px;
+  border: 1.5px dashed rgba(155, 195, 230, 0.35);
+  background:
+    radial-gradient(circle at 50% 42%, rgba(36, 211, 255, 0.16), transparent 64%),
+    var(--glass-bg);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  transition: border-color 260ms ease, box-shadow 300ms ease, background 300ms ease;
+}
+
+.map-node-glyph {
+  font-size: 19px;
+  line-height: 1;
+  opacity: 0.65;
+  transition: opacity 260ms ease;
+}
+
+.map-node-label {
+  display: grid;
+  justify-items: center;
+  gap: 1px;
+}
+
+.map-node-label strong {
+  font-size: 12.5px;
+  font-weight: 800;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.8);
+  white-space: nowrap;
+}
+
+.map-node-label em {
+  max-width: 88px;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 8.5px;
+  font-style: normal;
+  letter-spacing: 0.1em;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.map-node-visits {
+  position: absolute;
+  top: -4px;
+  right: 6px;
+  display: grid;
+  place-items: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 214, 128, 0.4);
+  background: var(--glass-bg-strong);
+  color: var(--color-energy);
+  font-size: 9.5px;
+  font-weight: 900;
+}
+
+.map-node-visits[hidden] {
+  display: none;
+}
+
+/* tone 狀態：safe / calm / discovery / danger */
+
+.map-node.tone-safe .map-node-orb { border-color: rgba(255, 214, 128, 0.5); }
+.map-node.tone-calm .map-node-orb { border-color: rgba(103, 232, 249, 0.42); }
+.map-node.tone-discovery .map-node-orb { border-color: rgba(36, 211, 255, 0.48); }
+.map-node.tone-danger .map-node-orb { border-color: rgba(248, 113, 113, 0.5); }
+
+/* visited：實心化 + glyph 亮起 */
+
+.map-node.is-visited .map-node-orb {
+  border-style: solid;
+}
+
+.map-node.is-visited .map-node-glyph {
+  opacity: 1;
+}
+
+.map-node.tone-safe.is-visited .map-node-orb { box-shadow: 0 0 16px var(--glow-gold), inset 0 1px 0 rgba(255, 255, 255, 0.1); }
+.map-node.tone-calm.is-visited .map-node-orb { box-shadow: 0 0 14px var(--glow-calm), inset 0 1px 0 rgba(255, 255, 255, 0.1); }
+.map-node.tone-discovery.is-visited .map-node-orb { box-shadow: 0 0 16px var(--glow-cyan), inset 0 1px 0 rgba(255, 255, 255, 0.1); }
+.map-node.tone-danger.is-visited .map-node-orb { box-shadow: 0 0 14px var(--glow-danger), inset 0 1px 0 rgba(255, 255, 255, 0.1); }
+
+/* current：金色呼吸環 */
+
+.map-node.is-current .map-node-orb::after {
+  content: "";
+  position: absolute;
+  inset: -7px;
+  border-radius: inherit;
+  border: 1.5px solid rgba(255, 214, 128, 0.55);
+  animation: currentBreath 3.2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes currentBreath {
+  0%, 100% { opacity: 0.4; transform: scale(0.97); }
+  50% { opacity: 0.9; transform: scale(1.04); }
+}
+
+/* danger：低頻符文微閃（柔和、不焦慮） */
+
+.map-node.tone-danger .map-node-glyph {
+  animation: runeFlicker 4.4s ease-in-out infinite;
+}
+
+@keyframes runeFlicker {
+  0%, 78%, 100% { opacity: 0.62; }
+  84% { opacity: 0.95; }
+  90% { opacity: 0.55; }
+  95% { opacity: 0.85; }
+}
+
+@media (hover: hover) {
+  .map-node:hover .map-node-orb,
+  .map-node:focus-visible .map-node-orb {
+    box-shadow: 0 0 20px var(--glow-cyan), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  }
+}
+
+/* --- 探索結果 toast --- */
+
+.map-toast {
+  margin-top: 12px;
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  padding: 11px 13px;
+  background: var(--glass-bg-strong);
+  backdrop-filter: blur(var(--glass-blur-subtle));
+  -webkit-backdrop-filter: blur(var(--glass-blur-subtle));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 280ms ease, transform 280ms ease, border-color 280ms ease, box-shadow 280ms ease;
+}
+
+.map-toast.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.map-toast.toast-success { border-color: rgba(74, 222, 128, 0.35); box-shadow: 0 0 14px rgba(74, 222, 128, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.08); }
+.map-toast.toast-danger { border-color: rgba(248, 113, 113, 0.4); box-shadow: 0 0 14px var(--glow-danger), inset 0 1px 0 rgba(255, 255, 255, 0.08); }
+.map-toast.toast-calm { border-color: rgba(103, 232, 249, 0.35); box-shadow: 0 0 14px var(--glow-calm), inset 0 1px 0 rgba(255, 255, 255, 0.08); }
+
+.map-toast-title {
+  margin: 0 0 4px;
+  color: var(--color-memory);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+}
+
+.map-toast-text {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.55;
+}
+
+.map-toast-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.map-toast-chips:empty {
+  display: none;
+}
+
+.map-toast-chip {
+  border-radius: 999px;
+  padding: 3px 9px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  border: 1px solid rgba(96, 165, 250, 0.4);
+  color: var(--feedback-progress);
+  background: rgba(96, 165, 250, 0.1);
+}
+
+.map-toast-chip.chip-success { border-color: rgba(74, 222, 128, 0.4); color: var(--feedback-success); background: rgba(74, 222, 128, 0.1); }
+.map-toast-chip.chip-bond { border-color: rgba(167, 139, 250, 0.4); color: var(--feedback-bond); background: rgba(167, 139, 250, 0.1); }
+.map-toast-chip.chip-trust { border-color: rgba(251, 191, 36, 0.4); color: var(--feedback-trust); background: rgba(251, 191, 36, 0.1); }
+.map-toast-chip.chip-danger { border-color: rgba(248, 113, 113, 0.4); color: var(--feedback-danger); background: rgba(248, 113, 113, 0.1); }
+
+/* 窄高螢幕：地圖縮高、節點縮小，保持間距與 panel 可用 */
+
+@media (max-height: 720px) {
+  .soul-map {
+    height: min(48vh, 380px);
+  }
+
+  .map-node-orb {
+    width: 46px;
+    height: 46px;
+  }
+
+  .map-node-glyph {
+    font-size: 16px;
+  }
+
+  .map-node-label strong {
+    font-size: 11px;
+  }
+
+  .map-node-label em {
+    display: none;
+  }
+}
+
+/* --- prefers-reduced-motion：關閉常駐動畫與 transform 回饋 --- */
+
+@media (prefers-reduced-motion: reduce) {
+  .map-path {
+    animation: none;
+  }
+
+  .map-node.is-current .map-node-orb::after {
+    animation: none;
+    opacity: 0.7;
+  }
+
+  .map-node.tone-danger .map-node-glyph {
+    animation: none;
+    opacity: 0.8;
+  }
+
+  .feedback-pulse {
+    animation: none;
+  }
+
+  .bottom-nav button.active,
+  .bottom-nav button.is-active,
+  .bottom-nav button[aria-current="true"],
+  .bottom-nav button[aria-current="page"] {
+    animation: none;
+  }
+
+  .glass-interactive:active {
+    transform: none;
+  }
+
+  .map-toast {
+    transform: none;
+    transition: opacity 280ms ease;
+  }
 }

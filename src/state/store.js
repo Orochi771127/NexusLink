@@ -1,6 +1,8 @@
 import defaultState from "./defaultState.js";
 import { sanitizeEmotionalMemory, sanitizeMemory, sanitizeTrace } from "../engine/storageGuard.js";
 import { clamp } from "../utils/clamp.js";
+import { DEFAULT_COMPANION_ID, isKnownCompanionId } from "../data/companionRegistry.js";
+import { EXPLORATION_NODE_IDS } from "../data/explorationNodes.js";
 
 let state = createDefaultState();
 const listeners = new Set();
@@ -12,7 +14,9 @@ export function createDefaultState() {
     chatHistory: defaultState.chatHistory.map((item) => ({ ...item })),
     memories: defaultState.memories.map((item) => ({ ...item })),
     habitatTraces: defaultState.habitatTraces.map((item) => ({ ...item })),
-    emotionalMemories: defaultState.emotionalMemories.map((item) => ({ ...item }))
+    emotionalMemories: defaultState.emotionalMemories.map((item) => ({ ...item })),
+    battleRecord: { ...defaultState.battleRecord },
+    explorationProgress: { ...defaultState.explorationProgress, visitCounts: {} }
   };
 }
 
@@ -74,6 +78,11 @@ export function normalizeState(rawState = {}) {
     safeHarborMode: Boolean(targetState.safeHarborMode),
     lastEmotionTag: targetState.lastEmotionTag || null,
     habitatRepairFactor: clamp(targetState.habitatRepairFactor ?? 0, 0, 1),
+    activeCompanionId: isKnownCompanionId(targetState.activeCompanionId)
+      ? targetState.activeCompanionId
+      : DEFAULT_COMPANION_ID,
+    battleRecord: normalizeBattleRecord(targetState.battleRecord, baseState.battleRecord),
+    explorationProgress: normalizeExplorationProgress(targetState.explorationProgress, baseState.explorationProgress),
     chatHistory: chatHistory.map((item) => ({
       role: item.role === "fox" ? "companion" : item.role || "companion",
       text: String(item.text || "")
@@ -81,6 +90,34 @@ export function normalizeState(rawState = {}) {
     memories: memories.map((item) => sanitizeMemory(item)).filter(Boolean),
     habitatTraces: habitatTraces.map((item) => sanitizeTrace(item)).filter(Boolean),
     emotionalMemories: emotionalMemories.map((item) => sanitizeEmotionalMemory(item)).filter(Boolean)
+  };
+}
+
+const BATTLE_RESULTS = new Set(["win", "lose", "retreat"]);
+
+function normalizeBattleRecord(rawRecord, baseRecord) {
+  const record = rawRecord && typeof rawRecord === "object" ? rawRecord : {};
+  return {
+    wins: clamp(Number(record.wins) || 0, 0, 9999),
+    losses: clamp(Number(record.losses) || 0, 0, 9999),
+    retreats: clamp(Number(record.retreats) || 0, 0, 9999),
+    lastResult: BATTLE_RESULTS.has(record.lastResult) ? record.lastResult : baseRecord.lastResult,
+    lastBattleAt: Number(record.lastBattleAt) || null
+  };
+}
+
+function normalizeExplorationProgress(rawProgress, baseProgress) {
+  const progress = rawProgress && typeof rawProgress === "object" ? rawProgress : {};
+  const rawCounts = progress.visitCounts && typeof progress.visitCounts === "object" ? progress.visitCounts : {};
+  const visitCounts = {};
+  EXPLORATION_NODE_IDS.forEach((nodeId) => {
+    const count = clamp(Number(rawCounts[nodeId]) || 0, 0, 9999);
+    if (count > 0) visitCounts[nodeId] = count;
+  });
+  return {
+    totalExplorations: clamp(Number(progress.totalExplorations) || 0, 0, 99999),
+    lastNodeId: EXPLORATION_NODE_IDS.includes(progress.lastNodeId) ? progress.lastNodeId : baseProgress.lastNodeId,
+    visitCounts
   };
 }
 

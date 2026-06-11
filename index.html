@@ -3,312 +3,273 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <title>Nexus Link / 心核連結</title>
+    <title>Nexus Link R2 Prototype</title>
+    <link rel="preload" as="image" href="./assets/backgrounds/LakeNightCamp_v2/bg_day_base.png" />
+    <link rel="preload" as="image" href="./assets/backgrounds/LakeNightCamp_v2/bg_night_base.png" />
+    <link rel="preload" as="image" href="./assets/platforms/LakeNightCamp_v2/magic_circle.png" />
+    <link rel="preload" as="image" href="./assets/characters/greyshade-cat/metadata/previews/greyshade-cat_idle_calm_preview.png" />
     <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2064%2064%27%3E%3Ccircle%20cx%3D%2732%27%20cy%3D%2732%27%20r%3D%2730%27%20fill%3D%27%23050915%27%2F%3E%3Ccircle%20cx%3D%2732%27%20cy%3D%2732%27%20r%3D%2718%27%20fill%3D%27%2300ced1%27%2F%3E%3C%2Fsvg%3E" />
-    <style>
-      :root {
-        --bg: #050915;
-        --bg-deep: #02050f;
-        --cyan: #00CED1;
-        --cyan-dim: #00a8ac;
-        --text: #e8f4ff;
-        --text-muted: #7a95b0;
-        --glass: rgba(10, 15, 30, 0.6);
-        --border: rgba(0, 206, 209, 0.25);
-      }
-
-      * {
-        box-sizing: border-box;
-      }
-
-      html, body {
-        margin: 0;
-        padding: 0;
-        width: 100%;
-        height: 100%;
-        background: var(--bg);
-        color: var(--text);
-        font-family: "Noto Sans TC", Inter, "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-        overflow: hidden;
-      }
-
-      body {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        min-height: 100dvh;
-        position: relative;
-      }
-
-      /* Night lake / cyber-taoist subtle backdrop */
-      .bg-veil {
-        position: fixed;
-        inset: 0;
-        background:
-          radial-gradient(ellipse at 50% 38%, rgba(0, 206, 209, 0.035) 0%, transparent 55%),
-          radial-gradient(ellipse at 50% 72%, rgba(0, 30, 45, 0.45) 0%, transparent 62%);
-        pointer-events: none;
-        z-index: 0;
-      }
-
-      .orb {
-        position: fixed;
-        top: 32%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 168px;
-        height: 168px;
-        border-radius: 999px;
-        background: radial-gradient(circle at 48% 42%, rgba(0, 206, 209, 0.12), rgba(0, 206, 209, 0.02) 40%, transparent 70%);
-        border: 1px solid rgba(0, 206, 209, 0.18);
-        box-shadow: 0 0 80px rgba(0, 206, 209, 0.08);
-        z-index: 0;
-        pointer-events: none;
-      }
-
-      .orb::after {
-        content: "";
-        position: absolute;
-        inset: 18px;
-        border-radius: 999px;
-        border: 1px solid rgba(0, 206, 209, 0.12);
-      }
-
-      .launcher {
-        position: relative;
-        z-index: 1;
-        width: 100%;
-        max-width: 520px;
-        padding: 48px 28px 56px;
-        text-align: center;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 18px;
-      }
-
-      .logo {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
-        margin-bottom: 4px;
-      }
-
-      .logo svg {
-        width: 28px;
-        height: 28px;
-      }
-
-      .logo-text {
-        font-size: 13px;
-        letter-spacing: 3px;
-        text-transform: uppercase;
-        color: var(--cyan);
-        opacity: 0.85;
-        font-weight: 500;
-      }
-
-      .title {
-        font-size: 42px;
-        line-height: 1.05;
-        font-weight: 600;
-        letter-spacing: -0.4px;
-        margin: 0 0 2px;
-      }
-
-      .title .en {
-        font-size: 0.72em;
-        font-weight: 400;
-        opacity: 0.65;
-        margin-left: 6px;
-      }
-
-      .tagline {
-        font-size: 15px;
-        line-height: 1.6;
-        color: var(--text-muted);
-        max-width: 28ch;
-        margin: 4px 0 8px;
-      }
-
-      .cta {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
-        margin-top: 10px;
-        padding: 14px 42px;
-        font-size: 15px;
-        font-weight: 600;
-        letter-spacing: 0.4px;
-        color: #041018;
-        background: var(--cyan);
-        border: 1px solid var(--cyan);
-        border-radius: 999px;
-        text-decoration: none;
-        box-shadow: 0 4px 18px rgba(0, 206, 209, 0.35);
-        transition: transform 120ms ease, box-shadow 160ms ease, background 120ms ease;
-        cursor: pointer;
-      }
-
-      .cta:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 8px 28px rgba(0, 206, 209, 0.45);
-        background: #00e0e5;
-      }
-
-      .cta:active {
-        transform: translateY(0);
-      }
-
-      .cta .arrow {
-        font-size: 18px;
-        line-height: 1;
-        transform: translateX(1px);
-      }
-
-      .meta {
-        margin-top: 22px;
-        font-size: 12.5px;
-        color: var(--text-muted);
-        opacity: 0.75;
-      }
-
-      .auto-note {
-        font-size: 12px;
-        color: var(--text-muted);
-        opacity: 0.6;
-        margin-top: 2px;
-      }
-
-      .stay {
-        appearance: none;
-        background: transparent;
-        border: 0;
-        color: var(--cyan-dim);
-        font-size: 12px;
-        padding: 6px 10px;
-        margin-top: 4px;
-        cursor: pointer;
-        text-decoration: underline;
-        text-underline-offset: 2px;
-        opacity: 0.7;
-        transition: opacity 120ms ease;
-      }
-
-      .stay:hover {
-        opacity: 1;
-      }
-
-      .status {
-        font-size: 11px;
-        color: var(--cyan);
-        opacity: 0.65;
-        min-height: 16px;
-        margin-top: 6px;
-      }
-
-      @media (max-width: 480px) {
-        .launcher {
-          padding: 36px 20px 44px;
-        }
-        .title {
-          font-size: 36px;
-        }
-      }
-    </style>
+    <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <div class="bg-veil" aria-hidden="true"></div>
-    <div class="orb" aria-hidden="true"></div>
+    <main class="app-shell" aria-label="Nexus Link 心核連結主畫面">
+      <section class="habitat-stage" aria-label="Nexus Link 第一棲地">
+        <div id="game-root" aria-label="心核連結棲地場景"></div>
 
-    <main class="launcher" role="main" aria-label="Nexus Link 啟動頁">
-      <div class="logo" aria-hidden="true">
-        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="32" cy="32" r="30" fill="#050915"/>
-          <circle cx="32" cy="32" r="18" fill="#00CED1"/>
-          <circle cx="32" cy="32" r="9" fill="#050915"/>
-        </svg>
-        <span class="logo-text">NEXUS LINK</span>
-      </div>
+        <section class="core-hud" aria-label="夥伴心核狀態">
+          <button class="core-hud-open glass-interactive" type="button" data-panel-trigger="character" aria-label="開啟夥伴狀態">
+            <span class="avatar-orb" aria-hidden="true">
+              <span class="avatar-orb-portrait"></span>
+            </span>
+            <span class="core-copy">
+              <span id="fox-name" class="core-name">載入中...</span>
+              <span class="core-kicker">心核夥伴</span>
+              <span class="level-pill">等級 01</span>
+            </span>
+            <span class="core-status-dot" aria-hidden="true"></span>
+          </button>
+        </section>
 
-      <h1 class="title">心核連結<span class="en">/ Nexus Link</span></h1>
+        <section class="quick-hud" aria-label="快速資源與設定">
+          <div class="resource-hud" aria-label="資源">
+            <div class="resource-item coin glass-subtle" aria-label="金幣">
+              <span class="resource-icon" aria-hidden="true"></span>
+              <span class="resource-value">1280</span>
+            </div>
+            <div class="resource-item gem glass-subtle" aria-label="晶石">
+              <span class="resource-icon" aria-hidden="true"></span>
+              <span class="resource-value">36</span>
+            </div>
+          </div>
+          <button id="btn-audio-toggle" class="quick-icon-button audio-toggle glass-interactive" type="button" aria-label="切換音效">
+            <svg class="quick-icon-svg" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 9v6h4l5 4V5L8 9H4Z"></path>
+              <path d="M16 8.5a5 5 0 0 1 0 7"></path>
+              <path d="M18.5 6a8.5 8.5 0 0 1 0 12"></path>
+            </svg>
+          </button>
+          <div class="settings-group">
+            <button id="btn-settings-toggle" class="quick-icon-button glass-interactive" type="button" aria-label="開啟設定" aria-expanded="false">
+              <svg class="quick-icon-svg" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 8.2a3.8 3.8 0 1 0 0 7.6 3.8 3.8 0 0 0 0-7.6Z"></path>
+                <path d="M19.4 13.4a7.8 7.8 0 0 0 .05-2.7l2-1.45-2-3.46-2.42 1a8.2 8.2 0 0 0-2.33-1.35L14.4 3h-4l-.3 2.44A8.2 8.2 0 0 0 7.77 6.8l-2.42-1-2 3.46 2 1.45a7.8 7.8 0 0 0 .05 2.7l-2.02 1.43 2 3.46 2.45-1a8.1 8.1 0 0 0 2.28 1.3l.29 2.4h4l.29-2.4a8.1 8.1 0 0 0 2.28-1.3l2.45 1 2-3.46-2.02-1.43Z"></path>
+              </svg>
+            </button>
+            <div id="settings-dropdown" class="settings-dropdown">
+              <button id="btn-mail" class="settings-item mail" type="button" aria-label="信件">
+                <svg class="settings-item-svg" viewBox="0 0 24 24" aria-hidden="true">
+                  <rect x="3" y="5" width="18" height="14" rx="2"></rect>
+                  <path d="m3 7 9 6 9-6"></path>
+                </svg>
+              </button>
+              <button id="btn-support" class="settings-item support" type="button" aria-label="支援">
+                <svg class="settings-item-svg" viewBox="0 0 24 24" aria-hidden="true">
+                  <circle cx="12" cy="12" r="8"></circle>
+                  <circle cx="12" cy="12" r="3"></circle>
+                  <path d="M12 4v2"></path>
+                  <path d="M12 18v2"></path>
+                  <path d="M4 12h2"></path>
+                  <path d="M18 12h2"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </section>
 
-      <p class="tagline">這不是電子寵物，這是你的夥伴。</p>
+        <button class="soul-talk-launcher glass-interactive rune-border" type="button" data-panel-trigger="soulTalk" aria-label="開啟心語對話">
+          <span>
+            <strong>心語</strong>
+            <em id="soul-talk-preview">我在這裡，安靜地看著你。</em>
+          </span>
+          <b aria-hidden="true">對話</b>
+        </button>
 
-      <a id="enter-btn" class="cta" href="./r2/" aria-label="進入 R2 Demo">
-        進入 R2 Demo
-        <span class="arrow" aria-hidden="true">→</span>
-      </a>
+        <nav class="bottom-nav" aria-label="主要行動">
+          <button type="button" class="glass-interactive" data-action="explore" aria-label="探索">
+            <span class="nav-icon-geo" aria-hidden="true"></span>
+            <span class="nav-label">探索</span>
+          </button>
+          <button type="button" class="glass-interactive" data-action="care" aria-label="照顧">
+            <span class="nav-icon-geo" aria-hidden="true"></span>
+            <span class="nav-label">照顧</span>
+          </button>
+          <button type="button" class="glass-interactive" data-action="grow" aria-label="成長">
+            <span class="nav-icon-geo" aria-hidden="true"></span>
+            <span class="nav-label">成長</span>
+          </button>
+          <button type="button" class="glass-interactive" data-action="memory" aria-label="記憶">
+            <span class="nav-icon-geo" aria-hidden="true"></span>
+            <span class="nav-label">記憶</span>
+          </button>
+        </nav>
 
-      <div class="meta">
-        <div class="auto-note">1.5 秒後將自動導向 R2</div>
-        <button id="stay-btn" class="stay" type="button">取消自動導向，留在這個畫面</button>
-      </div>
+        <div class="panel-layer" data-active-panel="none" aria-hidden="true">
+          <button class="panel-backdrop" type="button" data-panel-close aria-label="關閉面板"></button>
 
-      <div id="status" class="status" aria-live="polite"></div>
+          <section class="modal-panel character-modal rune-border" role="dialog" aria-modal="true" aria-labelledby="character-title" data-panel="character">
+            <header class="panel-header">
+              <div>
+                <p>心核夥伴</p>
+                <h2 id="character-title">夥伴狀態</h2>
+              </div>
+              <button type="button" class="panel-close" data-panel-close aria-label="關閉夥伴狀態">X</button>
+            </header>
+            <div class="character-summary">
+              <span class="avatar-orb avatar-orb-large" aria-hidden="true">
+                <span class="avatar-orb-portrait"></span>
+              </span>
+              <div>
+                <h3 id="modal-creature-name">載入中...</h3>
+                <p id="modal-creature-description">夥伴資料載入中。</p>
+              </div>
+            </div>
+            <div class="core-stat-list" aria-label="夥伴詳細狀態">
+              <div class="core-stat-row" data-stat="bond">
+                <span class="core-stat-label">羈絆</span>
+                <div class="core-stat-bar"><span id="bond-fill" class="core-stat-fill"></span></div>
+                <strong id="bond-value" class="core-stat-value">0</strong>
+              </div>
+              <div class="core-stat-row" data-stat="mood">
+                <span class="core-stat-label">心情</span>
+                <div class="core-stat-bar"><span id="mood-fill" class="core-stat-fill"></span></div>
+                <strong id="mood-value" class="core-stat-value">平靜</strong>
+              </div>
+              <div class="core-stat-row" data-stat="energy">
+                <span class="core-stat-label">能量</span>
+                <div class="core-stat-bar"><span id="energy-fill" class="core-stat-fill"></span></div>
+                <strong id="energy-value" class="core-stat-value">10</strong>
+              </div>
+              <div class="core-stat-row" data-stat="trust">
+                <span class="core-stat-label">信任</span>
+                <div class="core-stat-bar"><span id="trust-fill" class="core-stat-fill"></span></div>
+                <strong id="trust-value" class="core-stat-value">5</strong>
+              </div>
+              <div class="core-stat-row boundary-row" data-stat="boundary">
+                <span class="core-stat-label">邊界</span>
+                <div class="boundary-copy">
+                  <strong id="boundary-state" class="core-stat-value">平常</strong>
+                  <em id="boundary-preview" class="boundary-preview">現在輕碰，牠大概會靠過來。</em>
+                </div>
+              </div>
+            </div>
+            <div class="character-modal-actions">
+              <button type="button" class="ghost-button" data-panel-trigger="companionSelect">切換夥伴</button>
+              <button type="button" class="ghost-button" data-panel-trigger="codex">開啟圖鑑</button>
+            </div>
+          </section>
+
+          <section class="modal-panel companion-select-modal" role="dialog" aria-modal="true" aria-labelledby="companion-select-title" data-panel="companionSelect">
+            <header class="panel-header">
+              <div>
+                <p>心輝議會 ・ 樞核</p>
+                <h2 id="companion-select-title">選擇同行夥伴</h2>
+              </div>
+              <button type="button" class="panel-close" data-panel-close aria-label="關閉夥伴選擇">X</button>
+            </header>
+            <p class="panel-subcopy">夥伴會記得你們一起留下的痕跡。切換不會抹去任何記憶。</p>
+            <div id="companion-select-list" class="companion-select-list" aria-label="候選夥伴"></div>
+          </section>
+
+          <section class="modal-panel map-modal" role="dialog" aria-modal="true" aria-labelledby="map-title" data-panel="map">
+            <header class="panel-header">
+              <div>
+                <p>心核路徑 ・ 夜湖周邊</p>
+                <h2 id="map-title">探索地圖</h2>
+              </div>
+              <button type="button" class="panel-close" data-panel-close aria-label="關閉探索地圖">X</button>
+            </header>
+            <div id="map-canvas" class="soul-map rune-border" aria-label="探索節點地圖">
+              <svg id="map-paths" viewBox="0 0 100 132" preserveAspectRatio="none" aria-hidden="true"></svg>
+              <div id="map-node-layer"></div>
+            </div>
+            <div id="map-result" class="map-toast" role="status" aria-live="polite">
+              <p id="map-result-title" class="map-toast-title"></p>
+              <p id="map-result-text" class="map-toast-text"></p>
+              <div id="map-result-chips" class="map-toast-chips"></div>
+            </div>
+          </section>
+
+          <section class="modal-panel battle-modal" role="dialog" aria-modal="true" aria-labelledby="battle-title" data-panel="battle">
+            <header class="panel-header">
+              <div>
+                <p id="battle-node-label">遭遇</p>
+                <h2 id="battle-title">共鳴交鋒</h2>
+              </div>
+            </header>
+            <div class="battle-field">
+              <div class="battle-side battle-side-enemy">
+                <div class="battle-name-row">
+                  <strong id="battle-enemy-name">???</strong>
+                  <span id="battle-enemy-hp-text">--</span>
+                </div>
+                <div class="battle-hp-bar"><span id="battle-enemy-hp" class="battle-hp-fill enemy"></span></div>
+              </div>
+              <div class="battle-side battle-side-player">
+                <div class="battle-name-row">
+                  <strong id="battle-player-name">夥伴</strong>
+                  <span id="battle-player-hp-text">--</span>
+                </div>
+                <div class="battle-hp-bar"><span id="battle-player-hp" class="battle-hp-fill player"></span></div>
+                <div class="battle-energy-row" aria-label="共鳴能量">
+                  <span class="battle-energy-label">共鳴</span>
+                  <span id="battle-player-energy" class="battle-energy-pips"></span>
+                </div>
+              </div>
+            </div>
+            <div id="battle-log" class="battle-log" aria-live="polite"></div>
+            <div id="battle-skill-row" class="battle-skill-row" aria-label="戰鬥行動">
+              <button type="button" id="battle-skill-basic" data-skill="basic_attack">直覺爪擊</button>
+              <button type="button" id="battle-skill-guard" data-skill="guard">凝神防禦</button>
+              <button type="button" id="battle-skill-resonance" data-skill="resonance">情感共鳴</button>
+            </div>
+            <div class="battle-footer-row">
+              <button type="button" id="battle-retreat" class="ghost-button">先撤退</button>
+              <button type="button" id="battle-finish" class="ghost-button" hidden>回到棲地</button>
+            </div>
+          </section>
+
+          <section class="modal-panel codex-modal" role="dialog" aria-modal="true" aria-labelledby="codex-title" data-panel="codex">
+            <header class="panel-header">
+              <div>
+                <p>心核圖鑑</p>
+                <h2 id="codex-title">夥伴圖鑑</h2>
+              </div>
+              <button type="button" class="panel-close" data-panel-close aria-label="關閉圖鑑">X</button>
+            </header>
+            <div id="codex-body" class="codex-body" aria-label="圖鑑內容"></div>
+          </section>
+
+          <section id="soul-talk-panel" class="modal-panel soul-talk-modal glass-strong rune-border" role="dialog" aria-modal="true" aria-label="心語對話" data-panel="soulTalk">
+            <button type="button" class="panel-close" data-panel-close aria-label="關閉心語對話">X</button>
+            <p id="status-text" class="soul-status-text" aria-live="polite">心語</p>
+            <div id="chat-log" class="chat-log" aria-live="polite"></div>
+            <div class="chat-input-row">
+              <input
+                id="message-input"
+                type="text"
+                placeholder="輕聲說些什麼..."
+                autocomplete="off"
+              />
+              <button id="send-button" type="button">送出</button>
+            </div>
+          </section>
+
+          <section class="action-sheet" role="dialog" aria-modal="true" aria-labelledby="action-sheet-title" data-panel="actionSheet">
+            <header class="panel-header">
+              <div>
+                <p>棲地行動</p>
+                <h2 id="action-sheet-title">行動</h2>
+              </div>
+              <button type="button" class="panel-close" data-panel-close aria-label="關閉棲地行動">X</button>
+            </header>
+            <p id="action-sheet-copy" class="action-sheet-copy">選擇一個安靜的行動。</p>
+            <div id="action-sheet-actions" class="sheet-action-list" aria-label="行動選項"></div>
+          </section>
+        </div>
+      </section>
     </main>
 
-    <script>
-      (function () {
-        var AUTO_DELAY = 1500;
-        var timer = null;
-        var cancelled = false;
-        var statusEl = document.getElementById('status');
-        var enterBtn = document.getElementById('enter-btn');
-        var stayBtn = document.getElementById('stay-btn');
-
-        function go() {
-          window.location.href = './r2/';
-        }
-
-        function clearAuto() {
-          if (timer) {
-            clearTimeout(timer);
-            timer = null;
-          }
-        }
-
-        function cancelAutoAndStay() {
-          if (cancelled) return;
-          cancelled = true;
-          clearAuto();
-          if (statusEl) statusEl.textContent = '已取消自動導向';
-          if (stayBtn) stayBtn.style.display = 'none';
-        }
-
-        // Primary button: immediate navigation + ensure timer cleared
-        if (enterBtn) {
-          enterBtn.addEventListener('click', function (e) {
-            clearAuto();
-            // allow default href navigation
-          });
-        }
-
-        if (stayBtn) {
-          stayBtn.addEventListener('click', cancelAutoAndStay);
-        }
-
-        // Start the gentle auto-redirect (only if not cancelled by interaction)
-        timer = setTimeout(function () {
-          if (!cancelled) {
-            go();
-          }
-        }, AUTO_DELAY);
-
-        // Keyboard support: pressing Enter on the page activates primary action (when focused on body)
-        document.addEventListener('keydown', function (e) {
-          if (e.key === 'Enter' && document.activeElement === document.body) {
-            e.preventDefault();
-            clearAuto();
-            go();
-          }
-        });
-
-        // Expose for debugging if needed (no side effects)
-        window.__nexusLauncher = { cancelAuto: cancelAutoAndStay, go: go };
-      })();
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/pixi.js@8.8.1/dist/pixi.min.js"></script>
+    <script type="module" src="./src/app.js"></script>
   </body>
 </html>
