@@ -15,7 +15,11 @@ export async function createCreatureNode(creature, statusText) {
   }
 
   if (!creature.image) {
-    console.warn("Creature has no fallback image; using generic placeholder.");
+    if (!creature.placeholder) {
+      // 只有「未定義 placeholder 樣式」才視為異常；registry 內的輪廓佔位是正常設計狀態。
+      console.warn("Creature has no fallback image; using generic placeholder.");
+    }
+    statusText.textContent = `${creature.name}以輪廓之姿來到棲地（正式造型製作中）。`;
     return registerCompanionEditorObject(createCreaturePlaceholder(creature));
   }
 
@@ -36,7 +40,10 @@ export function positionCompanion(companion, app) {
   if (typeof window !== "undefined" && !companion.__responsiveLayoutBound) {
     companion.__responsiveLayoutBound = true;
     window.addEventListener("resize", () => {
-      requestAnimationFrame(() => applyCompanionResponsiveLayout(companion, app));
+      requestAnimationFrame(() => {
+        if (companion.destroyed) return;
+        applyCompanionResponsiveLayout(companion, app);
+      });
     });
   }
 }
@@ -122,22 +129,24 @@ function createCreatureSprite(texture, creature) {
 
 function createCreaturePlaceholder(creature = FALLBACK_CREATURE) {
   const companion = new PIXI.Container();
+  const bodyColor = creature.placeholder?.bodyColor ?? 0x5f6876;
+  const lightColor = creature.placeholder?.accentColor ?? 0x8a93a3;
 
   const shadow = new PIXI.Graphics();
   shadow.ellipse(0, 48, 54, 13).fill({ color: 0x000000, alpha: 0.28 });
   companion.addChild(shadow);
 
   const body = new PIXI.Graphics();
-  body.roundRect(-42, -28, 84, 70, 24).fill("#5f6876");
-  body.roundRect(-29, -18, 58, 52, 18).fill("#8a93a3");
+  body.roundRect(-42, -28, 84, 70, 24).fill(bodyColor);
+  body.roundRect(-29, -18, 58, 52, 18).fill(lightColor);
   companion.addChild(body);
 
   const head = new PIXI.Graphics();
-  head.roundRect(-36, -76, 72, 58, 22).fill("#6f7786");
-  head.moveTo(-28, -70).lineTo(-48, -104).lineTo(-4, -84).closePath().fill("#6f7786");
-  head.moveTo(28, -70).lineTo(48, -104).lineTo(4, -84).closePath().fill("#6f7786");
-  head.moveTo(-31, -78).lineTo(-41, -96).lineTo(-12, -84).closePath().fill("#a7afbd");
-  head.moveTo(31, -78).lineTo(41, -96).lineTo(12, -84).closePath().fill("#a7afbd");
+  head.roundRect(-36, -76, 72, 58, 22).fill(bodyColor);
+  head.moveTo(-28, -70).lineTo(-48, -104).lineTo(-4, -84).closePath().fill(bodyColor);
+  head.moveTo(28, -70).lineTo(48, -104).lineTo(4, -84).closePath().fill(bodyColor);
+  head.moveTo(-31, -78).lineTo(-41, -96).lineTo(-12, -84).closePath().fill(lightColor);
+  head.moveTo(31, -78).lineTo(41, -96).lineTo(12, -84).closePath().fill(lightColor);
   companion.addChild(head);
 
   const face = new PIXI.Graphics();
@@ -153,21 +162,60 @@ function createCreaturePlaceholder(creature = FALLBACK_CREATURE) {
     .quadraticCurveTo(92, -32, 66, -82)
     .quadraticCurveTo(110, -40, 78, 22)
     .closePath()
-    .fill("#707887");
+    .fill(bodyColor);
   tail
     .moveTo(76, -72)
     .quadraticCurveTo(104, -38, 76, 2)
     .quadraticCurveTo(94, -42, 76, -72)
-    .fill("#a7afbd");
+    .fill(lightColor);
   companion.addChildAt(tail, 1);
 
   if (creature.element === "fire") {
     const flame = createFlameAccent();
     companion.addChild(flame);
     companion.__accentFlame = flame;
+  } else {
+    const emblem = createEmblemAccent(creature.placeholder?.emblemShape, lightColor);
+    if (emblem) companion.addChild(emblem);
   }
 
   return companion;
+}
+
+function createEmblemAccent(emblemShape, color) {
+  if (!emblemShape || emblemShape === "moon") return null;
+  const emblem = new PIXI.Graphics();
+
+  if (emblemShape === "droplet") {
+    emblem
+      .moveTo(0, -110)
+      .quadraticCurveTo(12, -92, 0, -80)
+      .quadraticCurveTo(-12, -92, 0, -110)
+      .closePath()
+      .fill({ color, alpha: 0.85 });
+  } else if (emblemShape === "leaf") {
+    emblem
+      .moveTo(0, -112)
+      .quadraticCurveTo(16, -100, 0, -80)
+      .quadraticCurveTo(-16, -100, 0, -112)
+      .closePath()
+      .fill({ color, alpha: 0.85 });
+    emblem.moveTo(0, -108).lineTo(0, -84).stroke({ color: 0xffffff, alpha: 0.4, width: 1.5 });
+  } else if (emblemShape === "bolt") {
+    emblem
+      .moveTo(4, -114)
+      .lineTo(-8, -94)
+      .lineTo(-1, -94)
+      .lineTo(-5, -78)
+      .lineTo(9, -98)
+      .lineTo(2, -98)
+      .closePath()
+      .fill({ color, alpha: 0.9 });
+  } else {
+    return null;
+  }
+
+  return emblem;
 }
 
 function createFlameAccent() {
