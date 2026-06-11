@@ -7,14 +7,6 @@
     <link rel="preload" as="image" href="./assets/backgrounds/LakeNightCamp_v2/bg_day_base.png" />
     <link rel="preload" as="image" href="./assets/backgrounds/LakeNightCamp_v2/bg_night_base.png" />
     <link rel="preload" as="image" href="./assets/platforms/LakeNightCamp_v2/magic_circle.png" />
-    <link rel="preload" as="image" href="./assets/ui/nav/nav_explore_default.png" />
-    <link rel="preload" as="image" href="./assets/ui/nav/nav_explore_active.png" />
-    <link rel="preload" as="image" href="./assets/ui/nav/nav_care_default.png" />
-    <link rel="preload" as="image" href="./assets/ui/nav/nav_care_active.png" />
-    <link rel="preload" as="image" href="./assets/ui/nav/nav_grow_default.png" />
-    <link rel="preload" as="image" href="./assets/ui/nav/nav_grow_active.png" />
-    <link rel="preload" as="image" href="./assets/ui/nav/nav_memory_default.png" />
-    <link rel="preload" as="image" href="./assets/ui/nav/nav_memory_active.png" />
     <link rel="preload" as="image" href="./assets/characters/greyshade-cat/metadata/previews/greyshade-cat_idle_calm_preview.png" />
     <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2064%2064%27%3E%3Ccircle%20cx%3D%2732%27%20cy%3D%2732%27%20r%3D%2730%27%20fill%3D%27%23050915%27%2F%3E%3Ccircle%20cx%3D%2732%27%20cy%3D%2732%27%20r%3D%2718%27%20fill%3D%27%2300ced1%27%2F%3E%3C%2Fsvg%3E" />
     <link rel="stylesheet" href="./styles.css" />
@@ -25,7 +17,7 @@
         <div id="game-root" aria-label="心核連結棲地場景"></div>
 
         <section class="core-hud" aria-label="夥伴心核狀態">
-          <button class="core-hud-open" type="button" data-panel-trigger="character" aria-label="開啟夥伴狀態">
+          <button class="core-hud-open glass-interactive" type="button" data-panel-trigger="character" aria-label="開啟夥伴狀態">
             <span class="avatar-orb" aria-hidden="true">
               <span class="avatar-orb-portrait"></span>
             </span>
@@ -40,16 +32,16 @@
 
         <section class="quick-hud" aria-label="快速資源與設定">
           <div class="resource-hud" aria-label="資源">
-            <div class="resource-item coin" aria-label="金幣">
+            <div class="resource-item coin glass-subtle" aria-label="金幣">
               <span class="resource-icon" aria-hidden="true"></span>
               <span class="resource-value">1280</span>
             </div>
-            <div class="resource-item gem" aria-label="晶石">
+            <div class="resource-item gem glass-subtle" aria-label="晶石">
               <span class="resource-icon" aria-hidden="true"></span>
               <span class="resource-value">36</span>
             </div>
           </div>
-          <button id="btn-audio-toggle" class="quick-icon-button audio-toggle" type="button" aria-label="切換音效">
+          <button id="btn-audio-toggle" class="quick-icon-button audio-toggle glass-interactive" type="button" aria-label="切換音效">
             <svg class="quick-icon-svg" viewBox="0 0 24 24" aria-hidden="true">
               <path d="M4 9v6h4l5 4V5L8 9H4Z"></path>
               <path d="M16 8.5a5 5 0 0 1 0 7"></path>
@@ -57,7 +49,7 @@
             </svg>
           </button>
           <div class="settings-group">
-            <button id="btn-settings-toggle" class="quick-icon-button" type="button" aria-label="開啟設定" aria-expanded="false">
+            <button id="btn-settings-toggle" class="quick-icon-button glass-interactive" type="button" aria-label="開啟設定" aria-expanded="false">
               <svg class="quick-icon-svg" viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M12 8.2a3.8 3.8 0 1 0 0 7.6 3.8 3.8 0 0 0 0-7.6Z"></path>
                 <path d="M19.4 13.4a7.8 7.8 0 0 0 .05-2.7l2-1.45-2-3.46-2.42 1a8.2 8.2 0 0 0-2.33-1.35L14.4 3h-4l-.3 2.44A8.2 8.2 0 0 0 7.77 6.8l-2.42-1-2 3.46 2 1.45a7.8 7.8 0 0 0 .05 2.7l-2.02 1.43 2 3.46 2.45-1a8.1 8.1 0 0 0 2.28 1.3l.29 2.4h4l.29-2.4a8.1 8.1 0 0 0 2.28-1.3l2.45 1 2-3.46-2.02-1.43Z"></path>
@@ -84,7 +76,7 @@
           </div>
         </section>
 
-        <button class="soul-talk-launcher" type="button" data-panel-trigger="soulTalk" aria-label="開啟心語對話">
+        <button class="soul-talk-launcher glass-interactive rune-border" type="button" data-panel-trigger="soulTalk" aria-label="開啟心語對話">
           <span>
             <strong>心語</strong>
             <em id="soul-talk-preview">我在這裡，安靜地看著你。</em>
@@ -93,36 +85,28 @@
         </button>
 
         <nav class="bottom-nav" aria-label="主要行動">
-          <button type="button" data-action="explore" aria-label="探索">
-            <span class="nav-image" aria-hidden="true">
-              <img class="nav-art nav-art-default" src="./assets/ui/nav/nav_explore_default.png" width="512" height="388" alt="" decoding="async" draggable="false" />
-              <img class="nav-art nav-art-active" src="./assets/ui/nav/nav_explore_active.png" width="512" height="388" alt="" decoding="async" draggable="false" />
-            </span>
+          <button type="button" class="glass-interactive" data-action="explore" aria-label="探索">
+            <span class="nav-icon-geo" aria-hidden="true"></span>
+            <span class="nav-label">探索</span>
           </button>
-          <button type="button" data-action="care" aria-label="照顧">
-            <span class="nav-image" aria-hidden="true">
-              <img class="nav-art nav-art-default" src="./assets/ui/nav/nav_care_default.png" width="512" height="388" alt="" decoding="async" draggable="false" />
-              <img class="nav-art nav-art-active" src="./assets/ui/nav/nav_care_active.png" width="512" height="388" alt="" decoding="async" draggable="false" />
-            </span>
+          <button type="button" class="glass-interactive" data-action="care" aria-label="照顧">
+            <span class="nav-icon-geo" aria-hidden="true"></span>
+            <span class="nav-label">照顧</span>
           </button>
-          <button type="button" data-action="grow" aria-label="成長">
-            <span class="nav-image" aria-hidden="true">
-              <img class="nav-art nav-art-default" src="./assets/ui/nav/nav_grow_default.png" width="512" height="388" alt="" decoding="async" draggable="false" />
-              <img class="nav-art nav-art-active" src="./assets/ui/nav/nav_grow_active.png" width="512" height="388" alt="" decoding="async" draggable="false" />
-            </span>
+          <button type="button" class="glass-interactive" data-action="grow" aria-label="成長">
+            <span class="nav-icon-geo" aria-hidden="true"></span>
+            <span class="nav-label">成長</span>
           </button>
-          <button type="button" data-action="memory" aria-label="記憶">
-            <span class="nav-image" aria-hidden="true">
-              <img class="nav-art nav-art-default" src="./assets/ui/nav/nav_memory_default.png" width="512" height="388" alt="" decoding="async" draggable="false" />
-              <img class="nav-art nav-art-active" src="./assets/ui/nav/nav_memory_active.png" width="512" height="388" alt="" decoding="async" draggable="false" />
-            </span>
+          <button type="button" class="glass-interactive" data-action="memory" aria-label="記憶">
+            <span class="nav-icon-geo" aria-hidden="true"></span>
+            <span class="nav-label">記憶</span>
           </button>
         </nav>
 
         <div class="panel-layer" data-active-panel="none" aria-hidden="true">
           <button class="panel-backdrop" type="button" data-panel-close aria-label="關閉面板"></button>
 
-          <section class="modal-panel character-modal" role="dialog" aria-modal="true" aria-labelledby="character-title" data-panel="character">
+          <section class="modal-panel character-modal rune-border" role="dialog" aria-modal="true" aria-labelledby="character-title" data-panel="character">
             <header class="panel-header">
               <div>
                 <p>心核夥伴</p>
@@ -189,13 +173,20 @@
           <section class="modal-panel map-modal" role="dialog" aria-modal="true" aria-labelledby="map-title" data-panel="map">
             <header class="panel-header">
               <div>
-                <p>夜湖周邊</p>
+                <p>心核路徑 ・ 夜湖周邊</p>
                 <h2 id="map-title">探索地圖</h2>
               </div>
               <button type="button" class="panel-close" data-panel-close aria-label="關閉探索地圖">X</button>
             </header>
-            <p class="panel-subcopy">選擇一個節點，和夥伴一起出發。</p>
-            <div id="map-node-list" class="map-node-list" aria-label="探索節點"></div>
+            <div id="map-canvas" class="soul-map rune-border" aria-label="探索節點地圖">
+              <svg id="map-paths" viewBox="0 0 100 132" preserveAspectRatio="none" aria-hidden="true"></svg>
+              <div id="map-node-layer"></div>
+            </div>
+            <div id="map-result" class="map-toast" role="status" aria-live="polite">
+              <p id="map-result-title" class="map-toast-title"></p>
+              <p id="map-result-text" class="map-toast-text"></p>
+              <div id="map-result-chips" class="map-toast-chips"></div>
+            </div>
           </section>
 
           <section class="modal-panel battle-modal" role="dialog" aria-modal="true" aria-labelledby="battle-title" data-panel="battle">
@@ -248,7 +239,7 @@
             <div id="codex-body" class="codex-body" aria-label="圖鑑內容"></div>
           </section>
 
-          <section id="soul-talk-panel" class="modal-panel soul-talk-modal" role="dialog" aria-modal="true" aria-label="心語對話" data-panel="soulTalk">
+          <section id="soul-talk-panel" class="modal-panel soul-talk-modal glass-strong rune-border" role="dialog" aria-modal="true" aria-label="心語對話" data-panel="soulTalk">
             <button type="button" class="panel-close" data-panel-close aria-label="關閉心語對話">X</button>
             <p id="status-text" class="soul-status-text" aria-live="polite">心語</p>
             <div id="chat-log" class="chat-log" aria-live="polite"></div>

@@ -115,3 +115,44 @@ git clean -fd r2/src/data/companionRegistry.js r2/src/data/explorationNodes.js \
 （注意：`git clean` 也會影響 Grok Build 前置的未追蹤 docs/reference，請逐檔確認後再執行；最保守做法是只 `git checkout -- r2/` 還原被修改的已追蹤檔，再手動刪除上列新檔。）
 
 玩家端 rollback：清除瀏覽器 localStorage 的 `nexusLinkR2State:v1` 即可重置 R2 進度（不影響 R1）。
+
+---
+
+# 附錄：UI Polish v1-A（2026-06-11）
+
+範圍：Glassmorphism/Game Feel token 系統 + 探索地圖視覺化。改動 3 檔，全部 `r2/**`：`styles.css`、`index.html`、`src/ui/mapController.js`。引擎（battle/exploration/soulTalkComposer）、`resolveExplorationEvent`、encounter、localStorage schema 零改動。
+
+## A. Token 系統（styles.css `:root`）
+
+新增 token：
+- Glass：`--glass-bg` `--glass-bg-strong` `--glass-border` `--glass-highlight` `--glass-shadow` `--glass-blur-subtle(13px)` `--glass-blur(16px)` `--glass-blur-strong(22px)`
+- Glow：`--glow-cyan` `--glow-gold` `--glow-purple` `--glow-danger` `--glow-calm`
+- Feedback：`--feedback-bond` `--feedback-trust` `--feedback-progress` `--feedback-success` `--feedback-danger`
+
+整併方式：既有 alias（`--bg-panel-glass / --border-glass / --filter-glass / --shadow-glass`）重新指向新 token，18 處既有使用點（含 `.glass-panel` 共用塊 styles.css:155 區）自動升級，未重複宣告。`--shadow-glass` 升級為四層（頂緣高光 / 內陰影厚度 / 微弱折射 glow / 外部深影）。
+
+Reusable class：`.glass-subtle` `.glass-strong` `.glass-interactive`（hover 包 `@media(hover:hover)`）`.state-feedback` `.bond-glow` `.trust-glow` `.progress-glow` `.feedback-pulse`（一次性 620ms，只套小元素）`.rune-border`（四角符文角標方案，無 mask-composite、無相容性風險）。`.modal-panel/.action-sheet` 加 `::before` 頂緣 1px 高光。所有 backdrop-filter 均帶 `-webkit-` 前綴；統一 `prefers-reduced-motion` 區塊關閉常駐動畫。
+
+## B. 探索地圖視覺化
+
+- 列表卡片 → 「心核路徑」節點地圖：`#map-canvas`（`.soul-map.rune-border`，高 min(52vh,460px)）內含 inline SVG 光路層（`pointer-events:none`，4 條二次曲線，stroke-dash 慢速流動，→觀測點段帶 cyan→紫→紅漸層）+ 絕對定位節點層。
+- 佈局（UI 常數在 mapController，資料檔不動）：營地 (50,83) 中心、步道 (22,57)、河岸 (78,61)、遺跡 (28,24)、觀測點 (74,15)。
+- 節點狀態：`tone-safe/calm/discovery/danger`（eventType→tone 映射在 UI 層）、`is-visited`（visitCounts>0：實線+glow+×N 徽章）、`is-current`（lastNodeId：金色 3.2s 呼吸環）；danger 節點另有 4.4s 低頻符文微閃。
+- 互動流程不變：點擊 → 既有 `exploreNode` → `resolveExplorationEvent`；新行為僅 UI 層——探索後地圖保持開啟讓玩家看到狀態變化。
+
+## C. Game Feel 回饋
+
+| 事件 | 回饋 | 技術 |
+|---|---|---|
+| 節點點擊 | 光點 ping 360ms | WAAPI 一次性 |
+| 探索結算 | toast 滑入（雙語節點名 + 結果文 + 數值 chips），4.6s 自動淡出 | CSS transition |
+| 遭遇敵人 | toast 轉 danger + 光路染紅（`.is-alert`）+ 650ms 後進戰鬥 | class + setTimeout |
+| 能量/羈絆/信任變化 | toast chips（成功綠/羈絆紫/信任金/負值紅）+ 對應 HUD 數值 `.feedback-pulse` | CSS keyframes |
+| 記憶生成 | 「＋ 留下了一段記憶」chip + 心語預覽脈動 | 同上 |
+| 探索完成 | 節點金色 ring burst 700ms | WAAPI |
+
+JS 端以 `matchMedia('(prefers-reduced-motion: reduce)')` 跳過全部 WAAPI；遭遇延遲在 reduced-motion 下為 0。
+
+## 驗證結果（smoke check 全過）
+
+R1 `/` 正常（key 548B 未變）；`/r2/` console 0 error；Soul Talk（含回聲）、夥伴切換、地圖 5 節點點擊、visited/current/×N（含 reload）、裂隙→戰鬥→勝場入帳、Codex 5 列、storage 僅 `nexusLinkR2State:v1`、390×844 佈局；`git status` 僅 3 個 r2 檔。修正過程中的小 bug：`.map-node-visits` 顯式 display 蓋掉 `[hidden]`（已補 `[hidden]{display:none}`）。未 commit、未 push。
