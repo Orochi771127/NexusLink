@@ -2,45 +2,60 @@ import { qs } from "../utils/dom.js";
 import { getCompanionById } from "../data/companionRegistry.js";
 import { getExplorationNodeById } from "../data/explorationNodes.js";
 import {
-  applyEnemyTurn,
-  applyPlayerSkill,
-  canUseSkill,
-  createBattleSession,
+  applyNoiseTurn,
+  applyPlayerAction,
+  canUseAction,
+  createStandoffSession,
+  getOutcomeCopy,
   getResonanceSkillName,
-  isBattleOver,
-  summarizeBattleOutcome
+  settleStandoff,
+  summarizeStandoffOutcome,
+  MAX_FATIGUE,
+  MAX_SYNC,
+  SHARD_GOAL
 } from "../engine/battleEngine.js";
+import { buildEventReflection } from "../engine/soulTalkComposer.js";
+import {
+  createHabitatTraceFromMemory,
+  pruneHabitatTraces,
+  upsertHabitatTrace
+} from "../engine/habitatTraceEngine.js";
 
-const ENEMY_TURN_DELAY_MS = 620;
+const NOISE_TURN_DELAY_MS = 620;
 
+/**
+ * 心核對峙 controller。
+ * 介面維持 createBattleController / startBattle，app.js 與 mapController wiring 不變。
+ */
 export function createBattleController({ store, panelManager, soulTalkController, saveCurrentState, statusText }) {
   const nodeLabelEl = qs("#battle-node-label");
-  const enemyNameEl = qs("#battle-enemy-name");
-  const enemyHpTextEl = qs("#battle-enemy-hp-text");
-  const enemyHpFillEl = qs("#battle-enemy-hp");
-  const playerNameEl = qs("#battle-player-name");
-  const playerHpTextEl = qs("#battle-player-hp-text");
-  const playerHpFillEl = qs("#battle-player-hp");
-  const playerEnergyEl = qs("#battle-player-energy");
+  const noiseNameEl = qs("#standoff-noise-name");
+  const noiseTextEl = qs("#standoff-noise-text");
+  const noiseFillEl = qs("#standoff-noise-fill");
+  const companionNameEl = qs("#standoff-companion-name");
+  const stabilityTextEl = qs("#standoff-stability-text");
+  const stabilityFillEl = qs("#standoff-stability-fill");
+  const syncPipsEl = qs("#standoff-sync-pips");
+  const fatiguePipsEl = qs("#standoff-fatigue-pips");
+  const shardsEl = qs("#standoff-shards");
   const logEl = qs("#battle-log");
-  const skillButtons = {
-    basic_attack: qs("#battle-skill-basic"),
-    guard: qs("#battle-skill-guard"),
-    resonance: qs("#battle-skill-resonance")
+  const actionButtons = {
+    resonance: qs("#standoff-act-resonance"),
+    barrier: qs("#standoff-act-barrier"),
+    pulse: qs("#standoff-act-pulse"),
+    retreat: qs("#standoff-act-retreat")
   };
-  const retreatButton = qs("#battle-retreat");
   const finishButton = qs("#battle-finish");
 
   let session = null;
-  let enemyTurnTimer = null;
+  let noiseTurnTimer = null;
   let removeCloseGuard = null;
   let renderedLogCount = 0;
 
   function bind() {
-    Object.entries(skillButtons).forEach(([skillId, button]) => {
-      button?.addEventListener("click", () => handlePlayerSkill(skillId));
+    Object.entries(actionButtons).forEach(([actionId, button]) => {
+      button?.addEventListener("click", () => handleAction(actionId));
     });
-    retreatButton?.addEventListener("click", () => endBattle("retreat"));
     finishButton?.addEventListener("click", () => {
       panelManager.closePanel({ force: true });
     });
@@ -49,25 +64,25 @@ export function createBattleController({ store, panelManager, soulTalkController
   function startBattle({ enemyId, nodeId }) {
     const state = store.getState();
     const companion = getCompanionById(state.activeCompanionId);
-    session = createBattleSession({ companion, enemyId, nodeId, state });
+    session = createStandoffSession({ companion, enemyId, nodeId, state });
     renderedLogCount = 0;
     if (logEl) logEl.innerHTML = "";
 
     const node = getExplorationNodeById(nodeId);
-    if (nodeLabelEl) nodeLabelEl.textContent = node ? `${node.label.zh} ・ 遭遇` : "遭遇";
-    if (playerNameEl) playerNameEl.textContent = session.companionName;
-    if (enemyNameEl) enemyNameEl.textContent = session.enemyName;
-    if (skillButtons.resonance) {
-      skillButtons.resonance.textContent = getResonanceSkillName(session.emblem);
+    if (nodeLabelEl) nodeLabelEl.textContent = node ? `${node.label.zh} ・ 場域不安定` : "場域不安定";
+    if (companionNameEl) companionNameEl.textContent = `${session.companionName}的心核`;
+    if (noiseNameEl) noiseNameEl.textContent = `${session.enemyName}的雜訊`;
+    const resonanceButton = actionButtons.resonance;
+    if (resonanceButton) {
+      resonanceButton.querySelector("strong").textContent = getResonanceSkillName(session.emblem);
     }
     if (finishButton) finishButton.hidden = true;
-    if (retreatButton) retreatButton.hidden = false;
 
     removeCloseGuard?.();
     removeCloseGuard = panelManager.registerCloseGuard("battle", () => {
-      // Escape／backdrop 不直接離開戰鬥：轉成撤退結算。
+      // Escape／backdrop 不會無聲離開：轉成「先撤退」結算（被尊重的離開）。
       if (session && session.turn !== "ended") {
-        endBattle("retreat");
+        endStandoff("retreated");
       }
       return true;
     });
@@ -76,66 +91,97 @@ export function createBattleController({ store, panelManager, soulTalkController
     panelManager.openPanel("battle");
   }
 
-  function handlePlayerSkill(skillId) {
+  function handleAction(actionId) {
     if (!session || session.turn !== "player") return;
-    if (!canUseSkill(session, skillId)) return;
 
-    session = applyPlayerSkill(session, skillId);
-    render();
-
-    const verdict = isBattleOver(session);
-    if (verdict.over) {
-      endBattle(verdict.result);
+    if (actionId === "retreat") {
+      endStandoff("retreated");
       return;
     }
 
-    window.clearTimeout(enemyTurnTimer);
-    enemyTurnTimer = window.setTimeout(() => {
-      if (!session || session.turn !== "enemy") return;
-      session = applyEnemyTurn(session);
-      render();
-      const enemyVerdict = isBattleOver(session);
-      if (enemyVerdict.over) {
-        endBattle(enemyVerdict.result);
-      }
-    }, ENEMY_TURN_DELAY_MS);
-  }
+    if (!canUseAction(session, actionId)) return;
 
-  function endBattle(result) {
-    if (!session) return;
-    window.clearTimeout(enemyTurnTimer);
-    session = { ...session, turn: "ended", log: [...session.log] };
-
-    const outcome = summarizeBattleOutcome(result, store.getState());
-    session.log.push({ kind: "system", text: outcome.message });
+    session = applyPlayerAction(session, actionId);
     render();
 
-    store.setState(outcome.statePatch);
-    saveCurrentState?.();
-    soulTalkController.addChat("system", outcome.message);
+    const verdict = settleStandoff(session);
+    if (verdict.settled) {
+      endStandoff(verdict.outcome);
+      return;
+    }
+
+    window.clearTimeout(noiseTurnTimer);
+    noiseTurnTimer = window.setTimeout(() => {
+      if (!session || session.turn !== "noise") return;
+      session = applyNoiseTurn(session);
+      render();
+      const noiseVerdict = settleStandoff(session);
+      if (noiseVerdict.settled) {
+        endStandoff(noiseVerdict.outcome);
+      }
+    }, NOISE_TURN_DELAY_MS);
+  }
+
+  function endStandoff(outcome) {
+    if (!session) return;
+    window.clearTimeout(noiseTurnTimer);
+    session = { ...session, turn: "ended", log: [...session.log] };
+
+    const now = Date.now();
+    const summary = summarizeStandoffOutcome(outcome, session, store.getState(), now);
+    const copy = getOutcomeCopy(outcome);
+    session.log.push({ kind: "system", text: `【${copy.title}】${summary.message}` });
+    render();
+
+    // 結算回寫：patch + 對峙記憶/棲地痕跡（走既有沉積鏈）。
+    store.updateState((draft) => {
+      Object.assign(draft, summary.statePatch);
+      if (summary.memorySeed) {
+        draft.emotionalMemories.push(summary.memorySeed);
+        draft.lastEmotionTag = summary.memorySeed.emotion;
+        const trace = createHabitatTraceFromMemory(summary.memorySeed, now);
+        if (trace) {
+          draft.habitatTraces = pruneHabitatTraces(upsertHabitatTrace(draft.habitatTraces || [], trace));
+        }
+      }
+    });
+    // 閉環：回棲地後，夥伴用自己的聲音記得這件事（companion 角色，非 system）。
+    const reflection = buildEventReflection(store.getState(), now, { outcomeOverride: outcome });
+    if (reflection) {
+      soulTalkController.addChat("companion", reflection);
+    }
     soulTalkController.renderChat();
-    if (statusText) statusText.textContent = outcome.message.split("\n")[0];
+    saveCurrentState?.(); // patch + 記憶 + 引用台詞一次落盤
+    if (statusText) statusText.textContent = copy.title;
 
     removeCloseGuard?.();
     removeCloseGuard = null;
     if (finishButton) finishButton.hidden = false;
-    if (retreatButton) retreatButton.hidden = true;
   }
 
   function render() {
     if (!session) return;
 
-    if (playerHpTextEl) playerHpTextEl.textContent = `${session.playerHp} / ${session.playerMaxHp}`;
-    if (enemyHpTextEl) enemyHpTextEl.textContent = `${session.enemyHp} / ${session.enemyMaxHp}`;
-    if (playerHpFillEl) playerHpFillEl.style.width = `${Math.round((session.playerHp / session.playerMaxHp) * 100)}%`;
-    if (enemyHpFillEl) enemyHpFillEl.style.width = `${Math.round((session.enemyHp / session.enemyMaxHp) * 100)}%`;
-    if (playerEnergyEl) playerEnergyEl.textContent = "●".repeat(session.playerEnergy) + "○".repeat(Math.max(0, 5 - session.playerEnergy));
+    if (noiseTextEl) noiseTextEl.textContent = `${session.noise.current} / ${session.noise.max}`;
+    if (stabilityTextEl) stabilityTextEl.textContent = `${session.stability.current} / ${session.stability.max}`;
+    if (noiseFillEl) noiseFillEl.style.width = `${Math.round((session.noise.current / session.noise.max) * 100)}%`;
+    if (stabilityFillEl) stabilityFillEl.style.width = `${Math.round((session.stability.current / session.stability.max) * 100)}%`;
+    if (syncPipsEl) syncPipsEl.textContent = "●".repeat(session.sync) + "○".repeat(Math.max(0, MAX_SYNC - session.sync));
+    if (fatiguePipsEl) {
+      fatiguePipsEl.textContent = "●".repeat(session.fatigue) + "○".repeat(Math.max(0, MAX_FATIGUE - session.fatigue));
+      fatiguePipsEl.classList.toggle("is-strained", session.fatigue >= MAX_FATIGUE - 1);
+    }
+    if (shardsEl) {
+      shardsEl.textContent = `◈ ${session.shards}/${SHARD_GOAL}`;
+      shardsEl.classList.toggle("is-glowing", session.shards >= SHARD_GOAL - 1);
+    }
 
     if (logEl) {
       for (let index = renderedLogCount; index < session.log.length; index += 1) {
         const entry = session.log[index];
         const line = document.createElement("p");
-        line.className = entry.kind === "enemy" ? "battle-log-enemy" : entry.kind === "system" ? "battle-log-system" : "battle-log-player";
+        line.className =
+          entry.kind === "noise" ? "battle-log-enemy" : entry.kind === "system" ? "battle-log-system" : "battle-log-player";
         line.textContent = entry.text;
         logEl.appendChild(line);
       }
@@ -145,11 +191,14 @@ export function createBattleController({ store, panelManager, soulTalkController
     }
 
     const isPlayerTurn = session.turn === "player";
-    Object.entries(skillButtons).forEach(([skillId, button]) => {
+    Object.entries(actionButtons).forEach(([actionId, button]) => {
       if (!button) return;
-      button.disabled = !isPlayerTurn || !canUseSkill(session, skillId);
+      if (actionId === "retreat") {
+        button.disabled = session.turn === "ended";
+        return;
+      }
+      button.disabled = !isPlayerTurn || !canUseAction(session, actionId);
     });
-    if (retreatButton) retreatButton.disabled = session.turn === "ended";
   }
 
   return { bind, startBattle };

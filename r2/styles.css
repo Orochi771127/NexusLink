@@ -7,15 +7,21 @@
   --color-energy: #FFD858;
   --color-memory: #A0C8FF;
 
-  /* === Nexus Link Glassmorphism Tokens === */
-  --glass-bg: rgba(8, 13, 32, 0.58);
-  --glass-bg-strong: rgba(8, 13, 32, 0.72);
-  --glass-border: rgba(36, 211, 255, 0.18);
-  --glass-highlight: rgba(255, 255, 255, 0.12);
-  --glass-shadow: rgba(0, 0, 0, 0.35);
+  /* === Nexus Link Glassmorphism Tokens ===
+     深藍「紫」玻璃基底（不死黑），blur 一律搭配 saturate 提色。 */
+  --glass-bg: rgba(18, 16, 44, 0.58);
+  --glass-bg-strong: rgba(14, 12, 38, 0.74);
+  --glass-border: rgba(36, 211, 255, 0.2);
+  --glass-highlight: rgba(255, 255, 255, 0.28);
+  --glass-shadow: rgba(0, 0, 0, 0.38);
   --glass-blur-subtle: 13px;
   --glass-blur: 16px;
   --glass-blur-strong: 22px;
+  --glass-filter-subtle: blur(var(--glass-blur-subtle)) saturate(125%);
+  --glass-filter: blur(var(--glass-blur)) saturate(130%);
+  --glass-filter-strong: blur(var(--glass-blur-strong)) saturate(135%);
+  /* 統一 material：HUD / Soul Talk / Bottom Dock 共用的漸層邊框（border-box 層） */
+  --glass-gradient-border: linear-gradient(135deg, rgba(36, 211, 255, 0.45), rgba(167, 139, 250, 0.35) 55%, rgba(255, 214, 128, 0.3));
 
   /* === Cyber-Taoism Glow Tokens === */
   --glow-cyan: rgba(36, 211, 255, 0.45);
@@ -31,21 +37,27 @@
   --feedback-success: #4ade80;
   --feedback-danger: #f87171;
 
-  /* 既有 alias：重新指向新 token，18 處使用點自動升級 */
-  --bg-panel-glass: linear-gradient(145deg, rgba(13, 19, 40, 0.62) 0%, var(--glass-bg-strong) 100%);
+  /* 既有 alias：重新指向新 token，所有使用點自動升級。
+     --bg-panel-glass 本身就是多層背景：
+     左上 specular 反光 → 頂緣 sheen → 深藍紫玻璃基底（D1：不佔用 pseudo）。 */
+  --bg-panel-glass:
+    radial-gradient(120% 90% at 12% -4%, rgba(255, 255, 255, 0.1), transparent 42%),
+    linear-gradient(180deg, rgba(190, 225, 255, 0.07), transparent 16%),
+    linear-gradient(150deg, rgba(30, 26, 64, 0.6) 0%, var(--glass-bg-strong) 100%);
   --border-glass: 1px solid var(--glass-border);
-  --filter-glass: blur(var(--glass-blur));
+  --filter-glass: var(--glass-filter);
   --shadow-glass:
     inset 0 1px 0 var(--glass-highlight),
-    inset 0 -14px 26px rgba(0, 0, 0, 0.16),
-    0 0 22px rgba(36, 211, 255, 0.07),
-    0 12px 36px var(--glass-shadow);
+    inset 0 -20px 40px rgba(92, 225, 230, 0.07),
+    0 0 24px rgba(36, 211, 255, 0.1),
+    0 18px 60px var(--glass-shadow);
   --text: #ecf7ff;
   --muted: #9db3c9;
   --edge: 16px;
   --top-safe: max(env(safe-area-inset-top), 12px);
   --bottom-safe: max(env(safe-area-inset-bottom), 12px);
-  --nav-height: 92px;
+  /* 僅供 Soul Talk / dev-lab 計算底部讓位（dock 本體 height:auto 自適應） */
+  --nav-height: 76px;
   --nav-gap: 12px;
   --safe-top: var(--top-safe);
   --safe-bottom: var(--bottom-safe);
@@ -193,15 +205,19 @@ canvas {
   padding: 12px 13px;
   color: var(--text);
   cursor: pointer;
+  /* 漸層邊框（cyan→violet）：雙背景 padding-box / border-box 技法 */
+  border: 1px solid transparent;
   background:
-    radial-gradient(circle at 18% 50%, rgba(36, 211, 255, 0.14), transparent 44%),
-    linear-gradient(150deg, var(--glass-bg) 0%, var(--glass-bg-strong) 100%);
-  border-color: rgba(36, 211, 255, 0.32);
+    radial-gradient(130% 100% at 10% -8%, rgba(255, 255, 255, 0.13), transparent 42%) padding-box,
+    radial-gradient(circle at 18% 55%, rgba(36, 211, 255, 0.13), transparent 46%) padding-box,
+    linear-gradient(150deg, rgba(30, 26, 64, 0.72) 0%, rgba(12, 10, 32, 0.86) 100%) padding-box,
+    var(--glass-gradient-border) border-box;
   box-shadow:
     inset 0 1px 0 var(--glass-highlight),
-    inset 0 -1px 0 rgba(255, 214, 128, 0.12),
-    0 0 22px rgba(36, 211, 255, 0.12),
-    0 12px 34px var(--glass-shadow);
+    inset 0 -18px 34px rgba(92, 225, 230, 0.07),
+    inset 0 -1px 0 rgba(255, 214, 128, 0.16),
+    0 0 24px rgba(36, 211, 255, 0.14),
+    0 14px 40px var(--glass-shadow);
 }
 
 .avatar-orb {
@@ -210,11 +226,16 @@ canvas {
   flex-shrink: 0;
   width: 46px;
   aspect-ratio: 1;
-  border: 1px solid rgba(0, 206, 209, 0.46);
+  /* 金色發光環（外）+ 青光（內）：對齊北極星 mockup 的頭像金環 */
+  border: 1.5px solid rgba(255, 214, 128, 0.55);
   border-radius: 999px;
   overflow: hidden;
-  background: rgba(4, 9, 23, 0.92);
-  box-shadow: 0 0 24px rgba(0, 206, 209, 0.32), inset 0 0 18px rgba(160, 200, 255, 0.18);
+  background: rgba(8, 9, 26, 0.92);
+  box-shadow:
+    0 0 16px var(--glow-gold),
+    0 0 30px rgba(0, 206, 209, 0.2),
+    inset 0 0 0 1.5px rgba(0, 206, 209, 0.28),
+    inset 0 0 18px rgba(160, 200, 255, 0.18);
 }
 
 .avatar-orb-portrait {
@@ -534,13 +555,90 @@ canvas {
   align-items: center;
   gap: 12px;
   max-width: 430px;
-  min-height: 62px;
+  min-height: 64px;
   margin-inline: auto;
-  border-radius: 16px;
+  border-radius: 18px;
   padding: 10px 14px;
   color: var(--text);
   text-align: left;
   cursor: pointer;
+  overflow: hidden;
+  /* 大型玻璃心語欄：cyan→violet 漸層邊框 + 中心偏左內發光核心 */
+  border: 1px solid transparent;
+  background:
+    radial-gradient(90% 130% at 18% 50%, rgba(36, 211, 255, 0.14), transparent 52%) padding-box,
+    radial-gradient(70% 120% at 78% 50%, rgba(167, 139, 250, 0.1), transparent 60%) padding-box,
+    radial-gradient(140% 100% at 10% -10%, rgba(255, 255, 255, 0.12), transparent 40%) padding-box,
+    linear-gradient(155deg, rgba(28, 24, 60, 0.7), rgba(11, 10, 30, 0.85)) padding-box,
+    var(--glass-gradient-border) border-box;
+  box-shadow:
+    inset 0 1px 0 var(--glass-highlight),
+    inset 0 -22px 44px rgba(92, 225, 230, 0.08),
+    0 0 26px rgba(36, 211, 255, 0.16),
+    0 16px 50px var(--glass-shadow);
+}
+
+/* 靈魂波形面板：中央 cyan-purple 光波核心（置於文字後方，柔和呼吸） */
+.soul-core-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 70%;
+  height: 180%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(48% 60% at 42% 50%, rgba(36, 211, 255, 0.16), transparent 70%),
+    radial-gradient(40% 55% at 62% 50%, rgba(167, 139, 250, 0.13), transparent 72%);
+  filter: blur(6px);
+  animation: soulCoreBreath 4.2s ease-in-out infinite;
+}
+
+@keyframes soulCoreBreath {
+  0%, 100% { opacity: 0.55; transform: translate(-50%, -50%) scale(0.96); }
+  50% { opacity: 0.95; transform: translate(-50%, -50%) scale(1.04); }
+}
+
+/* 文字疊在光波之上 */
+.soul-talk-launcher > span:first-child,
+.soul-talk-launcher b {
+  position: relative;
+  z-index: 1;
+}
+
+/* 心語欄右側的細聲波裝飾（純 CSS，不干擾文字） */
+.soul-wave-deco {
+  position: absolute;
+  top: 50%;
+  right: 86px;
+  width: 46px;
+  height: 26px;
+  transform: translateY(-50%);
+  pointer-events: none;
+  opacity: 0.5;
+  background:
+    linear-gradient(180deg, transparent 36%, var(--color-cyan) 36% 64%, transparent 64%) 0 0 / 3px 100%,
+    linear-gradient(180deg, transparent 22%, rgba(125, 50, 255, 0.9) 22% 78%, transparent 78%) 7px 0 / 3px 100%,
+    linear-gradient(180deg, transparent 8%, var(--color-cyan) 8% 92%, transparent 92%) 14px 0 / 3px 100%,
+    linear-gradient(180deg, transparent 26%, rgba(167, 139, 250, 0.9) 26% 74%, transparent 74%) 21px 0 / 3px 100%,
+    linear-gradient(180deg, transparent 40%, var(--color-cyan) 40% 60%, transparent 60%) 28px 0 / 3px 100%,
+    linear-gradient(180deg, transparent 18%, rgba(103, 232, 249, 0.85) 18% 82%, transparent 82%) 35px 0 / 3px 100%,
+    linear-gradient(180deg, transparent 34%, rgba(167, 139, 250, 0.8) 34% 66%, transparent 66%) 42px 0 / 3px 100%;
+  background-repeat: no-repeat;
+  animation: soulWaveBreath 3.2s ease-in-out infinite;
+}
+
+@keyframes soulWaveBreath {
+  0%, 100% { opacity: 0.34; transform: translateY(-50%) scaleY(0.85); }
+  50% { opacity: 0.6; transform: translateY(-50%) scaleY(1); }
+}
+
+@media (max-width: 400px) {
+  .soul-wave-deco {
+    right: 78px;
+    width: 32px;
+  }
 }
 
 .soul-talk-launcher em {
@@ -579,13 +677,38 @@ canvas {
   z-index: var(--z-nav);
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 10px;
+  /* seam fix：縮小 gap，PNG 切角之間不露大片底色 */
+  gap: clamp(3px, 1.2vw, 6px);
   width: auto;
   max-width: 430px;
-  height: var(--nav-height);
+  height: auto;
+  min-height: unset;
   margin-inline: auto;
-  padding: 8px;
-  border-radius: 16px;
+  padding-block: clamp(6px, 1.8vw, 10px);
+  padding-inline: clamp(7px, 2vw, 10px);
+  border-radius: 18px;
+  /* seam fix：底色降黑提青——縫隙處看起來像玻璃透光，不是黑洞 */
+  border: 1px solid rgba(36, 211, 255, 0.16);
+  background:
+    radial-gradient(140% 100% at 10% -8%, rgba(255, 255, 255, 0.06), transparent 40%),
+    radial-gradient(120% 90% at 50% 110%, rgba(36, 211, 255, 0.07), transparent 60%),
+    linear-gradient(165deg, rgba(30, 28, 62, 0.32), rgba(14, 14, 36, 0.46));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    0 0 18px rgba(36, 211, 255, 0.08),
+    0 14px 40px rgba(0, 0, 0, 0.38);
+}
+
+/* 底座頂緣高光線（輔助層強度） */
+.bottom-nav::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 8%;
+  right: 8%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  pointer-events: none;
 }
 
 .bottom-nav button,
@@ -597,259 +720,103 @@ canvas {
   transition: transform 160ms ease, filter 160ms ease, opacity 160ms ease, box-shadow 160ms ease, border-color 160ms ease, background 160ms ease;
 }
 
+/* 方案 A：PNG 是完整按鈕美術（八角框/bevel/glow/label 已 baked），
+   button 只負責點擊區、layout、active 切換與柔光——不再畫第二層框。 */
 .bottom-nav button {
   position: relative;
-  display: grid;
-  grid-template-rows: minmax(0, 1fr) auto;
-  place-items: center;
+  display: block;
   min-width: 0;
-  height: 68px;
-  overflow: hidden;
-  border: 1px solid var(--glass-border);
-  border-radius: 14px;
-  background:
-    radial-gradient(circle at 50% 16%, rgba(36, 211, 255, 0.14), transparent 46%),
-    var(--glass-bg);
-  box-shadow:
-    inset 0 1px 0 var(--glass-highlight),
-    inset 0 -10px 18px rgba(0, 0, 0, 0.18);
+  width: 100%;
+  /* 尊重 PNG 原始比例：按鈕即圖、圖即按鈕，hitbox 100% 被美術填滿 */
+  aspect-ratio: 512 / 388;
+  height: auto;
+  padding: 0;
+  overflow: visible;
+  border: 0;
+  border-radius: 12px;
+  /* seam fix：平時完全透明——PNG 切角外不露任何底光（光暈移至 hover/press/active） */
+  background: transparent;
+  box-shadow: none;
   color: var(--text);
-  font-size: 11px;
-  font-weight: 900;
 }
 
-/* 符文內框：玻璃 button 內的能量層 */
-.bottom-nav button::before {
-  position: absolute;
-  inset: 7px 9px 24px;
-  content: "";
-  border-radius: 10px;
-  border: 1px solid rgba(36, 211, 255, 0.1);
-  background: rgba(36, 211, 255, 0.05);
-  opacity: 0.85;
-}
-
-/* 金色頂緣符文短線：Cyber-Taoism 角標 */
-.bottom-nav button::after {
-  position: absolute;
-  top: -1px;
-  left: 50%;
-  width: 18px;
-  height: 2px;
-  content: "";
-  border-radius: 2px;
-  background: linear-gradient(90deg, transparent, var(--glow-gold), transparent);
-  transform: translateX(-50%);
-  opacity: 0.55;
-  transition: opacity 200ms ease, width 200ms ease;
-}
-
-.nav-icon-geo {
-  position: relative;
-  z-index: 1;
-  display: grid;
-  place-items: center;
-  width: 36px;
-  height: 36px;
-  margin-top: 8px;
-  color: rgba(160, 200, 255, 0.9);
-  opacity: 0.7;
-  filter: drop-shadow(0 0 4px rgba(0, 206, 209, 0.4));
-  transform-origin: center;
-  transition: color 160ms ease, filter 160ms ease, opacity 160ms ease, transform 160ms ease;
-}
-
-.nav-icon-geo::before,
-.nav-icon-geo::after {
-  position: absolute;
-  content: "";
-  box-sizing: border-box;
-  transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease, transform 160ms ease, opacity 160ms ease;
-}
-
-.bottom-nav button[data-action="explore"] .nav-icon-geo {
-  transform: rotate(45deg);
-}
-
-.bottom-nav button[data-action="explore"] .nav-icon-geo::before {
-  inset: 7px;
-  border: 1px solid currentColor;
-  border-radius: 3px;
-  background:
-    linear-gradient(90deg, transparent 46%, currentColor 48% 52%, transparent 54%),
-    linear-gradient(0deg, transparent 46%, currentColor 48% 52%, transparent 54%),
-    radial-gradient(circle, rgba(0, 206, 209, 0.24), transparent 62%);
-  box-shadow: 0 0 16px rgba(0, 206, 209, 0.42), inset 0 0 10px rgba(0, 206, 209, 0.18);
-}
-
-.bottom-nav button[data-action="explore"] .nav-icon-geo::after {
-  inset: 1px 16px;
-  border-radius: 999px;
-  background: linear-gradient(180deg, transparent, currentColor, transparent);
-  box-shadow: 0 0 12px rgba(0, 206, 209, 0.7);
-}
-
-.bottom-nav button[data-action="care"] .nav-icon-geo::before {
-  inset: 5px;
-  border: 1px solid currentColor;
-  border-radius: 999px;
-  background: radial-gradient(circle, transparent 32%, rgba(0, 206, 209, 0.12) 34%, transparent 64%);
-  box-shadow: 0 0 15px rgba(0, 206, 209, 0.38), inset 0 0 12px rgba(160, 200, 255, 0.12);
-}
-
-.bottom-nav button[data-action="care"] .nav-icon-geo::after {
-  left: 14px;
-  top: 14px;
-  width: 8px;
-  height: 8px;
-  border: 1px solid currentColor;
-  border-radius: 2px;
-  background: rgba(0, 206, 209, 0.28);
-  box-shadow:
-    0 0 0 6px rgba(0, 206, 209, 0.08),
-    0 0 14px rgba(0, 206, 209, 0.66);
-}
-
-.bottom-nav button[data-action="grow"] .nav-icon-geo::before {
-  left: 7px;
-  top: 4px;
-  width: 22px;
-  height: 28px;
-  clip-path: polygon(50% 0, 100% 100%, 0 100%);
-  background:
-    linear-gradient(90deg, transparent 47%, currentColor 48% 52%, transparent 53%),
-    repeating-linear-gradient(0deg, rgba(0, 206, 209, 0.0) 0 5px, rgba(0, 206, 209, 0.32) 6px 7px),
-    linear-gradient(180deg, rgba(0, 206, 209, 0.32), rgba(125, 50, 255, 0.08));
-  box-shadow: 0 0 16px rgba(0, 206, 209, 0.42);
-}
-
-.bottom-nav button[data-action="grow"] .nav-icon-geo::after {
-  left: 11px;
-  top: 15px;
-  width: 14px;
-  height: 13px;
-  border-left: 1px solid currentColor;
-  border-right: 1px solid currentColor;
-  background:
-    linear-gradient(90deg, currentColor 0 1px, transparent 1px 6px, currentColor 6px 7px, transparent 7px 13px, currentColor 13px),
-    linear-gradient(0deg, currentColor 0 1px, transparent 1px 6px, currentColor 6px 7px, transparent 7px);
-  opacity: 0.75;
-}
-
-.bottom-nav button[data-action="memory"] .nav-icon-geo::before {
-  inset: 6px;
-  border: 1px solid currentColor;
-  border-radius: 4px;
-  background:
-    linear-gradient(90deg, currentColor 0 1px, transparent 1px 8px, currentColor 8px 9px, transparent 9px 16px, currentColor 16px 17px, transparent 17px),
-    linear-gradient(0deg, currentColor 0 1px, transparent 1px 8px, currentColor 8px 9px, transparent 9px 16px, currentColor 16px 17px, transparent 17px);
-  box-shadow: inset 0 0 10px rgba(0, 206, 209, 0.12), 0 0 13px rgba(160, 200, 255, 0.32);
-}
-
-.bottom-nav button[data-action="memory"] .nav-icon-geo::after {
-  inset: 3px;
-  border-radius: 6px;
-  background:
-    linear-gradient(currentColor, currentColor) 50% 0 / 8px 1px,
-    linear-gradient(currentColor, currentColor) 50% 100% / 8px 1px,
-    linear-gradient(currentColor, currentColor) 0 50% / 1px 8px,
-    linear-gradient(currentColor, currentColor) 100% 50% / 1px 8px;
-  background-repeat: no-repeat;
-  opacity: 0.85;
-}
-
-.nav-label {
+/* 正式按鈕美術（既有資產 assets/ui/nav/*.png）：
+   default = 青藍玻璃圖、active = 金色發光圖，置於玻璃 tile 內、不平貼。 */
+.nav-image {
   position: relative;
   z-index: 1;
   display: block;
-  max-width: 100%;
-  padding-bottom: 5px;
-  color: rgba(236, 247, 255, 0.92);
-  font-size: 11px;
-  line-height: 1;
-  white-space: nowrap;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
 }
 
+.nav-art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  opacity: 1;
+  filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.4));
+  transition: opacity 180ms ease, filter 180ms ease, transform 160ms ease;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.nav-art-active {
+  opacity: 0;
+}
+
+/* 按下（press）回饋：青藍柔光（無框，疊在 PNG 後方） */
 .bottom-nav button:focus-visible,
-.bottom-nav button:active,
+.bottom-nav button:active {
+  background: radial-gradient(60% 55% at 50% 58%, rgba(36, 211, 255, 0.18), transparent 75%);
+}
+
+/* active 狀態（方案 A）：視覺主體交給金色 active PNG，
+   CSS 只補「內部金色能量光池」與柔和 outer glow——不畫第二個主框。 */
 .bottom-nav button.active,
 .bottom-nav button.is-active,
 .bottom-nav button[aria-current="true"],
 .bottom-nav button[aria-current="page"] {
-  border-color: rgba(36, 211, 255, 0.6);
-  background:
-    radial-gradient(circle at 50% 16%, rgba(36, 211, 255, 0.2), transparent 50%),
-    var(--glass-bg-strong);
-  box-shadow:
-    inset 0 1px 0 var(--glass-highlight),
-    0 0 18px var(--glow-cyan),
-    inset 0 0 12px rgba(36, 211, 255, 0.16);
+  /* 金光集中在 PNG 內部與周圍 ~6px，不外溢成大黃框 */
+  background: radial-gradient(52% 46% at 50% 52%, rgba(255, 214, 128, 0.24), rgba(255, 180, 80, 0.06) 60%, transparent 74%);
+  animation: goldEnergyBreath 2.8s ease-in-out infinite;
 }
 
-.bottom-nav button.active::after,
-.bottom-nav button.is-active::after,
-.bottom-nav button[aria-current="true"]::after,
-.bottom-nav button[aria-current="page"]::after {
-  width: 30px;
-  opacity: 0.95;
+@keyframes goldEnergyBreath {
+  0%, 100% { opacity: 0.78; }
+  50% { opacity: 1; }
 }
 
-.bottom-nav button:focus-visible .nav-icon-geo,
-.bottom-nav button:active .nav-icon-geo,
-.bottom-nav button.active .nav-icon-geo,
-.bottom-nav button.is-active .nav-icon-geo,
-.bottom-nav button[aria-current="true"] .nav-icon-geo,
-.bottom-nav button[aria-current="page"] .nav-icon-geo,
-.bottom-nav button:focus-visible .nav-label,
-.bottom-nav button:active .nav-label,
-.bottom-nav button.active .nav-label,
-.bottom-nav button.is-active .nav-label,
-.bottom-nav button[aria-current="true"] .nav-label,
-.bottom-nav button[aria-current="page"] .nav-label {
-  color: #00CED1;
+.bottom-nav button.active .nav-art-default,
+.bottom-nav button.is-active .nav-art-default,
+.bottom-nav button[aria-current="true"] .nav-art-default,
+.bottom-nav button[aria-current="page"] .nav-art-default {
+  opacity: 0;
+}
+
+.bottom-nav button.active .nav-art-active,
+.bottom-nav button.is-active .nav-art-active,
+.bottom-nav button[aria-current="true"] .nav-art-active,
+.bottom-nav button[aria-current="page"] .nav-art-active {
   opacity: 1;
-  filter: drop-shadow(0 0 12px rgba(0, 206, 209, 1));
+  filter: drop-shadow(0 0 8px rgba(255, 214, 128, 0.45));
 }
 
 @media (hover: hover) {
   .bottom-nav button:hover {
-    border-color: rgba(36, 211, 255, 0.6);
-    background:
-      radial-gradient(circle at 50% 16%, rgba(36, 211, 255, 0.2), transparent 50%),
-      var(--glass-bg-strong);
-    box-shadow:
-      inset 0 1px 0 var(--glass-highlight),
-      0 0 18px var(--glow-cyan),
-      inset 0 0 12px rgba(36, 211, 255, 0.16);
+    background: radial-gradient(60% 55% at 50% 58%, rgba(36, 211, 255, 0.14), transparent 75%);
   }
 
-  .bottom-nav button:hover .nav-icon-geo,
-  .bottom-nav button:hover .nav-label {
-    color: #00CED1;
-    opacity: 1;
-    filter: drop-shadow(0 0 12px rgba(0, 206, 209, 1));
+  .bottom-nav button:hover .nav-art {
+    filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.4)) brightness(1.12);
   }
 }
 
-.bottom-nav button.active,
-.bottom-nav button.is-active,
-.bottom-nav button[aria-current="true"],
-.bottom-nav button[aria-current="page"] {
-  animation: navPulse 2.4s ease-in-out infinite;
-}
-
-@keyframes navPulse {
-  0%,
-  100% {
-    opacity: 0.9;
-    transform: scaleY(1);
-  }
-
-  50% {
-    opacity: 1;
-    transform: scaleY(1.03);
-  }
-}
+/* navPulse 已由 goldEnergyBreath（內部金色能量呼吸）取代，避免動畫互相覆蓋 */
 
 .panel-layer {
   position: absolute;
@@ -1010,8 +977,8 @@ canvas {
 }
 
 .core-stat-row[data-stat="bond"] .core-stat-fill {
-  background: linear-gradient(90deg, #046BFF, #7D32FF);
-  box-shadow: 0 0 16px rgba(125, 50, 255, 0.58);
+  background: linear-gradient(90deg, #ff7ab8, #7D32FF);
+  box-shadow: 0 0 16px rgba(255, 122, 184, 0.5);
 }
 
 .core-stat-row[data-stat="mood"] .core-stat-fill {
@@ -1493,7 +1460,7 @@ body.panel-open .dev-reaction-lab {
 @media (max-width: 370px), (max-height: 720px) {
   :root {
     --edge: 12px;
-    --nav-height: 86px;
+    --nav-height: 70px;
   }
 
   .core-hud {
@@ -1560,17 +1527,10 @@ body.panel-open .dev-reaction-lab {
   }
 
   .bottom-nav {
-    gap: 7px;
+    gap: 6px;
   }
 
-  .bottom-nav button {
-    height: 62px;
-  }
-
-  .nav-icon-geo {
-    width: 30px;
-    height: 30px;
-  }
+  /* 按鈕高度交由 aspect-ratio 512/388 自管，窄屏不另設固定高 */
 
   .modal-panel {
     top: calc(var(--top-safe) + 72px);
@@ -1660,6 +1620,14 @@ body.panel-open .dev-reaction-lab {
   font-size: 11.5px;
   font-style: normal;
   line-height: 1.45;
+}
+
+.boundary-bodycue {
+  color: var(--color-memory);
+  font-size: 11px;
+  font-style: normal;
+  line-height: 1.45;
+  opacity: 0.85;
 }
 
 /* --- 夥伴選擇 --- */
@@ -1769,34 +1737,34 @@ body.panel-open .dev-reaction-lab {
 
 /* --- 探索地圖（節點地圖樣式見檔尾 UI Polish 區） --- */
 
-/* --- 戰鬥 --- */
+/* --- 心核對峙（情緒對峙，非 RPG 戰鬥） --- */
 
 .battle-modal {
   display: grid;
   gap: 12px;
-  max-height: min(74vh, 640px);
+  max-height: min(78vh, 660px);
   overflow-y: auto;
 }
 
-.battle-field {
+.standoff-field {
   display: grid;
-  gap: 12px;
+  gap: 10px;
 }
 
-.battle-side {
+.standoff-meter {
   display: grid;
   gap: 6px;
-  border: 1px solid rgba(0, 212, 255, 0.22);
+  border: 1px solid rgba(36, 211, 255, 0.2);
   border-radius: 12px;
   padding: 10px 12px;
-  background: rgba(10, 15, 46, 0.55);
+  background: rgba(8, 13, 32, 0.5);
 }
 
-.battle-side-enemy {
-  border-color: rgba(255, 70, 70, 0.34);
+.standoff-noise {
+  border-color: rgba(167, 139, 250, 0.32);
 }
 
-.battle-name-row {
+.standoff-meter-head {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
@@ -1804,47 +1772,149 @@ body.panel-open .dev-reaction-lab {
   font-size: 13.5px;
 }
 
-.battle-name-row span {
+.standoff-meter-head span {
   color: var(--muted);
   font-size: 11px;
   font-variant-numeric: tabular-nums;
 }
 
-.battle-hp-bar {
+.standoff-meter-hint {
+  color: var(--muted);
+  font-size: 10px;
+  font-style: normal;
+  letter-spacing: 0.04em;
+}
+
+.standoff-bar {
   height: 8px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.08);
   overflow: hidden;
 }
 
-.battle-hp-fill {
+.standoff-fill {
   display: block;
   height: 100%;
   width: 100%;
   border-radius: inherit;
-  transition: width 240ms ease;
+  transition: width 280ms ease;
 }
 
-.battle-hp-fill.player {
-  background: linear-gradient(90deg, #00ced1, #43f6a3);
+/* 雜訊：紫→紅的不安定光；下降 = 場域平息 */
+.standoff-fill.noise {
+  background: linear-gradient(90deg, #a78bfa, #f87171);
 }
 
-.battle-hp-fill.enemy {
-  background: linear-gradient(90deg, #ff5d5d, #ff9b52);
+/* 心核穩定：青→金的安定光 */
+.standoff-fill.stability {
+  background: linear-gradient(90deg, #24d3ff, #ffd680);
 }
 
-.battle-energy-row {
+.standoff-vitals-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.standoff-vital {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   font-size: 10.5px;
-  color: var(--muted);
 }
 
-.battle-energy-pips {
-  color: var(--color-energy);
+.standoff-vital em {
+  color: var(--muted);
+  font-style: normal;
+}
+
+.standoff-vital b {
   font-size: 12px;
   letter-spacing: 2px;
+  color: var(--color-cyan);
+}
+
+#standoff-fatigue-pips {
+  color: rgba(255, 214, 128, 0.8);
+}
+
+#standoff-fatigue-pips.is-strained {
+  color: var(--feedback-danger);
+}
+
+.standoff-shards b {
+  color: var(--color-energy);
+  letter-spacing: 1px;
+}
+
+.standoff-shards b.is-glowing {
+  text-shadow: 0 0 10px var(--glow-gold);
+}
+
+.standoff-action-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.standoff-action-row button {
+  display: grid;
+  gap: 3px;
+  border: 1px solid rgba(36, 211, 255, 0.32);
+  border-radius: 12px;
+  padding: 10px 12px;
+  background: rgba(36, 211, 255, 0.08);
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+  transition: background 160ms ease, opacity 160ms ease, border-color 160ms ease;
+}
+
+.standoff-action-row button strong {
+  font-size: 13.5px;
+  font-weight: 800;
+}
+
+.standoff-action-row button em {
+  color: var(--muted);
+  font-size: 10.5px;
+  font-style: normal;
+  line-height: 1.4;
+}
+
+.standoff-action-row button:disabled {
+  opacity: 0.38;
+  cursor: default;
+}
+
+#standoff-act-barrier {
+  border-color: rgba(255, 214, 128, 0.36);
+  background: rgba(255, 214, 128, 0.07);
+}
+
+#standoff-act-pulse {
+  border-color: rgba(167, 139, 250, 0.36);
+  background: rgba(167, 139, 250, 0.08);
+}
+
+.standoff-action-row .standoff-retreat {
+  border-color: rgba(103, 232, 249, 0.3);
+  background: rgba(8, 13, 32, 0.55);
+}
+
+@media (hover: hover) {
+  .standoff-action-row button:hover:not(:disabled) {
+    background: rgba(36, 211, 255, 0.16);
+  }
+
+  #standoff-act-barrier:hover:not(:disabled) {
+    background: rgba(255, 214, 128, 0.14);
+  }
+
+  #standoff-act-pulse:hover:not(:disabled) {
+    background: rgba(167, 139, 250, 0.16);
+  }
 }
 
 .battle-log {
@@ -2113,25 +2183,31 @@ body.panel-open .dev-reaction-lab {
 /* --- Reusable glass tiers --- */
 
 .glass-subtle {
-  border: 1px solid rgba(36, 211, 255, 0.12);
-  background: var(--glass-bg);
-  backdrop-filter: blur(var(--glass-blur-subtle));
-  -webkit-backdrop-filter: blur(var(--glass-blur-subtle));
+  border: 1px solid rgba(36, 211, 255, 0.14);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.05), transparent 30%),
+    var(--glass-bg);
+  backdrop-filter: var(--glass-filter-subtle);
+  -webkit-backdrop-filter: var(--glass-filter-subtle);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
     0 8px 24px var(--glass-shadow);
 }
 
 .glass-strong {
   border: 1px solid var(--glass-border);
-  background: var(--glass-bg-strong);
-  backdrop-filter: blur(var(--glass-blur-strong));
-  -webkit-backdrop-filter: blur(var(--glass-blur-strong));
+  background:
+    radial-gradient(130% 90% at 10% -6%, rgba(255, 255, 255, 0.12), transparent 44%),
+    radial-gradient(110% 70% at 50% 110%, rgba(125, 50, 255, 0.1), transparent 55%),
+    linear-gradient(155deg, rgba(28, 24, 60, 0.66), var(--glass-bg-strong));
+  backdrop-filter: var(--glass-filter-strong);
+  -webkit-backdrop-filter: var(--glass-filter-strong);
   box-shadow:
     inset 0 1px 0 var(--glass-highlight),
-    inset 0 -16px 30px rgba(0, 0, 0, 0.2),
-    0 0 26px rgba(36, 211, 255, 0.09),
-    0 14px 40px var(--glass-shadow);
+    inset 0 -24px 48px rgba(92, 225, 230, 0.08),
+    inset 0 -16px 30px rgba(0, 0, 0, 0.18),
+    0 0 28px rgba(36, 211, 255, 0.12),
+    0 18px 60px var(--glass-shadow);
 }
 
 .glass-interactive {
@@ -2530,6 +2606,15 @@ body.panel-open .dev-reaction-lab {
   .bottom-nav button.is-active,
   .bottom-nav button[aria-current="true"],
   .bottom-nav button[aria-current="page"] {
+    animation: none;
+  }
+
+  .soul-wave-deco {
+    animation: none;
+    opacity: 0.4;
+  }
+
+  .soul-core-glow {
     animation: none;
   }
 

@@ -67,6 +67,7 @@ export function evaluateTouchReaction(targetState, personality, touchType = "tou
 
   return {
     reaction,
+    bodyCue: getBodyCueForReaction(reaction),
     motionState: getTouchMotionState(reaction),
     previewText: nextState.reactionPreview,
     statePatch: {
@@ -114,8 +115,79 @@ export function evaluateBlockedTouch(targetState, now = Date.now()) {
   return {
     blocked: true,
     reason: "recent_reject",
+    bodyCue: blockedTouchCount >= 3 ? "step_back" : blockedTouchCount === 2 ? "look_away" : "ears_back",
     previewText: statePatch.reactionPreview,
     statePatch
+  };
+}
+
+// ---- Body Cue 推導（純函數，不進 schema） ----
+
+const REACTION_TO_BODY_CUE = Object.freeze({
+  accept: "approach_softly",
+  guarded_accept: "neutral",
+  hesitate: "ears_back",
+  reject: "step_back",
+  spam_angry: "step_back"
+});
+
+export function getBodyCueForReaction(reaction) {
+  return REACTION_TO_BODY_CUE[reaction] || "neutral";
+}
+
+/**
+ * 棲地待機時的身體語言（HUD 顯示用）。由關係狀態推導，不持久化。
+ */
+export function getAmbientBodyCue(state = {}) {
+  if (state.mood === "sleeping" || state.energy <= 1) return "resting";
+  if (state.touchFatigue >= 6) return "look_away";
+  if (state.defense >= 70 || state.mood === "defensive") return "ears_back";
+  if (state.mood === "distant" || state.mood === "alert") return "look_away";
+  if ((state.mood === "warm" || state.mood === "happy") && state.bond >= 15 && state.defense <= 30) {
+    return "approach_softly";
+  }
+  return "neutral";
+}
+
+// ---- 尊重拒絕的正向沉積（純函數） ----
+
+export const RESPECT_GAP_MS = 25 * 1000;
+
+/**
+ * 拒絕之後，若玩家給了足夠的空間（≥25 秒沒有再伸手），
+ * 下一次互動前呼叫：給一次性的正向沉積——信任長一點、防備鬆一點，
+ * 並在棲地留下「被尊重的距離」的痕跡。
+ * 每個 reject episode 只觸發一次（以 lastTouchReaction === "reject" 判定，
+ * 觸發後由本次互動覆寫該欄位，自然失效）。
+ * 注意：觸發條件是單次互動事件之間的間隔，與上線頻率／遊玩時長無關。
+ */
+export function evaluateRespectBonus(state = {}, now = Date.now()) {
+  if (state.lastTouchReaction !== "reject") return { granted: false };
+  const rejectAt = Number(state.lastRejectAt) || 0;
+  if (!rejectAt || now - rejectAt < RESPECT_GAP_MS) return { granted: false };
+
+  return {
+    granted: true,
+    statePatch: {
+      trust: clamp((state.trust || 0) + 1, 0, 100),
+      defense: clamp((state.defense || 0) - 2, 0, 100)
+    },
+    message: "你給了牠需要的距離。牠回頭看了你一眼——這次的眼神柔軟了一些。",
+    memorySeed: {
+      id: `emem_${now}_respect`,
+      theme: "被尊重的距離",
+      label: "邊界被聽見的記憶",
+      emotion: "calm",
+      intensity: 0.45,
+      symbol: "soft_ripple",
+      place: "lake_surface",
+      status: "fresh",
+      source: "boundary",
+      excerpt: "牠說了不要，而你聽見了。",
+      createdAt: now,
+      lastUpdatedAt: now,
+      isVisibleInHabitat: true
+    }
   };
 }
 

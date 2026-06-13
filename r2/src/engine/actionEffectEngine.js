@@ -115,6 +115,13 @@ export function evaluateActionEffect(currentState, action, choice) {
     if (normalizedChoice === "gentle_presence") {
       setVitals({ defense: -6, trust: 1, mood: "calm" });
       message = "你只是待在牠身邊，沒有伸手。牠的肩膀慢慢鬆了。";
+      // 剛被拒絕後選擇「靜靜陪伴」＝聽見了牠的「不要」：額外的正向沉積。
+      if (currentState.lastTouchReaction === "reject") {
+        statePatch.trust = clamp((statePatch.trust ?? currentState.trust) + 1, 0, 100);
+        statePatch.defense = clamp((statePatch.defense ?? currentState.defense) - 2, 0, 100);
+        statePatch.lastTouchReaction = "respected";
+        message = "你沒有伸手，只是坐在牠夠得到的距離。牠記住了這個。";
+      }
     } else if (normalizedChoice === "soft_comfort") {
       setVitals({ defense: -2, trust: 1, mood: "calm" });
       message = "夥伴稍微放鬆了一點。";
@@ -136,6 +143,12 @@ export function evaluateActionEffect(currentState, action, choice) {
     if (normalizedChoice === "gentle_presence") {
       setVitals({ defense: -6, trust: 1, mood: "calm" });
       message = "你只是待在牠身邊，沒有伸手。牠的肩膀慢慢鬆了。";
+      if (currentState.lastTouchReaction === "reject") {
+        statePatch.trust = clamp((statePatch.trust ?? currentState.trust) + 1, 0, 100);
+        statePatch.defense = clamp((statePatch.defense ?? currentState.defense) - 2, 0, 100);
+        statePatch.lastTouchReaction = "respected";
+        message = "你沒有伸手，只是坐在牠夠得到的距離。牠記住了這個。";
+      }
     } else if (normalizedChoice === "trust_tuning") {
       setVitals({ trust: 1, defense: -1 });
       statePatch.growthHint = "trust_tuning";

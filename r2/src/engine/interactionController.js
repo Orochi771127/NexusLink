@@ -1,6 +1,7 @@
-import { evaluateBlockedTouch, evaluateTouchReaction } from "./touchReactionEngine.js";
+import { evaluateBlockedTouch, evaluateRespectBonus, evaluateTouchReaction } from "./touchReactionEngine.js";
 import { getTouchPersonality } from "./personalityProfile.js";
-import { getMoodIdleAnimationName } from "./animationProfile.js";
+import { getBodyCueProfile, getMoodIdleAnimationName } from "./animationProfile.js";
+import { createHabitatTraceFromMemory, pruneHabitatTraces, upsertHabitatTrace } from "./habitatTraceEngine.js";
 import { clamp } from "../utils/clamp.js";
 
 export const ANIMATION_REGISTRY = Object.freeze({
@@ -69,6 +70,9 @@ export class InteractionController {
     if (currentState.lastRejectAt && now - currentState.lastRejectAt < REJECT_TOUCH_COOLDOWN_MS) {
       return this.handleBlockedTouch(now);
     }
+
+    // 尊重拒絕的正向沉積：上次被拒絕後，玩家給了足夠空間才回來。
+    this.applyRespectBonusIfEarned(now);
 
     const currentAnimation = this.getCurrentAnimationName();
     if (currentAnimation === "sleep") {
@@ -212,10 +216,30 @@ export class InteractionController {
     this.onStateChange({
       blocked: true,
       reason: "recent_reject",
+      bodyCue: result.bodyCue,
       statePatch
     });
 
+    // 拒絕不能被連點覆寫——但牠的身體語言會讓你「看見」這個拒絕。
+    const cueAnimation = getBodyCueProfile(result.bodyCue).animation;
+    if (cueAnimation) this.playAnimation(cueAnimation, true);
+
     return result;
+  }
+
+  applyRespectBonusIfEarned(now = Date.now()) {
+    const bonus = evaluateRespectBonus(this.store.getState(), now);
+    if (!bonus.granted) return;
+
+    this.store.updateState((draft) => {
+      Object.assign(draft, bonus.statePatch);
+      draft.emotionalMemories.push(bonus.memorySeed);
+      const trace = createHabitatTraceFromMemory(bonus.memorySeed, now);
+      if (trace) {
+        draft.habitatTraces = pruneHabitatTraces(upsertHabitatTrace(draft.habitatTraces || [], trace));
+      }
+    });
+    this.setStatusText(bonus.message);
   }
 
 

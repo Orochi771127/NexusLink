@@ -156,3 +156,34 @@ JS 端以 `matchMedia('(prefers-reduced-motion: reduce)')` 跳過全部 WAAPI；
 ## 驗證結果（smoke check 全過）
 
 R1 `/` 正常（key 548B 未變）；`/r2/` console 0 error；Soul Talk（含回聲）、夥伴切換、地圖 5 節點點擊、visited/current/×N（含 reload）、裂隙→戰鬥→勝場入帳、Codex 5 列、storage 僅 `nexusLinkR2State:v1`、390×844 佈局；`git status` 僅 3 個 r2 檔。修正過程中的小 bug：`.map-node-visits` 顯式 display 蓋掉 `[hidden]`（已補 `[hidden]{display:none}`）。未 commit、未 push。
+
+---
+
+# 附錄：White Lab — Bond Boundary Slice（2026-06-12）
+
+範圍：r2/** 體驗層。13 個檔案修改，零新檔、零依賴、零 schema 變更、saveManager/store/pixiApp 零接觸。
+
+## 一、戰鬥 → 心核對峙（battleEngine / battleController / index.html battle panel / styles）
+
+- 模型：noise（雜訊濃度，取代 enemyHp）、stability（心核穩定，取代 playerHp）、sync（同步）、fatigue（對峙疲勞，回寫棲地）、boundary（邊界層數，會衰減需維護）、shards（記憶微光 0-3）。
+- 四行動：共鳴（依徽章命名）／邊界／脈衝（耗 2 同步、自損）／先撤退（同排公民、無懲罰）。
+- 四結局：stabilized / recovered / retreated / overwhelmed_but_safe。無 win/lose 語言；overwhelmed 文案=「牠把你拽到身後」，trust 仍 +1。
+- 持久化映射回 battleRecord 三值（不改 schema）；recovered/overwhelmed 產生情緒記憶（source:"standoff"）+ 棲地痕跡。
+
+## 二、閉環：Explore → Map → Standoff → Memory/Trace → Home Dialogue
+
+- soulTalkComposer.buildEventReflection（純函數）+ EVENT_REFLECTION 文案池（4 結局×2 + 探索×2，{node} 插值）。
+- 對峙結束 → battleController 推 companion 角色引用台詞（即時，含精確結局）。
+- 探索首訪（無遭遇）→ 一句探索引用。
+- 跨 session：對峙後 15 分鐘內 reload，開心語補一次引用（pageLoadedAt gate + 同句防重複）。
+
+## 三、邊界可玩化（touchReactionEngine / interactionController / animationProfile / actionEffectEngine / hudController）
+
+- BODY_CUE_PROFILE 資料結構（neutral/ears_back/step_back/look_away/resting/approach_softly；drift 欄位預留）。
+- 觸碰結果與 blocked 結果附 bodyCue；blocked 連點播退避動畫（ears_back→look_away→step_back 漸進），拒絕不可被連點覆寫（既有 3s cooldown + blockedTouch 鏈保留）。
+- 尊重沉積 evaluateRespectBonus（純函數）：拒絕後 >=25s 再互動 → trust+1、defense-2、「被尊重的距離」calm 記憶+漣漪痕跡，每 episode 一次；Care/Grow 靜靜陪伴在剛被拒絕時同等沉積（lastTouchReaction→"respected"）。觸發全為單次互動事件，與上線頻率/時長無關（無依賴偵測）。
+- HUD 邊界列新增第三行 ambient 身體語言（getAmbientBodyCue 推導，無 raw 數字）。
+
+## 四、實測（瀏覽器）
+
+recovered（共鳴×3）/ retreated / overwhelmed_but_safe（純函數 14 回合模擬）三結局驗證；閉環引用即時+跨 session 皆中；blocked cue 序列與 respect bonus（<25s 不給、>=25s 給）純函數驗證；console 0 error；R1 黑版正常；localStorage 僅既有三 key。

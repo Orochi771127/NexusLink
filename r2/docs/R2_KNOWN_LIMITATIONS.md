@@ -47,6 +47,15 @@
 23. **開發注意**：以 `python -m http.server` 開發時，瀏覽器可能快取 ES module；修改 `src/**` 後請硬重新整理（Ctrl+F5），否則會跑到舊版模組（驗證期間實際遇到）。
 24. `r2/.claude/launch.json` 為本次驗證新增的本地 preview 設定檔（非 runtime 資產），可保留供日後測試或自行刪除。
 
+## White Lab — Bond Boundary Slice（2026-06-12）
+
+W1. **對峙結局持久化走映射**：stabilized/recovered→win、overwhelmed_but_safe→lose、retreated→retreat（不改 battleRecord schema）。跨 session 的對話引用因此無法區分 stabilized 與 recovered（同 session 由 controller 傳精確結局）。
+W2. **bodyCue 的 drift（位移）欄位為預留**：step_back/approach_softly 目前以既有 touch 動畫的內建位移表現，未做獨立的位置 drift；BODY_CUE_PROFILE 資料結構已就緒，待 motion 升級接入。
+W3. **探索引用只在「首訪且無遭遇」觸發一次**，重訪節點不再引用（防止重複感）；探索無獨立 timestamp（不改 schema），新鮮度由呼叫端控制。
+W4. **對峙仍無 Pixi 演出**：greyshade 的 attack/defend/hit frames 未接入對峙畫面，全 DOM 呈現。
+W5. 連續兩個 session 內結束對峙＋reload，chat 可能出現同結局 pool 的兩句不同引用（同句已防重複）；pool 各 2 句，視覺上接近「補充說明」，暫不視為 bug。
+W6. 尊重沉積每個 reject episode 僅一次（lastTouchReaction 覆寫即失效），跨 reload 的 episode 追蹤依 lastRejectAt/lastTouchReaction 持久欄位，行為一致。
+
 ## UI Polish v1-A（2026-06-11）
 
 25. 節點完整描述只放在 `title` 屬性與 `aria-label`（桌面 hover / 螢幕閱讀器可見）；地圖上未做行動端的節點詳情視圖，行動端玩家只能從探索結果認識節點。
