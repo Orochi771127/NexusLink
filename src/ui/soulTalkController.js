@@ -6,7 +6,7 @@ import {
 } from "../engine/habitatTraceEngine.js";
 import { updateMemoryLifecycles } from "../engine/memoryLifecycleEngine.js";
 import { buildSafetyShieldReply } from "../engine/safeHarborMode.js";
-import { composeCompanionReply, composeFallbackReply } from "../engine/soulTalkComposer.js";
+import { buildEventReflection, composeCompanionReply, composeFallbackReply } from "../engine/soulTalkComposer.js";
 import { qs } from "../utils/dom.js";
 
 const DEFAULT_STATUS_TEXT = "心語 / 靈魂聖域";
@@ -22,6 +22,10 @@ export function createSoulTalkController({ store, saveCurrentState }) {
   let currentCreature = null;
   let waveformShell = null;
   let thinkingTimer = null;
+  // 跨 session 閉環：對峙發生在「本次頁面載入之前」且仍新鮮時，
+  // 開啟心語的第一次補上引用（同 session 的引用由 battleController 即時推送）。
+  const pageLoadedAt = Date.now();
+  let crossSessionReflected = false;
 
   function setCreature(creature) {
     currentCreature = creature;
@@ -59,8 +63,24 @@ export function createSoulTalkController({ store, saveCurrentState }) {
   function openSoulTalk(panelManager) {
     ensureWaveformShell();
     setSoulTalkState("idle");
+    maybeReflectCrossSessionEvent();
     renderChat();
     panelManager.openPanel("soulTalk");
+  }
+
+  function maybeReflectCrossSessionEvent() {
+    if (crossSessionReflected) return;
+    const state = store.getState();
+    const lastBattleAt = state.battleRecord?.lastBattleAt || 0;
+    if (!lastBattleAt || lastBattleAt >= pageLoadedAt) return; // 本 session 的對峙已即時引用過
+    const reflection = buildEventReflection(state, Date.now());
+    if (!reflection) return;
+    crossSessionReflected = true;
+    // 上一個 session 已推過同一句（已持久化在 chatHistory）就不重複。
+    const recentTail = (state.chatHistory || []).slice(-8);
+    if (recentTail.some((entry) => entry.text === reflection)) return;
+    addChat("companion", reflection);
+    saveCurrentState();
   }
 
   function handlePlayerMessage(message) {

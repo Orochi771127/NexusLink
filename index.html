@@ -3,10 +3,18 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <title>Nexus Link Black Build / 黑版</title>
+    <title>Nexus Link White Lab / 白版</title>
     <link rel="preload" as="image" href="./assets/backgrounds/LakeNightCamp_v2/bg_day_base.png" />
     <link rel="preload" as="image" href="./assets/backgrounds/LakeNightCamp_v2/bg_night_base.png" />
     <link rel="preload" as="image" href="./assets/platforms/LakeNightCamp_v2/magic_circle.png" />
+    <link rel="preload" as="image" href="./assets/ui/nav/nav_explore_default.png" />
+    <link rel="preload" as="image" href="./assets/ui/nav/nav_explore_active.png" />
+    <link rel="preload" as="image" href="./assets/ui/nav/nav_care_default.png" />
+    <link rel="preload" as="image" href="./assets/ui/nav/nav_care_active.png" />
+    <link rel="preload" as="image" href="./assets/ui/nav/nav_grow_default.png" />
+    <link rel="preload" as="image" href="./assets/ui/nav/nav_grow_active.png" />
+    <link rel="preload" as="image" href="./assets/ui/nav/nav_memory_default.png" />
+    <link rel="preload" as="image" href="./assets/ui/nav/nav_memory_active.png" />
     <link rel="preload" as="image" href="./assets/characters/greyshade-cat/metadata/previews/greyshade-cat_idle_calm_preview.png" />
     <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2064%2064%27%3E%3Ccircle%20cx%3D%2732%27%20cy%3D%2732%27%20r%3D%2730%27%20fill%3D%27%23050915%27%2F%3E%3Ccircle%20cx%3D%2732%27%20cy%3D%2732%27%20r%3D%2718%27%20fill%3D%27%2300ced1%27%2F%3E%3C%2Fsvg%3E" />
     <link rel="stylesheet" href="./styles.css" />
@@ -81,25 +89,35 @@
             <strong>心語</strong>
             <em id="soul-talk-preview">我在這裡，安靜地看著你。</em>
           </span>
+          <span class="soul-core-glow" aria-hidden="true"></span>
+          <span class="soul-wave-deco" aria-hidden="true"></span>
           <b aria-hidden="true">對話</b>
         </button>
 
         <nav class="bottom-nav" aria-label="主要行動">
           <button type="button" class="glass-interactive" data-action="explore" aria-label="探索">
-            <span class="nav-icon-geo" aria-hidden="true"></span>
-            <span class="nav-label">探索</span>
+            <span class="nav-image" aria-hidden="true">
+              <img class="nav-art nav-art-default" src="./assets/ui/nav/nav_explore_default.png" width="512" height="388" alt="" decoding="async" draggable="false" />
+              <img class="nav-art nav-art-active" src="./assets/ui/nav/nav_explore_active.png" width="512" height="388" alt="" decoding="async" draggable="false" />
+            </span>
           </button>
           <button type="button" class="glass-interactive" data-action="care" aria-label="照顧">
-            <span class="nav-icon-geo" aria-hidden="true"></span>
-            <span class="nav-label">照顧</span>
+            <span class="nav-image" aria-hidden="true">
+              <img class="nav-art nav-art-default" src="./assets/ui/nav/nav_care_default.png" width="512" height="388" alt="" decoding="async" draggable="false" />
+              <img class="nav-art nav-art-active" src="./assets/ui/nav/nav_care_active.png" width="512" height="388" alt="" decoding="async" draggable="false" />
+            </span>
           </button>
           <button type="button" class="glass-interactive" data-action="grow" aria-label="成長">
-            <span class="nav-icon-geo" aria-hidden="true"></span>
-            <span class="nav-label">成長</span>
+            <span class="nav-image" aria-hidden="true">
+              <img class="nav-art nav-art-default" src="./assets/ui/nav/nav_grow_default.png" width="512" height="388" alt="" decoding="async" draggable="false" />
+              <img class="nav-art nav-art-active" src="./assets/ui/nav/nav_grow_active.png" width="512" height="388" alt="" decoding="async" draggable="false" />
+            </span>
           </button>
           <button type="button" class="glass-interactive" data-action="memory" aria-label="記憶">
-            <span class="nav-icon-geo" aria-hidden="true"></span>
-            <span class="nav-label">記憶</span>
+            <span class="nav-image" aria-hidden="true">
+              <img class="nav-art nav-art-default" src="./assets/ui/nav/nav_memory_default.png" width="512" height="388" alt="" decoding="async" draggable="false" />
+              <img class="nav-art nav-art-active" src="./assets/ui/nav/nav_memory_active.png" width="512" height="388" alt="" decoding="async" draggable="false" />
+            </span>
           </button>
         </nav>
 
@@ -149,6 +167,7 @@
                 <div class="boundary-copy">
                   <strong id="boundary-state" class="core-stat-value">平常</strong>
                   <em id="boundary-preview" class="boundary-preview">現在輕碰，牠大概會靠過來。</em>
+                  <em id="boundary-bodycue" class="boundary-bodycue">牠安靜地待在原地。</em>
                 </div>
               </div>
             </div>
@@ -189,41 +208,65 @@
             </div>
           </section>
 
-          <section class="modal-panel battle-modal" role="dialog" aria-modal="true" aria-labelledby="battle-title" data-panel="battle">
+          <section class="modal-panel battle-modal rune-border" role="dialog" aria-modal="true" aria-labelledby="battle-title" data-panel="battle">
             <header class="panel-header">
               <div>
-                <p id="battle-node-label">遭遇</p>
-                <h2 id="battle-title">共鳴交鋒</h2>
+                <p id="battle-node-label">心核感知到不安定</p>
+                <h2 id="battle-title">心核對峙</h2>
               </div>
             </header>
-            <div class="battle-field">
-              <div class="battle-side battle-side-enemy">
-                <div class="battle-name-row">
-                  <strong id="battle-enemy-name">???</strong>
-                  <span id="battle-enemy-hp-text">--</span>
+
+            <div class="standoff-field">
+              <div class="standoff-meter standoff-noise">
+                <div class="standoff-meter-head">
+                  <strong id="standoff-noise-name">雜訊</strong>
+                  <span id="standoff-noise-text" aria-label="雜訊濃度">--</span>
                 </div>
-                <div class="battle-hp-bar"><span id="battle-enemy-hp" class="battle-hp-fill enemy"></span></div>
+                <div class="standoff-bar"><span id="standoff-noise-fill" class="standoff-fill noise"></span></div>
+                <em class="standoff-meter-hint">雜訊濃度——放輕它，而不是消滅它</em>
               </div>
-              <div class="battle-side battle-side-player">
-                <div class="battle-name-row">
-                  <strong id="battle-player-name">夥伴</strong>
-                  <span id="battle-player-hp-text">--</span>
+
+              <div class="standoff-meter standoff-stability">
+                <div class="standoff-meter-head">
+                  <strong id="standoff-companion-name">心核穩定</strong>
+                  <span id="standoff-stability-text" aria-label="心核穩定度">--</span>
                 </div>
-                <div class="battle-hp-bar"><span id="battle-player-hp" class="battle-hp-fill player"></span></div>
-                <div class="battle-energy-row" aria-label="共鳴能量">
-                  <span class="battle-energy-label">共鳴</span>
-                  <span id="battle-player-energy" class="battle-energy-pips"></span>
+                <div class="standoff-bar"><span id="standoff-stability-fill" class="standoff-fill stability"></span></div>
+                <div class="standoff-vitals-row">
+                  <span class="standoff-vital" aria-label="同步">
+                    <em>同步</em>
+                    <b id="standoff-sync-pips">●○○○○</b>
+                  </span>
+                  <span class="standoff-vital" aria-label="對峙疲勞">
+                    <em>疲勞</em>
+                    <b id="standoff-fatigue-pips">○○○○○○</b>
+                  </span>
+                  <span class="standoff-vital standoff-shards" aria-label="記憶微光">
+                    <em>記憶微光</em>
+                    <b id="standoff-shards">◈ 0/3</b>
+                  </span>
                 </div>
               </div>
             </div>
+
             <div id="battle-log" class="battle-log" aria-live="polite"></div>
-            <div id="battle-skill-row" class="battle-skill-row" aria-label="戰鬥行動">
-              <button type="button" id="battle-skill-basic" data-skill="basic_attack">直覺爪擊</button>
-              <button type="button" id="battle-skill-guard" data-skill="guard">凝神防禦</button>
-              <button type="button" id="battle-skill-resonance" data-skill="resonance">情感共鳴</button>
+
+            <div id="standoff-action-row" class="standoff-action-row" aria-label="對峙行動">
+              <button type="button" id="standoff-act-resonance" data-action-id="resonance">
+                <strong>共鳴</strong><em>回收記憶・放輕雜訊</em>
+              </button>
+              <button type="button" id="standoff-act-barrier" data-action-id="barrier">
+                <strong>邊界</strong><em>立起柔光・穩定心核</em>
+              </button>
+              <button type="button" id="standoff-act-pulse" data-action-id="pulse">
+                <strong>脈衝</strong><em>耗 2 同步・快速擊退</em>
+              </button>
+              <button type="button" id="standoff-act-retreat" data-action-id="retreat" class="standoff-retreat">
+                <strong>先撤退</strong><em>懂得離開也是照顧</em>
+              </button>
             </div>
+
             <div class="battle-footer-row">
-              <button type="button" id="battle-retreat" class="ghost-button">先撤退</button>
               <button type="button" id="battle-finish" class="ghost-button" hidden>回到棲地</button>
             </div>
           </section>

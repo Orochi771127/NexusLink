@@ -6,6 +6,7 @@ import {
   pruneHabitatTraces,
   upsertHabitatTrace
 } from "../engine/habitatTraceEngine.js";
+import { buildEventReflection } from "../engine/soulTalkComposer.js";
 
 // ---- UI 層佈局常數（不動 explorationNodes 資料、不動 schema） ----
 // 視覺概念：月湖營地為中心起點，其他節點是心核感知到的外圍記憶座標。
@@ -220,7 +221,7 @@ export function createMapController({ store, panelManager, soulTalkController, s
       pulseHudValue("#soul-talk-preview");
     }
     if (result.encounter) {
-      chips.push({ kind: "danger", label: "！ 遭遇接近中" });
+      chips.push({ kind: "danger", label: "！ 場域不安定" });
     }
     return chips;
   }
@@ -255,6 +256,13 @@ export function createMapController({ store, panelManager, soulTalkController, s
     });
 
     soulTalkController.addChat("system", `【${node.label.zh}】${result.message}`);
+
+    // 閉環：首次到訪且無遭遇時，夥伴用自己的聲音記得這趟探索。
+    const isFirstVisit = !(state.explorationProgress?.visitCounts?.[node.id] > 0);
+    if (!result.encounter && isFirstVisit) {
+      const reflection = buildEventReflection(store.getState(), Date.now(), { allowExploration: true });
+      if (reflection) soulTalkController.addChat("companion", reflection);
+    }
     soulTalkController.renderChat();
     if (statusText) statusText.textContent = result.message.split("\n")[0];
     saveCurrentState?.();

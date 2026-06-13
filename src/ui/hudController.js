@@ -1,5 +1,7 @@
 import { qs, qsa } from "../utils/dom.js";
 import { clampPercent } from "../utils/clamp.js";
+import { getAmbientBodyCue } from "../engine/touchReactionEngine.js";
+import { getBodyCueProfile } from "../engine/animationProfile.js";
 
 const DEFAULT_STATUS_TEXT = "心語 / 靈魂聖域";
 
@@ -23,6 +25,7 @@ export function createHudController({ store, statusText }) {
   const messageInput = qs("#message-input");
   const boundaryStateEl = qs("#boundary-state");
   const boundaryPreviewEl = qs("#boundary-preview");
+  const boundaryBodyCueEl = qs("#boundary-bodycue");
   let currentCreature = null;
 
   function setCreature(creature) {
@@ -81,6 +84,9 @@ export function createHudController({ store, statusText }) {
       const boundary = getBoundaryView(state);
       boundaryStateEl.textContent = boundary.label;
       boundaryPreviewEl.textContent = boundary.preview;
+    }
+    if (boundaryBodyCueEl) {
+      boundaryBodyCueEl.textContent = getBodyCueProfile(getAmbientBodyCue(state)).hint;
     }
   }
 

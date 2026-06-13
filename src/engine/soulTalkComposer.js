@@ -1,4 +1,5 @@
-import { RESPONSE_PACKS, TONE_FLAVOR, ECHO_TEMPLATES } from "../data/soulTalkResponsePacks.js";
+import { RESPONSE_PACKS, TONE_FLAVOR, ECHO_TEMPLATES, EVENT_REFLECTION } from "../data/soulTalkResponsePacks.js";
+import { getExplorationNodeById } from "../data/explorationNodes.js";
 
 const ECHO_WINDOW_MS = 48 * 60 * 60 * 1000;
 const ECHOABLE_STATUSES = new Set(["fresh", "settled"]);
@@ -66,6 +67,54 @@ export function composeCompanionReply({
   }
 
   return { reply, usedEcho };
+}
+
+// ---- 事件引用（閉環：探索/對峙 → 回家對話） ----
+
+const EVENT_FRESH_WINDOW_MS = 15 * 60 * 1000;
+
+// 既有 battleRecord 三值 → 對峙結局文案 key 的反推。
+// "win" 無法區分 stabilized/recovered → 由呼叫端傳 outcome 覆寫；
+// 純讀 state 時退回 stabilized（語氣相容）。
+const LEGACY_TO_OUTCOME = {
+  win: "stabilized",
+  lose: "overwhelmed_but_safe",
+  retreat: "retreated"
+};
+
+/**
+ * 依最近事件（對峙優先，其次探索）產生一句「牠記得」的引用台詞。
+ * 純函數：只讀 state，不寫入。回傳 null = 沒有夠新鮮的事件。
+ *
+ * 新鮮度規則：
+ * - 對峙：以 battleRecord.lastBattleAt 時間窗判定（15 分鐘）。
+ * - 探索：lastNodeId 是永續欄位、無獨立 timestamp（不改 schema），
+ *   因此必須由呼叫端在「剛探索完的同一 session」以 allowExploration 顯式開啟。
+ *
+ * @param {object} options.outcomeOverride 對峙剛結束時由 controller 傳入精確結局
+ * @param {boolean} options.allowExploration 探索引用 opt-in（mapController 專用）
+ */
+export function buildEventReflection(state = {}, now = Date.now(), { outcomeOverride = null, allowExploration = false } = {}) {
+  const lastBattleAt = state.battleRecord?.lastBattleAt || 0;
+  const lastNodeId = state.explorationProgress?.lastNodeId || null;
+  const node = lastNodeId ? getExplorationNodeById(lastNodeId) : null;
+  const nodeName = node?.label?.zh || "那片場域";
+  const seed = (state.chatHistory?.length || 0) + (state.bond || 0);
+
+  if (lastBattleAt && now - lastBattleAt <= EVENT_FRESH_WINDOW_MS) {
+    const outcome = outcomeOverride || LEGACY_TO_OUTCOME[state.battleRecord?.lastResult] || "stabilized";
+    const pool = EVENT_REFLECTION.standoff[outcome] || EVENT_REFLECTION.standoff.stabilized;
+    const line = pool[Math.abs(seed) % pool.length] || pool[0];
+    return line.replace("{node}", nodeName);
+  }
+
+  if (allowExploration && node) {
+    const pool = EVENT_REFLECTION.exploration;
+    const line = pool[Math.abs(seed) % pool.length] || pool[0];
+    return line.replace("{node}", nodeName);
+  }
+
+  return null;
 }
 
 /**
