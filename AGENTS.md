@@ -57,6 +57,23 @@
 - 圖像生成輸出的資產需經 human 確認後才能進 `assets/`。
 - Gemini 只做視覺 review，不改 runtime code。
 - Spine 動畫僅後期高階選項，非 MVP 主線。
+- Game Studio 只做任務分類與工作流輔助，不可把 Nexus Link 導回 Phaser、React、TypeScript、npm 或任何 build step。
+- Sprite Pipeline 可用於動畫一致性、切格、對齊、anchor、QC；套用時必須遵守 Nexus Link illustrated `512×512` companion 規格，不得回退成 chunky pixel art 預設。
+- Generate 2D Sprite 可用於 AI 圖像生成；Nexus Link 預設 `art_style` 應是 project-native / clean_hd / illustrated，不是 `pixel_art`。
+- 不得主動產 `64×64` chunky pixel art companion，除非 human 明確要求 legacy pixel asset。
+
+### Companion 美術政策
+- 新 companion 是 illustrated / painterly / high-detail，不是 chunky pixel art，也不是 nearest-neighbor pixel-perfect pipeline。
+- 新 companion master frame = `512×512 px`；final runtime asset 必須是 transparent PNG。
+- Frame 內不可 baked-in 白底、UI、文字、場景、展示台、圖鑑框。
+- Companion anchor = bottom-center（概念上 `x: 0.5, y: 1`）；final on-screen position snap 必須保留，避免動畫切換時腳底滑動。
+- Companion texture sampling 不再使用 nearest-neighbor；illustrated companion runtime 應使用 linear sampling + mipmaps，清晰度來自 512 高解析母版縮小顯示。
+- `greyshade-cat` 現有 443/444 frame 為 legacy accepted，不得 upscale 到 512。
+- 任一 sprite sheet edge 必須 `<= 4096 px`；frame grid 必須整除：`sheet_width / cols` 與 `sheet_height / rows` 都必須是整數。
+- Scale 必須以 `frameHeight` 計算，不可用整張 `sheetHeight` 計算。
+- Runtime 可以使用 downscaled export，不代表所有動畫永遠都要全載 512；必須控制同時載入的 sheet 數量，避免 mobile GPU memory 壓力。
+- 既有 pixel-style concept sheets / 舊圖鑑 / 64 PPU / 96px 標記圖保留為 design reference / art canon，不是廢棄，也不可直接視為 runtime companion sprite。
+- 若要實裝舊設計，必須依該設計重新輸出 clean `512×512` transparent companion frame。
 
 ---
 

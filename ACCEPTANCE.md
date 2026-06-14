@@ -103,26 +103,51 @@
 
 ---
 
-## G. 技術地基不被破壞（每個 TASK_PACK 都要過）
+## G. Companion Art Policy（illustrated root 主版本）
 
-**G1 — 解耦三層完好**
+**G1 — 新 companion 採 illustrated 高解析 pipeline**
+- 通過：新 companion 規格明確為 illustrated / painterly / high-detail；沒有把 chunky pixel art、pixel-perfect、nearest-neighbor、no anti-aliasing 設為 companion 預設。
+
+**G2 — Master frame 與透明輸出正確**
+- 通過：新 companion master frame = `512×512 px`；final runtime asset 是 transparent PNG；frame 內沒有 baked-in 白底、UI、文字、場景、展示台、圖鑑框。
+
+**G3 — Anchor、snap、scale 計算正確**
+- 通過：companion anchor = bottom-center（概念上 `x: 0.5, y: 1`）；final on-screen position snap 保留；scale 以 `frameHeight` 計算，不以整張 `sheetHeight` 計算。
+
+**G4 — Texture sampling 符合 illustrated pipeline**
+- 通過：illustrated companion runtime 使用 linear sampling + mipmaps；清晰度來自 512 高解析母版縮小顯示，不靠 nearest-neighbor。
+
+**G5 — Sheet 尺寸與 grid 可驗證**
+- 通過：任一 sprite sheet edge `<= 4096 px`；`sheet_width / cols` 與 `sheet_height / rows` 都是整數。
+
+**G6 — Legacy art 沒有被誤升級或誤廢棄**
+- 通過：`greyshade-cat` 現有 443/444 frame 標記為 legacy accepted，沒有被 upscale 到 512；既有 pixel-style concept sheets / 舊圖鑑 / 64 PPU / 96px 標記圖保留為 design reference / art canon，不被直接當成廢棄，也不被直接當成 runtime companion sprite。
+
+**G7 — Runtime 載入量受控**
+- 通過：允許 downscaled export；沒有要求所有動畫永遠全載 512；同時載入的 sheet 數量有控制，以避免 mobile GPU memory 壓力。
+
+---
+
+## H. 技術地基不被破壞（每個 TASK_PACK 都要過）
+
+**H1 — 解耦三層完好**
 - 通過：`src/pixi/**` 無 `document.querySelector` 等 DOM 操作；`src/ui/**` 無直接操作 `PIXI.Container`；跨層只走 EventBus / store。
 
-**G2 — STORAGE_KEY 未被改動**
+**H2 — STORAGE_KEY 未被改動**
 - 通過：`saveManager.js` 仍為 `nexusLinkR2State:v1`；無其他模組直接 `localStorage.setItem`。
 
-**G3 — 效能紀律**
-- 通過：ticker 內無新增的昂貴操作 / 每幀 new-destroy；像素角色仍 nearest + 整數 snap；spark pool / resize 節流 / webgl guard 未被拆。
+**H3 — 效能紀律**
+- 通過：ticker 內無新增的昂貴操作 / 每幀 new-destroy；illustrated companion sampling 遵守 G4，companion position snap 遵守 G3；spark pool / resize 節流 / webgl guard 未被拆。
 
-**G4 — LOCKED 屍體未被刪改**
+**H4 — LOCKED 屍體未被刪改**
 - 通過：`main.js` / `style.css` / `script.js` 原封不動；`node --check script.js` 仍通過。
 
-**G5 — 技術邊界未被破壞**
+**H5 — 技術邊界未被破壞**
 - 通過：無新增 React/Vue/TS/CSS 框架/後端/DB/LLM API/npm 套件/build step。
 
 ---
 
-## H. 既有功能不回歸（smoke）
+## I. 既有功能不回歸（smoke）
 
 沿用 `docs/testing/MANUAL_TEST_CHECKLIST.md`：頁面載入無 blocking error、PixiJS 起得來、灰影貓置中於平台、HUD 顯示四維 + 邊界、Soul Talk 可送出、四 nav 行動可開、localStorage 跨 reload 保留、手機 390×844 不破版。
 
@@ -130,9 +155,9 @@
 
 ## 驗收判定
 
-- **GROUNDWORK TASK_PACK**：G1–G5 + H 全過。
-- **EXPERIENCE TASK_PACK**：對應 A–F 的指定條 + G1–G5 + H 全過。
-- **戰鬥改造**：E1–E4 + D（全）+ G + H。
-- **裂變事件**：D1–D6 全過（尤其 D3–D5）+ C1 + G + H。
+- **GROUNDWORK TASK_PACK**：H1–H5 + I 全過；若碰 companion art / sheet / renderer，另跑 G1–G7。
+- **EXPERIENCE TASK_PACK**：對應 A–F 的指定條 + H1–H5 + I 全過；若碰 companion art / sheet / renderer，另跑 G1–G7。
+- **戰鬥改造**：E1–E4 + D（全）+ H + I。
+- **裂變事件**：D1–D6 全過（尤其 D3–D5）+ C1 + H + I。
 
 任一 D 條（安全紅線）未過 → 整個 TASK_PACK 不通過，無論其他多漂亮。

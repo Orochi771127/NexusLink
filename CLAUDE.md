@@ -81,8 +81,21 @@
 ### 效能規範
 - Ticker 內禁止昂貴操作（DOM 查詢、大量 JSON parse、fetch、每幀 new/destroy 物件）。
 - Texture 必須透過 `PIXI.Assets.load()` 快取。
-- 像素角色：`scaleMode = 'nearest'`，座標 `Math.round()` 整數 snap，禁止亞像素模糊。
+- Illustrated companion texture 應使用 linear sampling + mipmaps；清晰度來自 512 高解析母版縮小顯示，不再用 nearest-neighbor 製造 pixel-perfect 銳利感。
+- Companion 最終螢幕位置仍必須 snap，並維持 bottom-center baseline，避免動畫切換時腳底滑動。
+- Runtime 可以使用 downscaled export，不代表所有動畫永遠都要全載 512；必須控制同時載入的 sheet 數量，避免 mobile GPU memory 壓力。
 - 既有的 object pool（營火 spark）、resize RAF 節流、WebGL context guard 不可拆除。
+
+### Companion 美術規格（root 主版本）
+- 新 companion 預設為 illustrated / painterly / high-detail，不是 chunky pixel art，也不是 nearest-neighbor pixel-perfect pipeline。
+- 新 companion master frame 必須是 `512×512 px`，final runtime asset 必須是 transparent PNG。
+- Frame 內不可 baked-in 白底、UI、文字、場景、展示台、圖鑑框；只保留乾淨角色本體。
+- Companion anchor = bottom-center（概念上 `x: 0.5, y: 1`）；final on-screen position snap 必須保留。
+- Sprite sheet 任一邊必須 `<= 4096 px`；frame grid 必須整除：`sheet_width / cols` 與 `sheet_height / rows` 都必須是整數。
+- Scale 必須以 `frameHeight` 計算，不可用整張 `sheetHeight` 計算。
+- `greyshade-cat` 現有 443/444 frame 是 legacy accepted；不得為了符合 512 規格而 upscale。
+- 既有 pixel-style concept sheets、舊圖鑑、64 PPU、96px 標記圖保留為 design reference / art canon；舊設定圖不可直接視為廢棄，也不可直接視為 runtime companion sprite。
+- 若要實裝舊設計，必須依該設計重新輸出 clean `512×512` transparent companion frame。
 
 ### localStorage 規範（注意：key 已更新）
 - 所有寫入集中在 `src/state/saveManager.js`。
