@@ -1,0 +1,50 @@
+{
+  "character_id": "thunder-pup",
+  "action_id": "idle_calm",
+  "animation_catalog_ref": "docs/assets/COMPANION_ANIMATION_CATALOG.md#idle_calm",
+  "category": "emotion",
+  "meaning": "calm seated idle breathing / quiet observation",
+  "frame_count": 8,
+  "rows": 2,
+  "cols": 4,
+  "frame_width": 512,
+  "frame_height": 512,
+  "total_width": 2048,
+  "total_height": 1024,
+  "fps": 8,
+  "loop": true,
+  "facing": "front or slight 3/4 front",
+  "motion_notes": "subtle breathing only; tiny ear movement; small tail crystal flicker; eyes calm and alive; no dramatic pose change; stable scale across frames; stable bottom-center baseline; same character identity in every frame",
+  "safety_notes": "Protective but not aggressive. Calm when trusted. No combat escalation, no fear-punishment framing, no domination pose.",
+  "reference_policy": "Use approved ThunderPup reference images when provided by human. Do not infer missing traits freely. Preserve character identity over adding visual novelty. Concept sheets are reference / art canon only, not runtime sprites.",
+  "lock_frame_1": true,
+  "expected_output": {
+    "file_type": "PNG",
+    "background": "transparent",
+    "sheet_layout": "one full action sheet generated at once",
+    "per_frame_size": "512x512",
+    "body_policy": "full body inside safe area, no cropping, bottom-center baseline stable",
+    "forbidden": [
+      "white background",
+      "UI",
+      "text",
+      "scene",
+      "pedestal",
+      "chunky pixel art",
+      "nearest-neighbor pixel style",
+      "frame-by-frame generation",
+      "detached FX unless explicitly requested"
+    ]
+  },
+  "qc_requirements": {
+    "sheet_edge_max": 4096,
+    "grid_exactly_divisible": true,
+    "expected_frame_count_matches_grid": true,
+    "new_companion_frame_size": "512x512",
+    "transparent_png_required": true,
+    "anchor": "bottom-center",
+    "position_snap": true,
+    "scale_basis": "frameHeight",
+    "sampling": "linear + mipmaps"
+  }
+}

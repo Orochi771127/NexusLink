@@ -1,0 +1,229 @@
+# Nexus Link Companion Action Prompt
+
+Create one complete runtime-ready companion action sheet.
+
+## Character Lock Spec
+
+# Character Lock Spec — ThunderPup
+
+> Status: identity scaffold for pilot prompt generation. This file does not connect ThunderPup to runtime.
+
+## Identity
+
+- character_id: thunder-pup
+- display_name: ThunderPup
+- faction: black_iron_hackers
+- role: thunder guardian companion
+- element: thunder / lightning
+- species: wolf pup
+- age_feel: young companion
+- current_runtime_status: roadmap candidate, not active runtime companion
+
+## Art Direction
+
+- art_style: illustrated / painterly / high-detail
+- not chunky pixel art
+- not 64x64 pixel sprite
+- master_frame: 512x512
+- background: transparent PNG
+- anchor: bottom-center
+- position_snap: true
+- sampling: linear + mipmaps
+- no nearest-neighbor for illustrated companion
+
+## Core Silhouette
+
+- compact young wolf pup
+- large alert ears
+- compact seated or stable four-leg body
+- fluffy tail with compact crystal-like electric tail tip
+- readable small companion silhouette
+- loyal but alert posture
+
+## Face / Eye Identity
+
+- wolf pup face
+- bright electric blue eyes
+- small muzzle
+- calm but alive expression
+- not fox-like
+- not rabbit-like
+- not cat-like
+
+## Color System
+
+- charcoal black
+- cool gray
+- electric blue
+- blue-violet glow
+
+## Signature Markings
+
+- glowing blue-purple lightning markings
+- compact crystal-like electric tail tip
+- dark fur palette
+- bright blue eyes
+- black-iron / cyber thunder faction language
+- alert but companion-like personality
+
+## Material Language
+
+- soft dark young-wolf fur with painterly detail
+- cool gray secondary fur shapes
+- blue-violet lightning glow integrated into markings, not floating UI
+- compact crystal-like electric tail tip, readable but not oversized
+- cyber thunder faction accents should feel black-iron and restrained
+
+## Personality Impression
+
+- loyal
+- alert
+- emotionally sensitive
+- protective but not aggressive
+- calm when trusted
+- defensive when boundary pressure rises
+
+## Forbidden Drift
+
+- do not change species
+- do not turn into fox / rabbit / cat / generic dog
+- do not change blue eyes
+- do not remove blue-purple lightning markings
+- do not remove crystal tail tip
+- do not add armor unless explicitly requested
+- do not add wings
+- do not make it a giant adult wolf
+- do not change faction language into heart-council fantasy style
+- do not add UI
+- do not add text
+- do not add scene
+- do not add pedestal
+- do not add white background
+- do not convert into chunky pixel art
+- do not reinterpret as a different faction
+
+## Runtime Art Policy
+
+- art_style: illustrated / painterly / high-detail
+- master_frame: 512x512
+- background: transparent PNG
+- anchor: bottom-center
+- sampling: linear + mipmaps
+- position_snap: true
+- max_sheet_edge: 4096
+- sheet_grid: exactly divisible
+- scale_basis: frameHeight
+- no nearest-neighbor for illustrated companion
+- concept sheets are reference / art canon only, not runtime sprites
+
+## Reference Policy
+
+- Use approved ThunderPup reference images when human provides them.
+- Current lock spec is identity scaffold only.
+- Do not infer missing visual traits freely.
+- Preserve character identity over novelty.
+- Concept sheets are reference / art canon only, not runtime sprites.
+
+## Reference Image List
+
+| Reference | Path or link | Use | Runtime allowed? |
+|-----------|--------------|-----|------------------|
+| Human-approved ThunderPup reference | pending | identity / silhouette / markings | no |
+
+## Approval Status
+
+- lock_spec_status: pilot draft
+- human_approved_by:
+- approval_date:
+- approved_for_actions: idle_calm prompt pilot only
+
+## Human Notes
+
+-
+
+## Action Config
+
+- character_id: thunder-pup
+- action_id: idle_calm
+- animation_catalog_ref: docs/assets/COMPANION_ANIMATION_CATALOG.md#idle_calm
+- frame_count: 8
+- layout: 2 rows x 4 cols
+- per_frame: 512x512
+- total_sheet: 2048x1024
+- facing: front or slight 3/4 front
+- motion_notes: subtle breathing only; tiny ear movement; small tail crystal flicker; eyes calm and alive; no dramatic pose change; stable scale across frames; stable bottom-center baseline; same character identity in every frame
+- safety_notes: Protective but not aggressive. Calm when trusted. No combat escalation, no fear-punishment framing, no domination pose.
+- reference_policy: Use approved ThunderPup reference images when provided by human. Do not infer missing traits freely. Preserve character identity over adding visual novelty. Concept sheets are reference / art canon only, not runtime sprites.
+- lock_frame_1: true
+
+## Generation Requirements
+
+- same character identity
+- same silhouette
+- same palette
+- same face / eyes / markings
+- same material language
+- no species change
+- no redesign
+- no UI
+- no text
+- no scene
+- no pedestal
+- no white background
+- transparent PNG
+- 512x512 per frame for new companions
+- bottom-center baseline
+- one full action sheet at once
+- no frame-by-frame generation
+- stable scale across frames
+- full body inside safe area
+- no cropping
+- no detached FX inside body sheet unless explicitly requested
+- illustrated / painterly / high-detail Nexus Link companion style
+
+## Expected Output
+
+{
+  "file_type": "PNG",
+  "background": "transparent",
+  "sheet_layout": "one full action sheet generated at once",
+  "per_frame_size": "512x512",
+  "body_policy": "full body inside safe area, no cropping, bottom-center baseline stable",
+  "forbidden": [
+    "white background",
+    "UI",
+    "text",
+    "scene",
+    "pedestal",
+    "chunky pixel art",
+    "nearest-neighbor pixel style",
+    "frame-by-frame generation",
+    "detached FX unless explicitly requested"
+  ]
+}
+
+## QC Requirements
+
+{
+  "sheet_edge_max": 4096,
+  "grid_exactly_divisible": true,
+  "expected_frame_count_matches_grid": true,
+  "new_companion_frame_size": "512x512",
+  "transparent_png_required": true,
+  "anchor": "bottom-center",
+  "position_snap": true,
+  "scale_basis": "frameHeight",
+  "sampling": "linear + mipmaps"
+}
+
+## Forbidden
+
+- white background
+- UI
+- text
+- scene
+- pedestal
+- chunky pixel art
+- nearest-neighbor pixel style
+- frame-by-frame generation
+- detached FX unless explicitly requested

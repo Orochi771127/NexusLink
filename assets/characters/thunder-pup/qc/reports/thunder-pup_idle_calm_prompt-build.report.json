@@ -1,0 +1,26 @@
+{
+  "character_id": "thunder-pup",
+  "action_id": "idle_calm",
+  "generated_prompt_path": "assets/characters/thunder-pup/prompts/thunder-pup_idle_calm.prompt.txt",
+  "lock_spec_path": "assets/characters/thunder-pup/canon/thunder-pup.lock.md",
+  "action_config_path": "assets/characters/thunder-pup/actions/idle_calm.json",
+  "total_width": 2048,
+  "total_height": 1024,
+  "frame_width": 512,
+  "frame_height": 512,
+  "rows": 2,
+  "cols": 4,
+  "frame_count": 8,
+  "sheet_edge_pass": true,
+  "grid_pass": true,
+  "generated_at": "2026-06-15T00:14:33.3961326+08:00",
+  "runtime_integration": false,
+  "registry_modified": false,
+  "notes": [
+    "Prompt generated with scripts/build_companion_prompt.js using bundled Node.",
+    "No image was generated.",
+    "No runtime integration was performed.",
+    "ThunderPup canonical ID thunder-pup was used.",
+    "Human review remains required for visual identity and aesthetic approval."
+  ]
+}
