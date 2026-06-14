@@ -1,0 +1,46 @@
+{
+  "character_id": "new-companion",
+  "action_id": "idle_calm",
+  "animation_catalog_ref": "docs/assets/COMPANION_ANIMATION_CATALOG.md#idle_calm",
+  "frame_count": 8,
+  "rows": 2,
+  "cols": 4,
+  "frame_width": 512,
+  "frame_height": 512,
+  "total_width": 2048,
+  "total_height": 1024,
+  "facing": "3/4 front, body readable, feet aligned to bottom-center baseline",
+  "motion_notes": "Calm breathing idle. Subtle chest rise, tail or accessory motion may be present, no dramatic pose change. Preserve character lock spec identity across every frame.",
+  "safety_notes": "Keep the action gentle, companion-like, and non-dominating. No injury, no coercive pose, no distress escalation.",
+  "reference_policy": "Use approved character lock spec and references only as identity/art-canon guidance. Do not copy presentation sheets directly into runtime. Do not redesign the character.",
+  "lock_frame_1": "Frame 1 must read as the approved identity pose: same species, silhouette, palette, face, eyes, markings, and material language.",
+  "expected_output": {
+    "file_type": "PNG",
+    "background": "transparent",
+    "sheet_layout": "one full action sheet generated at once",
+    "per_frame_size": "512x512",
+    "body_policy": "full body inside safe area, no cropping, bottom-center baseline stable",
+    "forbidden": [
+      "white background",
+      "UI",
+      "text",
+      "scene",
+      "pedestal",
+      "chunky pixel art",
+      "frame-by-frame generation",
+      "detached FX unless explicitly requested"
+    ]
+  },
+  "qc_requirements": {
+    "sheet_edge_max": 4096,
+    "grid_exactly_divisible": true,
+    "expected_frame_count_matches_grid": true,
+    "new_companion_frame_size": "512x512",
+    "greyshade_cat_legacy_exception": "443/444 accepted, never upscale",
+    "transparent_png_required": true,
+    "anchor": "bottom-center",
+    "position_snap": true,
+    "scale_basis": "frameHeight",
+    "sampling": "linear + mipmaps"
+  }
+}
