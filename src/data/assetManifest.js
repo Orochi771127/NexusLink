@@ -13,7 +13,7 @@ export const ASSET_MANIFEST = Object.freeze({
     moon: "./assets/props/LakeNightCamp_v2/celestial_moon.png"
   }),
   audio: Object.freeze({
-    bgm: "./assets/audio/bgm_lakefront.mp3"
+    bgm: "./assets/audio/bgm_nexuslink.m4a"
   }),
   characters: Object.freeze({
     greyshadeCat: Object.freeze({
