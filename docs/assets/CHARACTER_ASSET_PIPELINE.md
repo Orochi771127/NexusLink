@@ -10,14 +10,23 @@
 > ⚠️ **不可直接把漂亮圖丟進 runtime。**  
 > 無論圖片多漂亮，未通過完整 pipeline 的資產不得進入 `assets/characters/<id>/spritesheets/`。
 
-進入 runtime 的 spritesheet 必須符合所有條件：
-- 透明背景（alpha channel，無白色或純色底）
+新 companion 進入 runtime 的 spritesheet 必須符合所有條件：
+- illustrated / painterly / high-detail，不是 chunky pixel art default
+- master frame = `512×512 px`
+- final runtime PNG 必須透明（alpha channel，無白色或純色底）
+- frame 內不可 baked-in 白底、UI、文字、場景、展示台、圖鑑框
 - 固定 frame size（所有幀寬高一致）
-- bottom-center baseline 對齊（所有幀的角色腳底在同一 Y 座標）
-- nearest-neighbor 友好（像素邊緣清晰，無抗鋸齒模糊）
+- bottom-center anchor / baseline 對齊（概念上 `x: 0.5, y: 1`）
+- final on-screen position snap 保留，避免動畫切換時腳底滑動
+- companion sampling = linear + mipmaps，不是 nearest-neighbor
+- 任一 sprite sheet edge `<= 4096 px`
+- frame grid 必須整除：`sheet_width / cols` 與 `sheet_height / rows` 都必須是整數
+- scale 必須使用 `frameHeight`，不可使用整張 `sheetHeight`
 - 檔名符合命名規則
 - `animations.json` 已更新
 - human 已確認視覺品質
+
+`greyshade-cat` 現有 443/444 frame 是 legacy accepted，不可 upscale 到 512。既有 pixel-style concept sheets、舊圖鑑、64 PPU、96px 標記圖保留為 design reference / art canon；舊設定圖不可直接視為廢棄，也不可直接視為 runtime companion sprite。若要實裝舊設計，必須依該設計重新輸出 clean `512×512` transparent companion frame。
 
 **必須先有 approved seed frame。**  
 在生成完整動畫序列前，需先產出單一 seed frame，經 Gemini review 和 human 確認後，才可展開其餘幀的生成。未 approved 的 seed frame 不得進入 spritesheets 目錄。
@@ -27,25 +36,25 @@
 ## 資產管線概覽
 
 ```
-概念圖 (ChatGPT image gen)
+human 提供舊設計圖 / concept sheet / art canon
   ↓
-圖鑑圖 / 立繪 (ChatGPT image gen)
+Codex 整理 Character Lock Spec
   ↓
-Gemini review（視覺審查）
+human 核准 lock spec
   ↓
-human 確認
+Codex 產 prompt / action config
   ↓
-Approved seed frame（單幀確認）← 必須先通過此步驟
+image generation tool 產出 512×512 transparent frame 或 animation sheet
   ↓
-64×64 / 128×128 像素動畫幀序列（ChatGPT / Gemini / Grok 協作）
+Codex 做 validation / QC report / preview
   ↓
-sprite sheet（逐格橫向排列，fixed frame size）
+human 最終核准
   ↓
-transparent PNG 處理 + bottom-center baseline 對齊驗證
+通過後才進 runtime assets
   ↓
-human 視覺確認
+spritesheet（fixed frame size，grid 整除，edge <= 4096）
   ↓
-assets/characters/<character-id>/spritesheets/ 存入
+transparent PNG + bottom-center baseline / position snap 驗證
   ↓
 animations.json metadata 更新
   ↓
@@ -65,7 +74,7 @@ runtime 測試（MANUAL_TEST_CHECKLIST.md）
 **規格**：
 - 尺寸：512×512 或 1024×1024（供設計參考，不是 runtime 用）
 - 格式：PNG
-- 風格：Pixel art 風格，Cyber-Taoism 美學，夜晚冷光調
+- 風格：illustrated / painterly / high-detail，Cyber-Taoism 美學，夜晚冷光調
 
 **存放路徑**：
 ```
@@ -94,25 +103,28 @@ assets/characters/<character-id>/portrait/
 
 ---
 
-## 三、像素資產規格
+## 三、Companion frame 規格
 
 **目的**：sprite sheet 的單格來源。
 
-**尺寸選項**：
+**當前 root 主版本規格**：
 
 | 尺寸 | 用途 |
 |------|------|
-| 64×64 px | 標準 runtime sprite（主要） |
-| 128×128 px | 高解析度版本（視裝置縮放使用） |
-| 96×96 px | 備選尺寸（視設計需求） |
+| 512×512 px | 新 companion master frame 標準 |
+| downscaled export | runtime 可用的效能輸出，不代表 master 降級 |
+| 443/444 px | `greyshade-cat` legacy accepted，只能保留，不可 upscale |
+| 64 PPU / 96px / pixel-style sheets | design reference / art canon，不是新 companion runtime 標準 |
 
 **工具**：ChatGPT image generation / Gemini / Grok
 
 **技術要求**：
 - 透明背景（alpha channel）
-- 像素風格 pixel art 繪製
+- illustrated / painterly / high-detail 繪製
+- 不可包含白底、UI、文字、場景、展示台、圖鑑框
 - 角色底部 baseline 必須對齊到同一水平線（所有幀的腳底位置一致）
-- 禁止抗鋸齒（no anti-aliasing on edges）
+- companion anchor = bottom-center（概念上 `x: 0.5, y: 1`）
+- 允許 illustrated anti-aliasing；不得套用 legacy pixel-art 的 no anti-aliasing 規則
 
 ---
 
@@ -126,9 +138,9 @@ assets/characters/<character-id>/portrait/
 <character-id>_<animation-name>_<width>x<height>_<frame-count>f.png
 
 範例：
-greyshade-cat_idle_calm_64x64_8f.png    （8 幀，64×64）
-greyshade-cat_idle_calm_128x128_8f.png  （8 幀，128×128）
-greyshade-cat_attack_basic_64x64_6f.png （6 幀，64×64）
+new-companion_idle_calm_512x512_8f.png   （新 companion master sheet）
+new-companion_idle_calm_256x256_8f.png   （downscaled runtime export）
+greyshade-cat_idle_calm_443x443_8f.png   （legacy accepted 範例，不可 upscale）
 ```
 
 ### Sprite Sheet 排列
@@ -136,8 +148,13 @@ greyshade-cat_attack_basic_64x64_6f.png （6 幀，64×64）
 - 所有幀橫向排列（單行）
 - 每幀寬高一致
 - 幀數由檔名的 `<N>f` 表示
+- 任一 sheet edge 必須 `<= 4096 px`
+- frame grid 必須整除：`sheet_width / cols` 與 `sheet_height / rows` 都必須是整數
+- runtime scale 必須以 `frameHeight` 計算，不可用整張 `sheetHeight`
 
 ### 目前動畫集（greyshade-cat）
+
+以下為 `greyshade-cat` legacy runtime 動畫集。它是 P1 主線唯一 active companion，但其現有 443/444 frame 屬 legacy accepted，不可 upscale 到 512，也不可用來推導新 companion 的 64×64 / nearest-neighbor 標準。
 
 **emotion/**
 - `idle_calm` (8f)、`idle_happy` (8f)、`idle_angry` (6f)
@@ -167,8 +184,9 @@ greyshade-cat_attack_basic_64x64_6f.png （6 幀，64×64）
 **要求**：
 - 所有 sprite sheet 必須有透明背景
 - 禁止白色或純色背景
-- 使用工具：`tools/process_greyshade_cat_manual_transparent_128.py`（離線處理）
-- 處理後存入 `inbox_manual_transparent/`，再由 pipeline 生成 spritesheet
+- 禁止把 UI、文字、場景、展示台、圖鑑框 baked into frame
+- 舊設計圖只能作為 reference / art canon；若要 runtime 化，必須重新輸出 clean `512×512` transparent companion frame
+- 既有 greyshade-cat 離線處理工具屬 legacy 專用，不代表新 companion 要走 64×64 / nearest-neighbor 管線
 
 ---
 
@@ -177,19 +195,20 @@ greyshade-cat_attack_basic_64x64_6f.png （6 幀，64×64）
 **要求**：
 - 每個動畫的所有幀，角色底部腳點必須在同一 Y 座標
 - 不對齊會導致角色在動畫播放時上下跳動
+- companion anchor = bottom-center（概念上 `x: 0.5, y: 1`）
+- final on-screen position snap 必須保留，避免動畫切換時腳底滑動
 - 驗證方式：在 Aseprite 或 Photoshop 中用參考線逐幀確認
 
 ---
 
-## 七、Nearest-Neighbor 渲染
+## 七、Texture sampling 與縮放
 
 **要求**：
-- PixiJS 載入 sprite texture 時必須設定：
-  ```js
-  texture.source.scaleMode = 'nearest'
-  ```
-- 禁止 linear 插值，會導致像素邊緣模糊
-- 目前由 `src/pixi/spriteSheetAnimationLoader.js` 負責設定
+- 新 illustrated companion runtime 應使用 linear sampling + mipmaps。
+- 清晰度來自 512 高解析母版縮小顯示，不靠 nearest-neighbor 製造 pixel-perfect 銳利感。
+- `scaleMode = 'nearest'` 僅可保留在 legacy pixel-art / historical / greyshade-cat 專用語境，不是新 companion 標準。
+- Runtime 可以使用 downscaled export，不代表所有動畫永遠都要全載 512。
+- 必須控制同時載入的 sheet 數量，避免 mobile GPU memory 壓力。
 
 ---
 
@@ -224,14 +243,14 @@ assets/characters/<character-id>/
 
 ```json
 {
-  "character": "greyshade-cat",
-  "frameSize": 64,
+  "character": "new-companion",
+  "frameSize": 512,
   "animations": {
     "idle_calm": {
-      "sheet": "assets/characters/greyshade-cat/spritesheets/emotion/greyshade-cat_idle_calm_64x64_8f.png",
+      "sheet": "assets/characters/new-companion/spritesheets/emotion/new-companion_idle_calm_512x512_8f.png",
       "frames": 8,
-      "frameWidth": 64,
-      "frameHeight": 64,
+      "frameWidth": 512,
+      "frameHeight": 512,
       "fps": 8,
       "loop": true
     }
@@ -243,6 +262,8 @@ assets/characters/<character-id>/
 - 新增動畫時同步更新 `animations.json`
 - 同步確認 `src/data/assetManifest.js` 中的路徑
 - 禁止修改現有 key 名稱（sprite loader 依賴這些 key）
+- metadata 的 scale / fit 計算必須使用 `frameHeight`，不可使用整張 `sheetHeight`
+- 新 companion metadata 不得把 `frameSize: 64` 當預設；64/96 類數值只可出現在 legacy/reference 註記
 
 ---
 
@@ -250,11 +271,11 @@ assets/characters/<character-id>/
 
 | AI | 職責 |
 |----|------|
-| **ChatGPT image generation** | 概念圖、立繪、像素 sprite 初稿生成 |
+| **ChatGPT image generation** | 概念圖、立繪、illustrated 512×512 frame / sheet 初稿生成 |
 | **Gemini** | 視覺審查（看圖比較、確認 baseline 對齊、色彩一致性） |
 | **Grok** | ChatGPT / Gemini 沒有額度時的備援生成 |
-| **Claude Code** | animations.json 更新、assetManifest.js 更新、pipeline 工具 |
-| **Human** | 最終視覺確認、approving assets 進入 runtime |
+| **Codex / Claude Code** | Character Lock Spec、prompt / action config、validation、QC report、preview、metadata 更新 |
+| **Human** | 核准 lock spec、最終視覺確認、approving assets 進入 runtime |
 
 ---
 

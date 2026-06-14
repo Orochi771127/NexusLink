@@ -21,6 +21,7 @@ git status --short
 - [ ] **未授權檔案是否被修改？**
   - 確認 diff 中的每個檔案都在本次任務的 `Allowed files` 清單內
   - 特別注意：`index.html`、`src/pixi/pixiApp.js`、`src/state/saveManager.js`、`assets/**`
+  - 確認未授權時沒有修改 `/r2/**`、`tools/**`、`scripts/**`
   - ✗ 失敗條件：任何未授權檔案出現在 diff 中
 
 - [ ] **是否有意外刪除或重命名資產檔案？**
@@ -78,14 +79,40 @@ git status --short
   - 確認沒有在 ticker 內每 frame 建立新的 Pixi 物件（應用物件池或 sync 模式）
   - ✗ 失敗條件：ticker 內出現高頻昂貴操作
 
-- [ ] **是否破壞 pixel-perfect 渲染？**
-  - 角色座標是否仍為整數（`Math.round()`）
-  - sprite 的 `scaleMode` 是否仍為 `nearest`
-  - ⚠ 關注條件：任何浮點數座標賦值給角色 sprite
+- [ ] **是否誤把 illustrated companion 改回 legacy pixel / nearest 規則？**
+  - 新 companion 是否仍是 illustrated / painterly / high-detail，而不是 chunky pixel art default
+  - companion sampling 是否維持 linear + mipmaps，而不是改回 nearest-neighbor
+  - 是否誤把 64×64、64 PPU、96px 或 `frameSize: 64` 當成新 companion 標準
+  - ⚠ 關注條件：nearest / pixel-perfect / no anti-aliasing 只可出現在 legacy / historical / greyshade-cat 專用語境
+
+- [ ] **是否保留 bottom-center baseline 與 position snap？**
+  - companion anchor 是否維持 bottom-center（概念上 `x: 0.5, y: 1`）
+  - final on-screen position snap 是否保留，避免動畫切換時腳底滑動
+  - scale / fit 計算是否使用 `frameHeight`，不是整張 `sheetHeight`
+  - ✗ 失敗條件：角色動畫因 anchor、position 或 sheetHeight scale 造成腳底滑動
 
 ---
 
-## 六、可測試性
+## 六、Companion Art Policy
+
+- [ ] **是否符合 illustrated companion root 規格？**
+  - 新 companion master frame 是否為 `512×512 px`
+  - final runtime PNG 是否透明
+  - frame 內是否沒有白底、UI、文字、場景、展示台、圖鑑框 baked in
+  - sprite sheet edge 是否 `<= 4096 px`
+  - frame grid 是否整除：`sheet_width / cols` 與 `sheet_height / rows` 都是整數
+  - ✗ 失敗條件：新 companion 用 chunky pixel art / nearest-neighbor / 64×64 作為預設規格
+
+- [ ] **是否保護 legacy / reference 邊界？**
+  - `greyshade-cat` 現有 443/444 frame 是否被視為 legacy accepted，且沒有被 upscale 到 512
+  - pixel-style concept sheets / 舊圖鑑 / 64 PPU / 96px 標記圖是否只作為 design reference / art canon
+  - 是否沒有把 concept sheet 直接放進 runtime spritesheets
+  - 是否未碰 `/r2/**`
+  - ✗ 失敗條件：舊設定圖被直接當成 runtime companion sprite，或 `/r2/**` 被順手更新
+
+---
+
+## 七、可測試性
 
 - [ ] **是否可以手動測試？**
   - 修改是否可以透過 `python -m http.server 5173` + 瀏覽器驗證
@@ -94,7 +121,7 @@ git status --short
 
 ---
 
-## 七、最終確認
+## 八、最終確認
 
 所有項目通過後，填寫以下確認欄：
 
@@ -109,7 +136,12 @@ PASS conditions met:
   - localStorage 直接寫入：無 ✓
   - Pixi/DOM 耦合：無 ✓
   - Ticker 濫用：無 ✓
-  - Pixel-perfect：保持 ✓
+  - Illustrated companion sampling：linear + mipmaps ✓
+  - 64×64 未被當成新 companion 標準 ✓
+  - Bottom-center baseline / position snap：保持 ✓
+  - frameHeight scale：使用 ✓
+  - /r2/：未修改 ✓
+  - concept sheet：未直接進 runtime ✓
   - 可手動測試：是 ✓
 
 Notes:
