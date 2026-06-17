@@ -1,0 +1,68 @@
+{
+  "character_id": "thunder-pup",
+  "approved_references": [
+    {
+      "id": "priority-a-primary-face",
+      "path": "assets/characters/<character-id>/references/<reference-a>.png",
+      "priority": "A",
+      "role": "primary identity, face, expression, seated idle reference",
+      "allowed_use": [
+        "face identity",
+        "eye shape and expression",
+        "front-facing proportions",
+        "seated idle posture",
+        "chest and front-leg marking placement"
+      ],
+      "forbidden_use": [
+        "replace side silhouette",
+        "invent alternate color canon",
+        "serve as runtime sprite without production export"
+      ]
+    },
+    {
+      "id": "priority-b-side-body",
+      "path": "assets/characters/<character-id>/references/<reference-b>.png",
+      "priority": "B",
+      "role": "body ratio, side silhouette, movement, and combat base",
+      "allowed_use": [
+        "body proportion",
+        "side silhouette",
+        "quadruped stance",
+        "tail and special anatomy structure",
+        "movement and combat pose planning"
+      ],
+      "forbidden_use": [
+        "replace front face identity",
+        "invent alternate expression canon",
+        "serve as runtime sprite without production export"
+      ]
+    },
+    {
+      "id": "supplemental-lineage",
+      "path": "assets/characters/<character-id>/references/<supplemental-reference>.png",
+      "priority": "Supplemental",
+      "role": "turnaround, lineage, or evolution logic only",
+      "allowed_use": [
+        "secondary anatomy clarification",
+        "lineage consistency",
+        "turnaround support"
+      ],
+      "forbidden_use": [
+        "override Priority A identity",
+        "override Priority B body ratio",
+        "seed unrelated evolution stage as primary form"
+      ]
+    }
+  ],
+  "reference_priority_rules": {
+    "Priority A": "primary identity / face / expression / seated idle",
+    "Priority B": "body ratio / side silhouette / movement / combat base",
+    "Supplemental": "turnaround / lineage / evolution logic only"
+  },
+  "warnings": [
+    "no mixed character versions",
+    "no unrelated evolution stage as primary seed",
+    "no UI-heavy card as runtime source",
+    "no alternate color variant unless human explicitly pivots canon"
+  ]
+}

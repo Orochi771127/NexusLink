@@ -1,0 +1,60 @@
+{
+  "character_id": "thunder-pup",
+  "action_id": "idle_calm",
+  "generation_backend": {
+    "name": "image_gen",
+    "direct_callable": true,
+    "model_specific_image_2_controls": "unverified",
+    "fallback": "external_image_generation_tool"
+  },
+  "required_skills": {
+    "game_studio": {
+      "required": true,
+      "purpose": "route as Nexus Link companion asset production"
+    },
+    "generate_2d_sprite": {
+      "required": true,
+      "purpose": "generate raw image or sprite sheet from prompt and references"
+    },
+    "sprite_pipeline": {
+      "required": true,
+      "purpose": "normalize sheet, check frames, baseline, preview, and QC"
+    }
+  },
+  "lock_spec_path": "assets/characters/<character-id>/canon/<character-id>.lock.md",
+  "action_config_path": "assets/characters/<character-id>/actions/<action-id>.json",
+  "prompt_path": "assets/characters/<character-id>/prompts/<character-id>_<action-id>.prompt.txt",
+  "reference_manifest_path": "assets/characters/<character-id>/references/<character-id>_<action-id>.reference-manifest.json",
+  "output_targets": {
+    "raw_output": "assets/characters/<character-id>/generation/raw/<character-id>_<action-id>_raw.png",
+    "processed_sheet": "assets/characters/<character-id>/generation/processed/<character-id>_<action-id>_sheet.png",
+    "preview": "assets/characters/<character-id>/qc/previews/<character-id>_<action-id>_preview.gif",
+    "validation_report": "assets/characters/<character-id>/qc/reports/<character-id>_<action-id>_validation.report.json",
+    "human_review_report": "assets/characters/<character-id>/qc/reports/<character-id>_<action-id>_human-review.md",
+    "approved_runtime_sheet": "assets/characters/<character-id>/runtime/<character-id>_<action-id>.png"
+  },
+  "frame_spec": {
+    "frame_width": 512,
+    "frame_height": 512,
+    "rows": 2,
+    "cols": 4,
+    "frame_count": 8,
+    "total_width": 2048,
+    "total_height": 1024,
+    "fps": 8,
+    "loop": true
+  },
+  "art_policy": {
+    "illustrated_painterly_high_detail": true,
+    "transparent_png": true,
+    "bottom_center_anchor": true,
+    "linear_sampling": true,
+    "mipmaps_recommended": true,
+    "no_nearest_neighbor": true
+  },
+  "approval_gate": {
+    "validate_asset_required": true,
+    "human_identity_review_required": true,
+    "runtime_promotion_allowed": false
+  }
+}
