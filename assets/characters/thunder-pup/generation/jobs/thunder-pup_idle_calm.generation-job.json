@@ -1,0 +1,61 @@
+{
+  "character_id": "thunder-pup",
+  "action_id": "idle_calm",
+  "generation_backend": "image_gen_or_external_image_backend",
+  "required_skills": {
+    "game_studio": {
+      "required": true,
+      "purpose": "route as Nexus Link companion asset production"
+    },
+    "generate_2d_sprite": {
+      "required": true,
+      "purpose": "generate raw idle_calm sheet from lock spec, prompt, and approved references"
+    },
+    "sprite_pipeline": {
+      "required": true,
+      "purpose": "normalize sheet, check frame layout, baseline, anchor, preview, and QC"
+    }
+  },
+  "lock_spec_path": "assets/characters/thunder-pup/canon/thunder-pup.lock.md",
+  "action_config_path": "assets/characters/thunder-pup/actions/idle_calm.json",
+  "prompt_path": "assets/characters/thunder-pup/prompts/thunder-pup_idle_calm.prompt.txt",
+  "reference_manifest_path": "assets/characters/thunder-pup/canon/references/reference-manifest.json",
+  "reference_gate": {
+    "priority_a_required": true,
+    "priority_b_required": true,
+    "generation_allowed_when_missing_priority_a_or_b": false,
+    "current_status": "blocked_until_human_imports_priority_a_and_priority_b_references"
+  },
+  "output_targets": {
+    "raw_output": "assets/characters/thunder-pup/generation/raw/thunder-pup_idle_calm_raw.png",
+    "processed_sheet": "assets/characters/thunder-pup/generation/processed/thunder-pup_idle_calm_sheet.png",
+    "preview": "assets/characters/thunder-pup/generation/previews/thunder-pup_idle_calm_preview.png",
+    "validation_report": "assets/characters/thunder-pup/qc/reports/thunder-pup_idle_calm_validation.json",
+    "human_review_report": "assets/characters/thunder-pup/qc/thunder-pup_idle_calm_human-approval.md",
+    "approved_runtime_sheet": "assets/characters/thunder-pup/runtime/sheets/thunder-pup_idle_calm_512x512_8f.png"
+  },
+  "frame_spec": {
+    "frame_width": 512,
+    "frame_height": 512,
+    "rows": 2,
+    "cols": 4,
+    "frame_count": 8,
+    "total_width": 2048,
+    "total_height": 1024,
+    "fps": 8,
+    "loop": true
+  },
+  "art_policy": {
+    "illustrated_painterly_high_detail": true,
+    "transparent_png": true,
+    "bottom_center_anchor": true,
+    "linear_sampling": true,
+    "mipmaps_recommended": true,
+    "no_nearest_neighbor": true
+  },
+  "approval_gate": {
+    "validate_asset_required": true,
+    "human_identity_review_required": true,
+    "runtime_promotion_allowed": false
+  }
+}
