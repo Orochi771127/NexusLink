@@ -6,10 +6,15 @@ This checklist is for the human-facing image generation package. It does not app
 
 Recommended reference count: **1-3 images**.
 
-Useful references:
-- One primary ThunderPup identity reference showing the whole body.
-- One close-up or crop that clarifies face, eyes, markings, and tail crystal.
-- Optional one pose or personality reference if it matches the approved lock spec.
+Highest-priority references:
+- Priority A: approved front seated ThunderPup reference. Use it for face identity, face proportions, expression baseline, seated / idle animation baseline, forehead lightning crest, chest V/Y glow, and front-leg lightning markings.
+- Priority B: approved side standing ThunderPup reference. Use it for body proportions, four-leg stance, side silhouette, wolf muzzle profile, side lightning mark distribution, and the tail crystal construction.
+- Optional extra reference: only if it matches the approved lock spec and does not conflict with Priority A / B.
+
+Reference hierarchy rules:
+- The front seated reference and side standing reference together form final canon.
+- Do not let the front reference replace the side-body proportions or tail crystal construction.
+- Do not let the side reference replace the front face, expression, seated idle identity, or chest / foreleg markings.
 
 Do not use references that contain:
 - UI
@@ -42,8 +47,13 @@ ThunderPup must remain:
 - wolf pup
 - bright electric blue eyes
 - dark fur palette
+- light gray / silver-gray muzzle and inner chest
+- central forehead lightning crest
+- chest V/Y-shaped electric cyan-blue glow
 - blue-purple lightning markings
-- compact crystal-like electric tail tip
+- irregular side-body lightning energy cracks
+- short front-leg and rear-leg lightning marks
+- large multi-shard violet-blue lightning crystal cluster on the rear half of the fluffy wolf tail
 - black-iron / cyber thunder faction language
 - alert but companion-like
 - protective but not aggressive
@@ -56,6 +66,10 @@ Reject drift toward:
 - giant adult wolf
 - heart-council fantasy style
 - chunky pixel art
+- chunky super-deformed toy look
+- white wolf / mint green / gold palette variants
+- fire, leaf, or ice-only marking language
+- mechanical beast redesign
 - armored redesign unless explicitly requested
 
 ## Forbidden In The Generated Sheet
@@ -69,6 +83,8 @@ Reject drift toward:
 - detached FX inside the body sheet unless explicitly requested
 - cropped body parts
 - inconsistent scale between frames
+- drifting forehead crest, chest V/Y mark, leg marks, or side lightning marks
+- shrinking, removing, or simplifying the tail crystal cluster
 
 ## Codex Validation Command
 
@@ -84,9 +100,16 @@ If local `node` is unavailable, use the bundled Codex Node executable and keep t
 
 - [ ] Does every frame look like the same ThunderPup?
 - [ ] Are proportions consistent across all 8 frames?
-- [ ] Is the crystal electric tail tip preserved?
+- [ ] Does the face stay wolf-pup shaped, not fox / rabbit / cat / generic dog?
+- [ ] Is the slightly large pup head proportion preserved without becoming babyish or toy-like?
+- [ ] Are large upright pointed ears preserved?
+- [ ] Is the light gray / silver-gray muzzle and inner chest preserved?
+- [ ] Is the central forehead lightning crest preserved?
+- [ ] Is the chest V/Y-shaped glow preserved?
+- [ ] Is the large multi-shard electric tail crystal cluster preserved and stable in size?
 - [ ] Are the eyes consistently bright electric blue?
 - [ ] Do the blue-purple lightning markings stay coherent and avoid drifting?
+- [ ] Do front-leg / rear-leg marks remain stable and not jump between frames?
 - [ ] Is there no white background?
 - [ ] Is there no UI?
 - [ ] Is there no text?
