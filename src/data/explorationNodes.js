@@ -2,7 +2,7 @@ export const EXPLORATION_NODES = [
   {
     id: "moonlake_camp",
     label: { zh: "月湖營地", en: "Moonlit Lake Camp" },
-    description: "灰影貓棲息的靜謐夜湖。營火溫暖，月光如鏡，是冒險的起點與歸所。",
+    description: "夥伴棲息的靜謐夜湖。營火溫暖，月光如鏡，是冒險的起點與歸所。",
     eventType: "rest",
     emotionalTone: "calm",
     encounterChance: 0,
