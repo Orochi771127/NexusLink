@@ -23,6 +23,8 @@ const ELEMENT_ACCENTS = {
   thunder: "#9b59ff",
   wood: "#2ecc71",
   star: "#f4d77d",
+  earth: "#c9a86a",
+  metal: "#cdd6e6",
   neutral: "#c0d9ff"
 };
 

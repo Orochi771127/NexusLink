@@ -1,7 +1,7 @@
 import { WORLD_HEIGHT, WORLD_WIDTH } from "./pixiApp.js";
 import { ANIMATION_NAMES, CORE_ANIMATION_NAMES } from "../engine/interactionController.js";
 import { ASSET_MANIFEST } from "../data/assetManifest.js";
-import { getMoodIdleAnimationName, resolveMoodIdleAnimationName } from "../engine/animationProfile.js";
+import { getAnimationProfileForCreature, getMoodIdleAnimationName, resolveMoodIdleAnimationName } from "../engine/animationProfile.js";
 
 export const GREYSHADE_CAT_ANIMATIONS_PATH = ASSET_MANIFEST.characters.greyshadeCat.animations;
 export const GREYSHADE_CAT_ANIMATION_NAMES = ANIMATION_NAMES;
@@ -84,8 +84,10 @@ export function createAnimatedCompanionNode(animationPack, creature) {
   animatedSprite.play();
   companion.addChild(animatedSprite);
 
-  const controller = createSpriteAnimationController(animationPack, animatedSprite, creature?.defaultMood || "calm");
+  const animationProfile = getAnimationProfileForCreature(creature);
+  const controller = createSpriteAnimationController(animationPack, animatedSprite, creature?.defaultMood || "calm", animationProfile);
   companion.__animationController = controller;
+  companion.__animationProfile = animationProfile;
   companion.__isSpriteSheetCreature = true;
   companion.__isSpriteCreature = true;
 
@@ -96,7 +98,7 @@ export function getMoodAnimationName(mood) {
   return getMoodIdleAnimationName(mood);
 }
 
-function createSpriteAnimationController(animationPack, animatedSprite, initialMood) {
+function createSpriteAnimationController(animationPack, animatedSprite, initialMood, profile) {
   let currentAnimationName = "idle_calm";
   let currentMirrorX = false;
   let lastMood = initialMood;
@@ -137,7 +139,7 @@ function createSpriteAnimationController(animationPack, animatedSprite, initialM
     animatedSprite.gotoAndPlay(0);
     animatedSprite.onComplete = () => {
       if (animatedSprite.loop) return;
-      play(resolveMoodIdleAnimationName(lastMood, (name) => animationPack.animations.has(name)), { mood: lastMood });
+      play(resolveMoodIdleAnimationName(lastMood, (name) => animationPack.animations.has(name), profile), { mood: lastMood });
     };
     return true;
   }

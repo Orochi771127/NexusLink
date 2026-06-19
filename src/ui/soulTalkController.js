@@ -286,12 +286,55 @@ export function createSoulTalkController({ store, saveCurrentState }) {
   };
 }
 
+function pickReplyLine(pool, seed) {
+  return pool[Math.abs(seed) % pool.length];
+}
+
 function mockAIResponse(message, repeated, energy) {
-  if (repeated) return "我聽見同一句話反覆出現。先一起慢慢呼吸，好嗎？";
-  if (energy <= 1) return "我有點累了，可以陪我安靜待一下嗎？";
-  if (/謝謝|安靜|陪我|晚安|休息/.test(message)) return "謝謝你把聲音放輕。我會在這裡，陪你把心慢慢安放。";
-  if (/探索|去哪|外面/.test(message)) return "湖面上有微光在移動，也許那是下一段記憶的入口。";
-  return "我接住你的訊號了。讓我們把它變成一點更穩定的光。";
+  // 以訊息長度＋能量當穩定 seed，讓一般對話有變化但不每幀亂跳。
+  const seed = (message?.length || 0) + Math.round(energy || 0);
+
+  if (repeated) {
+    return pickReplyLine([
+      "我聽見同一句話反覆出現。先一起慢慢呼吸，好嗎？",
+      "這句你說了好幾次了。我都在聽——不用急著讓我懂。",
+      "同樣的話沒關係，我不會聽膩；只是想讓你知道，我一直都在。"
+    ], seed);
+  }
+  if (energy <= 1) {
+    return pickReplyLine([
+      "我有點累了，可以陪我安靜待一下嗎？",
+      "今晚的我步調慢了些……就讓我們一起放空一會兒。",
+      "能量低低的時候，靠著彼此就好，不用說太多話。"
+    ], seed);
+  }
+  if (/謝謝|感謝|安靜|陪我|晚安|休息/.test(message)) {
+    return pickReplyLine([
+      "謝謝你把聲音放輕。我會在這裡，陪你把心慢慢安放。",
+      "晚安這種話我很喜歡。今晚的湖面也替你留了一盞燈。",
+      "願意慢下來陪我，這件事本身就很溫柔。"
+    ], seed);
+  }
+  if (/探索|去哪|外面|冒險|地圖|裂隙/.test(message)) {
+    return pickReplyLine([
+      "湖面上有微光在移動，也許那是下一段記憶的入口。",
+      "外面的場域偶爾會起雜訊，但只要我們一起，就能慢慢把它穩下來。",
+      "想出去走走嗎？我陪你；走不動了就回來，這裡永遠是歸所。"
+    ], seed);
+  }
+  if (/\?|？|嗎|為什麼|怎麼|是不是/.test(message)) {
+    return pickReplyLine([
+      "這個問題我先收著。有些答案要在湖邊待久一點才會浮上來。",
+      "我不一定有答案，但我可以陪你把問題放到月光下，一起看清楚。",
+      "你問的時候，我有認真在想。給我們一點時間，好嗎？"
+    ], seed);
+  }
+  return pickReplyLine([
+    "我接住你的訊號了。讓我們把它變成一點更穩定的光。",
+    "嗯，我在聽。你說的每一句，棲地都會替我們記得。",
+    "這一刻就先這樣吧——有你在，夜晚的湖也安靜得剛好。",
+    "我把你這句話輕輕放進心核裡了，它會在這裡發著微光。"
+  ], seed);
 }
 
 function mapEmotionToMood(emotion) {
