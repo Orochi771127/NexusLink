@@ -7,7 +7,7 @@ import {
 import { updateMemoryLifecycles } from "../engine/memoryLifecycleEngine.js";
 import { buildSafetyShieldReply } from "../engine/safeHarborMode.js";
 import { buildEventReflection, composeCompanionReply, composeFallbackReply } from "../engine/soulTalkComposer.js";
-import { buildMilestoneMemory, findNewBondMilestone } from "../engine/bondMilestoneEngine.js";
+import { buildMilestoneMemory, findNewBondMilestone, getMilestoneLine } from "../engine/bondMilestoneEngine.js";
 import { qs } from "../utils/dom.js";
 
 const DEFAULT_STATUS_TEXT = "心語 / 靈魂聖域";
@@ -183,11 +183,13 @@ export function createSoulTalkController({ store, saveCurrentState }) {
       state.reactionPreview = "";
       state.chatHistory.push({ role: replyRole, text: reply });
 
-      // 羈絆里程碑：bond 跨過門檻時，夥伴說一句深化關係的話，並在魔法陣綻放一道金色符文光痕。
+      // 羈絆里程碑：bond 跨過門檻時，夥伴以「自己的聲音」說一句深化關係的話（依五元屬性各異），
+      // 並在魔法陣綻放一道金色符文光痕。
       const newMilestone = findNewBondMilestone(state.bond, state.emotionalMemories);
       if (newMilestone) {
-        pushEmotionalMemoryWithTrace(state, buildMilestoneMemory(newMilestone, now), now);
-        state.chatHistory.push({ role: "companion", text: newMilestone.line });
+        const milestoneLine = getMilestoneLine(newMilestone, currentCreature?.soulTalkTone);
+        pushEmotionalMemoryWithTrace(state, buildMilestoneMemory(newMilestone, now, milestoneLine), now);
+        state.chatHistory.push({ role: "companion", text: milestoneLine });
       }
 
       if (state.chatHistory.length > 24) state.chatHistory.shift();

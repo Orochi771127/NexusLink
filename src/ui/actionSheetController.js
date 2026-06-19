@@ -1,4 +1,5 @@
 import { evaluateActionEffect } from "../engine/actionEffectEngine.js";
+import { BOND_MILESTONES } from "../engine/bondMilestoneEngine.js";
 import EventBus from "../utils/eventBus.js";
 import { qs, qsa } from "../utils/dom.js";
 
@@ -26,8 +27,68 @@ export function createActionSheetController({ soulTalkController, saveCurrentSta
     queuedAction = action;
     actionSheetTitle.textContent = actionMeta.title;
     actionSheetCopy.textContent = actionMeta.copy;
+    renderGrowthChronicle(action, store.getState());
     renderActionRows(actionMeta.rows);
     panelManager.openPanel("actionSheet");
+  }
+
+  // 成長分頁：把已綻放的羈絆里程碑做成可回顧的年表（重用 emotionalMemories）。
+  function renderGrowthChronicle(action, state) {
+    const existing = document.getElementById("bond-chronicle");
+    if (existing) existing.remove();
+    if (action !== "grow" || !actionSheetActions) return;
+
+    const bond = Number(state.bond || 0);
+    const memoriesById = new Map(
+      (Array.isArray(state.emotionalMemories) ? state.emotionalMemories : []).map((memory) => [memory?.id, memory])
+    );
+    const reachedCount = BOND_MILESTONES.filter((milestone) => memoriesById.has(milestone.id)).length;
+
+    const chronicle = document.createElement("div");
+    chronicle.id = "bond-chronicle";
+    chronicle.className = "bond-chronicle";
+
+    const heading = document.createElement("p");
+    heading.className = "bond-chronicle-head";
+    heading.textContent = reachedCount > 0
+      ? `羈絆年表 ・ 已綻放 ${reachedCount} / ${BOND_MILESTONES.length} 道光痕`
+      : "羈絆年表 ・ 還沒有光痕，但你們正在開始。";
+    chronicle.appendChild(heading);
+
+    let nextHinted = false;
+    BOND_MILESTONES.forEach((milestone) => {
+      const memory = memoriesById.get(milestone.id);
+      const reached = Boolean(memory);
+      const row = document.createElement("div");
+      row.className = `bond-chronicle-row${reached ? " is-reached" : " is-locked"}`;
+
+      let desc;
+      if (reached) {
+        desc = memory.excerpt || milestone.line;
+      } else if (!nextHinted) {
+        nextHinted = true;
+        desc = `羈絆達 ${milestone.threshold} 時亮起（目前 ${bond}）`;
+      } else {
+        desc = `羈絆達 ${milestone.threshold} 時亮起`;
+      }
+
+      const mark = document.createElement("span");
+      mark.className = "bond-chronicle-mark";
+      mark.textContent = reached ? "✦" : "◇";
+      const copy = document.createElement("span");
+      copy.className = "bond-chronicle-copy";
+      const title = document.createElement("strong");
+      title.textContent = reached ? milestone.theme : "？？？";
+      const detail = document.createElement("em");
+      detail.textContent = desc;
+      copy.appendChild(title);
+      copy.appendChild(detail);
+      row.appendChild(mark);
+      row.appendChild(copy);
+      chronicle.appendChild(row);
+    });
+
+    actionSheetActions.parentNode.insertBefore(chronicle, actionSheetActions);
   }
 
   function renderActionRows(rows) {
