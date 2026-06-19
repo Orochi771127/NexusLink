@@ -59,6 +59,8 @@ export const GUARDIAN_ANIMATION_PROFILE = Object.freeze({
   }),
   fallbackIdle: "idle_calm",
   ambientWalkEnabled: false,
+  // 偶發日常動作（原地）：讓五元守護有「自己的生活」。
+  ambientActions: Object.freeze(["sit", "groom", "stretch", "dance"]),
   ambientWalk: Object.freeze({
     left: "left_walk",
     right: "right_walk",

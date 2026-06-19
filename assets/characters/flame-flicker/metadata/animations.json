@@ -8,71 +8,7 @@
     "frameCount": 8,
     "rows": 2,
     "columns": 4,
-    "fps": 8,
-    "loop": true,
-    "anchor": {
-      "x": 0.5,
-      "y": 1
-    }
-  },
-  "idle_happy": {
-    "id": "idle_happy",
-    "category": "emotion",
-    "sheet": "./assets/characters/flame-flicker/spritesheets/emotion/flame-flicker_idle_happy_512x512_8f.png",
-    "frameWidth": 512,
-    "frameHeight": 512,
-    "frameCount": 8,
-    "rows": 2,
-    "columns": 4,
-    "fps": 8,
-    "loop": true,
-    "anchor": {
-      "x": 0.5,
-      "y": 1
-    }
-  },
-  "idle_sad": {
-    "id": "idle_sad",
-    "category": "emotion",
-    "sheet": "./assets/characters/flame-flicker/spritesheets/emotion/flame-flicker_idle_sad_512x512_8f.png",
-    "frameWidth": 512,
-    "frameHeight": 512,
-    "frameCount": 8,
-    "rows": 2,
-    "columns": 4,
-    "fps": 8,
-    "loop": true,
-    "anchor": {
-      "x": 0.5,
-      "y": 1
-    }
-  },
-  "idle_angry": {
-    "id": "idle_angry",
-    "category": "emotion",
-    "sheet": "./assets/characters/flame-flicker/spritesheets/emotion/flame-flicker_idle_angry_512x512_8f.png",
-    "frameWidth": 512,
-    "frameHeight": 512,
-    "frameCount": 8,
-    "rows": 2,
-    "columns": 4,
-    "fps": 8,
-    "loop": true,
-    "anchor": {
-      "x": 0.5,
-      "y": 1
-    }
-  },
-  "idle_defensive": {
-    "id": "idle_defensive",
-    "category": "emotion",
-    "sheet": "./assets/characters/flame-flicker/spritesheets/emotion/flame-flicker_idle_defensive_512x512_8f.png",
-    "frameWidth": 512,
-    "frameHeight": 512,
-    "frameCount": 8,
-    "rows": 2,
-    "columns": 4,
-    "fps": 8,
+    "fps": 5,
     "loop": true,
     "anchor": {
       "x": 0.5,
@@ -88,23 +24,7 @@
     "frameCount": 8,
     "rows": 2,
     "columns": 4,
-    "fps": 8,
-    "loop": true,
-    "anchor": {
-      "x": 0.5,
-      "y": 1
-    }
-  },
-  "idle_alert": {
-    "id": "idle_alert",
-    "category": "emotion",
-    "sheet": "./assets/characters/flame-flicker/spritesheets/emotion/flame-flicker_idle_alert_512x512_8f.png",
-    "frameWidth": 512,
-    "frameHeight": 512,
-    "frameCount": 8,
-    "rows": 2,
-    "columns": 4,
-    "fps": 8,
+    "fps": 5,
     "loop": true,
     "anchor": {
       "x": 0.5,
@@ -120,7 +40,7 @@
     "frameCount": 8,
     "rows": 2,
     "columns": 4,
-    "fps": 8,
+    "fps": 5,
     "loop": true,
     "anchor": {
       "x": 0.5,
@@ -136,7 +56,87 @@
     "frameCount": 8,
     "rows": 2,
     "columns": 4,
-    "fps": 8,
+    "fps": 5,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "idle_sad": {
+    "id": "idle_sad",
+    "category": "emotion",
+    "sheet": "./assets/characters/flame-flicker/spritesheets/emotion/flame-flicker_idle_sad_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 5,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "idle_defensive": {
+    "id": "idle_defensive",
+    "category": "emotion",
+    "sheet": "./assets/characters/flame-flicker/spritesheets/emotion/flame-flicker_idle_defensive_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 6,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "idle_alert": {
+    "id": "idle_alert",
+    "category": "emotion",
+    "sheet": "./assets/characters/flame-flicker/spritesheets/emotion/flame-flicker_idle_alert_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 6,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "idle_happy": {
+    "id": "idle_happy",
+    "category": "emotion",
+    "sheet": "./assets/characters/flame-flicker/spritesheets/emotion/flame-flicker_idle_happy_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 9,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "idle_angry": {
+    "id": "idle_angry",
+    "category": "emotion",
+    "sheet": "./assets/characters/flame-flicker/spritesheets/emotion/flame-flicker_idle_angry_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 9,
     "loop": true,
     "anchor": {
       "x": 0.5,
@@ -152,7 +152,7 @@
     "frameCount": 8,
     "rows": 2,
     "columns": 4,
-    "fps": 10,
+    "fps": 12,
     "loop": false,
     "anchor": {
       "x": 0.5,
@@ -168,7 +168,7 @@
     "frameCount": 8,
     "rows": 2,
     "columns": 4,
-    "fps": 8,
+    "fps": 9,
     "loop": false,
     "anchor": {
       "x": 0.5,
@@ -184,7 +184,7 @@
     "frameCount": 8,
     "rows": 2,
     "columns": 4,
-    "fps": 8,
+    "fps": 9,
     "loop": false,
     "anchor": {
       "x": 0.5,
@@ -200,7 +200,7 @@
     "frameCount": 8,
     "rows": 2,
     "columns": 4,
-    "fps": 8,
+    "fps": 9,
     "loop": false,
     "anchor": {
       "x": 0.5,
@@ -216,8 +216,88 @@
     "frameCount": 8,
     "rows": 2,
     "columns": 4,
-    "fps": 8,
+    "fps": 9,
     "loop": false,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "sleep": {
+    "id": "sleep",
+    "category": "daily",
+    "sheet": "./assets/characters/flame-flicker/spritesheets/daily/flame-flicker_sleep_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 3,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "sit": {
+    "id": "sit",
+    "category": "daily",
+    "sheet": "./assets/characters/flame-flicker/spritesheets/daily/flame-flicker_sit_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 6,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "groom": {
+    "id": "groom",
+    "category": "daily",
+    "sheet": "./assets/characters/flame-flicker/spritesheets/daily/flame-flicker_groom_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 6,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "stretch": {
+    "id": "stretch",
+    "category": "daily",
+    "sheet": "./assets/characters/flame-flicker/spritesheets/daily/flame-flicker_stretch_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 6,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "dance": {
+    "id": "dance",
+    "category": "daily",
+    "sheet": "./assets/characters/flame-flicker/spritesheets/daily/flame-flicker_dance_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 9,
+    "loop": true,
     "anchor": {
       "x": 0.5,
       "y": 1

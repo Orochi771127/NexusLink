@@ -11,6 +11,7 @@ import { createSaveQueue, SAVE_LEVEL } from "./state/saveQueue.js";
 import { createRuntimeGuard } from "./engine/runtimeGuard.js";
 import { estimateSaveSizeKB } from "./engine/storageGuard.js";
 import { startEnvironmentHeartbeat } from "./engine/environmentHeartbeat.js";
+import { isWithinSleepWindow, shouldSleep } from "./engine/sleepCycleEngine.js";
 import { buildReturnGreeting } from "./engine/returnBehaviorEngine.js";
 import { mapHabitatTracesToVisuals } from "./engine/traceVisualMapper.js";
 import * as store from "./state/store.js";
@@ -56,6 +57,12 @@ let currentMotionState = "idle_calm";
 let devPanelController = null;
 let lastSaveStatus = { ok: true, emergency: false, estimatedSaveSizeKB: 0 };
 let stopEnvironmentHeartbeat = null;
+// 生理時鐘：記憶體追蹤最後一次玩家互動（不存檔、不動 defaultState）。開 app 視為一次互動。
+let lastInteractionAt = Date.now();
+let wasSleeping = false;
+function markInteraction() {
+  lastInteractionAt = Date.now();
+}
 
 bootstrap();
 
@@ -84,7 +91,10 @@ async function bootstrap() {
   store.replaceState(initialState);
   const saveQueue = createSaveQueue(saveCurrentState);
   saveQueue.enqueue(SAVE_LEVEL.CRITICAL);
-  const saveInteraction = () => saveQueue.enqueue(SAVE_LEVEL.INTERACTION);
+  const saveInteraction = () => {
+    markInteraction();
+    return saveQueue.enqueue(SAVE_LEVEL.INTERACTION);
+  };
   const saveDebounced = () => saveQueue.enqueue(SAVE_LEVEL.DEBOUNCE);
 
   const hudController = createHudController({ store, statusText });
@@ -269,7 +279,10 @@ async function bootScene(app, panelManager, statusText, soulTalkController, save
     });
     bindCompanionTap(node, {
       isInteractionBlocked: () => panelManager.isPanelOpen(),
-      onTouch: (touchType) => interactionController.handleTouch(touchType)
+      onTouch: (touchType) => {
+        markInteraction(); // 觸碰會喚醒睡眠中的夥伴
+        return interactionController.handleTouch(touchType);
+      }
     });
   }
 
@@ -302,11 +315,23 @@ async function bootScene(app, panelManager, statusText, soulTalkController, save
     t += safeTicker.deltaMS / 1000;
 
     if (!isSceneEditorMode) {
+      const isSleeping = shouldSleep(Date.now(), lastInteractionAt);
+      if (isSleeping !== wasSleeping) {
+        wasSleeping = isSleeping;
+        if (isSleeping) {
+          statusText.textContent = `${currentCreature.name}在夜色裡睡著了。`;
+        } else {
+          statusText.textContent = isWithinSleepWindow(Date.now())
+            ? `你輕輕喚醒了${currentCreature.name}。`
+            : `${currentCreature.name}在晨光中醒了。`;
+        }
+      }
       updateCompanionMotion(companion, companionMotionController, t, performance.now(), store.getState().mood, (motionState) => {
         currentMotionState = motionState;
         devPanelController?.renderReadout();
       }, {
-        canAmbientWalk: !panelManager.isPanelOpen()
+        canAmbientWalk: !panelManager.isPanelOpen(),
+        isSleeping
       });
     }
     if (!environmentLayer.magicCircle.__sceneEditorOriginalAlpha) {
