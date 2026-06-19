@@ -35,6 +35,15 @@ const defaultState = {
 
   // R2 vertical slice
   activeCompanionId: "greyshade-cat",
+  unlockedCompanionIds: [
+    "greyshade-cat",
+    // 心輝議會・五元守護（512×512 動畫陣容，預設解鎖以供選用）
+    "flame-flicker",
+    "ice-talon",
+    "stone-shard",
+    "vine-twist",
+    "crystal-rabbit"
+  ],
   battleRecord: {
     wins: 0,
     losses: 0,

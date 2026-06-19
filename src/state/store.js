@@ -1,7 +1,7 @@
 import defaultState from "./defaultState.js";
 import { sanitizeEmotionalMemory, sanitizeMemory, sanitizeTrace } from "../engine/storageGuard.js";
 import { clamp } from "../utils/clamp.js";
-import { DEFAULT_COMPANION_ID, isKnownCompanionId } from "../data/companionRegistry.js";
+import { normalizeRuntimeCompanionId, normalizeUnlockedCompanionIds } from "../data/companionRuntimePolicy.js";
 import { EXPLORATION_NODE_IDS } from "../data/explorationNodes.js";
 
 let state = createDefaultState();
@@ -15,6 +15,7 @@ export function createDefaultState() {
     memories: defaultState.memories.map((item) => ({ ...item })),
     habitatTraces: defaultState.habitatTraces.map((item) => ({ ...item })),
     emotionalMemories: defaultState.emotionalMemories.map((item) => ({ ...item })),
+    unlockedCompanionIds: [...defaultState.unlockedCompanionIds],
     battleRecord: { ...defaultState.battleRecord },
     explorationProgress: { ...defaultState.explorationProgress, visitCounts: {} }
   };
@@ -53,6 +54,8 @@ export function normalizeState(rawState = {}) {
   const emotionalMemories = Array.isArray(targetState.emotionalMemories)
     ? targetState.emotionalMemories
     : baseState.emotionalMemories;
+  const unlockedCompanionIds = normalizeUnlockedCompanionIds(targetState.unlockedCompanionIds);
+  const runtimeState = { ...targetState, unlockedCompanionIds };
 
   return {
     ...targetState,
@@ -78,9 +81,8 @@ export function normalizeState(rawState = {}) {
     safeHarborMode: Boolean(targetState.safeHarborMode),
     lastEmotionTag: targetState.lastEmotionTag || null,
     habitatRepairFactor: clamp(targetState.habitatRepairFactor ?? 0, 0, 1),
-    activeCompanionId: isKnownCompanionId(targetState.activeCompanionId)
-      ? targetState.activeCompanionId
-      : DEFAULT_COMPANION_ID,
+    unlockedCompanionIds,
+    activeCompanionId: normalizeRuntimeCompanionId(targetState.activeCompanionId, runtimeState),
     battleRecord: normalizeBattleRecord(targetState.battleRecord, baseState.battleRecord),
     explorationProgress: normalizeExplorationProgress(targetState.explorationProgress, baseState.explorationProgress),
     chatHistory: chatHistory.map((item) => ({

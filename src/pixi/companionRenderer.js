@@ -1,11 +1,11 @@
 import { applyResponsiveLayout, registerSceneEditorObject, WORLD_HEIGHT, WORLD_WIDTH } from "./pixiApp.js";
 import { FALLBACK_CREATURE } from "../engine/personalityProfile.js";
 import { SCENE_LAYOUT } from "../data/sceneLayout.js";
-import { createAnimatedCompanionNode, loadGreyshadeCatAnimationPack } from "./spriteSheetAnimationLoader.js";
+import { createAnimatedCompanionNode, loadCompanionAnimationPack } from "./spriteSheetAnimationLoader.js";
 
 export async function createCreatureNode(creature, statusText) {
-  if (creature.id === "greyshade-cat") {
-    const animationPack = await loadGreyshadeCatAnimationPack();
+  if (creature.animationsManifest) {
+    const animationPack = await loadCompanionAnimationPack(creature.animationsManifest);
     const animatedCompanion = createAnimatedCompanionNode(animationPack, creature);
     if (animatedCompanion) {
       statusText.textContent = `${creature.name}已載入 idle_calm 動畫棲地。`;
@@ -110,9 +110,10 @@ function createCreatureSprite(texture, creature) {
   sprite.roundPixels = true;
   sprite.anchor.set(0.5, 1);
 
+  const renderScale = Number.isFinite(creature?.renderScale) ? creature.renderScale : 1;
   const maxW = Math.min(170, WORLD_WIDTH * 0.46);
   const maxH = Math.min(170, WORLD_HEIGHT * 0.2);
-  const scale = Math.min(maxW / sprite.width, maxH / sprite.height);
+  const scale = Math.min(maxW / sprite.width, maxH / sprite.height) * renderScale;
   sprite.scale.set(scale);
 
   companion.addChild(sprite);
@@ -211,6 +212,19 @@ function createEmblemAccent(emblemShape, color) {
       .lineTo(2, -98)
       .closePath()
       .fill({ color, alpha: 0.9 });
+  } else if (emblemShape === "star") {
+    for (let index = 0; index < 5; index += 1) {
+      const angle = -Math.PI / 2 + (index * Math.PI * 2) / 5;
+      const outerX = Math.cos(angle) * 14;
+      const outerY = -96 + Math.sin(angle) * 14;
+      const innerAngle = angle + Math.PI / 5;
+      const innerX = Math.cos(innerAngle) * 6;
+      const innerY = -96 + Math.sin(innerAngle) * 6;
+      if (index === 0) emblem.moveTo(outerX, outerY);
+      else emblem.lineTo(outerX, outerY);
+      emblem.lineTo(innerX, innerY);
+    }
+    emblem.closePath().fill({ color, alpha: 0.85 });
   } else {
     return null;
   }

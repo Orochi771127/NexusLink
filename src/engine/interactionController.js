@@ -88,7 +88,9 @@ export class InteractionController {
     const interactionResult = evaluateTouchReaction(
       this.store.getState(),
       getTouchPersonality(this.creature),
-      touchType
+      touchType,
+      Date.now(),
+      this.creature?.name
     );
     const motionState = this.chooseTouchAnimation(interactionResult, touchType);
 
@@ -207,7 +209,7 @@ export class InteractionController {
   }
 
   handleBlockedTouch(now = Date.now()) {
-    const result = evaluateBlockedTouch(this.store.getState(), now);
+    const result = evaluateBlockedTouch(this.store.getState(), now, this.creature?.name);
     const statePatch = result.statePatch;
 
     this.store.setState(statePatch);
