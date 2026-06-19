@@ -1,6 +1,6 @@
 import { evaluateBlockedTouch, evaluateRespectBonus, evaluateTouchReaction } from "./touchReactionEngine.js";
 import { getTouchPersonality } from "./personalityProfile.js";
-import { getBodyCueProfile, getMoodIdleAnimationName } from "./animationProfile.js";
+import { getAnimationProfileForCreature, getBodyCueProfile, getMoodIdleAnimationName, getTouchAnimationName } from "./animationProfile.js";
 import { createHabitatTraceFromMemory, pruneHabitatTraces, upsertHabitatTrace } from "./habitatTraceEngine.js";
 import { clamp } from "../utils/clamp.js";
 
@@ -189,6 +189,8 @@ export class InteractionController {
   async handleSpamBurst() {
     this.setSpamScore(0);
     const currentState = this.store.getState();
+    // 依夥伴 profile 解析憤怒動畫：灰影貓→special_angry，五元守護→idle_angry。
+    const angryAnimation = getTouchAnimationName("spam_angry", getAnimationProfileForCreature(this.creature));
     const nextState = {
       trust: clamp(currentState.trust - 2, 0, 100),
       bond: clamp(currentState.bond - 1, 0, 100),
@@ -203,8 +205,9 @@ export class InteractionController {
     this.store.setState(nextState);
     this.setStatusText(nextState.reactionPreview);
     this.saveCurrentState();
-    this.onStateChange({ reaction: "spam_angry", motionState: "special_angry", statePatch: nextState });
-    await this.playAnimation("special_angry");
+    this.onStateChange({ reaction: "spam_angry", motionState: angryAnimation, statePatch: nextState });
+    // 強制以非中斷方式播完整段憤怒動畫，避免被 defensive idle 立刻蓋掉。
+    await this.playAnimation(angryAnimation, false);
     return { reaction: "spam_angry", motionState: "special_angry", statePatch: nextState };
   }
 

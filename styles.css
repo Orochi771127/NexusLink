@@ -1696,6 +1696,8 @@ body.panel-open .dev-reaction-lab {
 .companion-card.element-wood .companion-card-badge { color: #6fe09b; border: 1px solid rgba(46, 204, 113, 0.5); }
 .companion-card.element-thunder .companion-card-badge { color: #c0a6ff; border: 1px solid rgba(155, 89, 255, 0.5); }
 .companion-card.element-star .companion-card-badge { color: #f4d77d; border: 1px solid rgba(244, 215, 125, 0.5); }
+.companion-card.element-earth .companion-card-badge { color: #d9bd86; border: 1px solid rgba(201, 168, 106, 0.5); }
+.companion-card.element-metal .companion-card-badge { color: #dde4f0; border: 1px solid rgba(205, 214, 230, 0.5); }
 .companion-card.element-neutral .companion-card-badge { color: #cfd9ea; border: 1px solid rgba(207, 217, 234, 0.4); }
 
 .companion-card-main {

@@ -14,7 +14,7 @@ const TOUCH_ACCEPT_ENVIRONMENT_EVENT_PROGRESS = 0.5;
 
 export function createCompanionMotion(companion, initialMood) {
   const motion = {
-    state: getIdleMotionState(initialMood),
+    state: getIdleMotionState(initialMood, companion.__animationProfile),
     temporaryState: null,
     temporaryStartedAt: 0,
     temporaryUntil: 0,
@@ -43,8 +43,8 @@ export function createCompanionMotion(companion, initialMood) {
   return motion;
 }
 
-export function getIdleMotionState(mood) {
-  return getMoodIdleAnimationName(mood);
+export function getIdleMotionState(mood, profile) {
+  return getMoodIdleAnimationName(mood, profile);
 }
 
 export function triggerCompanionTouchMotion(motion, interactionResult = {}) {
@@ -91,7 +91,7 @@ export function updateCompanionMotion(companion, motion, timeSeconds, nowMs, moo
     return;
   }
 
-  motion.state = getIdleMotionState(mood);
+  motion.state = getIdleMotionState(mood, companion.__animationProfile);
   if (motion.temporaryState && nowMs >= motion.temporaryUntil) {
     motion.temporaryState = null;
     motion.temporaryStartedAt = 0;
@@ -106,7 +106,7 @@ export function updateCompanionMotion(companion, motion, timeSeconds, nowMs, moo
   const canAmbientWalk = options.canAmbientWalk !== false;
   const isBattleActive = Boolean(options.isBattleActive);
   const isSleeping = Boolean(options.isSleeping);
-  const isAmbientBlocked = !canAmbientWalk || Boolean(motion.temporaryState) || isBattleActive || isSleeping || mood === "tired";
+  const isAmbientBlocked = !canAmbientWalk || Boolean(motion.temporaryState) || isBattleActive || isSleeping || mood === "tired" || companion.__animationProfile?.ambientWalkEnabled === false;
 
   if (motion.ambientState && (isAmbientBlocked || nowMs >= motion.ambientUntil)) {
     stopAmbientWalk(motion);

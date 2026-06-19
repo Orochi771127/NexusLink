@@ -31,6 +31,46 @@ export const GREYSHADE_CAT_ANIMATION_PROFILE = Object.freeze({
   })
 });
 
+// 心輝議會・五元守護專屬 profile：比灰影貓多用三個情緒待機圖
+// （alert→idle_alert、tired→idle_downcast、safe_harbor→idle_resonance）。
+// 這些角色沒有走路幀，故關閉 ambient 走動避免無動畫滑步。
+export const GUARDIAN_ANIMATION_PROFILE = Object.freeze({
+  moodIdle: Object.freeze({
+    calm: "idle_calm",
+    warm: "idle_calm",
+    happy: "idle_happy",
+    defensive: "idle_defensive",
+    distant: "idle_distant",
+    sad: "idle_sad",
+    soft: "idle_sad",
+    alert: "idle_alert",
+    safe_harbor: "idle_resonance",
+    tired: "idle_downcast",
+    sleeping: "idle_calm",
+    angry: "idle_angry"
+  }),
+  touchMotion: Object.freeze({
+    accept: "touch_accept",
+    guarded_accept: "touch_guarded",
+    hesitate: "touch_guarded",
+    reject: "touch_reject",
+    spam_angry: "idle_angry",
+    wake: "idle_alert"
+  }),
+  fallbackIdle: "idle_calm",
+  ambientWalkEnabled: false,
+  ambientWalk: Object.freeze({
+    left: "left_walk",
+    right: "right_walk",
+    mirrorFallback: "right_walk"
+  })
+});
+
+export function getAnimationProfileForCreature(creature) {
+  if (creature?.animationProfile === "guardian") return GUARDIAN_ANIMATION_PROFILE;
+  return GREYSHADE_CAT_ANIMATION_PROFILE;
+}
+
 export function getMoodIdleAnimationName(mood, profile = GREYSHADE_CAT_ANIMATION_PROFILE) {
   return profile.moodIdle[mood] || profile.fallbackIdle;
 }

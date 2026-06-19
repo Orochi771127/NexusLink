@@ -226,12 +226,14 @@ export function summarizeStandoffOutcome(outcome, session, state, now = Date.now
   if (outcome === "stabilized") {
     statePatch.bond = clamp((state.bond || 0) + 3, 0, 100);
     statePatch.trust = clamp((state.trust || 0) + 1, 0, 100);
-    statePatch.mood = "calm";
+    // 場域穩定下來——夥伴會開心（勝不驕，但允許一起鬆一口氣的喜悅）。回棲地後播 idle_happy。
+    statePatch.mood = "happy";
     statePatch.energy = clamp((state.energy || 0) - 2, 0, 10);
   } else if (outcome === "recovered") {
     statePatch.bond = clamp((state.bond || 0) + 2, 0, 100);
     statePatch.trust = clamp((state.trust || 0) + 2, 0, 100);
-    statePatch.mood = "warm";
+    // 一起把記憶撿回來，也是一種勝利——同樣以 idle_happy 表達喜悅。
+    statePatch.mood = "happy";
     statePatch.energy = clamp((state.energy || 0) - 1, 0, 10);
     memorySeed = {
       id: `emem_${now}_standoff`,
