@@ -57,8 +57,10 @@ let currentMotionState = "idle_calm";
 let devPanelController = null;
 let lastSaveStatus = { ok: true, emergency: false, estimatedSaveSizeKB: 0 };
 let stopEnvironmentHeartbeat = null;
-// 生理時鐘：記憶體追蹤最後一次玩家互動（不存檔、不動 defaultState）。開 app 視為一次互動。
-let lastInteractionAt = Date.now();
+// 生理時鐘：記憶體追蹤最後一次玩家互動（不存檔、不動 defaultState）。
+// 初始為 0（而非 now）：夜間時段一打開、若玩家沒在互動，夥伴就該是睡著的；
+// 5 分鐘寬限只在「被玩家叫醒之後」才生效（避免剛操作就被強制睡）。
+let lastInteractionAt = 0;
 let wasSleeping = false;
 function markInteraction() {
   lastInteractionAt = Date.now();
