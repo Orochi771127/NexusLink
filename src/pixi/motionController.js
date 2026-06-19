@@ -10,6 +10,12 @@ const AMBIENT_DURATION_MIN_MS = 1_200;
 const AMBIENT_DURATION_MAX_MS = 2_500;
 const AMBIENT_RANGE_X = 60;
 const AMBIENT_RANGE_Y = 15;
+// 偶發日常動作（坐下/理毛/伸懶腰/打盹），原地播放、不位移。
+const AMBIENT_ACTION_COOLDOWN_MIN_MS = 24_000;
+const AMBIENT_ACTION_COOLDOWN_MAX_MS = 70_000;
+const AMBIENT_ACTION_DURATION_MIN_MS = 3_500;
+const AMBIENT_ACTION_DURATION_MAX_MS = 6_500;
+const AMBIENT_ACTION_MOODS = new Set(["calm", "warm", "happy"]);
 const TOUCH_ACCEPT_ENVIRONMENT_EVENT_PROGRESS = 0.5;
 
 export function createCompanionMotion(companion, initialMood) {
@@ -35,12 +41,20 @@ export function createCompanionMotion(companion, initialMood) {
     baseRotation: companion.rotation || 0,
     devForcedState: null,
     devForcedUntil: 0,
+    ambientActionState: null,
+    ambientActionUntil: 0,
+    ambientActionNextAt: 0,
     fallbackMotionActive: true,
     getAnimationDurationMs: (animationName) => companion.__animationController?.getAnimationDurationMs(animationName),
     getAnimationController: () => companion.__animationController || null
   };
   scheduleNextAmbientWalk(motion, performance.now(), initialMood);
+  scheduleNextAmbientAction(motion, performance.now());
   return motion;
+}
+
+function scheduleNextAmbientAction(motion, nowMs) {
+  motion.ambientActionNextAt = nowMs + randomBetween(AMBIENT_ACTION_COOLDOWN_MIN_MS, AMBIENT_ACTION_COOLDOWN_MAX_MS);
 }
 
 export function getIdleMotionState(mood, profile) {
@@ -116,6 +130,22 @@ export function updateCompanionMotion(companion, motion, timeSeconds, nowMs, moo
     maybeStartAmbientWalk(motion, mood, nowMs);
   }
 
+  // 偶發日常動作（原地、不位移）：閒置且心情平穩時，偶爾坐下/理毛/伸懶腰/打盹。
+  const ambientActions = companion.__animationProfile?.ambientActions || [];
+  const isBusy = !canAmbientWalk || Boolean(motion.temporaryState) || isBattleActive || isSleeping || Boolean(motion.ambientState);
+  if (motion.ambientActionState && (isBusy || nowMs >= motion.ambientActionUntil)) {
+    motion.ambientActionState = null;
+    scheduleNextAmbientAction(motion, nowMs);
+  }
+  if (
+    !motion.ambientActionState && !motion.devForcedState && !isBusy &&
+    ambientActions.length > 0 && AMBIENT_ACTION_MOODS.has(mood) && nowMs >= motion.ambientActionNextAt
+  ) {
+    motion.ambientActionState = ambientActions[Math.floor(Math.random() * ambientActions.length)];
+    motion.ambientActionUntil = nowMs + randomBetween(AMBIENT_ACTION_DURATION_MIN_MS, AMBIENT_ACTION_DURATION_MAX_MS);
+    scheduleNextAmbientAction(motion, nowMs);
+  }
+
   const ambientAnimation = motion.ambientState
     ? getAmbientWalkAnimation(motion.ambientTargetOffsetX, (name) => companion.__animationController?.hasAnimation?.(name))
     : null;
@@ -123,6 +153,7 @@ export function updateCompanionMotion(companion, motion, timeSeconds, nowMs, moo
     (isBattleActive ? "battle" : null) ||
     (isSleeping ? "sleep" : null) ||
     motion.devForcedState ||
+    motion.ambientActionState ||
     ambientAnimation?.animationName ||
     motion.state;
   const animationController = companion.__animationController;
