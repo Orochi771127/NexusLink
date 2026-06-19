@@ -155,20 +155,24 @@ export function mapHabitatTraceToVisual(trace) {
 }
 
 function resolveVisualKind(trace) {
+  const type = String(trace.type || "").trim();
+
+  // 新鮮情緒痕跡優先採用專屬視覺（金符文/藍燈籠/白燼/雜訊/漣漪），
+  // 不被通用的 visualHint(faint_glow) 蓋掉；沉積後再回到 mist / repaired_light 的弧線。
+  if (type.startsWith("em_") && trace.status === "fresh" && EMOTION_TO_KIND[trace.emotion]) {
+    return EMOTION_TO_KIND[trace.emotion];
+  }
+
   const visualHint = String(trace.visualHint || "").trim();
   if (VISUAL_HINT_TO_KIND[visualHint]) {
     return VISUAL_HINT_TO_KIND[visualHint];
   }
 
-  const type = String(trace.type || "").trim();
   if (TRACE_TYPE_TO_KIND[type]) {
     return TRACE_TYPE_TO_KIND[type];
   }
 
   if (type.startsWith("em_")) {
-    if (trace.status === "fresh" && EMOTION_TO_KIND[trace.emotion]) {
-      return EMOTION_TO_KIND[trace.emotion];
-    }
     if (STATUS_TO_KIND[trace.status]) {
       return STATUS_TO_KIND[trace.status];
     }
