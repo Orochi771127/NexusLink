@@ -2,6 +2,7 @@ import { applyOfflineRecovery } from "./engine/offlineRecovery.js";
 import AudioManager from "./audio/audioManager.js";
 import { FALLBACK_CREATURE } from "./engine/personalityProfile.js";
 import { getCompanionById } from "./data/companionRegistry.js";
+import { normalizeRuntimeCompanionId } from "./data/companionRuntimePolicy.js";
 import { createInteractionController } from "./engine/interactionController.js";
 import { bindViewportVars, qs } from "./utils/dom.js";
 import EventBus from "./utils/eventBus.js";
@@ -122,11 +123,13 @@ async function bootstrap() {
     panelManager,
     saveCurrentState,
     onCompanionChanged: async (companion) => {
-      currentCreature = companion;
-      hudController.setCreature(companion);
-      soulTalkController.setCreature(companion);
+      const normalizedCompanionId = normalizeRuntimeCompanionId(companion?.id, store.getState());
+      const nextCompanion = getCompanionById(normalizedCompanionId);
+      currentCreature = nextCompanion;
+      hudController.setCreature(nextCompanion);
+      soulTalkController.setCreature(nextCompanion);
       hudController.renderHUD();
-      await sceneApi?.swapCompanion(companion);
+      await sceneApi?.swapCompanion(nextCompanion);
     }
   });
 
@@ -274,6 +277,8 @@ async function bootScene(app, panelManager, statusText, soulTalkController, save
 
   async function swapCompanion(nextCreature) {
     const previousCompanion = companion;
+    interactionController?.dispose?.();
+    interactionController = null;
     const nextCompanion = await createCreatureNode(nextCreature, statusText);
     companion = nextCompanion;
     attachCompanion(nextCompanion, nextCreature);

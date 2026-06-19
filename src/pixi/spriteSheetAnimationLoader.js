@@ -12,7 +12,14 @@ export function getPixiAnimationSpeed(definition) {
   return Math.max(0.01, fps / 60);
 }
 
-export async function loadGreyshadeCatAnimationPack() {
+// Back-compat thin wrapper: greyshade-cat is just the first companion to use the
+// generic sprite-sheet pack loader. Any companion with an animations manifest path
+// loads through loadCompanionAnimationPack below.
+export function loadGreyshadeCatAnimationPack() {
+  return loadCompanionAnimationPack(GREYSHADE_CAT_ANIMATIONS_PATH);
+}
+
+export async function loadCompanionAnimationPack(animationsPath) {
   const status = {
     metadataLoaded: false,
     available: Object.fromEntries(GREYSHADE_CAT_ANIMATION_NAMES.map((name) => [name, false])),
@@ -21,7 +28,7 @@ export async function loadGreyshadeCatAnimationPack() {
   };
 
   try {
-    const response = await fetch(GREYSHADE_CAT_ANIMATIONS_PATH, { cache: "no-cache" });
+    const response = await fetch(animationsPath, { cache: "no-cache" });
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
     const metadata = await response.json();
@@ -46,7 +53,7 @@ export async function loadGreyshadeCatAnimationPack() {
 
     return { animations, metadata, status };
   } catch (error) {
-    console.warn("Greyshade cat animations metadata failed to load", error);
+    console.warn("Companion animations metadata failed to load", error);
     status.errors.push(`metadata: ${error.message}`);
     status.missing = [...GREYSHADE_CAT_ANIMATION_NAMES];
     return { animations: new Map(), metadata: null, status };
@@ -68,9 +75,10 @@ export function createAnimatedCompanionNode(animationPack, creature) {
   animatedSprite.loop = true;
   animatedSprite.animationSpeed = getPixiAnimationSpeed(idleDefinition);
 
+  const renderScale = Number.isFinite(creature?.renderScale) ? creature.renderScale : 1;
   const maxW = Math.min(170, WORLD_WIDTH * 0.46);
   const maxH = Math.min(170, WORLD_HEIGHT * 0.2);
-  const scale = Math.min(maxW / idleDefinition.frameWidth, maxH / idleDefinition.frameHeight);
+  const scale = Math.min(maxW / idleDefinition.frameWidth, maxH / idleDefinition.frameHeight) * renderScale;
   animatedSprite.scale.set(scale);
   animatedSprite.__baseFrameScale = scale;
   animatedSprite.play();
@@ -174,7 +182,7 @@ async function loadAnimationDefinition({ animations, metadata, status, name }) {
     status.missing = status.missing.filter((missingName) => missingName !== name);
     return loadedDefinition;
   } catch (error) {
-    console.warn(`Greyshade cat animation failed to load: ${name}`, error);
+    console.warn(`Companion animation failed to load: ${name}`, error);
     status.available[name] = false;
     if (!status.missing.includes(name)) status.missing.push(name);
     status.errors.push(`${name}: ${error.message}`);

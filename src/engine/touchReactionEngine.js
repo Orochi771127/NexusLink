@@ -25,7 +25,7 @@ export function getUniversalTouchReaction(targetState, personality) {
   return "reject";
 }
 
-export function evaluateTouchReaction(targetState, personality, touchType = "touch", now = Date.now()) {
+export function evaluateTouchReaction(targetState, personality, touchType = "touch", now = Date.now(), companionName = "牠") {
   const nextState = normalizeState(applyTouchRecovery(targetState, now));
   const fatigueRules = personality.fatigueRules;
   const fatigueIncrease =
@@ -63,7 +63,7 @@ export function evaluateTouchReaction(targetState, personality, touchType = "tou
   nextState.lastTouchReaction = reaction;
   nextState.lastRejectAt = reaction === "reject" ? now : nextState.lastRejectAt;
   applyTouchReactionMutation(nextState, reaction);
-  nextState.reactionPreview = getTouchReactionText(reaction);
+  nextState.reactionPreview = getTouchReactionText(reaction, companionName);
 
   return {
     reaction,
@@ -89,7 +89,7 @@ export function evaluateTouchReaction(targetState, personality, touchType = "tou
   };
 }
 
-export function evaluateBlockedTouch(targetState, now = Date.now()) {
+export function evaluateBlockedTouch(targetState, now = Date.now(), companionName = "牠") {
   const currentState = normalizeState(targetState);
   const previousBlockedAt = Number(currentState.lastBlockedTouchAt) || 0;
   const resetWindowMs = Math.min(BLOCKED_TOUCH_RESET_MS, MAX_BLOCKED_TOUCH_RESET_MS);
@@ -101,7 +101,7 @@ export function evaluateBlockedTouch(targetState, now = Date.now()) {
   const statePatch = {
     blockedTouchCount,
     lastBlockedTouchAt: now,
-    reactionPreview: getBlockedTouchText(blockedTouchCount)
+    reactionPreview: getBlockedTouchText(blockedTouchCount, companionName)
   };
 
   if (blockedTouchCount === 2) {
@@ -220,18 +220,18 @@ export function getTouchMotionState(reaction) {
   return getTouchAnimationName(reaction);
 }
 
-function getTouchReactionText(reaction) {
+function getTouchReactionText(reaction, companionName = "牠") {
   const reactionText = {
-    accept: "灰影貓閉上眼睛，短暫地放鬆下來。",
-    guarded_accept: "灰影貓耳朵動了動，但沒有躲開。",
-    hesitate: "灰影貓看著你，尾巴末端有些緊繃。",
-    reject: "灰影貓默默往後退了一點。"
+    accept: `${companionName}閉上眼睛，短暫地放鬆下來。`,
+    guarded_accept: `${companionName}耳朵動了動，但沒有躲開。`,
+    hesitate: `${companionName}看著你，尾巴末端有些緊繃。`,
+    reject: `${companionName}默默往後退了一點。`
   };
   return reactionText[reaction] || reactionText.guarded_accept;
 }
 
-function getBlockedTouchText(blockedTouchCount) {
-  if (blockedTouchCount <= 1) return "灰影貓把身體收得更小了一點。";
+function getBlockedTouchText(blockedTouchCount, companionName = "牠") {
+  if (blockedTouchCount <= 1) return `${companionName}把身體收得更小了一點。`;
   if (blockedTouchCount === 2) return "牠沒有再退後，但尾巴明顯繃緊了。";
-  return "灰影貓移開視線，像是在告訴你：現在不要再靠近。";
+  return `${companionName}移開視線，像是在告訴你：現在不要再靠近。`;
 }
