@@ -2028,6 +2028,25 @@ body.panel-open .dev-reaction-lab {
   background: rgba(167, 139, 250, 0.08);
 }
 
+/* 裂隙心相：元素契合時，共鳴鈕亮起金光（重用 --glow-gold）。 */
+#standoff-act-resonance.is-attuned {
+  border-color: rgba(255, 214, 128, 0.6);
+  background: rgba(255, 214, 128, 0.12);
+  box-shadow: 0 0 14px var(--glow-gold);
+}
+#standoff-act-resonance.is-attuned strong {
+  color: var(--color-energy);
+}
+@media (prefers-reduced-motion: no-preference) {
+  #standoff-act-resonance.is-attuned {
+    animation: standoff-attune-pulse 2.4s ease-in-out infinite;
+  }
+}
+@keyframes standoff-attune-pulse {
+  0%, 100% { box-shadow: 0 0 10px var(--glow-gold); }
+  50% { box-shadow: 0 0 18px var(--glow-gold); }
+}
+
 .standoff-action-row .standoff-retreat {
   border-color: rgba(103, 232, 249, 0.3);
   background: rgba(8, 13, 32, 0.55);

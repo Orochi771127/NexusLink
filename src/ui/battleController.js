@@ -71,10 +71,23 @@ export function createBattleController({ store, panelManager, soulTalkController
     const node = getExplorationNodeById(nodeId);
     if (nodeLabelEl) nodeLabelEl.textContent = node ? `${node.label.zh} ・ 場域不安定` : "場域不安定";
     if (companionNameEl) companionNameEl.textContent = `${session.companionName}的心核`;
-    if (noiseNameEl) noiseNameEl.textContent = `${session.enemyName}的雜訊`;
+    if (noiseNameEl) {
+      noiseNameEl.textContent = session.riftEmotionLabelZh
+        ? `${session.enemyName}的雜訊・${session.riftEmotionLabelZh}`
+        : `${session.enemyName}的雜訊`;
+    }
     const resonanceButton = actionButtons.resonance;
     if (resonanceButton) {
       resonanceButton.querySelector("strong").textContent = getResonanceSkillName(session.emblem);
+      // 裂隙心相：元素契合時，共鳴鈕亮起金光並換上提示（每次 startBattle 重設）。
+      const isAttuned = session.affinityTier === "attuned";
+      resonanceButton.classList.toggle("is-attuned", isAttuned);
+      const resonanceHint = resonanceButton.querySelector("em");
+      if (resonanceHint) {
+        resonanceHint.textContent = isAttuned
+          ? `心相共鳴・特別能安撫這片${session.riftEmotionLabelZh}`
+          : "回收記憶・放輕雜訊";
+      }
     }
     if (finishButton) finishButton.hidden = true;
 
