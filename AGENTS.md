@@ -118,11 +118,25 @@ Acceptance refs:  <對應 ACCEPTANCE.md 的哪幾條>
 
 | Tier | 角色 | ID | 規則 |
 |------|------|-----|------|
-| 1 Active Runtime | 灰影貓 | `greyshade-cat` | 唯一 runtime 主夥伴，P1 主線 |
-| 2 Legacy/Fallback | 焰尾狐 | `flametail-fox` | 僅靜態圖，不可擅自升級 |
-| 3 Roadmap | 雷霆幼狼 / 星能小山豬 | `thunder-pup` / `star-energy-boarlet` | 不可進 runtime，不可觸發多角色隊伍 |
+| 1 Primary Runtime | 灰影貓 | `greyshade-cat` | 第一主夥伴、預設解鎖、P1 主線 |
+| 2 Chapter Runtime Candidate | 焰尾狐 | `flametail-fox` | 可作章節解鎖的靜態 runtime candidate；不可成為灰影貓 fallback |
+| 3 Roadmap Runtime Candidate | 雷霆幼狼 / 星能小山豬 | `thunder-pup` / `star-energy-boarlet` | 可逐章節升級為 runtime candidate；未通過 asset readiness 前不可選 |
 
-圖鑑中的水晶海馬 / 青葉麋鹿為既有 placeholder 展示資料，不可升級為 runtime 主夥伴。
+圖鑑中的水晶海馬 / 青葉麋鹿為既有 placeholder 展示資料；可列為 future runtime candidate，但必須先完成正式 companion spec、512×512 transparent master asset、human approval 與 asset readiness gate。多角色版本仍維持「同一時間只有一隻 active companion」，不可觸發隊伍或普通收集 RPG。
+
+### Runtime model（與現況同步）
+
+> 此區與目前 `companionRegistry.js` / `companionRuntimePolicy.js` 實況對齊；上方 Tier 表保留為產品節奏的歷史脈絡。
+
+- Greyshade Cat 仍是 default active companion。
+- 可以有多個 runtime-ready companion（目前心輝議會五元守護 `flame-flicker` / `ice-talon` / `stone-shard` / `vine-twist` / `crystal-rabbit` 已是 `full-runtime` / `runtime-ready` 並可選）。
+- runtime 模型是 single-active-companion only。
+- 不做 party system。
+- 不做 multi-companion 同場。
+- 不做 multi-companion 戰鬥隊伍。
+- 正式產品方向是 chapter-gated unlock。
+- Test builds 可暫時預設解鎖 runtime-ready companion 以利驗證（目前 root `defaultState.js` 即為此），但這不重新定義產品 loop；正式 chapter-gated unlock 需另開 TASK_PACK。
+- 註：`crystal-rabbit` 的 runtime 動畫資產暫借 `assets/characters/thunder-pup/` 目錄（命名債）；registry 的 `thunder-pup`（雷霆幼狼）與此為不同角色、維持原樣。
 
 ---
 
