@@ -41,11 +41,71 @@ export function getResonanceSkillName(emblem) {
   return RESONANCE_FLAVOR[emblem]?.name || "情感共鳴";
 }
 
+// 裂隙心相：每種裂隙情緒 ↔ 一個「安撫」元素；以五行相剋定「相沖」元素（輕微減益）。
+// 這讓「帶哪一隻元素守護進裂隙」有戰術意義。中性元素夥伴永遠 neutral、無減益。
+const RIFT_EMOTION_PROFILE = {
+  sadness: {
+    attuned: "fire", dissonant: "water", labelZh: "低鳴",
+    attuneLine: (name) => `${name}的火，正好能溫暖這片低鳴——共鳴會特別容易。`
+  },
+  anger: {
+    attuned: "water", dissonant: "earth", labelZh: "沉怒",
+    attuneLine: (name) => `${name}的水，把這團沉怒磨成了圓的——共鳴會特別容易。`
+  },
+  anxiety: {
+    attuned: "earth", dissonant: "wood", labelZh: "迷茫",
+    attuneLine: (name) => `${name}踩穩了地基，迷茫的影子慢了下來——共鳴會特別容易。`
+  },
+  fatigue: {
+    attuned: "wood", dissonant: "metal", labelZh: "倦怠",
+    attuneLine: (name) => `${name}的綠意裡長出新的氣力，倦怠被輕輕接住——共鳴會特別容易。`
+  },
+  loneliness: {
+    attuned: "metal", dissonant: "fire", labelZh: "孤鳴",
+    attuneLine: (name) => `${name}的晶核回應了這聲孤鳴，像終於有人聽見——共鳴會特別容易。`
+  }
+};
+
+// 夥伴元素 vs 裂隙情緒的契合度（attuned 1.25 / dissonant 0.85 / neutral 1）。
+export function getRiftAffinity(companion, enemy) {
+  const emotion = enemy?.emotion || null;
+  const profile = emotion ? RIFT_EMOTION_PROFILE[emotion] : null;
+  const element = companion?.element || "neutral";
+  const labelZh = profile?.labelZh || enemy?.emotionLabelZh || null;
+  if (!profile) return { emotion, tier: "neutral", multiplier: 1, labelZh, attuneLine: null };
+
+  let tier = "neutral";
+  if (element === profile.attuned) tier = "attuned";
+  else if (element === profile.dissonant) tier = "dissonant";
+  const multiplier = tier === "attuned" ? 1.25 : tier === "dissonant" ? 0.85 : 1;
+  return {
+    emotion,
+    tier,
+    multiplier,
+    labelZh,
+    attuneLine: tier === "attuned" ? profile.attuneLine(companion?.name || "夥伴") : null
+  };
+}
+
+// 夥伴 radar 區分三個行動的強弱（偏離 50 才有小幅增減，全部限幅、不致任何夥伴無用）。
+export function getRadarModifiers(radar = {}) {
+  const dev = (value) => (Number(value) || 50) - 50;
+  return {
+    resonanceBonus: 1 + clamp(dev(radar.healing) * 0.004, -0.12, 0.16), // 治癒高 → 共鳴更安撫
+    barrierStability: Math.round(clamp(dev(radar.defense) * 0.08, -2, 3)), // 防禦高 → 邊界更穩
+    barrierBoundaryBonus: (Number(radar.defense) || 50) >= 80 ? 1 : 0, // 高防禦 → 邊界多疊一層
+    pulseBonus: 1 + clamp(dev(radar.power) * 0.004, -0.12, 0.18) // 力量高 → 脈衝更強
+  };
+}
+
 export function createStandoffSession({ companion, enemyId, nodeId, state, now = Date.now() }) {
   const enemy = getEnemyById(enemyId);
   const radar = companion?.radar || { power: 50, emotion: 50 };
   const stabilityMax = Math.round(22 + (radar.emotion || 50) * 0.16 + (state?.bond || 0) * 0.18);
   const resonancePower = Math.round(5 + (radar.emotion || 50) * 0.05 + (state?.bond || 0) * 0.08);
+
+  const affinity = getRiftAffinity(companion, enemy);
+  const radarMods = getRadarModifiers(radar);
 
   return {
     nodeId: nodeId || null,
@@ -57,6 +117,13 @@ export function createStandoffSession({ companion, enemyId, nodeId, state, now =
     enemyName: enemy.name.zh,
     enemySurge: enemy.attack,
     enemyLullChance: enemy.guardChance,
+    // 裂隙心相
+    riftEmotion: affinity.emotion,
+    riftEmotionLabelZh: affinity.labelZh,
+    affinityTier: affinity.tier,
+    affinityMultiplier: affinity.multiplier,
+    affinityLine: affinity.attuneLine,
+    radarMods,
     noise: { current: enemy.maxHp, max: enemy.maxHp },
     stability: { current: stabilityMax, max: stabilityMax },
     sync: 1,
@@ -67,7 +134,16 @@ export function createStandoffSession({ companion, enemyId, nodeId, state, now =
     round: 1,
     startedAt: now,
     log: [
-      { kind: "system", text: `${enemy.name.zh}的雜訊籠罩過來。${enemy.flavor}` },
+      {
+        kind: "system",
+        text: affinity.labelZh
+          ? `${enemy.name.zh}的雜訊籠罩過來——這片裂隙的情緒，是「${affinity.labelZh}」。${enemy.flavor}`
+          : `${enemy.name.zh}的雜訊籠罩過來。${enemy.flavor}`
+      },
+      ...(affinity.attuneLine ? [{ kind: "system", text: affinity.attuneLine }] : []),
+      ...(affinity.tier === "dissonant"
+        ? [{ kind: "system", text: `${companion?.name || "夥伴"}的氣息和這片${affinity.labelZh}有點相沖，但你們仍能慢慢靠近。` }]
+        : []),
       { kind: "system", text: "穩住心核，把雜訊放輕。你們不需要消滅誰。" }
     ]
   };
@@ -83,43 +159,48 @@ export function canUseAction(session, actionId) {
 
 export function applyPlayerAction(session, actionId, rng = Math.random) {
   const next = cloneSession(session);
+  const aff = next.affinityMultiplier || 1; // 元素契合（attuned 1.25 / dissonant 0.85）
+  const mods = next.radarMods || {}; // radar 行動修正
 
   if (actionId === "barrier") {
-    next.boundary = clamp(next.boundary + 1, 0, MAX_BOUNDARY);
-    next.stability.current = clamp(next.stability.current + 5, 0, next.stability.max);
+    const stabilityGain = 5 + (mods.barrierStability || 0);
+    const boundaryGain = 1 + (mods.barrierBoundaryBonus || 0);
+    next.boundary = clamp(next.boundary + boundaryGain, 0, MAX_BOUNDARY);
+    next.stability.current = clamp(next.stability.current + stabilityGain, 0, next.stability.max);
     next.sync = clamp(next.sync + 1, 0, MAX_SYNC);
     next.log.push({
       kind: "player",
-      text: `${next.companionName}沒有撲向雜訊，而是在你們周圍立起一圈柔光的邊界。（穩定 +5，邊界 ${next.boundary} 層）`
+      text: `${next.companionName}沒有撲向雜訊，而是在你們周圍立起一圈柔光的邊界。（穩定 +${stabilityGain}，邊界 ${next.boundary} 層）`
     });
   } else if (actionId === "pulse" && next.sync >= PULSE_SYNC_COST) {
     next.sync -= PULSE_SYNC_COST;
     next.fatigue = clamp(next.fatigue + 2, 0, MAX_FATIGUE);
     next.stability.current = clamp(next.stability.current - 2, 0, next.stability.max);
-    const quieted = Math.max(1, Math.round(next.resonancePower * 1.9 + rng() * 4));
+    const quieted = Math.max(1, Math.round(next.resonancePower * 1.9 * (mods.pulseBonus || 1) + rng() * 4));
     next.noise.current = clamp(next.noise.current - quieted, 0, next.noise.max);
     next.log.push({
       kind: "player",
       text: `一道淨化脈衝盪開，雜訊被狠狠推遠。（雜訊 -${quieted}，但你們都喘了一下：疲勞 +2）`
     });
   } else {
-    // resonance（預設行動）
+    // resonance（預設行動）——元素契合與治癒 radar 都疊在這裡，把戰術拉力導向「安撫」。
     const tired = next.fatigue >= MAX_FATIGUE - 1;
     const efficiency = tired ? 0.7 : 1;
-    const quieted = Math.max(1, Math.round(next.resonancePower * efficiency + rng() * 3));
+    const quieted = Math.max(1, Math.round(next.resonancePower * efficiency * aff * (mods.resonanceBonus || 1) + rng() * 3));
     next.noise.current = clamp(next.noise.current - quieted, 0, next.noise.max);
     next.sync = clamp(next.sync + 1, 0, MAX_SYNC);
     next.fatigue = clamp(next.fatigue + 1, 0, MAX_FATIGUE);
 
     const flavor = RESONANCE_FLAVOR[next.emblem] || { name: "情感共鳴", line: "你們的節奏疊在一起，雜訊低了下去。" };
+    const attuneTag = next.affinityTier === "attuned" ? "・心相共鳴" : "";
     if (next.shards < SHARD_GOAL) {
       next.shards += 1;
       next.log.push({
         kind: "player",
-        text: `${flavor.name}——${flavor.line}（雜訊 -${quieted}，回收記憶微光 ◈${next.shards}/${SHARD_GOAL}）`
+        text: `${flavor.name}${attuneTag}——${flavor.line}（雜訊 -${quieted}，回收記憶微光 ◈${next.shards}/${SHARD_GOAL}）`
       });
     } else {
-      next.log.push({ kind: "player", text: `${flavor.name}——${flavor.line}（雜訊 -${quieted}）` });
+      next.log.push({ kind: "player", text: `${flavor.name}${attuneTag}——${flavor.line}（雜訊 -${quieted}）` });
     }
     if (tired) {
       next.log.push({ kind: "system", text: "牠的呼吸有點亂了。也許該立個邊界，或者先離開。" });
@@ -209,6 +290,8 @@ export function summarizeStandoffOutcome(outcome, session, state, now = Date.now
   const legacyResult = OUTCOME_TO_LEGACY[outcome] || "retreat";
   const copy = getOutcomeCopy(outcome);
   const fatigue = session?.fatigue || 0;
+  const riftEmotion = session?.riftEmotion || null;
+  const riftLabelZh = session?.riftEmotionLabelZh || "雜訊";
 
   const statePatch = {
     battleRecord: {
@@ -229,6 +312,22 @@ export function summarizeStandoffOutcome(outcome, session, state, now = Date.now
     // 場域穩定下來——夥伴會開心（勝不驕，但允許一起鬆一口氣的喜悅）。回棲地後播 idle_happy。
     statePatch.mood = "happy";
     statePatch.energy = clamp((state.energy || 0) - 2, 0, 10);
+    // 安撫過的裂隙會在記憶回廊留下一枚情緒對應的痕跡。
+    memorySeed = {
+      id: `emem_${now}_standoff`,
+      theme: "安撫過的裂隙",
+      label: "在裂隙裡留下的安靜",
+      emotion: riftEmotion || "gratitude",
+      intensity: 0.5,
+      symbol: "golden_rune",
+      place: "magic_circle",
+      status: "fresh",
+      source: "standoff",
+      excerpt: `你們沒有消滅誰，只是把這片${riftLabelZh}輕輕放下了。`,
+      createdAt: now,
+      lastUpdatedAt: now,
+      isVisibleInHabitat: true
+    };
   } else if (outcome === "recovered") {
     statePatch.bond = clamp((state.bond || 0) + 2, 0, 100);
     statePatch.trust = clamp((state.trust || 0) + 2, 0, 100);
@@ -239,13 +338,13 @@ export function summarizeStandoffOutcome(outcome, session, state, now = Date.now
       id: `emem_${now}_standoff`,
       theme: "被接住的微光",
       label: "對峙中回收的記憶",
-      emotion: "gratitude",
+      emotion: riftEmotion || "gratitude",
       intensity: 0.5,
       symbol: "golden_rune",
       place: "magic_circle",
       status: "fresh",
       source: "standoff",
-      excerpt: "在雜訊裡，你們一起把三枚記憶微光帶了回來。",
+      excerpt: `在這片${riftLabelZh}裡，你們一起把三枚記憶微光帶了回來。`,
       createdAt: now,
       lastUpdatedAt: now,
       isVisibleInHabitat: true

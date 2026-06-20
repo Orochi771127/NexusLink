@@ -66,7 +66,8 @@ export const EXPLORATION_NODES = [
     eventType: "danger",
     emotionalTone: "dread",
     encounterChance: 1,
-    enemyPool: ["rift_shade", "crystal_golemite"],
+    // 每次裂隙隨機呈現一種情緒（五行各一）；帶對的元素守護來會更契合（見 battleEngine 裂隙心相）。
+    enemyPool: ["rift_shade", "crystal_golemite", "weary_husk", "hollow_echo", "static_wisp"],
     possibleRewards: [{ stat: "trust", delta: 3 }],
     resultMessages: [
       "裂隙邊緣的空氣在發出細小的雜訊聲——有東西過來了。"
