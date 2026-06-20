@@ -124,6 +124,35 @@ const KIND_CONFIG = Object.freeze({
   })
 });
 
+// 記憶回廊用：情緒 → 強調色 / 字符（重用 EMOTION_TO_KIND，與棲地光痕同一套語彙）。
+const KIND_ACCENT = Object.freeze({
+  blue_lantern: "#6db4f0", // sadness
+  white_ash: "#cdd6e2", // fatigue
+  glitch_noise: "#b48bd6", // anxiety
+  golden_rune: "#f4d77d", // gratitude / bond
+  ripple: "#7fd6c2", // calm
+  glow: "#8fa6c4" // fallback
+});
+
+const EMOTION_GLYPH = Object.freeze({
+  sadness: "○", // 藍燈籠
+  fatigue: "·", // 白燼
+  anxiety: "≋", // 雜訊
+  gratitude: "✦", // 金符文
+  calm: "◡", // 漣漪
+  loneliness: "☆",
+  anger: "✸"
+});
+
+export function getMemoryAccentColor(emotion) {
+  const kind = EMOTION_TO_KIND[emotion] || "glow";
+  return KIND_ACCENT[kind] || KIND_ACCENT.glow;
+}
+
+export function getMemoryGlyph(emotion) {
+  return EMOTION_GLYPH[emotion] || "◇";
+}
+
 export function mapHabitatTracesToVisuals(traces = []) {
   if (!Array.isArray(traces)) return [];
 

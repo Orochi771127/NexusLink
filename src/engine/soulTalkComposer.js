@@ -1,4 +1,4 @@
-import { RESPONSE_PACKS, TONE_FLAVOR, ECHO_TEMPLATES, EVENT_REFLECTION } from "../data/soulTalkResponsePacks.js";
+import { RESPONSE_PACKS, TONE_FLAVOR, ECHO_TEMPLATES, EVENT_REFLECTION, MEMORY_REFLECTION, MEMORY_REFLECTION_BOND } from "../data/soulTalkResponsePacks.js";
 import { getExplorationNodeById } from "../data/explorationNodes.js";
 
 const ECHO_WINDOW_MS = 48 * 60 * 60 * 1000;
@@ -127,4 +127,25 @@ export function composeFallbackReply({ baseReply, state = {}, companion = null }
     return `${baseReply}\n${pickFromPool(toneFragments, seed)}`;
   }
   return baseReply;
+}
+
+/**
+ * 記憶回廊：玩家回看一段記憶時，夥伴以「自己的聲音」說一句「我們一起記得」。
+ * 純函數：不改 state、不碰 DOM。羈絆里程碑走專屬語，其餘依情緒取模板（有 fallback）。
+ */
+export function composeMemoryReflection({ memory, companion = null, state = {} }) {
+  if (!memory) return "";
+  const theme = memory.theme || "那段記憶";
+  const isBond = memory.source === "bond" || String(memory.id || "").startsWith("bond_milestone_");
+  const template = isBond
+    ? MEMORY_REFLECTION_BOND
+    : MEMORY_REFLECTION[memory.emotion] || "「{theme}」我都記得。你願意回來看它，這對我很重要。";
+  let line = template.replace("{theme}", theme);
+
+  const seed = (state.chatHistory?.length || 0) + (state.bond || 0);
+  const toneFragments = TONE_FLAVOR[companion?.soulTalkTone];
+  if (toneFragments && toneFragments.length > 0 && seed % 2 === 0) {
+    line = `${line}\n${pickFromPool(toneFragments, seed)}`;
+  }
+  return line;
 }

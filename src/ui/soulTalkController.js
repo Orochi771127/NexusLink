@@ -6,7 +6,7 @@ import {
 } from "../engine/habitatTraceEngine.js";
 import { updateMemoryLifecycles } from "../engine/memoryLifecycleEngine.js";
 import { buildSafetyShieldReply } from "../engine/safeHarborMode.js";
-import { buildEventReflection, composeCompanionReply, composeFallbackReply } from "../engine/soulTalkComposer.js";
+import { buildEventReflection, composeCompanionReply, composeFallbackReply, composeMemoryReflection } from "../engine/soulTalkComposer.js";
 import { buildMilestoneMemory, findNewBondMilestone, getMilestoneLine } from "../engine/bondMilestoneEngine.js";
 import { qs } from "../utils/dom.js";
 
@@ -286,6 +286,19 @@ export function createSoulTalkController({ store, saveCurrentState }) {
     chatLog.scrollTop = chatLog.scrollHeight;
   }
 
+  // 記憶回廊：玩家點一段記憶 → 夥伴以自己的聲音回應「我們一起記得」，並落盤。
+  function reflectOnMemory(memory) {
+    if (!memory) return;
+    const line = composeMemoryReflection({
+      memory,
+      companion: currentCreature,
+      state: store.getState()
+    });
+    if (!line) return;
+    addChat("companion", line);
+    saveCurrentState();
+  }
+
   return {
     setCreature,
     bind,
@@ -293,6 +306,7 @@ export function createSoulTalkController({ store, saveCurrentState }) {
     openSoulTalk,
     addChat,
     renderChat,
+    reflectOnMemory,
     setStatusText
   };
 }
