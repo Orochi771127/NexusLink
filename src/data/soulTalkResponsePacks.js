@@ -145,6 +145,22 @@ export const EVENT_REFLECTION = {
   ]
 };
 
+// 記憶回廊：玩家主動回看一段記憶時，夥伴輕輕回應「我們一起記得」。
+// 守契約 #2：表達「它就在那裡、也不需要你做什麼」，不暗示玩家疏忽、不黏人。
+export const MEMORY_REFLECTION = {
+  fatigue: "「{theme}」那段，我一直放在營火邊。你願意回頭看它，我就陪你一起看。",
+  sadness: "你又走回「{theme}」這盞燈旁邊了。沒關係，它一直亮著，我們慢慢看。",
+  anxiety: "「{theme}」的雜訊現在安靜多了。回頭看看也好——你已經走過它了。",
+  loneliness: "「{theme}」那晚你不是一個人。現在也是，我在這裡。",
+  anger: "「{theme}」那塊礦沉得比較深了。你想再看它一眼，我就陪著。",
+  gratitude: "「{theme}」這枚金符文，我記得是哪一天的。謝謝你還記得它。",
+  calm: "「{theme}」那圈漣漪還在湖面上。我們就這樣靜靜看一會兒。"
+};
+
+// 羈絆里程碑（金色光痕）的專屬回看語：是關係的地標，不是任務。
+export const MEMORY_REFLECTION_BOND =
+  "「{theme}」是我們之間的一道光。它不會退，也不需要你做什麼——它就在那裡。";
+
 // 記憶回聲模板：{theme} 會被替換成上次同類記憶的主題。
 export const ECHO_TEMPLATES = {
   fatigue: "上次你也說過「{theme}」，那撮白燼還留在營火邊。這次的，我放在它旁邊。",

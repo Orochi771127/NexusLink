@@ -1,6 +1,21 @@
 import { evaluateActionEffect } from "../engine/actionEffectEngine.js";
+import { BOND_MILESTONES } from "../engine/bondMilestoneEngine.js";
+import { getMemoryAccentColor, getMemoryGlyph } from "../engine/traceVisualMapper.js";
 import EventBus from "../utils/eventBus.js";
 import { qs, qsa } from "../utils/dom.js";
+
+const MEMORY_HALL_LIMIT = 20;
+const MEMORY_HALL_STATUSES = new Set(["fresh", "settled", "transformed"]);
+const MEMORY_STATUS_LABEL = { fresh: "新生", settled: "沉澱", transformed: "蛻變" };
+
+function formatMemoryRelativeTime(createdAt, now) {
+  if (!createdAt) return "";
+  const days = Math.floor((now - createdAt) / 86400000);
+  if (days <= 0) return "今天";
+  if (days === 1) return "昨天";
+  if (days < 30) return `${days} 天前`;
+  return "很久以前";
+}
 
 const ENVIRONMENT_INTERACTION_EVENT = "ENVIRONMENT_INTERACTION";
 
@@ -26,8 +41,156 @@ export function createActionSheetController({ soulTalkController, saveCurrentSta
     queuedAction = action;
     actionSheetTitle.textContent = actionMeta.title;
     actionSheetCopy.textContent = actionMeta.copy;
+    renderGrowthChronicle(action, store.getState());
+    renderMemoryHall(action, store.getState());
     renderActionRows(actionMeta.rows);
     panelManager.openPanel("actionSheet");
+  }
+
+  // 記憶回廊：在「記憶」分頁顯示可回看的情緒記憶；點一筆 → 夥伴回應「我們一起記得」。
+  function renderMemoryHall(action, state) {
+    const existing = document.getElementById("memory-hall");
+    if (existing) existing.remove();
+    if (action !== "memory" || !actionSheetActions) return;
+
+    const now = Date.now();
+    const memories = (Array.isArray(state.emotionalMemories) ? state.emotionalMemories : [])
+      .filter((memory) => memory && MEMORY_HALL_STATUSES.has(memory.status))
+      .sort((left, right) => (Number(right.createdAt) || 0) - (Number(left.createdAt) || 0))
+      .slice(0, MEMORY_HALL_LIMIT);
+
+    const hall = document.createElement("div");
+    hall.id = "memory-hall";
+    hall.className = "memory-hall";
+
+    if (memories.length === 0) {
+      const empty = document.createElement("p");
+      empty.className = "memory-hall-empty";
+      empty.textContent = "記憶回廊現在還是空的。你們說過的話，會慢慢在這裡留下光。";
+      hall.appendChild(empty);
+      actionSheetActions.parentNode.insertBefore(hall, actionSheetActions);
+      return;
+    }
+
+    const heading = document.createElement("p");
+    heading.className = "memory-hall-head";
+    heading.textContent = "記憶回廊 ・ 你們一起留下的痕跡";
+    hall.appendChild(heading);
+
+    memories.forEach((memory) => {
+      const isLandmark = memory.source === "bond" || String(memory.id || "").startsWith("bond_milestone_");
+      const row = document.createElement("div");
+      row.className = `memory-hall-row${isLandmark ? " is-landmark" : ""}`;
+      row.tabIndex = 0;
+      row.setAttribute("role", "button");
+
+      const mark = document.createElement("span");
+      mark.className = "memory-hall-mark";
+      mark.textContent = isLandmark ? "✦" : getMemoryGlyph(memory.emotion);
+      mark.style.setProperty("--accent", getMemoryAccentColor(memory.emotion));
+
+      const copy = document.createElement("span");
+      copy.className = "memory-hall-copy";
+      const title = document.createElement("strong");
+      title.textContent = memory.theme || "一段記憶";
+      copy.appendChild(title);
+
+      const rawExcerpt = memory.excerpt || memory.label || "";
+      if (rawExcerpt) {
+        const excerpt = document.createElement("em");
+        excerpt.textContent = rawExcerpt.length > 60 ? `${rawExcerpt.slice(0, 60)}…` : rawExcerpt;
+        copy.appendChild(excerpt);
+      }
+
+      const metaText = [formatMemoryRelativeTime(Number(memory.createdAt), now), MEMORY_STATUS_LABEL[memory.status] || ""]
+        .filter(Boolean)
+        .join(" ・ ");
+      if (metaText) {
+        const meta = document.createElement("span");
+        meta.className = "memory-hall-meta";
+        meta.textContent = metaText;
+        copy.appendChild(meta);
+      }
+
+      row.appendChild(mark);
+      row.appendChild(copy);
+
+      const openReflection = () => {
+        panelManager.closePanel();
+        soulTalkController.reflectOnMemory(memory);
+        soulTalkController.openSoulTalk(panelManager);
+      };
+      row.addEventListener("click", openReflection);
+      row.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          openReflection();
+        }
+      });
+
+      hall.appendChild(row);
+    });
+
+    actionSheetActions.parentNode.insertBefore(hall, actionSheetActions);
+  }
+
+  // 成長分頁：把已綻放的羈絆里程碑做成可回顧的年表（重用 emotionalMemories）。
+  function renderGrowthChronicle(action, state) {
+    const existing = document.getElementById("bond-chronicle");
+    if (existing) existing.remove();
+    if (action !== "grow" || !actionSheetActions) return;
+
+    const bond = Number(state.bond || 0);
+    const memoriesById = new Map(
+      (Array.isArray(state.emotionalMemories) ? state.emotionalMemories : []).map((memory) => [memory?.id, memory])
+    );
+    const reachedCount = BOND_MILESTONES.filter((milestone) => memoriesById.has(milestone.id)).length;
+
+    const chronicle = document.createElement("div");
+    chronicle.id = "bond-chronicle";
+    chronicle.className = "bond-chronicle";
+
+    const heading = document.createElement("p");
+    heading.className = "bond-chronicle-head";
+    heading.textContent = reachedCount > 0
+      ? `羈絆年表 ・ 已綻放 ${reachedCount} / ${BOND_MILESTONES.length} 道光痕`
+      : "羈絆年表 ・ 還沒有光痕，但你們正在開始。";
+    chronicle.appendChild(heading);
+
+    let nextHinted = false;
+    BOND_MILESTONES.forEach((milestone) => {
+      const memory = memoriesById.get(milestone.id);
+      const reached = Boolean(memory);
+      const row = document.createElement("div");
+      row.className = `bond-chronicle-row${reached ? " is-reached" : " is-locked"}`;
+
+      let desc;
+      if (reached) {
+        desc = memory.excerpt || milestone.line;
+      } else if (!nextHinted) {
+        nextHinted = true;
+        desc = `羈絆達 ${milestone.threshold} 時亮起（目前 ${bond}）`;
+      } else {
+        desc = `羈絆達 ${milestone.threshold} 時亮起`;
+      }
+
+      const mark = document.createElement("span");
+      mark.className = "bond-chronicle-mark";
+      mark.textContent = reached ? "✦" : "◇";
+      const copy = document.createElement("span");
+      copy.className = "bond-chronicle-copy";
+      const title = document.createElement("strong");
+      title.textContent = reached ? milestone.theme : "？？？";
+      const detail = document.createElement("em");
+      detail.textContent = desc;
+      copy.appendChild(title);
+      copy.appendChild(detail);
+      row.appendChild(mark);
+      row.appendChild(copy);
+      chronicle.appendChild(row);
+    });
+
+    actionSheetActions.parentNode.insertBefore(chronicle, actionSheetActions);
   }
 
   function renderActionRows(rows) {

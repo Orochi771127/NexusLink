@@ -937,6 +937,123 @@ canvas {
   line-height: 1.5;
 }
 
+/* 羈絆年表（成長分頁）：已綻放的里程碑以金色標記，未達者留白。 */
+.bond-chronicle {
+  margin: 14px 0 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.bond-chronicle-head {
+  margin: 0 0 2px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.bond-chronicle-row {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 8px 11px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(120, 160, 210, 0.12);
+}
+.bond-chronicle-row.is-reached {
+  border-color: rgba(244, 215, 125, 0.34);
+  background: rgba(244, 215, 125, 0.06);
+}
+.bond-chronicle-mark {
+  flex: 0 0 auto;
+  font-size: 15px;
+  line-height: 1.5;
+  color: #6f87a3;
+}
+.bond-chronicle-row.is-reached .bond-chronicle-mark {
+  color: #f4d77d;
+}
+.bond-chronicle-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.bond-chronicle-copy strong {
+  font-size: 14px;
+  color: #e7eefb;
+}
+.bond-chronicle-copy em {
+  font-size: 12px;
+  font-style: normal;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+/* 記憶回廊（記憶分頁）：可回看的情緒記憶，金色光痕為關係地標；點一筆 → 夥伴回應。 */
+.memory-hall {
+  margin: 14px 0 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.memory-hall-head {
+  margin: 0 0 2px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.memory-hall-empty {
+  margin: 14px 0 4px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+.memory-hall-row {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 8px 11px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(120, 160, 210, 0.12);
+  cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease;
+}
+.memory-hall-row:hover,
+.memory-hall-row:focus-visible {
+  background: rgba(255, 255, 255, 0.07);
+  outline: none;
+}
+.memory-hall-row:focus-visible {
+  border-color: rgba(255, 216, 88, 0.5);
+}
+.memory-hall-row.is-landmark {
+  border-color: rgba(244, 215, 125, 0.34);
+  background: rgba(244, 215, 125, 0.06);
+}
+.memory-hall-mark {
+  flex: 0 0 auto;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--accent, #8fa6c4);
+}
+.memory-hall-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.memory-hall-copy strong {
+  font-size: 14px;
+  color: #e7eefb;
+}
+.memory-hall-copy em {
+  font-size: 12px;
+  font-style: normal;
+  line-height: 1.5;
+  color: var(--muted);
+}
+.memory-hall-meta {
+  font-size: 11px;
+  color: #6f87a3;
+}
+
 .core-stat-list {
   display: grid;
   gap: 10px;
