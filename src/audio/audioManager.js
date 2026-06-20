@@ -6,6 +6,9 @@ const FADE_INTERVAL_MS = 50;
 const MUTE_STORAGE_KEY = "nexusLinkAudioMuted:v1";
 
 const bgmAudio = new Audio(ASSET_MANIFEST.audio.bgm);
+// 首屏不需要聲音：preload="none" 讓瀏覽器（尤其 iOS/mobile）不要在啟動時就預抓 BGM；
+// 第一次 unlock（click/touch）後 playBGM() 的 .play() 會即時載入。不改資產、不改路徑、mute key 不變。
+bgmAudio.preload = "none";
 bgmAudio.loop = true;
 bgmAudio.volume = 0;
 

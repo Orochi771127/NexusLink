@@ -66,9 +66,20 @@ function markInteraction() {
   lastInteractionAt = Date.now();
 }
 
+// dev-only 效能標記：僅在 window.__NEXUS_DEBUG_PERF__ = true 時輸出，不顯示任何 UI、不影響一般玩家。
+function markPerf(name) {
+  if (typeof window === "undefined" || !window.__NEXUS_DEBUG_PERF__) return;
+  try { performance.mark(name); } catch (error) { /* no-op */ }
+}
+function measurePerf(name, startMark, endMark) {
+  if (typeof window === "undefined" || !window.__NEXUS_DEBUG_PERF__) return;
+  try { performance.measure(name, startMark, endMark); } catch (error) { /* no-op */ }
+}
+
 bootstrap();
 
 async function bootstrap() {
+  markPerf("nexus:start");
   const statusText = qs("#status-text");
   bindViewportVars();
   AudioManager.initUnlock();
@@ -91,6 +102,7 @@ async function bootstrap() {
   }
 
   store.replaceState(initialState);
+  markPerf("nexus:state-loaded");
   const saveQueue = createSaveQueue(saveCurrentState);
   saveQueue.enqueue(SAVE_LEVEL.CRITICAL);
   const saveInteraction = () => {
@@ -103,56 +115,87 @@ async function bootstrap() {
   const soulTalkController = createSoulTalkController({ store, saveCurrentState: saveInteraction });
   const panelManager = createPanelManager({ onSoulTalkFocus: () => soulTalkController.focusInput() });
   let sceneApi = null;
+
+  // 效能：戰鬥／地圖／圖鑑／夥伴切換不是首屏必需，改為 lazy factory——
+  // 只有玩家真的需要時才建立，縮短啟動成本。首屏只建 HUD/SoulTalk/PanelManager/ActionSheet。
+  let battleController = null;
   let mapController = null;
   let codexController = null;
+  let companionSelectController = null;
+
+  function getBattleController() {
+    if (!battleController) {
+      battleController = createBattleController({
+        store,
+        panelManager,
+        soulTalkController,
+        saveCurrentState,
+        statusText
+      });
+      battleController.bind();
+    }
+    return battleController;
+  }
+
+  function getMapController() {
+    if (!mapController) {
+      mapController = createMapController({
+        store,
+        panelManager,
+        soulTalkController,
+        saveCurrentState: saveInteraction,
+        battleController: getBattleController(),
+        statusText
+      });
+    }
+    return mapController;
+  }
+
+  function getCodexController() {
+    if (!codexController) {
+      codexController = createCodexController({ store, panelManager });
+    }
+    return codexController;
+  }
+
+  function getCompanionSelectController() {
+    if (!companionSelectController) {
+      companionSelectController = createCompanionSelectController({
+        store,
+        panelManager,
+        saveCurrentState,
+        onCompanionChanged: async (companion) => {
+          const normalizedCompanionId = normalizeRuntimeCompanionId(companion?.id, store.getState());
+          const nextCompanion = getCompanionById(normalizedCompanionId);
+          currentCreature = nextCompanion;
+          hudController.setCreature(nextCompanion);
+          soulTalkController.setCreature(nextCompanion);
+          hudController.renderHUD();
+          await sceneApi?.swapCompanion(nextCompanion);
+        }
+      });
+    }
+    return companionSelectController;
+  }
+
   const actionSheetController = createActionSheetController({
     soulTalkController,
     saveCurrentState: saveInteraction,
     statusText,
     panelManager,
     store,
-    openMap: () => mapController?.open()
-  });
-  const battleController = createBattleController({
-    store,
-    panelManager,
-    soulTalkController,
-    saveCurrentState,
-    statusText
-  });
-  battleController.bind();
-  mapController = createMapController({
-    store,
-    panelManager,
-    soulTalkController,
-    saveCurrentState: saveInteraction,
-    battleController,
-    statusText
-  });
-  codexController = createCodexController({ store, panelManager });
-  const companionSelectController = createCompanionSelectController({
-    store,
-    panelManager,
-    saveCurrentState,
-    onCompanionChanged: async (companion) => {
-      const normalizedCompanionId = normalizeRuntimeCompanionId(companion?.id, store.getState());
-      const nextCompanion = getCompanionById(normalizedCompanionId);
-      currentCreature = nextCompanion;
-      hudController.setCreature(nextCompanion);
-      soulTalkController.setCreature(nextCompanion);
-      hudController.renderHUD();
-      await sceneApi?.swapCompanion(nextCompanion);
-    }
+    openMap: () => getMapController().open()
   });
 
   panelManager.bind({
     character: () => hudController.openCharacterDetail(panelManager),
     soulTalk: () => soulTalkController.openSoulTalk(panelManager),
-    companionSelect: () => companionSelectController.open(),
-    codex: () => codexController?.open()
+    companionSelect: () => getCompanionSelectController().open(),
+    codex: () => getCodexController().open()
   });
   soulTalkController.bind();
   actionSheetController.bind();
+  markPerf("nexus:controllers-ready");
 
   store.subscribe(() => {
     hudController.renderHUD();
@@ -180,19 +223,28 @@ async function bootstrap() {
 
   try {
     const app = await createPixiApp(qs("#game-root"));
+    markPerf("nexus:pixi-ready");
     sceneApi = await bootScene(app, panelManager, statusText, soulTalkController, saveQueue);
+    markPerf("nexus:first-scene-ready");
 
-    devPanelController = createDevPanelController({
-      isEnabled: isDevPanelEnabled,
-      store,
-      saveCurrentState,
-      playMotion: (motionState) => playDevMotion(companionMotionController, motionState),
-      getCurrentMotionState: () => currentMotionState,
-      getAnimationLabState: () => getAnimationLabState(),
-      getStorageDebugState: () => lastSaveStatus,
-      renderChat: () => soulTalkController.renderChat()
-    });
-    devPanelController.setup();
+    // 效能：dev panel 是純開發工具，一般玩家路徑（無 ?devPanel=1）完全不建立、不 setup。
+    // 全程以 devPanelController?. 取用，null 時安全略過。
+    if (isDevPanelEnabled) {
+      devPanelController = createDevPanelController({
+        isEnabled: isDevPanelEnabled,
+        store,
+        saveCurrentState,
+        playMotion: (motionState) => playDevMotion(companionMotionController, motionState),
+        getCurrentMotionState: () => currentMotionState,
+        getAnimationLabState: () => getAnimationLabState(),
+        getStorageDebugState: () => lastSaveStatus,
+        renderChat: () => soulTalkController.renderChat()
+      });
+      devPanelController.setup();
+    }
+    markPerf("nexus:interactive");
+    measurePerf("nexus:startup-total", "nexus:start", "nexus:interactive");
+    measurePerf("nexus:scene-boot", "nexus:pixi-ready", "nexus:first-scene-ready");
   } catch (error) {
     console.error(error);
     statusText.textContent = "場景初始化失敗，請重新整理頁面。";
@@ -260,6 +312,24 @@ async function bootScene(app, panelManager, statusText, soulTalkController, save
     activeEnvironmentEffects.push(createCrystalTouchEffect(environmentEffects, event));
   });
 
+  // 效能：habitat trace 的 map+sync 從 ticker（每幀）移到「痕跡內容改變時」才跑。
+  // ticker 只保留 update(t) 做逐幀動畫。先在 bootScene 同步一次（含 reload 後既有痕跡）。
+  let lastHabitatTraceSig = null;
+  function syncHabitatTraces() {
+    const traces = store.getState().habitatTraces || [];
+    // 便宜的內容簽章：長度＋每筆 id/status/intensity；只在實際變動時重建 visuals。
+    let sig = String(traces.length);
+    for (let index = 0; index < traces.length; index += 1) {
+      const trace = traces[index];
+      sig += `|${trace.id}:${trace.status}:${trace.emotion}:${trace.intensity}`;
+    }
+    if (sig === lastHabitatTraceSig) return;
+    lastHabitatTraceSig = sig;
+    habitatTraceRenderer.sync(mapHabitatTracesToVisuals(traces));
+  }
+  syncHabitatTraces();
+  store.subscribe(syncHabitatTraces);
+
   let companion = await createCreatureNode(currentCreature, statusText);
 
   function attachCompanion(node, creature) {
@@ -317,13 +387,14 @@ async function bootScene(app, panelManager, statusText, soulTalkController, save
     t += safeTicker.deltaMS / 1000;
 
     if (!isSceneEditorMode) {
-      const isSleeping = shouldSleep(Date.now(), lastInteractionAt);
+      const nowMs = Date.now();
+      const isSleeping = shouldSleep(nowMs, lastInteractionAt);
       if (isSleeping !== wasSleeping) {
         wasSleeping = isSleeping;
         if (isSleeping) {
           statusText.textContent = `${currentCreature.name}在夜色裡睡著了。`;
         } else {
-          statusText.textContent = isWithinSleepWindow(Date.now())
+          statusText.textContent = isWithinSleepWindow(nowMs)
             ? `你輕輕喚醒了${currentCreature.name}。`
             : `${currentCreature.name}在晨光中醒了。`;
         }
@@ -348,8 +419,7 @@ async function bootScene(app, panelManager, statusText, soulTalkController, save
     animateParticles(particles, t, safeTicker);
     updateEnvironmentEffects(activeEnvironmentEffects, safeTicker);
 
-    const habitatTraceVisuals = mapHabitatTracesToVisuals(store.getState().habitatTraces || []);
-    habitatTraceRenderer.sync(habitatTraceVisuals);
+    // trace 的 map+sync 已移到 syncHabitatTraces()（由 store.subscribe 驅動）；逐幀只做動畫更新。
     habitatTraceRenderer.update(t);
   });
 
