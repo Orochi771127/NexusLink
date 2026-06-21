@@ -7,6 +7,7 @@ import {
   upsertHabitatTrace
 } from "../engine/habitatTraceEngine.js";
 import { buildEventReflection } from "../engine/soulTalkComposer.js";
+import EventBus from "../utils/eventBus.js";
 
 // ---- UI 層佈局常數（不動 explorationNodes 資料、不動 schema） ----
 // 視覺概念：月湖營地為中心起點，其他節點是心核感知到的外圍記憶座標。
@@ -31,8 +32,35 @@ const VIEWBOX_H = 132;
 const TOAST_HIDE_MS = 4600;
 const ENCOUNTER_DELAY_MS = 650;
 
+// 動畫意圖事件（沿用既有 app/Pixi bridge；與 battleController/app 同名常數）。
+const COMPANION_ANIMATION_INTENT_EVENT = "COMPANION_ANIMATION_INTENT";
+// 無可靠來源節點時的參考點（地圖中心）；front=往畫面下方/靠近玩家，back=往上/遠離。
+const MAP_CENTER = { x: 50, y: 50 };
+const MAP_CUE_DELAY_MS = 150;
+const MAP_DIRECTION_EPS = 3; // x/y 差距都很小時不播（避免無意義 cue）
+
 function prefersReducedMotion() {
   return typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+}
+
+// 純函數：依「目標節點 vs 參考點」的相對位置解析方向意圖（取絕對差較大的軸）。
+// 只回傳意圖字串，實際動畫解析/播放由 app bridge 的 resolveAnimationIntent 處理。
+function pickDirectionIntent(target, ref) {
+  if (!target || !ref) return null;
+  const dx = target.x - ref.x;
+  const dy = target.y - ref.y;
+  if (Math.abs(dx) < MAP_DIRECTION_EPS && Math.abs(dy) < MAP_DIRECTION_EPS) return null;
+  if (Math.abs(dx) >= Math.abs(dy)) return dx >= 0 ? "move.right" : "move.left";
+  return dy >= 0 ? "move.front" : "move.back";
+}
+
+// 探索方向意圖：參考點優先用「上一個所在節點」，否則退回地圖中心。
+function resolveExploreDirectionIntent(state, node) {
+  const target = NODE_LAYOUT[node.id];
+  if (!target) return null;
+  const currentNodeId = state?.explorationProgress?.lastNodeId || null;
+  const fromLayout = currentNodeId && currentNodeId !== node.id ? NODE_LAYOUT[currentNodeId] : null;
+  return pickDirectionIntent(target, fromLayout || MAP_CENTER);
 }
 
 export function createMapController({ store, panelManager, soulTalkController, saveCurrentState, battleController, statusText }) {
@@ -53,6 +81,17 @@ export function createMapController({ store, panelManager, soulTalkController, s
     render();
     hideToast();
     panelManager.openPanel("map");
+  }
+
+  // UI 不直接碰 Pixi：方向 cue 只透過 EventBus 發送 intent，由 app/Pixi bridge 接。
+  function emitMapAnimationIntent(intent, meta = {}) {
+    if (!intent) return;
+    EventBus.emit(COMPANION_ANIMATION_INTENT_EVENT, {
+      intent,
+      source: "map-exploration",
+      interrupt: true,
+      ...meta
+    });
   }
 
   // ---- SVG 光路（一次性建構，純標記） ----
@@ -281,6 +320,7 @@ export function createMapController({ store, panelManager, soulTalkController, s
 
     if (result.encounter && battleController) {
       // 遭遇回饋：光路短暫染紅，停一拍再進戰鬥，讓玩家讀得到發生了什麼。
+      // 遭遇時不播 map 方向 cue——讓 battle cue 獨佔這一拍，避免搶 one-shot lock。
       mapCanvas?.classList.add("is-alert");
       pendingEncounterTimer = window.setTimeout(() => {
         pendingEncounterTimer = null;
@@ -288,8 +328,17 @@ export function createMapController({ store, panelManager, soulTalkController, s
         hideToast();
         battleController.startBattle(result.encounter);
       }, prefersReducedMotion() ? 0 : ENCOUNTER_DELAY_MS);
+    } else {
+      // 非遭遇：地圖保持開啟，玩家直接看到 visited / current / 次數變化。
+      // 結果已寫入 state/memory/trace 後，夥伴用一個短方向 cue 回應這趟探索（每次成功只一次）。
+      const directionIntent = resolveExploreDirectionIntent(state, node);
+      if (directionIntent) {
+        window.setTimeout(
+          () => emitMapAnimationIntent(directionIntent, { nodeId: node.id }),
+          MAP_CUE_DELAY_MS
+        );
+      }
     }
-    // 非遭遇：地圖保持開啟，玩家直接看到 visited / current / 次數變化。
   }
 
   return { open, render };
