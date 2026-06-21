@@ -169,11 +169,14 @@
 
 | Tier | 角色 | ID | 規則 |
 |------|------|-----|------|
-| 1 Active Runtime | 灰影貓 | `greyshade-cat` | 唯一 runtime 主夥伴，完整 spritesheet，P1 主線 |
-| 2 Legacy/Fallback | 焰尾狐 | `flametail-fox` | 已登錄、僅靜態圖，非優先，不可擅自升級為完整動畫 |
-| 3 Roadmap | 雷霆幼狼 `thunder-pup` / 星能小山豬 `star-energy-boarlet` | 不可進 runtime、不可觸發多角色隊伍系統 |
+| 1 Primary Runtime | 灰影貓 | `greyshade-cat` | 第一主夥伴、預設解鎖、完整 spritesheet，P1 主線 |
+| 1 Runtime-ready 同行夥伴 | 心輝議會五元守護：焰紋狐(火)／冰晶狼(水)／磐石熊(土)／青藤鹿(木)／晶石兔(金) | `flame-flicker` / `ice-talon` / `stone-shard` / `vine-twist` / `crystal-rabbit` | `full-runtime`、512×512 動畫就緒、可作 active companion；正式為章節解鎖，目前 root test build 預設解鎖以利驗證 |
+| 2 Chapter Runtime Candidate | 焰尾狐 | `flametail-fox` | 已登錄、靜態圖可作章節解鎖 runtime candidate；不可成為灰影貓 fallback |
+| 3 Roadmap Runtime Candidate | 雷霆幼狼 `thunder-pup` / 星能小山豬 `star-energy-boarlet` | 可逐章節升級為 runtime candidate；未通過 asset readiness 前不可選 |
 
-註：`companionRegistry.js` 已含水晶海馬、青葉麋鹿等 placeholder 角色作圖鑑展示用，屬已存在設計，非本檔需新增。不可因圖鑑存在就把它們升級成 runtime 主夥伴。
+註：`companionRegistry.js` 可含水晶海馬、青葉麋鹿等 placeholder 角色作圖鑑展示用。它們可成為 future runtime candidate，但必須先完成正式 companion spec、512×512 transparent master asset、human approval 與 asset readiness gate。多角色版本仍維持「同一時間只有一隻 active companion」，不可觸發隊伍或普通收集 RPG。
+
+註（命名債）：`crystal-rabbit`（晶石兔）的 runtime 動畫資產暫借 `assets/characters/thunder-pup/` 目錄，與 registry 的 `thunder-pup`（雷霆幼狼，Tier 3）為**不同角色**；雷霆幼狼維持原 Tier 3 狀態、未接入此批動畫。
 
 ---
 
