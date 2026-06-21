@@ -22,6 +22,40 @@
 
 ---
 
+## 0.5 當前階段：Pre-Commercial Vertical Slice（商業化前垂直切片期）
+
+**本階段目標 = first-session coherence（首輪體驗的連貫），不是 feature accumulation（堆功能）。**
+
+不是繼續往上加系統，而是讓一個陌生玩家在第一次進入時，能在心裡回答這五件事：
+
+- **我是誰** —— 玩家在這個世界裡的位置。
+- **牠是誰** —— 灰影貓不是寵物，是有自己邊界的夥伴。
+- **現在要做什麼** —— 當下這一步的方向。
+- **做完後世界有什麼變化** —— 我的行為在棲地留下了什麼。
+- **明天為什麼值得回來** —— 回來的理由是溫柔的牽掛，不是打卡焦慮。
+
+> 凡是不服務「首輪連貫」的功能，本階段一律延後。商業化前，先把「第一次見面」做對。
+
+### 0.5.1 First Session Flow（下一階段產品優先級）
+
+下一階段的產品主線是 First Session Flow（新玩家首次體驗），九拍序列：
+
+`Boot Splash → Local Player Identity → Prologue → Heart-Core Guidance（心核引導）→ First Touch → First Soul Talk → First Trace → Safe Moonlake Exploration → Return Echo`
+
+設計原則（每一拍都要通過）：
+
+- 這**不是**寵物養成教學（pet tutorial）。
+- 這**不是**純聊天機器人式 onboarding。
+- 這**不是**普通 RPG 任務式 onboarding。
+- 夥伴**有自己的邊界**；首次互動不得腳本式強制夥伴接受。
+- 棲地**會記住情緒痕跡**；玩家的第一個情緒會在湖邊留下微光。
+- 玩家**能影響、不能支配**夥伴（延續契約三）。
+- Heart-Core Guidance（心核引導）**不是任務欄**：不得有 FOMO / 紅點 / 倒數 / 連續登入 / 未完成焦慮（**直接對應第 2 節紅線 6**）。
+
+> First Session Flow 的可驗收對照見 `ACCEPTANCE.md` 新增的 §K；其 state 地基注意事項見本檔 §5.1。
+
+---
+
 ## 1. 三條核心情感契約（最高憲法，任何程式碼不得違反）
 
 這三條凌駕一切功能需求。任何讓夥伴違反這三條的修改，無論多「好玩」，一律不做。
@@ -94,8 +128,18 @@
 - Sprite sheet 任一邊必須 `<= 4096 px`；frame grid 必須整除：`sheet_width / cols` 與 `sheet_height / rows` 都必須是整數。
 - Scale 必須以 `frameHeight` 計算，不可用整張 `sheetHeight` 計算。
 - `greyshade-cat` 現有 443/444 frame 是 legacy accepted；不得為了符合 512 規格而 upscale。
+  - **調和（灰影貓替換）**：上述 legacy 灰影貓圖維持 **reference / art canon**，永遠不得 upscale；即將接入的新 runtime 灰影貓是**全新生成的 `512×512` illustrated 圖**，**不是** 443/444 legacy 的放大。兩者為不同來源的資產，新版上線不改寫本條對 legacy 的保護。
 - 既有 pixel-style concept sheets、舊圖鑑、64 PPU、96px 標記圖保留為 design reference / art canon；舊設定圖不可直接視為廢棄，也不可直接視為 runtime companion sprite。
 - 若要實裝舊設計，必須依該設計重新輸出 clean `512×512` transparent companion frame。
+
+### Greyshade Cat Replacement Protocol（灰影貓 runtime 替換協定）
+- 灰影貓（`greyshade-cat`）**維持 default active companion**，不因替換而改變主夥伴地位。
+- 新 illustrated `512×512` 動畫資產的目標，是**取代 legacy 64×64 runtime set**；採「先並存、後退役」。
+- **舊 Greyshade runtime 資產在 reference audit 通過前不得刪除**；退役是獨立、gated 的後續步驟，並保留一個 release 供 git revert rollback。
+- 灰影貓**絕不可 fallback 到焰尾狐（Flametail Fox）或任何其他角色美術**；缺動畫時只能走自身 manifest 的 documented fallback chain（見 `animationProfile.js`），不得借用他角資產。
+- `assets/**`（含 `animations.json` 與 spritesheets）屬 **GROUNDWORK**：替換前必須列計畫並等 human approval（見 §5.1）。
+- 替換的核心風險是**動畫 ID 詞彙對映**：新檔名用 guardian 詞彙（`walk_right` / `faint` / `skill_cast`…），但 runtime / intent 層期望既有 key（`right_walk` / `defeated` / `attack_basic`…）。新 `animations.json` 的 **key 必須沿用程式期望詞彙、指向新檔**；對映錯誤不會 crash，而會靜默 fallback 到 `idle_calm`。
+- 可驗收對照見 `ACCEPTANCE.md` 新增的 §J。
 
 ### localStorage 規範（注意：key 已更新）
 - 所有寫入集中在 `src/state/saveManager.js`。
@@ -122,6 +166,8 @@
 - `tools/**`、`scripts/**`（離線 sprite pipeline）
 
 地基層的規則沿用舊流程：讀取 → 列計畫 → **等 human 確認** → 最小必要修改 → 列 changed files → 給測試法。
+
+> **First Session Flow 地基注意**：新增 `playerProfile` / `onboarding` 等欄位會同時動到 `src/state/defaultState.js` 與 `src/state/store.js` 的 `normalizeState`，屬本層 GROUNDWORK。施工時必須：（a）為巢狀物件加 `normalizePlayerProfile()` / `normalizeOnboarding()`（仿既有 `normalizeBattleRecord`），讓 partial / 舊存檔安全回填——`normalizeState` 是淺層 merge，巢狀物件不會自動 deep-merge；（b）加 **veteran-save heuristic**，讓既有有遊玩痕跡的存檔**跳過 onboarding**，而不是被當新玩家重跑；（c）**不得新增 localStorage key**，identity 一律存在既有 `STORAGE_KEY = "nexusLinkR2State:v1"` 之內。
 
 ### 5.2 體驗層（EXPERIENCE）— 明文授權，連續施工
 下列工作**被授權**進行有設計野心的實作、重構與擴充，不需要把每一個檔案的每一行都拆成獨立確認。

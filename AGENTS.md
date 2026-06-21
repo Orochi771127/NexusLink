@@ -17,6 +17,8 @@
 
 判斷準則：每個決定都問「**這讓夥伴更像一個有邊界的生命，還是更扁平？**」
 
+**當前階段：Pre-Commercial Vertical Slice / 商業化前垂直切片期。** 本階段目標是 first-session coherence（首輪體驗連貫），不是堆功能；下一階段產品主線是 First Session Flow（新玩家首次體驗）。詳見 `CLAUDE.md` §0.5。
+
 ---
 
 ## 2. 三條情感契約 + 七條安全紅線（最高優先，全 agent 共用）
@@ -74,6 +76,7 @@
 - Runtime 可以使用 downscaled export，不代表所有動畫永遠都要全載 512；必須控制同時載入的 sheet 數量，避免 mobile GPU memory 壓力。
 - 既有 pixel-style concept sheets / 舊圖鑑 / 64 PPU / 96px 標記圖保留為 design reference / art canon，不是廢棄，也不可直接視為 runtime companion sprite。
 - 若要實裝舊設計，必須依該設計重新輸出 clean `512×512` transparent companion frame。
+- 灰影貓 runtime 美術正由 legacy 64 升級為 illustrated 512，採 **reference-audited swap**：新舊資產先並存，**reference audit 通過前不得刪除 legacy**；灰影貓不得 fallback 到其他角色美術。詳見 `CLAUDE.md` 的 Greyshade Cat Replacement Protocol。
 
 ---
 
@@ -136,6 +139,8 @@ Acceptance refs:  <對應 ACCEPTANCE.md 的哪幾條>
 - 不做 multi-companion 戰鬥隊伍。
 - 正式產品方向是 chapter-gated unlock。
 - Test builds 可暫時預設解鎖 runtime-ready companion 以利驗證（目前 root `defaultState.js` 即為此），但這不重新定義產品 loop；正式 chapter-gated unlock 需另開 TASK_PACK。
+- Greyshade 替換是 **asset-readiness-gated GROUNDWORK swap**：legacy 64 → illustrated 512，先並存後退役，audit 通過前不刪 legacy。
+- single-active-companion 模型不因替換而改變；灰影貓不得 fallback 到其他角色美術。
 - 註：`crystal-rabbit` 的 runtime 動畫資產暫借 `assets/characters/thunder-pup/` 目錄（命名債）；registry 的 `thunder-pup`（雷霆幼狼）與此為不同角色、維持原樣。
 
 ---

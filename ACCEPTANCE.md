@@ -153,11 +153,84 @@
 
 ---
 
+## J. Greyshade Illustrated Runtime Swap（灰影貓 illustrated runtime 替換）
+
+> 對應 `CLAUDE.md` 的 Greyshade Cat Replacement Protocol 與 Companion 美術規格（§4）。
+
+**J1 — 新 manifest 可載入**
+- 驗法：boot 後開 DevTools Network / Console，確認 `greyshade-cat` 的 `animations.json` 與其引用的 sprite sheet 路徑皆回 200。
+- 通過：manifest 載入成功；**無 missing sprite sheet path**（無 404）。
+
+**J2 — `idle_calm` 落地且不退 placeholder**
+- 驗法：boot 後觀察灰影貓是否為動畫本體（非幾何 placeholder）。
+- 通過：`idle_calm` 成功載入並播放；companion 不 fallback 成 placeholder（`idle_calm` 為 bootstrap-critical）。
+
+**J3 — 必要 animation id 可 resolve（直接或經 documented fallback chain）**
+- 驗法：逐一觸發對應動作，或讀 `animationProfile.js` 的 `ANIMATION_FALLBACK_CHAINS` 確認可解析。
+- 通過：下列 id 皆可解析（直接命中，或沿 fallback chain 退到安全動畫，最終至少 `idle_calm`）：
+  `idle_calm`、`idle_defensive`、`touch_accept`、`touch_guarded`、`touch_reject`、`sleep`、`right_walk`（或安全 movement fallback）、`attack_basic` / `defend` / `hit`（或安全 battle fallback）。
+
+**J4 — boot 無 console error**
+- 通過：瀏覽器啟動全程 Console 無紅色錯誤。
+
+**J5 — 既有互動不回歸**
+- 驗法：依序測 touch、Soul Talk 情緒反應、map 探索移動 cue、battle / standoff 動畫。
+- 通過：四者皆仍正常運作（standoff 動畫經 intent → fallback chain 至少有合理動作，不卡死）。
+
+**J6 — legacy 僅在 reference audit 後刪除**
+- 驗法：檢查替換 commit 是否仍保留 legacy 64×64 資產。
+- 通過：legacy 資產在 reference audit 通過前**未被刪除**；退役為獨立、gated 的後續步驟，並保留一個 release 供 git revert。
+
+---
+
+## K. First Session Flow / Vertical Slice（新玩家首次體驗）
+
+> 對應 `CLAUDE.md` §0.5。任一條違反第 2 節紅線 6（FOMO）即不通過。
+
+**K1 — 首次玩家不直接落入完整 UI**
+- 驗法：清空存檔後 boot。
+- 通過：首次玩家進入 First Session Flow，而非直接落到完整 HUD / nav。
+
+**K2 — Boot splash 時長合理**
+- 通過：splash 最低可見約 `1000–1200ms`，且**不**人為拖長；不製造假 loading 焦慮。
+
+**K3 — Identity 存在既有存檔內，無新 key**
+- 驗法：F12 → Local Storage。
+- 通過：identity 寫在 `STORAGE_KEY = nexusLinkR2State:v1` 內的 `playerProfile`；**無新增 localStorage key**（連動 H2）。
+
+**K4 — onboarding 完成跨 reload 持久**
+- 通過：完成 onboarding 後重整，不重跑首輪。
+
+**K5 — veteran 存檔跳過 onboarding**
+- 驗法：用有遊玩痕跡（`bond>0` / `emotionalMemories` 非空 / 探索過）的舊存檔載入。
+- 通過：`normalizeState` 的 veteran heuristic 讓其 `onboardingCompleted=true`，**不**被當新玩家重跑。
+
+**K6 — Heart-Core Guidance 無壓迫（連動紅線 6 / D6）**
+- 通過：心核引導**無** FOMO、無紅點、無倒數、無連續登入 streak、無未完成任務焦慮；可跳過；一次只揭露一拍、完成即淡出。
+
+**K7 — First Touch 走 touchReactionEngine、不強制接受**
+- 驗法：讀首次觸碰路徑。
+- 通過：first touch 經 `touchReactionEngine`，非腳本式強制 `touch_accept`；夥伴仍可能 guard（守契約 C1/C2）。
+
+**K8 — First Trace 跨 reload 持久**
+- 通過：第一次 Soul Talk 後留下的 trace 重整後仍在。
+
+**K9 — 首次探索用安全節點**
+- 通過：First Exploration 使用 `moonlake_camp`（`encounterChance = 0`），**不**使用 `rift_observatory`（`encounterChance = 1`）。
+
+**K10 — Return Echo 延用既有引擎、不愧疚**
+- 驗法：讀 Return Echo 來源。
+- 通過：Return Echo **擴充** `returnBehaviorEngine`（非另開 `dailyEcho`）；無 streak、無 missed-day 愧疚、無責備。
+
+---
+
 ## 驗收判定
 
 - **GROUNDWORK TASK_PACK**：H1–H5 + I 全過；若碰 companion art / sheet / renderer，另跑 G1–G7。
 - **EXPERIENCE TASK_PACK**：對應 A–F 的指定條 + H1–H5 + I 全過；若碰 companion art / sheet / renderer，另跑 G1–G7。
 - **戰鬥改造**：E1–E4 + D（全）+ H + I。
 - **裂變事件**：D1–D6 全過（尤其 D3–D5）+ C1 + H + I。
+- **Greyshade illustrated 替換**：J1–J6 + G1–G7 + H + I 全過。
+- **First Session Flow / Vertical Slice**：K1–K10 + D6 + B1–B2 + C1–C2 + H + I 全過。
 
 任一 D 條（安全紅線）未過 → 整個 TASK_PACK 不通過，無論其他多漂亮。
