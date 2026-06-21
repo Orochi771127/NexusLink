@@ -12,12 +12,12 @@
 
 ## Current Reference Gate
 
-Generation is blocked until human imports both Priority A and Priority B reference files:
+Generation may proceed because human-provided Priority A and Priority B reference files are present:
 
 - Priority A: `assets/characters/thunder-pup/canon/references/thunder-pup_front-seated.png`
 - Priority B: `assets/characters/thunder-pup/canon/references/thunder-pup_side-standing.png`
 
-Supplemental references are optional and cannot replace Priority A or Priority B.
+Supplemental references are optional and cannot replace Priority A or Priority B. If either Priority A or Priority B is removed or missing in a future run, generation must stop before image backend invocation.
 
 ## 1. Game Studio Routing Step
 

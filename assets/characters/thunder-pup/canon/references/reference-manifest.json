@@ -1,12 +1,13 @@
 {
   "character_id": "thunder-pup",
-  "generation_blocked": true,
-  "block_reason": "Priority A and Priority B reference files are pending human import. Do not generate ThunderPup idle_calm until both files physically exist.",
+  "generation_blocked": false,
+  "block_reason": null,
   "approved_references": [
     {
       "id": "thunder-pup_front-seated",
       "path": "assets/characters/thunder-pup/canon/references/thunder-pup_front-seated.png",
-      "file_status": "pending_human_import",
+      "file_status": "present",
+      "source": "human_provided_reference_2026-06-17",
       "priority": "A",
       "role": "primary face / expression / front seated idle / forehead crest / chest V/Y glow / front leg markings",
       "allowed_use": [
@@ -26,7 +27,8 @@
     {
       "id": "thunder-pup_side-standing",
       "path": "assets/characters/thunder-pup/canon/references/thunder-pup_side-standing.png",
-      "file_status": "pending_human_import",
+      "file_status": "present",
+      "source": "human_provided_reference_2026-06-17",
       "priority": "B",
       "role": "body ratio / side silhouette / four-leg stance / tail crystal structure / movement and combat base",
       "allowed_use": [

@@ -24,7 +24,7 @@
     "priority_a_required": true,
     "priority_b_required": true,
     "generation_allowed_when_missing_priority_a_or_b": false,
-    "current_status": "blocked_until_human_imports_priority_a_and_priority_b_references"
+    "current_status": "ready_priority_a_and_priority_b_references_present"
   },
   "output_targets": {
     "raw_output": "assets/characters/thunder-pup/generation/raw/thunder-pup_idle_calm_raw.png",
