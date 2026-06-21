@@ -20,8 +20,19 @@ import {
   pruneHabitatTraces,
   upsertHabitatTrace
 } from "../engine/habitatTraceEngine.js";
+import EventBus from "../utils/eventBus.js";
 
 const NOISE_TURN_DELAY_MS = 620;
+const COMPANION_ANIMATION_INTENT_EVENT = "COMPANION_ANIMATION_INTENT";
+
+// 結局 → 回棲地時的動畫意圖。對峙 modal 會遮住 canvas，所以「被看見的後果」
+// 安排在玩家點「回到棲地」、modal 關閉的瞬間播放（夥伴完全可見）。
+// retreated 不播特別動畫——尊重「離開」，讓夥伴安靜回到 mood idle。
+const OUTCOME_RETURN_INTENT = Object.freeze({
+  stabilized: "standoff.stabilized",
+  recovered: "standoff.recovered",
+  overwhelmed_but_safe: "standoff.overwhelmed"
+});
 
 /**
  * 心核對峙 controller。
@@ -51,12 +62,23 @@ export function createBattleController({ store, panelManager, soulTalkController
   let noiseTurnTimer = null;
   let removeCloseGuard = null;
   let renderedLogCount = 0;
+  let lastOutcome = null;
 
   function bind() {
     Object.entries(actionButtons).forEach(([actionId, button]) => {
       button?.addEventListener("click", () => handleAction(actionId));
     });
     finishButton?.addEventListener("click", () => {
+      // 回棲地：先發出「被看見的後果」動畫意圖，再關閉 modal。
+      // lazy load + modal 淡出（180ms）的時間差，剛好讓動畫落在夥伴可見後播放。
+      const returnIntent = OUTCOME_RETURN_INTENT[lastOutcome];
+      if (returnIntent) {
+        EventBus.emit(COMPANION_ANIMATION_INTENT_EVENT, {
+          intent: returnIntent,
+          source: "standoff",
+          interrupt: true
+        });
+      }
       panelManager.closePanel({ force: true });
     });
   }
@@ -66,6 +88,7 @@ export function createBattleController({ store, panelManager, soulTalkController
     const companion = getCompanionById(state.activeCompanionId);
     session = createStandoffSession({ companion, enemyId, nodeId, state });
     renderedLogCount = 0;
+    lastOutcome = null;
     if (logEl) logEl.innerHTML = "";
 
     const node = getExplorationNodeById(nodeId);
@@ -137,6 +160,7 @@ export function createBattleController({ store, panelManager, soulTalkController
 
   function endStandoff(outcome) {
     if (!session) return;
+    lastOutcome = outcome;
     window.clearTimeout(noiseTurnTimer);
     session = { ...session, turn: "ended", log: [...session.log] };
 

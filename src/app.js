@@ -47,8 +47,10 @@ import {
   playDevMotion,
   updateCompanionMotion
 } from "./pixi/motionController.js";
+import { resolveAnimationIntent } from "./engine/animationProfile.js";
 
 const ENVIRONMENT_INTERACTION_EVENT = "ENVIRONMENT_INTERACTION";
+const COMPANION_ANIMATION_INTENT_EVENT = "COMPANION_ANIMATION_INTENT";
 const ENVIRONMENT_EFFECT_LIFETIME_MS = 720;
 let currentCreature = FALLBACK_CREATURE;
 let companionMotionController = null;
@@ -74,6 +76,21 @@ function markPerf(name) {
 function measurePerf(name, startMark, endMark) {
   if (typeof window === "undefined" || !window.__NEXUS_DEBUG_PERF__) return;
   try { performance.measure(name, startMark, endMark); } catch (error) { /* no-op */ }
+}
+
+// Animation intent bridge：跨層 EventBus → 解析 intent → 對「目前 active companion」播一次性動畫。
+// 走 interactionController.playAnimation（既有 lock 路徑），播完自動回 mood idle；
+// 缺動畫時 resolver 已先 fallback。UI 不直接碰 PIXI、不新增 ticker。
+function playCompanionAnimationIntent(intent) {
+  if (!intent || !interactionController) return;
+  if (interactionController.isAnimationLocked?.()) return;
+  const animationController = interactionController.companion?.__animationController;
+  if (!animationController) return; // placeholder 角色無 sprite controller：安靜略過
+  const probe = animationController.canResolve
+    ? (name) => animationController.canResolve(name)
+    : (name) => animationController.hasAnimation?.(name);
+  const animationName = resolveAnimationIntent(intent, probe);
+  interactionController.playAnimation(animationName);
 }
 
 bootstrap();
@@ -241,6 +258,12 @@ async function bootstrap() {
         renderChat: () => soulTalkController.renderChat()
       });
       devPanelController.setup();
+      // dev-only：在 console 觸發任一 animation intent（一般玩家路徑不暴露）。
+      // 例：__NEXUS_PLAY_ANIMATION_INTENT__("standoff.stabilized")
+      if (typeof window !== "undefined") {
+        window.__NEXUS_PLAY_ANIMATION_INTENT__ = (intent) =>
+          EventBus.emit(COMPANION_ANIMATION_INTENT_EVENT, { intent, source: "dev" });
+      }
     }
     markPerf("nexus:interactive");
     measurePerf("nexus:startup-total", "nexus:start", "nexus:interactive");
@@ -359,6 +382,11 @@ async function bootScene(app, panelManager, statusText, soulTalkController, save
   }
 
   attachCompanion(companion, currentCreature);
+
+  // 一次性註冊：動畫意圖橋接（戰鬥結算回棲地、dev helper 等都透過此事件）。
+  EventBus.on(COMPANION_ANIMATION_INTENT_EVENT, (payload) => {
+    playCompanionAnimationIntent(payload?.intent);
+  });
 
   async function swapCompanion(nextCreature) {
     const previousCompanion = companion;

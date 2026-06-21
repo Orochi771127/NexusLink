@@ -148,6 +148,11 @@ function createSpriteAnimationController(animationPack, animatedSprite, initialM
     loadAnimation,
     play,
     hasAnimation: (animationName) => animationPack.animations.has(animationName),
+    // 已載入 OR metadata 內有合法定義（可被 lazy load）都算「解析得到」——
+    // intent resolver 用這個探針，才不會因為尚未 lazy load 就誤判 async 戰鬥動畫不存在。
+    canResolve: (animationName) =>
+      animationPack.animations.has(animationName) ||
+      isValidAnimationDefinition(animationPack.metadata?.[animationName]),
     getCurrentAnimationName: () => currentAnimationName,
     getStatus: () => animationPack.status,
     getAnimatedSprite: () => animatedSprite,

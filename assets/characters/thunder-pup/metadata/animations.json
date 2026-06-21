@@ -302,5 +302,165 @@
       "x": 0.5,
       "y": 1
     }
+  },
+  "left_walk": {
+    "id": "left_walk",
+    "category": "movement",
+    "sheet": "./assets/characters/thunder-pup/spritesheets/movement/thunder-pup_walk_left_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 8,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "right_walk": {
+    "id": "right_walk",
+    "category": "movement",
+    "sheet": "./assets/characters/thunder-pup/spritesheets/movement/thunder-pup_walk_right_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 8,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "front_walk": {
+    "id": "front_walk",
+    "category": "movement",
+    "sheet": "./assets/characters/thunder-pup/spritesheets/movement/thunder-pup_walk_front_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 8,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "back_walk": {
+    "id": "back_walk",
+    "category": "movement",
+    "sheet": "./assets/characters/thunder-pup/spritesheets/movement/thunder-pup_walk_back_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 8,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "attack_basic": {
+    "id": "attack_basic",
+    "category": "battle",
+    "sheet": "./assets/characters/thunder-pup/spritesheets/battle/thunder-pup_attack_basic_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 10,
+    "loop": false,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "skill_cast": {
+    "id": "skill_cast",
+    "category": "battle",
+    "sheet": "./assets/characters/thunder-pup/spritesheets/battle/thunder-pup_skill_cast_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 10,
+    "loop": false,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "defend": {
+    "id": "defend",
+    "category": "battle",
+    "sheet": "./assets/characters/thunder-pup/spritesheets/battle/thunder-pup_defend_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 8,
+    "loop": false,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "hit": {
+    "id": "hit",
+    "category": "battle",
+    "sheet": "./assets/characters/thunder-pup/spritesheets/battle/thunder-pup_hit_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 10,
+    "loop": false,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "defeated": {
+    "id": "defeated",
+    "category": "battle",
+    "sheet": "./assets/characters/thunder-pup/spritesheets/battle/thunder-pup_faint_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 6,
+    "loop": false,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "victory": {
+    "id": "victory",
+    "category": "battle",
+    "sheet": "./assets/characters/thunder-pup/spritesheets/battle/thunder-pup_victory_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 9,
+    "loop": false,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
   }
 }

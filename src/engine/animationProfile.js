@@ -124,3 +124,54 @@ export function getAmbientWalkAnimation(targetOffsetX, hasAnimation, profile = G
     mirrorX: isLeft && (!hasAnimation || hasAnimation(fallback))
   };
 }
+
+// ======================================================================
+// Animation intent resolver：gameplay 呼叫「動畫意圖」，而非硬寫動畫名。
+// 讓戰鬥/探索/對峙結算可以說 "standoff.stabilized"，由這層解析到實際存在的
+// animation ID，並在角色缺該動畫時走 fallback 鏈（最終一定落到 idle_calm）。
+// 純資料 + 純函數；hasAnimation 探針由呼叫端提供（通常是 controller.canResolve）。
+// ======================================================================
+const ANIMATION_INTENT_MAP = Object.freeze({
+  "move.left": "left_walk",
+  "move.right": "right_walk",
+  "move.front": "front_walk",
+  "move.back": "back_walk",
+  "battle.attack": "attack_basic",
+  "battle.skill": "skill_cast",
+  "battle.defend": "defend",
+  "battle.hit": "hit",
+  "battle.defeated": "defeated",
+  "battle.victory": "victory",
+  "standoff.resonance": "skill_cast",
+  "standoff.barrier": "defend",
+  "standoff.pulse": "attack_basic",
+  "standoff.overwhelmed": "defeated",
+  "standoff.stabilized": "victory",
+  "standoff.recovered": "victory",
+  "standoff.retreat": "back_walk"
+});
+
+const ANIMATION_FALLBACK_CHAINS = Object.freeze({
+  left_walk: ["idle_calm"],
+  right_walk: ["idle_calm"],
+  front_walk: ["right_walk", "idle_calm"],
+  back_walk: ["left_walk", "idle_calm"],
+  attack_basic: ["skill_cast", "idle_calm"],
+  skill_cast: ["attack_basic", "idle_calm"],
+  defend: ["idle_defensive", "idle_calm"],
+  hit: ["idle_sad", "idle_distant", "idle_calm"],
+  defeated: ["idle_sad", "idle_distant", "idle_calm"],
+  victory: ["idle_happy", "idle_calm"]
+});
+
+export const ANIMATION_INTENTS = Object.freeze(Object.keys(ANIMATION_INTENT_MAP));
+
+export function resolveAnimationIntent(intent, hasAnimation) {
+  const primary = ANIMATION_INTENT_MAP[intent];
+  if (!primary) return "idle_calm";
+  const candidates = [primary, ...(ANIMATION_FALLBACK_CHAINS[primary] || []), "idle_calm"];
+  for (const candidate of candidates) {
+    if (!hasAnimation || hasAnimation(candidate)) return candidate;
+  }
+  return "idle_calm";
+}
