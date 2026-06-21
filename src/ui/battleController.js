@@ -34,6 +34,14 @@ const OUTCOME_RETURN_INTENT = Object.freeze({
   overwhelmed_but_safe: "standoff.overwhelmed"
 });
 
+// 玩家行動 → 即時動畫意圖（按下當下就播，視覺回饋）。
+// 這些 cue 在 modal 內播放（夥伴部分可見），純視覺、不影響結算。
+const ACTION_INTENT = Object.freeze({
+  resonance: "standoff.resonance",
+  barrier: "standoff.barrier",
+  pulse: "standoff.pulse"
+});
+
 /**
  * 心核對峙 controller。
  * 介面維持 createBattleController / startBattle，app.js 與 mapController wiring 不變。
@@ -64,6 +72,17 @@ export function createBattleController({ store, panelManager, soulTalkController
   let renderedLogCount = 0;
   let lastOutcome = null;
 
+  // UI 不直接碰 Pixi：所有動畫回饋只透過 EventBus 發送 intent，由 app/Pixi bridge 接。
+  function emitBattleAnimationIntent(intent, meta = {}) {
+    if (!intent) return;
+    EventBus.emit(COMPANION_ANIMATION_INTENT_EVENT, {
+      intent,
+      source: "battle-modal",
+      interrupt: true,
+      ...meta
+    });
+  }
+
   function bind() {
     Object.entries(actionButtons).forEach(([actionId, button]) => {
       button?.addEventListener("click", () => handleAction(actionId));
@@ -71,14 +90,7 @@ export function createBattleController({ store, panelManager, soulTalkController
     finishButton?.addEventListener("click", () => {
       // 回棲地：先發出「被看見的後果」動畫意圖，再關閉 modal。
       // lazy load + modal 淡出（180ms）的時間差，剛好讓動畫落在夥伴可見後播放。
-      const returnIntent = OUTCOME_RETURN_INTENT[lastOutcome];
-      if (returnIntent) {
-        EventBus.emit(COMPANION_ANIMATION_INTENT_EVENT, {
-          intent: returnIntent,
-          source: "standoff",
-          interrupt: true
-        });
-      }
+      emitBattleAnimationIntent(OUTCOME_RETURN_INTENT[lastOutcome], { source: "standoff" });
       panelManager.closePanel({ force: true });
     });
   }
@@ -131,6 +143,8 @@ export function createBattleController({ store, panelManager, soulTalkController
     if (!session || session.turn !== "player") return;
 
     if (actionId === "retreat") {
+      // 撤退不是失敗：給一個回身的 cue（back_walk），再走「被尊重的離開」結算。
+      emitBattleAnimationIntent("standoff.retreat");
       endStandoff("retreated");
       return;
     }
@@ -139,6 +153,8 @@ export function createBattleController({ store, panelManager, soulTalkController
 
     session = applyPlayerAction(session, actionId);
     render();
+    // 即時 cue：行動已照原流程成立後才發；能播就播，不能播也不阻斷 gameplay。
+    emitBattleAnimationIntent(ACTION_INTENT[actionId]);
 
     const verdict = settleStandoff(session);
     if (verdict.settled) {
@@ -149,8 +165,13 @@ export function createBattleController({ store, panelManager, soulTalkController
     window.clearTimeout(noiseTurnTimer);
     noiseTurnTimer = window.setTimeout(() => {
       if (!session || session.turn !== "noise") return;
+      const stabilityBefore = session.stability.current;
       session = applyNoiseTurn(session);
       render();
+      // 只有雜訊真的造成 stability 下降才播 hit（暫歇/lull 不播）→ 一回合最多一次，不 spam。
+      if (session.stability.current < stabilityBefore) {
+        emitBattleAnimationIntent("battle.hit", { reason: "noise-pressure" });
+      }
       const noiseVerdict = settleStandoff(session);
       if (noiseVerdict.settled) {
         endStandoff(noiseVerdict.outcome);
