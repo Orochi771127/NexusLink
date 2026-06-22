@@ -1,0 +1,65 @@
+{
+  "tool": "validate_greyshade_cat_illustrated_emotion_asset",
+  "version": 1,
+  "file": "C:\\Users\\User\\AIForgeNexus2\\NexusLink\\assets\\characters\\greyshade-cat\\spritesheets\\illustrated\\emotion\\greyshade-cat_idle_calm_512x512_8f.png",
+  "character_id": "greyshade-cat",
+  "inputs": {
+    "cols": 4,
+    "rows": 2,
+    "expected_frames": 8,
+    "loop": true
+  },
+  "pass": true,
+  "checks": [
+    {
+      "name": "file_exists",
+      "pass": true,
+      "details": "C:\\Users\\User\\AIForgeNexus2\\NexusLink\\assets\\characters\\greyshade-cat\\spritesheets\\illustrated\\emotion\\greyshade-cat_idle_calm_512x512_8f.png"
+    },
+    {
+      "name": "sheet_edge_max",
+      "pass": true,
+      "details": "2048x1024, max edge 4096"
+    },
+    {
+      "name": "grid_exactly_divisible",
+      "pass": true,
+      "details": "2048/4, 1024/2"
+    },
+    {
+      "name": "frame_size_policy",
+      "pass": true,
+      "details": "512x512"
+    },
+    {
+      "name": "expected_frame_count",
+      "pass": true,
+      "details": "4 * 2 = 8"
+    },
+    {
+      "name": "alpha_capable_png",
+      "pass": true,
+      "details": "RGBA"
+    },
+    {
+      "name": "boundary_magenta_pixels",
+      "pass": true,
+      "details": "0"
+    },
+    {
+      "name": "edge_touch_frames",
+      "pass": true,
+      "details": "[]"
+    }
+  ],
+  "png": {
+    "width": 2048,
+    "height": 1024,
+    "mode": "RGBA"
+  },
+  "frame": {
+    "width": 512,
+    "height": 512,
+    "count_from_grid": 8
+  }
+}

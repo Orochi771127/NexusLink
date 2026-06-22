@@ -1,0 +1,135 @@
+{
+  "characterId": "greyshade-cat",
+  "action": "skill_cast",
+  "category": "combat",
+  "stage": 5,
+  "expectedSize": [
+    2048,
+    1024
+  ],
+  "actualSize": [
+    2048,
+    1024
+  ],
+  "rows": 2,
+  "cols": 4,
+  "frameSize": [
+    512,
+    512
+  ],
+  "frameCount": 8,
+  "loop": false,
+  "maxEdgeOk": true,
+  "gridDivisible": true,
+  "hasAlpha": true,
+  "boundaryMagentaBefore": 2524,
+  "cleanupIterations": 13,
+  "boundaryMagentaAfter": 0,
+  "edgeTouchFrames": [],
+  "emptyFrames": [],
+  "sheet": "assets/characters/greyshade-cat/spritesheets/illustrated/combat/greyshade-cat_skill_cast_512x512_8f.png",
+  "framesDir": "assets/characters/greyshade-cat/frames/illustrated/combat/skill_cast",
+  "gif": "assets/characters/greyshade-cat/previews/illustrated/combat/greyshade-cat_skill_cast_512x512_8f.gif",
+  "preview": "assets/characters/greyshade-cat/previews/illustrated/combat/greyshade-cat_skill_cast_512x512_8f_preview.png",
+  "generationDir": "assets/characters/greyshade-cat/generation/illustrated/skill_cast_combat_attempt01_8f",
+  "rawSourcePreserved": "C:\\Users\\User\\.codex\\generated_images\\019eda6a-19f5-7c02-bd64-7e1107289d7f\\ig_0616e50602c1f9bc016a383d0edc54819194952e3fac14dd43.png",
+  "frames": [
+    {
+      "frame": 1,
+      "path": "assets/characters/greyshade-cat/frames/illustrated/combat/skill_cast/frame_01.png",
+      "bbox": [
+        71,
+        73,
+        441,
+        457
+      ],
+      "edgeTouchPixels": 0,
+      "nonTransparentPixels": 92558
+    },
+    {
+      "frame": 2,
+      "path": "assets/characters/greyshade-cat/frames/illustrated/combat/skill_cast/frame_02.png",
+      "bbox": [
+        74,
+        127,
+        437,
+        457
+      ],
+      "edgeTouchPixels": 0,
+      "nonTransparentPixels": 86324
+    },
+    {
+      "frame": 3,
+      "path": "assets/characters/greyshade-cat/frames/illustrated/combat/skill_cast/frame_03.png",
+      "bbox": [
+        70,
+        130,
+        441,
+        457
+      ],
+      "edgeTouchPixels": 0,
+      "nonTransparentPixels": 85461
+    },
+    {
+      "frame": 4,
+      "path": "assets/characters/greyshade-cat/frames/illustrated/combat/skill_cast/frame_04.png",
+      "bbox": [
+        60,
+        109,
+        448,
+        457
+      ],
+      "edgeTouchPixels": 0,
+      "nonTransparentPixels": 88506
+    },
+    {
+      "frame": 5,
+      "path": "assets/characters/greyshade-cat/frames/illustrated/combat/skill_cast/frame_05.png",
+      "bbox": [
+        77,
+        70,
+        434,
+        457
+      ],
+      "edgeTouchPixels": 0,
+      "nonTransparentPixels": 96108
+    },
+    {
+      "frame": 6,
+      "path": "assets/characters/greyshade-cat/frames/illustrated/combat/skill_cast/frame_06.png",
+      "bbox": [
+        66,
+        65,
+        437,
+        457
+      ],
+      "edgeTouchPixels": 0,
+      "nonTransparentPixels": 94736
+    },
+    {
+      "frame": 7,
+      "path": "assets/characters/greyshade-cat/frames/illustrated/combat/skill_cast/frame_07.png",
+      "bbox": [
+        63,
+        57,
+        440,
+        457
+      ],
+      "edgeTouchPixels": 0,
+      "nonTransparentPixels": 97032
+    },
+    {
+      "frame": 8,
+      "path": "assets/characters/greyshade-cat/frames/illustrated/combat/skill_cast/frame_08.png",
+      "bbox": [
+        76,
+        68,
+        436,
+        457
+      ],
+      "edgeTouchPixels": 0,
+      "nonTransparentPixels": 92182
+    }
+  ],
+  "passed": true
+}

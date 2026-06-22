@@ -1,0 +1,135 @@
+{
+  "characterId": "greyshade-cat",
+  "action": "attack_basic",
+  "category": "combat",
+  "stage": 5,
+  "expectedSize": [
+    2048,
+    1024
+  ],
+  "actualSize": [
+    2048,
+    1024
+  ],
+  "rows": 2,
+  "cols": 4,
+  "frameSize": [
+    512,
+    512
+  ],
+  "frameCount": 8,
+  "loop": false,
+  "maxEdgeOk": true,
+  "gridDivisible": true,
+  "hasAlpha": true,
+  "boundaryMagentaBefore": 3066,
+  "cleanupIterations": 16,
+  "boundaryMagentaAfter": 0,
+  "edgeTouchFrames": [],
+  "emptyFrames": [],
+  "sheet": "assets/characters/greyshade-cat/spritesheets/illustrated/combat/greyshade-cat_attack_basic_512x512_8f.png",
+  "framesDir": "assets/characters/greyshade-cat/frames/illustrated/combat/attack_basic",
+  "gif": "assets/characters/greyshade-cat/previews/illustrated/combat/greyshade-cat_attack_basic_512x512_8f.gif",
+  "preview": "assets/characters/greyshade-cat/previews/illustrated/combat/greyshade-cat_attack_basic_512x512_8f_preview.png",
+  "generationDir": "assets/characters/greyshade-cat/generation/illustrated/attack_basic_combat_attempt01_8f",
+  "rawSourcePreserved": "C:\\Users\\User\\.codex\\generated_images\\019eda6a-19f5-7c02-bd64-7e1107289d7f\\ig_0616e50602c1f9bc016a383cb4cdec8191a5a261baa12e53b5.png",
+  "frames": [
+    {
+      "frame": 1,
+      "path": "assets/characters/greyshade-cat/frames/illustrated/combat/attack_basic/frame_01.png",
+      "bbox": [
+        89,
+        144,
+        423,
+        459
+      ],
+      "edgeTouchPixels": 0,
+      "nonTransparentPixels": 69838
+    },
+    {
+      "frame": 2,
+      "path": "assets/characters/greyshade-cat/frames/illustrated/combat/attack_basic/frame_02.png",
+      "bbox": [
+        69,
+        212,
+        443,
+        459
+      ],
+      "edgeTouchPixels": 0,
+      "nonTransparentPixels": 60404
+    },
+    {
+      "frame": 3,
+      "path": "assets/characters/greyshade-cat/frames/illustrated/combat/attack_basic/frame_03.png",
+      "bbox": [
+        50,
+        217,
+        453,
+        459
+      ],
+      "edgeTouchPixels": 0,
+      "nonTransparentPixels": 61852
+    },
+    {
+      "frame": 4,
+      "path": "assets/characters/greyshade-cat/frames/illustrated/combat/attack_basic/frame_04.png",
+      "bbox": [
+        50,
+        187,
+        448,
+        459
+      ],
+      "edgeTouchPixels": 0,
+      "nonTransparentPixels": 60604
+    },
+    {
+      "frame": 5,
+      "path": "assets/characters/greyshade-cat/frames/illustrated/combat/attack_basic/frame_05.png",
+      "bbox": [
+        54,
+        158,
+        458,
+        459
+      ],
+      "edgeTouchPixels": 0,
+      "nonTransparentPixels": 63549
+    },
+    {
+      "frame": 6,
+      "path": "assets/characters/greyshade-cat/frames/illustrated/combat/attack_basic/frame_06.png",
+      "bbox": [
+        72,
+        204,
+        439,
+        459
+      ],
+      "edgeTouchPixels": 0,
+      "nonTransparentPixels": 60006
+    },
+    {
+      "frame": 7,
+      "path": "assets/characters/greyshade-cat/frames/illustrated/combat/attack_basic/frame_07.png",
+      "bbox": [
+        98,
+        139,
+        413,
+        458
+      ],
+      "edgeTouchPixels": 0,
+      "nonTransparentPixels": 68078
+    },
+    {
+      "frame": 8,
+      "path": "assets/characters/greyshade-cat/frames/illustrated/combat/attack_basic/frame_08.png",
+      "bbox": [
+        90,
+        138,
+        421,
+        459
+      ],
+      "edgeTouchPixels": 0,
+      "nonTransparentPixels": 69964
+    }
+  ],
+  "passed": true
+}

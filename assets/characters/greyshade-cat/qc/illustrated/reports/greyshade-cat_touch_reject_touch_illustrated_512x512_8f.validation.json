@@ -1,0 +1,135 @@
+{
+  "characterId": "greyshade-cat",
+  "action": "touch_reject",
+  "category": "touch",
+  "stage": 2,
+  "expectedSize": [
+    2048,
+    1024
+  ],
+  "actualSize": [
+    2048,
+    1024
+  ],
+  "rows": 2,
+  "cols": 4,
+  "frameSize": [
+    512,
+    512
+  ],
+  "frameCount": 8,
+  "loop": false,
+  "maxEdgeOk": true,
+  "gridDivisible": true,
+  "hasAlpha": true,
+  "boundaryMagentaBefore": 2945,
+  "cleanupIterations": 18,
+  "boundaryMagentaAfter": 0,
+  "edgeTouchFrames": [],
+  "emptyFrames": [],
+  "sheet": "assets/characters/greyshade-cat/spritesheets/illustrated/touch/greyshade-cat_touch_reject_512x512_8f.png",
+  "framesDir": "assets/characters/greyshade-cat/frames/illustrated/touch/touch_reject",
+  "gif": "assets/characters/greyshade-cat/previews/illustrated/touch/greyshade-cat_touch_reject_512x512_8f.gif",
+  "preview": "assets/characters/greyshade-cat/previews/illustrated/touch/greyshade-cat_touch_reject_512x512_8f_preview.png",
+  "generationDir": "assets/characters/greyshade-cat/generation/illustrated/touch_reject_touch_attempt01_8f",
+  "rawSourcePreserved": "C:\\Users\\User\\.codex\\generated_images\\019eda6a-19f5-7c02-bd64-7e1107289d7f\\ig_0616e50602c1f9bc016a38366c4d748191a419497b7e7dfc2e.png",
+  "frames": [
+    {
+      "frame": 1,
+      "path": "assets/characters/greyshade-cat/frames/illustrated/touch/touch_reject/frame_01.png",
+      "bbox": [
+        96,
+        46,
+        415,
+        468
+      ],
+      "edgeTouchPixels": 0,
+      "nonTransparentPixels": 91603
+    },
+    {
+      "frame": 2,
+      "path": "assets/characters/greyshade-cat/frames/illustrated/touch/touch_reject/frame_02.png",
+      "bbox": [
+        103,
+        79,
+        408,
+        468
+      ],
+      "edgeTouchPixels": 0,
+      "nonTransparentPixels": 86892
+    },
+    {
+      "frame": 3,
+      "path": "assets/characters/greyshade-cat/frames/illustrated/touch/touch_reject/frame_03.png",
+      "bbox": [
+        95,
+        90,
+        416,
+        468
+      ],
+      "edgeTouchPixels": 0,
+      "nonTransparentPixels": 84620
+    },
+    {
+      "frame": 4,
+      "path": "assets/characters/greyshade-cat/frames/illustrated/touch/touch_reject/frame_04.png",
+      "bbox": [
+        85,
+        74,
+        427,
+        468
+      ],
+      "edgeTouchPixels": 0,
+      "nonTransparentPixels": 90249
+    },
+    {
+      "frame": 5,
+      "path": "assets/characters/greyshade-cat/frames/illustrated/touch/touch_reject/frame_05.png",
+      "bbox": [
+        91,
+        75,
+        420,
+        468
+      ],
+      "edgeTouchPixels": 0,
+      "nonTransparentPixels": 85468
+    },
+    {
+      "frame": 6,
+      "path": "assets/characters/greyshade-cat/frames/illustrated/touch/touch_reject/frame_06.png",
+      "bbox": [
+        91,
+        77,
+        421,
+        468
+      ],
+      "edgeTouchPixels": 0,
+      "nonTransparentPixels": 85360
+    },
+    {
+      "frame": 7,
+      "path": "assets/characters/greyshade-cat/frames/illustrated/touch/touch_reject/frame_07.png",
+      "bbox": [
+        105,
+        73,
+        406,
+        468
+      ],
+      "edgeTouchPixels": 0,
+      "nonTransparentPixels": 82650
+    },
+    {
+      "frame": 8,
+      "path": "assets/characters/greyshade-cat/frames/illustrated/touch/touch_reject/frame_08.png",
+      "bbox": [
+        103,
+        79,
+        408,
+        468
+      ],
+      "edgeTouchPixels": 0,
+      "nonTransparentPixels": 85458
+    }
+  ],
+  "passed": true
+}

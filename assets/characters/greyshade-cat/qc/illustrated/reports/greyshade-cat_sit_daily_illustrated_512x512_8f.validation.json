@@ -1,0 +1,135 @@
+{
+  "characterId": "greyshade-cat",
+  "action": "sit",
+  "category": "daily",
+  "stage": 3,
+  "expectedSize": [
+    2048,
+    1024
+  ],
+  "actualSize": [
+    2048,
+    1024
+  ],
+  "rows": 2,
+  "cols": 4,
+  "frameSize": [
+    512,
+    512
+  ],
+  "frameCount": 8,
+  "loop": true,
+  "maxEdgeOk": true,
+  "gridDivisible": true,
+  "hasAlpha": true,
+  "boundaryMagentaBefore": 3405,
+  "cleanupIterations": 19,
+  "boundaryMagentaAfter": 0,
+  "edgeTouchFrames": [],
+  "emptyFrames": [],
+  "sheet": "assets/characters/greyshade-cat/spritesheets/illustrated/daily/greyshade-cat_sit_512x512_8f.png",
+  "framesDir": "assets/characters/greyshade-cat/frames/illustrated/daily/sit",
+  "gif": "assets/characters/greyshade-cat/previews/illustrated/daily/greyshade-cat_sit_512x512_8f.gif",
+  "preview": "assets/characters/greyshade-cat/previews/illustrated/daily/greyshade-cat_sit_512x512_8f_preview.png",
+  "generationDir": "assets/characters/greyshade-cat/generation/illustrated/sit_daily_attempt01_8f",
+  "rawSourcePreserved": "C:\\Users\\User\\.codex\\generated_images\\019eda6a-19f5-7c02-bd64-7e1107289d7f\\ig_0616e50602c1f9bc016a383837b8dc8191bcc44b5d83ea2226.png",
+  "frames": [
+    {
+      "frame": 1,
+      "path": "assets/characters/greyshade-cat/frames/illustrated/daily/sit/frame_01.png",
+      "bbox": [
+        93,
+        46,
+        419,
+        468
+      ],
+      "edgeTouchPixels": 0,
+      "nonTransparentPixels": 94142
+    },
+    {
+      "frame": 2,
+      "path": "assets/characters/greyshade-cat/frames/illustrated/daily/sit/frame_02.png",
+      "bbox": [
+        92,
+        53,
+        419,
+        468
+      ],
+      "edgeTouchPixels": 0,
+      "nonTransparentPixels": 92118
+    },
+    {
+      "frame": 3,
+      "path": "assets/characters/greyshade-cat/frames/illustrated/daily/sit/frame_03.png",
+      "bbox": [
+        94,
+        64,
+        418,
+        468
+      ],
+      "edgeTouchPixels": 0,
+      "nonTransparentPixels": 90103
+    },
+    {
+      "frame": 4,
+      "path": "assets/characters/greyshade-cat/frames/illustrated/daily/sit/frame_04.png",
+      "bbox": [
+        67,
+        53,
+        444,
+        468
+      ],
+      "edgeTouchPixels": 0,
+      "nonTransparentPixels": 90857
+    },
+    {
+      "frame": 5,
+      "path": "assets/characters/greyshade-cat/frames/illustrated/daily/sit/frame_05.png",
+      "bbox": [
+        67,
+        51,
+        444,
+        468
+      ],
+      "edgeTouchPixels": 0,
+      "nonTransparentPixels": 89683
+    },
+    {
+      "frame": 6,
+      "path": "assets/characters/greyshade-cat/frames/illustrated/daily/sit/frame_06.png",
+      "bbox": [
+        87,
+        65,
+        424,
+        468
+      ],
+      "edgeTouchPixels": 0,
+      "nonTransparentPixels": 91067
+    },
+    {
+      "frame": 7,
+      "path": "assets/characters/greyshade-cat/frames/illustrated/daily/sit/frame_07.png",
+      "bbox": [
+        93,
+        70,
+        419,
+        468
+      ],
+      "edgeTouchPixels": 0,
+      "nonTransparentPixels": 88289
+    },
+    {
+      "frame": 8,
+      "path": "assets/characters/greyshade-cat/frames/illustrated/daily/sit/frame_08.png",
+      "bbox": [
+        95,
+        58,
+        416,
+        468
+      ],
+      "edgeTouchPixels": 0,
+      "nonTransparentPixels": 90079
+    }
+  ],
+  "passed": true
+}

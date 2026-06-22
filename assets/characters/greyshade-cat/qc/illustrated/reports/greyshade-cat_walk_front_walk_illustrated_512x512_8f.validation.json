@@ -1,0 +1,135 @@
+{
+  "characterId": "greyshade-cat",
+  "action": "walk_front",
+  "category": "walk",
+  "stage": 4,
+  "expectedSize": [
+    2048,
+    1024
+  ],
+  "actualSize": [
+    2048,
+    1024
+  ],
+  "rows": 2,
+  "cols": 4,
+  "frameSize": [
+    512,
+    512
+  ],
+  "frameCount": 8,
+  "loop": true,
+  "maxEdgeOk": true,
+  "gridDivisible": true,
+  "hasAlpha": true,
+  "boundaryMagentaBefore": 3080,
+  "cleanupIterations": 25,
+  "boundaryMagentaAfter": 0,
+  "edgeTouchFrames": [],
+  "emptyFrames": [],
+  "sheet": "assets/characters/greyshade-cat/spritesheets/illustrated/walk/greyshade-cat_walk_front_512x512_8f.png",
+  "framesDir": "assets/characters/greyshade-cat/frames/illustrated/walk/walk_front",
+  "gif": "assets/characters/greyshade-cat/previews/illustrated/walk/greyshade-cat_walk_front_512x512_8f.gif",
+  "preview": "assets/characters/greyshade-cat/previews/illustrated/walk/greyshade-cat_walk_front_512x512_8f_preview.png",
+  "generationDir": "assets/characters/greyshade-cat/generation/illustrated/walk_front_walk_attempt01_8f",
+  "rawSourcePreserved": "C:\\Users\\User\\.codex\\generated_images\\019eda6a-19f5-7c02-bd64-7e1107289d7f\\ig_0616e50602c1f9bc016a383b2db95c81918409d7f4ca51de7e.png",
+  "frames": [
+    {
+      "frame": 1,
+      "path": "assets/characters/greyshade-cat/frames/illustrated/walk/walk_front/frame_01.png",
+      "bbox": [
+        124,
+        55,
+        387,
+        459
+      ],
+      "edgeTouchPixels": 0,
+      "nonTransparentPixels": 72661
+    },
+    {
+      "frame": 2,
+      "path": "assets/characters/greyshade-cat/frames/illustrated/walk/walk_front/frame_02.png",
+      "bbox": [
+        118,
+        61,
+        394,
+        459
+      ],
+      "edgeTouchPixels": 0,
+      "nonTransparentPixels": 72715
+    },
+    {
+      "frame": 3,
+      "path": "assets/characters/greyshade-cat/frames/illustrated/walk/walk_front/frame_03.png",
+      "bbox": [
+        131,
+        62,
+        381,
+        459
+      ],
+      "edgeTouchPixels": 0,
+      "nonTransparentPixels": 71626
+    },
+    {
+      "frame": 4,
+      "path": "assets/characters/greyshade-cat/frames/illustrated/walk/walk_front/frame_04.png",
+      "bbox": [
+        119,
+        61,
+        392,
+        459
+      ],
+      "edgeTouchPixels": 0,
+      "nonTransparentPixels": 72218
+    },
+    {
+      "frame": 5,
+      "path": "assets/characters/greyshade-cat/frames/illustrated/walk/walk_front/frame_05.png",
+      "bbox": [
+        117,
+        67,
+        394,
+        459
+      ],
+      "edgeTouchPixels": 0,
+      "nonTransparentPixels": 72018
+    },
+    {
+      "frame": 6,
+      "path": "assets/characters/greyshade-cat/frames/illustrated/walk/walk_front/frame_06.png",
+      "bbox": [
+        145,
+        70,
+        366,
+        459
+      ],
+      "edgeTouchPixels": 0,
+      "nonTransparentPixels": 67447
+    },
+    {
+      "frame": 7,
+      "path": "assets/characters/greyshade-cat/frames/illustrated/walk/walk_front/frame_07.png",
+      "bbox": [
+        118,
+        69,
+        394,
+        459
+      ],
+      "edgeTouchPixels": 0,
+      "nonTransparentPixels": 71720
+    },
+    {
+      "frame": 8,
+      "path": "assets/characters/greyshade-cat/frames/illustrated/walk/walk_front/frame_08.png",
+      "bbox": [
+        114,
+        63,
+        384,
+        459
+      ],
+      "edgeTouchPixels": 0,
+      "nonTransparentPixels": 71620
+    }
+  ],
+  "passed": true
+}

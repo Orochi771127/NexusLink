@@ -53,6 +53,7 @@ export const COMPANIONS = [
     defaultMood: "calm",
     description: "安靜觀察玩家的灰色貓型心核夥伴，記得每一道留在棲地的情緒痕跡。",
     image: null,
+    renderScale: 1.2,
     animationsManifest: "./assets/characters/greyshade-cat/metadata/animations.json",
     placeholder: { bodyColor: 0x5f6876, accentColor: 0x8a93a3, emblemShape: "moon" },
     personality: GREYSHADE_PERSONALITY
