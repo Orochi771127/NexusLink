@@ -320,12 +320,12 @@ export const COMPANIONS = [
     assetReadiness: COMPANION_ASSET_READINESS.RUNTIME_READY,
     radar: { power: 40, defense: 50, speed: 70, wisdom: 72, emotion: 74, healing: 58 },
     defaultMood: "calm",
-    // 註：runtime 動畫資產暫存於 thunder-pup/ 資料夾（與雷霆幼狼共用目錄，僅命名債、不影響載入）。
+    // runtime 動畫資產位於自身 assets/characters/crystal-rabbit/ 目錄（命名債已解，與雷霆幼狼資料夾分離）。
     description: "屬金。身軀藏著澄藍晶核的兔，耳朵會先你一步察覺情緒的變化；金石雖冷，牠卻選擇為你豎起耳朵。",
     image: null,
     renderScale: 1.2,
     animationProfile: "guardian",
-    animationsManifest: "./assets/characters/thunder-pup/metadata/animations.json",
+    animationsManifest: "./assets/characters/crystal-rabbit/metadata/animations.json",
     placeholder: { bodyColor: 0x8a9486, accentColor: 0x7fd8ff, emblemShape: "droplet" },
     personality: { ...DEFAULT_TOUCH_PERSONALITY, baseDefense: 18, fatigueSensitivity: 1.1 }
   }

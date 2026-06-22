@@ -2,7 +2,7 @@
   "idle_calm": {
     "id": "idle_calm",
     "category": "emotion",
-    "sheet": "./assets/characters/thunder-pup/spritesheets/emotion/thunder-pup_idle_calm_512x512_8f.png",
+    "sheet": "./assets/characters/crystal-rabbit/spritesheets/emotion/crystal-rabbit_idle_calm_512x512_8f.png",
     "frameWidth": 512,
     "frameHeight": 512,
     "frameCount": 8,
@@ -18,7 +18,7 @@
   "idle_distant": {
     "id": "idle_distant",
     "category": "emotion",
-    "sheet": "./assets/characters/thunder-pup/spritesheets/emotion/thunder-pup_idle_distant_512x512_8f.png",
+    "sheet": "./assets/characters/crystal-rabbit/spritesheets/emotion/crystal-rabbit_idle_distant_512x512_8f.png",
     "frameWidth": 512,
     "frameHeight": 512,
     "frameCount": 8,
@@ -34,7 +34,7 @@
   "idle_downcast": {
     "id": "idle_downcast",
     "category": "emotion",
-    "sheet": "./assets/characters/thunder-pup/spritesheets/emotion/thunder-pup_idle_downcast_512x512_8f.png",
+    "sheet": "./assets/characters/crystal-rabbit/spritesheets/emotion/crystal-rabbit_idle_downcast_512x512_8f.png",
     "frameWidth": 512,
     "frameHeight": 512,
     "frameCount": 8,
@@ -50,7 +50,7 @@
   "idle_resonance": {
     "id": "idle_resonance",
     "category": "emotion",
-    "sheet": "./assets/characters/thunder-pup/spritesheets/emotion/thunder-pup_idle_resonance_512x512_8f.png",
+    "sheet": "./assets/characters/crystal-rabbit/spritesheets/emotion/crystal-rabbit_idle_resonance_512x512_8f.png",
     "frameWidth": 512,
     "frameHeight": 512,
     "frameCount": 8,
@@ -66,7 +66,7 @@
   "idle_sad": {
     "id": "idle_sad",
     "category": "emotion",
-    "sheet": "./assets/characters/thunder-pup/spritesheets/emotion/thunder-pup_idle_sad_512x512_8f.png",
+    "sheet": "./assets/characters/crystal-rabbit/spritesheets/emotion/crystal-rabbit_idle_sad_512x512_8f.png",
     "frameWidth": 512,
     "frameHeight": 512,
     "frameCount": 8,
@@ -82,7 +82,7 @@
   "idle_defensive": {
     "id": "idle_defensive",
     "category": "emotion",
-    "sheet": "./assets/characters/thunder-pup/spritesheets/emotion/thunder-pup_idle_defensive_512x512_8f.png",
+    "sheet": "./assets/characters/crystal-rabbit/spritesheets/emotion/crystal-rabbit_idle_defensive_512x512_8f.png",
     "frameWidth": 512,
     "frameHeight": 512,
     "frameCount": 8,
@@ -98,7 +98,7 @@
   "idle_alert": {
     "id": "idle_alert",
     "category": "emotion",
-    "sheet": "./assets/characters/thunder-pup/spritesheets/emotion/thunder-pup_idle_alert_512x512_8f.png",
+    "sheet": "./assets/characters/crystal-rabbit/spritesheets/emotion/crystal-rabbit_idle_alert_512x512_8f.png",
     "frameWidth": 512,
     "frameHeight": 512,
     "frameCount": 8,
@@ -114,7 +114,7 @@
   "idle_happy": {
     "id": "idle_happy",
     "category": "emotion",
-    "sheet": "./assets/characters/thunder-pup/spritesheets/emotion/thunder-pup_idle_happy_512x512_8f.png",
+    "sheet": "./assets/characters/crystal-rabbit/spritesheets/emotion/crystal-rabbit_idle_happy_512x512_8f.png",
     "frameWidth": 512,
     "frameHeight": 512,
     "frameCount": 8,
@@ -130,7 +130,7 @@
   "idle_angry": {
     "id": "idle_angry",
     "category": "emotion",
-    "sheet": "./assets/characters/thunder-pup/spritesheets/emotion/thunder-pup_idle_angry_512x512_8f.png",
+    "sheet": "./assets/characters/crystal-rabbit/spritesheets/emotion/crystal-rabbit_idle_angry_512x512_8f.png",
     "frameWidth": 512,
     "frameHeight": 512,
     "frameCount": 8,
@@ -146,7 +146,7 @@
   "blink": {
     "id": "blink",
     "category": "emotion",
-    "sheet": "./assets/characters/thunder-pup/spritesheets/emotion/thunder-pup_blink_512x512_8f.png",
+    "sheet": "./assets/characters/crystal-rabbit/spritesheets/emotion/crystal-rabbit_blink_512x512_8f.png",
     "frameWidth": 512,
     "frameHeight": 512,
     "frameCount": 8,
@@ -162,7 +162,7 @@
   "touch_accept": {
     "id": "touch_accept",
     "category": "touch",
-    "sheet": "./assets/characters/thunder-pup/spritesheets/touch/thunder-pup_touch_accept_512x512_8f.png",
+    "sheet": "./assets/characters/crystal-rabbit/spritesheets/touch/crystal-rabbit_touch_accept_512x512_8f.png",
     "frameWidth": 512,
     "frameHeight": 512,
     "frameCount": 8,
@@ -178,7 +178,7 @@
   "touch_guarded": {
     "id": "touch_guarded",
     "category": "touch",
-    "sheet": "./assets/characters/thunder-pup/spritesheets/touch/thunder-pup_touch_guarded_512x512_8f.png",
+    "sheet": "./assets/characters/crystal-rabbit/spritesheets/touch/crystal-rabbit_touch_guarded_512x512_8f.png",
     "frameWidth": 512,
     "frameHeight": 512,
     "frameCount": 8,
@@ -194,7 +194,7 @@
   "touch_reject": {
     "id": "touch_reject",
     "category": "touch",
-    "sheet": "./assets/characters/thunder-pup/spritesheets/touch/thunder-pup_touch_reject_512x512_8f.png",
+    "sheet": "./assets/characters/crystal-rabbit/spritesheets/touch/crystal-rabbit_touch_reject_512x512_8f.png",
     "frameWidth": 512,
     "frameHeight": 512,
     "frameCount": 8,
@@ -210,7 +210,7 @@
   "hug": {
     "id": "hug",
     "category": "touch",
-    "sheet": "./assets/characters/thunder-pup/spritesheets/touch/thunder-pup_hug_512x512_8f.png",
+    "sheet": "./assets/characters/crystal-rabbit/spritesheets/touch/crystal-rabbit_hug_512x512_8f.png",
     "frameWidth": 512,
     "frameHeight": 512,
     "frameCount": 8,
@@ -226,7 +226,7 @@
   "sleep": {
     "id": "sleep",
     "category": "daily",
-    "sheet": "./assets/characters/thunder-pup/spritesheets/daily/thunder-pup_sleep_512x512_8f.png",
+    "sheet": "./assets/characters/crystal-rabbit/spritesheets/daily/crystal-rabbit_sleep_512x512_8f.png",
     "frameWidth": 512,
     "frameHeight": 512,
     "frameCount": 8,
@@ -242,7 +242,7 @@
   "sit": {
     "id": "sit",
     "category": "daily",
-    "sheet": "./assets/characters/thunder-pup/spritesheets/daily/thunder-pup_sit_512x512_8f.png",
+    "sheet": "./assets/characters/crystal-rabbit/spritesheets/daily/crystal-rabbit_sit_512x512_8f.png",
     "frameWidth": 512,
     "frameHeight": 512,
     "frameCount": 8,
@@ -258,7 +258,7 @@
   "groom": {
     "id": "groom",
     "category": "daily",
-    "sheet": "./assets/characters/thunder-pup/spritesheets/daily/thunder-pup_groom_512x512_8f.png",
+    "sheet": "./assets/characters/crystal-rabbit/spritesheets/daily/crystal-rabbit_groom_512x512_8f.png",
     "frameWidth": 512,
     "frameHeight": 512,
     "frameCount": 8,
@@ -274,7 +274,7 @@
   "stretch": {
     "id": "stretch",
     "category": "daily",
-    "sheet": "./assets/characters/thunder-pup/spritesheets/daily/thunder-pup_stretch_512x512_8f.png",
+    "sheet": "./assets/characters/crystal-rabbit/spritesheets/daily/crystal-rabbit_stretch_512x512_8f.png",
     "frameWidth": 512,
     "frameHeight": 512,
     "frameCount": 8,
@@ -290,7 +290,7 @@
   "dance": {
     "id": "dance",
     "category": "daily",
-    "sheet": "./assets/characters/thunder-pup/spritesheets/daily/thunder-pup_dance_512x512_8f.png",
+    "sheet": "./assets/characters/crystal-rabbit/spritesheets/daily/crystal-rabbit_dance_512x512_8f.png",
     "frameWidth": 512,
     "frameHeight": 512,
     "frameCount": 8,
@@ -306,7 +306,7 @@
   "left_walk": {
     "id": "left_walk",
     "category": "movement",
-    "sheet": "./assets/characters/thunder-pup/spritesheets/movement/thunder-pup_walk_left_512x512_8f.png",
+    "sheet": "./assets/characters/crystal-rabbit/spritesheets/movement/crystal-rabbit_walk_left_512x512_8f.png",
     "frameWidth": 512,
     "frameHeight": 512,
     "frameCount": 8,
@@ -322,7 +322,7 @@
   "right_walk": {
     "id": "right_walk",
     "category": "movement",
-    "sheet": "./assets/characters/thunder-pup/spritesheets/movement/thunder-pup_walk_right_512x512_8f.png",
+    "sheet": "./assets/characters/crystal-rabbit/spritesheets/movement/crystal-rabbit_walk_right_512x512_8f.png",
     "frameWidth": 512,
     "frameHeight": 512,
     "frameCount": 8,
@@ -338,7 +338,7 @@
   "front_walk": {
     "id": "front_walk",
     "category": "movement",
-    "sheet": "./assets/characters/thunder-pup/spritesheets/movement/thunder-pup_walk_front_512x512_8f.png",
+    "sheet": "./assets/characters/crystal-rabbit/spritesheets/movement/crystal-rabbit_walk_front_512x512_8f.png",
     "frameWidth": 512,
     "frameHeight": 512,
     "frameCount": 8,
@@ -354,7 +354,7 @@
   "back_walk": {
     "id": "back_walk",
     "category": "movement",
-    "sheet": "./assets/characters/thunder-pup/spritesheets/movement/thunder-pup_walk_back_512x512_8f.png",
+    "sheet": "./assets/characters/crystal-rabbit/spritesheets/movement/crystal-rabbit_walk_back_512x512_8f.png",
     "frameWidth": 512,
     "frameHeight": 512,
     "frameCount": 8,
@@ -370,7 +370,7 @@
   "attack_basic": {
     "id": "attack_basic",
     "category": "battle",
-    "sheet": "./assets/characters/thunder-pup/spritesheets/battle/thunder-pup_attack_basic_512x512_8f.png",
+    "sheet": "./assets/characters/crystal-rabbit/spritesheets/battle/crystal-rabbit_attack_basic_512x512_8f.png",
     "frameWidth": 512,
     "frameHeight": 512,
     "frameCount": 8,
@@ -386,7 +386,7 @@
   "skill_cast": {
     "id": "skill_cast",
     "category": "battle",
-    "sheet": "./assets/characters/thunder-pup/spritesheets/battle/thunder-pup_skill_cast_512x512_8f.png",
+    "sheet": "./assets/characters/crystal-rabbit/spritesheets/battle/crystal-rabbit_skill_cast_512x512_8f.png",
     "frameWidth": 512,
     "frameHeight": 512,
     "frameCount": 8,
@@ -402,7 +402,7 @@
   "defend": {
     "id": "defend",
     "category": "battle",
-    "sheet": "./assets/characters/thunder-pup/spritesheets/battle/thunder-pup_defend_512x512_8f.png",
+    "sheet": "./assets/characters/crystal-rabbit/spritesheets/battle/crystal-rabbit_defend_512x512_8f.png",
     "frameWidth": 512,
     "frameHeight": 512,
     "frameCount": 8,
@@ -418,7 +418,7 @@
   "hit": {
     "id": "hit",
     "category": "battle",
-    "sheet": "./assets/characters/thunder-pup/spritesheets/battle/thunder-pup_hit_512x512_8f.png",
+    "sheet": "./assets/characters/crystal-rabbit/spritesheets/battle/crystal-rabbit_hit_512x512_8f.png",
     "frameWidth": 512,
     "frameHeight": 512,
     "frameCount": 8,
@@ -434,7 +434,7 @@
   "defeated": {
     "id": "defeated",
     "category": "battle",
-    "sheet": "./assets/characters/thunder-pup/spritesheets/battle/thunder-pup_faint_512x512_8f.png",
+    "sheet": "./assets/characters/crystal-rabbit/spritesheets/battle/crystal-rabbit_faint_512x512_8f.png",
     "frameWidth": 512,
     "frameHeight": 512,
     "frameCount": 8,
@@ -450,7 +450,7 @@
   "victory": {
     "id": "victory",
     "category": "battle",
-    "sheet": "./assets/characters/thunder-pup/spritesheets/battle/thunder-pup_victory_512x512_8f.png",
+    "sheet": "./assets/characters/crystal-rabbit/spritesheets/battle/crystal-rabbit_victory_512x512_8f.png",
     "frameWidth": 512,
     "frameHeight": 512,
     "frameCount": 8,
