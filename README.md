@@ -1,61 +1,75 @@
 # Nexus Link / 心核連結
 
-> 一個在冷世界裡，替玩家保存火種的 AI 情緒空間。
-> An AI emotional habitat where a companion remembers you, responds to you, and quietly changes with you.
+> 這不是電子寵物，這是你的夥伴。  
+> An emotional habitat game about a companion who remembers, keeps boundaries, and changes through shared experience.
 
 ---
 
-## Project Entry
+## Current Status
 
-**Nexus Link（心核連結）** is a Web-first AI companion habitat.
-
-The current prototype focuses on one simple experience:
+**Nexus Link** is a Web-first pre-commercial vertical slice built around one core loop:
 
 ```text
-一個網址
-一個湖畔營地
-灰影貓、雷霆幼狼、星能小山豬
-一個聊天框
-一段會被記住的關係
+First Session Opening
+→ First Soul Talk
+→ First Trace / Habitat Trace
+→ Return Echo
+→ Boundary-aware companion reactions
 ```
 
-Player-facing concept:
+The active runtime is the **root White Lab**:
 
-> 這裡有會記得你的 AI 心核夥伴。
-> 牠們會陪你生活，回應你的情緒，並因為你們的關係而慢慢改變。
+```text
+/
+  index.html
+  styles.css
+  src/
+  assets/
+```
+
+`/r2/` is legacy reference only and is not the current development entry.
 
 ---
 
-## Current Prototype
+## Product Identity
 
-This repository contains a static Web prototype built with:
+Nexus Link is a **narrative emotional habitat game**.
 
-- HTML
-- CSS
-- JavaScript
-- PixiJS via CDN
-- localStorage
-- GitHub Pages deployment support
+It is not:
 
-Current playable prototype features:
+- a digital pet
+- a gacha / character collection game
+- a pure AI chatbot
+- an AI girlfriend product
+- a traditional RPG combat game
+- a FOMO / streak / login reward system
 
-- Mobile-first vertical layout
-- Lake camp emotional habitat scene
-- Greyshade Cat runtime companion
-- ThunderPup and Star-Energy Boarlet as next companion directions
-- Chat input
-- Mock AI replies
-- Bond / Trust / Mood / Energy values
-- Repeated-input boundary reaction
-- localStorage persistence
+Its central promise:
+
+> A heart-core companion remembers how you approached, how you left, and how you returned — but it never belongs to you.
+
+---
+
+## Current Runtime Highlights
+
+- Mobile-first Web prototype
+- PixiJS v8 renderer via CDN
+- Vanilla JS / ES Modules
+- localStorage persistence through `nexusLinkR2State:v1`
+- Greyshade Cat as primary runtime companion
+- Five runtime-ready Heart Radiance guardian companions
+- Soul Talk emotional input
+- emotional memories and habitat traces
+- Return Echo with non-guilt return lines
+- companion animation cues for return, map, touch, and emotional standoff
+- boundary-aware touch reactions: accept / guarded / hesitate / reject
+- Emotional Standoff as relationship repair, not traditional combat
 
 ---
 
 ## Run Locally
 
 Use any static file server.
-
-Python example:
 
 ```bash
 python3 -m http.server 5173
@@ -75,16 +89,7 @@ python -m http.server 5173
 
 ---
 
-## GitHub Pages Deployment
-
-1. Go to this repository's **Settings**.
-2. Open **Pages**.
-3. Under **Build and deployment**, choose:
-   - **Source**: Deploy from a branch
-   - **Branch**: main
-   - **Folder**: / (root)
-4. Save.
-5. Wait for GitHub Pages to finish deployment.
+## GitHub Pages
 
 Expected Pages URL:
 
@@ -92,45 +97,75 @@ Expected Pages URL:
 https://orochi771127.github.io/NexusLink/
 ```
 
----
-
-## Main Files
+Deployment is from:
 
 ```text
-index.html
-styles.css
-src/app.js
-src/
-docs/nexuslink-development-direction.md
-docs/NexusLink_Emotional_Habitat_Plan.md
+main / root
 ```
-
-### File Roles
-
-- `index.html` — Web entry point.
-- `styles.css` — UI and mobile layout styling.
-- `src/app.js` — ES module bootstrap for PixiJS, state, chat, HUD, panels, and persistence.
-- `src/` — Modular state, engine, PixiJS, UI, and utility code.
-- `docs/nexuslink-development-direction.md` — current product direction for the emotional habitat and companion loop.
-- `docs/NexusLink_Emotional_Habitat_Plan.md` — formal product plan.
 
 ---
 
-## Product Plan
+## Canon and Research Documents
 
-Current planning package:
+### Core Bible
 
-[docs/README.md](docs/README.md)
+```text
+docs/bible/01_DESIGN_BIBLE.md
+docs/bible/02_WORLD_BIBLE.md
+docs/bible/03_CHARACTER_BIBLE.md
+docs/bible/04_RUNTIME_CANON.md
+docs/bible/README.md
+```
 
-Start there for the active development direction, design brief, implementation-facing game plan, first-loop roadmap, production backlog, QA checklist, and local art pipeline.
+### Strategic Canon
 
-Read the current product direction here:
+```text
+docs/strategy/NEXUS_LINK_MASTER_CANON_v3.1.md
+```
 
-[docs/nexuslink-development-direction.md](docs/nexuslink-development-direction.md)
+The strategic canon defines why the project exists, what it sells, and what it must never become. It does **not** replace `CLAUDE.md`, `AGENTS.md`, or `ACCEPTANCE.md`.
 
-Read the full emotional habitat product plan here:
+### Market Evidence
 
-[docs/NexusLink_Emotional_Habitat_Plan.md](docs/NexusLink_Emotional_Habitat_Plan.md)
+```text
+docs/research/MARKET_EVIDENCE_AI_COMPANION.md
+```
+
+This file is an internal evidence memo for AI companion / emotional habitat market assumptions. It is not external pitch material until source URLs are verified.
+
+### Raphael / Heart-core Brain
+
+```text
+docs/raphael/
+tools/raphael/
+```
+
+Raphael Constitution and `raphaelCore.js` are draft / sandbox materials until explicitly integrated through a reviewed task pack.
+
+---
+
+## Development Constraints
+
+Allowed stack:
+
+- HTML
+- CSS
+- Vanilla JavaScript / ES Modules
+- PixiJS v8 via CDN
+- localStorage
+- GitHub Pages
+
+Do not add without explicit approval:
+
+- React / Vue / Svelte
+- TypeScript
+- npm dependencies
+- build step
+- backend / database / API
+- LLM API
+- second Pixi app
+- new ticker
+- gacha / streak / daily reward / red dot systems
 
 ---
 
@@ -142,4 +177,20 @@ Make one companion feel present.
 Make one relationship worth returning to.
 ```
 
-Do not expand into combat, multiplayer, large RPG systems, or full AI memory before the first emotional loop feels alive.
+Next planning target:
+
+```text
+Initial Bond / 開場定情 — PLAN ONLY
+```
+
+Do not directly change `unlockedCompanionIds`, `defaultState.js`, or companion selection behavior until the Initial Bond migration plan is approved.
+
+---
+
+## Acceptance Question
+
+Every feature must answer:
+
+> Does this make the companion feel more clearly bounded, remembered, and changed by shared experience?
+
+If not, it should not expand the root runtime.
