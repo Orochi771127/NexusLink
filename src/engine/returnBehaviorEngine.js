@@ -1,7 +1,9 @@
 import { isEmotionalHabitatTrace } from "./habitatTraceEngine.js";
+import { RETURN_PRESENCE } from "../data/soulTalkResponsePacks.js";
 
 const SIX_HOURS_MS = 6 * 60 * 60 * 1000;
 const SHORT_AWAY_MS = 30 * 60 * 1000;
+const DAY_MS = 24 * 60 * 60 * 1000;
 
 const OFFLINE_RETURN_TRACE_TYPES = new Set(["small_silence", "fallen_leaf", "campfire_dim"]);
 const VULNERABLE_EMOTIONS = new Set(["sadness", "anxiety", "loneliness", "fatigue", "anger"]);
@@ -93,6 +95,51 @@ export function buildReturnGreeting(elapsedMs, state = {}) {
   }
 
   return buildGentleReturnMessage(state.lastEmotionTag, state.energy);
+}
+
+/**
+ * Return Echo tier（純時間差，不偵測玩家上線頻率/孤獨/依賴——遵守紅線 1、12）：
+ * <30min → null（不打招呼）／30min–6h → soft_return／6–24h → overnight／>24h → long_absence。
+ */
+export function resolveReturnTier(elapsedMs) {
+  if (!Number.isFinite(elapsedMs) || elapsedMs < SHORT_AWAY_MS) return null;
+  if (elapsedMs < SIX_HOURS_MS) return "soft_return";
+  if (elapsedMs < DAY_MS) return "overnight";
+  return "long_absence";
+}
+
+/**
+ * 回歸短句：依「夥伴自身的情緒沉積」(lastEmotionTag) 挑 RETURN_PRESENCE 類別，
+ * 不是對玩家做判斷。非阻塞、不責備、不要求回應；<30min 回 null。
+ */
+export function pickReturnPresenceLine(elapsedMs, state = {}) {
+  if (!resolveReturnTier(elapsedMs)) return null;
+  const tag = state.lastEmotionTag;
+  const category = tag === "fatigue" ? "fatigue" : tag === "loneliness" ? "loneliness" : "quiet";
+  const pool = RETURN_PRESENCE[category] || RETURN_PRESENCE.quiet || [];
+  if (pool.length === 0) return null;
+  return pool[Math.floor(Math.random() * pool.length)] || null;
+}
+
+/**
+ * 回歸一次性動畫意圖（交給既有 COMPANION_ANIMATION_INTENT 橋接、不直接碰 Pixi）：
+ * 由 tier + 夥伴自身狀態決定，回傳 intent 字串或 null（無回歸時）。
+ */
+export function resolveReturnAnimationIntent(elapsedMs, state = {}) {
+  const tier = resolveReturnTier(elapsedMs);
+  if (!tier) return null;
+  const tag = state.lastEmotionTag;
+  const energy = Number(state.energy) || 0;
+  const bond = Number(state.bond) || 0;
+  if (tier === "soft_return") {
+    if (energy <= 2) return "return.distant";
+    if (bond >= 60) return "return.happy";
+    return "return.calm";
+  }
+  if (tier === "overnight") {
+    return tag === "fatigue" || tag === "sadness" ? "return.sad" : "return.distant";
+  }
+  return "return.rest";
 }
 
 function estimateAwayMs(previousState, visibleTraces, emotionalMemories, now) {

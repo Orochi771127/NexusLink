@@ -33,6 +33,10 @@ const defaultState = {
   lastEmotionTag: null,
   habitatRepairFactor: 0,
 
+  // First Session → Return Echo：首輪安靜開場是否已看過（strict 持久化，非 derived 判斷）。
+  // null = 尚未看過；看過後寫入 timestamp。存在既有 STORAGE_KEY 之內，不新增 localStorage key。
+  firstSessionOpeningSeenAt: null,
+
   // R2 vertical slice
   activeCompanionId: "greyshade-cat",
   unlockedCompanionIds: [

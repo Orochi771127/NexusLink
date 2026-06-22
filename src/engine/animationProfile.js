@@ -148,7 +148,13 @@ const ANIMATION_INTENT_MAP = Object.freeze({
   "standoff.overwhelmed": "defeated",
   "standoff.stabilized": "victory",
   "standoff.recovered": "victory",
-  "standoff.retreat": "back_walk"
+  "standoff.retreat": "back_walk",
+  // Return Echo：回歸時播一次的情緒待機 cue（依 tier/state 由 returnBehaviorEngine 決定）。
+  "return.calm": "idle_calm",
+  "return.happy": "idle_happy",
+  "return.distant": "idle_distant",
+  "return.sad": "idle_sad",
+  "return.rest": "sleep"
 });
 
 const ANIMATION_FALLBACK_CHAINS = Object.freeze({
@@ -161,7 +167,12 @@ const ANIMATION_FALLBACK_CHAINS = Object.freeze({
   defend: ["idle_defensive", "idle_calm"],
   hit: ["idle_sad", "idle_distant", "idle_calm"],
   defeated: ["idle_sad", "idle_distant", "idle_calm"],
-  victory: ["idle_happy", "idle_calm"]
+  victory: ["idle_happy", "idle_calm"],
+  // Return Echo 情緒待機的安全鏈（缺該圖的夥伴最終一定落到 idle_calm）。
+  idle_happy: ["idle_calm"],
+  idle_distant: ["idle_calm"],
+  idle_sad: ["idle_distant", "idle_calm"],
+  sleep: ["idle_distant", "idle_calm"]
 });
 
 export const ANIMATION_INTENTS = Object.freeze(Object.keys(ANIMATION_INTENT_MAP));

@@ -81,6 +81,7 @@ export function normalizeState(rawState = {}) {
     safeHarborMode: Boolean(targetState.safeHarborMode),
     lastEmotionTag: targetState.lastEmotionTag || null,
     habitatRepairFactor: clamp(targetState.habitatRepairFactor ?? 0, 0, 1),
+    firstSessionOpeningSeenAt: Number(targetState.firstSessionOpeningSeenAt) || null,
     unlockedCompanionIds,
     activeCompanionId: normalizeRuntimeCompanionId(targetState.activeCompanionId, runtimeState),
     battleRecord: normalizeBattleRecord(targetState.battleRecord, baseState.battleRecord),
