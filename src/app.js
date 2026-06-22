@@ -90,7 +90,11 @@ function playCompanionAnimationIntent(intent) {
     ? (name) => animationController.canResolve(name)
     : (name) => animationController.hasAnimation?.(name);
   const animationName = resolveAnimationIntent(intent, probe);
-  interactionController.playAnimation(animationName);
+  // 強制非可中斷一次性播放（lock）：intent cue 是主動回饋，必須蓋過 per-frame mood idle。
+  // 走路幀的 ANIMATION_REGISTRY.interruptible=true，不帶第二參數時 playAnimation 不上鎖；
+  // 而 updateCompanionMotion 只在 isAnimationLocked() 時讓位，否則每幀把 mood idle 蓋回，
+  // 導致 move.front/back/left/right 方向 cue 在可見瀏覽器被即時覆蓋成 idle_calm。
+  interactionController.playAnimation(animationName, false);
 }
 
 bootstrap();
