@@ -1,6 +1,6 @@
 # CLAUDE.md — Nexus Link 開發憲法（給 Claude Fable 5 / Claude Code）
 
-> 本檔服從 `NEXUS_LINK_MASTER_CANON_v3.md`（最高整合憲法）。若有衝突，以 `NEXUS_LINK_MASTER_CANON_v3.md` 為準。
+> 本檔服從 `NEXUS_LINK_MASTER_CANON_v3.1.md`（最高戰略上位法）。若有衝突，以 `NEXUS_LINK_MASTER_CANON_v3.1.md` 為準。
 > 這是你進入 Nexus Link repo 後最先讀的協作入口文件。
 > 它定義三件事：（1）哪些是不可動的地基；（2）哪些是被授權的體驗層；（3）這個專案存在的意義（情感契約與安全紅線）。
 > 本檔取代舊版 CLAUDE.md。舊版把「技術保守」與「體驗野心保守」綁死，導致體驗層被當成維護工程在做。本版把兩者解綁。
@@ -77,7 +77,7 @@
 6. **不製造 FOMO / 紅點 / 任務壓迫 / 上線打卡焦慮。** 留白與「敢於無聊」是特性，不是待修的 bug。
 7. **自我傷害類輸入（safetyShield 命中）只觸發系統級求助訊息，不可變成 gameplay 獎勵或夥伴的角色扮演素材。**
 
-> 這七條對應 `NEXUS_LINK_MASTER_CANON_v3.md` 的安全層（整合自 legacy Design Bible 第四部）。施工時若某個需求與紅線衝突，停下來回報，不要自行「想辦法繞過」。
+> 這七條對應 `NEXUS_LINK_MASTER_CANON_v3.1.md` 的安全層（整合自 legacy Design Bible 第四部）。施工時若某個需求與紅線衝突，停下來回報，不要自行「想辦法繞過」。
 
 ---
 

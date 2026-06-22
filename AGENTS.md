@@ -1,8 +1,8 @@
 # AGENTS.md — Nexus Link 多 AI 協作規範
 
-> 本檔服從 `NEXUS_LINK_MASTER_CANON_v3.md`（最高整合憲法）。若有衝突，以 `NEXUS_LINK_MASTER_CANON_v3.md` 為準。
+> 本檔服從 `NEXUS_LINK_MASTER_CANON_v3.1.md`（最高戰略上位法）。若有衝突，以 `NEXUS_LINK_MASTER_CANON_v3.1.md` 為準。
 > 適用對象：Claude Fable 5、Claude Code、Codex、ChatGPT、Gemini、Grok 及所有參與本專案的 AI agent。
-> 本檔與 `CLAUDE.md` 對齊；兩者都服從 `NEXUS_LINK_MASTER_CANON_v3.md`。
+> 本檔與 `CLAUDE.md` 對齊；兩者都服從 `NEXUS_LINK_MASTER_CANON_v3.1.md`。
 
 ---
 
@@ -166,8 +166,8 @@ Acceptance refs:  <對應 ACCEPTANCE.md 的哪幾條>
 
 ## 10. 參考文件
 
-- `NEXUS_LINK_MASTER_CANON_v3.md` — 最高整合憲法（最高 canon）。
-- `CLAUDE.md` — 協作入口與執行規範（先讀，但服從 Master Canon v3）。
+- `NEXUS_LINK_MASTER_CANON_v3.1.md` — 最高戰略上位法（最高 canon）。
+- `CLAUDE.md` — 協作入口與執行規範（先讀，但服從 Master Canon v3.1）。
 - `ACCEPTANCE.md` — 契約 → 可驗收 assertion 對照表。
 - `docs/agent/AI_WORKFLOW.md` — Gate 流程。
 - `docs/agent/TASK_TEMPLATE.md` — 任務模板。

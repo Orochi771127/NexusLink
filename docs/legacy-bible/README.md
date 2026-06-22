@@ -1,5 +1,5 @@
-> ⚠️ SUPERSEDED：本文件的現況/優先序已被 `NEXUS_LINK_MASTER_CANON_v3.md` 取代。
-> 僅保留世界觀與角色敘事作參考。技術現況、商業方向、角色 tier 一律以 `NEXUS_LINK_MASTER_CANON_v3.md` 為準。
+> ⚠️ SUPERSEDED：本文件的現況/優先序已被 `NEXUS_LINK_MASTER_CANON_v3.1.md` 取代。
+> 僅保留世界觀與角色敘事作參考。技術現況、商業方向、角色 tier 一律以 `NEXUS_LINK_MASTER_CANON_v3.1.md` 為準。
 
 ---
 # README.md

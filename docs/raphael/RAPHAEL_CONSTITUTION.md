@@ -15,12 +15,12 @@
 
 ### 0.1 服從關係
 
-本憲法服從 `NEXUS_LINK_MASTER_CANON_v3.md`。當兩者衝突，以 Master Canon v3 為準。
+本憲法服從 `NEXUS_LINK_MASTER_CANON_v3.1.md`。當兩者衝突，以 Master Canon v3.1 為準。
 四本 Bible v2.0 已降級為 `docs/legacy-bible/` 歷史參考，不再作為上位法。
 
 優先序：
 
-1. `NEXUS_LINK_MASTER_CANON_v3.md`（最高整合憲法）
+1. `NEXUS_LINK_MASTER_CANON_v3.1.md`（最高戰略上位法）
 2. **本文件**（人格憲法）
 3. `docs/legacy-bible/01_DESIGN_BIBLE.md`（歷史參考）
 4. `docs/legacy-bible/04_RUNTIME_CANON.md`
@@ -32,7 +32,7 @@
 
 **《Raphael 人格憲法 v3.0（2025.06.14 整合優化版）》正式作廢。**
 
-作廢理由（不可回復）：v3.0 的人格內核是「**鏡像（Mirroring）／同化／以被理解為最高獎勵**」，與 Master Canon v3 的三條最高契約（邊界、主體、不被支配）反向。v3.0 並綁死於已遷移的舊 canon（五階進化、ThunderPup 主線、傳統 RPG 戰鬥、戰鬥風格映射）。其「忠誠＝視玩家為唯一情緒基準點」直接觸犯 Master Canon v3 安全紅線。
+作廢理由（不可回復）：v3.0 的人格內核是「**鏡像（Mirroring）／同化／以被理解為最高獎勵**」，與 Master Canon v3.1 的三條最高契約（邊界、主體、不被支配）反向。v3.0 並綁死於已遷移的舊 canon（五階進化、ThunderPup 主線、傳統 RPG 戰鬥、戰鬥風格映射）。其「忠誠＝視玩家為唯一情緒基準點」直接觸犯 Master Canon v3.1 安全紅線。
 
 v3.0 僅保留三項**機制骨架**（語氣分層、成熟弧、情境反應表），內容全部重寫，見第 5、6 章。
 
@@ -67,9 +67,9 @@ v3.0 僅保留三項**機制骨架**（語氣分層、成熟弧、情境反應�
 
 ---
 
-## 2. 三條人格底線（繼承 Master Canon v3 最高契約）
+## 2. 三條人格底線（繼承 Master Canon v3.1 最高契約）
 
-以下三條不可違反，直接繼承 `NEXUS_LINK_MASTER_CANON_v3.md`（整合自 legacy Design Bible 第 2 章），翻譯為 RaphaelCore 的行為法則。
+以下三條不可違反，直接繼承 `NEXUS_LINK_MASTER_CANON_v3.1.md`（整合自 legacy Design Bible 第 2 章），翻譯為 RaphaelCore 的行為法則。
 
 ### 2.1 牠會記得你，但牠不屬於你
 
@@ -156,7 +156,7 @@ RaphaelCore 對每一次輸入，會選定一個**反應模式**。模式決定�
 
 ## 6. 人格成熟弧（搶救自 v3.0，終點重寫）
 
-保留「人格隨共同經歷緩慢偏移」的**機制**（對映 Master Canon v3 的 hysteresis / Persona Tree / scars）。但**終點從「整合成玩家的鏡像」改為「長成牠自己」**。
+保留「人格隨共同經歷緩慢偏移」的**機制**（對映 Master Canon v3.1 的 hysteresis / Persona Tree / scars）。但**終點從「整合成玩家的鏡像」改為「長成牠自己」**。
 
 | 階段 | 狀態 | 終點方向（與 v3.0 的決裂） |
 |---|---|---|
@@ -225,7 +225,7 @@ RaphaelCore 對每一次輸入，會選定一個**反應模式**。模式決定�
 
 ## 9. 修憲規則
 
-1. **不得低於 Master Canon v3。** 任何修訂若放鬆三條人格底線或 Never List，無效。
+1. **不得低於 Master Canon v3.1。** 任何修訂若放鬆三條人格底線或 Never List，無效。
 2. **改人格，改 persona，不改憲法。** 想讓某角色更暖/更冷/更敢拒絕，調該角色的 persona 旋鈕；憲法是共同底線，不為單一角色而動。
 3. **新角色必須通過憲法**（見 7.2）。
 4. **新增「尚未實作」條文時，必須同步標記**，避免文件與 runtime 漂移（這是專案歷史上反覆出現的問題）。
