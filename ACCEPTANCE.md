@@ -1,5 +1,6 @@
 # ACCEPTANCE.md — Nexus Link 驗收對照表
 
+> 本檔服從 `NEXUS_LINK_MASTER_CANON_v3.md`（最高整合憲法）。若有衝突，以 `NEXUS_LINK_MASTER_CANON_v3.md` 為準。
 > 用途：把 `CLAUDE.md` 的情感契約、安全紅線與改造項，翻譯成 human 可以**逐條打勾**的驗收條件。
 > 每條都標明：對應憲法、驗法（瀏覽器 / DevTools / 讀碼）、通過標準。
 > Fable 完成任一 TASK_PACK 後，在開工計畫指定的 Acceptance refs 上逐條自評，human 複驗。
