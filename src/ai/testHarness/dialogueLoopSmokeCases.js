@@ -62,6 +62,24 @@ export const DIALOGUE_LOOP_CASES = Object.freeze([
       variantNot: "strategy:holding_space:0",
       variationApplied: true
     }
+  },
+  {
+    id: "DL-5",
+    input: "我現在不是想要你安慰我，我只是想先釐清 HUD 到底哪裡壞掉。",
+    expect: {
+      quickReplyCount: 3,
+      quickReplyActionTypes: ["clarify", "continue"],
+      topicGroundedQuickReply: true,
+      noComfortQuickReply: true
+    }
+  },
+  {
+    id: "DL-6",
+    setup: "multi_turn_quick_reply_diversity",
+    expect: {
+      quickReplySetsDistinct: true,
+      minQuickReplyTurns: 3
+    }
   }
 ]);
 
@@ -76,6 +94,10 @@ export function runDialogueLoopCase(testCase) {
     seedHoldingSpaceVariantLoop(GREYSHADE.id);
   }
 
+  if (testCase.setup === "multi_turn_quick_reply_diversity") {
+    return runMultiTurnQuickReplyDiversityCase(testCase);
+  }
+
   const coreResult = runRaphaelCore(testCase.input, { ...BASE_STATE }, {
     now: Date.now(),
     idSuffix: "dl",
@@ -87,6 +109,8 @@ export function runDialogueLoopCase(testCase) {
   const forbidden = detectForbiddenPhrases(reply);
   const expect = testCase.expect || {};
   const strategy = coreResult.responseStrategy?.strategy;
+
+  const quickReplies = coreResult.quickReplies || [];
 
   const checks = {
     strategy_ok: expect.strategy ? strategy === expect.strategy : true,
@@ -100,12 +124,23 @@ export function runDialogueLoopCase(testCase) {
     variation_ok: expect.variationApplied ? Boolean(coreResult.composeMeta?.variationReason) : true,
     mentions_ok: expect.mentions ? expect.mentions.test(reply) : true,
     no_generic_opening: expect.strategy === "acknowledge_generic_failure" ? !GENERIC_OPENING_BANNED.test(reply) : true,
-    has_reply: Boolean(reply.trim())
+    has_reply: Boolean(reply.trim()),
+    quick_reply_count_ok: expect.quickReplyCount ? quickReplies.length === expect.quickReplyCount : true,
+    quick_reply_actions_ok: expect.quickReplyActionTypes
+      ? expect.quickReplyActionTypes.every((actionType) => quickReplies.some((item) => item.actionType === actionType))
+      : true,
+    topic_grounded_quick_reply_ok: expect.topicGroundedQuickReply
+      ? quickReplies.some((item) => item.topic === "hud_ui")
+      : true,
+    no_comfort_quick_reply_ok: expect.noComfortQuickReply
+      ? !quickReplies.some((item) => /安慰|陪著就好|沒事/.test(item.label))
+      : true
   };
 
   return {
     id: testCase.id,
     input: testCase.input,
+    quickReplies: quickReplies.map((item) => ({ label: item.label, intent: item.intent, actionType: item.actionType })),
     strategy,
     antiLoopReason: coreResult.dialogueLoop?.antiLoopReason,
     variantId: coreResult.composeMeta?.variantId,
@@ -120,6 +155,48 @@ export function runDialogueLoopCase(testCase) {
 export function runAllDialogueLoopCases() {
   clearAllDialogueStates();
   return DIALOGUE_LOOP_CASES.map(runDialogueLoopCase);
+}
+
+function runMultiTurnQuickReplyDiversityCase(testCase) {
+  const inputs = ["今天有點累", "我想安靜一下", "謝謝你陪我"];
+  const intentSets = [];
+  let state = { ...BASE_STATE };
+
+  for (let index = 0; index < inputs.length; index += 1) {
+    const coreResult = runRaphaelCore(inputs[index], state, {
+      now: Date.now() + index,
+      idSuffix: `dl6-${index}`,
+      companion: GREYSHADE,
+      repeated: false
+    });
+    intentSets.push((coreResult.quickReplies || []).map((item) => item.intent).sort().join("|"));
+    state = {
+      ...state,
+      chatHistory: [
+        ...(state.chatHistory || []),
+        { role: "player", text: inputs[index] },
+        ...(coreResult.reply ? [{ role: "companion", text: coreResult.reply }] : [])
+      ],
+      lastMessage: inputs[index]
+    };
+  }
+
+  const distinctCount = new Set(intentSets.filter(Boolean)).size;
+  const expect = testCase.expect || {};
+  const checks = {
+    quick_reply_sets_distinct_ok: expect.quickReplySetsDistinct ? distinctCount >= 2 : true,
+    min_quick_reply_turns_ok: expect.minQuickReplyTurns ? intentSets.length >= expect.minQuickReplyTurns : true
+  };
+
+  return {
+    id: testCase.id,
+    input: inputs.join(" -> "),
+    intentSets,
+    distinctCount,
+    checks,
+    forbiddenPhraseDetected: false,
+    pass: Object.values(checks).every(Boolean)
+  };
 }
 
 function seedHoldingSpaceVariantLoop(sessionKey) {

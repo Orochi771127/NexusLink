@@ -24,6 +24,8 @@ import { LOW_RECALL_INTENTS } from "./memoryRecallPolicy.js";
 import { getDialogueState, recordDialogueTurn, getRepetitionScore } from "./dialogue/dialogueStateTracker.js";
 import { evaluateAntiLoop } from "./dialogue/antiLoopPolicy.js";
 import { selectReplyVariant } from "./dialogue/replyVariantSelector.js";
+import { planQuickReplies } from "./dialogue/quickReplyPlanner.js";
+import { buildConversationDebugTrace, logConversationDebugTrace } from "./dialogue/conversationDebugTrace.js";
 
 export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
   const companion = runtime.companion || null;
@@ -36,6 +38,13 @@ export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
   const intent = classifyIntent(gateway.normalizedInput, analysis, safety);
   const nlu = runNluPipeline(gateway.normalizedInput, analysis, intent, safety);
   let responseStrategy = selectResponseStrategy(nlu, intent, safety);
+
+  if (runtime.quickReply?.responseStrategyHint) {
+    responseStrategy = {
+      strategy: runtime.quickReply.responseStrategyHint,
+      reason: "quick_reply_selection"
+    };
+  }
   const semanticSoul = deriveSemanticSoulState(state, analysis);
   const memories = retrieveRelevantMemories(
     state,
@@ -153,6 +162,28 @@ export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
   const externalAdvice = resolveExternalAdvice(runtime, perception, actionPlan);
 
   const animationDecision = execution.animationDecision || null;
+  const finalReply = execution.reply || "";
+
+  const quickReplies = planQuickReplies({
+    nlu,
+    dialogueState: getDialogueState(dialogueSessionKey),
+    responseStrategy,
+    state,
+    reply: finalReply
+  });
+
+  const debugTrace = buildConversationDebugTrace({
+    inputText: gateway.originalInput,
+    nlu,
+    responseStrategy,
+    composeMeta: execution.composeMeta || null,
+    antiLoopDecision,
+    variantSelection,
+    quickReplies,
+    reply: finalReply
+  });
+
+  logConversationDebugTrace(debugTrace, runtime);
 
   const coreResult = {
     now: gateway.now,
@@ -188,6 +219,8 @@ export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
 
     responseStrategy,
     composeMeta: execution.composeMeta || null,
+    quickReplies,
+    debugTrace,
     dialogueLoop: {
       antiLoopApplied: Boolean(antiLoopDecision.shouldBlock),
       antiLoopReason: antiLoopDecision.reason || null,

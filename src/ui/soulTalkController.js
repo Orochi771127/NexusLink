@@ -10,6 +10,7 @@ const DEFAULT_PREVIEW_TEXT = "我在這裡，安靜地看著你。";
 
 export function createSoulTalkController({ store, saveCurrentState }) {
   const chatLog = qs("#chat-log");
+  const quickReplyRow = qs("#quick-reply-row");
   const messageInput = qs("#message-input");
   const sendButton = qs("#send-button");
   const soulTalkPreview = qs("#soul-talk-preview");
@@ -20,6 +21,7 @@ export function createSoulTalkController({ store, saveCurrentState }) {
   let thinkingTimer = null;
   const pageLoadedAt = Date.now();
   let crossSessionReflected = false;
+  let lastQuickReplies = [];
 
   function setCreature(creature) {
     currentCreature = creature;
@@ -76,7 +78,12 @@ export function createSoulTalkController({ store, saveCurrentState }) {
     saveCurrentState();
   }
 
-  function handlePlayerMessage(message) {
+  function handleQuickReply(quickReply) {
+    if (!quickReply?.label) return;
+    handlePlayerMessage(quickReply.label, { quickReply });
+  }
+
+  function handlePlayerMessage(message, options = {}) {
     setSoulTalkState("thinking");
     setStatusText("心核正在聽你說話...");
     addChat("player", message);
@@ -104,7 +111,8 @@ export function createSoulTalkController({ store, saveCurrentState }) {
         now,
         idSuffix,
         companion: currentCreature,
-        repeated: message === state.lastMessage
+        repeated: message === state.lastMessage,
+        quickReply: options.quickReply || null
       });
 
       applyRaphaelCoreResult(state, coreResult, { companion: currentCreature, now });
@@ -119,8 +127,10 @@ export function createSoulTalkController({ store, saveCurrentState }) {
       };
     });
 
+    lastQuickReplies = result?.coreResult?.quickReplies || [];
     saveCurrentState();
     renderChat();
+    renderQuickReplies(lastQuickReplies);
     window.clearTimeout(thinkingTimer);
     thinkingTimer = window.setTimeout(() => setSoulTalkState("idle"), 720);
     return result;
@@ -177,6 +187,20 @@ export function createSoulTalkController({ store, saveCurrentState }) {
       state.chatHistory.push({ role, text });
       if (state.chatHistory.length > 24) state.chatHistory.shift();
     });
+  }
+
+  function renderQuickReplies(quickReplies = []) {
+    if (!quickReplyRow) return;
+    quickReplyRow.innerHTML = "";
+
+    for (const item of quickReplies) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "quick-reply-chip";
+      button.textContent = item.label;
+      button.addEventListener("click", () => handleQuickReply(item));
+      quickReplyRow.appendChild(button);
+    }
   }
 
   function renderChat() {

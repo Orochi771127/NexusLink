@@ -1324,6 +1324,37 @@ canvas {
   color: #dffbff;
 }
 
+.quick-reply-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-height: 0;
+  padding: 4px 2px 8px;
+}
+
+.quick-reply-row:empty {
+  display: none;
+}
+
+.quick-reply-chip {
+  border: var(--border-glass);
+  border-radius: 999px;
+  background: rgba(0, 206, 209, 0.08);
+  color: #dffbff;
+  font-size: 0.82rem;
+  line-height: 1.2;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.quick-reply-chip:hover,
+.quick-reply-chip:focus-visible {
+  border-color: rgba(0, 206, 209, 0.68);
+  background: rgba(0, 206, 209, 0.16);
+  outline: none;
+}
+
 .chat-input-row {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 84px;
