@@ -55,6 +55,7 @@ export function runAllRaphaelSmokeCases(stateOverrides = {}, companion = GREYSHA
 }
 
 export function runMemoryRecallSmokeCase(companion = GREYSHADE_COMPANION) {
+  clearSessionPreferenceProfiles();
   const now = Date.now();
   const state = {
     ...BASE_STATE,

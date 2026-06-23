@@ -36,8 +36,13 @@ export function composeRaphaelReply({
   corpusHits = null,
   semanticSoul = {},
   recoveryContext = null,
-  actionPlan = {}
+  actionPlan = {},
+  replyMode = ""
 } = {}) {
+  const composeOpts = {
+    recoveryRecall: Boolean(recoveryContext?.canRecall),
+    replyMode: replyMode || actionPlan.replyMode || ""
+  };
   if (plan.mode === SOUL_TALK_REACTIONS.SAFETY_REDIRECT) {
     return buildSafetyRedirectReply(safety);
   }
@@ -63,7 +68,7 @@ export function composeRaphaelReply({
       recoveryContext,
       seed
     });
-    if (boundaryLine.line) return finalizeReply(boundaryLine.line, persona, state);
+    if (boundaryLine.line) return finalizeReply(boundaryLine.line, persona, state, composeOpts);
   }
 
   const templateReply = renderTemplateReply({
@@ -74,7 +79,7 @@ export function composeRaphaelReply({
     reaction: mode,
     seed
   });
-  if (templateReply?.text) return finalizeReply(templateReply.text, persona, state);
+  if (templateReply?.text) return finalizeReply(templateReply.text, persona, state, composeOpts);
 
   const packLine = selectResponsePackLine({
     corpus: loadedCorpus,
@@ -88,7 +93,7 @@ export function composeRaphaelReply({
     seed: seed + corpusSeedOffset(corpusHits)
   });
 
-  if (packLine.line) return finalizeReply(packLine.line, persona, state);
+  if (packLine.line) return finalizeReply(packLine.line, persona, state, composeOpts);
 
   if (intent.intent === SOUL_TALK_INTENTS.QUESTION && mode === SOUL_TALK_REACTIONS.ACKNOWLEDGE) {
     return finalizeReply(
@@ -100,19 +105,29 @@ export function composeRaphaelReply({
         seed
       ),
       persona,
-      state
+      state,
+      composeOpts
     );
   }
 
-  return finalizeReply("我聽見了。我們先慢一點。", persona, state);
+  return finalizeReply("我聽見了。我們先慢一點。", persona, state, composeOpts);
 }
 
-function finalizeReply(text, persona, state) {
+function finalizeReply(text, persona, state, options = {}) {
   let reply = String(text || "").trim();
-  if ((state.energy ?? 10) <= 2 && reply.length > 42) {
+  const isRecovery = options.recoveryRecall || options.replyMode === "reflect";
+
+  if (!isRecovery && (state.energy ?? 10) <= 2 && reply.length > 42) {
     reply = reply.split(/[。！？]/)[0] + "。";
   }
-  return persona ? applyPersonaStyle(reply, persona) : reply;
+
+  if (!persona) return reply;
+
+  const styledPersona = isRecovery
+    ? { ...persona, responseBias: { ...persona.responseBias, maxSentences: 3 } }
+    : persona;
+
+  return applyPersonaStyle(reply, styledPersona);
 }
 
 function corpusSeedOffset(corpusHits = []) {

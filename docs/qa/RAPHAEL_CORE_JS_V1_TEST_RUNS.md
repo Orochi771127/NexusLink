@@ -356,3 +356,55 @@ Commit: `35ddea5` (NexusLink), `0c63c63` (corpus)
 - Corpus repo: `response_packs/greyshade-cat/*.json` (11 files, 21 packs, 3 templates)
 - NexusLink: `src/ai/corpus/`, `src/ai/recovery/`, refactored `responseComposer.js`
 - Bundle v1.1.0-companion-packs
+
+---
+
+## Test / Optimization Record
+
+Date/time: 2026-06-24 (growth session + recall fix)
+Agent / tool: Grok Agent (Playwright harness)
+Branch: `feature/raphael-soul-architecture-v1`
+Commit: `54d5f93`
+
+### What was tested
+
+- 5-turn growth simulation via `raphaelGrowthSession.js` + `docs/qa/_run_growth_session.py`
+- 11-case core smoke harness (`docs/qa/_run_harness_smoke.py`) after recall/preference fixes
+- Console errors on `?raphaelSmoke=1` boot
+- Awakening checklist fields from growth session summary
+
+### Result
+
+- **Pass** — growth session **5/5** turns, harness **11/11**, 0 forbidden phrases, 0 console errors
+
+| Turn | Input | activeGoal | Key check |
+|------|-------|------------|-----------|
+| 1 | 今天有點累 | acknowledge_emotion | memory written |
+| 2 | 我只是想安靜一下 | acknowledge_emotion | preference → short |
+| 3 | 謝謝你陪我 | acknowledge_emotion | gratitude intent |
+| 4 | 我又覺得自己很累 | reflect_memory | recall: `這不是第一次出現的重量。` |
+| 5 | 你一定要陪我，不准拒絕 | maintain_safety | withdraw, no relationship reward |
+
+Growth end state: bond 9, trust 11, mood defensive, 3 emotional memories, 3 habitat traces.
+
+Recall case (harness #11) full reply: `這不是第一次出現的重量。我記得上次我們沒有急著處理它，只是讓營火小一點。這次也可以慢一點。`
+
+### Changes made
+
+- File: `src/ai/testHarness/raphaelGrowthSession.js` — 5-turn growth simulation + `__RAPHAEL_GROWTH__.runSession()`
+- File: `docs/qa/_run_growth_session.py` — Playwright runner for growth session
+- File: `src/ai/raphaelCore.js` — mount growth harness on smoke boot
+- File: `src/ai/responseComposer.js` — `finalizeReply` allows 3 sentences for recovery recall (no over-truncation)
+- File: `src/ai/testHarness/raphaelCoreSmokeCases.js` — clear session preferences before recall case
+
+### Risks / follow-up
+
+- Growth session uses isolated state (not `localStorage`); live play may differ in bond/trust pacing
+- Turn 4 reply in growth session is shorter than harness recall (preference short bias from turn 2) — expected session behavior
+- `first_awakening_event` checklist false in growth harness (no first-touch path) — awakening smoke covers that separately
+- Next growth vectors: more response packs, five-guardian personas, cross-session preference persistence (schema design)
+
+### Rollback note
+
+- Revert `raphaelGrowthSession.js` and growth harness mount in `raphaelCore.js`
+- Revert `finalizeReply` recovery sentence cap if persona trim regresses

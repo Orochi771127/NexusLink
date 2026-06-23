@@ -183,4 +183,5 @@ export { applyRaphaelCoreResult } from "./applyCoreResult.js";
 if (typeof window !== "undefined" && new URLSearchParams(window.location.search).get("raphaelSmoke") === "1") {
   import("./testHarness/raphaelCoreSmokeCases.js").then((mod) => mod.installRaphaelSmokeHarness(window));
   import("./testHarness/awakeningGateSmokeCases.js").then((mod) => mod.installAwakeningSmokeHarness(window));
+  import("./testHarness/raphaelGrowthSession.js").then((mod) => mod.installRaphaelGrowthHarness(window));
 }
