@@ -398,7 +398,7 @@ Commit: `1c258d4` (NexusLink), `4cf13ee` (corpus)
 
 Date/time: 2026-06-24 (Raphael Gateway Server Phase A)
 Branch: `feature/raphael-soul-architecture-v1` + new `raphael-gateway-server`
-Commit: *(pending)*
+Commit: `71eb033` (NexusLink), `5915b50` (raphael-gateway-server)
 
 ### What was tested
 
