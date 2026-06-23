@@ -12,9 +12,15 @@ import { processEmotionInput } from "../engine/emotionalSedimentationEngine.js";
 import { runAutonomyLoop } from "./autonomy/autonomyLoop.js";
 import { collectInteractionTrace } from "./evolution/interactionTraceCollector.js";
 import { askAdvisor } from "./external/externalModelGateway.js";
+import { searchCorpus } from "./corpusSearch.js";
+import {
+  getCompanionPreferenceProfile,
+  applyPreferenceToPersona
+} from "./companionPreferenceProfile.js";
 
 export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
   const companion = runtime.companion || null;
+  const companionId = companion?.id || state.activeCompanionId || "default";
   const gateway = prepareSoulTalkInput(inputText, state, runtime);
   const corpus = loadRaphaelCorpus();
 
@@ -23,7 +29,17 @@ export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
   const intent = classifyIntent(gateway.normalizedInput, analysis, safety);
   const semanticSoul = deriveSemanticSoulState(state, analysis);
   const memories = retrieveRelevantMemories(state, analysis, { now: gateway.now });
-  const persona = resolvePersona(companion, state);
+
+  const preferenceProfile =
+    runtime.companionPreferenceProfile || getCompanionPreferenceProfile(companionId);
+  const persona = applyPreferenceToPersona(resolvePersona(companion, state), preferenceProfile);
+
+  const corpusSearch = searchCorpus({
+    emotionKey: analysis.emotionKey,
+    intent: intent.intent,
+    inputText: gateway.normalizedInput,
+    limit: 3
+  });
 
   const sedimentationResult = processEmotionInput(gateway.normalizedInput, state, {
     now: gateway.now,
@@ -39,7 +55,14 @@ export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
     intent,
     semanticSoul,
     memories,
-    persona
+    persona,
+    corpusHits: corpusSearch.hits,
+    corpusMeta: {
+      version: corpusSearch.corpusVersion,
+      source: corpusSearch.corpusSource,
+      emotionHint: corpusSearch.emotionHint
+    },
+    preferenceProfile
   };
 
   const autonomyResult = runAutonomyLoop({
@@ -48,10 +71,13 @@ export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
     plan,
     sedimentationResult,
     companion,
-    corpus
+    corpus,
+    preferenceProfile,
+    runtime
   });
 
-  const { execution, reflection, needs, actionPlan, critique } = autonomyResult;
+  const { execution, reflection, reflectionPasses, needs, actionPlan, critique, preferenceProfile: updatedProfile } =
+    autonomyResult;
   const forbiddenCheck = detectForbiddenPhrases(execution.reply || "");
 
   const externalAdvice = resolveExternalAdvice(runtime, perception, actionPlan);
@@ -67,7 +93,10 @@ export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
       intent,
       semanticSoul,
       memories,
-      persona
+      persona,
+      corpusHits: perception.corpusHits,
+      corpusMeta: perception.corpusMeta,
+      preferenceProfile: updatedProfile
     },
 
     autonomy: {
@@ -95,14 +124,16 @@ export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
     traceDecision: execution.traceDecision,
     animationDecision: execution.animationDecision,
     reflection,
+    reflectionPasses,
     critique,
     externalAdvice,
+    renderMeta: execution.renderMeta || null,
     cooldown: autonomyResult.cooldown,
+    preferenceProfile: updatedProfile,
 
     corpusMeta: { version: corpus.version, source: corpus.source },
     sedimentationResult: execution.memoryDecision?.sedimentationResult || sedimentationResult,
 
-    // Legacy aliases for harness / gradual migration
     safety,
     analysis,
     intent,
@@ -119,7 +150,8 @@ export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
 }
 
 function resolveExternalAdvice(runtime, perception, coreDecision) {
-  if (!runtime?.externalIntelligence?.enabled) {
+  const settings = runtime?.externalIntelligence || {};
+  if (!settings.advisorEnabled && !settings.externalEnabled) {
     return { used: false, reason: "external_disabled" };
   }
   return { used: false, reason: "external_enabled_requires_async_gateway", asyncEntry: "askAdvisor" };
@@ -128,12 +160,13 @@ function resolveExternalAdvice(runtime, perception, coreDecision) {
 /** Future: async external advisor path — RaphaelCore still validates final output. */
 export async function runRaphaelCoreWithExternal(inputText = "", state = {}, runtime = {}) {
   const coreResult = runRaphaelCore(inputText, state, runtime);
-  if (!runtime?.externalIntelligence?.enabled) return coreResult;
+  const settings = runtime?.externalIntelligence || {};
+  if (!settings.advisorEnabled && !settings.externalEnabled) return coreResult;
 
   const advice = await askAdvisor({
     perception: { ...coreResult.perception, gateway: coreResult.input },
     coreDecision: coreResult.autonomy,
-    settings: runtime.externalIntelligence
+    settings
   });
 
   return { ...coreResult, externalAdvice: advice };

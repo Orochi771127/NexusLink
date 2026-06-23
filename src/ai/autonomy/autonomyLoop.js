@@ -7,10 +7,16 @@ import { evaluateInitiativeCooldown } from "./initiativeCooldown.js";
 import { runCritics } from "../eval/runCritics.js";
 import { buildSafetyRedirectReply } from "../safetyShield.js";
 import { sanitizeReply } from "../forbiddenPhrases.js";
+import { renderReply } from "../external/externalModelGateway.js";
+import {
+  buildPreferenceCooldown,
+  applyPreferenceRepairs,
+  updateCompanionPreferenceProfile
+} from "../companionPreferenceProfile.js";
 
 /**
  * Bounded Autonomous Companion Agent loop.
- * Observe → Evaluate → Choose Goal → Plan Action → Execute → Reflect
+ * Observe → Evaluate → Choose Goal → Plan Action → Execute → Reflect (2-pass)
  */
 export function runAutonomyLoop({
   state = {},
@@ -18,8 +24,13 @@ export function runAutonomyLoop({
   plan = {},
   sedimentationResult = {},
   companion = null,
-  corpus = null
+  corpus = null,
+  preferenceProfile = {},
+  runtime = {}
 } = {}) {
+  const companionId = companion?.id || perception.persona?.companionId || "default";
+  const preferenceCooldown = buildPreferenceCooldown(preferenceProfile);
+
   const needs = deriveCompanionNeeds({ state, perception, plan });
   const goal = selectActiveGoal(needs, perception, plan);
 
@@ -27,17 +38,22 @@ export function runAutonomyLoop({
     activeGoal: goal.activeGoal,
     perception,
     plan,
-    cooldown: { allowClarifyingQuestion: true, allowExplorationInvite: true },
+    cooldown: { allowClarifyingQuestion: true, allowExplorationInvite: true, ...preferenceCooldown },
     persona: perception.persona
   });
 
-  const cooldown = evaluateInitiativeCooldown({ state, perception, actionPlan: preliminaryAction });
+  const cooldown = evaluateInitiativeCooldown({
+    state,
+    perception,
+    actionPlan: preliminaryAction,
+    preferenceCooldown
+  });
 
   const actionPlan = planAutonomousAction({
     activeGoal: goal.activeGoal,
     perception,
     plan,
-    cooldown,
+    cooldown: { ...cooldown, ...preferenceCooldown },
     persona: perception.persona
   });
 
@@ -49,7 +65,7 @@ export function runAutonomyLoop({
     sedimentationResult,
     companion,
     corpus,
-    cooldown
+    cooldown: { ...cooldown, ...preferenceCooldown }
   });
 
   let critique = runCritics({
@@ -77,7 +93,56 @@ export function runAutonomyLoop({
     });
   }
 
-  const reflection = buildInteractionReflection({
+  const renderResult = maybeRenderReply(execution, perception, runtime, preferenceProfile);
+  if (renderResult.used) {
+    execution = {
+      ...execution,
+      reply: renderResult.text,
+      shouldSpeak: execution.shouldSpeak && Boolean(renderResult.text),
+      shouldStaySilent: !execution.shouldSpeak || !renderResult.text,
+      renderMeta: renderResult
+    };
+    critique = runCritics({
+      perception,
+      reply: execution.reply,
+      actionPlan: execution.actionPlan,
+      memoryDecision: execution.memoryDecision,
+      output: {
+        shouldSpeak: execution.shouldSpeak,
+        shouldStaySilent: execution.shouldStaySilent
+      }
+    });
+    if (!critique.pass) {
+      execution = applyCriticRepairs(execution, critique, perception);
+    }
+  }
+
+  let reflection = buildInteractionReflection({
+    perception,
+    actionPlan: execution.actionPlan,
+    execution,
+    stateMutation: execution.stateMutation
+  });
+
+  const updatedProfile = updateCompanionPreferenceProfile(companionId, {
+    reflection,
+    perception,
+    gateway: perception.gateway
+  });
+
+  execution = applyPreferenceRepairs(execution, updatedProfile);
+  critique = runCritics({
+    perception,
+    reply: execution.reply,
+    actionPlan: execution.actionPlan,
+    memoryDecision: execution.memoryDecision,
+    output: {
+      shouldSpeak: execution.shouldSpeak,
+      shouldStaySilent: execution.shouldStaySilent
+    }
+  });
+
+  const reflectionPass2 = buildInteractionReflection({
     perception,
     actionPlan: execution.actionPlan,
     execution,
@@ -90,9 +155,29 @@ export function runAutonomyLoop({
     cooldown,
     actionPlan: execution.actionPlan,
     execution,
-    reflection,
-    critique
+    reflection: reflectionPass2,
+    reflectionPasses: [reflection, reflectionPass2],
+    critique,
+    preferenceProfile: updatedProfile
   };
+}
+
+function maybeRenderReply(execution, perception, runtime, preferenceProfile) {
+  const settings = runtime?.externalIntelligence || {};
+  if (!settings.rendererEnabled || !execution.shouldSpeak || !execution.reply) {
+    return { used: false, reason: "renderer_disabled" };
+  }
+
+  return renderReply({
+    perception,
+    coreDecision: {
+      ...execution.actionPlan,
+      reaction: execution.actionPlan?.reaction
+    },
+    draftReply: execution.reply,
+    preferenceProfile,
+    settings
+  });
 }
 
 function applyCriticRepairs(execution, critique, perception) {

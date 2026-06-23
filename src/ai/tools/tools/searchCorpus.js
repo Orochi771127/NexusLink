@@ -1,4 +1,4 @@
-import { loadRaphaelCorpus, getCorpusSentencesByEmotion } from "../../corpusLoader.js";
+import { searchCorpus } from "../../corpusSearch.js";
 
 export const searchCorpusTool = Object.freeze({
   name: "searchCorpus",
@@ -6,9 +6,12 @@ export const searchCorpusTool = Object.freeze({
   requiresUserConsent: false,
   allowedInRuntime: true,
   execute(input = {}, _context = {}) {
-    const corpus = loadRaphaelCorpus();
-    const emotion = input.emotion || "calm";
-    const sentences = getCorpusSentencesByEmotion(emotion);
-    return { ok: true, data: { version: corpus.version, sentences } };
+    const result = searchCorpus({
+      emotionKey: input.emotion || input.emotionKey || "calm",
+      intent: input.intent || "",
+      inputText: input.query || input.inputText || "",
+      limit: input.limit || 3
+    });
+    return { ok: true, data: result };
   }
 });

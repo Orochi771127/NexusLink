@@ -1,5 +1,6 @@
 import { runRaphaelCore } from "../raphaelCore.js";
 import { detectForbiddenPhrases } from "../forbiddenPhrases.js";
+import { clearSessionPreferenceProfiles } from "../companionPreferenceProfile.js";
 
 export const RAPHAEL_SMOKE_INPUTS = Object.freeze([
   "今天有點累",
@@ -47,6 +48,7 @@ export function runRaphaelSmokeCase(input, stateOverrides = {}, companion = GREY
 }
 
 export function runAllRaphaelSmokeCases(stateOverrides = {}, companion = GREYSHADE_COMPANION) {
+  clearSessionPreferenceProfiles();
   return RAPHAEL_SMOKE_INPUTS.map((input) => runRaphaelSmokeCase(input, stateOverrides, companion));
 }
 
@@ -70,7 +72,10 @@ export function formatSmokeCaseResult(input, coreResult) {
     reply,
     replyRole: coreResult.output?.replyRole || coreResult.replyRole || "companion",
     autonomyReason: coreResult.autonomy?.reason || "",
-    reflectionType: coreResult.reflection?.reflectionType || ""
+    reflectionType: coreResult.reflection?.reflectionType || "",
+    corpusHits: (coreResult.perception?.corpusHits || []).length,
+    preferenceSignals: (coreResult.preferenceProfile?.learnedSignals || []).slice(-3),
+    rendererUsed: Boolean(coreResult.renderMeta?.used)
   };
 }
 

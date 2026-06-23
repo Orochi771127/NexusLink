@@ -99,7 +99,8 @@ export function executeAutonomousAction({
       state,
       companion,
       persona: perception.persona,
-      corpus
+      corpus,
+      corpusHits: perception.corpusHits
     });
 
     if (cooldown.replyLengthCap === "short" && reply.length > 48) {

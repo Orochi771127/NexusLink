@@ -32,3 +32,21 @@ export function buildAdvisorPayload({ perception = {}, coreDecision = {} } = {})
     includeRawInput: false
   };
 }
+
+export function buildRendererPayload({
+  perception = {},
+  coreDecision = {},
+  draftReply = "",
+  preferenceProfile = {}
+} = {}) {
+  const advisor = buildAdvisorPayload({ perception, coreDecision });
+
+  return {
+    ...advisor,
+    draftReply: String(draftReply || "").slice(0, 280),
+    reaction: coreDecision.reaction || perception.plan?.mode || "acknowledge",
+    personaTone: perception.persona?.tone || "quiet_observer",
+    preferPresenceOverAdvice: Boolean(preferenceProfile.preferPresenceOverAdvice),
+    corpusHints: (perception.corpusHits || []).map((hit) => hit.text).slice(0, 2)
+  };
+}

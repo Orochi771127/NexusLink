@@ -1,7 +1,12 @@
 const CLARIFY_COOLDOWN_MS = 90_000;
 const EXPLORATION_COOLDOWN_MS = 120_000;
 
-export function evaluateInitiativeCooldown({ state = {}, perception = {}, actionPlan = {} } = {}) {
+export function evaluateInitiativeCooldown({
+  state = {},
+  perception = {},
+  actionPlan = {},
+  preferenceCooldown = {}
+} = {}) {
   const now = perception.gateway?.now || Date.now();
   const chatHistory = Array.isArray(state.chatHistory) ? state.chatHistory : [];
   const energy = Number(state.energy ?? 10);
@@ -30,7 +35,8 @@ export function evaluateInitiativeCooldown({ state = {}, perception = {}, action
     blocks.push("high_boundary_reduce_frequency");
   }
 
-  const replyLengthCap = energy <= 2 ? "short" : boundaryPressure >= 0.72 ? "short" : "normal";
+  let replyLengthCap = energy <= 2 ? "short" : boundaryPressure >= 0.72 ? "short" : "normal";
+  if (preferenceCooldown.replyLengthCap === "short") replyLengthCap = "short";
   const shouldReduceInitiative = blocks.length > 0 || recentCompanionMessages.length >= 4;
 
   return {

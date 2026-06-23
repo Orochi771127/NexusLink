@@ -6,7 +6,10 @@ const BLOCKED_EXTERNAL_REASONS = Object.freeze([
 ]);
 
 export function evaluateExternalPrompt({ mode = "advisor", payload = {}, settings = {} } = {}) {
-  if (!settings.externalEnabled) {
+  const modeEnabled =
+    mode === "renderer" ? settings.rendererEnabled : settings.externalEnabled || settings.advisorEnabled;
+
+  if (!modeEnabled) {
     return { allowed: false, reason: "external_disabled" };
   }
 

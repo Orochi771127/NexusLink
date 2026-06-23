@@ -242,3 +242,48 @@ Commit: `72e57ff`
 
 - Revert `src/ai/eval/`, `src/ai/external/`, `src/ai/evolution/`, `src/ai/tools/` directories
 - Revert critic integration in `autonomyLoop.js` and trace hook in `raphaelCore.js`
+
+---
+
+## Test / Optimization Record
+
+Date/time: 2026-06-23 (Level 2 preference + corpus RAG + renderer mock)
+Agent / tool: Grok Agent (Playwright harness)
+Branch: `feature/raphael-soul-architecture-v1`
+Commit: (pending)
+
+### What was tested
+
+- `companionPreferenceProfile.js` — session preference learning, 2-pass reflect
+- Corpus bundle export from `aiforge-raphael-corpus` → `raphaelCorpusBundle.js`
+- `corpusSearch.js` RAG hits wired into perception + tool registry
+- `renderReply()` mock renderer (default OFF) in autonomy loop
+- 10-case smoke harness — 0 forbidden, 0 console errors
+- Preference side-effect: after `我只是想安靜一下`, later `謝謝你陪我` shortens to brief reply
+
+### Result
+
+- **Pass** (10/10)
+
+### Changes made
+
+- File: `src/ai/companionPreferenceProfile.js` — Level 2 session profile
+- File: `src/ai/corpusSearch.js` — emotion/intent/keyword RAG
+- File: `src/data/ai/raphaelCorpusBundle.js` — exported corpus bundle
+- File: `docs/qa/_export_corpus_bundle.py` — corpus export script
+- File: `src/ai/corpusLoader.js` — bundle-first loader
+- File: `src/ai/external/mockRendererAdapter.js` — mock renderer
+- File: `src/ai/external/externalModelGateway.js` — `renderReply()`
+- File: `src/ai/autonomy/autonomyLoop.js` — 2-pass reflect + renderer hook
+- File: `src/ai/raphaelCore.js` — preference + corpus integration
+
+### Risks / follow-up
+
+- F-layer corpus sentences are reference voice, not companion lines — used as RAG hints/seed bias only
+- Preference profile is session-only; cross-session persistence needs future schema design (not defaultState v1)
+- Renderer mock default OFF; enable explicitly for dev playtest
+
+### Rollback note
+
+- Revert `companionPreferenceProfile.js`, `corpusSearch.js`, `raphaelCorpusBundle.js`
+- Revert autonomy 2-pass + renderer hook

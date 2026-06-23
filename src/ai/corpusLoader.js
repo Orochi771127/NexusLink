@@ -1,7 +1,9 @@
+import { RAPHAEL_CORPUS_BUNDLE } from "../data/ai/raphaelCorpusBundle.js";
+
 /**
- * Local static corpus loader (v1 skeleton).
- * Future target: NexusLink/src/data/ai/raphael_corpus.bundle.json
- * Do not fetch network or import the external corpus repo at runtime.
+ * Local static corpus loader.
+ * Primary: exported bundle from aiforge-raphael-corpus.
+ * Fallback: minimal internal pack if bundle import fails.
  */
 const FALLBACK_CORPUS = Object.freeze({
   version: "1.0.0-fallback",
@@ -26,8 +28,21 @@ const FALLBACK_CORPUS = Object.freeze({
 let cachedCorpus = null;
 
 export function loadRaphaelCorpus() {
-  if (!cachedCorpus) cachedCorpus = FALLBACK_CORPUS;
+  if (!cachedCorpus) {
+    cachedCorpus = normalizeCorpus(RAPHAEL_CORPUS_BUNDLE || FALLBACK_CORPUS);
+  }
   return cachedCorpus;
+}
+
+function normalizeCorpus(raw = {}) {
+  if (!raw.sentences?.length) return FALLBACK_CORPUS;
+  return {
+    version: raw.version || "1.0.0",
+    source: raw.source || "unknown",
+    concepts: raw.concepts || [],
+    sentences: raw.sentences || [],
+    mappings: raw.mappings || []
+  };
 }
 
 export function getCorpusSentencesByEmotion(emotionKey = "") {
@@ -36,7 +51,11 @@ export function getCorpusSentencesByEmotion(emotionKey = "") {
 
   corpus.mappings
     .filter((mapping) => mapping.emotionHint === emotionKey)
-    .forEach((mapping) => mapping.sentenceIds.forEach((id) => sentenceIds.add(id)));
+    .forEach((mapping) => (mapping.sentenceIds || []).forEach((id) => sentenceIds.add(id)));
+
+  if (!sentenceIds.size) {
+    return corpus.sentences.filter((sentence) => sentence.emotion === emotionKey);
+  }
 
   return corpus.sentences.filter((sentence) => sentenceIds.has(sentence.id));
 }

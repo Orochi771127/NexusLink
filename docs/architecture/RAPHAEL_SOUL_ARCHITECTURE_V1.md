@@ -1,4 +1,4 @@
-# Raphael Soul Architecture v1.2
+# Raphael Soul Architecture v1.3
 
 Branch: `feature/raphael-soul-architecture-v1`
 
@@ -162,12 +162,51 @@ Whitelist registry with permission policy.
 - `applyRaphaelCoreResult()`
 - render + save
 
+## Level 2 preference memory (`companionPreferenceProfile.js`)
+
+Session-only profile — **no `defaultState` / save schema change**.
+
+```text
+learnedSignals / replyLengthBias / boundarySensitivity / restAffinity / eveningAffinity
+→ applyPreferenceToPersona()
+→ buildPreferenceCooldown()
+→ 2-pass reflect updates profile each turn
+```
+
+## Corpus RAG (`corpusSearch.js` + `raphaelCorpusBundle.js`)
+
+```text
+aiforge-raphael-corpus → docs/qa/_export_corpus_bundle.py → src/data/ai/raphaelCorpusBundle.js
+→ corpusLoader (bundle primary, internal fallback)
+→ searchCorpus() per turn → perception.corpusHits
+→ responseComposer seed bias + renderer hints (F-layer not pasted verbatim)
+```
+
+## Advisor + Renderer dual mode
+
+| Mode | Entry | Default |
+|------|-------|---------|
+| `advisor` | `askAdvisor()` async | OFF |
+| `renderer` | `renderReply()` sync mock | OFF |
+
+Enable in dev:
+
+```js
+runtime.externalIntelligence = {
+  advisorEnabled: false,
+  rendererEnabled: true,
+  provider: "mock"
+};
+```
+
+Renderer runs **after** local draft + critic repair; critics run again on rendered text.
+
 ## Learning levels (roadmap)
 
 | Level | Name | Status |
 |-------|------|--------|
 | 1 | Runtime adaptation | **Active** |
-| 2 | Persistent preference profile | Planned (session-only, no schema change) |
+| 2 | Persistent preference profile | **Active** (session-only) |
 | 3 | Corpus evolution via PR | Scaffolded |
 | 4 | Model fine-tuning | Deferred |
 
@@ -179,6 +218,8 @@ Phase 2: Memory retrieval + stateMutation      ✓
 Phase 3: Critic / Evaluator                    ✓
 Phase 4: SelfEvolutionPipeline                 ✓ (scaffold)
 Phase 5: ExternalModelGateway mock adapter     ✓ (scaffold)
+Phase 5b: Level 2 preference + corpus RAG    ✓
+Phase 5c: Renderer mock dual mode              ✓ (default OFF)
 Phase 6: OpenAI / Grok advisor mode            — not started
 Phase 7: Web access (default OFF)              — scaffold only
 Phase 8: Corpus evolution PR pipeline          — not started

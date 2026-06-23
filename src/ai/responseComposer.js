@@ -2,6 +2,7 @@ import { SOUL_TALK_INTENTS } from "./intentClassifier.js";
 import { SOUL_TALK_REACTIONS } from "./reactionPlanner.js";
 import { buildSafetyRedirectReply } from "./safetyShield.js";
 
+
 const RESPONSE_PACKS = Object.freeze({
   fatigue: {
     acknowledge: [
@@ -118,7 +119,8 @@ export function composeRaphaelReply({
   state = {},
   companion = null,
   persona = null,
-  corpus = null
+  corpus = null,
+  corpusHits = null
 } = {}) {
   if (plan.mode === SOUL_TALK_REACTIONS.SAFETY_REDIRECT) {
     return buildSafetyRedirectReply(safety);
@@ -159,8 +161,13 @@ export function composeRaphaelReply({
     ], seed);
   }
 
-  const composed = pick(modeLines, seed);
+  const composed = pick(modeLines, seed + corpusSeedOffset(corpusHits));
   return persona ? applyPersonaStyle(composed, persona) : composed;
+}
+
+function corpusSeedOffset(corpusHits = []) {
+  if (!corpusHits?.length) return 0;
+  return corpusHits.reduce((sum, hit) => sum + String(hit.id || "").length, 0) % 7;
 }
 
 function pick(lines = [], seed = 0) {
