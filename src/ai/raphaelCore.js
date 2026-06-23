@@ -184,4 +184,7 @@ if (typeof window !== "undefined" && new URLSearchParams(window.location.search)
   import("./testHarness/raphaelCoreSmokeCases.js").then((mod) => mod.installRaphaelSmokeHarness(window));
   import("./testHarness/awakeningGateSmokeCases.js").then((mod) => mod.installAwakeningSmokeHarness(window));
   import("./testHarness/raphaelGrowthSession.js").then((mod) => mod.installRaphaelGrowthHarness(window));
+  import("./testHarness/raphaelCrossSessionPreferenceCases.js").then((mod) =>
+    mod.installCrossSessionPreferenceHarness(window)
+  );
 }

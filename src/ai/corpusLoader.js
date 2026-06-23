@@ -43,7 +43,7 @@ function normalizeCorpus(raw = {}) {
     sentences: raw.sentences || [],
     mappings: raw.mappings || [],
     responsePacks: raw.responsePacks || {},
-    templates: raw.templates || { templates: [] }
+    templates: raw.templates || {}
   };
 }
 

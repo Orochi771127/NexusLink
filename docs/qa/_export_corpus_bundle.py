@@ -1,10 +1,11 @@
 """Export aiforge-raphael-corpus JSON into NexusLink runtime bundle module."""
 import json
+from datetime import date
 from pathlib import Path
 
 CORPUS_ROOT = Path(__file__).resolve().parents[2].parent / "aiforge-raphael-corpus"
 OUT_PATH = Path(__file__).resolve().parents[2] / "src" / "data" / "ai" / "raphaelCorpusBundle.js"
-PACKS_DIR = CORPUS_ROOT / "response_packs" / "greyshade-cat"
+PACKS_ROOT = CORPUS_ROOT / "response_packs"
 
 
 def load_json(path):
@@ -65,12 +66,12 @@ def normalize_mappings(raw):
     return mappings
 
 
-def load_response_packs():
+def load_companion_packs(companion_dir):
     packs = []
-    if not PACKS_DIR.exists():
-        return packs, {"companionId": "greyshade-cat", "templates": []}
+    if not companion_dir.exists():
+        return packs
 
-    for path in sorted(PACKS_DIR.glob("*.json")):
+    for path in sorted(companion_dir.glob("*.json")):
         if path.name == "templates.json":
             continue
         data = load_json(path)
@@ -78,29 +79,49 @@ def load_response_packs():
             packs.extend(data)
         elif isinstance(data, dict):
             packs.append(data)
+    return packs
 
-    templates_path = PACKS_DIR / "templates.json"
-    templates_doc = load_json(templates_path) if templates_path.exists() else {"templates": []}
-    return packs, templates_doc
+
+def load_all_response_packs():
+    response_packs = {}
+    templates_by_companion = {}
+
+    if not PACKS_ROOT.exists():
+        return response_packs, templates_by_companion
+
+    for companion_dir in sorted(PACKS_ROOT.iterdir()):
+        if not companion_dir.is_dir():
+            continue
+        companion_id = companion_dir.name
+        packs = load_companion_packs(companion_dir)
+        if packs:
+            response_packs[companion_id] = packs
+
+        templates_path = companion_dir / "templates.json"
+        if templates_path.exists():
+            templates_by_companion[companion_id] = load_json(templates_path)
+
+    return response_packs, templates_by_companion
 
 
 def main():
     concepts = normalize_concepts(load_json(CORPUS_ROOT / "corpus" / "concepts" / "A_concepts.json"))
     sentences = normalize_sentences(load_json(CORPUS_ROOT / "corpus" / "sentences" / "F_sentences.json"))
     mappings = normalize_mappings(load_json(CORPUS_ROOT / "corpus" / "mappings" / "G_mappings.json"))
-    response_packs, templates_doc = load_response_packs()
+    response_packs, templates_by_companion = load_all_response_packs()
+
+    pack_count = sum(len(packs) for packs in response_packs.values())
+    template_count = sum(len(doc.get("templates", [])) for doc in templates_by_companion.values())
 
     bundle = {
-        "version": "1.1.0-companion-packs",
+        "version": "1.2.0-multi-companion-packs",
         "source": "aiforge-raphael-corpus",
-        "exportedAt": "2026-06-23",
+        "exportedAt": date.today().isoformat(),
         "concepts": concepts,
         "sentences": sentences,
         "mappings": mappings,
-        "responsePacks": {
-            "greyshade-cat": response_packs
-        },
-        "templates": templates_doc
+        "responsePacks": response_packs,
+        "templates": templates_by_companion
     }
 
     OUT_PATH.parent.mkdir(parents=True, exist_ok=True)
@@ -111,7 +132,8 @@ def main():
     OUT_PATH.write_text(js, encoding="utf-8")
     print(
         f"Wrote {OUT_PATH} ({len(sentences)} ref sentences, "
-        f"{len(response_packs)} companion packs, {len(templates_doc.get('templates', []))} templates)"
+        f"{pack_count} companion packs across {len(response_packs)} companions, "
+        f"{template_count} templates)"
     )
 
 

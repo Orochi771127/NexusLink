@@ -59,6 +59,12 @@ def _pass_case(case):
         )
     if inp == "抱抱我":
         return case.get("shouldSpeak") is False and not case.get("forbiddenPhraseDetected")
+    if inp == "我又覺得自己很累":
+        return case.get("recallHit") and not case.get("forbiddenPhraseDetected")
+    if "flame-flicker" in inp:
+        return case.get("packHit") and not case.get("forbiddenPhraseDetected")
+    if case.get("pass") is False:
+        return False
     return not case.get("forbiddenPhraseDetected")
 
 

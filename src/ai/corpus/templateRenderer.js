@@ -59,7 +59,7 @@ export function renderTemplateReply({
     return { text: recoveryPack.line, source: "recovery_pack", packId: recoveryPack.packId };
   }
 
-  const templates = corpus.templates?.templates || [];
+  const templates = resolveCompanionTemplates(corpus, companionId);
   const slots = buildTemplateSlots(recoveryContext, analysis);
 
   for (const templateDef of templates) {
@@ -92,6 +92,13 @@ function buildTemplateSlots(recoveryContext = {}, analysis = {}) {
     memoryStatusLabel: STATUS_LABELS[recoveryContext.memoryStatus] || "留下來",
     smallAction: SMALL_ACTIONS[emotionKey] || "先慢一點"
   };
+}
+
+function resolveCompanionTemplates(corpus = {}, companionId = "greyshade-cat") {
+  const root = corpus.templates || {};
+  if (root[companionId]?.templates) return root[companionId].templates;
+  if (root.templates) return root.templates;
+  return [];
 }
 
 function fillTemplate(template = "", slots = {}) {

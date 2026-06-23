@@ -361,6 +361,41 @@ Commit: `35ddea5` (NexusLink), `0c63c63` (corpus)
 
 ## Test / Optimization Record
 
+Date/time: 2026-06-24 (corpus expansion + cross-session preferences)
+Branch: `feature/raphael-soul-architecture-v1` + `aiforge-raphael-corpus/merge/raphael-corpus-v1`
+Commit: *(pending)*
+
+### What was tested
+
+- Multi-companion corpus bundle v1.2.0 (greyshade-cat + flame-flicker)
+- Cross-session preference persistence (`nexusLinkCompanionPrefs:v1`)
+- 12-case harness (10 core + recall + flame-flicker pack)
+- Cross-session pref test + 5-turn growth session
+
+### Result
+
+- **Pass** — harness **12/12**, cross-session **7/7 checks**, growth **5/5**
+
+| Area | Result |
+|------|--------|
+| flame-flicker fatigue | `累的時候不用硬撐熱度。餘燼也可以安靜地亮著。` |
+| Cross-session short bias | Session 1 `rest_request` → reload hydrate → `replyLengthBias: short` |
+| Corpus packs | 36 packs across 2 companions |
+
+### Changes made
+
+- Corpus: `response_packs/flame-flicker/*` (8 emotion packs + templates)
+- Corpus: `greyshade-cat/pressure.json`, `presence.json`
+- NexusLink: `companionPreferenceStore.js`, hydrate/commit in `companionPreferenceProfile.js`
+- NexusLink: `docs/architecture/COMPANION_PREFERENCE_PERSISTENCE_V1.md`
+- NexusLink: multi-companion export in `_export_corpus_bundle.py`
+- NexusLink: persona table for 5 guardians; per-companion template lookup
+- Tests: `raphaelCrossSessionPreferenceCases.js`, `_run_cross_session_pref.py`, flame-flicker smoke case
+
+---
+
+## Test / Optimization Record
+
 Date/time: 2026-06-24 (growth session + recall fix)
 Agent / tool: Grok Agent (Playwright harness)
 Branch: `feature/raphael-soul-architecture-v1`

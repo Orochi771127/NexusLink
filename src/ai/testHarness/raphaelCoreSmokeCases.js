@@ -35,6 +35,12 @@ const GREYSHADE_COMPANION = Object.freeze({
   soulTalkTone: "quiet_observer"
 });
 
+const FLAME_FLICKER_COMPANION = Object.freeze({
+  id: "flame-flicker",
+  name: "焰紋狐",
+  soulTalkTone: "ember_fox"
+});
+
 export function runRaphaelSmokeCase(input, stateOverrides = {}, companion = GREYSHADE_COMPANION) {
   const state = { ...BASE_STATE, ...stateOverrides };
   const coreResult = runRaphaelCore(input, state, {
@@ -51,7 +57,22 @@ export function runAllRaphaelSmokeCases(stateOverrides = {}, companion = GREYSHA
   clearSessionPreferenceProfiles();
   const cases = RAPHAEL_SMOKE_INPUTS.map((input) => runRaphaelSmokeCase(input, stateOverrides, companion));
   cases.push(runMemoryRecallSmokeCase(companion));
+  cases.push(runFlameFlickerCorpusSmokeCase());
   return cases;
+}
+
+export function runFlameFlickerCorpusSmokeCase() {
+  clearSessionPreferenceProfiles();
+  const result = runRaphaelSmokeCase("今天有點累", {}, FLAME_FLICKER_COMPANION);
+  const packHit = /火|餘燼|疲憊|累/.test(result.reply || "");
+
+  return {
+    ...result,
+    input: "今天有點累 (flame-flicker)",
+    companionId: "flame-flicker",
+    packHit,
+    pass: packHit && !result.forbiddenPhraseDetected
+  };
 }
 
 export function runMemoryRecallSmokeCase(companion = GREYSHADE_COMPANION) {

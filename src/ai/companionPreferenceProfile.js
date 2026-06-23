@@ -1,7 +1,15 @@
 /**
- * Level 2 preference memory — session-only, no defaultState / save schema change.
+ * Level 2 preference memory — session cache + cross-session persistence.
+ * Persistence uses PREFERENCE_STORAGE_KEY (not STORAGE_KEY / defaultState).
  */
+import {
+  commitCompanionPreferenceProfile,
+  hydrateSessionProfileFromStore,
+  clearPersistedCompanionPreferences
+} from "./companionPreferenceStore.js";
+
 const SESSION_PROFILES = new Map();
+const SESSION_HYDRATED = new Set();
 
 const DEFAULT_PROFILE = Object.freeze({
   replyLengthBias: "normal",
@@ -18,8 +26,9 @@ const SHORT_REPLY_PATTERNS = [/短一點/, /簡短/, /少說/, /安靜/, /不用
 const LOW_COMFORT_PATTERNS = [/不要太甜/, /別安慰/, /不用哄/, /不要肉麻/];
 
 export function getCompanionPreferenceProfile(companionId = "default") {
+  ensureSessionHydrated(companionId);
   const existing = SESSION_PROFILES.get(companionId);
-  if (existing) return { ...existing, learnedSignals: [...existing.learnedSignals] };
+  if (existing) return cloneProfile(existing);
   return { ...DEFAULT_PROFILE, learnedSignals: [] };
 }
 
@@ -71,6 +80,7 @@ export function updateCompanionPreferenceProfile(
   }
 
   SESSION_PROFILES.set(companionId, profile);
+  commitCompanionPreferenceProfile(companionId, profile);
   return profile;
 }
 
@@ -145,4 +155,26 @@ function clamp(value, min, max) {
 
 export function clearSessionPreferenceProfiles() {
   SESSION_PROFILES.clear();
+  SESSION_HYDRATED.clear();
+}
+
+export function clearAllCompanionPreferences(companionId = null) {
+  clearSessionPreferenceProfiles();
+  clearPersistedCompanionPreferences(companionId);
+}
+
+function ensureSessionHydrated(companionId = "default") {
+  if (SESSION_HYDRATED.has(companionId)) return;
+  SESSION_HYDRATED.add(companionId);
+  if (SESSION_PROFILES.has(companionId)) return;
+
+  const hydrated = hydrateSessionProfileFromStore(companionId, DEFAULT_PROFILE);
+  SESSION_PROFILES.set(companionId, hydrated);
+}
+
+function cloneProfile(profile = {}) {
+  return {
+    ...profile,
+    learnedSignals: [...(profile.learnedSignals || [])]
+  };
 }
