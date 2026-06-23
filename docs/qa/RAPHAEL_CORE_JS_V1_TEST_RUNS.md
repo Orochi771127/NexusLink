@@ -364,7 +364,7 @@ Commit: `35ddea5` (NexusLink), `0c63c63` (corpus)
 Date/time: 2026-06-24 (growth session + recall fix)
 Agent / tool: Grok Agent (Playwright harness)
 Branch: `feature/raphael-soul-architecture-v1`
-Commit: `54d5f93`
+Commit: `effe621`
 
 ### What was tested
 
