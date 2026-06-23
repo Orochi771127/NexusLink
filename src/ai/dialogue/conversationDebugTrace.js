@@ -1,3 +1,5 @@
+import { getPrefillDebugInfo } from "./quickReplyContext.js";
+
 export function buildConversationDebugTrace({
   inputText = "",
   nlu = {},
@@ -34,6 +36,11 @@ export function buildConversationDebugTrace({
         }
       : null,
     finalReply: reply,
+    prefill: {
+      ...getPrefillDebugInfo(nlu.prefillContext),
+      usedPrefillDetail: composeMeta?.usedPrefillDetail || null,
+      groundedByPrefill: Boolean(composeMeta?.groundedByPrefill)
+    },
     quickReplies: (quickReplies || []).map((item) => ({
       label: item.label,
       intent: item.intent,

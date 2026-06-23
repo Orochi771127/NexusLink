@@ -7,6 +7,7 @@ import { evaluateInitiativeCooldown } from "./initiativeCooldown.js";
 import { runCritics } from "../eval/runCritics.js";
 import { repairGenericReply } from "../nlu/nluReplyBuilder.js";
 import { resolveConstitutionRepair } from "../eval/constitutionCritic.js";
+import { buildPrefillGroundedReply } from "../dialogue/prefillGrounding.js";
 import { buildSafetyRedirectReply } from "../safetyShield.js";
 import { sanitizeReply } from "../forbiddenPhrases.js";
 import { renderReply } from "../external/externalModelGateway.js";
@@ -227,10 +228,25 @@ function applyCriticRepairs(execution, critique, perception) {
     reply = sanitizeReply(reply, 0).text;
   }
 
+  if (codes.includes("missing_prefill_reference")) {
+    const prefillReply = buildPrefillGroundedReply({
+      strategy: perception.responseStrategy?.strategy,
+      nlu: perception.nlu,
+      semanticFrame: perception.nlu?.semanticFrame,
+      prefillContext: perception.nlu?.prefillContext,
+      seed: (perception.gateway?.normalizedInput || "").length
+    });
+    if (prefillReply) {
+      reply = prefillReply;
+      shouldSpeak = true;
+    }
+  }
+
   if (
     codes.includes("generic_fallback_reply") ||
     codes.includes("generic_without_topic") ||
     codes.includes("missing_topic_reference") ||
+    codes.includes("missing_specific_detail_reference") ||
     codes.includes("comfort_violates_constraint") ||
     codes.includes("comfort_instead_of_practical") ||
     codes.includes("too_similar_to_previous_reply")
@@ -241,6 +257,17 @@ function applyCriticRepairs(execution, critique, perception) {
       semanticFrame: perception.nlu?.semanticFrame,
       seed: (perception.gateway?.normalizedInput || "").length
     });
+    shouldSpeak = Boolean(reply);
+  }
+
+  if (codes.includes("prefill_constitution_risk")) {
+    reply = buildPrefillGroundedReply({
+      strategy: perception.responseStrategy?.strategy,
+      nlu: perception.nlu,
+      semanticFrame: perception.nlu?.semanticFrame,
+      prefillContext: perception.nlu?.prefillContext,
+      seed: (perception.gateway?.normalizedInput || "").length + 1
+    }) || reply;
     shouldSpeak = Boolean(reply);
   }
 

@@ -8,6 +8,10 @@ import { buildStrategyReply, repairGenericReply } from "./nlu/nluReplyBuilder.js
 import { critiqueGenericReply } from "./eval/genericReplyCritic.js";
 import { weaveExplicitReference } from "./nlu/explicitReference.js";
 import { shouldSuppressExplicitReference } from "./eval/constitutionCritic.js";
+import { buildPrefilledSpecificDetail } from "./nlu/specificDetailExtractor.js";
+import { replyReferencesDetail } from "./nlu/explicitReference.js";
+import { buildPrefillGroundingPlan, downgradePrefillGroundingPlan } from "./dialogue/prefillGrounding.js";
+import { getReferenceText, hasValidPrefill } from "./dialogue/quickReplyContext.js";
 
 const BOUNDARY_MODES = new Set([
   SOUL_TALK_REACTIONS.WITHDRAW,
@@ -38,12 +42,15 @@ function applyPersonaStyle(text, persona = {}) {
 
 function returnComposeResult(text, meta, guardArgs) {
   const reply = finalizeAndGuardReply(text, guardArgs);
+  const prefillMeta = guardArgs.composeOpts?.prefillMeta || {};
   return {
     reply,
     variantId: meta.variantId || null,
     replySource: meta.replySource || "unknown",
     openingPhrase: meta.openingPhrase || extractOpeningPhrase(reply),
-    variationReason: meta.variationReason || null
+    variationReason: meta.variationReason || null,
+    usedPrefillDetail: prefillMeta.usedPrefillDetail || null,
+    groundedByPrefill: Boolean(prefillMeta.groundedByPrefill)
   };
 }
 
@@ -284,21 +291,87 @@ export function finalizeAndGuardReply(text, { persona, state, composeOpts, nlu, 
     reply = finalizeReply(reply, persona, state, composeOpts);
   }
 
-  const specificDetail = nlu?.semanticFrame?.specificDetail;
   const weaveStrategy = composeOpts.responseStrategy?.strategy || "";
-  const shouldWeaveDetail =
-    specificDetail?.text &&
-    !["light_greeting", "quiet_presence", "holding_space", "memory_reference"].includes(weaveStrategy) &&
-    nlu?.dialogueAct !== "greeting" &&
-    specificDetail.type !== "clause" &&
-    !shouldSuppressExplicitReference(nlu?.semanticFrame, weaveStrategy);
+  const frame = nlu?.semanticFrame || {};
+  const prefillContext = nlu?.prefillContext || null;
+  let groundingPlan = buildPrefillGroundingPlan(prefillContext);
+  groundingPlan = downgradePrefillGroundingPlan(groundingPlan, frame, weaveStrategy);
 
-  if (shouldWeaveDetail) {
-    reply = weaveExplicitReference(reply, specificDetail, { strategy: weaveStrategy });
-    reply = finalizeReply(reply, persona, state, composeOpts);
+  composeOpts.prefillMeta = resolvePrefillComposeMeta({
+    reply,
+    prefillContext,
+    groundingPlan,
+    weaveStrategy,
+    frame
+  });
+
+  if (
+    groundingPlan.groundedMode === "explicit" &&
+    groundingPlan.prefillDetail &&
+    !prefillContext?.skipWeave &&
+    !shouldSuppressExplicitReference(frame, weaveStrategy)
+  ) {
+    const prefillDetail = buildPrefilledSpecificDetail(groundingPlan.prefillDetail);
+    if (!replyReferencesDetail(reply, prefillDetail)) {
+      reply = weaveExplicitReference(reply, prefillDetail, { strategy: weaveStrategy });
+      reply = finalizeReply(reply, persona, state, composeOpts);
+      composeOpts.prefillMeta = {
+        usedPrefillDetail: groundingPlan.prefillDetail,
+        groundedByPrefill: true
+      };
+    }
+  } else {
+    const specificDetail = frame.specificDetail;
+    const shouldWeaveDetail =
+      specificDetail?.text &&
+      !["light_greeting", "quiet_presence", "holding_space", "memory_reference"].includes(weaveStrategy) &&
+      nlu?.dialogueAct !== "greeting" &&
+      specificDetail.type !== "clause" &&
+      !shouldSuppressExplicitReference(frame, weaveStrategy);
+
+    if (shouldWeaveDetail && !replyReferencesDetail(reply, specificDetail)) {
+      reply = weaveExplicitReference(reply, specificDetail, { strategy: weaveStrategy });
+      reply = finalizeReply(reply, persona, state, composeOpts);
+    }
+  }
+
+  if (!composeOpts.prefillMeta?.groundedByPrefill && hasValidPrefill(prefillContext)) {
+    const referenceText = getReferenceText(prefillContext);
+    if (referenceText && replyReferencesDetail(reply, buildPrefilledSpecificDetail(referenceText))) {
+      composeOpts.prefillMeta = {
+        usedPrefillDetail: referenceText,
+        groundedByPrefill: true
+      };
+    }
   }
 
   return reply;
+}
+
+function resolvePrefillComposeMeta({ reply, prefillContext, groundingPlan, weaveStrategy, frame }) {
+  if (!hasValidPrefill(prefillContext)) {
+    return { usedPrefillDetail: null, groundedByPrefill: false };
+  }
+
+  const referenceText = getReferenceText(prefillContext);
+  if (!referenceText) {
+    return { usedPrefillDetail: null, groundedByPrefill: false };
+  }
+
+  const referenced = replyReferencesDetail(reply, buildPrefilledSpecificDetail(referenceText));
+  if (referenced) {
+    return { usedPrefillDetail: referenceText, groundedByPrefill: true };
+  }
+
+  if (
+    groundingPlan.groundedMode === "soft" ||
+    shouldSuppressExplicitReference(frame, weaveStrategy) ||
+    prefillContext.skipWeave
+  ) {
+    return { usedPrefillDetail: referenceText, groundedByPrefill: false };
+  }
+
+  return { usedPrefillDetail: referenceText, groundedByPrefill: false };
 }
 
 function shouldSkipResponsePacks(nlu, strategy) {

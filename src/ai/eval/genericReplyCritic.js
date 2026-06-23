@@ -1,4 +1,8 @@
 import { replyReferencesDetail } from "../nlu/explicitReference.js";
+import { buildPrefilledSpecificDetail } from "../nlu/specificDetailExtractor.js";
+import { getReferenceText, hasValidPrefill } from "../dialogue/quickReplyContext.js";
+import { shouldSuppressExplicitReference } from "./constitutionCritic.js";
+import { PersonaConstitution } from "../persona/PersonaConstitution.js";
 
 const GENERIC_PATTERNS = [
   /^好[，,]?\s*我聽見了/,
@@ -29,6 +33,8 @@ export function critiqueGenericReply({
   const entities = frame.entities || [];
   const constraints = frame.constraints || [];
   const specificDetail = frame.specificDetail || null;
+  const prefillContext = nlu.prefillContext || perception?.nlu?.prefillContext || null;
+  const strategy = perception?.responseStrategy?.strategy || "";
 
   if (!text) return { pass: true, issues: [], repairHint: "" };
 
@@ -80,6 +86,28 @@ export function critiqueGenericReply({
 
   if (previousReply && similarity(text, previousReply) > 0.82) {
     issues.push("too_similar_to_previous_reply");
+  }
+
+  if (
+    hasValidPrefill(prefillContext) &&
+    prefillContext.mustReference &&
+    !prefillContext.isQuietMode &&
+    !prefillContext.skipWeave
+  ) {
+    const referenceText = getReferenceText(prefillContext);
+    const prefillDetail = buildPrefilledSpecificDetail(referenceText);
+    if (referenceText && !replyReferencesDetail(text, prefillDetail)) {
+      issues.push("missing_prefill_reference");
+    }
+  }
+
+  if (
+    hasValidPrefill(prefillContext) &&
+    prefillContext.mustReference &&
+    shouldSuppressExplicitReference(frame, strategy) &&
+    PersonaConstitution.patterns.gamifyHighRisk.test(text)
+  ) {
+    issues.push("prefill_constitution_risk");
   }
 
   return {

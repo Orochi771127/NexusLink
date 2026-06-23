@@ -1,4 +1,6 @@
 import { RESPONSE_STRATEGIES } from "../responseStrategySelector.js";
+import { buildPrefillGroundedReply } from "../dialogue/prefillGrounding.js";
+import { hasValidPrefill } from "../dialogue/quickReplyContext.js";
 
 const GENERIC_FALLBACK_BANNED = /我聽見了[。.]?\s*我們先慢一點|好[，,]?\s*我聽到了[，,]?\s*我們慢一點/;
 
@@ -8,8 +10,23 @@ export function getStrategyVariantLines({
   semanticFrame = {},
   recoveryContext = null
 } = {}) {
-  const lines = resolveVariantLines(strategy, nlu, semanticFrame, recoveryContext);
-  return lines.filter((line) => line && !GENERIC_FALLBACK_BANNED.test(line));
+  const frame = semanticFrame || nlu.semanticFrame || {};
+  const activePrefill = nlu?.prefillContext || null;
+
+  if (hasValidPrefill(activePrefill) && activePrefill.mustReference) {
+    const forced = buildPrefillGroundedReply({
+      strategy,
+      nlu,
+      semanticFrame: frame,
+      prefillContext: activePrefill,
+      seed: String(nlu.inputText || "").length
+    });
+    if (forced && !GENERIC_FALLBACK_BANNED.test(forced)) return [forced];
+  }
+
+  const lines = resolveVariantLines(strategy, nlu, frame, recoveryContext, activePrefill);
+  const filtered = lines.filter((line) => line && !GENERIC_FALLBACK_BANNED.test(line));
+  return applyPrefillLines(filtered, strategy, nlu, frame, activePrefill);
 }
 
 export function buildStrategyVariantMeta({
@@ -36,6 +53,9 @@ export function buildStrategyReplyAtVariant({
   variantIndex = 0,
   recoveryContext = null
 } = {}) {
+  const prefillReply = tryBuildPrefillReply({ strategy, nlu, semanticFrame, seed: variantIndex });
+  if (prefillReply) return prefillReply;
+
   const lines = getStrategyVariantLines({ strategy, nlu, semanticFrame, recoveryContext });
   if (!lines.length) return null;
   const reply = lines[Math.abs(variantIndex) % lines.length];
@@ -54,6 +74,9 @@ export function buildStrategyReply({
   if (Number.isFinite(variantIndex)) {
     return buildStrategyReplyAtVariant({ strategy, nlu, semanticFrame, variantIndex, recoveryContext });
   }
+
+  const prefillReply = tryBuildPrefillReply({ strategy, nlu, semanticFrame, seed });
+  if (prefillReply) return prefillReply;
 
   const frame = semanticFrame || nlu.semanticFrame || {};
   const topic = frame.topic || nlu.topic || "unknown";
@@ -261,7 +284,42 @@ function pick(lines, seed) {
   return lines[Math.abs(seed) % lines.length];
 }
 
-function resolveVariantLines(strategy, nlu, frame, recoveryContext) {
+function tryBuildPrefillReply({ strategy, nlu, semanticFrame, seed = 0 }) {
+  const prefillContext = nlu?.prefillContext;
+  if (!hasValidPrefill(prefillContext)) return null;
+
+  const reply = buildPrefillGroundedReply({
+    strategy,
+    nlu,
+    semanticFrame,
+    prefillContext,
+    seed
+  });
+
+  if (!reply || GENERIC_FALLBACK_BANNED.test(reply)) return null;
+  if (prefillContext.mustReference) return reply;
+  return null;
+}
+
+function applyPrefillLines(lines, strategy, nlu, frame, prefillContext) {
+  if (!hasValidPrefill(prefillContext)) return lines;
+
+  const grounded = buildPrefillGroundedReply({
+    strategy,
+    nlu,
+    semanticFrame: frame,
+    prefillContext,
+    seed: String(nlu.inputText || "").length
+  });
+
+  if (!grounded || GENERIC_FALLBACK_BANNED.test(grounded)) return lines;
+  if (prefillContext.mustReference) return [grounded];
+  if (lines.includes(grounded)) return lines;
+  return [grounded, ...lines];
+}
+
+function resolveVariantLines(strategy, nlu, frame, recoveryContext, prefillContext = null) {
+  const activePrefill = prefillContext || nlu?.prefillContext || null;
   const topic = frame.topic || nlu.topic || "unknown";
   const entities = frame.entities || [];
   const entityRef = entities[0] || topicLabel(topic);

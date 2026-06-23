@@ -62,7 +62,7 @@ function buildPracticalQuickReplies(topic, constraints = []) {
   if (topic === "hud_ui") {
     return [
       createQuickReply({
-        label: "先拆 top HUD",
+        label: "先拆 HUD 問題",
         intent: "clarify_hud_top",
         actionType: QUICK_REPLY_ACTION_TYPES.CLARIFY,
         topic: "hud_ui",
@@ -180,6 +180,7 @@ function buildRepairQuickReplies() {
       topic: "unknown",
       dialogueAct: "correcting_raphael",
       responseStrategyHint: RESPONSE_STRATEGIES.ACKNOWLEDGE_GENERIC_FAILURE,
+      payload: { prefillSpecificDetail: "一直重複同一句模板" },
       priority: 3
     }),
     createQuickReply({

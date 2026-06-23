@@ -80,6 +80,84 @@ export const DIALOGUE_LOOP_CASES = Object.freeze([
       quickReplySetsDistinct: true,
       minQuickReplyTurns: 3
     }
+  },
+  {
+    id: "DL-7",
+    input: "先拆 HUD 問題",
+    quickReply: {
+      label: "先拆 HUD 問題",
+      actionType: "clarify",
+      topic: "hud_ui",
+      dialogueAct: "clarifying_problem",
+      responseStrategyHint: "practical_clarification",
+      payload: {
+        prefillSpecificDetail: "Soul Talk 面板被 HUD 擋住",
+        focus: "soul_talk_panel",
+        constraints: ["not_seeking_comfort"]
+      }
+    },
+    expect: {
+      strategy: "practical_clarification",
+      groundedByPrefill: true,
+      mentions: /Soul Talk|HUD|擋|面板/
+    }
+  },
+  {
+    id: "DL-8",
+    input: "換一種說法",
+    quickReply: {
+      label: "換一種說法",
+      actionType: "repair",
+      topic: "unknown",
+      dialogueAct: "correcting_raphael",
+      responseStrategyHint: "acknowledge_generic_failure",
+      payload: { prefillSpecificDetail: "一直重複同一句模板" }
+    },
+    expect: {
+      strategy: "acknowledge_generic_failure",
+      groundedByPrefill: true,
+      mentions: /重複|模板|改|收到/
+    }
+  },
+  {
+    id: "DL-9",
+    input: "保持安靜",
+    quickReply: {
+      label: "保持安靜",
+      actionType: "quiet",
+      topic: "unknown",
+      dialogueAct: "requesting_silence",
+      responseStrategyHint: "quiet_presence",
+      payload: {
+        prefillSpecificDetail: "不該被引用的細節",
+        constraints: ["no_questions"]
+      }
+    },
+    expect: {
+      strategy: "quiet_presence",
+      noPrefillReference: true,
+      mentions: /安靜|不多說|不問/
+    }
+  },
+  {
+    id: "DL-10",
+    input: "先不給建議",
+    quickReply: {
+      label: "先不給建議",
+      actionType: "constraint",
+      topic: "physical_tiredness",
+      dialogueAct: "describing_event",
+      responseStrategyHint: "holding_space",
+      payload: {
+        prefillSpecificDetail: "再努力一下",
+        constraints: ["not_seeking_comfort", "no_advice"]
+      }
+    },
+    expect: {
+      strategy: ["holding_space", "quiet_presence", "repeated_emotion_recall", "emotional_short"],
+      noGamify: true,
+      noPrefillGamify: true
+    }
   }
 ]);
 
@@ -102,7 +180,8 @@ export function runDialogueLoopCase(testCase) {
     now: Date.now(),
     idSuffix: "dl",
     companion: GREYSHADE,
-    repeated: false
+    repeated: false,
+    quickReply: testCase.quickReply || null
   });
 
   const reply = coreResult.reply || "";
@@ -113,7 +192,7 @@ export function runDialogueLoopCase(testCase) {
   const quickReplies = coreResult.quickReplies || [];
 
   const checks = {
-    strategy_ok: expect.strategy ? strategy === expect.strategy : true,
+    strategy_ok: matchList(strategy, expect.strategy),
     strategy_not_ok: expect.strategyNot ? strategy !== expect.strategyNot : true,
     anti_loop_ok: expect.antiLoopApplied ? Boolean(coreResult.dialogueLoop?.antiLoopApplied) : true,
     anti_loop_reason_ok: expect.antiLoopReason
@@ -134,7 +213,11 @@ export function runDialogueLoopCase(testCase) {
       : true,
     no_comfort_quick_reply_ok: expect.noComfortQuickReply
       ? !quickReplies.some((item) => /安慰|陪著就好|沒事/.test(item.label))
-      : true
+      : true,
+    grounded_by_prefill_ok: expect.groundedByPrefill ? Boolean(coreResult.composeMeta?.groundedByPrefill) : true,
+    no_prefill_reference_ok: expect.noPrefillReference ? !/不該被引用/.test(reply) : true,
+    no_gamify_ok: expect.noGamify ? !/再努力|加油|成長機會/.test(reply) : true,
+    no_prefill_gamify_ok: expect.noPrefillGamify ? !/再努力一下/.test(reply) : true
   };
 
   return {
@@ -145,6 +228,8 @@ export function runDialogueLoopCase(testCase) {
     antiLoopReason: coreResult.dialogueLoop?.antiLoopReason,
     variantId: coreResult.composeMeta?.variantId,
     variationReason: coreResult.composeMeta?.variationReason,
+    groundedByPrefill: coreResult.composeMeta?.groundedByPrefill,
+    usedPrefillDetail: coreResult.composeMeta?.usedPrefillDetail,
     reply,
     checks,
     forbiddenPhraseDetected: forbidden.hasForbidden,
@@ -244,4 +329,10 @@ export function installDialogueLoopHarness(windowRef) {
   if (!windowRef) return;
   windowRef.runDialogueLoopCase = runDialogueLoopCase;
   windowRef.runAllDialogueLoopCases = runAllDialogueLoopCases;
+}
+
+function matchList(actual, expected) {
+  if (!expected) return true;
+  const list = Array.isArray(expected) ? expected : [expected];
+  return list.includes(actual);
 }
