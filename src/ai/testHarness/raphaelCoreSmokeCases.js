@@ -1,6 +1,8 @@
 import { runRaphaelCore } from "../raphaelCore.js";
 import { detectForbiddenPhrases } from "../forbiddenPhrases.js";
+import { containsExplicitRecallLanguage } from "../memoryRecallPolicy.js";
 import { clearSessionPreferenceProfiles } from "../companionPreferenceProfile.js";
+import { runRecallBleedSmokeCases } from "./recallBleedSmokeCases.js";
 
 export const RAPHAEL_SMOKE_INPUTS = Object.freeze([
   "今天有點累",
@@ -58,6 +60,7 @@ export function runAllRaphaelSmokeCases(stateOverrides = {}, companion = GREYSHA
   const cases = RAPHAEL_SMOKE_INPUTS.map((input) => runRaphaelSmokeCase(input, stateOverrides, companion));
   cases.push(runMemoryRecallSmokeCase(companion));
   cases.push(runFlameFlickerCorpusSmokeCase());
+  cases.push(...runRecallBleedSmokeCases());
   return cases;
 }
 
@@ -146,6 +149,8 @@ export function formatSmokeCaseResult(input, coreResult) {
     preferenceSignals: (coreResult.preferenceProfile?.learnedSignals || []).slice(-3),
     rendererUsed: Boolean(coreResult.renderMeta?.used),
     recoveryRecall: Boolean(coreResult.perception?.recoveryContext?.canRecall),
+    recallMode: coreResult.perception?.memories?.recallMode || coreResult.perception?.recoveryContext?.recallMode || "none",
+    explicitRecallBleed: containsExplicitRecallLanguage(reply),
     replySource: coreResult.perception?.recoveryContext?.phase || ""
   };
 }

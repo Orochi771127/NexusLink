@@ -40,7 +40,8 @@ export function composeRaphaelReply({
   replyMode = ""
 } = {}) {
   const composeOpts = {
-    recoveryRecall: Boolean(recoveryContext?.canRecall),
+    recoveryRecall: Boolean(recoveryContext?.allowsExplicitReference && recoveryContext?.canRecall),
+    recallMode: recoveryContext?.recallMode || "none",
     replyMode: replyMode || actionPlan.replyMode || ""
   };
   if (plan.mode === SOUL_TALK_REACTIONS.SAFETY_REDIRECT) {
@@ -71,14 +72,17 @@ export function composeRaphaelReply({
     if (boundaryLine.line) return finalizeReply(boundaryLine.line, persona, state, composeOpts);
   }
 
-  const templateReply = renderTemplateReply({
-    corpus: loadedCorpus,
-    companionId,
-    recoveryContext,
-    analysis,
-    reaction: mode,
-    seed
-  });
+  const templateReply =
+    composeOpts.recoveryRecall
+      ? renderTemplateReply({
+          corpus: loadedCorpus,
+          companionId,
+          recoveryContext,
+          analysis,
+          reaction: mode,
+          seed
+        })
+      : null;
   if (templateReply?.text) return finalizeReply(templateReply.text, persona, state, composeOpts);
 
   const packLine = selectResponsePackLine({

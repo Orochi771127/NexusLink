@@ -565,3 +565,49 @@ Note: Soul Talk UI tests run **without** `?devPanel=1` to avoid dev-lab overlay 
 **Ready** for merge to main from a verification standpoint, with the touch fatigue daytime follow-up noted as post-merge QA.
 
 Runner: `python docs/qa/_run_live_playtest_gate.py` (requires local server on port 5173).
+
+---
+
+## Recall Bleed Hardening
+
+Date/time: 2026-06-24 (local)
+Branch: `feature/raphael-soul-architecture-v1`
+Commit: _(see hardening commit)_
+
+### Root cause
+
+- `buildRecoveryContext()` set `canRecall: true` whenever `strongestMemory` existed (including `first_awakening` / `心核初醒`), even on low-intent inputs like `rest_request`.
+- `templateRenderer` and `requiresRecall` response packs injected explicit copy (`我還記得上次你也提到「{memoryTheme}」`) whenever `canRecall` was true.
+- `actionPlanner` promoted `reflect_memory` from `suggestReflectGoal` without checking intent or explicit recall request.
+- Awakening / apology / boundary memories scored highly via recency + intensity and became implicit recall targets.
+
+### Fix summary
+
+- Added `src/ai/memoryRecallPolicy.js` with `recallMode` (`none` | `soft_context` | `explicit_reference`).
+- Low-intent / rest / silence intents block implicit recall by default.
+- Awakening / conflict / apology memories protected unless explicit recall request or awakening gate.
+- `recoveryLoop`, `responseComposer`, `templateRenderer`, `responsePackSelector`, `actionPlanner` only allow explicit template recall when `recallMode === explicit_reference`.
+- Extended `intentClassifier` for `silence_request`, `quiet_presence`, `low_intent`, etc.
+- Added `recallBleedSmokeCases.js` (Cases A–E) + live gate `no_recall_bleed` check.
+
+### Test cases
+
+| Case | Input | Expected | Result |
+|------|-------|----------|--------|
+| A | 我只是想安靜一下 | no awakening/major recall, short quiet reply | Pass |
+| B | 你還記得第一次醒來的時候嗎？ | explicit awakening recall allowed | Pass |
+| C | 我又覺得自己很累 (+ fatigue memory) | fatigue recall, no awakening | Pass |
+| D | 抱抱我 | body cue, no major recall | Pass |
+| E | 謝謝你陪我 | gratitude ok, no awakening recall | Pass |
+
+### Result
+
+- Harness smoke: **17/17** pass (12 core + recall + flame-flicker + 5 bleed cases)
+- Live playtest gate: **10/10** Soul Talk, **13/13** HUD, 0 console errors, 0 forbidden phrases
+- PR #86 **not merged** (per user instruction)
+
+### Remaining risks
+
+- Case B reply still uses generic template (`我還記得上次你也提到「心核初醒」`) — acceptable for explicit request but copy could be more narrative later.
+- `soft_context` mode does not yet visibly bias tone in all paths; it only suppresses explicit recall (by design this round).
+- Touch fatigue daytime follow-up still open from prior gate.

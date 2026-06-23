@@ -29,7 +29,12 @@ export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
   const analysis = interpretEmotionInput(gateway.originalInput, state, { repeated: gateway.repeated });
   const intent = classifyIntent(gateway.normalizedInput, analysis, safety);
   const semanticSoul = deriveSemanticSoulState(state, analysis);
-  const memories = retrieveRelevantMemories(state, analysis, { now: gateway.now });
+  const memories = retrieveRelevantMemories(
+    state,
+    analysis,
+    { now: gateway.now, inputText: gateway.normalizedInput },
+    intent
+  );
   const recoveryContext = buildRecoveryContext(state, memories, analysis, { now: gateway.now });
 
   const preferenceProfile =

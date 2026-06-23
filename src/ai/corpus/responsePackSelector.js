@@ -61,7 +61,7 @@ function packMatches(pack, ctx) {
   if (pack.maxEnergy != null && ctx.energy > pack.maxEnergy) return false;
   if (pack.maxBoundaryPressure != null && ctx.boundaryPressure > pack.maxBoundaryPressure) return false;
 
-  if (pack.requiresRecall && !ctx.recoveryContext?.canRecall) return false;
+  if (pack.requiresRecall && !ctx.recoveryContext?.allowsExplicitReference) return false;
   if (pack.memoryStatus && ctx.recoveryContext?.memoryStatus !== pack.memoryStatus) return false;
 
   return true;
@@ -69,7 +69,7 @@ function packMatches(pack, ctx) {
 
 function scorePack(pack, recoveryContext) {
   let score = 0;
-  if (pack.requiresRecall && recoveryContext?.canRecall) score += 2;
+  if (pack.requiresRecall && recoveryContext?.allowsExplicitReference) score += 2;
   if (pack.intent) score += 1;
   if (pack.reaction) score += 0.5;
   return score;

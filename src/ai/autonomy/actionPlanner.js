@@ -95,7 +95,12 @@ export function planAutonomousAction({
     mapping = GOAL_ACTION_MAP[GOAL_WHITELIST.REPAIR_AFTER_CONFLICT];
     confidence = 0.82;
     reason = "apology_repair";
-  } else if (perception.recoveryContext?.suggestReflectGoal && memories.hasRecallableMemory) {
+  } else if (
+    perception.recoveryContext?.allowsExplicitReference &&
+    perception.recoveryContext?.suggestReflectGoal &&
+    memories.shouldRecall &&
+    memories.hasRecallableMemory
+  ) {
     mapping = GOAL_ACTION_MAP[GOAL_WHITELIST.REFLECT_MEMORY];
     confidence = 0.8;
     reason = "recovery_recall";

@@ -1,9 +1,11 @@
+import { resolveRecallPolicy, RECALL_MODES } from "./memoryRecallPolicy.js";
+
 const ACTIVE_STATUSES = new Set(["fresh", "settled", "transformed"]);
 const BOUNDARY_SOURCES = new Set(["boundary", "bond", "battle_repair"]);
 const RECENT_WINDOW = 10;
 const SIMILAR_EMOTION_WINDOW = 5;
 
-export function retrieveRelevantMemories(state = {}, analysis = {}, runtime = {}) {
+export function retrieveRelevantMemories(state = {}, analysis = {}, runtime = {}, intent = {}) {
   const now = Number.isFinite(runtime.now) ? runtime.now : Date.now();
   const memories = (Array.isArray(state.emotionalMemories) ? state.emotionalMemories : [])
     .filter((memory) => memory && ACTIVE_STATUSES.has(memory.status));
@@ -46,7 +48,7 @@ export function retrieveRelevantMemories(state = {}, analysis = {}, runtime = {}
         strongestMemory.status === "transformed")
   );
 
-  return {
+  const baseResult = {
     relevantMemories,
     strongestMemory,
     similarEmotionMemories,
@@ -54,6 +56,29 @@ export function retrieveRelevantMemories(state = {}, analysis = {}, runtime = {}
     hasRecentSimilarEmotion,
     hasRecallableMemory,
     recallHint: buildRecallHint(strongestMemory, emotionKey, now)
+  };
+
+  const recallPolicy = resolveRecallPolicy({
+    inputText: runtime.inputText || "",
+    intent,
+    analysis,
+    memoryResult: baseResult,
+    runtime
+  });
+
+  const gatedStrongest = recallPolicy.strongestMemory;
+  const shouldRecall = recallPolicy.shouldRecall;
+  const recallMode = recallPolicy.recallMode;
+
+  return {
+    ...baseResult,
+    strongestMemory: gatedStrongest,
+    hasRecallableMemory: shouldRecall && Boolean(gatedStrongest),
+    shouldRecall,
+    recallMode,
+    recallPolicy,
+    recallHint: buildRecallHint(gatedStrongest, emotionKey, now),
+    allowsExplicitReference: recallMode === RECALL_MODES.EXPLICIT_REFERENCE
   };
 }
 

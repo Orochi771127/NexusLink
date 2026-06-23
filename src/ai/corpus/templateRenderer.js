@@ -44,7 +44,7 @@ export function renderTemplateReply({
   reaction = "acknowledge",
   seed = 0
 } = {}) {
-  if (!recoveryContext?.canRecall) return null;
+  if (!recoveryContext?.allowsExplicitReference || !recoveryContext?.canRecall) return null;
 
   const recoveryPack = selectResponsePackLine({
     corpus,

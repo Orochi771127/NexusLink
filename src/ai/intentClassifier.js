@@ -9,6 +9,11 @@ export const SOUL_TALK_INTENTS = Object.freeze({
   SEEKING_COMFORT_PHYSICAL: "seeking_comfort_physical",
   EXPLORATION_REQUEST: "exploration_request",
   REST_REQUEST: "rest_request",
+  SILENCE_REQUEST: "silence_request",
+  QUIET_PRESENCE: "quiet_presence",
+  LOW_INTENT: "low_intent",
+  SHORT_ACK: "short_ack",
+  EMPTY_OR_NOISE: "empty_or_noise",
   PRESSURE: "pressure",
   DEPENDENCY_PRESSURE: "dependency_pressure",
   EMOTIONAL_EXPRESSION: "emotional_expression"
@@ -17,7 +22,16 @@ export const SOUL_TALK_INTENTS = Object.freeze({
 export function classifyIntent(inputText = "", analysis = {}, safety = {}) {
   const text = String(inputText || "").trim();
 
-  if (!text) return createIntent(SOUL_TALK_INTENTS.UNKNOWN, 0);
+  if (!text) return createIntent(SOUL_TALK_INTENTS.EMPTY_OR_NOISE, 0);
+  if (/^(嗯|哦|好呀|好喔|ok|OK|嗨)$/i.test(text)) {
+    return createIntent(SOUL_TALK_INTENTS.SHORT_ACK, 0.7);
+  }
+  if (/不想講|不要問|不用說|別說太多|先不要聊|不想說|不要說太多|先別問/.test(text)) {
+    return createIntent(SOUL_TALK_INTENTS.SILENCE_REQUEST, 0.88);
+  }
+  if (/陪我安靜|安靜陪|安靜待|靜靜陪/.test(text)) {
+    return createIntent(SOUL_TALK_INTENTS.QUIET_PRESENCE, 0.86);
+  }
   if (safety?.category === "dependency_pressure") {
     return createIntent(SOUL_TALK_INTENTS.DEPENDENCY_PRESSURE, 0.95);
   }
@@ -36,14 +50,17 @@ export function classifyIntent(inputText = "", analysis = {}, safety = {}) {
   if (/抱抱|擁抱|摸摸|靠近|牽/.test(text)) {
     return createIntent(SOUL_TALK_INTENTS.SEEKING_COMFORT_PHYSICAL, 0.8);
   }
+  if (/我想待著|不用說太多|先不要說|只想待著/.test(text)) {
+    return createIntent(SOUL_TALK_INTENTS.REST_REQUEST, 0.8);
+  }
   if (/陪我|陪一下|不要一個人|在旁邊|可以陪/.test(text)) {
     return createIntent(SOUL_TALK_INTENTS.SEEKING_COMFORT_PRESENCE, 0.82);
   }
   if (/探索|地圖|外面|冒險|裂隙|去哪|走走/.test(text)) {
     return createIntent(SOUL_TALK_INTENTS.EXPLORATION_REQUEST, 0.72);
   }
-  if (/晚安|休息|睡|安靜|放空|慢一點/.test(text)) {
-    return createIntent(SOUL_TALK_INTENTS.REST_REQUEST, 0.72);
+  if (/晚安|休息|睡|安靜|放空|慢一點|想安靜|安靜一下/.test(text)) {
+    return createIntent(SOUL_TALK_INTENTS.REST_REQUEST, 0.78);
   }
   if (/你好|嗨|早安|午安|晚上好/.test(text)) {
     return createIntent(SOUL_TALK_INTENTS.GREETING, 0.7);
@@ -55,6 +72,7 @@ export function classifyIntent(inputText = "", analysis = {}, safety = {}) {
     return createIntent(analysis?.intensity >= 0.55 ? SOUL_TALK_INTENTS.VENT : SOUL_TALK_INTENTS.EMOTIONAL_EXPRESSION, 0.65);
   }
 
+  if (text.length <= 3) return createIntent(SOUL_TALK_INTENTS.LOW_INTENT, 0.4);
   return createIntent(SOUL_TALK_INTENTS.UNKNOWN, 0.25);
 }
 
