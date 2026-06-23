@@ -34,6 +34,25 @@ function applyPersonaStyle(text, persona = {}) {
   return parts.slice(0, maxSentences).join("。") + (parts.length ? "。" : "");
 }
 
+function returnComposeResult(text, meta, guardArgs) {
+  const reply = finalizeAndGuardReply(text, guardArgs);
+  return {
+    reply,
+    variantId: meta.variantId || null,
+    replySource: meta.replySource || "unknown"
+  };
+}
+
+function guardArgs(persona, state, composeOpts, nlu) {
+  return {
+    persona,
+    state,
+    composeOpts,
+    nlu,
+    previousReply: getPreviousCompanionReply(state)
+  };
+}
+
 export function composeRaphaelReply({
   inputText = "",
   analysis = {},
@@ -61,8 +80,10 @@ export function composeRaphaelReply({
     recoveryContext
   };
 
+  const args = guardArgs(persona, state, composeOpts, nlu);
+
   if (plan.mode === SOUL_TALK_REACTIONS.SAFETY_REDIRECT) {
-    return buildSafetyRedirectReply(safety);
+    return returnComposeResult(buildSafetyRedirectReply(safety), { variantId: "safety:redirect", replySource: "safety" }, args);
   }
 
   const seed = buildSeed(inputText, state, companion);
@@ -75,7 +96,7 @@ export function composeRaphaelReply({
 
   if (BOUNDARY_MODES.has(mode)) {
     if (safety?.category === "dependency_pressure") {
-      return buildSafetyRedirectReply(safety);
+      return returnComposeResult(buildSafetyRedirectReply(safety), { variantId: "safety:dependency", replySource: "safety" }, args);
     }
     const boundaryLine = selectResponsePackLine({
       corpus: loadedCorpus,
@@ -89,13 +110,11 @@ export function composeRaphaelReply({
       seed
     });
     if (boundaryLine.line) {
-      return finalizeAndGuardReply(boundaryLine.line, {
-        persona,
-        state,
-        composeOpts,
-        nlu,
-        previousReply: getPreviousCompanionReply(state)
-      });
+      return returnComposeResult(
+        boundaryLine.line,
+        { variantId: boundaryLine.packId ? `pack:${boundaryLine.packId}` : "pack:boundary", replySource: "response_pack" },
+        args
+      );
     }
     const boundaryFallback =
       mode === SOUL_TALK_REACTIONS.WITHDRAW
@@ -103,13 +122,11 @@ export function composeRaphaelReply({
         : mode === SOUL_TALK_REACTIONS.REJECT
           ? "這樣的靠近太快了。"
           : "我需要一點距離，才能好好聽你。";
-    return finalizeAndGuardReply(boundaryFallback, {
-      persona,
-      state,
-      composeOpts,
-      nlu,
-      previousReply: getPreviousCompanionReply(state)
-    });
+    return returnComposeResult(
+      boundaryFallback,
+      { variantId: `boundary:${mode}`, replySource: "nlu_builder" },
+      args
+    );
   }
 
   if (
@@ -124,13 +141,11 @@ export function composeRaphaelReply({
       recoveryContext
     });
     if (awakeningReply) {
-      return finalizeAndGuardReply(awakeningReply, {
-        persona,
-        state,
-        composeOpts,
-        nlu,
-        previousReply: getPreviousCompanionReply(state)
-      });
+      return returnComposeResult(
+        awakeningReply,
+        { variantId: `strategy:${strategy}`, replySource: "nlu_builder" },
+        args
+      );
     }
 
     const templateReply = renderTemplateReply({
@@ -142,13 +157,11 @@ export function composeRaphaelReply({
       seed
     });
     if (templateReply?.text) {
-      return finalizeAndGuardReply(templateReply.text, {
-        persona,
-        state,
-        composeOpts,
-        nlu,
-        previousReply: getPreviousCompanionReply(state)
-      });
+      return returnComposeResult(
+        templateReply.text,
+        { variantId: templateReply.templateId ? `template:${templateReply.templateId}` : "template:recovery", replySource: "template" },
+        args
+      );
     }
   }
 
@@ -161,13 +174,11 @@ export function composeRaphaelReply({
       recoveryContext
     });
     if (strategyReply) {
-      return finalizeAndGuardReply(strategyReply, {
-        persona,
-        state,
-        composeOpts,
-        nlu,
-        previousReply: getPreviousCompanionReply(state)
-      });
+      return returnComposeResult(
+        strategyReply,
+        { variantId: `strategy:${strategy}`, replySource: "nlu_builder" },
+        args
+      );
     }
   }
 
@@ -185,13 +196,11 @@ export function composeRaphaelReply({
     });
 
     if (packLine.line && !packLine.silent) {
-      return finalizeAndGuardReply(packLine.line, {
-        persona,
-        state,
-        composeOpts,
-        nlu,
-        previousReply: getPreviousCompanionReply(state)
-      });
+      return returnComposeResult(
+        packLine.line,
+        { variantId: packLine.packId ? `pack:${packLine.packId}` : "pack:unknown", replySource: "response_pack" },
+        args
+      );
     }
   }
 
@@ -203,13 +212,11 @@ export function composeRaphaelReply({
       seed
     });
     if (questionReply) {
-      return finalizeAndGuardReply(questionReply, {
-        persona,
-        state,
-        composeOpts,
-        nlu,
-        previousReply: getPreviousCompanionReply(state)
-      });
+      return returnComposeResult(
+        questionReply,
+        { variantId: `strategy:${RESPONSE_STRATEGIES.ANSWER_OR_CLARIFY}`, replySource: "nlu_builder" },
+        args
+      );
     }
   }
 
@@ -220,13 +227,11 @@ export function composeRaphaelReply({
     seed: seed + 3
   });
 
-  return finalizeAndGuardReply(fallback || "我在。你想我先懂的是哪一段？", {
-    persona,
-    state,
-    composeOpts,
-    nlu,
-    previousReply: getPreviousCompanionReply(state)
-  });
+  return returnComposeResult(
+    fallback || "我在。你想我先懂的是哪一段？",
+    { variantId: `strategy:${RESPONSE_STRATEGIES.CLARIFYING_QUESTION}`, replySource: "nlu_builder" },
+    args
+  );
 }
 
 export function finalizeAndGuardReply(text, { persona, state, composeOpts, nlu, previousReply }) {

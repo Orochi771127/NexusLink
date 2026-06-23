@@ -21,6 +21,8 @@ import { buildRecoveryContext } from "./recovery/recoveryLoop.js";
 import { runNluPipeline } from "./nlu/runNluPipeline.js";
 import { selectResponseStrategy, RESPONSE_STRATEGIES } from "./responseStrategySelector.js";
 import { LOW_RECALL_INTENTS } from "./memoryRecallPolicy.js";
+import { getDialogueState, recordDialogueTurn, getRepetitionScore } from "./dialogue/dialogueStateTracker.js";
+import { evaluateAntiLoop } from "./dialogue/antiLoopPolicy.js";
 
 export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
   const companion = runtime.companion || null;
@@ -53,6 +55,23 @@ export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
     !LOW_RECALL_INTENTS.has(intent.intent)
   ) {
     responseStrategy = { strategy: RESPONSE_STRATEGIES.MEMORY_REFERENCE, reason: "memory_recall_gate" };
+  }
+
+  const dialogueSessionKey = companionId;
+  const dialogueState = getDialogueState(dialogueSessionKey);
+  const antiLoopDecision = evaluateAntiLoop({
+    nlu,
+    responseStrategy,
+    dialogueState,
+    inputText: gateway.normalizedInput,
+    sessionKey: dialogueSessionKey
+  });
+
+  if (antiLoopDecision.shouldBlock && antiLoopDecision.forceStrategy) {
+    responseStrategy = {
+      strategy: antiLoopDecision.forceStrategy,
+      reason: antiLoopDecision.reason
+    };
   }
 
   const preferenceProfile =
@@ -90,7 +109,8 @@ export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
     preferenceProfile,
     recoveryContext,
     nlu,
-    responseStrategy
+    responseStrategy,
+    antiLoopDecision
   };
 
   const autonomyResult = runAutonomyLoop({
@@ -145,6 +165,13 @@ export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
     },
 
     responseStrategy,
+    composeMeta: execution.composeMeta || null,
+    dialogueLoop: {
+      antiLoopApplied: Boolean(antiLoopDecision.shouldBlock),
+      antiLoopReason: antiLoopDecision.reason || null,
+      forceStrategy: antiLoopDecision.forceStrategy || null,
+      repetitionScore: getRepetitionScore(dialogueState)
+    },
 
     autonomy: {
       needs,
@@ -192,6 +219,7 @@ export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
     forbiddenPhraseDetected: Boolean(execution.forbiddenPhraseDetected || forbiddenCheck.hasForbidden)
   };
 
+  recordDialogueTurn(dialogueSessionKey, coreResult);
   collectInteractionTrace(coreResult);
   return coreResult;
 }
@@ -233,4 +261,5 @@ if (typeof window !== "undefined" && new URLSearchParams(window.location.search)
   import("./testHarness/nluSmokeCases.js").then((mod) => mod.installNluSmokeHarness(window));
   import("./testHarness/stage4HumanPlaytestCases.js").then((mod) => mod.installStage4PlaytestHarness(window));
   import("./testHarness/nluTrainingCases.js").then((mod) => mod.installNluTrainingHarness(window));
+  import("./testHarness/dialogueLoopSmokeCases.js").then((mod) => mod.installDialogueLoopHarness(window));
 }

@@ -77,6 +77,7 @@ export function executeAutonomousAction({
   });
 
   let reply = "";
+  let composeMeta = null;
   let shouldSpeak = coerced.shouldSpeak;
   let shouldStaySilent = !shouldSpeak;
 
@@ -88,7 +89,7 @@ export function executeAutonomousAction({
     reply = buildSafetyRedirectReply(perception.safety);
     alignedPlan.replyRole = "system";
   } else {
-    reply = composeRaphaelReply({
+    const composed = composeRaphaelReply({
       inputText: gateway.normalizedInput,
       analysis: perception.analysis,
       intent: perception.intent,
@@ -105,6 +106,8 @@ export function executeAutonomousAction({
       nlu: perception.nlu,
       responseStrategy: perception.responseStrategy
     });
+    reply = composed.reply;
+    composeMeta = composed;
 
     if (cooldown.replyLengthCap === "short" && reply.length > 48) {
       reply = trimToShortReply(reply);
@@ -133,6 +136,7 @@ export function executeAutonomousAction({
   return {
     replyRole,
     reply,
+    composeMeta,
     shouldSpeak: shouldSpeak && Boolean(reply),
     shouldStaySilent,
     statePatch: stateMutation.statePatch || {},

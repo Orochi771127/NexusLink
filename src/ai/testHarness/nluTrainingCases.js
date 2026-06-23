@@ -5,6 +5,7 @@
 import { runRaphaelCore } from "../raphaelCore.js";
 import { detectForbiddenPhrases } from "../forbiddenPhrases.js";
 import { clearSessionPreferenceProfiles } from "../companionPreferenceProfile.js";
+import { clearDialogueState } from "../dialogue/dialogueStateTracker.js";
 
 const GREYSHADE = Object.freeze({
   id: "greyshade-cat",
@@ -121,6 +122,7 @@ export const NLU_TRAINING_CASES = Object.freeze([
 ]);
 
 export function runNluTrainingCase(testCase) {
+  clearDialogueState(GREYSHADE.id);
   const coreResult = runRaphaelCore(testCase.input, { ...BASE_STATE }, {
     now: Date.now(),
     idSuffix: "tr",
