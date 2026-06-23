@@ -108,11 +108,19 @@ export function buildStrategyReply({
           seed
         );
       }
-      if (topic === "work_pressure") return "工作壓力堆上來時，先把最卡的那一段說出來就好。";
+      if (topic === "work_pressure") {
+        const workLine = groundedWorkPressureLine(frame);
+        if (workLine) return workLine;
+        return "工作壓力堆上來時，先把最卡的那一段說出來就好。";
+      }
       if (topic === "physical_tiredness" || tone === "fatigue") {
         return pick(["累的時候，先把聲音放小也可以。", "這份累我先接住，不急着把你推去做事。"], seed);
       }
-      if (topic === "social_conflict") return "人際上的悶先放著，我不急着給你結論。";
+      if (topic === "social_conflict") {
+        const socialLine = groundedSocialConflictLine(frame);
+        if (socialLine) return socialLine;
+        return "人際上的悶先放著，我不急着給你結論。";
+      }
       if (topic === "relationship") return "關係這件事我會慢慢聽，不急着定義你現在要什麼。";
       return `這份${tone === "sadness" ? "悶" : "感覺"}我先接住，不急着分析。`;
     },
@@ -265,7 +273,8 @@ function resolveVariantLines(strategy, nlu, frame, recoveryContext) {
   switch (strategy) {
     case RESPONSE_STRATEGIES.PRACTICAL_CLARIFICATION:
       if (topic === "hud_ui" || entities.includes("HUD")) {
-        return ["先不安慰你。我們把 HUD 問題拆開：是 top HUD、bottom dock，還是 Soul Talk 面板被擋住？"];
+        const hudLine = groundedHudClarificationLine(frame);
+        return [hudLine || "先不安慰你。我們把 HUD 問題拆開：是 top HUD、bottom dock，還是 Soul Talk 面板被擋住？"];
       }
       if (topic === "development") {
         return [`先釐清問題。你提到${entityRef}，我們可以先列：現象、重現步驟、最後才是修法。`];
@@ -305,11 +314,17 @@ function resolveVariantLines(strategy, nlu, frame, recoveryContext) {
           "道歉我聽見了。先不用解釋太多，我們把距離放回剛剛剛好的位置。"
         ];
       }
-      if (topic === "work_pressure") return ["工作壓力堆上來時，先把最卡的那一段說出來就好。"];
+      if (topic === "work_pressure") {
+        const workLine = groundedWorkPressureLine(frame);
+        return [workLine || "工作壓力堆上來時，先把最卡的那一段說出來就好。"];
+      }
       if (topic === "physical_tiredness" || tone === "fatigue") {
         return ["累的時候，先把聲音放小也可以。", "這份累我先接住，不急着把你推去做事。"];
       }
-      if (topic === "social_conflict") return ["人際上的悶先放著，我不急着給你結論。"];
+      if (topic === "social_conflict") {
+        const socialLine = groundedSocialConflictLine(frame);
+        return [socialLine || "人際上的悶先放著，我不急着給你結論。"];
+      }
       if (topic === "relationship") return ["關係這件事我會慢慢聽，不急着定義你現在要什麼。"];
       return [`這份${tone === "sadness" ? "悶" : "感覺"}我先接住，不急着分析。`];
     case RESPONSE_STRATEGIES.CLARIFYING_QUESTION:
@@ -381,4 +396,46 @@ function resolveVariantLines(strategy, nlu, frame, recoveryContext) {
 
 function extractOpeningPhrase(text = "") {
   return String(text || "").split(/[。！？]/)[0].trim().slice(0, 14);
+}
+
+function groundedWorkPressureLine(frame = {}) {
+  const detail = frame.specificDetail?.text || "";
+  if (!detail) return null;
+  if (/老闆|任務|丟/.test(detail)) {
+    return "老闆一直丟任務的壓力我先聽見了。你想先講最煩的一段，還是先講今天最卡的地方？";
+  }
+  if (/壓力/.test(detail)) {
+    return `你說的「${truncateDetail(detail)}」我先聽見了。你想先講壓力來源，還是先講最煩的一段？`;
+  }
+  return null;
+}
+
+function groundedSocialConflictLine(frame = {}) {
+  const detail = frame.specificDetail?.text || "";
+  if (!detail) return null;
+  if (/酸|否定|罵|拒絕/.test(detail)) {
+    return `被人${detail.includes("酸") ? "酸" : "否定"}的悶我先放著，不急着給你結論。`;
+  }
+  if (/悶/.test(detail)) {
+    return "心裡悶悶的這份感覺我先接住，不急着分析。";
+  }
+  return null;
+}
+
+function groundedHudClarificationLine(frame = {}) {
+  const detail = frame.specificDetail?.text || "";
+  if (!detail) return null;
+  if (/Soul Talk|面板/.test(detail) && /擋|遮|疊/.test(detail)) {
+    return "先不安慰你。Soul Talk 面板被擋住的問題，我們先拆：是 top HUD 疊上來，還是 bottom dock 擋住？";
+  }
+  if (/HUD/.test(detail) && /擋|遮|疊|壞/.test(detail)) {
+    return `先釐清 HUD。你說的「${truncateDetail(detail)}」，是 top HUD、bottom dock，還是面板層級問題？`;
+  }
+  return null;
+}
+
+function truncateDetail(text = "", max = 16) {
+  const trimmed = String(text || "").trim();
+  if (trimmed.length <= max) return trimmed;
+  return `${trimmed.slice(0, max)}…`;
 }

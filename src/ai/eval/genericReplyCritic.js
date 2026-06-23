@@ -1,3 +1,5 @@
+import { replyReferencesDetail } from "../nlu/explicitReference.js";
+
 const GENERIC_PATTERNS = [
   /^好[，,]?\s*我聽見了/,
   /^我聽見了[。.]?\s*我們先慢一點/,
@@ -26,6 +28,7 @@ export function critiqueGenericReply({
   const topic = frame.topic || nlu.topic || "";
   const entities = frame.entities || [];
   const constraints = frame.constraints || [];
+  const specificDetail = frame.specificDetail || null;
 
   if (!text) return { pass: true, issues: [], repairHint: "" };
 
@@ -53,6 +56,14 @@ export function critiqueGenericReply({
     !["quiet_presence", "acknowledge_generic_failure", "practical_short"].includes(preferred)
   ) {
     issues.push("missing_topic_reference");
+  }
+
+  if (
+    specificDetail?.text &&
+    !replyReferencesDetail(text, specificDetail) &&
+    !["quiet_presence", "light_greeting"].includes(preferred)
+  ) {
+    issues.push("missing_specific_detail_reference");
   }
 
   if (constraints.includes("not_seeking_comfort") && /安慰|沒事|會好起來|我在這裡陪/.test(text)) {

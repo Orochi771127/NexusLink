@@ -6,6 +6,7 @@ import { renderTemplateReply } from "./corpus/templateRenderer.js";
 import { RESPONSE_STRATEGIES } from "./responseStrategySelector.js";
 import { buildStrategyReply, repairGenericReply } from "./nlu/nluReplyBuilder.js";
 import { critiqueGenericReply } from "./eval/genericReplyCritic.js";
+import { weaveExplicitReference } from "./nlu/explicitReference.js";
 
 const BOUNDARY_MODES = new Set([
   SOUL_TALK_REACTIONS.WITHDRAW,
@@ -279,6 +280,19 @@ export function finalizeAndGuardReply(text, { persona, state, composeOpts, nlu, 
       seed: buildSeed("", state, null),
       recoveryContext: composeOpts.recoveryContext || null
     });
+    reply = finalizeReply(reply, persona, state, composeOpts);
+  }
+
+  const specificDetail = nlu?.semanticFrame?.specificDetail;
+  const weaveStrategy = composeOpts.responseStrategy?.strategy || "";
+  const shouldWeaveDetail =
+    specificDetail?.text &&
+    !["light_greeting", "quiet_presence", "holding_space", "memory_reference"].includes(weaveStrategy) &&
+    nlu?.dialogueAct !== "greeting" &&
+    specificDetail.type !== "clause";
+
+  if (shouldWeaveDetail) {
+    reply = weaveExplicitReference(reply, specificDetail, { strategy: weaveStrategy });
     reply = finalizeReply(reply, persona, state, composeOpts);
   }
 

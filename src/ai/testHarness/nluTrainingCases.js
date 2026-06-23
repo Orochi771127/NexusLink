@@ -33,7 +33,13 @@ export const NLU_TRAINING_CASES = Object.freeze([
   {
     id: "TR-1",
     input: "我最近壓力好大，老闆一直丟任務給我",
-    expect: { topic: "work_pressure", dialogueAct: "venting", noGeneric: true, mentions: /工作|壓力|任務/ }
+    expect: {
+      topic: "work_pressure",
+      dialogueAct: "venting",
+      noGeneric: true,
+      hasSpecificDetail: true,
+      mentions: /工作|壓力|任務|老闆/
+    }
   },
   {
     id: "TR-2",
@@ -62,7 +68,12 @@ export const NLU_TRAINING_CASES = Object.freeze([
   {
     id: "TR-5",
     input: "我今天被人酸了一句，心裡悶悶的",
-    expect: { topic: ["social_conflict", "emotion"], noGeneric: true, mentions: /悶|否定|人際|情緒/ }
+    expect: {
+      topic: ["social_conflict", "emotion"],
+      noGeneric: true,
+      hasSpecificDetail: true,
+      mentions: /酸|悶|否定|人際|情緒/
+    }
   },
   {
     id: "TR-6",
@@ -118,7 +129,18 @@ export const NLU_TRAINING_CASES = Object.freeze([
       noGeneric: true,
       mentions: /型|害羞|心情|夸/
     }
-  }
+  },
+  {
+    id: "TR-13",
+    input: "Soul Talk 面板被 HUD 擋住了，我現在沒辦法好好操作",
+    expect: {
+      topic: "hud_ui",
+      strategy: "practical_clarification",
+      noGeneric: true,
+      hasSpecificDetail: true,
+      mentions: /Soul Talk|HUD|擋|面板/
+    }
+  },
 ]);
 
 export function runNluTrainingCase(testCase) {
@@ -139,7 +161,10 @@ export function runNluTrainingCase(testCase) {
     strategy_ok: matchList(coreResult.responseStrategy?.strategy, expect.strategy),
     mentions_ok: expect.mentions ? expect.mentions.test(reply) : true,
     no_generic: expect.noGeneric ? !GENERIC_BANNED.test(reply) : true,
-    has_reply: Boolean(reply.trim())
+    has_reply: Boolean(reply.trim()),
+    specific_detail_ok: expect.hasSpecificDetail
+      ? Boolean(coreResult.nlu?.semanticFrame?.specificDetail?.text)
+      : true
   };
 
   return {

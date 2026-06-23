@@ -1,6 +1,7 @@
 import { DIALOGUE_ACTS } from "./dialogueActClassifier.js";
 import { NUANCE_FLAGS } from "./nuanceDetector.js";
 import { TOPICS } from "./topicClassifier.js";
+import { extractSpecificDetail } from "./specificDetailExtractor.js";
 
 export function extractSemanticFrame({
   inputText = "",
@@ -19,6 +20,7 @@ export function extractSemanticFrame({
   const requestedAction = inferRequestedAction(dialogueAct, userNeed);
   const negations = extractNegations(inputText);
   const timeSignal = /今天|剛剛|現在|昨晚|最近/.test(inputText) ? "present" : "unspecified";
+  const specificDetail = extractSpecificDetail(inputText, { entities, topic, dialogueAct });
 
   return {
     topic,
@@ -33,7 +35,8 @@ export function extractSemanticFrame({
     negations,
     timeSignal,
     dialogueAct,
-    intent: intent.intent || "unknown"
+    intent: intent.intent || "unknown",
+    specificDetail
   };
 }
 

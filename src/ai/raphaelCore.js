@@ -26,6 +26,7 @@ import { evaluateAntiLoop } from "./dialogue/antiLoopPolicy.js";
 import { selectReplyVariant } from "./dialogue/replyVariantSelector.js";
 import { planQuickReplies } from "./dialogue/quickReplyPlanner.js";
 import { buildConversationDebugTrace, logConversationDebugTrace } from "./dialogue/conversationDebugTrace.js";
+import { applyQuickReplyContext, resolveQuickReplyStrategy } from "./dialogue/quickReplyContext.js";
 
 export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
   const companion = runtime.companion || null;
@@ -36,15 +37,10 @@ export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
   const safety = assessInputSafety(gateway.normalizedInput);
   const analysis = interpretEmotionInput(gateway.originalInput, state, { repeated: gateway.repeated });
   const intent = classifyIntent(gateway.normalizedInput, analysis, safety);
-  const nlu = runNluPipeline(gateway.normalizedInput, analysis, intent, safety);
+  let nlu = runNluPipeline(gateway.normalizedInput, analysis, intent, safety);
+  nlu = applyQuickReplyContext(nlu, runtime.quickReply);
   let responseStrategy = selectResponseStrategy(nlu, intent, safety);
-
-  if (runtime.quickReply?.responseStrategyHint) {
-    responseStrategy = {
-      strategy: runtime.quickReply.responseStrategyHint,
-      reason: "quick_reply_selection"
-    };
-  }
+  responseStrategy = resolveQuickReplyStrategy(runtime.quickReply, responseStrategy);
   const semanticSoul = deriveSemanticSoulState(state, analysis);
   const memories = retrieveRelevantMemories(
     state,

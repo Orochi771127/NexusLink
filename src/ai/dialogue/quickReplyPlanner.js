@@ -68,7 +68,12 @@ function buildPracticalQuickReplies(topic, constraints = []) {
         topic: "hud_ui",
         dialogueAct: "clarifying_problem",
         responseStrategyHint: RESPONSE_STRATEGIES.PRACTICAL_CLARIFICATION,
-        payload: { focus: "top_hud", noQuestion: false },
+        payload: {
+          focus: "top_hud",
+          prefillSpecificDetail: "top HUD 被擋住",
+          constraints: ["not_seeking_comfort"],
+          noQuestion: false
+        },
         priority: 3
       }),
       createQuickReply({
@@ -78,7 +83,11 @@ function buildPracticalQuickReplies(topic, constraints = []) {
         topic: "hud_ui",
         dialogueAct: "reporting_bug",
         responseStrategyHint: RESPONSE_STRATEGIES.PRACTICAL_CLARIFICATION,
-        payload: { focus: "soul_talk_panel" },
+        payload: {
+          focus: "soul_talk_panel",
+          prefillSpecificDetail: "Soul Talk 面板被擋住",
+          constraints: ["not_seeking_comfort"]
+        },
         priority: 2
       }),
       createQuickReply({
