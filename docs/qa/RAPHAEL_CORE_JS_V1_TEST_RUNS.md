@@ -720,3 +720,47 @@ Forbidden phrases in manual run: **0** (`我還記得上次你也提到`, generi
 - **Merge PR #86** to `main`, then re-run this QA pack on `main` for canonical sign-off.
 - Optional follow-up (not blocking merge): align fatigue recall core smoke `recallHit` with NLU clarifying behavior or restore soft fatigue recall line without new modules.
 - Human playtest pass on `main` → proceed to Stage 4 expanded playtest / corpus tuning (no new AI architecture).
+
+---
+
+## Post-Merge Raphael QA Sign-off
+
+### Branch / Commit
+
+- Branch: `main`
+- Commit: `043efb56f1e5e89a669e46d6b89e5e41dfaf06f7`
+- Merge commit: `043efb56f1e5e89a669e46d6b89e5e41dfaf06f7` (PR #86)
+- Working tree: clean
+
+### Result
+
+- NLU smoke: **8/8** pass, 0 forbidden, 0 console errors
+- Harness smoke: **16/17** pass — single failure: core case `我又覺得自己很累` (`recallHit` expects `不是第一次|營火|上次|重量|慢一點`; NLU v1 returns clarifying question `我想確認一下：你現在最想先處理的是疲憊這塊嗎？`). Recall bleed case C for same input still passes.
+- Live gate: **pass** — Soul Talk 10/10, HUD 13/13, awakening/storage/touch/pixi OK
+- Manual Soul Talk: **6/6** pass (no generic fallback, no forbidden phrases, awakening copy verified)
+- HUD/mobile: 390×844 pass (live gate 13/13; single canvas)
+- Console errors: **0**
+- Forbidden phrases: **0**
+
+### Main verification
+
+- Raphael files present: `src/ai/nlu/`, `autonomy/`, `awakening/`, `eval/`, `recovery/`, `memoryRecallPolicy.js`, `responseStrategySelector.js`, `nluSmokeCases.js`, QA runners — all confirmed on `main`
+- `STORAGE_KEY`: `nexusLinkR2State:v1` (unchanged)
+- Single Pixi app at runtime: live gate `pixi_single: true` (`canvas_count: 1`); legacy `main.js` demo not loaded by `index.html`
+- Gateway not bundled: `raphael-gateway-server` remains separate; runtime has no hard dependency (optional `externalIntelligencePolicy` URL only)
+
+### Notes
+
+- Post-merge QA run on canonical `main` after PR #86 merge (`8b95ee3` → `043efb5`).
+- Awakening recall copy on `main`: `我記得第一次醒來。那時候我還分不清你的聲音，只知道你在這裡。`
+- Harness 16/17 is an **expectation mismatch**, not a merge blocker — NLU v1 clarifying strategy vs legacy fatigue recall regex.
+
+### Remaining follow-ups
+
+- Post-merge follow-up: **fatigue recall strategy alignment** (`我又覺得自己很累` core smoke `recallHit`)
+- Touch fatigue / reject daytime QA
+- Stage 4 human playtest
+
+### Recommendation
+
+**Ready for Stage 4 human playtest** — all merge-blocking gates pass; harness gap is documented follow-up only.
