@@ -475,7 +475,7 @@ Recall case (harness #11) full reply: `這不是第一次出現的重量。我�
 Date/time: 2026-06-24 (local)
 Agent / tool: Grok Agent (Playwright + `python -m http.server 5173`)
 Branch: `feature/raphael-soul-architecture-v1`
-Commit: `1a041b2`
+Commit: `6834907`
 Browser: Chromium (Playwright headless)
 Viewport: 390×844 (iPhone-class)
 
