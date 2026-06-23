@@ -96,7 +96,30 @@ const BOUNDARY_MODES = new Set([
   SOUL_TALK_REACTIONS.HESITATE
 ]);
 
-export function composeRaphaelReply({ inputText = "", analysis = {}, intent = {}, plan = {}, safety = {}, state = {}, companion = null } = {}) {
+function applyPersonaStyle(text, persona = {}) {
+  const style = persona.sentenceStyle || "balanced";
+  if (style !== "short_quiet") return text;
+
+  const parts = String(text || "")
+    .split(/[\n。！？]/)
+    .map((part) => part.trim())
+    .filter(Boolean);
+
+  const maxSentences = persona.responseBias?.maxSentences || 2;
+  return parts.slice(0, maxSentences).join("。") + (parts.length ? "。" : "");
+}
+
+export function composeRaphaelReply({
+  inputText = "",
+  analysis = {},
+  intent = {},
+  plan = {},
+  safety = {},
+  state = {},
+  companion = null,
+  persona = null,
+  corpus = null
+} = {}) {
   if (plan.mode === SOUL_TALK_REACTIONS.SAFETY_REDIRECT) {
     return buildSafetyRedirectReply(safety);
   }
@@ -136,7 +159,8 @@ export function composeRaphaelReply({ inputText = "", analysis = {}, intent = {}
     ], seed);
   }
 
-  return pick(modeLines, seed);
+  const composed = pick(modeLines, seed);
+  return persona ? applyPersonaStyle(composed, persona) : composed;
 }
 
 function pick(lines = [], seed = 0) {
