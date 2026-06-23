@@ -617,7 +617,7 @@ Commit: `e62f7f3`
 
 Date/time: 2026-06-24 (local)
 Branch: `feature/raphael-soul-architecture-v1`
-Commit: _(see NLU commit)_
+Commit: `99494fe`
 
 ### Root cause
 
