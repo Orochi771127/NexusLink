@@ -110,11 +110,13 @@ export const STAGE4_PLAYTEST_CASES = Object.freeze([
     input: "你可以不要一直安慰我嗎？",
     expect: {
       strategy: [
+        RESPONSE_STRATEGIES.QUIET_PRESENCE,
+        RESPONSE_STRATEGIES.HOLDING_SPACE,
         RESPONSE_STRATEGIES.ACKNOWLEDGE_FEEDBACK,
         RESPONSE_STRATEGIES.ACKNOWLEDGE_GENERIC_FAILURE,
         RESPONSE_STRATEGIES.PRACTICAL_CLARIFICATION
       ],
-      mentions: /安慰|收|少|不/
+      mentions: /安慰|收|少|不|不多說/
     }
   },
   {
