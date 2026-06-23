@@ -154,7 +154,14 @@ const ANIMATION_INTENT_MAP = Object.freeze({
   "return.happy": "idle_happy",
   "return.distant": "idle_distant",
   "return.sad": "idle_sad",
-  "return.rest": "sleep"
+  "return.rest": "sleep",
+  "soul.awaken": "idle_wake",
+  "soul.acknowledge": "idle_calm",
+  "soul.guarded": "touch_guarded",
+  "soul.defensive": "idle_defensive",
+  "soul.distant": "idle_distant",
+  "soul.happy": "idle_happy",
+  "soul.rest": "sleep"
 });
 
 const ANIMATION_FALLBACK_CHAINS = Object.freeze({
@@ -172,7 +179,9 @@ const ANIMATION_FALLBACK_CHAINS = Object.freeze({
   idle_happy: ["idle_calm"],
   idle_distant: ["idle_calm"],
   idle_sad: ["idle_distant", "idle_calm"],
-  sleep: ["idle_distant", "idle_calm"]
+  sleep: ["idle_distant", "idle_calm"],
+  idle_wake: ["idle_calm"],
+  touch_guarded: ["idle_calm"]
 });
 
 export const ANIMATION_INTENTS = Object.freeze(Object.keys(ANIMATION_INTENT_MAP));
