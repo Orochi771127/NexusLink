@@ -90,6 +90,12 @@ const MODE_FALLBACKS = Object.freeze({
   ]
 });
 
+const BOUNDARY_MODES = new Set([
+  SOUL_TALK_REACTIONS.WITHDRAW,
+  SOUL_TALK_REACTIONS.REJECT,
+  SOUL_TALK_REACTIONS.HESITATE
+]);
+
 export function composeRaphaelReply({ inputText = "", analysis = {}, intent = {}, plan = {}, safety = {}, state = {}, companion = null } = {}) {
   if (plan.mode === SOUL_TALK_REACTIONS.SAFETY_REDIRECT) {
     return buildSafetyRedirectReply(safety);
@@ -98,6 +104,14 @@ export function composeRaphaelReply({ inputText = "", analysis = {}, intent = {}
   const seed = buildSeed(inputText, state, companion);
   const emotionKey = analysis.emotionKey || "calm";
   const mode = plan.mode || SOUL_TALK_REACTIONS.ACKNOWLEDGE;
+
+  if (BOUNDARY_MODES.has(mode)) {
+    if (safety?.category === "dependency_pressure") {
+      return buildSafetyRedirectReply(safety);
+    }
+    return pick(MODE_FALLBACKS[mode], seed);
+  }
+
   const pack = RESPONSE_PACKS[emotionKey] || RESPONSE_PACKS.calm;
   const modeLines = pack[mode] || pack.acknowledge || MODE_FALLBACKS[mode] || MODE_FALLBACKS.acknowledge;
 
@@ -108,7 +122,7 @@ export function composeRaphaelReply({ inputText = "", analysis = {}, intent = {}
     ], seed);
   }
 
-  if (intent.intent === SOUL_TALK_INTENTS.APOLOGY && mode !== SOUL_TALK_REACTIONS.REJECT) {
+  if (intent.intent === SOUL_TALK_INTENTS.APOLOGY && !BOUNDARY_MODES.has(mode) && mode !== SOUL_TALK_REACTIONS.REJECT) {
     return pick([
       "我聽見你的道歉了。它不會立刻抹掉剛才的痕跡，但我願意把它放進記憶裡。",
       "道歉我收到了。我還需要一點時間，但這句話有被聽見。"
