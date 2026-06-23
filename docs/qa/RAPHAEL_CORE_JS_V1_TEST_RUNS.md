@@ -338,7 +338,7 @@ Commit: `11f8fa3`
 
 Date/time: 2026-06-23 (Offline Intelligence + companion response packs)
 Branch: `feature/raphael-soul-architecture-v1` + `aiforge-raphael-corpus/merge/raphael-corpus-v1`
-Commit: (pending)
+Commit: `35ddea5` (NexusLink), `0c63c63` (corpus)
 
 ### What was tested
 
