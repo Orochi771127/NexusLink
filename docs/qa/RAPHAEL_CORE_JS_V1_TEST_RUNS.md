@@ -674,3 +674,49 @@ Commit: `99494fe`
 - `soft_context` recall mode still suppresses explicit mention only — tone biasing is minimal.
 
 Runner: `python docs/qa/_run_nlu_smoke.py`
+
+---
+
+## Post-merge QA — awakening copy polish (2026-06-24)
+
+Branch at test time: `feature/raphael-soul-architecture-v1` (PR #86 still **open** on GitHub; `origin/main` at `8b95ee3` — merge pending manual action).
+
+Commit: `69af26a`
+
+### Copy polish
+
+- **Input:** `你還記得第一次醒來嗎？`
+- **Before:** `我還記得上次你也提到「心核初醒」。…` (generic memory template)
+- **After:** `我記得第一次醒來。那時候我還分不清你的聲音，只知道你在這裡。` (or variant: `我記得。那時候心核剛亮起，聲音還很輕。`)
+- **Files:** `src/ai/nlu/nluReplyBuilder.js`, `src/ai/responseComposer.js` — strategy reply before template for `MEMORY_REFERENCE` + awakening topic.
+
+### Automated QA (feature branch, server `python -m http.server 5173`)
+
+| Runner | Result |
+|--------|--------|
+| `_run_nlu_smoke.py` | **8/8** pass, 0 forbidden, 0 console errors |
+| `_run_harness_smoke.py` | **16/17** pass — core case `我又覺得自己很累` expects fatigue recall regex (`不是第一次\|營火\|上次\|重量\|慢一點`); NLU now returns clarifying question with topic `疲憊` (recall bleed case C still passes). Pre-existing NLU v1 gap, not introduced by copy polish. |
+| `_run_live_playtest_gate.py` | **pass** — 10/10 Soul Talk, 13/13 HUD, awakening/storage/touch/pixi OK, 0 console errors |
+
+### Manual Soul Talk (6 sentences)
+
+| Input | Reply (summary) | OK |
+|-------|-----------------|-----|
+| HUD 釐清 / 不要安慰 | practical HUD split | ✅ |
+| 抱怨 generic 重複 | acknowledges repetition | ✅ |
+| 安靜 / 不要問 | `好，我不多說。` | ✅ |
+| 還記得第一次醒來 | Raphael awakening copy (no template bleed) | ✅ |
+| 被否定 / 不要大道理 | practical clarify on 悶 | ✅ |
+| UI vs AI 優先 | practical planning | ✅ |
+
+Forbidden phrases in manual run: **0** (`我還記得上次你也提到`, generic fallback lines absent).
+
+### HUD / mobile
+
+- Live gate: 13/13 HUD checks, 390×844 viewport pass, single Pixi canvas, storage key unchanged.
+
+### Next stage recommendation
+
+- **Merge PR #86** to `main`, then re-run this QA pack on `main` for canonical sign-off.
+- Optional follow-up (not blocking merge): align fatigue recall core smoke `recallHit` with NLU clarifying behavior or restore soft fatigue recall line without new modules.
+- Human playtest pass on `main` → proceed to Stage 4 expanded playtest / corpus tuning (no new AI architecture).
