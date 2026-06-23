@@ -18,7 +18,8 @@ export const DIALOGUE_ACTS = Object.freeze({
   DEPENDENCY_PRESSURE: "dependency_pressure",
   META_DISCUSSION: "meta_discussion",
   PRACTICAL_PLANNING: "practical_planning",
-  CLARIFYING_PROBLEM: "clarifying_problem"
+  CLARIFYING_PROBLEM: "clarifying_problem",
+  GREETING: "greeting"
 });
 
 export function classifyDialogueAct(inputText = "", analysis = {}, intent = {}, topic = "unknown") {
@@ -28,6 +29,9 @@ export function classifyDialogueAct(inputText = "", analysis = {}, intent = {}, 
   if (intent.intent === "pressure") return DIALOGUE_ACTS.PRESSURE_COMMAND;
   if (intent.intent === "apology") return DIALOGUE_ACTS.APOLOGIZING;
   if (intent.intent === "gratitude") return DIALOGUE_ACTS.THANKING;
+  if (intent.intent === "greeting" || intent.intent === "short_ack" || /^(安安|你好|嗨|哈囉)/.test(text)) {
+    return DIALOGUE_ACTS.GREETING;
+  }
   if (/不管我說什麼|一直講|都會說|重複|generic|一樣的話|好我聽到了|念稿|自然一點|太機械|像在念/.test(text)) {
     return DIALOGUE_ACTS.CORRECTING_RAPHAEL;
   }

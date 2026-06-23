@@ -106,6 +106,11 @@ export function buildStrategyReply({
       ),
     [RESPONSE_STRATEGIES.HOLDING_SPACE]: () =>
       pick(["好，我先不給答案。這件事就放在這裡。", "嗯，不用講太多。我陪著，不急着收走。"], seed),
+    [RESPONSE_STRATEGIES.LIGHT_GREETING]: () => {
+      const said = String(nlu.inputText || "").trim();
+      if (/安安/.test(said)) return pick(["嗯，我在。", "安安，聽見你了。", "我在，不用急著說重點。"], seed);
+      return pick(["嗯，我在。", "聽見你了。", "我在，不用急著說重點。"], seed);
+    },
     [RESPONSE_STRATEGIES.MEMORY_REFERENCE]: () => {
       const awakeningRecall =
         topic === "awakening" ||

@@ -25,6 +25,7 @@ export function runNluPipeline(inputText = "", analysis = {}, intent = {}, safet
   const confidence = scoreNluConfidence({ semanticFrame, dialogueAct, topic, nuances });
 
   return {
+    inputText: String(inputText || "").trim(),
     semanticFrame,
     dialogueAct,
     topic,

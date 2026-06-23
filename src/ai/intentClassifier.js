@@ -23,7 +23,7 @@ export function classifyIntent(inputText = "", analysis = {}, safety = {}) {
   const text = String(inputText || "").trim();
 
   if (!text) return createIntent(SOUL_TALK_INTENTS.EMPTY_OR_NOISE, 0);
-  if (/^(嗯|哦|好呀|好喔|ok|OK|嗨)$/i.test(text)) {
+  if (/^(嗯|哦|好呀|好喔|ok|OK|嗨|安安|哈囉|嘿)$/i.test(text)) {
     return createIntent(SOUL_TALK_INTENTS.SHORT_ACK, 0.7);
   }
   if (/不想講|不要問|不用說|別說太多|先不要聊|不想說|不要說太多|先別問/.test(text)) {
@@ -65,8 +65,8 @@ export function classifyIntent(inputText = "", analysis = {}, safety = {}) {
   if (/晚安|休息|睡|安靜|放空|慢一點|想安靜|安靜一下/.test(text)) {
     return createIntent(SOUL_TALK_INTENTS.REST_REQUEST, 0.78);
   }
-  if (/你好|嗨|早安|午安|晚上好/.test(text)) {
-    return createIntent(SOUL_TALK_INTENTS.GREETING, 0.7);
+  if (/^(安安|你好|嗨|哈囉|早安|午安|晚上好)$|安安你在|你在嗎|在嗎/.test(text)) {
+    return createIntent(SOUL_TALK_INTENTS.GREETING, 0.78);
   }
   if (analysis?.isQuestion) {
     return createIntent(SOUL_TALK_INTENTS.QUESTION, 0.68);

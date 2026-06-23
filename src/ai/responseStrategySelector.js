@@ -18,7 +18,8 @@ export const RESPONSE_STRATEGIES = Object.freeze({
   CONTEXTUAL_ACK: "contextual_ack",
   CLARIFYING_QUESTION: "clarifying_question",
   REPEATED_EMOTION_RECALL: "repeated_emotion_recall",
-  HOLDING_SPACE: "holding_space"
+  HOLDING_SPACE: "holding_space",
+  LIGHT_GREETING: "light_greeting"
 });
 
 export function selectResponseStrategy(nlu = {}, intent = {}, safety = {}) {
@@ -89,6 +90,9 @@ export function selectResponseStrategy(nlu = {}, intent = {}, safety = {}) {
   }
   if (nuances.includes(NUANCE_FLAGS.WANTS_BOUNDARY)) {
     return { strategy: RESPONSE_STRATEGIES.BOUNDARY_SET, reason: "soft_boundary_invite" };
+  }
+  if (dialogueAct === DIALOGUE_ACTS.GREETING || intent.intent === "greeting" || intent.intent === "short_ack") {
+    return { strategy: RESPONSE_STRATEGIES.LIGHT_GREETING, reason: "light_greeting" };
   }
   if (dialogueAct === DIALOGUE_ACTS.APOLOGIZING) {
     return { strategy: RESPONSE_STRATEGIES.EMOTIONAL_SHORT, reason: "apology_repair" };

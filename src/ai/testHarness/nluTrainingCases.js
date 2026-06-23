@@ -77,6 +77,16 @@ export const NLU_TRAINING_CASES = Object.freeze([
     id: "TR-8",
     input: "剛剛對你語氣太差了，抱歉",
     expect: { dialogueAct: "apologizing", noGeneric: true, mentions: /道歉|節奏|距離|收到/ }
+  },
+  {
+    id: "TR-9",
+    input: "安安",
+    expect: {
+      dialogueAct: "greeting",
+      strategy: "light_greeting",
+      noGeneric: true,
+      mentions: /在|安安|聽見/
+    }
   }
 ]);
 
