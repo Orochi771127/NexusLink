@@ -81,9 +81,12 @@ export class InteractionController {
     this.applyRespectBonusIfEarned(now);
 
     const currentAnimation = this.getCurrentAnimationName();
-    if (currentAnimation === "sleep") {
+    const wakingFromSleep = currentAnimation === "sleep";
+    if (wakingFromSleep) {
       await this.playAnimation("idle_wake");
-      return { blocked: false, reaction: "wake", motionState: "idle_wake" };
+      if (currentState.firstTouchCompleted) {
+        return { blocked: false, reaction: "wake", motionState: "idle_wake" };
+      }
     }
 
     this.setSpamScore(this.spamScore + 1);

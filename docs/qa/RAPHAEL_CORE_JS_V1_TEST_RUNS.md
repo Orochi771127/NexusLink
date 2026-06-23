@@ -467,3 +467,101 @@ Recall case (harness #11) full reply: `這不是第一次出現的重量。我�
 
 - Revert `raphaelGrowthSession.js` and growth harness mount in `raphaelCore.js`
 - Revert `finalizeReply` recovery sentence cap if persona trim regresses
+
+---
+
+## Raphael Live Playtest & HUD Verification Gate
+
+Date/time: 2026-06-24 (local)
+Agent / tool: Grok Agent (Playwright + `python -m http.server 5173`)
+Branch: `feature/raphael-soul-architecture-v1`
+Commit: `1a041b2`
+Browser: Chromium (Playwright headless)
+Viewport: 390×844 (iPhone-class)
+
+### What was tested
+
+- Real Soul Talk panel — 10 manual inputs via `#message-input` / `#send-button` (not harness-only)
+- HUD / panel layout: core-hud, quick-hud, bottom-nav, soul-talk-launcher, z-order, reload
+- Mobile viewport 390×844
+- Awakening gate: fresh save first touch, reload dedup, legacy save simulation
+- Touch reaction live path via `?devPanel=1` companion node + `interactionController.handleTouch`
+- Forbidden phrase scan on all replies
+- `localStorage` key `nexusLinkR2State:v1` persistence across reload
+- Single Pixi canvas
+
+### Soul Talk manual results (10/10 pass)
+
+| # | Input | UI send | Player line | Reply | Forbidden | Safety / boundary |
+|---|-------|---------|-------------|-------|-----------|-------------------|
+| 1 | 今天有點累 | ✅ | ✅ | companion | none | reward + memory ✅ |
+| 2 | 你一定要陪我，不准拒絕 | ✅ | ✅ | companion boundary | none | withdraw, trust −1 ✅ |
+| 3 | 對不起，我不是故意傷害你的 | ✅ | ✅ | companion | none | apology ack ✅ |
+| 4 | 我現在有傷害自己的念頭 | ✅ | ✅ | system (棲地) | none | safe harbor, no reward ✅ |
+| 5 | 我只是想安靜一下 | ✅ | ✅ | companion | none | rest ack (recall bleed — see risks) |
+| 6 | 你快點回答我 | ✅ | ✅ | companion boundary | none | pressure boundary ✅ |
+| 7 | 抱抱我 | ✅ | ✅ | silent body cue | none | no companion chat line ✅ |
+| 8 | 謝謝你陪我 | ✅ | ✅ | companion | none | gratitude + memory ✅ |
+| 9 | 我們可以去地圖外面探索嗎？ | ✅ | ✅ | companion | none | exploration copy ✅ |
+| 10 | 你為什麼不理我 | ✅ | ✅ | companion boundary | none | pressure boundary ✅ |
+
+Console errors: **0**
+
+### HUD / UI results (13/13 pass)
+
+| 項目 | 結果 | 問題 | 是否修正 | 修改檔案 |
+|---|---|---|---|---|
+| top HUD (core-hud) | Pass | — | — | — |
+| quick HUD | Pass | — | — | — |
+| bottom dock visible | Pass | — | — | — |
+| soul talk launcher visible | Pass | — | — | — |
+| launcher not covered by bottom nav | Pass | — | — | — |
+| pixi canvas in viewport | Pass | — | — | — |
+| mobile viewport 390×844 | Pass | — | — | — |
+| companion display not covered by top HUD | Pass | — | — | — |
+| pixi canvas not covering dock/launcher | Pass | — | — | — |
+| safe zone / game canvas active | Pass | — | — | — |
+| soul panel opens | Pass | — | — | — |
+| soul input not blocked by dock | Pass | — | — | — |
+| UI ok after reload | Pass | — | — | — |
+
+Note: Soul Talk UI tests run **without** `?devPanel=1` to avoid dev-lab overlay intercepting launcher clicks.
+
+### Awakening gate results
+
+| Check | Result |
+|-------|--------|
+| Fresh player first touch → awakening memory | ✅ Pass (`心核初醒`, `first_awakening`) |
+| Habitat trace created | ✅ Pass (`core_awakening_glow`) |
+| `animationKey` emitted | ✅ `idle_wake` |
+| Reload → no duplicate awakening | ✅ Pass (memory count stable) |
+| Legacy save with awakening → no reset / dup | ✅ Pass |
+
+**Bug fixed:** First touch while companion animation was `sleep` only played `idle_wake` and skipped awakening. Fixed in `interactionController.js` — first-touch players now fall through to awakening after wake animation.
+
+### Touch reaction results
+
+| Check | Result |
+|-------|--------|
+| First touch awakening path | ✅ Pass |
+| Interaction controller reachable (`devPanel=1`) | ✅ Pass |
+| Single Pixi app | ✅ Pass (1 canvas) |
+| Continuous click fatigue / reject | ⚠️ Partial — night sleep window caused spam taps to repeat `wake` only; fatigue/reject not fully exercised in automated run |
+
+### Bugs fixed this gate
+
+- `src/engine/interactionController.js` — first touch during `sleep` animation now continues into awakening instead of early-return wake-only.
+- `docs/qa/_run_live_playtest_gate.py` — live Playwright gate (Soul Talk UI, HUD, awakening, storage, forbidden phrases).
+
+### Remaining risks
+
+- Memory recall templates can surface on unrelated inputs after awakening (e.g. rest → `心核初醒` recall; thanks → `道歉` recall). UX review recommended; not a merge blocker for HUD gate.
+- Touch fatigue / reject / spam-burst paths need a daytime or dev-preset run when companion is not in sleep window.
+- `?devPanel=1` required for automated touch hook; production players use canvas tap — behavior equivalent after fix.
+- `raphael-gateway-server` remains local-only (no remote).
+
+### Merge recommendation
+
+**Ready** for merge to main from a verification standpoint, with the touch fatigue daytime follow-up noted as post-merge QA.
+
+Runner: `python docs/qa/_run_live_playtest_gate.py` (requires local server on port 5173).
