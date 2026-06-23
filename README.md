@@ -63,7 +63,52 @@ Its central promise:
 - Return Echo with non-guilt return lines
 - companion animation cues for return, map, touch, and emotional standoff
 - boundary-aware touch reactions: accept / guarded / hesitate / reject
+- RaphaelCore JS v1 local companion AI layer for Soul Talk safety, intent, emotion, boundary, and response planning
 - Emotional Standoff as relationship repair, not traditional combat
+
+---
+
+## RaphaelCore JS v1
+
+`src/ai/` contains the first Web-native RaphaelCore layer.
+
+```text
+src/ai/
+  safetyShield.js
+  emotionInterpreter.js
+  intentClassifier.js
+  semanticSoulModel.js
+  reactionPlanner.js
+  responseComposer.js
+  raphaelCore.js
+```
+
+Soul Talk now routes player input through:
+
+```text
+safetyShield
+→ emotionInterpreter
+→ intentClassifier
+→ semanticSoulModel
+→ reactionPlanner
+→ responseComposer
+→ existing memory / trace / state update path
+```
+
+This layer is local and deterministic. It does **not** use an LLM, backend, database, or external API.
+
+Design rule:
+
+```text
+NexusCore decides emotion, intent, memory, boundary, reaction, trace, and animation.
+LLM, if added later, may only be an optional language rendering layer.
+```
+
+Detailed architecture note:
+
+```text
+docs/architecture/RAPHAEL_CORE_JS_V1.md
+```
 
 ---
 
@@ -138,9 +183,10 @@ This file is an internal evidence memo for AI companion / emotional habitat mark
 ```text
 docs/raphael/
 tools/raphael/
+src/ai/
 ```
 
-Raphael Constitution and `raphaelCore.js` are draft / sandbox materials until explicitly integrated through a reviewed task pack.
+`src/ai/` is the active Web-native RaphaelCore v1 layer. Older Raphael Constitution and sandbox materials remain design references until integrated through reviewed task packs.
 
 ---
 
