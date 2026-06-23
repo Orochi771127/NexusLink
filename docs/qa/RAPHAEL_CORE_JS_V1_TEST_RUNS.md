@@ -572,7 +572,7 @@ Runner: `python docs/qa/_run_live_playtest_gate.py` (requires local server on po
 
 Date/time: 2026-06-24 (local)
 Branch: `feature/raphael-soul-architecture-v1`
-Commit: _(see hardening commit)_
+Commit: `e62f7f3`
 
 ### Root cause
 
