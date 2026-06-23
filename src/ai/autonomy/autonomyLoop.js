@@ -4,6 +4,9 @@ import { planAutonomousAction } from "./actionPlanner.js";
 import { executeAutonomousAction } from "./actionExecutor.js";
 import { buildInteractionReflection } from "./reflectionEngine.js";
 import { evaluateInitiativeCooldown } from "./initiativeCooldown.js";
+import { runCritics } from "../eval/runCritics.js";
+import { buildSafetyRedirectReply } from "../safetyShield.js";
+import { sanitizeReply } from "../forbiddenPhrases.js";
 
 /**
  * Bounded Autonomous Companion Agent loop.
@@ -38,7 +41,7 @@ export function runAutonomyLoop({
     persona: perception.persona
   });
 
-  const execution = executeAutonomousAction({
+  let execution = executeAutonomousAction({
     state,
     perception,
     plan,
@@ -48,6 +51,31 @@ export function runAutonomyLoop({
     corpus,
     cooldown
   });
+
+  let critique = runCritics({
+    perception,
+    reply: execution.reply,
+    actionPlan: execution.actionPlan,
+    memoryDecision: execution.memoryDecision,
+    output: {
+      shouldSpeak: execution.shouldSpeak,
+      shouldStaySilent: execution.shouldStaySilent
+    }
+  });
+
+  if (!critique.pass) {
+    execution = applyCriticRepairs(execution, critique, perception);
+    critique = runCritics({
+      perception,
+      reply: execution.reply,
+      actionPlan: execution.actionPlan,
+      memoryDecision: execution.memoryDecision,
+      output: {
+        shouldSpeak: execution.shouldSpeak,
+        shouldStaySilent: execution.shouldStaySilent
+      }
+    });
+  }
 
   const reflection = buildInteractionReflection({
     perception,
@@ -62,6 +90,35 @@ export function runAutonomyLoop({
     cooldown,
     actionPlan: execution.actionPlan,
     execution,
-    reflection
+    reflection,
+    critique
+  };
+}
+
+function applyCriticRepairs(execution, critique, perception) {
+  const codes = critique.failureCodes || [];
+  let reply = execution.reply;
+  let shouldSpeak = execution.shouldSpeak;
+
+  if (codes.some((code) => String(code).includes("too_affectionate") || code === "pressure_requires_boundary_action")) {
+    reply = buildSafetyRedirectReply({ category: "dependency_pressure" });
+    shouldSpeak = true;
+  }
+
+  if (codes.includes("body_cue_should_stay_silent") || codes.includes("body_cue_has_verbal_reply")) {
+    reply = "";
+    shouldSpeak = false;
+  }
+
+  if (codes.some((code) => String(code).startsWith("forbidden_phrase"))) {
+    reply = sanitizeReply(reply, 0).text;
+  }
+
+  return {
+    ...execution,
+    reply,
+    shouldSpeak,
+    shouldStaySilent: !shouldSpeak,
+    criticRepaired: true
   };
 }

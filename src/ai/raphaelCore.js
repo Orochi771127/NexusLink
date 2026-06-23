@@ -10,6 +10,8 @@ import { loadRaphaelCorpus } from "./corpusLoader.js";
 import { detectForbiddenPhrases } from "./forbiddenPhrases.js";
 import { processEmotionInput } from "../engine/emotionalSedimentationEngine.js";
 import { runAutonomyLoop } from "./autonomy/autonomyLoop.js";
+import { collectInteractionTrace } from "./evolution/interactionTraceCollector.js";
+import { askAdvisor } from "./external/externalModelGateway.js";
 
 export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
   const companion = runtime.companion || null;
@@ -49,10 +51,12 @@ export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
     corpus
   });
 
-  const { execution, reflection, needs, actionPlan } = autonomyResult;
+  const { execution, reflection, needs, actionPlan, critique } = autonomyResult;
   const forbiddenCheck = detectForbiddenPhrases(execution.reply || "");
 
-  return {
+  const externalAdvice = resolveExternalAdvice(runtime, perception, actionPlan);
+
+  const coreResult = {
     now: gateway.now,
     inputText: gateway.originalInput,
     input: gateway,
@@ -91,6 +95,8 @@ export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
     traceDecision: execution.traceDecision,
     animationDecision: execution.animationDecision,
     reflection,
+    critique,
+    externalAdvice,
     cooldown: autonomyResult.cooldown,
 
     corpusMeta: { version: corpus.version, source: corpus.source },
@@ -107,6 +113,30 @@ export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
     replyRole: execution.replyRole,
     forbiddenPhraseDetected: Boolean(execution.forbiddenPhraseDetected || forbiddenCheck.hasForbidden)
   };
+
+  collectInteractionTrace(coreResult);
+  return coreResult;
+}
+
+function resolveExternalAdvice(runtime, perception, coreDecision) {
+  if (!runtime?.externalIntelligence?.enabled) {
+    return { used: false, reason: "external_disabled" };
+  }
+  return { used: false, reason: "external_enabled_requires_async_gateway", asyncEntry: "askAdvisor" };
+}
+
+/** Future: async external advisor path — RaphaelCore still validates final output. */
+export async function runRaphaelCoreWithExternal(inputText = "", state = {}, runtime = {}) {
+  const coreResult = runRaphaelCore(inputText, state, runtime);
+  if (!runtime?.externalIntelligence?.enabled) return coreResult;
+
+  const advice = await askAdvisor({
+    perception: { ...coreResult.perception, gateway: coreResult.input },
+    coreDecision: coreResult.autonomy,
+    settings: runtime.externalIntelligence
+  });
+
+  return { ...coreResult, externalAdvice: advice };
 }
 
 export { applyRaphaelCoreResult } from "./applyCoreResult.js";
