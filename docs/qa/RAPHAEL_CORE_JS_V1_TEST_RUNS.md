@@ -363,7 +363,7 @@ Commit: `35ddea5` (NexusLink), `0c63c63` (corpus)
 
 Date/time: 2026-06-24 (corpus expansion + cross-session preferences)
 Branch: `feature/raphael-soul-architecture-v1` + `aiforge-raphael-corpus/merge/raphael-corpus-v1`
-Commit: *(pending)*
+Commit: `1c258d4` (NexusLink), `4cf13ee` (corpus)
 
 ### What was tested
 
