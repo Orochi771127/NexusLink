@@ -172,7 +172,8 @@ export async function runRaphaelCoreWithExternal(inputText = "", state = {}, run
   const advice = await askAdvisor({
     perception: { ...coreResult.perception, gateway: coreResult.input },
     coreDecision: coreResult.autonomy,
-    settings
+    settings,
+    runtime
   });
 
   return { ...coreResult, externalAdvice: advice };
@@ -187,4 +188,5 @@ if (typeof window !== "undefined" && new URLSearchParams(window.location.search)
   import("./testHarness/raphaelCrossSessionPreferenceCases.js").then((mod) =>
     mod.installCrossSessionPreferenceHarness(window)
   );
+  import("./testHarness/raphaelGatewaySmokeCases.js").then((mod) => mod.installGatewaySmokeHarness(window));
 }

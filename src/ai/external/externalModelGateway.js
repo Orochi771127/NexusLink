@@ -2,6 +2,10 @@ import { buildAdvisorPayload, buildRendererPayload } from "./privacyRedactor.js"
 import { evaluateExternalPrompt } from "./promptFirewall.js";
 import { routeAdvisorRequest, routeRendererRequest } from "./modelRouter.js";
 import { detectForbiddenPhrases, sanitizeReply } from "../forbiddenPhrases.js";
+import {
+  resolveExternalIntelligencePolicy,
+  shouldRouteAdvisorViaGateway
+} from "./externalIntelligencePolicy.js";
 
 const DEFAULT_SETTINGS = Object.freeze({
   externalEnabled: false,
@@ -15,8 +19,13 @@ const DEFAULT_SETTINGS = Object.freeze({
  * External models advise only — RaphaelCore retains final authority.
  * Default: disabled. Enable via runtime.settings.externalIntelligence only.
  */
-export async function askAdvisor({ perception = {}, coreDecision = {}, settings = {} } = {}) {
-  const merged = { ...DEFAULT_SETTINGS, ...settings };
+export async function askAdvisor({
+  perception = {},
+  coreDecision = {},
+  settings = {},
+  runtime = {}
+} = {}) {
+  const merged = resolveExternalIntelligencePolicy({ externalIntelligence: { ...DEFAULT_SETTINGS, ...settings } });
   const payload = buildAdvisorPayload({ perception, coreDecision });
   const advisorSettings = { ...merged, externalEnabled: merged.advisorEnabled || merged.externalEnabled };
   const firewall = evaluateExternalPrompt({ mode: "advisor", payload, settings: advisorSettings });
@@ -29,7 +38,15 @@ export async function askAdvisor({ perception = {}, coreDecision = {}, settings 
     };
   }
 
-  const advice = await routeAdvisorRequest({ provider: merged.provider, payload });
+  const provider = shouldRouteAdvisorViaGateway(merged) ? "gateway" : merged.provider;
+  const advice = await routeAdvisorRequest({
+    provider,
+    payload,
+    perception,
+    coreDecision,
+    settings: merged,
+    runtime
+  });
 
   const validated = validateAdvisorAdvice(advice);
   return {

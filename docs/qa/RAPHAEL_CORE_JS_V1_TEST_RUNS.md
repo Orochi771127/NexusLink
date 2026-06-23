@@ -396,6 +396,30 @@ Commit: `1c258d4` (NexusLink), `4cf13ee` (corpus)
 
 ## Test / Optimization Record
 
+Date/time: 2026-06-24 (Raphael Gateway Server Phase A)
+Branch: `feature/raphael-soul-architecture-v1` + new `raphael-gateway-server`
+Commit: *(pending)*
+
+### What was tested
+
+- Local gateway server `http://127.0.0.1:8787` (Python stdlib runner)
+- Client `raphaelGatewayClient.js` + `externalIntelligencePolicy.js`
+- Gateway smoke: health, advisor, web blocked, corpus search, core advisor route
+
+### Result
+
+- **Pass** — server smoke 4/4, client smoke 5/5 checks
+
+### Changes made
+
+- New repo: `raphael-gateway-server/` (Node canonical + Python fallback)
+- NexusLink: gateway client adapter, policy, smoke harness
+- Doc: `docs/architecture/RAPHAEL_GATEWAY_SERVER_V1.md`
+
+---
+
+## Test / Optimization Record
+
 Date/time: 2026-06-24 (growth session + recall fix)
 Agent / tool: Grok Agent (Playwright harness)
 Branch: `feature/raphael-soul-architecture-v1`
