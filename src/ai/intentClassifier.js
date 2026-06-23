@@ -47,7 +47,7 @@ export function classifyIntent(inputText = "", analysis = {}, safety = {}) {
   if (/謝謝|感謝|謝啦/.test(text)) {
     return createIntent(SOUL_TALK_INTENTS.GRATITUDE, 0.9);
   }
-  if (/抱抱|擁抱|摸摸|靠近|牽/.test(text)) {
+  if (/抱抱|擁抱|摸摸|牽/.test(text) || (/靠近/.test(text) && !/退後|太快|距離|半步/.test(text))) {
     return createIntent(SOUL_TALK_INTENTS.SEEKING_COMFORT_PHYSICAL, 0.8);
   }
   if (/我想待著|不用說太多|先不要說|只想待著/.test(text)) {

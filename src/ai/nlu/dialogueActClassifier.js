@@ -31,6 +31,9 @@ export function classifyDialogueAct(inputText = "", analysis = {}, intent = {}, 
   if (/不管我說什麼|一直講|都會說|重複|generic|一樣的話|好我聽到了/.test(text)) {
     return DIALOGUE_ACTS.CORRECTING_RAPHAEL;
   }
+  if (/問太多|問太多了/.test(text) && /安靜|少問|不要問/.test(text)) {
+    return DIALOGUE_ACTS.REQUESTING_SILENCE;
+  }
   if (intent.intent === "silence_request" || intent.intent === "quiet_presence") {
     return DIALOGUE_ACTS.REQUESTING_SILENCE;
   }
@@ -44,7 +47,10 @@ export function classifyDialogueAct(inputText = "", analysis = {}, intent = {}, 
   if (/壞掉|bug|錯誤|擋住|疊層|修到|亂了|釐清/.test(text)) return DIALOGUE_ACTS.REPORTING_BUG;
   if (/先修|下一步|優先|開發順序|要先做/.test(text)) return DIALOGUE_ACTS.PRACTICAL_PLANNING;
   if (/幫我拆解|為什麼理解不了|怎麼改|怎麼修/.test(text)) return DIALOGUE_ACTS.ASKING_FOR_HELP;
-  if (/不是想要你安慰|不要安慰|不想聽大道理|不要問我/.test(text)) {
+  if (/心裡卡住|不是身體累|不是身體/.test(text)) {
+    return DIALOGUE_ACTS.CLARIFYING_PROBLEM;
+  }
+  if (/不是想要你安慰|不要安慰|不想聽大道理|不要問我|不要一直安慰/.test(text)) {
     return DIALOGUE_ACTS.CLARIFYING_PROBLEM;
   }
   if (/陪我|在旁邊|不要走/.test(text) && !/安靜|不要問/.test(text)) {

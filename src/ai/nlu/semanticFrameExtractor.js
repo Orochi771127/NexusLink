@@ -108,5 +108,6 @@ function extractNegations(text = "") {
   if (/不是想要|不要|不想|別|不用|不必/.test(text)) negations.push("reject_default_comfort");
   if (/不要問/.test(text)) negations.push("reject_questions");
   if (/不要安慰/.test(text)) negations.push("reject_comfort");
+  if (/不是身體累|不是身體/.test(text)) negations.push("不是身體累");
   return negations;
 }

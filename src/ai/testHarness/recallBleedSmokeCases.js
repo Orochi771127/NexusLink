@@ -99,7 +99,9 @@ function runCase({ id, input, stateOverrides = {}, expect = {} }) {
     no_awakening_recall: expect.noAwakeningRecall ? !awakeningBleed : true,
     short_quiet_reply: expect.shortQuiet ? reply.length <= 56 : true,
     explicit_recall_allowed: expect.explicitRecall ? recallMode === "explicit_reference" : true,
-    fatigue_recall_allowed: expect.fatigueRecall ? /不是第一次|營火|上次|重量|慢一點|疲憊/.test(reply) : true,
+    fatigue_recall_allowed: expect.fatigueRecall
+      ? /不是第一次|營火|上次|重量|慢一點|疲憊|又回來了|「又」|不是第一次回來|身體累|心裡卡住/.test(reply)
+      : true,
     no_major_memory_recall: expect.noMajorRecall ? !recallBleed : true,
     gratitude_ok: expect.gratitudeOk ? formatted.intent === "gratitude" : true,
     body_cue_ok: expect.bodyCueOk ? formatted.shouldSpeak === false : true

@@ -42,7 +42,12 @@ export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
   );
   const recoveryContext = buildRecoveryContext(state, memories, analysis, { now: gateway.now });
 
-  if (
+  if (memories.recallPolicy?.blockReason === "repeated_fatigue_recall") {
+    responseStrategy = {
+      strategy: RESPONSE_STRATEGIES.REPEATED_EMOTION_RECALL,
+      reason: "repeated_fatigue_recall"
+    };
+  } else if (
     memories.shouldRecall &&
     recoveryContext.allowsExplicitReference &&
     !LOW_RECALL_INTENTS.has(intent.intent)
@@ -226,4 +231,5 @@ if (typeof window !== "undefined" && new URLSearchParams(window.location.search)
   );
   import("./testHarness/raphaelGatewaySmokeCases.js").then((mod) => mod.installGatewaySmokeHarness(window));
   import("./testHarness/nluSmokeCases.js").then((mod) => mod.installNluSmokeHarness(window));
+  import("./testHarness/stage4HumanPlaytestCases.js").then((mod) => mod.installStage4PlaytestHarness(window));
 }

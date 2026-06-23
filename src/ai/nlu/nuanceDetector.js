@@ -10,7 +10,9 @@ export const NUANCE_FLAGS = Object.freeze({
   ASKS_FOR_MORE_NATURAL_LANGUAGE: "asks_for_more_natural_language",
   ASKS_FOR_AGENTIC_BEHAVIOR: "asks_for_agentic_behavior",
   NO_QUESTIONS: "no_questions",
-  NO_ADVICE: "no_advice"
+  NO_ADVICE: "no_advice",
+  REPEATED_EMOTION: "repeated_emotion",
+  WANTS_HOLDING_SPACE: "wants_holding_space"
 });
 
 export function detectNuances(inputText = "", segments = []) {
@@ -48,6 +50,20 @@ export function detectNuances(inputText = "", segments = []) {
   }
   if (/不想聽大道理|不要建議|不要分析太多/.test(text)) {
     nuances.push(NUANCE_FLAGS.NO_ADVICE);
+  }
+  if (/又|再次|又來了|最近又|又覺得|還是.*(累|悶|煩|難過|沒力)/.test(text)) {
+    nuances.push(NUANCE_FLAGS.REPEATED_EMOTION);
+  }
+  if (/不是要答案|放在這裡|不用講太多|不用說太多|今天不用/.test(text)) {
+    nuances.push(NUANCE_FLAGS.WANTS_HOLDING_SPACE);
+    nuances.push(NUANCE_FLAGS.WANTS_SHORT_REPLY);
+  }
+  if (/問太多|一直安慰|不要一直/.test(text)) {
+    nuances.push(NUANCE_FLAGS.WANTS_QUIET_PRESENCE);
+    nuances.push(NUANCE_FLAGS.NOT_SEEKING_COMFORT);
+  }
+  if (/太快.*退後|退後一點|可以退後/.test(text)) {
+    nuances.push(NUANCE_FLAGS.WANTS_BOUNDARY);
   }
 
   return nuances;

@@ -40,6 +40,9 @@ export function classifyTopic(inputText = "", entities = [], analysis = {}) {
   if (/地圖|外面|探索|走走|湖面外/i.test(text) || entities.includes("地圖")) {
     return TOPICS.EXPLORATION;
   }
+  if (/心裡卡住|不是身體累|心裡累/.test(text)) {
+    return TOPICS.EMOTION;
+  }
   if (/累|疲憊|好睏|沒力|體力/.test(text)) {
     return TOPICS.PHYSICAL_TIREDNESS;
   }

@@ -764,3 +764,48 @@ Forbidden phrases in manual run: **0** (`我還記得上次你也提到`, generi
 ### Recommendation
 
 **Ready for Stage 4 human playtest** — all merge-blocking gates pass; harness gap is documented follow-up only.
+
+---
+
+## Stage 4 Raphael Human Playtest
+
+### Scope
+
+- Fatigue recall strategy alignment (`我又覺得自己很累` → `repeated_emotion_recall`)
+- Touch fatigue / reject daytime QA (`docs/qa/_run_touch_fatigue_daytime.py`, dev preset `?devPanel=1&devFirstTouch=1`)
+- Human-feel dialogue cases (`docs/qa/_run_stage4_human_playtest.py`, 10 cases)
+
+### Fatigue recall alignment
+
+- **Before:** `我想確認一下：你現在最想先處理的是疲憊這塊嗎？` (generic clarifying question)
+- **After:** `我聽見「又」這個字了。這種疲憊不是第一次回來。這次先不用急著拆，先確認它是身體累，還是心裡卡住。` (or shorter variant with `又回來了`)
+- **Mechanism:** `isRepeatedEmotionSignal` + `repeated_fatigue_recall` policy + `REPEATED_EMOTION_RECALL` strategy (no new modules)
+
+### Results
+
+| Runner | Result |
+|--------|--------|
+| `_run_nlu_smoke.py` | **8/8** pass |
+| `_run_harness_smoke.py` | **17/17** pass (fatigue `recallHit` aligned) |
+| `_run_live_playtest_gate.py` | **pass** (10/10 Soul Talk, 13/13 HUD) |
+| `_run_stage4_human_playtest.py` | **10/10** pass |
+| `_run_touch_fatigue_daytime.py` | **7/7** pass |
+| Console errors | **0** |
+| Forbidden phrases | **0** |
+
+### Touch fatigue / reject daytime QA
+
+- Dev preset avoids fresh-player awakening (`devFirstTouch=1`)
+- Engine-level fatigue rise verified via `touchReactionEngine` (daytime, non-sleep path)
+- IC integration: first touch + spam burst; guarded/reject/wake reactions observed
+- Single Pixi canvas; awakening gate not re-triggered; Soul Talk panel present
+
+### Remaining risks
+
+- Sleep-window touches still short-circuit to `wake` before fatigue accrues in live UI (documented; engine QA covers fatigue math separately)
+- Stage 4 cases are rule-based harness checks — expanded real human playtest still recommended
+- Apology line (`我剛剛對你太急了，對不起`) still uses contextual ack; dedicated repair pack optional
+
+### Recommendation
+
+**Ready for expanded Stage 4 human playtest** on branch `feature/raphael-stage4-human-playtest` (not merged).

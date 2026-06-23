@@ -111,7 +111,10 @@ export function composeRaphaelReply({
     });
   }
 
-  if (strategy === RESPONSE_STRATEGIES.MEMORY_REFERENCE && composeOpts.recoveryRecall) {
+  if (
+    strategy === RESPONSE_STRATEGIES.MEMORY_REFERENCE &&
+    (composeOpts.recoveryRecall || nlu?.dialogueAct === "asking_memory")
+  ) {
     const awakeningReply = buildStrategyReply({
       strategy,
       nlu,

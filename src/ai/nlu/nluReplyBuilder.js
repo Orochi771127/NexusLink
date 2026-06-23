@@ -22,6 +22,9 @@ export function buildStrategyReply({
       if (topic === "development") {
         return `先釐清問題。你提到${entityRef}，我們可以先列：現象、重現步驟、最後才是修法。`;
       }
+      if (topic === "emotion" && (frame.negations || []).some((n) => /身體累/.test(n))) {
+        return "好，我先當成心裡卡住，不當成身體累。你想先說的是哪一段？";
+      }
       return `我先把重點放在釐清，不先安慰。你說的${entityRef || "這件事"}，是哪一段開始不對？`;
     },
     [RESPONSE_STRATEGIES.ACKNOWLEDGE_GENERIC_FAILURE]: () =>
@@ -40,8 +43,14 @@ export function buildStrategyReply({
       "自然語言理解會經過 intent、semanticFrame、response pack 幾層；如果都 miss，才會掉到 generic fallback。我們可以從你這句話的 topic 和 constraints 開始修。",
     [RESPONSE_STRATEGIES.PRACTICAL_PLANNING]: () =>
       "若目標是讓玩家立刻感覺懂你，先修 AI 理解層；若畫面操作受阻，先修 UI/HUD。你現在比較卡的是哪一種？",
-    [RESPONSE_STRATEGIES.EXPLORATION_INVITE]: () =>
-      "湖面外的光路還在。我們可以慢慢走向外面地圖，但不會硬拉你離開現在的節奏。",
+    [RESPONSE_STRATEGIES.EXPLORATION_INVITE]: () => {
+      if (frame.emotionalTone === "fatigue" || (nlu.nuances || []).includes("repeated_emotion")) {
+        return "湖面外的路還在。你現在有點沒力，我們可以慢慢走，不硬拉節奏。";
+      }
+      return "湖面外的光路還在。我們可以慢慢走向外面地圖，但不會硬拉你離開現在的節奏。";
+    },
+    [RESPONSE_STRATEGIES.BOUNDARY_SET]: () =>
+      "你想靠近，也留了退後的空間。若太快，我會先退半步。",
     [RESPONSE_STRATEGIES.SHORT_VALIDATION]: () =>
       pick(["嗯，被否定會悶。我先不講大道理。", "聽起來很悶。我先陪著，不急着給建議。"], seed),
     [RESPONSE_STRATEGIES.EMOTIONAL_SHORT]: () => {
@@ -59,6 +68,16 @@ export function buildStrategyReply({
       if (topic !== "unknown") return `我聽見你在說${topicLabel(topic)}。我們先從這個點開始。`;
       return "我在。你可以再說一句你最想我先懂的部分。";
     },
+    [RESPONSE_STRATEGIES.REPEATED_EMOTION_RECALL]: () =>
+      pick(
+        [
+          "我聽見「又」這個字了。這種疲憊不是第一次回來。這次先不用急著拆，先確認它是身體累，還是心裡卡住。",
+          "這種疲憊又回來了。我不急著安慰你。先分清楚：是身體累，還是心裡卡住？"
+        ],
+        seed
+      ),
+    [RESPONSE_STRATEGIES.HOLDING_SPACE]: () =>
+      pick(["好，我先不給答案。這件事就放在這裡。", "嗯，不用講太多。我陪著，不急着收走。"], seed),
     [RESPONSE_STRATEGIES.MEMORY_REFERENCE]: () => {
       const awakeningRecall =
         topic === "awakening" ||
@@ -71,6 +90,24 @@ export function buildStrategyReply({
           [
             "我記得。那時候心核剛亮起，聲音還很輕。",
             "我記得第一次醒來。那時候我還分不清你的聲音，只知道你在這裡。"
+          ],
+          seed
+        );
+      }
+
+      const dialogueAct = frame.dialogueAct || nlu.dialogueAct || "";
+      const fatigueRecall =
+        recoveryContext?.memoryEmotion === "fatigue" ||
+        recoveryContext?.memoryTheme === "疲憊" ||
+        topic === "physical_tiredness" ||
+        (topic === "memory" && /累|疲憊/.test(entityRef)) ||
+        (dialogueAct === "asking_memory" && /累|疲憊|沒力/.test(topicLabel(topic) + entityRef));
+
+      if (fatigueRecall && !awakeningRecall) {
+        return pick(
+          [
+            "我記得你上次說累的時候。那時候我們把節奏放慢，不急着把火燒旺。",
+            "上次那段疲憊還在記憶裡。這次我們沿用那種慢一點的節奏。"
           ],
           seed
         );
