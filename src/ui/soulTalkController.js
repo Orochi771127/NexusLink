@@ -1,4 +1,6 @@
 import { runRaphaelCore, applyRaphaelCoreResult } from "../ai/raphaelCore.js";
+import { maybeTriggerFirstAwakening } from "../ai/awakening/firstAwakeningRuntime.js";
+import { isRaphaelAwakened } from "../ai/awakening/raphaelAwakeningGate.js";
 import { updateMemoryLifecycles } from "../engine/memoryLifecycleEngine.js";
 import { buildEventReflection, composeMemoryReflection } from "../engine/soulTalkComposer.js";
 import { qs } from "../utils/dom.js";
@@ -89,6 +91,15 @@ export function createSoulTalkController({ store, saveCurrentState }) {
       const lifecycleResult = updateMemoryLifecycles(state.emotionalMemories || [], now);
       state.emotionalMemories = lifecycleResult.updatedMemories;
 
+      let awakeningResult = null;
+      if (!isRaphaelAwakened(state)) {
+        awakeningResult = maybeTriggerFirstAwakening(state, {
+          companion: currentCreature,
+          now,
+          dispatchAnimation: true
+        });
+      }
+
       const coreResult = runRaphaelCore(message, state, {
         now,
         idSuffix,
@@ -102,6 +113,8 @@ export function createSoulTalkController({ store, saveCurrentState }) {
         moodBefore,
         moodAfter: state.mood,
         repeated: coreResult.input?.repeated,
+        awakening: awakeningResult,
+        isAwakened: isRaphaelAwakened(state),
         coreResult
       };
     });

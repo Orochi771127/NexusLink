@@ -3,6 +3,7 @@ import { getTouchPersonality } from "./personalityProfile.js";
 import { getAnimationProfileForCreature, getBodyCueProfile, getMoodIdleAnimationName, getTouchAnimationName } from "./animationProfile.js";
 import { createHabitatTraceFromMemory, pruneHabitatTraces, upsertHabitatTrace } from "./habitatTraceEngine.js";
 import { clamp } from "../utils/clamp.js";
+import { maybeTriggerFirstAwakening } from "../ai/awakening/firstAwakeningRuntime.js";
 
 export const ANIMATION_REGISTRY = Object.freeze({
   idle_calm: { id: "idle_calm", category: "idle", interruptible: true, pack: "core" },
@@ -90,24 +91,40 @@ export class InteractionController {
       return this.handleSpamBurst();
     }
 
+    const wasFirstTouch = !currentState.firstTouchCompleted;
     const interactionResult = evaluateTouchReaction(
       this.store.getState(),
       getTouchPersonality(this.creature),
       touchType,
-      Date.now(),
+      now,
       this.creature?.name
     );
-    const motionState = this.chooseTouchAnimation(interactionResult, touchType);
+    let motionState = this.chooseTouchAnimation(interactionResult, touchType);
+    let awakeningResult = null;
 
-    this.store.setState({
-      ...interactionResult.statePatch,
-      spamScore: this.spamScore
+    this.store.updateState((draft) => {
+      Object.assign(draft, interactionResult.statePatch);
+      draft.spamScore = this.spamScore;
+      if (wasFirstTouch) {
+        awakeningResult = maybeTriggerFirstAwakening(draft, {
+          companion: this.creature,
+          now,
+          dispatchAnimation: false
+        });
+      }
     });
-    this.setStatusText(interactionResult.previewText);
+
+    if (awakeningResult?.applied) {
+      motionState = awakeningResult.animationKey || "idle_wake";
+      this.setStatusText(awakeningResult.payload?.reactionPreview || interactionResult.previewText);
+    } else {
+      this.setStatusText(interactionResult.previewText);
+    }
+
     this.saveCurrentState();
-    this.onStateChange(interactionResult);
+    this.onStateChange({ ...interactionResult, awakening: awakeningResult, motionState });
     await this.playAnimation(motionState);
-    return { ...interactionResult, motionState };
+    return { ...interactionResult, motionState, awakening: awakeningResult };
   }
 
   playAnimation(animName, interruptible = false) {

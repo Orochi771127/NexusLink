@@ -1,6 +1,38 @@
-# Raphael Soul Architecture v1.3
+# Raphael Soul Architecture v1.4
 
 Branch: `feature/raphael-soul-architecture-v1`
+
+## Awakening gate (Stage 3 — 心核初醒)
+
+Raphael **does not need external LLM** to awaken. Awakening means affecting memory, habitat, state, and body language — not just chat.
+
+### Stage model
+
+| Stage | Signal |
+|-------|--------|
+| `dormant` | No awakening memory, no first touch |
+| `stirring` | `firstTouchCompleted` but no awakening memory yet |
+| `awakened` | `emotionalMemories` contains `source: first_awakening` |
+
+### 8-point awakening checklist (`awakeningChecklist.js`)
+
+1. Soul Talk via RaphaelCore
+2. High-risk not gamified
+3. Dependency boundary (no intimacy reward)
+4. Ordinary emotions → `emotionalMemory`
+5. Important memories → `habitatTrace`
+6. `stateMutationPolicy` for bond/trust/defense/mood/energy
+7. `animationKey` + dispatch via `raphaelAnimationBridge`
+8. First awakening event (`firstAwakeningRuntime.js`)
+
+### First awakening trigger
+
+```text
+Primary: first touch → idle_wake + awakening memory + habitat trace + opening lines
+Fallback: first Soul Talk while dormant → same awakening payload
+```
+
+Modules: `src/ai/awakening/*`
 
 ## Design principle
 

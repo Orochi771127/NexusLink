@@ -5,10 +5,15 @@ import {
 } from "../engine/habitatTraceEngine.js";
 import { buildMilestoneMemory, findNewBondMilestone, getMilestoneLine } from "../engine/bondMilestoneEngine.js";
 import { shouldBlockMilestone } from "./stateMutationPolicy.js";
+import { dispatchRaphaelAnimationCue } from "./raphaelAnimationBridge.js";
 
 const NON_REWARDING_MODES = new Set(["safety_redirect", "withdraw", "reject"]);
 
-export function applyRaphaelCoreResult(state, coreResult, { companion = null, now = Date.now() } = {}) {
+export function applyRaphaelCoreResult(
+  state,
+  coreResult,
+  { companion = null, now = Date.now(), dispatchAnimation = true } = {}
+) {
   const plan = coreResult.plan || {};
   const mutation = coreResult.stateMutation || {};
   const memoryDecision = coreResult.memoryDecision || {};
@@ -53,12 +58,17 @@ export function applyRaphaelCoreResult(state, coreResult, { companion = null, no
 
   if (state.chatHistory.length > 24) state.chatHistory.shift();
 
+  if (dispatchAnimation && coreResult.animationDecision) {
+    dispatchRaphaelAnimationCue(coreResult.animationDecision, { source: "raphael-soul-talk" });
+  }
+
   return {
     replyRole,
     replyText,
     shouldSpeak,
     milestone,
-    reflection: coreResult.reflection || null
+    reflection: coreResult.reflection || null,
+    animationDispatched: Boolean(dispatchAnimation && coreResult.animationDecision?.shouldDispatchNow)
   };
 }
 

@@ -23,11 +23,28 @@ export function mapSoulTalkAnimation({ plan = {}, analysis = {}, intent = {} } =
   const animationKey = plan.animationKey || emotionMap?.animationKey || reactionMap.animationKey;
   const fallbackKey = emotionMap?.fallbackKey || reactionMap.fallbackKey || "idle_calm";
 
+  const animationIntent = resolveSoulAnimationIntent(animationKey);
+
   return {
     animationKey,
     fallbackKey,
-    shouldDispatchNow: false,
+    animationIntent,
+    shouldDispatchNow: true,
     reaction,
     intent: intent.intent || "unknown"
   };
+}
+
+function resolveSoulAnimationIntent(animationKey = "idle_calm") {
+  const map = {
+    idle_wake: "soul.awaken",
+    idle_calm: "soul.acknowledge",
+    touch_guarded: "soul.guarded",
+    idle_defensive: "soul.defensive",
+    idle_distant: "soul.distant",
+    idle_happy: "soul.happy",
+    sleep: "soul.rest",
+    idle_tired: "soul.rest"
+  };
+  return map[animationKey] || "soul.acknowledge";
 }

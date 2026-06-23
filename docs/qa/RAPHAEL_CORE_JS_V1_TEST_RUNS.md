@@ -287,3 +287,47 @@ Commit: `2071610`
 
 - Revert `companionPreferenceProfile.js`, `corpusSearch.js`, `raphaelCorpusBundle.js`
 - Revert autonomy 2-pass + renderer hook
+
+---
+
+## Test / Optimization Record
+
+Date/time: 2026-06-23 (Awakening Runtime Gate)
+Agent / tool: Grok Agent (Playwright)
+Branch: `feature/raphael-soul-architecture-v1`
+Commit: (pending)
+
+### What was tested
+
+- `raphaelAwakeningGate` stage model: dormant / stirring / awakened
+- `firstAwakeningEvent` — memory + habitat trace + idle_wake + opening lines
+- First touch path (`interactionController`) triggers awakening
+- First Soul Talk fallback trigger while dormant
+- `raphaelAnimationBridge` — Soul Talk animation dispatch via EventBus
+- 10 core smoke cases + 4 awakening gate cases
+
+### Result
+
+- **Pass** (10/10 core, 4/4 awakening, 0 console errors)
+
+### Changes made
+
+- File: `src/ai/awakening/*` — gate, event, apply, checklist, runtime
+- File: `src/ai/raphaelAnimationBridge.js` — animation intent dispatch
+- File: `src/ai/animationMapper.js` — `shouldDispatchNow: true`
+- File: `src/ai/applyCoreResult.js` — dispatch animation after apply
+- File: `src/engine/interactionController.js` — first-touch awakening
+- File: `src/ui/soulTalkController.js` — soul-talk awakening fallback
+- File: `src/engine/animationProfile.js` — `soul.*` intents
+- File: `src/ai/testHarness/awakeningGateSmokeCases.js`
+- File: `docs/qa/_run_awakening_smoke.py`
+
+### Risks / follow-up
+
+- Returning players with old saves lack `first_awakening` memory — may re-trigger on first touch/soul talk (idempotent guard via `hasAwakeningMemory`)
+- Awakening adds companion chat lines — may stack with first-session opening line; human UX review recommended
+- Full 8-point checklist needs live play (emotional memory from non-awakening interactions) — harness covers gate mechanics
+
+### Rollback note
+
+- Revert `src/ai/awakening/` and animation bridge wiring first

@@ -69,14 +69,11 @@ export function executeAutonomousAction({
     ? mapHabitatTraceIntent(memoryDecision, alignedPlan, perception.analysis)
     : { traceObject: null, traceIntent: null, shouldApplyTrace: false };
 
-  const animationDecision = {
-    ...mapSoulTalkAnimation({
-      plan: { ...alignedPlan, mode: coerced.reaction, animationKey: coerced.animationKey },
-      analysis: perception.analysis,
-      intent: perception.intent
-    }),
-    shouldDispatchNow: false
-  };
+  const animationDecision = mapSoulTalkAnimation({
+    plan: { ...alignedPlan, mode: coerced.reaction, animationKey: coerced.animationKey },
+    analysis: perception.analysis,
+    intent: perception.intent
+  });
 
   let reply = "";
   let shouldSpeak = coerced.shouldSpeak;

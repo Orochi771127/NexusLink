@@ -82,6 +82,8 @@ export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
 
   const externalAdvice = resolveExternalAdvice(runtime, perception, actionPlan);
 
+  const animationDecision = execution.animationDecision || null;
+
   const coreResult = {
     now: gateway.now,
     inputText: gateway.originalInput,
@@ -122,7 +124,7 @@ export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
     stateMutation: execution.stateMutation,
     memoryDecision: execution.memoryDecision,
     traceDecision: execution.traceDecision,
-    animationDecision: execution.animationDecision,
+    animationDecision,
     reflection,
     reflectionPasses,
     critique,
@@ -176,4 +178,5 @@ export { applyRaphaelCoreResult } from "./applyCoreResult.js";
 
 if (typeof window !== "undefined" && new URLSearchParams(window.location.search).get("raphaelSmoke") === "1") {
   import("./testHarness/raphaelCoreSmokeCases.js").then((mod) => mod.installRaphaelSmokeHarness(window));
+  import("./testHarness/awakeningGateSmokeCases.js").then((mod) => mod.installAwakeningSmokeHarness(window));
 }
