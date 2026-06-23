@@ -28,7 +28,7 @@ export function classifyDialogueAct(inputText = "", analysis = {}, intent = {}, 
   if (intent.intent === "pressure") return DIALOGUE_ACTS.PRESSURE_COMMAND;
   if (intent.intent === "apology") return DIALOGUE_ACTS.APOLOGIZING;
   if (intent.intent === "gratitude") return DIALOGUE_ACTS.THANKING;
-  if (/不管我說什麼|一直講|都會說|重複|generic|一樣的話|好我聽到了/.test(text)) {
+  if (/不管我說什麼|一直講|都會說|重複|generic|一樣的話|好我聽到了|念稿|自然一點|太機械|像在念/.test(text)) {
     return DIALOGUE_ACTS.CORRECTING_RAPHAEL;
   }
   if (/問太多|問太多了/.test(text) && /安靜|少問|不要問/.test(text)) {
@@ -53,8 +53,11 @@ export function classifyDialogueAct(inputText = "", analysis = {}, intent = {}, 
   if (/不是想要你安慰|不要安慰|不想聽大道理|不要問我|不要一直安慰/.test(text)) {
     return DIALOGUE_ACTS.CLARIFYING_PROBLEM;
   }
-  if (/陪我|在旁邊|不要走/.test(text) && !/安靜|不要問/.test(text)) {
+  if (/陪我|在旁邊|不要走|想靠近|靠近你/.test(text) && !/安靜|不要問/.test(text)) {
     return DIALOGUE_ACTS.REQUESTING_PRESENCE;
+  }
+  if (/好煩|好悶|好委屈|受不了|崩潰|壓力好大/.test(text)) {
+    return DIALOGUE_ACTS.VENTING;
   }
   if (topic === "raphael_ai" || topic === "development") return DIALOGUE_ACTS.META_DISCUSSION;
   if (analysis?.isQuestion || intent.intent === "question") return DIALOGUE_ACTS.ASKING_QUESTION;

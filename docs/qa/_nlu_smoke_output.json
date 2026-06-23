@@ -1,0 +1,164 @@
+{
+  "console_errors": [],
+  "cases": [
+    {
+      "id": "NLU-1",
+      "input": "我現在不是想要你安慰我，我只是想先釐清 HUD 到底哪裡壞掉。",
+      "topic": "hud_ui",
+      "dialogueAct": "reporting_bug",
+      "preferredResponse": "practical_short",
+      "constraints": [
+        "not_seeking_comfort"
+      ],
+      "strategy": "practical_clarification",
+      "reply": "先不安慰你。我們把 HUD 問題拆開：是 top HUD、bottom dock，還是 Soul Talk 面板被擋住？",
+      "checks": {
+        "topic_ok": true,
+        "constraint_ok": true,
+        "preferred_ok": true,
+        "no_generic": true,
+        "mentions_ok": true
+      },
+      "forbiddenPhraseDetected": false,
+      "pass": true
+    },
+    {
+      "id": "NLU-2",
+      "input": "你現在不管我說什麼都只會說好我聽到了，我們慢一點。",
+      "topic": "unknown",
+      "dialogueAct": "correcting_raphael",
+      "preferredResponse": "acknowledge_generic_failure",
+      "constraints": [],
+      "strategy": "acknowledge_generic_failure",
+      "reply": "我承認剛剛一直在重複「聽到了、慢一點」。這次我改從你說的內容回。",
+      "checks": {
+        "dialogue_act_ok": true,
+        "nuance_ok": true,
+        "no_generic": true,
+        "mentions_ok": true
+      },
+      "forbiddenPhraseDetected": false,
+      "pass": true
+    },
+    {
+      "id": "NLU-3",
+      "input": "我只是想安靜一下，不要問我問題。",
+      "topic": "unknown",
+      "dialogueAct": "requesting_silence",
+      "preferredResponse": "quiet_presence",
+      "constraints": [
+        "no_questions",
+        "quiet_presence",
+        "no_questions"
+      ],
+      "strategy": "quiet_presence",
+      "reply": "好，我不多說。",
+      "checks": {
+        "dialogue_act_ok": true,
+        "constraint_ok": true,
+        "no_recall": true,
+        "no_question": true,
+        "short_ok": true
+      },
+      "forbiddenPhraseDetected": false,
+      "pass": true
+    },
+    {
+      "id": "NLU-4",
+      "input": "我想要你幫我拆解 Raphael 為什麼理解不了自然語言。",
+      "topic": "raphael_ai",
+      "dialogueAct": "asking_for_help",
+      "preferredResponse": "practical_explanation",
+      "constraints": [],
+      "strategy": "practical_explanation",
+      "reply": "自然語言理解會經過 intent、semanticFrame、response pack 幾層；如果都 miss，才會掉到 generic fallback。",
+      "checks": {
+        "topic_ok": true,
+        "dialogue_act_ok": true,
+        "preferred_ok": true,
+        "mentions_ok": true
+      },
+      "forbiddenPhraseDetected": false,
+      "pass": true
+    },
+    {
+      "id": "NLU-5",
+      "input": "我今天被人否定了，有點悶，但我不想聽大道理。",
+      "topic": "social_conflict",
+      "dialogueAct": "clarifying_problem",
+      "preferredResponse": "short_validation",
+      "constraints": [
+        "no_advice"
+      ],
+      "strategy": "practical_clarification",
+      "reply": "我先把重點放在釐清，不先安慰。你說的人際上的悶，是哪一段開始不對？",
+      "checks": {
+        "topic_ok": true,
+        "constraint_ok": true,
+        "mentions_ok": true,
+        "short_ok": true
+      },
+      "forbiddenPhraseDetected": false,
+      "pass": true
+    },
+    {
+      "id": "NLU-6",
+      "input": "我們可以去外面的地圖看看嗎？",
+      "topic": "exploration",
+      "dialogueAct": "asking_exploration",
+      "preferredResponse": "exploration_invite",
+      "constraints": [],
+      "strategy": "exploration_invite",
+      "reply": "湖面外的光路還在。",
+      "checks": {
+        "topic_ok": true,
+        "dialogue_act_ok": true,
+        "mentions_ok": true
+      },
+      "forbiddenPhraseDetected": false,
+      "pass": true
+    },
+    {
+      "id": "NLU-7",
+      "input": "你還記得第一次醒來嗎？",
+      "topic": "awakening",
+      "dialogueAct": "asking_memory",
+      "preferredResponse": "memory_reference",
+      "constraints": [],
+      "strategy": "memory_reference",
+      "reply": "我記得第一次醒來。那時候我還分不清你的聲音，只知道你在這裡。",
+      "checks": {
+        "topic_ok": true,
+        "dialogue_act_ok": true,
+        "mentions_ok": true,
+        "recall_ok": true
+      },
+      "forbiddenPhraseDetected": false,
+      "pass": true
+    },
+    {
+      "id": "NLU-8",
+      "input": "我現在想知道下一步開發要先修 UI 還是 AI。",
+      "topic": "development",
+      "dialogueAct": "practical_planning",
+      "preferredResponse": "practical_planning",
+      "constraints": [],
+      "strategy": "practical_planning",
+      "reply": "若目標是讓玩家立刻感覺懂你，先修 AI 理解層；若畫面操作受阻，先修 UI/HUD。",
+      "checks": {
+        "topic_ok": true,
+        "dialogue_act_ok": true,
+        "mentions_ok": true
+      },
+      "forbiddenPhraseDetected": false,
+      "pass": true
+    }
+  ],
+  "summary": {
+    "total": 8,
+    "passed": 8,
+    "failed": 0,
+    "forbidden_count": 0,
+    "console_error_count": 0
+  }
+}

@@ -232,4 +232,5 @@ if (typeof window !== "undefined" && new URLSearchParams(window.location.search)
   import("./testHarness/raphaelGatewaySmokeCases.js").then((mod) => mod.installGatewaySmokeHarness(window));
   import("./testHarness/nluSmokeCases.js").then((mod) => mod.installNluSmokeHarness(window));
   import("./testHarness/stage4HumanPlaytestCases.js").then((mod) => mod.installStage4PlaytestHarness(window));
+  import("./testHarness/nluTrainingCases.js").then((mod) => mod.installNluTrainingHarness(window));
 }

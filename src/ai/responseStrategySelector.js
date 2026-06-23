@@ -90,11 +90,31 @@ export function selectResponseStrategy(nlu = {}, intent = {}, safety = {}) {
   if (nuances.includes(NUANCE_FLAGS.WANTS_BOUNDARY)) {
     return { strategy: RESPONSE_STRATEGIES.BOUNDARY_SET, reason: "soft_boundary_invite" };
   }
+  if (dialogueAct === DIALOGUE_ACTS.APOLOGIZING) {
+    return { strategy: RESPONSE_STRATEGIES.EMOTIONAL_SHORT, reason: "apology_repair" };
+  }
+  if (dialogueAct === DIALOGUE_ACTS.VENTING) {
+    if (frame.topic === "social_conflict" || constraints.includes("no_advice")) {
+      return { strategy: RESPONSE_STRATEGIES.SHORT_VALIDATION, reason: "venting_social" };
+    }
+    if (frame.topic === "work_pressure" || frame.topic === "physical_tiredness") {
+      return { strategy: RESPONSE_STRATEGIES.EMOTIONAL_SHORT, reason: "venting_stress" };
+    }
+    if (frame.topic !== "unknown") {
+      return { strategy: RESPONSE_STRATEGIES.EMOTIONAL_SHORT, reason: "venting_topic" };
+    }
+  }
+  if (dialogueAct === DIALOGUE_ACTS.REQUESTING_PRESENCE) {
+    return { strategy: RESPONSE_STRATEGIES.HOLDING_SPACE, reason: "requesting_presence" };
+  }
   if (dialogueAct === DIALOGUE_ACTS.ASKING_QUESTION) {
     return { strategy: RESPONSE_STRATEGIES.ANSWER_OR_CLARIFY, reason: "asking_question" };
   }
   if (frame.preferredResponse === "short_validation" || constraints.includes("no_advice")) {
     return { strategy: RESPONSE_STRATEGIES.SHORT_VALIDATION, reason: "short_validation" };
+  }
+  if (frame.topic !== "unknown" && frame.userNeed && frame.userNeed !== "presence") {
+    return { strategy: RESPONSE_STRATEGIES.CONTEXTUAL_ACK, reason: "topic_grounded_ack" };
   }
   if ((nlu.confidenceBand || "low") === "low" && !constraints.includes("no_questions")) {
     return { strategy: RESPONSE_STRATEGIES.CLARIFYING_QUESTION, reason: "low_confidence" };

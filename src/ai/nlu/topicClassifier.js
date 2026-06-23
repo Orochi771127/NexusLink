@@ -46,8 +46,11 @@ export function classifyTopic(inputText = "", entities = [], analysis = {}) {
   if (/累|疲憊|好睏|沒力|體力/.test(text)) {
     return TOPICS.PHYSICAL_TIREDNESS;
   }
-  if (/工作|加班|deadline|壓力很大|專案/.test(text)) {
+  if (/工作|加班|deadline|壓力很大|壓力好大|壓力大|專案|老闆|老板|主管|任務|丟任務/.test(text)) {
     return TOPICS.WORK_PRESSURE;
+  }
+  if (/卡住|堵住了|繞不過|想不通/.test(text) && !/HUD|介面|bug/.test(text)) {
+    return TOPICS.EMOTION;
   }
   if (/否定|被拒|被罵|人際|吵架|悶|委屈/.test(text)) {
     return TOPICS.SOCIAL_CONFLICT;

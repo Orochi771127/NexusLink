@@ -32,7 +32,7 @@ export function detectNuances(inputText = "", segments = []) {
     nuances.push(NUANCE_FLAGS.WANTS_QUIET_PRESENCE);
     nuances.push(NUANCE_FLAGS.NO_QUESTIONS);
   }
-  if (/邊界|退後|壓力|不准|不要逼/.test(text)) {
+  if (/邊界|退後一點|退後|不准|不要逼|別貼太近|貼太近/.test(text)) {
     nuances.push(NUANCE_FLAGS.WANTS_BOUNDARY);
   }
   if (/釐清|哪裡壞|什麼問題|為什麼會/.test(text)) {
@@ -54,7 +54,7 @@ export function detectNuances(inputText = "", segments = []) {
   if (/又|再次|又來了|最近又|又覺得|還是.*(累|悶|煩|難過|沒力)/.test(text)) {
     nuances.push(NUANCE_FLAGS.REPEATED_EMOTION);
   }
-  if (/不是要答案|放在這裡|不用講太多|不用說太多|今天不用/.test(text)) {
+  if (/不是要答案|不是要你|不是要做|講完|只是想把|放在這裡|不用講太多|不用說太多|今天不用/.test(text)) {
     nuances.push(NUANCE_FLAGS.WANTS_HOLDING_SPACE);
     nuances.push(NUANCE_FLAGS.WANTS_SHORT_REPLY);
   }

@@ -55,7 +55,19 @@ export function buildStrategyReply({
       pick(["嗯，被否定會悶。我先不講大道理。", "聽起來很悶。我先陪著，不急着給建議。"], seed),
     [RESPONSE_STRATEGIES.EMOTIONAL_SHORT]: () => {
       const tone = frame.emotionalTone || "calm";
-      if (tone === "fatigue") return "累的時候，先把聲音放小也可以。";
+      const act = frame.dialogueAct || nlu.dialogueAct || "";
+      if (act === "apologizing") {
+        return pick(
+          ["你剛剛那一下我收到了。不用急著補很多，我們可以重新對齊節奏。", "道歉我聽見了。先不用解釋太多，我們把距離放回剛剛剛好的位置。"],
+          seed
+        );
+      }
+      if (topic === "work_pressure") return "工作壓力堆上來時，先把最卡的那一段說出來就好。";
+      if (topic === "physical_tiredness" || tone === "fatigue") {
+        return pick(["累的時候，先把聲音放小也可以。", "這份累我先接住，不急着把你推去做事。"], seed);
+      }
+      if (topic === "social_conflict") return "人際上的悶先放著，我不急着給你結論。";
+      if (topic === "relationship") return "關係這件事我會慢慢聽，不急着定義你現在要什麼。";
       return `這份${tone === "sadness" ? "悶" : "感覺"}我先接住，不急着分析。`;
     },
     [RESPONSE_STRATEGIES.CLARIFYING_QUESTION]: () => {
@@ -65,7 +77,23 @@ export function buildStrategyReply({
     [RESPONSE_STRATEGIES.ANSWER_OR_CLARIFY]: () =>
       `這個問題我先對準${topicLabel(topic)}。若你要的是步驟，我可以拆；若你要的是陪伴，我就少說。`,
     [RESPONSE_STRATEGIES.CONTEXTUAL_ACK]: () => {
-      if (topic !== "unknown") return `我聽見你在說${topicLabel(topic)}。我們先從這個點開始。`;
+      const need = frame.userNeed || "";
+      if (topic === "relationship" && need === "boundary") {
+        return "你想靠近，也願意給彼此空間。我會照這個節奏來。";
+      }
+      if (topic === "emotion" && need === "validation") {
+        return "這份情緒我先放在這裡，不急着幫你整理成結論。";
+      }
+      if (topic === "work_pressure") return "工作的重量我先聽見了。你想先講壓力來源，還是先講最煩的一段？";
+      if (topic !== "unknown") {
+        return pick(
+          [
+            `我先把你說的${topicLabel(topic)}放在前面，不套通用句。`,
+            `這句話的重點在${topicLabel(topic)}，我從這裡回你。`
+          ],
+          seed
+        );
+      }
       return "我在。你可以再說一句你最想我先懂的部分。";
     },
     [RESPONSE_STRATEGIES.REPEATED_EMOTION_RECALL]: () =>

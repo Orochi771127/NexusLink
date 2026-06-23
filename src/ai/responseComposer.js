@@ -57,7 +57,8 @@ export function composeRaphaelReply({
     recallMode: recoveryContext?.recallMode || "none",
     replyMode: replyMode || actionPlan.replyMode || "",
     nlu,
-    responseStrategy
+    responseStrategy,
+    recoveryContext
   };
 
   if (plan.mode === SOUL_TALK_REACTIONS.SAFETY_REDIRECT) {
@@ -170,7 +171,7 @@ export function composeRaphaelReply({
     }
   }
 
-  if (!blockComfort) {
+  if (!blockComfort && !shouldSkipResponsePacks(nlu, strategy)) {
     const packLine = selectResponsePackLine({
       corpus: loadedCorpus,
       companionId,
@@ -243,12 +244,25 @@ export function finalizeAndGuardReply(text, { persona, state, composeOpts, nlu, 
       nlu,
       semanticFrame: nlu?.semanticFrame,
       seed: buildSeed("", state, null),
-      recoveryContext: null
+      recoveryContext: composeOpts.recoveryContext || null
     });
     reply = finalizeReply(reply, persona, state, composeOpts);
   }
 
   return reply;
+}
+
+function shouldSkipResponsePacks(nlu, strategy) {
+  if (!nlu) return false;
+  const topic = nlu.topic || nlu.semanticFrame?.topic || "unknown";
+  const band = nlu.confidenceBand || "low";
+  const strategic =
+    strategy &&
+    strategy !== RESPONSE_STRATEGIES.CONTEXTUAL_ACK &&
+    strategy !== RESPONSE_STRATEGIES.CLARIFYING_QUESTION;
+  if (topic !== "unknown" && (strategic || band !== "low")) return true;
+  if ((nlu.nuances || []).length >= 2) return true;
+  return false;
 }
 
 function shouldBlockComfortPacks(nlu, strategy) {
