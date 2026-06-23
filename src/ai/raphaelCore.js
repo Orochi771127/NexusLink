@@ -23,6 +23,7 @@ import { selectResponseStrategy, RESPONSE_STRATEGIES } from "./responseStrategyS
 import { LOW_RECALL_INTENTS } from "./memoryRecallPolicy.js";
 import { getDialogueState, recordDialogueTurn, getRepetitionScore } from "./dialogue/dialogueStateTracker.js";
 import { evaluateAntiLoop } from "./dialogue/antiLoopPolicy.js";
+import { selectReplyVariant } from "./dialogue/replyVariantSelector.js";
 
 export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
   const companion = runtime.companion || null;
@@ -74,6 +75,26 @@ export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
     };
   }
 
+  const variantSeed =
+    String(gateway.normalizedInput || "").length +
+    Math.round(state.energy || 0) +
+    Math.round(state.trust || 0);
+
+  const variantSelection = selectReplyVariant({
+    responseStrategy,
+    nlu,
+    dialogueState,
+    corpus,
+    companionId,
+    analysis,
+    intent,
+    plan: { mode: "acknowledge" },
+    state,
+    semanticSoul,
+    recoveryContext,
+    seed: variantSeed
+  });
+
   const preferenceProfile =
     runtime.companionPreferenceProfile || getCompanionPreferenceProfile(companionId);
   const persona = applyPreferenceToPersona(resolvePersona(companion, state), preferenceProfile);
@@ -110,7 +131,8 @@ export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
     recoveryContext,
     nlu,
     responseStrategy,
-    antiLoopDecision
+    antiLoopDecision,
+    variantSelection
   };
 
   const autonomyResult = runAutonomyLoop({
@@ -170,7 +192,8 @@ export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
       antiLoopApplied: Boolean(antiLoopDecision.shouldBlock),
       antiLoopReason: antiLoopDecision.reason || null,
       forceStrategy: antiLoopDecision.forceStrategy || null,
-      repetitionScore: getRepetitionScore(dialogueState)
+      repetitionScore: getRepetitionScore(dialogueState),
+      variantSelection
     },
 
     autonomy: {

@@ -51,6 +51,8 @@ export function recordDialogueTurn(sessionKey = "default", coreResult = {}) {
     responseStrategy: strategy,
     variantId: coreResult.composeMeta?.variantId || null,
     replySource: coreResult.composeMeta?.replySource || null,
+    openingPhrase: coreResult.composeMeta?.openingPhrase || null,
+    reply: coreResult.reply || coreResult.output?.reply || "",
     quickReplyIntents: (coreResult.quickReplies || []).map((item) => item.intent).filter(Boolean),
     timestamp: Number(coreResult.now) || Date.now()
   };

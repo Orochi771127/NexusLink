@@ -52,6 +52,16 @@ export const DIALOGUE_LOOP_CASES = Object.freeze([
       composeMeta: true,
       mentions: /安靜|不多說|不問/
     }
+  },
+  {
+    id: "DL-4",
+    setup: "seed_holding_space_variant_loop",
+    input: "我不是要你做什麼，我只是想講完這件事",
+    expect: {
+      strategy: "holding_space",
+      variantNot: "strategy:holding_space:0",
+      variationApplied: true
+    }
   }
 ]);
 
@@ -61,6 +71,9 @@ export function runDialogueLoopCase(testCase) {
 
   if (testCase.setup === "seed_contextual_ack_loop") {
     seedContextualAckLoop(GREYSHADE.id);
+  }
+  if (testCase.setup === "seed_holding_space_variant_loop") {
+    seedHoldingSpaceVariantLoop(GREYSHADE.id);
   }
 
   const coreResult = runRaphaelCore(testCase.input, { ...BASE_STATE }, {
@@ -83,6 +96,8 @@ export function runDialogueLoopCase(testCase) {
       ? coreResult.dialogueLoop?.antiLoopReason === expect.antiLoopReason
       : true,
     compose_meta_ok: expect.composeMeta ? Boolean(coreResult.composeMeta?.variantId) : true,
+    variant_not_ok: expect.variantNot ? coreResult.composeMeta?.variantId !== expect.variantNot : true,
+    variation_ok: expect.variationApplied ? Boolean(coreResult.composeMeta?.variationReason) : true,
     mentions_ok: expect.mentions ? expect.mentions.test(reply) : true,
     no_generic_opening: expect.strategy === "acknowledge_generic_failure" ? !GENERIC_OPENING_BANNED.test(reply) : true,
     has_reply: Boolean(reply.trim())
@@ -94,6 +109,7 @@ export function runDialogueLoopCase(testCase) {
     strategy,
     antiLoopReason: coreResult.dialogueLoop?.antiLoopReason,
     variantId: coreResult.composeMeta?.variantId,
+    variationReason: coreResult.composeMeta?.variationReason,
     reply,
     checks,
     forbiddenPhraseDetected: forbidden.hasForbidden,
@@ -104,6 +120,29 @@ export function runDialogueLoopCase(testCase) {
 export function runAllDialogueLoopCases() {
   clearAllDialogueStates();
   return DIALOGUE_LOOP_CASES.map(runDialogueLoopCase);
+}
+
+function seedHoldingSpaceVariantLoop(sessionKey) {
+  const baseNow = Date.now() - 2000;
+  for (let index = 0; index < 2; index += 1) {
+    recordDialogueTurn(sessionKey, {
+      now: baseNow + index,
+      inputText: `holding-seed-${index}`,
+      nlu: {
+        topic: "unknown",
+        dialogueAct: "asking_question",
+        semanticFrame: { topic: "unknown", userNeed: "presence" },
+        constraints: []
+      },
+      responseStrategy: { strategy: "holding_space" },
+      composeMeta: {
+        variantId: "strategy:holding_space:0",
+        replySource: "nlu_builder",
+        openingPhrase: "好，我先不給答案"
+      },
+      reply: "好，我先不給答案。這件事就放在這裡。"
+    });
+  }
 }
 
 function seedContextualAckLoop(sessionKey) {

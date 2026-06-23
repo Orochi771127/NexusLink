@@ -104,7 +104,8 @@ export function executeAutonomousAction({
       recoveryContext: perception.recoveryContext,
       actionPlan: coerced,
       nlu: perception.nlu,
-      responseStrategy: perception.responseStrategy
+      responseStrategy: perception.responseStrategy,
+      variantSelection: perception.variantSelection
     });
     reply = composed.reply;
     composeMeta = composed;

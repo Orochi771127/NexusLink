@@ -1,7 +1,7 @@
 import { SOUL_TALK_INTENTS } from "./intentClassifier.js";
 import { SOUL_TALK_REACTIONS } from "./reactionPlanner.js";
 import { buildSafetyRedirectReply } from "./safetyShield.js";
-import { selectResponsePackLine } from "./corpus/responsePackSelector.js";
+import { selectResponsePackLine, selectResponsePackAtVariant } from "./corpus/responsePackSelector.js";
 import { renderTemplateReply } from "./corpus/templateRenderer.js";
 import { RESPONSE_STRATEGIES } from "./responseStrategySelector.js";
 import { buildStrategyReply, repairGenericReply } from "./nlu/nluReplyBuilder.js";
@@ -39,7 +39,23 @@ function returnComposeResult(text, meta, guardArgs) {
   return {
     reply,
     variantId: meta.variantId || null,
-    replySource: meta.replySource || "unknown"
+    replySource: meta.replySource || "unknown",
+    openingPhrase: meta.openingPhrase || extractOpeningPhrase(reply),
+    variationReason: meta.variationReason || null
+  };
+}
+
+function extractOpeningPhrase(text = "") {
+  return String(text || "").split(/[。！？]/)[0].trim().slice(0, 14);
+}
+
+function composeMetaFromSelection(variantSelection, reply, overrides = {}) {
+  return {
+    variantId: variantSelection?.variantId || overrides.variantId || null,
+    replySource: variantSelection?.replySource || overrides.replySource || "nlu_builder",
+    openingPhrase: extractOpeningPhrase(reply),
+    variationReason: variantSelection?.variationReason || null,
+    ...overrides
   };
 }
 
@@ -69,7 +85,8 @@ export function composeRaphaelReply({
   actionPlan = {},
   replyMode = "",
   nlu = null,
-  responseStrategy = null
+  responseStrategy = null,
+  variantSelection = null
 } = {}) {
   const composeOpts = {
     recoveryRecall: Boolean(recoveryContext?.allowsExplicitReference && recoveryContext?.canRecall),
@@ -138,14 +155,11 @@ export function composeRaphaelReply({
       nlu,
       semanticFrame: nlu?.semanticFrame,
       seed,
-      recoveryContext
+      recoveryContext,
+      variantIndex: variantSelection?.variantIndex
     });
     if (awakeningReply) {
-      return returnComposeResult(
-        awakeningReply,
-        { variantId: `strategy:${strategy}`, replySource: "nlu_builder" },
-        args
-      );
+      return returnComposeResult(awakeningReply, composeMetaFromSelection(variantSelection, awakeningReply), args);
     }
 
     const templateReply = renderTemplateReply({
@@ -171,34 +185,48 @@ export function composeRaphaelReply({
       nlu,
       semanticFrame: nlu?.semanticFrame,
       seed,
-      recoveryContext
+      recoveryContext,
+      variantIndex: variantSelection?.variantIndex
     });
     if (strategyReply) {
-      return returnComposeResult(
-        strategyReply,
-        { variantId: `strategy:${strategy}`, replySource: "nlu_builder" },
-        args
-      );
+      return returnComposeResult(strategyReply, composeMetaFromSelection(variantSelection, strategyReply), args);
     }
   }
 
   if (!blockComfort && !shouldSkipResponsePacks(nlu, strategy)) {
-    const packLine = selectResponsePackLine({
-      corpus: loadedCorpus,
-      companionId,
-      emotion: emotionKey,
-      intent: intent.intent,
-      reaction: mode,
-      state,
-      semanticSoul,
-      recoveryContext,
-      seed: seed + corpusSeedOffset(corpusHits)
-    });
+    const packLine =
+      variantSelection?.replySource === "response_pack" && variantSelection.packId
+        ? selectResponsePackAtVariant({
+            corpus: loadedCorpus,
+            companionId,
+            emotion: emotionKey,
+            intent: intent.intent,
+            reaction: mode,
+            state,
+            semanticSoul,
+            recoveryContext,
+            packId: variantSelection.packId,
+            lineIndex: variantSelection.lineIndex ?? variantSelection.variantIndex ?? 0
+          })
+        : selectResponsePackLine({
+            corpus: loadedCorpus,
+            companionId,
+            emotion: emotionKey,
+            intent: intent.intent,
+            reaction: mode,
+            state,
+            semanticSoul,
+            recoveryContext,
+            seed: seed + corpusSeedOffset(corpusHits)
+          });
 
     if (packLine.line && !packLine.silent) {
       return returnComposeResult(
         packLine.line,
-        { variantId: packLine.packId ? `pack:${packLine.packId}` : "pack:unknown", replySource: "response_pack" },
+        composeMetaFromSelection(variantSelection, packLine.line, {
+          variantId: variantSelection?.variantId || (packLine.packId ? `pack:${packLine.packId}:${packLine.lineIndex ?? 0}` : "pack:unknown"),
+          replySource: "response_pack"
+        }),
         args
       );
     }
