@@ -112,6 +112,23 @@ export function composeRaphaelReply({
   }
 
   if (strategy === RESPONSE_STRATEGIES.MEMORY_REFERENCE && composeOpts.recoveryRecall) {
+    const awakeningReply = buildStrategyReply({
+      strategy,
+      nlu,
+      semanticFrame: nlu?.semanticFrame,
+      seed,
+      recoveryContext
+    });
+    if (awakeningReply) {
+      return finalizeAndGuardReply(awakeningReply, {
+        persona,
+        state,
+        composeOpts,
+        nlu,
+        previousReply: getPreviousCompanionReply(state)
+      });
+    }
+
     const templateReply = renderTemplateReply({
       corpus: loadedCorpus,
       companionId,
