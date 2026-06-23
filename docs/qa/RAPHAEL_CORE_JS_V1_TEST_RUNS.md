@@ -130,7 +130,7 @@ Commit: `da7fe4b`
 Date/time: 2026-06-23 (autonomy agent pass)
 Agent / tool: Grok Agent (Playwright)
 Branch: `feature/raphael-soul-architecture-v1`
-Commit: _(see latest commit)_
+Commit: `c9adff9`
 
 ### What was tested
 
