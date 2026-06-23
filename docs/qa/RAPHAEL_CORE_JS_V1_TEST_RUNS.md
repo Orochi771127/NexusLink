@@ -9,7 +9,7 @@ Branch: `feature/raphael-core-js-v1`
 Date/time: 2026-06-23 (local)
 Agent / tool: Grok Agent (Playwright + Python http.server)
 Branch: `feature/raphael-core-js-v1`
-Commit: `a154b97`
+Commit: `6355606`
 
 ### What was tested
 
