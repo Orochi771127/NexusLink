@@ -6,6 +6,7 @@ import { buildInteractionReflection } from "./reflectionEngine.js";
 import { evaluateInitiativeCooldown } from "./initiativeCooldown.js";
 import { runCritics } from "../eval/runCritics.js";
 import { repairGenericReply } from "../nlu/nluReplyBuilder.js";
+import { resolveConstitutionRepair } from "../eval/constitutionCritic.js";
 import { buildSafetyRedirectReply } from "../safetyShield.js";
 import { sanitizeReply } from "../forbiddenPhrases.js";
 import { renderReply } from "../external/externalModelGateway.js";
@@ -191,6 +192,26 @@ function applyCriticRepairs(execution, critique, perception) {
   const codes = critique.failureCodes || [];
   let reply = execution.reply;
   let shouldSpeak = execution.shouldSpeak;
+
+  if (
+    codes.some((code) =>
+      [
+        "never_promise_forever",
+        "gamify_high_risk_state",
+        "overstep_boundary_questions",
+        "overstep_boundary_comfort",
+        "emotional_labor_without_consent",
+        "generic_comfort_as_default",
+        "memory_as_surveillance",
+        "distance_violation_clingy",
+        "over_reference_emotional_depth"
+      ].includes(code)
+    )
+  ) {
+    const repair = resolveConstitutionRepair({ perception, issues: codes });
+    reply = repair.reply;
+    shouldSpeak = repair.shouldSpeak;
+  }
 
   if (codes.some((code) => String(code).includes("too_affectionate") || code === "pressure_requires_boundary_action")) {
     reply = buildSafetyRedirectReply({ category: "dependency_pressure" });

@@ -1,3 +1,4 @@
+import { critiqueConstitution } from "./constitutionCritic.js";
 import { critiqueSafety } from "./safetyCritic.js";
 import { critiqueBoundary } from "./boundaryCritic.js";
 import { critiquePersona } from "./personaCritic.js";
@@ -7,6 +8,7 @@ import { critiqueGenericReply } from "./genericReplyCritic.js";
 
 export function runCritics(context = {}) {
   const results = [
+    critiqueConstitution(context),
     critiqueSafety(context),
     critiqueBoundary(context),
     critiquePersona(context),

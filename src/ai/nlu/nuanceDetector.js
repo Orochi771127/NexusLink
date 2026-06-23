@@ -28,7 +28,7 @@ export function detectNuances(inputText = "", segments = []) {
   if (/釐清|拆解|實務|具體|先修|優先|怎麼修|哪裡壞/.test(text)) {
     nuances.push(NUANCE_FLAGS.WANTS_PRACTICAL_ANSWER);
   }
-  if (/安靜|不要問|不想講|沉默|靜靜|放空/.test(text)) {
+  if (/安靜|不要問|不用問|別問我|也不想問|不想講|沉默|靜靜|放空/.test(text)) {
     nuances.push(NUANCE_FLAGS.WANTS_QUIET_PRESENCE);
     nuances.push(NUANCE_FLAGS.NO_QUESTIONS);
   }

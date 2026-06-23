@@ -7,6 +7,7 @@ import { RESPONSE_STRATEGIES } from "./responseStrategySelector.js";
 import { buildStrategyReply, repairGenericReply } from "./nlu/nluReplyBuilder.js";
 import { critiqueGenericReply } from "./eval/genericReplyCritic.js";
 import { weaveExplicitReference } from "./nlu/explicitReference.js";
+import { shouldSuppressExplicitReference } from "./eval/constitutionCritic.js";
 
 const BOUNDARY_MODES = new Set([
   SOUL_TALK_REACTIONS.WITHDRAW,
@@ -289,7 +290,8 @@ export function finalizeAndGuardReply(text, { persona, state, composeOpts, nlu, 
     specificDetail?.text &&
     !["light_greeting", "quiet_presence", "holding_space", "memory_reference"].includes(weaveStrategy) &&
     nlu?.dialogueAct !== "greeting" &&
-    specificDetail.type !== "clause";
+    specificDetail.type !== "clause" &&
+    !shouldSuppressExplicitReference(nlu?.semanticFrame, weaveStrategy);
 
   if (shouldWeaveDetail) {
     reply = weaveExplicitReference(reply, specificDetail, { strategy: weaveStrategy });

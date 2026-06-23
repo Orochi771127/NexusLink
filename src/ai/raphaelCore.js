@@ -27,6 +27,7 @@ import { selectReplyVariant } from "./dialogue/replyVariantSelector.js";
 import { planQuickReplies } from "./dialogue/quickReplyPlanner.js";
 import { buildConversationDebugTrace, logConversationDebugTrace } from "./dialogue/conversationDebugTrace.js";
 import { applyQuickReplyContext, resolveQuickReplyStrategy } from "./dialogue/quickReplyContext.js";
+import { evaluateConstitutionSignals } from "./eval/constitutionCritic.js";
 
 export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
   const companion = runtime.companion || null;
@@ -41,6 +42,14 @@ export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
   nlu = applyQuickReplyContext(nlu, runtime.quickReply);
   let responseStrategy = selectResponseStrategy(nlu, intent, safety);
   responseStrategy = resolveQuickReplyStrategy(runtime.quickReply, responseStrategy);
+
+  const constitutionSignal = evaluateConstitutionSignals(nlu.semanticFrame, nlu);
+  if (constitutionSignal?.override) {
+    responseStrategy = {
+      strategy: constitutionSignal.override,
+      reason: constitutionSignal.reason
+    };
+  }
   const semanticSoul = deriveSemanticSoulState(state, analysis);
   const memories = retrieveRelevantMemories(
     state,
@@ -314,4 +323,5 @@ if (typeof window !== "undefined" && new URLSearchParams(window.location.search)
   import("./testHarness/stage4HumanPlaytestCases.js").then((mod) => mod.installStage4PlaytestHarness(window));
   import("./testHarness/nluTrainingCases.js").then((mod) => mod.installNluTrainingHarness(window));
   import("./testHarness/dialogueLoopSmokeCases.js").then((mod) => mod.installDialogueLoopHarness(window));
+  import("./testHarness/constitutionSmokeCases.js").then((mod) => mod.installConstitutionSmokeHarness(window));
 }

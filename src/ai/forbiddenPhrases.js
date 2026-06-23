@@ -1,15 +1,15 @@
+import { PersonaConstitution } from "./persona/PersonaConstitution.js";
+
 /** Global forbidden companion phrases — NexusCore tone guard. */
 export const GLOBAL_FORBIDDEN_PATTERNS = Object.freeze([
-  /我永遠陪你/,
+  PersonaConstitution.patterns.foreverPromise,
   /我不會離開你/,
   /你可以永遠依靠我/,
   /只要把痛苦交給我/,
   /其餘的我來想辦法/,
   /來摸摸我的頭吧/,
   /你只有我/,
-  /沒有我你不行/,
-  /永遠陪伴/,
-  /永遠在這裡陪你/
+  /沒有我你不行/
 ]);
 
 const SAFE_REPLACEMENTS = Object.freeze([
