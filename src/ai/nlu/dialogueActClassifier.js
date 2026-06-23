@@ -29,7 +29,13 @@ export function classifyDialogueAct(inputText = "", analysis = {}, intent = {}, 
   if (intent.intent === "pressure") return DIALOGUE_ACTS.PRESSURE_COMMAND;
   if (intent.intent === "apology") return DIALOGUE_ACTS.APOLOGIZING;
   if (intent.intent === "gratitude") return DIALOGUE_ACTS.THANKING;
-  if (intent.intent === "greeting" || intent.intent === "short_ack" || /^(安安|你好|嗨|哈囉)/.test(text)) {
+  if (
+    intent.intent === "greeting" ||
+    intent.intent === "short_ack" ||
+    /^(安安|你好|嗨|哈囉|你好嗎|最近好嗎)/.test(text) ||
+    /吃飯沒|吃了嗎|吃飯了嗎/.test(text) ||
+    /聽說.{0,12}很[型屌行]|^[你妳]很[型屌行]/.test(text)
+  ) {
     return DIALOGUE_ACTS.GREETING;
   }
   if (/不管我說什麼|一直講|都會說|重複|generic|一樣的話|好我聽到了|念稿|自然一點|太機械|像在念/.test(text)) {

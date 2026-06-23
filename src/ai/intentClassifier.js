@@ -65,7 +65,12 @@ export function classifyIntent(inputText = "", analysis = {}, safety = {}) {
   if (/晚安|休息|睡|安靜|放空|慢一點|想安靜|安靜一下/.test(text)) {
     return createIntent(SOUL_TALK_INTENTS.REST_REQUEST, 0.78);
   }
-  if (/^(安安|你好|嗨|哈囉|早安|午安|晚上好)$|安安你在|你在嗎|在嗎/.test(text)) {
+  if (
+    /^(安安|你好|嗨|哈囉|早安|午安|晚上好)$|安安你在|你在嗎|在嗎/.test(text) ||
+    /^(你好嗎|你好不好|最近好嗎|還好嗎)$/.test(text) ||
+    /吃飯沒[啊阿]?$|吃了嗎|吃飯了嗎/.test(text) ||
+    /聽說.{0,12}很[型屌行]|^[你妳]很[型屌行]/.test(text)
+  ) {
     return createIntent(SOUL_TALK_INTENTS.GREETING, 0.78);
   }
   if (analysis?.isQuestion) {

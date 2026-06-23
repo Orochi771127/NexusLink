@@ -108,6 +108,21 @@ export function buildStrategyReply({
       pick(["好，我先不給答案。這件事就放在這裡。", "嗯，不用講太多。我陪著，不急着收走。"], seed),
     [RESPONSE_STRATEGIES.LIGHT_GREETING]: () => {
       const said = String(nlu.inputText || "").trim();
+      if (/聽說.{0,12}很[型屌行]|^[你妳]很[型屌行]/.test(said)) {
+        return pick(
+          ["哈哈，你這樣開場我會害羞。", "型喔？那你今天心情好像不錯。", "嗯？突然這樣夸，我會當真的喔。"],
+          seed
+        );
+      }
+      if (/吃飯沒|吃了嗎|吃飯了嗎/.test(said)) {
+        return pick(
+          ["還沒呢，但你先顧好自己比較重要。", "你呢？有沒有好好吃？", "我這邊沒關係，倒是你——有吃飯嗎？"],
+          seed
+        );
+      }
+      if (/你好嗎|你好不好|最近好嗎|還好嗎/.test(said)) {
+        return pick(["我還好，你呢？", "嗯，我在。你呢，還好嗎？", "聽見你了。你最近怎麼樣？"], seed);
+      }
       if (/安安/.test(said)) return pick(["嗯，我在。", "安安，聽見你了。", "我在，不用急著說重點。"], seed);
       return pick(["嗯，我在。", "聽見你了。", "我在，不用急著說重點。"], seed);
     },

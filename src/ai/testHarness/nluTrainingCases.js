@@ -87,6 +87,36 @@ export const NLU_TRAINING_CASES = Object.freeze([
       noGeneric: true,
       mentions: /在|安安|聽見/
     }
+  },
+  {
+    id: "TR-10",
+    input: "你好嗎",
+    expect: {
+      dialogueAct: "greeting",
+      strategy: "light_greeting",
+      noGeneric: true,
+      mentions: /還好|你呢|怎麼樣|聽見/
+    }
+  },
+  {
+    id: "TR-11",
+    input: "吃飯沒阿",
+    expect: {
+      dialogueAct: "greeting",
+      strategy: "light_greeting",
+      noGeneric: true,
+      mentions: /吃|你呢|顧好/
+    }
+  },
+  {
+    id: "TR-12",
+    input: "聽說妳很型喔",
+    expect: {
+      dialogueAct: "greeting",
+      strategy: "light_greeting",
+      noGeneric: true,
+      mentions: /型|害羞|心情|夸/
+    }
   }
 ]);
 
