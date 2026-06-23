@@ -1,4 +1,4 @@
-# Raphael Soul Architecture v1.4
+# Raphael Soul Architecture v1.5
 
 Branch: `feature/raphael-soul-architecture-v1`
 
@@ -193,6 +193,17 @@ Whitelist registry with permission policy.
 - `runRaphaelCore()`
 - `applyRaphaelCoreResult()`
 - render + save
+
+## Offline Intelligence Simulation (Stage 4)
+
+No external API — corpus + memory + state + critic + recovery.
+
+```text
+responsePackSelector → templateRenderer → responseComposer
+memoryRetriever → recoveryLoop → reflect_memory goal
+```
+
+Corpus companion packs: `aiforge-raphael-corpus/response_packs/greyshade-cat/`
 
 ## Level 2 preference memory (`companionPreferenceProfile.js`)
 

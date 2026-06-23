@@ -17,6 +17,7 @@ import {
   getCompanionPreferenceProfile,
   applyPreferenceToPersona
 } from "./companionPreferenceProfile.js";
+import { buildRecoveryContext } from "./recovery/recoveryLoop.js";
 
 export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
   const companion = runtime.companion || null;
@@ -29,6 +30,7 @@ export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
   const intent = classifyIntent(gateway.normalizedInput, analysis, safety);
   const semanticSoul = deriveSemanticSoulState(state, analysis);
   const memories = retrieveRelevantMemories(state, analysis, { now: gateway.now });
+  const recoveryContext = buildRecoveryContext(state, memories, analysis, { now: gateway.now });
 
   const preferenceProfile =
     runtime.companionPreferenceProfile || getCompanionPreferenceProfile(companionId);
@@ -62,7 +64,8 @@ export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
       source: corpusSearch.corpusSource,
       emotionHint: corpusSearch.emotionHint
     },
-    preferenceProfile
+    preferenceProfile,
+    recoveryContext
   };
 
   const autonomyResult = runAutonomyLoop({
@@ -98,7 +101,8 @@ export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
       persona,
       corpusHits: perception.corpusHits,
       corpusMeta: perception.corpusMeta,
-      preferenceProfile: updatedProfile
+      preferenceProfile: updatedProfile,
+      recoveryContext
     },
 
     autonomy: {

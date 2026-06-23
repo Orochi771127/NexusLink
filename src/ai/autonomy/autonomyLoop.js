@@ -38,6 +38,7 @@ export function runAutonomyLoop({
     activeGoal: goal.activeGoal,
     perception,
     plan,
+    state,
     cooldown: { allowClarifyingQuestion: true, allowExplorationInvite: true, ...preferenceCooldown },
     persona: perception.persona
   });
@@ -53,6 +54,7 @@ export function runAutonomyLoop({
     activeGoal: goal.activeGoal,
     perception,
     plan,
+    state,
     cooldown: { ...cooldown, ...preferenceCooldown },
     persona: perception.persona
   });

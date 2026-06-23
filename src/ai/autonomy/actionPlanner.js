@@ -55,7 +55,8 @@ export function planAutonomousAction({
   perception = {},
   plan = {},
   cooldown = {},
-  persona = {}
+  persona = {},
+  state = {}
 } = {}) {
   const safety = perception.safety || {};
   const intent = perception.intent || {};
@@ -94,10 +95,19 @@ export function planAutonomousAction({
     mapping = GOAL_ACTION_MAP[GOAL_WHITELIST.REPAIR_AFTER_CONFLICT];
     confidence = 0.82;
     reason = "apology_repair";
+  } else if (perception.recoveryContext?.suggestReflectGoal && memories.hasRecallableMemory) {
+    mapping = GOAL_ACTION_MAP[GOAL_WHITELIST.REFLECT_MEMORY];
+    confidence = 0.8;
+    reason = "recovery_recall";
   }
 
   const reaction = plan.mode || mapping.reaction;
   let selectedAction = mapping.action;
+
+  if ((state.energy ?? 10) <= 2 && selectedAction !== "enter_safe_harbor") {
+    mapping = { ...mapping, replyMode: "rest_short" };
+    reason += "+low_energy_short";
+  }
 
   if (selectedAction === "ask_clarifying_question" && !cooldown.allowClarifyingQuestion) {
     selectedAction = "say_reply";

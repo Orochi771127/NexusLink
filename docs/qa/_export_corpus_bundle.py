@@ -4,6 +4,7 @@ from pathlib import Path
 
 CORPUS_ROOT = Path(__file__).resolve().parents[2].parent / "aiforge-raphael-corpus"
 OUT_PATH = Path(__file__).resolve().parents[2] / "src" / "data" / "ai" / "raphaelCorpusBundle.js"
+PACKS_DIR = CORPUS_ROOT / "response_packs" / "greyshade-cat"
 
 
 def load_json(path):
@@ -32,6 +33,7 @@ def normalize_sentences(raw):
             "language": item.get("language", "zh"),
             "emotion": item.get("emotion", "calm"),
             "tone": item.get("tone", ""),
+            "role": item.get("role", "reference"),
             "concepts": item.get("concepts", [])
         }
         for item in raw
@@ -63,18 +65,42 @@ def normalize_mappings(raw):
     return mappings
 
 
+def load_response_packs():
+    packs = []
+    if not PACKS_DIR.exists():
+        return packs, {"companionId": "greyshade-cat", "templates": []}
+
+    for path in sorted(PACKS_DIR.glob("*.json")):
+        if path.name == "templates.json":
+            continue
+        data = load_json(path)
+        if isinstance(data, list):
+            packs.extend(data)
+        elif isinstance(data, dict):
+            packs.append(data)
+
+    templates_path = PACKS_DIR / "templates.json"
+    templates_doc = load_json(templates_path) if templates_path.exists() else {"templates": []}
+    return packs, templates_doc
+
+
 def main():
     concepts = normalize_concepts(load_json(CORPUS_ROOT / "corpus" / "concepts" / "A_concepts.json"))
     sentences = normalize_sentences(load_json(CORPUS_ROOT / "corpus" / "sentences" / "F_sentences.json"))
     mappings = normalize_mappings(load_json(CORPUS_ROOT / "corpus" / "mappings" / "G_mappings.json"))
+    response_packs, templates_doc = load_response_packs()
 
     bundle = {
-        "version": "1.0.0-corpus-v1",
+        "version": "1.1.0-companion-packs",
         "source": "aiforge-raphael-corpus",
         "exportedAt": "2026-06-23",
         "concepts": concepts,
         "sentences": sentences,
-        "mappings": mappings
+        "mappings": mappings,
+        "responsePacks": {
+            "greyshade-cat": response_packs
+        },
+        "templates": templates_doc
     }
 
     OUT_PATH.parent.mkdir(parents=True, exist_ok=True)
@@ -83,7 +109,10 @@ def main():
         f"export const RAPHAEL_CORPUS_BUNDLE = Object.freeze({json.dumps(bundle, ensure_ascii=False, indent=2)});\n"
     )
     OUT_PATH.write_text(js, encoding="utf-8")
-    print(f"Wrote {OUT_PATH} ({len(sentences)} sentences, {len(concepts)} concepts)")
+    print(
+        f"Wrote {OUT_PATH} ({len(sentences)} ref sentences, "
+        f"{len(response_packs)} companion packs, {len(templates_doc.get('templates', []))} templates)"
+    )
 
 
 if __name__ == "__main__":

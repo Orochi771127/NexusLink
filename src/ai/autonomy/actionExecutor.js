@@ -97,7 +97,10 @@ export function executeAutonomousAction({
       companion,
       persona: perception.persona,
       corpus,
-      corpusHits: perception.corpusHits
+      corpusHits: perception.corpusHits,
+      semanticSoul: perception.semanticSoul,
+      recoveryContext: perception.recoveryContext,
+      actionPlan: coerced
     });
 
     if (cooldown.replyLengthCap === "short" && reply.length > 48) {

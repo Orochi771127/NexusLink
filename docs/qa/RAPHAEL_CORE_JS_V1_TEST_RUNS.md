@@ -331,3 +331,28 @@ Commit: `11f8fa3`
 ### Rollback note
 
 - Revert `src/ai/awakening/` and animation bridge wiring first
+
+---
+
+## Test / Optimization Record
+
+Date/time: 2026-06-23 (Offline Intelligence + companion response packs)
+Branch: `feature/raphael-soul-architecture-v1` + `aiforge-raphael-corpus/merge/raphael-corpus-v1`
+Commit: (pending)
+
+### What was tested
+
+- 21 greyshade-cat companion response packs exported to bundle
+- `responsePackSelector` + `templateRenderer` + `recoveryLoop`
+- Memory recall case: `我又覺得自己很累` with prior fatigue memory → recovery reply
+- 11/11 smoke cases (10 core + 1 recall)
+
+### Result
+
+- **Pass** — recall hit: `這不是第一次出現的重量。`, activeGoal `reflect_memory`, reason `recovery_recall`
+
+### Changes made
+
+- Corpus repo: `response_packs/greyshade-cat/*.json` (11 files, 21 packs, 3 templates)
+- NexusLink: `src/ai/corpus/`, `src/ai/recovery/`, refactored `responseComposer.js`
+- Bundle v1.1.0-companion-packs

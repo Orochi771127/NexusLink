@@ -58,8 +58,11 @@ export function deriveCompanionNeeds({ state = {}, perception = {}, plan = {} } 
     1
   );
 
+  const recovery = perception.recoveryContext || {};
   const needForReflection = clamp(
     (memories.relevantMemories?.length >= 2 ? 0.25 : 0) +
+      (memories.hasRecallableMemory ? 0.3 : 0) +
+      (recovery.canRecall ? 0.25 : 0) +
       (gateway.repeated ? 0.2 : 0) +
       (analysis.intensity >= 0.65 ? 0.2 : 0),
     0,

@@ -34,16 +34,39 @@ export function retrieveRelevantMemories(state = {}, analysis = {}, runtime = {}
     .sort((a, b) => (Number(b.createdAt) || 0) - (Number(a.createdAt) || 0))
     .slice(0, SIMILAR_EMOTION_WINDOW);
 
-  const hasRecentSimilarEmotion = Boolean(
-    emotionKey &&
-      recentSlice.filter((memory) => memory.emotion === emotionKey).length >= 2
+  const similarEmotionMemories = emotionKey
+    ? recentSlice.filter((memory) => memory.emotion === emotionKey)
+    : [];
+
+  const hasRecentSimilarEmotion = similarEmotionMemories.length >= 2;
+  const hasRecallableMemory = Boolean(
+    strongestMemory &&
+      (similarEmotionMemories.length >= 1 ||
+        strongestMemory.status === "settled" ||
+        strongestMemory.status === "transformed")
   );
 
   return {
     relevantMemories,
     strongestMemory,
+    similarEmotionMemories,
     hasBoundaryMemory,
-    hasRecentSimilarEmotion
+    hasRecentSimilarEmotion,
+    hasRecallableMemory,
+    recallHint: buildRecallHint(strongestMemory, emotionKey, now)
+  };
+}
+
+function buildRecallHint(memory, emotionKey, now) {
+  if (!memory) return null;
+  const ageDays = Math.max(0, Math.floor((now - (Number(memory.createdAt) || now)) / (24 * 60 * 60 * 1000)));
+  return {
+    memoryId: memory.id,
+    theme: memory.theme || memory.label || memory.emotion,
+    emotion: memory.emotion,
+    status: memory.status,
+    ageDays,
+    sameEmotionNow: emotionKey && memory.emotion === emotionKey
   };
 }
 

@@ -49,7 +49,54 @@ export function runRaphaelSmokeCase(input, stateOverrides = {}, companion = GREY
 
 export function runAllRaphaelSmokeCases(stateOverrides = {}, companion = GREYSHADE_COMPANION) {
   clearSessionPreferenceProfiles();
-  return RAPHAEL_SMOKE_INPUTS.map((input) => runRaphaelSmokeCase(input, stateOverrides, companion));
+  const cases = RAPHAEL_SMOKE_INPUTS.map((input) => runRaphaelSmokeCase(input, stateOverrides, companion));
+  cases.push(runMemoryRecallSmokeCase(companion));
+  return cases;
+}
+
+export function runMemoryRecallSmokeCase(companion = GREYSHADE_COMPANION) {
+  const now = Date.now();
+  const state = {
+    ...BASE_STATE,
+    emotionalMemories: [
+      {
+        id: "emem_test_fatigue",
+        theme: "疲憊",
+        label: "疲憊",
+        emotion: "fatigue",
+        intensity: 0.62,
+        status: "settled",
+        source: "emotion",
+        createdAt: now - 3 * 24 * 60 * 60 * 1000,
+        lastUpdatedAt: now - 2 * 24 * 60 * 60 * 1000,
+        isVisibleInHabitat: true
+      }
+    ],
+    habitatTraces: [
+      {
+        id: "htrace_emem_test_fatigue",
+        memoryId: "emem_test_fatigue",
+        emotion: "fatigue",
+        status: "settled",
+        intensity: 0.3,
+        createdAt: now - 3 * 24 * 60 * 60 * 1000,
+        lastUpdatedAt: now - 2 * 24 * 60 * 60 * 1000,
+        expiresAt: now + 11 * 24 * 60 * 60 * 1000,
+        visualHint: "faint_glow",
+        textHint: "營火變小了"
+      }
+    ]
+  };
+
+  const result = runRaphaelSmokeCase("我又覺得自己很累", state, companion);
+  const recallHit = /不是第一次|營火|上次|重量|慢一點/.test(result.reply || "");
+
+  return {
+    ...result,
+    input: "我又覺得自己很累",
+    recallHit,
+    pass: recallHit && !result.forbiddenPhraseDetected
+  };
 }
 
 export function formatSmokeCaseResult(input, coreResult) {
@@ -75,7 +122,9 @@ export function formatSmokeCaseResult(input, coreResult) {
     reflectionType: coreResult.reflection?.reflectionType || "",
     corpusHits: (coreResult.perception?.corpusHits || []).length,
     preferenceSignals: (coreResult.preferenceProfile?.learnedSignals || []).slice(-3),
-    rendererUsed: Boolean(coreResult.renderMeta?.used)
+    rendererUsed: Boolean(coreResult.renderMeta?.used),
+    recoveryRecall: Boolean(coreResult.perception?.recoveryContext?.canRecall),
+    replySource: coreResult.perception?.recoveryContext?.phase || ""
   };
 }
 

@@ -35,14 +35,21 @@ export function loadRaphaelCorpus() {
 }
 
 function normalizeCorpus(raw = {}) {
-  if (!raw.sentences?.length) return FALLBACK_CORPUS;
+  if (!raw.sentences?.length && !raw.responsePacks) return FALLBACK_CORPUS;
   return {
     version: raw.version || "1.0.0",
     source: raw.source || "unknown",
     concepts: raw.concepts || [],
     sentences: raw.sentences || [],
-    mappings: raw.mappings || []
+    mappings: raw.mappings || [],
+    responsePacks: raw.responsePacks || {},
+    templates: raw.templates || { templates: [] }
   };
+}
+
+export function getCompanionResponsePacks(companionId = "greyshade-cat") {
+  const corpus = loadRaphaelCorpus();
+  return corpus.responsePacks?.[companionId] || [];
 }
 
 export function getCorpusSentencesByEmotion(emotionKey = "") {
