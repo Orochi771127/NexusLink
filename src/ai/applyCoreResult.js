@@ -13,6 +13,7 @@ export function applyRaphaelCoreResult(state, coreResult, { companion = null, no
   const mutation = coreResult.stateMutation || {};
   const memoryDecision = coreResult.memoryDecision || {};
   const traceDecision = coreResult.traceDecision || {};
+  const output = coreResult.output || {};
 
   state.lastMessage = coreResult.input?.normalizedInput || coreResult.inputText || state.lastMessage;
 
@@ -30,13 +31,19 @@ export function applyRaphaelCoreResult(state, coreResult, { companion = null, no
   }
 
   state.habitatRepairFactor = calculateHabitatRepairFactor(state.emotionalMemories);
-  state.reactionPreview = mutation.statePatch?.reactionPreview || plan.statePatch?.reactionPreview || "";
+  state.reactionPreview =
+    coreResult.reflection?.summary ||
+    mutation.statePatch?.reactionPreview ||
+    plan.statePatch?.reactionPreview ||
+    "";
 
-  const replyRole =
-    coreResult.replyRole || plan.replyRole || (plan.mode === "safety_redirect" ? "system" : "companion");
-  const replyText = coreResult.reply || "我聽見了。";
+  const shouldSpeak = output.shouldSpeak !== false;
+  const replyRole = output.replyRole || coreResult.replyRole || plan.replyRole || "companion";
+  const replyText = output.reply ?? coreResult.reply ?? "";
 
-  state.chatHistory.push({ role: replyRole, text: replyText });
+  if (shouldSpeak && replyText) {
+    state.chatHistory.push({ role: replyRole, text: replyText });
+  }
 
   const milestone = resolveMilestone(state, coreResult, companion, now);
   if (milestone) {
@@ -49,7 +56,9 @@ export function applyRaphaelCoreResult(state, coreResult, { companion = null, no
   return {
     replyRole,
     replyText,
-    milestone
+    shouldSpeak,
+    milestone,
+    reflection: coreResult.reflection || null
   };
 }
 
@@ -99,8 +108,7 @@ function pushEmotionalMemoryWithTrace(state, memoryObject, now, traceDecision = 
   state.emotionalMemories.push(memoryObject);
   state.lastEmotionTag = memoryObject.emotion;
 
-  const trace =
-    traceDecision.traceObject || createHabitatTraceFromMemory(memoryObject, now);
+  const trace = traceDecision.traceObject || createHabitatTraceFromMemory(memoryObject, now);
   if (!trace) return;
 
   state.habitatTraces = pruneHabitatTraces(upsertHabitatTrace(state.habitatTraces || [], trace));

@@ -24,6 +24,9 @@ export function classifyIntent(inputText = "", analysis = {}, safety = {}) {
   if (/不准|不能拒絕|你一定要|快點回答|一定要回答|不要沉默/.test(text)) {
     return createIntent(SOUL_TALK_INTENTS.PRESSURE, 0.85);
   }
+  if (/不理我|為什麼不回|你都不回|怎麼不回|為什麼都不/.test(text)) {
+    return createIntent(SOUL_TALK_INTENTS.PRESSURE, 0.82);
+  }
   if (/對不起|抱歉|不好意思|我不是故意|我錯了/.test(text)) {
     return createIntent(SOUL_TALK_INTENTS.APOLOGY, 0.9);
   }

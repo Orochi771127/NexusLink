@@ -3,17 +3,13 @@ import { interpretEmotionInput } from "./emotionInterpreter.js";
 import { classifyIntent } from "./intentClassifier.js";
 import { deriveSemanticSoulState } from "./semanticSoulModel.js";
 import { planSoulTalkReaction } from "./reactionPlanner.js";
-import { composeRaphaelReply } from "./responseComposer.js";
 import { prepareSoulTalkInput } from "./inputGateway.js";
 import { retrieveRelevantMemories } from "./memoryRetriever.js";
 import { resolvePersona } from "./personaResolver.js";
-import { deriveStateMutation } from "./stateMutationPolicy.js";
-import { buildMemoryDecision } from "./memoryWriter.js";
-import { mapHabitatTraceIntent } from "./habitatTraceMapper.js";
-import { mapSoulTalkAnimation } from "./animationMapper.js";
 import { loadRaphaelCorpus } from "./corpusLoader.js";
-import { detectForbiddenPhrases, sanitizeReply } from "./forbiddenPhrases.js";
+import { detectForbiddenPhrases } from "./forbiddenPhrases.js";
 import { processEmotionInput } from "../engine/emotionalSedimentationEngine.js";
+import { runAutonomyLoop } from "./autonomy/autonomyLoop.js";
 
 export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
   const companion = runtime.companion || null;
@@ -33,71 +29,83 @@ export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
   });
 
   const plan = planSoulTalkReaction({ analysis, intent, semanticSoul, safety, state, memories });
-  const stateMutation = deriveStateMutation({
-    state,
+
+  const perception = {
     gateway,
     safety,
     analysis,
     intent,
-    plan,
     semanticSoul,
     memories,
-    sedimentationResult
-  });
+    persona
+  };
 
-  const memoryDecision = buildMemoryDecision({
+  const autonomyResult = runAutonomyLoop({
     state,
-    gateway,
-    safety,
-    analysis,
-    intent,
+    perception,
     plan,
-    stateMutation,
-    sedimentationResult
-  });
-
-  const traceDecision = mapHabitatTraceIntent(memoryDecision, plan, analysis);
-  const animationDecision = mapSoulTalkAnimation({ plan, analysis, intent });
-
-  let reply = composeRaphaelReply({
-    inputText: gateway.normalizedInput,
-    analysis,
-    intent,
-    plan,
-    safety,
-    state,
+    sedimentationResult,
     companion,
-    persona,
     corpus
   });
 
-  const seed = gateway.normalizedInput.length + Math.round(state.energy || 0);
-  const sanitized = sanitizeReply(reply, seed);
-  reply = sanitized.text;
-
-  const replyRole = plan.replyRole || (plan.mode === "safety_redirect" ? "system" : "companion");
-  const forbiddenCheck = detectForbiddenPhrases(reply);
+  const { execution, reflection, needs, actionPlan } = autonomyResult;
+  const forbiddenCheck = detectForbiddenPhrases(execution.reply || "");
 
   return {
     now: gateway.now,
     inputText: gateway.originalInput,
     input: gateway,
+
+    perception: {
+      safety,
+      analysis,
+      intent,
+      semanticSoul,
+      memories,
+      persona
+    },
+
+    autonomy: {
+      needs,
+      activeGoal: actionPlan.activeGoal,
+      selectedAction: actionPlan.selectedAction,
+      reason: actionPlan.reason,
+      confidence: actionPlan.confidence
+    },
+
+    plan: {
+      ...plan,
+      mode: actionPlan.reaction || plan.mode
+    },
+
+    output: {
+      replyRole: execution.replyRole,
+      reply: execution.reply,
+      shouldSpeak: execution.shouldSpeak,
+      shouldStaySilent: execution.shouldStaySilent
+    },
+
+    stateMutation: execution.stateMutation,
+    memoryDecision: execution.memoryDecision,
+    traceDecision: execution.traceDecision,
+    animationDecision: execution.animationDecision,
+    reflection,
+    cooldown: autonomyResult.cooldown,
+
+    corpusMeta: { version: corpus.version, source: corpus.source },
+    sedimentationResult: execution.memoryDecision?.sedimentationResult || sedimentationResult,
+
+    // Legacy aliases for harness / gradual migration
     safety,
     analysis,
     intent,
     semanticSoul,
     memories,
     persona,
-    corpusMeta: { version: corpus.version, source: corpus.source },
-    plan,
-    stateMutation,
-    memoryDecision,
-    traceDecision,
-    animationDecision,
-    sedimentationResult: memoryDecision.sedimentationResult,
-    reply,
-    replyRole,
-    forbiddenPhraseDetected: sanitized.forbiddenPhraseDetected || forbiddenCheck.hasForbidden
+    reply: execution.reply,
+    replyRole: execution.replyRole,
+    forbiddenPhraseDetected: Boolean(execution.forbiddenPhraseDetected || forbiddenCheck.hasForbidden)
   };
 }
 

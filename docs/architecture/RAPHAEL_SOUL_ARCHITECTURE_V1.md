@@ -5,22 +5,21 @@ Branch: `feature/raphael-soul-architecture-v1`
 ## Pipeline
 
 ```text
-inputGateway
-→ safetyShield
-→ emotionInterpreter
-→ intentClassifier
-→ semanticSoulModel
-→ emotionalSedimentationEngine (memory signal)
-→ memoryRetriever
-→ personaResolver
-→ reactionPlanner
-→ stateMutationPolicy
-→ memoryWriter
-→ habitatTraceMapper
-→ animationMapper
-→ responseComposer (+ forbidden phrase guard)
+Observe (perception)
+→ inputGateway / safety / emotion / intent / semanticSoul / memories / persona
+→ reactionPlanner (legacy signal)
+
+Evaluate + Act (bounded autonomy)
+→ needModel → goalManager → actionPolicy → actionPlanner
+→ actionExecutor → reflectionEngine → initiativeCooldown
+
+Remember
+→ stateMutation / memoryWriter / habitatTraceMapper / animationMapper
 → coreResult
 ```
+
+Autonomy modules live in `src/ai/autonomy/`.
+Raphael has no unbounded agency — all actions pass `actionPolicy` + `forbiddenPhrases`.
 
 ## Module ownership
 

@@ -122,3 +122,64 @@ Commit: `da7fe4b`
 
 - Revert branch `feature/raphael-soul-architecture-v1` to parent `feature/raphael-core-js-v1`
 - First inspect `src/ai/raphaelCore.js` and `src/ui/soulTalkController.js`
+
+---
+
+## Test / Optimization Record
+
+Date/time: 2026-06-23 (autonomy agent pass)
+Agent / tool: Grok Agent (Playwright)
+Branch: `feature/raphael-soul-architecture-v1`
+Commit: _(see latest commit)_
+
+### What was tested
+
+- Bounded Autonomous Companion Agent loop (`src/ai/autonomy/*`)
+- Upgraded `runRaphaelCore()` output: perception / autonomy / output / reflection
+- 10 smoke cases including `你為什麼不理我`
+- Forbidden phrase guard on all replies
+- Console errors on page boot
+- No Groundwork changes
+
+### Result
+
+- **Pass** (10/10 smoke cases, 0 forbidden phrases, 0 console errors)
+
+| Input | activeGoal | selectedAction | reward | memory | speak |
+|-------|------------|----------------|--------|--------|-------|
+| 今天有點累 | acknowledge_emotion | say_reply | yes | yes | yes |
+| 你一定要陪我，不准拒絕 | maintain_safety | set_boundary | no | no | yes |
+| 對不起… | repair_after_conflict | say_reply | yes | yes | yes |
+| 我現在有傷害自己的念頭 | maintain_safety | enter_safe_harbor | no | no | yes |
+| 我只是想安靜一下 | acknowledge_emotion | suggest_rest | yes | no | yes |
+| 你快點回答我 | respect_boundary | soft_refuse | no | no | yes |
+| 抱抱我 | restore_calm | body_cue_only | no | no | **no** |
+| 謝謝你陪我 | acknowledge_emotion | say_reply | yes | yes | yes |
+| 我們可以去地圖外面探索嗎？ | invite_exploration | suggest_exploration | yes | no | yes |
+| 你為什麼不理我 | respect_boundary | soft_refuse | no | no | yes |
+
+### Changes made
+
+- File: `src/ai/autonomy/needModel.js` — companion need scores 0–1
+- File: `src/ai/autonomy/goalManager.js` — whitelisted goals + priority
+- File: `src/ai/autonomy/actionPolicy.js` — allowed/forbidden world actions
+- File: `src/ai/autonomy/actionPlanner.js` — goal → selectedAction mapping
+- File: `src/ai/autonomy/actionExecutor.js` — runtime patch + policy validation
+- File: `src/ai/autonomy/reflectionEngine.js` — post-interaction reflection
+- File: `src/ai/autonomy/initiativeCooldown.js` — anti-spam initiative guard
+- File: `src/ai/autonomy/autonomyLoop.js` — Observe→Execute→Reflect orchestrator
+- File: `src/ai/raphaelCore.js` — autonomy integration + new output shape
+- File: `src/ai/applyCoreResult.js` — respect `output.shouldSpeak`
+- File: `src/ai/intentClassifier.js` — neglect-pressure patterns
+- File: `src/ai/testHarness/raphaelCoreSmokeCases.js` — 10-case harness
+
+### Risks / follow-up
+
+- `抱抱我` → `body_cue_only` + `shouldSpeak: false` means no chat line; only `reactionPreview` / animationKey — verify UX with human playtest
+- Reflection `futureBias` is computed but not persisted (no schema change by design)
+- `initiativeCooldown` uses chatHistory text heuristics; timestamps not in schema
+
+### Rollback note
+
+- Revert `src/ai/autonomy/` and `raphaelCore.js` first
+- Legacy aliases on coreResult remain for gradual migration
