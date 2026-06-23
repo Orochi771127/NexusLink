@@ -606,8 +606,71 @@ Commit: `e62f7f3`
 - Live playtest gate: **10/10** Soul Talk, **13/13** HUD, 0 console errors, 0 forbidden phrases
 - PR #86 **not merged** (per user instruction)
 
+### Remaining risks (recall)
+
+- Case B awakening reply still uses template form — acceptable for explicit request.
+- Touch fatigue daytime follow-up still open from prior gate.
+
+---
+
+## Raphael Natural Language Understanding v1
+
+Date/time: 2026-06-24 (local)
+Branch: `feature/raphael-soul-architecture-v1`
+Commit: _(see NLU commit)_
+
+### Root cause
+
+- Pipeline stopped at coarse `intentClassifier` + emotion packs; many distinct utterances fell through to `responseComposer` generic fallback (`我聽見了。我們先慢一點。`).
+- No structured `semanticFrame` meant replies could not ground on topic, entities, or user constraints (e.g. `not_seeking_comfort`).
+- `recoveryContext.canRecall` and comfort packs competed with practical / silence intents.
+
+### New NLU modules
+
+- `src/ai/nlu/utteranceSegmenter.js`
+- `src/ai/nlu/semanticFrameExtractor.js`
+- `src/ai/nlu/dialogueActClassifier.js`
+- `src/ai/nlu/entitySlotExtractor.js`
+- `src/ai/nlu/topicClassifier.js`
+- `src/ai/nlu/nuanceDetector.js`
+- `src/ai/nlu/nluConfidenceScorer.js`
+- `src/ai/nlu/runNluPipeline.js`
+- `src/ai/nlu/nluReplyBuilder.js`
+- `src/ai/responseStrategySelector.js`
+- `src/ai/eval/genericReplyCritic.js`
+
+### Anti-generic reply rules
+
+- `responseStrategySelector` maps dialogue act + nuance → strategy (practical / quiet / feedback / memory / exploration).
+- `responseComposer` builds strategy-first replies; blocks comfort packs when `not_seeking_comfort`.
+- `genericReplyCritic` rejects bare 「好 / 我聽到了 / 慢一點」without topic grounding; autonomy loop repairs via `nluReplyBuilder`.
+- Memory recall templates prioritized when `MEMORY_REFERENCE` strategy active (preserves fatigue recall regression).
+
+### Test cases (NLU smoke 8/8)
+
+| Case | Input | Result |
+|------|-------|--------|
+| NLU-1 | HUD 釐清 / 不要安慰 | Pass — practical HUD reply |
+| NLU-2 | 抱怨 generic 重複 | Pass — acknowledges repetition |
+| NLU-3 | 安靜 / 不要問 | Pass — short, no question, no recall |
+| NLU-4 | Raphael 理解不了自然語言 | Pass — mentions intent/semanticFrame layers |
+| NLU-5 | 被否定 / 不要大道理 | Pass — short validation |
+| NLU-6 | 地圖探索 | Pass — exploration copy |
+| NLU-7 | 還記得第一次醒來 | Pass — awakening recall |
+| NLU-8 | UI vs AI 開發優先 | Pass — practical planning |
+
+### Result
+
+- Harness smoke: **17/17** pass
+- Live playtest gate: **pass** (10/10 Soul Talk, 13/13 HUD)
+- NLU smoke: **8/8** pass
+- Console errors: **0**
+- Forbidden phrases: **0**
+
 ### Remaining risks
 
-- Case B reply still uses generic template (`我還記得上次你也提到「心核初醒」`) — acceptable for explicit request but copy could be more narrative later.
-- `soft_context` mode does not yet visibly bias tone in all paths; it only suppresses explicit recall (by design this round).
-- Touch fatigue daytime follow-up still open from prior gate.
+- NLU is rule-based (no LLM); edge phrasing outside regex packs may still need corpus expansion.
+- Apology / gratitude lines may use contextual ack instead of dedicated packs when NLU topic is broad.
+- `soft_context` recall mode still suppresses explicit mention only — tone biasing is minimal.
+
+Runner: `python docs/qa/_run_nlu_smoke.py`

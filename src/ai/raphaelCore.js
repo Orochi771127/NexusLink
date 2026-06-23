@@ -18,6 +18,9 @@ import {
   applyPreferenceToPersona
 } from "./companionPreferenceProfile.js";
 import { buildRecoveryContext } from "./recovery/recoveryLoop.js";
+import { runNluPipeline } from "./nlu/runNluPipeline.js";
+import { selectResponseStrategy, RESPONSE_STRATEGIES } from "./responseStrategySelector.js";
+import { LOW_RECALL_INTENTS } from "./memoryRecallPolicy.js";
 
 export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
   const companion = runtime.companion || null;
@@ -28,6 +31,8 @@ export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
   const safety = assessInputSafety(gateway.normalizedInput);
   const analysis = interpretEmotionInput(gateway.originalInput, state, { repeated: gateway.repeated });
   const intent = classifyIntent(gateway.normalizedInput, analysis, safety);
+  const nlu = runNluPipeline(gateway.normalizedInput, analysis, intent, safety);
+  let responseStrategy = selectResponseStrategy(nlu, intent, safety);
   const semanticSoul = deriveSemanticSoulState(state, analysis);
   const memories = retrieveRelevantMemories(
     state,
@@ -36,6 +41,14 @@ export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
     intent
   );
   const recoveryContext = buildRecoveryContext(state, memories, analysis, { now: gateway.now });
+
+  if (
+    memories.shouldRecall &&
+    recoveryContext.allowsExplicitReference &&
+    !LOW_RECALL_INTENTS.has(intent.intent)
+  ) {
+    responseStrategy = { strategy: RESPONSE_STRATEGIES.MEMORY_REFERENCE, reason: "memory_recall_gate" };
+  }
 
   const preferenceProfile =
     runtime.companionPreferenceProfile || getCompanionPreferenceProfile(companionId);
@@ -70,7 +83,9 @@ export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
       emotionHint: corpusSearch.emotionHint
     },
     preferenceProfile,
-    recoveryContext
+    recoveryContext,
+    nlu,
+    responseStrategy
   };
 
   const autonomyResult = runAutonomyLoop({
@@ -107,8 +122,24 @@ export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
       corpusHits: perception.corpusHits,
       corpusMeta: perception.corpusMeta,
       preferenceProfile: updatedProfile,
-      recoveryContext
+      recoveryContext,
+      nlu,
+      responseStrategy
     },
+
+    nlu: {
+      semanticFrame: nlu.semanticFrame,
+      dialogueAct: nlu.dialogueAct,
+      topic: nlu.topic,
+      confidence: nlu.confidence,
+      confidenceBand: nlu.confidenceBand,
+      constraints: nlu.constraints,
+      preferredResponse: nlu.preferredResponse,
+      entities: nlu.entities,
+      nuances: nlu.nuances
+    },
+
+    responseStrategy,
 
     autonomy: {
       needs,
@@ -194,4 +225,5 @@ if (typeof window !== "undefined" && new URLSearchParams(window.location.search)
     mod.installCrossSessionPreferenceHarness(window)
   );
   import("./testHarness/raphaelGatewaySmokeCases.js").then((mod) => mod.installGatewaySmokeHarness(window));
+  import("./testHarness/nluSmokeCases.js").then((mod) => mod.installNluSmokeHarness(window));
 }

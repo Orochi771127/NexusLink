@@ -5,6 +5,7 @@ import { executeAutonomousAction } from "./actionExecutor.js";
 import { buildInteractionReflection } from "./reflectionEngine.js";
 import { evaluateInitiativeCooldown } from "./initiativeCooldown.js";
 import { runCritics } from "../eval/runCritics.js";
+import { repairGenericReply } from "../nlu/nluReplyBuilder.js";
 import { buildSafetyRedirectReply } from "../safetyShield.js";
 import { sanitizeReply } from "../forbiddenPhrases.js";
 import { renderReply } from "../external/externalModelGateway.js";
@@ -72,6 +73,7 @@ export function runAutonomyLoop({
 
   let critique = runCritics({
     perception,
+    state,
     reply: execution.reply,
     actionPlan: execution.actionPlan,
     memoryDecision: execution.memoryDecision,
@@ -85,6 +87,7 @@ export function runAutonomyLoop({
     execution = applyCriticRepairs(execution, critique, perception);
     critique = runCritics({
       perception,
+      state,
       reply: execution.reply,
       actionPlan: execution.actionPlan,
       memoryDecision: execution.memoryDecision,
@@ -106,6 +109,7 @@ export function runAutonomyLoop({
     };
     critique = runCritics({
       perception,
+      state,
       reply: execution.reply,
       actionPlan: execution.actionPlan,
       memoryDecision: execution.memoryDecision,
@@ -135,6 +139,7 @@ export function runAutonomyLoop({
   execution = applyPreferenceRepairs(execution, updatedProfile);
   critique = runCritics({
     perception,
+    state,
     reply: execution.reply,
     actionPlan: execution.actionPlan,
     memoryDecision: execution.memoryDecision,
@@ -199,6 +204,23 @@ function applyCriticRepairs(execution, critique, perception) {
 
   if (codes.some((code) => String(code).startsWith("forbidden_phrase"))) {
     reply = sanitizeReply(reply, 0).text;
+  }
+
+  if (
+    codes.includes("generic_fallback_reply") ||
+    codes.includes("generic_without_topic") ||
+    codes.includes("missing_topic_reference") ||
+    codes.includes("comfort_violates_constraint") ||
+    codes.includes("comfort_instead_of_practical") ||
+    codes.includes("too_similar_to_previous_reply")
+  ) {
+    reply = repairGenericReply({
+      strategy: perception.responseStrategy?.strategy,
+      nlu: perception.nlu,
+      semanticFrame: perception.nlu?.semanticFrame,
+      seed: (perception.gateway?.normalizedInput || "").length
+    });
+    shouldSpeak = Boolean(reply);
   }
 
   return {

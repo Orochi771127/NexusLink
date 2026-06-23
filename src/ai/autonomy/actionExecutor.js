@@ -1,4 +1,5 @@
 import { composeRaphaelReply } from "../responseComposer.js";
+import { repairGenericReply } from "../nlu/nluReplyBuilder.js";
 import { buildSafetyRedirectReply } from "../safetyShield.js";
 import { deriveStateMutation } from "../stateMutationPolicy.js";
 import { buildMemoryDecision } from "../memoryWriter.js";
@@ -100,7 +101,9 @@ export function executeAutonomousAction({
       corpusHits: perception.corpusHits,
       semanticSoul: perception.semanticSoul,
       recoveryContext: perception.recoveryContext,
-      actionPlan: coerced
+      actionPlan: coerced,
+      nlu: perception.nlu,
+      responseStrategy: perception.responseStrategy
     });
 
     if (cooldown.replyLengthCap === "short" && reply.length > 48) {
@@ -114,7 +117,15 @@ export function executeAutonomousAction({
 
   const validation = validatePlannedAction(coerced, reply);
   if (!validation.allowed && reply) {
-    reply = sanitizeReply("我聽見了。我們先慢一點。", seed).text;
+    reply = sanitizeReply(
+      repairGenericReply({
+        strategy: perception.responseStrategy?.strategy,
+        nlu: perception.nlu,
+        semanticFrame: perception.nlu?.semanticFrame,
+        seed
+      }),
+      seed
+    ).text;
   }
 
   const replyRole = alignedPlan.replyRole || (coerced.reaction === SOUL_TALK_REACTIONS.SAFETY_REDIRECT ? "system" : "companion");
