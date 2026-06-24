@@ -1,0 +1,81 @@
+{
+  "base_url": "https://orochi771127.github.io/NexusLink",
+  "target": "github_pages",
+  "runners": [
+    {
+      "runner": "harness_smoke",
+      "total": 17,
+      "passed": 17,
+      "failed": 0,
+      "console_errors": [],
+      "ok": true
+    },
+    {
+      "runner": "nlu_smoke",
+      "total": 8,
+      "passed": 8,
+      "failed": 0,
+      "forbidden_count": 0,
+      "console_errors": [],
+      "ok": true
+    },
+    {
+      "runner": "stage4_human_playtest",
+      "total": 10,
+      "passed": 10,
+      "failed": 0,
+      "forbidden_count": 0,
+      "console_errors": [],
+      "ok": true
+    },
+    {
+      "runner": "live_gate_subset",
+      "canvas_count": 1,
+      "pixi_single": true,
+      "storage_key": "nexusLinkR2State:v1",
+      "soul_talk_round": true,
+      "companion_reply": true,
+      "console_errors": [],
+      "ok": true
+    }
+  ],
+  "summary": {
+    "all_ok": true,
+    "harness": {
+      "runner": "harness_smoke",
+      "total": 17,
+      "passed": 17,
+      "failed": 0,
+      "console_errors": [],
+      "ok": true
+    },
+    "nlu": {
+      "runner": "nlu_smoke",
+      "total": 8,
+      "passed": 8,
+      "failed": 0,
+      "forbidden_count": 0,
+      "console_errors": [],
+      "ok": true
+    },
+    "stage4": {
+      "runner": "stage4_human_playtest",
+      "total": 10,
+      "passed": 10,
+      "failed": 0,
+      "forbidden_count": 0,
+      "console_errors": [],
+      "ok": true
+    },
+    "live": {
+      "runner": "live_gate_subset",
+      "canvas_count": 1,
+      "pixi_single": true,
+      "storage_key": "nexusLinkR2State:v1",
+      "soul_talk_round": true,
+      "companion_reply": true,
+      "console_errors": [],
+      "ok": true
+    }
+  }
+}

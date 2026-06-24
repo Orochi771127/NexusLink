@@ -1,12 +1,13 @@
 """Raphael Live Playtest & HUD Verification Gate — real UI via Playwright."""
 import json
+import os
 import re
 import sys
 import time
 from playwright.sync_api import sync_playwright
 
-BASE = "http://localhost:5173"
-BASE_DEV = "http://localhost:5173?devPanel=1"
+BASE = os.environ.get("NEXUS_QA_BASE", "http://localhost:5173").rstrip("/")
+BASE_DEV = f"{BASE}?devPanel=1"
 STORAGE_KEY = "nexusLinkR2State:v1"
 VIEWPORT = {"width": 390, "height": 844}
 

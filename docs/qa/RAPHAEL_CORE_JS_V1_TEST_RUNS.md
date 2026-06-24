@@ -809,3 +809,39 @@ Forbidden phrases in manual run: **0** (`我還記得上次你也提到`, generi
 ### Recommendation
 
 **Ready for expanded Stage 4 human playtest** on branch `feature/raphael-stage4-human-playtest` (not merged).
+
+---
+
+## Post-PR #87 Main Sign-off + GitHub Pages QA (2026-06-24)
+
+### Branch / Deploy
+
+- Branch: `main`
+- Commit: `9db4c66` (local QA); GitHub Pages: `https://orochi771127.github.io/NexusLink/`
+- Agent: Grok Agent (Playwright + `python -m http.server 5173`)
+
+### Local `main` results
+
+| Runner | Result |
+|--------|--------|
+| `_run_harness_smoke.py` | **17/17** |
+| `_run_nlu_smoke.py` | **8/8** |
+| `_run_stage4_human_playtest.py` | **10/10** |
+| `_run_live_playtest_gate.py` | pass — Soul Talk **10/10**, HUD **13/13**, awakening/touch/storage/pixi OK |
+| `_run_touch_fatigue_daytime.py` | **7/7** |
+| Console errors | **0** |
+| Forbidden phrases | **0** |
+
+### GitHub Pages results (`orochi771127.github.io/NexusLink`)
+
+| Runner | Result |
+|--------|--------|
+| `_run_github_pages_qa.py` | **all_ok** — harness 17/17, NLU 8/8, Stage4 10/10, live subset pass |
+| `_run_live_playtest_gate.py` (`NEXUS_QA_BASE=Pages`) | pass — Soul Talk **10/10**, HUD **13/13**, awakening/touch/storage/pixi OK |
+| Console errors | **0** |
+| Forbidden phrases | **0** |
+| Single Pixi canvas | **yes** |
+
+### Recommendation
+
+**Canonical sign-off on `main` + production Pages deploy verified.** Next: expanded real human playtest (optional apology repair pack).
