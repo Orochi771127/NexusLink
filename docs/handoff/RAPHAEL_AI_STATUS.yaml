@@ -3,19 +3,20 @@ last_updated: "2026-06-24"
 last_agent: Grok Agent
 
 branch:
-  active: feature/raphael-stage4-human-playtest
+  active: main
   last_commit: "see git log -1 on active branch"
-  handoff_intro_commit: 3ac95c3
-  merged_to_main: false
-  main_last_known: "043efb5"  # PR #86 merge
+  merge_commit: "4338d76"  # PR #87
+  merged_to_main: true
+  merged_pr: 87
+  merged_at: "2026-06-24"
 
 workspace: "C:\\Users\\User\\NexusLink_RaphaelAI_Workspace\\NexusLink"
 do_not_touch: "AIForgeNexus2\\NexusLink"
 
 stage:
   current: 4
-  label: "Human playtest pack"
-  next: "Expanded real human playtest + merge to main"
+  label: "Human playtest pack (on main)"
+  next: "Post-merge QA sign-off + expanded real human playtest"
 
 qa:
   harness_smoke: "17/17"
@@ -40,7 +41,6 @@ constraints:
 
 blockers: []
 follow_ups:
-  - "Merge feature/raphael-stage4-human-playtest to main (human approval)"
-  - "Re-run QA pack on main after merge"
+  - "Re-run QA pack on main for canonical sign-off (post PR #87)"
   - "Expanded real human playtest"
   - "Optional: dedicated apology repair pack"

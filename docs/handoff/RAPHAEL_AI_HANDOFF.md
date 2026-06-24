@@ -12,9 +12,9 @@
 |------|-----|
 | `last_updated` | 2026-06-24 |
 | `last_agent` | Grok Agent |
-| `active_branch` | `feature/raphael-stage4-human-playtest` |
-| `last_commit` | 執行 `git log -1 --oneline` 取得分支 tip（handoff 初版：`3ac95c3`） |
-| `merged_to_main` | **否** — Stage 4 分支尚未 merge；`main` 上 PR #86 已 merge（`043efb5`） |
+| `active_branch` | `main` |
+| `last_commit` | 執行 `git log -1 --oneline` 取得 tip（PR #87 merge：`4338d76`） |
+| `merged_to_main` | **是** — PR #87 merged（2026-06-24）；Stage 4 + handoff 已在 `main` |
 | `workspace` | `C:\Users\User\NexusLink_RaphaelAI_Workspace\NexusLink` |
 | `do_not_touch` | `AIForgeNexus2\NexusLink`（舊 checkout，易與本工作區分叉） |
 
@@ -22,7 +22,7 @@
 
 ## 一句話現況
 
-RaphaelCore JS v1 → Soul Architecture v1.5 → NLU v1 已在 `main` 落地；**Stage 4 human playtest**（疲憊 recall 對齊、觸摸疲勞日間 QA、10 則人感對話）在 `feature/raphael-stage4-human-playtest` **全測通過、待 merge / 真人試玩**。
+RaphaelCore JS v1 → Soul Architecture v1.5 → NLU v1 → **Stage 4 human playtest** 已全部在 `main`（PR #87）。下一步：**在 `main` 重跑 QA sign-off + expanded real human playtest**。
 
 ---
 
@@ -34,7 +34,7 @@ RaphaelCore JS v1 → Soul Architecture v1.5 → NLU v1 已在 `main` 落地；*
 | 2 | Soul Architecture v1.5（autonomy、critic、evolution、external gateway stub） | ✅ `main`（PR #86） |
 | 3 | Awakening gate（心核初醒、first touch / first Soul Talk） | ✅ `main` |
 | 3b | NLU v1（semanticFrame、responseStrategy、anti-generic） | ✅ `main` |
-| 4 | Human playtest pack（fatigue recall、touch fatigue daytime、10 human-feel cases） | ✅ 分支全過；**未 merge** |
+| 4 | Human playtest pack（fatigue recall、touch fatigue daytime、10 human-feel cases） | ✅ `main`（PR #87） |
 | 5 | Expanded real human playtest + corpus tuning | ⏳ 下一步 |
 
 ---
@@ -92,9 +92,8 @@ Player input
 
 ## 未完成 / 建議下一步
 
-1. **Merge `feature/raphael-stage4-human-playtest` → `main`**（需 human 明確指示；AGENTS.md 禁止 AI 自行 commit/push）
-2. Merge 後在 `main` 重跑 QA pack 做 canonical sign-off
-3. **Expanded real human playtest**（規則 harness 通過 ≠ 真人語感驗收）
+1. 在 `main` 重跑 QA pack 做 canonical sign-off（PR #87 merge 後）
+2. **Expanded real human playtest**（規則 harness 通過 ≠ 真人語感驗收）
 4. 可選：道歉線 `我剛剛對你太急了，對不起` 專用 repair pack（目前 contextual ack）
 5. 可選：睡眠時段觸摸仍先 `wake`、疲勞不累積（live UI 已知限制；engine QA 已覆蓋數學）
 6. 長線：corpus 擴充、NLU regex 邊界語句、gateway 真實 advisor 接入（仍須 RaphaelCore 最終裁決）
@@ -135,7 +134,7 @@ Player input
 
 | 風險 | 嚴重度 | 說明 |
 |------|--------|------|
-| Stage 4 未 merge | 中 | 接手者若在 `main` 開工會缺 Stage 4 修正 |
+| Post-merge QA 未重跑 | 低 | PR #87 已 merge；建議在 `main` 再跑一輪 QA 做 sign-off |
 | NLU rule-based 覆蓋率 | 低 | 邊界語句需 corpus / regex 擴充 |
 | 睡眠窗觸摸 → wake 短路 | 低 | Live UI 行為；engine 層 fatigue 已單測 |
 | Apology 無專用 pack | 低 | 語氣可接受，非 merge blocker |
