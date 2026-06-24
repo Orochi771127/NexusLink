@@ -7,6 +7,10 @@ export const GREYSHADE_CAT_ANIMATIONS_PATH = ASSET_MANIFEST.characters.greyshade
 export const GREYSHADE_CAT_ANIMATION_NAMES = ANIMATION_NAMES;
 export const GREYSHADE_CAT_CORE_ANIMATION_NAMES = CORE_ANIMATION_NAMES;
 
+// Keep first paint focused on the companion's visible idle state; interaction
+// animations continue to lazy-load through the existing controller.
+export const BOOT_ANIMATION_NAMES = Object.freeze(["idle_calm", "sleep"]);
+
 export function getPixiAnimationSpeed(definition) {
   const fps = Number.isFinite(definition?.fps) ? definition.fps : 8;
   return Math.max(0.01, fps / 60);
@@ -19,7 +23,7 @@ export function loadGreyshadeCatAnimationPack() {
   return loadCompanionAnimationPack(GREYSHADE_CAT_ANIMATIONS_PATH);
 }
 
-export async function loadCompanionAnimationPack(animationsPath) {
+export async function loadCompanionAnimationPack(animationsPath, { bootOnly = false } = {}) {
   const status = {
     metadataLoaded: false,
     available: Object.fromEntries(GREYSHADE_CAT_ANIMATION_NAMES.map((name) => [name, false])),
@@ -42,8 +46,9 @@ export async function loadCompanionAnimationPack(animationsPath) {
       }
     });
 
+    const initialAnimationNames = bootOnly ? BOOT_ANIMATION_NAMES : GREYSHADE_CAT_CORE_ANIMATION_NAMES;
     await Promise.all(
-      GREYSHADE_CAT_CORE_ANIMATION_NAMES.map((name) => loadAnimationDefinition({
+      initialAnimationNames.map((name) => loadAnimationDefinition({
         animations,
         metadata,
         status,
@@ -51,13 +56,40 @@ export async function loadCompanionAnimationPack(animationsPath) {
       }).catch(() => null))
     );
 
-    return { animations, metadata, status };
+    const pack = { animations, metadata, status };
+    if (bootOnly) scheduleAnimationWarmup(pack);
+    return pack;
   } catch (error) {
     console.warn("Companion animations metadata failed to load", error);
     status.errors.push(`metadata: ${error.message}`);
     status.missing = [...GREYSHADE_CAT_ANIMATION_NAMES];
     return { animations: new Map(), metadata: null, status };
   }
+}
+
+function scheduleAnimationWarmup(pack) {
+  const warm = () => preloadAnimationNames(pack, GREYSHADE_CAT_CORE_ANIMATION_NAMES)
+    .catch((error) => console.warn("[animations] warm preload failed:", error));
+
+  if (typeof window !== "undefined" && "requestIdleCallback" in window) {
+    window.requestIdleCallback(warm, { timeout: 5000 });
+  } else if (typeof window !== "undefined") {
+    window.setTimeout(warm, 1200);
+  }
+}
+
+async function preloadAnimationNames(pack, names = []) {
+  if (!pack?.metadata || !pack?.animations) return;
+  await Promise.all(
+    names
+      .filter((name) => !pack.animations.has(name))
+      .map((name) => loadAnimationDefinition({
+        animations: pack.animations,
+        metadata: pack.metadata,
+        status: pack.status,
+        name
+      }).catch(() => null))
+  );
 }
 
 export function createAnimatedCompanionNode(animationPack, creature) {

@@ -3,9 +3,9 @@ import { FALLBACK_CREATURE } from "../engine/personalityProfile.js";
 import { SCENE_LAYOUT } from "../data/sceneLayout.js";
 import { createAnimatedCompanionNode, loadCompanionAnimationPack } from "./spriteSheetAnimationLoader.js";
 
-export async function createCreatureNode(creature, statusText) {
+export async function createCreatureNode(creature, statusText, { bootOnly = true } = {}) {
   if (creature.animationsManifest) {
-    const animationPack = await loadCompanionAnimationPack(creature.animationsManifest);
+    const animationPack = await loadCompanionAnimationPack(creature.animationsManifest, { bootOnly });
     const animatedCompanion = createAnimatedCompanionNode(animationPack, creature);
     if (animatedCompanion) {
       statusText.textContent = `${creature.name}已載入 idle_calm 動畫棲地。`;
