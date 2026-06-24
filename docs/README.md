@@ -6,6 +6,10 @@ This folder contains the planning and production references for NexusLink.
 
 ## Start Here
 
+0. `agent/AI_EXECUTION_LEDGER.md`
+   - The current cross-AI operational handoff. Read the relevant lane before
+     starting work and append the final status, problems, and next safe action.
+
 1. `nexuslink-development-direction.md`
    - Current product direction and emotional habitat north star.
    - Use this to understand the core positioning, emotional sedimentation system, companion principles, MVP scope guard, and current companion direction.
