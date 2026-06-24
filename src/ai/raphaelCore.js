@@ -1,3 +1,4 @@
+// Handoff & progress: docs/handoff/RAPHAEL_AI_HANDOFF.md
 import { assessInputSafety } from "./safetyShield.js";
 import { interpretEmotionInput } from "./emotionInterpreter.js";
 import { classifyIntent } from "./intentClassifier.js";

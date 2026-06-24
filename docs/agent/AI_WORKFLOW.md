@@ -36,6 +36,18 @@ Gate 6: Human Approval before Commit
 - 掃描相關 `src/`、`assets/`、`data/` 路徑
 - 確認現有檔案的最新狀態
 
+**required pre-read files（Raphael / Soul Talk 任務）**：
+
+| 優先 | 檔案 | 用途 |
+|------|------|------|
+| 1 | `docs/handoff/RAPHAEL_AI_HANDOFF.md` | 現況、分支、決策、下一步 |
+| 2 | `docs/handoff/RAPHAEL_AI_STATUS.yaml` | branch / commit / QA 數字 |
+| 3 | `AGENTS.md` | 多 AI 協作規範與紅線 |
+| 4 | `docs/architecture/RAPHAEL_SOUL_ARCHITECTURE_V1.md` | 架構與模組邊界 |
+| 5 | `docs/qa/RAPHAEL_CORE_JS_V1_TEST_RUNS.md` | 最新測試證據 |
+
+非 Raphael 任務可略過上表，但仍須讀 `AGENTS.md` 與任務相關 canon。
+
 **輸出**：
 ```
 Gate 0 完成
