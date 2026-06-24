@@ -264,3 +264,14 @@
 - 不可引入新依賴。
 - 不可繞過紅線「想辦法達成需求」——遇衝突就停下回報。
 - 不可把對話框內的口頭授權擴大解讀成跨 session 的長期授權；每個 TASK_PACK 重新確認。
+
+---
+
+## 11. Cross-AI Execution Ledger
+
+Every TASK_PACK must read the relevant lane in
+`docs/agent/AI_EXECUTION_LEDGER.md` before editing. Before a final report or a
+blocked handoff, append the completed work, verification, problems, and next
+safe action to the relevant lane. Keep Game Engineering, Game Art/UI, and
+Raphael Core entries separate. A remote branch or historical test report is not
+evidence of current runtime integration until the checked-out worktree proves it.

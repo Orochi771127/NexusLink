@@ -25,6 +25,14 @@ Gate 6: Human Approval before Commit
 
 ---
 
+## Cross-Agent Execution Ledger
+
+Before Gate 0, read the relevant lane in
+`docs/agent/AI_EXECUTION_LEDGER.md`. Before the final report, append the
+completed work, verification, problems, and next safe action to that lane.
+Use separate entries for engineering, art/UI, and Raphael work. The ledger
+does not replace human approval at Gate 2 or Gate 6.
+
 ## Gate 0 — Read-only Scan
 
 **目的**：在修改任何檔案之前，先完整理解現狀。
@@ -201,6 +209,13 @@ Gate 5 Diff Review
 **失敗處理**：修正後重新通過 Gate 5，或向 human 說明風險
 
 ---
+
+### Ledger update
+
+Before a final report or a blocked handoff, append the relevant execution-ledger
+entry. State the current branch and commit, exact verification performed, known
+risks, and the next bounded action. Do not report a remote branch as current
+runtime integration.
 
 ## Gate 6 — Human Approval before Commit
 
