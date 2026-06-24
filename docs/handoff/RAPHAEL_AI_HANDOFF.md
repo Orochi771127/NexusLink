@@ -13,7 +13,7 @@
 | `last_updated` | 2026-06-24 |
 | `last_agent` | Grok Agent |
 | `active_branch` | `feature/raphael-stage4-human-playtest` |
-| `last_commit` | `bcc663e` — test(stage4): accept quiet_presence for comfort-feedback case S4-6 |
+| `last_commit` | `3ac95c3` — docs(handoff): add Raphael AI handoff and agent onboarding hooks |
 | `merged_to_main` | **否** — Stage 4 分支尚未 merge；`main` 上 PR #86 已 merge（`043efb5`） |
 | `workspace` | `C:\Users\User\NexusLink_RaphaelAI_Workspace\NexusLink` |
 | `do_not_touch` | `AIForgeNexus2\NexusLink`（舊 checkout，易與本工作區分叉） |

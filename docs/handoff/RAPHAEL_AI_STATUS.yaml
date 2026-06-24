@@ -4,7 +4,7 @@ last_agent: Grok Agent
 
 branch:
   active: feature/raphael-stage4-human-playtest
-  last_commit: bcc663e
+  last_commit: 3ac95c3
   merged_to_main: false
   main_last_known: "043efb5"  # PR #86 merge
 
