@@ -8,6 +8,7 @@ export function scoreNluConfidence({ semanticFrame = {}, dialogueAct = "", topic
   if (nuances.length) score += 0.05 * Math.min(4, nuances.length);
   if (semanticFrame.userNeed && semanticFrame.userNeed !== "presence") score += 0.1;
   if (semanticFrame.problemType && semanticFrame.problemType !== "general") score += 0.1;
+  if (semanticFrame.specificDetail?.text) score += 0.12;
 
   return {
     score: Math.min(1, Math.max(0, score)),

@@ -169,6 +169,8 @@ Acceptance refs:  <對應 ACCEPTANCE.md 的哪幾條>
 - `NEXUS_LINK_MASTER_CANON_v3.1.md` — 最高戰略上位法（最高 canon）。
 - `CLAUDE.md` — 協作入口與執行規範（先讀，但服從 Master Canon v3.1）。
 - `ACCEPTANCE.md` — 契約 → 可驗收 assertion 對照表。
+- `docs/handoff/RAPHAEL_AI_HANDOFF.md` — **Raphael AI 現況交接（接手 Soul Talk / RaphaelCore 前必讀）**。
+- `docs/handoff/RAPHAEL_AI_STATUS.yaml` — Raphael AI 機器可讀狀態（branch / QA 數字）。
 - `docs/agent/AI_WORKFLOW.md` — Gate 流程。
 - `docs/agent/TASK_TEMPLATE.md` — 任務模板。
 - `docs/testing/MANUAL_TEST_CHECKLIST.md` — 手動測試清單。

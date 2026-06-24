@@ -1,11 +1,17 @@
 import { SOUL_TALK_INTENTS } from "./intentClassifier.js";
 import { SOUL_TALK_REACTIONS } from "./reactionPlanner.js";
 import { buildSafetyRedirectReply } from "./safetyShield.js";
-import { selectResponsePackLine } from "./corpus/responsePackSelector.js";
+import { selectResponsePackLine, selectResponsePackAtVariant } from "./corpus/responsePackSelector.js";
 import { renderTemplateReply } from "./corpus/templateRenderer.js";
 import { RESPONSE_STRATEGIES } from "./responseStrategySelector.js";
 import { buildStrategyReply, repairGenericReply } from "./nlu/nluReplyBuilder.js";
 import { critiqueGenericReply } from "./eval/genericReplyCritic.js";
+import { weaveExplicitReference } from "./nlu/explicitReference.js";
+import { shouldSuppressExplicitReference } from "./eval/constitutionCritic.js";
+import { buildPrefilledSpecificDetail } from "./nlu/specificDetailExtractor.js";
+import { replyReferencesDetail } from "./nlu/explicitReference.js";
+import { buildPrefillGroundingPlan, downgradePrefillGroundingPlan } from "./dialogue/prefillGrounding.js";
+import { getReferenceText, hasValidPrefill } from "./dialogue/quickReplyContext.js";
 
 const BOUNDARY_MODES = new Set([
   SOUL_TALK_REACTIONS.WITHDRAW,
@@ -34,6 +40,44 @@ function applyPersonaStyle(text, persona = {}) {
   return parts.slice(0, maxSentences).join("。") + (parts.length ? "。" : "");
 }
 
+function returnComposeResult(text, meta, guardArgs) {
+  const reply = finalizeAndGuardReply(text, guardArgs);
+  const prefillMeta = guardArgs.composeOpts?.prefillMeta || {};
+  return {
+    reply,
+    variantId: meta.variantId || null,
+    replySource: meta.replySource || "unknown",
+    openingPhrase: meta.openingPhrase || extractOpeningPhrase(reply),
+    variationReason: meta.variationReason || null,
+    usedPrefillDetail: prefillMeta.usedPrefillDetail || null,
+    groundedByPrefill: Boolean(prefillMeta.groundedByPrefill)
+  };
+}
+
+function extractOpeningPhrase(text = "") {
+  return String(text || "").split(/[。！？]/)[0].trim().slice(0, 14);
+}
+
+function composeMetaFromSelection(variantSelection, reply, overrides = {}) {
+  return {
+    variantId: variantSelection?.variantId || overrides.variantId || null,
+    replySource: variantSelection?.replySource || overrides.replySource || "nlu_builder",
+    openingPhrase: extractOpeningPhrase(reply),
+    variationReason: variantSelection?.variationReason || null,
+    ...overrides
+  };
+}
+
+function guardArgs(persona, state, composeOpts, nlu) {
+  return {
+    persona,
+    state,
+    composeOpts,
+    nlu,
+    previousReply: getPreviousCompanionReply(state)
+  };
+}
+
 export function composeRaphaelReply({
   inputText = "",
   analysis = {},
@@ -50,18 +94,22 @@ export function composeRaphaelReply({
   actionPlan = {},
   replyMode = "",
   nlu = null,
-  responseStrategy = null
+  responseStrategy = null,
+  variantSelection = null
 } = {}) {
   const composeOpts = {
     recoveryRecall: Boolean(recoveryContext?.allowsExplicitReference && recoveryContext?.canRecall),
     recallMode: recoveryContext?.recallMode || "none",
     replyMode: replyMode || actionPlan.replyMode || "",
     nlu,
-    responseStrategy
+    responseStrategy,
+    recoveryContext
   };
 
+  const args = guardArgs(persona, state, composeOpts, nlu);
+
   if (plan.mode === SOUL_TALK_REACTIONS.SAFETY_REDIRECT) {
-    return buildSafetyRedirectReply(safety);
+    return returnComposeResult(buildSafetyRedirectReply(safety), { variantId: "safety:redirect", replySource: "safety" }, args);
   }
 
   const seed = buildSeed(inputText, state, companion);
@@ -74,7 +122,7 @@ export function composeRaphaelReply({
 
   if (BOUNDARY_MODES.has(mode)) {
     if (safety?.category === "dependency_pressure") {
-      return buildSafetyRedirectReply(safety);
+      return returnComposeResult(buildSafetyRedirectReply(safety), { variantId: "safety:dependency", replySource: "safety" }, args);
     }
     const boundaryLine = selectResponsePackLine({
       corpus: loadedCorpus,
@@ -88,13 +136,11 @@ export function composeRaphaelReply({
       seed
     });
     if (boundaryLine.line) {
-      return finalizeAndGuardReply(boundaryLine.line, {
-        persona,
-        state,
-        composeOpts,
-        nlu,
-        previousReply: getPreviousCompanionReply(state)
-      });
+      return returnComposeResult(
+        boundaryLine.line,
+        { variantId: boundaryLine.packId ? `pack:${boundaryLine.packId}` : "pack:boundary", replySource: "response_pack" },
+        args
+      );
     }
     const boundaryFallback =
       mode === SOUL_TALK_REACTIONS.WITHDRAW
@@ -102,31 +148,27 @@ export function composeRaphaelReply({
         : mode === SOUL_TALK_REACTIONS.REJECT
           ? "這樣的靠近太快了。"
           : "我需要一點距離，才能好好聽你。";
-    return finalizeAndGuardReply(boundaryFallback, {
-      persona,
-      state,
-      composeOpts,
-      nlu,
-      previousReply: getPreviousCompanionReply(state)
-    });
+    return returnComposeResult(
+      boundaryFallback,
+      { variantId: `boundary:${mode}`, replySource: "nlu_builder" },
+      args
+    );
   }
 
-  if (strategy === RESPONSE_STRATEGIES.MEMORY_REFERENCE && composeOpts.recoveryRecall) {
+  if (
+    strategy === RESPONSE_STRATEGIES.MEMORY_REFERENCE &&
+    (composeOpts.recoveryRecall || nlu?.dialogueAct === "asking_memory")
+  ) {
     const awakeningReply = buildStrategyReply({
       strategy,
       nlu,
       semanticFrame: nlu?.semanticFrame,
       seed,
-      recoveryContext
+      recoveryContext,
+      variantIndex: variantSelection?.variantIndex
     });
     if (awakeningReply) {
-      return finalizeAndGuardReply(awakeningReply, {
-        persona,
-        state,
-        composeOpts,
-        nlu,
-        previousReply: getPreviousCompanionReply(state)
-      });
+      return returnComposeResult(awakeningReply, composeMetaFromSelection(variantSelection, awakeningReply), args);
     }
 
     const templateReply = renderTemplateReply({
@@ -138,13 +180,11 @@ export function composeRaphaelReply({
       seed
     });
     if (templateReply?.text) {
-      return finalizeAndGuardReply(templateReply.text, {
-        persona,
-        state,
-        composeOpts,
-        nlu,
-        previousReply: getPreviousCompanionReply(state)
-      });
+      return returnComposeResult(
+        templateReply.text,
+        { variantId: templateReply.templateId ? `template:${templateReply.templateId}` : "template:recovery", replySource: "template" },
+        args
+      );
     }
   }
 
@@ -154,40 +194,50 @@ export function composeRaphaelReply({
       nlu,
       semanticFrame: nlu?.semanticFrame,
       seed,
-      recoveryContext
+      recoveryContext,
+      variantIndex: variantSelection?.variantIndex
     });
     if (strategyReply) {
-      return finalizeAndGuardReply(strategyReply, {
-        persona,
-        state,
-        composeOpts,
-        nlu,
-        previousReply: getPreviousCompanionReply(state)
-      });
+      return returnComposeResult(strategyReply, composeMetaFromSelection(variantSelection, strategyReply), args);
     }
   }
 
-  if (!blockComfort) {
-    const packLine = selectResponsePackLine({
-      corpus: loadedCorpus,
-      companionId,
-      emotion: emotionKey,
-      intent: intent.intent,
-      reaction: mode,
-      state,
-      semanticSoul,
-      recoveryContext,
-      seed: seed + corpusSeedOffset(corpusHits)
-    });
+  if (!blockComfort && !shouldSkipResponsePacks(nlu, strategy)) {
+    const packLine =
+      variantSelection?.replySource === "response_pack" && variantSelection.packId
+        ? selectResponsePackAtVariant({
+            corpus: loadedCorpus,
+            companionId,
+            emotion: emotionKey,
+            intent: intent.intent,
+            reaction: mode,
+            state,
+            semanticSoul,
+            recoveryContext,
+            packId: variantSelection.packId,
+            lineIndex: variantSelection.lineIndex ?? variantSelection.variantIndex ?? 0
+          })
+        : selectResponsePackLine({
+            corpus: loadedCorpus,
+            companionId,
+            emotion: emotionKey,
+            intent: intent.intent,
+            reaction: mode,
+            state,
+            semanticSoul,
+            recoveryContext,
+            seed: seed + corpusSeedOffset(corpusHits)
+          });
 
     if (packLine.line && !packLine.silent) {
-      return finalizeAndGuardReply(packLine.line, {
-        persona,
-        state,
-        composeOpts,
-        nlu,
-        previousReply: getPreviousCompanionReply(state)
-      });
+      return returnComposeResult(
+        packLine.line,
+        composeMetaFromSelection(variantSelection, packLine.line, {
+          variantId: variantSelection?.variantId || (packLine.packId ? `pack:${packLine.packId}:${packLine.lineIndex ?? 0}` : "pack:unknown"),
+          replySource: "response_pack"
+        }),
+        args
+      );
     }
   }
 
@@ -199,13 +249,11 @@ export function composeRaphaelReply({
       seed
     });
     if (questionReply) {
-      return finalizeAndGuardReply(questionReply, {
-        persona,
-        state,
-        composeOpts,
-        nlu,
-        previousReply: getPreviousCompanionReply(state)
-      });
+      return returnComposeResult(
+        questionReply,
+        { variantId: `strategy:${RESPONSE_STRATEGIES.ANSWER_OR_CLARIFY}`, replySource: "nlu_builder" },
+        args
+      );
     }
   }
 
@@ -216,13 +264,11 @@ export function composeRaphaelReply({
     seed: seed + 3
   });
 
-  return finalizeAndGuardReply(fallback || "我在。你想我先懂的是哪一段？", {
-    persona,
-    state,
-    composeOpts,
-    nlu,
-    previousReply: getPreviousCompanionReply(state)
-  });
+  return returnComposeResult(
+    fallback || "我在。你想我先懂的是哪一段？",
+    { variantId: `strategy:${RESPONSE_STRATEGIES.CLARIFYING_QUESTION}`, replySource: "nlu_builder" },
+    args
+  );
 }
 
 export function finalizeAndGuardReply(text, { persona, state, composeOpts, nlu, previousReply }) {
@@ -240,12 +286,105 @@ export function finalizeAndGuardReply(text, { persona, state, composeOpts, nlu, 
       nlu,
       semanticFrame: nlu?.semanticFrame,
       seed: buildSeed("", state, null),
-      recoveryContext: null
+      recoveryContext: composeOpts.recoveryContext || null
     });
     reply = finalizeReply(reply, persona, state, composeOpts);
   }
 
+  const weaveStrategy = composeOpts.responseStrategy?.strategy || "";
+  const frame = nlu?.semanticFrame || {};
+  const prefillContext = nlu?.prefillContext || null;
+  let groundingPlan = buildPrefillGroundingPlan(prefillContext);
+  groundingPlan = downgradePrefillGroundingPlan(groundingPlan, frame, weaveStrategy);
+
+  composeOpts.prefillMeta = resolvePrefillComposeMeta({
+    reply,
+    prefillContext,
+    groundingPlan,
+    weaveStrategy,
+    frame
+  });
+
+  if (
+    groundingPlan.groundedMode === "explicit" &&
+    groundingPlan.prefillDetail &&
+    !prefillContext?.skipWeave &&
+    !shouldSuppressExplicitReference(frame, weaveStrategy)
+  ) {
+    const prefillDetail = buildPrefilledSpecificDetail(groundingPlan.prefillDetail);
+    if (!replyReferencesDetail(reply, prefillDetail)) {
+      reply = weaveExplicitReference(reply, prefillDetail, { strategy: weaveStrategy });
+      reply = finalizeReply(reply, persona, state, composeOpts);
+      composeOpts.prefillMeta = {
+        usedPrefillDetail: groundingPlan.prefillDetail,
+        groundedByPrefill: true
+      };
+    }
+  } else {
+    const specificDetail = frame.specificDetail;
+    const shouldWeaveDetail =
+      specificDetail?.text &&
+      !["light_greeting", "quiet_presence", "holding_space", "memory_reference"].includes(weaveStrategy) &&
+      nlu?.dialogueAct !== "greeting" &&
+      specificDetail.type !== "clause" &&
+      !shouldSuppressExplicitReference(frame, weaveStrategy);
+
+    if (shouldWeaveDetail && !replyReferencesDetail(reply, specificDetail)) {
+      reply = weaveExplicitReference(reply, specificDetail, { strategy: weaveStrategy });
+      reply = finalizeReply(reply, persona, state, composeOpts);
+    }
+  }
+
+  if (!composeOpts.prefillMeta?.groundedByPrefill && hasValidPrefill(prefillContext)) {
+    const referenceText = getReferenceText(prefillContext);
+    if (referenceText && replyReferencesDetail(reply, buildPrefilledSpecificDetail(referenceText))) {
+      composeOpts.prefillMeta = {
+        usedPrefillDetail: referenceText,
+        groundedByPrefill: true
+      };
+    }
+  }
+
   return reply;
+}
+
+function resolvePrefillComposeMeta({ reply, prefillContext, groundingPlan, weaveStrategy, frame }) {
+  if (!hasValidPrefill(prefillContext)) {
+    return { usedPrefillDetail: null, groundedByPrefill: false };
+  }
+
+  const referenceText = getReferenceText(prefillContext);
+  if (!referenceText) {
+    return { usedPrefillDetail: null, groundedByPrefill: false };
+  }
+
+  const referenced = replyReferencesDetail(reply, buildPrefilledSpecificDetail(referenceText));
+  if (referenced) {
+    return { usedPrefillDetail: referenceText, groundedByPrefill: true };
+  }
+
+  if (
+    groundingPlan.groundedMode === "soft" ||
+    shouldSuppressExplicitReference(frame, weaveStrategy) ||
+    prefillContext.skipWeave
+  ) {
+    return { usedPrefillDetail: referenceText, groundedByPrefill: false };
+  }
+
+  return { usedPrefillDetail: referenceText, groundedByPrefill: false };
+}
+
+function shouldSkipResponsePacks(nlu, strategy) {
+  if (!nlu) return false;
+  const topic = nlu.topic || nlu.semanticFrame?.topic || "unknown";
+  const band = nlu.confidenceBand || "low";
+  const strategic =
+    strategy &&
+    strategy !== RESPONSE_STRATEGIES.CONTEXTUAL_ACK &&
+    strategy !== RESPONSE_STRATEGIES.CLARIFYING_QUESTION;
+  if (topic !== "unknown" && (strategic || band !== "low")) return true;
+  if ((nlu.nuances || []).length >= 2) return true;
+  return false;
 }
 
 function shouldBlockComfortPacks(nlu, strategy) {

@@ -1,3 +1,4 @@
+// Handoff & progress: docs/handoff/RAPHAEL_AI_HANDOFF.md
 import { assessInputSafety } from "./safetyShield.js";
 import { interpretEmotionInput } from "./emotionInterpreter.js";
 import { classifyIntent } from "./intentClassifier.js";
@@ -21,6 +22,13 @@ import { buildRecoveryContext } from "./recovery/recoveryLoop.js";
 import { runNluPipeline } from "./nlu/runNluPipeline.js";
 import { selectResponseStrategy, RESPONSE_STRATEGIES } from "./responseStrategySelector.js";
 import { LOW_RECALL_INTENTS } from "./memoryRecallPolicy.js";
+import { getDialogueState, recordDialogueTurn, getRepetitionScore } from "./dialogue/dialogueStateTracker.js";
+import { evaluateAntiLoop } from "./dialogue/antiLoopPolicy.js";
+import { selectReplyVariant } from "./dialogue/replyVariantSelector.js";
+import { planQuickReplies } from "./dialogue/quickReplyPlanner.js";
+import { buildConversationDebugTrace, logConversationDebugTrace } from "./dialogue/conversationDebugTrace.js";
+import { applyQuickReplyContext, resolveQuickReplyStrategy } from "./dialogue/quickReplyContext.js";
+import { evaluateConstitutionSignals } from "./eval/constitutionCritic.js";
 
 export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
   const companion = runtime.companion || null;
@@ -31,8 +39,18 @@ export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
   const safety = assessInputSafety(gateway.normalizedInput);
   const analysis = interpretEmotionInput(gateway.originalInput, state, { repeated: gateway.repeated });
   const intent = classifyIntent(gateway.normalizedInput, analysis, safety);
-  const nlu = runNluPipeline(gateway.normalizedInput, analysis, intent, safety);
+  let nlu = runNluPipeline(gateway.normalizedInput, analysis, intent, safety);
+  nlu = applyQuickReplyContext(nlu, runtime.quickReply);
   let responseStrategy = selectResponseStrategy(nlu, intent, safety);
+  responseStrategy = resolveQuickReplyStrategy(runtime.quickReply, responseStrategy);
+
+  const constitutionSignal = evaluateConstitutionSignals(nlu.semanticFrame, nlu);
+  if (constitutionSignal?.override) {
+    responseStrategy = {
+      strategy: constitutionSignal.override,
+      reason: constitutionSignal.reason
+    };
+  }
   const semanticSoul = deriveSemanticSoulState(state, analysis);
   const memories = retrieveRelevantMemories(
     state,
@@ -42,13 +60,55 @@ export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
   );
   const recoveryContext = buildRecoveryContext(state, memories, analysis, { now: gateway.now });
 
-  if (
+  if (memories.recallPolicy?.blockReason === "repeated_fatigue_recall") {
+    responseStrategy = {
+      strategy: RESPONSE_STRATEGIES.REPEATED_EMOTION_RECALL,
+      reason: "repeated_fatigue_recall"
+    };
+  } else if (
     memories.shouldRecall &&
     recoveryContext.allowsExplicitReference &&
     !LOW_RECALL_INTENTS.has(intent.intent)
   ) {
     responseStrategy = { strategy: RESPONSE_STRATEGIES.MEMORY_REFERENCE, reason: "memory_recall_gate" };
   }
+
+  const dialogueSessionKey = companionId;
+  const dialogueState = getDialogueState(dialogueSessionKey);
+  const antiLoopDecision = evaluateAntiLoop({
+    nlu,
+    responseStrategy,
+    dialogueState,
+    inputText: gateway.normalizedInput,
+    sessionKey: dialogueSessionKey
+  });
+
+  if (antiLoopDecision.shouldBlock && antiLoopDecision.forceStrategy) {
+    responseStrategy = {
+      strategy: antiLoopDecision.forceStrategy,
+      reason: antiLoopDecision.reason
+    };
+  }
+
+  const variantSeed =
+    String(gateway.normalizedInput || "").length +
+    Math.round(state.energy || 0) +
+    Math.round(state.trust || 0);
+
+  const variantSelection = selectReplyVariant({
+    responseStrategy,
+    nlu,
+    dialogueState,
+    corpus,
+    companionId,
+    analysis,
+    intent,
+    plan: { mode: "acknowledge" },
+    state,
+    semanticSoul,
+    recoveryContext,
+    seed: variantSeed
+  });
 
   const preferenceProfile =
     runtime.companionPreferenceProfile || getCompanionPreferenceProfile(companionId);
@@ -85,7 +145,9 @@ export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
     preferenceProfile,
     recoveryContext,
     nlu,
-    responseStrategy
+    responseStrategy,
+    antiLoopDecision,
+    variantSelection
   };
 
   const autonomyResult = runAutonomyLoop({
@@ -106,6 +168,28 @@ export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
   const externalAdvice = resolveExternalAdvice(runtime, perception, actionPlan);
 
   const animationDecision = execution.animationDecision || null;
+  const finalReply = execution.reply || "";
+
+  const quickReplies = planQuickReplies({
+    nlu,
+    dialogueState: getDialogueState(dialogueSessionKey),
+    responseStrategy,
+    state,
+    reply: finalReply
+  });
+
+  const debugTrace = buildConversationDebugTrace({
+    inputText: gateway.originalInput,
+    nlu,
+    responseStrategy,
+    composeMeta: execution.composeMeta || null,
+    antiLoopDecision,
+    variantSelection,
+    quickReplies,
+    reply: finalReply
+  });
+
+  logConversationDebugTrace(debugTrace, runtime);
 
   const coreResult = {
     now: gateway.now,
@@ -140,6 +224,16 @@ export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
     },
 
     responseStrategy,
+    composeMeta: execution.composeMeta || null,
+    quickReplies,
+    debugTrace,
+    dialogueLoop: {
+      antiLoopApplied: Boolean(antiLoopDecision.shouldBlock),
+      antiLoopReason: antiLoopDecision.reason || null,
+      forceStrategy: antiLoopDecision.forceStrategy || null,
+      repetitionScore: getRepetitionScore(dialogueState),
+      variantSelection
+    },
 
     autonomy: {
       needs,
@@ -187,6 +281,7 @@ export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
     forbiddenPhraseDetected: Boolean(execution.forbiddenPhraseDetected || forbiddenCheck.hasForbidden)
   };
 
+  recordDialogueTurn(dialogueSessionKey, coreResult);
   collectInteractionTrace(coreResult);
   return coreResult;
 }
@@ -226,4 +321,8 @@ if (typeof window !== "undefined" && new URLSearchParams(window.location.search)
   );
   import("./testHarness/raphaelGatewaySmokeCases.js").then((mod) => mod.installGatewaySmokeHarness(window));
   import("./testHarness/nluSmokeCases.js").then((mod) => mod.installNluSmokeHarness(window));
+  import("./testHarness/stage4HumanPlaytestCases.js").then((mod) => mod.installStage4PlaytestHarness(window));
+  import("./testHarness/nluTrainingCases.js").then((mod) => mod.installNluTrainingHarness(window));
+  import("./testHarness/dialogueLoopSmokeCases.js").then((mod) => mod.installDialogueLoopHarness(window));
+  import("./testHarness/constitutionSmokeCases.js").then((mod) => mod.installConstitutionSmokeHarness(window));
 }

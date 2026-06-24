@@ -114,7 +114,9 @@ export function runMemoryRecallSmokeCase(companion = GREYSHADE_COMPANION) {
   };
 
   const result = runRaphaelSmokeCase("我又覺得自己很累", state, companion);
-  const recallHit = /不是第一次|營火|上次|重量|慢一點/.test(result.reply || "");
+  const recallHit = /不是第一次|營火|上次|重量|慢一點|又回來了|「又」|不是第一次回來|疲憊又/.test(
+    result.reply || ""
+  );
 
   return {
     ...result,

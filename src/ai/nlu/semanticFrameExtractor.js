@@ -1,6 +1,7 @@
 import { DIALOGUE_ACTS } from "./dialogueActClassifier.js";
 import { NUANCE_FLAGS } from "./nuanceDetector.js";
 import { TOPICS } from "./topicClassifier.js";
+import { extractSpecificDetail } from "./specificDetailExtractor.js";
 
 export function extractSemanticFrame({
   inputText = "",
@@ -19,6 +20,7 @@ export function extractSemanticFrame({
   const requestedAction = inferRequestedAction(dialogueAct, userNeed);
   const negations = extractNegations(inputText);
   const timeSignal = /今天|剛剛|現在|昨晚|最近/.test(inputText) ? "present" : "unspecified";
+  const specificDetail = extractSpecificDetail(inputText, { entities, topic, dialogueAct });
 
   return {
     topic,
@@ -33,7 +35,8 @@ export function extractSemanticFrame({
     negations,
     timeSignal,
     dialogueAct,
-    intent: intent.intent || "unknown"
+    intent: intent.intent || "unknown",
+    specificDetail
   };
 }
 
@@ -108,5 +111,6 @@ function extractNegations(text = "") {
   if (/不是想要|不要|不想|別|不用|不必/.test(text)) negations.push("reject_default_comfort");
   if (/不要問/.test(text)) negations.push("reject_questions");
   if (/不要安慰/.test(text)) negations.push("reject_comfort");
+  if (/不是身體累|不是身體/.test(text)) negations.push("不是身體累");
   return negations;
 }

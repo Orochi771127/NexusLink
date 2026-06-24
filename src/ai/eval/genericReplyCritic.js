@@ -1,11 +1,20 @@
+import { replyReferencesDetail } from "../nlu/explicitReference.js";
+import { buildPrefilledSpecificDetail } from "../nlu/specificDetailExtractor.js";
+import { getReferenceText, hasValidPrefill } from "../dialogue/quickReplyContext.js";
+import { shouldSuppressExplicitReference } from "./constitutionCritic.js";
+import { PersonaConstitution } from "../persona/PersonaConstitution.js";
+
 const GENERIC_PATTERNS = [
   /^好[，,]?\s*我聽見了/,
   /^我聽見了[。.]?\s*我們先慢一點/,
   /^我聽見了[。.]?\s*我們慢一點/,
   /^我聽見了[。.]?$/,
   /^好[，,]?\s*我們先慢一點/,
-  /^我在旁邊聽著[。.]?$/
+  /^我在旁邊聽著[。.]?$/,
+  /^我聽見你在說.+。我們先從這個點開始。$/
 ];
+
+const THIN_ACK_RE = /^(我在|嗯|好)[。.]?$/;
 
 const GENERIC_FRAGMENTS = ["好", "我聽到了", "我聽見了", "慢一點", "我們慢一點", "我在旁邊"];
 
@@ -23,11 +32,18 @@ export function critiqueGenericReply({
   const topic = frame.topic || nlu.topic || "";
   const entities = frame.entities || [];
   const constraints = frame.constraints || [];
+  const specificDetail = frame.specificDetail || null;
+  const prefillContext = nlu.prefillContext || perception?.nlu?.prefillContext || null;
+  const strategy = perception?.responseStrategy?.strategy || "";
 
   if (!text) return { pass: true, issues: [], repairHint: "" };
 
   if (GENERIC_PATTERNS.some((re) => re.test(text))) {
     issues.push("generic_fallback_reply");
+  }
+
+  if (THIN_ACK_RE.test(text) && topic !== "unknown") {
+    issues.push("thin_ack_without_grounding");
   }
 
   const onlyGeneric = text.length <= 24 && GENERIC_FRAGMENTS.some((frag) => text.includes(frag));
@@ -48,6 +64,14 @@ export function critiqueGenericReply({
     issues.push("missing_topic_reference");
   }
 
+  if (
+    specificDetail?.text &&
+    !replyReferencesDetail(text, specificDetail) &&
+    !["quiet_presence", "light_greeting"].includes(preferred)
+  ) {
+    issues.push("missing_specific_detail_reference");
+  }
+
   if (constraints.includes("not_seeking_comfort") && /安慰|沒事|會好起來|我在這裡陪/.test(text)) {
     issues.push("comfort_violates_constraint");
   }
@@ -62,6 +86,28 @@ export function critiqueGenericReply({
 
   if (previousReply && similarity(text, previousReply) > 0.82) {
     issues.push("too_similar_to_previous_reply");
+  }
+
+  if (
+    hasValidPrefill(prefillContext) &&
+    prefillContext.mustReference &&
+    !prefillContext.isQuietMode &&
+    !prefillContext.skipWeave
+  ) {
+    const referenceText = getReferenceText(prefillContext);
+    const prefillDetail = buildPrefilledSpecificDetail(referenceText);
+    if (referenceText && !replyReferencesDetail(text, prefillDetail)) {
+      issues.push("missing_prefill_reference");
+    }
+  }
+
+  if (
+    hasValidPrefill(prefillContext) &&
+    prefillContext.mustReference &&
+    shouldSuppressExplicitReference(frame, strategy) &&
+    PersonaConstitution.patterns.gamifyHighRisk.test(text)
+  ) {
+    issues.push("prefill_constitution_risk");
   }
 
   return {
@@ -90,7 +136,10 @@ function mentionsTopicKeyword(text, topic) {
     raphael_ai: /理解|intent|semanticFrame|自然語言|回覆層/,
     exploration: /地圖|探索|外面|湖面/,
     awakening: /初醒|醒來|心核/,
-    social_conflict: /悶|否定|委屈/
+    social_conflict: /悶|否定|委屈/,
+    work_pressure: /工作|壓力|任務|老闆/,
+    physical_tiredness: /累|疲憊|沒力/,
+    emotion: /情緒|卡住|心裡/
   };
   return map[topic] ? map[topic].test(text) : false;
 }

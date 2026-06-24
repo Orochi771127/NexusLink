@@ -55,6 +55,15 @@ export function isAwakeningRecallRequest(inputText = "") {
   return AWAKENING_RECALL_RE.test(text) || /你還記得.*(醒|初醒|心核)/.test(text);
 }
 
+export function isRepeatedEmotionSignal(inputText = "") {
+  return /又|再次|又來了|最近又|又覺得|還是.*(累|悶|煩|難過|沒力)/.test(String(inputText || "").trim());
+}
+
+export function isFatigueMemory(memory) {
+  if (!memory) return false;
+  return memory.emotion === "fatigue" || /疲憊|好累|累/.test(String(memory.theme || memory.label || ""));
+}
+
 export function isLowRecallIntent(intentKey = "", inputText = "") {
   if (LOW_RECALL_INTENTS.has(intentKey)) return true;
   const text = String(inputText || "").trim();
@@ -104,7 +113,8 @@ export function resolveRecallPolicy({
     strongestMemory = pickExplicitTarget({
       ranked,
       awakeningRequest,
-      emotionKey
+      emotionKey,
+      inputText
     });
     if (strongestMemory) {
       shouldRecall = true;
@@ -132,6 +142,24 @@ export function resolveRecallPolicy({
       awakeningRequest,
       lowIntent
     });
+  }
+
+  const repeatedSignal = isRepeatedEmotionSignal(inputText);
+  if (repeatedSignal && emotionKey === "fatigue") {
+    const fatigueMemory =
+      ranked.find((entry) => isFatigueMemory(entry.memory) && !isAwakeningMemory(entry.memory))?.memory ||
+      null;
+    if (fatigueMemory) {
+      return finalizePolicy({
+        shouldRecall: true,
+        recallMode: RECALL_MODES.EXPLICIT_REFERENCE,
+        strongestMemory: fatigueMemory,
+        blockReason: "repeated_fatigue_recall",
+        explicitRequest,
+        awakeningRequest,
+        lowIntent
+      });
+    }
   }
 
   const emotionMatches = ranked.filter(
@@ -193,9 +221,21 @@ function buildRankedCandidates(memoryResult = {}, emotionKey = null) {
     });
 }
 
-function pickExplicitTarget({ ranked = [], awakeningRequest = false, emotionKey = null } = {}) {
+function pickExplicitTarget({
+  ranked = [],
+  awakeningRequest = false,
+  emotionKey = null,
+  inputText = ""
+} = {}) {
   if (awakeningRequest) {
     return ranked.find((entry) => isAwakeningMemory(entry.memory))?.memory || null;
+  }
+
+  if (/累|疲憊|沒力/.test(String(inputText || ""))) {
+    const fatigueHit = ranked.find(
+      (entry) => isFatigueMemory(entry.memory) && !isAwakeningMemory(entry.memory)
+    );
+    if (fatigueHit) return fatigueHit.memory;
   }
 
   const emotionHit = ranked.find(
