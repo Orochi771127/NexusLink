@@ -1,0 +1,29 @@
+html[data-ui="v2"] .companion-card,
+html[data-ui="v2"] .quick-hud > *,
+html[data-ui="v2"] .soul-strip {
+  border-color: rgba(173, 222, 255, 0.22);
+  background-color: rgba(16, 25, 51, 0.56);
+  backdrop-filter: blur(14px);
+}
+
+html[data-ui="v2"] .soul-strip {
+  display: flex;
+  align-items: center;
+  min-height: 70px;
+  bottom: calc(var(--bottom-safe) + 108px);
+  border-radius: 20px;
+}
+
+html[data-ui="v2"] .soul-strip .btn-primary {
+  border-radius: 999px;
+  padding: 8px 12px;
+  font-size: 0.78rem;
+}
+
+html[data-ui="v2"] body[data-soul-talk="open"] .soul-strip {
+  opacity: 0.65;
+}
+
+html[data-ui="v2"] .panel-layer[data-active-panel="soulTalk"] .soul-talk-drawer {
+  transform: translateY(0) scale(1);
+}

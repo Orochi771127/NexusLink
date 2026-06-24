@@ -29,9 +29,26 @@ export function createActionSheetController({ soulTalkController, saveCurrentSta
   function bind() {
     bottomNavButtons.forEach((button) => {
       button.addEventListener("click", () => {
-        setActiveNav(button.dataset.action);
-        openActionSheet(button.dataset.action);
+        const action = button.dataset.action;
+        if (action === "home") {
+          showHome();
+          return;
+        }
+        setActiveNav(action);
+        openActionSheet(action);
       });
+    });
+    showHome();
+  }
+
+  function showHome() {
+    queuedAction = null;
+    panelManager.closePanel();
+    bottomNavButtons.forEach((button) => {
+      const isHome = button.dataset.action === "home";
+      button.classList.toggle("active", isHome);
+      button.classList.toggle("is-active", isHome);
+      button.toggleAttribute("aria-current", isHome);
     });
   }
 
@@ -238,13 +255,15 @@ export function createActionSheetController({ soulTalkController, saveCurrentSta
     bottomNavButtons.forEach((button) => {
       const isActive = button.dataset.action === action;
       button.classList.toggle("active", isActive);
+      button.classList.toggle("is-active", isActive);
       button.setAttribute("aria-current", isActive ? "true" : "false");
     });
   }
 
   return {
     bind,
-    openActionSheet
+    openActionSheet,
+    showHome
   };
 }
 

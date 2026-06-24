@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="zh-Hant">
+<html lang="zh-Hant" data-ui="v2" data-variant="B">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <title>Nexus Link White Lab / 白版</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-visual" />
+    <title>Nexus Link · 心核連結</title>
     <link rel="preload" as="image" href="./assets/backgrounds/LakeNightCamp_v2/bg_day_base.png" />
     <link rel="preload" as="image" href="./assets/backgrounds/LakeNightCamp_v2/bg_night_base.png" />
     <link rel="preload" as="image" href="./assets/platforms/LakeNightCamp_v2/magic_circle.png" />
@@ -18,14 +18,28 @@
     <link rel="preload" as="image" href="./assets/characters/greyshade-cat/previews/illustrated/emotion/greyshade-cat_idle_calm_512x512_8f_preview.png" />
     <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2064%2064%27%3E%3Ccircle%20cx%3D%2732%27%20cy%3D%2732%27%20r%3D%2730%27%20fill%3D%27%23050915%27%2F%3E%3Ccircle%20cx%3D%2732%27%20cy%3D%2732%27%20r%3D%2718%27%20fill%3D%27%2300ced1%27%2F%3E%3C%2Fsvg%3E" />
     <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./styles/ui-v1.css" />
+    <link rel="stylesheet" href="./styles/layout-shell.css" />
+    <link rel="stylesheet" href="./styles/soul-talk-drawer.css" />
+    <link rel="stylesheet" href="./styles/page-full-nav.css" />
+    <link rel="stylesheet" href="./styles/page-content.css" />
+    <link rel="stylesheet" href="./styles/mobile-safari-polish.css" />
+    <link rel="stylesheet" href="./styles/ui-v2-aurora.css" />
   </head>
-  <body>
+  <body data-soul-talk="collapsed">
     <main class="app-shell" aria-label="Nexus Link 心核連結主畫面">
       <section class="habitat-stage" aria-label="Nexus Link 第一棲地">
-        <div id="game-root" aria-label="心核連結棲地場景"></div>
+        <div class="scene-layer">
+          <div id="game-root" aria-label="心核連結棲地場景與夥伴層"></div>
+        </div>
+        <div class="content-layer" aria-hidden="true">
+          <div class="home-view">
+            <div class="companion-focal-zone"></div>
+          </div>
+        </div>
 
         <section class="core-hud" aria-label="夥伴心核狀態">
-          <button class="core-hud-open glass-interactive" type="button" data-panel-trigger="character" aria-label="開啟夥伴狀態">
+          <button class="core-hud-open companion-card glass-interactive" type="button" data-panel-trigger="character" aria-label="開啟夥伴狀態">
             <span class="avatar-orb" aria-hidden="true">
               <span class="avatar-orb-portrait"></span>
             </span>
@@ -84,40 +98,57 @@
           </div>
         </section>
 
-        <button class="soul-talk-launcher glass-interactive rune-border" type="button" data-panel-trigger="soulTalk" aria-label="開啟心語對話">
+        <button class="soul-talk-launcher soul-strip glass-interactive rune-border" type="button" data-panel-trigger="soulTalk" aria-label="開啟心語對話">
           <span>
             <strong>心語</strong>
             <em id="soul-talk-preview">我在這裡，安靜地看著你。</em>
           </span>
           <span class="soul-core-glow" aria-hidden="true"></span>
           <span class="soul-wave-deco" aria-hidden="true"></span>
-          <b aria-hidden="true">對話</b>
+          <b class="btn-primary" aria-hidden="true">對話</b>
         </button>
 
-        <nav class="bottom-nav" aria-label="主要行動">
-          <button type="button" class="glass-interactive" data-action="explore" aria-label="探索">
-            <span class="nav-image" aria-hidden="true">
+        <nav class="bottom-nav bottom-nav--aurora" aria-label="主要行動">
+          <button type="button" class="bottom-nav__item glass-interactive" data-action="explore" aria-label="探索">
+            <span class="bottom-nav__icon" aria-hidden="true">✦</span>
+            <span class="nav-image" aria-hidden="true" hidden>
               <img class="nav-art nav-art-default" src="./assets/ui/nav/nav_explore_default.png" width="512" height="388" alt="" decoding="async" draggable="false" />
               <img class="nav-art nav-art-active" src="./assets/ui/nav/nav_explore_active.png" width="512" height="388" alt="" decoding="async" draggable="false" />
             </span>
+            <span class="bottom-nav__label">探索</span>
+            <span class="bottom-nav__en">Explore</span>
           </button>
-          <button type="button" class="glass-interactive" data-action="care" aria-label="照顧">
-            <span class="nav-image" aria-hidden="true">
+          <button type="button" class="bottom-nav__item glass-interactive" data-action="care" aria-label="照顧">
+            <span class="bottom-nav__icon" aria-hidden="true">♡</span>
+            <span class="nav-image" aria-hidden="true" hidden>
               <img class="nav-art nav-art-default" src="./assets/ui/nav/nav_care_default.png" width="512" height="388" alt="" decoding="async" draggable="false" />
               <img class="nav-art nav-art-active" src="./assets/ui/nav/nav_care_active.png" width="512" height="388" alt="" decoding="async" draggable="false" />
             </span>
+            <span class="bottom-nav__label">照顧</span>
+            <span class="bottom-nav__en">Care</span>
           </button>
-          <button type="button" class="glass-interactive" data-action="grow" aria-label="成長">
-            <span class="nav-image" aria-hidden="true">
+          <button type="button" class="bottom-nav__item bottom-nav__item--core glass-interactive" data-action="home" aria-label="回到心核棲地">
+            <span class="nav-core-gem" aria-hidden="true">◈</span>
+            <span class="bottom-nav__label">心核</span>
+            <span class="bottom-nav__en">Home</span>
+          </button>
+          <button type="button" class="bottom-nav__item glass-interactive" data-action="grow" aria-label="成長">
+            <span class="bottom-nav__icon" aria-hidden="true">⌁</span>
+            <span class="nav-image" aria-hidden="true" hidden>
               <img class="nav-art nav-art-default" src="./assets/ui/nav/nav_grow_default.png" width="512" height="388" alt="" decoding="async" draggable="false" />
               <img class="nav-art nav-art-active" src="./assets/ui/nav/nav_grow_active.png" width="512" height="388" alt="" decoding="async" draggable="false" />
             </span>
+            <span class="bottom-nav__label">成長</span>
+            <span class="bottom-nav__en">Growth</span>
           </button>
-          <button type="button" class="glass-interactive" data-action="memory" aria-label="記憶">
-            <span class="nav-image" aria-hidden="true">
+          <button type="button" class="bottom-nav__item glass-interactive" data-action="memory" aria-label="記憶">
+            <span class="bottom-nav__icon" aria-hidden="true">▤</span>
+            <span class="nav-image" aria-hidden="true" hidden>
               <img class="nav-art nav-art-default" src="./assets/ui/nav/nav_memory_default.png" width="512" height="388" alt="" decoding="async" draggable="false" />
               <img class="nav-art nav-art-active" src="./assets/ui/nav/nav_memory_active.png" width="512" height="388" alt="" decoding="async" draggable="false" />
             </span>
+            <span class="bottom-nav__label">記憶</span>
+            <span class="bottom-nav__en">Memory</span>
           </button>
         </nav>
 
@@ -282,8 +313,14 @@
             <div id="codex-body" class="codex-body" aria-label="圖鑑內容"></div>
           </section>
 
-          <section id="soul-talk-panel" class="modal-panel soul-talk-modal glass-strong rune-border" role="dialog" aria-modal="true" aria-label="心語對話" data-panel="soulTalk">
-            <button type="button" class="panel-close" data-panel-close aria-label="關閉心語對話">X</button>
+          <section id="soul-talk-panel" class="modal-panel soul-talk-drawer deep-panel deep-panel--soultalk soul-talk-modal glass-strong rune-border" role="dialog" aria-modal="false" aria-label="心語對話" data-panel="soulTalk">
+            <header class="soul-drawer-header">
+              <div class="soul-drawer-heading">
+                <p class="soul-drawer-kicker">心語對話</p>
+                <h3 id="soul-drawer-companion-name" class="soul-drawer-title">夥伴</h3>
+              </div>
+              <button type="button" class="soul-drawer-collapse" data-panel-close aria-label="收合心語">⌄</button>
+            </header>
             <p id="status-text" class="soul-status-text" aria-live="polite">心語</p>
             <div id="chat-log" class="chat-log" aria-live="polite"></div>
             <div id="quick-reply-row" class="quick-reply-row" aria-label="快速回覆選項"></div>

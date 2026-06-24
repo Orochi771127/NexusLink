@@ -3,7 +3,7 @@ import { maybeTriggerFirstAwakening } from "../ai/awakening/firstAwakeningRuntim
 import { isRaphaelAwakened } from "../ai/awakening/raphaelAwakeningGate.js";
 import { updateMemoryLifecycles } from "../engine/memoryLifecycleEngine.js";
 import { buildEventReflection, composeMemoryReflection } from "../engine/soulTalkComposer.js";
-import { qs } from "../utils/dom.js";
+import { qs, setViewportVars } from "../utils/dom.js";
 
 const DEFAULT_STATUS_TEXT = "心語 / 靈魂聖域";
 const DEFAULT_PREVIEW_TEXT = "我在這裡，安靜地看著你。";
@@ -15,6 +15,7 @@ export function createSoulTalkController({ store, saveCurrentState }) {
   const sendButton = qs("#send-button");
   const soulTalkPreview = qs("#soul-talk-preview");
   const soulTalkModal = qs(".soul-talk-modal");
+  const soulDrawerCompanionName = qs("#soul-drawer-companion-name");
   const statusText = qs("#status-text");
   let currentCreature = null;
   let waveformShell = null;
@@ -25,6 +26,9 @@ export function createSoulTalkController({ store, saveCurrentState }) {
 
   function setCreature(creature) {
     currentCreature = creature;
+    if (soulDrawerCompanionName) {
+      soulDrawerCompanionName.textContent = creature?.name || "夥伴";
+    }
   }
 
   function bind() {
@@ -44,7 +48,13 @@ export function createSoulTalkController({ store, saveCurrentState }) {
       }
     });
 
-    messageInput.addEventListener("focus", () => setSoulTalkState("active"));
+    messageInput.addEventListener("focus", () => {
+      setSoulTalkState("active");
+      window.requestAnimationFrame(() => {
+        setViewportVars();
+        messageInput.scrollIntoView({ block: "nearest", inline: "nearest" });
+      });
+    });
     messageInput.addEventListener("input", () => {
       setSoulTalkState(messageInput.value.trim() ? "active" : "idle");
     });

@@ -1,0 +1,4 @@
+/* Reserved for future Aurora full-page content. Pack 1 retains canonical action-sheet behavior. */
+html[data-ui="v2"] .content-layer {
+  overflow: clip;
+}

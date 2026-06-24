@@ -13,6 +13,7 @@ export function createPanelManager({ onSoulTalkFocus } = {}) {
     panelLayer.setAttribute("aria-hidden", "false");
     document.body.classList.add("panel-open");
     if (panelName === "soulTalk") {
+      document.body.dataset.soulTalk = "open";
       requestAnimationFrame(() => onSoulTalkFocus?.());
     }
   }
@@ -23,10 +24,14 @@ export function createPanelManager({ onSoulTalkFocus } = {}) {
       const vetoed = guard?.();
       if (vetoed) return;
     }
+    const closedPanel = activePanel;
     activePanel = null;
     panelLayer.dataset.activePanel = "none";
     panelLayer.setAttribute("aria-hidden", "true");
     document.body.classList.remove("panel-open");
+    if (closedPanel === "soulTalk") {
+      document.body.dataset.soulTalk = "collapsed";
+    }
   }
 
   function registerCloseGuard(panelName, guardFn) {

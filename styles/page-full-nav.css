@@ -1,0 +1,65 @@
+html[data-ui="v2"] .bottom-nav--aurora {
+  z-index: 65;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+  align-items: stretch;
+  width: min(680px, calc(100vw - 24px));
+  max-width: 680px;
+  padding: 8px;
+  border: 1px solid rgba(173, 222, 255, 0.2);
+  border-radius: 24px;
+  background: rgba(10, 17, 38, 0.82);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.32);
+  backdrop-filter: blur(18px);
+}
+
+html[data-ui="v2"] .bottom-nav--aurora .bottom-nav__item {
+  display: grid;
+  place-items: center;
+  gap: 2px;
+  min-height: 58px;
+  width: auto;
+  aspect-ratio: auto;
+  padding: 6px 4px;
+  border: 1px solid transparent;
+  border-radius: 17px;
+  color: var(--aurora-muted);
+  background: transparent;
+}
+
+html[data-ui="v2"] .bottom-nav--aurora .bottom-nav__item.active,
+html[data-ui="v2"] .bottom-nav--aurora .bottom-nav__item.is-active {
+  border-color: rgba(138, 217, 255, 0.45);
+  color: var(--aurora-text);
+  background: linear-gradient(135deg, rgba(138, 217, 255, 0.18), rgba(155, 140, 255, 0.2));
+}
+
+html[data-ui="v2"] .bottom-nav__icon,
+html[data-ui="v2"] .nav-core-gem {
+  font-size: 1.15rem;
+  line-height: 1;
+}
+
+html[data-ui="v2"] .bottom-nav__item--core .nav-core-gem {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  color: #10172d;
+  background: radial-gradient(circle at 35% 30%, #fff5ca, var(--aurora-gold) 65%, #b98947);
+  box-shadow: 0 0 16px rgba(231, 200, 132, 0.5);
+}
+
+html[data-ui="v2"] .bottom-nav__label {
+  font-size: 0.75rem;
+  line-height: 1;
+}
+
+html[data-ui="v2"] .bottom-nav__en {
+  color: currentColor;
+  font-size: 0.57rem;
+  line-height: 1;
+  opacity: 0.72;
+}

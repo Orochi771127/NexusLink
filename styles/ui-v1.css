@@ -1,0 +1,26 @@
+/* Aurora compatibility base.  This file deliberately contains no runtime logic. */
+:root {
+  --aurora-panel: rgba(20, 28, 50, 0.72);
+  --aurora-panel-strong: rgba(26, 38, 70, 0.9);
+  --aurora-line: rgba(173, 222, 255, 0.24);
+  --aurora-text: #f2f6ff;
+  --aurora-muted: rgba(214, 224, 248, 0.68);
+  --aurora-cyan: #8ad9ff;
+  --aurora-violet: #9b8cff;
+  --aurora-gold: #e7c884;
+}
+
+html[data-ui="v2"] body {
+  color: var(--aurora-text);
+  background: #070b19;
+}
+
+html[data-ui="v2"] button,
+html[data-ui="v2"] input {
+  font: inherit;
+}
+
+html[data-ui="v2"] .btn-primary {
+  color: #06101d;
+  background: linear-gradient(135deg, var(--aurora-cyan), #c9b7ff);
+}

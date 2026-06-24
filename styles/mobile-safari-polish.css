@@ -1,0 +1,28 @@
+@supports (height: 100svh) {
+  html[data-ui="v2"] .habitat-stage {
+    min-height: 100svh;
+  }
+}
+
+@media (max-width: 480px) {
+  html[data-ui="v2"] .bottom-nav--aurora {
+    width: calc(100vw - 16px);
+    gap: 3px;
+    padding: 6px 4px calc(6px + env(safe-area-inset-bottom, 0px));
+  }
+
+  html[data-ui="v2"] .bottom-nav--aurora .bottom-nav__item {
+    min-height: 54px;
+    padding-inline: 1px;
+  }
+
+  html[data-ui="v2"] .bottom-nav__en {
+    display: none;
+  }
+
+  html[data-ui="v2"] .soul-talk-drawer {
+    width: calc(100vw - 12px);
+    height: min(76svh, 640px);
+    padding: 14px;
+  }
+}
