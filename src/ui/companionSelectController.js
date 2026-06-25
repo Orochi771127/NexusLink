@@ -15,10 +15,16 @@ export function createCompanionSelectController({ store, panelManager, saveCurre
     if (!listEl) return;
     const state = store.getState();
     const activeId = state.activeCompanionId;
+    const visibleCompanions = COMPANIONS
+      .map((companion) => ({
+        companion,
+        eligibility: getCompanionRuntimeEligibility(companion, state)
+      }))
+      .filter(({ companion, eligibility }) => shouldShowCompanionInSelector(companion, state, eligibility));
     listEl.innerHTML = "";
+    listEl.setAttribute("aria-label", "已締結的夥伴");
 
-    COMPANIONS.forEach((companion) => {
-      const eligibility = getCompanionRuntimeEligibility(companion, state);
+    visibleCompanions.forEach(({ companion, eligibility }) => {
       const isActive = companion.id === activeId;
       const card = document.createElement("button");
       card.type = "button";
@@ -80,6 +86,10 @@ export function createCompanionSelectController({ store, panelManager, saveCurre
   }
 
   return { open, render };
+}
+
+function shouldShowCompanionInSelector(companion, state, eligibility) {
+  return companion.id === state.activeCompanionId || eligibility.isUnlocked || eligibility.canSelect;
 }
 
 function getCardStatusLabel(companion, eligibility) {
