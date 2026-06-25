@@ -27,6 +27,7 @@ import { createHudController } from "./ui/hudController.js";
 import { createSoulTalkController } from "./ui/soulTalkController.js";
 import { createOnboardingController } from "./ui/onboardingController.js";
 import { createActionSheetController } from "./ui/actionSheetController.js";
+import { createPageRouter } from "./ui/pageRouter.js";
 import { createCompanionSelectController } from "./ui/companionSelectController.js";
 import { createMapController } from "./ui/mapController.js";
 import { createBattleController } from "./ui/battleController.js";
@@ -159,6 +160,7 @@ async function bootstrap() {
   let mapController = null;
   let codexController = null;
   let companionSelectController = null;
+  let pageRouter = null;
 
   function getBattleController() {
     if (!battleController) {
@@ -221,7 +223,18 @@ async function bootstrap() {
     statusText,
     panelManager,
     store,
-    openMap: () => getMapController().open()
+    openMap: () => getMapController().open(),
+    routeNavAction: (action) => pageRouter?.navigate(action)
+  });
+
+  pageRouter = createPageRouter({
+    store,
+    panelManager,
+    soulTalkController,
+    actionSheetController,
+    statusText,
+    openMap: () => getMapController().open(),
+    openCodex: () => getCodexController().open()
   });
 
   panelManager.bind({
@@ -232,6 +245,7 @@ async function bootstrap() {
   });
   soulTalkController.bind();
   onboardingController.bind();
+  pageRouter.bind();
   actionSheetController.bind();
   markPerf("nexus:controllers-ready");
 
@@ -239,6 +253,7 @@ async function bootstrap() {
     hudController.renderHUD();
     soulTalkController.renderChat();
     onboardingController.render();
+    pageRouter.render();
     devPanelController?.renderReadout();
   });
 

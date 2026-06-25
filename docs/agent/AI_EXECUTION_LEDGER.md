@@ -58,6 +58,28 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-06-25 - Codex - Explore / Care / Growth / Memory full pages
+
+- Status: `IN PROGRESS`
+- Branch / commit: `integrate/ui-v2-raphael-main` / `0d27368`, uncommitted GROUNDWORK + EXPERIENCE pack
+- Scope: Package 5 only. Convert the four core bottom-nav destinations from primary action-sheet modals into true content pages while preserving existing action handlers as fallbacks. This touches `index.html` and is therefore Groundwork-approved by the human. No state schema, storage-key, `saveManager.js`, Pixi renderer, asset, dependency, backend, or build-step changes.
+- Work performed: Started after human approval. Current read confirmed the existing bottom nav is bound by `actionSheetController`, `page-content.css` is reserved for this work, and `page-full-nav.css` already styles the persistent nav.
+- Verification: Pending implementation, syntax checks, migration runner, semantic scan, and static route smoke.
+- Problems / risks: Existing map/codex/action-sheet entry points must not break; pages must not become RPG map expansion, feeding/gift economy, power-grind growth, fake memory, or modal-with-X semantics.
+- Next safe action: Add a page layer and `pageRouter.js`, route bottom nav to pages, and keep existing action-sheet commit behavior available for page buttons.
+- Required reading: `docs/strategy/NEXUS_LINK_STEAM_DEMO_MASTER_BLUEPRINT.md`, `docs/design/NEXUS_LINK_V3_VISUAL_SYSTEM.md`, `AGENTS.md`, `CLAUDE.md`, `ACCEPTANCE.md`, `src/ui/actionSheetController.js`, `src/ui/mapController.js`, `src/ui/codexController.js`, and `index.html`.
+
+### 2026-06-25 - Codex - Explore / Care / Growth / Memory full pages
+
+- Status: `COMPLETED`
+- Branch / commit: `integrate/ui-v2-raphael-main` / uncommitted, awaiting human approval before commit/push
+- Files touched: `index.html`, `src/app.js`, `src/ui/actionSheetController.js`, `src/ui/pageRouter.js`, `styles/page-content.css`, `docs/agent/AI_EXECUTION_LEDGER.md`. `src/ui/mapController.js` and `src/ui/codexController.js` were read and reused through existing public open paths, but not modified.
+- Work performed: Added a non-modal `page-layer` with true Explore, Care, Growth, and Memory page surfaces. Added `pageRouter.js` to route bottom nav away from the old primary action-sheet flow while preserving action-sheet fallback APIs. Page buttons reuse existing map, codex, Soul Talk, and action effect/store-save paths instead of directly mutating state. Explore stays Moonlake-first, Care avoids exchange/economy verbs, Growth presents relationship chapters, and Memory renders only saved `memories`, `emotionalMemories`, and `habitatTraces`.
+- Verification: `node --check src/app.js`, `node --check src/ui/actionSheetController.js`, `node --check src/ui/pageRouter.js`, `node docs/qa/state-onboarding-migration-cases.mjs` passed 7/7, `git diff --check` passed, forbidden commerce/FOMO/feed/power semantic scan returned 0 hits. Chrome headless smoke using local Chrome passed 390x844 and 1280x900 nav/page checks with 0 console errors and 0 page errors; active pages did not overlap bottom nav or viewport center after layout correction. Interaction smoke passed: Explore opened existing map, Care saved via existing action path, Growth saved `trust_tuning` via existing action path and opened codex, Memory opened Soul Talk reflection.
+- Problems / risks: No blocking issue found. The page layer is intentionally scrollable because 390x844 low-chrome panels are height-limited to keep the companion focal zone clear. Real-device visual acceptance is still part of Package 9, not this package.
+- Next safe action: Wait for human approval. If approved, commit and push Package 5 only, then present Package 6 opening plan.
+- Required reading: Same as the `IN PROGRESS` entry above.
+
 ### 2026-06-25 - Codex - Start / Identity / Guidance / Home
 
 - Status: `IN PROGRESS`
@@ -162,6 +184,28 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 ---
 
 ## Lane 2 - Game Art, UI, And Visual Production
+
+### 2026-06-25 - Codex - Explore / Care / Growth / Memory page UI
+
+- Status: `IN PROGRESS`
+- Branch / commit: `integrate/ui-v2-raphael-main` / `0d27368`, uncommitted V3 page pack
+- Scope: Package 5 UI layer. Give Explore, Care, Growth, and Memory real page surfaces using the approved V3 low-chrome moonlake visual language while keeping Home as the default habitat.
+- Work performed: Started after human approval. The Game UI Frontend skill is being used to protect the Pixi playfield and avoid dense dashboard/page takeover.
+- Verification: Pending CSS/source review, semantic scan, and static checks.
+- Problems / risks: Explore can become a world map; Care can become feeding/gifts; Growth can become combat power; Memory can fake evidence. Each page must stay evidence-based and quiet.
+- Next safe action: Implement isolated page content styling in `styles/page-content.css` and keep page panels low enough to preserve the companion focal zone.
+- Required reading: `docs/design/NEXUS_LINK_V3_VISUAL_SYSTEM.md`, `docs/strategy/NEXUS_LINK_STEAM_DEMO_MASTER_BLUEPRINT.md`, `AGENTS.md`, `ACCEPTANCE.md`.
+
+### 2026-06-25 - Codex - Explore / Care / Growth / Memory page UI
+
+- Status: `COMPLETED`
+- Branch / commit: `integrate/ui-v2-raphael-main` / uncommitted, awaiting human approval before commit/push
+- Files touched: `index.html`, `styles/page-content.css`, `src/ui/pageRouter.js`, `docs/agent/AI_EXECUTION_LEDGER.md`
+- Work performed: Implemented V3 low-chrome page cards with mist-gold borders, moon-white copy, compact evidence strips, relationship metrics, and scrollable memory evidence rows. The first layout pass covered viewport center; self-review caught it and reduced the panels into upper low-height surfaces so 390x844 and desktop keep the center companion area open. No right-side modal close affordance was added; Home/bottom nav remains the way back to habitat.
+- Verification: CSS/source review completed. Chrome headless 390x844 and 1280x900 layout smoke passed with no nav overlap, no center obstruction, and no console/page errors. Semantic scan returned 0 hits for store, currency, FOMO, task pressure, feed/gift, or power-rank wording in the touched page files.
+- Problems / risks: No blocking issue found. The design intentionally prioritizes playfield protection over showing all page content at once; longer content scrolls inside the page card.
+- Next safe action: Wait for human approval. If approved, commit and push Package 5, then move to Package 6 plan.
+- Required reading: Same as the `IN PROGRESS` entry above.
 
 ### 2026-06-25 - Codex - Start / Identity / Guidance / Home visual implementation
 

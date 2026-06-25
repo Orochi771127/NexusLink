@@ -19,7 +19,15 @@ function formatMemoryRelativeTime(createdAt, now) {
 
 const ENVIRONMENT_INTERACTION_EVENT = "ENVIRONMENT_INTERACTION";
 
-export function createActionSheetController({ soulTalkController, saveCurrentState, statusText, panelManager, store, openMap }) {
+export function createActionSheetController({
+  soulTalkController,
+  saveCurrentState,
+  statusText,
+  panelManager,
+  store,
+  openMap,
+  routeNavAction
+}) {
   const bottomNavButtons = qsa(".bottom-nav button[data-action]");
   const actionSheetTitle = qs("#action-sheet-title");
   const actionSheetCopy = qs("#action-sheet-copy");
@@ -30,6 +38,10 @@ export function createActionSheetController({ soulTalkController, saveCurrentSta
     bottomNavButtons.forEach((button) => {
       button.addEventListener("click", () => {
         const action = button.dataset.action;
+        if (typeof routeNavAction === "function") {
+          routeNavAction(action);
+          return;
+        }
         if (action === "home") {
           showHome();
           return;
@@ -263,7 +275,9 @@ export function createActionSheetController({ soulTalkController, saveCurrentSta
   return {
     bind,
     openActionSheet,
-    showHome
+    showHome,
+    performAction: commitNavAction,
+    setActiveNav
   };
 }
 
