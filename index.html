@@ -25,6 +25,8 @@
     <link rel="stylesheet" href="./styles/page-content.css" />
     <link rel="stylesheet" href="./styles/mobile-safari-polish.css" />
     <link rel="stylesheet" href="./styles/ui-v2-aurora.css" />
+    <link rel="stylesheet" href="./styles/ui-v3-tokens.css" />
+    <link rel="stylesheet" href="./styles/ui-v3-onboarding.css" />
   </head>
   <body data-soul-talk="collapsed">
     <main class="app-shell" aria-label="Nexus Link 心核連結主畫面">
@@ -35,8 +37,54 @@
         <div class="content-layer" aria-hidden="true">
           <div class="home-view">
             <div class="companion-focal-zone"></div>
+            <aside class="v3-home-presence" aria-hidden="true">
+              <span class="v3-home-kicker">Moonlake Habitat</span>
+              <strong>月湖棲地</strong>
+              <em>灰影會記得痕跡，也會保留自己的距離。</em>
+            </aside>
           </div>
         </div>
+
+        <section id="onboarding-root" class="onboarding-layer" aria-label="心核引導" aria-live="polite" hidden>
+          <div class="onboarding-shell rune-border" data-onboarding-step="start">
+            <section class="onboarding-step is-active" data-step="start" aria-labelledby="onboarding-start-title">
+              <p class="onboarding-kicker">Nexus Link ・ 心核連結</p>
+              <h1 id="onboarding-start-title">這不是電子寵物。</h1>
+              <p class="onboarding-copy">這是一段會留下痕跡的陪伴。灰影會靠近，也會保留自己的邊界。</p>
+              <button type="button" class="onboarding-primary" data-onboarding-action="start">開始連結</button>
+            </section>
+
+            <section class="onboarding-step" data-step="identity" aria-labelledby="onboarding-identity-title">
+              <p class="onboarding-kicker">Local Identity</p>
+              <h2 id="onboarding-identity-title">你希望我們怎麼稱呼你？</h2>
+              <label class="onboarding-input-label" for="player-display-name">稱呼</label>
+              <input id="player-display-name" class="onboarding-input" type="text" maxlength="32" autocomplete="nickname" placeholder="星夜旅人" />
+              <div class="onboarding-actions">
+                <button type="button" class="onboarding-secondary" data-onboarding-action="skip-identity">稍後決定</button>
+                <button type="button" class="onboarding-primary" data-onboarding-action="save-identity">繼續</button>
+              </div>
+              <p class="onboarding-note">資料只保存在此裝置的既有存檔中。</p>
+            </section>
+
+            <section class="onboarding-step" data-step="guidance" aria-labelledby="onboarding-guidance-title">
+              <p class="onboarding-kicker">Heart-Core Guidance</p>
+              <h2 id="onboarding-guidance-title">三件事先說清楚。</h2>
+              <ul class="onboarding-contract-list">
+                <li>牠會記得你，但牠不屬於你。</li>
+                <li>牠會靠近你，但不會吞掉你。</li>
+                <li>你能影響牠，但不能支配牠。</li>
+              </ul>
+              <button type="button" class="onboarding-primary" data-onboarding-action="guidance-next">我明白</button>
+            </section>
+
+            <section class="onboarding-step" data-step="meet" aria-labelledby="onboarding-meet-title">
+              <p class="onboarding-kicker">First Resonance</p>
+              <h2 id="onboarding-meet-title">灰影在月湖邊等你。</h2>
+              <p class="onboarding-copy">你不用立刻說很多話。靠近、停下、或只是看一會兒，都可以。</p>
+              <button type="button" class="onboarding-primary" data-onboarding-action="complete">進入心核棲地</button>
+            </section>
+          </div>
+        </section>
 
         <section class="core-hud" aria-label="夥伴心核狀態">
           <button class="core-hud-open companion-card glass-interactive" type="button" data-panel-trigger="character" aria-label="開啟夥伴狀態">
@@ -53,16 +101,6 @@
         </section>
 
         <section class="quick-hud" aria-label="快速資源與設定">
-          <div class="resource-hud" aria-label="資源">
-            <div class="resource-item coin glass-subtle" aria-label="金幣">
-              <span class="resource-icon" aria-hidden="true"></span>
-              <span class="resource-value">1280</span>
-            </div>
-            <div class="resource-item gem glass-subtle" aria-label="晶石">
-              <span class="resource-icon" aria-hidden="true"></span>
-              <span class="resource-value">36</span>
-            </div>
-          </div>
           <button id="btn-audio-toggle" class="quick-icon-button audio-toggle glass-interactive" type="button" aria-label="切換音效">
             <svg class="quick-icon-svg" viewBox="0 0 24 24" aria-hidden="true">
               <path d="M4 9v6h4l5 4V5L8 9H4Z"></path>
@@ -203,7 +241,7 @@
               </div>
             </div>
             <div class="character-modal-actions">
-              <button type="button" class="ghost-button" data-panel-trigger="companionSelect">切換夥伴</button>
+              <button type="button" class="ghost-button" data-panel-trigger="companionSelect">夥伴名錄</button>
               <button type="button" class="ghost-button" data-panel-trigger="codex">開啟圖鑑</button>
             </div>
           </section>
@@ -211,13 +249,13 @@
           <section class="modal-panel companion-select-modal" role="dialog" aria-modal="true" aria-labelledby="companion-select-title" data-panel="companionSelect">
             <header class="panel-header">
               <div>
-                <p>心輝議會 ・ 樞核</p>
-                <h2 id="companion-select-title">選擇同行夥伴</h2>
+                <p>心核連結 ・ 已締結</p>
+                <h2 id="companion-select-title">已締結的夥伴</h2>
               </div>
               <button type="button" class="panel-close" data-panel-close aria-label="關閉夥伴選擇">X</button>
             </header>
-            <p class="panel-subcopy">夥伴會記得你們一起留下的痕跡。切換不會抹去任何記憶。</p>
-            <div id="companion-select-list" class="companion-select-list" aria-label="候選夥伴"></div>
+            <p class="panel-subcopy">這裡只顯示已締結或已解鎖的夥伴。灰影仍是第一位心核夥伴。</p>
+            <div id="companion-select-list" class="companion-select-list" aria-label="已締結的夥伴"></div>
           </section>
 
           <section class="modal-panel map-modal" role="dialog" aria-modal="true" aria-labelledby="map-title" data-panel="map">

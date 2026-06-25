@@ -25,6 +25,7 @@ import {
 import { createPanelManager } from "./ui/panelManager.js";
 import { createHudController } from "./ui/hudController.js";
 import { createSoulTalkController } from "./ui/soulTalkController.js";
+import { createOnboardingController } from "./ui/onboardingController.js";
 import { createActionSheetController } from "./ui/actionSheetController.js";
 import { createCompanionSelectController } from "./ui/companionSelectController.js";
 import { createMapController } from "./ui/mapController.js";
@@ -113,30 +114,25 @@ async function bootstrap() {
   const loadedState = loadState();
   const previousSeenAt = Number(loadedState.lastSeenAt) || Date.now();
   const initialState = applyDevQueryHooks(applyOfflineRecovery(loadedState), devQueryHooks);
+  const shouldRunOnboarding = !initialState.onboarding?.completed;
 
   const elapsedAwayMs = Date.now() - previousSeenAt;
   // 回歸短句優先用 RETURN_PRESENCE（依夥伴情緒沉積），無命中再退回既有 buildReturnGreeting。
   const returnGreeting =
     pickReturnPresenceLine(elapsedAwayMs, initialState) || buildReturnGreeting(elapsedAwayMs, initialState);
-  if (returnGreeting) {
+  if (!shouldRunOnboarding && returnGreeting) {
     initialState.chatHistory = [
       ...(Array.isArray(initialState.chatHistory) ? initialState.chatHistory : []),
       { role: "companion", text: returnGreeting }
     ].slice(-24);
   }
 
-  // First Session 安靜開場：strict 持久化（firstSessionOpeningSeenAt），非 derived。
-  // 只在從未看過時放一句不阻塞的開場語（無 modal、無任務 UI），並寫入 timestamp；reload 後不再出現。
-  if (initialState.firstSessionOpeningSeenAt == null) {
-    initialState.chatHistory = [
-      ...(Array.isArray(initialState.chatHistory) ? initialState.chatHistory : []),
-      { role: "companion", text: "這裡沒有任務。你可以先待著。" }
-    ].slice(-24);
+  if (!shouldRunOnboarding && initialState.firstSessionOpeningSeenAt == null) {
     initialState.firstSessionOpeningSeenAt = Date.now();
   }
 
   // 回歸一次性動畫 cue：此處先算 intent，待 bootScene（動畫橋接/控制器就緒）後再 emit 一次。
-  const pendingReturnIntent = resolveReturnAnimationIntent(elapsedAwayMs, initialState);
+  const pendingReturnIntent = shouldRunOnboarding ? null : resolveReturnAnimationIntent(elapsedAwayMs, initialState);
 
   store.replaceState(initialState);
   markPerf("nexus:state-loaded");
@@ -151,6 +147,10 @@ async function bootstrap() {
   const hudController = createHudController({ store, statusText });
   const soulTalkController = createSoulTalkController({ store, saveCurrentState: saveInteraction });
   const panelManager = createPanelManager({ onSoulTalkFocus: () => soulTalkController.focusInput() });
+  const onboardingController = createOnboardingController({
+    store,
+    saveCurrentState: () => saveQueue.enqueue(SAVE_LEVEL.CRITICAL)
+  });
   let sceneApi = null;
 
   // 效能：戰鬥／地圖／圖鑑／夥伴切換不是首屏必需，改為 lazy factory——
@@ -231,12 +231,14 @@ async function bootstrap() {
     codex: () => getCodexController().open()
   });
   soulTalkController.bind();
+  onboardingController.bind();
   actionSheetController.bind();
   markPerf("nexus:controllers-ready");
 
   store.subscribe(() => {
     hudController.renderHUD();
     soulTalkController.renderChat();
+    onboardingController.render();
     devPanelController?.renderReadout();
   });
 
@@ -252,6 +254,7 @@ async function bootstrap() {
   soulTalkController.setCreature(currentCreature);
   hudController.renderHUD();
   soulTalkController.renderChat();
+  onboardingController.render();
 
   if (!window.PIXI) {
     statusText.textContent = "PixiJS 載入失敗，請檢查網路或 CDN。";
@@ -261,7 +264,7 @@ async function bootstrap() {
   try {
     const app = await createPixiApp(qs("#game-root"));
     markPerf("nexus:pixi-ready");
-    sceneApi = await bootScene(app, panelManager, statusText, soulTalkController, saveQueue);
+    sceneApi = await bootScene(app, panelManager, statusText, soulTalkController, saveQueue, onboardingController);
     markPerf("nexus:first-scene-ready");
 
     // Return Echo 動畫 cue：場景與 COMPANION_ANIMATION_INTENT 橋接已就緒，emit 一次性 intent。
@@ -335,7 +338,7 @@ function bindSettingsDropdown() {
   });
 }
 
-async function bootScene(app, panelManager, statusText, soulTalkController, saveQueue) {
+async function bootScene(app, panelManager, statusText, soulTalkController, saveQueue, onboardingController) {
   const runtimeGuard = createRuntimeGuard(app);
   const world = createWorld(app);
   const layers = getSceneLayers(world);
@@ -399,7 +402,7 @@ async function bootScene(app, panelManager, statusText, soulTalkController, save
       }
     });
     bindCompanionTap(node, {
-      isInteractionBlocked: () => panelManager.isPanelOpen(),
+      isInteractionBlocked: () => panelManager.isPanelOpen() || onboardingController?.isActive?.(),
       onTouch: (touchType) => {
         markInteraction(); // 觸碰會喚醒睡眠中的夥伴
         return interactionController.handleTouch(touchType);
@@ -457,7 +460,7 @@ async function bootScene(app, panelManager, statusText, soulTalkController, save
         currentMotionState = motionState;
         devPanelController?.renderReadout();
       }, {
-        canAmbientWalk: !panelManager.isPanelOpen(),
+        canAmbientWalk: !panelManager.isPanelOpen() && !onboardingController?.isActive?.(),
         isSleeping
       });
     }
