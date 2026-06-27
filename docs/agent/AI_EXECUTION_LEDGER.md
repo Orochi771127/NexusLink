@@ -58,6 +58,28 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-06-28 - Codex - Web Release Gate / Private Test Pack Completion
+
+- Status: `VERIFIED`
+- Branch / commit: `integrate/ui-v2-raphael-main` / Package 9 commit pending; baseline before this package was `a667853`
+- Scope: Package 9 engineering/release side only. Added the web release checklist, private-test script, release evidence record, and read-only web release gate runner. No runtime behavior changes, no `src/**` product code changes, no state schema or storage-key changes, no `assets/**` changes, no dependency, no desktop wrapper, and no Steam build.
+- Work performed: Added `docs/qa/_run_web_release_gate.py` to orchestrate JS syntax, save/onboarding migration, asset integrity, Raphael restricted-agent cases, responsive browser probe, and existing Raphael/browser gates. Added `docs/testing/STEAM_DEMO_WEB_RELEASE_CHECKLIST.md`, `docs/testing/PRIVATE_TEST_SCRIPT.md`, and `docs/qa/WEB_RELEASE_EVIDENCE.md`.
+- Verification: `python -m py_compile docs/qa/_run_web_release_gate.py`; `git diff --check`; `python docs/qa/_run_web_release_gate.py` -> 9/9 automated required gates pass. JS syntax 168 files / 0 failures; migration 7/7; asset integrity pass; Raphael restricted-agent 7/7; Raphael smoke 17/17; NLU 8/8; Stage 4 10/10; live UI gate Soul Talk 10/10 and HUD 13/13.
+- Problems / risks: Responsive probe reports focusable controls inside `aria-hidden` scope in both 390x844 and 1280x900 viewports. This is recorded as a manual accessibility follow-up warning, not fixed in Package 9 because this package is QA/release-only. Public release remains blocked on real-device, moderated private-test, legal/privacy, and accessibility follow-up evidence.
+- Next safe action: If human approves, commit and push Package 9 files only. Next package after web/private-test approval is Package 10 Desktop Wrapper ADR; do not start wrapper work before the pending human gates are accepted.
+- Required reading: `docs/strategy/NEXUS_LINK_STEAM_DEMO_MASTER_BLUEPRINT.md`, `docs/testing/MANUAL_TEST_CHECKLIST.md`, `docs/assets/ILLUSTRATED_RUNTIME_AUDIT.md`, `docs/qa/state-onboarding-migration-cases.mjs`, `docs/qa/_run_live_playtest_gate.py`, and Package 8 ledger entries.
+
+### 2026-06-28 - Codex - Web Release Gate / Private Test Pack
+
+- Status: `IN PROGRESS`
+- Branch / commit: `integrate/ui-v2-raphael-main` / `a667853`, uncommitted QA / RELEASE pack
+- Scope: Package 9 engineering/release side only. Build a repeatable web release gate around existing browser, mobile viewport, save migration, asset integrity, Raphael, and accessibility checks. No runtime behavior changes, no state schema or storage-key changes, no `assets/**` changes, no dependency, no desktop wrapper, no Steam build, and no external service requirement.
+- Work performed: Started after human approval to continue. Current worktree has only pre-existing untracked QA output files from prior gates.
+- Verification: Pending web-release runner, local HTTP browser gate, state migration, asset integrity, accessibility probe, Raphael smoke, NLU, Stage 4, live UI gate, and evidence doc review.
+- Problems / risks: This package must not overclaim final real-device approval if the current run is local/desktop only; private human test evidence must remain a checklist until humans fill it.
+- Next safe action: Add docs/testing checklists, `docs/qa/WEB_RELEASE_EVIDENCE.md`, and a docs-only QA runner that orchestrates existing gates without modifying product runtime.
+- Required reading: `docs/strategy/NEXUS_LINK_STEAM_DEMO_MASTER_BLUEPRINT.md`, `docs/testing/MANUAL_TEST_CHECKLIST.md`, `docs/assets/ILLUSTRATED_RUNTIME_AUDIT.md`, `docs/qa/state-onboarding-migration-cases.mjs`, `docs/qa/_run_live_playtest_gate.py`, and Package 8 ledger entries.
+
 ### 2026-06-27 - Codex - Raphael Restricted Habitat Agent
 
 - Status: `IN PROGRESS`
@@ -251,6 +273,28 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 2 - Game Art, UI, And Visual Production
 
+### 2026-06-28 - Codex - Web Release Gate / Private Test Pack Completion
+
+- Status: `VERIFIED`
+- Branch / commit: `integrate/ui-v2-raphael-main` / Package 9 commit pending; baseline before this package was `a667853`
+- Scope: Package 9 visual/private-test side only. Documented mobile/desktop visual review expectations, illustrated asset gate evidence, and private tester observation script. No generated images, no asset approval, no asset movement/deletion, and no V3 redesign.
+- Work performed: Added private-test script and web release evidence file. The evidence records the active runtime companions checked by the runner and keeps real-device/private-tester fields as `PENDING HUMAN`.
+- Verification: `python docs/qa/_run_web_release_gate.py` responsive/browser probe passed at 390x844 and 1280x900: single canvas, 5 nav buttons, Soul Talk input visible, no unlabeled buttons, no horizontal overflow. Asset integrity passed for `greyshade-cat`, `flame-flicker`, `ice-talon`, `stone-shard`, `vine-twist`, and `crystal-rabbit`.
+- Problems / risks: Automated screenshots were captured to a temporary local directory for this run and are not committed. Human visual/private-test evidence still must be gathered on real devices before public release. Accessibility focus-management warning must be handled in a separate runtime task.
+- Next safe action: Human can run `docs/testing/PRIVATE_TEST_SCRIPT.md` with at least 3 testers and append sanitized results to `docs/qa/WEB_RELEASE_EVIDENCE.md`.
+- Required reading: `docs/design/NEXUS_LINK_V3_VISUAL_SYSTEM.md`, `docs/assets/ILLUSTRATED_RUNTIME_AUDIT.md`, `docs/testing/MANUAL_TEST_CHECKLIST.md`, and Package 7/8 ledger entries.
+
+### 2026-06-28 - Codex - Web Release Gate / Private Test Pack
+
+- Status: `IN PROGRESS`
+- Branch / commit: `integrate/ui-v2-raphael-main` / `a667853`, uncommitted QA / RELEASE pack
+- Scope: Package 9 visual/private-test side only. Document mobile/desktop visual review, illustrated asset consistency, UI obstruction checks, and private tester prompts. No generated images, no asset approval, no asset deletion or movement, no V3 visual redesign, and no release sign-off beyond the evidence actually gathered.
+- Work performed: Started after human approval to continue. Package 7 asset audit remains the source for active illustrated runtime asset status; Package 9 will reference it rather than changing assets.
+- Verification: Pending visual checklist, browser screenshot/evidence runner output, and private tester script.
+- Problems / risks: Human private-test fields cannot be self-filled by Codex. They must remain explicit pending evidence until real testers provide responses.
+- Next safe action: Add private-test script and release evidence template with clear pending/required fields.
+- Required reading: `docs/design/NEXUS_LINK_V3_VISUAL_SYSTEM.md`, `docs/assets/ILLUSTRATED_RUNTIME_AUDIT.md`, `docs/testing/MANUAL_TEST_CHECKLIST.md`, and Package 7/8 ledger entries.
+
 ### 2026-06-27 - Codex - Raphael Restricted Habitat Agent
 
 - Status: `IN PROGRESS`
@@ -414,6 +458,28 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 ---
 
 ## Lane 3 - Raphael Core, Companion Reasoning, And Soul Talk
+
+### 2026-06-28 - Codex - Web Release Gate / Private Test Pack Completion
+
+- Status: `VERIFIED`
+- Branch / commit: `integrate/ui-v2-raphael-main` / Package 9 commit pending; baseline before this package was `a667853`
+- Scope: Package 9 Raphael QA side only. Included current Raphael smoke, NLU, Stage 4, restricted-agent, safety/non-reward, and live Soul Talk checks in the web release gate. No RaphaelCore behavior change, no external LLM, no fetch, no tool registry, no direct state mutation policy change, and no new memory/trace reward behavior.
+- Work performed: Added `docs/qa/_run_web_release_gate.py` orchestration and documented the release evidence. The private-test script uses low-risk prompts and explicitly stops on real safety concern rather than turning it into gameplay.
+- Verification: `python docs/qa/_run_web_release_gate.py` passed: Raphael restricted-agent event cases 7/7; Raphael core smoke 17/17 with 0 console errors; NLU smoke 8/8 with 0 console errors; Stage 4 harness 10/10; live Soul Talk 10/10. Safety input remains non-gameplay and non-reward in the gate evidence.
+- Problems / risks: Private testers must not be asked to provoke high-risk content. Public release remains blocked until human-run private testing confirms boundary/refusal is not perceived as punishment.
+- Next safe action: Use `docs/testing/PRIVATE_TEST_SCRIPT.md` for moderated private testing; do not enable external LLM gateway or autonomous Raphael behaviors outside the restricted adapter policy.
+- Required reading: `docs/handoff/RAPHAEL_AI_HANDOFF.md`, `docs/handoff/RAPHAEL_AI_STATUS.yaml`, `docs/qa/RAPHAEL_CORE_JS_V1_TEST_RUNS.md`, Package 8 files, and Package 8 ledger entries.
+
+### 2026-06-28 - Codex - Web Release Gate / Private Test Pack
+
+- Status: `IN PROGRESS`
+- Branch / commit: `integrate/ui-v2-raphael-main` / `a667853`, uncommitted QA / RELEASE pack
+- Scope: Package 9 Raphael QA side only. Include existing Raphael smoke, NLU, Stage 4, restricted-agent, safety, refusal/non-reward, and live Soul Talk checks in the release gate. No RaphaelCore behavior change, no external LLM, no fetch, no tool registry, no state mutation policy change, and no new memory/trace reward behavior.
+- Work performed: Started after human approval to continue. Package 8 restricted habitat-agent implementation is the current baseline.
+- Verification: Pending local release runner and evidence doc.
+- Problems / risks: Safety outputs must be verified as non-gameplay; private-test wording must not ask testers to provoke high-risk content beyond safe, moderated scripts.
+- Next safe action: Wire the release runner to existing Raphael gates and document moderated private-test prompts.
+- Required reading: `docs/handoff/RAPHAEL_AI_HANDOFF.md`, `docs/handoff/RAPHAEL_AI_STATUS.yaml`, `docs/qa/RAPHAEL_CORE_JS_V1_TEST_RUNS.md`, Package 8 files, and Package 8 ledger entries.
 
 ### 2026-06-27 - Codex - Raphael Restricted Habitat Agent
 
