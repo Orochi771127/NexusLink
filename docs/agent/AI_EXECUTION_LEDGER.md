@@ -58,6 +58,28 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-06-27 - Codex - Illustrated Runtime Asset Audit
+
+- Status: `IN PROGRESS`
+- Branch / commit: `integrate/ui-v2-raphael-main` / `d613de9`, uncommitted GROUNDWORK / ART QA pack
+- Scope: Package 7 engineering side only. Audit and enforce active illustrated companion manifest policy, sheet dimensions, texture sampling intent, anchor handling, and static fallback rendering. No `assets/**` file changes, no state schema or storage-key changes, no `saveManager.js`, no dependency, backend, build-step, or Raphael behavior changes.
+- Work performed: Started after human approval. Root-relative manifest audit found the six active animated runtime manifests present and dimension-compliant. Runtime mismatch found: global canvas CSS was still forcing pixelated rendering.
+- Verification: Pending syntax checks, dimension audit rerun, runtime/browser smoke, protected-root diff check, and staged-set review.
+- Problems / risks: Loader validation must not break accepted manifests; texture policy must remain defensive across Pixi v8 property differences; final companion placement snap must remain intact.
+- Next safe action: Finalize code/docs-only Package 7 changes and verify before committing/pushing this package only.
+- Required reading: `docs/strategy/NEXUS_LINK_STEAM_DEMO_MASTER_BLUEPRINT.md`, `AGENTS.md`, `CLAUDE.md`, `ACCEPTANCE.md`, `src/data/assetManifest.js`, `src/pixi/spriteSheetAnimationLoader.js`, `src/pixi/companionRenderer.js`, and `styles.css`.
+
+### 2026-06-27 - Codex - Illustrated Runtime Asset Audit
+
+- Status: `VERIFIED`
+- Branch / commit: `integrate/ui-v2-raphael-main` / uncommitted, self-reviewed and ready for Package 7 commit/push
+- Files touched: `docs/assets/ILLUSTRATED_RUNTIME_AUDIT.md`, `src/data/assetManifest.js`, `src/pixi/spriteSheetAnimationLoader.js`, `src/pixi/companionRenderer.js`, `styles.css`, and `docs/agent/AI_EXECUTION_LEDGER.md`. No `assets/**`, `index.html`, `src/state/**`, `saveManager.js`, `src/ai/**`, dependencies, backend, or build-step files were modified.
+- Work performed: Centralized active illustrated runtime companion asset policy and manifest roots; added runtime loader enforcement for `<=4096px` sheet edges, exact grid dimensions, bottom-center anchors, linear/mipmap texture policy intent, and non-pixelated animated sprite rendering; changed static fallback companion rendering away from `roundPixels`; removed global canvas `image-rendering: pixelated` from the runtime CSS.
+- Verification: Bundled Node syntax checks passed for `src/data/assetManifest.js`, `src/pixi/spriteSheetAnimationLoader.js`, and `src/pixi/companionRenderer.js`. Active root-relative manifest audit passed for six active animated companions: 179 animation definitions and 171 unique sheets, all exact grid, `<=4096px`, and bottom-center where declared. `git diff --check` passed; `git diff --cached --name-only` was empty; `git status --short -- assets` and protected runtime-ready root checks returned empty. Chrome headless 390x844 and 1280x900 smokes passed with one canvas, `image-rendering:auto`, visible Greyshade sprite-sheet mode, `idle_calm`, anchor `0.5/1`, `roundPixels=false`, metadata loaded, no missing `idle_calm`, no animation errors, no policy warnings, no blocking console errors, and screenshots captured to the local temp directory. Package 3 migration runner still passed 7/7.
+- Problems / risks: No blocking Package 7 issue remains. Existing `roundPixels=true` in `src/pixi/pixiApp.js` scene sprites and `src/pixi/habitatTraceRenderer.js` trace containers was intentionally not changed because it is outside illustrated companion rendering. Real-device visual approval remains Package 9.
+- Next safe action: Commit and push Package 7 only, excluding unrelated untracked QA output files. Then open Package 8 only after human approval because it touches Raphael agent behavior and safety gates.
+- Required reading: Same as the `IN PROGRESS` entry above.
+
 ### 2026-06-25 - Codex - First Trace / Return Echo Loop
 
 - Status: `IN PROGRESS`
@@ -206,6 +228,28 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 ---
 
 ## Lane 2 - Game Art, UI, And Visual Production
+
+### 2026-06-27 - Codex - Illustrated Runtime Asset Audit
+
+- Status: `IN PROGRESS`
+- Branch / commit: `integrate/ui-v2-raphael-main` / `d613de9`, uncommitted ART QA pack
+- Scope: Package 7 visual-production side only. Document active illustrated runtime entries, protected roots, source/readiness status, legacy preservation, and acceptance evidence. No generated images, no asset deletion, no asset movement, and no reference-audit retirement.
+- Work performed: Started after human approval. Active runtime list was derived from the current registry and manifest roots: `greyshade-cat`, `flame-flicker`, `ice-talon`, `stone-shard`, `vine-twist`, and `crystal-rabbit`; `flametail-fox` remains static fallback only.
+- Verification: Pending `ILLUSTRATED_RUNTIME_AUDIT.md` review, browser smoke, and protected-root diff check.
+- Problems / risks: Audit wording must not overclaim final art approval; static-ready and future placeholder companions must not be promoted by documentation alone.
+- Next safe action: Complete the audit doc and verify no `assets/**` changes before committing/pushing Package 7 only.
+- Required reading: `docs/assets/ILLUSTRATED_RUNTIME_AUDIT.md`, `src/data/companionRegistry.js`, `src/data/assetManifest.js`, `AGENTS.md`, and `ACCEPTANCE.md`.
+
+### 2026-06-27 - Codex - Illustrated Runtime Asset Audit
+
+- Status: `VERIFIED`
+- Branch / commit: `integrate/ui-v2-raphael-main` / uncommitted, self-reviewed and ready for Package 7 commit/push
+- Files touched: `docs/assets/ILLUSTRATED_RUNTIME_AUDIT.md`, `src/data/assetManifest.js`, `styles.css`, `src/pixi/spriteSheetAnimationLoader.js`, `src/pixi/companionRenderer.js`, and `docs/agent/AI_EXECUTION_LEDGER.md`. No runtime-ready asset roots, generated batches, legacy sheets, or static companion images were modified.
+- Work performed: Added the illustrated runtime audit document with active manifest table, source/readiness status, protected roots, runtime policy, manifest-dimension evidence, browser-smoke evidence, rollback, and acceptance checklist. The audit explicitly preserves legacy Greyshade assets and does not promote placeholder/future companions.
+- Verification: Current active runtime entries were derived from `src/data/companionRegistry.js` and mirrored in `src/data/assetManifest.js`. Root-relative asset audit passed for `greyshade-cat`, `flame-flicker`, `ice-talon`, `stone-shard`, `vine-twist`, and `crystal-rabbit`. 390x844 and 1280x900 Chrome screenshots were captured to the local temp directory while the companion rendered as an illustrated sprite sheet with no pixelated canvas policy. `git status --short -- assets` and protected-root checks returned empty.
+- Problems / risks: No blocking Package 7 issue remains. This audit does not grant final art/license/release approval; Package 9 still owns private test and real-device evidence.
+- Next safe action: Commit and push Package 7 only, excluding unrelated untracked QA output files. Package 8 must start with a new Raphael / safety opening plan.
+- Required reading: Same as the `IN PROGRESS` entry above.
 
 ### 2026-06-25 - Codex - Explore / Care / Growth / Memory page UI
 

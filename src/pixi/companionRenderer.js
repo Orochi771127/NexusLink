@@ -100,6 +100,7 @@ function isSceneEditorMode() {
 }
 
 function createCreatureSprite(texture, creature) {
+  applyStaticCompanionTexturePolicy(texture);
   const companion = new PIXI.Container();
 
   const shadow = new PIXI.Graphics();
@@ -107,7 +108,7 @@ function createCreatureSprite(texture, creature) {
   companion.addChild(shadow);
 
   const sprite = new PIXI.Sprite(texture);
-  sprite.roundPixels = true;
+  sprite.roundPixels = false;
   sprite.anchor.set(0.5, 1);
 
   const renderScale = Number.isFinite(creature?.renderScale) ? creature.renderScale : 1;
@@ -126,6 +127,33 @@ function createCreatureSprite(texture, creature) {
   }
 
   return companion;
+}
+
+function applyStaticCompanionTexturePolicy(texture) {
+  const source = texture?.source || texture?.baseTexture;
+  const scaleMode = resolvePixiConstant(() => PIXI.SCALE_MODES.LINEAR, "linear");
+
+  setTextureProperty(source, "scaleMode", scaleMode);
+  setTextureProperty(texture, "scaleMode", scaleMode);
+}
+
+function resolvePixiConstant(read, fallback) {
+  try {
+    return read() ?? fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function setTextureProperty(target, propertyName, value) {
+  if (!target || !(propertyName in target)) return false;
+
+  try {
+    target[propertyName] = value;
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 function createCreaturePlaceholder(creature = FALLBACK_CREATURE) {

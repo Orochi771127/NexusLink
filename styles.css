@@ -163,7 +163,8 @@ canvas {
   display: block;
   width: 100%;
   height: 100%;
-  image-rendering: pixelated;
+  /* Illustrated companion runtime must not force global pixel sampling. */
+  image-rendering: auto;
   object-fit: fill;
 }
 
