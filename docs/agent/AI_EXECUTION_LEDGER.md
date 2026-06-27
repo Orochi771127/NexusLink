@@ -58,6 +58,28 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-06-25 - Codex - First Trace / Return Echo Loop
+
+- Status: `IN PROGRESS`
+- Branch / commit: `integrate/ui-v2-raphael-main` / `3e0c466`, uncommitted EXPERIENCE pack
+- Scope: Package 6 only. Make First Trace and Return Echo visible as one relationship loop by wiring existing trace, return, and Soul Talk paths. No state schema, storage-key, `saveManager.js`, asset, dependency, backend, build-step, or safety-core changes.
+- Work performed: Started after human approval. Current read confirmed Soul Talk already writes memory and traces through `applyRaphaelCoreResult`, while app boot currently uses generic return greetings instead of trace-aware `buildReturnBehavior`.
+- Verification: Pending implementation, syntax checks, return/trace no-duplicate checks, high-risk safety non-reward check, and browser smoke.
+- Problems / risks: Duplicate memory or trace writes would corrupt relationship evidence; return copy must remain non-punitive; high-risk safety input must not create ordinary memory, trace, or bond reward.
+- Next safe action: Wire trace-aware Return Echo through `src/app.js` and make the first created trace legible through the existing Soul Talk/store path without introducing new persistence schema.
+- Required reading: `docs/strategy/NEXUS_LINK_STEAM_DEMO_MASTER_BLUEPRINT.md`, `AGENTS.md`, `CLAUDE.md`, `ACCEPTANCE.md`, `src/engine/returnBehaviorEngine.js`, `src/engine/habitatTraceEngine.js`, `src/engine/traceVisualMapper.js`, `src/pixi/habitatTraceRenderer.js`, `src/ui/soulTalkController.js`, and `src/app.js`.
+
+### 2026-06-25 - Codex - First Trace / Return Echo Loop
+
+- Status: `VERIFIED`
+- Branch / commit: `integrate/ui-v2-raphael-main` / uncommitted, awaiting human approval before commit/push
+- Files touched: `src/app.js`, `src/engine/returnBehaviorEngine.js`, `src/ui/soulTalkController.js`, `docs/agent/AI_EXECUTION_LEDGER.md`. No state schema, storage key, `saveManager.js`, assets, dependencies, backend, build step, or safety-core files were modified.
+- Work performed: Wired `buildReturnBehavior` into app boot so Return Echo prefers real visible habitat traces before generic presence/greeting fallback. Replaced directly used Return Echo copy with clear non-punitive Chinese. Added a short `lastSeenAt` gate so old traces do not retrigger Return Echo on immediate reload. Made First Trace legible through the existing Soul Talk/store path with a system line that explicitly says it is not a reward. Moved first awakening behind RaphaelCore safety/edge checks and deferred ordinary memory/trace for the same first-awakening turn, so fresh first Soul Talk writes one trace instead of double-writing.
+- Verification: Bundled Node syntax checks passed for `src/app.js`, `src/engine/returnBehaviorEngine.js`, and `src/ui/soulTalkController.js`. Deterministic return/trace checks passed: trace-aware return metadata is present, short reload does not echo, normal Soul Talk creates one memory/trace, and high-risk RaphaelCore input creates 0 memory/trace and no bond reward. Chrome headless CDP smoke at 390x844 passed: trace-aware Return Echo preview visible, First Trace creates exactly 1 memory and 1 trace with the system line, high-risk browser Soul Talk creates 0 memory/trace and keeps bond at 5, screenshots captured in memory, and blocking console count is 0. Raphael core smoke passed 17/17, NLU smoke passed 8/8, Stage 4 playtest harness passed 10/10, state onboarding migration runner passed 7/7, `git diff --check` passed, and touched-runtime red-line wording scan returned 0 hits.
+- Problems / risks: No blocking Package 6 issue remains. `runEvolutionEval()` still reports an existing `repeated_critic_failure` pattern even though its core smoke portion passes 17/17; the evidence is in RaphaelCore critic specificity for dependency/recall/fatigue replies and is outside this package's touched files.
+- Next safe action: Human review. If accepted, commit and push Package 6 only, excluding unrelated untracked QA output files.
+- Required reading: Same as the `IN PROGRESS` entry above.
+
 ### 2026-06-25 - Codex - Explore / Care / Growth / Memory full pages
 
 - Status: `IN PROGRESS`
@@ -304,6 +326,28 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 ---
 
 ## Lane 3 - Raphael Core, Companion Reasoning, And Soul Talk
+
+### 2026-06-25 - Codex - First Trace / Return Echo Loop
+
+- Status: `IN PROGRESS`
+- Branch / commit: `integrate/ui-v2-raphael-main` / `3e0c466`, uncommitted EXPERIENCE pack
+- Scope: Package 6 Raphael/Soul Talk surface only. Keep RaphaelCore safety and memory policy intact while making the first non-safety trace visible to the player through existing Soul Talk flow. No external LLM, fetch, tool registry, auto-navigation, direct state mutation outside the existing store update path, or safety reward behavior.
+- Work performed: Started after human approval. Current read confirmed `memoryWriter` blocks high-risk safety and dependency pressure from ordinary memory, while `applyRaphaelCoreResult` already blocks non-rewarding modes from milestones.
+- Verification: Pending syntax checks, deterministic safety input check, no duplicate trace check, and browser Soul Talk smoke.
+- Problems / risks: First Trace messaging must not become a reward, achievement, task prompt, or dependency pressure. Safety exits must stay non-gameplay and non-rewarding.
+- Next safe action: Add only presentation-level first-trace acknowledgement after existing trace creation, gated so it never fires for high-risk safety or non-rewarding modes.
+- Required reading: `docs/handoff/RAPHAEL_AI_HANDOFF.md`, `docs/handoff/RAPHAEL_AI_STATUS.yaml`, `src/ai/raphaelCore.js`, `src/ai/memoryWriter.js`, `src/ai/safetyShield.js`, `src/ai/applyCoreResult.js`, and `src/ui/soulTalkController.js`.
+
+### 2026-06-25 - Codex - First Trace / Return Echo Loop
+
+- Status: `VERIFIED`
+- Branch / commit: `integrate/ui-v2-raphael-main` / uncommitted, awaiting human approval before commit/push
+- Files touched: `src/ui/soulTalkController.js`, `src/app.js`, `src/engine/returnBehaviorEngine.js`, `docs/agent/AI_EXECUTION_LEDGER.md`.
+- Work performed: Kept RaphaelCore, `memoryWriter`, safety shield, and `applyCoreResult` policy intact. Soul Talk now waits for RaphaelCore safety/edge classification before allowing first awakening; safety or boundary turns defer awakening and do not write relationship evidence. When first awakening is the first trace of the turn, ordinary emotional memory/trace from the same message is deferred to avoid double-writing. First Trace visibility is added as a quiet system line only after an allowed trace is created through the existing store path.
+- Verification: High-risk deterministic RaphaelCore input returned `safety_redirect`, system role, 0 memory, 0 trace, and unchanged bond. Browser CDP smoke confirmed the same behavior through the live Soul Talk UI on a fresh save: 0 memory, 0 trace, bond 5, `safeHarborMode` true. Normal first Soul Talk created exactly one first trace and showed the non-reward system line. Raphael core smoke passed 17/17, NLU smoke passed 8/8, Stage 4 playtest harness passed 10/10.
+- Problems / risks: No Package 6 blocking issue remains. The remaining `runEvolutionEval()` false is an existing critic-pattern finding in RaphaelCore reply specificity, not a safety failure and not caused by this presentation/controller package.
+- Next safe action: Human review, then commit/push Package 6 only if accepted. Package 7 should start only after commit/push approval and must be opened as a new ART QA / GROUNDWORK plan.
+- Required reading: Same as the `IN PROGRESS` entry above.
 
 ### 2026-06-25 - Codex - Raphael × Aurora UI v2 integration pack 1
 

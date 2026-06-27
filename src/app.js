@@ -12,7 +12,13 @@ import { createRuntimeGuard } from "./engine/runtimeGuard.js";
 import { estimateSaveSizeKB } from "./engine/storageGuard.js";
 import { startEnvironmentHeartbeat } from "./engine/environmentHeartbeat.js";
 import { isWithinSleepWindow, shouldSleep } from "./engine/sleepCycleEngine.js";
-import { buildReturnGreeting, pickReturnPresenceLine, resolveReturnAnimationIntent } from "./engine/returnBehaviorEngine.js";
+import {
+  buildReturnBehavior,
+  buildReturnGreeting,
+  getReturnMessage,
+  pickReturnPresenceLine,
+  resolveReturnAnimationIntent
+} from "./engine/returnBehaviorEngine.js";
 import { mapHabitatTracesToVisuals } from "./engine/traceVisualMapper.js";
 import * as store from "./state/store.js";
 import {
@@ -112,28 +118,44 @@ async function bootstrap() {
   const isDevPanelEnabled = readDevPanelFlag();
   const devQueryHooks = readDevQueryHooks();
   applyDevResetHook(devQueryHooks);
+  const bootNow = Date.now();
   const loadedState = loadState();
-  const previousSeenAt = Number(loadedState.lastSeenAt) || Date.now();
+  const previousSeenAt = Number(loadedState.lastSeenAt) || bootNow;
   const initialState = applyDevQueryHooks(applyOfflineRecovery(loadedState), devQueryHooks);
   const shouldRunOnboarding = !initialState.onboarding?.completed;
 
-  const elapsedAwayMs = Date.now() - previousSeenAt;
-  // 回歸短句優先用 RETURN_PRESENCE（依夥伴情緒沉積），無命中再退回既有 buildReturnGreeting。
+  const elapsedAwayMs = bootNow - previousSeenAt;
+  const returnBehavior = shouldRunOnboarding ? null : buildReturnBehavior(initialState, bootNow);
+  // Return Echo 優先使用真實 habitat trace；沒有 trace-aware echo 時才退回既有 presence/greeting。
   const returnGreeting =
-    pickReturnPresenceLine(elapsedAwayMs, initialState) || buildReturnGreeting(elapsedAwayMs, initialState);
-  if (!shouldRunOnboarding && returnGreeting) {
+    getReturnMessage(returnBehavior) ||
+    pickReturnPresenceLine(elapsedAwayMs, initialState) ||
+    buildReturnGreeting(elapsedAwayMs, initialState);
+  const hasRecentReturnGreeting = (initialState.chatHistory || [])
+    .slice(-8)
+    .some((entry) => entry?.role === "companion" && entry?.text === returnGreeting);
+  if (!shouldRunOnboarding && returnGreeting && !hasRecentReturnGreeting) {
     initialState.chatHistory = [
       ...(Array.isArray(initialState.chatHistory) ? initialState.chatHistory : []),
       { role: "companion", text: returnGreeting }
     ].slice(-24);
   }
+  if (!shouldRunOnboarding && returnBehavior?.shouldPersist) {
+    if (returnBehavior.moodHint) initialState.mood = returnBehavior.moodHint;
+    initialState.reactionPreview = returnGreeting || initialState.reactionPreview || "";
+  }
 
   if (!shouldRunOnboarding && initialState.firstSessionOpeningSeenAt == null) {
-    initialState.firstSessionOpeningSeenAt = Date.now();
+    initialState.firstSessionOpeningSeenAt = bootNow;
   }
 
   // 回歸一次性動畫 cue：此處先算 intent，待 bootScene（動畫橋接/控制器就緒）後再 emit 一次。
-  const pendingReturnIntent = shouldRunOnboarding ? null : resolveReturnAnimationIntent(elapsedAwayMs, initialState);
+  const pendingReturnIntent = shouldRunOnboarding
+    ? null
+    : resolveReturnAnimationIntent(elapsedAwayMs, {
+        ...initialState,
+        lastEmotionTag: returnBehavior?.dominantEmotion || initialState.lastEmotionTag
+      });
 
   store.replaceState(initialState);
   markPerf("nexus:state-loaded");

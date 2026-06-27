@@ -8,6 +8,12 @@ const DAY_MS = 24 * 60 * 60 * 1000;
 const OFFLINE_RETURN_TRACE_TYPES = new Set(["small_silence", "fallen_leaf", "campfire_dim"]);
 const VULNERABLE_EMOTIONS = new Set(["sadness", "anxiety", "loneliness", "fatigue", "anger"]);
 
+const RETURN_COPY = {
+  minimal_return: "我看見湖面還有一點微光。你回來了，我會慢慢靠近。",
+  repaired_return: "那段痕跡變淡了一些。不是消失，是被安穩地放回湖裡。",
+  soft_return: "月湖還留著上次的光。你不用補償什麼，回來本身就夠了。"
+};
+
 export function buildReturnBehavior(previousState = {}, now = Date.now()) {
   const habitatTraces = Array.isArray(previousState.habitatTraces) ? previousState.habitatTraces : [];
   const emotionalMemories = Array.isArray(previousState.emotionalMemories)
@@ -25,17 +31,43 @@ export function buildReturnBehavior(previousState = {}, now = Date.now()) {
     return null;
   }
 
+  const seenGap = Math.max(0, now - (Number(previousState.lastSeenAt) || now));
+  if (seenGap < SHORT_AWAY_MS && !hasRecentOfflineReturnTrace(previousState, now)) {
+    return null;
+  }
+
   const awayMs = estimateAwayMs(previousState, visibleTraces, emotionalMemories, now);
   if (awayMs < SHORT_AWAY_MS) {
     return null;
   }
 
+  const dominantTrace = visibleTraces[0] || null;
+  const dominantEmotion = dominantTrace?.emotion || previousState.lastEmotionTag || null;
+  const baseReturn = {
+    traceId: dominantTrace?.id || null,
+    memoryId: dominantTrace?.memoryId || null,
+    dominantEmotion,
+    awayMs
+  };
+
   if (awayMs < SIX_HOURS_MS) {
     return {
+      ...baseReturn,
       type: "minimal_return",
-      message: "你回來了，棲地仍留著一點安靜的光。",
+      message: RETURN_COPY.minimal_return,
       moodHint: previousState.mood || "calm",
       shouldPersist: false
+    };
+  }
+
+  const repairedCount = visibleTraces.filter((trace) => trace.status === "transformed").length;
+  if (repairedCount > 0) {
+    return {
+      ...baseReturn,
+      type: "repaired_return",
+      message: RETURN_COPY.repaired_return,
+      moodHint: "calm",
+      shouldPersist: true
     };
   }
 
@@ -47,12 +79,11 @@ export function buildReturnBehavior(previousState = {}, now = Date.now()) {
       VULNERABLE_EMOTIONS.has(memory?.emotion)
   );
 
-  const dominantTrace = visibleTraces[0];
-  const dominantEmotion = dominantTrace?.emotion || previousState.lastEmotionTag || null;
   const hasVulnerableSignal = vulnerableMemories.length > 0 || VULNERABLE_EMOTIONS.has(dominantEmotion);
 
   if (hasVulnerableSignal) {
     return {
+      ...baseReturn,
       type: "gentle_return",
       message: buildGentleReturnMessage(dominantEmotion, previousState.energy),
       moodHint: "warm",
@@ -60,19 +91,10 @@ export function buildReturnBehavior(previousState = {}, now = Date.now()) {
     };
   }
 
-  const repairedCount = visibleTraces.filter((trace) => trace.status === "transformed").length;
-  if (repairedCount > 0) {
-    return {
-      type: "repaired_return",
-      message: "你離開的這段時間，棲地裡有些痕跡被柔光修過。我在這裡。",
-      moodHint: "calm",
-      shouldPersist: true
-    };
-  }
-
   return {
+    ...baseReturn,
     type: "soft_return",
-    message: "湖邊留著你上次留下的情緒痕跡。不用急著說話，先休息一下也可以。",
+    message: RETURN_COPY.soft_return,
     moodHint: previousState.mood || "calm",
     shouldPersist: true
   };
@@ -83,24 +105,16 @@ export function getReturnMessage(returnBehavior) {
   return String(returnBehavior.message);
 }
 
-/**
- * 回歸問候（寫進對話）：短離開輕聲招呼，長離開依最近的情緒語氣。
- * 不責備、不情緒勒索；少於 30 分鐘不打招呼。
- */
 export function buildReturnGreeting(elapsedMs, state = {}) {
   if (!Number.isFinite(elapsedMs) || elapsedMs < SHORT_AWAY_MS) return null;
 
   if (elapsedMs < SIX_HOURS_MS) {
-    return "你回來了。湖面的光還亮著，我有注意到你離開的方向。";
+    return "我看見你回來了。先不用急著說話。";
   }
 
   return buildGentleReturnMessage(state.lastEmotionTag, state.energy);
 }
 
-/**
- * Return Echo tier（純時間差，不偵測玩家上線頻率/孤獨/依賴——遵守紅線 1、12）：
- * <30min → null（不打招呼）／30min–6h → soft_return／6–24h → overnight／>24h → long_absence。
- */
 export function resolveReturnTier(elapsedMs) {
   if (!Number.isFinite(elapsedMs) || elapsedMs < SHORT_AWAY_MS) return null;
   if (elapsedMs < SIX_HOURS_MS) return "soft_return";
@@ -108,10 +122,6 @@ export function resolveReturnTier(elapsedMs) {
   return "long_absence";
 }
 
-/**
- * 回歸短句：依「夥伴自身的情緒沉積」(lastEmotionTag) 挑 RETURN_PRESENCE 類別，
- * 不是對玩家做判斷。非阻塞、不責備、不要求回應；<30min 回 null。
- */
 export function pickReturnPresenceLine(elapsedMs, state = {}) {
   if (!resolveReturnTier(elapsedMs)) return null;
   const tag = state.lastEmotionTag;
@@ -121,10 +131,6 @@ export function pickReturnPresenceLine(elapsedMs, state = {}) {
   return pool[Math.floor(Math.random() * pool.length)] || null;
 }
 
-/**
- * 回歸一次性動畫意圖（交給既有 COMPANION_ANIMATION_INTENT 橋接、不直接碰 Pixi）：
- * 由 tier + 夥伴自身狀態決定，回傳 intent 字串或 null（無回歸時）。
- */
 export function resolveReturnAnimationIntent(elapsedMs, state = {}) {
   const tier = resolveReturnTier(elapsedMs);
   if (!tier) return null;
@@ -150,10 +156,7 @@ function estimateAwayMs(previousState, visibleTraces, emotionalMemories, now) {
     return seenGap;
   }
 
-  const offlineReturnTrace = (previousState.habitatTraces || []).find(
-    (trace) => OFFLINE_RETURN_TRACE_TYPES.has(trace.type) && now - Number(trace.createdAt || 0) < 120000
-  );
-  if (offlineReturnTrace) {
+  if (hasRecentOfflineReturnTrace(previousState, now)) {
     return SIX_HOURS_MS;
   }
 
@@ -170,28 +173,34 @@ function estimateAwayMs(previousState, visibleTraces, emotionalMemories, now) {
   return seenGap;
 }
 
+function hasRecentOfflineReturnTrace(previousState, now) {
+  return (previousState.habitatTraces || []).some(
+    (trace) => OFFLINE_RETURN_TRACE_TYPES.has(trace.type) && now - Number(trace.createdAt || 0) < 120000
+  );
+}
+
 function buildGentleReturnMessage(emotion, energy = 10) {
   if (energy <= 2) {
-    return "你回來了。棲地還在，我也還在。先慢慢呼吸，不用急著整理一切。";
+    return "你看起來還很累。先不用說太多，我會把聲音放輕。";
   }
 
   if (emotion === "sadness") {
-    return "你回來了。湖邊仍留著柔軟的痕跡，我不會催你變好。";
+    return "我記得那段沉下去的感覺。今天先從一點點光開始。";
   }
   if (emotion === "anxiety") {
-    return "你回來了。這裡還是安靜的，我們可以先把步伐放輕。";
+    return "我記得那陣緊繃。現在不用急著整理，我們先把呼吸放慢。";
   }
   if (emotion === "loneliness") {
-    return "你回來了。你不是一個人，棲地一直替你留著位置。";
+    return "那段孤單還在湖邊留下微光。你不是被要求回來，只是被記得。";
   }
   if (emotion === "fatigue") {
-    return "你回來了。先休息一下吧，不必急著把話說完。";
+    return "我記得那份疲憊。你可以先在這裡休息，不用立刻回應。";
   }
   if (emotion === "anger") {
-    return "你回來了。那些起伏可以慢慢放下，我不會責怪你。";
+    return "我記得那股用力撐住的熱。今天我們先保留一點距離。";
   }
 
-  return "你回來了。棲地還留著你的痕跡，我會溫柔地陪著你。";
+  return "湖邊還留著一點光。你回來了，我會慢慢認出今天的你。";
 }
 
 function isTraceCurrentlyVisible(trace, now) {

@@ -2,11 +2,15 @@ import { runRaphaelCore, applyRaphaelCoreResult } from "../ai/raphaelCore.js";
 import { maybeTriggerFirstAwakening } from "../ai/awakening/firstAwakeningRuntime.js";
 import { isRaphaelAwakened } from "../ai/awakening/raphaelAwakeningGate.js";
 import { updateMemoryLifecycles } from "../engine/memoryLifecycleEngine.js";
+import { isEmotionalHabitatTrace } from "../engine/habitatTraceEngine.js";
 import { buildEventReflection, composeMemoryReflection } from "../engine/soulTalkComposer.js";
 import { qs, setViewportVars } from "../utils/dom.js";
 
-const DEFAULT_STATUS_TEXT = "心語 / 靈魂聖域";
-const DEFAULT_PREVIEW_TEXT = "我在這裡，安靜地看著你。";
+const DEFAULT_STATUS_TEXT = "心湖 / 安靜待命";
+const DEFAULT_PREVIEW_TEXT = "你可以慢慢說，灰影會聽。";
+const FIRST_TRACE_SYSTEM_TEXT = "月湖留下了第一道很淡的光。這不是獎勵，是牠記得你說過的事。";
+const FIRST_TRACE_STATUS_TEXT = "第一道痕跡已安靜留在月湖。";
+const NON_REWARDING_MODES = new Set(["safety_redirect", "withdraw", "reject"]);
 
 export function createSoulTalkController({ store, saveCurrentState }) {
   const chatLog = qs("#chat-log");
@@ -95,7 +99,7 @@ export function createSoulTalkController({ store, saveCurrentState }) {
 
   function handlePlayerMessage(message, options = {}) {
     setSoulTalkState("thinking");
-    setStatusText("心核正在聽你說話...");
+    setStatusText("灰影正在聽，先把湖面放慢……");
     addChat("player", message);
 
     let result;
@@ -104,18 +108,10 @@ export function createSoulTalkController({ store, saveCurrentState }) {
       const moodBefore = state.mood;
       const now = Date.now();
       const idSuffix = String(Math.floor(Math.random() * 1000)).padStart(3, "0");
+      const traceCountBefore = countVisibleRelationshipTraces(state.habitatTraces);
 
       const lifecycleResult = updateMemoryLifecycles(state.emotionalMemories || [], now);
       state.emotionalMemories = lifecycleResult.updatedMemories;
-
-      let awakeningResult = null;
-      if (!isRaphaelAwakened(state)) {
-        awakeningResult = maybeTriggerFirstAwakening(state, {
-          companion: currentCreature,
-          now,
-          dispatchAnimation: true
-        });
-      }
 
       const coreResult = runRaphaelCore(message, state, {
         now,
@@ -125,7 +121,33 @@ export function createSoulTalkController({ store, saveCurrentState }) {
         quickReply: options.quickReply || null
       });
 
-      applyRaphaelCoreResult(state, coreResult, { companion: currentCreature, now });
+      let awakeningResult = null;
+      if (!isRaphaelAwakened(state) && shouldAllowFirstAwakening(coreResult)) {
+        awakeningResult = maybeTriggerFirstAwakening(state, {
+          companion: currentCreature,
+          now,
+          dispatchAnimation: true
+        });
+      } else if (!isRaphaelAwakened(state)) {
+        awakeningResult = { applied: false, reason: "safety_or_boundary_deferred" };
+      }
+
+      const coreResultToApply = awakeningResult?.applied
+        ? deferOrdinaryMemoryForFirstAwakeningTurn(coreResult)
+        : coreResult;
+      const applied = applyRaphaelCoreResult(state, coreResultToApply, { companion: currentCreature, now });
+      const traceCountAfter = countVisibleRelationshipTraces(state.habitatTraces);
+      const firstTraceCreated = shouldAnnounceFirstTrace({
+        traceCountBefore,
+        traceCountAfter,
+        coreResult: coreResultToApply,
+        awakeningResult,
+        state
+      });
+
+      if (firstTraceCreated) {
+        appendChatLine(state, "system", FIRST_TRACE_SYSTEM_TEXT);
+      }
 
       result = {
         moodBefore,
@@ -133,7 +155,11 @@ export function createSoulTalkController({ store, saveCurrentState }) {
         repeated: coreResult.input?.repeated,
         awakening: awakeningResult,
         isAwakened: isRaphaelAwakened(state),
-        coreResult
+        coreResult: coreResultToApply,
+        originalCoreResult: coreResult,
+        applied,
+        firstTraceCreated,
+        deferredOrdinaryTrace: Boolean(awakeningResult?.applied)
       };
     });
 
@@ -141,6 +167,9 @@ export function createSoulTalkController({ store, saveCurrentState }) {
     saveCurrentState();
     renderChat();
     renderQuickReplies(lastQuickReplies);
+    if (result?.firstTraceCreated) {
+      setStatusText(FIRST_TRACE_STATUS_TEXT);
+    }
     window.clearTimeout(thinkingTimer);
     thinkingTimer = window.setTimeout(() => setSoulTalkState("idle"), 720);
     return result;
@@ -151,11 +180,11 @@ export function createSoulTalkController({ store, saveCurrentState }) {
 
     waveformShell = document.createElement("section");
     waveformShell.className = "soul-talk-waveform";
-    waveformShell.setAttribute("aria-label", "心語聆聽波形");
+    waveformShell.setAttribute("aria-label", "心湖聲紋狀態");
     waveformShell.innerHTML = `
       <div class="soul-waveform-copy">
-        <strong>心語</strong>
-        <span>靈魂聖域</span>
+        <strong>心湖</strong>
+        <span>安靜待命</span>
       </div>
       <div class="soul-waveform" aria-hidden="true">
         <div class="waveform-bar"></div>
@@ -194,8 +223,7 @@ export function createSoulTalkController({ store, saveCurrentState }) {
   function addChat(role, text) {
     store.updateState((state) => {
       state.reactionPreview = "";
-      state.chatHistory.push({ role, text });
-      if (state.chatHistory.length > 24) state.chatHistory.shift();
+      appendChatLine(state, role, text);
     });
   }
 
@@ -227,7 +255,7 @@ export function createSoulTalkController({ store, saveCurrentState }) {
       if (role === "player") {
         line.textContent = `你：${item.text}`;
       } else if (role === "system") {
-        line.textContent = `棲地：${item.text}`;
+        line.textContent = `心湖：${item.text}`;
       } else {
         const name = currentCreature?.name || "夥伴";
         line.textContent = `${name}：${item.text}`;
@@ -259,4 +287,65 @@ export function createSoulTalkController({ store, saveCurrentState }) {
     reflectOnMemory,
     setStatusText
   };
+}
+
+function countVisibleRelationshipTraces(traces = []) {
+  if (!Array.isArray(traces)) return 0;
+  return traces.filter((trace) => isEmotionalHabitatTrace(trace)).length;
+}
+
+function shouldAnnounceFirstTrace({ traceCountBefore, traceCountAfter, coreResult, awakeningResult, state }) {
+  if (traceCountBefore !== 0 || traceCountAfter <= traceCountBefore) return false;
+  if (hasRecentChatEntry(state, FIRST_TRACE_SYSTEM_TEXT)) return false;
+
+  if (!shouldAllowFirstAwakening(coreResult)) return false;
+
+  const memoryDecision = coreResult?.memoryDecision || {};
+  const traceDecision = coreResult?.traceDecision || {};
+  return Boolean(awakeningResult?.applied || memoryDecision.shouldWrite || traceDecision.shouldApplyTrace);
+}
+
+function shouldAllowFirstAwakening(coreResult) {
+  const planMode = coreResult?.plan?.mode || "";
+  if (NON_REWARDING_MODES.has(planMode)) return false;
+
+  const safety = coreResult?.safety || coreResult?.perception?.safety || {};
+  if (safety.isHighRisk || (safety.riskLevel && safety.riskLevel !== "none")) return false;
+  if (safety.shouldCreateMemory === false || safety.shouldRewardRelationship === false) return false;
+
+  return true;
+}
+
+function deferOrdinaryMemoryForFirstAwakeningTurn(coreResult) {
+  return {
+    ...coreResult,
+    memoryDecision: {
+      ...(coreResult?.memoryDecision || {}),
+      shouldWrite: false,
+      memoryObject: null,
+      reason: "deferred_first_awakening_turn"
+    },
+    traceDecision: {
+      ...(coreResult?.traceDecision || {}),
+      shouldApplyTrace: false,
+      traceObject: null,
+      reason: "deferred_first_awakening_turn"
+    },
+    stateMutation: {
+      ...(coreResult?.stateMutation || {}),
+      shouldTriggerMilestone: false
+    }
+  };
+}
+
+function hasRecentChatEntry(state, text) {
+  return (state.chatHistory || []).slice(-12).some((entry) => entry?.text === text);
+}
+
+function appendChatLine(state, role, text) {
+  if (!Array.isArray(state.chatHistory)) state.chatHistory = [];
+  state.chatHistory.push({ role, text });
+  if (state.chatHistory.length > 24) {
+    state.chatHistory.splice(0, state.chatHistory.length - 24);
+  }
 }
