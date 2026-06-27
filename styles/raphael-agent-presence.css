@@ -1,0 +1,36 @@
+html[data-raphael-agent-presence] .soul-talk-modal {
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    filter 180ms ease;
+}
+
+html[data-raphael-agent-presence="listening"] .soul-talk-modal,
+.soul-talk-modal[data-raphael-agent-presence="listening"] {
+  border-color: rgba(134, 223, 255, 0.32);
+  box-shadow: 0 0 28px rgba(97, 201, 255, 0.14);
+}
+
+html[data-raphael-agent-presence="boundary"] .soul-talk-modal,
+.soul-talk-modal[data-raphael-agent-presence="boundary"] {
+  border-color: rgba(232, 201, 139, 0.4);
+  box-shadow: 0 0 28px rgba(232, 201, 139, 0.12);
+}
+
+html[data-raphael-agent-presence="safety-exit"] .soul-talk-modal,
+.soul-talk-modal[data-raphael-agent-presence="safety-exit"] {
+  border-color: rgba(173, 202, 255, 0.42);
+  box-shadow: 0 0 30px rgba(173, 202, 255, 0.16);
+  filter: saturate(0.92);
+}
+
+html[data-raphael-agent-presence="blocked"] .soul-talk-modal,
+.soul-talk-modal[data-raphael-agent-presence="blocked"] {
+  border-color: rgba(255, 142, 142, 0.32);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-raphael-agent-presence] .soul-talk-modal {
+    transition: none;
+  }
+}

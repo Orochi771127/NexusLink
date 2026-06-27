@@ -1,8 +1,10 @@
 import { runRaphaelCore, applyRaphaelCoreResult } from "../ai/raphaelCore.js";
+import { createRaphaelAgentIntent } from "../ai/raphaelAgentAdapter.js";
 import { maybeTriggerFirstAwakening } from "../ai/awakening/firstAwakeningRuntime.js";
 import { isRaphaelAwakened } from "../ai/awakening/raphaelAwakeningGate.js";
 import { updateMemoryLifecycles } from "../engine/memoryLifecycleEngine.js";
 import { isEmotionalHabitatTrace } from "../engine/habitatTraceEngine.js";
+import { applyRaphaelAgentReduction, reduceRaphaelAgentIntent } from "../engine/raphaelIntentReducer.js";
 import { buildEventReflection, composeMemoryReflection } from "../engine/soulTalkComposer.js";
 import { qs, setViewportVars } from "../utils/dom.js";
 
@@ -149,6 +151,19 @@ export function createSoulTalkController({ store, saveCurrentState }) {
         appendChatLine(state, "system", FIRST_TRACE_SYSTEM_TEXT);
       }
 
+      const agentIntent = createRaphaelAgentIntent({
+        eventType: "soul_talk",
+        coreResult: coreResultToApply,
+        state,
+        companion: currentCreature,
+        now,
+        options: {
+          speechAlreadyApplied: true,
+          animationAlreadyApplied: true
+        }
+      });
+      const agentReduction = reduceRaphaelAgentIntent(agentIntent, state);
+
       result = {
         moodBefore,
         moodAfter: state.mood,
@@ -158,6 +173,8 @@ export function createSoulTalkController({ store, saveCurrentState }) {
         coreResult: coreResultToApply,
         originalCoreResult: coreResult,
         applied,
+        agentIntent,
+        agentReduction,
         firstTraceCreated,
         deferredOrdinaryTrace: Boolean(awakeningResult?.applied)
       };
@@ -167,6 +184,12 @@ export function createSoulTalkController({ store, saveCurrentState }) {
     saveCurrentState();
     renderChat();
     renderQuickReplies(lastQuickReplies);
+    if (result?.agentReduction) {
+      applyRaphaelAgentReduction(result.agentReduction, {
+        setPresenceState: setRaphaelAgentPresence,
+        setStatusText: result?.firstTraceCreated ? null : setStatusText
+      });
+    }
     if (result?.firstTraceCreated) {
       setStatusText(FIRST_TRACE_STATUS_TEXT);
     }
@@ -213,6 +236,11 @@ export function createSoulTalkController({ store, saveCurrentState }) {
     soulTalkModal.classList.toggle("is-listening", state === "active");
     soulTalkModal.classList.toggle("is-thinking", state === "thinking");
     soulTalkModal.classList.toggle("is-idle", state === "idle");
+  }
+
+  function setRaphaelAgentPresence(presenceState) {
+    if (!soulTalkModal) return;
+    soulTalkModal.dataset.raphaelAgentPresence = presenceState || "quiet";
   }
 
   function setStatusText(text) {

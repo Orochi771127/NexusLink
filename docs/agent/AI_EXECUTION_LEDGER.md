@@ -58,6 +58,28 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-06-27 - Codex - Raphael Restricted Habitat Agent
+
+- Status: `IN PROGRESS`
+- Branch / commit: `integrate/ui-v2-raphael-main` / `43100c0`, uncommitted AI_AGENT / EXPERIENCE / SAFETY pack
+- Scope: Package 8 engineering side only. Add a restricted, serializable Raphael habitat-agent intent layer and runtime-owned reducer path around existing Soul Talk, touch, Return Echo, habitat-change, exploration, and standoff events. No state schema or storage-key change, no `saveManager.js`, no external LLM, no fetch, no tool registry, no auto-navigation, no automatic flow opening, and no direct store import or mutation from agent code.
+- Work performed: Started after human approval. Current context read confirmed RaphaelCore external gateway is disabled by default and existing Soul Talk writes state only through the current store update path.
+- Verification: Pending JS syntax checks, restricted intent whitelist harness, forbidden-action/source scan, Raphael smoke, NLU smoke, Stage 4 playtest harness, and live UI gate.
+- Problems / risks: The adapter must not duplicate existing Soul Talk chat/memory/trace writes, and event observation must stay presentational rather than becoming proactive prompts or tasks.
+- Next safe action: Implement adapter/reducer and minimal runtime presentation hooks without modifying save schema, protected assets, or release/desktop docs.
+- Required reading: `docs/handoff/RAPHAEL_AI_HANDOFF.md`, `docs/handoff/RAPHAEL_AI_STATUS.yaml`, `docs/architecture/RAPHAEL_SOUL_ARCHITECTURE_V1.md`, `docs/raphael/RAPHAEL_CONSTITUTION.md`, `src/ai/raphaelCore.js`, `src/ai/autonomy/actionPolicy.js`, `src/ui/soulTalkController.js`, and `src/app.js`.
+
+### 2026-06-27 - Codex - Raphael Restricted Habitat Agent
+
+- Status: `VERIFIED`
+- Branch / commit: `integrate/ui-v2-raphael-main` / uncommitted, self-reviewed and ready for Package 8 commit/push
+- Files touched: `src/ai/autonomy/actionPolicy.js`, `src/ai/raphaelAgentAdapter.js`, `src/engine/raphaelIntentReducer.js`, `src/ui/soulTalkController.js`, `src/app.js`, `src/ai/raphaelCore.js`, `src/ai/testHarness/raphaelAgentEventCases.js`, `styles/raphael-agent-presence.css`, `docs/agent/AI_EXECUTION_LEDGER.md`.
+- Work performed: Added restricted habitat-agent action policy, serialized Raphael intent adapter, runtime-owned intent reducer, event-case harness, and minimal runtime presentation hooks for Soul Talk, touch, Return Echo, habitat trace changes, exploration, and standoff state changes. The agent code does not import store, does not call `updateState`, does not expose state patches, and does not call fetch, external LLM, tool registry, navigation, or flow-opening APIs.
+- Verification: JS `--check` passed for all changed JS. `runRaphaelAgentEventCases()` passed 7/7, including safety-exit memory/trace blocking and forbidden `navigateTo` rejection. `git diff --check` passed. Raphael core smoke passed 17/17, NLU smoke passed 8/8, Stage 4 human playtest passed 10/10, and live UI gate at 390x844 passed with summary `ok=true` and console error count 0.
+- Problems / risks: No blocking Package 8 issue remains. Existing runner output files under `docs/qa/_live_playtest_gate_output.json` and `docs/qa/_nlu_smoke_output.json` remain untracked and intentionally excluded from the package.
+- Next safe action: Commit and push Package 8 only, excluding unrelated untracked QA output files. Package 9 should begin only after human approval because it is the Web Release Gate / Private Test Pack.
+- Required reading: Same as the `IN PROGRESS` entry above.
+
 ### 2026-06-27 - Codex - Illustrated Runtime Asset Audit
 
 - Status: `IN PROGRESS`
@@ -229,6 +251,28 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 2 - Game Art, UI, And Visual Production
 
+### 2026-06-27 - Codex - Raphael Restricted Habitat Agent
+
+- Status: `IN PROGRESS`
+- Branch / commit: `integrate/ui-v2-raphael-main` / `43100c0`, uncommitted AI_AGENT / EXPERIENCE / SAFETY pack
+- Scope: Package 8 UI-presence side only. Add a subtle Raphael restricted-agent presence layer for existing Soul Talk/runtime events. No new screens, no task UI, no FOMO indicator, no navigation behavior, no generated art, no `assets/**` changes, and no V3/Package 9 release styling expansion.
+- Work performed: Started after human approval. The presence layer is constrained to quiet status/body-language feedback and must not override existing First Trace / Return Echo copy or become a notification system.
+- Verification: Pending static CSS/JS review plus live UI gate.
+- Problems / risks: Visual presence must remain non-demanding and must not read as a red dot, quest marker, or pressure prompt.
+- Next safe action: Create the scoped CSS file and load it from runtime without touching `index.html`.
+- Required reading: `docs/design/NEXUS_LINK_V3_VISUAL_SYSTEM.md`, `src/ui/soulTalkController.js`, `src/app.js`, and the Package 8 plan.
+
+### 2026-06-27 - Codex - Raphael Restricted Habitat Agent
+
+- Status: `VERIFIED`
+- Branch / commit: `integrate/ui-v2-raphael-main` / uncommitted, self-reviewed and ready for Package 8 commit/push
+- Files touched: `styles/raphael-agent-presence.css`, `src/app.js`, `src/ui/soulTalkController.js`, `docs/agent/AI_EXECUTION_LEDGER.md`.
+- Work performed: Added a scoped Raphael presence stylesheet and loaded it dynamically from `src/app.js` without touching `index.html`. Presence states are subtle Soul Talk/runtime visual states only: listening, boundary, safety-exit, blocked, and quiet. No red-dot, task, quest, FOMO, generated art, asset movement, or new screen was added.
+- Verification: CSS is loaded by the local runtime; live UI gate at 390x844 passed with top HUD, bottom dock, Soul Talk launcher/input, Pixi canvas, reload persistence, and console error count 0.
+- Problems / risks: No blocking Package 8 UI-presence issue remains. This is not Package 9 real-device or private-test evidence.
+- Next safe action: Commit and push Package 8 only, excluding unrelated untracked QA output files. Package 9 owns release evidence and private test scripts.
+- Required reading: Same as the `IN PROGRESS` entry above.
+
 ### 2026-06-27 - Codex - Illustrated Runtime Asset Audit
 
 - Status: `IN PROGRESS`
@@ -370,6 +414,28 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 ---
 
 ## Lane 3 - Raphael Core, Companion Reasoning, And Soul Talk
+
+### 2026-06-27 - Codex - Raphael Restricted Habitat Agent
+
+- Status: `IN PROGRESS`
+- Branch / commit: `integrate/ui-v2-raphael-main` / `43100c0`, uncommitted AI_AGENT / EXPERIENCE / SAFETY pack
+- Scope: Package 8 Raphael side only. Convert Raphael into a restricted habitat-agent presence by emitting serialized intents and passing them through a runtime-owned reducer. The agent may speak or stay silent, show body language, set boundaries, suggest rest/exploration without opening anything, carry controlled trace/memory metadata, and safety-exit. It may not import store, call `updateState`, mutate state directly, fetch, use external LLM, call tool registry, navigate, open flows, or push tasks.
+- Work performed: Started after human approval. Current read confirmed `runRaphaelCore` already keeps external advice disabled unless explicitly enabled; Package 8 will keep that default and avoid gateway calls.
+- Verification: Pending restricted agent event cases, forbidden-action/source scan, Raphael smoke, NLU smoke, Stage 4 playtest harness, and live UI gate.
+- Problems / risks: Safety exits must remain 100% non-gameplay and non-rewarding; runtime event hooks must not become proactive reminders or duplicate memory/trace writes.
+- Next safe action: Add adapter/reducer/harness and wire Soul Talk/app events through presentation-only runtime callbacks.
+- Required reading: `docs/handoff/RAPHAEL_AI_HANDOFF.md`, `docs/handoff/RAPHAEL_AI_STATUS.yaml`, `docs/architecture/RAPHAEL_SOUL_ARCHITECTURE_V1.md`, `docs/raphael/RAPHAEL_CONSTITUTION.md`, `src/ai/raphaelCore.js`, `src/ai/autonomy/actionPolicy.js`, `src/ai/applyCoreResult.js`, `src/ui/soulTalkController.js`, and `src/app.js`.
+
+### 2026-06-27 - Codex - Raphael Restricted Habitat Agent
+
+- Status: `VERIFIED`
+- Branch / commit: `integrate/ui-v2-raphael-main` / uncommitted, self-reviewed and ready for Package 8 commit/push
+- Files touched: `src/ai/raphaelAgentAdapter.js`, `src/engine/raphaelIntentReducer.js`, `src/ai/autonomy/actionPolicy.js`, `src/ai/testHarness/raphaelAgentEventCases.js`, `src/ui/soulTalkController.js`, `src/app.js`, `src/ai/raphaelCore.js`, `docs/agent/AI_EXECUTION_LEDGER.md`.
+- Work performed: Raphael now emits restricted serialized habitat-agent intents for Soul Talk, touch, Return Echo, habitat changes, exploration results, and standoff results. The reducer rejects forbidden keys such as navigation, panel opening, task push, tool call, fetch, direct state mutation, state patch, and reward grant. Safety exits block agent memory/trace metadata and suggestions. Soul Talk suppresses duplicate speech/animation because the existing RaphaelCore application path already writes chat, memory, trace, and animation decisions through the store.
+- Verification: New event harness passed 7/7. Forbidden-key injection was rejected. High-risk safety intent produced `safetyExit=true`, no memory, no trace, and no suggestion. Raphael smoke passed 17/17, NLU smoke passed 8/8, Stage 4 passed 10/10, live UI gate passed with console error count 0.
+- Problems / risks: No blocking Package 8 Raphael issue remains. Existing optional external gateway modules are still present in the repo but were not enabled or called; Package 8 keeps gateway behavior disabled and local-only.
+- Next safe action: Commit and push Package 8 only, excluding unrelated untracked QA output files. Package 9 can start after human approval.
+- Required reading: Same as the `IN PROGRESS` entry above.
 
 ### 2026-06-25 - Codex - First Trace / Return Echo Loop
 

@@ -20,6 +20,8 @@ import {
   resolveReturnAnimationIntent
 } from "./engine/returnBehaviorEngine.js";
 import { mapHabitatTracesToVisuals } from "./engine/traceVisualMapper.js";
+import { createRaphaelAgentIntent } from "./ai/raphaelAgentAdapter.js";
+import { applyRaphaelAgentReduction, reduceRaphaelAgentIntent } from "./engine/raphaelIntentReducer.js";
 import * as store from "./state/store.js";
 import {
   applyDevQueryHooks,
@@ -114,6 +116,7 @@ async function bootstrap() {
   AudioManager.initUnlock();
   bindAudioControls();
   bindSettingsDropdown();
+  ensureRaphaelAgentPresenceStyles();
 
   const isDevPanelEnabled = readDevPanelFlag();
   const devQueryHooks = readDevQueryHooks();
@@ -271,12 +274,88 @@ async function bootstrap() {
   actionSheetController.bind();
   markPerf("nexus:controllers-ready");
 
+  let raphaelPresenceResetTimer = null;
+  let lastRaphaelAgentSnapshot = createRaphaelAgentEventSnapshot(store.getState());
+
+  function setRaphaelAgentPresence(presenceState) {
+    if (typeof document === "undefined") return;
+    const stateName = presenceState || "quiet";
+    document.documentElement.dataset.raphaelAgentPresence = stateName;
+    window.clearTimeout(raphaelPresenceResetTimer);
+    if (stateName !== "quiet" && stateName !== "safety-exit") {
+      raphaelPresenceResetTimer = window.setTimeout(() => {
+        document.documentElement.dataset.raphaelAgentPresence = "quiet";
+      }, 1600);
+    }
+  }
+
+  function emitRestrictedRaphaelAgentEvent(eventType, event = {}, options = {}) {
+    const currentState = store.getState();
+    const intent = createRaphaelAgentIntent({
+      eventType,
+      event,
+      state: currentState,
+      companion: currentCreature,
+      now: Date.now(),
+      options: {
+        suppressSpeech: true,
+        animationAlreadyApplied: Boolean(options.animationAlreadyApplied)
+      }
+    });
+    const reduction = reduceRaphaelAgentIntent(intent, currentState);
+
+    applyRaphaelAgentReduction(reduction, {
+      setPresenceState: setRaphaelAgentPresence,
+      setStatusText: (text) => {
+        if (text) statusText.textContent = text;
+      },
+      dispatchAnimation: (animation) => {
+        if (options.animationAlreadyApplied || !animation?.intent) return;
+        EventBus.emit(COMPANION_ANIMATION_INTENT_EVENT, {
+          intent: animation.intent,
+          source: animation.source || "raphael-agent"
+        });
+      }
+    });
+
+    return { intent, reduction };
+  }
+
+  function observeRaphaelAgentStateEvents(state) {
+    const nextSnapshot = createRaphaelAgentEventSnapshot(state);
+    const previousSnapshot = lastRaphaelAgentSnapshot;
+    lastRaphaelAgentSnapshot = nextSnapshot;
+
+    if (!previousSnapshot) return;
+
+    if (nextSnapshot.traceSignature !== previousSnapshot.traceSignature) {
+      emitRestrictedRaphaelAgentEvent("habitat_change", {
+        traceSignature: nextSnapshot.traceSignature
+      }, { animationAlreadyApplied: true });
+    }
+
+    if (nextSnapshot.explorationTotal > previousSnapshot.explorationTotal) {
+      emitRestrictedRaphaelAgentEvent("exploration_result", {
+        totalExplorations: nextSnapshot.explorationTotal,
+        nodeId: nextSnapshot.explorationNodeId
+      }, { animationAlreadyApplied: true });
+    }
+
+    if (nextSnapshot.battleAt && nextSnapshot.battleAt !== previousSnapshot.battleAt) {
+      emitRestrictedRaphaelAgentEvent("standoff_result", {
+        result: nextSnapshot.battleResult,
+        battleAt: nextSnapshot.battleAt
+      }, { animationAlreadyApplied: true });
+    }
+  }
+
   store.subscribe(() => {
     hudController.renderHUD();
     soulTalkController.renderChat();
     onboardingController.render();
     pageRouter.render();
     devPanelController?.renderReadout();
+    observeRaphaelAgentStateEvents(store.getState());
   });
 
   stopEnvironmentHeartbeat?.();
@@ -301,13 +380,27 @@ async function bootstrap() {
   try {
     const app = await createPixiApp(qs("#game-root"));
     markPerf("nexus:pixi-ready");
-    sceneApi = await bootScene(app, panelManager, statusText, soulTalkController, saveQueue, onboardingController);
+    sceneApi = await bootScene(
+      app,
+      panelManager,
+      statusText,
+      soulTalkController,
+      saveQueue,
+      onboardingController,
+      emitRestrictedRaphaelAgentEvent
+    );
     markPerf("nexus:first-scene-ready");
 
     // Return Echo 動畫 cue：場景與 COMPANION_ANIMATION_INTENT 橋接已就緒，emit 一次性 intent。
     // 不阻塞、不輪詢、不加 ticker；one-shot lock 中或缺圖時由橋接安全略過/ fallback。
     if (pendingReturnIntent) {
       EventBus.emit(COMPANION_ANIMATION_INTENT_EVENT, { intent: pendingReturnIntent, source: "return-echo" });
+    }
+    if (!shouldRunOnboarding && returnBehavior) {
+      emitRestrictedRaphaelAgentEvent("return_echo", {
+        returnBehavior,
+        message: returnGreeting
+      }, { animationAlreadyApplied: Boolean(pendingReturnIntent) });
     }
 
     // 效能：dev panel 是純開發工具，一般玩家路徑（無 ?devPanel=1）完全不建立、不 setup。
@@ -338,6 +431,31 @@ async function bootstrap() {
     console.error(error);
     statusText.textContent = "場景初始化失敗，請重新整理頁面。";
   }
+}
+
+function ensureRaphaelAgentPresenceStyles() {
+  if (typeof document === "undefined") return;
+  if (document.querySelector('link[data-raphael-agent-presence="true"]')) return;
+  const link = document.createElement("link");
+  link.rel = "stylesheet";
+  link.href = "./styles/raphael-agent-presence.css";
+  link.dataset.raphaelAgentPresence = "true";
+  document.head.appendChild(link);
+}
+
+function createRaphaelAgentEventSnapshot(state = {}) {
+  const traces = Array.isArray(state.habitatTraces) ? state.habitatTraces : [];
+  const traceSignature = traces
+    .map((trace) => `${trace?.id || "trace"}:${trace?.status || "unknown"}:${trace?.emotion || "none"}:${trace?.intensity || 0}`)
+    .join("|");
+
+  return {
+    explorationTotal: Number(state.explorationProgress?.totalExplorations) || 0,
+    explorationNodeId: state.explorationProgress?.lastNodeId || null,
+    battleAt: Number(state.battleRecord?.lastBattleAt) || 0,
+    battleResult: state.battleRecord?.lastResult || null,
+    traceSignature
+  };
 }
 
 function bindAudioControls() {
@@ -375,7 +493,15 @@ function bindSettingsDropdown() {
   });
 }
 
-async function bootScene(app, panelManager, statusText, soulTalkController, saveQueue, onboardingController) {
+async function bootScene(
+  app,
+  panelManager,
+  statusText,
+  soulTalkController,
+  saveQueue,
+  onboardingController,
+  raphaelAgentEventBridge = null
+) {
   const runtimeGuard = createRuntimeGuard(app);
   const world = createWorld(app);
   const layers = getSceneLayers(world);
@@ -442,7 +568,13 @@ async function bootScene(app, panelManager, statusText, soulTalkController, save
       isInteractionBlocked: () => panelManager.isPanelOpen() || onboardingController?.isActive?.(),
       onTouch: (touchType) => {
         markInteraction(); // 觸碰會喚醒睡眠中的夥伴
-        return interactionController.handleTouch(touchType);
+        return Promise.resolve(interactionController.handleTouch(touchType)).then((touchResult) => {
+          raphaelAgentEventBridge?.("touch", {
+            touchType,
+            touchResult
+          }, { animationAlreadyApplied: true });
+          return touchResult;
+        });
       }
     });
   }

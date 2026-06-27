@@ -30,6 +30,37 @@ export const FORBIDDEN_ACTIONS = Object.freeze([
   "force_progression"
 ]);
 
+export const RESTRICTED_HABITAT_AGENT_ACTIONS = Object.freeze([
+  "say_reply",
+  "stay_silent",
+  "set_boundary",
+  "soft_refuse",
+  "offer_presence",
+  "suggest_rest",
+  "suggest_exploration",
+  "create_memory",
+  "create_habitat_trace",
+  "choose_animation",
+  "lower_interaction_intensity",
+  "enter_safe_harbor",
+  "body_cue_only"
+]);
+
+export const RESTRICTED_HABITAT_AGENT_FORBIDDEN_ACTIONS = Object.freeze([
+  "auto_navigate",
+  "open_flow",
+  "open_panel",
+  "push_task",
+  "fetch",
+  "tool_registry_call",
+  "external_llm_call",
+  "direct_state_mutation",
+  "update_state",
+  "change_storage_schema",
+  "grant_reward",
+  "force_progression"
+]);
+
 const ACTION_TO_FORBIDDEN = Object.freeze({
   promise_forever: "romantic_dependency",
   demand_attention: "pressure_player",
@@ -38,6 +69,31 @@ const ACTION_TO_FORBIDDEN = Object.freeze({
 
 export function isActionAllowed(action) {
   return ALLOWED_ACTIONS.includes(action) && !FORBIDDEN_ACTIONS.includes(action);
+}
+
+export function isRestrictedHabitatAgentActionAllowed(action) {
+  return (
+    RESTRICTED_HABITAT_AGENT_ACTIONS.includes(action) &&
+    !RESTRICTED_HABITAT_AGENT_FORBIDDEN_ACTIONS.includes(action) &&
+    !FORBIDDEN_ACTIONS.includes(action)
+  );
+}
+
+export function validateRestrictedHabitatAgentActions(actions = []) {
+  const list = Array.isArray(actions) ? actions : [];
+  const violations = [];
+
+  for (const action of list) {
+    if (!isRestrictedHabitatAgentActionAllowed(action)) {
+      violations.push(`restricted_forbidden_action:${action}`);
+    }
+  }
+
+  return {
+    allowed: violations.length === 0,
+    violations,
+    actions: list
+  };
 }
 
 export function validatePlannedAction(actionPlan = {}, reply = "") {

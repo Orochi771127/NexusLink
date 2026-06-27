@@ -325,4 +325,5 @@ if (typeof window !== "undefined" && new URLSearchParams(window.location.search)
   import("./testHarness/nluTrainingCases.js").then((mod) => mod.installNluTrainingHarness(window));
   import("./testHarness/dialogueLoopSmokeCases.js").then((mod) => mod.installDialogueLoopHarness(window));
   import("./testHarness/constitutionSmokeCases.js").then((mod) => mod.installConstitutionSmokeHarness(window));
+  import("./testHarness/raphaelAgentEventCases.js").then((mod) => mod.installRaphaelAgentEventHarness(window));
 }
