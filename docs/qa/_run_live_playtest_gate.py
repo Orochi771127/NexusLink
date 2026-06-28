@@ -359,6 +359,9 @@ def check_hud_layout(page):
         const st = document.querySelector('#status-text, .status-text, [data-status-text]');
         const hud = document.querySelector('.core-hud');
         if (!st || !hud) return { ok: true, reason: 'no_status_el' };
+        const style = getComputedStyle(st);
+        const isHidden = st.closest('[hidden], [inert]') || st.getClientRects().length === 0 || style.display === 'none' || style.visibility === 'hidden';
+        if (isHidden) return { ok: true, reason: 'status_hidden_in_panel' };
         const sb = st.getBoundingClientRect();
         const hb = hud.getBoundingClientRect();
         return { ok: sb.top >= hb.bottom - 4, statusTop: sb.top, hudBottom: hb.bottom };

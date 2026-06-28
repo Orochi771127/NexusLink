@@ -344,6 +344,7 @@ def run_accessibility_probe(base_url: str):
             page.evaluate(f"() => localStorage.removeItem('{STORAGE_KEY}')")
             page.reload(wait_until="networkidle", timeout=90000)
             page.wait_for_timeout(1500)
+            onboarding_round = complete_onboarding_for_probe(page)
             screenshot_path = screenshot_dir / f"{viewport['name']}.png"
             page.screenshot(path=str(screenshot_path), full_page=False)
             probe = page.evaluate(
@@ -400,6 +401,7 @@ def run_accessibility_probe(base_url: str):
                 "consoleErrors": console_errors,
                 "screenshot": str(screenshot_path),
                 "probe": probe,
+                "onboardingRound": onboarding_round,
                 "soulRound": soul_round,
                 "warnings": {
                     "focusableHidden": focusable_hidden_warnings,
@@ -408,11 +410,13 @@ def run_accessibility_probe(base_url: str):
                     not console_errors
                     and probe["canvasCount"] == 1
                     and probe["gameRoot"]
+                    and onboarding_round["completed"]
                     and probe["soulLauncher"]
                     and probe["messageInput"]
                     and probe["sendButton"]
                     and probe["navButtonCount"] >= 4
                     and not probe["unlabeledButtons"]
+                    and not probe["focusableHidden"]
                     and not probe["horizontalOverflow"]
                     and soul_round["opened"]
                     and soul_round["inputVisible"]
@@ -425,6 +429,60 @@ def run_accessibility_probe(base_url: str):
         "screenshotDir": str(screenshot_dir),
         "viewports": results,
         "ok": all(item["ok"] for item in results),
+    }
+
+
+def complete_onboarding_for_probe(page):
+    root = page.locator("#onboarding-root").first
+    if not root.count() or root.evaluate("node => node.hidden"):
+        return {"startedVisible": False, "completed": True, "actions": []}
+
+    actions = [
+        ("start", "identity"),
+        ("skip-identity", "guidance"),
+        ("guidance-next", "meet"),
+        ("complete", None),
+    ]
+    completed_actions = []
+    for action, expected_step in actions:
+        clicked = page.evaluate(
+            """
+            (action) => {
+              const button = document.querySelector(`[data-onboarding-action="${action}"]`);
+              if (!button) return false;
+              button.click();
+              return true;
+            }
+            """,
+            action,
+        )
+        if not clicked:
+            return {
+                "startedVisible": True,
+                "completed": False,
+                "actions": completed_actions,
+                "failedAction": action,
+            }
+        completed_actions.append(action)
+        if expected_step:
+            page.wait_for_function(
+                """
+                (step) => document.querySelector('.onboarding-shell')?.dataset.onboardingStep === step
+                """,
+                arg=expected_step,
+                timeout=5000,
+            )
+        else:
+            page.wait_for_function(
+                "() => document.querySelector('#onboarding-root')?.hidden === true",
+                timeout=5000,
+            )
+
+    completed = root.evaluate("node => node.hidden")
+    return {
+        "startedVisible": True,
+        "completed": bool(completed),
+        "actions": completed_actions,
     }
 
 

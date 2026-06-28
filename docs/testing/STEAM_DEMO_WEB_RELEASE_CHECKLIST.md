@@ -60,7 +60,7 @@ Required automated checks:
 | NLU smoke | `docs/qa/_run_nlu_smoke.py` | 8/8 pass, 0 console errors |
 | Stage 4 human-feel harness | `docs/qa/_run_stage4_human_playtest.py` | 10/10 pass |
 | Live UI gate | `docs/qa/_run_live_playtest_gate.py` | Soul Talk 10/10, HUD 13/13, awakening/storage/touch/pixi OK |
-| Responsive/accessibility probe | `docs/qa/_run_web_release_gate.py` | 390x844 and 1280x900 pass; no unlabeled buttons or horizontal overflow; focusable controls under `aria-hidden` are reported as a manual follow-up warning |
+| Responsive/accessibility probe | `docs/qa/_run_web_release_gate.py` | 390x844 and 1280x900 pass; no unlabeled buttons, no focusable controls under `aria-hidden`, and no horizontal overflow |
 
 ## Manual real-device gate
 

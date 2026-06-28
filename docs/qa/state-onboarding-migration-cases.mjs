@@ -77,6 +77,22 @@ runCase("partial player profile and onboarding deep-merge safely", () => {
   assertEqual(state.onboarding.guidanceCompleted, false, "partial guidance default");
 });
 
+runCase("first-session meet step survives normalization", () => {
+  const state = normalizeState({
+    onboarding: {
+      status: "meet",
+      startedAt: 1782600000000,
+      identityCompleted: true,
+      guidanceCompleted: true
+    }
+  });
+
+  assertEqual(state.onboarding.completed, false, "meet step remains incomplete");
+  assertEqual(state.onboarding.status, "meet", "meet status preserved");
+  assertEqual(state.onboarding.identityCompleted, true, "meet identity complete");
+  assertEqual(state.onboarding.guidanceCompleted, true, "meet guidance complete");
+});
+
 runCase("damaged save values normalize to safe defaults", () => {
   const state = normalizeState({
     playerProfile: "bad-profile",

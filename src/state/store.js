@@ -106,7 +106,7 @@ export function normalizeState(rawState = {}) {
 }
 
 const BATTLE_RESULTS = new Set(["win", "lose", "retreat"]);
-const ONBOARDING_STATUSES = new Set(["pending", "start", "identity", "guidance", "home", "completed"]);
+const ONBOARDING_STATUSES = new Set(["pending", "start", "identity", "guidance", "meet", "home", "completed"]);
 
 function normalizePlayerProfile(rawProfile, baseProfile) {
   const profile = rawProfile && typeof rawProfile === "object" ? rawProfile : {};

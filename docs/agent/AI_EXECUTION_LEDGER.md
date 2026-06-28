@@ -58,6 +58,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-06-28 - Codex - Package 1-9 Required Fix Pass
+
+- Status: `VERIFIED`
+- Branch / commit: `integrate/ui-v2-raphael-main` / required-fix commit pending; previous package baseline was `8d19e96`
+- Scope: Fix Package 1-9 release-blocking issues that Codex can resolve in repo. Touched state normalization, panel accessibility, QA runners, release evidence, and checklist only. No assets, no external dependency, no storage key change, no desktop wrapper, no external LLM, no fetch, and no product scope expansion.
+- Work performed: Added `meet` to valid onboarding statuses so the first-session Guidance -> Meet step survives normalization. Added a regression case to `docs/qa/state-onboarding-migration-cases.mjs`. Updated `src/ui/panelManager.js` so closed/inactive panels are `hidden`/`inert` and only the active panel remains focusable. Restored `aria-hidden` focus leakage as a hard web-release gate. Updated the web-release runner to complete the fresh onboarding flow before probing Home/Soul Talk, and fixed the live UI gate to ignore `#status-text` when it is inside a hidden panel.
+- Verification: `node --check src/state/store.js`; `node --check src/ui/panelManager.js`; `python -m py_compile docs/qa/_run_web_release_gate.py docs/qa/_run_live_playtest_gate.py`; `git diff --check`; `node docs/qa/state-onboarding-migration-cases.mjs` -> 8/8; `python docs/qa/_run_web_release_gate.py` -> 9/9 automated required gates pass, with 0 accessibility warnings.
+- Problems / risks: Human-only gates remain: real mobile device check, moderated 3-person private test, and legal/privacy/store-copy review. These cannot be completed by Codex and must not be marked as passed without human evidence.
+- Next safe action: Commit and push the required-fix pass. Then run the local server for real-phone testing at the LAN URL and collect human private-test evidence before any Package 10 desktop-wrapper ADR.
+- Required reading: `docs/qa/WEB_RELEASE_EVIDENCE.md`, `docs/testing/STEAM_DEMO_WEB_RELEASE_CHECKLIST.md`, Package 3/4/9 ledger entries, and `AGENTS.md`.
+
 ### 2026-06-28 - Codex - Web Release Gate / Private Test Pack Completion
 
 - Status: `VERIFIED`
@@ -272,6 +283,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 ---
 
 ## Lane 2 - Game Art, UI, And Visual Production
+
+### 2026-06-28 - Codex - Package 1-9 Required Fix Pass
+
+- Status: `VERIFIED`
+- Branch / commit: `integrate/ui-v2-raphael-main` / required-fix commit pending; previous package baseline was `8d19e96`
+- Scope: UI/accessibility release-blocker cleanup only. No redesign, no new UI direction, no generated images, no asset approval/movement/deletion, and no companion visual swap.
+- Work performed: Inactive modal panels are now removed from visibility and focus order, preventing invisible panel buttons/inputs from being reachable under `aria-hidden`. The web release evidence now records `PASS` for responsive/browser accessibility with 0 focusable hidden entries in 390x844 and 1280x900 probes.
+- Verification: `python docs/qa/_run_web_release_gate.py` passed responsive/accessibility probes at 390x844 and 1280x900: onboarding completes, Soul Talk opens, input visible, 1 canvas, 5 nav buttons, no unlabeled buttons, no horizontal overflow, and `focusableHidden: []`. Live UI gate passed HUD 13/13.
+- Problems / risks: Visual confirmation on actual phone hardware is still human-only and remains required before public release.
+- Next safe action: Human should open the LAN URL on a phone on the same Wi-Fi and run the real-device checks in `docs/testing/STEAM_DEMO_WEB_RELEASE_CHECKLIST.md`.
+- Required reading: `docs/qa/WEB_RELEASE_EVIDENCE.md`, `docs/testing/PRIVATE_TEST_SCRIPT.md`, and Package 9 ledger entries.
 
 ### 2026-06-28 - Codex - Web Release Gate / Private Test Pack Completion
 
