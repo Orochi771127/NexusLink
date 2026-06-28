@@ -19,7 +19,8 @@ export function createPageRouter({
   actionSheetController,
   statusText,
   openMap,
-  openCodex
+  openCodex,
+  openAtlas
 }) {
   const pageLayer = qs("#page-layer");
   const pageViews = pageLayer ? qsa("[data-page]", pageLayer) : [];
@@ -101,6 +102,10 @@ export function createPageRouter({
         <button type="button" data-page-action="open-map">
           <strong>查看月湖路徑</strong>
           <em>打開既有探索地圖，不擴張新區域。</em>
+        </button>
+        <button type="button" data-page-action="open-atlas">
+          <strong>世界地圖</strong>
+          <em>遠望 Linkara：你現在在月湖一帶，其餘仍在遠方。</em>
         </button>
         <button type="button" data-page-action="commit" data-nav-action="explore" data-choice="lake_glow" data-status="湖面留下了一圈柔和微光。">
           <strong>靠近湖面微光</strong>
@@ -248,6 +253,10 @@ export function createPageRouter({
     const action = button.dataset.pageAction;
     if (action === "open-map") {
       openMap?.();
+      return;
+    }
+    if (action === "open-atlas") {
+      openAtlas?.();
       return;
     }
     if (action === "open-character") {

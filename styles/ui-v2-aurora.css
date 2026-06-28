@@ -12,7 +12,9 @@ html[data-ui="v2"] .soul-strip {
   align-items: center;
   column-gap: 10px;
   min-height: 70px;
-  bottom: calc(var(--bottom-safe) + 108px);
+  /* Aurora 影像分頁 nav 在寬螢幕會長到 ~111px（tile aspect 512/388），
+     108px 舊值是為 76px legacy nav 調的；提高讓 strip 在桌面寬度也不壓到 nav。 */
+  bottom: calc(var(--bottom-safe) + 124px);
   border-radius: 20px;
   overflow: hidden;
 }
@@ -38,21 +40,8 @@ html[data-ui="v2"] .panel-layer[data-active-panel="soulTalk"] .soul-talk-drawer 
   transform: translateY(0) scale(1);
 }
 
-html[data-ui="v2"] .bottom-nav--aurora .bottom-nav__item:not(.bottom-nav__item--core) {
-  min-height: 0;
-  aspect-ratio: 512 / 388;
-  padding: 0;
-}
-
-html[data-ui="v2"] .bottom-nav--aurora .bottom-nav__item:not(.bottom-nav__item--core) .bottom-nav__icon,
-html[data-ui="v2"] .bottom-nav--aurora .bottom-nav__item:not(.bottom-nav__item--core) .bottom-nav__label,
-html[data-ui="v2"] .bottom-nav--aurora .bottom-nav__item:not(.bottom-nav__item--core) .bottom-nav__en {
-  display: none;
-}
-
-html[data-ui="v2"] .bottom-nav--aurora .bottom-nav__item:not(.bottom-nav__item--core) .nav-image {
-  display: block;
-}
+/* Bottom nav 視覺由 page-full-nav.css 單一擁有（:not(--core) tile、隱藏 icon/label、nav-image 定位、
+   active 金光、中央心核鑽）。此處不再重複定義，避免兩檔 override 互相打架。 */
 
 @media (max-width: 400px) {
   html[data-ui="v2"] .soul-strip {
@@ -67,4 +56,50 @@ html[data-ui="v2"] .bottom-nav--aurora .bottom-nav__item:not(.bottom-nav__item--
     min-width: 48px;
     padding-inline: 10px;
   }
+}
+
+/* ---- Aurora typography polish (V2: 中文標題 Noto Serif TC) ---- */
+html[data-ui="v2"] .core-name,
+html[data-ui="v2"] .panel-header h2,
+html[data-ui="v2"] .character-summary h3,
+html[data-ui="v2"] .soul-drawer-title {
+  font-family: var(--v3-font-serif);
+  letter-spacing: 0.02em;
+}
+
+/* ---- 心情共鳴（唯讀；由既有 mood 推導，無新 schema、無 %race、無 FOMO） ---- */
+html[data-ui="v2"] .mood-resonance {
+  position: relative;
+  margin: 14px 0 4px;
+  padding: 11px 14px 12px;
+  border: 1px solid var(--v3-line-quiet);
+  border-radius: 16px;
+  background:
+    linear-gradient(150deg, rgba(124, 231, 255, 0.06), transparent 52%),
+    radial-gradient(120% 90% at 88% 0%, rgba(169, 152, 255, 0.12), transparent 56%),
+    var(--v3-surface-quiet);
+}
+html[data-ui="v2"] .mood-resonance__kicker {
+  margin: 0 0 4px;
+  color: var(--v3-cyan-300);
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+html[data-ui="v2"] .mood-resonance__label {
+  display: inline-block;
+  font-family: var(--v3-font-serif);
+  font-size: 1.04rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--v3-moon-100);
+}
+html[data-ui="v2"] .mood-resonance__note {
+  display: block;
+  margin-top: 3px;
+  color: var(--v3-moon-200);
+  font-size: 0.78rem;
+  font-style: normal;
+  line-height: 1.4;
 }

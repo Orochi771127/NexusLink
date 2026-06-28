@@ -58,6 +58,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-06-28 - Codex - UI/HUD Claude Code Handoff
+
+- Status: `COMPLETED`
+- Branch / commit: `integrate/ui-v2-raphael-main` / `25b9944`, handoff docs uncommitted
+- Scope: Documentation-only handoff for Claude Code to continue HUD/UI V2 architecture work. No runtime code, no assets, no state, no storage schema, no Raphael behavior, no dependency, and no build step changed.
+- Work performed: Added `docs/handoff/UI_HUD_ARCHITECTURE_HANDOFF.md` with current architecture map, file ownership, controller responsibilities, known fixed items, unresolved issues, acceptance criteria, and non-goals. Added `docs/handoff/CLAUDE_CODE_UI_HUD_TAKEOVER_PROMPT.md` as a paste-ready instruction for Claude Code.
+- Verification: Documentation paths are inside the repo and readable/writable by Claude Code in this workspace. `git diff --check` should be run before any later commit.
+- Problems / risks: This does not fix the listed UI/HUD issues; it only hands them off. Known unresolved items include mojibake in UI copy, incomplete V2 parity, CSS ownership fragmentation, real-device Safari fit, and non-persisted Settings volume ranges.
+- Next safe action: Human can paste the prompt file contents to Claude Code together with the V2 design files. Claude Code should submit a plan before touching `index.html` or other Groundwork files.
+- Required reading: `docs/handoff/UI_HUD_ARCHITECTURE_HANDOFF.md`, `docs/handoff/CLAUDE_CODE_UI_HUD_TAKEOVER_PROMPT.md`, `AGENTS.md`, `CLAUDE.md`, `ACCEPTANCE.md`, and the supplied V2 design handoff/screenshots.
+
 ### 2026-06-28 - Codex - Mobile UI v2 HUD/Icon Optimization
 
 - Status: `VERIFIED`
@@ -305,6 +316,35 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 ---
 
 ## Lane 2 - Game Art, UI, And Visual Production
+
+### 2026-06-28 - Claude Code - UI/HUD V2 Aurora Pass (HUD chrome, pages, World Atlas)
+
+- Status: `VERIFIED`
+- Branch / commit: `integrate/ui-v2-raphael-main` / `25b9944` base, uncommitted, awaiting human approval before commit/push
+- Scope: EXPERIENCE-layer UI/HUD V2 (Aurora) pass per `docs/handoff/UI_HUD_ARCHITECTURE_HANDOFF.md` and the human-supplied V2 design plus the 2.5D habitat / Linkara world-map references. References were adopted as visual language only; no Pixi renderer change, no companion change, no asset import, no save-schema change. Currency/multi-companion/daily-reward/level framing from the references was explicitly rejected per canon red lines.
+- Work performed:
+  - HUD/nav CSS dedup: removed the duplicate `.bottom-nav--aurora` rules from `styles/ui-v2-aurora.css`; bottom-nav stays single-owned by `styles/page-full-nav.css`.
+  - Aurora typography: Noto Serif TC on companion name, panel headings, and Soul Talk title; added the V2 香檳金 ◈ diamond signature to true-page title blocks.
+  - Read-only "今日心情共鳴" added to the companion status modal, derived from existing `state.mood` (single descriptor + one gentle line; no %-race, no new schema, no FOMO).
+  - Read-only World Atlas: new `data-panel="atlas"` panel + `src/ui/atlasController.js` rendering Linkara regions as a CSS/SVG placeholder (no PNG import). Region 5 月湖營地 = current/highlighted; the rest are "遠方"/locked with no completion %, no countdown, no unlock task. Reachable from a new "世界地圖" button on the Explore page.
+  - Fixed a pre-existing desktop-width Soul Talk strip vs bottom-nav 3px overlap (raised strip clearance for the taller Aurora image-tile nav).
+- Changed files: `index.html`, `src/app.js`, `src/ui/hudController.js`, `src/ui/pageRouter.js`, `styles/ui-v2-aurora.css`, `styles/page-content.css`, new `src/ui/atlasController.js`, new `styles/world-atlas.css`, and this ledger entry.
+- Verification: bundled Node `--check` on all changed JS; `git diff --check` clean; web release gate 9/9 required automated checks, 0 accessibility warnings, 0 console errors, no horizontal overflow at 390x844 and 1280x900; manual browser checks of Home, all four pages, the companion modal (心情共鳴), the World Atlas, and the existing soul-map at 390x844 and desktop; strip↔nav gap 56px mobile / 13px desktop. Existing soul-map (5-node) and flows unregressed.
+- Problems / risks: The four true pages were already close to V2 from prior Codex work, so this pass preserved them and added only the diamond signature; deeper reflow was unnecessary. Settings volume/quality persistence (`nexuslink_v2` schema) intentionally deferred (would be GROUNDWORK). Real-device Safari review remains human-only. The World Atlas is an SVG placeholder; importing the actual Linkara map PNG needs a separate asset-approval GROUNDWORK pack.
+- Not touched: `src/ai/**`, `src/state/**`, `saveManager`, save schema, Pixi renderer, `assets/**`, tools, scripts, Raphael behavior/safety, onboarding logic, battle/standoff mechanics.
+- Next safe action: Human review of the scoped diff and an on-device 390x844 check, then commit/push if accepted. Optional follow-ups (each a new pack): soul-map V2 restyle, Settings persistence (GROUNDWORK), real Atlas PNG import (asset approval).
+- Required reading: `AGENTS.md`, `CLAUDE.md`, `ACCEPTANCE.md`, `NEXUS_LINK_MASTER_CANON_v3.1.md`, `docs/handoff/UI_HUD_ARCHITECTURE_HANDOFF.md`, `docs/design/NEXUS_LINK_V3_VISUAL_SYSTEM.md`, and this lane.
+
+### 2026-06-28 - Codex - UI/HUD Claude Code Handoff
+
+- Status: `COMPLETED`
+- Branch / commit: `integrate/ui-v2-raphael-main` / `25b9944`, handoff docs uncommitted
+- Scope: Documentation-only visual/UI handoff for a future Claude Code V2 parity pass. No generated art, no asset import, no asset deletion/movement, no companion visual swap, and no product-direction change.
+- Work performed: Documented the current V2 target, persistent HUD budget, bottom-nav status, Moonlake chip status, Settings/audio direction, page/modal layering, and unresolved visual issues. Added a paste-ready Claude Code instruction that requires plan-first execution and asks Claude to treat the human-supplied V2 design files as the visual target.
+- Verification: Handoff file lists explicit acceptance criteria for mobile and desktop UI checks and warns not to stage local QA JSON outputs.
+- Problems / risks: Exact V2 parity, nav icon coherence, and Traditional Chinese copy cleanup remain unimplemented. New bitmap icons still require human approval before entering `assets/**`.
+- Next safe action: Claude Code should inspect the current runtime at 390x844, 430x932, and desktop, compare against the provided V2 design documents, then propose a scoped UI/HUD plan.
+- Required reading: `docs/handoff/UI_HUD_ARCHITECTURE_HANDOFF.md`, `docs/handoff/CLAUDE_CODE_UI_HUD_TAKEOVER_PROMPT.md`, and the user-provided Nexus Link UI V2 design files/screenshots.
 
 ### 2026-06-28 - Codex - Mobile UI v2 HUD/Icon Optimization
 

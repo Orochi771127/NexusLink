@@ -39,6 +39,7 @@ import { createPageRouter } from "./ui/pageRouter.js";
 import { createSettingsController } from "./ui/settingsController.js";
 import { createCompanionSelectController } from "./ui/companionSelectController.js";
 import { createMapController } from "./ui/mapController.js";
+import { createAtlasController } from "./ui/atlasController.js";
 import { createBattleController } from "./ui/battleController.js";
 import { createCodexController } from "./ui/codexController.js";
 import {
@@ -190,6 +191,7 @@ async function bootstrap() {
   let mapController = null;
   let codexController = null;
   let companionSelectController = null;
+  let atlasController = null;
   let pageRouter = null;
 
   function getBattleController() {
@@ -225,6 +227,13 @@ async function bootstrap() {
       codexController = createCodexController({ store, panelManager });
     }
     return codexController;
+  }
+
+  function getAtlasController() {
+    if (!atlasController) {
+      atlasController = createAtlasController({ panelManager });
+    }
+    return atlasController;
   }
 
   function getCompanionSelectController() {
@@ -264,7 +273,8 @@ async function bootstrap() {
     actionSheetController,
     statusText,
     openMap: () => getMapController().open(),
-    openCodex: () => getCodexController().open()
+    openCodex: () => getCodexController().open(),
+    openAtlas: () => getAtlasController().open()
   });
 
   panelManager.bind({

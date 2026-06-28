@@ -28,6 +28,7 @@
     <link rel="stylesheet" href="./styles/ui-v2-aurora.css" />
     <link rel="stylesheet" href="./styles/ui-v3-tokens.css" />
     <link rel="stylesheet" href="./styles/ui-v3-onboarding.css" />
+    <link rel="stylesheet" href="./styles/world-atlas.css" />
   </head>
   <body data-soul-talk="collapsed">
     <main class="app-shell" aria-label="Nexus Link 心核連結主畫面">
@@ -224,6 +225,11 @@
                 <p id="modal-creature-description">夥伴資料載入中。</p>
               </div>
             </div>
+            <div class="mood-resonance" aria-label="今日心情共鳴">
+              <p class="mood-resonance__kicker">今日心情共鳴</p>
+              <strong id="mood-resonance-label" class="mood-resonance__label">平靜</strong>
+              <em id="mood-resonance-note" class="mood-resonance__note">牠把距離留在自己覺得安心的地方。</em>
+            </div>
             <div class="core-stat-list" aria-label="夥伴詳細狀態">
               <div class="core-stat-row" data-stat="bond">
                 <span class="core-stat-label">羈絆</span>
@@ -289,6 +295,20 @@
               <p id="map-result-text" class="map-toast-text"></p>
               <div id="map-result-chips" class="map-toast-chips"></div>
             </div>
+          </section>
+
+          <section class="modal-panel atlas-modal rune-border" role="dialog" aria-modal="true" aria-labelledby="atlas-title" data-panel="atlas">
+            <header class="panel-header">
+              <div>
+                <p>World Atlas ・ Linkara</p>
+                <h2 id="atlas-title">世界地圖</h2>
+              </div>
+              <button type="button" class="panel-close" data-panel-close aria-label="關閉世界地圖">X</button>
+            </header>
+            <p class="atlas-intro">「聯結之河」串起 Linkara 的各個區域。你與灰影現在停在月湖一帶；其餘地方仍在遠處，會在之後的旅程裡慢慢靠近。</p>
+            <div id="atlas-canvas" class="atlas-canvas" aria-hidden="true"></div>
+            <ul id="atlas-legend" class="atlas-legend" aria-label="Linkara 區域"></ul>
+            <p class="atlas-note">這是一張遠景示意圖，不是任務清單，也沒有要趕著抵達的地方。</p>
           </section>
 
           <section class="modal-panel battle-modal rune-border" role="dialog" aria-modal="true" aria-labelledby="battle-title" data-panel="battle">

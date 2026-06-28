@@ -26,6 +26,8 @@ export function createHudController({ store, statusText }) {
   const boundaryStateEl = qs("#boundary-state");
   const boundaryPreviewEl = qs("#boundary-preview");
   const boundaryBodyCueEl = qs("#boundary-bodycue");
+  const moodResonanceLabel = qs("#mood-resonance-label");
+  const moodResonanceNote = qs("#mood-resonance-note");
   let currentCreature = null;
 
   function setCreature(creature) {
@@ -88,6 +90,8 @@ export function createHudController({ store, statusText }) {
     if (boundaryBodyCueEl) {
       boundaryBodyCueEl.textContent = getBodyCueProfile(getAmbientBodyCue(state)).hint;
     }
+    if (moodResonanceLabel) moodResonanceLabel.textContent = getMoodLabel(state.mood);
+    if (moodResonanceNote) moodResonanceNote.textContent = getMoodNote(state.mood);
   }
 
   return {
@@ -134,6 +138,22 @@ function getMoodLabel(mood) {
     sleeping: "睡眠"
   };
   return moodMap[mood] || "平衡";
+}
+
+// 心情共鳴：由既有 mood 推導一句尊重邊界的陪伴語（無診斷、無勒索、符合 V3 copy rules）。
+function getMoodNote(mood) {
+  const noteMap = {
+    calm: "牠把距離留在自己覺得安心的地方。",
+    warm: "牠願意靠近一點，但仍然是牠自己。",
+    happy: "今天的光比較亮，牠的尾巴鬆了下來。",
+    distant: "牠想要一點空間，這也沒關係。",
+    defensive: "牠把自己收了起來，先安靜陪著就好。",
+    tired: "牠有點累了，慢一點，對牠比較剛好。",
+    sad: "牠今天比較沉，光也輕了一些。",
+    angry: "牠的邊界正豎著，給牠一點時間。",
+    sleeping: "牠睡著了，呼吸很輕。"
+  };
+  return noteMap[mood] || "牠在自己的節奏裡，安靜地待著。";
 }
 
 function moodPercent(mood) {

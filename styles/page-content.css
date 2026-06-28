@@ -90,6 +90,17 @@ html[data-ui="v2"] .page-view__header h2 {
   letter-spacing: 0.16em;
 }
 
+/* V2 page title block 簽名：serif 大標前的香檳金鑽石符 */
+html[data-ui="v2"] .page-view__header h2::before {
+  content: "◈";
+  margin-right: 9px;
+  color: var(--v3-gold-200, #f7dfaa);
+  font-size: 0.62em;
+  vertical-align: 0.12em;
+  opacity: 0.85;
+  text-shadow: 0 0 10px rgba(247, 206, 133, 0.34);
+}
+
 html[data-ui="v2"] .page-view__header span {
   align-self: center;
   padding: 4px 10px;
