@@ -47,6 +47,24 @@ export function createOnboardingController({ store, saveCurrentState } = {}) {
     return Boolean(root && !root.hidden);
   }
 
+  function restart() {
+    const state = store.getState();
+    const now = Date.now();
+    store.setState({
+      onboarding: {
+        ...state.onboarding,
+        completed: false,
+        status: "start",
+        startedAt: now,
+        completedAt: null,
+        identityCompleted: false,
+        guidanceCompleted: false
+      }
+    });
+    persist();
+    render();
+  }
+
   function handleAction(event) {
     const button = event.target.closest("[data-onboarding-action]");
     if (!button) return;
@@ -152,7 +170,8 @@ export function createOnboardingController({ store, saveCurrentState } = {}) {
   return {
     bind,
     render,
-    isActive
+    isActive,
+    restart
   };
 }
 

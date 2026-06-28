@@ -36,6 +36,7 @@ import { createSoulTalkController } from "./ui/soulTalkController.js";
 import { createOnboardingController } from "./ui/onboardingController.js";
 import { createActionSheetController } from "./ui/actionSheetController.js";
 import { createPageRouter } from "./ui/pageRouter.js";
+import { createSettingsController } from "./ui/settingsController.js";
 import { createCompanionSelectController } from "./ui/companionSelectController.js";
 import { createMapController } from "./ui/mapController.js";
 import { createBattleController } from "./ui/battleController.js";
@@ -177,6 +178,10 @@ async function bootstrap() {
     store,
     saveCurrentState: () => saveQueue.enqueue(SAVE_LEVEL.CRITICAL)
   });
+  const settingsController = createSettingsController({
+    panelManager,
+    restartOnboarding: () => onboardingController.restart()
+  });
   let sceneApi = null;
 
   // 效能：戰鬥／地圖／圖鑑／夥伴切換不是首屏必需，改為 lazy factory——
@@ -266,10 +271,12 @@ async function bootstrap() {
     character: () => hudController.openCharacterDetail(panelManager),
     soulTalk: () => soulTalkController.openSoulTalk(panelManager),
     companionSelect: () => getCompanionSelectController().open(),
-    codex: () => getCodexController().open()
+    codex: () => getCodexController().open(),
+    settings: () => settingsController.open()
   });
   soulTalkController.bind();
   onboardingController.bind();
+  settingsController.bind();
   pageRouter.bind();
   actionSheetController.bind();
   markPerf("nexus:controllers-ready");
@@ -473,6 +480,7 @@ function bindSettingsDropdown() {
   const settingsToggleButton = qs("#btn-settings-toggle");
   const settingsDropdown = qs("#settings-dropdown");
   if (!settingsToggleButton || !settingsDropdown) return;
+  if (settingsToggleButton.dataset.panelTrigger === "settings") return;
 
   const setDropdownExpanded = (isExpanded) => {
     settingsDropdown.classList.toggle("expanded", isExpanded);

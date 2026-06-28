@@ -23,6 +23,7 @@
     <link rel="stylesheet" href="./styles/soul-talk-drawer.css" />
     <link rel="stylesheet" href="./styles/page-full-nav.css" />
     <link rel="stylesheet" href="./styles/page-content.css" />
+    <link rel="stylesheet" href="./styles/settings-page.css" />
     <link rel="stylesheet" href="./styles/mobile-safari-polish.css" />
     <link rel="stylesheet" href="./styles/ui-v2-aurora.css" />
     <link rel="stylesheet" href="./styles/ui-v3-tokens.css" />
@@ -147,7 +148,7 @@
             </svg>
           </button>
           <div class="settings-group">
-            <button id="btn-settings-toggle" class="quick-icon-button glass-interactive" type="button" aria-label="開啟設定" aria-expanded="false">
+            <button id="btn-settings-toggle" class="quick-icon-button glass-interactive" type="button" data-panel-trigger="settings" aria-label="開啟設定" aria-expanded="false">
               <svg class="quick-icon-svg" viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M12 8.2a3.8 3.8 0 1 0 0 7.6 3.8 3.8 0 0 0 0-7.6Z"></path>
                 <path d="M19.4 13.4a7.8 7.8 0 0 0 .05-2.7l2-1.45-2-3.46-2.42 1a8.2 8.2 0 0 0-2.33-1.35L14.4 3h-4l-.3 2.44A8.2 8.2 0 0 0 7.77 6.8l-2.42-1-2 3.46 2 1.45a7.8 7.8 0 0 0 .05 2.7l-2.02 1.43 2 3.46 2.45-1a8.1 8.1 0 0 0 2.28 1.3l.29 2.4h4l.29-2.4a8.1 8.1 0 0 0 2.28-1.3l2.45 1 2-3.46-2.02-1.43Z"></path>
@@ -387,6 +388,67 @@
               <button type="button" class="panel-close" data-panel-close aria-label="關閉圖鑑">X</button>
             </header>
             <div id="codex-body" class="codex-body" aria-label="圖鑑內容"></div>
+          </section>
+
+          <section class="modal-panel settings-page-panel rune-border" role="dialog" aria-modal="true" aria-labelledby="settings-page-title" data-panel="settings">
+            <header class="panel-header settings-page-header">
+              <div>
+                <p>Settings</p>
+                <h2 id="settings-page-title">設定</h2>
+              </div>
+              <button type="button" class="panel-close" data-panel-close aria-label="關閉設定">X</button>
+            </header>
+
+            <div class="settings-page-body" aria-label="設定內容">
+              <section class="settings-section" aria-labelledby="settings-audio-title">
+                <h3 id="settings-audio-title">音效</h3>
+                <label class="settings-range-row">
+                  <span>主音量</span>
+                  <input type="range" min="0" max="100" value="80" data-settings-range="master" />
+                  <output data-settings-output="master">80</output>
+                </label>
+                <label class="settings-range-row">
+                  <span>背景音樂</span>
+                  <input type="range" min="0" max="100" value="70" data-settings-range="bgm" />
+                  <output data-settings-output="bgm">70</output>
+                </label>
+                <label class="settings-range-row">
+                  <span>音效</span>
+                  <input type="range" min="0" max="100" value="80" data-settings-range="sfx" />
+                  <output data-settings-output="sfx">80</output>
+                </label>
+                <button type="button" class="settings-toggle-row" data-settings-action="toggle-audio" aria-pressed="false">
+                  <span>語音播放</span>
+                  <b data-settings-toggle-knob></b>
+                </button>
+              </section>
+
+              <section class="settings-section" aria-labelledby="settings-display-title">
+                <h3 id="settings-display-title">畫面</h3>
+                <div class="settings-segment-row" role="group" aria-label="畫質">
+                  <span>畫質</span>
+                  <button type="button" data-settings-segment="quality" data-value="low">低</button>
+                  <button type="button" data-settings-segment="quality" data-value="medium">中</button>
+                  <button type="button" data-settings-segment="quality" data-value="high" aria-pressed="true">高</button>
+                </div>
+                <div class="settings-segment-row" role="group" aria-label="文字大小">
+                  <span>文字大小</span>
+                  <button type="button" data-settings-segment="textSize" data-value="small">小</button>
+                  <button type="button" data-settings-segment="textSize" data-value="medium" aria-pressed="true">中</button>
+                  <button type="button" data-settings-segment="textSize" data-value="large">大</button>
+                </div>
+                <button type="button" class="settings-toggle-row" data-settings-action="toggle-motion" aria-pressed="false">
+                  <span>低動態模式</span>
+                  <b data-settings-toggle-knob></b>
+                </button>
+              </section>
+
+              <section class="settings-section" aria-labelledby="settings-save-title">
+                <h3 id="settings-save-title">存檔與引導</h3>
+                <p class="settings-note">目前進度保存在這台裝置。若要在手機重看開始、身份與心核引導，可從這裡重新播放，不會刪除記憶或痕跡。</p>
+                <button type="button" class="settings-primary-action" data-settings-action="restart-onboarding">重新播放引導</button>
+              </section>
+            </div>
           </section>
 
           <section id="soul-talk-panel" class="modal-panel soul-talk-drawer deep-panel deep-panel--soultalk soul-talk-modal glass-strong rune-border" role="dialog" aria-modal="false" aria-label="心語對話" data-panel="soulTalk">

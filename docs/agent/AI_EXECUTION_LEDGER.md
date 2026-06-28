@@ -58,6 +58,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-06-28 - Codex - Mobile UI v2 Runtime Repair
+
+- Status: `VERIFIED`
+- Branch / commit: `integrate/ui-v2-raphael-main` / uncommitted, self-reviewed and ready for commit/push
+- Scope: Runtime UI repair for the user-reported mobile issues in the UI v2 direction. Touched onboarding visibility, settings panel wiring, page/modal accessibility isolation, and mobile page proportions. No `assets/**`, no `src/state/**`, no `saveManager.js`, no storage-key/schema change, no Pixi renderer change, no Raphael behavior change, no dependency, no build step, no desktop wrapper, and no generated image work.
+- Work performed: Added a Settings panel controller and panel route for the existing gear button; added a safe onboarding restart action that only resets existing onboarding flags; updated panel management so modal panels inert and hide active content pages; restored settings to the base panel whitelist; kept the old settings dropdown from binding when the new panel route is active.
+- Verification: Bundled Node `--check` passed for `src/app.js`, `src/ui/panelManager.js`, `src/ui/onboardingController.js`, and `src/ui/settingsController.js`. `git diff --check` passed. `docs/qa/state-onboarding-migration-cases.mjs` passed 8/8. A 390x844 Playwright probe passed Start, Identity, Guidance, Settings, Care full-page sizing, Soul Talk button containment, no horizontal overflow, and companion-card-over-Care isolation. `python docs/qa/_run_web_release_gate.py` passed 9/9 automated required gates with 0 accessibility warnings.
+- Problems / risks: Real iPhone/Android hardware visual approval remains human-only. The gate reused `http://localhost:5173`; human phone testing should use the LAN URL on the same Wi-Fi and can force a fresh first session with `?devReset=1`.
+- Next safe action: Commit and push this scoped UI repair only, excluding untracked QA output JSON files. Then human should test on phone at the LAN URL and record any remaining visual issues with screenshots.
+- Required reading: `AGENTS.md`, `docs/design/NEXUS_LINK_V3_VISUAL_SYSTEM.md`, `docs/testing/STEAM_DEMO_WEB_RELEASE_CHECKLIST.md`, and the supplied Nexus Link UI v2 handoff/reference files.
+
 ### 2026-06-28 - Codex - Package 1-9 Required Fix Pass
 
 - Status: `VERIFIED`
@@ -283,6 +294,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 ---
 
 ## Lane 2 - Game Art, UI, And Visual Production
+
+### 2026-06-28 - Codex - Mobile UI v2 Runtime Repair
+
+- Status: `VERIFIED`
+- Branch / commit: `integrate/ui-v2-raphael-main` / uncommitted, self-reviewed and ready for commit/push
+- Scope: UI v2 visual/runtime repair based on the user-supplied screenshots and handoff. Adjusted proportions and layer behavior for Start/Identity/Guidance/Home/Settings and true-page overlays. No new art, no generated images, no asset movement, no asset approval, no redesign beyond applying the supplied UI v2 direction.
+- Work performed: Added a full Settings panel matching the glass-card direction; changed Explore/Care/Growth/Memory page surfaces to occupy the readable mobile content band between HUD and bottom nav; kept Soul Talk as a contained strip with the `對話` pill inside the card; visually suppresses active pages when a modal companion/status panel opens, preventing the Care + companion-card overlap shown in the user's screenshots.
+- Verification: 390x844 Playwright UI probe passed: Start visible, identity page visible, guidance visible, Settings visible at 358x664, Care page at 370x622 above the 72px nav, Soul Talk strip/button contained, companion modal visible with the Care page opacity resolved to 0 after transition, no horizontal overflow, no console errors. Web release responsive/accessibility probe passed at 390x844 and 1280x900 with single canvas, 5 nav buttons, Soul Talk input visible, no unlabeled buttons, no hidden focusables, and no horizontal overflow.
+- Problems / risks: The automated proof confirms layout mechanics, not final human aesthetic approval. Actual Safari browser chrome height and safe-area differences still require human phone screenshots before public release.
+- Next safe action: Commit/push the repair, then have human test `http://192.168.1.123:5173/` and `http://192.168.1.123:5173/?devReset=1` on the phone.
+- Required reading: `C:/Users/User/Pictures/新增資料夾/Nexus Link UI v2 設計/Nexus Link UI v2 - Handoff.md`, `C:/Users/User/Pictures/新增資料夾/Nexus Link UI v2 設計/Nexus Link UI v2 (export-src).dc.html`, and the user-provided mobile screenshots.
 
 ### 2026-06-28 - Codex - Package 1-9 Required Fix Pass
 

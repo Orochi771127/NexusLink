@@ -832,7 +832,8 @@ canvas {
 .panel-layer[data-active-panel="companionSelect"],
 .panel-layer[data-active-panel="map"],
 .panel-layer[data-active-panel="battle"],
-.panel-layer[data-active-panel="codex"] {
+.panel-layer[data-active-panel="codex"],
+.panel-layer[data-active-panel="settings"] {
   pointer-events: auto;
 }
 
@@ -889,7 +890,8 @@ canvas {
 .panel-layer[data-active-panel="companionSelect"] [data-panel="companionSelect"],
 .panel-layer[data-active-panel="map"] [data-panel="map"],
 .panel-layer[data-active-panel="battle"] [data-panel="battle"],
-.panel-layer[data-active-panel="codex"] [data-panel="codex"] {
+.panel-layer[data-active-panel="codex"] [data-panel="codex"],
+.panel-layer[data-active-panel="settings"] [data-panel="settings"] {
   opacity: 1;
   pointer-events: auto;
   transform: translateY(0) scale(1);

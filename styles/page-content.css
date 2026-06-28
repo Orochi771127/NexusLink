@@ -11,10 +11,11 @@ html[data-ui="v2"] .page-layer {
 
 html[data-ui="v2"] .page-view {
   position: absolute;
-  top: clamp(116px, 14svh, 144px);
+  top: calc(var(--top-safe) + 112px);
   right: clamp(16px, 5vw, 54px);
+  bottom: calc(var(--bottom-safe) + var(--nav-height) + var(--nav-gap) + 12px);
   width: min(380px, calc(100vw - 32px));
-  max-height: min(34svh, 340px);
+  max-height: none;
   padding: 16px;
   border: 1px solid var(--v3-line-quiet, rgba(247, 223, 170, 0.34));
   border-radius: var(--v3-radius-card, 28px);
@@ -27,7 +28,8 @@ html[data-ui="v2"] .page-view {
     0 18px 54px rgba(0, 0, 0, 0.38);
   backdrop-filter: blur(18px) saturate(1.08);
   pointer-events: auto;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
   scrollbar-width: thin;
   opacity: 0;
   transform: translateX(14px);
@@ -37,6 +39,12 @@ html[data-ui="v2"] .page-view {
 html[data-ui="v2"] .page-view.is-active {
   opacity: 1;
   transform: translateX(0);
+}
+
+html[data-ui="v2"] body.panel-open .page-view.is-active {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(10px) scale(0.99);
 }
 
 html[data-ui="v2"] .page-view[hidden] {
@@ -301,7 +309,7 @@ html[data-ui="v2"] .page-tendency {
 html[data-ui="v2"] .page-memory-list {
   display: grid;
   gap: 8px;
-  max-height: min(31svh, 310px);
+  max-height: none;
   overflow: auto;
   padding-right: 2px;
 }
@@ -353,12 +361,12 @@ html[data-ui="v2"] body.page-open .v3-home-presence {
 
 @media (max-width: 720px) {
   html[data-ui="v2"] .page-view {
-    top: clamp(108px, 13svh, 124px);
-    left: 14px;
-    right: 14px;
-    bottom: auto;
+    top: calc(var(--top-safe) + 112px);
+    left: max(12px, var(--edge));
+    right: max(12px, var(--edge));
+    bottom: calc(var(--bottom-safe) + var(--nav-height) + 10px);
     width: auto;
-    max-height: min(33svh, 300px);
+    max-height: none;
     padding: 13px;
     border-radius: 24px;
     transform: translateY(14px);
@@ -384,7 +392,6 @@ html[data-ui="v2"] body.page-open .v3-home-presence {
   html[data-ui="v2"] .page-view {
     left: 10px;
     right: 10px;
-    max-height: 33svh;
     padding: 12px;
   }
 
@@ -417,4 +424,10 @@ html[data-ui="v2"] body.page-open .v3-home-presence {
   html[data-ui="v2"] .page-view {
     transition: none;
   }
+}
+
+body.panel-open .page-layer .page-view.is-active {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(10px) scale(0.99);
 }

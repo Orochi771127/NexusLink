@@ -7,17 +7,27 @@ html[data-ui="v2"] .soul-strip {
 }
 
 html[data-ui="v2"] .soul-strip {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
+  column-gap: 10px;
   min-height: 70px;
   bottom: calc(var(--bottom-safe) + 108px);
   border-radius: 20px;
+  overflow: hidden;
+}
+
+html[data-ui="v2"] .soul-strip > span:first-child {
+  min-width: 0;
+  padding-right: 56px;
 }
 
 html[data-ui="v2"] .soul-strip .btn-primary {
   border-radius: 999px;
   padding: 8px 12px;
   font-size: 0.78rem;
+  min-width: 54px;
+  white-space: nowrap;
 }
 
 html[data-ui="v2"] body[data-soul-talk="open"] .soul-strip {
@@ -26,4 +36,19 @@ html[data-ui="v2"] body[data-soul-talk="open"] .soul-strip {
 
 html[data-ui="v2"] .panel-layer[data-active-panel="soulTalk"] .soul-talk-drawer {
   transform: translateY(0) scale(1);
+}
+
+@media (max-width: 400px) {
+  html[data-ui="v2"] .soul-strip {
+    column-gap: 8px;
+  }
+
+  html[data-ui="v2"] .soul-strip > span:first-child {
+    padding-right: 40px;
+  }
+
+  html[data-ui="v2"] .soul-strip .btn-primary {
+    min-width: 48px;
+    padding-inline: 10px;
+  }
 }

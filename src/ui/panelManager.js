@@ -2,6 +2,7 @@ import { qs, qsa } from "../utils/dom.js";
 
 export function createPanelManager({ onSoulTalkFocus } = {}) {
   const panelLayer = qs(".panel-layer");
+  const pageLayer = qs("#page-layer");
   const panelBackdrop = qs(".panel-backdrop", panelLayer);
   const panels = qsa("[data-panel]", panelLayer);
   const panelCloseButtons = qsa("[data-panel-close]");
@@ -24,6 +25,10 @@ export function createPanelManager({ onSoulTalkFocus } = {}) {
     panelLayer.hidden = !hasActivePanel;
     panelLayer.setAttribute("aria-hidden", String(!hasActivePanel));
     setInert(panelLayer, !hasActivePanel);
+    if (pageLayer) {
+      pageLayer.setAttribute("aria-hidden", String(hasActivePanel));
+      setInert(pageLayer, hasActivePanel);
+    }
 
     if (panelBackdrop) {
       panelBackdrop.hidden = !hasActivePanel;
