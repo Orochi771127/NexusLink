@@ -181,7 +181,9 @@ async function bootstrap() {
   });
   const settingsController = createSettingsController({
     panelManager,
-    restartOnboarding: () => onboardingController.restart()
+    restartOnboarding: () => onboardingController.restart(),
+    store,
+    saveSettings: () => saveQueue.enqueue(SAVE_LEVEL.CRITICAL)
   });
   let sceneApi = null;
 

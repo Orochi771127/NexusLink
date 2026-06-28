@@ -317,6 +317,19 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 2 - Game Art, UI, And Visual Production
 
+### 2026-06-29 - Claude Code - Settings persistence (GROUNDWORK: save-schema settings block)
+
+- Status: `VERIFIED`
+- Branch / commit: `integrate/ui-v2-raphael-main` / on top of `0e5f20f`, committed this pack. No new localStorage key.
+- Layer: GROUNDWORK (save schema: `src/state/defaultState.js` + `src/state/store.js` `normalizeState`) + EXPERIENCE (`src/ui/settingsController.js` wiring).
+- Scope: Persist player Settings inside the existing `nexusLinkR2State:v1` save. No new localStorage key, no Pixi/Raphael/asset change, `saveManager.js` STORAGE_KEY untouched. Audio mute keeps its existing separate key (`nexusLinkAudioMuted:v1`).
+- Work performed: Added a `settings` block (`volMaster/volBgm/volSfx/quality/textSize/lowMotion`, defaults matching `index.html`) to `defaultState.js`; deep-cloned it in `createDefaultState`; added `normalizeSettings()` (mirrors `normalizeBattleRecord`) to `normalizeState` so partial/old saves backfill safely. Rewrote `settingsController.js` to use `store.settings` as the source of truth: applies on boot (volumes → `AudioManager.setVolume`, lowMotion → `reducedMotionPreference` dataset, quality/textSize → root dataset markers) and persists on every change via the existing save queue. Wired `store` + `saveSettings` into `createSettingsController` in `app.js`.
+- Verification: bundled Node `--check` on all changed JS; `node docs/qa/state-onboarding-migration-cases.mjs` all cases passed (failed 0); fresh-origin browser test at 390x844 — set master volume to 30 → persisted to `settings.volMaster` in `nexusLinkR2State:v1`, slider/output restored to 30 after reload, AudioManager re-applied; low-motion toggle and quality segment also round-trip (saved + applied to root dataset). Web release gate 9/9 required, `stateMigration` ok, 0 console errors at 390x844 and 1280x900.
+- Problems / risks: quality and textSize persist + restore their UI selection and write inert root dataset markers, but do NOT yet change rendering (px-based font scaling / Pixi quality is a separate EXPERIENCE pack). No new localStorage key (ACCEPTANCE H2/K3 preserved).
+- Not touched: `saveManager.js` STORAGE_KEY and save-key set, Pixi renderer, `assets/**`, Raphael behavior, onboarding logic.
+- Next safe action: Human review; optional follow-up EXPERIENCE pack to actually apply textSize/quality to rendering.
+- Required reading: `AGENTS.md`, `CLAUDE.md` §5.1, `ACCEPTANCE.md` H2/K3, and this lane.
+
 ### 2026-06-28 - Claude Code - UI/HUD V2 Aurora Pass (HUD chrome, pages, World Atlas)
 
 - Status: `VERIFIED`

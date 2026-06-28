@@ -71,6 +71,17 @@ const defaultState = {
     totalExplorations: 0,
     lastNodeId: null,
     visitCounts: {}
+  },
+
+  // 玩家偏好（Settings 持久化）。存在既有 STORAGE_KEY 之內，不新增 localStorage key。
+  // 預設值對齊 index.html 的 Settings 初始狀態。音效靜音(mute)維持既有獨立 key，不併入此處。
+  settings: {
+    volMaster: 80,
+    volBgm: 70,
+    volSfx: 80,
+    quality: "high",
+    textSize: "medium",
+    lowMotion: false
   }
 };
 

@@ -19,7 +19,8 @@ export function createDefaultState() {
     onboarding: { ...defaultState.onboarding },
     unlockedCompanionIds: [...defaultState.unlockedCompanionIds],
     battleRecord: { ...defaultState.battleRecord },
-    explorationProgress: { ...defaultState.explorationProgress, visitCounts: {} }
+    explorationProgress: { ...defaultState.explorationProgress, visitCounts: {} },
+    settings: { ...defaultState.settings }
   };
 }
 
@@ -95,6 +96,7 @@ export function normalizeState(rawState = {}) {
     activeCompanionId: normalizeRuntimeCompanionId(targetState.activeCompanionId, runtimeState),
     battleRecord: normalizeBattleRecord(targetState.battleRecord, baseState.battleRecord),
     explorationProgress: normalizeExplorationProgress(targetState.explorationProgress, baseState.explorationProgress),
+    settings: normalizeSettings(targetState.settings, baseState.settings),
     chatHistory: chatHistory.map((item) => ({
       role: item.role === "fox" ? "companion" : item.role || "companion",
       text: String(item.text || "")
@@ -107,6 +109,24 @@ export function normalizeState(rawState = {}) {
 
 const BATTLE_RESULTS = new Set(["win", "lose", "retreat"]);
 const ONBOARDING_STATUSES = new Set(["pending", "start", "identity", "guidance", "meet", "home", "completed"]);
+const QUALITY_VALUES = new Set(["low", "medium", "high"]);
+const TEXT_SIZE_VALUES = new Set(["small", "medium", "large"]);
+
+function normalizeSettings(rawSettings, baseSettings) {
+  const settings = rawSettings && typeof rawSettings === "object" ? rawSettings : {};
+  const vol = (value, fallback) => {
+    const num = Number(value);
+    return clamp(Number.isFinite(num) ? num : fallback, 0, 100);
+  };
+  return {
+    volMaster: vol(settings.volMaster, baseSettings.volMaster),
+    volBgm: vol(settings.volBgm, baseSettings.volBgm),
+    volSfx: vol(settings.volSfx, baseSettings.volSfx),
+    quality: QUALITY_VALUES.has(settings.quality) ? settings.quality : baseSettings.quality,
+    textSize: TEXT_SIZE_VALUES.has(settings.textSize) ? settings.textSize : baseSettings.textSize,
+    lowMotion: Boolean(settings.lowMotion)
+  };
+}
 
 function normalizePlayerProfile(rawProfile, baseProfile) {
   const profile = rawProfile && typeof rawProfile === "object" ? rawProfile : {};
