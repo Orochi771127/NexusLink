@@ -186,3 +186,91 @@ html[data-ui="v2"] .atlas-note {
     animation: none;
   }
 }
+
+/* =========================================================================
+   Soul Map（月湖 5 節點探索地圖）— V2 Aurora 重繪。
+   只改視覺；mapController.js / explorationNodes.js 的資料與結算零改動。
+   與上方 World Atlas 共用同一套 map-surface 視覺語彙（髮絲邊、v3 玻璃、青/金/紫）。
+   ========================================================================= */
+
+html[data-ui="v2"] .soul-map {
+  border: 1px solid var(--v3-line-quiet);
+  border-radius: 18px;
+  background:
+    radial-gradient(120% 80% at 22% 8%, rgba(124, 231, 255, 0.1), transparent 52%),
+    radial-gradient(120% 90% at 80% 96%, rgba(169, 152, 255, 0.12), transparent 56%),
+    linear-gradient(160deg, rgba(8, 19, 40, 0.62), rgba(5, 12, 28, 0.86));
+  box-shadow: inset 0 0 38px rgba(4, 10, 26, 0.55);
+}
+
+/* 光路：細虛線青光，與 atlas-link 一致克制（保留 path-danger / is-alert 既有處理） */
+html[data-ui="v2"] .map-path:not(.path-danger) {
+  stroke: rgba(173, 200, 240, 0.22);
+  stroke-width: 0.7;
+  stroke-dasharray: 2 2.6;
+}
+
+/* 節點 orb：實心髮絲邊（不再 dashed）、v3 玻璃 + 內微光 */
+html[data-ui="v2"] .map-node-orb {
+  border: 1px solid rgba(173, 200, 240, 0.3);
+  background:
+    radial-gradient(circle at 50% 38%, rgba(124, 231, 255, 0.12), transparent 62%),
+    var(--v3-surface-quiet);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+html[data-ui="v2"] .map-node-glyph {
+  color: var(--v3-cyan-300);
+  opacity: 0.78;
+}
+
+/* 標籤：中文 serif、拉丁小標克制 */
+html[data-ui="v2"] .map-node-label strong {
+  font-family: var(--v3-font-serif);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.7);
+}
+html[data-ui="v2"] .map-node-label em {
+  color: rgba(185, 201, 230, 0.6);
+  font-size: 8px;
+  letter-spacing: 0.14em;
+}
+
+/* 到訪次數徽章：克制金色藥丸 */
+html[data-ui="v2"] .map-node-visits {
+  border-color: rgba(247, 223, 170, 0.45);
+  background: var(--v3-surface-deep);
+  color: var(--v3-gold-200);
+}
+
+/* tone：safe=金 / calm=青 / discovery=青 / danger=克制玫瑰（非警示血紅，守「不用紅色」基調） */
+html[data-ui="v2"] .map-node.tone-safe .map-node-orb { border-color: rgba(247, 223, 170, 0.5); }
+html[data-ui="v2"] .map-node.tone-safe .map-node-glyph { color: var(--v3-gold-200); }
+html[data-ui="v2"] .map-node.tone-calm .map-node-orb { border-color: rgba(124, 231, 255, 0.42); }
+html[data-ui="v2"] .map-node.tone-discovery .map-node-orb { border-color: rgba(124, 231, 255, 0.5); }
+html[data-ui="v2"] .map-node.tone-danger .map-node-orb { border-color: rgba(201, 152, 196, 0.5); }
+html[data-ui="v2"] .map-node.tone-danger .map-node-glyph { color: rgba(214, 160, 200, 0.85); }
+
+/* visited：v3 暖/青光 */
+html[data-ui="v2"] .map-node.tone-safe.is-visited .map-node-orb {
+  box-shadow: var(--v3-glow-gold), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+html[data-ui="v2"] .map-node.tone-calm.is-visited .map-node-orb,
+html[data-ui="v2"] .map-node.tone-discovery.is-visited .map-node-orb {
+  box-shadow: var(--v3-glow-cyan), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+html[data-ui="v2"] .map-node.tone-danger.is-visited .map-node-orb {
+  box-shadow: 0 0 14px rgba(201, 152, 196, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+/* toast：對齊 v3 surface */
+html[data-ui="v2"] .map-toast {
+  border: 1px solid var(--v3-line-quiet);
+  border-radius: 14px;
+  background: var(--v3-surface-deep);
+}
+html[data-ui="v2"] .map-toast-title {
+  color: var(--v3-gold-200);
+  letter-spacing: 0.14em;
+}
