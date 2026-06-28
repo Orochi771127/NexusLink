@@ -17,6 +17,9 @@ function createAudioManager() {
   let isUnlocked = false;
   let hasRegisteredUnlock = false;
   let fadeIntervalId = null;
+  let masterVolume = 0.8;
+  let bgmVolume = 0.7;
+  let sfxVolume = 0.8;
 
   function initUnlock() {
     if (hasRegisteredUnlock || isUnlocked || typeof document === "undefined") {
@@ -49,7 +52,7 @@ function createAudioManager() {
     }
 
     if (isUnlocked) {
-      bgmAudio.volume = MAX_BGM_VOLUME;
+      bgmAudio.volume = getTargetBgmVolume();
       safePlay();
     }
 
@@ -65,6 +68,35 @@ function createAudioManager() {
     bgmAudio.volume = 0;
     safePlay();
     fadeInVolume();
+  }
+
+  function setVolume(settings = {}) {
+    if (Number.isFinite(settings.master)) {
+      masterVolume = clampVolume(settings.master);
+    }
+    if (Number.isFinite(settings.bgm)) {
+      bgmVolume = clampVolume(settings.bgm);
+    }
+    if (Number.isFinite(settings.sfx)) {
+      sfxVolume = clampVolume(settings.sfx);
+    }
+
+    if (!isMuted && isUnlocked) {
+      bgmAudio.volume = getTargetBgmVolume();
+      if (!bgmAudio.paused) safePlay();
+    }
+  }
+
+  function getVolumeSettings() {
+    return {
+      master: Math.round(masterVolume * 100),
+      bgm: Math.round(bgmVolume * 100),
+      sfx: Math.round(sfxVolume * 100)
+    };
+  }
+
+  function getTargetBgmVolume() {
+    return MAX_BGM_VOLUME * masterVolume * bgmVolume;
   }
 
   function safePlay() {
@@ -84,11 +116,12 @@ function createAudioManager() {
         return;
       }
 
+      const targetVolume = getTargetBgmVolume();
       const progress = Math.min((Date.now() - startTime) / FADE_IN_DURATION_MS, 1);
-      bgmAudio.volume = Math.min(progress * MAX_BGM_VOLUME, MAX_BGM_VOLUME);
+      bgmAudio.volume = Math.min(progress * targetVolume, targetVolume);
 
       if (progress >= 1) {
-        bgmAudio.volume = MAX_BGM_VOLUME;
+        bgmAudio.volume = targetVolume;
         stopFadeIn();
       }
     }, FADE_INTERVAL_MS);
@@ -105,6 +138,8 @@ function createAudioManager() {
     initUnlock,
     toggleMute,
     playBGM,
+    setVolume,
+    getVolumeSettings,
     get isMuted() {
       return isMuted;
     },
@@ -112,6 +147,11 @@ function createAudioManager() {
       return isUnlocked;
     }
   };
+}
+
+function clampVolume(value) {
+  const normalized = value > 1 ? value / 100 : value;
+  return Math.min(Math.max(normalized, 0), 1);
 }
 
 function readStoredMuteState() {

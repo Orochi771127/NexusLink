@@ -32,34 +32,35 @@ html[data-ui="v2"] .resource-hud {
 
 html[data-ui="v2"] .v3-home-presence {
   position: absolute;
-  left: clamp(18px, 6vw, 54px);
-  bottom: calc(var(--bottom-safe) + var(--nav-height) + 104px);
-  width: min(78vw, 340px);
-  padding: 16px 18px;
+  left: clamp(18px, 5vw, 48px);
+  bottom: calc(var(--bottom-safe) + 188px);
+  width: min(68vw, 292px);
+  max-width: calc(100vw - 36px);
+  padding: 8px 12px 9px;
   border: 1px solid var(--v3-line-quiet);
-  border-radius: 22px;
+  border-radius: 18px;
   color: var(--v3-moon-100);
   background:
-    linear-gradient(145deg, rgba(9, 21, 42, 0.18), rgba(9, 21, 42, 0.58)),
-    radial-gradient(circle at 16% 0%, rgba(124, 231, 255, 0.12), transparent 56%);
-  box-shadow: var(--v3-glow-cyan);
-  opacity: 0.92;
+    linear-gradient(145deg, rgba(9, 21, 42, 0.12), rgba(9, 21, 42, 0.48)),
+    radial-gradient(circle at 16% 0%, rgba(124, 231, 255, 0.1), transparent 54%);
+  box-shadow: 0 0 18px rgba(82, 210, 255, 0.18);
+  opacity: 0.84;
   transform: translateY(0);
 }
 
 html[data-ui="v2"] .v3-home-presence::before {
   content: "";
   position: absolute;
-  inset: 8px;
+  inset: 5px;
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 17px;
+  border-radius: 13px;
 }
 
 html[data-ui="v2"] .v3-home-kicker {
   display: block;
-  margin-bottom: 4px;
+  margin-bottom: 1px;
   color: var(--v3-cyan-300);
-  font-size: 0.68rem;
+  font-size: 0.55rem;
   letter-spacing: 0.18em;
   text-transform: uppercase;
 }
@@ -67,17 +68,21 @@ html[data-ui="v2"] .v3-home-kicker {
 html[data-ui="v2"] .v3-home-presence strong {
   display: block;
   font-family: var(--v3-font-serif);
-  font-size: clamp(1.35rem, 5vw, 1.9rem);
+  font-size: clamp(1rem, 4vw, 1.26rem);
   font-weight: 600;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.1em;
 }
 
 html[data-ui="v2"] .v3-home-presence em {
   display: block;
-  margin-top: 6px;
+  margin-top: 2px;
   color: var(--v3-moon-200);
+  font-size: 0.72rem;
   font-style: normal;
-  line-height: 1.6;
+  line-height: 1.25;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 html[data-ui="v2"] body.onboarding-active .v3-home-presence {
@@ -87,9 +92,17 @@ html[data-ui="v2"] body.onboarding-active .v3-home-presence {
 @media (max-width: 520px) {
   html[data-ui="v2"] .v3-home-presence {
     left: 18px;
-    right: 18px;
-    bottom: calc(var(--bottom-safe) + var(--nav-height) + 84px);
-    width: auto;
-    padding: 13px 15px;
+    right: auto;
+    bottom: calc(var(--bottom-safe) + 184px);
+    width: min(58vw, 230px);
+    padding: 7px 11px 8px;
+  }
+
+  html[data-ui="v2"] .v3-home-presence strong {
+    font-size: 1rem;
+  }
+
+  html[data-ui="v2"] .v3-home-presence em {
+    display: none;
   }
 }

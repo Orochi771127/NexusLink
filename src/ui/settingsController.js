@@ -11,11 +11,13 @@ export function createSettingsController({ panelManager, restartOnboarding } = {
     panel.addEventListener("input", handleInput);
     panel.addEventListener("click", handleClick);
     observePanelState();
+    syncAudioRanges();
     syncOutputs();
     syncAudioToggle();
   }
 
   function open() {
+    syncAudioRanges();
     syncOutputs();
     syncAudioToggle();
     panelManager?.openPanel("settings");
@@ -25,6 +27,7 @@ export function createSettingsController({ panelManager, restartOnboarding } = {
   function handleInput(event) {
     const range = event.target.closest("[data-settings-range]");
     if (!range) return;
+    updateAudioVolume(range);
     const output = panel.querySelector(`[data-settings-output="${range.dataset.settingsRange}"]`);
     if (output) output.textContent = range.value;
   }
@@ -73,6 +76,21 @@ export function createSettingsController({ panelManager, restartOnboarding } = {
       const output = panel.querySelector(`[data-settings-output="${range.dataset.settingsRange}"]`);
       if (output) output.textContent = range.value;
     });
+  }
+
+  function syncAudioRanges() {
+    const volumeSettings = AudioManager.getVolumeSettings?.();
+    if (!volumeSettings) return;
+    qsa("[data-settings-range]", panel).forEach((range) => {
+      const value = volumeSettings[range.dataset.settingsRange];
+      if (value != null) range.value = String(value);
+    });
+  }
+
+  function updateAudioVolume(range) {
+    const key = range.dataset.settingsRange;
+    if (!["master", "bgm", "sfx"].includes(key)) return;
+    AudioManager.setVolume?.({ [key]: Number(range.value) });
   }
 
   function syncAudioToggle() {

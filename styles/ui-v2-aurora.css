@@ -38,6 +38,22 @@ html[data-ui="v2"] .panel-layer[data-active-panel="soulTalk"] .soul-talk-drawer 
   transform: translateY(0) scale(1);
 }
 
+html[data-ui="v2"] .bottom-nav--aurora .bottom-nav__item:not(.bottom-nav__item--core) {
+  min-height: 0;
+  aspect-ratio: 512 / 388;
+  padding: 0;
+}
+
+html[data-ui="v2"] .bottom-nav--aurora .bottom-nav__item:not(.bottom-nav__item--core) .bottom-nav__icon,
+html[data-ui="v2"] .bottom-nav--aurora .bottom-nav__item:not(.bottom-nav__item--core) .bottom-nav__label,
+html[data-ui="v2"] .bottom-nav--aurora .bottom-nav__item:not(.bottom-nav__item--core) .bottom-nav__en {
+  display: none;
+}
+
+html[data-ui="v2"] .bottom-nav--aurora .bottom-nav__item:not(.bottom-nav__item--core) .nav-image {
+  display: block;
+}
+
 @media (max-width: 400px) {
   html[data-ui="v2"] .soul-strip {
     column-gap: 8px;

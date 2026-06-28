@@ -58,6 +58,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-06-28 - Codex - Mobile UI v2 HUD/Icon Optimization
+
+- Status: `VERIFIED`
+- Branch / commit: `integrate/ui-v2-raphael-main` / uncommitted, self-reviewed and ready for commit/push
+- Scope: Mobile HUD and settings-volume refinement based on the user-supplied UI v2 references and phone screenshot. Touched only runtime HTML/CSS plus the existing in-memory audio manager/settings controller path. No `assets/**`, no `src/state/**`, no `saveManager.js`, no storage-key/schema change, no Pixi renderer change, no Raphael behavior change, no external dependency, no build step, and no generated image work.
+- Work performed: Removed the standalone HUD speaker button so audio control lives in Settings; wired the Settings audio sliders to `AudioManager` volume state for in-session master/BGM/SFX control; exposed the existing UI v2 navigation PNGs for Explore/Care/Growth/Memory; restyled the center Home/Core nav button as a gold heart-core tile; reduced the Moonlake Habitat presence chip so it sits above Soul Talk without covering the companion.
+- Verification: Bundled Node `--check` passed for `src/audio/audioManager.js`, `src/ui/settingsController.js`, and `src/app.js`. `docs/qa/state-onboarding-migration-cases.mjs` passed 8/8. `git diff --check` passed. A 390x844 browser probe confirmed no HUD speaker button, one settings button, five nav buttons, visible UI v2 nav images, Settings volume range updates, no horizontal overflow, and the compact habitat chip positioned above Soul Talk. `python docs/qa/_run_web_release_gate.py` passed 9/9 automated required gates with 0 accessibility warnings.
+- Problems / risks: Real iPhone Safari visual approval remains human-only, especially exact fit under Safari browser chrome. The gate still lists manual release requirements for real-device testing, moderated private testers, and legal/privacy/store-copy review.
+- Next safe action: Commit and push this scoped UI/HUD optimization only, excluding untracked QA output JSON files. Human should recheck the phone URL and capture any remaining V2 parity gaps.
+- Required reading: `AGENTS.md`, `docs/design/NEXUS_LINK_V3_VISUAL_SYSTEM.md`, `docs/testing/STEAM_DEMO_WEB_RELEASE_CHECKLIST.md`, the supplied Nexus Link UI v2 handoff/reference files, and the user-provided mobile screenshot.
+
 ### 2026-06-28 - Codex - Mobile UI v2 Runtime Repair
 
 - Status: `VERIFIED`
@@ -294,6 +305,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 ---
 
 ## Lane 2 - Game Art, UI, And Visual Production
+
+### 2026-06-28 - Codex - Mobile UI v2 HUD/Icon Optimization
+
+- Status: `VERIFIED`
+- Branch / commit: `integrate/ui-v2-raphael-main` / uncommitted, self-reviewed and ready for commit/push
+- Scope: Visual/HUD optimization toward the supplied UI v2 direction. No new art generation, no asset import, no asset movement, no companion visual swap, no storefront/FOMO elements, and no redesign outside the user-reported HUD/icon/presence issues.
+- Work performed: The bottom navigation now uses the existing V2-style image tiles for Explore, Care, Growth, and Memory, with a distinct gold Heart-Core/Home tile in the center. The Moonlake Habitat label is compressed into a smaller glass chip instead of a large blocking block. The right HUD is simplified to Settings only, with audio controlled from the Settings page. Page and modal layering from the previous repair remains intact so companion status and content pages do not overlap visually.
+- Verification: 390x844 browser screenshot/probe showed the V2 nav images rendered at the bottom, the center Core tile highlighted, no standalone speaker icon, a compact Moonlake chip above Soul Talk, no horizontal overflow, no console errors, and Settings volume controls updating visible values. Web release responsive/accessibility gate passed 9/9 automated required checks with 0 accessibility warnings.
+- Problems / risks: This closes the obvious HUD/icon mismatch and oversized habitat label, but exact V2 aesthetic parity still depends on human phone review against the reference screenshots. No generated replacement icons were introduced because current repo policy requires human approval before adding new art to `assets/**`.
+- Next safe action: Commit/push the scoped visual optimization, then human should test `http://192.168.1.123:5173/` and `http://192.168.1.123:5173/?devReset=1` on the phone.
+- Required reading: `C:/Users/User/Pictures/新增資料夾/Nexus Link UI v2 設計/Nexus Link UI v2 - Handoff.md`, `C:/Users/User/Pictures/新增資料夾/Nexus Link UI v2 設計/Nexus Link UI v2 (export-src).dc.html`, and the user-provided V2/mobile screenshots.
 
 ### 2026-06-28 - Codex - Mobile UI v2 Runtime Repair
 
