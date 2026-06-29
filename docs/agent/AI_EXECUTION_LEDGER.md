@@ -317,6 +317,22 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 2 - Game Art, UI, And Visual Production
 
+### 2026-06-29 - Claude Code - R2C-fix i18n 動態頁切語言不重畫 (P1)
+
+- Status: `VERIFIED`
+- Branch / commit: `integrate/ui-v2-raphael-main` (+ deploy `main`), on top of `c74f7bb`.
+- Layer: EXPERIENCE. 無 schema 變更（`settings.lang` 為 R2C 既有欄位）、無 Pixi、無資產。
+- Scope: 修 QA 回報的 i18n P1 —— 翻譯表無缺 key，但語言切換後**已渲染的動態頁不重畫**，導致 Explore 等頁面 `t()` 標籤殘留上一個語言（EN 下殘繁中、JP↔SC↔TC 互殘）。**本 pack 僅修「切語言後動態 UI 不重畫」**；內容翻譯與 baked PNG nav 多語系**仍未做**（見 Problems）。
+- Work performed:
+  - `src/i18n/i18n.js`：新增並 export `LANGUAGE_CHANGED_EVENT`；`applyLanguage()` 末端 `EventBus.emit`（語言切換的唯一進出口；靜態 `[data-i18n]` 仍由原 DOM 掃描更新）。
+  - `src/ui/pageRouter.js`：`bind()` 訂閱該事件 → `render()` 重畫 active page（home early-return；背景開著的分頁就地以新語言重畫）。
+  - `src/ui/companionSelectController.js`：訂閱該事件 → 重畫 roster 卡（狀態標籤 / 同行中）。
+  - `atlasController` 不改 —— 其唯一 `t()` 同時帶 `data-i18n`，已被 `applyLanguage` 的 DOM 掃描覆蓋（實測切換後 tag 正確）。走 `eventBus`，符合 CLAUDE.md §4 跨層通訊規範。
+- Verification: bundled `node --check`(3 JS) OK；`git diff --check` clean；`state-onboarding-migration-cases` 8/8 passed；web release gate **9/9 required、0 accessibility warning、0 console error、canvas=1**；預覽 390×844 真實 UI（Home→Explore→Settings→切語言）EN→JP→SC→TC：Explore 的 `t()` 標籤（World Atlas / Approach the lake glow / Moonlake Camp / Visible traces…）每次都跟著切，**無殘留上一語言**；companionSelect 開著切 EN →「同行中／可同行」即時變「Walking with you／Available」、切回 TC 還原。
+- Problems / risks: **以下兩項刻意維持現狀、不在本 pack 範圍，不得視為已完成**：(1) 動態頁 body copy／按鈕副說明（`首輪探索…` 等敘事內文）依 `strings.js` 宣告範圍仍為繁中，屬內容翻譯 pack；(2) 底部四側 nav 為 baked-text PNG（探索/照顧/成長/記憶），EN/JP 下仍顯示中文，需新 nav 美術（資產，待批准）。簡/英/日翻譯仍建議人工校對（尤其日文語氣）。
+- Next safe action: 人工校對翻譯；之後若要譯敘事內容或 nav 圖示，各自另開後續 pack（內容翻譯 pack / nav 美術資產 pack）。
+- Required reading: 本 lane（含下一則 R2C i18n）、`CLAUDE.md` §4/§5、`ACCEPTANCE.md` H2/K3（無新 localStorage key）。
+
 ### 2026-06-29 - Claude Code - R2C i18n（語言選擇器 + UI chrome 翻譯 繁/簡/英/日）
 
 - Status: `VERIFIED`

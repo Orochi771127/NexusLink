@@ -5,7 +5,8 @@ import {
   getCompanionById
 } from "../data/companionRegistry.js";
 import { getCompanionRuntimeEligibility, normalizeRuntimeCompanionId } from "../data/companionRuntimePolicy.js";
-import { t } from "../i18n/i18n.js";
+import EventBus from "../utils/eventBus.js";
+import { t, LANGUAGE_CHANGED_EVENT } from "../i18n/i18n.js";
 
 export function createCompanionSelectController({ store, panelManager, saveCurrentState, onCompanionChanged }) {
   const listEl = qs("#companion-select-list");
@@ -83,6 +84,9 @@ export function createCompanionSelectController({ store, panelManager, saveCurre
     render();
     panelManager.openPanel("companionSelect");
   }
+
+  // roster 狀態標籤、「同行中」皆以 t() baked 進卡片 innerHTML；語言切換後重畫一次。
+  EventBus.on(LANGUAGE_CHANGED_EVENT, () => render());
 
   return { open, render };
 }

@@ -1,6 +1,7 @@
 import { BOND_MILESTONES } from "../engine/bondMilestoneEngine.js";
 import { qs, qsa } from "../utils/dom.js";
-import { t } from "../i18n/i18n.js";
+import EventBus from "../utils/eventBus.js";
+import { t, LANGUAGE_CHANGED_EVENT } from "../i18n/i18n.js";
 
 const PAGE_ACTIONS = new Set(["home", "explore", "care", "grow", "memory"]);
 const MOOD_LABELS = {
@@ -43,6 +44,9 @@ export function createPageRouter({
         navigate("home");
       }
     });
+    // 語言切換時重畫目前分頁：t() 字串已 baked 進 innerHTML，靜態 DOM 掃描掃不到。
+    // render() 在 home 會自行 early-return，背景分頁（如切語言時開著的 Explore）則就地以新語言重畫。
+    EventBus.on(LANGUAGE_CHANGED_EVENT, () => render());
     render();
   }
 
