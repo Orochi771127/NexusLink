@@ -32,7 +32,11 @@ html[data-ui="v2"] .onboarding-shell {
   padding: clamp(22px, 5vw, 34px);
   border: 1px solid var(--v3-line-strong);
   border-radius: var(--v3-radius-card);
-  overflow: hidden;
+  /* 鍵盤/短高度安全：盒子高度受可視視窗（--app-height，dom.js 量 visualViewport）約束並可內部捲動，
+     避免身份頁的「繼續/稍後決定」action 落到 viewport 之外而點不到（不必先收鍵盤）。 */
+  max-height: calc(var(--app-height, 100dvh) - var(--top-safe) - var(--bottom-safe) - 32px);
+  overflow-x: hidden;
+  overflow-y: auto;
   background:
     linear-gradient(160deg, rgba(12, 26, 52, 0.72), rgba(8, 15, 31, 0.9)),
     radial-gradient(circle at 18% 8%, rgba(124, 231, 255, 0.18), transparent 42%),
@@ -198,6 +202,40 @@ html[data-ui="v2"] .onboarding-contract-list li {
   html[data-ui="v2"] .onboarding-primary,
   html[data-ui="v2"] .onboarding-secondary {
     flex: 1 1 100%;
+  }
+}
+
+/* 短可視高度（含手機鍵盤壓縮）：壓縮間距與標題、解除 min-height、外層可捲動，
+   確保身份頁的輸入框與主要 action 同時在可視範圍內可點。 */
+@media (max-height: 600px) {
+  html[data-ui="v2"] .onboarding-layer {
+    padding-top: calc(var(--top-safe) + 10px);
+    padding-bottom: calc(var(--bottom-safe) + 12px);
+    overflow-y: auto;
+  }
+
+  html[data-ui="v2"] .onboarding-shell {
+    min-height: 0;
+    padding: 16px 18px;
+  }
+
+  html[data-ui="v2"] .onboarding-step {
+    min-height: 0;
+    justify-content: flex-start;
+    gap: 10px;
+  }
+
+  html[data-ui="v2"] .onboarding-step h1 {
+    font-size: clamp(1.5rem, 6.5vw, 2.1rem);
+  }
+
+  html[data-ui="v2"] .onboarding-step h2 {
+    font-size: clamp(1.2rem, 5vw, 1.6rem);
+  }
+
+  html[data-ui="v2"] .onboarding-copy,
+  html[data-ui="v2"] .onboarding-note {
+    line-height: 1.45;
   }
 }
 

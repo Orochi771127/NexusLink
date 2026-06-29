@@ -4,8 +4,13 @@ html[data-ui="v2"] .bottom-nav--aurora {
   grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 8px;
   align-items: stretch;
-  width: min(680px, calc(100vw - 24px));
+  /* 左右安全邊距對稱：固定 left/right:0 + margin auto 置中，寬度兩側各留 16px，
+     不再依賴 width 撐到右邊界（修右側貼齊 viewport 的不對稱）。 */
+  left: 0;
+  right: 0;
+  width: min(680px, calc(100vw - 32px));
   max-width: 680px;
+  margin-inline: auto;
   padding: 8px;
   border: 1px solid rgba(173, 222, 255, 0.2);
   border-radius: 24px;
@@ -163,6 +168,13 @@ html[data-ui="v2"] .bottom-nav__item--core .bottom-nav__label {
 
 html[data-ui="v2"] .bottom-nav__item--core .bottom-nav__en {
   display: none;
+}
+
+/* modal/面板開啟時，底部 nav 不可互動：避免第一次使用者「點到背景」誤觸 → 同時關 modal + 跳頁。
+   body.panel-open 由 panelManager.openPanel 設定（character / settings / soulTalk / companionSelect / atlas / codex 一致）。 */
+html[data-ui="v2"] body.panel-open .bottom-nav {
+  pointer-events: none;
+  opacity: 0.5;
 }
 
 /* 主次：非 active 影像分頁降亮/降彩（安靜），active 維持金色全亮（V3：selected→gold、inactive quiet）。 */

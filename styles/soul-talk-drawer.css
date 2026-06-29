@@ -45,12 +45,16 @@ html[data-ui="v2"] .soul-drawer-title {
 }
 
 html[data-ui="v2"] .soul-drawer-collapse {
-  width: 40px;
-  height: 40px;
+  /* 手機關閉鍵：>=44px 觸控目標 + touch-action:manipulation（去除 300ms 點擊延遲與雙擊縮放），
+     讓 tap 關閉穩定，不必依賴 Escape（手機無 Escape）。 */
+  width: 44px;
+  height: 44px;
+  flex: 0 0 auto;
   border: 1px solid var(--aurora-line);
   border-radius: 50%;
   color: var(--aurora-text);
   background: rgba(255, 255, 255, 0.06);
+  touch-action: manipulation;
 }
 
 html[data-ui="v2"] .soul-talk-drawer .chat-log {
@@ -100,4 +104,32 @@ html[data-ui="v2"] .soul-talk-drawer #send-button {
 }
 html[data-ui="v2"] .soul-talk-drawer #message-input {
   height: 46px;
+}
+
+/* 對話可讀下限：chat log 至少保留 96px，短高度時不被 header/quick-reply/輸入列壓死。 */
+html[data-ui="v2"] .soul-talk-drawer .chat-log {
+  min-height: 96px;
+}
+
+/* Compact composer：短可視高度或鍵盤開啟時，收掉次要區塊（快速回覆、聲紋、kicker），
+   把垂直空間讓給 chat log，同時保留輸入列在底部可見。
+   兩個觸發條件：(a) 視窗本身矮（含 Codex 模擬鍵盤的縮窗）；(b) 真機鍵盤開啟（body.kb-open）。 */
+@media (max-height: 560px) {
+  html[data-ui="v2"] .soul-talk-drawer .quick-reply-row,
+  html[data-ui="v2"] .soul-talk-drawer .soul-talk-waveform,
+  html[data-ui="v2"] .soul-talk-drawer .soul-drawer-kicker {
+    display: none;
+  }
+  html[data-ui="v2"] .soul-talk-drawer .soul-drawer-header {
+    padding-bottom: 6px;
+  }
+  html[data-ui="v2"] .soul-talk-drawer .chat-log {
+    margin: 6px 0;
+  }
+}
+
+html[data-ui="v2"] body.kb-open .soul-talk-drawer .quick-reply-row,
+html[data-ui="v2"] body.kb-open .soul-talk-drawer .soul-talk-waveform,
+html[data-ui="v2"] body.kb-open .soul-talk-drawer .soul-drawer-kicker {
+  display: none;
 }

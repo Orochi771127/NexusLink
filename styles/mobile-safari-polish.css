@@ -6,7 +6,8 @@
 
 @media (max-width: 480px) {
   html[data-ui="v2"] .bottom-nav--aurora {
-    width: calc(100vw - 16px);
+    /* 對稱邊距：兩側各 16px（置中由 base 的 margin-inline:auto 處理），不貼右邊界。 */
+    width: calc(100vw - 32px);
     gap: 3px;
     padding: 6px 4px calc(6px + env(safe-area-inset-bottom, 0px));
   }

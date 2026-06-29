@@ -317,6 +317,23 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 2 - Game Art, UI, And Visual Production
 
+### 2026-06-29 - Claude Code - First-time UX 基礎修復（mobile keyboard / page stack / HUD hit area）
+
+- Status: `VERIFIED`
+- Branch / commit: `integrate/ui-v2-raphael-main` (+ deploy `main`), on top of `b593e71`.
+- Layer: EXPERIENCE，**純 CSS**（5 個 styles 檔）。無 JS / 無 `index.html` 結構 / 無 schema / 無 Pixi / 無資產。Codex 以第一次使用者角度回報的 6 項基礎 UX（3×P1 + 3×P2）。
+- Work performed（每項都先實測重現根因再修）：
+  - **P1 身份頁鍵盤高度卡死** → `ui-v3-onboarding.css`：`.onboarding-shell` 加 `max-height: calc(var(--app-height) - safe - 32px)` + `overflow-y:auto`（吃 dom.js 量的 visualViewport，鍵盤感知）；新增 `@media (max-height:600px)` 壓縮 min-height/標題/間距、外層可捲。
+  - **P1 Soul Talk 打字壓死對話** → `soul-talk-drawer.css`：`.chat-log { min-height:96px }`；`@media (max-height:560px)` 與 `body.kb-open` 下收掉 quick-reply / 聲紋 / kicker、壓縮 header，把高度讓給 chat log，輸入列留底部可見。
+  - **P1 真頁面被心語條蓋 60px** → `page-content.css`：`body.page-open .soul-talk-launcher` 的 transform 由 `translateY(10px)` 改 `translateY(calc(100% + 16px))`，把已隱藏（opacity:0/pe:none）的心語條盒子整個移出頁面下緣 → page-view 與心語條 overlapY=0。
+  - **P2 底部 nav 右側貼邊不對稱** → `page-full-nav.css` + `mobile-safari-polish.css`：nav 改 `left:0;right:0;margin-inline:auto;width:min(680px,100vw-32px)`（≤480px 同 100vw-32），左右各 16px 對稱。
+  - **P2 modal 開啟時 nav 仍可互動誤觸跳頁** → `page-full-nav.css`：`body.panel-open .bottom-nav { pointer-events:none; opacity:.5 }`（`body.panel-open` 由既有 panelManager 設，無需動 JS）。
+  - **P2 Soul Talk 關閉鍵 tap 不穩** → `soul-talk-drawer.css`：`.soul-drawer-collapse` 由 40→44px 觸控目標 + `touch-action:manipulation`。實測發現關閉 handler 本身正常（collapse 鍵與 backdrop 皆 `data-panel-close`、Escape 亦可），不穩主因是觸控目標偏小／背景 backdrop 中心被 sheet 遮、以及鍵盤重排時序；故以放大命中區 + 去點擊延遲處理。
+- Verification（預覽 8128，清空 localStorage，實測量化）：bundled `node --check` n/a（無 JS 變更）；`git diff --check` clean；`state-onboarding-migration-cases` 8/8（未動 schema）；web release gate **9/9 required、0 accessibility warning、no failing node**；0 console error。視窗實測：390×390 身份頁 shell bottom 366<390、「繼續」在視窗內且可點、無水平溢出；390×390 Soul Talk chat-log 133px（≥96）、輸入列可見；390×520 chat-log 232px 無 regression；390×844 nav 左右margin=16/16、page-view↔心語條 overlap=0、modal 開啟時 nav pointer-events:none。截圖：390×844 Explore（末按鈕不被蓋、nav 置中）、390×390 身份頁（繼續可見）。
+- Problems / risks: P2 #6 在自動化點擊器（preview_click / 類 Codex harness）對 backdrop-filter 面板層內的 close 鍵投遞 tap 不穩，屬工具側 hit-test 限制；真實啟用（synthetic activation / Escape / 放大後的 tap）皆關閉正常、`data-active-panel→none`、aria-hidden 正確。內容翻譯 pack 與 baked PNG nav 多語系**仍未做**（沿用前述，不在本 pack）。
+- Next safe action: 真機 iOS Safari 鍵盤實測（模擬已過）；之後再開「內容翻譯 pack」與「HUD/nav 視覺 pack」（各自獨立）。
+- Required reading: 本 lane、`CLAUDE.md` §4/§5、`ACCEPTANCE.md` H2/K3（無新 localStorage key、未動 schema）。
+
 ### 2026-06-29 - Claude Code - R2C-fix i18n 動態頁切語言不重畫 (P1)
 
 - Status: `VERIFIED`

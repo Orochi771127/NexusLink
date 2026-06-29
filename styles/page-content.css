@@ -387,10 +387,12 @@ html[data-ui="v2"] body.page-open .v3-home-presence {
     transform: translateY(0);
   }
 
+  /* 開啟真頁面時，心語條完全讓開：除了 opacity/pointer-events，還用 transform 把整個盒子
+     移到自身高度之下，讓 page-view 底緣與心語條 overlapY = 0（頁面最後一個 action 不被蓋住）。 */
   html[data-ui="v2"] body.page-open .soul-talk-launcher {
     opacity: 0;
     pointer-events: none;
-    transform: translateY(10px);
+    transform: translateY(calc(100% + 16px));
   }
 
   html[data-ui="v2"] .page-evidence-strip,
