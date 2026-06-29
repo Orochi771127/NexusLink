@@ -25,6 +25,13 @@ export function setViewportVars() {
     const navH = Math.round(nav.getBoundingClientRect().height);
     if (navH > 0) root.style.setProperty("--nav-block-h", `${navH}px`);
   }
+
+  // 量測 soul-strip 高度 → 讓月湖棲地標註能緊貼在心語欄位正上方。
+  const strip = document.querySelector(".soul-strip");
+  if (strip) {
+    const stripH = Math.round(strip.getBoundingClientRect().height);
+    if (stripH > 0) root.style.setProperty("--soul-strip-h", `${stripH}px`);
+  }
 }
 
 export function bindViewportVars() {

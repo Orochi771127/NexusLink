@@ -30,79 +30,44 @@ html[data-ui="v2"] .resource-hud {
   display: none;
 }
 
+/* 月湖棲地標註：小型藥丸 tag，緊貼在心語欄位正上方左側。
+   名稱（strong）會隨未來地圖切換而改字；故只顯示名稱、隱藏 kicker 與描述句。 */
 html[data-ui="v2"] .v3-home-presence {
   position: absolute;
-  left: clamp(18px, 5vw, 48px);
-  bottom: calc(var(--bottom-safe) + 188px);
-  width: min(68vw, 292px);
+  left: 16px;
+  right: auto;
+  bottom: calc(var(--bottom-safe) + var(--nav-block-h, 104px) + var(--soul-strip-h, 76px) + 18px);
+  width: fit-content;
   max-width: calc(100vw - 36px);
-  padding: 8px 12px 9px;
+  padding: 4px 11px;
   border: 1px solid var(--v3-line-quiet);
-  border-radius: 18px;
+  border-radius: 999px;
   color: var(--v3-moon-100);
-  background:
-    linear-gradient(145deg, rgba(9, 21, 42, 0.12), rgba(9, 21, 42, 0.48)),
-    radial-gradient(circle at 16% 0%, rgba(124, 231, 255, 0.1), transparent 54%);
-  box-shadow: 0 0 18px rgba(82, 210, 255, 0.18);
-  opacity: 0.84;
+  background: linear-gradient(145deg, rgba(9, 21, 42, 0.52), rgba(7, 16, 34, 0.7));
+  box-shadow: 0 0 12px rgba(82, 210, 255, 0.14);
+  opacity: 0.9;
   transform: translateY(0);
+  pointer-events: none;
 }
 
 html[data-ui="v2"] .v3-home-presence::before {
-  content: "";
-  position: absolute;
-  inset: 5px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 13px;
+  display: none;
 }
 
-html[data-ui="v2"] .v3-home-kicker {
-  display: block;
-  margin-bottom: 1px;
-  color: var(--v3-cyan-300);
-  font-size: 0.55rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
+/* 英文小標與描述句在 tag 形態下隱藏，只留地點名。 */
+html[data-ui="v2"] .v3-home-kicker,
+html[data-ui="v2"] .v3-home-presence em {
+  display: none;
 }
 
 html[data-ui="v2"] .v3-home-presence strong {
-  display: block;
+  display: inline-block;
   font-family: var(--v3-font-serif);
-  font-size: clamp(1rem, 4vw, 1.26rem);
+  font-size: 0.82rem;
   font-weight: 600;
-  letter-spacing: 0.1em;
-}
-
-html[data-ui="v2"] .v3-home-presence em {
-  display: block;
-  margin-top: 2px;
-  color: var(--v3-moon-200);
-  font-size: 0.72rem;
-  font-style: normal;
-  line-height: 1.25;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  letter-spacing: 0.08em;
 }
 
 html[data-ui="v2"] body.onboarding-active .v3-home-presence {
   opacity: 0;
-}
-
-@media (max-width: 520px) {
-  html[data-ui="v2"] .v3-home-presence {
-    left: 18px;
-    right: auto;
-    bottom: calc(var(--bottom-safe) + 184px);
-    width: min(58vw, 230px);
-    padding: 7px 11px 8px;
-  }
-
-  html[data-ui="v2"] .v3-home-presence strong {
-    font-size: 1rem;
-  }
-
-  html[data-ui="v2"] .v3-home-presence em {
-    display: none;
-  }
 }
