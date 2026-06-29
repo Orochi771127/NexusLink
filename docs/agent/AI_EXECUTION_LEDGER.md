@@ -317,6 +317,22 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 2 - Game Art, UI, And Visual Production
 
+### 2026-06-29 - Claude Code - R2C i18n（語言選擇器 + UI chrome 翻譯 繁/簡/英/日）
+
+- Status: `VERIFIED`
+- Branch / commit: `integrate/ui-v2-raphael-main` (+ deploy `main`), on top of `9c13adc`.
+- Layer: EXPERIENCE + 最小 GROUNDWORK（`settings.lang` 加在既有 settings 區塊；`defaultState.js` + `store.js` normalizeSettings 白名單）。無新 localStorage key。
+- Work performed:
+  - 新 `src/i18n/strings.js`（key→{tc,sc,en,jp}，~80 UI chrome 字串）+ `src/i18n/i18n.js`（`t()` / `applyLanguage()`：設 html lang、掃 `data-i18n`/`-placeholder`/`-aria`）。
+  - `settings.lang`（預設 tc）持久化；設定頁加語言 segmented（繁/簡/EN/日本語），切換即套用＋存檔。
+  - `index.html` 靜態 chrome 全面加 `data-i18n`：nav、HUD、開場（含三契約）、四大頁標題/膠囊、角色 modal 標籤、companion-select、atlas、soul drawer、設定全部。
+  - 動態渲染用 `t()`：`pageRouter`（四大頁標題/動作鈕/證據·量表標籤）、`atlasController`（區域 tag，data-i18n 以便切換後仍更新）、`companionSelectController`（狀態/同行中）。
+  - **不譯（維持繁中）**：夥伴對話、Raphael 敘事、`soulTalkResponsePacks`、`explorationNodes` 結果文、心情敘述、記憶內文、區域專有名詞 —— 屬內容工程，另開 pack。
+- Verification: bundled `node --check`（8 JS）；`state-onboarding-migration-cases` 8/8 passed（settings.lang 安全遷移）；web release gate **9/9**、stateMigration ok、兩視窗 0 console error；預覽 390×844 切 EN → nav「Core」、設定「Settings/Audio/Export save」、Explore 鈕英文、atlas「Far away/You are here」、保存 lang=en；切 JP → 心核の相棒 / 心の声 / 話す / モーション軽減。
+- Problems / risks: 簡/英/**日**為 AI 生成翻譯，**建議人工校對**（尤其日文語氣）。四側 nav 圖示為 baked-text PNG（探索/照顧/成長/記憶），EN/JP 下仍顯示中文；要全譯需新 nav 美術（資產，待批准）。中央心核鍵與所有 CSS 文字已隨語言切換。
+- Next safe action: 人工校對翻譯；之後若要譯敘事內容或 nav 圖示，各自另開 pack。
+- Required reading: 本 lane、plan ROUND 2、`ACCEPTANCE.md` H2/K3（無新 localStorage key）。
+
 ### 2026-06-29 - Claude Code - R2B Settings 實裝（畫質有感 / 匯出·刪除存檔 / 音量稽核）
 
 - Status: `VERIFIED`

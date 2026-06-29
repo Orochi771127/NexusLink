@@ -52,8 +52,8 @@
           <section class="page-view page-view--explore rune-border" data-page="explore" aria-labelledby="explore-page-title" aria-hidden="true" hidden>
             <header class="page-view__header">
               <p>Explore</p>
-              <h2 id="explore-page-title">探索</h2>
-              <span>月湖首輪</span>
+              <h2 id="explore-page-title" data-i18n="page.explore.title">探索</h2>
+              <span data-i18n="page.explore.pill">月湖首輪</span>
             </header>
             <div id="explore-page-body" class="page-view__body"></div>
           </section>
@@ -61,8 +61,8 @@
           <section class="page-view page-view--care rune-border" data-page="care" aria-labelledby="care-page-title" aria-hidden="true" hidden>
             <header class="page-view__header">
               <p>Care</p>
-              <h2 id="care-page-title">照顧</h2>
-              <span>陪伴與邊界</span>
+              <h2 id="care-page-title" data-i18n="page.care.title">照顧</h2>
+              <span data-i18n="page.care.pill">陪伴與邊界</span>
             </header>
             <div id="care-page-body" class="page-view__body"></div>
           </section>
@@ -70,8 +70,8 @@
           <section class="page-view page-view--growth rune-border" data-page="grow" aria-labelledby="growth-page-title" aria-hidden="true" hidden>
             <header class="page-view__header">
               <p>Growth</p>
-              <h2 id="growth-page-title">成長</h2>
-              <span>關係章節</span>
+              <h2 id="growth-page-title" data-i18n="page.growth.title">成長</h2>
+              <span data-i18n="page.growth.pill">關係章節</span>
             </header>
             <div id="growth-page-body" class="page-view__body"></div>
           </section>
@@ -79,8 +79,8 @@
           <section class="page-view page-view--memory rune-border" data-page="memory" aria-labelledby="memory-page-title" aria-hidden="true" hidden>
             <header class="page-view__header">
               <p>Memory</p>
-              <h2 id="memory-page-title">記憶</h2>
-              <span>已保存資料</span>
+              <h2 id="memory-page-title" data-i18n="page.memory.title">記憶</h2>
+              <span data-i18n="page.memory.pill">已保存資料</span>
             </header>
             <div id="memory-page-body" class="page-view__body"></div>
           </section>
@@ -90,39 +90,39 @@
           <div class="onboarding-shell rune-border" data-onboarding-step="start">
             <section class="onboarding-step is-active" data-step="start" aria-labelledby="onboarding-start-title">
               <p class="onboarding-kicker">Nexus Link ・ 心核連結</p>
-              <h1 id="onboarding-start-title">這不是電子寵物。</h1>
-              <p class="onboarding-copy">這是一段會留下痕跡的陪伴。灰影會靠近，也會保留自己的邊界。</p>
-              <button type="button" class="onboarding-primary" data-onboarding-action="start">開始連結</button>
+              <h1 id="onboarding-start-title" data-i18n="ob.startTitle">這不是電子寵物。</h1>
+              <p class="onboarding-copy" data-i18n="ob.startCopy">這是一段會留下痕跡的陪伴。灰影會靠近，也會保留自己的邊界。</p>
+              <button type="button" class="onboarding-primary" data-onboarding-action="start" data-i18n="ob.startBtn">開始連結</button>
             </section>
 
             <section class="onboarding-step" data-step="identity" aria-labelledby="onboarding-identity-title">
-              <p class="onboarding-kicker">Local Identity</p>
-              <h2 id="onboarding-identity-title">你希望我們怎麼稱呼你？</h2>
-              <label class="onboarding-input-label" for="player-display-name">稱呼</label>
+              <p class="onboarding-kicker" data-i18n="ob.identityKicker">Local Identity</p>
+              <h2 id="onboarding-identity-title" data-i18n="ob.identityTitle">你希望我們怎麼稱呼你？</h2>
+              <label class="onboarding-input-label" for="player-display-name" data-i18n="ob.nameLabel">稱呼</label>
               <input id="player-display-name" class="onboarding-input" type="text" maxlength="32" autocomplete="nickname" placeholder="星夜旅人" />
               <div class="onboarding-actions">
-                <button type="button" class="onboarding-secondary" data-onboarding-action="skip-identity">稍後決定</button>
-                <button type="button" class="onboarding-primary" data-onboarding-action="save-identity">繼續</button>
+                <button type="button" class="onboarding-secondary" data-onboarding-action="skip-identity" data-i18n="ob.skipBtn">稍後決定</button>
+                <button type="button" class="onboarding-primary" data-onboarding-action="save-identity" data-i18n="ob.continueBtn">繼續</button>
               </div>
-              <p class="onboarding-note">資料只保存在此裝置的既有存檔中。</p>
+              <p class="onboarding-note" data-i18n="ob.identityNote">資料只保存在此裝置的既有存檔中。</p>
             </section>
 
             <section class="onboarding-step" data-step="guidance" aria-labelledby="onboarding-guidance-title">
               <p class="onboarding-kicker">Heart-Core Guidance</p>
-              <h2 id="onboarding-guidance-title">三件事先說清楚。</h2>
+              <h2 id="onboarding-guidance-title" data-i18n="ob.guidanceTitle">三件事先說清楚。</h2>
               <ul class="onboarding-contract-list">
-                <li>牠會記得你，但牠不屬於你。</li>
-                <li>牠會靠近你，但不會吞掉你。</li>
-                <li>你能影響牠，但不能支配牠。</li>
+                <li data-i18n="ob.contract1">牠會記得你，但牠不屬於你。</li>
+                <li data-i18n="ob.contract2">牠會靠近你，但不會吞掉你。</li>
+                <li data-i18n="ob.contract3">你能影響牠，但不能支配牠。</li>
               </ul>
-              <button type="button" class="onboarding-primary" data-onboarding-action="guidance-next">我明白</button>
+              <button type="button" class="onboarding-primary" data-onboarding-action="guidance-next" data-i18n="ob.guidanceBtn">我明白</button>
             </section>
 
             <section class="onboarding-step" data-step="meet" aria-labelledby="onboarding-meet-title">
               <p class="onboarding-kicker">First Resonance</p>
-              <h2 id="onboarding-meet-title">灰影在月湖邊等你。</h2>
-              <p class="onboarding-copy">你不用立刻說很多話。靠近、停下、或只是看一會兒，都可以。</p>
-              <button type="button" class="onboarding-primary" data-onboarding-action="complete">進入心核棲地</button>
+              <h2 id="onboarding-meet-title" data-i18n="ob.meetTitle">灰影在月湖邊等你。</h2>
+              <p class="onboarding-copy" data-i18n="ob.meetCopy">你不用立刻說很多話。靠近、停下、或只是看一會兒，都可以。</p>
+              <button type="button" class="onboarding-primary" data-onboarding-action="complete" data-i18n="ob.meetBtn">進入心核棲地</button>
             </section>
           </div>
         </section>
@@ -134,7 +134,7 @@
             </span>
             <span class="core-copy">
               <span id="fox-name" class="core-name">載入中...</span>
-              <span class="core-kicker">心核夥伴</span>
+              <span class="core-kicker" data-i18n="hud.companion">心核夥伴</span>
               <span class="level-pill">等級 01</span>
             </span>
             <span class="core-status-dot" aria-hidden="true"></span>
@@ -154,12 +154,12 @@
 
         <button class="soul-talk-launcher soul-strip glass-interactive rune-border" type="button" data-panel-trigger="soulTalk" aria-label="開啟心語對話">
           <span>
-            <strong>心語</strong>
+            <strong data-i18n="hud.soulKicker">心語</strong>
             <em id="soul-talk-preview">我在這裡，安靜地看著你。</em>
           </span>
           <span class="soul-core-glow" aria-hidden="true"></span>
           <span class="soul-wave-deco" aria-hidden="true"></span>
-          <b class="btn-primary" aria-hidden="true">對話</b>
+          <b class="btn-primary" aria-hidden="true" data-i18n="hud.talk">對話</b>
         </button>
 
         <nav class="bottom-nav bottom-nav--aurora" aria-label="主要行動">
@@ -169,7 +169,7 @@
               <img class="nav-art nav-art-default" src="./assets/ui/nav/nav_explore_default.png" width="512" height="388" alt="" decoding="async" draggable="false" />
               <img class="nav-art nav-art-active" src="./assets/ui/nav/nav_explore_active.png" width="512" height="388" alt="" decoding="async" draggable="false" />
             </span>
-            <span class="bottom-nav__label">探索</span>
+            <span class="bottom-nav__label" data-i18n="nav.explore">探索</span>
             <span class="bottom-nav__en">Explore</span>
           </button>
           <button type="button" class="bottom-nav__item glass-interactive" data-action="care" aria-label="照顧">
@@ -178,12 +178,12 @@
               <img class="nav-art nav-art-default" src="./assets/ui/nav/nav_care_default.png" width="512" height="388" alt="" decoding="async" draggable="false" />
               <img class="nav-art nav-art-active" src="./assets/ui/nav/nav_care_active.png" width="512" height="388" alt="" decoding="async" draggable="false" />
             </span>
-            <span class="bottom-nav__label">照顧</span>
+            <span class="bottom-nav__label" data-i18n="nav.care">照顧</span>
             <span class="bottom-nav__en">Care</span>
           </button>
           <button type="button" class="bottom-nav__item bottom-nav__item--core glass-interactive" data-action="home" aria-label="回到心核棲地">
             <span class="nav-core-gem" aria-hidden="true">◈</span>
-            <span class="bottom-nav__label">心核</span>
+            <span class="bottom-nav__label" data-i18n="nav.home">心核</span>
             <span class="bottom-nav__en">Home</span>
           </button>
           <button type="button" class="bottom-nav__item glass-interactive" data-action="grow" aria-label="成長">
@@ -192,7 +192,7 @@
               <img class="nav-art nav-art-default" src="./assets/ui/nav/nav_grow_default.png" width="512" height="388" alt="" decoding="async" draggable="false" />
               <img class="nav-art nav-art-active" src="./assets/ui/nav/nav_grow_active.png" width="512" height="388" alt="" decoding="async" draggable="false" />
             </span>
-            <span class="bottom-nav__label">成長</span>
+            <span class="bottom-nav__label" data-i18n="nav.growth">成長</span>
             <span class="bottom-nav__en">Growth</span>
           </button>
           <button type="button" class="bottom-nav__item glass-interactive" data-action="memory" aria-label="記憶">
@@ -201,7 +201,7 @@
               <img class="nav-art nav-art-default" src="./assets/ui/nav/nav_memory_default.png" width="512" height="388" alt="" decoding="async" draggable="false" />
               <img class="nav-art nav-art-active" src="./assets/ui/nav/nav_memory_active.png" width="512" height="388" alt="" decoding="async" draggable="false" />
             </span>
-            <span class="bottom-nav__label">記憶</span>
+            <span class="bottom-nav__label" data-i18n="nav.memory">記憶</span>
             <span class="bottom-nav__en">Memory</span>
           </button>
         </nav>
@@ -212,8 +212,8 @@
           <section class="modal-panel character-modal rune-border" role="dialog" aria-modal="true" aria-labelledby="character-title" data-panel="character">
             <header class="panel-header">
               <div>
-                <p>心核夥伴</p>
-                <h2 id="character-title">夥伴狀態</h2>
+                <p data-i18n="char.kicker">心核夥伴</p>
+                <h2 id="character-title" data-i18n="char.title">夥伴狀態</h2>
               </div>
               <button type="button" class="panel-close" data-panel-close aria-label="關閉夥伴狀態">X</button>
             </header>
@@ -227,33 +227,33 @@
               </div>
             </div>
             <div class="mood-resonance" aria-label="今日心情共鳴">
-              <p class="mood-resonance__kicker">今日心情共鳴</p>
+              <p class="mood-resonance__kicker" data-i18n="char.moodTitle">今日心情共鳴</p>
               <strong id="mood-resonance-label" class="mood-resonance__label">平靜</strong>
               <em id="mood-resonance-note" class="mood-resonance__note">牠把距離留在自己覺得安心的地方。</em>
             </div>
             <div class="core-stat-list" aria-label="夥伴詳細狀態">
               <div class="core-stat-row" data-stat="bond">
-                <span class="core-stat-label">羈絆</span>
+                <span class="core-stat-label" data-i18n="char.bond">羈絆</span>
                 <div class="core-stat-bar"><span id="bond-fill" class="core-stat-fill"></span></div>
                 <strong id="bond-value" class="core-stat-value">0</strong>
               </div>
               <div class="core-stat-row" data-stat="mood">
-                <span class="core-stat-label">心情</span>
+                <span class="core-stat-label" data-i18n="char.mood">心情</span>
                 <div class="core-stat-bar"><span id="mood-fill" class="core-stat-fill"></span></div>
                 <strong id="mood-value" class="core-stat-value">平靜</strong>
               </div>
               <div class="core-stat-row" data-stat="energy">
-                <span class="core-stat-label">能量</span>
+                <span class="core-stat-label" data-i18n="char.energy">能量</span>
                 <div class="core-stat-bar"><span id="energy-fill" class="core-stat-fill"></span></div>
                 <strong id="energy-value" class="core-stat-value">10</strong>
               </div>
               <div class="core-stat-row" data-stat="trust">
-                <span class="core-stat-label">信任</span>
+                <span class="core-stat-label" data-i18n="char.trust">信任</span>
                 <div class="core-stat-bar"><span id="trust-fill" class="core-stat-fill"></span></div>
                 <strong id="trust-value" class="core-stat-value">5</strong>
               </div>
               <div class="core-stat-row boundary-row" data-stat="boundary">
-                <span class="core-stat-label">邊界</span>
+                <span class="core-stat-label" data-i18n="char.boundary">邊界</span>
                 <div class="boundary-copy">
                   <strong id="boundary-state" class="core-stat-value">平常</strong>
                   <em id="boundary-preview" class="boundary-preview">現在輕碰，牠大概會靠過來。</em>
@@ -262,8 +262,8 @@
               </div>
             </div>
             <div class="character-modal-actions">
-              <button type="button" class="ghost-button" data-panel-trigger="companionSelect">夥伴名錄</button>
-              <button type="button" class="ghost-button" data-panel-trigger="codex">開啟圖鑑</button>
+              <button type="button" class="ghost-button" data-panel-trigger="companionSelect" data-i18n="char.roster">夥伴名錄</button>
+              <button type="button" class="ghost-button" data-panel-trigger="codex" data-i18n="char.codex">開啟圖鑑</button>
             </div>
           </section>
 
@@ -271,11 +271,11 @@
             <header class="panel-header">
               <div>
                 <p>心核連結 ・ 已締結</p>
-                <h2 id="companion-select-title">已締結的夥伴</h2>
+                <h2 id="companion-select-title" data-i18n="roster.title">已締結的夥伴</h2>
               </div>
               <button type="button" class="panel-close" data-panel-close aria-label="關閉夥伴選擇">X</button>
             </header>
-            <p class="panel-subcopy">這裡只顯示已締結或已解鎖的夥伴。灰影仍是第一位心核夥伴。</p>
+            <p class="panel-subcopy" data-i18n="roster.subcopy">這裡只顯示已締結或已解鎖的夥伴。灰影仍是第一位心核夥伴。</p>
             <div id="companion-select-list" class="companion-select-list" aria-label="已締結的夥伴"></div>
           </section>
 
@@ -302,14 +302,14 @@
             <header class="panel-header">
               <div>
                 <p>World Atlas ・ Linkara</p>
-                <h2 id="atlas-title">世界地圖</h2>
+                <h2 id="atlas-title" data-i18n="atlas.title">世界地圖</h2>
               </div>
               <button type="button" class="panel-close" data-panel-close aria-label="關閉世界地圖">X</button>
             </header>
-            <p class="atlas-intro">「聯結之河」串起 Linkara 的各個區域。你與灰影現在停在月湖一帶；其餘地方仍在遠處，會在之後的旅程裡慢慢靠近。</p>
+            <p class="atlas-intro" data-i18n="atlas.intro">「聯結之河」串起 Linkara 的各個區域。你與灰影現在停在月湖一帶；其餘地方仍在遠處，會在之後的旅程裡慢慢靠近。</p>
             <div id="atlas-canvas" class="atlas-canvas" aria-hidden="true"></div>
             <ul id="atlas-legend" class="atlas-legend" aria-label="Linkara 區域"></ul>
-            <p class="atlas-note">這是一張遠景示意圖，不是任務清單，也沒有要趕著抵達的地方。</p>
+            <p class="atlas-note" data-i18n="atlas.note">這是一張遠景示意圖，不是任務清單，也沒有要趕著抵達的地方。</p>
           </section>
 
           <section class="modal-panel battle-modal rune-border" role="dialog" aria-modal="true" aria-labelledby="battle-title" data-panel="battle">
@@ -390,63 +390,73 @@
             <header class="panel-header settings-page-header">
               <div>
                 <p>Settings</p>
-                <h2 id="settings-page-title">設定</h2>
+                <h2 id="settings-page-title" data-i18n="set.title">設定</h2>
               </div>
               <button type="button" class="panel-close" data-panel-close aria-label="關閉設定">X</button>
             </header>
 
             <div class="settings-page-body" aria-label="設定內容">
               <section class="settings-section" aria-labelledby="settings-audio-title">
-                <h3 id="settings-audio-title">音效</h3>
+                <h3 id="settings-audio-title" data-i18n="set.audio">音效</h3>
                 <label class="settings-range-row">
-                  <span>主音量</span>
+                  <span data-i18n="set.master">主音量</span>
                   <input type="range" min="0" max="100" value="80" data-settings-range="master" />
                   <output data-settings-output="master">80</output>
                 </label>
                 <label class="settings-range-row">
-                  <span>背景音樂</span>
+                  <span data-i18n="set.bgm">背景音樂</span>
                   <input type="range" min="0" max="100" value="70" data-settings-range="bgm" />
                   <output data-settings-output="bgm">70</output>
                 </label>
                 <label class="settings-range-row">
-                  <span>音效</span>
+                  <span data-i18n="set.sfx">音效</span>
                   <input type="range" min="0" max="100" value="80" data-settings-range="sfx" />
                   <output data-settings-output="sfx">80</output>
                 </label>
                 <button type="button" class="settings-toggle-row" data-settings-action="toggle-audio" aria-pressed="false">
-                  <span>聲音開關</span>
+                  <span data-i18n="set.soundToggle">聲音開關</span>
                   <b data-settings-toggle-knob></b>
                 </button>
-                <p class="settings-note settings-note--quiet">背景音樂會即時隨「主音量／背景音樂」變化（首次需輕觸畫面以啟用聲音）。音效素材仍在準備中。</p>
+                <p class="settings-note settings-note--quiet" data-i18n="set.audioNote">背景音樂會即時隨「主音量／背景音樂」變化（首次需輕觸畫面以啟用聲音）。音效素材仍在準備中。</p>
               </section>
 
               <section class="settings-section" aria-labelledby="settings-display-title">
-                <h3 id="settings-display-title">畫面</h3>
-                <div class="settings-segment-row" role="group" aria-label="畫質">
-                  <span>畫質</span>
-                  <button type="button" data-settings-segment="quality" data-value="low">低</button>
-                  <button type="button" data-settings-segment="quality" data-value="medium">中</button>
-                  <button type="button" data-settings-segment="quality" data-value="high" aria-pressed="true">高</button>
+                <h3 id="settings-display-title" data-i18n="set.display">畫面</h3>
+                <div class="settings-segment-row" role="group" aria-label="畫質 / Quality">
+                  <span data-i18n="set.quality">畫質</span>
+                  <button type="button" data-settings-segment="quality" data-value="low" data-i18n="set.qualityLow">低</button>
+                  <button type="button" data-settings-segment="quality" data-value="medium" data-i18n="set.qualityMed">中</button>
+                  <button type="button" data-settings-segment="quality" data-value="high" aria-pressed="true" data-i18n="set.qualityHigh">高</button>
                 </div>
-                <div class="settings-segment-row" role="group" aria-label="文字大小">
-                  <span>文字大小</span>
-                  <button type="button" data-settings-segment="textSize" data-value="small">小</button>
-                  <button type="button" data-settings-segment="textSize" data-value="medium" aria-pressed="true">中</button>
-                  <button type="button" data-settings-segment="textSize" data-value="large">大</button>
+                <div class="settings-segment-row" role="group" aria-label="文字大小 / Text size">
+                  <span data-i18n="set.textSize">文字大小</span>
+                  <button type="button" data-settings-segment="textSize" data-value="small" data-i18n="set.textSmall">小</button>
+                  <button type="button" data-settings-segment="textSize" data-value="medium" aria-pressed="true" data-i18n="set.textMed">中</button>
+                  <button type="button" data-settings-segment="textSize" data-value="large" data-i18n="set.textLarge">大</button>
                 </div>
                 <button type="button" class="settings-toggle-row" data-settings-action="toggle-motion" aria-pressed="false">
-                  <span>低動態模式</span>
+                  <span data-i18n="set.lowMotion">低動態模式</span>
                   <b data-settings-toggle-knob></b>
                 </button>
               </section>
 
+              <section class="settings-section" aria-labelledby="settings-language-title">
+                <h3 id="settings-language-title" data-i18n="set.language">語言</h3>
+                <div class="settings-segment-row settings-segment-row--lang" role="group" aria-label="語言 / Language">
+                  <button type="button" data-settings-segment="language" data-value="tc" aria-pressed="true">繁體</button>
+                  <button type="button" data-settings-segment="language" data-value="sc">简体</button>
+                  <button type="button" data-settings-segment="language" data-value="en">EN</button>
+                  <button type="button" data-settings-segment="language" data-value="jp">日本語</button>
+                </div>
+              </section>
+
               <section class="settings-section" aria-labelledby="settings-save-title">
-                <h3 id="settings-save-title">存檔與引導</h3>
-                <p class="settings-note">目前進度保存在這台裝置。若要在手機重看開始、身份與心核引導，可從這裡重新播放，不會刪除記憶或痕跡。</p>
-                <button type="button" class="settings-primary-action" data-settings-action="restart-onboarding">重新播放引導</button>
-                <button type="button" class="settings-secondary-action" data-settings-action="export-save">匯出存檔</button>
-                <button type="button" class="settings-danger-action" data-settings-action="delete-save">刪除存檔</button>
-                <p class="settings-note settings-note--quiet">刪除後會清空這台裝置上的記憶與痕跡，回到最開始的開場與輸入名字流程，無法復原。</p>
+                <h3 id="settings-save-title" data-i18n="set.saveTitle">存檔與引導</h3>
+                <p class="settings-note" data-i18n="set.saveNote">目前進度保存在這台裝置。若要在手機重看開始、身份與心核引導，可從這裡重新播放，不會刪除記憶或痕跡。</p>
+                <button type="button" class="settings-primary-action" data-settings-action="restart-onboarding" data-i18n="set.restart">重新播放引導</button>
+                <button type="button" class="settings-secondary-action" data-settings-action="export-save" data-i18n="set.export">匯出存檔</button>
+                <button type="button" class="settings-danger-action" data-settings-action="delete-save" data-i18n="set.delete">刪除存檔</button>
+                <p class="settings-note settings-note--quiet" data-i18n="set.deleteNote">刪除後會清空這台裝置上的記憶與痕跡，回到最開始的開場與輸入名字流程，無法復原。</p>
               </section>
             </div>
           </section>
@@ -454,10 +464,10 @@
           <section id="soul-talk-panel" class="modal-panel soul-talk-drawer deep-panel deep-panel--soultalk soul-talk-modal glass-strong rune-border" role="dialog" aria-modal="false" aria-label="心語對話" data-panel="soulTalk">
             <header class="soul-drawer-header">
               <div class="soul-drawer-heading">
-                <p class="soul-drawer-kicker">心語對話</p>
+                <p class="soul-drawer-kicker" data-i18n="soul.kicker">心語對話</p>
                 <h3 id="soul-drawer-companion-name" class="soul-drawer-title">夥伴</h3>
               </div>
-              <button type="button" class="soul-drawer-collapse" data-panel-close aria-label="收合心語">⌄</button>
+              <button type="button" class="soul-drawer-collapse" data-panel-close aria-label="收合心語" data-i18n-aria="soul.collapse">⌄</button>
             </header>
             <p id="status-text" class="soul-status-text" aria-live="polite">心語</p>
             <div id="chat-log" class="chat-log" aria-live="polite"></div>
@@ -467,9 +477,10 @@
                 id="message-input"
                 type="text"
                 placeholder="輕聲說些什麼..."
+                data-i18n-placeholder="soul.placeholder"
                 autocomplete="off"
               />
-              <button id="send-button" type="button">送出</button>
+              <button id="send-button" type="button" data-i18n="soul.send">送出</button>
             </div>
           </section>
 

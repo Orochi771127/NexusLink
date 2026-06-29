@@ -111,6 +111,7 @@ const BATTLE_RESULTS = new Set(["win", "lose", "retreat"]);
 const ONBOARDING_STATUSES = new Set(["pending", "start", "identity", "guidance", "meet", "home", "completed"]);
 const QUALITY_VALUES = new Set(["low", "medium", "high"]);
 const TEXT_SIZE_VALUES = new Set(["small", "medium", "large"]);
+const LANGUAGE_VALUES = new Set(["tc", "sc", "en", "jp"]);
 
 function normalizeSettings(rawSettings, baseSettings) {
   const settings = rawSettings && typeof rawSettings === "object" ? rawSettings : {};
@@ -124,7 +125,8 @@ function normalizeSettings(rawSettings, baseSettings) {
     volSfx: vol(settings.volSfx, baseSettings.volSfx),
     quality: QUALITY_VALUES.has(settings.quality) ? settings.quality : baseSettings.quality,
     textSize: TEXT_SIZE_VALUES.has(settings.textSize) ? settings.textSize : baseSettings.textSize,
-    lowMotion: Boolean(settings.lowMotion)
+    lowMotion: Boolean(settings.lowMotion),
+    lang: LANGUAGE_VALUES.has(settings.lang) ? settings.lang : baseSettings.lang
   };
 }
 

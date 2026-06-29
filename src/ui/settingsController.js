@@ -1,6 +1,7 @@
 import AudioManager from "../audio/audioManager.js";
 import { qs, qsa } from "../utils/dom.js";
 import { clearState, exportSaveData } from "../state/saveManager.js";
+import { applyLanguage } from "../i18n/i18n.js";
 
 // data-settings-range key → state.settings 欄位
 const VOLUME_FIELD = { master: "volMaster", bgm: "volBgm", sfx: "volSfx" };
@@ -43,6 +44,7 @@ export function createSettingsController({ panelManager, restartOnboarding, stor
     observePanelState();
     syncControlsFromState();
     applyToRuntime();
+    applyLanguage(getSettings().lang || "tc");
   }
 
   function open() {
@@ -144,6 +146,10 @@ export function createSettingsController({ panelManager, restartOnboarding, stor
       patchSettings({ [group]: value });
       applyToRuntime();
     }
+    if (group === "language") {
+      patchSettings({ lang: value });
+      applyLanguage(value);
+    }
   }
 
   function syncControlsFromState() {
@@ -159,6 +165,7 @@ export function createSettingsController({ panelManager, restartOnboarding, stor
 
     syncSegment("quality", settings.quality);
     syncSegment("textSize", settings.textSize);
+    syncSegment("language", settings.lang);
 
     const motionButton = qs('[data-settings-action="toggle-motion"]', panel);
     motionButton?.setAttribute("aria-pressed", String(Boolean(settings.lowMotion)));

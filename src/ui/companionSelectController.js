@@ -5,6 +5,7 @@ import {
   getCompanionById
 } from "../data/companionRegistry.js";
 import { getCompanionRuntimeEligibility, normalizeRuntimeCompanionId } from "../data/companionRuntimePolicy.js";
+import { t } from "../i18n/i18n.js";
 
 export function createCompanionSelectController({ store, panelManager, saveCurrentState, onCompanionChanged }) {
   const listEl = qs("#companion-select-list");
@@ -47,7 +48,7 @@ export function createCompanionSelectController({ store, panelManager, saveCurre
         </span>
         <span class="companion-card-side">
           <span class="companion-card-status">${statusLabel}</span>
-          ${isActive ? '<span class="companion-card-active">同行中</span>' : ""}
+          ${isActive ? `<span class="companion-card-active">${t("roster.active")}</span>` : ""}
         </span>
       `;
 
@@ -93,8 +94,8 @@ function shouldShowCompanionInSelector(companion, state, eligibility) {
 // 玩家語：把工程狀態（「動畫就緒」/「Asset pending」）映射成玩家看得懂的字眼。
 // 只改 controller 顯示層，companion data 不動。
 function getCardStatusLabel(companion, eligibility) {
-  if (eligibility.canSelect) return "可同行";
-  if (!eligibility.isAssetReady) return "準備中";
-  if (!eligibility.isUnlocked) return "章節未解鎖";
-  return "暫不可同行";
+  if (eligibility.canSelect) return t("status.available");
+  if (!eligibility.isAssetReady) return t("status.preparing");
+  if (!eligibility.isUnlocked) return t("status.locked");
+  return t("status.unavailable");
 }

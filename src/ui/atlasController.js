@@ -1,4 +1,5 @@
 import { qs } from "../utils/dom.js";
+import { t } from "../i18n/i18n.js";
 
 // 唯讀世界地圖（Linkara 遠景）。資料純前端、不接 schema、不改存檔。
 // 月湖營地（區域 5 / Ethereal Moon Lakefront）＝玩家當前所在；其餘為遠方鎖定。
@@ -82,14 +83,14 @@ function buildLegend() {
     .slice()
     .sort((left, right) => Number(left.no) - Number(right.no))
     .map((region) => {
-      const tag = region.status === "current" ? "你在這裡" : "遠方";
+      const tagKey = region.status === "current" ? "atlas.here" : "atlas.far";
       return `<li class="atlas-region atlas-region--${region.status}">
         <span class="atlas-region-no" aria-hidden="true">${region.no}</span>
         <span class="atlas-region-copy">
           <strong>${region.zh}</strong>
           <em>${region.en}</em>
         </span>
-        <span class="atlas-region-tag">${tag}</span>
+        <span class="atlas-region-tag" data-i18n="${tagKey}">${t(tagKey)}</span>
       </li>`;
     })
     .join("");

@@ -1,5 +1,6 @@
 import { BOND_MILESTONES } from "../engine/bondMilestoneEngine.js";
 import { qs, qsa } from "../utils/dom.js";
+import { t } from "../i18n/i18n.js";
 
 const PAGE_ACTIONS = new Set(["home", "explore", "care", "grow", "memory"]);
 const MOOD_LABELS = {
@@ -95,29 +96,29 @@ export function createPageRouter({
         <span class="page-orb" aria-hidden="true">☾</span>
         <div>
           <p class="page-card-kicker">Moonlake Camp</p>
-          <h3>月湖營地</h3>
+          <h3>${t("explore.cardTitle")}</h3>
           <p>首輪探索只開放月湖周邊。你可以看見棲地、記憶痕跡與灰影貓願意靠近的距離。</p>
         </div>
       </div>
       <div class="page-evidence-strip" aria-label="探索狀態">
-        <span><strong>${traceCount}</strong><em>可見痕跡</em></span>
-        <span><strong>${memoryCount}</strong><em>情緒記憶</em></span>
+        <span><strong>${traceCount}</strong><em>${t("explore.evTraces")}</em></span>
+        <span><strong>${memoryCount}</strong><em>${t("explore.evMemories")}</em></span>
       </div>
       <div class="page-action-grid">
         <button type="button" data-page-action="open-map">
-          <strong>查看月湖路徑</strong>
+          <strong>${t("explore.openMap")}</strong>
           <em>打開既有探索地圖，不擴張新區域。</em>
         </button>
         <button type="button" data-page-action="open-atlas">
-          <strong>世界地圖</strong>
+          <strong>${t("explore.atlas")}</strong>
           <em>遠望 Linkara：你現在在月湖一帶，其餘仍在遠方。</em>
         </button>
         <button type="button" data-page-action="commit" data-nav-action="explore" data-choice="lake_glow" data-status="湖面留下了一圈柔和微光。">
-          <strong>靠近湖面微光</strong>
+          <strong>${t("explore.lakeGlow")}</strong>
           <em>安靜觀察牠留下的回應。</em>
         </button>
         <button type="button" data-page-action="commit" data-nav-action="explore" data-choice="silent_crystal" data-status="晶簇亮起微光，空氣變得穩定。">
-          <strong>觀察靜默晶簇</strong>
+          <strong>${t("explore.crystal")}</strong>
           <em>留下可見的棲地痕跡。</em>
         </button>
       </div>
@@ -131,16 +132,16 @@ export function createPageRouter({
     const energy = toNumber(state.energy);
     const trust = toNumber(state.trust);
     const primaryCareChoice = defense >= 60 ? "gentle_presence" : "soft_comfort";
-    const primaryCareLabel = defense >= 60 ? "保持距離陪伴" : "靜靜陪伴";
+    const primaryCareLabel = defense >= 60 ? t("care.keepDistance") : t("care.sitQuiet");
     const primaryCareStatus = defense >= 60
       ? "你放慢靠近的速度，讓牠保有自己的距離。"
       : "你沒有要求牠回應，只是安靜地待在旁邊。";
 
     body.innerHTML = `
       <div class="page-meter-card">
-        ${renderMetric("邊界", defense, "牠是否需要更多空間")}
-        ${renderMetric("信任", trust, "牠是否願意靠近")}
-        ${renderMetric("精力", energy * 10, "目前活動餘裕")}
+        ${renderMetric(t("care.boundary"), defense, "牠是否需要更多空間")}
+        ${renderMetric(t("care.trust"), trust, "牠是否願意靠近")}
+        ${renderMetric(t("care.energy"), energy * 10, "目前活動餘裕")}
       </div>
       <p class="page-soft-note">照顧不是消耗品交換或討好。這裡只提供陪伴、休息與觀察，讓灰影貓可以選擇靠近或保持距離。</p>
       <div class="page-action-grid">
@@ -149,11 +150,11 @@ export function createPageRouter({
           <em>尊重牠此刻的邊界。</em>
         </button>
         <button type="button" data-page-action="commit" data-nav-action="care" data-choice="rest_together" data-status="棲地安靜下來，適合一起休息。">
-          <strong>一起休息</strong>
+          <strong>${t("care.restTogether")}</strong>
           <em>不催促互動，只讓棲地慢下來。</em>
         </button>
         <button type="button" data-page-action="open-character">
-          <strong>觀察狀態</strong>
+          <strong>${t("care.observe")}</strong>
           <em>查看牠的身體語言與邊界提示。</em>
         </button>
       </div>
@@ -182,21 +183,21 @@ export function createPageRouter({
         <p>${nextMilestone ? `羈絆 ${bond} / ${nextMilestone.threshold}` : `羈絆 ${bond}`}</p>
       </div>
       <div class="page-tendency-grid">
-        ${renderTendency("信任", toNumber(state.trust))}
-        ${renderTendency("心情", MOOD_LABELS[state.mood] || state.mood || "平靜", false)}
-        ${renderTendency("邊界", toNumber(state.defense))}
+        ${renderTendency(t("char.trust"), toNumber(state.trust))}
+        ${renderTendency(t("char.mood"), MOOD_LABELS[state.mood] || state.mood || "平靜", false)}
+        ${renderTendency(t("char.boundary"), toNumber(state.defense))}
       </div>
       <div class="page-action-grid">
         <button type="button" data-page-action="commit" data-nav-action="grow" data-choice="trust_tuning" data-status="信任回路略微對齊。">
-          <strong>信任校準</strong>
+          <strong>${t("growth.trustTune")}</strong>
           <em>把節奏調回彼此都能承受的距離。</em>
         </button>
         <button type="button" data-page-action="commit" data-nav-action="grow" data-choice="emotional_balance" data-status="心核回到更穩定的節奏。">
-          <strong>情緒穩定</strong>
+          <strong>${t("growth.emotionBalance")}</strong>
           <em>不追求變強，只整理目前的狀態。</em>
         </button>
         <button type="button" data-page-action="open-codex">
-          <strong>回看資料</strong>
+          <strong>${t("growth.review")}</strong>
           <em>查看既有 companion 資料，仍維持單一夥伴模型。</em>
         </button>
       </div>
@@ -212,9 +213,9 @@ export function createPageRouter({
 
     body.innerHTML = `
       <div class="page-evidence-strip" aria-label="記憶證據">
-        <span><strong>${Array.isArray(state.memories) ? state.memories.length : 0}</strong><em>互動記憶</em></span>
-        <span><strong>${emotionalCount}</strong><em>情緒記憶</em></span>
-        <span><strong>${Array.isArray(state.habitatTraces) ? state.habitatTraces.length : 0}</strong><em>棲地痕跡</em></span>
+        <span><strong>${Array.isArray(state.memories) ? state.memories.length : 0}</strong><em>${t("memory.evInteractions")}</em></span>
+        <span><strong>${emotionalCount}</strong><em>${t("memory.evEmotional")}</em></span>
+        <span><strong>${Array.isArray(state.habitatTraces) ? state.habitatTraces.length : 0}</strong><em>${t("memory.evTraces")}</em></span>
       </div>
       <div class="page-memory-list" aria-label="已保存的記憶與痕跡">
         ${renderMemoryEntries(renderedMemoryEntries)}
@@ -222,12 +223,12 @@ export function createPageRouter({
       <div class="page-action-grid">
         ${canEcho ? `
           <button type="button" data-page-action="commit" data-nav-action="memory" data-choice="memory_echo" data-status="最近的記憶被輕輕回看了一次。">
-            <strong>回聽最近共鳴</strong>
+            <strong>${t("memory.echo")}</strong>
             <em>只根據已存在的情緒記憶回應。</em>
           </button>
         ` : ""}
         <button type="button" data-page-action="open-soul-talk">
-          <strong>開啟心語</strong>
+          <strong>${t("memory.openSoul")}</strong>
           <em>如果你願意，可以直接和牠說話。</em>
         </button>
       </div>

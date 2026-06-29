@@ -207,6 +207,17 @@ html[data-ui="v2"] .settings-note--quiet {
   color: rgba(214, 224, 248, 0.55);
 }
 
+/* 語言選擇器：4 個語言鈕（語言名以各自文字顯示，不隨介面語言改變）。 */
+html[data-ui="v2"] .settings-segment-row--lang {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+html[data-ui="v2"] .settings-segment-row--lang button {
+  flex: 1 1 40%;
+  min-width: 0;
+}
+
 @media (max-width: 430px) {
   html[data-ui="v2"] .settings-page-panel {
     top: calc(var(--top-safe) + 72px);

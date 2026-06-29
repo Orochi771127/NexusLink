@@ -81,7 +81,8 @@ const defaultState = {
     volSfx: 80,
     quality: "high",
     textSize: "medium",
-    lowMotion: false
+    lowMotion: false,
+    lang: "tc"
   }
 };
 
