@@ -317,6 +317,22 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 2 - Game Art, UI, And Visual Production
 
+### 2026-06-29 - Claude Code - R2B Settings 實裝（畫質有感 / 匯出·刪除存檔 / 音量稽核）
+
+- Status: `VERIFIED`
+- Branch / commit: `integrate/ui-v2-raphael-main` (+ deploy `main`), on top of `513a91d`.
+- Layer: EXPERIENCE + 最小 GROUNDWORK（`saveManager.js` 新增唯讀 `exportSaveData()`，複用既有 `clearState`；**不改 STORAGE_KEY/schema**）。
+- Work performed:
+  - **畫質有感**：新 `styles/quality-modes.css`，`html[data-quality=low|medium|high]` 控 backdrop-blur/glow/vignette/bloom/動畫；low=扁平玻璃＋關場景特效（手機效能模式），medium=降 blur，high=預設。`settingsController` 已寫 dataset.quality 並持久化。**不動 pixiApp**。
+  - **匯出存檔**：`saveManager.exportSaveData()` 回傳 JSON 字串；`settingsController.exportSave()` 包 Blob 讓玩家下載 `nexuslink-save-YYYY-MM-DD.json`（client 端、不上傳）。
+  - **刪除存檔**：`settingsController.deleteSave()` 二次 `confirm()` → `clearState()` → reload → 自然回開場→輸入名字→導引→遊戲。
+  - **音量**：master/bgm 已即時驅動 BGM（settings persistence pack 已接）；加註記說明「首次需輕觸啟用聲音、SFX 素材待補」（不假裝 SFX 有效，無 SFX 音源 → 待批准資產）。
+  - settings 面板底緣改用 `--nav-block-h`。
+- Verification: bundled `node --check`(2 JS)；web release gate **9/9**、0 console error、無 unlabeled button；預覽 390×844：畫質 high→low 即時套用且持久（soul-strip backdrop-filter→none、vignette→none）、匯出/刪除鈕存在且有 label。
+- Problems / risks: SFX/環境音量無音源（待資產批准）；刪除為破壞性，已加 confirm。畫質為 CSS 特效層級，非 Pixi 解析度（pixiApp LOCKED）。
+- Next safe action: R2C（i18n 語言選擇器 + UI chrome 翻譯）。
+- Required reading: 本 lane、plan ROUND 2、`ACCEPTANCE.md` H2/K3（無新增 localStorage key、STORAGE_KEY 未動）。
+
 ### 2026-06-29 - Claude Code - R2A Mobile UX polish (keyboard / hierarchy / nav / chat)
 
 - Status: `VERIFIED`

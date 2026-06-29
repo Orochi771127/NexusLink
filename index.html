@@ -29,6 +29,7 @@
     <link rel="stylesheet" href="./styles/ui-v3-tokens.css" />
     <link rel="stylesheet" href="./styles/ui-v3-onboarding.css" />
     <link rel="stylesheet" href="./styles/world-atlas.css" />
+    <link rel="stylesheet" href="./styles/quality-modes.css" />
   </head>
   <body data-soul-talk="collapsed">
     <main class="app-shell" aria-label="Nexus Link 心核連結主畫面">
@@ -416,6 +417,7 @@
                   <span>聲音開關</span>
                   <b data-settings-toggle-knob></b>
                 </button>
+                <p class="settings-note settings-note--quiet">背景音樂會即時隨「主音量／背景音樂」變化（首次需輕觸畫面以啟用聲音）。音效素材仍在準備中。</p>
               </section>
 
               <section class="settings-section" aria-labelledby="settings-display-title">
@@ -442,6 +444,9 @@
                 <h3 id="settings-save-title">存檔與引導</h3>
                 <p class="settings-note">目前進度保存在這台裝置。若要在手機重看開始、身份與心核引導，可從這裡重新播放，不會刪除記憶或痕跡。</p>
                 <button type="button" class="settings-primary-action" data-settings-action="restart-onboarding">重新播放引導</button>
+                <button type="button" class="settings-secondary-action" data-settings-action="export-save">匯出存檔</button>
+                <button type="button" class="settings-danger-action" data-settings-action="delete-save">刪除存檔</button>
+                <p class="settings-note settings-note--quiet">刪除後會清空這台裝置上的記憶與痕跡，回到最開始的開場與輸入名字流程，無法復原。</p>
               </section>
             </div>
           </section>

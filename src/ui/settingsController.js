@@ -1,5 +1,6 @@
 import AudioManager from "../audio/audioManager.js";
 import { qs, qsa } from "../utils/dom.js";
+import { clearState, exportSaveData } from "../state/saveManager.js";
 
 // data-settings-range key → state.settings 欄位
 const VOLUME_FIELD = { master: "volMaster", bgm: "volBgm", sfx: "volSfx" };
@@ -93,7 +94,44 @@ export function createSettingsController({ panelManager, restartOnboarding, stor
     if (action === "restart-onboarding") {
       panelManager?.closePanel({ force: true });
       restartOnboarding?.();
+      return;
     }
+    if (action === "export-save") {
+      exportSave();
+      return;
+    }
+    if (action === "delete-save") {
+      deleteSave();
+    }
+  }
+
+  // 匯出存檔：玩家自行下載 JSON（client 端、不上傳）。
+  function exportSave() {
+    const data = exportSaveData();
+    if (!data) return;
+    try {
+      const blob = new Blob([data], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `nexuslink-save-${new Date().toISOString().slice(0, 10)}.json`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.warn("Export save failed", error);
+    }
+  }
+
+  // 刪除存檔：清空本機存檔 → reload，自然回到開場 → 輸入名字 → 導引 → 遊戲。需玩家二次確認。
+  function deleteSave() {
+    const confirmed = window.confirm(
+      "確定要刪除這台裝置上的存檔嗎？\n記憶與痕跡會清空，回到最開始的開場流程，無法復原。"
+    );
+    if (!confirmed) return;
+    clearState();
+    window.location.reload();
   }
 
   function selectSegment(button) {
