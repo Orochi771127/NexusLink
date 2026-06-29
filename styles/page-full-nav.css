@@ -165,6 +165,17 @@ html[data-ui="v2"] .bottom-nav__item--core .bottom-nav__en {
   display: none;
 }
 
+/* 主次：非 active 影像分頁降亮/降彩（安靜），active 維持金色全亮（V3：selected→gold、inactive quiet）。 */
+html[data-ui="v2"] .bottom-nav--aurora .bottom-nav__item:not(.active):not(.is-active):not(.bottom-nav__item--core) .nav-art {
+  opacity: 0.78;
+  filter: saturate(0.82) brightness(0.9);
+}
+html[data-ui="v2"] .bottom-nav--aurora .bottom-nav__item.active:not(.bottom-nav__item--core) .nav-art,
+html[data-ui="v2"] .bottom-nav--aurora .bottom-nav__item.is-active:not(.bottom-nav__item--core) .nav-art {
+  opacity: 1;
+  filter: none;
+}
+
 @media (max-width: 480px) {
   html[data-ui="v2"] .bottom-nav--aurora {
     gap: 2px;

@@ -1,9 +1,7 @@
 import { qs } from "../utils/dom.js";
 import {
   COMPANIONS,
-  COMPANION_ASSET_READINESS_LABELS,
   ELEMENT_LABELS,
-  RUNTIME_STATUS_LABELS,
   getCompanionById
 } from "../data/companionRegistry.js";
 import { getCompanionRuntimeEligibility, normalizeRuntimeCompanionId } from "../data/companionRuntimePolicy.js";
@@ -92,13 +90,11 @@ function shouldShowCompanionInSelector(companion, state, eligibility) {
   return companion.id === state.activeCompanionId || eligibility.isUnlocked || eligibility.canSelect;
 }
 
+// 玩家語：把工程狀態（「動畫就緒」/「Asset pending」）映射成玩家看得懂的字眼。
+// 只改 controller 顯示層，companion data 不動。
 function getCardStatusLabel(companion, eligibility) {
-  if (eligibility.canSelect) {
-    return RUNTIME_STATUS_LABELS[companion.runtimeStatus] || companion.runtimeStatus;
-  }
-  if (!eligibility.isAssetReady) {
-    return COMPANION_ASSET_READINESS_LABELS[companion.assetReadiness] || "Asset pending";
-  }
+  if (eligibility.canSelect) return "可同行";
+  if (!eligibility.isAssetReady) return "準備中";
   if (!eligibility.isUnlocked) return "章節未解鎖";
   return "暫不可同行";
 }

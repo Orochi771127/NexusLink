@@ -1,15 +1,23 @@
 html[data-ui="v2"] .soul-talk-drawer {
   top: auto;
-  bottom: calc(var(--bottom-safe) + 108px);
+  bottom: calc(var(--bottom-safe) + var(--nav-block-h, 104px) + 12px);
   width: min(720px, calc(100vw - 24px));
   max-width: 720px;
-  height: min(72svh, 640px);
+  /* 高度隨可視視窗（--app-height）收縮：鍵盤開啟時 visualViewport 變矮 → drawer 變矮 → 不溢出、不留黑塊。 */
+  height: min(72svh, calc(var(--app-height, 100dvh) - var(--top-safe) - 24px));
   max-height: none;
+  display: flex;
+  flex-direction: column;
   padding: 18px;
   border: 1px solid var(--aurora-line);
   border-radius: 28px 28px 18px 18px;
   background: linear-gradient(150deg, rgba(18, 27, 54, 0.97), rgba(12, 17, 35, 0.97));
   box-shadow: 0 -18px 54px rgba(0, 0, 0, 0.35), 0 0 36px rgba(138, 217, 255, 0.12);
+}
+
+/* 鍵盤開啟：把 drawer 下錨到鍵盤正上方（捨棄 nav 讓位，nav 已被鍵盤蓋），輸入框與最後一句保持可見。 */
+html[data-ui="v2"] body.kb-open .soul-talk-drawer {
+  bottom: calc(var(--kb-inset, 0px) + 8px);
 }
 
 html[data-ui="v2"] .soul-drawer-header {
@@ -46,8 +54,16 @@ html[data-ui="v2"] .soul-drawer-collapse {
 }
 
 html[data-ui="v2"] .soul-talk-drawer .chat-log {
+  flex: 1 1 auto;
   min-height: 0;
+  max-height: none;
+  overflow-y: auto;
   margin: 10px 0;
+}
+
+/* 輸入列固定在 drawer 底部，鍵盤開啟時永遠可見。 */
+html[data-ui="v2"] .soul-talk-drawer .chat-input-row {
+  flex: 0 0 auto;
 }
 
 html[data-ui="v2"] .soul-talk-drawer .quick-reply-row {
@@ -60,4 +76,28 @@ html[data-ui="v2"] .soul-talk-drawer .quick-reply-row {
 html[data-ui="v2"] .soul-talk-drawer .quick-reply-chip {
   border-color: rgba(138, 217, 255, 0.4);
   background: rgba(138, 217, 255, 0.1);
+}
+
+/* 聊天密度：縮 padding/gap，一頁多看幾句（ChatGPT 回饋：泡泡太高一頁只 4 句）。 */
+html[data-ui="v2"] .soul-talk-drawer .chat-log {
+  gap: 6px;
+}
+html[data-ui="v2"] .soul-talk-drawer .chat-line {
+  padding: 6px 11px;
+  line-height: 1.4;
+}
+
+/* 輸入列比例：送出鈕收窄、輸入框拿回寬度（ChatGPT 回饋：送出太大、輸入太擠）。 */
+html[data-ui="v2"] .soul-talk-drawer .chat-input-row {
+  grid-template-columns: minmax(0, 1fr) 64px;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+html[data-ui="v2"] .soul-talk-drawer #send-button {
+  min-height: 46px;
+  padding: 0;
+  font-size: 0.86rem;
+}
+html[data-ui="v2"] .soul-talk-drawer #message-input {
+  height: 46px;
 }

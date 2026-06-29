@@ -317,6 +317,25 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 2 - Game Art, UI, And Visual Production
 
+### 2026-06-29 - Claude Code - R2A Mobile UX polish (keyboard / hierarchy / nav / chat)
+
+- Status: `VERIFIED`
+- Branch / commit: `integrate/ui-v2-raphael-main` (+ deploy to `main`), on top of `15af843`.
+- Layer: EXPERIENCE (CSS + 輕量 JS). 無 schema / 無 Pixi 架構 / 無資產 / 無 Raphael 行為變更。
+- Scope (post-launch iPhone + ChatGPT UX feedback, canon-filtered): **拒絕** roster 等級/星/親密度% 與世界共鳴% 等收集/FOMO 數字。
+- Work performed:
+  - **鍵盤遮擋修復 (P0)**：`dom.js` 由 visualViewport 算 `--kb-inset` + `body.kb-open`；soul-talk drawer 高度改吃 `--app-height`（`soul-talk-drawer.css` + `mobile-safari-polish.css` 一致），鍵盤開時下錨到鍵盤上方並收縮，header/輸入框/最後一句皆可見、無黑塊。drawer 改 flex column，輸入列固定底部。
+  - **視覺階層 (CSS only)**：`layout-shell.css` scene vignette（壓暗四周搶戲、夥伴中心區透亮）+ focal bloom；不動 Pixi。
+  - **底部 nav 主次**：`page-full-nav.css` 非 active tile 降亮/降彩、active 維持金。
+  - **心語↔nav 緊鄰**：`dom.js` 量測 `.bottom-nav` → `--nav-block-h`；soul-strip / page-view / drawer / 之後設定底緣統一用之（取代魔術數 108/124）。
+  - **微互動**：`ui-v2-aurora.css` 按壓 scale .965 + 微亮、綠點呼吸；全 gate 在 `data-reduced-motion-preference!="reduced"` + `@media prefers-reduced-motion`。iOS 無 vibrate API 故純視覺。
+  - **聊天**：密度收斂、輸入列比例（送出收窄/輸入加寬）；`soulTalkController` 連續相同訊息去重（store + render 兩層，修重複行；不動 Raphael 推理）。**未**加假 typing dots（Raphael 回應為同步、無真等待）。
+  - **夥伴名片**精簡字體/排版；**nav 再按關閉**（`pageRouter.navigate` toggle 回 home）；**roster 工程字眼**「動畫就緒」→「可同行」（`companionSelectController` 顯示層，companion data 不動）。
+- Verification: bundled `node --check`(4 JS)；web release gate **9/9**、兩視窗 0 console error、無水平溢出；預覽 390×844：心語緊鄰 nav(12px)、nav 再按可關、roster「可同行」、drawer flex；模擬鍵盤(--app-height 450/--kb-inset 394) → drawer 收縮 418、top 24、輸入框 bottom 427 可見、無黑塊。
+- Problems / risks: 真機 iOS Safari 鍵盤行為仍需你手機實測（模擬已過）。夥伴「放大」未做（依決策只用 CSS 階層，不動 Pixi scale）。
+- Next safe action: 你 iPhone 實測鍵盤/階層；接著 R2B（設定實裝）。
+- Required reading: `AGENTS.md`、`CLAUDE.md`、`ACCEPTANCE.md`、本 lane、plan 的 ROUND 2 段。
+
 ### 2026-06-29 - Claude Code - Settings persistence (GROUNDWORK: save-schema settings block)
 
 - Status: `VERIFIED`

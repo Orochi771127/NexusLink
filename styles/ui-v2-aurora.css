@@ -12,9 +12,9 @@ html[data-ui="v2"] .soul-strip {
   align-items: center;
   column-gap: 10px;
   min-height: 70px;
-  /* Aurora 影像分頁 nav 在寬螢幕會長到 ~111px（tile aspect 512/388），
-     108px 舊值是為 76px legacy nav 調的；提高讓 strip 在桌面寬度也不壓到 nav。 */
-  bottom: calc(var(--bottom-safe) + 124px);
+  /* 緊鄰 nav 但不重疊：用 dom.js 量測的實際 nav 高度（--nav-block-h），
+     各尺寸都只留 12px 間隙；fallback 104px 供量測前。 */
+  bottom: calc(var(--bottom-safe) + var(--nav-block-h, 104px) + 12px);
   border-radius: 20px;
   overflow: hidden;
 }
@@ -102,4 +102,76 @@ html[data-ui="v2"] .mood-resonance__note {
   font-size: 0.78rem;
   font-style: normal;
   line-height: 1.4;
+}
+
+/* ---- 夥伴名片精簡（更俐落字體/排版） ---- */
+html[data-ui="v2"] .core-hud {
+  height: auto;
+  width: auto;
+  min-width: 0;
+  max-width: calc(100vw - 176px);
+}
+html[data-ui="v2"] .core-hud-open {
+  grid-template-columns: 42px minmax(0, 1fr) 8px;
+  gap: 9px;
+  padding: 9px 12px;
+}
+html[data-ui="v2"] .avatar-orb {
+  width: 42px;
+}
+html[data-ui="v2"] .core-name {
+  font-size: 16px;
+}
+html[data-ui="v2"] .core-kicker {
+  margin: 2px 0 4px;
+  font-size: 9.5px;
+}
+html[data-ui="v2"] .level-pill {
+  padding: 2px 7px;
+  font-size: 9.5px;
+}
+
+/* 綠點語意：呼吸脈動＝「在這裡、可互動」（低動態關閉）。 */
+html[data-ui="v2"] .core-status-dot {
+  width: 7px;
+  height: 7px;
+}
+html[data-ui="v2"]:not([data-reduced-motion-preference="reduced"]) .core-status-dot {
+  animation: corePresencePulse 2.8s ease-in-out infinite;
+}
+@keyframes corePresencePulse {
+  0%, 100% { opacity: 0.55; box-shadow: 0 0 6px rgba(0, 206, 209, 0.5); }
+  50% { opacity: 1; box-shadow: 0 0 13px rgba(0, 206, 209, 0.85); }
+}
+
+/* ---- 微互動：按壓回饋（scale + 微亮）。低動態/省電與系統 reduce 皆關閉。iOS 無震動 API，純視覺。 ---- */
+html[data-ui="v2"]:not([data-reduced-motion-preference="reduced"]) .bottom-nav__item,
+html[data-ui="v2"]:not([data-reduced-motion-preference="reduced"]) .soul-talk-launcher,
+html[data-ui="v2"]:not([data-reduced-motion-preference="reduced"]) .core-hud-open,
+html[data-ui="v2"]:not([data-reduced-motion-preference="reduced"]) .quick-icon-button,
+html[data-ui="v2"]:not([data-reduced-motion-preference="reduced"]) .page-action-grid button,
+html[data-ui="v2"]:not([data-reduced-motion-preference="reduced"]) .companion-select-list .companion-card,
+html[data-ui="v2"]:not([data-reduced-motion-preference="reduced"]) .ghost-button,
+html[data-ui="v2"]:not([data-reduced-motion-preference="reduced"]) #send-button {
+  transition: transform 130ms ease, box-shadow 160ms ease, filter 160ms ease;
+}
+html[data-ui="v2"]:not([data-reduced-motion-preference="reduced"]) .bottom-nav__item:active,
+html[data-ui="v2"]:not([data-reduced-motion-preference="reduced"]) .soul-talk-launcher:active,
+html[data-ui="v2"]:not([data-reduced-motion-preference="reduced"]) .core-hud-open:active,
+html[data-ui="v2"]:not([data-reduced-motion-preference="reduced"]) .quick-icon-button:active,
+html[data-ui="v2"]:not([data-reduced-motion-preference="reduced"]) .page-action-grid button:active,
+html[data-ui="v2"]:not([data-reduced-motion-preference="reduced"]) .companion-select-list .companion-card:not(.is-locked):active,
+html[data-ui="v2"]:not([data-reduced-motion-preference="reduced"]) .ghost-button:active,
+html[data-ui="v2"]:not([data-reduced-motion-preference="reduced"]) #send-button:active {
+  transform: scale(0.965);
+  filter: brightness(1.08);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-ui="v2"] .core-status-dot { animation: none; }
+  html[data-ui="v2"] .bottom-nav__item:active,
+  html[data-ui="v2"] .soul-talk-launcher:active,
+  html[data-ui="v2"] .core-hud-open:active,
+  html[data-ui="v2"] .page-action-grid button:active,
+  html[data-ui="v2"] #send-button:active { transform: none; }
 }

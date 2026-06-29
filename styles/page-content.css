@@ -13,7 +13,7 @@ html[data-ui="v2"] .page-view {
   position: absolute;
   top: calc(var(--top-safe) + 112px);
   right: clamp(16px, 5vw, 54px);
-  bottom: calc(var(--bottom-safe) + var(--nav-height) + var(--nav-gap) + 12px);
+  bottom: calc(var(--bottom-safe) + var(--nav-block-h, 104px) + 14px);
   width: min(380px, calc(100vw - 32px));
   max-height: none;
   padding: 16px;
@@ -375,7 +375,7 @@ html[data-ui="v2"] body.page-open .v3-home-presence {
     top: calc(var(--top-safe) + 112px);
     left: max(12px, var(--edge));
     right: max(12px, var(--edge));
-    bottom: calc(var(--bottom-safe) + var(--nav-height) + 10px);
+    bottom: calc(var(--bottom-safe) + var(--nav-block-h, 104px) + 12px);
     width: auto;
     max-height: none;
     padding: 13px;

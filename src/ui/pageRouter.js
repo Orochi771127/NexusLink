@@ -48,6 +48,11 @@ export function createPageRouter({
   function navigate(action = "home") {
     if (!PAGE_ACTIONS.has(action)) return;
 
+    // 再按一次目前分頁 → 收合回 home（toggle 開關）。
+    if (action !== "home" && action === activePage) {
+      action = "home";
+    }
+
     activePage = action;
     pageLayer?.setAttribute("data-active-page", action);
     document.body.classList.toggle("page-open", action !== "home");

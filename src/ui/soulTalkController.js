@@ -276,9 +276,13 @@ export function createSoulTalkController({ store, saveCurrentState }) {
     const lastItem = state.chatHistory[state.chatHistory.length - 1];
     soulTalkPreview.textContent = state.reactionPreview || (lastItem ? lastItem.text : DEFAULT_PREVIEW_TEXT);
 
+    let prevKey = null;
     for (const item of visibleHistory) {
-      const line = document.createElement("div");
       const role = item.role === "fox" ? "companion" : item.role;
+      const dedupeKey = `${role} ${item.text}`;
+      if (dedupeKey === prevKey) continue; // 連續相同訊息不重複顯示（catch-all，含舊存檔已存在的重複）
+      prevKey = dedupeKey;
+      const line = document.createElement("div");
       line.className = `chat-line ${role}`;
       if (role === "player") {
         line.textContent = `你：${item.text}`;
@@ -372,6 +376,9 @@ function hasRecentChatEntry(state, text) {
 
 function appendChatLine(state, role, text) {
   if (!Array.isArray(state.chatHistory)) state.chatHistory = [];
+  // 連續相同訊息去重：避免回歸問候/反思在多次進場累積出重複行（presentation，不動 Raphael 推理）。
+  const last = state.chatHistory[state.chatHistory.length - 1];
+  if (last && last.role === role && last.text === text) return;
   state.chatHistory.push({ role, text });
   if (state.chatHistory.length > 24) {
     state.chatHistory.splice(0, state.chatHistory.length - 24);
