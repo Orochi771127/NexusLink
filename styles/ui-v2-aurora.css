@@ -1,9 +1,16 @@
 html[data-ui="v2"] .companion-card,
-html[data-ui="v2"] .quick-hud > *,
 html[data-ui="v2"] .soul-strip {
   border-color: rgba(173, 222, 255, 0.22);
   background-color: rgba(16, 25, 51, 0.56);
   backdrop-filter: blur(14px);
+}
+
+/* 右上設定：只保留圓形玻璃鈕包齒輪；wrapper 不再加方形玻璃框。 */
+html[data-ui="v2"] .quick-hud .settings-group {
+  border: 0;
+  background: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 
 html[data-ui="v2"] .soul-strip {
