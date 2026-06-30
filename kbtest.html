@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>KB Diagnostic — Nexus Link</title>
+<style>
+  * { box-sizing: border-box; -webkit-text-size-adjust: 100%; }
+  html, body { margin: 0; padding: 0; background: #0a1020; color: #eaf2ff;
+    font-family: -apple-system, system-ui, "PingFang TC", sans-serif; }
+  /* 上方：即時數字面板（截圖時請讓這塊清楚入鏡） */
+  #info { position: fixed; top: 0; left: 0; right: 0; z-index: 30;
+    padding: 12px 14px; background: rgba(2, 8, 22, 0.82);
+    border-bottom: 2px solid #7ce7ff; font-size: 17px; line-height: 1.55;
+    font-variant-numeric: tabular-nums; }
+  #info b { color: #7ce7ff; font-weight: 700; }
+  #verdict { margin-top: 6px; font-size: 18px; font-weight: 800; }
+  #verdict.kb { color: #8affc1; }
+  #verdict.nokb { color: #ff9d7a; }
+  /* 可捲動的高背景，用來測試「鍵盤開啟時頁面被捲動」是否影響定位 */
+  #scene { height: 220vh;
+    background: repeating-linear-gradient(180deg, #122142 0 40px, #0c1733 40px 80px); }
+  /* 候選修法：position:fixed 的藍框，用 JS 每幀釘在「可視視窗底部」（鍵盤正上方）。
+     若這個藍框在鍵盤彈出後仍緊貼鍵盤頂端 → 此技術在你裝置可用，我就照搬進 app。 */
+  #bar { position: fixed; left: 8px; right: 8px; height: 132px; z-index: 20;
+    background: #15244e; border: 2px solid #7ce7ff; border-radius: 14px;
+    padding: 10px 12px; display: flex; flex-direction: column; gap: 9px;
+    box-shadow: 0 -8px 30px rgba(0,0,0,0.5); }
+  #bar .lbl { color: #a9c2ec; font-size: 13px; line-height: 1.4; }
+  #kbinput { width: 100%; height: 46px; font-size: 16px; border-radius: 9px;
+    border: 1px solid #9bb; padding: 0 12px; background: #fff; color: #111; }
+  #barpos { color: #ffd98a; font-size: 13px; font-variant-numeric: tabular-nums; }
+</style>
+</head>
+<body>
+  <div id="info">
+    讀取中…
+    <div id="verdict"></div>
+  </div>
+  <div id="scene"></div>
+
+  <div id="bar">
+    <div class="lbl">這個藍框應該<b style="color:#7ce7ff">一直緊貼在鍵盤正上方</b>。請點下面輸入框 → 鍵盤彈出 → <b style="color:#fff">截一張圖</b>（要同時看到上方數字與這個藍框）。</div>
+    <input id="kbinput" type="text" placeholder="點我彈出鍵盤，再截圖">
+    <div id="barpos"></div>
+  </div>
+
+<script>
+(function () {
+  var info = document.getElementById('info');
+  var verdict = document.getElementById('verdict');
+  var bar = document.getElementById('bar');
+  var barpos = document.getElementById('barpos');
+  var BAR_H = 132;
+  function r(n) { return Math.round(n); }
+
+  function update(tag) {
+    var vv = window.visualViewport;
+    var innerH = r(window.innerHeight);
+    var clientH = r(document.documentElement.clientHeight);
+    var vvH = vv ? r(vv.height) : -1;
+    var vvTop = vv ? r(vv.offsetTop) : -1;
+    var scrollY = r(window.scrollY || window.pageYOffset || 0);
+    var kbInner = Math.max(0, innerH - vvH - vvTop);
+    var kbClient = Math.max(0, clientH - vvH - vvTop);
+
+    // 候選修法：fixed 元素釘在可視視窗底部（= vv.offsetTop + vv.height）
+    var visualBottom = vv ? (vv.offsetTop + vv.height) : window.innerHeight;
+    var barTop = visualBottom - BAR_H;
+    bar.style.top = barTop + 'px';
+
+    var kbOpen = kbClient > 80 || kbInner > 80;
+    info.firstChild.nodeValue = '';
+    info.innerHTML =
+      '<b>innerHeight</b> = ' + innerH + '　　<b>clientHeight</b> = ' + clientH + '<br>' +
+      '<b>vv.height</b> = ' + vvH + '　　<b>vv.offsetTop</b> = ' + vvTop + '<br>' +
+      '<b>scrollY</b> = ' + scrollY + '　　<b>screen.h</b> = ' + r(screen.height) + '<br>' +
+      '<b>kbInset(inner)</b> = ' + kbInner + '　　<b>kbInset(client)</b> = ' + kbClient + '<br>' +
+      '<b>event</b> = ' + (tag || '') +
+      '<div id="verdict" class="' + (kbOpen ? 'kb' : 'nokb') + '">' +
+      (kbOpen ? '✅ 偵測到鍵盤 (kb-open)' : '❌ 沒偵測到鍵盤 (kb-open=false)') + '</div>';
+
+    barpos.textContent = '藍框 top=' + r(barTop) + ' bottom=' + r(visualBottom) + '（bottom 應 ≈ 鍵盤頂端）';
+  }
+
+  function loop() { update('rAF'); requestAnimationFrame(loop); }
+  requestAnimationFrame(loop);
+
+  if (window.visualViewport) {
+    visualViewport.addEventListener('resize', function () { update('vv.resize'); });
+    visualViewport.addEventListener('scroll', function () { update('vv.scroll'); });
+  }
+  window.addEventListener('resize', function () { update('resize'); });
+  document.getElementById('kbinput').addEventListener('focus', function () { update('focus'); });
+  update('init');
+})();
+</script>
+</body>
+</html>
