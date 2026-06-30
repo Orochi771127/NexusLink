@@ -33,8 +33,10 @@ html[data-ui="v2"] .onboarding-shell {
   border: 1px solid var(--v3-line-strong);
   border-radius: var(--v3-radius-card);
   /* 鍵盤/短高度安全：盒子高度受可視視窗（--app-height，dom.js 量 visualViewport）約束並可內部捲動，
-     避免身份頁的「繼續/稍後決定」action 落到 viewport 之外而點不到（不必先收鍵盤）。 */
+     避免身份頁的「繼續/稍後決定」action 落到 viewport 之外而點不到（不必先收鍵盤）。
+     max-height 平滑過渡：鍵盤動畫期間 --app-height 可能變化好幾次，用 transition 取代瞬間跳動。 */
   max-height: calc(var(--app-height, 100dvh) - var(--top-safe) - var(--bottom-safe) - 32px);
+  transition: max-height 220ms ease;
   overflow-x: hidden;
   overflow-y: auto;
   background:

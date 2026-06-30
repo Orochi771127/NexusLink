@@ -40,7 +40,7 @@
   <div id="scene"></div>
 
   <div id="bar">
-    <div class="lbl">這個藍框應該<b style="color:#7ce7ff">一直緊貼在鍵盤正上方</b>。請點下面輸入框 → 鍵盤彈出 → <b style="color:#fff">截一張圖</b>（要同時看到上方數字與這個藍框）。</div>
+    <div class="lbl">這版<b style="color:#fff">不再主動捲動畫面</b>（捲動會讓 iOS 直接取消顯示鍵盤）。請點下面輸入框 → 鍵盤彈出 → <b style="color:#fff">截一張圖</b>，看藍框是否「不用手動拖曳」就自己貼到鍵盤上方。</div>
     <input id="kbinput" type="text" placeholder="點我彈出鍵盤，再截圖">
     <div id="barpos"></div>
   </div>
@@ -83,26 +83,19 @@
     barpos.textContent = '藍框 top=' + r(barTop) + ' bottom=' + r(visualBottom) + '（bottom 應 ≈ 鍵盤頂端）';
   }
 
+  // 純被動：rAF 迴圈只「讀」visualViewport、不捲動、不搬動任何元素。
+  // 先前版本會在這裡用捲動 jiggle 強迫重算，但真機證實那會讓 iOS 直接取消顯示鍵盤
+  // （比黑塊更糟：鍵盤完全不彈出來）。現在改成完全不干預，純粹觀察鍵盤自己彈出後
+  // visualViewport 是否（以及多快）自然更新。
   function loop() { update('rAF'); requestAnimationFrame(loop); }
   requestAnimationFrame(loop);
-
-  // 與 app 相同的捲動 jiggle：強迫 iOS 在鍵盤彈出後重算 visualViewport（不需手動拖曳）。
-  function nudge() {
-    var el = document.scrollingElement || document.documentElement;
-    if (el) { var y = el.scrollTop || 0; el.scrollTop = y > 0 ? y - 1 : y + 1; }
-    update('nudge');
-  }
 
   if (window.visualViewport) {
     visualViewport.addEventListener('resize', function () { update('vv.resize'); });
     visualViewport.addEventListener('scroll', function () { update('vv.scroll'); });
   }
   window.addEventListener('resize', function () { update('resize'); });
-  document.getElementById('kbinput').addEventListener('focus', function () {
-    update('focus');
-    // 點輸入框後，在鍵盤動畫窗口內自動 jiggle 數次，測試藍框是否「不用手動拖曳」就跳到鍵盤上方。
-    [60, 140, 260, 420, 620, 820].forEach(function (t) { setTimeout(nudge, t); });
-  });
+  document.getElementById('kbinput').addEventListener('focus', function () { update('focus'); });
   update('init');
 })();
 </script>

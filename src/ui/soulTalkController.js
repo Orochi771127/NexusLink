@@ -6,7 +6,7 @@ import { updateMemoryLifecycles } from "../engine/memoryLifecycleEngine.js";
 import { isEmotionalHabitatTrace } from "../engine/habitatTraceEngine.js";
 import { applyRaphaelAgentReduction, reduceRaphaelAgentIntent } from "../engine/raphaelIntentReducer.js";
 import { buildEventReflection, composeMemoryReflection } from "../engine/soulTalkComposer.js";
-import { qs, syncViewportDuringTransition, setKeyboardExpected } from "../utils/dom.js";
+import { qs, syncViewportDuringTransition } from "../utils/dom.js";
 
 const DEFAULT_STATUS_TEXT = "心湖 / 安靜待命";
 const DEFAULT_PREVIEW_TEXT = "你可以慢慢說，灰影會聽。";
@@ -56,10 +56,9 @@ export function createSoulTalkController({ store, saveCurrentState }) {
 
     messageInput.addEventListener("focus", () => {
       setSoulTalkState("active");
-      // focus 當下就「樂觀預收合」drawer（用估計鍵盤高度），消除 iOS 首次點擊的黑塊；
-      // 接著在較長的鍵盤動畫窗口內持續重量 + nudge，等 visualViewport 真的更新後換成真值。
-      setKeyboardExpected(true);
-      syncViewportDuringTransition(2000);
+      // 鍵盤動畫窗口內被動重量 viewport（不捲動、不搬動 focus 容器），讓 --app-height 盡快
+      // 跟上真實鍵盤高度；版面變化交給 CSS transition 平滑套用，不在 focus 當下強制改版面。
+      syncViewportDuringTransition(1200);
       window.requestAnimationFrame(() => {
         if (chatLog) chatLog.scrollTop = chatLog.scrollHeight;
       });
@@ -69,8 +68,6 @@ export function createSoulTalkController({ store, saveCurrentState }) {
     });
     messageInput.addEventListener("blur", () => {
       setSoulTalkState("idle");
-      // 取消樂觀估計；鍵盤收合動畫期間持續重量，版面乾淨地回復全高。
-      setKeyboardExpected(false);
       syncViewportDuringTransition(800);
     });
   }
