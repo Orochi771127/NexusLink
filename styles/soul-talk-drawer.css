@@ -108,9 +108,11 @@ html[data-ui="v2"] .soul-talk-drawer #message-input {
 
 /* 對話可讀下限「自適應」：可視高度（--app-height，鍵盤開啟時變小）夠時保 96px 可讀；
    可視高度很小（大鍵盤 / 橫向）時自動讓位給輸入列，避免輸入框被擠到鍵盤下方而看不到。
-   下限隨 --app-height 線性縮放（扣掉 header/輸入列/間距約 200px 的固定開銷），不需要 JS。 */
+   下限隨 --app-height 線性縮放後，再扣掉 240px（header/輸入列/間距的固定開銷 ~200px + 約 40px
+   裝置字體度量安全餘裕），確保 floor 永遠 <= 可用空間、輸入框不被擠出；不需要 JS。
+   注意：此值只是「下限」，chat-log 以 flex 自動填滿可用空間，正常高度仍會 >= 96px。 */
 html[data-ui="v2"] .soul-talk-drawer .chat-log {
-  min-height: clamp(0px, calc(var(--app-height, 100dvh) - 200px), 96px);
+  min-height: clamp(0px, calc(var(--app-height, 100dvh) - 240px), 96px);
 }
 
 /* Compact composer：短可視高度或鍵盤開啟時，收掉次要區塊（快速回覆、聲紋、kicker），

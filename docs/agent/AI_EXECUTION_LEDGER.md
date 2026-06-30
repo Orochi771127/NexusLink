@@ -317,6 +317,18 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 2 - Game Art, UI, And Visual Production
 
+### 2026-06-30 - Claude Code - 嚴格自審：chat-log 自適應下限加裝置餘裕（200→240px）
+
+- Status: `VERIFIED`（模擬 + gate；真機 iOS 仍需最後一次實測確認）
+- Branch / commit: `integrate/ui-v2-raphael-main` (+ deploy `main`), on top of `895b038`。
+- Layer: EXPERIENCE，**純 CSS**（1 檔 `styles/soul-talk-drawer.css`，1 行）。無 JS／無 index.html／無 schema／無 assets。
+- 嚴格自審發現: `895b038` 的 `clamp(0, --app-height - 200px, 96px)` 中 200 = headless Chrome 量到的 drawer 固定開銷，floor 剛好等於可用空間（**零餘裕**）；真機字體度量若多幾 px，floor 會再次超過可用空間、輸入框被裁切幾 px。
+- Work performed: 常數 200→240（多 ~40px 餘裕），讓 floor 在所有小高度都「嚴格 < 可用空間」，輸入框保證可見。因 chat-log 以 flex 填滿可用空間、floor 只是下限，正常高度行為完全不變。
+- Verification: 模擬鍵盤可視高度 420/360/300/260/220/**190**（極端橫向）six 檔，**輸入框＋送出全部可見**、drawer 距鍵盤 8px、chat-log 213→4 平滑降；real 390×844 chat-log 359、real 390×390 chat-log 133（floor 96，無 regression）。全套 session regression 複驗：nav margin 16/16、HUD 無 speaker、五鍵語意 icon+label、四頁 nav active 正確、page↔心語條 overlap=0（settled；量到 70 是 launcher 180ms transition 的量測競態，非 regression）、modal nav lock、Soul Talk close→none。`git diff --check` clean、migration 8/8、web release gate **9/9、0 a11y warning、no failing node**、0 console error。
+- Problems / risks: chat-log 在極端小可視高度（~190）僅 ~4px（但輸入框可見＝優先正確）。真機 iOS 仍是最終驗收（headless 無法彈真鍵盤）。
+- Next safe action: iPhone Safari 實測（直向＋橫向）Soul Talk 鍵盤；確認無黑塊、輸入框恆可見。
+- Required reading: 本 lane（含 `895b038` / `2fcb905`）、`CLAUDE.md` §4/§5。
+
 ### 2026-06-30 - Claude Code - Soul Talk 鍵盤自適應補強（chat-log 下限隨可視高度縮放）
 
 - Status: `VERIFIED`（模擬 + gate；真機 iOS 仍需最後一次實測確認）
