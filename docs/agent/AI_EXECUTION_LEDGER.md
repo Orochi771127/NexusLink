@@ -317,6 +317,22 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 2 - Game Art, UI, And Visual Production
 
+### 2026-06-30 - Claude Code - 鍵盤動畫窗口內持續重量 viewport（首次 focus 即自適應，免手動拖曳）
+
+- Status: `VERIFIED`（機制以 headless 證實；真機 iOS 為最終驗收）
+- Branch / commit: `integrate/ui-v2-raphael-main` (+ deploy `main`), on top of `4b83daa`。
+- Layer: EXPERIENCE，**純 JS**（2 檔：`src/utils/dom.js`、`src/ui/soulTalkController.js`）。無 CSS／無 index.html／無 schema／無 assets／無 Raphael 行為變更。
+- 背景（真機回報，P0）: 部署版（`4b83daa`）在真 iPhone Safari + Chrome，第一次點 Soul Talk 輸入框、鍵盤彈出時**仍有大黑塊**；要**手動拖曳/捲動**才會跳成正確版面（輸入框貼鍵盤上方）。截圖佐證：黑塊狀態仍顯示聲紋 waveform，而 compact 模式在 `kb-open` 時會隱藏 waveform → 證明**首次 focus 當下 `body.kb-open` 沒被設**。
+- 根因: `soulTalkController` focus handler 只在 rAF + double-rAF（~16–32ms）重量一次 viewport，但 iOS 虛擬鍵盤要 ~250–350ms 才動畫完成 → 重量發生在鍵盤開之前 → `--app-height` 維持全高、`kb-open` 沒設 → 黑塊。之後唯一可靠修正它的事件是使用者手動拖曳產生的 `visualViewport.scroll`（已綁定 → 修正）。幾何（Codex `2fcb905` 的 visual-viewport 錨定 + 本人 `895b038/4b83daa` 的 chat-log 自適應）本來就對，缺的只是**重量時機**。
+- Work performed:
+  - `src/utils/dom.js`：新增 `syncViewportDuringTransition(durationMs=800)` —— focus/blur 後在整段鍵盤動畫窗口內，每一幀呼叫 `setViewportVars()`（rAF 迴圈、有截止時間、重複呼叫只延長截止不起第二迴圈）。`setViewportVars`/`bindViewportVars` 及既有 visualViewport listener 不動（穩態路徑）。
+  - `src/ui/soulTalkController.js`：focus → `syncViewportDuringTransition(800)`（取代原 rAF×2），blur → `syncViewportDuringTransition(600)`；focus 時保留 chatLog 捲到底。移除不再使用的 `setViewportVars` import。
+  - 效果：鍵盤一開始壓縮 viewport 的那一幀，`kb-open` 立即翻開、`--app-height`/`--vv-offset-top` 逐幀跟上 → drawer 即時升到鍵盤上方，**第一次 focus 就是正確版面，免手動拖曳**（對應 ChatGPT 建議與驗收）。
+- Verification: `node --check`(2 JS) OK、`git diff --check` clean、migration 8/8、web release gate **9/9、0 a11y warning、no failing node**、0 console error。Headless 機制驗證：focus 事件後 `setViewportVars` 在 ~800ms 內被呼叫 **49 次**（修前 2 次）；rAF/setTimeout 在預覽可正常觸發；Soul Talk 開關正常、chat-log 359（≥96）。（headless 無法彈真 iOS 鍵盤、且 `location.reload()` 會吃舊 ES module 快取 → 用新 port 8137 fresh origin 載入新碼後才量到 49 次。）
+- Problems / risks: 真機鍵盤的 `visualViewport` 時序/捲動狀態 headless 無法完全重現 → **iPhone Safari + Chrome 實測為最終驗收**（直向＋橫向）。rAF 在前景可見頁正常觸發（已驗證），低電量節流屬極端例外。
+- Next safe action: 真機 `orochi771127.github.io/?v=<commit>`：開 Soul Talk → 點輸入 → 鍵盤彈出 → **第一次就應呈現「輸入框貼鍵盤上方、無黑塊」**、免拖曳；打多行、收合再開、直向＋橫向。
+- Required reading: 本 lane（含 `4b83daa`/`895b038`/`2fcb905`）、`CLAUDE.md` §4/§5、計畫 `safari-chrome-chatgpt-web-resilient-curry.md`。
+
 ### 2026-06-30 - Claude Code - 嚴格自審：chat-log 自適應下限加裝置餘裕（200→240px）
 
 - Status: `VERIFIED`（模擬 + gate；真機 iOS 仍需最後一次實測確認）
