@@ -1,5 +1,6 @@
 import { DIALOGUE_ACTS } from "./nlu/dialogueActClassifier.js";
 import { NUANCE_FLAGS } from "./nlu/nuanceDetector.js";
+import { canUseTrainingResponseStrategy } from "./raphaelTrainingAdapter.js";
 
 export const RESPONSE_STRATEGIES = Object.freeze({
   PRACTICAL_CLARIFICATION: "practical_clarification",
@@ -114,6 +115,10 @@ export function selectResponseStrategy(nlu = {}, intent = {}, safety = {}) {
   if (dialogueAct === DIALOGUE_ACTS.ASKING_QUESTION) {
     return { strategy: RESPONSE_STRATEGIES.ANSWER_OR_CLARIFY, reason: "asking_question" };
   }
+  const trainingStrategy = resolveTrainingStrategy(nlu, safety);
+  if (trainingStrategy) {
+    return { strategy: trainingStrategy, reason: "training_bundle_advisory" };
+  }
   if (frame.preferredResponse === "short_validation" || constraints.includes("no_advice")) {
     return { strategy: RESPONSE_STRATEGIES.SHORT_VALIDATION, reason: "short_validation" };
   }
@@ -125,4 +130,15 @@ export function selectResponseStrategy(nlu = {}, intent = {}, safety = {}) {
   }
 
   return { strategy: RESPONSE_STRATEGIES.CONTEXTUAL_ACK, reason: "default_contextual" };
+}
+
+function resolveTrainingStrategy(nlu = {}, safety = {}) {
+  if (safety?.isHighRisk || safety?.isBoundaryPressure) return null;
+  const training = nlu.trainingSuggestion || {};
+  const suggestion = training.suggestion || {};
+  const strategy = suggestion.responseStrategy || null;
+  if (!strategy) return null;
+  if (training.trusted !== false || suggestion.trusted !== false) return null;
+  if (!canUseTrainingResponseStrategy(strategy)) return null;
+  return Object.values(RESPONSE_STRATEGIES).includes(strategy) ? strategy : null;
 }

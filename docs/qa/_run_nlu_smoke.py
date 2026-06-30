@@ -1,10 +1,11 @@
 """Run Raphael NLU v1 smoke cases in browser. QA helper only."""
 import json
+import os
 import sys
 import time
 from playwright.sync_api import sync_playwright
 
-BASE = "http://localhost:5173"
+BASE = os.environ.get("NEXUS_QA_BASE", "http://localhost:5173").rstrip("/")
 
 
 def run():

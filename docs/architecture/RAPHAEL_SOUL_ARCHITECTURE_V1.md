@@ -42,6 +42,45 @@ Raphael is the soul core of Nexus Link.
 External models advise only — RaphaelCore retains final authority.
 ```
 
+## Agent classification
+
+RaphaelCore is a **Stateful Companion Cognition Agent**.
+
+Required traits:
+
+| Trait | Meaning |
+|-------|---------|
+| Stateful | Decisions change with trust, bond, defense, fatigue, memory, traces, and return context. |
+| Relational | The output is relationship change, not task completion. |
+| Boundary-aware | The companion may accept, hesitate, withdraw, stay silent, or refuse. |
+| Memory-bearing | Memory is a policy-gated trace, not raw chat history. |
+| Safety-gated | High-risk input routes to safety before gameplay, reward, memory, or advisor hints. |
+| Companion-agnostic | Greyshade Cat is a shell; RaphaelCore must work across future companion shells. |
+| Game-integrated | Core decisions may drive reply, body language, habitat trace, UI state, and standoff policy. |
+
+It must not be implemented as:
+
+- an autonomous task agent;
+- a web-search or tool-using agent;
+- a therapy, crisis, or diagnosis agent;
+- a customer-service assistant;
+- a sycophantic chatbot;
+- a generic NPC dialogue manager;
+- a free multi-agent crew that negotiates player state.
+
+### Core vs Gateway
+
+Gateway / LangGraph-style workflow may normalize requests, apply policy gates, redact private fields, route optional tools, validate payloads, and produce audit records. It cannot become the source of truth for emotion, boundary, memory, state delta, final companion reply, or gameplay reward.
+
+```text
+Gateway / advisors = routing, review, optional advice
+RaphaelCore        = final authority for safety, boundary, memory, state, and response
+Companion shell    = visible voice, posture, animation, and persona surface
+Runtime            = PixiJS / DOM / state application through approved reducers
+```
+
+Training bundles, external model output, and gateway responses are advisory only. They must not directly write memory, grant reward, override safety, bypass BoundaryPolicy, or mutate state.
+
 ## Four-layer architecture
 
 ```text

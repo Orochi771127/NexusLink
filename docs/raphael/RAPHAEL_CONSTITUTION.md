@@ -65,6 +65,29 @@ v3.0 僅保留三項**機制骨架**（語氣分層、成熟弧、情境反應�
 > RaphaelCore 不負責「說好聽的話」。
 > 牠負責讓心核生命**有內在**：會理解、會記得、會守住自己、會留下痕跡、會緩慢改變。
 
+### 1.4 Agent 類型定義
+
+RaphaelCore is a **Stateful Companion Cognition Agent**.
+
+更完整地說：
+
+> RaphaelCore is companion-agnostic, safety-gated, memory-bearing, boundary-aware, and game-integrated.
+
+中文定義：
+
+> RaphaelCore 是一個有狀態的 AI 夥伴認知代理。它與角色外型解耦，具備安全閘門、記憶留痕與邊界判斷能力，並能驅動棲地、姿態、UI 與事件反應。
+
+它不是：
+
+- autonomous task agent：不自動替玩家做事、排程、查資料、操作工具。
+- tool-using web agent：外部搜尋與工具路由只能放在 Gateway，不放在 RaphaelCore 本體。
+- therapy / crisis agent：可安全轉向現實求助，但不診斷、不治療、不承接危機依賴。
+- customer-service assistant：不以解決使用者任務或滿意度為最高目標。
+- sycophantic chatbot：不無條件肯定、陪伴、迎合或提高親密度。
+- generic NPC dialogue bot：不只是根據狀態講台詞，而是判斷邊界、記憶、狀態、棲地痕跡與回應策略。
+
+一句話：RaphaelCore 是心核生命的認知核心，不是工具人、治療師、客服或戀愛迎合機器。
+
 ---
 
 ## 2. 三條人格底線（繼承 Master Canon v3.1 最高契約）

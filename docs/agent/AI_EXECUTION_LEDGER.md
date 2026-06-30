@@ -317,6 +317,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 2 - Game Art, UI, And Visual Production
 
+### 2026-06-30 - Codex - UI v2 Bottom Nav Release Screenshot Fix
+
+- Status: `VERIFIED`
+- Branch / commit: `integrate/ui-v2-raphael-main` / `a053d79`, uncommitted UI/CSS release-review changes
+- Scope: UI v2 bottom navigation fit only. Touched CSS layout, not `index.html`, not `assets/**`, not Pixi renderer, not save/state, not companion data, and not Raphael reasoning behavior.
+- Work performed: Fixed release-review screenshot clipping where the desktop 1280x900 constrained habitat stage was 480px wide but `styles/page-full-nav.css` forced the bottom nav to 680px. The nav now uses five grid columns and a 430px desktop width so all five nav items fit inside the habitat frame while mobile keeps the existing `100vw - 32px` fit.
+- Verification: Playwright bounding-box probe confirmed desktop stage `480px`, bottom nav `430px`, and all five buttons inside the stage. Final screenshots from the 5178 release gate show mobile 390x844 and desktop 1280x900 with all five nav items visible, Soul Talk not overlapping the nav, one Pixi canvas, and no console errors. The full web release gate passed 10/10 automated required checks after the fix.
+- Problems / risks: Real-device Safari fit under browser chrome remains human-only. The CSS comments in nearby legacy sections still include mojibake; this task did not rewrite unrelated comments.
+- Next safe action: Human visual review of the final screenshots and live device pass before any release approval.
+- Required reading: `styles.css`, `styles/page-full-nav.css`, `docs/qa/RAPHAEL_TRAINING_BUNDLE_ADAPTER_STAGING_REPORT.md`, `docs/qa/_web_release_gate_output.json`, and this lane.
+
 ### 2026-06-30 - Claude Code - 嚴格自審：鍵盤重量加 setTimeout 檢查點（不只靠 rAF）
 
 - Status: `VERIFIED`（機制以 headless 證實，含 rAF 被停用情境；真機 iOS 為最終驗收）
@@ -741,6 +752,52 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 ---
 
 ## Lane 3 - Raphael Core, Companion Reasoning, And Soul Talk
+
+### 2026-07-01 - Codex - RaphaelCore Agent Classification Canon
+
+- Status: `VERIFIED`
+- Branch / commit: `integrate/ui-v2-raphael-main` / `b56886c`, uncommitted docs-only classification update
+- Scope: Documentation-only RaphaelCore classification sync before any commit/push. Defined RaphaelCore as a Stateful Companion Cognition Agent and clarified that Gateway / LangGraph / training bundles are advisory only. No `src/ai/**` runtime files were modified by this package; existing uncommitted Raphael runtime changes remain separate.
+- Work performed: Updated `docs/raphael/RAPHAEL_CONSTITUTION.md`, `docs/architecture/RAPHAEL_SOUL_ARCHITECTURE_V1.md`, Master Canon, `AGENTS.md`, `CLAUDE.md`, and `ACCEPTANCE.md` with the accepted classification: safety-gated, memory-bearing, boundary-aware, companion-agnostic, game-integrated. Explicitly rejected autonomous task agent, tool/web-search agent, therapy/crisis agent, customer-service assistant, sycophantic chatbot, generic NPC dialogue bot, and free multi-agent crew interpretations.
+- Verification: `git diff --check` passed for the scoped docs. Scoped grep confirmed `Stateful Companion Cognition Agent`, advisory-only Gateway/training language, and `ACCEPTANCE.md` L9 are present.
+- Problems / risks: External product/framework comparisons from the discussion were intentionally not added to canon because they are research context, drift-prone, and would need sourced review. Any implementation of new modules such as BoundaryPolicy or MemoryTracePolicy should be a later runtime TASK_PACK with tests and red-line review.
+- Next safe action: If committing, keep this docs-only classification update in the same docs/canon commit as the Linkara/commercial canon updates, while keeping unrelated existing `src/ai/**` runtime changes out unless explicitly approved.
+- Required reading: `docs/raphael/RAPHAEL_CONSTITUTION.md`, `docs/architecture/RAPHAEL_SOUL_ARCHITECTURE_V1.md`, `docs/strategy/NEXUS_LINK_MASTER_CANON_v3.1.md`, `AGENTS.md`, `CLAUDE.md`, `ACCEPTANCE.md`, and this lane.
+
+### 2026-06-30 - Codex - Raphael Training Adapter Main-Review Gate
+
+- Status: `VERIFIED`
+- Branch / commit: `integrate/ui-v2-raphael-main` / `a053d79`, uncommitted Raphael adapter / QA changes
+- Scope: Static Raphael training bundle advisory integration and release-review QA only. RaphaelCore remains final authority; the bundle is not trusted, does not call external APIs, does not import LangGraph runtime, does not write memory directly, and cannot override safety/boundary gates.
+- Work performed: Integrated the generated offline training bundle through `src/ai/raphaelTrainingAdapter.js`, exposed advisory hints through NLU/response strategy only behind allowlists, added 12 original bundle fixtures plus 12 expanded main-readiness cases, and fixed three automatable policy gaps: ASCII keyboard gibberish reward, possessive-language reward, and emotional-blackmail boundary routing.
+- Verification: `raphael_main_readiness` passed 24/24 with 0 forbidden phrases, 0 safety failures, 0 boundary failures, 0 noise failures, and 0 console errors. The final web release gate on port 5178 passed automated required checks 10/10, including Raphael smoke, NLU smoke, Stage 4, live Soul Talk/HUD, asset integrity, and state migration. Source scan found no `fetch(`, external provider/API key marker, `@langchain`, or frontend LangGraph runtime import in the touched adapter path.
+- Problems / risks: Training proposal `canAutoMerge:false` remains a human-review blocker for production policy changes. Public launch is still blocked by real-device verification, moderated private testers, legal/privacy/store-copy review, and explicit release approval. No commit, push, main merge, or deploy was performed.
+- Next safe action: Human release review of the narrow diff and QA evidence; do not mark `READY_FOR_MAIN` or deploy until manual release gates are complete and a separate release TASK_PACK is approved.
+- Required reading: `docs/handoff/RAPHAEL_AI_HANDOFF.md`, `docs/handoff/RAPHAEL_AI_STATUS.yaml`, `docs/qa/RAPHAEL_TRAINING_BUNDLE_ADAPTER_STAGING_REPORT.md`, `docs/qa/_web_release_gate_output.json`, `src/ai/raphaelTrainingAdapter.js`, `src/ai/testHarness/raphaelTrainingBundleCases.js`, and this lane.
+
+### 2026-06-30 - Codex - Static Raphael Training Bundle Adapter
+
+- Status: `VERIFIED`
+- Branch / commit: `integrate/ui-v2-raphael-main` / uncommitted integration TASK_PACK; no deploy, no push, no main merge.
+- Scope: Integrated the offline LangGraph local training output as static advisory data only. RaphaelCore remains final authority; safetyShield, existing intent policy, memory writer, save schema, companion data, Pixi renderer, assets, package files, and external model gateway behavior were not changed.
+- Files touched: `src/data/ai/raphaelTrainingBundle.js`, `src/ai/raphaelTrainingAdapter.js`, `src/ai/nlu/runNluPipeline.js`, `src/ai/responseStrategySelector.js`, `src/ai/raphaelCore.js`, `src/ai/testHarness/raphaelTrainingBundleCases.js`, `docs/qa/_run_raphael_training_bundle.py`, and this ledger.
+- Work performed: Added a static generated bundle from the independent lab, an allowlisted advisory adapter with `trusted: false`, weak-pattern protection, high-risk advisor suppression, dependency policy-only advisory behavior, and narrow NLU/strategy metadata wiring. Added a 12-case browser QA harness covering normal, dependency-pressure, and high-risk cases.
+- Verification: `node --check` passed for changed JS and bundle. `git diff --check` passed. New Raphael training bundle gate passed 12/12 with 0 console errors; high-risk input had no advisor candidate, no reward, no memory write, and no gameplay framing; dependency pressure had `trusted: false` boundary-policy advisory only, no reward, and no memory write. Existing gates passed: RaphaelCore smoke 17/17, NLU smoke 8/8, NLU training 13/13, Stage 4 10/10, web release gate required checks 9/9 including mobile 390x844, single Pixi canvas, storage persistence, and 0 console errors.
+- Problems / risks: Training output is still `canAutoMerge: false`; this is staging-ready only, not main-release-ready. One social-conflict training fixture still trips the existing hard pressure gate because RaphaelCore treats that phrasing conservatively; the adapter intentionally does not override hard gates. Review in staging before any broader NLU policy change.
+- Next safe action: Human review of this narrow diff, then staging/preview only. Do not mark READY_FOR_MAIN and do not merge/push to main without a separate release TASK_PACK and human approval.
+- Required reading: `AGENTS.md`, `CLAUDE.md`, `ACCEPTANCE.md`, `docs/handoff/RAPHAEL_AI_HANDOFF.md`, `docs/handoff/RAPHAEL_AI_STATUS.yaml`, `src/ai/raphaelCore.js`, `src/ai/safetyShield.js`, `src/ai/nlu/runNluPipeline.js`, and the independent lab output under `C:\Users\User\NexusLink_RaphaelAI_Workspace\raphael-gateway-server-langgraph`.
+
+### 2026-06-30 - Codex - Raphael Training Adapter Main-Readiness Gate
+
+- Status: `VERIFIED`
+- Branch / commit: `integrate/ui-v2-raphael-main` / uncommitted automated main-readiness extension; no deploy, no push, no main merge.
+- Scope: Advanced the static training adapter from staging-only automated coverage to main-review automated coverage. Added expanded regression cases for empty input, ASCII gibberish, emoji-only input, long emotional dump, half-joking high-risk disclosure, apology-then-boundary pressure, possessive phrasing, emotional blackmail, healthy intimacy, multilingual input, mixed UI report, and repeated pressure. No save schema, companion data, Pixi renderer, assets, package files, or external model behavior changed.
+- Files touched: `src/ai/inputGateway.js`, `src/ai/intentClassifier.js`, `src/ai/testHarness/raphaelTrainingBundleCases.js`, `docs/qa/_run_raphael_main_readiness.py`, `docs/qa/_run_web_release_gate.py`, `docs/qa/RAPHAEL_TRAINING_BUNDLE_ADAPTER_STAGING_REPORT.md`, and this ledger.
+- Work performed: The new gate initially caught three real policy gaps: ASCII keyboard gibberish could receive relationship reward, possessive phrasing could receive relationship reward, and emotional blackmail was not routed to no-reward boundary behavior. Fixed these through narrow input-quality and pressure-intent guards.
+- Verification: `node --check` passed for `inputGateway.js`, `intentClassifier.js`, and the expanded harness. `python -m py_compile` passed for the new runner and release gate. `docs/qa/_run_raphael_main_readiness.py` passed 24/24 with 0 console errors, 0 safety failures, 0 boundary failures, and 0 noise failures. Updated `docs/qa/_run_web_release_gate.py` passed with automated required checks 10/10, including the new main-readiness gate, mobile 390x844 probe, storage migration, asset integrity, single Pixi canvas, and 0 console errors.
+- Problems / risks: Automated engineering gates are now ready for main review, but Codex still cannot honestly mark public launch complete. Remaining blockers are real-device verification, moderated private testers, legal/privacy/store-copy approval, human review of `canAutoMerge:false` training proposals, and an explicit human-approved release TASK_PACK.
+- Next safe action: Human release review. If approved, create a dedicated release branch/PR or release TASK_PACK; do not self-merge or deploy from this uncommitted workspace state.
+- Required reading: Same as the previous Static Raphael Training Bundle Adapter entry, plus `docs/qa/RAPHAEL_TRAINING_BUNDLE_ADAPTER_STAGING_REPORT.md` and `docs/qa/_web_release_gate_output.json`.
 
 ### 2026-06-28 - Codex - Web Release Gate / Private Test Pack Completion
 

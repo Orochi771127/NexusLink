@@ -5,12 +5,20 @@ import { classifyDialogueAct } from "./dialogueActClassifier.js";
 import { detectNuances } from "./nuanceDetector.js";
 import { extractSemanticFrame } from "./semanticFrameExtractor.js";
 import { scoreNluConfidence } from "./nluConfidenceScorer.js";
+import { getTrainingSuggestion } from "../raphaelTrainingAdapter.js";
 
 export function runNluPipeline(inputText = "", analysis = {}, intent = {}, safety = {}) {
   const segments = segmentUtterance(inputText);
   const entities = extractEntitySlots(inputText, segments);
-  const topic = classifyTopic(inputText, entities, analysis);
-  const dialogueAct = classifyDialogueAct(inputText, analysis, intent, topic);
+  const trainingSuggestion = getTrainingSuggestion(inputText, { analysis, intent, safety });
+  const topic = resolveTopic(
+    classifyTopic(inputText, entities, analysis),
+    trainingSuggestion
+  );
+  const dialogueAct = resolveDialogueAct(
+    classifyDialogueAct(inputText, analysis, intent, topic),
+    trainingSuggestion
+  );
   const nuances = detectNuances(inputText, segments);
   const semanticFrame = extractSemanticFrame({
     inputText,
@@ -36,6 +44,21 @@ export function runNluPipeline(inputText = "", analysis = {}, intent = {}, safet
     entities,
     nuances,
     segments,
-    safetyCategory: safety?.category || null
+    safetyCategory: safety?.category || null,
+    trainingSuggestion
   };
+}
+
+function resolveTopic(topic, trainingSuggestion) {
+  const suggestedTopic = trainingSuggestion?.suggestion?.topic || null;
+  if (topic === "unknown" && suggestedTopic) return suggestedTopic;
+  return topic;
+}
+
+function resolveDialogueAct(dialogueAct, trainingSuggestion) {
+  const suggestedAct = trainingSuggestion?.suggestion?.dialogueAct || null;
+  if (!suggestedAct) return dialogueAct;
+  if (dialogueAct === "describing_event") return suggestedAct;
+  if (dialogueAct === "asking_question" && suggestedAct !== "describing_event") return suggestedAct;
+  return dialogueAct;
 }

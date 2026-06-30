@@ -8,8 +8,8 @@ html[data-ui="v2"] .bottom-nav--aurora {
      不再依賴 width 撐到右邊界（修右側貼齊 viewport 的不對稱）。 */
   left: 0;
   right: 0;
-  width: min(680px, calc(100vw - 32px));
-  max-width: 680px;
+  width: min(430px, calc(100vw - 32px));
+  max-width: 430px;
   margin-inline: auto;
   padding: 8px;
   border: 1px solid rgba(173, 222, 255, 0.2);

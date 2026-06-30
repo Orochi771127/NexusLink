@@ -44,6 +44,7 @@ function assessInputQuality(text) {
   if (text.length < MIN_MEANINGFUL_LENGTH) return "too_short";
 
   const compact = text.replace(/\s/g, "");
+  if (isAsciiKeyboardNoise(text)) return "noise";
   if (!compact) return "empty";
 
   if (/^(.)(\1{5,})$/.test(compact)) return "noise";
@@ -51,4 +52,15 @@ function assessInputQuality(text) {
   if (/^(哈|呵|嘻|ㄏ|w){6,}$/i.test(compact)) return "noise";
 
   return "meaningful";
+}
+
+function isAsciiKeyboardNoise(text) {
+  if (!/^[a-z0-9\s?!.:,;'"()[\]{}_-]+$/i.test(text)) return false;
+  const compact = text.replace(/[^a-z0-9]/gi, "");
+  if (compact.length < 8) return false;
+  const meaningfulTokens =
+    /\b(soul|talk|hud|ui|bug|map|ai|raphael|tired|anxious|help|hello|hi|stress|sad|angry|feel|feeling)\b/i;
+  if (meaningfulTokens.test(text)) return false;
+  const tokens = text.toLowerCase().match(/[a-z]{3,}/g) || [];
+  return tokens.length >= 2;
 }

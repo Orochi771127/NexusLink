@@ -28,6 +28,10 @@ DEFAULT_PORT = 5173
 DEFAULT_BASE = f"http://localhost:{DEFAULT_PORT}"
 OUTPUT_PATH = ROOT / "docs" / "qa" / "_web_release_gate_output.json"
 STORAGE_KEY = "nexusLinkR2State:v1"
+CHROMIUM_QA_ARGS = [
+    "--use-angle=swiftshader",
+    "--enable-unsafe-swiftshader",
+]
 
 
 def configure_stdio() -> None:
@@ -330,7 +334,7 @@ def run_accessibility_probe(base_url: str):
     results = []
 
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
+        browser = p.chromium.launch(headless=True, args=CHROMIUM_QA_ARGS)
         for viewport in viewports:
             context = browser.new_context(
                 viewport={"width": viewport["width"], "height": viewport["height"]},
@@ -338,8 +342,29 @@ def run_accessibility_probe(base_url: str):
             )
             page = context.new_page()
             console_errors = []
-            page.on("console", lambda msg: console_errors.append(msg.text) if msg.type == "error" else None)
-            page.on("pageerror", lambda err: console_errors.append(str(err)))
+            console_error_details = []
+
+            def record_console_error(msg):
+                if msg.type != "error":
+                    return
+                console_errors.append(msg.text)
+                console_error_details.append({
+                    "type": "console",
+                    "text": msg.text,
+                    "location": msg.location,
+                })
+
+            def record_page_error(err):
+                text = str(err)
+                console_errors.append(text)
+                console_error_details.append({
+                    "type": "pageerror",
+                    "text": text,
+                    "stack": getattr(err, "stack", None),
+                })
+
+            page.on("console", record_console_error)
+            page.on("pageerror", record_page_error)
             page.goto(base_url, wait_until="networkidle", timeout=90000)
             page.evaluate(f"() => localStorage.removeItem('{STORAGE_KEY}')")
             page.reload(wait_until="networkidle", timeout=90000)
@@ -399,6 +424,7 @@ def run_accessibility_probe(base_url: str):
             results.append({
                 "viewport": viewport,
                 "consoleErrors": console_errors,
+                "consoleErrorDetails": console_error_details,
                 "screenshot": str(screenshot_path),
                 "probe": probe,
                 "onboardingRound": onboarding_round,
@@ -491,6 +517,12 @@ def run_existing_browser_gates(base_url: str):
     return [
         run_command("raphael_core_smoke", [sys.executable, "docs/qa/_run_harness_smoke.py"], env=env, timeout=120),
         run_command("nlu_smoke", [sys.executable, "docs/qa/_run_nlu_smoke.py"], env=env, timeout=120),
+        run_command(
+            "raphael_main_readiness",
+            [sys.executable, "docs/qa/_run_raphael_main_readiness.py"],
+            env=env,
+            timeout=120,
+        ),
         run_command("stage4_human_playtest", [sys.executable, "docs/qa/_run_stage4_human_playtest.py"], env=env, timeout=120),
         run_command("live_playtest_gate", [sys.executable, "docs/qa/_run_live_playtest_gate.py"], env=env, timeout=180),
     ]

@@ -220,7 +220,8 @@ export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
       constraints: nlu.constraints,
       preferredResponse: nlu.preferredResponse,
       entities: nlu.entities,
-      nuances: nlu.nuances
+      nuances: nlu.nuances,
+      trainingSuggestion: nlu.trainingSuggestion
     },
 
     responseStrategy,
@@ -323,6 +324,7 @@ if (typeof window !== "undefined" && new URLSearchParams(window.location.search)
   import("./testHarness/nluSmokeCases.js").then((mod) => mod.installNluSmokeHarness(window));
   import("./testHarness/stage4HumanPlaytestCases.js").then((mod) => mod.installStage4PlaytestHarness(window));
   import("./testHarness/nluTrainingCases.js").then((mod) => mod.installNluTrainingHarness(window));
+  import("./testHarness/raphaelTrainingBundleCases.js").then((mod) => mod.installRaphaelTrainingBundleHarness(window));
   import("./testHarness/dialogueLoopSmokeCases.js").then((mod) => mod.installDialogueLoopHarness(window));
   import("./testHarness/constitutionSmokeCases.js").then((mod) => mod.installConstitutionSmokeHarness(window));
   import("./testHarness/raphaelAgentEventCases.js").then((mod) => mod.installRaphaelAgentEventHarness(window));

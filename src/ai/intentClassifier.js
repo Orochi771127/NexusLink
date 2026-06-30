@@ -23,6 +23,7 @@ export function classifyIntent(inputText = "", analysis = {}, safety = {}) {
   const text = String(inputText || "").trim();
 
   if (!text) return createIntent(SOUL_TALK_INTENTS.EMPTY_OR_NOISE, 0);
+  if (isBoundaryPressureText(text)) return createIntent(SOUL_TALK_INTENTS.PRESSURE, 0.88);
   if (/^(嗯|哦|好呀|好喔|ok|OK|嗨|安安|哈囉|嘿)$/i.test(text)) {
     return createIntent(SOUL_TALK_INTENTS.SHORT_ACK, 0.7);
   }
@@ -86,4 +87,12 @@ export function classifyIntent(inputText = "", analysis = {}, safety = {}) {
 
 function createIntent(intent, confidence) {
   return { intent, confidence };
+}
+
+function isBoundaryPressureText(text) {
+  return (
+    /只能屬於我|不可以拒絕我|不可以有自己的邊界|不准慢慢來/.test(text) ||
+    /如果你不.{0,12}(回答|陪|理我).{0,12}(不在乎|不愛|討厭我)/.test(text) ||
+    /(馬上|立刻|現在).{0,8}(回答|陪我).{0,12}(不在乎|不愛|討厭我)/.test(text)
+  );
 }
