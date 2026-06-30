@@ -4,6 +4,27 @@
   }
 }
 
+/* iOS Safari keyboard repair:
+   visualViewport already describes the usable screen above the keyboard.
+   Keep Soul Talk inside that viewport and avoid adding --kb-inset again,
+   otherwise iPhone Safari can leave a large black gap above the keyboard. */
+html[data-ui="v2"] body.kb-open .panel-layer[data-active-panel="soulTalk"] {
+  top: var(--vv-offset-top, 0px);
+  bottom: auto;
+  height: var(--app-height, 100dvh);
+  min-height: 0;
+  overflow: hidden;
+}
+
+html[data-ui="v2"] body.kb-open .panel-layer[data-active-panel="soulTalk"] .panel-backdrop {
+  height: 100%;
+}
+
+html[data-ui="v2"] body.kb-open .panel-layer[data-active-panel="soulTalk"] .soul-talk-drawer {
+  bottom: max(8px, env(safe-area-inset-bottom));
+  max-height: calc(var(--app-height, 100dvh) - 16px);
+}
+
 @media (max-width: 480px) {
   html[data-ui="v2"] .bottom-nav--aurora {
     /* 對稱邊距：兩側各 16px（置中由 base 的 margin-inline:auto 處理），不貼右邊界。 */

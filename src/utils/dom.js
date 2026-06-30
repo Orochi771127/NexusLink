@@ -9,24 +9,28 @@ export function qsa(selector, root = document) {
 export function setViewportVars() {
   const vv = window.visualViewport;
   const height = vv?.height || window.innerHeight;
+  const offsetTop = Math.max(0, Math.round(vv?.offsetTop || 0));
   const root = document.documentElement;
-  root.style.setProperty("--app-height", `${height}px`);
 
-  // 鍵盤讓位：visualViewport 比 layout viewport 短多少（含 offsetTop）= 鍵盤佔用高度。
-  // 供 soul-talk drawer 在鍵盤開啟時收縮並把輸入框抬到鍵盤上方，避免下方留黑塊。
-  const kbInset = Math.max(0, Math.round(window.innerHeight - height - (vv?.offsetTop || 0)));
+  root.style.setProperty("--app-height", `${height}px`);
+  root.style.setProperty("--vv-offset-top", `${offsetTop}px`);
+
+  // Keyboard inset is the part of the layout viewport hidden by the OS keyboard.
+  // Elements that are already sized to --app-height should anchor inside the
+  // visual viewport rather than also adding this inset, otherwise iOS Safari can
+  // show a large black gap between the drawer and keyboard.
+  const kbInset = Math.max(0, Math.round(window.innerHeight - height - offsetTop));
   root.style.setProperty("--kb-inset", `${kbInset}px`);
   document.body?.classList.toggle("kb-open", kbInset > 80);
 
-  // 量測底部 nav 實際高度，讓 soul-strip / 完整頁 / 設定底緣能「緊鄰但不重疊」，
-  // 取代各檔散落的魔術數（如 108/124px）。nav 由 PNG aspect-ratio 決定高度，隨寬度變動。
+  // Measure nav height after image/CSS layout; page and soul-strip reserve this.
   const nav = document.querySelector(".bottom-nav");
   if (nav) {
     const navH = Math.round(nav.getBoundingClientRect().height);
     if (navH > 0) root.style.setProperty("--nav-block-h", `${navH}px`);
   }
 
-  // 量測 soul-strip 高度 → 讓月湖棲地標註能緊貼在心語欄位正上方。
+  // Measure the collapsed Soul Talk strip for page layout spacing.
   const strip = document.querySelector(".soul-strip");
   if (strip) {
     const stripH = Math.round(strip.getBoundingClientRect().height);
@@ -36,7 +40,7 @@ export function setViewportVars() {
 
 export function bindViewportVars() {
   setViewportVars();
-  // nav/字體晚一拍才定版面，補量一次，避免 --nav-block-h 初值為 0。
+  // Re-measure after first paint; image-backed nav can be zero before layout.
   requestAnimationFrame(setViewportVars);
   window.addEventListener("load", setViewportVars);
   window.addEventListener("resize", setViewportVars);

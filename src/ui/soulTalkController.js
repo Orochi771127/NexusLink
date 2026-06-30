@@ -58,8 +58,9 @@ export function createSoulTalkController({ store, saveCurrentState }) {
       setSoulTalkState("active");
       window.requestAnimationFrame(() => {
         setViewportVars();
-        messageInput.scrollIntoView({ block: "nearest", inline: "nearest" });
+        if (chatLog) chatLog.scrollTop = chatLog.scrollHeight;
       });
+      window.requestAnimationFrame(() => window.requestAnimationFrame(setViewportVars));
     });
     messageInput.addEventListener("input", () => {
       setSoulTalkState(messageInput.value.trim() ? "active" : "idle");

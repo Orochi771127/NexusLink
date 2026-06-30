@@ -317,6 +317,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 2 - Game Art, UI, And Visual Production
 
+### 2026-06-30 - Codex - iOS Safari Soul Talk keyboard black-gap repair
+
+- Status: `VERIFIED`
+- Branch / commit: `integrate/ui-v2-raphael-main` / commit pending; self-reviewed and ready for push/main fast-forward
+- Scope: Mobile Safari viewport repair for the user-reported iPhone 15 Pro Max Soul Talk keyboard black gap. Touched only the DOM viewport helper, Soul Talk focus behavior, and mobile Safari polish CSS. No `index.html`, no `assets/**`, no `src/state/**`, no `saveManager.js`, no storage-key/schema change, no Pixi renderer change, no Raphael behavior change, no external dependency, and no build step.
+- Work performed: Added `--vv-offset-top` alongside `--app-height`/`--kb-inset`; kept keyboard detection but documented that elements sized to `visualViewport.height` must not also add keyboard inset. Removed `messageInput.scrollIntoView()` from the fixed Soul Talk drawer focus path and instead re-measures viewport variables after focus while keeping the chat log pinned to the latest entry. Added a V2 mobile Safari override that anchors the active Soul Talk panel and drawer inside the visual viewport instead of double-compensating above the keyboard.
+- Verification: Bundled Node `--check` passed for `src/utils/dom.js` and `src/ui/soulTalkController.js`. `git diff --check` passed. `docs/qa/state-onboarding-migration-cases.mjs` passed 8/8. `python docs/qa/_run_web_release_gate.py` passed 9/9 automated required gates with 0 accessibility warnings.
+- Problems / risks: Automated gates cannot physically raise the iOS Safari keyboard; final confirmation still requires human retest on real iPhone Safari after GitHub Pages deploy. Existing untracked QA output JSON files remain intentionally unstaged.
+- Next safe action: Push this scoped repair, fast-forward `main`, then human should retest Soul Talk on iPhone Safari: open Soul Talk, focus the input, type several lines, close keyboard, reopen, and confirm no black gap appears above the keyboard.
+- Required reading: `AGENTS.md`, `docs/testing/STEAM_DEMO_WEB_RELEASE_CHECKLIST.md`, `styles/mobile-safari-polish.css`, `src/utils/dom.js`, `src/ui/soulTalkController.js`, and the user-provided iPhone keyboard screenshots.
+
 ### 2026-06-30 - Claude Code - HUD/nav 視覺 pack（對齊 V2「不 baked text」、語意化底部五鍵）
 
 - Status: `VERIFIED`
