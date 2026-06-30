@@ -6,6 +6,46 @@ export function qsa(selector, root = document) {
   return Array.from(root.querySelectorAll(selector));
 }
 
+const SOFT_KEYBOARD_FALLBACK_DELAY_MS = 340;
+const SOFT_KEYBOARD_FALLBACK_RATIO = 0.55;
+let softKeyboardExpectedUntil = 0;
+let softKeyboardFallbackAfter = 0;
+let lastSoftKeyboardHeight = 0;
+
+function hasTouchKeyboard() {
+  return Boolean(
+    typeof navigator !== "undefined" &&
+      (navigator.maxTouchPoints > 0 || "ontouchstart" in window)
+  );
+}
+
+function isTextEditingActive() {
+  const active = document.activeElement;
+  if (!active) return false;
+  const tag = active.tagName?.toLowerCase();
+  return tag === "input" || tag === "textarea" || active.isContentEditable;
+}
+
+function estimateKeyboardHeight(layoutHeight) {
+  const remembered = lastSoftKeyboardHeight || 0;
+  const estimated = remembered || Math.round(layoutHeight * SOFT_KEYBOARD_FALLBACK_RATIO);
+  const minHeight = Math.min(260, Math.max(180, layoutHeight - 360));
+  const maxHeight = Math.max(minHeight, layoutHeight - 120);
+  return Math.min(maxHeight, Math.max(minHeight, estimated));
+}
+
+export function expectSoftKeyboard(durationMs = 1600) {
+  const now = Date.now();
+  softKeyboardExpectedUntil = now + durationMs;
+  softKeyboardFallbackAfter = now + SOFT_KEYBOARD_FALLBACK_DELAY_MS;
+}
+
+export function clearSoftKeyboardExpectation() {
+  softKeyboardExpectedUntil = 0;
+  softKeyboardFallbackAfter = 0;
+  document.body?.classList.remove("kb-fallback");
+}
+
 export function setViewportVars() {
   const vv = window.visualViewport;
   const rawHeight = Math.round(vv?.height || window.innerHeight);
@@ -14,17 +54,34 @@ export function setViewportVars() {
 
   // 穩定的版面高度基準（不隨鍵盤縮短）：某些 iOS innerHeight 會跟鍵盤縮短，clientHeight 才是 layout viewport。
   const layoutHeight = Math.max(root.clientHeight || 0, window.innerHeight || 0, rawHeight);
-  const kbInset = Math.max(0, Math.round(layoutHeight - rawHeight - offsetTop));
+  let height = rawHeight;
+  let kbInset = Math.max(0, Math.round(layoutHeight - rawHeight - offsetTop));
+  const detectedKeyboard = kbInset > 80;
+  let usingKeyboardFallback = false;
+
+  if (detectedKeyboard) {
+    lastSoftKeyboardHeight = rawHeight;
+  } else if (
+    hasTouchKeyboard() &&
+    isTextEditingActive() &&
+    Date.now() >= softKeyboardFallbackAfter &&
+    Date.now() < softKeyboardExpectedUntil
+  ) {
+    height = estimateKeyboardHeight(layoutHeight);
+    kbInset = Math.max(0, Math.round(layoutHeight - height - offsetTop));
+    usingKeyboardFallback = kbInset > 80;
+  }
 
   // 只用「真的量到」的 visualViewport 值，不猜測、不主動觸發捲動。
   // （先前版本試過「捲動 jiggle 強迫重算」與「focus 當下立即套用估計高度」，
   // 兩者都會在鍵盤正在打開的瞬間搬動 focus 元素的容器／觸發捲動事件，
   // 這是 iOS 已知會直接取消顯示鍵盤的反模式 —— 真機證實會整個不彈鍵盤，比黑塊更糟。
   // 現在改成純被動讀值 + CSS transition 讓最終套用的高度變化平滑，不再主動干預鍵盤生命週期。）
-  root.style.setProperty("--app-height", `${rawHeight}px`);
+  root.style.setProperty("--app-height", `${height}px`);
   root.style.setProperty("--vv-offset-top", `${offsetTop}px`);
   root.style.setProperty("--kb-inset", `${kbInset}px`);
   document.body?.classList.toggle("kb-open", kbInset > 80);
+  document.body?.classList.toggle("kb-fallback", usingKeyboardFallback);
 
   // Measure nav height after image/CSS layout; page and soul-strip reserve this.
   const nav = document.querySelector(".bottom-nav");
