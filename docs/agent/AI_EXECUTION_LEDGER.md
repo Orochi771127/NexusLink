@@ -317,6 +317,18 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 2 - Game Art, UI, And Visual Production
 
+### 2026-06-30 - Claude Code - 嚴格自審：鍵盤重量加 setTimeout 檢查點（不只靠 rAF）
+
+- Status: `VERIFIED`（機制以 headless 證實，含 rAF 被停用情境；真機 iOS 為最終驗收）
+- Branch / commit: `integrate/ui-v2-raphael-main` (+ deploy `main`), on top of `04abb5a`。
+- Layer: EXPERIENCE，**純 JS**（1 檔 `src/utils/dom.js`）。無 CSS／index.html／schema／assets。
+- 嚴格自審發現: `04abb5a` 的 `syncViewportDuringTransition` **只靠 rAF 迴圈**。iOS Safari 在鍵盤動畫期間有時會節流/暫停 rAF —— 正是我們要追蹤的窗口；若 rAF 停擺，burst 不 tick → 黑塊可能重現。這正是「測試過卻在真機失敗」的殘留風險。
+- Work performed: 在 `syncViewportDuringTransition` 內加 setTimeout 檢查點 `[60,140,260,420,620,820]ms`（依 durationMs 過濾），與既有 rAF 迴圈雙保險：rAF 正常時逐幀平滑追蹤；rAF 被節流時，setTimeout 仍在鍵盤動畫後重量到位、設好 `kb-open`/`--app-height`。重複呼叫只延長 rAF 截止。
+- Verification: `node --check` OK、`git diff --check` clean、migration 8/8、web release gate **9/9、0 a11y warning、no failing node**、0 console error。Headless（fresh origin 8141 載入新碼）：focus 後 `setViewportVars` 被呼叫 **54 次**（rAF≈48 + setTimeout≈6）；**將 rAF stub 成 no-op（模擬 iOS 節流）後仍重量 6 次** → 證明 setTimeout belt 獨立有效；Soul Talk 開關正常、chat-log 359。
+- Problems / risks: 真機鍵盤時序 headless 無法完全重現 → iPhone Safari + Chrome 實測為最終驗收（直向＋橫向）。
+- Next safe action: 真機 `?v=<commit>` 實測：第一次 focus 即「輸入框貼鍵盤上方、無黑塊」免拖曳。
+- Required reading: 本 lane（含 `04abb5a`）、`CLAUDE.md` §4/§5。
+
 ### 2026-06-30 - Claude Code - 鍵盤動畫窗口內持續重量 viewport（首次 focus 即自適應，免手動拖曳）
 
 - Status: `VERIFIED`（機制以 headless 證實；真機 iOS 為最終驗收）

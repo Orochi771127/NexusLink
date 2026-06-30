@@ -40,12 +40,19 @@ export function setViewportVars() {
 
 // iOS Safari 的虛擬鍵盤要 ~250–350ms 才動畫完成；focus 當下只量一兩次（rAF）會在鍵盤開之前就跑完，
 // 導致 --app-height / body.kb-open 維持「無鍵盤」狀態，drawer 出現黑塊，要等使用者手動捲動才被 visualViewport
-// scroll 事件修正。此函式在 focus/blur 後的整段鍵盤動畫窗口內，每一幀重量一次 viewport，讓版面即時跟著
-// 鍵盤升起／收合，不需手動拖曳。重複呼叫只延長截止時間，不會起第二個迴圈。
+// scroll 事件修正。此函式在 focus/blur 後的整段鍵盤動畫窗口內持續重量 viewport，讓版面即時跟著鍵盤升起／
+// 收合，不需手動拖曳。
+// 用「rAF 迴圈 + setTimeout 檢查點」雙保險：iOS Safari 在鍵盤動畫期間有時會節流/暫停 rAF（正是我們要追蹤的
+// 那段窗口），故再加幾個固定時間點的 setTimeout 重量，rAF 即使被節流也能補上。重複呼叫只延長 rAF 截止時間。
 let viewportSyncRaf = 0;
 let viewportSyncDeadline = 0;
+const VIEWPORT_SYNC_CHECKPOINTS = [60, 140, 260, 420, 620, 820];
 export function syncViewportDuringTransition(durationMs = 800) {
   viewportSyncDeadline = Date.now() + durationMs;
+  // setTimeout 檢查點：即使 rAF 被節流也保證在鍵盤動畫後重量到位。
+  for (const t of VIEWPORT_SYNC_CHECKPOINTS) {
+    if (t <= durationMs + 40) window.setTimeout(setViewportVars, t);
+  }
   if (viewportSyncRaf) return;
   const tick = () => {
     setViewportVars();
