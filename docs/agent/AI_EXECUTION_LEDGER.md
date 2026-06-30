@@ -317,6 +317,18 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 2 - Game Art, UI, And Visual Production
 
+### 2026-06-30 - Claude Code - Soul Talk 鍵盤自適應補強（chat-log 下限隨可視高度縮放）
+
+- Status: `VERIFIED`（模擬 + gate；真機 iOS 仍需最後一次實測確認）
+- Branch / commit: `integrate/ui-v2-raphael-main` (+ deploy `main`), on top of `2fcb905`（Codex 的 iOS Safari keyboard 修復）。
+- Layer: EXPERIENCE，**純 CSS**（1 檔：`styles/soul-talk-drawer.css`，1 行）。無 JS／無 index.html／無 schema／無 assets。
+- 背景: 先獨立驗證了 Codex `2fcb905`（移除 scrollIntoView + 把 soul 面板鎖進 visual viewport）—— 程式碼根因正確、無 regression、gate 9/9、模擬幾何正確（panel-layer=可視區、drawer 距鍵盤 8px）。但在**小可視高度**（大鍵盤 / 橫向，模擬 --app-height≤~280）時量到**殘留問題**：我上一包加的 `chat-log { min-height:96px }` 固定下限，會把 drawer 內容（header+chatLog+輸入列）撐得比可用高度高，**輸入框被擠到鍵盤下方看不到**（visible 260 → input bottom 280）。
+- Work performed: 把 chat-log 下限從固定 `96px` 改為 `clamp(0px, calc(var(--app-height,100dvh) - 200px), 96px)` —— 可視高度大時保 96px 可讀，鍵盤越大下限越小、把空間讓給輸入列。純 CSS、吃 dom.js 既有的 `--app-height`（visualViewport 高），不需 JS。
+- Verification（預覽 8128 模擬鍵盤開啟、手動灌 --app-height）：修後 visible 390/320/260/220 四種鍵盤大小下，**輸入框＋送出皆在可視區內**、drawer 距鍵盤 8px、chat-log 自動縮 183/113/60/20；real 390×844 chat-log 359（下限 96）、real 390×390 chat-log 133（上一包驗收保留，無 regression）。`git diff --check` clean、state migration 8/8、web release gate **9/9、0 a11y warning、no failing node**、0 console error。
+- Problems / risks: `200px` 為 drawer 固定開銷（header+輸入列+間距）的估計常數，極小可視高度（~220）時 chat-log 只剩 ~20px（但輸入框可見＝優先正確）。真機 iOS Safari 鍵盤 visualViewport 時序 headless Chrome 無法完全重現，**最終仍需 iPhone 實測**（`?v=<commit>` 略過快取）；使用者先前回報的黑塊截圖極可能是舊版快取。
+- Next safe action: 真機 iPhone Safari：開 Soul Talk → 點輸入 → 鍵盤彈出 → 打多行 → 收 → 再開，確認無黑塊且輸入框恆可見（含橫向）。
+- Required reading: 本 lane（含 `2fcb905` 與上一包 First-time UX）、`CLAUDE.md` §4/§5。
+
 ### 2026-06-30 - Codex - iOS Safari Soul Talk keyboard black-gap repair
 
 - Status: `VERIFIED`
