@@ -49,11 +49,25 @@ export function setViewportVars() {
 let viewportSyncRaf = 0;
 let viewportSyncDeadline = 0;
 const VIEWPORT_SYNC_CHECKPOINTS = [60, 140, 260, 420, 620, 820];
+
+// 真機關鍵修法：某些 iOS Safari / Chrome 在鍵盤彈出時**不會更新** visualViewport.height
+// （量到的還是無鍵盤的舊值），要等使用者「手動捲一下」才更新 → 黑塊。此函式用 1px 捲動 jiggle
+// 模擬那個手勢，強迫瀏覽器重算 visualViewport，然後立即重量。鍵盤開啟時 document 比可視視窗高、
+// 有捲動範圍，drawer 又是 position:fixed 不會被捲動帶走，所以 1px jiggle 不可見、只是觸發重算。
+export function nudgeViewportRecompute() {
+  const el = document.scrollingElement || document.documentElement;
+  if (el) {
+    const y = el.scrollTop || 0;
+    el.scrollTop = y > 0 ? y - 1 : y + 1; // 一個真實的 1px 捲動 delta，觸發 iOS 重算 visualViewport
+  }
+  setViewportVars();
+}
+
 export function syncViewportDuringTransition(durationMs = 800) {
   viewportSyncDeadline = Date.now() + durationMs;
-  // setTimeout 檢查點：即使 rAF 被節流也保證在鍵盤動畫後重量到位。
+  // setTimeout 檢查點：即使 rAF 被節流也保證在鍵盤動畫後重量到位；同時做捲動 jiggle 強迫 vv 重算。
   for (const t of VIEWPORT_SYNC_CHECKPOINTS) {
-    if (t <= durationMs + 40) window.setTimeout(setViewportVars, t);
+    if (t <= durationMs + 40) window.setTimeout(nudgeViewportRecompute, t);
   }
   if (viewportSyncRaf) return;
   const tick = () => {
