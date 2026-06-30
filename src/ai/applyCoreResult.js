@@ -37,7 +37,6 @@ export function applyRaphaelCoreResult(
 
   state.habitatRepairFactor = calculateHabitatRepairFactor(state.emotionalMemories);
   state.reactionPreview =
-    coreResult.reflection?.summary ||
     mutation.statePatch?.reactionPreview ||
     plan.statePatch?.reactionPreview ||
     "";

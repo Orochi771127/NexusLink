@@ -77,8 +77,8 @@ export function createHudController({ store, statusText }) {
       statusText.textContent = `${currentCreature.name} 正在第一棲地安靜待命。`;
     }
 
-    bondFill.style.width = `${clampPercent(state.bond, 24)}%`;
-    trustFill.style.width = `${clampPercent(state.trust, 12)}%`;
+    bondFill.style.width = `${clampPercent(state.bond, 100)}%`;
+    trustFill.style.width = `${clampPercent(state.trust, 100)}%`;
     energyFill.style.width = `${clampPercent(state.energy, 10)}%`;
     moodFill.style.width = `${moodPercent(state.mood)}%`;
 

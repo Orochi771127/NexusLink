@@ -1,4 +1,5 @@
 import { BOND_MILESTONES } from "../engine/bondMilestoneEngine.js";
+import { getTraceDisplayCopy } from "../engine/traceVisualMapper.js";
 import { qs, qsa } from "../utils/dom.js";
 import EventBus from "../utils/eventBus.js";
 import { t, LANGUAGE_CHANGED_EVENT } from "../i18n/i18n.js";
@@ -145,7 +146,7 @@ export function createPageRouter({
       <div class="page-meter-card">
         ${renderMetric(t("care.boundary"), defense, "牠是否需要更多空間")}
         ${renderMetric(t("care.trust"), trust, "牠是否願意靠近")}
-        ${renderMetric(t("care.energy"), energy * 10, "目前活動餘裕")}
+        ${renderMetric(t("care.energy"), energy, "目前活動餘裕", 10)}
       </div>
       <p class="page-soft-note">照顧不是消耗品交換或討好。這裡只提供陪伴、休息與觀察，讓灰影貓可以選擇靠近或保持距離。</p>
       <div class="page-action-grid">
@@ -313,11 +314,13 @@ function getPageStatus(action) {
   return "回到月湖棲地。";
 }
 
-function renderMetric(label, value, hint) {
-  const safeValue = Math.max(0, Math.min(100, Math.round(value)));
+function renderMetric(label, value, hint, max = 100) {
+  const numericValue = Number(value) || 0;
+  const percent = Math.max(0, Math.min(100, Math.round((numericValue / max) * 100)));
+  const displayValue = Math.max(0, Math.min(max, Math.round(numericValue)));
   return `
-    <div class="page-meter" style="--value:${safeValue}%">
-      <div class="page-meter-head"><strong>${escapeHtml(label)}</strong><span>${safeValue}</span></div>
+    <div class="page-meter" style="--value:${percent}%">
+      <div class="page-meter-head"><strong>${escapeHtml(label)}</strong><span>${displayValue}</span></div>
       <div class="page-meter-line"><span></span></div>
       <em>${escapeHtml(hint)}</em>
     </div>
@@ -357,14 +360,18 @@ function collectMemoryEntries(state) {
     meta: memory.type || ""
   }));
 
-  const traces = (Array.isArray(state.habitatTraces) ? state.habitatTraces : []).map((trace) => ({
-    kind: "trace",
-    source: trace,
-    title: `棲地痕跡：${trace.type || trace.emotion || "unknown"}`,
-    copy: `強度 ${Math.round((Number(trace.intensity) || 0) * 100)}%。這是 runtime 實際保存的 trace。`,
-    createdAt: Number(trace.lastUpdatedAt) || Number(trace.createdAt) || 0,
-    meta: trace.status || trace.memoryId || ""
-  }));
+  const traces = (Array.isArray(state.habitatTraces) ? state.habitatTraces : []).map((trace) => {
+    const display = getTraceDisplayCopy(trace);
+    const intensityPct = Math.round((Number(trace.intensity) || 0) * 100);
+    return {
+      kind: "trace",
+      source: trace,
+      title: display.title,
+      copy: `${display.copy}（強度 ${intensityPct}%）`,
+      createdAt: Number(trace.lastUpdatedAt) || Number(trace.createdAt) || 0,
+      meta: trace.status || trace.memoryId || ""
+    };
+  });
 
   return [...emotional, ...simple, ...traces]
     .sort((left, right) => right.createdAt - left.createdAt)
