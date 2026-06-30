@@ -8,18 +8,20 @@ export function qsa(selector, root = document) {
 
 export function setViewportVars() {
   const vv = window.visualViewport;
-  const height = vv?.height || window.innerHeight;
+  const height = Math.round(vv?.height || window.innerHeight);
   const offsetTop = Math.max(0, Math.round(vv?.offsetTop || 0));
   const root = document.documentElement;
 
   root.style.setProperty("--app-height", `${height}px`);
   root.style.setProperty("--vv-offset-top", `${offsetTop}px`);
 
-  // Keyboard inset is the part of the layout viewport hidden by the OS keyboard.
-  // Elements that are already sized to --app-height should anchor inside the
-  // visual viewport rather than also adding this inset, otherwise iOS Safari can
-  // show a large black gap between the drawer and keyboard.
-  const kbInset = Math.max(0, Math.round(window.innerHeight - height - offsetTop));
+  // 鍵盤佔用高度 = 「不隨鍵盤縮短的版面高度」- 可視視窗高度 - 上方偏移。
+  // 關鍵：某些 iOS Safari 版本 window.innerHeight 會跟著鍵盤一起縮短；若只用它當基準，
+  // kbInset 會算成 ~0、body.kb-open 永遠不觸發 → drawer 不收合 → 大黑塊。
+  // documentElement.clientHeight 是 layout viewport 高度、不隨鍵盤縮短（且隨方向變化正確），
+  // 取它與 innerHeight、可視高度三者的較大者當穩定基準。
+  const layoutHeight = Math.max(root.clientHeight || 0, window.innerHeight || 0, height);
+  const kbInset = Math.max(0, Math.round(layoutHeight - height - offsetTop));
   root.style.setProperty("--kb-inset", `${kbInset}px`);
   document.body?.classList.toggle("kb-open", kbInset > 80);
 

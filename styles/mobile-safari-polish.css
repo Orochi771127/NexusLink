@@ -7,9 +7,15 @@
 /* iOS Safari keyboard repair:
    visualViewport already describes the usable screen above the keyboard.
    Keep Soul Talk inside that viewport and avoid adding --kb-inset again,
-   otherwise iPhone Safari can leave a large black gap above the keyboard. */
+   otherwise iPhone Safari can leave a large black gap above the keyboard.
+   position:fixed pins the panel to the visual viewport so the keyboard-induced
+   page scroll (iOS auto-scrolls to reveal a bottom-anchored input) can't drag it
+   off-screen — ancestors are transform/filter-free so fixed resolves to the viewport. */
 html[data-ui="v2"] body.kb-open .panel-layer[data-active-panel="soulTalk"] {
+  position: fixed;
   top: var(--vv-offset-top, 0px);
+  left: 0;
+  right: 0;
   bottom: auto;
   height: var(--app-height, 100dvh);
   min-height: 0;
