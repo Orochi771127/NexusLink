@@ -203,3 +203,66 @@ html[data-ui="v2"] .bottom-nav--aurora .bottom-nav__item.is-active:not(.bottom-n
     font-size: 0.78rem;
   }
 }
+
+/* ============================================================
+   V2 nav 語意化：以 SVG 線描 icon + 文字 label 取代 baked PNG。
+   符合 Handoff「不 baked text、icon 用 SVG」與「五鍵語意明確」。
+   純 CSS：隱藏既有 PNG、顯示 DOM 既有的 .bottom-nav__icon/.__label，
+   icon 用 CSS mask + inline data-URI SVG（無新增 asset），以 currentColor 上色。
+   保留上一包：置中對稱邊距、modal 開啟 nav lock（皆在本檔上方，不受影響）。
+   ============================================================ */
+
+/* 所有鍵：改為「icon 疊 label」直向排版，解除 baked-PNG 的 aspect-ratio。 */
+html[data-ui="v2"] .bottom-nav--aurora .bottom-nav__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  aspect-ratio: auto;
+  min-height: 52px;
+  padding: 6px 2px;
+  overflow: visible;
+  color: var(--aurora-muted, rgba(214, 224, 248, 0.68));
+}
+
+/* 非中央鍵：隱藏 baked PNG，顯示語意 icon + 中文 label。 */
+html[data-ui="v2"] .bottom-nav--aurora .bottom-nav__item:not(.bottom-nav__item--core) .nav-image {
+  display: none;
+}
+html[data-ui="v2"] .bottom-nav--aurora .bottom-nav__item:not(.bottom-nav__item--core) .bottom-nav__icon {
+  display: block;
+  width: 23px;
+  height: 23px;
+  font-size: 0; /* 隱藏原 placeholder 字符（✦♡⌁▤），改由 mask 畫 icon */
+  background-color: currentColor;
+  -webkit-mask: var(--nav-icon, none) center / contain no-repeat;
+  mask: var(--nav-icon, none) center / contain no-repeat;
+}
+html[data-ui="v2"] .bottom-nav--aurora .bottom-nav__item:not(.bottom-nav__item--core) .bottom-nav__label {
+  display: block;
+  font-size: 0.62rem;
+  line-height: 1;
+  letter-spacing: 0.05em;
+}
+
+/* 每鍵 icon（inline SVG，mask 用 alpha，故顏色任意；以 currentColor 上色）：
+   探索=星芒羅盤 / 照顧=手心托心 / 成長=新芽 / 記憶=書頁。中央鍵維持心核晶體（既有 gem）。 */
+html[data-ui="v2"] .bottom-nav button[data-action="explore"] {
+  --nav-icon: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='12' cy='12' r='9' fill='none' stroke='black' stroke-width='1.6'/%3E%3Cpath d='M12 6l2.5 5.5L12 18l-2.5-6.5z' fill='black'/%3E%3C/svg%3E");
+}
+html[data-ui="v2"] .bottom-nav button[data-action="care"] {
+  --nav-icon: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 8.6c-1-1.7-3-2.1-4.3-1-1.3 1.1-1.2 3.1.2 4.5L12 16l4.1-3.9c1.4-1.4 1.5-3.4.2-4.5-1.3-1.1-3.3-.7-4.3 1z' fill='black'/%3E%3Cpath d='M5 18c2.2 1.4 11.8 1.4 14 0' fill='none' stroke='black' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+html[data-ui="v2"] .bottom-nav button[data-action="grow"] {
+  --nav-icon: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 20v-7' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round'/%3E%3Cpath d='M12 14c.2-3 2.6-4.7 5-4.6-.1 3-2.4 4.8-5 4.6z' fill='black'/%3E%3Cpath d='M12 16c-.2-2.6-2.3-4.1-4.5-4 .1 2.6 2 4.1 4.5 4z' fill='black'/%3E%3C/svg%3E");
+}
+html[data-ui="v2"] .bottom-nav button[data-action="memory"] {
+  --nav-icon: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 7C10 5.7 7 5.6 4.8 6.2v11.2C7 16.8 10 16.9 12 18.2 14 16.9 17 16.8 19.2 17.4V6.2C17 5.6 14 5.7 12 7z' fill='none' stroke='black' stroke-width='1.5' stroke-linejoin='round'/%3E%3Cpath d='M12 7v11.2' fill='none' stroke='black' stroke-width='1.4'/%3E%3C/svg%3E");
+}
+
+/* active = 香檳金（V2：selected→gold）；inactive 安靜。光池沿用上方既有 active 背景。 */
+html[data-ui="v2"] .bottom-nav--aurora .bottom-nav__item.active:not(.bottom-nav__item--core),
+html[data-ui="v2"] .bottom-nav--aurora .bottom-nav__item.is-active:not(.bottom-nav__item--core) {
+  color: var(--aurora-gold, #e7c884);
+}

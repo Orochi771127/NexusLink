@@ -17,7 +17,8 @@ html[data-ui="v2"] .page-view {
   width: min(380px, calc(100vw - 32px));
   max-height: none;
   padding: 16px;
-  border: 1px solid var(--v3-line-quiet, rgba(247, 223, 170, 0.34));
+  /* V2 玻璃頁：較細的冷色髮絲邊（取代偏金的粗框），更像「真頁面」而非疊在背景上的 modal。 */
+  border: 1px solid var(--aurora-line, rgba(173, 222, 255, 0.18));
   border-radius: var(--v3-radius-card, 28px);
   color: var(--v3-moon-100, #f7f2e7);
   background:

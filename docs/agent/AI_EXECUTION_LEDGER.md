@@ -317,6 +317,23 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 2 - Game Art, UI, And Visual Production
 
+### 2026-06-30 - Claude Code - HUD/nav 視覺 pack（對齊 V2「不 baked text」、語意化底部五鍵）
+
+- Status: `VERIFIED`
+- Branch / commit: `integrate/ui-v2-raphael-main` (+ deploy `main`), on top of `efd8b1c`.
+- Layer: EXPERIENCE，**純 CSS**（2 檔：`page-full-nav.css`、`page-content.css`）。**無 `index.html`**（先確認既有 DOM 足夠：nav 每鍵已含 `.bottom-nav__icon` + `data-i18n` 文字 label + baked PNG，HUD 已是 compact chip + 右上僅設定、無 speaker/無貨幣）／無 JS／無 schema／無 Pixi／無 assets 變更。對照 `Nexus Link UI v2 - Handoff.md` 與 screenshots。
+- Work performed:
+  - **P1 底部五鍵語意化（核心）**：依 Handoff「不 baked text、icon 用 SVG」，CSS 隱藏 baked PNG（`.nav-image`），改顯示 DOM 既有的 `.bottom-nav__icon`（以 `mask` + inline data-URI SVG 線描 icon、`currentColor` 上色，**無新增 asset**）+ 中文 `.bottom-nav__label`：探索=星芒羅盤／照顧=手心托心／成長=新芽／記憶=書頁；中央維持心核晶體 gem。active=香檳金（V2 selected→gold）+ 既有金色光池，**非 FOMO 紅點**。
+  - **P1 HUD 資訊層級**：確認既有 HUD 已符合 V2（左上 compact companion chip：頭像+名+心核共鳴體 kicker+等級+在線點；右上**僅**設定齒輪；**無** speaker 快捷、**無**貨幣/鑽石/商城/紅點）。無需改碼，實測佐證。
+  - **P1 月湖棲地收斂**：`.v3-home-presence` 已是左下小藥丸 tag、不擋夥伴中央、與 page content 不重疊（上一包 stack 修復保留）。無需改碼，實測佐證。
+  - **P2 頁框玻璃感**：`.page-view` 外框由偏金粗框（`--v3-line-quiet` 0.34）改冷色髮絲邊（`--aurora-line` 0.24），更像「真頁面」非疊背景 modal；四頁仍無右上 X、仍為真頁面。
+  - **P2 Settings 音量**：確認主 HUD 無 speaker；設定頁 master/bgm/sfx slider + 聲音開關齊全；390×844/390×520 經內層 `.settings-page-body`（overflow-y:auto，scrollH 998>241）可捲動、刪除鈕可達。
+- Verification（預覽 8128，清空 localStorage 實測 + 截圖）：`git diff --check` clean；只動 2 個允許檔；`node --check` n/a（無 JS）；`state-onboarding-migration-cases` 8/8（未動 schema）；web release gate **9/9 required、0 accessibility warning、no failing node**（一次 8/9 為已知 split-on-null cold-load transient，重跑 9/9）；0 console error。視窗實測：390×844 五鍵語意 icon+label 清楚、active=gold、margin 16/16；四頁 nav active 正確、page↔心語條 overlap=0、頁框冷色細邊；HUD 右上僅設定；Settings 390×844/520 可捲；**regression 全過**：390×390 身份頁「繼續」可點(shell 360<390)、Soul Talk chat-log 133px、modal nav lock(pointer-events:none)、Soul Talk close→none。截圖：390×844 Home（五鍵 icon+chip）、Explore（頁框+nav active）。
+- Problems / risks: nav active 視覺指示為金色 tint + 柔光（克制），中央心核 gem 恆為金（home 鍵設計）— 已確認 active item 真的轉金（`rgb(231,200,132)`），不致混淆。baked PNG 檔案仍保留在 repo（僅 CSS 隱藏、未刪、未改 assets）。
+- Known incomplete / 不在本包: 內容翻譯 pack（敘事內文）、2.5D 棲地、完整世界地圖 runtime、Emotional Standoff 改造、Explore/Care/Growth/Memory 的 V2 完整節點內容（progress card / node rows / filter chips 等 Handoff §3.5–3.8 內容尚未填）。
+- Next safe action: 真機 iOS Safari 檢視 nav icon 清晰度；之後若要做頁面內容對齊 Handoff §3.5–3.8，另開 content pack。
+- Required reading: 本 lane、`CLAUDE.md` §4/§5、`Nexus Link UI v2 - Handoff.md`、`ACCEPTANCE.md`（未動 schema/assets）。
+
 ### 2026-06-29 - Claude Code - First-time UX 基礎修復（mobile keyboard / page stack / HUD hit area）
 
 - Status: `VERIFIED`
