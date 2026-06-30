@@ -6,22 +6,47 @@ export function qsa(selector, root = document) {
   return Array.from(root.querySelectorAll(selector));
 }
 
+// 「樂觀預收合」：iOS 第一次開鍵盤時 visualViewport 常常還沒縮（要等手動捲動才更新），
+// 造成首次點擊的黑塊。focus 當下先用「上次記住的鍵盤可視高度」或估計值（版面 55%）把 drawer
+// 立即收合到鍵盤上方；等 vv 真的更新後再換成真值（並記住，供下次直接用）。
+let keyboardExpectedUntil = 0;
+let lastKeyboardVisibleHeight = 0;
+const HAS_SOFT_KEYBOARD =
+  (typeof navigator !== "undefined" && Number(navigator.maxTouchPoints) > 0) ||
+  (typeof window !== "undefined" && "ontouchstart" in window);
+
+// soulTalkController 在 focus/blur 呼叫：宣告「鍵盤即將出現/離開」。windowMs 後若 vv 仍沒縮就放棄估計。
+export function setKeyboardExpected(expected, windowMs) {
+  keyboardExpectedUntil = expected ? Date.now() + (windowMs || 2500) : 0;
+  setViewportVars();
+}
+
 export function setViewportVars() {
   const vv = window.visualViewport;
-  const height = Math.round(vv?.height || window.innerHeight);
+  const rawHeight = Math.round(vv?.height || window.innerHeight);
   const offsetTop = Math.max(0, Math.round(vv?.offsetTop || 0));
   const root = document.documentElement;
 
+  // 穩定的版面高度基準（不隨鍵盤縮短）：某些 iOS innerHeight 會跟鍵盤縮短，clientHeight 才是 layout viewport。
+  const layoutHeight = Math.max(root.clientHeight || 0, window.innerHeight || 0, rawHeight);
+
+  let height = rawHeight;
+  let kbInset = Math.max(0, Math.round(layoutHeight - rawHeight - offsetTop));
+
+  if (kbInset >= 80) {
+    // 真的偵測到鍵盤：記住此可視高度，供下次冷啟直接套用。
+    lastKeyboardVisibleHeight = rawHeight;
+  } else if (HAS_SOFT_KEYBOARD && Date.now() < keyboardExpectedUntil) {
+    // 已 focus 但 vv 還沒縮 → 用估計值先收合，消除首次黑塊（vv 更新後此分支不再命中）。
+    const estimate = lastKeyboardVisibleHeight || Math.round(layoutHeight * 0.55);
+    if (estimate > 0 && estimate < layoutHeight - 40) {
+      height = estimate;
+      kbInset = Math.max(0, layoutHeight - estimate - offsetTop);
+    }
+  }
+
   root.style.setProperty("--app-height", `${height}px`);
   root.style.setProperty("--vv-offset-top", `${offsetTop}px`);
-
-  // 鍵盤佔用高度 = 「不隨鍵盤縮短的版面高度」- 可視視窗高度 - 上方偏移。
-  // 關鍵：某些 iOS Safari 版本 window.innerHeight 會跟著鍵盤一起縮短；若只用它當基準，
-  // kbInset 會算成 ~0、body.kb-open 永遠不觸發 → drawer 不收合 → 大黑塊。
-  // documentElement.clientHeight 是 layout viewport 高度、不隨鍵盤縮短（且隨方向變化正確），
-  // 取它與 innerHeight、可視高度三者的較大者當穩定基準。
-  const layoutHeight = Math.max(root.clientHeight || 0, window.innerHeight || 0, height);
-  const kbInset = Math.max(0, Math.round(layoutHeight - height - offsetTop));
   root.style.setProperty("--kb-inset", `${kbInset}px`);
   document.body?.classList.toggle("kb-open", kbInset > 80);
 
