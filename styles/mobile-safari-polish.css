@@ -4,42 +4,8 @@
   }
 }
 
-/* iOS Safari keyboard repair:
-   visualViewport already describes the usable screen above the keyboard.
-   Keep Soul Talk inside that viewport and avoid adding --kb-inset again,
-   otherwise iPhone Safari can leave a large black gap above the keyboard.
-   position:fixed pins the panel to the visual viewport so the keyboard-induced
-   page scroll (iOS auto-scrolls to reveal a bottom-anchored input) can't drag it
-   off-screen — ancestors are transform/filter-free so fixed resolves to the viewport. */
-html[data-ui="v2"] .panel-layer[data-active-panel="soulTalk"] {
-  /* 高度/位置一律平滑過渡：--app-height 由被動量測更新時（鍵盤動畫期間可能變好幾次），
-     版面用滑動取代瞬間跳動，避免「跳一下又跳一下」，也降低對 iOS 鍵盤生命週期的干擾。 */
-  transition: height 220ms ease, top 220ms ease;
-}
-
-html[data-ui="v2"] body.kb-open .panel-layer[data-active-panel="soulTalk"] {
-  position: fixed;
-  top: var(--vv-offset-top, 0px);
-  left: 0;
-  right: 0;
-  bottom: auto;
-  height: var(--app-height, 100dvh);
-  min-height: 0;
-  overflow: hidden;
-}
-
-html[data-ui="v2"] body.kb-open .panel-layer[data-active-panel="soulTalk"] .panel-backdrop {
-  height: 100%;
-}
-
-html[data-ui="v2"] .panel-layer[data-active-panel="soulTalk"] .soul-talk-drawer {
-  transition: opacity 180ms ease, transform 180ms ease, max-height 220ms ease, bottom 220ms ease;
-}
-
-html[data-ui="v2"] body.kb-open .panel-layer[data-active-panel="soulTalk"] .soul-talk-drawer {
-  bottom: max(8px, env(safe-area-inset-bottom));
-  max-height: calc(var(--app-height, 100dvh) - 16px);
-}
+/* iOS Safari 鍵盤模型已整併到 styles/soul-talk-drawer.css（單一補償，單一擁有者）。
+   本檔只保留 safe-area / 響應式 polish。 */
 
 @media (max-width: 480px) {
   html[data-ui="v2"] .bottom-nav--aurora {

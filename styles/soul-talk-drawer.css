@@ -15,9 +15,34 @@ html[data-ui="v2"] .soul-talk-drawer {
   box-shadow: 0 -18px 54px rgba(0, 0, 0, 0.35), 0 0 36px rgba(138, 217, 255, 0.12);
 }
 
-/* 鍵盤開啟：把 drawer 下錨到鍵盤正上方（捨棄 nav 讓位，nav 已被鍵盤蓋），輸入框與最後一句保持可見。 */
-html[data-ui="v2"] body.kb-open .soul-talk-drawer {
-  bottom: calc(var(--kb-inset, 0px) + 8px);
+/* =========================================================================
+   iOS 鍵盤模型 v5 —— 不偵測、不量測、不用 fixed。
+   真機（kbtest.html 三輪測試）已證實這裝置上以下三個標準機制全部不可靠：
+   (1) visualViewport / innerHeight 鍵盤開啟時不會更新；
+   (2) position:fixed 在鍵盤顯示期間本身會失效（畫面捲動時會跟著跑掉）；
+   (3) 瀏覽器原生 scroll-into-view 也不可信（依賴同一組壞掉的訊號）。
+   三條路都走不通，所以完全放棄「跟著鍵盤動」，改成輸入框 focus 時把 drawer
+   釘在螢幕頂端一塊固定比例的區域——鍵盤只會從螢幕下緣往上長，頂端 42%
+   永遠不會被蓋到（這個 repo 真機量到的鍵盤最高比例約 58%），不需要知道
+   鍵盤實際高度，也不需要 dom.js 的任何量測值。body.st-focus 由
+   soulTalkController.js 的 input focus/blur 直接切換，跟 kb-open 無關。
+   ========================================================================= */
+html[data-ui="v2"] .soul-talk-drawer {
+  transition: opacity 180ms ease, transform 180ms ease, top 180ms ease, bottom 180ms ease,
+    height 180ms ease, max-height 180ms ease;
+}
+
+html[data-ui="v2"] body.st-focus .soul-talk-drawer {
+  top: max(12px, var(--top-safe));
+  bottom: auto;
+  height: 42vh;
+  max-height: 42vh;
+}
+
+html[data-ui="v2"] body.st-focus .soul-talk-drawer .quick-reply-row,
+html[data-ui="v2"] body.st-focus .soul-talk-drawer .soul-talk-waveform,
+html[data-ui="v2"] body.st-focus .soul-talk-drawer .soul-drawer-kicker {
+  display: none;
 }
 
 html[data-ui="v2"] .soul-drawer-header {
@@ -115,9 +140,9 @@ html[data-ui="v2"] .soul-talk-drawer .chat-log {
   min-height: clamp(0px, calc(var(--app-height, 100dvh) - 240px), 96px);
 }
 
-/* Compact composer：短可視高度或鍵盤開啟時，收掉次要區塊（快速回覆、聲紋、kicker），
-   把垂直空間讓給 chat log，同時保留輸入列在底部可見。
-   兩個觸發條件：(a) 視窗本身矮（含 Codex 模擬鍵盤的縮窗）；(b) 真機鍵盤開啟（body.kb-open）。 */
+/* Compact composer：視窗本身矮（含 Codex 模擬鍵盤的縮窗）時，收掉次要區塊（快速回覆、聲紋、
+   kicker），把垂直空間讓給 chat log，同時保留輸入列在底部可見。真機鍵盤的等價收縮由
+   body.st-focus 負責（見檔案開頭），跟這裡的 viewport-height media query 是兩條獨立路徑。 */
 @media (max-height: 560px) {
   html[data-ui="v2"] .soul-talk-drawer .quick-reply-row,
   html[data-ui="v2"] .soul-talk-drawer .soul-talk-waveform,
@@ -130,10 +155,4 @@ html[data-ui="v2"] .soul-talk-drawer .chat-log {
   html[data-ui="v2"] .soul-talk-drawer .chat-log {
     margin: 6px 0;
   }
-}
-
-html[data-ui="v2"] body.kb-open .soul-talk-drawer .quick-reply-row,
-html[data-ui="v2"] body.kb-open .soul-talk-drawer .soul-talk-waveform,
-html[data-ui="v2"] body.kb-open .soul-talk-drawer .soul-drawer-kicker {
-  display: none;
 }
