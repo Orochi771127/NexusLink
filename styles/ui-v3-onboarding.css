@@ -16,6 +16,24 @@ html[data-ui="v2"] .onboarding-layer[hidden] {
   display: none;
 }
 
+/* 鍵盤開啟時（含 kb-fallback 估計），把整個 onboarding 層釘進「可視視窗」，
+   否則 place-items:end 的身份卡會貼在 layout viewport 底部、整張被鍵盤蓋住。
+   用 position:fixed（祖先無 transform/filter）貼視覺視窗，height 用 --app-height，
+   平滑過渡避免鍵盤動畫期間跳動。身份卡本身的 max-height/內部捲動維持既有邏輯。 */
+html[data-ui="v2"] .onboarding-layer {
+  transition: height 220ms ease, top 220ms ease;
+}
+
+html[data-ui="v2"] body.kb-open .onboarding-layer {
+  position: fixed;
+  top: var(--vv-offset-top, 0px);
+  left: 0;
+  right: 0;
+  bottom: auto;
+  height: var(--app-height, 100dvh);
+  padding-bottom: calc(var(--bottom-safe) + 12px);
+}
+
 html[data-ui="v2"] body.onboarding-active .core-hud,
 html[data-ui="v2"] body.onboarding-active .quick-hud,
 html[data-ui="v2"] body.onboarding-active .soul-talk-launcher,

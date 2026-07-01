@@ -1,4 +1,10 @@
-import { qs, qsa } from "../utils/dom.js";
+import {
+  qs,
+  qsa,
+  expectSoftKeyboard,
+  clearSoftKeyboardExpectation,
+  syncViewportDuringTransition
+} from "../utils/dom.js";
 
 const STEP_ORDER = ["start", "identity", "guidance", "meet"];
 const FINAL_GREETING = "我在這裡。你可以慢慢靠近，也可以先只是看著月湖。";
@@ -18,6 +24,16 @@ export function createOnboardingController({ store, saveCurrentState } = {}) {
         event.preventDefault();
         saveIdentity(false);
       }
+    });
+    // 身份頁輸入名字會彈鍵盤：與 Soul Talk 一樣武裝「延遲鍵盤 fallback」+ 被動重量 viewport，
+    // 讓 --app-height/kb-open 跟上鍵盤，配合 CSS 把身份卡釘在可視視窗內、不被鍵盤蓋住。
+    nameInput?.addEventListener("focus", () => {
+      expectSoftKeyboard(1600);
+      syncViewportDuringTransition(1200);
+    });
+    nameInput?.addEventListener("blur", () => {
+      clearSoftKeyboardExpectation();
+      syncViewportDuringTransition(800);
     });
   }
 
