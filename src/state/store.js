@@ -15,9 +15,12 @@ export function createDefaultState() {
     memories: defaultState.memories.map((item) => ({ ...item })),
     habitatTraces: defaultState.habitatTraces.map((item) => ({ ...item })),
     emotionalMemories: defaultState.emotionalMemories.map((item) => ({ ...item })),
+    playerProfile: { ...defaultState.playerProfile },
+    onboarding: { ...defaultState.onboarding },
     unlockedCompanionIds: [...defaultState.unlockedCompanionIds],
     battleRecord: { ...defaultState.battleRecord },
-    explorationProgress: { ...defaultState.explorationProgress, visitCounts: {} }
+    explorationProgress: { ...defaultState.explorationProgress, visitCounts: {} },
+    settings: { ...defaultState.settings }
   };
 }
 
@@ -54,8 +57,13 @@ export function normalizeState(rawState = {}) {
   const emotionalMemories = Array.isArray(targetState.emotionalMemories)
     ? targetState.emotionalMemories
     : baseState.emotionalMemories;
-  const unlockedCompanionIds = normalizeUnlockedCompanionIds(targetState.unlockedCompanionIds);
+  const unlockedCompanionIds = normalizeUnlockedCompanionIds(targetState.unlockedCompanionIds, {
+    activeCompanionId: targetState.activeCompanionId,
+    preserveActiveCompanion: true
+  });
   const runtimeState = { ...targetState, unlockedCompanionIds };
+  const playerProfile = normalizePlayerProfile(targetState.playerProfile, baseState.playerProfile);
+  const onboarding = normalizeOnboarding(targetState.onboarding, baseState.onboarding, targetState);
 
   return {
     ...targetState,
@@ -82,10 +90,13 @@ export function normalizeState(rawState = {}) {
     lastEmotionTag: targetState.lastEmotionTag || null,
     habitatRepairFactor: clamp(targetState.habitatRepairFactor ?? 0, 0, 1),
     firstSessionOpeningSeenAt: Number(targetState.firstSessionOpeningSeenAt) || null,
+    playerProfile,
+    onboarding,
     unlockedCompanionIds,
     activeCompanionId: normalizeRuntimeCompanionId(targetState.activeCompanionId, runtimeState),
     battleRecord: normalizeBattleRecord(targetState.battleRecord, baseState.battleRecord),
     explorationProgress: normalizeExplorationProgress(targetState.explorationProgress, baseState.explorationProgress),
+    settings: normalizeSettings(targetState.settings, baseState.settings),
     chatHistory: chatHistory.map((item) => ({
       role: item.role === "fox" ? "companion" : item.role || "companion",
       text: String(item.text || "")
@@ -97,6 +108,94 @@ export function normalizeState(rawState = {}) {
 }
 
 const BATTLE_RESULTS = new Set(["win", "lose", "retreat"]);
+const ONBOARDING_STATUSES = new Set(["pending", "start", "identity", "guidance", "meet", "home", "completed"]);
+const QUALITY_VALUES = new Set(["low", "medium", "high"]);
+const TEXT_SIZE_VALUES = new Set(["small", "medium", "large"]);
+const LANGUAGE_VALUES = new Set(["tc", "sc", "en", "jp"]);
+
+function normalizeSettings(rawSettings, baseSettings) {
+  const settings = rawSettings && typeof rawSettings === "object" ? rawSettings : {};
+  const vol = (value, fallback) => {
+    const num = Number(value);
+    return clamp(Number.isFinite(num) ? num : fallback, 0, 100);
+  };
+  return {
+    volMaster: vol(settings.volMaster, baseSettings.volMaster),
+    volBgm: vol(settings.volBgm, baseSettings.volBgm),
+    volSfx: vol(settings.volSfx, baseSettings.volSfx),
+    quality: QUALITY_VALUES.has(settings.quality) ? settings.quality : baseSettings.quality,
+    textSize: TEXT_SIZE_VALUES.has(settings.textSize) ? settings.textSize : baseSettings.textSize,
+    lowMotion: Boolean(settings.lowMotion),
+    lang: LANGUAGE_VALUES.has(settings.lang) ? settings.lang : baseSettings.lang
+  };
+}
+
+function normalizePlayerProfile(rawProfile, baseProfile) {
+  const profile = rawProfile && typeof rawProfile === "object" ? rawProfile : {};
+  return {
+    displayName: normalizeProfileText(profile.displayName),
+    identitySkipped: Boolean(profile.identitySkipped),
+    createdAt: Number(profile.createdAt) || baseProfile.createdAt,
+    updatedAt: Number(profile.updatedAt) || baseProfile.updatedAt
+  };
+}
+
+function normalizeProfileText(value) {
+  if (typeof value !== "string") return "";
+  return value.replace(/\s+/g, " ").trim().slice(0, 32);
+}
+
+function normalizeOnboarding(rawOnboarding, baseOnboarding, targetState) {
+  const onboarding = rawOnboarding && typeof rawOnboarding === "object" ? rawOnboarding : {};
+  const veteranAutoCompleted = isVeteranSave(targetState);
+  const completed = Boolean(onboarding.completed) || onboarding.status === "completed" || veteranAutoCompleted;
+  const rawStatus = typeof onboarding.status === "string" ? onboarding.status : baseOnboarding.status;
+  const status = completed ? "completed" : ONBOARDING_STATUSES.has(rawStatus) ? rawStatus : baseOnboarding.status;
+
+  return {
+    version: Number(onboarding.version) || baseOnboarding.version,
+    status,
+    completed,
+    completedAt: Number(onboarding.completedAt) || baseOnboarding.completedAt,
+    startedAt: Number(onboarding.startedAt) || baseOnboarding.startedAt,
+    identityCompleted: completed || Boolean(onboarding.identityCompleted),
+    guidanceCompleted: completed || Boolean(onboarding.guidanceCompleted),
+    greyshadeMetAt: Number(onboarding.greyshadeMetAt) || baseOnboarding.greyshadeMetAt,
+    veteranAutoCompleted: veteranAutoCompleted || Boolean(onboarding.veteranAutoCompleted)
+  };
+}
+
+function isVeteranSave(targetState) {
+  if (Number(targetState.bond) > 0) return true;
+  if (Boolean(targetState.firstTouchCompleted) || Boolean(targetState.firstHugCompleted)) return true;
+  if (hasArrayItems(targetState.memories)) return true;
+  if (hasArrayItems(targetState.habitatTraces)) return true;
+  if (hasArrayItems(targetState.emotionalMemories)) return true;
+  if (hasBattleRecordProgress(targetState.battleRecord)) return true;
+  return hasExplorationProgress(targetState.explorationProgress);
+}
+
+function hasArrayItems(value) {
+  return Array.isArray(value) && value.length > 0;
+}
+
+function hasBattleRecordProgress(rawRecord) {
+  if (!rawRecord || typeof rawRecord !== "object") return false;
+  return (Number(rawRecord.wins) || 0) > 0
+    || (Number(rawRecord.losses) || 0) > 0
+    || (Number(rawRecord.retreats) || 0) > 0
+    || Boolean(rawRecord.lastResult)
+    || Boolean(Number(rawRecord.lastBattleAt));
+}
+
+function hasExplorationProgress(rawProgress) {
+  if (!rawProgress || typeof rawProgress !== "object") return false;
+  if ((Number(rawProgress.totalExplorations) || 0) > 0) return true;
+  const visitCounts = rawProgress.visitCounts && typeof rawProgress.visitCounts === "object"
+    ? rawProgress.visitCounts
+    : {};
+  return Object.values(visitCounts).some((count) => (Number(count) || 0) > 0);
+}
 
 function normalizeBattleRecord(rawRecord, baseRecord) {
   const record = rawRecord && typeof rawRecord === "object" ? rawRecord : {};

@@ -1,11 +1,16 @@
 import { WORLD_HEIGHT, WORLD_WIDTH } from "./pixiApp.js";
 import { ANIMATION_NAMES, CORE_ANIMATION_NAMES } from "../engine/interactionController.js";
-import { ASSET_MANIFEST } from "../data/assetManifest.js";
+import { ASSET_MANIFEST, ILLUSTRATED_COMPANION_RUNTIME_POLICY } from "../data/assetManifest.js";
 import { getAnimationProfileForCreature, getMoodIdleAnimationName, resolveMoodIdleAnimationName } from "../engine/animationProfile.js";
 
 export const GREYSHADE_CAT_ANIMATIONS_PATH = ASSET_MANIFEST.characters.greyshadeCat.animations;
 export const GREYSHADE_CAT_ANIMATION_NAMES = ANIMATION_NAMES;
 export const GREYSHADE_CAT_CORE_ANIMATION_NAMES = CORE_ANIMATION_NAMES;
+export const ILLUSTRATED_SHEET_MAX_EDGE = ILLUSTRATED_COMPANION_RUNTIME_POLICY.maxSheetEdge;
+
+// Keep first paint focused on the companion's visible idle state; interaction
+// animations continue to lazy-load through the existing controller.
+export const BOOT_ANIMATION_NAMES = Object.freeze(["idle_calm", "sleep"]);
 
 export function getPixiAnimationSpeed(definition) {
   const fps = Number.isFinite(definition?.fps) ? definition.fps : 8;
@@ -19,12 +24,13 @@ export function loadGreyshadeCatAnimationPack() {
   return loadCompanionAnimationPack(GREYSHADE_CAT_ANIMATIONS_PATH);
 }
 
-export async function loadCompanionAnimationPack(animationsPath) {
+export async function loadCompanionAnimationPack(animationsPath, { bootOnly = false } = {}) {
   const status = {
     metadataLoaded: false,
     available: Object.fromEntries(GREYSHADE_CAT_ANIMATION_NAMES.map((name) => [name, false])),
     missing: [],
-    errors: []
+    errors: [],
+    policyWarnings: []
   };
 
   try {
@@ -42,8 +48,9 @@ export async function loadCompanionAnimationPack(animationsPath) {
       }
     });
 
+    const initialAnimationNames = bootOnly ? BOOT_ANIMATION_NAMES : GREYSHADE_CAT_CORE_ANIMATION_NAMES;
     await Promise.all(
-      GREYSHADE_CAT_CORE_ANIMATION_NAMES.map((name) => loadAnimationDefinition({
+      initialAnimationNames.map((name) => loadAnimationDefinition({
         animations,
         metadata,
         status,
@@ -51,13 +58,40 @@ export async function loadCompanionAnimationPack(animationsPath) {
       }).catch(() => null))
     );
 
-    return { animations, metadata, status };
+    const pack = { animations, metadata, status };
+    if (bootOnly) scheduleAnimationWarmup(pack);
+    return pack;
   } catch (error) {
     console.warn("Companion animations metadata failed to load", error);
     status.errors.push(`metadata: ${error.message}`);
     status.missing = [...GREYSHADE_CAT_ANIMATION_NAMES];
     return { animations: new Map(), metadata: null, status };
   }
+}
+
+function scheduleAnimationWarmup(pack) {
+  const warm = () => preloadAnimationNames(pack, GREYSHADE_CAT_CORE_ANIMATION_NAMES)
+    .catch((error) => console.warn("[animations] warm preload failed:", error));
+
+  if (typeof window !== "undefined" && "requestIdleCallback" in window) {
+    window.requestIdleCallback(warm, { timeout: 5000 });
+  } else if (typeof window !== "undefined") {
+    window.setTimeout(warm, 1200);
+  }
+}
+
+async function preloadAnimationNames(pack, names = []) {
+  if (!pack?.metadata || !pack?.animations) return;
+  await Promise.all(
+    names
+      .filter((name) => !pack.animations.has(name))
+      .map((name) => loadAnimationDefinition({
+        animations: pack.animations,
+        metadata: pack.metadata,
+        status: pack.status,
+        name
+      }).catch(() => null))
+  );
 }
 
 export function createAnimatedCompanionNode(animationPack, creature) {
@@ -71,7 +105,8 @@ export function createAnimatedCompanionNode(animationPack, creature) {
   companion.addChild(shadow);
 
   const animatedSprite = new PIXI.AnimatedSprite(idleDefinition.textures);
-  animatedSprite.anchor.set(0.5, 1);
+  animatedSprite.roundPixels = false;
+  animatedSprite.anchor.set(idleDefinition.anchor.x, idleDefinition.anchor.y);
   animatedSprite.loop = true;
   animatedSprite.animationSpeed = getPixiAnimationSpeed(idleDefinition);
 
@@ -131,7 +166,7 @@ function createSpriteAnimationController(animationPack, animatedSprite, initialM
     currentAnimationName = animationName;
     currentMirrorX = mirrorX;
     animatedSprite.textures = definition.textures;
-    animatedSprite.anchor.set(0.5, 1);
+    animatedSprite.anchor.set(definition.anchor.x, definition.anchor.y);
     const baseFrameScale = animatedSprite.__baseFrameScale || 1;
     animatedSprite.scale.set(mirrorX ? -baseFrameScale : baseFrameScale, baseFrameScale);
     animatedSprite.loop = options.loop === undefined ? Boolean(definition.loop) : Boolean(options.loop);
@@ -171,7 +206,9 @@ async function loadAnimationDefinition({ animations, metadata, status, name }) {
   }
 
   try {
+    const anchor = resolveFrameAnchor(definition, name);
     const texture = await PIXI.Assets.load(definition.sheet);
+    applyIllustratedTexturePolicy(texture, status, name);
     const textures = sliceSpriteSheet(texture, definition, name);
     if (textures.length !== definition.frameCount) {
       throw new Error(`Expected ${definition.frameCount} frames, sliced ${textures.length}`);
@@ -181,6 +218,7 @@ async function loadAnimationDefinition({ animations, metadata, status, name }) {
       ...definition,
       name,
       textures,
+      anchor,
       animationSpeed: getPixiAnimationSpeed(definition),
       durationMs: (definition.frameCount / Math.max(0.01, Number.isFinite(definition.fps) ? definition.fps : 8)) * 1000
     };
@@ -266,16 +304,63 @@ function validateSpriteSheetDimensions(texture, grid, animationName = "animation
   const expectedWidth = grid.columns * grid.frameWidth;
   const expectedHeight = grid.rows * grid.frameHeight;
 
-  if (texture.width < expectedWidth || texture.height < expectedHeight) {
+  if (texture.width > ILLUSTRATED_SHEET_MAX_EDGE || texture.height > ILLUSTRATED_SHEET_MAX_EDGE) {
     throw new Error(
-      `${animationName}: sheet is ${texture.width}x${texture.height}, expected at least ${expectedWidth}x${expectedHeight}`
+      `${animationName}: sheet edge ${texture.width}x${texture.height} exceeds ${ILLUSTRATED_SHEET_MAX_EDGE}px`
     );
   }
 
-  if (texture.width > expectedWidth || texture.height > expectedHeight) {
-    console.warn(
-      `${animationName}: sheet is ${texture.width}x${texture.height}, expected ${expectedWidth}x${expectedHeight}; extra pixels will be ignored`
+  if (texture.width !== expectedWidth || texture.height !== expectedHeight) {
+    throw new Error(
+      `${animationName}: sheet is ${texture.width}x${texture.height}, expected exact grid ${expectedWidth}x${expectedHeight}`
     );
+  }
+}
+
+function resolveFrameAnchor(definition, animationName = "animation") {
+  const anchor = definition.anchor || ILLUSTRATED_COMPANION_RUNTIME_POLICY.anchor;
+  const x = Number(anchor.x);
+  const y = Number(anchor.y);
+
+  if (x !== ILLUSTRATED_COMPANION_RUNTIME_POLICY.anchor.x || y !== ILLUSTRATED_COMPANION_RUNTIME_POLICY.anchor.y) {
+    throw new Error(`${animationName}: companion anchor must be bottom-center (0.5, 1)`);
+  }
+
+  return Object.freeze({ x, y });
+}
+
+function applyIllustratedTexturePolicy(texture, status, animationName = "animation") {
+  const source = texture?.source || texture?.baseTexture;
+  const scaleMode = resolvePixiConstant(() => PIXI.SCALE_MODES.LINEAR, "linear");
+  const mipmapMode = resolvePixiConstant(() => PIXI.MIPMAP_MODES.ON, "on");
+  const applied = [];
+
+  if (setTextureProperty(source, "scaleMode", scaleMode)) applied.push("source.scaleMode");
+  if (setTextureProperty(texture, "scaleMode", scaleMode)) applied.push("texture.scaleMode");
+  if (setTextureProperty(source, "mipmap", mipmapMode)) applied.push("source.mipmap");
+  if (setTextureProperty(source, "autoGenerateMipmaps", true)) applied.push("source.autoGenerateMipmaps");
+
+  if (!applied.length && status?.policyWarnings) {
+    status.policyWarnings.push(`${animationName}: Pixi texture source did not expose linear/mipmap properties`);
+  }
+}
+
+function resolvePixiConstant(read, fallback) {
+  try {
+    return read() ?? fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function setTextureProperty(target, propertyName, value) {
+  if (!target || !(propertyName in target)) return false;
+
+  try {
+    target[propertyName] = value;
+    return true;
+  } catch {
+    return false;
   }
 }
 

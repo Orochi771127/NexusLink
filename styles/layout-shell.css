@@ -1,0 +1,58 @@
+/* DOM/Pixi boundary: game-root remains Pixi-owned; all Aurora layers are DOM overlays. */
+html[data-ui="v2"] .habitat-stage {
+  isolation: isolate;
+  min-height: 100svh;
+}
+
+html[data-ui="v2"] .scene-layer,
+html[data-ui="v2"] #game-root {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+html[data-ui="v2"] .scene-layer {
+  z-index: 0;
+}
+
+html[data-ui="v2"] .content-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+html[data-ui="v2"] .home-view,
+html[data-ui="v2"] .companion-focal-zone {
+  position: absolute;
+  inset: 0;
+}
+
+html[data-ui="v2"] .companion-focal-zone {
+  margin: 28vh 16vw 18vh;
+  border-radius: 48%;
+  /* 夥伴後方柔光 bloom：把視線拉向夥伴本身，不動 Pixi 場景/角色。 */
+  background: radial-gradient(ellipse at 50% 58%, rgba(132, 204, 255, 0.13), transparent 62%);
+}
+
+/* 視覺階層：場景四周壓暗 vignette（壓住月亮/城市/樹的搶戲），中下方夥伴區保持透亮。
+   疊在 Pixi canvas 上、pointer-events:none，不影響夥伴點擊；夥伴位於透明中心區故不被壓暗。 */
+html[data-ui="v2"] .scene-layer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    radial-gradient(125% 100% at 50% 60%, transparent 34%, rgba(3, 8, 20, 0.32) 76%, rgba(2, 6, 16, 0.5) 100%),
+    linear-gradient(180deg, rgba(2, 6, 16, 0.26) 0%, transparent 22%);
+}
+
+html[data-ui="v2"] .core-hud,
+html[data-ui="v2"] .quick-hud,
+html[data-ui="v2"] .soul-strip,
+html[data-ui="v2"] .bottom-nav,
+html[data-ui="v2"] .panel-layer {
+  z-index: 10;
+}

@@ -33,6 +33,24 @@ const defaultState = {
   lastEmotionTag: null,
   habitatRepairFactor: 0,
 
+  playerProfile: {
+    displayName: "",
+    identitySkipped: false,
+    createdAt: null,
+    updatedAt: null
+  },
+  onboarding: {
+    version: 1,
+    status: "pending",
+    completed: false,
+    completedAt: null,
+    startedAt: null,
+    identityCompleted: false,
+    guidanceCompleted: false,
+    greyshadeMetAt: null,
+    veteranAutoCompleted: false
+  },
+
   // First Session → Return Echo：首輪安靜開場是否已看過（strict 持久化，非 derived 判斷）。
   // null = 尚未看過；看過後寫入 timestamp。存在既有 STORAGE_KEY 之內，不新增 localStorage key。
   firstSessionOpeningSeenAt: null,
@@ -41,12 +59,6 @@ const defaultState = {
   activeCompanionId: "greyshade-cat",
   unlockedCompanionIds: [
     "greyshade-cat",
-    // 心輝議會・五元守護（512×512 動畫陣容，預設解鎖以供選用）
-    "flame-flicker",
-    "ice-talon",
-    "stone-shard",
-    "vine-twist",
-    "crystal-rabbit"
   ],
   battleRecord: {
     wins: 0,
@@ -59,6 +71,18 @@ const defaultState = {
     totalExplorations: 0,
     lastNodeId: null,
     visitCounts: {}
+  },
+
+  // 玩家偏好（Settings 持久化）。存在既有 STORAGE_KEY 之內，不新增 localStorage key。
+  // 預設值對齊 index.html 的 Settings 初始狀態。音效靜音(mute)維持既有獨立 key，不併入此處。
+  settings: {
+    volMaster: 80,
+    volBgm: 70,
+    volSfx: 80,
+    quality: "high",
+    textSize: "medium",
+    lowMotion: false,
+    lang: "tc"
   }
 };
 

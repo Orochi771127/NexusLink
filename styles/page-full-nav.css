@@ -1,0 +1,268 @@
+html[data-ui="v2"] .bottom-nav--aurora {
+  z-index: 65;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+  align-items: stretch;
+  /* 左右安全邊距對稱：固定 left/right:0 + margin auto 置中，寬度兩側各留 16px，
+     不再依賴 width 撐到右邊界（修右側貼齊 viewport 的不對稱）。 */
+  left: 0;
+  right: 0;
+  width: min(430px, calc(100vw - 32px));
+  max-width: 430px;
+  margin-inline: auto;
+  padding: 8px;
+  border: 1px solid rgba(173, 222, 255, 0.2);
+  border-radius: 24px;
+  background: rgba(10, 17, 38, 0.82);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.32);
+  backdrop-filter: blur(18px);
+}
+
+html[data-ui="v2"] .bottom-nav--aurora .bottom-nav__item {
+  display: grid;
+  place-items: center;
+  gap: 2px;
+  min-height: 58px;
+  width: auto;
+  aspect-ratio: auto;
+  padding: 6px 4px;
+  border: 1px solid transparent;
+  border-radius: 17px;
+  color: var(--aurora-muted);
+  background: transparent;
+}
+
+html[data-ui="v2"] .bottom-nav--aurora .bottom-nav__item.active,
+html[data-ui="v2"] .bottom-nav--aurora .bottom-nav__item.is-active {
+  border-color: rgba(138, 217, 255, 0.45);
+  color: var(--aurora-text);
+  background: linear-gradient(135deg, rgba(138, 217, 255, 0.18), rgba(155, 140, 255, 0.2));
+}
+
+html[data-ui="v2"] .bottom-nav__icon,
+html[data-ui="v2"] .nav-core-gem {
+  font-size: 1.15rem;
+  line-height: 1;
+}
+
+html[data-ui="v2"] .bottom-nav__item--core .nav-core-gem {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  color: #10172d;
+  background: radial-gradient(circle at 35% 30%, #fff5ca, var(--aurora-gold) 65%, #b98947);
+  box-shadow: 0 0 16px rgba(231, 200, 132, 0.5);
+}
+
+html[data-ui="v2"] .bottom-nav__label {
+  font-size: 0.75rem;
+  line-height: 1;
+}
+
+html[data-ui="v2"] .bottom-nav__en {
+  color: currentColor;
+  font-size: 0.57rem;
+  line-height: 1;
+  opacity: 0.72;
+}
+
+html[data-ui="v2"] .bottom-nav--aurora {
+  gap: clamp(3px, 1.2vw, 7px);
+  padding: 6px;
+}
+
+html[data-ui="v2"] .bottom-nav--aurora .bottom-nav__item {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 0;
+  aspect-ratio: 512 / 388;
+  padding: 0;
+  overflow: hidden;
+  border-color: transparent;
+  background: transparent;
+  box-shadow: none;
+}
+
+html[data-ui="v2"] .bottom-nav--aurora .bottom-nav__item:not(.bottom-nav__item--core) .bottom-nav__icon,
+html[data-ui="v2"] .bottom-nav--aurora .bottom-nav__item:not(.bottom-nav__item--core) .bottom-nav__label,
+html[data-ui="v2"] .bottom-nav--aurora .bottom-nav__item:not(.bottom-nav__item--core) .bottom-nav__en {
+  display: none;
+}
+
+html[data-ui="v2"] .bottom-nav--aurora .bottom-nav__item:not(.bottom-nav__item--core) .nav-image {
+  position: absolute;
+  inset: 0;
+  display: block;
+}
+
+html[data-ui="v2"] .bottom-nav--aurora .bottom-nav__item.active,
+html[data-ui="v2"] .bottom-nav--aurora .bottom-nav__item.is-active {
+  border-color: transparent;
+  background: radial-gradient(54% 48% at 50% 53%, rgba(255, 214, 128, 0.2), transparent 72%);
+}
+
+html[data-ui="v2"] .bottom-nav--aurora .bottom-nav__item--core {
+  gap: 2px;
+  padding: 5px 3px 4px;
+  border: 1px solid rgba(173, 222, 255, 0.22);
+  border-radius: 15px;
+  background:
+    radial-gradient(circle at 50% 34%, rgba(255, 231, 160, 0.16), transparent 38%),
+    linear-gradient(145deg, rgba(18, 28, 55, 0.7), rgba(9, 14, 34, 0.88));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    inset 0 -12px 24px rgba(82, 210, 255, 0.08),
+    0 0 18px rgba(82, 210, 255, 0.14);
+}
+
+html[data-ui="v2"] .bottom-nav--aurora .bottom-nav__item--core.is-active,
+html[data-ui="v2"] .bottom-nav--aurora .bottom-nav__item--core.active {
+  border-color: rgba(247, 223, 170, 0.58);
+  background:
+    radial-gradient(circle at 50% 30%, rgba(255, 244, 196, 0.42), transparent 42%),
+    radial-gradient(circle at 50% 85%, rgba(255, 178, 70, 0.22), transparent 62%),
+    linear-gradient(145deg, rgba(137, 91, 31, 0.7), rgba(38, 32, 58, 0.92));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    0 0 20px rgba(247, 206, 133, 0.34),
+    0 12px 28px rgba(0, 0, 0, 0.32);
+}
+
+html[data-ui="v2"] .bottom-nav__item--core .nav-core-gem {
+  position: relative;
+  width: 24px;
+  height: 24px;
+  border: 1px solid rgba(255, 238, 184, 0.78);
+  border-radius: 8px;
+  font-size: 0;
+  background:
+    radial-gradient(circle at 34% 28%, rgba(255, 255, 255, 0.95), transparent 18%),
+    linear-gradient(145deg, #fff1a6, #d99b45 52%, #5e7fff);
+  box-shadow:
+    0 0 16px rgba(247, 206, 133, 0.52),
+    inset 0 0 0 2px rgba(21, 33, 63, 0.28);
+  transform: rotate(45deg);
+}
+
+html[data-ui="v2"] .bottom-nav__item--core .nav-core-gem::after {
+  content: "";
+  position: absolute;
+  inset: 6px;
+  border: 1px solid rgba(16, 23, 45, 0.46);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.3);
+}
+
+html[data-ui="v2"] .bottom-nav__item--core .bottom-nav__label {
+  color: var(--v3-moon-100, #f7f2e7);
+  font-family: var(--v3-font-serif, serif);
+  font-size: clamp(0.68rem, 3.1vw, 0.92rem);
+  line-height: 1;
+  letter-spacing: 0.08em;
+  text-shadow: 0 0 8px rgba(247, 206, 133, 0.42);
+}
+
+html[data-ui="v2"] .bottom-nav__item--core .bottom-nav__en {
+  display: none;
+}
+
+/* modal/面板開啟時，底部 nav 不可互動：避免第一次使用者「點到背景」誤觸 → 同時關 modal + 跳頁。
+   body.panel-open 由 panelManager.openPanel 設定（character / settings / soulTalk / companionSelect / atlas / codex 一致）。 */
+html[data-ui="v2"] body.panel-open .bottom-nav {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+/* 主次：非 active 影像分頁降亮/降彩（安靜），active 維持金色全亮（V3：selected→gold、inactive quiet）。 */
+html[data-ui="v2"] .bottom-nav--aurora .bottom-nav__item:not(.active):not(.is-active):not(.bottom-nav__item--core) .nav-art {
+  opacity: 0.78;
+  filter: saturate(0.82) brightness(0.9);
+}
+html[data-ui="v2"] .bottom-nav--aurora .bottom-nav__item.active:not(.bottom-nav__item--core) .nav-art,
+html[data-ui="v2"] .bottom-nav--aurora .bottom-nav__item.is-active:not(.bottom-nav__item--core) .nav-art {
+  opacity: 1;
+  filter: none;
+}
+
+@media (max-width: 480px) {
+  html[data-ui="v2"] .bottom-nav--aurora {
+    gap: 2px;
+    padding: 5px 4px calc(5px + env(safe-area-inset-bottom, 0px));
+  }
+
+  html[data-ui="v2"] .bottom-nav__item--core .nav-core-gem {
+    width: 22px;
+    height: 22px;
+  }
+
+  html[data-ui="v2"] .bottom-nav__item--core .bottom-nav__label {
+    font-size: 0.78rem;
+  }
+}
+
+/* ============================================================
+   V2 nav 語意化：以 SVG 線描 icon + 文字 label 取代 baked PNG。
+   符合 Handoff「不 baked text、icon 用 SVG」與「五鍵語意明確」。
+   純 CSS：隱藏既有 PNG、顯示 DOM 既有的 .bottom-nav__icon/.__label，
+   icon 用 CSS mask + inline data-URI SVG（無新增 asset），以 currentColor 上色。
+   保留上一包：置中對稱邊距、modal 開啟 nav lock（皆在本檔上方，不受影響）。
+   ============================================================ */
+
+/* 所有鍵：改為「icon 疊 label」直向排版，解除 baked-PNG 的 aspect-ratio。 */
+html[data-ui="v2"] .bottom-nav--aurora .bottom-nav__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  aspect-ratio: auto;
+  min-height: 52px;
+  padding: 6px 2px;
+  overflow: visible;
+  color: var(--aurora-muted, rgba(214, 224, 248, 0.68));
+}
+
+/* 非中央鍵：隱藏 baked PNG，顯示語意 icon + 中文 label。 */
+html[data-ui="v2"] .bottom-nav--aurora .bottom-nav__item:not(.bottom-nav__item--core) .nav-image {
+  display: none;
+}
+html[data-ui="v2"] .bottom-nav--aurora .bottom-nav__item:not(.bottom-nav__item--core) .bottom-nav__icon {
+  display: block;
+  width: 23px;
+  height: 23px;
+  font-size: 0; /* 隱藏原 placeholder 字符（✦♡⌁▤），改由 mask 畫 icon */
+  background-color: currentColor;
+  -webkit-mask: var(--nav-icon, none) center / contain no-repeat;
+  mask: var(--nav-icon, none) center / contain no-repeat;
+}
+html[data-ui="v2"] .bottom-nav--aurora .bottom-nav__item:not(.bottom-nav__item--core) .bottom-nav__label {
+  display: block;
+  font-size: 0.62rem;
+  line-height: 1;
+  letter-spacing: 0.05em;
+}
+
+/* 每鍵 icon（inline SVG，mask 用 alpha，故顏色任意；以 currentColor 上色）：
+   探索=星芒羅盤 / 照顧=手心托心 / 成長=新芽 / 記憶=書頁。中央鍵維持心核晶體（既有 gem）。 */
+html[data-ui="v2"] .bottom-nav button[data-action="explore"] {
+  --nav-icon: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='12' cy='12' r='9' fill='none' stroke='black' stroke-width='1.6'/%3E%3Cpath d='M12 6l2.5 5.5L12 18l-2.5-6.5z' fill='black'/%3E%3C/svg%3E");
+}
+html[data-ui="v2"] .bottom-nav button[data-action="care"] {
+  --nav-icon: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 8.6c-1-1.7-3-2.1-4.3-1-1.3 1.1-1.2 3.1.2 4.5L12 16l4.1-3.9c1.4-1.4 1.5-3.4.2-4.5-1.3-1.1-3.3-.7-4.3 1z' fill='black'/%3E%3Cpath d='M5 18c2.2 1.4 11.8 1.4 14 0' fill='none' stroke='black' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+html[data-ui="v2"] .bottom-nav button[data-action="grow"] {
+  --nav-icon: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 20v-7' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round'/%3E%3Cpath d='M12 14c.2-3 2.6-4.7 5-4.6-.1 3-2.4 4.8-5 4.6z' fill='black'/%3E%3Cpath d='M12 16c-.2-2.6-2.3-4.1-4.5-4 .1 2.6 2 4.1 4.5 4z' fill='black'/%3E%3C/svg%3E");
+}
+html[data-ui="v2"] .bottom-nav button[data-action="memory"] {
+  --nav-icon: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 7C10 5.7 7 5.6 4.8 6.2v11.2C7 16.8 10 16.9 12 18.2 14 16.9 17 16.8 19.2 17.4V6.2C17 5.6 14 5.7 12 7z' fill='none' stroke='black' stroke-width='1.5' stroke-linejoin='round'/%3E%3Cpath d='M12 7v11.2' fill='none' stroke='black' stroke-width='1.4'/%3E%3C/svg%3E");
+}
+
+/* active = 香檳金（V2：selected→gold）；inactive 安靜。光池沿用上方既有 active 背景。 */
+html[data-ui="v2"] .bottom-nav--aurora .bottom-nav__item.active:not(.bottom-nav__item--core),
+html[data-ui="v2"] .bottom-nav--aurora .bottom-nav__item.is-active:not(.bottom-nav__item--core) {
+  color: var(--aurora-gold, #e7c884);
+}

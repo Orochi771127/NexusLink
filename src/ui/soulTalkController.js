@@ -1,35 +1,45 @@
-import { processEmotionInput } from "../engine/emotionalSedimentationEngine.js";
-import {
-  createHabitatTraceFromMemory,
-  pruneHabitatTraces,
-  upsertHabitatTrace
-} from "../engine/habitatTraceEngine.js";
+import { runRaphaelCore, applyRaphaelCoreResult } from "../ai/raphaelCore.js";
+import { createRaphaelAgentIntent } from "../ai/raphaelAgentAdapter.js";
+import { maybeTriggerFirstAwakening } from "../ai/awakening/firstAwakeningRuntime.js";
+import { isRaphaelAwakened } from "../ai/awakening/raphaelAwakeningGate.js";
 import { updateMemoryLifecycles } from "../engine/memoryLifecycleEngine.js";
-import { buildSafetyShieldReply } from "../engine/safeHarborMode.js";
-import { buildEventReflection, composeCompanionReply, composeFallbackReply, composeMemoryReflection } from "../engine/soulTalkComposer.js";
-import { buildMilestoneMemory, findNewBondMilestone, getMilestoneLine } from "../engine/bondMilestoneEngine.js";
-import { qs } from "../utils/dom.js";
+import { isEmotionalHabitatTrace } from "../engine/habitatTraceEngine.js";
+import { applyRaphaelAgentReduction, reduceRaphaelAgentIntent } from "../engine/raphaelIntentReducer.js";
+import { buildEventReflection, composeMemoryReflection } from "../engine/soulTalkComposer.js";
+import {
+  clearSoftKeyboardExpectation,
+  expectSoftKeyboard,
+  qs,
+  syncViewportDuringTransition
+} from "../utils/dom.js";
 
-const DEFAULT_STATUS_TEXT = "心語 / 靈魂聖域";
-const DEFAULT_PREVIEW_TEXT = "我在這裡，安靜地看著你。";
+const DEFAULT_STATUS_TEXT = "心湖 / 安靜待命";
+const DEFAULT_PREVIEW_TEXT = "你可以慢慢說，灰影會聽。";
+const FIRST_TRACE_SYSTEM_TEXT = "月湖留下了第一道很淡的光。這不是獎勵，是牠記得你說過的事。";
+const FIRST_TRACE_STATUS_TEXT = "第一道痕跡已安靜留在月湖。";
+const NON_REWARDING_MODES = new Set(["safety_redirect", "withdraw", "reject"]);
 
 export function createSoulTalkController({ store, saveCurrentState }) {
   const chatLog = qs("#chat-log");
+  const quickReplyRow = qs("#quick-reply-row");
   const messageInput = qs("#message-input");
   const sendButton = qs("#send-button");
   const soulTalkPreview = qs("#soul-talk-preview");
   const soulTalkModal = qs(".soul-talk-modal");
+  const soulDrawerCompanionName = qs("#soul-drawer-companion-name");
   const statusText = qs("#status-text");
   let currentCreature = null;
   let waveformShell = null;
   let thinkingTimer = null;
-  // 跨 session 閉環：對峙發生在「本次頁面載入之前」且仍新鮮時，
-  // 開啟心語的第一次補上引用（同 session 的引用由 battleController 即時推送）。
   const pageLoadedAt = Date.now();
   let crossSessionReflected = false;
+  let lastQuickReplies = [];
 
   function setCreature(creature) {
     currentCreature = creature;
+    if (soulDrawerCompanionName) {
+      soulDrawerCompanionName.textContent = creature?.name || "夥伴";
+    }
   }
 
   function bind() {
@@ -49,11 +59,24 @@ export function createSoulTalkController({ store, saveCurrentState }) {
       }
     });
 
-    messageInput.addEventListener("focus", () => setSoulTalkState("active"));
+    messageInput.addEventListener("focus", () => {
+      setSoulTalkState("active");
+      // Wait for the iOS keyboard animation first; if visualViewport stays stale,
+      // dom.js applies a delayed fallback instead of moving the focused element.
+      expectSoftKeyboard(1800);
+      syncViewportDuringTransition(1800);
+      window.requestAnimationFrame(() => {
+        if (chatLog) chatLog.scrollTop = chatLog.scrollHeight;
+      });
+    });
     messageInput.addEventListener("input", () => {
       setSoulTalkState(messageInput.value.trim() ? "active" : "idle");
     });
-    messageInput.addEventListener("blur", () => setSoulTalkState("idle"));
+    messageInput.addEventListener("blur", () => {
+      setSoulTalkState("idle");
+      clearSoftKeyboardExpectation();
+      syncViewportDuringTransition(800);
+    });
   }
 
   function focusInput() {
@@ -73,137 +96,115 @@ export function createSoulTalkController({ store, saveCurrentState }) {
     if (crossSessionReflected) return;
     const state = store.getState();
     const lastBattleAt = state.battleRecord?.lastBattleAt || 0;
-    if (!lastBattleAt || lastBattleAt >= pageLoadedAt) return; // 本 session 的對峙已即時引用過
+    if (!lastBattleAt || lastBattleAt >= pageLoadedAt) return;
     const reflection = buildEventReflection(state, Date.now());
     if (!reflection) return;
     crossSessionReflected = true;
-    // 上一個 session 已推過同一句（已持久化在 chatHistory）就不重複。
     const recentTail = (state.chatHistory || []).slice(-8);
     if (recentTail.some((entry) => entry.text === reflection)) return;
     addChat("companion", reflection);
     saveCurrentState();
   }
 
-  function handlePlayerMessage(message) {
+  function handleQuickReply(quickReply) {
+    if (!quickReply?.label) return;
+    handlePlayerMessage(quickReply.label, { quickReply });
+  }
+
+  function handlePlayerMessage(message, options = {}) {
     setSoulTalkState("thinking");
-    setStatusText("心核正在聽你說話...");
+    setStatusText("灰影正在聽，先把湖面放慢……");
     addChat("player", message);
 
     let result;
 
     store.updateState((state) => {
       const moodBefore = state.mood;
-      const repeated = message === state.lastMessage;
       const now = Date.now();
       const idSuffix = String(Math.floor(Math.random() * 1000)).padStart(3, "0");
+      const traceCountBefore = countVisibleRelationshipTraces(state.habitatTraces);
 
       const lifecycleResult = updateMemoryLifecycles(state.emotionalMemories || [], now);
       state.emotionalMemories = lifecycleResult.updatedMemories;
 
-      const sedimentationResult = processEmotionInput(message, state, {
+      const coreResult = runRaphaelCore(message, state, {
         now,
-        idSuffix
+        idSuffix,
+        companion: currentCreature,
+        repeated: message === state.lastMessage,
+        quickReply: options.quickReply || null
       });
 
-      state.lastMessage = message;
-
-      let reply = "";
-      let replyRole = "companion";
-
-      if (sedimentationResult.safetyRisk?.riskLevel === "high") {
-        state.energy = Math.max(state.energy, 1);
-        state.safeHarborMode = true;
-        state.mood = "safe_harbor";
-        state.trust = Math.max(state.trust, 5);
-        state.reactionPreview = "";
-        replyRole = "system";
-        reply = buildSafetyShieldReply();
-      } else if (sedimentationResult.triggerSafeHarbor) {
-        state.energy = Math.min(10, Math.max(state.energy, 1) + 0.5);
-        state.safeHarborMode = true;
-        state.spamScore = Math.max(0, state.spamScore - 1);
-        state.trust += 1;
-        state.bond += 1;
-        state.defense = Math.max(0, state.defense - 2);
-        state.mood = sedimentationResult.matchedEmotionKey === "fatigue" ? "tired" : "calm";
-
-        if (sedimentationResult.shouldCreateMemory && sedimentationResult.memoryObject) {
-          pushEmotionalMemoryWithTrace(state, sedimentationResult.memoryObject, now);
-        }
-
-        reply = composeCompanionReply({
-          emotionKey: sedimentationResult.matchedEmotionKey || sedimentationResult.memoryObject?.emotion,
-          state,
+      let awakeningResult = null;
+      if (!isRaphaelAwakened(state) && shouldAllowFirstAwakening(coreResult)) {
+        awakeningResult = maybeTriggerFirstAwakening(state, {
           companion: currentCreature,
           now,
-          excludeMemoryId: sedimentationResult.memoryObject?.id || null
-        }).reply;
-      } else {
-        state.energy = Math.max(0, state.energy - 1);
+          dispatchAnimation: true
+        });
+      } else if (!isRaphaelAwakened(state)) {
+        awakeningResult = { applied: false, reason: "safety_or_boundary_deferred" };
+      }
 
-        if (sedimentationResult.memoryObject) {
-          state.safeHarborMode = false;
-          state.bond += 2;
-          state.trust += 1;
-          state.mood = mapEmotionToMood(sedimentationResult.memoryObject.emotion);
-          pushEmotionalMemoryWithTrace(state, sedimentationResult.memoryObject, now);
-          reply = composeCompanionReply({
-            emotionKey: sedimentationResult.memoryObject.emotion,
-            state,
-            companion: currentCreature,
-            now,
-            excludeMemoryId: sedimentationResult.memoryObject.id || null
-          }).reply;
-        } else if (repeated) {
-          state.safeHarborMode = false;
-          state.spamScore += 1;
-          state.trust = Math.max(0, state.trust - 1);
-          state.mood = "defensive";
-          reply = mockAIResponse(message, repeated, state.energy);
-        } else if (state.energy <= 2) {
-          state.safeHarborMode = false;
-          state.bond += 1;
-          state.mood = "tired";
-          reply = composeFallbackReply({ baseReply: mockAIResponse(message, repeated, state.energy), state, companion: currentCreature });
-        } else if (/謝謝|安靜|陪我|晚安|休息/.test(message)) {
-          state.safeHarborMode = false;
-          state.bond += 1;
-          state.mood = "calm";
-          state.trust += 1;
-          reply = composeFallbackReply({ baseReply: mockAIResponse(message, repeated, state.energy), state, companion: currentCreature });
-        } else {
-          state.safeHarborMode = false;
-          state.bond += 1;
-          state.mood = "warm";
-          reply = composeFallbackReply({ baseReply: mockAIResponse(message, repeated, state.energy), state, companion: currentCreature });
+      const coreResultToApply = awakeningResult?.applied
+        ? deferOrdinaryMemoryForFirstAwakeningTurn(coreResult)
+        : coreResult;
+      const applied = applyRaphaelCoreResult(state, coreResultToApply, { companion: currentCreature, now });
+      const traceCountAfter = countVisibleRelationshipTraces(state.habitatTraces);
+      const firstTraceCreated = shouldAnnounceFirstTrace({
+        traceCountBefore,
+        traceCountAfter,
+        coreResult: coreResultToApply,
+        awakeningResult,
+        state
+      });
+
+      if (firstTraceCreated) {
+        appendChatLine(state, "system", FIRST_TRACE_SYSTEM_TEXT);
+      }
+
+      const agentIntent = createRaphaelAgentIntent({
+        eventType: "soul_talk",
+        coreResult: coreResultToApply,
+        state,
+        companion: currentCreature,
+        now,
+        options: {
+          speechAlreadyApplied: true,
+          animationAlreadyApplied: true
         }
-      }
-
-      state.habitatRepairFactor = calculateHabitatRepairFactor(state.emotionalMemories);
-      state.reactionPreview = "";
-      state.chatHistory.push({ role: replyRole, text: reply });
-
-      // 羈絆里程碑：bond 跨過門檻時，夥伴以「自己的聲音」說一句深化關係的話（依五元屬性各異），
-      // 並在魔法陣綻放一道金色符文光痕。
-      const newMilestone = findNewBondMilestone(state.bond, state.emotionalMemories);
-      if (newMilestone) {
-        const milestoneLine = getMilestoneLine(newMilestone, currentCreature?.soulTalkTone);
-        pushEmotionalMemoryWithTrace(state, buildMilestoneMemory(newMilestone, now, milestoneLine), now);
-        state.chatHistory.push({ role: "companion", text: milestoneLine });
-      }
-
-      if (state.chatHistory.length > 24) state.chatHistory.shift();
+      });
+      const agentReduction = reduceRaphaelAgentIntent(agentIntent, state);
 
       result = {
         moodBefore,
         moodAfter: state.mood,
-        repeated,
-        sedimentationResult
+        repeated: coreResult.input?.repeated,
+        awakening: awakeningResult,
+        isAwakened: isRaphaelAwakened(state),
+        coreResult: coreResultToApply,
+        originalCoreResult: coreResult,
+        applied,
+        agentIntent,
+        agentReduction,
+        firstTraceCreated,
+        deferredOrdinaryTrace: Boolean(awakeningResult?.applied)
       };
     });
 
+    lastQuickReplies = result?.coreResult?.quickReplies || [];
     saveCurrentState();
     renderChat();
+    renderQuickReplies(lastQuickReplies);
+    if (result?.agentReduction) {
+      applyRaphaelAgentReduction(result.agentReduction, {
+        setPresenceState: setRaphaelAgentPresence,
+        setStatusText: result?.firstTraceCreated ? null : setStatusText
+      });
+    }
+    if (result?.firstTraceCreated) {
+      setStatusText(FIRST_TRACE_STATUS_TEXT);
+    }
     window.clearTimeout(thinkingTimer);
     thinkingTimer = window.setTimeout(() => setSoulTalkState("idle"), 720);
     return result;
@@ -214,11 +215,11 @@ export function createSoulTalkController({ store, saveCurrentState }) {
 
     waveformShell = document.createElement("section");
     waveformShell.className = "soul-talk-waveform";
-    waveformShell.setAttribute("aria-label", "心語聆聽波形");
+    waveformShell.setAttribute("aria-label", "心湖聲紋狀態");
     waveformShell.innerHTML = `
       <div class="soul-waveform-copy">
-        <strong>心語</strong>
-        <span>靈魂聖域</span>
+        <strong>心湖</strong>
+        <span>安靜待命</span>
       </div>
       <div class="soul-waveform" aria-hidden="true">
         <div class="waveform-bar"></div>
@@ -249,6 +250,11 @@ export function createSoulTalkController({ store, saveCurrentState }) {
     soulTalkModal.classList.toggle("is-idle", state === "idle");
   }
 
+  function setRaphaelAgentPresence(presenceState) {
+    if (!soulTalkModal) return;
+    soulTalkModal.dataset.raphaelAgentPresence = presenceState || "quiet";
+  }
+
   function setStatusText(text) {
     if (!statusText) return;
     statusText.textContent = text || DEFAULT_STATUS_TEXT;
@@ -257,9 +263,22 @@ export function createSoulTalkController({ store, saveCurrentState }) {
   function addChat(role, text) {
     store.updateState((state) => {
       state.reactionPreview = "";
-      state.chatHistory.push({ role, text });
-      if (state.chatHistory.length > 24) state.chatHistory.shift();
+      appendChatLine(state, role, text);
     });
+  }
+
+  function renderQuickReplies(quickReplies = []) {
+    if (!quickReplyRow) return;
+    quickReplyRow.innerHTML = "";
+
+    for (const item of quickReplies) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "quick-reply-chip";
+      button.textContent = item.label;
+      button.addEventListener("click", () => handleQuickReply(item));
+      quickReplyRow.appendChild(button);
+    }
   }
 
   function renderChat() {
@@ -269,14 +288,18 @@ export function createSoulTalkController({ store, saveCurrentState }) {
     const lastItem = state.chatHistory[state.chatHistory.length - 1];
     soulTalkPreview.textContent = state.reactionPreview || (lastItem ? lastItem.text : DEFAULT_PREVIEW_TEXT);
 
+    let prevKey = null;
     for (const item of visibleHistory) {
-      const line = document.createElement("div");
       const role = item.role === "fox" ? "companion" : item.role;
+      const dedupeKey = `${role} ${item.text}`;
+      if (dedupeKey === prevKey) continue; // 連續相同訊息不重複顯示（catch-all，含舊存檔已存在的重複）
+      prevKey = dedupeKey;
+      const line = document.createElement("div");
       line.className = `chat-line ${role}`;
       if (role === "player") {
         line.textContent = `你：${item.text}`;
       } else if (role === "system") {
-        line.textContent = `棲地：${item.text}`;
+        line.textContent = `心湖：${item.text}`;
       } else {
         const name = currentCreature?.name || "夥伴";
         line.textContent = `${name}：${item.text}`;
@@ -286,7 +309,6 @@ export function createSoulTalkController({ store, saveCurrentState }) {
     chatLog.scrollTop = chatLog.scrollHeight;
   }
 
-  // 記憶回廊：玩家點一段記憶 → 夥伴以自己的聲音回應「我們一起記得」，並落盤。
   function reflectOnMemory(memory) {
     if (!memory) return;
     const line = composeMemoryReflection({
@@ -311,84 +333,66 @@ export function createSoulTalkController({ store, saveCurrentState }) {
   };
 }
 
-function pickReplyLine(pool, seed) {
-  return pool[Math.abs(seed) % pool.length];
+function countVisibleRelationshipTraces(traces = []) {
+  if (!Array.isArray(traces)) return 0;
+  return traces.filter((trace) => isEmotionalHabitatTrace(trace)).length;
 }
 
-function mockAIResponse(message, repeated, energy) {
-  // 以訊息長度＋能量當穩定 seed，讓一般對話有變化但不每幀亂跳。
-  const seed = (message?.length || 0) + Math.round(energy || 0);
+function shouldAnnounceFirstTrace({ traceCountBefore, traceCountAfter, coreResult, awakeningResult, state }) {
+  if (traceCountBefore !== 0 || traceCountAfter <= traceCountBefore) return false;
+  if (hasRecentChatEntry(state, FIRST_TRACE_SYSTEM_TEXT)) return false;
 
-  if (repeated) {
-    return pickReplyLine([
-      "我聽見同一句話反覆出現。先一起慢慢呼吸，好嗎？",
-      "這句你說了好幾次了。我都在聽——不用急著讓我懂。",
-      "同樣的話沒關係，我不會聽膩；只是想讓你知道，我一直都在。"
-    ], seed);
-  }
-  if (energy <= 1) {
-    return pickReplyLine([
-      "我有點累了，可以陪我安靜待一下嗎？",
-      "今晚的我步調慢了些……就讓我們一起放空一會兒。",
-      "能量低低的時候，靠著彼此就好，不用說太多話。"
-    ], seed);
-  }
-  if (/謝謝|感謝|安靜|陪我|晚安|休息/.test(message)) {
-    return pickReplyLine([
-      "謝謝你把聲音放輕。我會在這裡，陪你把心慢慢安放。",
-      "晚安這種話我很喜歡。今晚的湖面也替你留了一盞燈。",
-      "願意慢下來陪我，這件事本身就很溫柔。"
-    ], seed);
-  }
-  if (/探索|去哪|外面|冒險|地圖|裂隙/.test(message)) {
-    return pickReplyLine([
-      "湖面上有微光在移動，也許那是下一段記憶的入口。",
-      "外面的場域偶爾會起雜訊，但只要我們一起，就能慢慢把它穩下來。",
-      "想出去走走嗎？我陪你；走不動了就回來，這裡永遠是歸所。"
-    ], seed);
-  }
-  if (/\?|？|嗎|為什麼|怎麼|是不是/.test(message)) {
-    return pickReplyLine([
-      "這個問題我先收著。有些答案要在湖邊待久一點才會浮上來。",
-      "我不一定有答案，但我可以陪你把問題放到月光下，一起看清楚。",
-      "你問的時候，我有認真在想。給我們一點時間，好嗎？"
-    ], seed);
-  }
-  return pickReplyLine([
-    "我接住你的訊號了。讓我們把它變成一點更穩定的光。",
-    "嗯，我在聽。你說的每一句，棲地都會替我們記得。",
-    "這一刻就先這樣吧——有你在，夜晚的湖也安靜得剛好。",
-    "我把你這句話輕輕放進心核裡了，它會在這裡發著微光。"
-  ], seed);
+  if (!shouldAllowFirstAwakening(coreResult)) return false;
+
+  const memoryDecision = coreResult?.memoryDecision || {};
+  const traceDecision = coreResult?.traceDecision || {};
+  return Boolean(awakeningResult?.applied || memoryDecision.shouldWrite || traceDecision.shouldApplyTrace);
 }
 
-function mapEmotionToMood(emotion) {
-  if (emotion === "fatigue") return "tired";
-  if (emotion === "sadness") return "soft";
-  if (emotion === "anxiety") return "alert";
-  if (emotion === "loneliness") return "warm";
-  if (emotion === "anger") return "defensive";
-  if (emotion === "gratitude") return "calm";
-  if (emotion === "calm") return "calm";
-  return "warm";
+function shouldAllowFirstAwakening(coreResult) {
+  const planMode = coreResult?.plan?.mode || "";
+  if (NON_REWARDING_MODES.has(planMode)) return false;
+
+  const safety = coreResult?.safety || coreResult?.perception?.safety || {};
+  if (safety.isHighRisk || (safety.riskLevel && safety.riskLevel !== "none")) return false;
+  if (safety.shouldCreateMemory === false || safety.shouldRewardRelationship === false) return false;
+
+  return true;
 }
 
-function pushEmotionalMemoryWithTrace(state, memoryObject, now) {
-  state.emotionalMemories.push(memoryObject);
-  state.lastEmotionTag = memoryObject.emotion;
-
-  const trace = createHabitatTraceFromMemory(memoryObject, now);
-  if (!trace) return;
-
-  state.habitatTraces = pruneHabitatTraces(upsertHabitatTrace(state.habitatTraces || [], trace));
+function deferOrdinaryMemoryForFirstAwakeningTurn(coreResult) {
+  return {
+    ...coreResult,
+    memoryDecision: {
+      ...(coreResult?.memoryDecision || {}),
+      shouldWrite: false,
+      memoryObject: null,
+      reason: "deferred_first_awakening_turn"
+    },
+    traceDecision: {
+      ...(coreResult?.traceDecision || {}),
+      shouldApplyTrace: false,
+      traceObject: null,
+      reason: "deferred_first_awakening_turn"
+    },
+    stateMutation: {
+      ...(coreResult?.stateMutation || {}),
+      shouldTriggerMilestone: false
+    }
+  };
 }
 
-function calculateHabitatRepairFactor(emotionalMemories = []) {
-  if (!Array.isArray(emotionalMemories) || emotionalMemories.length === 0) return 0;
+function hasRecentChatEntry(state, text) {
+  return (state.chatHistory || []).slice(-12).some((entry) => entry?.text === text);
+}
 
-  const transformedCount = emotionalMemories.filter((memory) => memory.status === "transformed").length;
-  const settledCount = emotionalMemories.filter((memory) => memory.status === "settled").length;
-  const total = emotionalMemories.length;
-
-  return Math.max(0, Math.min(1, (transformedCount * 0.08 + settledCount * 0.04) / Math.max(1, total)));
+function appendChatLine(state, role, text) {
+  if (!Array.isArray(state.chatHistory)) state.chatHistory = [];
+  // 連續相同訊息去重：避免回歸問候/反思在多次進場累積出重複行（presentation，不動 Raphael 推理）。
+  const last = state.chatHistory[state.chatHistory.length - 1];
+  if (last && last.role === role && last.text === text) return;
+  state.chatHistory.push({ role, text });
+  if (state.chatHistory.length > 24) {
+    state.chatHistory.splice(0, state.chatHistory.length - 24);
+  }
 }

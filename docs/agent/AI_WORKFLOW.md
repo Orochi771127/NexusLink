@@ -25,6 +25,14 @@ Gate 6: Human Approval before Commit
 
 ---
 
+## Cross-Agent Execution Ledger
+
+Before Gate 0, read the relevant lane in
+`docs/agent/AI_EXECUTION_LEDGER.md`. Before the final report, append the
+completed work, verification, problems, and next safe action to that lane.
+Use separate entries for engineering, art/UI, and Raphael work. The ledger
+does not replace human approval at Gate 2 or Gate 6.
+
 ## Gate 0 — Read-only Scan
 
 **目的**：在修改任何檔案之前，先完整理解現狀。
@@ -35,6 +43,18 @@ Gate 6: Human Approval before Commit
 - 讀取所有 `required pre-read files`（只讀，不修改）
 - 掃描相關 `src/`、`assets/`、`data/` 路徑
 - 確認現有檔案的最新狀態
+
+**required pre-read files（Raphael / Soul Talk 任務）**：
+
+| 優先 | 檔案 | 用途 |
+|------|------|------|
+| 1 | `docs/handoff/RAPHAEL_AI_HANDOFF.md` | 現況、分支、決策、下一步 |
+| 2 | `docs/handoff/RAPHAEL_AI_STATUS.yaml` | branch / commit / QA 數字 |
+| 3 | `AGENTS.md` | 多 AI 協作規範與紅線 |
+| 4 | `docs/architecture/RAPHAEL_SOUL_ARCHITECTURE_V1.md` | 架構與模組邊界 |
+| 5 | `docs/qa/RAPHAEL_CORE_JS_V1_TEST_RUNS.md` | 最新測試證據 |
+
+非 Raphael 任務可略過上表，但仍須讀 `AGENTS.md` 與任務相關 canon。
 
 **輸出**：
 ```
@@ -189,6 +209,13 @@ Gate 5 Diff Review
 **失敗處理**：修正後重新通過 Gate 5，或向 human 說明風險
 
 ---
+
+### Ledger update
+
+Before a final report or a blocked handoff, append the relevant execution-ledger
+entry. State the current branch and commit, exact verification performed, known
+risks, and the next bounded action. Do not report a remote branch as current
+runtime integration.
 
 ## Gate 6 — Human Approval before Commit
 

@@ -1,0 +1,44 @@
+/* 畫質模式（Settings 畫質：低/中/高）— 控 CSS 特效強度，讓切換真的「有感」。
+   不動 Pixi renderer（LOCKED）；low 同時是手機效能模式（關掉重 backdrop-filter / vignette / bloom）。
+   settingsController 會把選擇寫到 <html data-quality="low|medium|high">。high = 預設（不覆寫）。 */
+
+/* ---- 低畫質：扁平玻璃、關場景特效，最省效能 ---- */
+html[data-ui="v2"][data-quality="low"] .glass-panel,
+html[data-ui="v2"][data-quality="low"] .core-hud-open,
+html[data-ui="v2"][data-quality="low"] .quick-icon-button,
+html[data-ui="v2"][data-quality="low"] .soul-talk-launcher,
+html[data-ui="v2"][data-quality="low"] .bottom-nav,
+html[data-ui="v2"][data-quality="low"] .modal-panel,
+html[data-ui="v2"][data-quality="low"] .action-sheet,
+html[data-ui="v2"][data-quality="low"] .page-view,
+html[data-ui="v2"][data-quality="low"] .soul-talk-drawer {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* 低畫質關掉場景 vignette 與夥伴 bloom（純效能/視覺差異，可感知）。 */
+html[data-ui="v2"][data-quality="low"] .scene-layer::after,
+html[data-ui="v2"][data-quality="low"] .companion-focal-zone {
+  display: none;
+}
+
+/* 低畫質降光暈與呼吸動畫（更扁平、更省）。 */
+html[data-ui="v2"][data-quality="low"] {
+  --glow: rgba(140, 170, 255, 0.2);
+}
+html[data-ui="v2"][data-quality="low"] .core-status-dot,
+html[data-ui="v2"][data-quality="low"] .atlas-node--current .atlas-node-halo {
+  animation: none !important;
+}
+
+/* ---- 中畫質：保留玻璃但降 blur 半徑（折衷） ---- */
+html[data-ui="v2"][data-quality="medium"] .soul-talk-launcher,
+html[data-ui="v2"][data-quality="medium"] .bottom-nav,
+html[data-ui="v2"][data-quality="medium"] .page-view,
+html[data-ui="v2"][data-quality="medium"] .soul-talk-drawer,
+html[data-ui="v2"][data-quality="medium"] .modal-panel {
+  backdrop-filter: blur(9px);
+  -webkit-backdrop-filter: blur(9px);
+}
+
+/* high：使用各檔原本最強的 blur/glow/vignette/bloom，不覆寫。 */

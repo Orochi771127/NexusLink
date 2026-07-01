@@ -95,6 +95,22 @@
 體驗層每個 TASK_PACK **開工前回報計畫等 human 點頭**，點頭後可在該包範圍內連續施工到完成，完成後對照 `ACCEPTANCE.md` 自評。
 > 地基逐項問；體驗層問一次（開工計畫），然後一路做完。
 
+### 5.4 跨 AI 執行台帳（必讀、必寫）
+
+`docs/agent/AI_EXECUTION_LEDGER.md` 是所有協作 AI 的單一操作交接台帳，
+不是產品 canon，也不取代 Git diff、測試或 human 驗收。
+
+- 每個 TASK_PACK 開工前，必讀相關 lane 的最新條目與其 `Required reading`。
+- 每個 TASK_PACK 結案或 block 時，必須在相關 lane 追加：完成內容、驗證、
+  遇到的狀況／風險、下一個 AI 的安全操作，以及 branch / commit。
+- 三個 lane 必須分開寫：`Game Engineering And Architecture`、`Game Art, UI,
+  And Visual Production`、`Raphael Core, Companion Reasoning, And Soul Talk`。
+  跨 lane 任務必須各寫一筆，不得混成無法追溯的總結。
+- 遠端 branch、設計文件或舊測試紀錄不等於已接入目前 runtime；只有 current
+  `HEAD`／實際 worktree 驗證可標為 current integration。
+- 長任務先追加 `IN PROGRESS`；完成後追加 `VERIFIED`、`COMPLETED` 或
+  `BLOCKED`。不可刪除舊條目掩蓋歷史。
+
 ---
 
 ## 6. 任務執行規則
@@ -169,6 +185,8 @@ Acceptance refs:  <對應 ACCEPTANCE.md 的哪幾條>
 - `NEXUS_LINK_MASTER_CANON_v3.1.md` — 最高戰略上位法（最高 canon）。
 - `CLAUDE.md` — 協作入口與執行規範（先讀，但服從 Master Canon v3.1）。
 - `ACCEPTANCE.md` — 契約 → 可驗收 assertion 對照表。
+- `docs/handoff/RAPHAEL_AI_HANDOFF.md` — **Raphael AI 現況交接（接手 Soul Talk / RaphaelCore 前必讀）**。
+- `docs/handoff/RAPHAEL_AI_STATUS.yaml` — Raphael AI 機器可讀狀態（branch / QA 數字）。
 - `docs/agent/AI_WORKFLOW.md` — Gate 流程。
 - `docs/agent/TASK_TEMPLATE.md` — 任務模板。
 - `docs/testing/MANUAL_TEST_CHECKLIST.md` — 手動測試清單。

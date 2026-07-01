@@ -1,0 +1,139 @@
+html[data-ui="v2"] .soul-talk-drawer {
+  top: auto;
+  bottom: calc(var(--bottom-safe) + var(--nav-block-h, 104px) + 12px);
+  width: min(720px, calc(100vw - 24px));
+  max-width: 720px;
+  /* 高度隨可視視窗（--app-height）收縮：鍵盤開啟時 visualViewport 變矮 → drawer 變矮 → 不溢出、不留黑塊。 */
+  height: min(72svh, calc(var(--app-height, 100dvh) - var(--top-safe) - 24px));
+  max-height: none;
+  display: flex;
+  flex-direction: column;
+  padding: 18px;
+  border: 1px solid var(--aurora-line);
+  border-radius: 28px 28px 18px 18px;
+  background: linear-gradient(150deg, rgba(18, 27, 54, 0.97), rgba(12, 17, 35, 0.97));
+  box-shadow: 0 -18px 54px rgba(0, 0, 0, 0.35), 0 0 36px rgba(138, 217, 255, 0.12);
+}
+
+/* 鍵盤開啟：把 drawer 下錨到鍵盤正上方（捨棄 nav 讓位，nav 已被鍵盤蓋），輸入框與最後一句保持可見。 */
+html[data-ui="v2"] body.kb-open .soul-talk-drawer {
+  bottom: calc(var(--kb-inset, 0px) + 8px);
+}
+
+html[data-ui="v2"] .soul-drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(173, 222, 255, 0.14);
+}
+
+html[data-ui="v2"] .soul-drawer-kicker,
+html[data-ui="v2"] .soul-drawer-title {
+  margin: 0;
+}
+
+html[data-ui="v2"] .soul-drawer-kicker {
+  color: var(--aurora-muted);
+  font-size: 0.75rem;
+}
+
+html[data-ui="v2"] .soul-drawer-title {
+  color: var(--aurora-text);
+  font-size: 1.05rem;
+}
+
+html[data-ui="v2"] .soul-drawer-collapse {
+  /* 手機關閉鍵：>=44px 觸控目標 + touch-action:manipulation（去除 300ms 點擊延遲與雙擊縮放），
+     讓 tap 關閉穩定，不必依賴 Escape（手機無 Escape）。 */
+  width: 44px;
+  height: 44px;
+  flex: 0 0 auto;
+  border: 1px solid var(--aurora-line);
+  border-radius: 50%;
+  color: var(--aurora-text);
+  background: rgba(255, 255, 255, 0.06);
+  touch-action: manipulation;
+}
+
+html[data-ui="v2"] .soul-talk-drawer .chat-log {
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: none;
+  overflow-y: auto;
+  margin: 10px 0;
+}
+
+/* 輸入列固定在 drawer 底部，鍵盤開啟時永遠可見。 */
+html[data-ui="v2"] .soul-talk-drawer .chat-input-row {
+  flex: 0 0 auto;
+}
+
+html[data-ui="v2"] .soul-talk-drawer .quick-reply-row {
+  flex: 0 0 auto;
+  max-height: 96px;
+  overflow-y: auto;
+  padding: 4px 0 10px;
+}
+
+html[data-ui="v2"] .soul-talk-drawer .quick-reply-chip {
+  border-color: rgba(138, 217, 255, 0.4);
+  background: rgba(138, 217, 255, 0.1);
+}
+
+/* 聊天密度：縮 padding/gap，一頁多看幾句（ChatGPT 回饋：泡泡太高一頁只 4 句）。 */
+html[data-ui="v2"] .soul-talk-drawer .chat-log {
+  gap: 6px;
+}
+html[data-ui="v2"] .soul-talk-drawer .chat-line {
+  padding: 6px 11px;
+  line-height: 1.4;
+}
+
+/* 輸入列比例：送出鈕收窄、輸入框拿回寬度（ChatGPT 回饋：送出太大、輸入太擠）。 */
+html[data-ui="v2"] .soul-talk-drawer .chat-input-row {
+  grid-template-columns: minmax(0, 1fr) 64px;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+html[data-ui="v2"] .soul-talk-drawer #send-button {
+  min-height: 46px;
+  padding: 0;
+  font-size: 0.86rem;
+}
+html[data-ui="v2"] .soul-talk-drawer #message-input {
+  height: 46px;
+}
+
+/* 對話可讀下限「自適應」：可視高度（--app-height，鍵盤開啟時變小）夠時保 96px 可讀；
+   可視高度很小（大鍵盤 / 橫向）時自動讓位給輸入列，避免輸入框被擠到鍵盤下方而看不到。
+   下限隨 --app-height 線性縮放後，再扣掉 240px（header/輸入列/間距的固定開銷 ~200px + 約 40px
+   裝置字體度量安全餘裕），確保 floor 永遠 <= 可用空間、輸入框不被擠出；不需要 JS。
+   注意：此值只是「下限」，chat-log 以 flex 自動填滿可用空間，正常高度仍會 >= 96px。 */
+html[data-ui="v2"] .soul-talk-drawer .chat-log {
+  min-height: clamp(0px, calc(var(--app-height, 100dvh) - 240px), 96px);
+}
+
+/* Compact composer：短可視高度或鍵盤開啟時，收掉次要區塊（快速回覆、聲紋、kicker），
+   把垂直空間讓給 chat log，同時保留輸入列在底部可見。
+   兩個觸發條件：(a) 視窗本身矮（含 Codex 模擬鍵盤的縮窗）；(b) 真機鍵盤開啟（body.kb-open）。 */
+@media (max-height: 560px) {
+  html[data-ui="v2"] .soul-talk-drawer .quick-reply-row,
+  html[data-ui="v2"] .soul-talk-drawer .soul-talk-waveform,
+  html[data-ui="v2"] .soul-talk-drawer .soul-drawer-kicker {
+    display: none;
+  }
+  html[data-ui="v2"] .soul-talk-drawer .soul-drawer-header {
+    padding-bottom: 6px;
+  }
+  html[data-ui="v2"] .soul-talk-drawer .chat-log {
+    margin: 6px 0;
+  }
+}
+
+html[data-ui="v2"] body.kb-open .soul-talk-drawer .quick-reply-row,
+html[data-ui="v2"] body.kb-open .soul-talk-drawer .soul-talk-waveform,
+html[data-ui="v2"] body.kb-open .soul-talk-drawer .soul-drawer-kicker {
+  display: none;
+}

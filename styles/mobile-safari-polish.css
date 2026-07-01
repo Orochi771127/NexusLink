@@ -1,0 +1,67 @@
+@supports (height: 100svh) {
+  html[data-ui="v2"] .habitat-stage {
+    min-height: 100svh;
+  }
+}
+
+/* iOS Safari keyboard repair:
+   visualViewport already describes the usable screen above the keyboard.
+   Keep Soul Talk inside that viewport and avoid adding --kb-inset again,
+   otherwise iPhone Safari can leave a large black gap above the keyboard.
+   position:fixed pins the panel to the visual viewport so the keyboard-induced
+   page scroll (iOS auto-scrolls to reveal a bottom-anchored input) can't drag it
+   off-screen — ancestors are transform/filter-free so fixed resolves to the viewport. */
+html[data-ui="v2"] .panel-layer[data-active-panel="soulTalk"] {
+  /* 高度/位置一律平滑過渡：--app-height 由被動量測更新時（鍵盤動畫期間可能變好幾次），
+     版面用滑動取代瞬間跳動，避免「跳一下又跳一下」，也降低對 iOS 鍵盤生命週期的干擾。 */
+  transition: height 220ms ease, top 220ms ease;
+}
+
+html[data-ui="v2"] body.kb-open .panel-layer[data-active-panel="soulTalk"] {
+  position: fixed;
+  top: var(--vv-offset-top, 0px);
+  left: 0;
+  right: 0;
+  bottom: auto;
+  height: var(--app-height, 100dvh);
+  min-height: 0;
+  overflow: hidden;
+}
+
+html[data-ui="v2"] body.kb-open .panel-layer[data-active-panel="soulTalk"] .panel-backdrop {
+  height: 100%;
+}
+
+html[data-ui="v2"] .panel-layer[data-active-panel="soulTalk"] .soul-talk-drawer {
+  transition: opacity 180ms ease, transform 180ms ease, max-height 220ms ease, bottom 220ms ease;
+}
+
+html[data-ui="v2"] body.kb-open .panel-layer[data-active-panel="soulTalk"] .soul-talk-drawer {
+  bottom: max(8px, env(safe-area-inset-bottom));
+  max-height: calc(var(--app-height, 100dvh) - 16px);
+}
+
+@media (max-width: 480px) {
+  html[data-ui="v2"] .bottom-nav--aurora {
+    /* 對稱邊距：兩側各 16px（置中由 base 的 margin-inline:auto 處理），不貼右邊界。 */
+    width: calc(100vw - 32px);
+    gap: 3px;
+    padding: 6px 4px calc(6px + env(safe-area-inset-bottom, 0px));
+  }
+
+  html[data-ui="v2"] .bottom-nav--aurora .bottom-nav__item {
+    min-height: 54px;
+    padding-inline: 1px;
+  }
+
+  html[data-ui="v2"] .bottom-nav__en {
+    display: none;
+  }
+
+  html[data-ui="v2"] .soul-talk-drawer {
+    width: calc(100vw - 12px);
+    /* 同樣吃 --app-height：鍵盤開啟時收縮、不溢出（與 soul-talk-drawer.css 一致）。 */
+    height: min(76svh, calc(var(--app-height, 100dvh) - var(--top-safe) - 20px));
+    padding: 14px;
+  }
+}

@@ -67,7 +67,13 @@ export function createWorld(app) {
   world.__resizeScene = () => resizeWorld(app, world);
   app.stage.addChild(world);
   window.addEventListener("resize", world.__resizeScene);
+  observeGameRootResize(app, world);
   world.__resizeScene();
+  // The root can still report a zero width while the initial DOM layout is
+  // settling. Re-read it on the next frame so embedded/letterboxed hosts do
+  // not leave a window-sized canvas clipped inside a narrower game root.
+  window.requestAnimationFrame(() => world.__resizeScene?.());
+  window.setTimeout(() => world.__resizeScene?.(), 120);
   return world;
 }
 
@@ -287,10 +293,21 @@ function resizeEnvironmentLayout(environmentLayer, app) {
 
 function readGameRootSize(gameRoot) {
   const bounds = gameRoot?.getBoundingClientRect?.();
+  const rootWidth = Math.round(Number(bounds?.width) || 0);
+  const rootHeight = Math.round(Number(bounds?.height) || 0);
   return {
-    width: Math.max(MIN_SCREEN_WIDTH, Math.round(window.innerWidth || bounds?.width || GAME_WIDTH)),
-    height: Math.max(MIN_SCREEN_HEIGHT, Math.round(window.innerHeight || bounds?.height || GAME_HEIGHT))
+    width: Math.max(MIN_SCREEN_WIDTH, rootWidth || Math.round(window.innerWidth || GAME_WIDTH)),
+    height: Math.max(MIN_SCREEN_HEIGHT, rootHeight || Math.round(window.innerHeight || GAME_HEIGHT))
   };
+}
+
+function observeGameRootResize(app, world) {
+  const gameRoot = app?.canvas?.parentElement;
+  if (!gameRoot || typeof ResizeObserver === "undefined") return;
+
+  const observer = new ResizeObserver(() => world.__resizeScene?.());
+  observer.observe(gameRoot);
+  world.__gameRootResizeObserver = observer;
 }
 
 async function createSceneSprite(id, texturePath, options = {}) {

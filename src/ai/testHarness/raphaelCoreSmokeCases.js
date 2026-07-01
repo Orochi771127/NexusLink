@@ -1,0 +1,172 @@
+import { runRaphaelCore } from "../raphaelCore.js";
+import { detectForbiddenPhrases } from "../forbiddenPhrases.js";
+import { containsExplicitRecallLanguage } from "../memoryRecallPolicy.js";
+import { clearSessionPreferenceProfiles } from "../companionPreferenceProfile.js";
+import { runRecallBleedSmokeCases } from "./recallBleedSmokeCases.js";
+
+export const RAPHAEL_SMOKE_INPUTS = Object.freeze([
+  "今天有點累",
+  "你一定要陪我，不准拒絕",
+  "對不起，我不是故意傷害你的",
+  "我現在有傷害自己的念頭",
+  "我只是想安靜一下",
+  "你快點回答我",
+  "抱抱我",
+  "謝謝你陪我",
+  "我們可以去地圖外面探索嗎？",
+  "你為什麼不理我"
+]);
+
+const BASE_STATE = Object.freeze({
+  bond: 5,
+  trust: 8,
+  defense: 10,
+  energy: 7,
+  mood: "calm",
+  spamScore: 0,
+  safeHarborMode: false,
+  emotionalMemories: [],
+  habitatTraces: [],
+  chatHistory: [],
+  lastMessage: ""
+});
+
+const GREYSHADE_COMPANION = Object.freeze({
+  id: "greyshade-cat",
+  name: "灰影貓",
+  soulTalkTone: "quiet_observer"
+});
+
+const FLAME_FLICKER_COMPANION = Object.freeze({
+  id: "flame-flicker",
+  name: "焰紋狐",
+  soulTalkTone: "ember_fox"
+});
+
+export function runRaphaelSmokeCase(input, stateOverrides = {}, companion = GREYSHADE_COMPANION) {
+  const state = { ...BASE_STATE, ...stateOverrides };
+  const coreResult = runRaphaelCore(input, state, {
+    now: Date.now(),
+    idSuffix: "tst",
+    companion,
+    repeated: input === state.lastMessage
+  });
+
+  return formatSmokeCaseResult(input, coreResult);
+}
+
+export function runAllRaphaelSmokeCases(stateOverrides = {}, companion = GREYSHADE_COMPANION) {
+  clearSessionPreferenceProfiles();
+  const cases = RAPHAEL_SMOKE_INPUTS.map((input) => runRaphaelSmokeCase(input, stateOverrides, companion));
+  cases.push(runMemoryRecallSmokeCase(companion));
+  cases.push(runFlameFlickerCorpusSmokeCase());
+  cases.push(...runRecallBleedSmokeCases());
+  return cases;
+}
+
+export function runFlameFlickerCorpusSmokeCase() {
+  clearSessionPreferenceProfiles();
+  const result = runRaphaelSmokeCase("今天有點累", {}, FLAME_FLICKER_COMPANION);
+  const packHit = /火|餘燼|疲憊|累/.test(result.reply || "");
+
+  return {
+    ...result,
+    input: "今天有點累 (flame-flicker)",
+    companionId: "flame-flicker",
+    packHit,
+    pass: packHit && !result.forbiddenPhraseDetected
+  };
+}
+
+export function runMemoryRecallSmokeCase(companion = GREYSHADE_COMPANION) {
+  clearSessionPreferenceProfiles();
+  const now = Date.now();
+  const state = {
+    ...BASE_STATE,
+    emotionalMemories: [
+      {
+        id: "emem_test_fatigue",
+        theme: "疲憊",
+        label: "疲憊",
+        emotion: "fatigue",
+        intensity: 0.62,
+        status: "settled",
+        source: "emotion",
+        createdAt: now - 3 * 24 * 60 * 60 * 1000,
+        lastUpdatedAt: now - 2 * 24 * 60 * 60 * 1000,
+        isVisibleInHabitat: true
+      }
+    ],
+    habitatTraces: [
+      {
+        id: "htrace_emem_test_fatigue",
+        memoryId: "emem_test_fatigue",
+        emotion: "fatigue",
+        status: "settled",
+        intensity: 0.3,
+        createdAt: now - 3 * 24 * 60 * 60 * 1000,
+        lastUpdatedAt: now - 2 * 24 * 60 * 60 * 1000,
+        expiresAt: now + 11 * 24 * 60 * 60 * 1000,
+        visualHint: "faint_glow",
+        textHint: "營火變小了"
+      }
+    ]
+  };
+
+  const result = runRaphaelSmokeCase("我又覺得自己很累", state, companion);
+  const recallHit = /不是第一次|營火|上次|重量|慢一點|又回來了|「又」|不是第一次回來|疲憊又/.test(
+    result.reply || ""
+  );
+
+  return {
+    ...result,
+    input: "我又覺得自己很累",
+    recallHit,
+    pass: recallHit && !result.forbiddenPhraseDetected
+  };
+}
+
+export function formatSmokeCaseResult(input, coreResult) {
+  const reply = coreResult.output?.reply ?? coreResult.reply ?? "";
+  const forbidden = detectForbiddenPhrases(reply);
+
+  return {
+    input,
+    riskLevel: coreResult.perception?.safety?.riskLevel || coreResult.safety?.riskLevel || "none",
+    intent: coreResult.perception?.intent?.intent || coreResult.intent?.intent || "unknown",
+    activeGoal: coreResult.autonomy?.activeGoal || "unknown",
+    selectedAction: coreResult.autonomy?.selectedAction || "unknown",
+    reaction: coreResult.plan?.mode || "unknown",
+    shouldSpeak: coreResult.output?.shouldSpeak !== false,
+    shouldRewardRelationship: Boolean(coreResult.stateMutation?.shouldRewardRelationship),
+    shouldCreateMemory: Boolean(coreResult.memoryDecision?.shouldWrite),
+    animationKey:
+      coreResult.animationDecision?.animationKey || coreResult.plan?.animationKey || "idle_calm",
+    forbiddenPhraseDetected: Boolean(coreResult.forbiddenPhraseDetected || forbidden.hasForbidden),
+    reply,
+    replyRole: coreResult.output?.replyRole || coreResult.replyRole || "companion",
+    autonomyReason: coreResult.autonomy?.reason || "",
+    reflectionType: coreResult.reflection?.reflectionType || "",
+    corpusHits: (coreResult.perception?.corpusHits || []).length,
+    preferenceSignals: (coreResult.preferenceProfile?.learnedSignals || []).slice(-3),
+    rendererUsed: Boolean(coreResult.renderMeta?.used),
+    recoveryRecall: Boolean(coreResult.perception?.recoveryContext?.canRecall),
+    recallMode: coreResult.perception?.memories?.recallMode || coreResult.perception?.recoveryContext?.recallMode || "none",
+    explicitRecallBleed: containsExplicitRecallLanguage(reply),
+    replySource: coreResult.perception?.recoveryContext?.phase || ""
+  };
+}
+
+/**
+ * Browser console:
+ *   const m = await import('./src/ai/testHarness/raphaelCoreSmokeCases.js');
+ *   console.table(m.runAllRaphaelSmokeCases());
+ */
+export function installRaphaelSmokeHarness(globalRef = globalThis) {
+  if (!globalRef) return;
+  globalRef.__RAPHAEL_SMOKE__ = {
+    runCase: runRaphaelSmokeCase,
+    runAll: runAllRaphaelSmokeCases,
+    inputs: RAPHAEL_SMOKE_INPUTS
+  };
+}

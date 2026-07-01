@@ -48,6 +48,18 @@ export function clearState() {
   }
 }
 
+// 匯出存檔：回傳目前存檔的 JSON 字串（唯讀，不改 STORAGE_KEY/schema）。
+// 由 settingsController 包成 Blob 讓玩家自行下載。
+export function exportSaveData() {
+  try {
+    const raw = readFirstAvailableSave();
+    return raw || JSON.stringify(createDefaultState());
+  } catch (error) {
+    console.warn("Failed to export NexusLink save", error);
+    return null;
+  }
+}
+
 function readFirstAvailableSave() {
   const current = localStorage.getItem(STORAGE_KEY);
   if (current) return current;

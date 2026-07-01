@@ -12,8 +12,16 @@ import { createRuntimeGuard } from "./engine/runtimeGuard.js";
 import { estimateSaveSizeKB } from "./engine/storageGuard.js";
 import { startEnvironmentHeartbeat } from "./engine/environmentHeartbeat.js";
 import { isWithinSleepWindow, shouldSleep } from "./engine/sleepCycleEngine.js";
-import { buildReturnGreeting, pickReturnPresenceLine, resolveReturnAnimationIntent } from "./engine/returnBehaviorEngine.js";
+import {
+  buildReturnBehavior,
+  buildReturnGreeting,
+  getReturnMessage,
+  pickReturnPresenceLine,
+  resolveReturnAnimationIntent
+} from "./engine/returnBehaviorEngine.js";
 import { mapHabitatTracesToVisuals } from "./engine/traceVisualMapper.js";
+import { createRaphaelAgentIntent } from "./ai/raphaelAgentAdapter.js";
+import { applyRaphaelAgentReduction, reduceRaphaelAgentIntent } from "./engine/raphaelIntentReducer.js";
 import * as store from "./state/store.js";
 import {
   applyDevQueryHooks,
@@ -25,9 +33,13 @@ import {
 import { createPanelManager } from "./ui/panelManager.js";
 import { createHudController } from "./ui/hudController.js";
 import { createSoulTalkController } from "./ui/soulTalkController.js";
+import { createOnboardingController } from "./ui/onboardingController.js";
 import { createActionSheetController } from "./ui/actionSheetController.js";
+import { createPageRouter } from "./ui/pageRouter.js";
+import { createSettingsController } from "./ui/settingsController.js";
 import { createCompanionSelectController } from "./ui/companionSelectController.js";
 import { createMapController } from "./ui/mapController.js";
+import { createAtlasController } from "./ui/atlasController.js";
 import { createBattleController } from "./ui/battleController.js";
 import { createCodexController } from "./ui/codexController.js";
 import {
@@ -106,37 +118,49 @@ async function bootstrap() {
   AudioManager.initUnlock();
   bindAudioControls();
   bindSettingsDropdown();
+  ensureRaphaelAgentPresenceStyles();
 
   const isDevPanelEnabled = readDevPanelFlag();
   const devQueryHooks = readDevQueryHooks();
   applyDevResetHook(devQueryHooks);
+  const bootNow = Date.now();
   const loadedState = loadState();
-  const previousSeenAt = Number(loadedState.lastSeenAt) || Date.now();
+  const previousSeenAt = Number(loadedState.lastSeenAt) || bootNow;
   const initialState = applyDevQueryHooks(applyOfflineRecovery(loadedState), devQueryHooks);
+  const shouldRunOnboarding = !initialState.onboarding?.completed;
 
-  const elapsedAwayMs = Date.now() - previousSeenAt;
-  // 回歸短句優先用 RETURN_PRESENCE（依夥伴情緒沉積），無命中再退回既有 buildReturnGreeting。
+  const elapsedAwayMs = bootNow - previousSeenAt;
+  const returnBehavior = shouldRunOnboarding ? null : buildReturnBehavior(initialState, bootNow);
+  // Return Echo 優先使用真實 habitat trace；沒有 trace-aware echo 時才退回既有 presence/greeting。
   const returnGreeting =
-    pickReturnPresenceLine(elapsedAwayMs, initialState) || buildReturnGreeting(elapsedAwayMs, initialState);
-  if (returnGreeting) {
+    getReturnMessage(returnBehavior) ||
+    pickReturnPresenceLine(elapsedAwayMs, initialState) ||
+    buildReturnGreeting(elapsedAwayMs, initialState);
+  const hasRecentReturnGreeting = (initialState.chatHistory || [])
+    .slice(-8)
+    .some((entry) => entry?.role === "companion" && entry?.text === returnGreeting);
+  if (!shouldRunOnboarding && returnGreeting && !hasRecentReturnGreeting) {
     initialState.chatHistory = [
       ...(Array.isArray(initialState.chatHistory) ? initialState.chatHistory : []),
       { role: "companion", text: returnGreeting }
     ].slice(-24);
   }
+  if (!shouldRunOnboarding && returnBehavior?.shouldPersist) {
+    if (returnBehavior.moodHint) initialState.mood = returnBehavior.moodHint;
+    initialState.reactionPreview = returnGreeting || initialState.reactionPreview || "";
+  }
 
-  // First Session 安靜開場：strict 持久化（firstSessionOpeningSeenAt），非 derived。
-  // 只在從未看過時放一句不阻塞的開場語（無 modal、無任務 UI），並寫入 timestamp；reload 後不再出現。
-  if (initialState.firstSessionOpeningSeenAt == null) {
-    initialState.chatHistory = [
-      ...(Array.isArray(initialState.chatHistory) ? initialState.chatHistory : []),
-      { role: "companion", text: "這裡沒有任務。你可以先待著。" }
-    ].slice(-24);
-    initialState.firstSessionOpeningSeenAt = Date.now();
+  if (!shouldRunOnboarding && initialState.firstSessionOpeningSeenAt == null) {
+    initialState.firstSessionOpeningSeenAt = bootNow;
   }
 
   // 回歸一次性動畫 cue：此處先算 intent，待 bootScene（動畫橋接/控制器就緒）後再 emit 一次。
-  const pendingReturnIntent = resolveReturnAnimationIntent(elapsedAwayMs, initialState);
+  const pendingReturnIntent = shouldRunOnboarding
+    ? null
+    : resolveReturnAnimationIntent(elapsedAwayMs, {
+        ...initialState,
+        lastEmotionTag: returnBehavior?.dominantEmotion || initialState.lastEmotionTag
+      });
 
   store.replaceState(initialState);
   markPerf("nexus:state-loaded");
@@ -151,6 +175,16 @@ async function bootstrap() {
   const hudController = createHudController({ store, statusText });
   const soulTalkController = createSoulTalkController({ store, saveCurrentState: saveInteraction });
   const panelManager = createPanelManager({ onSoulTalkFocus: () => soulTalkController.focusInput() });
+  const onboardingController = createOnboardingController({
+    store,
+    saveCurrentState: () => saveQueue.enqueue(SAVE_LEVEL.CRITICAL)
+  });
+  const settingsController = createSettingsController({
+    panelManager,
+    restartOnboarding: () => onboardingController.restart(),
+    store,
+    saveSettings: () => saveQueue.enqueue(SAVE_LEVEL.CRITICAL)
+  });
   let sceneApi = null;
 
   // 效能：戰鬥／地圖／圖鑑／夥伴切換不是首屏必需，改為 lazy factory——
@@ -159,6 +193,8 @@ async function bootstrap() {
   let mapController = null;
   let codexController = null;
   let companionSelectController = null;
+  let atlasController = null;
+  let pageRouter = null;
 
   function getBattleController() {
     if (!battleController) {
@@ -195,6 +231,13 @@ async function bootstrap() {
     return codexController;
   }
 
+  function getAtlasController() {
+    if (!atlasController) {
+      atlasController = createAtlasController({ panelManager });
+    }
+    return atlasController;
+  }
+
   function getCompanionSelectController() {
     if (!companionSelectController) {
       companionSelectController = createCompanionSelectController({
@@ -221,23 +264,117 @@ async function bootstrap() {
     statusText,
     panelManager,
     store,
-    openMap: () => getMapController().open()
+    openMap: () => getMapController().open(),
+    routeNavAction: (action) => pageRouter?.navigate(action)
+  });
+
+  pageRouter = createPageRouter({
+    store,
+    panelManager,
+    soulTalkController,
+    actionSheetController,
+    statusText,
+    openMap: () => getMapController().open(),
+    openCodex: () => getCodexController().open(),
+    openAtlas: () => getAtlasController().open()
   });
 
   panelManager.bind({
     character: () => hudController.openCharacterDetail(panelManager),
     soulTalk: () => soulTalkController.openSoulTalk(panelManager),
     companionSelect: () => getCompanionSelectController().open(),
-    codex: () => getCodexController().open()
+    codex: () => getCodexController().open(),
+    settings: () => settingsController.open()
   });
   soulTalkController.bind();
+  onboardingController.bind();
+  settingsController.bind();
+  pageRouter.bind();
   actionSheetController.bind();
   markPerf("nexus:controllers-ready");
+
+  let raphaelPresenceResetTimer = null;
+  let lastRaphaelAgentSnapshot = createRaphaelAgentEventSnapshot(store.getState());
+
+  function setRaphaelAgentPresence(presenceState) {
+    if (typeof document === "undefined") return;
+    const stateName = presenceState || "quiet";
+    document.documentElement.dataset.raphaelAgentPresence = stateName;
+    window.clearTimeout(raphaelPresenceResetTimer);
+    if (stateName !== "quiet" && stateName !== "safety-exit") {
+      raphaelPresenceResetTimer = window.setTimeout(() => {
+        document.documentElement.dataset.raphaelAgentPresence = "quiet";
+      }, 1600);
+    }
+  }
+
+  function emitRestrictedRaphaelAgentEvent(eventType, event = {}, options = {}) {
+    const currentState = store.getState();
+    const intent = createRaphaelAgentIntent({
+      eventType,
+      event,
+      state: currentState,
+      companion: currentCreature,
+      now: Date.now(),
+      options: {
+        suppressSpeech: true,
+        animationAlreadyApplied: Boolean(options.animationAlreadyApplied)
+      }
+    });
+    const reduction = reduceRaphaelAgentIntent(intent, currentState);
+
+    applyRaphaelAgentReduction(reduction, {
+      setPresenceState: setRaphaelAgentPresence,
+      setStatusText: (text) => {
+        if (text) statusText.textContent = text;
+      },
+      dispatchAnimation: (animation) => {
+        if (options.animationAlreadyApplied || !animation?.intent) return;
+        EventBus.emit(COMPANION_ANIMATION_INTENT_EVENT, {
+          intent: animation.intent,
+          source: animation.source || "raphael-agent"
+        });
+      }
+    });
+
+    return { intent, reduction };
+  }
+
+  function observeRaphaelAgentStateEvents(state) {
+    const nextSnapshot = createRaphaelAgentEventSnapshot(state);
+    const previousSnapshot = lastRaphaelAgentSnapshot;
+    lastRaphaelAgentSnapshot = nextSnapshot;
+
+    if (!previousSnapshot) return;
+
+    if (nextSnapshot.traceSignature !== previousSnapshot.traceSignature) {
+      emitRestrictedRaphaelAgentEvent("habitat_change", {
+        traceSignature: nextSnapshot.traceSignature
+      }, { animationAlreadyApplied: true });
+    }
+
+    if (nextSnapshot.explorationTotal > previousSnapshot.explorationTotal) {
+      emitRestrictedRaphaelAgentEvent("exploration_result", {
+        totalExplorations: nextSnapshot.explorationTotal,
+        nodeId: nextSnapshot.explorationNodeId
+      }, { animationAlreadyApplied: true });
+    }
+
+    if (nextSnapshot.battleAt && nextSnapshot.battleAt !== previousSnapshot.battleAt) {
+      emitRestrictedRaphaelAgentEvent("standoff_result", {
+        result: nextSnapshot.battleResult,
+        battleAt: nextSnapshot.battleAt
+      }, { animationAlreadyApplied: true });
+    }
+  }
 
   store.subscribe(() => {
     hudController.renderHUD();
     soulTalkController.renderChat();
+    onboardingController.render();
+    pageRouter.render();
     devPanelController?.renderReadout();
+    observeRaphaelAgentStateEvents(store.getState());
   });
 
   stopEnvironmentHeartbeat?.();
@@ -252,6 +389,7 @@ async function bootstrap() {
   soulTalkController.setCreature(currentCreature);
   hudController.renderHUD();
   soulTalkController.renderChat();
+  onboardingController.render();
 
   if (!window.PIXI) {
     statusText.textContent = "PixiJS 載入失敗，請檢查網路或 CDN。";
@@ -261,13 +399,27 @@ async function bootstrap() {
   try {
     const app = await createPixiApp(qs("#game-root"));
     markPerf("nexus:pixi-ready");
-    sceneApi = await bootScene(app, panelManager, statusText, soulTalkController, saveQueue);
+    sceneApi = await bootScene(
+      app,
+      panelManager,
+      statusText,
+      soulTalkController,
+      saveQueue,
+      onboardingController,
+      emitRestrictedRaphaelAgentEvent
+    );
     markPerf("nexus:first-scene-ready");
 
     // Return Echo 動畫 cue：場景與 COMPANION_ANIMATION_INTENT 橋接已就緒，emit 一次性 intent。
     // 不阻塞、不輪詢、不加 ticker；one-shot lock 中或缺圖時由橋接安全略過/ fallback。
     if (pendingReturnIntent) {
       EventBus.emit(COMPANION_ANIMATION_INTENT_EVENT, { intent: pendingReturnIntent, source: "return-echo" });
+    }
+    if (!shouldRunOnboarding && returnBehavior) {
+      emitRestrictedRaphaelAgentEvent("return_echo", {
+        returnBehavior,
+        message: returnGreeting
+      }, { animationAlreadyApplied: Boolean(pendingReturnIntent) });
     }
 
     // 效能：dev panel 是純開發工具，一般玩家路徑（無 ?devPanel=1）完全不建立、不 setup。
@@ -300,6 +452,31 @@ async function bootstrap() {
   }
 }
 
+function ensureRaphaelAgentPresenceStyles() {
+  if (typeof document === "undefined") return;
+  if (document.querySelector('link[data-raphael-agent-presence="true"]')) return;
+  const link = document.createElement("link");
+  link.rel = "stylesheet";
+  link.href = "./styles/raphael-agent-presence.css";
+  link.dataset.raphaelAgentPresence = "true";
+  document.head.appendChild(link);
+}
+
+function createRaphaelAgentEventSnapshot(state = {}) {
+  const traces = Array.isArray(state.habitatTraces) ? state.habitatTraces : [];
+  const traceSignature = traces
+    .map((trace) => `${trace?.id || "trace"}:${trace?.status || "unknown"}:${trace?.emotion || "none"}:${trace?.intensity || 0}`)
+    .join("|");
+
+  return {
+    explorationTotal: Number(state.explorationProgress?.totalExplorations) || 0,
+    explorationNodeId: state.explorationProgress?.lastNodeId || null,
+    battleAt: Number(state.battleRecord?.lastBattleAt) || 0,
+    battleResult: state.battleRecord?.lastResult || null,
+    traceSignature
+  };
+}
+
 function bindAudioControls() {
   const audioToggleButton = qs("#btn-audio-toggle");
   if (!audioToggleButton) return;
@@ -315,6 +492,7 @@ function bindSettingsDropdown() {
   const settingsToggleButton = qs("#btn-settings-toggle");
   const settingsDropdown = qs("#settings-dropdown");
   if (!settingsToggleButton || !settingsDropdown) return;
+  if (settingsToggleButton.dataset.panelTrigger === "settings") return;
 
   const setDropdownExpanded = (isExpanded) => {
     settingsDropdown.classList.toggle("expanded", isExpanded);
@@ -335,7 +513,15 @@ function bindSettingsDropdown() {
   });
 }
 
-async function bootScene(app, panelManager, statusText, soulTalkController, saveQueue) {
+async function bootScene(
+  app,
+  panelManager,
+  statusText,
+  soulTalkController,
+  saveQueue,
+  onboardingController,
+  raphaelAgentEventBridge = null
+) {
   const runtimeGuard = createRuntimeGuard(app);
   const world = createWorld(app);
   const layers = getSceneLayers(world);
@@ -399,10 +585,16 @@ async function bootScene(app, panelManager, statusText, soulTalkController, save
       }
     });
     bindCompanionTap(node, {
-      isInteractionBlocked: () => panelManager.isPanelOpen(),
+      isInteractionBlocked: () => panelManager.isPanelOpen() || onboardingController?.isActive?.(),
       onTouch: (touchType) => {
         markInteraction(); // 觸碰會喚醒睡眠中的夥伴
-        return interactionController.handleTouch(touchType);
+        return Promise.resolve(interactionController.handleTouch(touchType)).then((touchResult) => {
+          raphaelAgentEventBridge?.("touch", {
+            touchType,
+            touchResult
+          }, { animationAlreadyApplied: true });
+          return touchResult;
+        });
       }
     });
   }
@@ -457,7 +649,7 @@ async function bootScene(app, panelManager, statusText, soulTalkController, save
         currentMotionState = motionState;
         devPanelController?.renderReadout();
       }, {
-        canAmbientWalk: !panelManager.isPanelOpen(),
+        canAmbientWalk: !panelManager.isPanelOpen() && !onboardingController?.isActive?.(),
         isSleeping
       });
     }

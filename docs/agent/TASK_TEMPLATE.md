@@ -45,6 +45,7 @@ Non-goals (do NOT do these):
 
 ----------------------------------------------------
 Required pre-read files (read before editing):
+  - docs/agent/AI_EXECUTION_LEDGER.md (relevant lane and its Required reading)
   - CLAUDE.md
   - AGENTS.md
   - <其他相關 runtime 檔案>
@@ -63,6 +64,7 @@ Required final output:
   2. 每個修改的說明（改了什麼、為什麼）
   3. 手動測試步驟
   4. 若有 state schema 變更，說明 localStorage migration 風險
+  5. Updated execution-ledger entry: completed work, verification, problems, and next safe action
 
 ----------------------------------------------------
 CRITICAL RULES:

@@ -4,7 +4,7 @@ export const DEFAULT_ACTIVE_COMPANION_ID = DEFAULT_COMPANION_ID;
 
 const RUNTIME_READY_ASSET_STATES = new Set(["runtime-ready", "static-ready"]);
 
-export function normalizeUnlockedCompanionIds(rawUnlockedIds = []) {
+export function normalizeUnlockedCompanionIds(rawUnlockedIds = [], options = {}) {
   const source = Array.isArray(rawUnlockedIds) ? rawUnlockedIds : [];
   const unlocked = new Set([DEFAULT_ACTIVE_COMPANION_ID]);
 
@@ -13,6 +13,10 @@ export function normalizeUnlockedCompanionIds(rawUnlockedIds = []) {
       unlocked.add(companionId);
     }
   });
+
+  if (options.preserveActiveCompanion && isKnownCompanionId(options.activeCompanionId)) {
+    unlocked.add(options.activeCompanionId);
+  }
 
   return [...unlocked];
 }

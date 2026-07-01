@@ -1,12 +1,12 @@
 import { qs } from "../utils/dom.js";
 import {
   COMPANIONS,
-  COMPANION_ASSET_READINESS_LABELS,
   ELEMENT_LABELS,
-  RUNTIME_STATUS_LABELS,
   getCompanionById
 } from "../data/companionRegistry.js";
 import { getCompanionRuntimeEligibility, normalizeRuntimeCompanionId } from "../data/companionRuntimePolicy.js";
+import EventBus from "../utils/eventBus.js";
+import { t, LANGUAGE_CHANGED_EVENT } from "../i18n/i18n.js";
 
 export function createCompanionSelectController({ store, panelManager, saveCurrentState, onCompanionChanged }) {
   const listEl = qs("#companion-select-list");
@@ -15,10 +15,16 @@ export function createCompanionSelectController({ store, panelManager, saveCurre
     if (!listEl) return;
     const state = store.getState();
     const activeId = state.activeCompanionId;
+    const visibleCompanions = COMPANIONS
+      .map((companion) => ({
+        companion,
+        eligibility: getCompanionRuntimeEligibility(companion, state)
+      }))
+      .filter(({ companion, eligibility }) => shouldShowCompanionInSelector(companion, state, eligibility));
     listEl.innerHTML = "";
+    listEl.setAttribute("aria-label", "已締結的夥伴");
 
-    COMPANIONS.forEach((companion) => {
-      const eligibility = getCompanionRuntimeEligibility(companion, state);
+    visibleCompanions.forEach(({ companion, eligibility }) => {
       const isActive = companion.id === activeId;
       const card = document.createElement("button");
       card.type = "button";
@@ -43,7 +49,7 @@ export function createCompanionSelectController({ store, panelManager, saveCurre
         </span>
         <span class="companion-card-side">
           <span class="companion-card-status">${statusLabel}</span>
-          ${isActive ? '<span class="companion-card-active">同行中</span>' : ""}
+          ${isActive ? `<span class="companion-card-active">${t("roster.active")}</span>` : ""}
         </span>
       `;
 
@@ -79,16 +85,21 @@ export function createCompanionSelectController({ store, panelManager, saveCurre
     panelManager.openPanel("companionSelect");
   }
 
+  // roster 狀態標籤、「同行中」皆以 t() baked 進卡片 innerHTML；語言切換後重畫一次。
+  EventBus.on(LANGUAGE_CHANGED_EVENT, () => render());
+
   return { open, render };
 }
 
+function shouldShowCompanionInSelector(companion, state, eligibility) {
+  return companion.id === state.activeCompanionId || eligibility.isUnlocked || eligibility.canSelect;
+}
+
+// 玩家語：把工程狀態（「動畫就緒」/「Asset pending」）映射成玩家看得懂的字眼。
+// 只改 controller 顯示層，companion data 不動。
 function getCardStatusLabel(companion, eligibility) {
-  if (eligibility.canSelect) {
-    return RUNTIME_STATUS_LABELS[companion.runtimeStatus] || companion.runtimeStatus;
-  }
-  if (!eligibility.isAssetReady) {
-    return COMPANION_ASSET_READINESS_LABELS[companion.assetReadiness] || "Asset pending";
-  }
-  if (!eligibility.isUnlocked) return "章節未解鎖";
-  return "暫不可同行";
+  if (eligibility.canSelect) return t("status.available");
+  if (!eligibility.isAssetReady) return t("status.preparing");
+  if (!eligibility.isUnlocked) return t("status.locked");
+  return t("status.unavailable");
 }

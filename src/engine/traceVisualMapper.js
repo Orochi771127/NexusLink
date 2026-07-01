@@ -1,3 +1,5 @@
+import { EmotionDict } from "../data/emotionDictionary.js";
+
 const POSITION_POOLS = Object.freeze({
   lake: Object.freeze([
     { xRatio: 0.42, yRatio: 0.53 },
@@ -151,6 +153,23 @@ export function getMemoryAccentColor(emotion) {
 
 export function getMemoryGlyph(emotion) {
   return EMOTION_GLYPH[emotion] || "◇";
+}
+
+// 記憶頁的「棲地痕跡」清單用：情緒類痕跡重用 EmotionDict 的詩意標籤與 textHint 敘事句；
+// 無 emotion 的 action-effect 類痕跡（如 crystal_trace）走通用文案，不暴露內部 type/emotion 原始字串。
+export function getTraceDisplayCopy(trace = {}) {
+  const dictEntry = EmotionDict[trace.emotion];
+  if (dictEntry) {
+    return {
+      title: dictEntry.label,
+      copy: trace.textHint || `${dictEntry.theme}留下的痕跡，仍在棲地裡。`
+    };
+  }
+
+  return {
+    title: "棲地痕跡",
+    copy: "牠在棲地裡留下的安靜痕跡。"
+  };
 }
 
 export function mapHabitatTracesToVisuals(traces = []) {

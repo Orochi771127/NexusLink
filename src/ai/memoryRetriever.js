@@ -1,0 +1,113 @@
+import { resolveRecallPolicy, RECALL_MODES } from "./memoryRecallPolicy.js";
+
+const ACTIVE_STATUSES = new Set(["fresh", "settled", "transformed"]);
+const BOUNDARY_SOURCES = new Set(["boundary", "bond", "battle_repair"]);
+const RECENT_WINDOW = 10;
+const SIMILAR_EMOTION_WINDOW = 5;
+
+export function retrieveRelevantMemories(state = {}, analysis = {}, runtime = {}, intent = {}) {
+  const now = Number.isFinite(runtime.now) ? runtime.now : Date.now();
+  const memories = (Array.isArray(state.emotionalMemories) ? state.emotionalMemories : [])
+    .filter((memory) => memory && ACTIVE_STATUSES.has(memory.status));
+
+  const emotionKey = analysis?.emotionKey || null;
+  const ranked = memories
+    .map((memory) => ({
+      memory,
+      score: scoreMemory(memory, emotionKey, now)
+    }))
+    .sort((left, right) => right.score - left.score);
+
+  const relevantMemories = ranked
+    .filter((entry) => entry.score >= 0.35)
+    .slice(0, RECENT_WINDOW)
+    .map((entry) => entry.memory);
+
+  const strongestMemory = ranked[0]?.memory || null;
+  const hasBoundaryMemory = memories.some(
+    (memory) =>
+      BOUNDARY_SOURCES.has(memory.source) ||
+      memory.emotion === "boundary" ||
+      /邊界|拒絕|退後/.test(String(memory.theme || memory.label || ""))
+  );
+
+  const recentSlice = memories
+    .slice()
+    .sort((a, b) => (Number(b.createdAt) || 0) - (Number(a.createdAt) || 0))
+    .slice(0, SIMILAR_EMOTION_WINDOW);
+
+  const similarEmotionMemories = emotionKey
+    ? recentSlice.filter((memory) => memory.emotion === emotionKey)
+    : [];
+
+  const hasRecentSimilarEmotion = similarEmotionMemories.length >= 2;
+  const hasRecallableMemory = Boolean(
+    strongestMemory &&
+      (similarEmotionMemories.length >= 1 ||
+        strongestMemory.status === "settled" ||
+        strongestMemory.status === "transformed")
+  );
+
+  const baseResult = {
+    relevantMemories,
+    strongestMemory,
+    similarEmotionMemories,
+    hasBoundaryMemory,
+    hasRecentSimilarEmotion,
+    hasRecallableMemory,
+    recallHint: buildRecallHint(strongestMemory, emotionKey, now)
+  };
+
+  const recallPolicy = resolveRecallPolicy({
+    inputText: runtime.inputText || "",
+    intent,
+    analysis,
+    memoryResult: baseResult,
+    runtime
+  });
+
+  const gatedStrongest = recallPolicy.strongestMemory;
+  const shouldRecall = recallPolicy.shouldRecall;
+  const recallMode = recallPolicy.recallMode;
+
+  return {
+    ...baseResult,
+    strongestMemory: gatedStrongest,
+    hasRecallableMemory: shouldRecall && Boolean(gatedStrongest),
+    shouldRecall,
+    recallMode,
+    recallPolicy,
+    recallHint: buildRecallHint(gatedStrongest, emotionKey, now),
+    allowsExplicitReference: recallMode === RECALL_MODES.EXPLICIT_REFERENCE
+  };
+}
+
+function buildRecallHint(memory, emotionKey, now) {
+  if (!memory) return null;
+  const ageDays = Math.max(0, Math.floor((now - (Number(memory.createdAt) || now)) / (24 * 60 * 60 * 1000)));
+  return {
+    memoryId: memory.id,
+    theme: memory.theme || memory.label || memory.emotion,
+    emotion: memory.emotion,
+    status: memory.status,
+    ageDays,
+    sameEmotionNow: emotionKey && memory.emotion === emotionKey
+  };
+}
+
+function scoreMemory(memory, emotionKey, now) {
+  let score = 0;
+  const intensity = Number(memory.intensity) || 0;
+  const ageMs = now - (Number(memory.createdAt) || now);
+  const recencyBoost = Math.max(0, 1 - ageMs / (14 * 24 * 60 * 60 * 1000));
+
+  score += intensity * 0.45;
+  score += recencyBoost * 0.35;
+
+  if (emotionKey && memory.emotion === emotionKey) score += 0.25;
+  if (memory.status === "fresh") score += 0.1;
+  if (memory.status === "transformed") score += 0.05;
+  if (BOUNDARY_SOURCES.has(memory.source)) score += 0.15;
+
+  return Math.min(1, score);
+}

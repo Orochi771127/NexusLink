@@ -163,7 +163,8 @@ canvas {
   display: block;
   width: 100%;
   height: 100%;
-  image-rendering: pixelated;
+  /* Illustrated companion runtime must not force global pixel sampling. */
+  image-rendering: auto;
   object-fit: fill;
 }
 
@@ -676,7 +677,7 @@ canvas {
   bottom: var(--bottom-safe);
   z-index: var(--z-nav);
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   /* seam fix：縮小 gap，PNG 切角之間不露大片底色 */
   gap: clamp(3px, 1.2vw, 6px);
   width: auto;
@@ -831,7 +832,8 @@ canvas {
 .panel-layer[data-active-panel="companionSelect"],
 .panel-layer[data-active-panel="map"],
 .panel-layer[data-active-panel="battle"],
-.panel-layer[data-active-panel="codex"] {
+.panel-layer[data-active-panel="codex"],
+.panel-layer[data-active-panel="settings"] {
   pointer-events: auto;
 }
 
@@ -888,7 +890,8 @@ canvas {
 .panel-layer[data-active-panel="companionSelect"] [data-panel="companionSelect"],
 .panel-layer[data-active-panel="map"] [data-panel="map"],
 .panel-layer[data-active-panel="battle"] [data-panel="battle"],
-.panel-layer[data-active-panel="codex"] [data-panel="codex"] {
+.panel-layer[data-active-panel="codex"] [data-panel="codex"],
+.panel-layer[data-active-panel="settings"] [data-panel="settings"] {
   opacity: 1;
   pointer-events: auto;
   transform: translateY(0) scale(1);
@@ -1322,6 +1325,37 @@ canvas {
 .chat-line.system {
   background: rgba(255, 255, 255, 0.05);
   color: #dffbff;
+}
+
+.quick-reply-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-height: 0;
+  padding: 4px 2px 8px;
+}
+
+.quick-reply-row:empty {
+  display: none;
+}
+
+.quick-reply-chip {
+  border: var(--border-glass);
+  border-radius: 999px;
+  background: rgba(0, 206, 209, 0.08);
+  color: #dffbff;
+  font-size: 0.82rem;
+  line-height: 1.2;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.quick-reply-chip:hover,
+.quick-reply-chip:focus-visible {
+  border-color: rgba(0, 206, 209, 0.68);
+  background: rgba(0, 206, 209, 0.16);
+  outline: none;
 }
 
 .chat-input-row {

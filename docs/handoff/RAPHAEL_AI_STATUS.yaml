@@ -1,0 +1,46 @@
+# Machine-readable Raphael AI status. Human narrative: RAPHAEL_AI_HANDOFF.md
+last_updated: "2026-06-24"
+last_agent: Grok Agent
+
+branch:
+  active: main
+  last_commit: "see git log -1 on active branch"
+  merge_commit: "4338d76"  # PR #87
+  merged_to_main: true
+  merged_pr: 87
+  merged_at: "2026-06-24"
+
+workspace: "C:\\Users\\User\\NexusLink_RaphaelAI_Workspace\\NexusLink"
+do_not_touch: "AIForgeNexus2\\NexusLink"
+
+stage:
+  current: 4
+  label: "Human playtest pack (on main)"
+  next: "Post-merge QA sign-off + expanded real human playtest"
+
+qa:
+  harness_smoke: "17/17"
+  nlu_smoke: "8/8"
+  live_playtest_gate: pass
+  stage4_human_playtest: "10/10"
+  touch_fatigue_daytime: "7/7"
+  console_errors: 0
+  forbidden_phrases: 0
+  last_record: docs/qa/RAPHAEL_CORE_JS_V1_TEST_RUNS.md
+
+entrypoints:
+  orchestrator: src/ai/raphaelCore.js
+  ui: src/ui/soulTalkController.js
+  handoff: docs/handoff/RAPHAEL_AI_HANDOFF.md
+  architecture: docs/architecture/RAPHAEL_SOUL_ARCHITECTURE_V1.md
+
+constraints:
+  storage_key: nexusLinkR2State:v1
+  external_llm_in_runtime: false
+  ai_may_commit: false
+
+blockers: []
+follow_ups:
+  - "Re-run QA pack on main for canonical sign-off (post PR #87)"
+  - "Expanded real human playtest"
+  - "Optional: dedicated apology repair pack"

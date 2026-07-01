@@ -1,0 +1,276 @@
+/* World Atlas — 唯讀世界地圖（Linkara 遠景示意）。
+   月湖為當前所在，其餘區域為遠方鎖定；無完成度 %、無倒數、無 FOMO。
+   全 CSS/SVG 佔位，不匯入任何底圖 PNG（之後若批准底圖再以獨立 pack 換上）。 */
+
+html[data-ui="v2"] .atlas-modal {
+  width: min(420px, calc(100vw - 28px));
+  max-height: min(86vh, 720px);
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+/* 顯示規則：以獨立檔承載 atlas 擁有權，沿用既有 modal reveal，不動 styles.css 的列舉清單。
+   （styles.css 的 .modal-panel 預設 opacity:0；此處在 atlas 啟用時揭示。） */
+html[data-ui="v2"] .panel-layer[data-active-panel="atlas"] {
+  pointer-events: auto;
+}
+html[data-ui="v2"] .panel-layer[data-active-panel="atlas"] [data-panel="atlas"] {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0) scale(1);
+}
+
+html[data-ui="v2"] .atlas-intro {
+  margin: 2px 0 12px;
+  color: var(--v3-moon-200, #e9dfcf);
+  font-size: 0.86rem;
+  line-height: 1.6;
+}
+
+html[data-ui="v2"] .atlas-canvas {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 100 / 96;
+  border: 1px solid var(--v3-line-quiet, rgba(247, 223, 170, 0.34));
+  border-radius: 18px;
+  overflow: hidden;
+  background:
+    radial-gradient(120% 80% at 22% 8%, rgba(124, 231, 255, 0.12), transparent 52%),
+    radial-gradient(120% 90% at 82% 96%, rgba(169, 152, 255, 0.14), transparent 56%),
+    linear-gradient(160deg, rgba(8, 19, 40, 0.72), rgba(5, 12, 28, 0.92));
+  box-shadow: inset 0 0 38px rgba(4, 10, 26, 0.6);
+}
+
+html[data-ui="v2"] .atlas-canvas svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* 聯結之河：區域間的細光路 */
+html[data-ui="v2"] .atlas-link {
+  fill: none;
+  stroke: rgba(173, 200, 240, 0.18);
+  stroke-width: 0.7;
+  stroke-linecap: round;
+  stroke-dasharray: 2 2.4;
+}
+html[data-ui="v2"] .atlas-link.is-live {
+  stroke: rgba(124, 231, 255, 0.42);
+  stroke-dasharray: none;
+}
+
+/* 區域節點 */
+html[data-ui="v2"] .atlas-node-halo {
+  fill: rgba(173, 200, 240, 0.06);
+  stroke: rgba(173, 200, 240, 0.22);
+  stroke-width: 0.5;
+}
+html[data-ui="v2"] .atlas-node-dot {
+  fill: rgba(150, 178, 220, 0.5);
+}
+html[data-ui="v2"] .atlas-node-no {
+  fill: rgba(233, 240, 255, 0.6);
+  font-family: var(--v3-font-serif, serif);
+  font-size: 3.4px;
+  font-weight: 600;
+  text-anchor: middle;
+}
+
+/* 鎖定（遠方）區域：低調、降亮 */
+html[data-ui="v2"] .atlas-node--locked .atlas-node-dot {
+  fill: rgba(150, 178, 220, 0.32);
+}
+html[data-ui="v2"] .atlas-node--locked .atlas-node-no {
+  fill: rgba(214, 224, 248, 0.4);
+}
+
+/* 當前所在：月湖 — 香檳金＋青光高亮、輕呼吸 */
+html[data-ui="v2"] .atlas-node--current .atlas-node-halo {
+  fill: rgba(247, 206, 133, 0.12);
+  stroke: rgba(247, 223, 170, 0.6);
+  stroke-width: 0.7;
+  animation: atlasPulse 3.2s ease-in-out infinite;
+}
+html[data-ui="v2"] .atlas-node--current .atlas-node-dot {
+  fill: var(--v3-gold-200, #f7dfaa);
+}
+html[data-ui="v2"] .atlas-node--current .atlas-node-no {
+  fill: #0a1228;
+}
+
+@keyframes atlasPulse {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+
+/* 圖例 */
+html[data-ui="v2"] .atlas-legend {
+  display: grid;
+  gap: 7px;
+  margin: 14px 0 4px;
+  padding: 0;
+  list-style: none;
+}
+html[data-ui="v2"] .atlas-region {
+  display: grid;
+  grid-template-columns: 26px minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  padding: 9px 11px;
+  border: 1px solid rgba(185, 201, 230, 0.16);
+  border-radius: 14px;
+  background: rgba(7, 18, 38, 0.42);
+}
+html[data-ui="v2"] .atlas-region-no {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border: 1px solid rgba(185, 201, 230, 0.24);
+  border-radius: 8px;
+  color: var(--v3-moon-200, #e9dfcf);
+  font-family: var(--v3-font-serif, serif);
+  font-size: 0.82rem;
+}
+html[data-ui="v2"] .atlas-region-copy {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+}
+html[data-ui="v2"] .atlas-region-copy strong {
+  color: var(--v3-moon-100, #f7f2e7);
+  font-size: 0.9rem;
+  letter-spacing: 0.03em;
+}
+html[data-ui="v2"] .atlas-region-copy em {
+  color: rgba(185, 201, 230, 0.66);
+  font-size: 0.66rem;
+  font-style: normal;
+  letter-spacing: 0.04em;
+}
+html[data-ui="v2"] .atlas-region-tag {
+  padding: 3px 9px;
+  border: 1px solid rgba(185, 201, 230, 0.2);
+  border-radius: 999px;
+  color: rgba(214, 224, 248, 0.6);
+  font-size: 0.66rem;
+  white-space: nowrap;
+}
+
+/* 當前所在區域的圖例列高亮 */
+html[data-ui="v2"] .atlas-region--current {
+  border-color: rgba(247, 223, 170, 0.5);
+  background:
+    radial-gradient(80% 120% at 0% 0%, rgba(247, 206, 133, 0.12), transparent 60%),
+    rgba(9, 24, 47, 0.56);
+}
+html[data-ui="v2"] .atlas-region--current .atlas-region-no {
+  border-color: rgba(247, 223, 170, 0.6);
+  color: var(--v3-gold-200, #f7dfaa);
+}
+html[data-ui="v2"] .atlas-region--current .atlas-region-tag {
+  border-color: rgba(247, 223, 170, 0.55);
+  color: var(--v3-gold-200, #f7dfaa);
+}
+
+html[data-ui="v2"] .atlas-note {
+  margin: 10px 2px 2px;
+  color: rgba(185, 201, 230, 0.6);
+  font-size: 0.74rem;
+  line-height: 1.5;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-ui="v2"] .atlas-node--current .atlas-node-halo {
+    animation: none;
+  }
+}
+
+/* =========================================================================
+   Soul Map（月湖 5 節點探索地圖）— V2 Aurora 重繪。
+   只改視覺；mapController.js / explorationNodes.js 的資料與結算零改動。
+   與上方 World Atlas 共用同一套 map-surface 視覺語彙（髮絲邊、v3 玻璃、青/金/紫）。
+   ========================================================================= */
+
+html[data-ui="v2"] .soul-map {
+  border: 1px solid var(--v3-line-quiet);
+  border-radius: 18px;
+  background:
+    radial-gradient(120% 80% at 22% 8%, rgba(124, 231, 255, 0.1), transparent 52%),
+    radial-gradient(120% 90% at 80% 96%, rgba(169, 152, 255, 0.12), transparent 56%),
+    linear-gradient(160deg, rgba(8, 19, 40, 0.62), rgba(5, 12, 28, 0.86));
+  box-shadow: inset 0 0 38px rgba(4, 10, 26, 0.55);
+}
+
+/* 光路：細虛線青光，與 atlas-link 一致克制（保留 path-danger / is-alert 既有處理） */
+html[data-ui="v2"] .map-path:not(.path-danger) {
+  stroke: rgba(173, 200, 240, 0.22);
+  stroke-width: 0.7;
+  stroke-dasharray: 2 2.6;
+}
+
+/* 節點 orb：實心髮絲邊（不再 dashed）、v3 玻璃 + 內微光 */
+html[data-ui="v2"] .map-node-orb {
+  border: 1px solid rgba(173, 200, 240, 0.3);
+  background:
+    radial-gradient(circle at 50% 38%, rgba(124, 231, 255, 0.12), transparent 62%),
+    var(--v3-surface-quiet);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+html[data-ui="v2"] .map-node-glyph {
+  color: var(--v3-cyan-300);
+  opacity: 0.78;
+}
+
+/* 標籤：中文 serif、拉丁小標克制 */
+html[data-ui="v2"] .map-node-label strong {
+  font-family: var(--v3-font-serif);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.7);
+}
+html[data-ui="v2"] .map-node-label em {
+  color: rgba(185, 201, 230, 0.6);
+  font-size: 8px;
+  letter-spacing: 0.14em;
+}
+
+/* 到訪次數徽章：克制金色藥丸 */
+html[data-ui="v2"] .map-node-visits {
+  border-color: rgba(247, 223, 170, 0.45);
+  background: var(--v3-surface-deep);
+  color: var(--v3-gold-200);
+}
+
+/* tone：safe=金 / calm=青 / discovery=青 / danger=克制玫瑰（非警示血紅，守「不用紅色」基調） */
+html[data-ui="v2"] .map-node.tone-safe .map-node-orb { border-color: rgba(247, 223, 170, 0.5); }
+html[data-ui="v2"] .map-node.tone-safe .map-node-glyph { color: var(--v3-gold-200); }
+html[data-ui="v2"] .map-node.tone-calm .map-node-orb { border-color: rgba(124, 231, 255, 0.42); }
+html[data-ui="v2"] .map-node.tone-discovery .map-node-orb { border-color: rgba(124, 231, 255, 0.5); }
+html[data-ui="v2"] .map-node.tone-danger .map-node-orb { border-color: rgba(201, 152, 196, 0.5); }
+html[data-ui="v2"] .map-node.tone-danger .map-node-glyph { color: rgba(214, 160, 200, 0.85); }
+
+/* visited：v3 暖/青光 */
+html[data-ui="v2"] .map-node.tone-safe.is-visited .map-node-orb {
+  box-shadow: var(--v3-glow-gold), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+html[data-ui="v2"] .map-node.tone-calm.is-visited .map-node-orb,
+html[data-ui="v2"] .map-node.tone-discovery.is-visited .map-node-orb {
+  box-shadow: var(--v3-glow-cyan), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+html[data-ui="v2"] .map-node.tone-danger.is-visited .map-node-orb {
+  box-shadow: 0 0 14px rgba(201, 152, 196, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+/* toast：對齊 v3 surface */
+html[data-ui="v2"] .map-toast {
+  border: 1px solid var(--v3-line-quiet);
+  border-radius: 14px;
+  background: var(--v3-surface-deep);
+}
+html[data-ui="v2"] .map-toast-title {
+  color: var(--v3-gold-200);
+  letter-spacing: 0.14em;
+}

@@ -1,0 +1,73 @@
+html[data-ui="v2"] {
+  --v3-ink-950: #061022;
+  --v3-ink-900: #09182f;
+  --v3-ink-820: #102243;
+  --v3-moon-100: #f7f2e7;
+  --v3-moon-200: #e9dfcf;
+  --v3-moon-420: #b9c9e6;
+  --v3-cyan-300: #7ce7ff;
+  --v3-cyan-500: #3aa7ff;
+  --v3-gold-200: #f7dfaa;
+  --v3-gold-420: #cda363;
+  --v3-violet-320: #a998ff;
+  --v3-surface-quiet: rgba(7, 18, 38, 0.54);
+  --v3-surface-deep: rgba(7, 16, 34, 0.82);
+  --v3-line-quiet: rgba(247, 223, 170, 0.34);
+  --v3-line-strong: rgba(247, 223, 170, 0.72);
+  --v3-glow-cyan: 0 0 24px rgba(82, 210, 255, 0.3);
+  --v3-glow-gold: 0 0 24px rgba(247, 206, 133, 0.28);
+  --v3-radius-card: 28px;
+  --v3-radius-pill: 999px;
+  --v3-font-serif: "Noto Serif TC", "Songti TC", "PMingLiU", serif;
+  --v3-font-ui: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif;
+}
+
+html[data-ui="v2"] body {
+  font-family: var(--v3-font-ui);
+}
+
+html[data-ui="v2"] .resource-hud {
+  display: none;
+}
+
+/* 月湖棲地標註：小型藥丸 tag，緊貼在心語欄位正上方左側。
+   名稱（strong）會隨未來地圖切換而改字；故只顯示名稱、隱藏 kicker 與描述句。 */
+html[data-ui="v2"] .v3-home-presence {
+  position: absolute;
+  left: 16px;
+  right: auto;
+  bottom: calc(var(--bottom-safe) + var(--nav-block-h, 104px) + var(--soul-strip-h, 76px) + 18px);
+  width: fit-content;
+  max-width: calc(100vw - 36px);
+  padding: 4px 11px;
+  border: 1px solid var(--v3-line-quiet);
+  border-radius: 999px;
+  color: var(--v3-moon-100);
+  background: linear-gradient(145deg, rgba(9, 21, 42, 0.52), rgba(7, 16, 34, 0.7));
+  box-shadow: 0 0 12px rgba(82, 210, 255, 0.14);
+  opacity: 0.9;
+  transform: translateY(0);
+  pointer-events: none;
+}
+
+html[data-ui="v2"] .v3-home-presence::before {
+  display: none;
+}
+
+/* 英文小標與描述句在 tag 形態下隱藏，只留地點名。 */
+html[data-ui="v2"] .v3-home-kicker,
+html[data-ui="v2"] .v3-home-presence em {
+  display: none;
+}
+
+html[data-ui="v2"] .v3-home-presence strong {
+  display: inline-block;
+  font-family: var(--v3-font-serif);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+
+html[data-ui="v2"] body.onboarding-active .v3-home-presence {
+  opacity: 0;
+}
