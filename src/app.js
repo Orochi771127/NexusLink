@@ -119,6 +119,7 @@ async function bootstrap() {
   bindAudioControls();
   bindSettingsDropdown();
   ensureRaphaelAgentPresenceStyles();
+  installRaphaelPreviewHarnessIfRequested();
 
   const isDevPanelEnabled = readDevPanelFlag();
   const devQueryHooks = readDevQueryHooks();
@@ -746,6 +747,28 @@ function exposeDevCompanion(companion) {
   const params = new URLSearchParams(window.location.search);
   if (params.get("devPanel") !== "1" && params.get("devSceneEditor") !== "1") return;
   window.__NEXUS_TEST_COMPANION__ = companion;
+}
+
+function installRaphaelPreviewHarnessIfRequested() {
+  if (typeof window === "undefined") return;
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("raphaelPreview") !== "1") return;
+  window.__RAPHAEL_PREVIEW_BOOTSTRAP__ = {
+    requested: true,
+    startedAt: new Date().toISOString(),
+    appliedToLive: false
+  };
+  import("./ai/testHarness/raphaelPreviewStagingCases.js").then((mod) =>
+    mod.installRaphaelPreviewStagingHarness(window)
+  ).catch((error) => {
+    window.__RAPHAEL_PREVIEW_REPORT__ = {
+      ok: false,
+      previewOnly: true,
+      appliedToLive: false,
+      fallbackUsed: true,
+      reason: `PREVIEW_HARNESS_IMPORT_FAILED:${error?.message || "unknown"}`
+    };
+  });
 }
 
 function saveCurrentState() {

@@ -179,6 +179,18 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Next safe action: Implement adapter/reducer and minimal runtime presentation hooks without modifying save schema, protected assets, or release/desktop docs.
 - Required reading: `docs/handoff/RAPHAEL_AI_HANDOFF.md`, `docs/handoff/RAPHAEL_AI_STATUS.yaml`, `docs/architecture/RAPHAEL_SOUL_ARCHITECTURE_V1.md`, `docs/raphael/RAPHAEL_CONSTITUTION.md`, `src/ai/raphaelCore.js`, `src/ai/autonomy/actionPolicy.js`, `src/ui/soulTalkController.js`, and `src/app.js`.
 
+### 2026-07-02 - Codex - Raphael Preview Staging Integration
+
+- Lane: `Raphael Core, Companion Reasoning, And Soul Talk`
+- Status: `VERIFIED`
+- Branch / commit: `main` / pending commit for Phase 9.
+- Scope: Phase 9 QA-only staging comparison between NexusLink live `runRaphaelCore()` and sibling `raphael-ai-engine` / mock gateway compatibility. Preview output remains debug/report only. No frontend API key, no external LLM, no LangGraph runtime dependency inside NexusLink, no save schema, no Pixi renderer, no assets, and no companion data change.
+- Work performed: Added a read-only preview adapter, browser/Node staging cases, and a Node QA runner. `src/app.js` now query-gates the preview harness behind `?raphaelPreview=1`; normal live Soul Talk remains unchanged and still uses existing `runRaphaelCore()` as final authority. The sibling engine worker now accepts legacy `POST /v1/gateway` contract while returning `trusted:false`, `authorityReport.finalAuthority="RaphaelCore"`, and `advisorOverrideApplied=false`.
+- Verification: NexusLink preview staging runner passed 6/6; state onboarding migration passed 8/8; changed JavaScript syntax checks passed; `raphael-ai-engine` full local regression passed, including gateway legacy 3/3, gateway maturity 7/7, NexusLink adapter probe 9/9, and Phase 4 expanded eval 167/167. Existing Python browser wrappers were blocked by missing `playwright.sync_api` in bundled Python. In-app browser local smoke confirmed page load, one canvas, Soul Talk launcher, and message input, but its old module cache prevented a conclusive `window.__RAPHAEL_PREVIEW_REPORT__` browser assertion in this session.
+- Problems / risks: Browser preview report should be rechecked after a clean browser context or deployed staging build. Do not route preview output into player-facing chat, memory, trace, state, or animation without a separate approved TASK_PACK.
+- Next safe action: Commit/push Phase 9 in both repos, then use `?raphaelPreview=1` on a clean staging context for phone-side QA. Keep live routing disabled until a separate human-approved gateway routing task.
+- Required reading: `AGENTS.md`, `CLAUDE.md`, `ACCEPTANCE.md`, `docs/handoff/RAPHAEL_AI_HANDOFF.md`, `src/ai/raphaelCore.js`, `src/ai/external/raphaelPreviewAdapter.js`, `docs/qa/RAPHAEL_PREVIEW_STAGING_REPORT.md`, and sibling `raphael-ai-engine/gateway/worker-skeleton.js`.
+
 ### 2026-06-27 - Codex - Raphael Restricted Habitat Agent
 
 - Status: `VERIFIED`
