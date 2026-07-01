@@ -1,10 +1,4 @@
-import {
-  qs,
-  qsa,
-  expectSoftKeyboard,
-  clearSoftKeyboardExpectation,
-  syncViewportDuringTransition
-} from "../utils/dom.js";
+import { qs, qsa } from "../utils/dom.js";
 
 const STEP_ORDER = ["start", "identity", "guidance", "meet"];
 const FINAL_GREETING = "我在這裡。你可以慢慢靠近，也可以先只是看著月湖。";
@@ -25,15 +19,14 @@ export function createOnboardingController({ store, saveCurrentState } = {}) {
         saveIdentity(false);
       }
     });
-    // 身份頁輸入名字會彈鍵盤：與 Soul Talk 一樣武裝「延遲鍵盤 fallback」+ 被動重量 viewport，
-    // 讓 --app-height/kb-open 跟上鍵盤，配合 CSS 把身份卡釘在可視視窗內、不被鍵盤蓋住。
+    // 鍵盤模型 v5（同 Soul Talk drawer，見 soul-talk-drawer.css）：不偵測、不量測、不用 fixed。
+    // kbtest.html 真機三輪已證實 visualViewport/innerHeight/fixed/scroll-into-view 全不可靠。
+    // focus 時 body.ob-focus 直接把身份卡釘到螢幕頂端 42vh 安全區（CSS），鍵盤只會從下緣往上長。
     nameInput?.addEventListener("focus", () => {
-      expectSoftKeyboard(1600);
-      syncViewportDuringTransition(1200);
+      document.body.classList.add("ob-focus");
     });
     nameInput?.addEventListener("blur", () => {
-      clearSoftKeyboardExpectation();
-      syncViewportDuringTransition(800);
+      document.body.classList.remove("ob-focus");
     });
   }
 
@@ -172,6 +165,8 @@ export function createOnboardingController({ store, saveCurrentState } = {}) {
 
   function showStep(step) {
     if (shell) shell.dataset.onboardingStep = step;
+    // 安全網：離開 identity 步驟時輸入框可能來不及觸發 blur，避免 ob-focus 卡住。
+    if (step !== "identity") document.body.classList.remove("ob-focus");
     steps.forEach((stepEl) => {
       const isActiveStep = stepEl.dataset.step === step;
       stepEl.classList.toggle("is-active", isActiveStep);

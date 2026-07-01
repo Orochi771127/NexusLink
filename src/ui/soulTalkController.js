@@ -29,6 +29,10 @@ export function createSoulTalkController({ store, saveCurrentState }) {
   const pageLoadedAt = Date.now();
   let crossSessionReflected = false;
   let lastQuickReplies = [];
+  // 玩家剛送出的訊息文字：renderChat 據此把該行錨定在可視區頂端（見 scrollChatLog）。
+  let scrollAnchorText = null;
+  // 上次渲染的內容簽章：內容沒變就跳過重建，避免捲動位置被無關 state 變動重置。
+  let lastRenderSig = null;
 
   function setCreature(creature) {
     currentCreature = creature;
@@ -39,6 +43,13 @@ export function createSoulTalkController({ store, saveCurrentState }) {
 
   function bind() {
     ensureWaveformShell();
+
+    // 送出鈕不奪走輸入框焦點：st-focus 模式下 blur 會讓 drawer 位移 180ms，
+    // 按鈕在手指/游標下方移走，click 落在舊座標上 → 送出靜默失敗、訊息消失
+    //（真機點按與 Playwright 閘門都會中招；鍵盤保持開啟也更接近一般聊天體驗）。
+    sendButton.addEventListener("pointerdown", (event) => {
+      event.preventDefault();
+    });
 
     sendButton.addEventListener("click", () => {
       const value = messageInput.value.trim();
@@ -64,9 +75,10 @@ export function createSoulTalkController({ store, saveCurrentState }) {
       // which is safely above any keyboard because keyboards only ever grow from
       // the bottom.
       document.body.classList.add("st-focus");
-      window.requestAnimationFrame(() => {
-        if (chatLog) chatLog.scrollTop = chatLog.scrollHeight;
-      });
+      window.requestAnimationFrame(() => scrollChatLog());
+      // drawer 有 180ms 的 top/height transition，rAF 落在轉場前、量到的是舊高度；
+      // 轉場結束後補一次，確保鍵盤模式下捲動位置正確。
+      window.setTimeout(() => scrollChatLog(), 240);
     });
     messageInput.addEventListener("input", () => {
       setSoulTalkState(messageInput.value.trim() ? "active" : "idle");
@@ -86,8 +98,11 @@ export function createSoulTalkController({ store, saveCurrentState }) {
     ensureWaveformShell();
     setSoulTalkState("idle");
     maybeReflectCrossSessionEvent();
+    scrollAnchorText = null; // 重新打開 drawer 一律回到最新訊息
     renderChat();
     panelManager.openPanel("soulTalk");
+    // renderChat 可能在面板還隱藏（高度為 0）時執行過；面板可見後補一次捲動。
+    window.requestAnimationFrame(() => scrollChatLog());
   }
 
   function maybeReflectCrossSessionEvent() {
@@ -112,6 +127,7 @@ export function createSoulTalkController({ store, saveCurrentState }) {
   function handlePlayerMessage(message, options = {}) {
     setSoulTalkState("thinking");
     setStatusText("灰影正在聽，先把湖面放慢……");
+    scrollAnchorText = message;
     addChat("player", message);
 
     let result;
@@ -281,16 +297,25 @@ export function createSoulTalkController({ store, saveCurrentState }) {
 
   function renderChat() {
     const state = store.getState();
-    chatLog.innerHTML = "";
     const visibleHistory = state.chatHistory.slice(-12);
     const lastItem = state.chatHistory[state.chatHistory.length - 1];
     soulTalkPreview.textContent = state.reactionPreview || (lastItem ? lastItem.text : DEFAULT_PREVIEW_TEXT);
 
+    // 內容簽章：store.subscribe 每次 state 變動（含 heartbeat/存檔）都會呼叫 renderChat；
+    // 內容沒變就不重建 DOM 也不動捲動位置，玩家往上翻歷史不會被跳回底部。
+    const renderSig = `${currentCreature?.name || ""}|${visibleHistory
+      .map((item) => `${item.role} ${item.text}`)
+      .join("\n")}`;
+    if (renderSig === lastRenderSig) return;
+    lastRenderSig = renderSig;
+
+    chatLog.innerHTML = "";
     let prevKey = null;
     for (const item of visibleHistory) {
       const role = item.role === "fox" ? "companion" : item.role;
       const dedupeKey = `${role} ${item.text}`;
-      if (dedupeKey === prevKey) continue; // 連續相同訊息不重複顯示（catch-all，含舊存檔已存在的重複）
+      // 連續相同訊息不重複顯示（僅 companion/system；玩家的重複輸入必須照實顯示）
+      if (role !== "player" && dedupeKey === prevKey) continue;
       prevKey = dedupeKey;
       const line = document.createElement("div");
       line.className = `chat-line ${role}`;
@@ -303,6 +328,31 @@ export function createSoulTalkController({ store, saveCurrentState }) {
         line.textContent = `${name}：${item.text}`;
       }
       chatLog.appendChild(line);
+    }
+    scrollChatLog();
+  }
+
+  // 捲動策略：玩家剛送出的那句要「錨定在可視區頂端」，回覆在它下方陸續出現——
+  // 鍵盤模式 drawer 只剩 42vh、可視 2~4 行時，盲捲到底會把玩家自己的話推出視野
+  //（私測回報：「我打出去的自我看不到內容，就只有他回覆」）。無錨點時維持捲到底。
+  function scrollChatLog() {
+    if (!chatLog) return;
+    let anchorLine = null;
+    if (scrollAnchorText) {
+      const playerLines = chatLog.querySelectorAll(".chat-line.player");
+      for (let index = playerLines.length - 1; index >= 0; index -= 1) {
+        if (playerLines[index].textContent === `你：${scrollAnchorText}`) {
+          anchorLine = playerLines[index];
+          break;
+        }
+      }
+    }
+    if (anchorLine) {
+      const offsetWithinLog =
+        anchorLine.getBoundingClientRect().top - chatLog.getBoundingClientRect().top + chatLog.scrollTop;
+      const maxScroll = Math.max(0, chatLog.scrollHeight - chatLog.clientHeight);
+      chatLog.scrollTop = Math.max(0, Math.min(offsetWithinLog - 6, maxScroll));
+      return;
     }
     chatLog.scrollTop = chatLog.scrollHeight;
   }
@@ -386,9 +436,10 @@ function hasRecentChatEntry(state, text) {
 
 function appendChatLine(state, role, text) {
   if (!Array.isArray(state.chatHistory)) state.chatHistory = [];
-  // 連續相同訊息去重：避免回歸問候/反思在多次進場累積出重複行（presentation，不動 Raphael 推理）。
+  // 連續相同訊息去重「僅限 companion/system」：避免回歸問候/反思在多次進場累積出重複行。
+  // 玩家重複說同一句是有效輸入（私測回報：第二次送出整句被吞掉、畫面毫無反應），不可去重。
   const last = state.chatHistory[state.chatHistory.length - 1];
-  if (last && last.role === role && last.text === text) return;
+  if (role !== "player" && last && last.role === role && last.text === text) return;
   state.chatHistory.push({ role, text });
   if (state.chatHistory.length > 24) {
     state.chatHistory.splice(0, state.chatHistory.length - 24);

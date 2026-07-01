@@ -274,8 +274,7 @@ export function createMapController({ store, panelManager, soulTalkController, s
 
     if ((state.energy || 0) <= 0 && node.eventType !== "rest") {
       const message = "夥伴的能量見底了。先回月湖營地休息，再出發吧。";
-      soulTalkController.addChat("system", message);
-      soulTalkController.renderChat();
+      // 只走 toast：系統狀態不再塞進聊天紀錄（私測回報會被誤認成對話回覆）。
       showToast({ title: "心核訊號微弱", text: message, tone: "calm" });
       return;
     }
@@ -294,9 +293,8 @@ export function createMapController({ store, panelManager, soulTalkController, s
       }
     });
 
-    soulTalkController.addChat("system", `【${node.label.zh}】${result.message}`);
-
-    // 閉環：首次到訪且無遭遇時，夥伴用自己的聲音記得這趟探索。
+    // 探索結果只走下方 toast（本函式尾端的 showToast）；不再以 system 行塞進聊天紀錄。
+    // 閉環：首次到訪且無遭遇時，夥伴用自己的聲音記得這趟探索——這是對話，留在聊天室。
     const isFirstVisit = !(state.explorationProgress?.visitCounts?.[node.id] > 0);
     if (!result.encounter && isFirstVisit) {
       const reflection = buildEventReflection(store.getState(), Date.now(), { allowExploration: true });

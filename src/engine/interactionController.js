@@ -4,6 +4,12 @@ import { getAnimationProfileForCreature, getBodyCueProfile, getMoodIdleAnimation
 import { createHabitatTraceFromMemory, pruneHabitatTraces, upsertHabitatTrace } from "./habitatTraceEngine.js";
 import { clamp } from "../utils/clamp.js";
 import { maybeTriggerFirstAwakening } from "../ai/awakening/firstAwakeningRuntime.js";
+import EventBus from "../utils/eventBus.js";
+
+// 觸碰反應的可見回饋事件：由 UI 層（companionFeedbackController）訂閱後顯示在主畫面。
+// 反應文字原本只寫進收合中的 Soul Talk drawer（#status-text），平常完全看不見——
+// 私測回報「點貓沒有互動」。拒絕/退縮也要看得見：邊界是設計，隱形的邊界不是。
+export const COMPANION_REACTION_FEEDBACK_EVENT = "COMPANION_REACTION_FEEDBACK";
 
 export const ANIMATION_REGISTRY = Object.freeze({
   idle_calm: { id: "idle_calm", category: "idle", interruptible: true, pack: "core" },
@@ -83,6 +89,9 @@ export class InteractionController {
     const currentAnimation = this.getCurrentAnimationName();
     const wakingFromSleep = currentAnimation === "sleep";
     if (wakingFromSleep) {
+      // 夜間點睡著的貓：喚醒本身也要有可見文字回饋（私測者在深夜狂點、只看到動畫沒有任何字）。
+      // emit 在動畫 await 之前，確保 300ms 內出現。
+      this.emitReactionFeedback("牠睜開眼睛，慢慢醒了過來。", "accept");
       await this.playAnimation("idle_wake");
       if (currentState.firstTouchCompleted) {
         return { blocked: false, reaction: "wake", motionState: "idle_wake" };
@@ -120,8 +129,13 @@ export class InteractionController {
     if (awakeningResult?.applied) {
       motionState = awakeningResult.animationKey || "idle_wake";
       this.setStatusText(awakeningResult.payload?.reactionPreview || interactionResult.previewText);
+      this.emitReactionFeedback(
+        awakeningResult.payload?.reactionPreview || interactionResult.previewText,
+        "accept"
+      );
     } else {
       this.setStatusText(interactionResult.previewText);
+      this.emitReactionFeedback(interactionResult.previewText, resolveReactionTone(interactionResult.reaction));
     }
 
     this.saveCurrentState();
@@ -224,11 +238,12 @@ export class InteractionController {
       spamScore: 0,
       lastTouchAt: Date.now(),
       lastTouchReaction: "spam_angry",
-      reactionPreview: "The companion pulls back. Give it a moment."
+      reactionPreview: "牠往後縮了縮。給牠一點時間。"
     };
 
     this.store.setState(nextState);
     this.setStatusText(nextState.reactionPreview);
+    this.emitReactionFeedback(nextState.reactionPreview, "refusal");
     this.saveCurrentState();
     this.onStateChange({ reaction: "spam_angry", motionState: angryAnimation, statePatch: nextState });
     // 強制以非中斷方式播完整段憤怒動畫，避免被 defensive idle 立刻蓋掉。
@@ -242,6 +257,7 @@ export class InteractionController {
 
     this.store.setState(statePatch);
     this.setStatusText(statePatch.reactionPreview);
+    this.emitReactionFeedback(statePatch.reactionPreview, "refusal");
     this.saveCurrentState();
     this.onStateChange({
       blocked: true,
@@ -270,6 +286,7 @@ export class InteractionController {
       }
     });
     this.setStatusText(bonus.message);
+    this.emitReactionFeedback(bonus.message, "accept");
   }
 
 
@@ -289,6 +306,12 @@ export class InteractionController {
     this.statusText.textContent = text;
   }
 
+  // 同步 emit（不等動畫）：回饋必須在 300ms 內出現在主畫面。
+  emitReactionFeedback(text, tone = "accept") {
+    if (!text) return;
+    EventBus.emit(COMPANION_REACTION_FEEDBACK_EVENT, { text, tone });
+  }
+
   getIdleAnimationName() {
     return getMoodIdleAnimationName(this.store.getState().mood);
   }
@@ -300,4 +323,11 @@ export class InteractionController {
 
 export function createInteractionController(options) {
   return new InteractionController(options);
+}
+
+// 反應 → 回饋語氣：accept 系柔亮、hesitate 中性、reject 是「牠說不」——中性月灰，不是錯誤紅。
+function resolveReactionTone(reaction) {
+  if (reaction === "accept" || reaction === "guarded_accept") return "accept";
+  if (reaction === "reject") return "refusal";
+  return "guarded";
 }

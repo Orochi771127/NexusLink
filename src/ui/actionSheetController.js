@@ -18,6 +18,9 @@ function formatMemoryRelativeTime(createdAt, now) {
 }
 
 const ENVIRONMENT_INTERACTION_EVENT = "ENVIRONMENT_INTERACTION";
+// 動作狀態改走主畫面 toast（companionFeedbackController 訂閱）：
+// 私測回報這些行以「心湖：」塞進聊天紀錄，被誤認成對話回覆、又淹掉玩家自己的話。
+const HABITAT_STATUS_TOAST_EVENT = "HABITAT_STATUS_TOAST";
 
 export function createActionSheetController({
   soulTalkController,
@@ -246,8 +249,7 @@ export function createActionSheetController({
       if (typeof openMap === "function") {
         openMap();
       } else {
-        soulTalkController.addChat("system", "探索地圖整備中。");
-        soulTalkController.renderChat();
+        EventBus.emit(HABITAT_STATUS_TOAST_EVENT, { text: "探索地圖整備中。", tone: "calm" });
       }
       return;
     }
@@ -257,10 +259,9 @@ export function createActionSheetController({
     store.setState(result.statePatch);
     if (result.environmentEvent) EventBus.emit(ENVIRONMENT_INTERACTION_EVENT, result.environmentEvent);
     const message = row?.status || actionMeta.message;
-    soulTalkController.addChat("system", message);
+    EventBus.emit(HABITAT_STATUS_TOAST_EVENT, { text: message, tone: "calm" });
     statusText.textContent = message;
     saveCurrentState();
-    soulTalkController.renderChat();
   }
 
   function setActiveNav(action) {

@@ -32,6 +32,7 @@ import {
 } from "./ui/devPanelController.js";
 import { createPanelManager } from "./ui/panelManager.js";
 import { createHudController } from "./ui/hudController.js";
+import { createCompanionFeedbackController } from "./ui/companionFeedbackController.js";
 import { createSoulTalkController } from "./ui/soulTalkController.js";
 import { createOnboardingController } from "./ui/onboardingController.js";
 import { createActionSheetController } from "./ui/actionSheetController.js";
@@ -174,6 +175,9 @@ async function bootstrap() {
   const saveDebounced = () => saveQueue.enqueue(SAVE_LEVEL.DEBOUNCE);
 
   const hudController = createHudController({ store, statusText });
+  // 主畫面回饋 toast：接夥伴觸碰反應（含拒絕）與 Care/Growth/探索的動作狀態。
+  const companionFeedbackController = createCompanionFeedbackController();
+  companionFeedbackController.bind();
   const soulTalkController = createSoulTalkController({ store, saveCurrentState: saveInteraction });
   const panelManager = createPanelManager({ onSoulTalkFocus: () => soulTalkController.focusInput() });
   const onboardingController = createOnboardingController({

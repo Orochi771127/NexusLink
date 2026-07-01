@@ -58,6 +58,33 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-07-02 - Codex - Commercial UI/UX Documentation Handoff
+
+- Status: `VERIFIED`
+- Branch / commit: `main` / uncommitted docs-only package
+- Scope: Documentation governance and engineering handoff only. Created a readable commercial UI/UX entry point for the next Claude Code / Fable 5 TASK_PACK. No runtime code, state schema, assets, dependencies, build step, backend, LLM, deployment, commit, or push.
+- Work performed: Added `docs/production/NEXUS_LINK_COMMERCIAL_UIUX_HANDOFF.md` with current product position, readable canon summary, document authority table, Fable 5 execution boundary, GROUNDWORK restrictions, and acceptance references. Added `docs/handoff/FABLE5_COMMERCIAL_UIUX_TAKEOVER_PROMPT.md` as a paste-ready execution prompt. Updated `docs/README.md` to route agents through the commercial handoff and mark Master Canon / runtime map / asset pipeline / legacy docs status. Marked `docs/architecture/RUNTIME_MAP.md` as `NEEDS UPDATE` because stale facts must be verified against source before implementation.
+- Verification: `git diff --check` passed. Scoped grep confirmed `BLOCKED`, `NEEDS UPDATE`, `REFERENCE ONLY`, `nexusLinkPrototypeState:v2`, and `64x64` references are visible for triage. Scoped grep confirmed the new handoff/prompt do not authorize direct GROUNDWORK edits and explicitly prohibit FOMO, red dots, streaks, daily pressure, gacha, backend, LLM, npm, build step, React, and TypeScript.
+- Problems / risks: Existing unrelated worktree changes remain outside this docs-only package, including in-progress runtime/UI files and generated QA JSON outputs. `docs/strategy/NEXUS_LINK_MASTER_CANON_v3.1.md` remains blocked as a direct reading source because it reads as mojibake in this environment; this package does not repair or overwrite it.
+- Next safe action: Give Claude Code / Fable 5 `docs/handoff/FABLE5_COMMERCIAL_UIUX_TAKEOVER_PROMPT.md` only after deciding the next commercial UI/UX TASK_PACK. Any implementation touching `index.html`, `src/state/**`, `src/pixi/pixiApp.js`, or `assets/**` still needs separate GROUNDWORK approval.
+- Required reading: `docs/production/NEXUS_LINK_COMMERCIAL_UIUX_HANDOFF.md`, `docs/handoff/FABLE5_COMMERCIAL_UIUX_TAKEOVER_PROMPT.md`, `AGENTS.md`, `CLAUDE.md`, `ACCEPTANCE.md`, `docs/design/NEXUS_LINK_V3_VISUAL_SYSTEM.md`, `docs/strategy/NEXUS_LINK_STEAM_DEMO_MASTER_BLUEPRINT.md`, and this lane.
+
+### 2026-07-02 - Claude Fable 5 - First Session UX Repair TASK_PACK A (P0)
+
+- Status: `VERIFIED`
+- Branch / commit: `main` / uncommitted (awaiting human commit/push approval)
+- Scope: P0 fixes from private tester feedback, human-approved scope only. Explicitly forbidden and respected: no `defaultState.js`, `store.js`, `saveManager.js`, `pixiApp.js`, `assets/**`, no new localStorage keys, no new dependencies, reject cooldown / spam gate untouched, no commit/push. `index.html` untouched (feedback element is created dynamically at boot).
+- Work performed:
+  1. **Lost-send root cause (pre-existing on main, introduced by 84a19de)**: tapping 送出 blurred the input → `st-focus` removed → drawer animated 180ms away from under the pointer → click landed on stale coordinates → message silently lost. Fixed via `pointerdown` `preventDefault()` on `#send-button` (`soulTalkController.js` bind) so the input never blurs mid-tap; keyboard now stays open after sending. This alone took the live Soul Talk gate from 0/10 (baseline main, verified via `git stash` A/B run) to 10/10.
+  2. Player-message visibility: `.chat-log` grid `align-content:end` (iOS WebKit unscrollable-overflow data loss) → flex column + `margin-top:auto` (`styles.css`); player bubble distinct cyan (aurora accent, no gold); consecutive-dedupe in `appendChatLine`/`renderChat` scoped to non-player roles (duplicate player sends were silently swallowed — reproduced and fixed); post-send scroll anchors the player's own line at the top of the visible area; render-signature skip stops unrelated state changes (heartbeat/save) from resetting chat scroll; re-scroll after the 180ms st-focus drawer transition and after panel open.
+  3. Action-status de-pollution: `actionSheetController.commitNavAction` and `mapController.exploreNode`/energy-block no longer append `role:"system"` lines to chatHistory; they emit `HABITAT_STATUS_TOAST` instead (companion-voice reflections stay in chat). Persisted legacy system entries untouched; `.chat-line.system` restyled quieter. First-trace narrative line intentionally kept in chat.
+  4. Companion tap feedback: new `src/ui/companionFeedbackController.js` (DOM toast, dynamically created, `aria-live=polite`, reduced-motion aware, tone classes accept/guarded/refusal/calm — refusal is neutral moon-grey, not error-red). `interactionController` emits `COMPANION_REACTION_FEEDBACK` synchronously before animation awaits at: normal reaction, awakening, wake-from-sleep (new visible line — night testers only ever hit this silent path), respect bonus, spam burst (copy localized to zh), blocked-touch cooldown. Boundary gates and their trust/defense consequences unchanged — visibility only.
+  5. Onboarding name-input keyboard: replaced broken `kb-open`/`expectSoftKeyboard` machinery with keyboard model v5 (`body.ob-focus` pins the card to the top 42vh safe zone; `ui-v3-onboarding.css` kb-open block removed; `src/utils/dom.js` untouched/dormant).
+- Verification: bundled Node `--check` pass on all 7 changed/new JS files; `python docs/qa/_run_web_release_gate.py --base http://localhost:8231 --no-server` **10/10 required, allAutomatedRequiredOk: true** (baseline before this pack: 9/10 — live playtest soul_talk 0/10); live playtest gate soul_talk 10/10, HUD 13/13, console errors 0; Chromium preview manual smoke (390×844): fresh-save onboarding, ob-focus pins card top ≤42vh with input visible, wake/hesitate/refusal toasts all visible <300ms via real canvas pointer events, duplicate "你好" sends both render (state+UI), Growth `trust_tuning` shows toast with chatHistory unchanged, player bubbles cyan right-aligned (screenshot verified).
+- Problems / risks: (a) real-device iOS Safari + Messenger/IG in-app browser retest still required (human-only gate) — st-focus/ob-focus and the pointerdown send fix especially; (b) rapid clicks during a touch animation still return `animation_locked` silently by design (the playing animation is the feedback; spam gate is hard to reach via UI because locked taps don't increment spamScore — pre-existing tuning, out of scope); (c) quick replies remain hidden in st-focus mode (unchanged).
+- Next safe action: human real-device mobile checklist, then commit/push approval; afterwards TASK_PACK B (progressive first-loop + copy diet) which requires GROUNDWORK approval for `defaultState.js`/`store.js` `onboarding.firstLoop` fields per the approved plan (`C:\Users\User\.claude\plans\chatgpt-ai-witty-starfish.md`).
+- Required reading: `CLAUDE.md` §2/§5, `ACCEPTANCE.md` §K/§D, this entry.
+
 ### 2026-07-01 - Codex - Repo Main Deployment Sync
 
 - Status: `VERIFIED`
@@ -372,6 +399,28 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 ---
 
 ## Lane 2 - Game Art, UI, And Visual Production
+
+### 2026-07-02 - Claude Fable 5 - First Session UX Repair TASK_PACK A (P0) — UI Visuals
+
+- Status: `VERIFIED`
+- Branch / commit: `main` / uncommitted (same package as the Lane 1 entry of the same name; see that entry for engineering detail and verification)
+- Scope: CSS-only visual side of the P0 pack. No assets, no baked text/character, no gold outside selected/primary (aurora rule respected — player bubble uses cyan accent).
+- Work performed: `styles.css` — `.chat-log` scroll model grid→flex (iOS-safe bottom anchor via `margin-top:auto`), `.chat-line.player` distinct cyan bubble (`rgba(138,217,255,…)`, right-aligned), `.chat-line.system` demoted to quiet 12px borderless side-note, new `.companion-feedback` toast (fixed, bottom-center above nav, tone variants accept/guarded/refusal/calm, refusal = neutral moon-grey not danger-red, `prefers-reduced-motion` fallback). `styles/ui-v3-onboarding.css` — removed dead `body.kb-open` block; added `body.ob-focus` rules pinning the onboarding card to the top 42vh keyboard-safe zone with internal scroll and compact type.
+- Verification: Chromium preview 390×844 screenshots — chat drawer with cyan player bubbles distinct from companion bubbles; ob-focus card top=12px height 344px ≤ 42vh (354px) with input visible; toast visible states exercised for accept/guarded/refusal tones.
+- Problems / risks: real-device visual pass (iOS Safari + in-app browsers) still pending, same as Lane 1.
+- Next safe action: include these surfaces in the human real-device checklist before commit approval.
+- Required reading: Lane 1 entry `2026-07-02 - Claude Fable 5 - First Session UX Repair TASK_PACK A (P0)`.
+
+### 2026-07-02 - Codex - Commercial UI/UX Documentation Handoff
+
+- Status: `VERIFIED`
+- Branch / commit: `main` / uncommitted docs-only package
+- Scope: Art/UI/UX handoff only. Established the commercial visual/UX execution entry point for a future Fable 5 First Session Flow and V3 UI/UX slice. No runtime styling, live UI CSS, image generation, asset movement, asset deletion, manifest change, or visual approval claim.
+- Work performed: Added a current UI/UX handoff that locks Greyshade Cat + Moonlake as the first-session focus, points to the V3 visual system, defines the Start / Identity / Guidance / Home / Explore / Care / Growth / Memory / Soul Talk / Return Echo target surfaces, and prevents old 64x64 / R2 / legacy references from overriding the current illustrated 512 commercial direction. Added the Fable 5 prompt with explicit design rules and non-goals.
+- Verification: `git diff --check` passed. Scoped grep confirmed `docs/asset-pipeline.md` is marked `NEEDS UPDATE` for commercial companion production and that the new handoff preserves the illustrated 512 policy while keeping legacy/R2 material as reference only.
+- Problems / risks: This does not visually QA or implement the next UI/UX slice. Current worktree already contains unrelated in-progress UI/runtime changes by another agent; this package leaves them untouched.
+- Next safe action: Before any Fable 5 visual implementation, read the commercial handoff and open a new TASK_PACK that names exact UI/CSS/runtime files and acceptance refs. Real-device mobile review remains a separate human gate.
+- Required reading: `docs/production/NEXUS_LINK_COMMERCIAL_UIUX_HANDOFF.md`, `docs/handoff/FABLE5_COMMERCIAL_UIUX_TAKEOVER_PROMPT.md`, `docs/design/NEXUS_LINK_V3_VISUAL_SYSTEM.md`, `docs/testing/STEAM_DEMO_WEB_RELEASE_CHECKLIST.md`, `AGENTS.md`, `CLAUDE.md`, `ACCEPTANCE.md`, and this lane.
 
 ### 2026-06-30 - Codex - UI v2 Bottom Nav Release Screenshot Fix
 
@@ -1031,3 +1080,15 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Problems / risks: The scaffold does not imply visual approval or runtime readiness. Do not place generated PNGs in these folders without human visual approval and asset QC.
 - Next safe action: Use these folders only as targets for future approved illustrated 512x512 transparent sheet generation; keep old reference images out of runtime paths unless explicitly approved.
 - Required reading: `docs/assets/COMPANION_ANIMATION_CATALOG.md`, `AGENTS.md`, `CLAUDE.md`, `ACCEPTANCE.md`, and this lane.
+
+### 2026-07-02 - Codex - Fable 5 Raphael Agent Handoff Package
+
+- Lane: `Raphael Core, Companion Reasoning, And Soul Talk`
+- Status: `VERIFIED`
+- Branch / commit: `main` / uncommitted docs-only package.
+- Scope: Prepare a controlled Fable 5 handoff for Raphael AI maturity work. No runtime integration, no external API, no gateway live routing, no save schema, no Pixi renderer, no companion data, no package/dependency, and no deployment changes.
+- Work performed: Added a Fable 5 Raphael-specific prompt, a local Raphael artifact inventory, and a Raphael Agent System Architecture V1 that maps the desired central-agent capability into NexusLink-safe layers: input, RaphaelCore final authority, controlled intelligence ring, advisory gateway, and approved output layer. The handoff explicitly keeps LangGraph/Gateway/training/model output advisory only and blocks direct memory/state mutation, high-risk gameplay framing, and dependency rewards.
+- Verification: `git diff --check` passed for the docs-only patch. The codebase-memory index for this checkout was present and ready. No JavaScript/runtime files were touched by this package.
+- Problems / risks: Existing older Raphael Chinese handoff/constitution files display mojibake in this environment; they remain authority references but should not be copied verbatim into new runtime code until a separate encoding/readability repair pass is approved.
+- Next safe action: Give Fable 5 `docs/handoff/FABLE5_RAPHAEL_AGENT_HANDOFF_PROMPT.md` as its starting prompt. Its first implementation should stay in docs/eval/QA or return to Codex review before any runtime path is changed.
+- Required reading: `docs/handoff/FABLE5_RAPHAEL_AGENT_HANDOFF_PROMPT.md`, `docs/raphael/RAPHAEL_LOCAL_ARTIFACT_INVENTORY.md`, `docs/architecture/RAPHAEL_AGENT_SYSTEM_ARCHITECTURE_V1.md`, `docs/architecture/RAPHAEL_SOUL_ARCHITECTURE_V1.md`, `docs/raphael/RAPHAEL_CONSTITUTION.md`, `AGENTS.md`, `CLAUDE.md`, `ACCEPTANCE.md`, and this lane.

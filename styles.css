@@ -1283,9 +1283,12 @@ canvas {
   }
 }
 
+/* 底部貼齊改用 flex + margin-top:auto：grid 的 align-content:end 在 iOS WebKit
+   會讓溢出 scroll container 的舊訊息被裁切且無法捲動（unsafe end alignment data loss），
+   玩家會「看不到自己剛送出的話」。flex 版本溢出時維持正常可捲。 */
 .chat-log {
-  display: grid;
-  align-content: end;
+  display: flex;
+  flex-direction: column;
   gap: 8px;
   flex: 1 1 auto;
   min-height: 0;
@@ -1297,6 +1300,10 @@ canvas {
   scrollbar-color: rgba(0, 206, 209, 0.32) transparent;
 }
 
+.chat-log > :first-child {
+  margin-top: auto;
+}
+
 .chat-line {
   width: fit-content;
   max-width: 86%;
@@ -1306,27 +1313,82 @@ canvas {
   background: rgba(255, 255, 255, 0.05);
   line-height: 1.42;
   font-size: 13px;
+  flex: 0 0 auto;
 }
 
 .chat-line.player {
-  justify-self: end;
-  background: rgba(255, 255, 255, 0.05);
-  color: #e6fbff;
+  align-self: flex-end;
+  background: rgba(138, 217, 255, 0.12);
+  border-color: rgba(138, 217, 255, 0.35);
+  color: #eaf9ff;
   border-bottom-right-radius: 6px;
 }
 
 .chat-line.fox,
 .chat-line.companion,
 .chat-line.system {
-  justify-self: start;
+  align-self: flex-start;
   background: rgba(255, 255, 255, 0.05);
   color: #fff1dc;
   border-bottom-left-radius: 6px;
 }
 
+/* system 行降格為安靜的側註：舊存檔已持久化的按鈕狀態行仍可讀，但退到背景，
+   不再與玩家/夥伴的真對話搶視覺。 */
 .chat-line.system {
-  background: rgba(255, 255, 255, 0.05);
-  color: #dffbff;
+  background: transparent;
+  border-color: transparent;
+  color: rgba(223, 251, 255, 0.6);
+  font-size: 12px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
+
+/* 夥伴觸碰回饋 / 棲地狀態 toast（companionFeedbackController 動態建立）。
+   位置：bottom-nav 上方置中，靠近夥伴所在的舞台下緣。拒絕語氣用中性月灰——
+   牠說「不」是邊界，不是錯誤，不得用紅色/danger 樣式。 */
+.companion-feedback {
+  position: fixed;
+  left: 50%;
+  bottom: calc(var(--bottom-safe, 0px) + var(--nav-block-h, 104px) + 72px);
+  transform: translate(-50%, 8px);
+  max-width: min(78vw, 420px);
+  margin: 0;
+  padding: 8px 16px;
+  border: 1px solid rgba(138, 217, 255, 0.3);
+  border-radius: 999px;
+  color: #dff3ff;
+  background: rgba(10, 16, 32, 0.84);
+  font-size: 13px;
+  line-height: 1.45;
+  text-align: center;
+  opacity: 0;
+  pointer-events: none;
+  z-index: calc(var(--z-panel, 70) + 4);
+  transition: opacity 200ms ease, transform 200ms ease;
+}
+
+.companion-feedback.is-visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.companion-feedback[data-tone="guarded"],
+.companion-feedback[data-tone="refusal"] {
+  border-color: rgba(190, 205, 225, 0.26);
+  color: rgba(216, 226, 240, 0.94);
+}
+
+.companion-feedback[data-tone="calm"] {
+  border-color: rgba(138, 217, 255, 0.2);
+  color: rgba(223, 243, 255, 0.9);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .companion-feedback {
+    transform: translate(-50%, 0);
+    transition: opacity 200ms ease;
+  }
 }
 
 .quick-reply-row {
