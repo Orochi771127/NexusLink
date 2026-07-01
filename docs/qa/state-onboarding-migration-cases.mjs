@@ -128,6 +128,55 @@ runCase("veteran heuristic accepts traces, memories, battles, and exploration", 
   });
 });
 
+runCase("fresh default state starts first loop un-run", () => {
+  const state = createDefaultState();
+  assertEqual(state.onboarding.firstLoop.skippedAt, null, "fresh firstLoop skippedAt");
+  assertEqual(state.onboarding.firstLoop.completedAt, null, "fresh firstLoop completedAt");
+});
+
+runCase("pre-firstLoop completed save is backfilled and never re-runs the loop", () => {
+  // 本欄位出現前寫入的存檔：onboarding 完成但沒有 firstLoop 物件 → 回填 completedAt。
+  const state = normalizeState({
+    bond: 8,
+    onboarding: {
+      status: "completed",
+      completed: true,
+      completedAt: 1782600000000
+    }
+  });
+  assertEqual(state.onboarding.firstLoop.completedAt, 1782600000000, "legacy firstLoop backfill uses completedAt");
+  assertEqual(state.onboarding.firstLoop.skippedAt, null, "legacy firstLoop skippedAt stays null");
+});
+
+runCase("mid-loop save keeps first loop running despite veteran heuristic", () => {
+  // 新玩家第一次觸碰後 isVeteranSave 即為 true，但存檔「有」firstLoop 物件（nulls）
+  // → 不得被回填成完成，閉環必須照常進行。
+  const state = normalizeState({
+    firstTouchCompleted: true,
+    onboarding: {
+      status: "completed",
+      completed: true,
+      completedAt: 1782600000000,
+      firstLoop: { skippedAt: null, completedAt: null }
+    }
+  });
+  assertEqual(state.onboarding.completed, true, "mid-loop onboarding stays completed");
+  assertEqual(state.onboarding.firstLoop.completedAt, null, "mid-loop firstLoop not auto-completed");
+  assertEqual(state.onboarding.firstLoop.skippedAt, null, "mid-loop firstLoop not auto-skipped");
+});
+
+runCase("skipped first loop persists across normalization", () => {
+  const state = normalizeState({
+    onboarding: {
+      status: "completed",
+      completed: true,
+      firstLoop: { skippedAt: 1782600001000, completedAt: null }
+    }
+  });
+  assertEqual(state.onboarding.firstLoop.skippedAt, 1782600001000, "skippedAt preserved");
+  assertEqual(state.onboarding.firstLoop.completedAt, null, "completedAt untouched");
+});
+
 const failedCases = cases.filter((item) => item.status === "failed");
 console.log(JSON.stringify({ total: cases.length, failed: failedCases.length, cases }, null, 2));
 

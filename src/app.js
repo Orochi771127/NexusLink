@@ -35,6 +35,7 @@ import { createHudController } from "./ui/hudController.js";
 import { createCompanionFeedbackController } from "./ui/companionFeedbackController.js";
 import { createSoulTalkController } from "./ui/soulTalkController.js";
 import { createOnboardingController } from "./ui/onboardingController.js";
+import { createFirstLoopController } from "./ui/firstLoopController.js";
 import { createActionSheetController } from "./ui/actionSheetController.js";
 import { createPageRouter } from "./ui/pageRouter.js";
 import { createSettingsController } from "./ui/settingsController.js";
@@ -184,6 +185,11 @@ async function bootstrap() {
     store,
     saveCurrentState: () => saveQueue.enqueue(SAVE_LEVEL.CRITICAL)
   });
+  // Meet 之後的首輪閉環（觸碰→心語→痕跡）：完成/跳過前只開心核與心語入口。
+  const firstLoopController = createFirstLoopController({
+    store,
+    saveCurrentState: () => saveQueue.enqueue(SAVE_LEVEL.CRITICAL)
+  });
   const settingsController = createSettingsController({
     panelManager,
     restartOnboarding: () => onboardingController.restart(),
@@ -293,6 +299,7 @@ async function bootstrap() {
   });
   soulTalkController.bind();
   onboardingController.bind();
+  firstLoopController.bind();
   settingsController.bind();
   pageRouter.bind();
   actionSheetController.bind();
@@ -377,6 +384,7 @@ async function bootstrap() {
     hudController.renderHUD();
     soulTalkController.renderChat();
     onboardingController.render();
+    firstLoopController.render();
     pageRouter.render();
     devPanelController?.renderReadout();
     observeRaphaelAgentStateEvents(store.getState());

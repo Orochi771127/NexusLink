@@ -286,3 +286,70 @@ html[data-ui="v2"] .onboarding-contract-list li {
     }
   }
 }
+
+/* =========================================================================
+   First Loop（Meet 之後的首輪閉環：觸碰 → 心語 → 痕跡）
+   K6 / 紅線 6：單行提示、可跳過、無紅點、無倒數、無進度條。
+   首輪期間 Explore/Care/Growth/Memory 完全隱藏（human 拍板），
+   心核（home）與心語入口全程可用；完成後以 720ms 淡入安靜浮現。
+   ========================================================================= */
+html[data-ui="v2"] .bottom-nav .bottom-nav__item:not(.bottom-nav__item--core) {
+  transition: opacity 720ms ease;
+}
+
+html[data-ui="v2"] body.first-loop-active .bottom-nav .bottom-nav__item:not(.bottom-nav__item--core) {
+  opacity: 0;
+  pointer-events: none;
+}
+
+html[data-ui="v2"] .first-loop-hint-wrap {
+  position: fixed;
+  left: 50%;
+  bottom: calc(var(--bottom-safe, 0px) + var(--nav-block-h, 104px) + 118px);
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  max-width: min(82vw, 420px);
+  opacity: 0;
+  pointer-events: none;
+  z-index: calc(var(--z-nav, 30) + 2);
+  transition: opacity 400ms ease;
+}
+
+html[data-ui="v2"] .first-loop-hint-wrap.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+html[data-ui="v2"] .first-loop-hint {
+  margin: 0;
+  padding: 8px 16px;
+  border: 1px solid rgba(138, 217, 255, 0.22);
+  border-radius: 999px;
+  color: #dff3ff;
+  background: rgba(10, 16, 32, 0.78);
+  font-size: 13px;
+  line-height: 1.45;
+  text-align: center;
+}
+
+html[data-ui="v2"] .first-loop-skip {
+  border: 0;
+  padding: 2px 8px;
+  background: transparent;
+  color: rgba(190, 210, 235, 0.58);
+  font: inherit;
+  font-size: 11.5px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-ui="v2"] .bottom-nav .bottom-nav__item:not(.bottom-nav__item--core),
+  html[data-ui="v2"] .first-loop-hint-wrap {
+    transition: none;
+  }
+}

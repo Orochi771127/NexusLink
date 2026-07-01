@@ -16,7 +16,7 @@ export function createDefaultState() {
     habitatTraces: defaultState.habitatTraces.map((item) => ({ ...item })),
     emotionalMemories: defaultState.emotionalMemories.map((item) => ({ ...item })),
     playerProfile: { ...defaultState.playerProfile },
-    onboarding: { ...defaultState.onboarding },
+    onboarding: { ...defaultState.onboarding, firstLoop: { ...defaultState.onboarding.firstLoop } },
     unlockedCompanionIds: [...defaultState.unlockedCompanionIds],
     battleRecord: { ...defaultState.battleRecord },
     explorationProgress: { ...defaultState.explorationProgress, visitCounts: {} },
@@ -161,7 +161,32 @@ function normalizeOnboarding(rawOnboarding, baseOnboarding, targetState) {
     identityCompleted: completed || Boolean(onboarding.identityCompleted),
     guidanceCompleted: completed || Boolean(onboarding.guidanceCompleted),
     greyshadeMetAt: Number(onboarding.greyshadeMetAt) || baseOnboarding.greyshadeMetAt,
-    veteranAutoCompleted: veteranAutoCompleted || Boolean(onboarding.veteranAutoCompleted)
+    veteranAutoCompleted: veteranAutoCompleted || Boolean(onboarding.veteranAutoCompleted),
+    firstLoop: normalizeFirstLoop(onboarding.firstLoop, baseOnboarding.firstLoop, {
+      completed,
+      completedAt: Number(onboarding.completedAt) || null
+    })
+  };
+}
+
+// 首輪閉環（First Touch → First Soul Talk → First Trace）持久欄位。
+// 只存「跳過/完成」兩個時間戳；進行中的 stage 由既有欄位（firstTouchCompleted /
+// chatHistory player 行 / 情緒痕跡數）derive，不落地，把存檔面縮到最小。
+// 回填規則（關鍵）：本欄位出現「之前」寫入的存檔沒有 firstLoop 物件——
+// 若該存檔已完成 onboarding（含 veteran heuristic），直接回填 completedAt，
+// 老玩家與既有完成檔永不重跑首輪（K4/K5）。注意不能只看 veteranAutoCompleted：
+// 新玩家第一次觸碰後 isVeteranSave 即為 true，但其存檔「有」firstLoop 物件，
+// 所以不會走回填分支、閉環照常進行。
+function normalizeFirstLoop(rawFirstLoop, baseFirstLoop, { completed, completedAt }) {
+  if (!rawFirstLoop || typeof rawFirstLoop !== "object") {
+    if (completed) {
+      return { skippedAt: null, completedAt: completedAt || Date.now() };
+    }
+    return { ...baseFirstLoop };
+  }
+  return {
+    skippedAt: Number(rawFirstLoop.skippedAt) || null,
+    completedAt: Number(rawFirstLoop.completedAt) || null
   };
 }
 

@@ -102,7 +102,7 @@ export function createPageRouter({
         <div>
           <p class="page-card-kicker">Moonlake Camp</p>
           <h3>${t("explore.cardTitle")}</h3>
-          <p>首輪探索只開放月湖周邊。你可以看見棲地、記憶痕跡與灰影貓願意靠近的距離。</p>
+          <p>月湖周邊已醒來。牠願意靠近的距離，會慢慢改變。</p>
         </div>
       </div>
       <div class="page-evidence-strip" aria-label="探索狀態">
@@ -112,11 +112,11 @@ export function createPageRouter({
       <div class="page-action-grid">
         <button type="button" data-page-action="open-map">
           <strong>${t("explore.openMap")}</strong>
-          <em>打開既有探索地圖，不擴張新區域。</em>
+          <em>看看月湖的小路。</em>
         </button>
         <button type="button" data-page-action="open-atlas">
           <strong>${t("explore.atlas")}</strong>
-          <em>遠望 Linkara：你現在在月湖一帶，其餘仍在遠方。</em>
+          <em>遠望整片大陸。</em>
         </button>
         <button type="button" data-page-action="commit" data-nav-action="explore" data-choice="lake_glow" data-status="湖面留下了一圈柔和微光。">
           <strong>${t("explore.lakeGlow")}</strong>
@@ -148,7 +148,7 @@ export function createPageRouter({
         ${renderMetric(t("care.trust"), trust, "牠是否願意靠近")}
         ${renderMetric(t("care.energy"), energy, "目前活動餘裕", 10)}
       </div>
-      <p class="page-soft-note">照顧不是消耗品交換或討好。這裡只提供陪伴、休息與觀察，讓灰影貓可以選擇靠近或保持距離。</p>
+      <p class="page-soft-note">這裡不交換、不討好。陪伴牠，也讓牠選擇距離。</p>
       <div class="page-action-grid">
         <button type="button" data-page-action="commit" data-nav-action="care" data-choice="${primaryCareChoice}" data-status="${primaryCareStatus}">
           <strong>${primaryCareLabel}</strong>
@@ -156,11 +156,11 @@ export function createPageRouter({
         </button>
         <button type="button" data-page-action="commit" data-nav-action="care" data-choice="rest_together" data-status="棲地安靜下來，適合一起休息。">
           <strong>${t("care.restTogether")}</strong>
-          <em>不催促互動，只讓棲地慢下來。</em>
+          <em>讓棲地慢下來。</em>
         </button>
         <button type="button" data-page-action="open-character">
           <strong>${t("care.observe")}</strong>
-          <em>查看牠的身體語言與邊界提示。</em>
+          <em>看牠的身體語言。</em>
         </button>
       </div>
     `;
@@ -180,7 +180,7 @@ export function createPageRouter({
         <div>
           <p class="page-card-kicker">Relationship Chapter</p>
           <h3>${nextMilestone ? `下一段：${escapeHtml(nextMilestone.theme)}` : "已抵達目前章節終點"}</h3>
-          <p>${nextMilestone ? `這不是能力排行；只是你們的關係被真實互動慢慢推進。` : "目前已沒有新的 Demo 章節需要追逐。"}</p>
+          <p>${nextMilestone ? `不是能力排行，是關係慢慢往前。` : "這一章先到這裡。不用追。"}</p>
         </div>
       </div>
       <div class="page-progress-block" aria-label="關係章節進度">
@@ -195,15 +195,15 @@ export function createPageRouter({
       <div class="page-action-grid">
         <button type="button" data-page-action="commit" data-nav-action="grow" data-choice="trust_tuning" data-status="信任回路略微對齊。">
           <strong>${t("growth.trustTune")}</strong>
-          <em>把節奏調回彼此都能承受的距離。</em>
+          <em>把節奏調回來。</em>
         </button>
         <button type="button" data-page-action="commit" data-nav-action="grow" data-choice="emotional_balance" data-status="心核回到更穩定的節奏。">
           <strong>${t("growth.emotionBalance")}</strong>
-          <em>不追求變強，只整理目前的狀態。</em>
+          <em>整理現在的狀態。</em>
         </button>
         <button type="button" data-page-action="open-codex">
           <strong>${t("growth.review")}</strong>
-          <em>查看既有 companion 資料，仍維持單一夥伴模型。</em>
+          <em>翻翻牠的圖鑑。</em>
         </button>
       </div>
     `;
@@ -229,12 +229,12 @@ export function createPageRouter({
         ${canEcho ? `
           <button type="button" data-page-action="commit" data-nav-action="memory" data-choice="memory_echo" data-status="最近的記憶被輕輕回看了一次。">
             <strong>${t("memory.echo")}</strong>
-            <em>只根據已存在的情緒記憶回應。</em>
+            <em>回聽你們說過的話。</em>
           </button>
         ` : ""}
         <button type="button" data-page-action="open-soul-talk">
           <strong>${t("memory.openSoul")}</strong>
-          <em>如果你願意，可以直接和牠說話。</em>
+          <em>想說什麼都可以。</em>
         </button>
       </div>
     `;
@@ -307,10 +307,10 @@ export function createPageRouter({
 }
 
 function getPageStatus(action) {
-  if (action === "explore") return "探索頁已開啟：目前只顯示月湖首輪內容。";
-  if (action === "care") return "照顧頁已開啟：以陪伴、休息與觀察為主。";
-  if (action === "grow") return "成長頁已開啟：呈現關係章節，不呈現能力排行。";
-  if (action === "memory") return "記憶頁已開啟：只呈現已保存資料。";
+  if (action === "explore") return "月湖就在眼前。";
+  if (action === "care") return "陪伴、休息、觀察。";
+  if (action === "grow") return "關係章節翻開了。";
+  if (action === "memory") return "已保存的回憶在這裡。";
   return "回到月湖棲地。";
 }
 

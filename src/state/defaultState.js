@@ -48,7 +48,14 @@ const defaultState = {
     identityCompleted: false,
     guidanceCompleted: false,
     greyshadeMetAt: null,
-    veteranAutoCompleted: false
+    veteranAutoCompleted: false,
+    // Meet 之後的首輪閉環（First Touch → First Soul Talk → First Trace）。
+    // 只持久化「跳過/完成」時間戳；進行中的 stage 由既有欄位 derive、不落地。
+    // 舊存檔缺此物件時由 normalizeFirstLoop 回填（已完成 onboarding 者直接視為完成，永不重跑）。
+    firstLoop: {
+      skippedAt: null,
+      completedAt: null
+    }
   },
 
   // First Session → Return Echo：首輪安靜開場是否已看過（strict 持久化，非 derived 判斷）。

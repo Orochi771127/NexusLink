@@ -58,6 +58,13 @@ export const STRINGS = {
   },
   "ob.meetBtn": { tc: "進入心核棲地", sc: "进入心核栖地", en: "Enter the Heart-Core Habitat", jp: "心核の棲み処へ" },
 
+  // ---- First Loop（Meet 後首輪閉環提示；K6：單行、可跳過、無壓迫）----
+  "fl.hintTouch": { tc: "可以先輕輕碰碰牠。", sc: "可以先轻轻碰碰牠。", en: "Try a gentle touch first.", jp: "まずはそっと触れてみて。" },
+  "fl.hintTalk": { tc: "想說話時，點開心語。", sc: "想说话时，点开心语。", en: "When ready, open Soul Talk.", jp: "話したくなったら、心の声を。" },
+  "fl.hintTrace": { tc: "牠在聽。慢慢說就好。", sc: "牠在听。慢慢说就好。", en: "It's listening. Take your time.", jp: "聞いているよ。ゆっくりでいい。" },
+  "fl.reveal": { tc: "棲地的其他角落也醒了。", sc: "栖地的其他角落也醒了。", en: "Other corners of the habitat have woken.", jp: "棲み処のほかの場所も目を覚ました。" },
+  "fl.skip": { tc: "先自己逛", sc: "先自己逛", en: "Explore on my own", jp: "自分で見て回る" },
+
   // ---- Page headers ----
   "page.explore.title": { tc: "探索", sc: "探索", en: "Explore", jp: "探索" },
   "page.explore.pill": { tc: "月湖首輪", sc: "月湖首轮", en: "Moonlake, first round", jp: "月湖・序章" },

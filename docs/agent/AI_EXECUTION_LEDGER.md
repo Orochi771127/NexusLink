@@ -64,15 +64,32 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Branch / commit: `main` / uncommitted docs-only package
 - Scope: Documentation governance and engineering handoff only. Created a readable commercial UI/UX entry point for the next Claude Code / Fable 5 TASK_PACK. No runtime code, state schema, assets, dependencies, build step, backend, LLM, deployment, commit, or push.
 - Work performed: Added `docs/production/NEXUS_LINK_COMMERCIAL_UIUX_HANDOFF.md` with current product position, readable canon summary, document authority table, Fable 5 execution boundary, GROUNDWORK restrictions, and acceptance references. Added `docs/handoff/FABLE5_COMMERCIAL_UIUX_TAKEOVER_PROMPT.md` as a paste-ready execution prompt. Updated `docs/README.md` to route agents through the commercial handoff and mark Master Canon / runtime map / asset pipeline / legacy docs status. Marked `docs/architecture/RUNTIME_MAP.md` as `NEEDS UPDATE` because stale facts must be verified against source before implementation.
-- Verification: `git diff --check` passed. Scoped grep confirmed `BLOCKED`, `NEEDS UPDATE`, `REFERENCE ONLY`, `nexusLinkPrototypeState:v2`, and `64x64` references are visible for triage. Scoped grep confirmed the new handoff/prompt do not authorize direct GROUNDWORK edits and explicitly prohibit FOMO, red dots, streaks, daily pressure, gacha, backend, LLM, npm, build step, React, and TypeScript.
-- Problems / risks: Existing unrelated worktree changes remain outside this docs-only package, including in-progress runtime/UI files and generated QA JSON outputs. `docs/strategy/NEXUS_LINK_MASTER_CANON_v3.1.md` remains blocked as a direct reading source because it reads as mojibake in this environment; this package does not repair or overwrite it.
+- Verification: `git diff --check` passed. Scoped grep confirmed `NEEDS UPDATE`, `REFERENCE ONLY`, `nexusLinkPrototypeState:v2`, and `64x64` references are visible for triage. Scoped grep confirmed the new handoff/prompt do not authorize direct GROUNDWORK edits and explicitly prohibit FOMO, red dots, streaks, daily pressure, gacha, backend, LLM, npm, build step, React, and TypeScript.
+- Problems / risks: Existing unrelated worktree changes remain outside this docs-only package, including in-progress runtime/UI files and generated QA JSON outputs. `docs/strategy/NEXUS_LINK_MASTER_CANON_v3.1.md` is readable in this checkout and remains the highest strategic canon; this package does not overwrite it.
 - Next safe action: Give Claude Code / Fable 5 `docs/handoff/FABLE5_COMMERCIAL_UIUX_TAKEOVER_PROMPT.md` only after deciding the next commercial UI/UX TASK_PACK. Any implementation touching `index.html`, `src/state/**`, `src/pixi/pixiApp.js`, or `assets/**` still needs separate GROUNDWORK approval.
 - Required reading: `docs/production/NEXUS_LINK_COMMERCIAL_UIUX_HANDOFF.md`, `docs/handoff/FABLE5_COMMERCIAL_UIUX_TAKEOVER_PROMPT.md`, `AGENTS.md`, `CLAUDE.md`, `ACCEPTANCE.md`, `docs/design/NEXUS_LINK_V3_VISUAL_SYSTEM.md`, `docs/strategy/NEXUS_LINK_STEAM_DEMO_MASTER_BLUEPRINT.md`, and this lane.
+
+### 2026-07-02 - Claude Fable 5 - First Session UX Repair TASK_PACK B (P1 first loop + copy diet)
+
+- Status: `VERIFIED`
+- Branch / commit: `main` / committed after TASK_PACK A (`30ef1fa`); pushed to origin/main per explicit human instruction
+- Scope: Human-approved plan (`.claude/plans/chatgpt-ai-witty-starfish.md`) with explicit instruction to implement, commit, and push to main. GROUNDWORK touched per that plan: `defaultState.js` and `store.js`. No new localStorage key (K3); stage derived, not stored; no FOMO/red dots/countdowns/progress bars; skippable (K6).
+- Work performed:
+  1. GROUNDWORK: `defaultState.js` adds `onboarding.firstLoop { skippedAt: null, completedAt: null }`; `store.js` deep-copies `firstLoop` in `createDefaultState` and adds `normalizeFirstLoop()` inside `normalizeOnboarding` — legacy rule: a save with completed onboarding but NO `firstLoop` object (written before this feature) is backfilled `completedAt` so veterans and existing completed saves never run the loop (K4/K5); a save WITH the object keeps its nulls, so the veteran heuristic flipping true after the player's own first touch does NOT auto-complete their loop.
+  2. New `src/ui/firstLoopController.js` (EXPERIENCE): store-subscription driven; derives stage touch→talk→trace→done from `firstTouchCompleted` / `chatHistory` player lines / `isEmotionalHabitatTrace` count; toggles `body.first-loop-active` + `data-first-loop-stage`; single dynamically-created hint line + quiet underlined skip link (`fl.skip` writes `skippedAt`); on done writes `completedAt`, shows `fl.reveal` once (~2.6s), nav fades back in 720ms with no fanfare. Re-renders on `LANGUAGE_CHANGED_EVENT`.
+  3. Nav gating CSS (`ui-v3-onboarding.css`): during the loop the four non-core nav items are fully hidden (opacity 0 + pointer-events none, human-approved full-hide option) and set `inert`/`aria-hidden` by the controller; 心核 (home), soul-talk launcher, HUD, and settings stay available throughout; `prefers-reduced-motion` disables the fades.
+  4. i18n: `fl.hintTouch/hintTalk/hintTrace/reveal/skip` added in tc/sc/en/jp (hints ≤10 chars tc).
+  5. Copy diet (`pageRouter.js`): removed dev-speak leaking to players (「不擴張新區域」「維持單一夥伴模型」「Demo 章節」etc.); all `<em>` action hints now 6–10 chars; care soft-note 41→20 chars; `getPageStatus` lines shortened to single warm phrases. `ob.*` onboarding strings and `actionSheetController.getActionMeta` copy audited — already within budget, left unchanged.
+  6. QA: extended `docs/qa/state-onboarding-migration-cases.mjs` with 4 firstLoop cases (fresh nulls; legacy backfill uses stored completedAt; mid-loop save NOT auto-completed despite veteran heuristic; skippedAt persists).
+- Verification: bundled Node `--check` pass on all changed JS; migration suite **12/12**; full web release gate `--base http://localhost:5190` **10/10 required, allAutomatedRequiredOk: true**; live playtest soul_talk 10/10, HUD 13/13, 0 console errors; Chromium preview manual save-matrix: fresh save → onboarding → loop active with only 心核+心語 visible and touch hint → real canvas tap advances to talk hint (awakening toast shown) → first message creates trace → `completedAt` persisted, reveal line shown, nav un-gated → reload keeps full nav with no hint; skip link writes `skippedAt` and un-gates immediately; screenshot evidence of the gated first-session view. Note: nav fade opacity reads stale in a backgrounded preview tab (compositor throttling) — verified via `transition:none` computed value 0 and rule-match audit; not an app issue.
+- Problems / risks: real-device pass still pending (human-only gate) for the loop hints and reveal; browser-level legacy-backfill was validated at Node level only (in-browser localStorage injection races the app's save queue — expected).
+- Next safe action: human real-device checklist (Soul Talk keyboard + first loop together), then re-invite the three private testers using the six behavior questions in the plan file.
+- Required reading: Lane 1 TASK_PACK A entry, `CLAUDE.md` §0.5.1/§5.1, `ACCEPTANCE.md` §K.
 
 ### 2026-07-02 - Claude Fable 5 - First Session UX Repair TASK_PACK A (P0)
 
 - Status: `VERIFIED`
-- Branch / commit: `main` / uncommitted (awaiting human commit/push approval)
+- Branch / commit: `main` / `30ef1fa` (pushed to origin/main)
 - Scope: P0 fixes from private tester feedback, human-approved scope only. Explicitly forbidden and respected: no `defaultState.js`, `store.js`, `saveManager.js`, `pixiApp.js`, `assets/**`, no new localStorage keys, no new dependencies, reject cooldown / spam gate untouched, no commit/push. `index.html` untouched (feedback element is created dynamically at boot).
 - Work performed:
   1. **Lost-send root cause (pre-existing on main, introduced by 84a19de)**: tapping 送出 blurred the input → `st-focus` removed → drawer animated 180ms away from under the pointer → click landed on stale coordinates → message silently lost. Fixed via `pointerdown` `preventDefault()` on `#send-button` (`soulTalkController.js` bind) so the input never blurs mid-tap; keyboard now stays open after sending. This alone took the live Soul Talk gate from 0/10 (baseline main, verified via `git stash` A/B run) to 10/10.
@@ -399,6 +416,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 ---
 
 ## Lane 2 - Game Art, UI, And Visual Production
+
+### 2026-07-02 - Claude Fable 5 - First Session UX Repair TASK_PACK B (P1) — UI Visuals
+
+- Status: `VERIFIED`
+- Branch / commit: `main` / committed with the Lane 1 TASK_PACK B entry of the same name (see it for engineering detail)
+- Scope: CSS + copy side of the first-loop pack. No assets, no gold outside selected/primary, no red-dot/badge/progress visuals (K6).
+- Work performed: `ui-v3-onboarding.css` first-loop section — four non-core nav items fully hidden during the loop and revealed with a 720ms opacity fade; `.first-loop-hint` quiet cyan-line pill above the soul strip; `.first-loop-skip` low-contrast underlined text link; reduced-motion fallback. `pageRouter.js` player-facing copy shortened to 6–10 char hints, dev-jargon removed.
+- Verification: Chromium 390×844 screenshot of the gated first session (sleeping Greyshade by Moonlake, single hint + skip, soul strip, lone 心核 nav item); reveal line and un-gated nav screenshot-verified after loop completion.
+- Problems / risks: real-device visual pass pending, same as Lane 1.
+- Next safe action: include the first-loop surfaces in the human real-device checklist.
+- Required reading: Lane 1 entry `2026-07-02 - Claude Fable 5 - First Session UX Repair TASK_PACK B`.
 
 ### 2026-07-02 - Claude Fable 5 - First Session UX Repair TASK_PACK A (P0) — UI Visuals
 
