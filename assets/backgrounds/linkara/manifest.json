@@ -1,0 +1,117 @@
+{
+  "assetPackId": "linkara-region-backgrounds-bgm-2026-07-02",
+  "status": "staged-not-runtime-wired",
+  "runtimeIntegration": false,
+  "notes": [
+    "User-approved local staging for future Linkara atlas and scene use.",
+    "Backgrounds are copied from source JPG attachments without conversion.",
+    "BGM files are copied from source MP3 attachments without loudness or duration edits.",
+    "Do not treat these files as active runtime assets until a separate scene profile or atlas integration task wires them."
+  ],
+  "worldMap": {
+    "id": "linkara-region-world-map",
+    "title": "Linkara Region World Map",
+    "path": "./assets/backgrounds/linkara/world_map_linkara_region.jpg",
+    "sourceFile": "8-photos-8.jpg",
+    "sourceAttachment": "8-\u7167\u7247-8.jpg",
+    "width": 1178,
+    "height": 1280
+  },
+  "regions": [
+    {
+      "no": 1,
+      "id": "forge",
+      "title": "Southeast Forge Hills",
+      "background": "./assets/backgrounds/linkara/regions/southeast_forge_hills.jpg",
+      "bgm": "./assets/audio/linkara/bgm_southeast_forge_hills.mp3",
+      "sourceImage": "7-\u7167\u7247-7.jpg",
+      "sourceAudio": "9-bgm_southeast_forge_hill.mp3",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "no": 2,
+      "id": "core",
+      "title": "Central Radiant Core",
+      "background": "./assets/backgrounds/linkara/regions/central_radiant_core.jpg",
+      "bgm": "./assets/audio/linkara/bgm_central_radiant_core.mp3",
+      "sourceImage": "6-\u7167\u7247-6.jpg",
+      "sourceAudio": "12-bgm_heartRadianceCouncil.mp3",
+      "width": 1280,
+      "height": 720,
+      "mappingNote": "Uses the Heart Radiance Council BGM as the proposed Central Radiant Core track."
+    },
+    {
+      "no": 3,
+      "id": "plains",
+      "title": "Northern Verdant Plains",
+      "background": "./assets/backgrounds/linkara/regions/northern_verdant_plains.jpg",
+      "bgm": "./assets/audio/linkara/bgm_northern_verdant_plains.mp3",
+      "sourceImage": "2-\u7167\u7247-2.jpg",
+      "sourceAudio": "10-bgm_northern_verdant_plains.mp3",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "no": 4,
+      "id": "harbor",
+      "title": "Southern Harbor Nexus",
+      "background": "./assets/backgrounds/linkara/regions/southern_harbor_nexus.jpg",
+      "bgm": "./assets/audio/linkara/bgm_southern_harbor_nexus.mp3",
+      "sourceImage": "3-\u7167\u7247-3.jpg",
+      "sourceAudio": "15-bgm_afternoon_pool.mp3",
+      "width": 1280,
+      "height": 720,
+      "mappingNote": "Uses the afternoon pool BGM as the proposed Southern Harbor Nexus track."
+    },
+    {
+      "no": 5,
+      "id": "moonlake",
+      "title": "Ethereal Moon Lakefront",
+      "background": "./assets/backgrounds/linkara/regions/ethereal_moon_lakefront.jpg",
+      "bgm": "./assets/audio/linkara/bgm_ethereal_moon_lakefront.mp3",
+      "sourceImage": "1-\u7167\u7247-1.jpg",
+      "sourceAudio": "14-bgm_moonlake.mp3",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "no": 6,
+      "id": "mystic",
+      "title": "Eastern Mystic Mountains",
+      "background": "./assets/backgrounds/linkara/regions/eastern_mystic_mountains.jpg",
+      "bgm": "./assets/audio/linkara/bgm_eastern_mystic_mountains.mp3",
+      "sourceImage": "5-\u7167\u7247-5.jpg",
+      "sourceAudio": "13-bgm_eastern_mystic_-mountains.mp3",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "no": 7,
+      "id": "tidal",
+      "title": "Southwest Tidal Frontier",
+      "background": "./assets/backgrounds/linkara/regions/southwest_tidal_frontier.jpg",
+      "bgm": "./assets/audio/linkara/bgm_southwest_tidal_frontier.mp3",
+      "sourceImage": "4-\u7167\u7247-4.jpg",
+      "sourceAudio": "17-bgm_southwest_tidal_frontier.mp3",
+      "width": 1280,
+      "height": 720
+    }
+  ],
+  "extraAudio": [
+    {
+      "id": "linkara-lofi",
+      "title": "Linkara Lofi",
+      "path": "./assets/audio/linkara/bgm_linkara_lofi.mp3",
+      "sourceAudio": "11-bgm_lofi.mp3",
+      "intendedUse": "global atlas, neutral browsing, or placeholder ambient track"
+    },
+    {
+      "id": "login-page",
+      "title": "Login Page",
+      "path": "./assets/audio/linkara/bgm_login_page.mp3",
+      "sourceAudio": "16-bgm_-login_page.mp3",
+      "intendedUse": "login or title page"
+    }
+  ]
+}

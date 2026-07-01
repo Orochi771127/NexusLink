@@ -1,0 +1,281 @@
+{
+  "schemaVersion": 1,
+  "id": "linkara-region-map-data",
+  "status": "staged-not-runtime-wired",
+  "sourceManifest": "./assets/backgrounds/linkara/manifest.json",
+  "runtimeIntegration": false,
+  "purpose": [
+    "Keep Linkara world-map, region-scene, and BGM data organized before runtime wiring.",
+    "Make redraw and UI-fit decisions explicit before the map goes live.",
+    "Prepare stable scene-switching keys without changing save state or runtime code."
+  ],
+  "canon": {
+    "regionCount": 7,
+    "singleActiveRegion": true,
+    "partySystem": false,
+    "multiCompanionBattleTeam": false,
+    "chapterGatedUnlockFuture": true
+  },
+  "atlas": {
+    "worldMapImage": "./assets/backgrounds/linkara/world_map_linkara_region.jpg",
+    "sourceWidth": 1178,
+    "sourceHeight": 1280,
+    "sourceAspectRatio": 0.9203,
+    "currentRuntimePlaceholder": "src/ui/atlasController.js",
+    "coordinateSource": "Existing SVG placeholder coordinates from src/ui/atlasController.js",
+    "viewBox": {
+      "width": 100,
+      "height": 96
+    },
+    "uiFitAssessment": {
+      "status": "needs-mobile-readability-audit-before-live-use",
+      "currentImageUse": "reference-or-large-atlas-panel",
+      "mobileRisk": [
+        "Baked labels and paragraph copy will likely be too small on 390x844.",
+        "The image is portrait, but not tall enough for full mobile screen use without cropping or letterboxing.",
+        "Future UI should prefer overlay labels/buttons over relying on baked text."
+      ],
+      "recommendedVariants": [
+        {
+          "id": "world-map-ui-mobile",
+          "targetUse": "phone atlas screen",
+          "recommendation": "Create a cleaner 9:16 or scrollable mobile UI map variant with fewer baked labels and separate DOM/SVG region labels."
+        },
+        {
+          "id": "world-map-ui-desktop",
+          "targetUse": "large desktop/tablet atlas panel",
+          "recommendation": "The current 1178x1280 image can be tested as a reference or large panel asset."
+        },
+        {
+          "id": "world-map-reference-master",
+          "targetUse": "art reference",
+          "recommendation": "Keep the current file as the canonical visual reference until a UI-specific redraw is approved."
+        }
+      ]
+    }
+  },
+  "sceneSwitching": {
+    "mode": "future-single-active-region",
+    "initialRegionId": "moonlake",
+    "switchStorageChangeRequired": false,
+    "futureRuntimeRequirements": [
+      "Add a scene profile for every region before using the region background as an active habitat.",
+      "Define background cover/crop behavior for 16:9 region art in the current mobile-first UI.",
+      "Route BGM through the existing audio manager with volume caps and fades.",
+      "Keep locked regions non-FOMO: no timers, red dots, daily tasks, or completion pressure."
+    ]
+  },
+  "regionBackgroundFit": {
+    "sourceWidth": 1280,
+    "sourceHeight": 720,
+    "sourceAspectRatio": 1.7778,
+    "currentHabitatReference": "LakeNightCamp_v2 uses mobile-first vertical background art.",
+    "readiness": "good-for-preview-not-main-habitat-until-profiled",
+    "notes": [
+      "These landscape scenes are useful for atlas previews, chapter selection, or wide scene cards.",
+      "Using them as full active habitat backgrounds on mobile will need cover/crop anchors or vertical redraws.",
+      "Companion placement, trace placement, celestial arcs, and UI-safe zones cannot be inferred from pixels alone."
+    ]
+  },
+  "regions": [
+    {
+      "no": 1,
+      "id": "forge",
+      "slug": "southeast_forge_hills",
+      "title": "Southeast Forge Hills",
+      "canonRole": "Black Iron Hacker fire and industrial energy region",
+      "defaultStatus": "locked",
+      "atlasPosition": {
+        "x": 80,
+        "y": 64,
+        "xNormalized": 0.8,
+        "yNormalized": 0.6667
+      },
+      "assets": {
+        "background": "./assets/backgrounds/linkara/regions/southeast_forge_hills.jpg",
+        "bgm": "./assets/audio/linkara/bgm_southeast_forge_hills.mp3"
+      },
+      "sceneKeys": {
+        "regionKey": "linkara.forge",
+        "sceneKey": "linkara.scene.southeast_forge_hills",
+        "backgroundKey": "linkara.bg.southeast_forge_hills",
+        "bgmKey": "linkara.bgm.southeast_forge_hills"
+      },
+      "liveReadiness": "staged"
+    },
+    {
+      "no": 2,
+      "id": "core",
+      "slug": "central_radiant_core",
+      "title": "Central Radiant Core",
+      "canonRole": "Heart Radiance Council main city and chapter hub",
+      "defaultStatus": "locked",
+      "atlasPosition": {
+        "x": 46,
+        "y": 46,
+        "xNormalized": 0.46,
+        "yNormalized": 0.4792
+      },
+      "assets": {
+        "background": "./assets/backgrounds/linkara/regions/central_radiant_core.jpg",
+        "bgm": "./assets/audio/linkara/bgm_central_radiant_core.mp3"
+      },
+      "sceneKeys": {
+        "regionKey": "linkara.core",
+        "sceneKey": "linkara.scene.central_radiant_core",
+        "backgroundKey": "linkara.bg.central_radiant_core",
+        "bgmKey": "linkara.bgm.central_radiant_core"
+      },
+      "liveReadiness": "staged",
+      "pairingNote": "BGM source was named for Heart Radiance Council and is staged here as the Central Radiant Core track."
+    },
+    {
+      "no": 3,
+      "id": "plains",
+      "slug": "northern_verdant_plains",
+      "title": "Northern Verdant Plains",
+      "canonRole": "Wood, repair, growth, and low-pressure travel-trace region",
+      "defaultStatus": "locked",
+      "atlasPosition": {
+        "x": 32,
+        "y": 27,
+        "xNormalized": 0.32,
+        "yNormalized": 0.2813
+      },
+      "assets": {
+        "background": "./assets/backgrounds/linkara/regions/northern_verdant_plains.jpg",
+        "bgm": "./assets/audio/linkara/bgm_northern_verdant_plains.mp3"
+      },
+      "sceneKeys": {
+        "regionKey": "linkara.plains",
+        "sceneKey": "linkara.scene.northern_verdant_plains",
+        "backgroundKey": "linkara.bg.northern_verdant_plains",
+        "bgmKey": "linkara.bgm.northern_verdant_plains"
+      },
+      "liveReadiness": "staged"
+    },
+    {
+      "no": 4,
+      "id": "harbor",
+      "slug": "southern_harbor_nexus",
+      "title": "Southern Harbor Nexus",
+      "canonRole": "Trade, travel, cross-chapter departure, and outside-world news",
+      "defaultStatus": "locked",
+      "atlasPosition": {
+        "x": 50,
+        "y": 90,
+        "xNormalized": 0.5,
+        "yNormalized": 0.9375
+      },
+      "assets": {
+        "background": "./assets/backgrounds/linkara/regions/southern_harbor_nexus.jpg",
+        "bgm": "./assets/audio/linkara/bgm_southern_harbor_nexus.mp3"
+      },
+      "sceneKeys": {
+        "regionKey": "linkara.harbor",
+        "sceneKey": "linkara.scene.southern_harbor_nexus",
+        "backgroundKey": "linkara.bg.southern_harbor_nexus",
+        "bgmKey": "linkara.bgm.southern_harbor_nexus"
+      },
+      "liveReadiness": "staged",
+      "pairingNote": "BGM source was named afternoon pool and is staged here as the Southern Harbor Nexus track."
+    },
+    {
+      "no": 5,
+      "id": "moonlake",
+      "slug": "ethereal_moon_lakefront",
+      "title": "Ethereal Moon Lakefront",
+      "canonRole": "Demo and Chapter 1 first habitat, Greyshade Cat first-session focus",
+      "defaultStatus": "current",
+      "atlasPosition": {
+        "x": 71,
+        "y": 38,
+        "xNormalized": 0.71,
+        "yNormalized": 0.3958
+      },
+      "assets": {
+        "background": "./assets/backgrounds/linkara/regions/ethereal_moon_lakefront.jpg",
+        "bgm": "./assets/audio/linkara/bgm_ethereal_moon_lakefront.mp3"
+      },
+      "sceneKeys": {
+        "regionKey": "linkara.moonlake",
+        "sceneKey": "linkara.scene.ethereal_moon_lakefront",
+        "backgroundKey": "linkara.bg.ethereal_moon_lakefront",
+        "bgmKey": "linkara.bgm.ethereal_moon_lakefront"
+      },
+      "liveReadiness": "staged",
+      "runtimeCaution": "This does not replace the current LakeNightCamp_v2 habitat until a separate scene-profile task approves it."
+    },
+    {
+      "no": 6,
+      "id": "mystic",
+      "slug": "eastern_mystic_mountains",
+      "title": "Eastern Mystic Mountains",
+      "canonRole": "Mundun Rift high-tension region, memory pressure, and endgame foreshadowing",
+      "defaultStatus": "locked",
+      "atlasPosition": {
+        "x": 80,
+        "y": 18,
+        "xNormalized": 0.8,
+        "yNormalized": 0.1875
+      },
+      "assets": {
+        "background": "./assets/backgrounds/linkara/regions/eastern_mystic_mountains.jpg",
+        "bgm": "./assets/audio/linkara/bgm_eastern_mystic_mountains.mp3"
+      },
+      "sceneKeys": {
+        "regionKey": "linkara.mystic",
+        "sceneKey": "linkara.scene.eastern_mystic_mountains",
+        "backgroundKey": "linkara.bg.eastern_mystic_mountains",
+        "bgmKey": "linkara.bgm.eastern_mystic_mountains"
+      },
+      "liveReadiness": "staged"
+    },
+    {
+      "no": 7,
+      "id": "tidal",
+      "slug": "southwest_tidal_frontier",
+      "title": "Southwest Tidal Frontier",
+      "canonRole": "Water, drifting memory, rift boundaries, and isolated settlements",
+      "defaultStatus": "locked",
+      "atlasPosition": {
+        "x": 19,
+        "y": 78,
+        "xNormalized": 0.19,
+        "yNormalized": 0.8125
+      },
+      "assets": {
+        "background": "./assets/backgrounds/linkara/regions/southwest_tidal_frontier.jpg",
+        "bgm": "./assets/audio/linkara/bgm_southwest_tidal_frontier.mp3"
+      },
+      "sceneKeys": {
+        "regionKey": "linkara.tidal",
+        "sceneKey": "linkara.scene.southwest_tidal_frontier",
+        "backgroundKey": "linkara.bg.southwest_tidal_frontier",
+        "bgmKey": "linkara.bgm.southwest_tidal_frontier"
+      },
+      "liveReadiness": "staged"
+    }
+  ],
+  "extraAudio": [
+    {
+      "id": "linkara-lofi",
+      "path": "./assets/audio/linkara/bgm_linkara_lofi.mp3",
+      "key": "linkara.bgm.global_lofi",
+      "intendedUse": "global atlas, neutral browsing, or fallback ambient track"
+    },
+    {
+      "id": "login-page",
+      "path": "./assets/audio/linkara/bgm_login_page.mp3",
+      "key": "linkara.bgm.login_page",
+      "intendedUse": "login or title page"
+    }
+  ],
+  "nextDecisionsBeforeLive": [
+    "Decide whether the current world-map JPG is a reference master or the live atlas image.",
+    "If live on mobile, produce or crop-test a UI-specific world map variant with readable labels.",
+    "Choose whether scene switching is atlas-only preview, active habitat switching, or chapter selection.",
+    "For active habitat switching, author scene profiles before using any region background in Pixi.",
+    "Confirm Central Radiant Core and Southern Harbor Nexus BGM pairings after listening review."
+  ]
+}
