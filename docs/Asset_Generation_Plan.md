@@ -12,12 +12,12 @@ These are the first assets required to make the current prototype feel less like
 
 ### `assets/flametail-fox.png`
 
-- Purpose: main companion image loaded by `script.js`
+- Purpose: replacement Flametail Fox companion image; previous root file was removed after human review because the content was incorrect
 - Size: 512x512 px recommended
 - Frame count: 1
 - Background type: transparent PNG
-- PixiJS usage: loaded through `PIXI.Assets.load("./assets/flametail-fox.png")`
-- Status: required runtime asset
+- PixiJS usage: only after a new approved transparent PNG exists; until then runtime must use placeholder graphics
+- Status: replacement needed / not current runtime-ready
 
 ### `assets/backgrounds/lake-camp-night.png`
 
@@ -137,4 +137,4 @@ These assets add emotional state variation after the static companion image is c
 
 ## Implementation Rule
 
-Do not expand into large asset batches before confirming that the current runtime can load and display `assets/flametail-fox.png` successfully on GitHub Pages.
+Do not expand into large asset batches before generating a new human-approved Flametail Fox replacement and confirming that the current runtime can load and display it successfully on GitHub Pages.

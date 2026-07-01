@@ -150,6 +150,12 @@
 
 > Emotional Standoff／情緒對峙。
 
+玩家端名稱優先用：
+
+> 穩住裂隙
+
+玩家需要理解的對象不是怪物、玩家或夥伴，而是裂隙裡卡住的情緒、雜訊與記憶回聲。
+
 現有 battle engine 已定義：
 
 - noise
@@ -205,6 +211,13 @@ nexusLinkR2State:v1
 - battleRecord
 - explorationProgress
 
+商業版後續可新增 per-companion state，但必須另開 GROUNDWORK TASK_PACK 並做 migration。目標欄位包含：
+
+- per-companion relationship state
+- travel memories / 旅痕
+- chapter unlock progress
+- companion persona profile overrides
+
 ---
 
 ## 5. Current Runtime Roster
@@ -228,9 +241,9 @@ crystal-rabbit
 
 其中：
 
-- `greyshade-cat` 是 Primary Runtime。
+- `greyshade-cat` 是第一個已驗證 runtime carrier 與 default first-session companion；不是 RaphaelCore 本體，也不是永久唯一中心。
 - `flame-flicker`、`ice-talon`、`stone-shard`、`vine-twist`、`crystal-rabbit` 是目前 root 可測的五元守護 runtime-ready 陣容。
-- `flametail-fox`、`crystal-seahorse`、`verdant-stag`、`thunder-pup`、`star-energy-boarlet` 等仍存在於 registry，但 runtime readiness 不同，不能混為同一層級。
+- `flametail-fox`、`crystal-seahorse`、`verdant-stag`、`thunder-pup`、`star-energy-boarlet` 等仍存在於 registry，但 runtime readiness 不同，不能混為同一層級。`flametail-fox` 的舊靜態圖已因內容錯誤移除，需新 approved asset 才可恢復 static/runtime readiness。
 
 ---
 
@@ -350,7 +363,11 @@ New Canon Target：
 
 目前 battle 應統一稱為：
 
-> Emotional Standoff／情緒對峙
+> Emotional Standoff／情緒對峙（內部詞）
+
+玩家端 UI 應稱為：
+
+> 穩住裂隙
 
 不是：
 
@@ -367,6 +384,13 @@ New Canon Target：
 - 降低雜訊
 - 讓夥伴與玩家共同穿越裂隙情緒
 
+玩家端行動詞優先使用：
+
+- 穩住
+- 設界
+- 共鳴
+- 退一步
+
 禁止新增：
 
 - 傳統暴力勝利敘事
@@ -381,7 +405,7 @@ New Canon Target：
 即使某些功能已存在，也不應繼續無限擴張：
 
 - 不擴張成完整 RPG 戰鬥
-- 不擴張成多角色隊伍系統
+- 首版不擴張成多角色隊伍系統
 - 不擴張成抽卡
 - 不擴張成五階全角色量產
 - 不擴張成大量 boss 實戰
@@ -393,6 +417,8 @@ New Canon Target：
 核心仍然是：
 
 > 一隻有邊界、會記得、會留下痕跡的心核夥伴。
+
+未來可做同行／組隊戰鬥，但必須是章節後期擴充，目標是共同旅途、角色間記憶與事件分歧，不得做輸出排行、屬性刷關、農裝或每日必派遣。
 
 ---
 
@@ -438,10 +464,42 @@ New Canon Target：
 9. 沒有強制覆寫角色意志。
 10. Codex / battle / exploration 都必須回到夥伴關係與棲地痕跡。
 11. root 主線不得被誤導回 `/r2/` 子資料夾開發。
+12. 離線或未開遊戲期間若產生旅痕，玩家回來時不得被責備、不得被提示「錯過」，且不得給大量離線收益。
 
 ---
 
-## 12. 文件遷移建議
+## 12. Future Systems: 旅痕與同行
+
+### 12.1 旅痕 / Offline Adventure
+
+旅痕是未來回歸系統，不是放置遊戲。玩家下線或未開遊戲時，夥伴可以獨自或與已相遇夥伴短程外出；玩家下次回來時，收到簡短回報、旅途記憶或棲地痕跡。
+
+旅痕可使用 Linkara 七區作短事件舞台：東南熔爐丘陵區、中央輝耀核心區、北部翠綠平原區、南港、月湖營地、秘境山脈核心、西南潮汐邊疆區。旅痕回報只描述「去了哪裡、遇到什麼、留下什麼痕跡」，不做長篇報告或任務壓力。
+
+規則：
+
+- 不懲罰離線。
+- 不做登入 streak。
+- 不做每日派遣。
+- 不用離線時長換大量資源。
+- 不讓 safetyShield 或痛苦輸入產生旅痕獎勵。
+- 旅痕以短句、痕跡與小事件呈現，不用長篇報告壓迫玩家。
+
+### 12.2 同行／組隊戰鬥
+
+組隊戰鬥可保留為未來章節後期方向，但不是首版範圍。若實作，隊伍的主要產物應是共同旅痕、角色間對話與章節事件，不是傳統 RPG 戰力。
+
+禁止：
+
+- 輸出排行。
+- 屬性刷關。
+- 掉寶農裝。
+- 沒派遣就落後。
+- 把 companion 當隊伍位置或皮膚。
+
+---
+
+## 13. 文件遷移建議
 
 需要更新或對齊的文件：
 
@@ -456,7 +514,7 @@ New Canon Target：
 
 ---
 
-## 13. Runtime Canon 結語
+## 14. Runtime Canon 結語
 
 目前 Nexus Link 的主線不是 `/r2/`，而是 root White Lab。
 它繼承 R2 prototype 的核心系統，並已持續在 root 上開發。

@@ -20,6 +20,14 @@
 
 **當前階段：Pre-Commercial Vertical Slice / 商業化前垂直切片期。** 本階段目標是 first-session coherence（首輪體驗連貫），不是堆功能；下一階段產品主線是 First Session Flow（新玩家首次體驗）。詳見 `CLAUDE.md` §0.5。
 
+### RaphaelCore / Companion Shell
+
+RaphaelCore 與角色外型解耦。灰影貓是第一個已驗證 runtime 載體與首輪焦點，不是 RaphaelCore 本體，也不是永久唯一中心。所有角色共用 RaphaelCore 的安全憲法；角色差異來自 persona 旋鈕、語氣種子、邊界門檻、身體語言、記憶偏好與冒險傾向。
+
+RaphaelCore is a Stateful Companion Cognition Agent: safety-gated, memory-bearing, boundary-aware, companion-agnostic, and game-integrated. It is not an autonomous task agent, tool-using web agent, therapy/crisis agent, customer-service assistant, sycophantic chatbot, or generic NPC dialogue bot. Gateway / LangGraph / training bundles may advise or route, but cannot override RaphaelCore safety, boundary, memory, state delta, or response policy.
+
+商業版賣章節、棲地、音樂、故事與新相遇；不做抽卡、稀有度、角色皮膚商城或戰力禮包。旅痕與組隊／同行冒險可作未來擴充，但不得變成 FOMO、每日派遣、離線農場或戰力隊伍。
+
 ---
 
 ## 2. 三條情感契約 + 七條安全紅線（最高優先，全 agent 共用）
@@ -138,11 +146,11 @@ Acceptance refs:  <對應 ACCEPTANCE.md 的哪幾條>
 
 | Tier | 角色 | ID | 規則 |
 |------|------|-----|------|
-| 1 Primary Runtime | 灰影貓 | `greyshade-cat` | 第一主夥伴、預設解鎖、P1 主線 |
-| 2 Chapter Runtime Candidate | 焰尾狐 | `flametail-fox` | 可作章節解鎖的靜態 runtime candidate；不可成為灰影貓 fallback |
+| 1 First Runtime Carrier | 灰影貓 | `greyshade-cat` | 第一個已驗證 runtime 載體、預設 first-session companion、P1 主線 |
+| 2 Chapter Runtime Candidate | 焰尾狐 | `flametail-fox` | 仍可作章節候選；舊靜態圖已因內容錯誤移除，需新 approved asset 才能成為 runtime candidate；不可成為灰影貓 fallback |
 | 3 Roadmap Runtime Candidate | 雷霆幼狼 / 星能小山豬 | `thunder-pup` / `star-energy-boarlet` | 可逐章節升級為 runtime candidate；未通過 asset readiness 前不可選 |
 
-圖鑑中的水晶海馬 / 青葉麋鹿為既有 placeholder 展示資料；可列為 future runtime candidate，但必須先完成正式 companion spec、512×512 transparent master asset、human approval 與 asset readiness gate。多角色版本仍維持「同一時間只有一隻 active companion」，不可觸發隊伍或普通收集 RPG。
+圖鑑中的水晶海馬 / 青葉麋鹿為既有 placeholder 展示資料；可列為 future runtime candidate，但必須先完成正式 companion spec、512×512 transparent master asset、human approval 與 asset readiness gate。多角色版本首版仍維持「同一時間只有一隻 active companion」。未來可做同行／組隊內容，但必須是章節後期、非戰力導向、非普通收集 RPG。
 
 ### Runtime model（與現況同步）
 
@@ -154,11 +162,19 @@ Acceptance refs:  <對應 ACCEPTANCE.md 的哪幾條>
 - 不做 party system。
 - 不做 multi-companion 同場。
 - 不做 multi-companion 戰鬥隊伍。
+- 未來可做「旅痕」與同行／組隊戰鬥，但只能作章節後期擴充；不得做每日派遣、離線收益農場、輸出排行或屬性刷關。
 - 正式產品方向是 chapter-gated unlock。
 - Test builds 可暫時預設解鎖 runtime-ready companion 以利驗證（目前 root `defaultState.js` 即為此），但這不重新定義產品 loop；正式 chapter-gated unlock 需另開 TASK_PACK。
 - Greyshade 替換是 **asset-readiness-gated GROUNDWORK swap**：legacy 64 → illustrated 512，先並存後退役，audit 通過前不刪 legacy。
 - single-active-companion 模型不因替換而改變；灰影貓不得 fallback 到其他角色美術。
 - 註：`crystal-rabbit` 的 runtime 動畫資產暫借 `assets/characters/thunder-pup/` 目錄（命名債）；registry 的 `thunder-pup`（雷霆幼狼）與此為不同角色、維持原樣。
+
+### World faction model（Linkara）
+
+- Linkara 世界地圖固定七區：東南熔爐丘陵區、中央輝耀核心區、北部翠綠平原區、南港、月湖營地、秘境山脈核心、西南潮汐邊疆區。
+- 三勢力固定為心輝議會、黑鐵駭客、混頓裂隙；玩家口語可見「混沌裂隙」，正式 canon 用「混頓裂隙」。
+- 三勢力各有金、木、水、火、土五個角色席位；副屬性只能作風格，不取代五行席位。
+- 灰影貓與星能小山豬是中立心核生命，不屬於三勢力，也不占五行 roster。
 
 ---
 

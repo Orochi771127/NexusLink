@@ -109,7 +109,8 @@ export const ASSET_MANIFEST = Object.freeze({
     flametailFox: createStaticCompanionAsset({
       id: "flametail-fox",
       sourceRoot: "./assets",
-      fallbackImage: "./assets/flametail-fox.png"
+      fallbackImage: null,
+      approvalStatus: "replacement-needed-image-rejected"
     })
   })
 });

@@ -34,7 +34,7 @@ export const FALLBACK_CREATURE = {
   id: "flametail-fox",
   name: "焰尾狐",
   element: "fire",
-  image: "./assets/flametail-fox.png",
+  image: null,
   defaultMood: "warm",
   description: "火屬性的陪伴型 AI 小怪獸。",
   personality: DEFAULT_TOUCH_PERSONALITY

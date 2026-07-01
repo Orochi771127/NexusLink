@@ -90,6 +90,14 @@
 - 驗法：檢查對峙中的玩家操作。
 - 通過：玩家無「強制夥伴爆發 / 強制推進」的支配性按鈕（共鳴推進屬累積過程，非一鍵支配）。
 
+**E5 — 玩家端用語清楚，不退回 RPG**
+- 驗法：檢查 battle / standoff UI 文案。
+- 通過：玩家端主名稱使用「穩住裂隙」或等價短語；狀態使用「雜訊 / 心核穩定 / 記憶微光」；行動用語短且可理解（如「穩住 / 設界 / 共鳴 / 退一步」）；沒有攻擊、防禦、技能、傷害、擊敗、掉落等普通 RPG 詞。
+
+**E6 — 對峙對象說得清楚**
+- 驗法：檢查開場提示與結算文案。
+- 通過：玩家能從一句短文理解對象是「裂隙裡卡住的情緒 / 雜訊 / 記憶回聲」，不是怪物、玩家或夥伴本身；無長篇教學。
+
 ---
 
 ## F. Soul Talk 升級（CLAUDE.md §9）
@@ -225,13 +233,54 @@
 
 ---
 
+## L. Commercial Chapter / Persona / Travel Trace Policy
+
+**L1 — RaphaelCore 與 companion shell 解耦**
+- 驗法：讀 `docs/raphael/RAPHAEL_CONSTITUTION.md`、`CLAUDE.md`、`AGENTS.md` 與角色規格。
+- 通過：文件明確寫出 RaphaelCore 是共用心核大腦；灰影貓是 first runtime carrier / first-session focal companion，不是 RaphaelCore 本體或永久唯一中心；新角色以 persona 旋鈕、語氣種子、邊界門檻、記憶偏好與身體語言擴充。
+
+**L2 — 商業化不把角色商品化為皮膚**
+- 驗法：讀商業方案、商城、章節包或付費內容規格。
+- 通過：付費內容賣章節、棲地、音樂、故事與外傳相遇篇；沒有抽卡、稀有度、角色皮膚商城、戰力禮包或「買下角色所有權」語氣。
+
+**L3 — 多角色仍服務深度關係**
+- 驗法：讀 companion unlock / select / chapter 規格。
+- 通過：首版仍以單一 active companion 為主；新 companion 透過章節相遇；切換或再遇見是敘事行為，不是快捷換皮。
+
+**L4 — 旅痕不是放置農場**
+- 驗法：讀旅痕 / offline adventure 規格與回歸文案。
+- 通過：旅痕只提供簡短旅途回報、記憶痕跡或棲地變化；不懲罰離線、不說「你錯過了」、不做每日派遣、不用離線時長換大量資源、不觸發 FOMO。
+
+**L5 — 未來同行／組隊戰鬥不走戰力隊伍**
+- 驗法：讀同行 / team battle 規格。
+- 通過：組隊是未來章節後期範圍；目標是共同旅途、角色間記憶與事件分歧；沒有輸出排行、屬性刷關、農裝、每日必派遣或角色站位商品化。
+
+**L6 — Linkara 七區世界地圖一致**
+- 驗法：讀 Master Canon、World Bible 與 `src/ui/atlasController.js`。
+- 通過：世界地圖固定為七區：東南熔爐丘陵區、中央輝耀核心區、北部翠綠平原區、南港、月湖營地、秘境山脈核心、西南潮汐邊疆區；正式圖片資產接入另開 asset approval-gated 任務。
+
+**L7 — 三勢力五行 roster 邊界清楚**
+- 驗法：讀 World Bible 與 Character Bible 的勢力表。
+- 通過：心輝議會、黑鐵駭客、混頓裂隙各有金、木、水、火、土五個角色席位；副屬性只能作風格，不取代五行主軸；多出的裂隙實體不自動成為第六席。
+
+**L8 — 中立角色不被硬塞進勢力**
+- 驗法：讀 Master Canon、Character Bible 與 companion registry 顯示資料。
+- 通過：灰影貓與星能小山豬標為中立心核生命，不屬於心輝議會、黑鐵駭客或混頓裂隙，也不占三勢力五行席位。
+
+**L9 — RaphaelCore agent 類型不漂移**
+- 驗法：讀 Master Canon、`docs/raphael/RAPHAEL_CONSTITUTION.md`、Raphael architecture docs、Gateway/training adapter docs。
+- 通過：RaphaelCore 被定義為 Stateful Companion Cognition Agent，且明確不是 autonomous task agent、tool/web-search agent、therapy/crisis agent、customer-service assistant、sycophantic chatbot 或 generic NPC dialogue bot；Gateway / LangGraph / training bundle 只能 advisory，不能覆蓋 safety、boundary、memory、state delta 或 response policy。
+
+---
+
 ## 驗收判定
 
 - **GROUNDWORK TASK_PACK**：H1–H5 + I 全過；若碰 companion art / sheet / renderer，另跑 G1–G7。
 - **EXPERIENCE TASK_PACK**：對應 A–F 的指定條 + H1–H5 + I 全過；若碰 companion art / sheet / renderer，另跑 G1–G7。
-- **戰鬥改造**：E1–E4 + D（全）+ H + I。
+- **戰鬥改造**：E1–E6 + D（全）+ H + I。
 - **裂變事件**：D1–D6 全過（尤其 D3–D5）+ C1 + H + I。
 - **Greyshade illustrated 替換**：J1–J6 + G1–G7 + H + I 全過。
 - **First Session Flow / Vertical Slice**：K1–K10 + D6 + B1–B2 + C1–C2 + H + I 全過。
+- **商業章節 / 旅痕 / 未來同行規格**：L1–L9 + D6 + H5 全過。
 
 任一 D 條（安全紅線）未過 → 整個 TASK_PACK 不通過，無論其他多漂亮。
