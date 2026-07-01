@@ -5,6 +5,10 @@ import {
   RUNTIME_STATUS_LABELS,
   getCompanionById
 } from "../data/companionRegistry.js";
+import {
+  HEARTSPARK_COUNCIL_CANON_V06,
+  getHeartsparkCouncilCanonCharacterById
+} from "../data/heartsparkCouncilCanon.js";
 import { getEvolutionLine } from "../data/evolutionLines.js";
 
 // 雷達六軸（依 R2_CODEX_UI_REFERENCE：力量／防禦／速度／智慧／情感／治癒）。
@@ -28,6 +32,35 @@ const ELEMENT_ACCENTS = {
   neutral: "#c0d9ff"
 };
 
+const CANON_STAGE_LABELS = [
+  { zh: "第一階", en: "Stage 1" },
+  { zh: "第二階", en: "Stage 2" },
+  { zh: "第三階", en: "Stage 3" }
+];
+
+function getCodexEntries() {
+  return [
+    ...COMPANIONS.map((companion) => ({
+      kind: "runtime",
+      id: companion.id,
+      element: companion.element,
+      elementName: ELEMENT_LABELS[companion.element],
+      name: companion.displayName,
+      emblem: companion.emotionalEmblem,
+      companion
+    })),
+    ...HEARTSPARK_COUNCIL_CANON_V06.characters.map((character) => ({
+      kind: "canon",
+      id: character.id,
+      element: character.element,
+      elementName: character.elementName,
+      name: character.names.stage1,
+      emblem: character.emblem,
+      character
+    }))
+  ];
+}
+
 export function createCodexController({ store, panelManager }) {
   const bodyEl = qs("#codex-body");
 
@@ -43,20 +76,24 @@ export function createCodexController({ store, panelManager }) {
     const list = document.createElement("div");
     list.className = "codex-list";
 
-    COMPANIONS.forEach((companion) => {
+    getCodexEntries().forEach((entry) => {
       const row = document.createElement("button");
       row.type = "button";
       row.className = "codex-row";
-      const elementLabel = ELEMENT_LABELS[companion.element];
+      const elementLabel = entry.elementName;
+      const rowMeta = entry.kind === "canon" ? "Canon roadmap" : entry.name.en;
       row.innerHTML = `
-        <span class="companion-card-badge element-${companion.element}" aria-hidden="true">${elementLabel?.zh || ""}</span>
+        <span class="companion-card-badge element-${entry.element}" aria-hidden="true">${elementLabel?.zh || ""}</span>
         <span class="companion-card-main">
-          <strong class="companion-card-name">${companion.displayName.zh}</strong>
-          <em class="companion-card-name-en">${companion.displayName.en}</em>
+          <strong class="companion-card-name">${entry.name.zh}</strong>
+          <em class="companion-card-name-en">${rowMeta}</em>
         </span>
-        <span class="codex-row-emblem">${companion.emotionalEmblem.zh}</span>
+        <span class="codex-row-emblem">${entry.emblem.zh}</span>
       `;
-      row.addEventListener("click", () => renderDetail(companion.id));
+      row.addEventListener("click", () => {
+        if (entry.kind === "canon") renderCanonDetail(entry.id);
+        else renderDetail(entry.id);
+      });
       list.appendChild(row);
     });
 
@@ -130,6 +167,85 @@ export function createCodexController({ store, panelManager }) {
     bodyEl.appendChild(detail);
   }
 
+  function renderCanonDetail(characterId) {
+    if (!bodyEl) return;
+    const character = getHeartsparkCouncilCanonCharacterById(characterId);
+    if (!character) {
+      renderList();
+      return;
+    }
+
+    const accent = ELEMENT_ACCENTS[character.element] || ELEMENT_ACCENTS.neutral;
+    bodyEl.innerHTML = "";
+
+    const detail = document.createElement("div");
+    detail.className = "codex-detail";
+
+    const backButton = document.createElement("button");
+    backButton.type = "button";
+    backButton.className = "ghost-button codex-back";
+    backButton.textContent = "返回列表";
+    backButton.addEventListener("click", renderList);
+    detail.appendChild(backButton);
+
+    const titleBlock = document.createElement("div");
+    titleBlock.className = "codex-title-block";
+    titleBlock.innerHTML = `
+      <h3>${character.names.stage1.zh}</h3>
+      <em>${character.names.stage1.en} · ${character.elementName.en} · Canon roadmap</em>
+    `;
+    detail.appendChild(titleBlock);
+
+    const tags = document.createElement("dl");
+    tags.className = "codex-tag-grid";
+    tags.innerHTML = [
+      ["ELEMENT", `${character.elementName.zh} ${character.elementName.en}`],
+      ["FACTION", `${HEARTSPARK_COUNCIL_CANON_V06.factionName.zh} · ${HEARTSPARK_COUNCIL_CANON_V06.factionName.en}`],
+      ["EMBLEM", `${character.emblem.zh} · ${character.emblem.en}`],
+      ["ROLE", `${character.role.zh} · ${character.role.en}`],
+      ["TEAM SLOT", character.teamSlot.join(" / ")],
+      ["TEMPERAMENT", character.temperament.zh],
+      ["HABITAT", `${character.habitat.zh} · ${character.habitat.en}`],
+      ["RUNTIME", "Canon display only / not runtime-ready"]
+    ].map(([label, value]) => `
+      <div class="codex-tag">
+        <dt>${label}</dt>
+        <dd>${value}</dd>
+      </div>
+    `).join("");
+    detail.appendChild(tags);
+
+    const radarSection = document.createElement("section");
+    radarSection.innerHTML = `<h4 class="codex-section-title">Stats</h4>`;
+    const radarWrap = document.createElement("div");
+    radarWrap.className = "codex-radar-wrap";
+    radarWrap.innerHTML = buildRadarSvg(scaleCanonStats(character.stats), accent);
+    radarSection.appendChild(radarWrap);
+    detail.appendChild(radarSection);
+
+    const evolutionSection = document.createElement("section");
+    evolutionSection.innerHTML = `<h4 class="codex-section-title">Three-stage Canon Evolution</h4>`;
+    evolutionSection.appendChild(buildCanonEvolutionStrip(character));
+    detail.appendChild(evolutionSection);
+
+    const lore = document.createElement("p");
+    lore.className = "codex-lore";
+    lore.textContent = character.story.zh;
+    detail.appendChild(lore);
+
+    const tagsLine = document.createElement("p");
+    tagsLine.className = "codex-lore";
+    tagsLine.textContent = `Tactic tags: ${character.tacticTags.join(", ")}`;
+    detail.appendChild(tagsLine);
+
+    const lines = document.createElement("p");
+    lines.className = "codex-lore";
+    lines.textContent = `Lines: ${character.sampleLines.meet} / ${character.sampleLines.battle} / ${character.sampleLines.bond}`;
+    detail.appendChild(lines);
+
+    bodyEl.appendChild(detail);
+  }
+
   function buildEvolutionStrip(companion, wins) {
     const strip = document.createElement("div");
     strip.className = "codex-evolution-strip";
@@ -166,6 +282,34 @@ export function createCodexController({ store, panelManager }) {
   }
 
   return { open };
+}
+
+function buildCanonEvolutionStrip(character) {
+  const strip = document.createElement("div");
+  strip.className = "codex-evolution-strip";
+
+  ["stage1", "stage2", "stage3"].forEach((stageKey, index) => {
+    const stageName = character.names[stageKey];
+    const chip = document.createElement("div");
+    chip.className = "codex-stage-chip";
+    chip.innerHTML = `
+      <span class="codex-stage-index">${index + 1}</span>
+      <span class="codex-stage-copy">
+        <strong class="codex-stage-name">${stageName.zh}</strong>
+        <span class="codex-stage-label">${CANON_STAGE_LABELS[index].zh} · ${stageName.en}</span>
+        <p class="codex-stage-lore">${stageName.ja}</p>
+      </span>
+    `;
+    strip.appendChild(chip);
+  });
+
+  return strip;
+}
+
+function scaleCanonStats(stats = {}) {
+  return Object.fromEntries(
+    Object.entries(stats).map(([key, value]) => [key, Math.max(0, Math.min(100, Number(value) * 10))])
+  );
 }
 
 function buildRadarSvg(radar = {}, accent = "#00d4ff") {

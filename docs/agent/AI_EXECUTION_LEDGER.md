@@ -1007,3 +1007,27 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Problems / risks: `--kb-inset` / `--app-height` / `kb-open` machinery in `src/utils/dom.js` is now unused by Soul Talk but still used by `onboardingController.js` (name-input page) — left untouched, out of scope for this pack. No rule reads `kb-open` for `.soul-talk-drawer` anymore, so it is inert for this component by design even if a future device reports keyboard height correctly.
 - Next safe action: Human real-device retest (same phone, Chrome + Safari) of the actual Soul Talk drawer itself (not kbtest.html) — focus the input, confirm the drawer sits in the top zone with no black gap. If confirmed, commit and push only `src/ui/soulTalkController.js`, `styles/soul-talk-drawer.css`, `styles/mobile-safari-polish.css`, and this ledger entry.
 - Required reading: `src/ui/soulTalkController.js`, `styles/soul-talk-drawer.css`, `styles/mobile-safari-polish.css`, and the two Codex entries directly above (their `dom.js`/`mobile-safari-polish.css` intent motivated part of this cleanup).
+
+### 2026-07-02 - Codex - Heartspark Canon Roster Cleanup And Codex Data
+
+- Lane: `Game Engineering And Architecture`
+- Status: `VERIFIED`
+- Branch / commit: `main` / pending scoped commit for this package.
+- Scope: Remove old non-animated generated companion records that confused the live character roster, then add the approved Heartspark Council v0.6 roster as canon-only Codex display data. No `saveManager.js`, `store.js`, `defaultState.js`, active companion migration, localStorage schema, animation loader, Pixi renderer, or external dependencies changed.
+- Work performed: Removed stale non-animated placeholder companion IDs from `src/data/companionRegistry.js`, removed their legacy Codex evolution lines, removed the rejected/static Flametail fallback from `data/creatures.json` and `src/data/assetManifest.js`, and changed the generic fallback creature to `greyshade-cat`. Added `src/data/heartsparkCouncilCanon.js` for `auriowl`, `sprigfawn`, `crystalfin-seahorse`, `blazetail-kit`, and `starstripe-cub`, updated `src/ui/codexController.js` so these five appear as canon roadmap entries with three-stage evolution display rather than runtime-selectable companions, and tightened `styles.css` so Codex canon detail wraps on mobile.
+- Verification: Bundled Node `--check` passed for touched JS modules. `data/creatures.json` parsed. Scoped grep confirmed old non-animated IDs no longer appear in runtime data paths and the six animated roots remain present. `docs/qa/state-onboarding-migration-cases.mjs` passed 8/8. In-app Browser QA at `http://127.0.0.1:8137/` confirmed the Codex list shows all five canon entries, Starstripe Cub detail shows the three-stage canon line and `Canon display only / not runtime-ready`, console warnings/errors were 0, and 390x844 geometry had no horizontal overflow (`scrollWidth=390`, Codex panel within 16-374px). `git diff --check` passed.
+- Problems / risks: The five new canon characters are display/scaffold only and intentionally do not create `animations.json`; they are not runtime-ready and cannot be selected until a separate asset-readiness/migration task creates approved sheets.
+- Next safe action: When real animated sheets are approved for any one canon character, open a separate GROUNDWORK asset-readiness task to add its manifest and then decide whether it enters `COMPANIONS`.
+- Required reading: `AGENTS.md`, `CLAUDE.md`, `ACCEPTANCE.md`, `src/data/heartsparkCouncilCanon.js`, `src/ui/codexController.js`, `src/data/companionRegistry.js`, `styles.css`, and this lane.
+
+### 2026-07-02 - Codex - Heartspark Canon Animation Folder Scaffold
+
+- Lane: `Game Art, UI, And Visual Production`
+- Status: `VERIFIED`
+- Branch / commit: `main` / pending scoped commit for this package.
+- Scope: Asset tree cleanup plus official scaffold creation only. Protected animated runtime roots were left untouched: `greyshade-cat`, `flame-flicker`, `ice-talon`, `stone-shard`, `vine-twist`, and `crystal-rabbit`.
+- Work performed: Deleted the non-animated old generated roots `assets/characters/flame-tail-fox/` and `assets/characters/thunder-pup/`. Added scaffold folders under `assets/characters/` for `auriowl`, `sprigfawn`, `crystalfin-seahorse`, `blazetail-kit`, and `starstripe-cub`, each with metadata and empty tracked `spritesheets/emotion`, `touch`, `daily`, `movement`, and `battle` categories.
+- Verification: Filesystem checks confirmed the deleted old roots are absent and protected animated roots are still present with `metadata/animations.json`. The new scaffold metadata marks `runtimeReady:false` and does not create runtime manifests.
+- Problems / risks: The scaffold does not imply visual approval or runtime readiness. Do not place generated PNGs in these folders without human visual approval and asset QC.
+- Next safe action: Use these folders only as targets for future approved illustrated 512x512 transparent sheet generation; keep old reference images out of runtime paths unless explicitly approved.
+- Required reading: `docs/assets/COMPANION_ANIMATION_CATALOG.md`, `AGENTS.md`, `CLAUDE.md`, `ACCEPTANCE.md`, and this lane.

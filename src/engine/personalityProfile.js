@@ -31,12 +31,13 @@ export const DEFAULT_TOUCH_PERSONALITY = {
 };
 
 export const FALLBACK_CREATURE = {
-  id: "flametail-fox",
-  name: "焰尾狐",
-  element: "fire",
+  id: "greyshade-cat",
+  name: "Greyshade Cat",
+  element: "neutral",
   image: null,
-  defaultMood: "warm",
-  description: "火屬性的陪伴型 AI 小怪獸。",
+  defaultMood: "calm",
+  description: "Primary runtime fallback companion.",
+  placeholder: { bodyColor: 0x5f6876, accentColor: 0x8a93a3, emblemShape: "moon" },
   personality: DEFAULT_TOUCH_PERSONALITY
 };
 

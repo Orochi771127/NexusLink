@@ -25,29 +25,6 @@ function createIllustratedCompanionAsset({
   });
 }
 
-function createStaticCompanionAsset({
-  id,
-  sourceRoot,
-  fallbackImage,
-  approvalStatus = "static-ready-registry"
-}) {
-  return Object.freeze({
-    id,
-    sourceRoot,
-    animations: null,
-    runtimeManifest: null,
-    fallbackImage,
-    protectedRuntimeRoot: false,
-    approvalStatus,
-    artStyle: "static-illustrated",
-    sampling: "linear",
-    anchor: ILLUSTRATED_COMPANION_RUNTIME_POLICY.anchor,
-    scaleBasis: "spriteHeight",
-    maxSheetEdge: null,
-    sheetGrid: null
-  });
-}
-
 export const RUNTIME_COMPANION_ASSET_KEYS = Object.freeze([
   "greyshadeCat",
   "flameFlicker",
@@ -106,11 +83,5 @@ export const ASSET_MANIFEST = Object.freeze({
       sourceRoot: "./assets/characters/crystal-rabbit",
       animations: "./assets/characters/crystal-rabbit/metadata/animations.json"
     }),
-    flametailFox: createStaticCompanionAsset({
-      id: "flametail-fox",
-      sourceRoot: "./assets",
-      fallbackImage: null,
-      approvalStatus: "replacement-needed-image-rejected"
-    })
   })
 });
