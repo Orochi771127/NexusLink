@@ -11,10 +11,10 @@ Use this folder for:
 - visual effects
 - audio assets
 
-Current required runtime asset:
+Current flametail asset status:
 
 ```text
-assets/flametail-fox.png
+assets/flametail-fox.png is intentionally absent
 ```
 
-If `assets/flametail-fox.png` exists, `src/pixi/companionRenderer.js` will load it as the companion image. If it does not exist, the prototype falls back to the PixiJS Graphics placeholder.
+The previous root `assets/flametail-fox.png` was removed after human review because the image content was incorrect. Until a new approved Flametail Fox asset is generated, the runtime must use the PixiJS Graphics placeholder instead of a stale file path.

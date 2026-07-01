@@ -6,6 +6,7 @@
 > **依據**：基於 repo 實測盤點（commit `b9ea19a`）的 code 事實；後續 TP-2.7A/B/C 與 First Session → Return Echo v1 已另行完成，實際施工前須以最新 `origin/main` 重新驗證。市場趨勢僅作 product thesis（見附註）。
 > **撰寫框架**：遊戲製作、開發工程、程式工程、美術、心理諮商、腦神經科學六重專業視角整合。
 > **版本說明**：v3.1 將 v3.0 由「外部建議體」改寫為「專案自身法律體」，並降低越權宣告、將市場數據改列為假設。
+> **商業版增補**：RaphaelCore 與角色外型解耦；灰影貓是第一個已驗證 runtime 載體與首輪焦點，不是 RaphaelCore 本體。商業化賣章節、棲地、音樂、故事與新相遇，不賣抽卡或可替換皮膚。
 
 ---
 
@@ -27,7 +28,7 @@
 |---|---|
 | 一隻心核生命的**深度關係** | 一櫃可切換的角色 |
 | 「這一隻**不可替換**」 | 「收集更多隻」 |
-| 棲地、音樂、故事章節（環境） | 角色當皮膚、商城賣夥伴 |
+| 棲地、音樂、故事章節、外傳相遇篇 | 角色當皮膚、抽卡、商城直售夥伴 |
 | 關係改變了牠（人格偏移） | 練強了牠（戰力數值） |
 
 > **鐵律**：任何使「角色淪為可替換商品」的設計，無論商業誘因多強，一律否決。理由：它會摧毀本作唯一的護城河——「越界會痛，因為只有牠」。此條為不可動憲法。
@@ -48,7 +49,7 @@
 
 - **賣點 A —「有邊界的活著棲地」**：玩家可真實越界，並承受可見後果（防衛、拒絕、姿態變化、棲地痕跡）。
 - **賣點 B —「被記得的回歸儀式」**：玩家離開後回來，夥伴姿態不同、棲地留痕、說一句與上次情緒相關但不責備的話。
-- **賣點 C —「情緒對峙」**：將關係中的衝突與修復做成可玩機制（共鳴／設立邊界／撤退），非暴力消滅。情緒對峙是本作與純聊天型產品的核心差異點，須在文案與體驗中明確呈現為「可玩的關係修復機制」。
+- **賣點 C —「穩住裂隙」**：將關係中的衝突與修復做成可玩機制（穩住／設界／共鳴／退一步），非暴力消滅。內部可稱情緒對峙；玩家端應理解為「裂隙裡有卡住的情緒，你們一起讓它安靜下來」。
 
 三大賣點的共同前提皆為「**深度單一關係**」。此為本作靈魂，不可稀釋。
 
@@ -58,12 +59,17 @@
 |---|---|---|
 | 多角色 | **開場定情 + 章節劇情解鎖**，非開場全解鎖 | 多角色為「深度的獎勵／另一段人生」，非「廣度自助餐」 |
 | 玩家選角色 | **開場「初遇」選一隻定情**，選後即唯一 | 「選了牠、放棄了別的」反而**加重**不可替換感 |
-| 組隊冒險 | **砍除**（或極後期且非戰力導向） | 組隊＝把角色當戰力，直接殺主體性 |
-| 商城 | **僅售棲地／音樂／故事章節**；**絕不售角色當皮膚** | 售環境不殺關係；售角色當商品＝殺關係 |
+| 組隊／同行冒險 | **未來章節後期才可做**，且必須是旅途記憶與角色關係，不是戰力隊伍 | 允許擴充，但不得把角色降為輸出位置 |
+| 商城 | **僅售章節包／棲地／音樂／外傳相遇篇**；**絕不售角色皮膚、抽卡或戰力禮包** | 玩家買的是相遇與內容，不是角色所有權 |
 | 陰陽心核 + 進化 | 保留，但進化＝**人格偏移**（hysteresis／scars），非變強 | 進化服務「關係改變了牠」，非「練強了牠」 |
 | 三勢力 | 保留為**世界觀背景與敘事深度**，非「集滿三勢力」的收集框架 | 敘事深度 ✓；收集驅動 ✗ |
 
-**長線願景（R4+，現階段不執行）：** 桌面環境式存在感（Taskbar Ambient Presence）——僅狀態累積 + 低調存在，**絕不做生產進度／紅點／通知轟炸**。
+**商業版內容骨架**：Demo / Chapter 1 以 Moonlake + Greyshade Cat 展示核心；付費章節包解鎖新棲地、新音樂、新事件與新 companion 的完整相遇。若未來有角色禮包，只能包裝為外傳相遇篇，不可做「買下角色」或「換皮」。
+
+**長線願景（R4+，現階段不執行）**：
+- 桌面環境式存在感（Taskbar Ambient Presence）——僅狀態累積 + 低調存在，**絕不做生產進度／紅點／通知轟炸**。
+- **旅痕**（Offline Adventure）——玩家離線或未開遊戲時，夥伴可獨自或與已相遇夥伴短程外出；玩家回來時收到簡短旅途回報、記憶痕跡或棲地變化。旅痕不是登入獎勵、不是派遣刷資源、不是「你錯過了」。
+- **同行／組隊戰鬥**——可作未來章節後期系統，但必須服務角色關係與旅途記憶；不得做輸出排行、屬性刷關、農裝、每日必派遣。
 
 ### 1.3 開場定情機制（戰略已定版；施工分兩階段）
 
@@ -116,6 +122,10 @@
 ### 2.4 心核腦人格安全底線
 
 詳見配套文件 `RAPHAEL_CONSTITUTION.md`（人格上位法 v4.0，狀態：DRAFT，尚未接入 runtime）。核心：心核生命「在被尊重中長成牠自己」，不以「成為玩家的鏡像／被完全理解」為目標。高 bond 不解除拒絕能力。
+
+**RaphaelCore 與角色外型解耦。** RaphaelCore is companion-agnostic. Greyshade Cat is the first validated runtime carrier and first-session focal companion, not RaphaelCore itself and not the permanent canonical center. 新角色應以 persona 旋鈕、語氣種子、邊界門檻、記憶偏好與身體語言呈現差異，不複製多套心核腦。
+
+**Agent 類型定義**：RaphaelCore is a Stateful Companion Cognition Agent: safety-gated, memory-bearing, boundary-aware, companion-agnostic, and game-integrated. It is not an autonomous task agent, therapy agent, customer-service assistant, tool-using web agent, sycophantic chatbot, or generic NPC dialogue bot. Gateway / LangGraph / training bundles may advise or route, but cannot override RaphaelCore's final authority over safety, boundary, memory, state delta, or response policy.
 
 ---
 
@@ -207,6 +217,34 @@ illustrated／painterly，非 chunky pixel art。夥伴與背景共用 high-deta
 - **黑鐵駭客**（Ironflow Hackers）——廢「鐵流黑客」。
 - **混頓裂隙**——正式名／世界觀核心名用「**混頓**」（情緒卡死、記憶堵塞、自我修復失敗後的深層停滯，語義承載全作內核，為護城河級獨特詞）。「混沌裂隙」僅作對外玩家俗稱別名。上架主文案一律用「混頓」。
 
+### 5.1.1 Linkara 世界地圖（七區定版）
+
+Linkara Region 是 Nexus Link 的主舞台。世界地圖以七個區域構成，現有 `src/ui/atlasController.js` 已有唯讀示意座標；正式地圖 PNG 匯入仍屬 asset approval-gated 後續任務。
+
+| No. | 區域 | English | 主要功能 |
+|---|---|---|---|
+| 1 | 東南熔爐丘陵區 | Southeast Forge Hills | 黑鐵駭客／火與工業能量 |
+| 2 | 中央輝耀核心區 | Central Radiant Core | 心輝議會／主城與章節樞紐 |
+| 3 | 北部翠綠平原區 | Northern Verdant Plains | 木屬性、修復、生長與旅痕 |
+| 4 | 南港 | Southern Harbor Nexus | 交易、遠行、跨章節出發點 |
+| 5 | 月湖營地 | Ethereal Moon Lakefront | Demo / Chapter 1 初始棲地，灰影貓首輪焦點 |
+| 6 | 秘境山脈核心 | Eastern Mystic Mountains | 混頓裂隙高張力區、記憶壓力與終局伏筆 |
+| 7 | 西南潮汐邊疆區 | Southwest Tidal Frontier | 水屬性、漂流記憶與裂隙邊界 |
+
+### 5.1.2 三勢力五行矩陣
+
+正式商業版以「三勢力 × 五行」作角色擴充骨架。每個勢力各有金、木、水、火、土五個席位；席位代表主題與章節功能，不代表抽卡稀有度或戰力職業。
+
+| 勢力 | 金 | 木 | 水 | 火 | 土 |
+|---|---|---|---|---|---|
+| 心輝議會 | 判斷、守望 | 修復、生長 | 記憶、沉澱 | 陪伴、溫度 | 邊界、安定 |
+| 黑鐵駭客 | 秩序、封裝 | 神經網、擴張 | 壓縮、冷卻 | 熔爐、驅動 | 裝甲、地基 |
+| 混頓裂隙 | 裂光、寄生 | 夢織、纏附 | 淵潮、共感 | 殘焰、失控 | 腐土、吞噬 |
+
+黑鐵駭客不是普通反派；它代表「為了保護而控制」。混頓裂隙不是第四陣營怪物巢，而是心輝議會與黑鐵駭客的能量、方法與情緒壓力長期交會後撕開的傷口。
+
+**中立角色不占三勢力五行席位**：灰影貓 `greyshade-cat` 與星能小山豬 `star-energy-boarlet` 屬中立心核生命。牠們可連接章節、旅痕與地圖事件，但不得被硬塞進心輝議會、黑鐵駭客或混頓裂隙 roster。
+
 ### 5.2 五元守護的勢力歸屬（定版）
 
 五元守護**屬心輝議會**，為「**可愛的第一梯隊／初醒形態**」，與 Character Bible 中更高階的議會守護線同屬心輝議會、但不同梯隊／世代。
@@ -224,16 +262,17 @@ illustrated／painterly，非 chunky pixel art。夥伴與背景共用 high-deta
 兩隻不同角色，同屬心輝議會火屬性的不同世代：
 
 - 焰紋狐 `flame-flicker`：第一梯隊（可愛初醒），full-runtime。
-- 焰尾狐 `flametail-fox`：高階線起點／legacy static-image。不可作為灰影貓的 fallback 圖。
+- 焰尾狐 `flametail-fox`：高階線起點／legacy candidate。舊靜態圖已因內容錯誤移除，需新 approved asset 才能恢復 static/runtime readiness；不可作為灰影貓的 fallback 圖。
 
 兩者 ID 不同，不可為對齊命名直接改 ID 或合併；改 ID 必開 migration。
 
-### 5.4 灰影貓（主角，商業化靈魂）
+### 5.4 灰影貓（第一個已驗證 runtime 載體）
 
 - Runtime ID `greyshade-cat`，樞核／neutral，full-runtime。
 - 性格：慢熱、防衛、安靜、觀察、邊界敏感、不即時親密。
 - 核心情感意義：牠不會立刻信任你，但牠會慢慢記得你。
-- 不可刪除、不可 fallback 到其他角色美術。所有上架行銷火力集中於牠。
+- 不可刪除、不可 fallback 到其他角色美術。Demo / Chapter 1 與首輪商業驗證集中於牠。
+- 灰影貓不是 RaphaelCore 本體，也不是 Nexus Link 的永久唯一中心；牠是最先讓玩家看見 RaphaelCore 如何運作的 first-session focal companion。
 
 ### 5.5 進化 canon（定版）
 
@@ -245,10 +284,10 @@ illustrated／painterly，非 chunky pixel art。夥伴與背景共用 high-deta
 
 | Tier | 角色 | 規則 |
 |---|---|---|
-| 1 主角 | 灰影貓 `greyshade-cat` | 商業化靈魂，full pipeline，行銷主體 |
+| 1 首輪焦點 | 灰影貓 `greyshade-cat` | first validated runtime carrier，Demo / Chapter 1 行銷主體 |
 | 1.5 已實作梯隊 | 五元守護（火/水/木/金/土） | full-runtime，但透過章節解鎖，非開場全開 |
-| 2 Legacy | 焰尾狐 `flametail-fox` | static，不可升級，不可作 fallback |
-| 3 Roadmap | 雷霆幼狼 / 星能小山豬 等 | 不可進 runtime，不可觸發組隊系統 |
+| 2 Legacy | 焰尾狐 `flametail-fox` | 舊錯圖已移除；需新 approved asset 才可恢復 static candidate，不可升級，不可作 fallback |
+| 3 Roadmap | 雷霆幼狼 / 星能小山豬 等 | 未通過 asset readiness 前不可選；可作未來章節或旅痕內容 |
 
 ---
 
@@ -266,7 +305,7 @@ GitHub Pages 原型 → 小型私測 → 社群分享（灰影貓截圖 + 關係
 
 ### 6.3 明確不做（現階段）
 
-組隊冒險、商城賣角色、桌面模式、LLM、後端、金流、五階量產、多角色開場全解鎖。
+首版不做組隊戰鬥／同行冒險實作、商城直售角色、抽卡、桌面模式、LLM、後端、金流、五階量產、多角色開場全解鎖。組隊與旅痕可作未來章節後期擴充，但必須通過「非 FOMO、非 idle farming、非戰力隊伍」驗收。
 
 ### 6.4 配套文件與狀態
 

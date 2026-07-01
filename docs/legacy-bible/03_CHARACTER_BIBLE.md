@@ -28,7 +28,7 @@
 
 ### 1.1 Primary Runtime
 
-目前主線預設夥伴與情緒棲地核心測試角色。
+目前主線預設夥伴、第一個已驗證 runtime 載體與情緒棲地核心測試角色。此定位不代表灰影貓是 RaphaelCore 本體或永久唯一中心。
 
 - 灰影貓／Greyshade Cat
 
@@ -57,6 +57,8 @@
 - 青葉麋鹿／Verdant Stag
 - 雷霆幼狼／Thunder Pup
 - 星能小山豬／Star-energy Boarlet
+
+灰影貓與星能小山豬是中立心核生命；牠們不占心輝議會、黑鐵駭客或混頓裂隙的五行席位。
 
 ### 1.4 Lore / Roadmap / Boss-level Entities
 
@@ -128,6 +130,7 @@
 ### 定位
 
 灰影貓是目前 root 主線預設夥伴，也是第一棲地的核心角色。
+更精確地說，灰影貓是第一個已驗證的 runtime carrier：牠讓玩家看見 RaphaelCore 如何透過一個 companion shell 表現記憶、邊界、拒絕與回歸。
 
 牠不是最華麗的角色，也不是最有宣傳爆點的角色。
 但牠最能展示 Nexus Link 的核心差異。
@@ -159,9 +162,21 @@
 - 記憶留痕
 - localStorage 記憶
 - 棲地留痕
+- 旅痕回報
 - 角色沉默
 - 拒絕層次
 - 高羈絆下仍保有邊界
+
+### Persona 旋鈕
+
+- warmth：低到中，偏安靜。
+- guardedness：高，接近前會觀察。
+- rejectThreshold：中低，壓力過高會退。
+- fatigueSensitivity：高，重複互動容易疲勞。
+- memoryPreference：偏向細小、安靜、回來後才亮起的痕跡。
+- silenceStyle：停頓、看著玩家、尾巴收緊。
+- repairStyle：不立刻原諒，但會記得玩家尊重邊界。
+- adventureTendency：短程、夜湖邊、獨自觀察；不主動邀功。
 
 ---
 
@@ -177,6 +192,7 @@
 - 陣營：心輝議會
 - Runtime 狀態：full-runtime
 - 定位：火系守護、熱切靈動、突擊者
+- Persona 傾向：warmth 高、guardedness 低到中、adventureTendency 高；仍必須保留拒絕能力。
 
 Canon 關係：
 
@@ -191,6 +207,7 @@ Canon 關係：
 - 陣營：心輝議會
 - Runtime 狀態：full-runtime
 - 定位：水系守界、冷靜、防衛
+- Persona 傾向：warmth 低到中、guardedness 中高、memoryPreference 高；旅痕偏向潮聲、霧、沉澱記憶。
 
 Canon 關係：
 
@@ -205,6 +222,7 @@ Canon 關係：
 - 陣營：心輝議會
 - Runtime 狀態：full-runtime
 - 定位：穩定、防禦、地基守護
+- Persona 傾向：warmth 中、guardedness 中、repairStyle 穩定緩慢；旅痕偏向地層、石痕、舊路。
 
 Canon 關係：
 
@@ -219,6 +237,7 @@ Canon 關係：
 - 陣營：心輝議會
 - Runtime 狀態：full-runtime
 - 定位：木系療癒、溫和、生長
+- Persona 傾向：warmth 中高、fatigueSensitivity 中低、memoryPreference 偏生長與修復；旅痕偏向林道與新芽。
 
 Canon 關係：
 
@@ -233,6 +252,7 @@ Canon 關係：
 - 陣營：心輝議會
 - Runtime 狀態：full-runtime
 - 定位：金系感應、敏感警覺、晶核反應
+- Persona 傾向：guardedness 高、rejectThreshold 中、silenceStyle 警覺；旅痕偏向晶光、微聲與預警。
 
 Canon 關係：
 
@@ -331,11 +351,13 @@ Canon 關係：
 
 此表為世界觀長線 canon，不代表 current root 已實作。
 
+黑鐵駭客五行席位以金、木、水、火、土為主屬性；雷、闇、秩序等只能作副主題或技術風格，不得取代五行主軸。
+
 | 屬性 | 第一階 | 第二階 | 第三階 |
 |---|---|---|---|
-| 木＋雷 | 雷霆幼狼 | 雷鳴蒼狼 | 天狼雷皇 |
-| 水＋闇 | 浪花幼獅 | 冰潮獅皇 | 深淵獅帝 |
-| 金＋秩序 | 金光幼龍 | 輝鋼龍將 | 聖金龍神 |
+| 木（雷系副題） | 雷霆幼狼 | 雷鳴蒼狼 | 天狼雷皇 |
+| 水（闇流副題） | 浪花幼獅 | 冰潮獅皇 | 深淵獅帝 |
+| 金（秩序副題） | 金光幼龍 | 輝鋼龍將 | 聖金龍神 |
 | 土 | 幼星駒 | 晶地戰駒 | 泰坦星皇 |
 | 火 | 星焰鳳凰 | 星輝聖者 | 永恆星皇 |
 
@@ -351,14 +373,17 @@ Canon 關係：
 
 > 污染顯化 → 異常成熟 → 虛空覺醒
 
+正式勢力 roster 只保留五行五席。既有額外裂隙實體可留作 boss、事件異常或早期概念，不自動變成第六席。
+
 | 屬性 | 第一階 | 第二階 | 第三階 |
 |---|---|---|---|
-| 影／火 | 殘焰小獸 | 無主裂王 | 殞焰無主神 |
-| 木／虛空 | 潛行蝶 | 夢織蝶 | 幻蝶虛空領主 |
 | 金／虛空 | 裂光螳螂 | 螺旋寄生體 | 螺旋虛空領主 |
+| 木／虛空 | 潛行蝶 | 夢織蝶 | 幻蝶虛空領主 |
 | 水／虛空 | 深螢孢子體 | 淵螢共感體 | 終潮虛空領主 |
-| 土／虛空 | 腐土殘核 | 蛭塔掘墓體 | 虛土吞噬領主 |
 | 火／虛空 | 赤燄幼核 | 夢魘召火者 | 赤燄虛空主母 |
+| 土／虛空 | 腐土殘核 | 蛭塔掘墓體 | 虛土吞噬領主 |
+
+`殘焰小獸` 暫列混頓裂隙事件 / boss 候選，不列入正式五行 roster，避免火屬性重複。
 
 ---
 
@@ -387,3 +412,12 @@ Canon 關係：
 - Codex 顯示不壞
 - animation manifest 不壞
 - active companion 不會變 unknown
+
+---
+
+## 13. 商業版角色擴充原則
+
+- 角色以章節、棲地、故事與相遇開放；不以抽卡、稀有度、角色皮膚商城或戰力包開放。
+- 每位正式 companion 都必須有自己的初遇、邊界反應、記憶偏好、Return Echo、旅痕語氣與「穩住裂隙」行動語氣。
+- RaphaelCore 是共用心核大腦；新角色不得複製一套新核心，只能新增 persona 旋鈕、語氣種子、動畫/身體語言與章節事件。
+- 未來可做同行／組隊冒險，但該系統應產生共同旅痕與角色間記憶，不得成為輸出排行、農裝或每日派遣。

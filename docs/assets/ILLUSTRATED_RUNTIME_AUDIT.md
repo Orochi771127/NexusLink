@@ -24,7 +24,7 @@
 | `stone-shard` | `assets/characters/stone-shard/metadata/animations.json` | full-runtime | Active illustrated guardian manifest; protected runtime-ready root. |
 | `vine-twist` | `assets/characters/vine-twist/metadata/animations.json` | full-runtime | Active illustrated guardian manifest; protected runtime-ready root. |
 | `crystal-rabbit` | `assets/characters/crystal-rabbit/metadata/animations.json` | full-runtime | Active illustrated guardian manifest; protected runtime-ready root. |
-| `flametail-fox` | `assets/flametail-fox.png` | static-image | Static fallback only; not part of the animated illustrated manifest gate. |
+| `flametail-fox` | no approved root static image | placeholder / replacement needed | Previous root static PNG was removed after human review because the content was incorrect; not part of the animated illustrated manifest gate. |
 
 Placeholders and future candidates such as `crystal-seahorse`, `verdant-stag`,
 `thunder-pup`, and `star-energy-boarlet` are not active animated runtime

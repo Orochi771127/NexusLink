@@ -21,6 +21,16 @@
 
 每一個設計決定都必須通過這個測試：**「這讓夥伴更像一個有自己邊界的生命，還是更扁平？」**
 
+### 0.1 RaphaelCore / Companion Shell
+
+RaphaelCore 與角色外型解耦。RaphaelCore 是共用的心核大腦與人格憲法；不同 companion 是不同 shell、persona 旋鈕、語氣種子、身體語言與記憶偏好。
+
+- 灰影貓是第一個已驗證 runtime 載體與首輪焦點，不是 RaphaelCore 本體，也不是永久唯一中心。
+- 新角色不應複製一套心核腦；應在共用 RaphaelCore 下調整溫度、戒心、拒絕門檻、疲勞敏感度、沉默方式、修復方式與冒險傾向。
+- 所有角色都必須保留拒絕能力；高 bond 不解除邊界。
+- RaphaelCore is a Stateful Companion Cognition Agent: safety-gated, memory-bearing, boundary-aware, companion-agnostic, and game-integrated. It is not an autonomous task agent, web-search/tool agent, therapy/crisis agent, customer-service assistant, sycophantic chatbot, or generic NPC dialogue bot.
+- Gateway / LangGraph / training bundles may advise or route, but cannot override RaphaelCore safety, boundary, memory, state delta, response policy, or companion shell boundaries.
+
 ---
 
 ## 0.5 當前階段：Pre-Commercial Vertical Slice（商業化前垂直切片期）
@@ -54,6 +64,14 @@
 - Heart-Core Guidance（心核引導）**不是任務欄**：不得有 FOMO / 紅點 / 倒數 / 連續登入 / 未完成焦慮（**直接對應第 2 節紅線 6**）。
 
 > First Session Flow 的可驗收對照見 `ACCEPTANCE.md` 新增的 §K；其 state 地基注意事項見本檔 §5.1。
+
+### 0.6 商業版擴充方向（上架後可逐步開）
+
+- 商業版賣章節、棲地、音樂、故事與新相遇；不做抽卡、稀有度、角色皮膚商城或戰力禮包。
+- 付費章節包可帶來新 companion，但玩家買的是相遇篇章與內容，不是角色所有權。
+- 同一時間仍以一位 active companion 為主；切換或再遇見必須是敘事行為，不是快捷換皮。
+- **旅痕**是未來系統：玩家離線或未開遊戲時，夥伴可獨自或與已相遇夥伴短程外出；玩家回來時收到簡短旅途回報、記憶痕跡或棲地變化。旅痕不得變成登入獎勵、每日派遣、離線收益農場或「你錯過了」。
+- 組隊戰鬥／同行冒險可作未來章節後期擴充，但必須服務角色關係與旅途記憶，不得做輸出排行、屬性刷關、農裝或必派遣。
 
 ---
 
@@ -198,7 +216,9 @@
 ### 6.1 `battleEngine.js` + `battleController.js` — 需「體質改造」，非調參
 **現況問題**：目前是普通 RPG 打怪——`basic_attack`、敵我 HP bar、HP 歸零判勝負（見 `index.html` battle-modal 的 `data-skill="basic_attack"`、`battle-enemy-hp`）。這**違反** Bible：Nexus Link 的「對峙」不是把對方血條清零。
 
-**改造方向**（情緒對峙，非消滅敵人）：對峙的目標應是**穩定心核 / 建立邊界 / 回收記憶**之類的情緒性結算，而非 enemy HP→0。`resonance`（情感共鳴）已是對的方向，`basic_attack`（直覺爪擊）是要被重新定義的舊骨。retreat（先撤退）「懂得離開也是照顧」的設計是對的，保留。勝負回饋必須「勝不驕、敗不罰」（`summarizeBattleOutcome` 已是對的基調，延續它）。
+**改造方向**（內部：情緒對峙；玩家端：穩住裂隙）：對峙的目標應是**穩定心核 / 建立邊界 / 回收記憶**之類的情緒性結算，而非 enemy HP→0。玩家要理解「裂隙裡有卡住的情緒，你們不需要消滅它，只要讓它安靜下來」。`resonance`（情感共鳴）已是對的方向，`basic_attack`（直覺爪擊）是要被重新定義的舊骨。retreat（先撤退）「懂得離開也是照顧」的設計是對的，保留。勝負回饋必須「勝不驕、敗不罰」（`summarizeBattleOutcome` 已是對的基調，延續它）。
+
+**玩家端用語規則**：主名稱用「穩住裂隙」；狀態用「雜訊 / 心核穩定 / 記憶微光」；行動優先用「穩住 / 設界 / 共鳴 / 退一步」。不要把 UI 寫成攻擊、防禦、技能、傷害、擊敗、掉落。每個按鈕盡量 2–4 個字，每個說明盡量一句話。
 
 **警語**：這是一次**體質改造**，會動到 engine 的核心迴圈與 controller 的渲染，屬於「授權的大改」，但因為它同時牽涉 `index.html` 的 battle-modal **結構**，所以開工計畫要明確標出哪些是純體驗層、哪些觸及 5.1，分開確認。
 
@@ -216,14 +236,21 @@
 
 | Tier | 角色 | ID | 規則 |
 |------|------|-----|------|
-| 1 Primary Runtime | 灰影貓 | `greyshade-cat` | 第一主夥伴、預設解鎖、完整 spritesheet，P1 主線 |
+| 1 First Runtime Carrier | 灰影貓 | `greyshade-cat` | 第一個已驗證 runtime 載體、預設 first-session companion、完整 spritesheet，P1 主線 |
 | 1 Runtime-ready 同行夥伴 | 心輝議會五元守護：焰紋狐(火)／冰晶狼(水)／磐石熊(土)／青藤鹿(木)／晶石兔(金) | `flame-flicker` / `ice-talon` / `stone-shard` / `vine-twist` / `crystal-rabbit` | `full-runtime`、512×512 動畫就緒、可作 active companion；正式為章節解鎖，目前 root test build 預設解鎖以利驗證 |
-| 2 Chapter Runtime Candidate | 焰尾狐 | `flametail-fox` | 已登錄、靜態圖可作章節解鎖 runtime candidate；不可成為灰影貓 fallback |
+| 2 Chapter Runtime Candidate | 焰尾狐 | `flametail-fox` | 已登錄；舊靜態圖因內容錯誤移除，需新 approved asset 才可作章節解鎖 runtime candidate；不可成為灰影貓 fallback |
 | 3 Roadmap Runtime Candidate | 雷霆幼狼 `thunder-pup` / 星能小山豬 `star-energy-boarlet` | 可逐章節升級為 runtime candidate；未通過 asset readiness 前不可選 |
 
-註：`companionRegistry.js` 可含水晶海馬、青葉麋鹿等 placeholder 角色作圖鑑展示用。它們可成為 future runtime candidate，但必須先完成正式 companion spec、512×512 transparent master asset、human approval 與 asset readiness gate。多角色版本仍維持「同一時間只有一隻 active companion」，不可觸發隊伍或普通收集 RPG。
+註：`companionRegistry.js` 可含水晶海馬、青葉麋鹿等 placeholder 角色作圖鑑展示用。它們可成為 future runtime candidate，但必須先完成正式 companion spec、512×512 transparent master asset、human approval 與 asset readiness gate。多角色版本首版仍維持「同一時間只有一隻 active companion」。未來可做同行／組隊內容，但必須是章節後期、非戰力導向、非普通收集 RPG。
 
 註（命名債）：`crystal-rabbit`（晶石兔）的 runtime 動畫資產暫借 `assets/characters/thunder-pup/` 目錄，與 registry 的 `thunder-pup`（雷霆幼狼，Tier 3）為**不同角色**；雷霆幼狼維持原 Tier 3 狀態、未接入此批動畫。
+
+### Linkara world faction model
+
+- 世界地圖固定七區：東南熔爐丘陵區、中央輝耀核心區、北部翠綠平原區、南港、月湖營地、秘境山脈核心、西南潮汐邊疆區。
+- 三勢力固定為心輝議會、黑鐵駭客、混頓裂隙；「混沌裂隙」可作玩家口語，正式 canon 用「混頓裂隙」。
+- 每個勢力各有金、木、水、火、土五個角色席位；這是章節與角色擴充骨架，不是抽卡池或戰力職業表。
+- 灰影貓與星能小山豬是中立心核生命，不屬於三勢力，也不占五行 roster。
 
 ---
 

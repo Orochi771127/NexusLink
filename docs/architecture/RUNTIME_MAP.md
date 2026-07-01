@@ -77,7 +77,7 @@ index.html
 
 | 角色 | ID | Runtime 狀態 | 說明 |
 |------|-----|------------|------|
-| 焰尾狐 | `flametail-fox` | ⚠️ fallback image only | `data/creatures.json` 中有定義，只有 `assets/flametail-fox.png` 靜態圖，尚無 spritesheet |
+| 焰尾狐 | `flametail-fox` | ⚠️ placeholder / replacement needed | `data/creatures.json` 中有定義；舊 `assets/flametail-fox.png` 因內容錯誤已移除，需新 approved asset，尚無 spritesheet |
 
 **限制**：焰尾狐是 **legacy/fallback registered creature**，不是目前 P1 優先角色。未獲 human 明確指示，不可擅自將焰尾狐升級為完整 animation pipeline。焰尾狐在完整 spritesheet 建立前，不應在 animation 相關代碼中被引用。
 

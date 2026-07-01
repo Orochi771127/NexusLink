@@ -58,6 +58,50 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-07-01 - Codex - Repo Main Deployment Sync
+
+- Status: `VERIFIED`
+- Branch / commit: `codex/raphael-core-main-review-gate` / current deployment commit
+- Scope: Scoped integration for RaphaelCore agent classification, Linkara world/faction canon, commercial chapter/travel-trace guardrails, and the human-confirmed removal of the incorrect root Flametail Fox PNG. No `src/ai/**` runtime changes, no save schema or storage-key change, no backend, no LLM/API, no dependency, and no build step.
+- Work performed: Kept the existing RaphaelCore constitution/architecture definitions as the current source of truth; synchronized Master Canon, `AGENTS.md`, `CLAUDE.md`, `ACCEPTANCE.md`, legacy bible docs, runtime map/audit docs, and asset docs. Removed `assets/flametail-fox.png` after human review confirmed it depicted the wrong creature, then cleared stale runtime references in `data/creatures.json`, `src/data/assetManifest.js`, `src/data/companionRegistry.js`, and `src/engine/personalityProfile.js` so Flametail falls back to placeholder graphics until a new approved asset exists.
+- Verification: Bundled Node `--check` passed for `src/data/assetManifest.js`, `src/data/companionRegistry.js`, and `src/engine/personalityProfile.js`; `data/creatures.json` parsed successfully; `git diff --check` passed; `node docs/qa/state-onboarding-migration-cases.mjs` passed 8/8; `python docs/qa/_run_web_release_gate.py --base http://localhost:8128 --port 8128` passed automated required checks 10/10 with asset integrity failures 0, responsive/accessibility warnings 0, Raphael restricted-agent 7/7, browser gates passing, and live UI/Soul Talk gate passing.
+- Problems / risks: GitHub Pages still requires remote propagation after push. Human-only gates remain real-device mobile Safari/Chrome verification, moderated private testers, and legal/privacy/store-copy review. Flametail Fox is not runtime asset-ready until a new human-approved transparent PNG is produced.
+- Next safe action: Push this scoped commit to the current branch and `main`, then verify `https://orochi771127.github.io/NexusLink/` after Pages updates. Any new Flametail image requires a separate asset approval-gated TASK_PACK.
+- Required reading: `AGENTS.md`, `CLAUDE.md`, `ACCEPTANCE.md`, `docs/strategy/NEXUS_LINK_MASTER_CANON_v3.1.md`, `docs/raphael/RAPHAEL_CONSTITUTION.md`, `docs/architecture/RAPHAEL_SOUL_ARCHITECTURE_V1.md`, `docs/agent/AI_EXECUTION_LEDGER.md`, `src/data/companionRegistry.js`, and `src/data/assetManifest.js`.
+
+### 2026-07-01 - Codex - Linkara World And Faction Canon Sync
+
+- Status: `VERIFIED`
+- Branch / commit: `codex/raphael-core-main-review-gate` / included in current deployment commit
+- Scope: Canon/spec synchronization for the supplied Linkara world map and character bible data. Locked the seven Linkara regions, three factions, five-element roster boundary, and neutral status for Greyshade Cat and Star-energy Boarlet. No map PNG import, no asset writes, no save schema, no unlock logic, no battle/team implementation, no dependency, no backend, no LLM/API, and no build step.
+- Work performed: Updated Master Canon, World Bible, Character Bible, Runtime Canon, `AGENTS.md`, `CLAUDE.md`, and `ACCEPTANCE.md` so Linkara has seven named regions; Heartlight Council, Black Iron Hacker, and the Mundun Rift each own gold/wood/water/fire/earth roster slots; Black Iron secondary tags such as thunder/dark/order are style modifiers; extra Rift concepts such as `殘焰小獸` remain event/boss candidates rather than sixth roster slots; Greyshade Cat and Star-energy Boarlet are neutral. Updated `src/data/companionRegistry.js` display labels only for those two neutral companions.
+- Verification: `git diff --check` passed for the scoped docs and registry files. Bundled Node `--check src/data/companionRegistry.js` passed. Scoped grep confirmed Linkara seven-region names, L6-L8 acceptance gates, neutral registry labels, and Rift boss-candidate wording are present.
+- Problems / risks: This package does not integrate the attached world map image as a runtime asset; `src/ui/atlasController.js` remains the existing read-only SVG placeholder. Actual PNG import, region unlock progression, per-faction chapter data, offline `旅痕` state, or team battle all require separate TASK_PACKs; asset/state work needs GROUNDWORK approval.
+- Next safe action: If the map should become a real in-game screen, open a GROUNDWORK asset/UI TASK_PACK to import an approved map image, audit mobile readability, and decide whether atlas data remains static or becomes chapter-gated state.
+- Required reading: `AGENTS.md`, `CLAUDE.md`, `ACCEPTANCE.md`, `docs/strategy/NEXUS_LINK_MASTER_CANON_v3.1.md`, `docs/legacy-bible/02_WORLD_BIBLE.md`, `docs/legacy-bible/03_CHARACTER_BIBLE.md`, `docs/legacy-bible/04_RUNTIME_CANON.md`, `src/ui/atlasController.js`, `src/data/companionRegistry.js`, and this lane.
+
+### 2026-06-30 - Codex - Commercial Core Canon v2 Docs
+
+- Status: `COMPLETED`
+- Branch / commit: `codex/raphael-core-main-review-gate` / included in current deployment commit
+- Scope: Documentation-only canon and acceptance update for commercial chapter structure, RaphaelCore companion-agnostic positioning, player-facing `穩住裂隙` terminology, future `旅痕` offline adventure, and future-only同行/組隊 guardrails. No runtime code, state schema, storage key, assets, dependencies, backend, LLM/API, or build step changed.
+- Work performed: Updated the Master Canon, `CLAUDE.md`, `AGENTS.md`, legacy Character Bible, legacy Runtime Canon, and `ACCEPTANCE.md` so Greyshade is the first validated runtime carrier rather than RaphaelCore itself; commercial content sells chapters/places/music/story/new encounters rather than skins, gacha, or battle power; `旅痕` is framed as a non-FOMO return-memory system; and future team play is allowed only as relationship/travel content, not farming or output ranking.
+- Verification: Documentation grep confirmed the new terms and gates are present: `RaphaelCore 與角色外型解耦`, `first-session focal`, `穩住裂隙`, `旅痕`, `章節包`, no-gacha wording, no daily dispatch/farming wording, and `ACCEPTANCE.md` L1-L5. No browser/runtime tests were run because this package intentionally did not touch runtime files.
+- Problems / risks: This is a canon/spec update only. Any actual per-companion state, offline adventure, chapter-commerce UI, or team system remains future work and must open a separate TASK_PACK with GROUNDWORK approval if it touches `defaultState.js`, `store.js`, `saveManager.js`, `index.html`, Pixi core, or assets.
+- Next safe action: If implementation is requested, start with a docs-to-schema design TASK_PACK for per-companion relationship/travel memory state, then separately request GROUNDWORK approval before any state migration.
+- Required reading: `AGENTS.md`, `CLAUDE.md`, `ACCEPTANCE.md`, `docs/strategy/NEXUS_LINK_MASTER_CANON_v3.1.md`, `docs/legacy-bible/03_CHARACTER_BIBLE.md`, `docs/legacy-bible/04_RUNTIME_CANON.md`, and this lane.
+
+### 2026-06-30 - Codex - Web Release Gate Main-Review Automation
+
+- Status: `VERIFIED`
+- Branch / commit: `codex/raphael-core-main-review-gate` / already integrated before current deployment commit
+- Scope: Release-gate and QA orchestration only. No save schema or storage-key change, no `saveManager.js`, no Pixi renderer rewrite, no `assets/**`, no dependency, no backend, no external LLM/API, and no deploy/merge/push.
+- Work performed: Extended the web release gate with Raphael main-readiness coverage and fixed nested browser QA helpers so `NEXUS_QA_BASE` propagates to Raphael smoke, NLU smoke, and Stage 4 harnesses when the main gate runs on an alternate local port.
+- Verification: `python -m py_compile docs/qa/_run_harness_smoke.py docs/qa/_run_nlu_smoke.py docs/qa/_run_stage4_human_playtest.py docs/qa/_run_raphael_main_readiness.py docs/qa/_run_web_release_gate.py`; `python docs/qa/_run_web_release_gate.py --base http://localhost:5178 --port 5178` passed automated required checks 10/10 with JS syntax 175 files / 0 failures, state migration 8/8, asset integrity pass, Raphael restricted-agent 7/7, responsive/accessibility probe pass, Raphael smoke pass, NLU smoke pass, Raphael main-readiness 24/24, Stage 4 pass, and live UI/Soul Talk gate pass.
+- Problems / risks: The automated gate still lists human-only release blockers: real-device mobile Safari/Chrome verification, moderated private testers, legal/privacy/store-copy review, and explicit release approval. No commit, push, merge, or deploy was performed.
+- Next safe action: Human release review can use `docs/qa/RAPHAEL_TRAINING_BUNDLE_ADAPTER_STAGING_REPORT.md` and `docs/qa/_web_release_gate_output.json`; only after approval should a scoped commit/PR/release TASK_PACK be created.
+- Required reading: `AGENTS.md`, `CLAUDE.md`, `ACCEPTANCE.md`, `docs/qa/RAPHAEL_TRAINING_BUNDLE_ADAPTER_STAGING_REPORT.md`, `docs/qa/_web_release_gate_output.json`, and this lane.
+
 ### 2026-06-28 - Codex - UI/HUD Claude Code Handoff
 
 - Status: `COMPLETED`
