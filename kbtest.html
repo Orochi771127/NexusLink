@@ -3,46 +3,51 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>KB Diagnostic v3 — no position:fixed</title>
+<title>KB Diagnostic v4 — matches real app (overflow:hidden by default)</title>
 <style>
   * { box-sizing: border-box; -webkit-text-size-adjust: 100%; }
-  html, body { margin: 0; padding: 0; background: #0a1020; color: #eaf2ff;
+  /* 這行故意跟正式 app 的 styles.css 一樣：html,body 預設鎖住捲動。
+     上一版（v3）測的頁面本來就是可捲動的，這台裝置鍵盤跟頁面對齊得很乾淨；
+     但正式 app 預設 overflow:hidden，所以這版要測「focus 那一刻才切成可捲動」
+     這個動作本身，會不會像先前踩過的雷（focus 當下搬動容器）一樣讓 iOS 直接取消顯示鍵盤。 */
+  html, body { margin: 0; padding: 0; width: 100%; height: 100%;
+    overflow: hidden; overscroll-behavior: none;
+    background: #0a1020; color: #eaf2ff;
     font-family: -apple-system, system-ui, "PingFang TC", sans-serif; }
-  #note { padding: 14px; background: rgba(2, 8, 22, 0.92); border-bottom: 2px solid #8affc1;
-    font-size: 15px; line-height: 1.55; }
-  #note b { color: #8affc1; }
-  /* 刻意不用 position:fixed —— 上一版的 #info（fixed;top:0）在鍵盤打開時整塊從畫面消失，
-     證明這台裝置在鍵盤顯示期間 position:fixed 本身會失效（iOS 老毛病：鍵盤彈出時瀏覽器把
-     頁面「捲動置中」到 focus 元素，fixed 元素那段時間會跟著頁面捲走，不會真的貼在螢幕上）。
-     這版改成完全正常文件流，讓瀏覽器原生 scroll-into-view 把 drawer 整塊一起帶上去，
-     沒有「兩層各自運作、中間留黑縫」的結構問題。 */
-  #filler { height: 66vh;
-    background: repeating-linear-gradient(180deg, #122142 0 40px, #0c1733 40px 80px);
-    display: flex; align-items: flex-end; justify-content: center; padding-bottom: 14px;
-    color: #5f76ad; font-size: 13px; }
-  #drawer { position: static; background: #15244e; border: 2px solid #8affc1;
+  #note { padding: 14px; background: rgba(2, 8, 22, 0.92); border-bottom: 2px solid #ff9dd8;
+    font-size: 14.5px; line-height: 1.55; position: relative; z-index: 5; }
+  #note b { color: #ff9dd8; }
+  #stage { position: relative; height: calc(100% - 0px); overflow: hidden; }
+  /* body.typing 時才打開捲動、並且把內容撐高，給原生 scroll-into-view 空間可以捲。 */
+  body.typing #stage { overflow-y: auto; -webkit-overflow-scrolling: touch; }
+  #scene { height: 40vh;
+    background: repeating-linear-gradient(180deg, #122142 0 40px, #0c1733 40px 80px); }
+  body.typing #scene { height: 100vh; } /* focus 那一刻才變高，製造可捲空間 */
+  #drawer { position: static; background: #15244e; border: 2px solid #ff9dd8;
     border-radius: 16px 16px 0 0; padding: 14px 16px 18px; display: flex;
     flex-direction: column; gap: 9px; }
   #drawer .msg { color: #c8d6f5; font-size: 14px; }
-  #live { color: #ffd98a; font-size: 12.5px; font-variant-numeric: tabular-nums; }
+  #live { color: #ffd98a; font-size: 12px; font-variant-numeric: tabular-nums; }
   #kbinput { width: 100%; height: 46px; font-size: 16px; border-radius: 9px;
     border: 1px solid #9bb; padding: 0 12px; background: #fff; color: #111; }
-  #tail { height: 10vh; }
+  #tail { height: 12vh; }
 </style>
 </head>
 <body>
-  <div id="note">這版<b>完全不用 position:fixed</b>。上一版的診斷面板在鍵盤打開時整塊消失，
-    代表這裝置鍵盤彈出時 fixed 會失效、跟著頁面捲走。這版把「對話 + 輸入框」都放在
-    <b>普通文件流</b>裡，靠瀏覽器原生把 focus 元素捲進畫面，不自己搬任何東西。
-    請往下捲到深藍色對話框，點輸入框彈鍵盤，截圖看對話框底部跟鍵盤之間<b>還有沒有黑縫</b>。</div>
-  <div id="filler">↓ 往下捲到對話框 ↓</div>
-  <div id="drawer">
-    <div class="msg">灰影貓：…你在想什麼呢。</div>
-    <div class="msg">灰影貓：慢慢說，我在聽。</div>
-    <div id="live">讀取中…</div>
-    <input id="kbinput" type="text" placeholder="點我彈出鍵盤，再截圖看有沒有縫">
+  <div id="note">這版<b>預設鎖住捲動（跟正式 app 一樣）</b>，只在<b>點輸入框那一刻</b>才切成可捲動 +
+    撐高內容，模擬真正要套進 app 的做法。風險點：先前踩過雷——「focus 當下搬動容器」在這台裝置上
+    可能讓鍵盤直接不彈出來。請點輸入框，觀察<b>鍵盤有沒有正常彈出</b>，如果彈出了，
+    再截圖看對話框跟鍵盤之間有沒有黑縫。</div>
+  <div id="stage">
+    <div id="scene"></div>
+    <div id="drawer">
+      <div class="msg">灰影貓：…你在想什麼呢。</div>
+      <div class="msg">灰影貓：慢慢說，我在聽。</div>
+      <div id="live">讀取中…</div>
+      <input id="kbinput" type="text" placeholder="點我彈出鍵盤，再截圖看有沒有縫">
+    </div>
+    <div id="tail"></div>
   </div>
-  <div id="tail"></div>
 
 <script>
 (function () {
@@ -53,16 +58,22 @@
     live.textContent =
       'innerHeight=' + r(window.innerHeight) +
       ' vv.height=' + (vv ? r(vv.height) : -1) +
-      ' vv.offsetTop=' + (vv ? r(vv.offsetTop) : -1) +
       ' scrollY=' + r(window.scrollY || 0) +
+      ' typing=' + document.body.classList.contains('typing') +
       ' [' + (tag || '') + ']';
   }
   function loop() { update('rAF'); requestAnimationFrame(loop); }
   requestAnimationFrame(loop);
-  if (window.visualViewport) {
-    visualViewport.addEventListener('resize', function () { update('vv.resize'); });
-  }
-  document.getElementById('kbinput').addEventListener('focus', function () { update('focus'); });
+
+  var input = document.getElementById('kbinput');
+  input.addEventListener('focus', function () {
+    document.body.classList.add('typing');
+    update('focus');
+  });
+  input.addEventListener('blur', function () {
+    document.body.classList.remove('typing');
+    update('blur');
+  });
   update('init');
 })();
 </script>
