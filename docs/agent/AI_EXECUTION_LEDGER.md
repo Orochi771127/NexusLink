@@ -58,6 +58,21 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-07-03 - Codex - Calm Sync v1 completion
+
+- Status: `VERIFIED`
+- Branch / commit: `main` / pending Codex commit in this TASK_PACK
+- Scope: Completed Claude Fable 5's interrupted Calm Sync v1 EXPERIENCE package. No `index.html`, save schema, Pixi ground layer, assets, tools, scripts, dependencies, or GROUNDWORK files were changed. Existing untracked `output/linkara/` asset output remains untouched and excluded.
+- Work performed:
+  1. Finished `src/ui/calmSyncController.js`: dynamic overlay, 36-second low-stimulation breathing loop, click/keyboard ring sync during inhale, Escape/leave/visibility/blank-overlay abort, no state writes on early exit, one state write/save on completion.
+  2. Wired Calm Sync into `src/app.js`, `src/ui/pageRouter.js`, and `src/ui/actionSheetController.js`; Care page now exposes `心核共息`, and the legacy action sheet care row delegates to the same flow.
+  3. Extended `src/engine/actionEffectEngine.js` with `calm_sync` effects: energy +2..+5, touch fatigue -2, defense -1 only outside refusal state, trust +1 only outside refusal and outside a 10-minute memory-derived cooldown, plus `care_calm_sync` memory and possible `calm_breath_trace`.
+  4. Added `care.calm_sync` animation intent mapping to `sit` with `idle_calm` fallback, `calm_breath_trace` visual/display mapping, four-language i18n strings, overlay CSS in `styles/page-content.css`, and 5 QA cases for Calm Sync state rules.
+- Verification: bundled Node `--check` passed for `src/ui/calmSyncController.js`, `src/app.js`, `src/ui/pageRouter.js`, `src/ui/actionSheetController.js`, `src/engine/actionEffectEngine.js`, and `docs/qa/state-onboarding-migration-cases.mjs`; `node docs/qa/state-onboarding-migration-cases.mjs` passed 17/17, failed 0; `git diff --check` clean; full `python docs/qa/_run_web_release_gate.py --base http://localhost:5206 --port 5206` passed 10/10 required checks, 0 accessibility warnings, jsSyntax 186 files, stateMigration 17/17, live playtest Soul Talk 10/10, HUD 13/13, 0 console errors; targeted Chromium 390x844 Calm Sync test passed Care -> overlay -> ring sync -> completion, with overlay hidden afterward, `care_calm_sync` memory and `calm_breath_trace` persisted, nav non-interactive during overlay, and 0 console errors.
+- Problems / risks: Real iPhone Safari/Chrome visual feel remains human-only. Targeted test output text was mojibake in the PowerShell pipe, but assertions used DOM/localStorage booleans and passed. QA evidence JSONs were refreshed by the release gate and included with this package.
+- Next safe action: After push, human can retest Calm Sync on real mobile Safari/Chrome; the next separate TASK_PACK can address deeper Care restructuring or autonomous idle/adventure rules.
+- Required reading: this entry, `src/ui/calmSyncController.js`, `src/engine/actionEffectEngine.js`, `styles/page-content.css`, `docs/production/NEXUS_LINK_NEXT_GAMEPLAY_SYSTEMS_SPEC.md`.
+
 ### 2026-07-03 - Claude Fable 5 - Soul Talk single-panel rebuild + HUD V3 alignment (human-directed)
 
 - Status: `VERIFIED`

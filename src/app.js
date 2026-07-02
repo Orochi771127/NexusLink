@@ -37,6 +37,7 @@ import { createSoulTalkController } from "./ui/soulTalkController.js";
 import { createOnboardingController } from "./ui/onboardingController.js";
 import { createFirstLoopController } from "./ui/firstLoopController.js";
 import { createActionSheetController } from "./ui/actionSheetController.js";
+import { createCalmSyncController } from "./ui/calmSyncController.js";
 import { createPageRouter } from "./ui/pageRouter.js";
 import { createSettingsController } from "./ui/settingsController.js";
 import { createCompanionSelectController } from "./ui/companionSelectController.js";
@@ -206,6 +207,13 @@ async function bootstrap() {
   let atlasController = null;
   let pageRouter = null;
 
+  const calmSyncController = createCalmSyncController({
+    store,
+    saveCurrentState: saveInteraction,
+    statusText,
+    goHome: () => pageRouter?.navigate("home")
+  });
+
   function getBattleController() {
     if (!battleController) {
       battleController = createBattleController({
@@ -274,6 +282,7 @@ async function bootstrap() {
     statusText,
     panelManager,
     store,
+    calmSyncController,
     openMap: () => getMapController().open(),
     routeNavAction: (action) => pageRouter?.navigate(action)
   });
@@ -284,6 +293,7 @@ async function bootstrap() {
     soulTalkController,
     actionSheetController,
     statusText,
+    calmSyncController,
     openMap: () => getMapController().open(),
     openCodex: () => getCodexController().open(),
     openAtlas: () => getAtlasController().open()

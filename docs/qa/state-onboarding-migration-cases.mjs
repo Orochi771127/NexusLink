@@ -1,5 +1,6 @@
 import { createDefaultState, normalizeState } from "../../src/state/store.js";
 import { getCompanionRuntimeEligibility } from "../../src/data/companionRuntimePolicy.js";
+import { evaluateActionEffect } from "../../src/engine/actionEffectEngine.js";
 
 const RUNTIME_READY_LEGACY_UNLOCKS = [
   "greyshade-cat",
@@ -177,6 +178,63 @@ runCase("skipped first loop persists across normalization", () => {
   assertEqual(state.onboarding.firstLoop.completedAt, null, "completedAt untouched");
 });
 
+runCase("calm sync creates one care memory and quiet recovery deltas", () => {
+  const state = createCalmSyncState({ energy: 1, touchFatigue: 5, trust: 10, defense: 20 });
+  const result = evaluateActionEffect(state, "care", "calm_sync", { syncedCycles: 0 });
+
+  assertEqual(result.statePatch.energy, 3, "quiet calm sync energy delta");
+  assertEqual(result.statePatch.touchFatigue, 3, "quiet calm sync touch fatigue delta");
+  assertEqual(result.statePatch.mood, "tired", "low-energy calm sync stays tired");
+  assertEqual(result.statePatch.memories.some((memory) => memory.type === "care_calm_sync"), true, "calm sync memory");
+});
+
+runCase("calm sync synced cycles can grant trust and a breath trace", () => {
+  const state = createCalmSyncState({ energy: 4, touchFatigue: 4, trust: 10, defense: 20 });
+  const result = evaluateActionEffect(state, "care", "calm_sync", { syncedCycles: 4 });
+
+  assertEqual(result.statePatch.energy, 9, "synced calm sync energy delta");
+  assertEqual(result.statePatch.touchFatigue, 2, "synced calm sync fatigue delta");
+  assertEqual(result.statePatch.defense, 19, "synced calm sync boundary delta");
+  assertEqual(result.statePatch.trust, 11, "synced calm sync trust grant");
+  assertEqual(result.statePatch.habitatTraces.some((trace) => trace.type === "calm_breath_trace"), true, "calm breath trace");
+});
+
+runCase("calm sync trust cooldown blocks repeat trust and trace", () => {
+  const state = createCalmSyncState({
+    energy: 4,
+    trust: 10,
+    defense: 20,
+    memories: [{ type: "care_calm_sync", createdAt: Date.now() }]
+  });
+  const result = evaluateActionEffect(state, "care", "calm_sync", { syncedCycles: 4 });
+
+  assertEqual(result.statePatch.trust, 10, "cooldown trust unchanged");
+  assertEqual(Boolean(result.statePatch.habitatTraces?.some((trace) => trace.type === "calm_breath_trace")), false, "cooldown trace blocked");
+});
+
+runCase("calm sync respects refusal state boundaries", () => {
+  const state = createCalmSyncState({
+    energy: 4,
+    trust: 10,
+    defense: 50,
+    mood: "defensive",
+    lastTouchReaction: "reject"
+  });
+  const result = evaluateActionEffect(state, "care", "calm_sync", { syncedCycles: 4 });
+
+  assertEqual(result.statePatch.trust, 10, "refusal trust unchanged");
+  assertEqual(result.statePatch.defense, 50, "refusal defense unchanged");
+  assertEqual(result.statePatch.mood, "calm", "refusal can settle without reward");
+});
+
+runCase("calm sync action alias resolves safely", () => {
+  const state = createCalmSyncState({ energy: 4, touchFatigue: 4, trust: 10, defense: 20 });
+  const result = evaluateActionEffect(state, "care", "Calm sync", { syncedCycles: 2 });
+
+  assertEqual(result.statePatch.energy, 8, "calm sync alias energy delta");
+  assertEqual(result.statePatch.memories.some((memory) => memory.type === "care_calm_sync"), true, "calm sync alias memory");
+});
+
 const failedCases = cases.filter((item) => item.status === "failed");
 console.log(JSON.stringify({ total: cases.length, failed: failedCases.length, cases }, null, 2));
 
@@ -207,4 +265,18 @@ function assertIncludes(actual, expected, label) {
   if (!Array.isArray(actual) || !actual.includes(expected)) {
     throw new Error(`${label}: expected ${JSON.stringify(actual)} to include ${JSON.stringify(expected)}`);
   }
+}
+
+function createCalmSyncState(overrides = {}) {
+  return {
+    ...createDefaultState(),
+    energy: 4,
+    touchFatigue: 4,
+    trust: 10,
+    defense: 20,
+    mood: "warm",
+    memories: [],
+    habitatTraces: [],
+    ...overrides
+  };
 }

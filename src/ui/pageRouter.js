@@ -19,6 +19,7 @@ export function createPageRouter({
   soulTalkController,
   actionSheetController,
   statusText,
+  calmSyncController,
   openMap,
   openCodex,
   openAtlas
@@ -160,6 +161,10 @@ export function createPageRouter({
           <strong>${t("care.restTogether")}</strong>
           <em>${t("care.restSub")}</em>
         </button>
+        <button type="button" data-page-action="open-calm-sync">
+          <strong>${t("care.calmSync")}</strong>
+          <em>${t("care.calmSyncSub")}</em>
+        </button>
         <button type="button" data-page-action="open-character">
           <strong>${t("care.observe")}</strong>
           <em>${t("care.observeSub")}</em>
@@ -282,6 +287,10 @@ export function createPageRouter({
     }
     if (action === "open-soul-talk") {
       soulTalkController.openSoulTalk(panelManager);
+      return;
+    }
+    if (action === "open-calm-sync") {
+      calmSyncController?.start();
       return;
     }
     if (action === "commit") {

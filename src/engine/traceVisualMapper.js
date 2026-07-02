@@ -34,7 +34,15 @@ const VISUAL_HINT_TO_KIND = Object.freeze({
 const TRACE_TYPE_TO_KIND = Object.freeze({
   fallen_leaf: "leaf",
   small_silence: "ripple",
-  campfire_dim: "ember"
+  campfire_dim: "ember",
+  calm_breath_trace: "ripple"
+});
+
+const TRACE_TYPE_DISPLAY_COPY = Object.freeze({
+  calm_breath_trace: {
+    title: "心核共息",
+    copy: "湖面留下一圈很淡的呼吸光。"
+  }
 });
 
 const STATUS_TO_KIND = Object.freeze({
@@ -158,6 +166,9 @@ export function getMemoryGlyph(emotion) {
 // 記憶頁的「棲地痕跡」清單用：情緒類痕跡重用 EmotionDict 的詩意標籤與 textHint 敘事句；
 // 無 emotion 的 action-effect 類痕跡（如 crystal_trace）走通用文案，不暴露內部 type/emotion 原始字串。
 export function getTraceDisplayCopy(trace = {}) {
+  const typeCopy = TRACE_TYPE_DISPLAY_COPY[trace.type];
+  if (typeCopy) return typeCopy;
+
   const dictEntry = EmotionDict[trace.emotion];
   if (dictEntry) {
     return {

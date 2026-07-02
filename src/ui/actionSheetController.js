@@ -28,6 +28,7 @@ export function createActionSheetController({
   statusText,
   panelManager,
   store,
+  calmSyncController,
   openMap,
   routeNavAction
 }) {
@@ -254,6 +255,11 @@ export function createActionSheetController({
       return;
     }
 
+    if (row?.kind === "calm_sync") {
+      calmSyncController?.start();
+      return;
+    }
+
     const choice = row?.choice;
     const result = evaluateActionEffect(store.getState(), action, choice);
     store.setState(result.statePatch);
@@ -303,7 +309,7 @@ function getActionMeta(action, state = {}) {
         { label: "輕聲安撫", choice: "soft_comfort", status: "夥伴稍微放鬆了一點。" },
         { label: "能量補給", choice: "energy_supply", status: "溫暖能量回到心核。" },
         { label: "陪伴休息", choice: "rest_together", status: "棲地安靜下來，適合一起休息。" },
-        { label: "清理雜訊", choice: "clear_static", status: "空氣中的雜訊被清掉了一些。" }
+        { label: "心核共息", kind: "calm_sync" }
       ]
     },
     grow: {

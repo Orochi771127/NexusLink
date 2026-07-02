@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-07-03T05:49:02+0800",
-  "baseUrl": "http://localhost:5198",
+  "generatedAt": "2026-07-03T06:13:13+0800",
+  "baseUrl": "http://localhost:5206",
   "server": "started_local_http_server",
   "node": "C:\\Users\\User\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
   "checks": {
     "jsSyntax": {
       "name": "js_syntax",
-      "total": 185,
+      "total": 186,
       "failed": [],
       "ok": true
     },
@@ -18,10 +18,10 @@
         "docs/qa/state-onboarding-migration-cases.mjs"
       ],
       "exit_code": 0,
-      "duration_ms": 81,
+      "duration_ms": 65,
       "ok": true,
       "json": {
-        "total": 12,
+        "total": 17,
         "failed": 0,
         "cases": [
           {
@@ -71,10 +71,30 @@
           {
             "name": "skipped first loop persists across normalization",
             "status": "passed"
+          },
+          {
+            "name": "calm sync creates one care memory and quiet recovery deltas",
+            "status": "passed"
+          },
+          {
+            "name": "calm sync synced cycles can grant trust and a breath trace",
+            "status": "passed"
+          },
+          {
+            "name": "calm sync trust cooldown blocks repeat trust and trace",
+            "status": "passed"
+          },
+          {
+            "name": "calm sync respects refusal state boundaries",
+            "status": "passed"
+          },
+          {
+            "name": "calm sync action alias resolves safely",
+            "status": "passed"
           }
         ]
       },
-      "stdout_tail": "hade runtime companions are locked\",\n      \"status\": \"passed\"\n    },\n    {\n      \"name\": \"legacy runtime-ready unlocks and active companion are preserved\",\n      \"status\": \"passed\"\n    },\n    {\n      \"name\": \"legacy active companion without unlock array is kept selectable\",\n      \"status\": \"passed\"\n    },\n    {\n      \"name\": \"partial player profile and onboarding deep-merge safely\",\n      \"status\": \"passed\"\n    },\n    {\n      \"name\": \"first-session meet step survives normalization\",\n      \"status\": \"passed\"\n    },\n    {\n      \"name\": \"damaged save values normalize to safe defaults\",\n      \"status\": \"passed\"\n    },\n    {\n      \"name\": \"veteran heuristic accepts traces, memories, battles, and exploration\",\n      \"status\": \"passed\"\n    },\n    {\n      \"name\": \"fresh default state starts first loop un-run\",\n      \"status\": \"passed\"\n    },\n    {\n      \"name\": \"pre-firstLoop completed save is backfilled and never re-runs the loop\",\n      \"status\": \"passed\"\n    },\n    {\n      \"name\": \"mid-loop save keeps first loop running despite veteran heuristic\",\n      \"status\": \"passed\"\n    },\n    {\n      \"name\": \"skipped first loop persists across normalization\",\n      \"status\": \"passed\"\n    }\n  ]\n}\n",
+      "stdout_tail": "\"name\": \"damaged save values normalize to safe defaults\",\n      \"status\": \"passed\"\n    },\n    {\n      \"name\": \"veteran heuristic accepts traces, memories, battles, and exploration\",\n      \"status\": \"passed\"\n    },\n    {\n      \"name\": \"fresh default state starts first loop un-run\",\n      \"status\": \"passed\"\n    },\n    {\n      \"name\": \"pre-firstLoop completed save is backfilled and never re-runs the loop\",\n      \"status\": \"passed\"\n    },\n    {\n      \"name\": \"mid-loop save keeps first loop running despite veteran heuristic\",\n      \"status\": \"passed\"\n    },\n    {\n      \"name\": \"skipped first loop persists across normalization\",\n      \"status\": \"passed\"\n    },\n    {\n      \"name\": \"calm sync creates one care memory and quiet recovery deltas\",\n      \"status\": \"passed\"\n    },\n    {\n      \"name\": \"calm sync synced cycles can grant trust and a breath trace\",\n      \"status\": \"passed\"\n    },\n    {\n      \"name\": \"calm sync trust cooldown blocks repeat trust and trace\",\n      \"status\": \"passed\"\n    },\n    {\n      \"name\": \"calm sync respects refusal state boundaries\",\n      \"status\": \"passed\"\n    },\n    {\n      \"name\": \"calm sync action alias resolves safely\",\n      \"status\": \"passed\"\n    }\n  ]\n}\n",
       "stderr_tail": ""
     },
     "assetIntegrity": {
@@ -129,7 +149,7 @@
         "\nimport('./src/ai/testHarness/raphaelAgentEventCases.js')\n  .then((m) => {\n    const result = m.runRaphaelAgentEventCases();\n    console.log(JSON.stringify(result));\n    if (!result.ok) process.exit(1);\n  })\n  .catch((error) => {\n    console.error(error);\n    process.exit(2);\n  });\n"
       ],
       "exit_code": 0,
-      "duration_ms": 79,
+      "duration_ms": 64,
       "ok": true,
       "json": {
         "ok": true,
@@ -213,7 +233,7 @@
     },
     "accessibilityProbe": {
       "name": "accessibility_responsive_probe",
-      "screenshotDir": "C:\\Users\\User\\AppData\\Local\\Temp\\nexus_web_release_0a5whhhm",
+      "screenshotDir": "C:\\Users\\User\\AppData\\Local\\Temp\\nexus_web_release_lrbrt4o0",
       "viewports": [
         {
           "viewport": {
@@ -223,7 +243,7 @@
           },
           "consoleErrors": [],
           "consoleErrorDetails": [],
-          "screenshot": "C:\\Users\\User\\AppData\\Local\\Temp\\nexus_web_release_0a5whhhm\\mobile_390x844.png",
+          "screenshot": "C:\\Users\\User\\AppData\\Local\\Temp\\nexus_web_release_lrbrt4o0\\mobile_390x844.png",
           "probe": {
             "title": "Nexus Link · 心核連結",
             "canvasCount": 1,
@@ -266,7 +286,7 @@
           },
           "consoleErrors": [],
           "consoleErrorDetails": [],
-          "screenshot": "C:\\Users\\User\\AppData\\Local\\Temp\\nexus_web_release_0a5whhhm\\desktop_1280x900.png",
+          "screenshot": "C:\\Users\\User\\AppData\\Local\\Temp\\nexus_web_release_lrbrt4o0\\desktop_1280x900.png",
           "probe": {
             "title": "Nexus Link · 心核連結",
             "canvasCount": 1,
@@ -312,7 +332,7 @@
           "docs/qa/_run_harness_smoke.py"
         ],
         "exit_code": 0,
-        "duration_ms": 4061,
+        "duration_ms": 4234,
         "ok": true,
         "json": {
           "console_errors": [],
@@ -882,7 +902,7 @@
           "docs/qa/_run_nlu_smoke.py"
         ],
         "exit_code": 0,
-        "duration_ms": 3790,
+        "duration_ms": 4063,
         "ok": true,
         "json": {
           "console_errors": [],
@@ -1058,7 +1078,7 @@
           "docs/qa/_run_raphael_main_readiness.py"
         ],
         "exit_code": 0,
-        "duration_ms": 4028,
+        "duration_ms": 3959,
         "ok": true,
         "json": {
           "console_errors": [],
@@ -2002,7 +2022,7 @@
           "docs/qa/_run_stage4_human_playtest.py"
         ],
         "exit_code": 0,
-        "duration_ms": 4113,
+        "duration_ms": 3776,
         "ok": true,
         "json": {
           "console_errors": [],
@@ -2256,7 +2276,7 @@
           "docs/qa/_run_live_playtest_gate.py"
         ],
         "exit_code": 0,
-        "duration_ms": 59025,
+        "duration_ms": 58607,
         "ok": true,
         "json": {
           "browser": "chromium",
@@ -2596,7 +2616,7 @@
                     "energy": 10,
                     "defense": 34,
                     "touchFatigue": 0.5,
-                    "lastTouchAt": 1783028996128,
+                    "lastTouchAt": 1783030442235,
                     "lastRejectAt": null,
                     "lastTouchReaction": "guarded_accept",
                     "firstTouchCompleted": true,
@@ -2615,7 +2635,7 @@
                       "shouldApply": true,
                       "reason": "first_awakening",
                       "memoryObject": {
-                        "id": "emem_1783028996128_awakening_995",
+                        "id": "emem_1783030442235_awakening_903",
                         "type": "awakening_memory",
                         "theme": "心核初醒",
                         "label": "初醒",
@@ -2626,20 +2646,20 @@
                         "status": "fresh",
                         "source": "first_awakening",
                         "excerpt": "心核在月湖邊第一次睜眼。",
-                        "createdAt": 1783028996128,
-                        "lastUpdatedAt": 1783028996128,
+                        "createdAt": 1783030442235,
+                        "lastUpdatedAt": 1783030442235,
                         "isVisibleInHabitat": true
                       },
                       "traceObject": {
-                        "id": "htrace_emem_1783028996128_awakening_995",
-                        "memoryId": "emem_1783028996128_awakening_995",
+                        "id": "htrace_emem_1783030442235_awakening_903",
+                        "memoryId": "emem_1783030442235_awakening_903",
                         "type": "core_awakening_glow",
                         "emotion": "calm",
                         "intensity": 0.55,
                         "status": "fresh",
-                        "createdAt": 1783028996128,
-                        "lastUpdatedAt": 1783028996128,
-                        "expiresAt": 1784238596128,
+                        "createdAt": 1783030442235,
+                        "lastUpdatedAt": 1783030442235,
+                        "expiresAt": 1784240042235,
                         "visualHint": "faint_glow",
                         "textHint": "月湖中心浮起一道心核微光，像有什麼慢慢睜開了眼。"
                       },

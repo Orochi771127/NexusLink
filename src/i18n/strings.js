@@ -93,6 +93,7 @@ export const STRINGS = {
   "care.keepDistance": { tc: "保持距離陪伴", sc: "保持距离陪伴", en: "Stay near, at a distance", jp: "距離を保って寄り添う" },
   "care.restTogether": { tc: "一起休息", sc: "一起休息", en: "Rest together", jp: "一緒に休む" },
   "care.observe": { tc: "觀察狀態", sc: "观察状态", en: "Observe its state", jp: "様子を見る" },
+  "care.calmSync": { tc: "心核共息", sc: "心核共息", en: "Calm Sync", jp: "心核の共息" },
 
   // ---- Growth page body ----
   "growth.trustTune": { tc: "信任校準", sc: "信任校准", en: "Tune trust", jp: "信頼を整える" },
@@ -253,7 +254,16 @@ export const STRINGS = {
   "care.primarySub": { tc: "尊重牠此刻的邊界。", sc: "尊重牠此刻的边界。", en: "Respect the boundary it holds right now.", jp: "いまの境界を尊重する。" },
   "care.restSub": { tc: "讓棲地慢下來。", sc: "让栖地慢下来。", en: "Let the habitat slow down.", jp: "棲み処をゆっくりさせる。" },
   "care.restStatus": { tc: "棲地安靜下來，適合一起休息。", sc: "栖地安静下来，适合一起休息。", en: "The habitat grows quiet — a good time to rest together.", jp: "棲み処が静かになり、一緒に休むのにいい頃合い。" },
+  "care.calmSyncSub": { tc: "和牠一起把節奏放慢。", sc: "和牠一起把节奏放慢。", en: "Slow the rhythm down together.", jp: "一緒にリズムをゆっくりにする。" },
   "care.observeSub": { tc: "看牠的身體語言。", sc: "看牠的身体语言。", en: "Read its body language.", jp: "からだの言葉を見る。" },
+
+  // ---- Calm Sync session ----
+  "cs.hint": { tc: "慢一點。看著光圈就好。", sc: "慢一点。看着光圈就好。", en: "Slowly. Just stay with the ring.", jp: "ゆっくり。輪を見ているだけでいい。" },
+  "cs.leave": { tc: "先離開", sc: "先离开", en: "Step away", jp: "いったん離れる" },
+  "cs.leftEarly": { tc: "你們先停在這裡。這不是失敗。", sc: "你们先停在这里。这不是失败。", en: "You stop here for now. That is not failure.", jp: "ここでいったん止めた。失敗ではない。" },
+  "cs.doneQuiet": { tc: "你沒有急著說話。節奏在你們之間安定下來。", sc: "你没有急着说话。节奏在你们之间安定下来。", en: "You do not hurry to speak. The rhythm settles between you.", jp: "急いで話さない。ふたりの間のリズムが落ち着いた。" },
+  "cs.doneSynced": { tc: "牠的呼吸慢了下來，湖面也安靜了一些。", sc: "牠的呼吸慢了下来，湖面也安静了一些。", en: "Its breathing slows, and the lake quiets a little.", jp: "相手の呼吸がゆっくりになり、湖面も少し静まった。" },
+  "cs.ringAria": { tc: "心核共息光圈", sc: "心核共息光圈", en: "Calm Sync heart-core ring", jp: "心核共息の光の輪" },
 
   // ---- Growth page content ----
   "growth.nextPrefix": { tc: "下一段：", sc: "下一段：", en: "Next: ", jp: "次の章：" },

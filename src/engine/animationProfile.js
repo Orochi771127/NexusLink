@@ -161,7 +161,9 @@ const ANIMATION_INTENT_MAP = Object.freeze({
   "soul.defensive": "idle_defensive",
   "soul.distant": "idle_distant",
   "soul.happy": "idle_happy",
-  "soul.rest": "sleep"
+  "soul.rest": "sleep",
+  // 心核共息：session 開始時的安定 cue（sit 為 core pack；缺圖時 resolver 落回 idle_calm）。
+  "care.calm_sync": "sit"
 });
 
 const ANIMATION_FALLBACK_CHAINS = Object.freeze({
@@ -181,7 +183,8 @@ const ANIMATION_FALLBACK_CHAINS = Object.freeze({
   idle_sad: ["idle_distant", "idle_calm"],
   sleep: ["idle_distant", "idle_calm"],
   idle_wake: ["idle_calm"],
-  touch_guarded: ["idle_calm"]
+  touch_guarded: ["idle_calm"],
+  sit: ["idle_calm"]
 });
 
 export const ANIMATION_INTENTS = Object.freeze(Object.keys(ANIMATION_INTENT_MAP));

@@ -2,6 +2,9 @@ import { clamp } from "../utils/clamp.js";
 
 const MEMORY_DEDUPE_WINDOW_MS = 5 * 60 * 1000;
 const TRACE_TTL_MS = 7 * 24 * 60 * 60 * 1000;
+// 心核共息 trust 冷卻：由最近一筆 care_calm_sync 記憶的 createdAt 推導（零 schema 變更）。
+// 冷卻只是內部調參，絕不可變成玩家可見的「明天再來」壓力（紅線 6）。
+const CALM_SYNC_TRUST_COOLDOWN_MS = 10 * 60 * 1000;
 
 const ACTION_CHOICE_ALIASES = Object.freeze({
   "Lake glow": "lake_glow",
@@ -11,6 +14,7 @@ const ACTION_CHOICE_ALIASES = Object.freeze({
   "Energy supply": "energy_supply",
   "Rest together": "rest_together",
   "Clear static": "clear_static",
+  "Calm sync": "calm_sync",
   "Trust tuning": "trust_tuning",
   "Emotional balance": "emotional_balance",
   "Skill circuit": "skill_circuit",
@@ -72,7 +76,21 @@ function appendMemoryDeduped(memories, memory, now = Date.now()) {
   });
 }
 
-export function evaluateActionEffect(currentState, action, choice) {
+// 拒絕狀態：夥伴剛用身體語言說「不」或正處防備。共息在此狀態不動 defense、不長 trust
+// （規格：boundaries respected 才有信任沉積）——判準只看夥伴自身狀態，不看玩家頻率（紅線 1）。
+function isRefusalState(state) {
+  return state.lastTouchReaction === "reject" || state.mood === "defensive";
+}
+
+function getLastCalmSyncAt(memories) {
+  for (let index = memories.length - 1; index >= 0; index -= 1) {
+    const item = memories[index];
+    if (item?.type === "care_calm_sync" && Number.isFinite(item.createdAt)) return item.createdAt;
+  }
+  return 0;
+}
+
+export function evaluateActionEffect(currentState, action, choice, context = {}) {
   const statePatch = {};
   const now = Date.now();
   const normalizedChoice = normalizeActionChoice(choice);
@@ -135,6 +153,33 @@ export function evaluateActionEffect(currentState, action, choice) {
         createMemory(currentState, "care_rest", "陪伴休息", "棲地安靜下來，適合一起休息。", now)
       );
       message = "棲地安靜下來，適合一起休息。";
+    } else if (normalizedChoice === "calm_sync") {
+      // 心核共息 v1（spec §5）：mood 是字串枚舉，規格的 mood +1..+3 以「往安定推一步」表達。
+      const syncedCycles = clamp(Number(context.syncedCycles) || 0, 0, 4);
+      const refusal = isRefusalState(currentState);
+      const trustReady = now - getLastCalmSyncAt(memories) >= CALM_SYNC_TRUST_COOLDOWN_MS;
+      const grantTrust = trustReady && !refusal;
+      const nextMood = currentState.energy <= 2
+        ? "tired"
+        : (refusal || currentState.mood === "distant") ? "calm" : "warm";
+      setVitals({
+        energy: Math.min(5, 2 + syncedCycles),
+        touchFatigue: -2,
+        defense: refusal ? 0 : -1,
+        trust: grantTrust ? 1 : 0,
+        mood: nextMood
+      });
+      statePatch.memories = appendMemoryDeduped(
+        memories,
+        createMemory(currentState, "care_calm_sync", "心核共息", "你們一起放慢了呼吸，湖面安靜了一些。", now),
+        now
+      );
+      if (grantTrust) {
+        statePatch.habitatTraces = [...habitatTraces, createTrace("calm_breath_trace", 0.45, now)];
+      }
+      message = syncedCycles > 0
+        ? "牠的呼吸慢了下來，湖面也安靜了一些。"
+        : "你沒有急著說話。節奏在你們之間安定下來。";
     } else {
       setVitals({ defense: -1, touchFatigue: -1, mood: "calm" });
       message = "空氣中的雜訊被清掉了一些。";
