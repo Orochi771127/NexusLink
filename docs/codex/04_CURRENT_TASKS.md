@@ -35,6 +35,7 @@ Files:
 - `docs/codex/05_UNITY_PIPELINE.md`
 - `docs/codex/06_PIXIJS_RUNTIME_BRIDGE.md`
 - `docs/codex/07_ASSET_PIPELINE.md`
+- `docs/codex/08_HABITAT_WEATHER_AND_UNITY_HABITATS.md`
 
 Acceptance:
 
@@ -43,6 +44,7 @@ Acceptance:
 - Docs preserve Web/PixiJS-first direction.
 - Docs define Unity/UModeler as an asset-production pipeline, not a runtime migration.
 - Docs define how future ChatGPT conclusions should become context patches.
+- Docs provide a landing zone for habitat weather and Unity habitat authoring discussions.
 
 Non-goals:
 
@@ -137,6 +139,44 @@ Non-goals:
 
 - do not delete legacy accepted assets
 - do not replace Greyshade without reference-audited swap approval
+
+## Current Priority 5 — Habitat Weather System Context Distillation
+
+Status: READY FOR HUMAN SOURCE NOTES
+
+Goal:
+
+Distill the separate ChatGPT discussion about habitat weather systems and Unity-made habitats into `docs/codex/08_HABITAT_WEATHER_AND_UNITY_HABITATS.md`.
+
+Expected input from human:
+
+- pasted raw conversation excerpt, or
+- a rough summary, or
+- screenshots/text copied from the other chat window
+
+Distillation output:
+
+- stable decisions
+- open questions
+- runtime constraints
+- Unity authoring requirements
+- PixiJS requirements
+- non-goals
+- future task packs
+
+Acceptance:
+
+- No raw chat noise is committed unless explicitly requested.
+- Weather remains ambience/emotional support, not FOMO or reward pressure.
+- Unity remains an asset authoring pipeline, not a runtime migration.
+- Any future implementation remains separate from this docs-only context task.
+
+Non-goals:
+
+- no runtime weather implementation yet
+- no Unity project import yet
+- no asset file additions yet
+- no save-state changes yet
 
 ## How to Add New Tasks
 
