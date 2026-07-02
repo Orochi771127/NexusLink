@@ -3,7 +3,6 @@
 // 以及四大頁（pageRouter）內容文案與行動回饋、心情標籤、狀態列文字。
 // 不含：夥伴對話（Soul Talk 回應池）、Raphael 敘事、地圖結果文、區域/里程碑專有名詞 —— 維持繁中（另開內容翻譯 pack）。
 // 簡/英/日 由 AI 生成，建議人工校對（尤其日文語氣）。
-// 註：EN 內容 pack（2026-07-02）新增的 key 僅含 tc + en；sc/jp 由 t() 回退繁中，待後續補齊。
 
 export const LANGUAGES = [
   { id: "tc", label: "繁體中文", htmlLang: "zh-Hant" },
@@ -197,79 +196,161 @@ export const STRINGS = {
     jp: "削除するとこの端末の記憶と痕跡が消え、最初の開始と名前入力に戻ります。元には戻せません。"
   },
 
-  // ---- Page status line（狀態列；EN pack：tc+en，sc/jp 回退）----
-  "page.status.home": { tc: "回到月湖棲地。", en: "Back at the Moonlake habitat." },
-  "page.status.explore": { tc: "月湖就在眼前。", en: "The Moonlake lies before you." },
-  "page.status.care": { tc: "陪伴、休息、觀察。", en: "Stay, rest, observe." },
-  "page.status.grow": { tc: "關係章節翻開了。", en: "A relationship chapter opens." },
-  "page.status.memory": { tc: "已保存的回憶在這裡。", en: "Saved memories live here." },
+  // ---- Page status line（狀態列）----
+  "page.status.home": { tc: "回到月湖棲地。", sc: "回到月湖栖地。", en: "Back at the Moonlake habitat.", jp: "月湖の棲み処に戻った。" },
+  "page.status.explore": { tc: "月湖就在眼前。", sc: "月湖就在眼前。", en: "The Moonlake lies before you.", jp: "月湖はすぐそこに。" },
+  "page.status.care": { tc: "陪伴、休息、觀察。", sc: "陪伴、休息、观察。", en: "Stay, rest, observe.", jp: "寄り添い、休み、見守る。" },
+  "page.status.grow": { tc: "關係章節翻開了。", sc: "关系章节翻开了。", en: "A relationship chapter opens.", jp: "関係の章がひらいた。" },
+  "page.status.memory": { tc: "已保存的回憶在這裡。", sc: "已保存的回忆在这里。", en: "Saved memories live here.", jp: "保存された思い出はここに。" },
 
   // ---- Mood labels（心情標籤）----
-  "mood.calm": { tc: "平靜", en: "Calm" },
-  "mood.warm": { tc: "靠近", en: "Close" },
-  "mood.distant": { tc: "保持距離", en: "Keeping distance" },
-  "mood.defensive": { tc: "需要邊界", en: "Needs boundaries" },
-  "mood.tired": { tc: "疲倦", en: "Tired" },
-  "mood.happy": { tc: "明亮", en: "Bright" },
+  "mood.calm": { tc: "平靜", sc: "平静", en: "Calm", jp: "おだやか" },
+  "mood.warm": { tc: "靠近", sc: "靠近", en: "Close", jp: "そばにいる" },
+  "mood.distant": { tc: "保持距離", sc: "保持距离", en: "Keeping distance", jp: "距離を保つ" },
+  "mood.defensive": { tc: "需要邊界", sc: "需要边界", en: "Needs boundaries", jp: "境界がほしい" },
+  "mood.tired": { tc: "疲倦", sc: "疲倦", en: "Tired", jp: "つかれぎみ" },
+  "mood.happy": { tc: "明亮", sc: "明亮", en: "Bright", jp: "あかるい" },
 
   // ---- Explore page content ----
   "explore.cardCopy": {
     tc: "月湖周邊已醒來。牠願意靠近的距離，會慢慢改變。",
-    en: "The Moonlake's edge has woken. How close it is willing to come will change, slowly."
+    sc: "月湖周边已醒来。牠愿意靠近的距离，会慢慢改变。",
+    en: "The Moonlake's edge has woken. How close it is willing to come will change, slowly.",
+    jp: "月湖のほとりは目を覚ました。近づいてくれる距離は、ゆっくり変わっていく。"
   },
-  "explore.stateAria": { tc: "探索狀態", en: "Exploration state" },
-  "explore.openMapSub": { tc: "看看月湖的小路。", en: "Walk the small paths of the Moonlake." },
-  "explore.atlasSub": { tc: "遠望整片大陸。", en: "Gaze at the wider continent." },
-  "explore.lakeGlowSub": { tc: "安靜觀察牠留下的回應。", en: "Quietly watch the response it leaves." },
-  "explore.lakeGlowStatus": { tc: "湖面留下了一圈柔和微光。", en: "A soft ring of light lingers on the lake." },
-  "explore.crystalSub": { tc: "留下可見的棲地痕跡。", en: "Leave a visible trace in the habitat." },
-  "explore.crystalStatus": { tc: "晶簇亮起微光，空氣變得穩定。", en: "The crystals glow faintly; the air settles." },
+  "explore.stateAria": { tc: "探索狀態", sc: "探索状态", en: "Exploration state", jp: "探索の状態" },
+  "explore.openMapSub": { tc: "看看月湖的小路。", sc: "看看月湖的小路。", en: "Walk the small paths of the Moonlake.", jp: "月湖の小道を歩いてみる。" },
+  "explore.atlasSub": { tc: "遠望整片大陸。", sc: "远望整片大陆。", en: "Gaze at the wider continent.", jp: "大陸を遠くから眺める。" },
+  "explore.lakeGlowSub": { tc: "安靜觀察牠留下的回應。", sc: "安静观察牠留下的回应。", en: "Quietly watch the response it leaves.", jp: "残された応えを静かに見つめる。" },
+  "explore.lakeGlowStatus": { tc: "湖面留下了一圈柔和微光。", sc: "湖面留下了一圈柔和微光。", en: "A soft ring of light lingers on the lake.", jp: "湖面にやわらかな光の輪が残った。" },
+  "explore.crystalSub": { tc: "留下可見的棲地痕跡。", sc: "留下可见的栖地痕迹。", en: "Leave a visible trace in the habitat.", jp: "棲み処に見える痕跡を残す。" },
+  "explore.crystalStatus": { tc: "晶簇亮起微光，空氣變得穩定。", sc: "晶簇亮起微光，空气变得稳定。", en: "The crystals glow faintly; the air settles.", jp: "晶簇がほのかに灯り、空気が落ち着いた。" },
 
   // ---- Care page content ----
-  "care.hintBoundary": { tc: "牠是否需要更多空間", en: "Whether it needs more space" },
-  "care.hintTrust": { tc: "牠是否願意靠近", en: "Whether it is willing to come close" },
-  "care.hintEnergy": { tc: "目前活動餘裕", en: "Room for activity right now" },
+  "care.hintBoundary": { tc: "牠是否需要更多空間", sc: "牠是否需要更多空间", en: "Whether it needs more space", jp: "もっと空間が要るかどうか" },
+  "care.hintTrust": { tc: "牠是否願意靠近", sc: "牠是否愿意靠近", en: "Whether it is willing to come close", jp: "近づきたい気持ちがあるか" },
+  "care.hintEnergy": { tc: "目前活動餘裕", sc: "目前活动余裕", en: "Room for activity right now", jp: "いまの活動の余裕" },
   "care.softNote": {
     tc: "這裡不交換、不討好。陪伴牠，也讓牠選擇距離。",
-    en: "No trading, no pleasing here. Stay with it, and let it choose the distance."
+    sc: "这里不交换、不讨好。陪伴牠，也让牠选择距离。",
+    en: "No trading, no pleasing here. Stay with it, and let it choose the distance.",
+    jp: "ここでは取引も機嫌取りもしない。寄り添いながら、距離は相手に選ばせる。"
   },
-  "care.keepDistanceStatus": { tc: "你放慢靠近的速度，讓牠保有自己的距離。", en: "You slow your approach, letting it keep its own distance." },
-  "care.sitQuietStatus": { tc: "你沒有要求牠回應，只是安靜地待在旁邊。", en: "You ask nothing of it — you simply stay nearby, quietly." },
-  "care.primarySub": { tc: "尊重牠此刻的邊界。", en: "Respect the boundary it holds right now." },
-  "care.restSub": { tc: "讓棲地慢下來。", en: "Let the habitat slow down." },
-  "care.restStatus": { tc: "棲地安靜下來，適合一起休息。", en: "The habitat grows quiet — a good time to rest together." },
-  "care.observeSub": { tc: "看牠的身體語言。", en: "Read its body language." },
+  "care.keepDistanceStatus": { tc: "你放慢靠近的速度，讓牠保有自己的距離。", sc: "你放慢靠近的速度，让牠保有自己的距离。", en: "You slow your approach, letting it keep its own distance.", jp: "近づく足を緩め、相手の距離を守った。" },
+  "care.sitQuietStatus": { tc: "你沒有要求牠回應，只是安靜地待在旁邊。", sc: "你没有要求牠回应，只是安静地待在旁边。", en: "You ask nothing of it — you simply stay nearby, quietly.", jp: "応えを求めず、ただ静かにそばにいた。" },
+  "care.primarySub": { tc: "尊重牠此刻的邊界。", sc: "尊重牠此刻的边界。", en: "Respect the boundary it holds right now.", jp: "いまの境界を尊重する。" },
+  "care.restSub": { tc: "讓棲地慢下來。", sc: "让栖地慢下来。", en: "Let the habitat slow down.", jp: "棲み処をゆっくりさせる。" },
+  "care.restStatus": { tc: "棲地安靜下來，適合一起休息。", sc: "栖地安静下来，适合一起休息。", en: "The habitat grows quiet — a good time to rest together.", jp: "棲み処が静かになり、一緒に休むのにいい頃合い。" },
+  "care.observeSub": { tc: "看牠的身體語言。", sc: "看牠的身体语言。", en: "Read its body language.", jp: "からだの言葉を見る。" },
 
   // ---- Growth page content ----
-  "growth.nextPrefix": { tc: "下一段：", en: "Next: " },
-  "growth.chapterEnd": { tc: "已抵達目前章節終點", en: "You've reached the end of this chapter" },
-  "growth.nextCopy": { tc: "不是能力排行，是關係慢慢往前。", en: "Not a power ranking — a relationship moving forward, slowly." },
-  "growth.endCopy": { tc: "這一章先到這裡。不用追。", en: "This chapter rests here. No need to chase." },
-  "growth.progressAria": { tc: "關係章節進度", en: "Relationship chapter progress" },
-  "growth.trustTuneSub": { tc: "把節奏調回來。", en: "Bring the rhythm back." },
-  "growth.trustTuneStatus": { tc: "信任回路略微對齊。", en: "The trust loop aligns a little." },
-  "growth.balanceSub": { tc: "整理現在的狀態。", en: "Settle how things are now." },
-  "growth.balanceStatus": { tc: "心核回到更穩定的節奏。", en: "The heart-core returns to a steadier rhythm." },
-  "growth.reviewSub": { tc: "翻翻牠的圖鑑。", en: "Leaf through its codex." },
+  "growth.nextPrefix": { tc: "下一段：", sc: "下一段：", en: "Next: ", jp: "次の章：" },
+  "growth.chapterEnd": { tc: "已抵達目前章節終點", sc: "已抵达目前章节终点", en: "You've reached the end of this chapter", jp: "いまの章はここで終わり" },
+  "growth.nextCopy": { tc: "不是能力排行，是關係慢慢往前。", sc: "不是能力排行，是关系慢慢往前。", en: "Not a power ranking — a relationship moving forward, slowly.", jp: "能力の順位ではなく、関係がゆっくり進んでいく。" },
+  "growth.endCopy": { tc: "這一章先到這裡。不用追。", sc: "这一章先到这里。不用追。", en: "This chapter rests here. No need to chase.", jp: "この章はここまで。急がなくていい。" },
+  "growth.progressAria": { tc: "關係章節進度", sc: "关系章节进度", en: "Relationship chapter progress", jp: "関係の章の進み" },
+  "growth.trustTuneSub": { tc: "把節奏調回來。", sc: "把节奏调回来。", en: "Bring the rhythm back.", jp: "リズムを取り戻す。" },
+  "growth.trustTuneStatus": { tc: "信任回路略微對齊。", sc: "信任回路略微对齐。", en: "The trust loop aligns a little.", jp: "信頼の回路が少し揃った。" },
+  "growth.balanceSub": { tc: "整理現在的狀態。", sc: "整理现在的状态。", en: "Settle how things are now.", jp: "いまの状態をととのえる。" },
+  "growth.balanceStatus": { tc: "心核回到更穩定的節奏。", sc: "心核回到更稳定的节奏。", en: "The heart-core returns to a steadier rhythm.", jp: "心核がより安定したリズムに戻った。" },
+  "growth.reviewSub": { tc: "翻翻牠的圖鑑。", sc: "翻翻牠的图鉴。", en: "Leaf through its codex.", jp: "図鑑をめくってみる。" },
 
   // ---- Memory page content ----
-  "memory.evidenceAria": { tc: "記憶證據", en: "Memory evidence" },
-  "memory.listAria": { tc: "已保存的記憶與痕跡", en: "Saved memories and traces" },
-  "memory.echoSub": { tc: "回聽你們說過的話。", en: "Listen back to what you said to each other." },
-  "memory.echoStatus": { tc: "最近的記憶被輕輕回看了一次。", en: "A recent memory was gently revisited." },
-  "memory.openSoulSub": { tc: "想說什麼都可以。", en: "Say anything you like." },
-  "memory.emptyTitle": { tc: "還沒有保存的記憶或痕跡", en: "No memories or traces saved yet" },
+  "memory.evidenceAria": { tc: "記憶證據", sc: "记忆证据", en: "Memory evidence", jp: "記憶の証" },
+  "memory.listAria": { tc: "已保存的記憶與痕跡", sc: "已保存的记忆与痕迹", en: "Saved memories and traces", jp: "保存された記憶と痕跡" },
+  "memory.echoSub": { tc: "回聽你們說過的話。", sc: "回听你们说过的话。", en: "Listen back to what you said to each other.", jp: "交わした言葉を聴き返す。" },
+  "memory.echoStatus": { tc: "最近的記憶被輕輕回看了一次。", sc: "最近的记忆被轻轻回看了一次。", en: "A recent memory was gently revisited.", jp: "最近の記憶がそっと見返された。" },
+  "memory.openSoulSub": { tc: "想說什麼都可以。", sc: "想说什么都可以。", en: "Say anything you like.", jp: "何を話してもいい。" },
+  "memory.emptyTitle": { tc: "還沒有保存的記憶或痕跡", sc: "还没有保存的记忆或痕迹", en: "No memories or traces saved yet", jp: "保存された記憶や痕跡はまだない" },
   "memory.emptyCopy": {
     tc: "等你和灰影貓留下真實互動後，這裡才會出現內容。",
-    en: "Once you and Greyshade share real moments, they will appear here."
+    sc: "等你和灰影猫留下真实互动后，这里才会出现内容。",
+    en: "Once you and Greyshade share real moments, they will appear here.",
+    jp: "灰影と本当のやり取りを重ねたら、ここに現れてくる。"
   },
-  "memory.fallbackEmotionalTitle": { tc: "情緒記憶", en: "Emotional memory" },
-  "memory.fallbackEmotionalCopy": { tc: "牠把這段感受留在棲地裡。", en: "It left this feeling in the habitat." },
-  "memory.fallbackInteractionTitle": { tc: "互動記憶", en: "Interaction memory" },
-  "memory.fallbackInteractionCopy": { tc: "這是一段已保存的互動。", en: "A saved moment between you." },
-  "memory.intensityFmt": { tc: "（強度 {pct}%）", en: " (intensity {pct}%)" },
-  "memory.reviewAria": { tc: "回看", en: "Revisit" },
+  "memory.fallbackEmotionalTitle": { tc: "情緒記憶", sc: "情绪记忆", en: "Emotional memory", jp: "感情の記憶" },
+  "memory.fallbackEmotionalCopy": { tc: "牠把這段感受留在棲地裡。", sc: "牠把这段感受留在栖地里。", en: "It left this feeling in the habitat.", jp: "その気持ちは棲み処に残された。" },
+  "memory.fallbackInteractionTitle": { tc: "互動記憶", sc: "互动记忆", en: "Interaction memory", jp: "やり取りの記憶" },
+  "memory.fallbackInteractionCopy": { tc: "這是一段已保存的互動。", sc: "这是一段已保存的互动。", en: "A saved moment between you.", jp: "保存されたひとときのやり取り。" },
+  "memory.intensityFmt": { tc: "（強度 {pct}%）", sc: "（强度 {pct}%）", en: " (intensity {pct}%)", jp: "（強さ {pct}%）" },
+  "memory.reviewAria": { tc: "回看", sc: "回看", en: "Revisit", jp: "見返す" },
 
   // ---- Time ----
-  "time.unmarked": { tc: "未標記時間", en: "No timestamp" }
+  "time.unmarked": { tc: "未標記時間", sc: "未标记时间", en: "No timestamp", jp: "時刻の記録なし" },
+
+  // ---- Document / brand ----
+  "meta.title": { tc: "Nexus Link · 心核連結", sc: "Nexus Link · 心核连结", en: "Nexus Link", jp: "Nexus Link · 心核連結" },
+
+  // ---- Static aria labels（index.html 靜態層）----
+  "aria.appShell": { tc: "Nexus Link 心核連結主畫面", sc: "Nexus Link 心核连结主画面", en: "Nexus Link main view", jp: "Nexus Link メイン画面" },
+  "aria.habitatStage": { tc: "Nexus Link 第一棲地", sc: "Nexus Link 第一栖地", en: "Nexus Link first habitat", jp: "Nexus Link 最初の棲み処" },
+  "aria.gameRoot": { tc: "心核連結棲地場景與夥伴層", sc: "心核连结栖地场景与伙伴层", en: "Habitat scene and companion layer", jp: "棲み処のシーンと相棒レイヤー" },
+  "aria.pageLayer": { tc: "核心行動頁面", sc: "核心行动页面", en: "Core action pages", jp: "主要アクションページ" },
+  "aria.onboardingRoot": { tc: "心核引導", sc: "心核引导", en: "Heart-Core Guidance", jp: "心核ガイダンス" },
+  "aria.coreHud": { tc: "夥伴心核狀態", sc: "伙伴心核状态", en: "Companion heart-core status", jp: "相棒の心核ステータス" },
+  "aria.openCompanion": { tc: "開啟夥伴狀態", sc: "打开伙伴状态", en: "Open companion status", jp: "相棒の状態を開く" },
+  "aria.quickHud": { tc: "快速設定", sc: "快速设置", en: "Quick settings", jp: "クイック設定" },
+  "aria.openSoulTalk": { tc: "開啟心語對話", sc: "打开心语对话", en: "Open Soul Talk", jp: "心の声を開く" },
+  "aria.mainNav": { tc: "主要行動", sc: "主要行动", en: "Main actions", jp: "メインアクション" },
+  "aria.homeNav": { tc: "回到心核棲地", sc: "回到心核栖地", en: "Return to the heart-core habitat", jp: "心核の棲み処へ戻る" },
+  "aria.closePanel": { tc: "關閉面板", sc: "关闭面板", en: "Close panel", jp: "パネルを閉じる" },
+  "aria.closeCharacter": { tc: "關閉夥伴狀態", sc: "关闭伙伴状态", en: "Close companion status", jp: "相棒の状態を閉じる" },
+  "aria.coreStats": { tc: "夥伴詳細狀態", sc: "伙伴详细状态", en: "Companion detailed stats", jp: "相棒の詳細ステータス" },
+  "aria.closeRoster": { tc: "關閉夥伴選擇", sc: "关闭伙伴选择", en: "Close companion select", jp: "相棒選択を閉じる" },
+  "aria.closeMap": { tc: "關閉探索地圖", sc: "关闭探索地图", en: "Close exploration map", jp: "探索マップを閉じる" },
+  "aria.mapCanvas": { tc: "探索節點地圖", sc: "探索节点地图", en: "Exploration node map", jp: "探索ノードマップ" },
+  "aria.closeAtlas": { tc: "關閉世界地圖", sc: "关闭世界地图", en: "Close world atlas", jp: "世界地図を閉じる" },
+  "aria.atlasLegend": { tc: "Linkara 區域", sc: "Linkara 区域", en: "Linkara regions", jp: "Linkara の地域" },
+  "aria.noiseMeter": { tc: "雜訊濃度", sc: "杂讯浓度", en: "Noise level", jp: "ノイズの濃さ" },
+  "aria.stabilityMeter": { tc: "心核穩定度", sc: "心核稳定度", en: "Heart-core stability", jp: "心核の安定度" },
+  "aria.fatigue": { tc: "對峙疲勞", sc: "对峙疲劳", en: "Standoff fatigue", jp: "対峙の疲労" },
+  "aria.battleActions": { tc: "對峙行動", sc: "对峙行动", en: "Standoff actions", jp: "対峙のアクション" },
+  "aria.closeCodex": { tc: "關閉圖鑑", sc: "关闭图鉴", en: "Close codex", jp: "図鑑を閉じる" },
+  "aria.codexBody": { tc: "圖鑑內容", sc: "图鉴内容", en: "Codex contents", jp: "図鑑の内容" },
+  "aria.closeSettings": { tc: "關閉設定", sc: "关闭设置", en: "Close settings", jp: "設定を閉じる" },
+  "aria.settingsBody": { tc: "設定內容", sc: "设置内容", en: "Settings contents", jp: "設定の内容" },
+  "aria.quickReplyRow": { tc: "快速回覆選項", sc: "快速回复选项", en: "Quick reply options", jp: "クイック返信の選択肢" },
+  "aria.closeActionSheet": { tc: "關閉棲地行動", sc: "关闭栖地行动", en: "Close habitat actions", jp: "棲み処アクションを閉じる" },
+  "aria.actionList": { tc: "行動選項", sc: "行动选项", en: "Action options", jp: "アクションの選択肢" },
+
+  // ---- Home presence / onboarding statics ----
+  "habitat.moonlakeName": { tc: "月湖棲地", sc: "月湖栖地", en: "Moonlake Habitat", jp: "月湖の棲み処" },
+  "habitat.moonlakeQuip": {
+    tc: "灰影會記得痕跡，也會保留自己的距離。",
+    sc: "灰影会记得痕迹，也会保留自己的距离。",
+    en: "Greyshade remembers traces, and keeps its own distance.",
+    jp: "灰影は痕跡を覚え、自分の距離も保つ。"
+  },
+  "ob.kicker": { tc: "Nexus Link ・ 心核連結", sc: "Nexus Link ・ 心核连结", en: "Nexus Link", jp: "Nexus Link ・ 心核連結" },
+  "ob.namePlaceholder": { tc: "星夜旅人", sc: "星夜旅人", en: "Star-Night Traveler", jp: "星夜の旅人" },
+  "hud.levelPill": { tc: "等級 01", sc: "等级 01", en: "Level 01", jp: "レベル 01" },
+  "hud.soulPlaceholderNamed": { tc: "對 {name} 輕聲說些什麼...", sc: "对 {name} 轻声说些什么...", en: "Say something softly to {name}...", jp: "{name}にそっと話しかけて..." },
+  "char.descFallback": { tc: "心核夥伴資料尚未完成。", sc: "心核伙伴资料尚未完成。", en: "Companion profile not ready yet.", jp: "相棒のデータはまだ準備中。" },
+  "roster.kicker": { tc: "心核連結 ・ 已締結", sc: "心核连结 ・ 已缔结", en: "Nexus Link ・ Bonded", jp: "心核連結 ・ 結ばれた仲間" },
+
+  // ---- Map / codex / action sheet panel statics ----
+  "map.kicker": { tc: "心核路徑 ・ 夜湖周邊", sc: "心核路径 ・ 夜湖周边", en: "Heart-core paths ・ Around the night lake", jp: "心核の道 ・ 夜の湖のほとり" },
+  "map.title": { tc: "探索地圖", sc: "探索地图", en: "Exploration Map", jp: "探索マップ" },
+  "codex.kicker": { tc: "心核圖鑑", sc: "心核图鉴", en: "Heart-Core Codex", jp: "心核図鑑" },
+  "codex.title": { tc: "夥伴圖鑑", sc: "伙伴图鉴", en: "Companion Codex", jp: "相棒図鑑" },
+  "actionSheet.kicker": { tc: "棲地行動", sc: "栖地行动", en: "Habitat actions", jp: "棲み処アクション" },
+
+  // ---- Standoff（心核對峙）statics + controller templates ----
+  "battle.title": { tc: "心核對峙", sc: "心核对峙", en: "Heart-Core Standoff", jp: "心核の対峙" },
+  "battle.noiseHint": { tc: "雜訊濃度——放輕它，而不是消滅它", sc: "杂讯浓度——放轻它，而不是消灭它", en: "Noise level — soften it, don't destroy it", jp: "ノイズの濃さ——消すのではなく、やわらげる" },
+  "battle.sync": { tc: "同步", sc: "同步", en: "Sync", jp: "同調" },
+  "battle.fatigue": { tc: "疲勞", sc: "疲劳", en: "Fatigue", jp: "疲労" },
+  "battle.shards": { tc: "記憶微光", sc: "记忆微光", en: "Memory glimmers", jp: "記憶の微光" },
+  "battle.barrierName": { tc: "邊界", sc: "边界", en: "Boundary", jp: "境界" },
+  "battle.barrierHint": { tc: "立起柔光・穩定心核", sc: "立起柔光・稳定心核", en: "Raise soft light · steady the core", jp: "柔光を立て・心核を安定させる" },
+  "battle.pulseName": { tc: "脈衝", sc: "脉冲", en: "Pulse", jp: "パルス" },
+  "battle.pulseHint": { tc: "耗 2 同步・快速擊退", sc: "耗 2 同步・快速击退", en: "Costs 2 sync · quick push-back", jp: "同調2消費・素早く押し返す" },
+  "battle.retreatName": { tc: "先撤退", sc: "先撤退", en: "Step away", jp: "いったん退く" },
+  "battle.retreatHint": { tc: "懂得離開也是照顧", sc: "懂得离开也是照顾", en: "Knowing when to leave is also care", jp: "離れることも、いたわりのひとつ" },
+  "battle.returnHome": { tc: "回到棲地", sc: "回到栖地", en: "Back to the habitat", jp: "棲み処へ戻る" },
+  "battle.nodeUnstable": { tc: "場域不安定", sc: "场域不安定", en: "Field unstable", jp: "場が不安定" },
+  "battle.stabilityOwner": { tc: "{name}的心核", sc: "{name}的心核", en: "{name}'s heart-core", jp: "{name}の心核" },
+  "battle.noiseOf": { tc: "{name}的雜訊", sc: "{name}的杂讯", en: "Noise of {name}", jp: "{name}のノイズ" },
+  "battle.resonanceHintDefault": { tc: "回收記憶・放輕雜訊", sc: "回收记忆・放轻杂讯", en: "Recover memories · soften the noise", jp: "記憶を拾い・ノイズをやわらげる" },
+  "battle.resonanceHintEmotion": { tc: "心相共鳴・特別能安撫這片{emotion}", sc: "心相共鸣・特别能安抚这片{emotion}", en: "Heart resonance · especially soothes this {emotion}", jp: "心の共鳴・この{emotion}をとくに鎮める" }
 };

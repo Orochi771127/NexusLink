@@ -1,5 +1,6 @@
 import { qs, qsa } from "../utils/dom.js";
 import { clampPercent } from "../utils/clamp.js";
+import { t } from "../i18n/i18n.js";
 import { getAmbientBodyCue } from "../engine/touchReactionEngine.js";
 import { getBodyCueProfile } from "../engine/animationProfile.js";
 
@@ -34,8 +35,8 @@ export function createHudController({ store, statusText }) {
     currentCreature = creature;
     foxName.textContent = creature.name;
     modalCreatureName.textContent = creature.name;
-    modalCreatureDescription.textContent = creature.description || "心核夥伴資料尚未完成。";
-    messageInput.placeholder = `對 ${creature.name} 輕聲說些什麼...`;
+    modalCreatureDescription.textContent = creature.description || t("char.descFallback");
+    messageInput.placeholder = t("hud.soulPlaceholderNamed").replace("{name}", creature.name);
     renderAvatarPortraits(creature);
   }
 

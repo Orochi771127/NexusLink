@@ -2,7 +2,7 @@ import { BOND_MILESTONES } from "../engine/bondMilestoneEngine.js";
 import { getTraceDisplayCopy } from "../engine/traceVisualMapper.js";
 import { qs, qsa } from "../utils/dom.js";
 import EventBus from "../utils/eventBus.js";
-import { t, LANGUAGE_CHANGED_EVENT } from "../i18n/i18n.js";
+import { t, getLanguage, LANGUAGE_CHANGED_EVENT } from "../i18n/i18n.js";
 
 const PAGE_ACTIONS = new Set(["home", "explore", "care", "grow", "memory"]);
 const MOOD_KEYS = new Set(["calm", "warm", "distant", "defensive", "tired", "happy"]);
@@ -45,7 +45,11 @@ export function createPageRouter({
     });
     // 語言切換時重畫目前分頁：t() 字串已 baked 進 innerHTML，靜態 DOM 掃描掃不到。
     // render() 在 home 會自行 early-return，背景分頁（如切語言時開著的 Explore）則就地以新語言重畫。
-    EventBus.on(LANGUAGE_CHANGED_EVENT, () => render());
+    // statusText 只在 navigate() 寫入，語言切換時需就地以新語言重設（覆寫暫態行動回饋屬預期）。
+    EventBus.on(LANGUAGE_CHANGED_EVENT, () => {
+      statusText.textContent = getPageStatus(activePage);
+      render();
+    });
     render();
   }
 
@@ -410,11 +414,14 @@ function trimText(text, limit) {
   return safeText.length > limit ? `${safeText.slice(0, limit)}…` : safeText;
 }
 
+const DATE_LOCALES = { tc: "zh-TW", sc: "zh-CN", en: "en-US", jp: "ja-JP" };
+
 function formatDate(value) {
   if (!value) return t("time.unmarked");
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return t("time.unmarked");
-  return date.toLocaleDateString("zh-TW", { month: "2-digit", day: "2-digit" });
+  const locale = DATE_LOCALES[getLanguage()] || "zh-TW";
+  return date.toLocaleDateString(locale, { month: "2-digit", day: "2-digit" });
 }
 
 function toNumber(value) {

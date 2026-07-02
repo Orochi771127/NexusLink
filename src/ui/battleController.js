@@ -15,6 +15,7 @@ import {
   SHARD_GOAL
 } from "../engine/battleEngine.js";
 import { buildEventReflection } from "../engine/soulTalkComposer.js";
+import { t } from "../i18n/i18n.js";
 import {
   createHabitatTraceFromMemory,
   pruneHabitatTraces,
@@ -104,12 +105,20 @@ export function createBattleController({ store, panelManager, soulTalkController
     if (logEl) logEl.innerHTML = "";
 
     const node = getExplorationNodeById(nodeId);
-    if (nodeLabelEl) nodeLabelEl.textContent = node ? `${node.label.zh} ・ 場域不安定` : "場域不安定";
-    if (companionNameEl) companionNameEl.textContent = `${session.companionName}的心核`;
+    // 節點名/敵名/心相標籤是內容層資料（維持繁中）；外框模板走 i18n key（{name} 佔位）。
+    if (nodeLabelEl) {
+      nodeLabelEl.textContent = node
+        ? `${node.label.zh} ・ ${t("battle.nodeUnstable")}`
+        : t("battle.nodeUnstable");
+    }
+    if (companionNameEl) {
+      companionNameEl.textContent = t("battle.stabilityOwner").replace("{name}", session.companionName);
+    }
     if (noiseNameEl) {
+      const noiseLabel = t("battle.noiseOf").replace("{name}", session.enemyName);
       noiseNameEl.textContent = session.riftEmotionLabelZh
-        ? `${session.enemyName}的雜訊・${session.riftEmotionLabelZh}`
-        : `${session.enemyName}的雜訊`;
+        ? `${noiseLabel}・${session.riftEmotionLabelZh}`
+        : noiseLabel;
     }
     const resonanceButton = actionButtons.resonance;
     if (resonanceButton) {
@@ -120,8 +129,8 @@ export function createBattleController({ store, panelManager, soulTalkController
       const resonanceHint = resonanceButton.querySelector("em");
       if (resonanceHint) {
         resonanceHint.textContent = isAttuned
-          ? `心相共鳴・特別能安撫這片${session.riftEmotionLabelZh}`
-          : "回收記憶・放輕雜訊";
+          ? t("battle.resonanceHintEmotion").replace("{emotion}", session.riftEmotionLabelZh)
+          : t("battle.resonanceHintDefault");
       }
     }
     if (finishButton) finishButton.hidden = true;
