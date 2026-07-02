@@ -1,6 +1,6 @@
 # Raphael Agent System Architecture V1
 
-Status: design handoff, not runtime integration  
+Status: design handoff, not runtime integration
 Purpose: define a controlled Raphael AI system inspired by a central-agent
 architecture while preserving Nexus Link's companion contract.
 
@@ -422,4 +422,3 @@ Before main:
 - human explicitly approves release task;
 - no `canAutoMerge:false` artifact is force-merged;
 - worktree is scoped and explainable.
-

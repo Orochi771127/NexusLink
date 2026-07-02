@@ -1,6 +1,6 @@
 # Raphael Local Artifact Inventory
 
-Status: Phase A handoff inventory  
+Status: Phase A handoff inventory
 Scope: local Raphael / Rafael / RaphaelCore related artifacts found under
 `C:\Users\User\NexusLink_RaphaelAI_Workspace` and adjacent known worktrees.
 
@@ -163,4 +163,3 @@ Root: `C:\Users\User\NexusLink_RaphaelAI_Workspace\aiforge-raphael-corpus`
 3. No live external model, Telegram, n8n, voice, or robot connector is approved.
 4. Global training requires consent, redaction, summarization, human review, and
    eval pass; raw player text is not a global training source.
-
