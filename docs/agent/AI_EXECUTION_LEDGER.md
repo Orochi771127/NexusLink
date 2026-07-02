@@ -58,6 +58,21 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-07-03 - Claude Fable 5 - Soul Talk single-panel rebuild + HUD V3 alignment (human-directed)
+
+- Status: `VERIFIED`
+- Branch / commit: `main` / committed and pushed this round per explicit human instruction (rebuild Soul Talk, align UI/HUD with V2/V3, fix atlas overlap, then commit/push)
+- Scope: Human-directed rebuild. Files: `src/ui/soulTalkController.js`, `src/ui/hudController.js`, `src/i18n/strings.js`, `styles/soul-talk-drawer.css`, `index.html` (one line: level pill). Kept intact: keyboard model v5 (real-device-derived, NOT discarded), send pipeline, dedupe/scroll-anchor logic, Raphael presence state machine (`data-raphael-agent-presence` panel glow), safety paths.
+- Work performed:
+  1. Soul Talk single glass panel (V3 "never opaque card stacks / no cards-inside-cards"): `ensureWaveformShell()` now builds a slim `.soul-presence` line (mini 7-bar waveform + `#status-text`) appended INTO `.soul-drawer-heading` instead of a standalone card between header and chat; `soul-talk-drawer.css` rewritten — header uses hairline bottom divider only, chat log / quick replies lose borders+backgrounds, composer remains the single field border, waveform bars downscaled (5–13px) overriding styles.css 38–58px base.
+  2. Keyboard black-band fix (真機圖一): soulTalk backdrop lightened (non-blocking drawer, aria-modal=false) — normal 0.34 alpha radial, st-focus 0.3→0.1 gradient so the band between drawer and keyboard shows the habitat instead of near-black. Keyboard model v5 st-focus geometry unchanged (verified drawer 12→482 with 42svh reserve, input bottom 467).
+  3. HUD V3 identity-card rule ("do not show levels"): static `等級 01` level pill replaced by a live companion state signal — `hudController` renders `hudMood.*` label into `.level-pill` each renderHUD and on LANGUAGE_CHANGED (new EventBus listener); `getMoodLabel` now t()-based (10 new `hudMood.*` keys, 4 languages; HUD vocabulary kept separate from page tendency `mood.*`).
+  4. Atlas/nav overlap (真機圖四): verified Codex's 4001663 constraints hold on this build — modal bottom 752 < nav top 764 (12px gap), legend `overflow-y:auto`, 7 regions internally scrollable, no horizontal overflow. No further change needed; user screenshot predates that fix (advise hard-refresh of the Pages demo).
+- Verification: `node --check` ×3; STRINGS 235 keys / 0 missing languages; html refs 142 all resolve + all `t()` refs resolve; `git diff --check` clean; web release gate port 5198 **10/10 required, 0 accessibility warnings** (2026-07-03 05:49); live playtest gate **soul_talk 10/10, hud 13/13, 0 console errors** (send pipeline intact after rebuild); Chromium preview 390x844: fresh onboarding→home, drawer children = header/chat-log/quick-replies/composer (presence inside heading), header hairline + transparent interior confirmed via computed styles, st-focus async-measured (transition-aware), pill 平靜↔Calm live on language switch, atlas metrics above, console clean.
+- Problems / risks: (a) real iOS keyboard still human-only gate — st-focus verified by class toggle + geometry, not a real keyboard; (b) `hud.levelPill` key now unused in index.html (kept in dictionary, harmless); (c) styles.css legacy `.soul-waveform-copy` block now dead CSS (left in place — styles.css is the cautious base layer); (d) status text is shared between page status and presence line by design (single `#status-text`).
+- Next safe action: human real-device retest of the three reported screenshots (keyboard band, Soul Talk layering, atlas); then Calm Sync v1 (validated design in plan file) as the next gameplay TASK_PACK.
+- Required reading: `styles/soul-talk-drawer.css` header comments, this entry, previous Codex polish entry.
+
 ### 2026-07-03 - Codex - Mobile Soul Talk and Atlas viewport polish
 
 - Status: `VERIFIED`
