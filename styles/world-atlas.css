@@ -4,8 +4,12 @@
 
 html[data-ui="v2"] .atlas-modal {
   width: min(420px, calc(100vw - 28px));
-  max-height: min(86vh, 720px);
-  overflow-y: auto;
+  top: calc(var(--top-safe) + 108px);
+  bottom: calc(var(--bottom-safe) + var(--nav-block-h, 104px) + 16px);
+  max-height: none;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
   scrollbar-width: thin;
 }
 
@@ -21,6 +25,7 @@ html[data-ui="v2"] .panel-layer[data-active-panel="atlas"] [data-panel="atlas"] 
 }
 
 html[data-ui="v2"] .atlas-intro {
+  flex: 0 0 auto;
   margin: 2px 0 12px;
   color: var(--v3-moon-200, #e9dfcf);
   font-size: 0.86rem;
@@ -29,8 +34,10 @@ html[data-ui="v2"] .atlas-intro {
 
 html[data-ui="v2"] .atlas-canvas {
   position: relative;
+  flex: 0 0 auto;
   width: 100%;
-  aspect-ratio: 100 / 96;
+  aspect-ratio: 100 / 82;
+  max-height: min(36vh, 330px);
   border: 1px solid var(--v3-line-quiet, rgba(247, 223, 170, 0.34));
   border-radius: 18px;
   overflow: hidden;
@@ -107,10 +114,14 @@ html[data-ui="v2"] .atlas-node--current .atlas-node-no {
 /* 圖例 */
 html[data-ui="v2"] .atlas-legend {
   display: grid;
+  flex: 1 1 auto;
+  min-height: 88px;
+  overflow-y: auto;
   gap: 7px;
   margin: 14px 0 4px;
   padding: 0;
   list-style: none;
+  scrollbar-width: thin;
 }
 html[data-ui="v2"] .atlas-region {
   display: grid;
@@ -175,6 +186,7 @@ html[data-ui="v2"] .atlas-region--current .atlas-region-tag {
 }
 
 html[data-ui="v2"] .atlas-note {
+  flex: 0 0 auto;
   margin: 10px 2px 2px;
   color: rgba(185, 201, 230, 0.6);
   font-size: 0.74rem;
@@ -184,6 +196,29 @@ html[data-ui="v2"] .atlas-note {
 @media (prefers-reduced-motion: reduce) {
   html[data-ui="v2"] .atlas-node--current .atlas-node-halo {
     animation: none;
+  }
+}
+
+@media (max-width: 480px), (max-height: 780px) {
+  html[data-ui="v2"] .atlas-modal {
+    top: calc(var(--top-safe) + 88px);
+    bottom: calc(var(--bottom-safe) + var(--nav-block-h, 104px) + 12px);
+    padding: 14px;
+  }
+
+  html[data-ui="v2"] .atlas-intro {
+    font-size: 0.82rem;
+    line-height: 1.5;
+    margin-bottom: 10px;
+  }
+
+  html[data-ui="v2"] .atlas-canvas {
+    aspect-ratio: 100 / 74;
+    max-height: 30vh;
+  }
+
+  html[data-ui="v2"] .atlas-legend {
+    margin-top: 10px;
   }
 }
 

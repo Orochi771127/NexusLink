@@ -58,6 +58,21 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-07-03 - Codex - Mobile Soul Talk and Atlas viewport polish
+
+- Status: `VERIFIED`
+- Branch / commit: `main` / pending Codex commit in this TASK_PACK
+- Scope: Targeted mobile UI/viewport repair from human screenshots. Fixed Soul Talk keyboard focus layout, Soul Talk V2 four-layer visual structure, and World Atlas modal overlap with bottom nav. No save schema, Pixi, assets, dependencies, gameplay rules, Calm Sync, map art, or product-spec expansion.
+- Work performed:
+  1. `src/ui/soulTalkController.js`: wired existing passive keyboard helpers (`expectSoftKeyboard`, `syncViewportDuringTransition`, `clearSoftKeyboardExpectation`) into Soul Talk input focus/blur so CSS can use `--kb-inset` when the browser reports or estimates it.
+  2. `styles/soul-talk-drawer.css` + `styles/mobile-safari-polish.css`: changed focus layout from a fixed 42vh top slab to a drawer that reserves the keyboard band below it, tightened mobile width, and styled the four visible Soul Talk layers: header, resonance/waveform, transcript, composer.
+  3. `styles/world-atlas.css`: constrained the atlas modal between the top safe area and bottom nav, made the region legend internally scrollable, and reduced the map canvas height on mobile/short viewports.
+  4. Refreshed existing tracked QA evidence JSONs from the release gate; no new evidence document was created.
+- Verification: bundled Node `--check src/ui/soulTalkController.js` passed; `git diff --check` clean; Browser plugin QA at 390x844 on fresh local port 5202 passed with no console warnings/errors. Soul Talk metrics: no horizontal overflow, header/resonance/transcript/composer ordered, composer inside drawer. Atlas metrics: active panel `atlas`, modal bottom 752, nav top 764, 12px gap, legend `overflow-y:auto`, no modal horizontal overflow. Full web release gate on `--base http://localhost:5205 --port 5205` passed 10/10 required checks, 0 accessibility warnings; live playtest gate inside it passed Soul Talk 10/10, HUD 13/13, 0 console errors.
+- Problems / risks: Browser QA cannot display the real iOS keyboard, so the keyboard band is verified by layout metrics and existing fallback variables; human should still recheck on real mobile Safari/Chrome. The World Atlas remains CSS/SVG placeholder art; this did not implement a generated world-map image.
+- Next safe action: Human real-device retest for the exact screenshots: iOS keyboard open in Soul Talk and World Atlas opened from Explore. If passed, next separate TASK_PACK can be Calm Sync v1 or map art integration using the existing gameplay systems spec.
+- Required reading: `styles/soul-talk-drawer.css`, `styles/world-atlas.css`, `src/ui/soulTalkController.js`, this entry.
+
 ### 2026-07-02 - Codex - i18n P4 review, evidence, and main integration
 
 - Status: `COMPLETED`

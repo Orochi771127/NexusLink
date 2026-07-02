@@ -25,7 +25,7 @@
   }
 
   html[data-ui="v2"] .soul-talk-drawer {
-    width: calc(100vw - 12px);
+    width: calc(100vw - 24px);
     /* 同樣吃 --app-height：鍵盤開啟時收縮、不溢出（與 soul-talk-drawer.css 一致）。 */
     height: min(76svh, calc(var(--app-height, 100dvh) - var(--top-safe) - 20px));
     padding: 14px;

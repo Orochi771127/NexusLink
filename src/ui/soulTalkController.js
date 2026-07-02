@@ -6,7 +6,7 @@ import { updateMemoryLifecycles } from "../engine/memoryLifecycleEngine.js";
 import { isEmotionalHabitatTrace } from "../engine/habitatTraceEngine.js";
 import { applyRaphaelAgentReduction, reduceRaphaelAgentIntent } from "../engine/raphaelIntentReducer.js";
 import { buildEventReflection, composeMemoryReflection } from "../engine/soulTalkComposer.js";
-import { qs } from "../utils/dom.js";
+import { clearSoftKeyboardExpectation, expectSoftKeyboard, qs, syncViewportDuringTransition } from "../utils/dom.js";
 
 const DEFAULT_STATUS_TEXT = "心湖 / 安靜待命";
 const DEFAULT_PREVIEW_TEXT = "你可以慢慢說，灰影會聽。";
@@ -67,6 +67,8 @@ export function createSoulTalkController({ store, saveCurrentState }) {
 
     messageInput.addEventListener("focus", () => {
       setSoulTalkState("active");
+      expectSoftKeyboard();
+      syncViewportDuringTransition(1200);
       // Real-device testing (kbtest.html) proved visualViewport/innerHeight never
       // update on some iOS builds, position:fixed itself breaks while the keyboard
       // is shown, and even native scroll-into-view can't be trusted (same broken
@@ -86,6 +88,8 @@ export function createSoulTalkController({ store, saveCurrentState }) {
     messageInput.addEventListener("blur", () => {
       setSoulTalkState("idle");
       document.body.classList.remove("st-focus");
+      clearSoftKeyboardExpectation();
+      syncViewportDuringTransition(620);
     });
   }
 
