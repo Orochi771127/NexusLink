@@ -206,3 +206,21 @@ Acceptance refs:  <對應 ACCEPTANCE.md 的哪幾條>
 - `docs/agent/AI_WORKFLOW.md` — Gate 流程。
 - `docs/agent/TASK_TEMPLATE.md` — 任務模板。
 - `docs/testing/MANUAL_TEST_CHECKLIST.md` — 手動測試清單。
+
+---
+
+## 11. Codex 補充上下文入口
+
+Codex / ChatGPT 在執行架構拆解、任務包規劃、Unity 管線、PixiJS 橋接、資產導入或長期 handoff 任務前，除本檔、`CLAUDE.md`、`ACCEPTANCE.md` 與相關 canon 外，應讀取以下補充文件：
+
+1. `docs/codex/01_PROJECT_BRIEF.md`
+2. `docs/codex/02_DECISION_LOG.md`
+3. `docs/codex/03_ARCHITECTURE_RULES.md`
+4. `docs/codex/04_CURRENT_TASKS.md`
+5. `docs/codex/05_UNITY_PIPELINE.md`
+6. `docs/codex/06_PIXIJS_RUNTIME_BRIDGE.md`
+7. `docs/codex/07_ASSET_PIPELINE.md`
+
+`docs/codex/` 是給 Codex 的壓縮上下文層，用來保存 ChatGPT 討論後的穩定結論、決策、任務與限制。它不是原始聊天紀錄，也不取代 `NEXUS_LINK_MASTER_CANON_v3.1.md`、`CLAUDE.md`、`ACCEPTANCE.md` 或本檔。
+
+若 `docs/codex/` 與上位 canon、`CLAUDE.md`、`ACCEPTANCE.md` 或本檔衝突，以上位文件為準，並回報衝突，不可自行擴張任務範圍。
