@@ -1,7 +1,9 @@
 // UI chrome 字串字典：key -> { tc, sc, en, jp }。
-// 範圍：靜態/動態「介面外框」字串（nav、HUD、設定、開場、頁標、面板標籤、按鈕）。
-// 不含：夥伴對話、Raphael 敘事、心情敘述、地圖結果文、區域專有名詞 —— 這些維持繁中（另開內容翻譯 pack）。
+// 範圍：靜態/動態「介面外框」字串（nav、HUD、設定、開場、頁標、面板標籤、按鈕），
+// 以及四大頁（pageRouter）內容文案與行動回饋、心情標籤、狀態列文字。
+// 不含：夥伴對話（Soul Talk 回應池）、Raphael 敘事、地圖結果文、區域/里程碑專有名詞 —— 維持繁中（另開內容翻譯 pack）。
 // 簡/英/日 由 AI 生成，建議人工校對（尤其日文語氣）。
+// 註：EN 內容 pack（2026-07-02）新增的 key 僅含 tc + en；sc/jp 由 t() 回退繁中，待後續補齊。
 
 export const LANGUAGES = [
   { id: "tc", label: "繁體中文", htmlLang: "zh-Hant" },
@@ -193,5 +195,81 @@ export const STRINGS = {
     sc: "删除后会清空这台装置上的记忆与痕迹，回到最开始的开场与输入名字流程，无法复原。",
     en: "Deleting clears this device's memories and traces and returns to the opening and name-entry flow. This cannot be undone.",
     jp: "削除するとこの端末の記憶と痕跡が消え、最初の開始と名前入力に戻ります。元には戻せません。"
-  }
+  },
+
+  // ---- Page status line（狀態列；EN pack：tc+en，sc/jp 回退）----
+  "page.status.home": { tc: "回到月湖棲地。", en: "Back at the Moonlake habitat." },
+  "page.status.explore": { tc: "月湖就在眼前。", en: "The Moonlake lies before you." },
+  "page.status.care": { tc: "陪伴、休息、觀察。", en: "Stay, rest, observe." },
+  "page.status.grow": { tc: "關係章節翻開了。", en: "A relationship chapter opens." },
+  "page.status.memory": { tc: "已保存的回憶在這裡。", en: "Saved memories live here." },
+
+  // ---- Mood labels（心情標籤）----
+  "mood.calm": { tc: "平靜", en: "Calm" },
+  "mood.warm": { tc: "靠近", en: "Close" },
+  "mood.distant": { tc: "保持距離", en: "Keeping distance" },
+  "mood.defensive": { tc: "需要邊界", en: "Needs boundaries" },
+  "mood.tired": { tc: "疲倦", en: "Tired" },
+  "mood.happy": { tc: "明亮", en: "Bright" },
+
+  // ---- Explore page content ----
+  "explore.cardCopy": {
+    tc: "月湖周邊已醒來。牠願意靠近的距離，會慢慢改變。",
+    en: "The Moonlake's edge has woken. How close it is willing to come will change, slowly."
+  },
+  "explore.stateAria": { tc: "探索狀態", en: "Exploration state" },
+  "explore.openMapSub": { tc: "看看月湖的小路。", en: "Walk the small paths of the Moonlake." },
+  "explore.atlasSub": { tc: "遠望整片大陸。", en: "Gaze at the wider continent." },
+  "explore.lakeGlowSub": { tc: "安靜觀察牠留下的回應。", en: "Quietly watch the response it leaves." },
+  "explore.lakeGlowStatus": { tc: "湖面留下了一圈柔和微光。", en: "A soft ring of light lingers on the lake." },
+  "explore.crystalSub": { tc: "留下可見的棲地痕跡。", en: "Leave a visible trace in the habitat." },
+  "explore.crystalStatus": { tc: "晶簇亮起微光，空氣變得穩定。", en: "The crystals glow faintly; the air settles." },
+
+  // ---- Care page content ----
+  "care.hintBoundary": { tc: "牠是否需要更多空間", en: "Whether it needs more space" },
+  "care.hintTrust": { tc: "牠是否願意靠近", en: "Whether it is willing to come close" },
+  "care.hintEnergy": { tc: "目前活動餘裕", en: "Room for activity right now" },
+  "care.softNote": {
+    tc: "這裡不交換、不討好。陪伴牠，也讓牠選擇距離。",
+    en: "No trading, no pleasing here. Stay with it, and let it choose the distance."
+  },
+  "care.keepDistanceStatus": { tc: "你放慢靠近的速度，讓牠保有自己的距離。", en: "You slow your approach, letting it keep its own distance." },
+  "care.sitQuietStatus": { tc: "你沒有要求牠回應，只是安靜地待在旁邊。", en: "You ask nothing of it — you simply stay nearby, quietly." },
+  "care.primarySub": { tc: "尊重牠此刻的邊界。", en: "Respect the boundary it holds right now." },
+  "care.restSub": { tc: "讓棲地慢下來。", en: "Let the habitat slow down." },
+  "care.restStatus": { tc: "棲地安靜下來，適合一起休息。", en: "The habitat grows quiet — a good time to rest together." },
+  "care.observeSub": { tc: "看牠的身體語言。", en: "Read its body language." },
+
+  // ---- Growth page content ----
+  "growth.nextPrefix": { tc: "下一段：", en: "Next: " },
+  "growth.chapterEnd": { tc: "已抵達目前章節終點", en: "You've reached the end of this chapter" },
+  "growth.nextCopy": { tc: "不是能力排行，是關係慢慢往前。", en: "Not a power ranking — a relationship moving forward, slowly." },
+  "growth.endCopy": { tc: "這一章先到這裡。不用追。", en: "This chapter rests here. No need to chase." },
+  "growth.progressAria": { tc: "關係章節進度", en: "Relationship chapter progress" },
+  "growth.trustTuneSub": { tc: "把節奏調回來。", en: "Bring the rhythm back." },
+  "growth.trustTuneStatus": { tc: "信任回路略微對齊。", en: "The trust loop aligns a little." },
+  "growth.balanceSub": { tc: "整理現在的狀態。", en: "Settle how things are now." },
+  "growth.balanceStatus": { tc: "心核回到更穩定的節奏。", en: "The heart-core returns to a steadier rhythm." },
+  "growth.reviewSub": { tc: "翻翻牠的圖鑑。", en: "Leaf through its codex." },
+
+  // ---- Memory page content ----
+  "memory.evidenceAria": { tc: "記憶證據", en: "Memory evidence" },
+  "memory.listAria": { tc: "已保存的記憶與痕跡", en: "Saved memories and traces" },
+  "memory.echoSub": { tc: "回聽你們說過的話。", en: "Listen back to what you said to each other." },
+  "memory.echoStatus": { tc: "最近的記憶被輕輕回看了一次。", en: "A recent memory was gently revisited." },
+  "memory.openSoulSub": { tc: "想說什麼都可以。", en: "Say anything you like." },
+  "memory.emptyTitle": { tc: "還沒有保存的記憶或痕跡", en: "No memories or traces saved yet" },
+  "memory.emptyCopy": {
+    tc: "等你和灰影貓留下真實互動後，這裡才會出現內容。",
+    en: "Once you and Greyshade share real moments, they will appear here."
+  },
+  "memory.fallbackEmotionalTitle": { tc: "情緒記憶", en: "Emotional memory" },
+  "memory.fallbackEmotionalCopy": { tc: "牠把這段感受留在棲地裡。", en: "It left this feeling in the habitat." },
+  "memory.fallbackInteractionTitle": { tc: "互動記憶", en: "Interaction memory" },
+  "memory.fallbackInteractionCopy": { tc: "這是一段已保存的互動。", en: "A saved moment between you." },
+  "memory.intensityFmt": { tc: "（強度 {pct}%）", en: " (intensity {pct}%)" },
+  "memory.reviewAria": { tc: "回看", en: "Revisit" },
+
+  // ---- Time ----
+  "time.unmarked": { tc: "未標記時間", en: "No timestamp" }
 };

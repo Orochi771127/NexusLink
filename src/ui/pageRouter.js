@@ -5,15 +5,13 @@ import EventBus from "../utils/eventBus.js";
 import { t, LANGUAGE_CHANGED_EVENT } from "../i18n/i18n.js";
 
 const PAGE_ACTIONS = new Set(["home", "explore", "care", "grow", "memory"]);
-const MOOD_LABELS = {
-  calm: "平靜",
-  warm: "靠近",
-  distant: "保持距離",
-  defensive: "需要邊界",
-  tired: "疲倦",
-  happy: "明亮"
-};
+const MOOD_KEYS = new Set(["calm", "warm", "distant", "defensive", "tired", "happy"]);
 const MEMORY_LIMIT = 8;
+
+function moodLabel(mood) {
+  if (MOOD_KEYS.has(mood)) return t(`mood.${mood}`);
+  return mood || t("mood.calm");
+}
 
 export function createPageRouter({
   store,
@@ -72,7 +70,7 @@ export function createPageRouter({
 
     if (action === "home") {
       actionSheetController.showHome();
-      statusText.textContent = "回到月湖棲地。";
+      statusText.textContent = t("page.status.home");
       return;
     }
 
@@ -102,29 +100,29 @@ export function createPageRouter({
         <div>
           <p class="page-card-kicker">Moonlake Camp</p>
           <h3>${t("explore.cardTitle")}</h3>
-          <p>月湖周邊已醒來。牠願意靠近的距離，會慢慢改變。</p>
+          <p>${t("explore.cardCopy")}</p>
         </div>
       </div>
-      <div class="page-evidence-strip" aria-label="探索狀態">
+      <div class="page-evidence-strip" aria-label="${t("explore.stateAria")}">
         <span><strong>${traceCount}</strong><em>${t("explore.evTraces")}</em></span>
         <span><strong>${memoryCount}</strong><em>${t("explore.evMemories")}</em></span>
       </div>
       <div class="page-action-grid">
         <button type="button" data-page-action="open-map">
           <strong>${t("explore.openMap")}</strong>
-          <em>看看月湖的小路。</em>
+          <em>${t("explore.openMapSub")}</em>
         </button>
         <button type="button" data-page-action="open-atlas">
           <strong>${t("explore.atlas")}</strong>
-          <em>遠望整片大陸。</em>
+          <em>${t("explore.atlasSub")}</em>
         </button>
-        <button type="button" data-page-action="commit" data-nav-action="explore" data-choice="lake_glow" data-status="湖面留下了一圈柔和微光。">
+        <button type="button" data-page-action="commit" data-nav-action="explore" data-choice="lake_glow" data-status="${t("explore.lakeGlowStatus")}">
           <strong>${t("explore.lakeGlow")}</strong>
-          <em>安靜觀察牠留下的回應。</em>
+          <em>${t("explore.lakeGlowSub")}</em>
         </button>
-        <button type="button" data-page-action="commit" data-nav-action="explore" data-choice="silent_crystal" data-status="晶簇亮起微光，空氣變得穩定。">
+        <button type="button" data-page-action="commit" data-nav-action="explore" data-choice="silent_crystal" data-status="${t("explore.crystalStatus")}">
           <strong>${t("explore.crystal")}</strong>
-          <em>留下可見的棲地痕跡。</em>
+          <em>${t("explore.crystalSub")}</em>
         </button>
       </div>
     `;
@@ -139,28 +137,28 @@ export function createPageRouter({
     const primaryCareChoice = defense >= 60 ? "gentle_presence" : "soft_comfort";
     const primaryCareLabel = defense >= 60 ? t("care.keepDistance") : t("care.sitQuiet");
     const primaryCareStatus = defense >= 60
-      ? "你放慢靠近的速度，讓牠保有自己的距離。"
-      : "你沒有要求牠回應，只是安靜地待在旁邊。";
+      ? t("care.keepDistanceStatus")
+      : t("care.sitQuietStatus");
 
     body.innerHTML = `
       <div class="page-meter-card">
-        ${renderMetric(t("care.boundary"), defense, "牠是否需要更多空間")}
-        ${renderMetric(t("care.trust"), trust, "牠是否願意靠近")}
-        ${renderMetric(t("care.energy"), energy, "目前活動餘裕", 10)}
+        ${renderMetric(t("care.boundary"), defense, t("care.hintBoundary"))}
+        ${renderMetric(t("care.trust"), trust, t("care.hintTrust"))}
+        ${renderMetric(t("care.energy"), energy, t("care.hintEnergy"), 10)}
       </div>
-      <p class="page-soft-note">這裡不交換、不討好。陪伴牠，也讓牠選擇距離。</p>
+      <p class="page-soft-note">${t("care.softNote")}</p>
       <div class="page-action-grid">
         <button type="button" data-page-action="commit" data-nav-action="care" data-choice="${primaryCareChoice}" data-status="${primaryCareStatus}">
           <strong>${primaryCareLabel}</strong>
-          <em>尊重牠此刻的邊界。</em>
+          <em>${t("care.primarySub")}</em>
         </button>
-        <button type="button" data-page-action="commit" data-nav-action="care" data-choice="rest_together" data-status="棲地安靜下來，適合一起休息。">
+        <button type="button" data-page-action="commit" data-nav-action="care" data-choice="rest_together" data-status="${t("care.restStatus")}">
           <strong>${t("care.restTogether")}</strong>
-          <em>讓棲地慢下來。</em>
+          <em>${t("care.restSub")}</em>
         </button>
         <button type="button" data-page-action="open-character">
           <strong>${t("care.observe")}</strong>
-          <em>看牠的身體語言。</em>
+          <em>${t("care.observeSub")}</em>
         </button>
       </div>
     `;
@@ -179,31 +177,31 @@ export function createPageRouter({
         <span class="page-orb" aria-hidden="true">✧</span>
         <div>
           <p class="page-card-kicker">Relationship Chapter</p>
-          <h3>${nextMilestone ? `下一段：${escapeHtml(nextMilestone.theme)}` : "已抵達目前章節終點"}</h3>
-          <p>${nextMilestone ? `不是能力排行，是關係慢慢往前。` : "這一章先到這裡。不用追。"}</p>
+          <h3>${nextMilestone ? `${t("growth.nextPrefix")}${escapeHtml(nextMilestone.theme)}` : t("growth.chapterEnd")}</h3>
+          <p>${nextMilestone ? t("growth.nextCopy") : t("growth.endCopy")}</p>
         </div>
       </div>
-      <div class="page-progress-block" aria-label="關係章節進度">
+      <div class="page-progress-block" aria-label="${t("growth.progressAria")}">
         <div class="page-progress-line"><span style="width:${nextProgress}%"></span></div>
-        <p>${nextMilestone ? `羈絆 ${bond} / ${nextMilestone.threshold}` : `羈絆 ${bond}`}</p>
+        <p>${nextMilestone ? `${t("char.bond")} ${bond} / ${nextMilestone.threshold}` : `${t("char.bond")} ${bond}`}</p>
       </div>
       <div class="page-tendency-grid">
         ${renderTendency(t("char.trust"), toNumber(state.trust))}
-        ${renderTendency(t("char.mood"), MOOD_LABELS[state.mood] || state.mood || "平靜", false)}
+        ${renderTendency(t("char.mood"), moodLabel(state.mood), false)}
         ${renderTendency(t("char.boundary"), toNumber(state.defense))}
       </div>
       <div class="page-action-grid">
-        <button type="button" data-page-action="commit" data-nav-action="grow" data-choice="trust_tuning" data-status="信任回路略微對齊。">
+        <button type="button" data-page-action="commit" data-nav-action="grow" data-choice="trust_tuning" data-status="${t("growth.trustTuneStatus")}">
           <strong>${t("growth.trustTune")}</strong>
-          <em>把節奏調回來。</em>
+          <em>${t("growth.trustTuneSub")}</em>
         </button>
-        <button type="button" data-page-action="commit" data-nav-action="grow" data-choice="emotional_balance" data-status="心核回到更穩定的節奏。">
+        <button type="button" data-page-action="commit" data-nav-action="grow" data-choice="emotional_balance" data-status="${t("growth.balanceStatus")}">
           <strong>${t("growth.emotionBalance")}</strong>
-          <em>整理現在的狀態。</em>
+          <em>${t("growth.balanceSub")}</em>
         </button>
         <button type="button" data-page-action="open-codex">
           <strong>${t("growth.review")}</strong>
-          <em>翻翻牠的圖鑑。</em>
+          <em>${t("growth.reviewSub")}</em>
         </button>
       </div>
     `;
@@ -217,24 +215,24 @@ export function createPageRouter({
     const canEcho = emotionalCount >= 3;
 
     body.innerHTML = `
-      <div class="page-evidence-strip" aria-label="記憶證據">
+      <div class="page-evidence-strip" aria-label="${t("memory.evidenceAria")}">
         <span><strong>${Array.isArray(state.memories) ? state.memories.length : 0}</strong><em>${t("memory.evInteractions")}</em></span>
         <span><strong>${emotionalCount}</strong><em>${t("memory.evEmotional")}</em></span>
         <span><strong>${Array.isArray(state.habitatTraces) ? state.habitatTraces.length : 0}</strong><em>${t("memory.evTraces")}</em></span>
       </div>
-      <div class="page-memory-list" aria-label="已保存的記憶與痕跡">
+      <div class="page-memory-list" aria-label="${t("memory.listAria")}">
         ${renderMemoryEntries(renderedMemoryEntries)}
       </div>
       <div class="page-action-grid">
         ${canEcho ? `
-          <button type="button" data-page-action="commit" data-nav-action="memory" data-choice="memory_echo" data-status="最近的記憶被輕輕回看了一次。">
+          <button type="button" data-page-action="commit" data-nav-action="memory" data-choice="memory_echo" data-status="${t("memory.echoStatus")}">
             <strong>${t("memory.echo")}</strong>
-            <em>回聽你們說過的話。</em>
+            <em>${t("memory.echoSub")}</em>
           </button>
         ` : ""}
         <button type="button" data-page-action="open-soul-talk">
           <strong>${t("memory.openSoul")}</strong>
-          <em>想說什麼都可以。</em>
+          <em>${t("memory.openSoulSub")}</em>
         </button>
       </div>
     `;
@@ -307,11 +305,11 @@ export function createPageRouter({
 }
 
 function getPageStatus(action) {
-  if (action === "explore") return "月湖就在眼前。";
-  if (action === "care") return "陪伴、休息、觀察。";
-  if (action === "grow") return "關係章節翻開了。";
-  if (action === "memory") return "已保存的回憶在這裡。";
-  return "回到月湖棲地。";
+  if (action === "explore") return t("page.status.explore");
+  if (action === "care") return t("page.status.care");
+  if (action === "grow") return t("page.status.grow");
+  if (action === "memory") return t("page.status.memory");
+  return t("page.status.home");
 }
 
 function renderMetric(label, value, hint, max = 100) {
@@ -345,8 +343,8 @@ function collectMemoryEntries(state) {
   const emotional = (Array.isArray(state.emotionalMemories) ? state.emotionalMemories : []).map((memory) => ({
     kind: "emotional",
     source: memory,
-    title: memory.theme || memory.label || "情緒記憶",
-    copy: memory.excerpt || memory.label || "牠把這段感受留在棲地裡。",
+    title: memory.theme || memory.label || t("memory.fallbackEmotionalTitle"),
+    copy: memory.excerpt || memory.label || t("memory.fallbackEmotionalCopy"),
     createdAt: Number(memory.lastUpdatedAt) || Number(memory.createdAt) || 0,
     meta: [memory.status, memory.emotion].filter(Boolean).join(" · ")
   }));
@@ -354,8 +352,8 @@ function collectMemoryEntries(state) {
   const simple = (Array.isArray(state.memories) ? state.memories : []).map((memory) => ({
     kind: "memory",
     source: memory,
-    title: memory.title || "互動記憶",
-    copy: memory.text || "這是一段已保存的互動。",
+    title: memory.title || t("memory.fallbackInteractionTitle"),
+    copy: memory.text || t("memory.fallbackInteractionCopy"),
     createdAt: Number(memory.createdAt) || 0,
     meta: memory.type || ""
   }));
@@ -367,7 +365,7 @@ function collectMemoryEntries(state) {
       kind: "trace",
       source: trace,
       title: display.title,
-      copy: `${display.copy}（強度 ${intensityPct}%）`,
+      copy: `${display.copy}${t("memory.intensityFmt").replace("{pct}", String(intensityPct))}`,
       createdAt: Number(trace.lastUpdatedAt) || Number(trace.createdAt) || 0,
       meta: trace.status || trace.memoryId || ""
     };
@@ -382,8 +380,8 @@ function renderMemoryEntries(entries) {
   if (!entries.length) {
     return `
       <article class="page-empty-memory">
-        <strong>還沒有保存的記憶或痕跡</strong>
-        <p>等你和灰影貓留下真實互動後，這裡才會出現內容。</p>
+        <strong>${t("memory.emptyTitle")}</strong>
+        <p>${t("memory.emptyCopy")}</p>
       </article>
     `;
   }
@@ -392,7 +390,7 @@ function renderMemoryEntries(entries) {
     const isReflectable = entry.kind === "emotional";
     const tag = isReflectable ? "button" : "article";
     const attrs = isReflectable
-      ? `type="button" data-memory-open="${index}" aria-label="回看 ${escapeHtml(entry.title)}"`
+      ? `type="button" data-memory-open="${index}" aria-label="${t("memory.reviewAria")} ${escapeHtml(entry.title)}"`
       : "";
     return `
       <${tag} class="page-memory-row page-memory-row--${entry.kind}" ${attrs}>
@@ -413,9 +411,9 @@ function trimText(text, limit) {
 }
 
 function formatDate(value) {
-  if (!value) return "未標記時間";
+  if (!value) return t("time.unmarked");
   const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "未標記時間";
+  if (Number.isNaN(date.getTime())) return t("time.unmarked");
   return date.toLocaleDateString("zh-TW", { month: "2-digit", day: "2-digit" });
 }
 

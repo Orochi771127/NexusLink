@@ -118,7 +118,6 @@ async function bootstrap() {
   const statusText = qs("#status-text");
   bindViewportVars();
   AudioManager.initUnlock();
-  bindAudioControls();
   bindSettingsDropdown();
   ensureRaphaelAgentPresenceStyles();
   installRaphaelPreviewHarnessIfRequested();
@@ -488,17 +487,6 @@ function createRaphaelAgentEventSnapshot(state = {}) {
     battleResult: state.battleRecord?.lastResult || null,
     traceSignature
   };
-}
-
-function bindAudioControls() {
-  const audioToggleButton = qs("#btn-audio-toggle");
-  if (!audioToggleButton) return;
-
-  audioToggleButton.classList.toggle("muted", AudioManager.isMuted);
-  audioToggleButton.addEventListener("click", () => {
-    const isMuted = AudioManager.toggleMute();
-    audioToggleButton.classList.toggle("muted", isMuted);
-  });
 }
 
 function bindSettingsDropdown() {
