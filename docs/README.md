@@ -6,41 +6,59 @@ This folder contains the planning and production references for NexusLink.
 
 ## Start Here
 
-0. `agent/AI_EXECUTION_LEDGER.md`
+0. `production/NEXUS_LINK_COMMERCIAL_UIUX_HANDOFF.md`
+   - Current commercial UI/UX execution entry point for Claude Code / Fable 5.
+   - Use this before starting the commercial First Session Flow or V3 UI/UX
+     vertical slice.
+
+1. `agent/AI_EXECUTION_LEDGER.md`
    - The current cross-AI operational handoff. Read the relevant lane before
      starting work and append the final status, problems, and next safe action.
 
-1. `nexuslink-development-direction.md`
+2. `nexuslink-development-direction.md`
    - Current product direction and emotional habitat north star.
    - Use this to understand the core positioning, emotional sedimentation system, companion principles, MVP scope guard, and current companion direction.
 
-2. `nexuslink-design-brief.md`
+3. `nexuslink-design-brief.md`
    - One-page product and design orientation.
    - Use this to understand the north star, player promise, design pillars, MVP loop, and first release gate.
 
-3. `nexuslink-game-plan.md`
+4. `nexuslink-game-plan.md`
    - Implementation-facing game plan.
    - Use this to understand the current runtime baseline, state model, companion motion priorities, UI surface, and acceptance criteria.
 
-4. `nexuslink-implementation-roadmap.md`
+5. `nexuslink-implementation-roadmap.md`
    - Ordered milestones for the first complete habitat loop.
    - Use this to sequence engineering and asset work without expanding scope too early.
 
-5. `nexuslink-production-backlog.md`
+6. `nexuslink-production-backlog.md`
    - Concrete work packages.
    - Use this to pick the next implementation or production task.
 
-6. `nexuslink-sprint-01.md`
+7. `nexuslink-sprint-01.md`
    - First execution slice.
    - Use this to run the baseline verification sprint before generating new art.
 
-7. `nexuslink-first-habitat-qa.md`
+8. `nexuslink-first-habitat-qa.md`
    - First-loop QA checklist.
    - Use this before deciding the habitat is ready for broader feature expansion.
 
-8. `asset-pipeline.md`
+9. `asset-pipeline.md`
    - Official local art and animation pipeline.
    - Use this before generating, processing, registering, or QAing any visual asset.
+
+## Current Document Status
+
+- `production/NEXUS_LINK_COMMERCIAL_UIUX_HANDOFF.md`: CURRENT commercial UI/UX handoff.
+- `strategy/NEXUS_LINK_MASTER_CANON_v3.1.md`: CURRENT highest strategic canon.
+  Use the commercial UI/UX handoff as the practical execution entry, but resolve
+  strategic conflicts against the Master Canon.
+- `architecture/RUNTIME_MAP.md`: NEEDS UPDATE; useful map, but verify stale
+  storage/runtime facts against current code.
+- `asset-pipeline.md`: NEEDS UPDATE; useful pipeline base, but 64x64 character
+  steps must be separated from the current illustrated 512 companion policy.
+- `legacy-bible/**`, `r2-canon/**`, and early v0.3/v1 planning docs:
+  REFERENCE ONLY unless a current file explicitly promotes a section.
 
 ## Full Planning Documents / 中文完整企劃留存
 

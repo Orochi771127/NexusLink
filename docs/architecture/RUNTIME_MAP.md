@@ -2,6 +2,11 @@
 
 > 本文件根據實際 repo 掃描建立，描述各模組的職責與依賴關係。  
 > AI agent 讀取此文件以快速理解 runtime 結構，不得根據此文件修改任何 runtime code。
+> Status: NEEDS UPDATE. This map is useful for orientation, but some facts are
+> stale. Verify storage keys, active companion policy, and current UI/runtime
+> wiring against the live source files before using it as an implementation
+> authority. The current commercial UI/UX entry point is
+> `docs/production/NEXUS_LINK_COMMERCIAL_UIUX_HANDOFF.md`.
 
 ---
 

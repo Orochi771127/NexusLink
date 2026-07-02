@@ -3,6 +3,13 @@
 This document is the official local art asset pipeline reference for NexusLink.
 It defines where asset work happens, where final files may be written, and how character sprites, habitat maps, props, FX, and metadata move from raw generation to runtime-ready assets.
 
+> Status: NEEDS UPDATE for commercial companion production. This file remains
+> useful for asset ownership, folder standards, metadata, and QA flow, but its
+> older 64x64 character normalization steps must be separated from the current
+> illustrated 512x512 companion policy in `AGENTS.md`, `CLAUDE.md`, and
+> `ACCEPTANCE.md`. Do not use this file to downgrade approved illustrated
+> companion work into chunky pixel-art runtime assets.
+
 ## 1. Division Of Responsibility
 
 Cloud Codex owns web-game architecture and integration work:
