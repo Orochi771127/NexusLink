@@ -1192,6 +1192,18 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Next safe action: Open a separate GROUNDWORK runtime task if the world map should replace the current SVG atlas or if scene switching should become active. That task should choose live atlas image sizing, add scene profiles, and route BGM through the existing audio manager with fades and volume caps.
 - Required reading: `assets/backgrounds/linkara/README.md`, `assets/backgrounds/linkara/manifest.json`, `assets/backgrounds/linkara/linkara-map-data.json`, `src/ui/atlasController.js`, `docs/architecture/HABITAT_SCENE_PROFILE_SPEC.md`, `AGENTS.md`, `CLAUDE.md`, `ACCEPTANCE.md`, and this lane.
 
+### 2026-07-03 - Codex - Linkara Habitat Layering And Visual Locks
+
+- Lane: `Game Art, UI, And Visual Production`
+- Status: `VERIFIED`
+- Branch / commit: `main` / pending scoped docs commit for this package.
+- Scope: Docs-only planning/index package for seven Linkara habitat backgrounds. Added layered art-production locks, per-region Scene Profile drafts, prop/trace separation rules, Moonlake replacement protocol, and generation TASK_PACKs. No `assets/**`, `src/**`, `pixiApp.js`, `assetManifest.js`, save schema, BGM routing, scene switching, external dependency, or runtime wiring changed.
+- Work performed: Added `docs/assets/LINKARA_HABITAT_LAYERING_AND_VISUAL_LOCKS.md`. The document defines the shared layer stack (`sky`, distant mountains/city, water/atmosphere plane, ground/platform, structures, runtime props, trace FX, foreground occlusion, companion, UI), visual locks for all seven regions, do-not-bake object lists, draft normalized scene-profile zones, prompt templates, and follow-on packs TP-HAB-1 through TP-HAB-4. Moonlake is prioritized as the first layered generation target and remains replacement-candidate only until human approval and reference audit.
+- Verification: `git diff --check` passed. New document readback succeeded. codebase-memory full index completed for `C-Users-User-NexusLink_RaphaelAI_Workspace-NexusLink` with `.git` excluded only, updating the graph to 6144 nodes / 10031 edges. Commit/push handled in this Codex turn after scoped diff review.
+- Problems / risks: The staged Linkara region JPGs are landscape `1280x720`; active mobile habitat use still needs layered 9:16 generation or profile-aware crop/redraw. `manifest.json` source-image fields should be rechecked before provenance-sensitive generation. This package does not make any generated image runtime-ready.
+- Next safe action: Use `docs/assets/LINKARA_HABITAT_LAYERING_AND_VISUAL_LOCKS.md` as the entry document in the next generation window. Start with TP-HAB-1 Moonlake layered art generation and keep generated candidates outside `assets/**` until human visual approval.
+- Required reading: `docs/assets/LINKARA_HABITAT_LAYERING_AND_VISUAL_LOCKS.md`, `docs/architecture/HABITAT_SCENE_PROFILE_SPEC.md`, `assets/backgrounds/linkara/README.md`, `assets/backgrounds/linkara/linkara-map-data.json`, `AGENTS.md`, `CLAUDE.md`, `ACCEPTANCE.md`, and this lane.
+
 ### 2026-07-02 - Codex - Next Gameplay Systems Spec Consolidation
 
 - Lane: `Game Engineering And Architecture`
