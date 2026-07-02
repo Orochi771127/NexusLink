@@ -1132,3 +1132,15 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Problems / risks: The world map JPG is useful as a reference or large atlas panel but needs mobile readability review before live use because labels are baked into the image. Region backgrounds are landscape `16:9` assets; using them as active mobile-first habitat backgrounds requires future scene profiles, cover/crop anchors, or vertical redraws. Central Radiant Core and Southern Harbor Nexus BGM pairings are staged from available filenames and should receive listening review before final runtime use.
 - Next safe action: Open a separate GROUNDWORK runtime task if the world map should replace the current SVG atlas or if scene switching should become active. That task should choose live atlas image sizing, add scene profiles, and route BGM through the existing audio manager with fades and volume caps.
 - Required reading: `assets/backgrounds/linkara/README.md`, `assets/backgrounds/linkara/manifest.json`, `assets/backgrounds/linkara/linkara-map-data.json`, `src/ui/atlasController.js`, `docs/architecture/HABITAT_SCENE_PROFILE_SPEC.md`, `AGENTS.md`, `CLAUDE.md`, `ACCEPTANCE.md`, and this lane.
+
+### 2026-07-02 - Codex - Next Gameplay Systems Spec Consolidation
+
+- Lane: `Game Engineering And Architecture`
+- Status: `VERIFIED`
+- Branch / commit: `main` / pending scoped commit for this docs-only spec.
+- Scope: Consolidated human gameplay direction into one planning spec for visible standoff, synchronization, fatigue, Care, memory glimmers, crystals, Explore, silent anchors, phase search, adventure, and heart-core co-breathing. No runtime files, save schema, assets, package/dependency, build step, or deployment changed.
+- Work performed: Replaced the temporary intake draft with `docs/production/NEXUS_LINK_NEXT_GAMEPLAY_SYSTEMS_SPEC.md`. The spec translates mystical inspiration into Nexus Link-safe fictional mechanics, blocks prophecy/medical/diagnostic claims, keeps Care compact by upgrading `Clear Noise` into `心核共息 / Calm Sync` instead of adding button bloat, defines standoff outcomes where retreat is not failure, and splits future work into TASK_PACKs.
+- Verification: Markdown/whitespace checks passed for the spec and this ledger entry. Scoped safety review confirmed the spec frames the material as world mechanics, not real-world prediction, therapy, or player diagnosis.
+- Problems / risks: This is a planning spec only. Any runtime implementation that touches `index.html`, state persistence, Pixi, assets, tools, or scripts still needs the normal GROUNDWORK approval path. The final UI label for standoff records, visible-versus-hidden stamina/heart-core energy, and the first Moonlake autonomous behavior remain open decisions.
+- Next safe action: If implementation is approved, start with the `Heart-core Co-Breathing v1` EXPERIENCE TASK_PACK and keep it no-save-schema unless explicitly expanded.
+- Required reading: `docs/production/NEXUS_LINK_NEXT_GAMEPLAY_SYSTEMS_SPEC.md`, `AGENTS.md`, `CLAUDE.md`, `ACCEPTANCE.md`, and this lane.
