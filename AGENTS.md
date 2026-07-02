@@ -220,6 +220,7 @@ Codex / ChatGPT 在執行架構拆解、任務包規劃、Unity 管線、PixiJS 
 5. `docs/codex/05_UNITY_PIPELINE.md`
 6. `docs/codex/06_PIXIJS_RUNTIME_BRIDGE.md`
 7. `docs/codex/07_ASSET_PIPELINE.md`
+8. `docs/codex/08_HABITAT_WEATHER_AND_UNITY_HABITATS.md`
 
 `docs/codex/` 是給 Codex 的壓縮上下文層，用來保存 ChatGPT 討論後的穩定結論、決策、任務與限制。它不是原始聊天紀錄，也不取代 `NEXUS_LINK_MASTER_CANON_v3.1.md`、`CLAUDE.md`、`ACCEPTANCE.md` 或本檔。
 
