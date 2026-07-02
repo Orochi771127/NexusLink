@@ -1,3 +1,10 @@
+/* =========================================================================
+   Soul Talk drawer — V2/V3 單一玻璃面板重構
+   V3 規則：low-contrast translucent panel、thin ornamental edges、
+   「never opaque card stacks / no cards-inside-cards」。
+   結構：header（夥伴 + presence 狀態行）｜訊息列｜快速回覆｜輸入框+送出。
+   面板本體是唯一的玻璃卡；內部只用髮絲分隔線與留白，composer 是唯一的輸入場域。
+   ========================================================================= */
 html[data-ui="v2"] .soul-talk-drawer {
   top: auto;
   bottom: calc(var(--bottom-safe) + var(--nav-block-h, 104px) + 12px);
@@ -8,14 +15,14 @@ html[data-ui="v2"] .soul-talk-drawer {
   max-height: none;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding: 18px;
+  gap: 8px;
+  padding: 14px 16px 12px;
   border: 1px solid var(--aurora-line);
   border-radius: 28px 28px 18px 18px;
   background:
-    radial-gradient(90% 72% at 18% 0%, rgba(124, 231, 255, 0.12), transparent 58%),
-    radial-gradient(80% 86% at 100% 22%, rgba(169, 152, 255, 0.13), transparent 60%),
-    linear-gradient(150deg, rgba(18, 27, 54, 0.97), rgba(12, 17, 35, 0.97));
+    radial-gradient(90% 72% at 18% 0%, rgba(124, 231, 255, 0.1), transparent 58%),
+    radial-gradient(80% 86% at 100% 22%, rgba(169, 152, 255, 0.11), transparent 60%),
+    linear-gradient(150deg, rgba(18, 27, 54, 0.94), rgba(12, 17, 35, 0.94));
   box-shadow: 0 -18px 54px rgba(0, 0, 0, 0.35), 0 0 36px rgba(138, 217, 255, 0.12);
 }
 
@@ -46,26 +53,28 @@ html[data-ui="v2"] body.st-focus .soul-talk-drawer .soul-drawer-kicker {
   display: none;
 }
 
-html[data-ui="v2"] body.st-focus .soul-talk-drawer .soul-talk-waveform {
-  min-height: 58px;
-  padding: 8px 10px;
-}
-
 html[data-ui="v2"] body.st-focus .soul-talk-drawer .quick-reply-row {
   max-height: 52px;
-  padding-bottom: 6px;
+  padding-bottom: 4px;
   overflow-y: hidden;
 }
 
+/* ---- Header：夥伴名 + presence 狀態行 + 收合鍵；只以髮絲線與下方分隔 ---- */
 html[data-ui="v2"] .soul-drawer-header {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 12px;
-  padding: 8px 10px;
-  border: 1px solid rgba(173, 222, 255, 0.14);
-  border-radius: 18px;
-  background: rgba(7, 16, 36, 0.34);
+  padding: 2px 2px 10px;
+  border: 0;
+  border-bottom: 1px solid rgba(214, 224, 248, 0.1);
+  border-radius: 0;
+  background: none;
+}
+
+html[data-ui="v2"] .soul-drawer-heading {
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 html[data-ui="v2"] .soul-drawer-kicker,
@@ -75,7 +84,8 @@ html[data-ui="v2"] .soul-drawer-title {
 
 html[data-ui="v2"] .soul-drawer-kicker {
   color: var(--aurora-muted);
-  font-size: 0.75rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
 }
 
 html[data-ui="v2"] .soul-drawer-title {
@@ -96,50 +106,77 @@ html[data-ui="v2"] .soul-drawer-collapse {
   touch-action: manipulation;
 }
 
-html[data-ui="v2"] .soul-talk-drawer .soul-talk-waveform {
+/* ---- Presence 狀態行（V3「short status line」）：迷你聲紋 + status text，單行、無卡片 ---- */
+html[data-ui="v2"] .soul-talk-drawer .soul-presence {
+  display: flex;
   align-items: center;
-  min-height: 82px;
-  padding: 12px 14px;
-  border: 1px solid rgba(173, 222, 255, 0.14);
-  border-radius: 20px;
-  background:
-    radial-gradient(70% 130% at 76% 44%, rgba(0, 206, 209, 0.16), transparent 64%),
-    radial-gradient(75% 120% at 100% 0%, rgba(125, 50, 255, 0.14), transparent 62%),
-    rgba(7, 16, 36, 0.3);
+  gap: 8px;
+  min-height: 0;
+  margin-top: 6px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
 }
 
-html[data-ui="v2"] .soul-talk-drawer .soul-waveform {
-  justify-self: end;
-  margin-top: 0;
+html[data-ui="v2"] .soul-talk-drawer .soul-presence .soul-waveform {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  height: 14px;
+  flex: 0 0 auto;
+  justify-self: unset;
+  margin: 0;
 }
 
+html[data-ui="v2"] .soul-talk-drawer .soul-presence .waveform-bar {
+  width: 2px;
+  border-radius: 2px;
+}
+
+/* 覆寫 styles.css 的大型 bar 高度（38–58px）為 header 內迷你尺寸。 */
+html[data-ui="v2"] .soul-talk-drawer .soul-presence .waveform-bar:nth-child(1) { height: 5px; }
+html[data-ui="v2"] .soul-talk-drawer .soul-presence .waveform-bar:nth-child(2) { height: 9px; }
+html[data-ui="v2"] .soul-talk-drawer .soul-presence .waveform-bar:nth-child(3) { height: 13px; }
+html[data-ui="v2"] .soul-talk-drawer .soul-presence .waveform-bar:nth-child(4) { height: 7px; }
+html[data-ui="v2"] .soul-talk-drawer .soul-presence .waveform-bar:nth-child(5) { height: 12px; }
+html[data-ui="v2"] .soul-talk-drawer .soul-presence .waveform-bar:nth-child(6) { height: 8px; }
+html[data-ui="v2"] .soul-talk-drawer .soul-presence .waveform-bar:nth-child(7) { height: 5px; }
+
+html[data-ui="v2"] .soul-talk-drawer .soul-presence .soul-status-text {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  color: var(--aurora-muted);
+  font-size: 0.78rem;
+  line-height: 1.35;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ---- 訊息列：無邊框、極淡底，保持棲地可見（V3 glass visibility）---- */
 html[data-ui="v2"] .soul-talk-drawer .chat-log {
   flex: 1 1 auto;
   min-height: 0;
   max-height: none;
   overflow-y: auto;
   margin: 0;
-  border: 1px solid rgba(173, 222, 255, 0.12);
-  border-radius: 18px;
-  padding: 10px;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.035), transparent 18%),
-    rgba(5, 12, 28, 0.22);
+  border: 0;
+  border-radius: 12px;
+  padding: 8px 4px;
+  background: none;
 }
 
-/* 輸入列固定在 drawer 底部，鍵盤開啟時永遠可見。 */
-html[data-ui="v2"] .soul-talk-drawer .chat-input-row {
-  flex: 0 0 auto;
-}
-
+/* ---- 快速回覆：純 chips、無容器卡片 ---- */
 html[data-ui="v2"] .soul-talk-drawer .quick-reply-row {
   flex: 0 0 auto;
   max-height: 96px;
   overflow-y: auto;
-  padding: 8px 8px 10px;
-  border: 1px solid rgba(173, 222, 255, 0.12);
-  border-radius: 18px;
-  background: rgba(7, 16, 36, 0.24);
+  padding: 0 2px 2px;
+  border: 0;
+  border-radius: 0;
+  background: none;
 }
 
 html[data-ui="v2"] .soul-talk-drawer .quick-reply-chip {
@@ -156,7 +193,7 @@ html[data-ui="v2"] .soul-talk-drawer .chat-line {
   line-height: 1.4;
 }
 
-/* 輸入列比例：送出鈕收窄、輸入框拿回寬度（ChatGPT 回饋：送出太大、輸入太擠）。 */
+/* ---- Composer：面板內唯一的場域邊框（輸入框+送出）。 ---- */
 html[data-ui="v2"] .soul-talk-drawer .chat-input-row {
   grid-template-columns: minmax(0, 1fr) 64px;
   gap: 8px;
@@ -179,14 +216,26 @@ html[data-ui="v2"] .soul-talk-drawer #message-input {
 
 /* 對話可讀下限「自適應」：可視高度（--app-height，鍵盤開啟時變小）夠時保 96px 可讀；
    可視高度很小（大鍵盤 / 橫向）時自動讓位給輸入列，避免輸入框被擠到鍵盤下方而看不到。
-   下限隨 --app-height 線性縮放後，再扣掉 240px（header/輸入列/間距的固定開銷 ~200px + 約 40px
-   裝置字體度量安全餘裕），確保 floor 永遠 <= 可用空間、輸入框不被擠出；不需要 JS。
+   下限隨 --app-height 線性縮放後，再扣掉 220px（header/輸入列/間距的固定開銷 + 裝置字體
+   度量安全餘裕），確保 floor 永遠 <= 可用空間、輸入框不被擠出；不需要 JS。
    注意：此值只是「下限」，chat-log 以 flex 自動填滿可用空間，正常高度仍會 >= 96px。 */
 html[data-ui="v2"] .soul-talk-drawer .chat-log {
-  min-height: clamp(0px, calc(var(--app-height, 100dvh) - 240px), 96px);
+  min-height: clamp(0px, calc(var(--app-height, 100dvh) - 220px), 96px);
 }
 
-/* Compact composer：視窗本身矮（含 Codex 模擬鍵盤的縮窗）時，收掉次要區塊（快速回覆、聲紋、
+/* ---- Backdrop：心語是非阻斷式抽屜（aria-modal=false）。
+   一般 modal 的 62% 深色遮罩在夜景上讀起來就是「黑掉」；心語改用淡遮罩，
+   讓棲地與夥伴保持可見（V3 scene visibility）。鍵盤開啟（st-focus）時 drawer
+   收到上半部，下方帶狀區改為極淡漸層——顯示湖面棲地，而非黑色空區（真機回報修正）。 ---- */
+html[data-ui="v2"] .panel-layer[data-active-panel="soulTalk"] .panel-backdrop {
+  background: radial-gradient(circle at 50% 70%, rgba(4, 107, 255, 0.08), rgba(2, 6, 12, 0.34));
+}
+
+html[data-ui="v2"] body.st-focus .panel-layer[data-active-panel="soulTalk"] .panel-backdrop {
+  background: linear-gradient(180deg, rgba(2, 6, 12, 0.3), rgba(2, 6, 12, 0.1));
+}
+
+/* Compact composer：視窗本身矮（含 Codex 模擬鍵盤的縮窗）時，收掉次要區塊（快速回覆、
    kicker），把垂直空間讓給 chat log，同時保留輸入列在底部可見。真機鍵盤的等價收縮由
    body.st-focus 負責（見檔案開頭），跟這裡的 viewport-height media query 是兩條獨立路徑。 */
 @media (max-height: 560px) {
@@ -194,14 +243,10 @@ html[data-ui="v2"] .soul-talk-drawer .chat-log {
   html[data-ui="v2"] .soul-talk-drawer .soul-drawer-kicker {
     display: none;
   }
-  html[data-ui="v2"] .soul-talk-drawer .soul-talk-waveform {
-    min-height: 52px;
-    padding-block: 7px;
-  }
   html[data-ui="v2"] .soul-talk-drawer .soul-drawer-header {
-    padding-block: 6px;
+    padding-bottom: 6px;
   }
   html[data-ui="v2"] .soul-talk-drawer .chat-log {
-    padding: 8px;
+    padding: 6px 2px;
   }
 }

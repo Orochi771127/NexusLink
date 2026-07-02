@@ -231,14 +231,12 @@ export function createSoulTalkController({ store, saveCurrentState }) {
   function ensureWaveformShell() {
     if (waveformShell || !soulTalkModal) return;
 
-    waveformShell = document.createElement("section");
-    waveformShell.className = "soul-talk-waveform";
+    // V3 對齊：presence 不再是獨立卡片（面板內禁止 cards-inside-cards），
+    // 併入 header 成單行狀態列：迷你聲紋 + status line。
+    waveformShell = document.createElement("div");
+    waveformShell.className = "soul-talk-waveform soul-presence";
     waveformShell.setAttribute("aria-label", "心湖聲紋狀態");
     waveformShell.innerHTML = `
-      <div class="soul-waveform-copy">
-        <strong>心湖</strong>
-        <span>安靜待命</span>
-      </div>
       <div class="soul-waveform" aria-hidden="true">
         <div class="waveform-bar"></div>
         <div class="waveform-bar"></div>
@@ -250,13 +248,14 @@ export function createSoulTalkController({ store, saveCurrentState }) {
       </div>
     `;
 
-    const copy = waveformShell.querySelector(".soul-waveform-copy");
-    if (statusText && copy) {
+    if (statusText) {
       statusText.textContent = statusText.textContent.trim() || DEFAULT_STATUS_TEXT;
-      copy.appendChild(statusText);
+      waveformShell.appendChild(statusText);
     }
 
-    soulTalkModal.insertBefore(waveformShell, chatLog);
+    const heading = soulTalkModal.querySelector(".soul-drawer-heading");
+    if (heading) heading.appendChild(waveformShell);
+    else soulTalkModal.insertBefore(waveformShell, chatLog);
     setSoulTalkState("idle");
   }
 

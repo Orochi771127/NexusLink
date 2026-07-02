@@ -211,6 +211,18 @@ export const STRINGS = {
   "mood.tired": { tc: "疲倦", sc: "疲倦", en: "Tired", jp: "つかれぎみ" },
   "mood.happy": { tc: "明亮", sc: "明亮", en: "Bright", jp: "あかるい" },
 
+  // ---- HUD mood labels（HUD/夥伴狀態面板用詞，與四大頁 tendency 用詞分開維護）----
+  "hudMood.defensive": { tc: "防備", sc: "防备", en: "Guarded", jp: "身構え" },
+  "hudMood.tired": { tc: "疲倦", sc: "疲倦", en: "Tired", jp: "つかれぎみ" },
+  "hudMood.calm": { tc: "平靜", sc: "平静", en: "Calm", jp: "おだやか" },
+  "hudMood.warm": { tc: "溫暖", sc: "温暖", en: "Warm", jp: "あたたか" },
+  "hudMood.happy": { tc: "開心", sc: "开心", en: "Happy", jp: "うれしい" },
+  "hudMood.distant": { tc: "疏離", sc: "疏离", en: "Distant", jp: "よそよそしい" },
+  "hudMood.sad": { tc: "低落", sc: "低落", en: "Low", jp: "しずみがち" },
+  "hudMood.angry": { tc: "生氣", sc: "生气", en: "Upset", jp: "おこりぎみ" },
+  "hudMood.sleeping": { tc: "睡眠", sc: "睡眠", en: "Sleeping", jp: "ねむり" },
+  "hudMood.balanced": { tc: "平衡", sc: "平衡", en: "Steady", jp: "おちつき" },
+
   // ---- Explore page content ----
   "explore.cardCopy": {
     tc: "月湖周邊已醒來。牠願意靠近的距離，會慢慢改變。",

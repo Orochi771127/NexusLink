@@ -1,6 +1,7 @@
 import { qs, qsa } from "../utils/dom.js";
 import { clampPercent } from "../utils/clamp.js";
-import { t } from "../i18n/i18n.js";
+import { t, LANGUAGE_CHANGED_EVENT } from "../i18n/i18n.js";
+import EventBus from "../utils/eventBus.js";
 import { getAmbientBodyCue } from "../engine/touchReactionEngine.js";
 import { getBodyCueProfile } from "../engine/animationProfile.js";
 
@@ -29,7 +30,13 @@ export function createHudController({ store, statusText }) {
   const boundaryBodyCueEl = qs("#boundary-bodycue");
   const moodResonanceLabel = qs("#mood-resonance-label");
   const moodResonanceNote = qs("#mood-resonance-note");
+  const statePill = qs(".level-pill");
   let currentCreature = null;
+
+  // 語言切換時 HUD 動態文字（心情標籤/狀態臆牌）需就地重畫；applyLanguage 只掃 data-i18n 靜態節點。
+  EventBus.on(LANGUAGE_CHANGED_EVENT, () => {
+    if (currentCreature) renderHUD();
+  });
 
   function setCreature(creature) {
     currentCreature = creature;
@@ -74,6 +81,8 @@ export function createHudController({ store, statusText }) {
     moodEl.textContent = getMoodLabel(state.mood);
     energyEl.textContent = state.energy;
     foxName.textContent = currentCreature.name;
+    // V3 identity card 規則：不顯示等級/戰力；臆牌改為夥伴當下狀態訊號（心情標籤）。
+    if (statePill) statePill.textContent = getMoodLabel(state.mood);
     if (!statusText.textContent || statusText.textContent === DEFAULT_STATUS_TEXT || statusText.textContent === "心語") {
       statusText.textContent = `${currentCreature.name} 正在第一棲地安靜待命。`;
     }
@@ -126,19 +135,13 @@ function getBoundaryView(state) {
   return BOUNDARY_LEVELS[level];
 }
 
+const HUD_MOOD_KEYS = new Set([
+  "defensive", "tired", "calm", "warm", "happy", "distant", "sad", "angry", "sleeping"
+]);
+
 function getMoodLabel(mood) {
-  const moodMap = {
-    defensive: "防備",
-    tired: "疲倦",
-    calm: "平靜",
-    warm: "溫暖",
-    happy: "開心",
-    distant: "疏離",
-    sad: "低落",
-    angry: "生氣",
-    sleeping: "睡眠"
-  };
-  return moodMap[mood] || "平衡";
+  if (HUD_MOOD_KEYS.has(mood)) return t(`hudMood.${mood}`);
+  return t("hudMood.balanced");
 }
 
 // 心情共鳴：由既有 mood 推導一句尊重邊界的陪伴語（無診斷、無勒索、符合 V3 copy rules）。
