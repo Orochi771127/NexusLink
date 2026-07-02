@@ -61,7 +61,7 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 ### 2026-07-03 - Codex - Calm Sync v1 completion
 
 - Status: `VERIFIED`
-- Branch / commit: `main` / pending Codex commit in this TASK_PACK
+- Branch / commit: `main` / `e94f549`
 - Scope: Completed Claude Fable 5's interrupted Calm Sync v1 EXPERIENCE package. No `index.html`, save schema, Pixi ground layer, assets, tools, scripts, dependencies, or GROUNDWORK files were changed. Existing untracked `output/linkara/` asset output remains untouched and excluded.
 - Work performed:
   1. Finished `src/ui/calmSyncController.js`: dynamic overlay, 36-second low-stimulation breathing loop, click/keyboard ring sync during inhale, Escape/leave/visibility/blank-overlay abort, no state writes on early exit, one state write/save on completion.
