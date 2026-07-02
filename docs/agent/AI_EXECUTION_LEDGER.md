@@ -58,6 +58,36 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-07-02 - Codex - i18n P4 review, evidence, and main integration
+
+- Status: `COMPLETED`
+- Branch / commit: `main` / `21323a9` docs whitespace, `35046c8` i18n wiring, plus this ledger/evidence commit.
+- Scope: Reviewed and integrated Claude Fable 5's i18n P4 package. Included refreshed tracked QA evidence files because they are the current automated proof for this integration. No Calm Sync, world map, asset pipeline, save/state, Pixi, gameplay rule, dependency, or UI redesign work was performed.
+- Work performed:
+  1. Reviewed actual working tree against Claude's handoff report: 11 touched files, matching the reported scope.
+  2. Used codebase-memory trace to confirm `createBattleController` and `createHudController` are high-impact UI entry points; reviewed their diffs and confirmed changes are limited to i18n templates and `textContent` / `placeholder` writes.
+  3. Committed the package in scoped commits: whitespace docs first, static/controller i18n wiring second, ledger + QA evidence last.
+- Verification: `git diff --check` clean; bundled Node `--check` passed for `src/i18n/strings.js`, `src/ui/pageRouter.js`, `src/ui/battleController.js`, and `src/ui/hudController.js`; scripted i18n integrity passed with 225 STRINGS keys, 0 missing languages, 143 HTML i18n attributes all resolved, and 92 scanned static `t()` references all resolved; system Python release gate on `--base http://localhost:5198 --port 5198` passed 10/10 required checks with 0 accessibility warnings; live playtest gate passed Soul Talk 10/10, HUD 13/13, awakening/storage/touch/pixi OK, and 0 console errors.
+- Problems / risks: Same non-blocking gaps as Claude's entry remain: named Soul Talk placeholder reverts to generic localized placeholder after language switch; mid-standoff dynamic labels refresh on the next `startBattle`; remaining content-tier and dynamic TC writers need a separate mini-pack. Human gates remain open: real-device mobile Safari/Chrome, moderated private testers, legal/privacy/store copy.
+- Next safe action: Push these scoped commits to `origin/main`; then start a new authorized TASK_PACK for either Calm Sync v1 or the remaining dynamic-writer i18n mini-pack.
+
+### 2026-07-02 - Claude Fable 5 - i18n package P4: controller wiring + index.html static labels (handoff to Codex review)
+
+- Status: `VERIFIED` (uncommitted — awaiting Codex review; commit/push NOT performed per this round's instruction)
+- Branch / commit: `main` / uncommitted working tree
+- Scope: Finish i18n package P4 per human TASK_PACK. Files touched: `index.html` (i18n attributes only, no structural change), `src/i18n/strings.js`, `src/ui/pageRouter.js` (P2, earlier in round), `src/ui/battleController.js`, `src/ui/hudController.js`, 3 docs (whitespace only). Explicitly NOT done: Calm Sync, world map, asset pipeline, saveManager/store/defaultState/pixiApp, gameplay/standoff rule changes, new dependencies.
+- Work performed:
+  1. P1 whitespace: 3 Raphael docs cleaned (trailing spaces + EOF blank lines); `git diff --check` clean.
+  2. P2: `pageRouter.js` LANGUAGE_CHANGED listener now re-sets `#status-text` via `getPageStatus(activePage)` (home included) before re-render; `formatDate()` maps `getLanguage()` → locale (`zh-TW/zh-CN/en-US/ja-JP`) instead of hardcoded zh-TW.
+  3. P3: all 53 EN-pack keys filled with sc/jp; header note removed.
+  4. P4 index.html: 143 total `data-i18n`/`data-i18n-aria`/`data-i18n-placeholder` refs after adding ~60 attributes across title, shell/HUD/nav arias, panel close buttons, kickers (roster/map/codex/actionSheet), Moonlake presence block, level pill, onboarding kicker + name placeholder, standoff modal statics (title, noise hint, sync/fatigue/shards vitals, barrier/pulse/retreat buttons, finish button), settings group arias, soul panel aria. Language self-name buttons (繁體/简体/日本語) intentionally untranslated.
+  5. P4 controllers: `battleController.startBattle` node label / `{name}的心核` / `{name}的雜訊` / resonance-hint templates now use i18n keys with `{name}`/`{emotion}` placeholder replace (content-tier node/enemy/emotion names stay TC by design); `hudController.setCreature` description fallback + named soul-talk placeholder keyed (`char.descFallback`, `hud.soulPlaceholderNamed`). All writes remain `textContent`/`placeholder` — no innerHTML path touched.
+  6. New keys this round: `aria.*` ×30, `battle.*` ×17, `map.*` ×2, `codex.kicker/title`, `actionSheet.kicker`, `habitat.*` ×2, `ob.kicker/namePlaceholder`, `hud.levelPill/soulPlaceholderNamed`, `char.descFallback`, `roster.kicker`, `meta.title`. STRINGS total 225 keys, 0 missing languages (scripted check).
+- Verification: bundled Node `--check` on 4 touched JS; scripted integrity: all 143 html refs + all static `t()` refs in src/ resolve to STRINGS (both directions NONE missing); `git diff --check` clean; web release gate on clean port 5197 **10/10 required PASS, 0 accessibility warnings** (22:07); live playtest gate vs :8128 **soul_talk 10/10, hud 13/13, 0 console errors**; Chromium preview manual: EN switch → title/level pill/moonlake block/all panel arias/standoff statics (Heart-Core Standoff, Boundary/Pulse/Step away + hints)/map/codex/roster kickers all EN with zero TC residue; JP switch → 心核の対峙/レベル 01/statusText 即時同步（月湖の棲み処に戻った。）; TC restore clean; console errors 0.
+- Problems / risks: (a) `#message-input` named placeholder reverts to generic localized placeholder after a language switch (applyLanguage owns the node; pre-existing behavior, now correct-language in all cases); (b) battleController dynamic labels only refresh at next `startBattle` after mid-standoff language switch (transient, session-scoped); (c) remaining hardcoded-TC dynamic writers deferred as known gaps: `actionSheetController` actionMeta copy (gameplay copy), app.js sleep-cycle/companion-switch statusText lines, `hudController` idle status line (entangled with DEFAULT_STATUS_TEXT comparison), companionRenderer load-status lines, Soul Talk dialogue pool, mood/boundary preview copy (content tier); (d) gate reruns refreshed `docs/qa/_web_release_gate_output.json` + `_live_playtest_gate_output.json` in the working tree as evidence — Codex may include or discard at commit time.
+- Next safe action: Codex review of the uncommitted diff (6 code/docs files + 2 refreshed QA evidence JSONs), then human-authorized commit/push; after that the next gameplay TASK_PACK (Calm Sync v1 — design already validated, see plan file `c-users-user-pictures-thumbnail-c-users-curried-mccarthy.md`) or the remaining dynamic-writer i18n mini-pack.
+- Required reading: this entry, previous entry (Commercial RC pass), `src/i18n/strings.js` header comment.
+
 ### 2026-07-02 - Claude Fable 5 - Commercial RC pass: HUD-B audit, dead-code cleanup, EN content i18n
 
 - Status: `VERIFIED`
