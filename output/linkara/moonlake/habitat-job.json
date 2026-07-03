@@ -33,52 +33,65 @@
     "width": 1080,
     "height": 1920
   },
-  "actualArtSize": {
-    "width": 941,
-    "height": 1672
-  },
+  "passes": [
+    {
+      "id": "v1",
+      "status": "superseded_by_v2_for_composition",
+      "actualSceneLayerSize": {
+        "width": 941,
+        "height": 1672
+      },
+      "preview": "layered-preview.png",
+      "notes": "Useful first layer-direction staging set, but not runtime-ready because it used 941x1672 art and left a large lower empty area."
+    },
+    {
+      "id": "v2",
+      "status": "keep_for_human_review_not_runtime_ready",
+      "actualSceneLayerSize": {
+        "width": 1080,
+        "height": 1920
+      },
+      "preview": "v2/layered-preview-v2.png",
+      "profileDraft": "profile-draft-v2.json",
+      "promptLog": "v2/prompts/moonlake_v2_generation_prompts.md",
+      "notes": "Fixes the target canvas and lower composition. Still requires visual review because the lake-water layer has a visible hard color band at the far water edge."
+    }
+  ],
   "layers": [
     {
       "id": "sky",
-      "path": "layers/moonlake_sky.png",
+      "path": "v2/layers/moonlake_v2_sky.png",
       "classification": "foundation_layer",
-      "decision": "regenerate",
-      "reason": "Opaque sky layer is usable as direction, but actual canvas is 941x1672 instead of the target 1080x1920."
+      "decision": "keep_for_review",
+      "reason": "Target-size 1080x1920 sky-only layer. Opaque source normalized to alpha-capable PNG for consistent preview compositing."
     },
     {
       "id": "mountains",
-      "path": "layers/moonlake_mountains.png",
+      "path": "v2/layers/moonlake_v2_mountains.png",
       "classification": "foundation_layer",
       "decision": "keep_for_review",
-      "reason": "Alpha-capable distant layer; needs visual approval and target-canvas normalization before runtime promotion."
+      "reason": "Target-size alpha-capable distant cliffs and waterfalls layer. Review for edge cleanup before runtime promotion."
     },
     {
       "id": "lake_water",
-      "path": "layers/moonlake_lake_water.png",
+      "path": "v2/layers/moonlake_v2_lake_water.png",
       "classification": "foundation_layer",
-      "decision": "keep_for_review",
-      "reason": "Alpha-capable water plane; useful for profile zone review."
+      "decision": "regenerate_or_manual_cleanup",
+      "reason": "Target-size water plane improves canvas fit, but visual self-review found a hard color band along the far water edge."
     },
     {
       "id": "shore_ground_platform",
-      "path": "layers/moonlake_shore_ground_platform.png",
+      "path": "v2/layers/moonlake_v2_shore_ground_platform.png",
       "classification": "foundation_layer",
-      "decision": "regenerate",
-      "reason": "Direction is useful, but composite preview leaves a large lower empty area and needs stronger target-frame fit."
-    },
-    {
-      "id": "camp_structures",
-      "path": "layers/moonlake_camp_structures.png",
-      "classification": "structure_layer",
       "decision": "keep_for_review",
-      "reason": "Alpha-capable structure layer; must be checked for baked runtime props before approval."
+      "reason": "Target-size shore/platform layer fixes the previous lower empty-area issue and keeps companion center readable."
     },
     {
       "id": "foreground_occlusion",
-      "path": "layers/moonlake_foreground_occlusion.png",
+      "path": "v2/layers/moonlake_v2_foreground_occlusion.png",
       "classification": "foreground_occlusion",
-      "decision": "regenerate",
-      "reason": "Accepted candidate is sparse, but occlusion needs a stricter companion-foot and bottom-edge review pass."
+      "decision": "keep_for_review",
+      "reason": "Target-size sparse bottom/side foliage and stones; review companion-foot occlusion before approval."
     }
   ],
   "props": [
@@ -87,7 +100,7 @@
       "path": "props/prop_crystal_cluster.png",
       "classification": "compact_prop",
       "decision": "keep_for_review",
-      "reason": "Readable cyan crystal prop candidate."
+      "reason": "Readable cyan crystal prop candidate from v1 staging."
     },
     {
       "id": "lantern_post",
@@ -101,7 +114,7 @@
       "path": "props/prop_dock_posts.png",
       "classification": "compact_prop",
       "decision": "keep_for_review",
-      "reason": "Small dock-post group candidate."
+      "reason": "Small dock-post group candidate from v1 staging."
     },
     {
       "id": "shrine_marker",
@@ -114,8 +127,8 @@
       "id": "firefly_glow",
       "path": "props/prop_firefly_glow.png",
       "classification": "fx_candidate",
-      "decision": "regenerate",
-      "reason": "Very subtle after chroma-key removal; runtime particle rendering may be preferable."
+      "decision": "use_runtime_particle_instead",
+      "reason": "Too subtle as a cutout. Treat fireflies as lightweight Pixi particles in a later weather/FX pack."
     }
   ],
   "checks": {
@@ -124,8 +137,8 @@
     "propFilesExist": true,
     "sceneLayerDimensionsMatch": true,
     "actualSceneLayerSize": {
-      "width": 941,
-      "height": 1672
+      "width": 1080,
+      "height": 1920
     },
     "targetSceneLayerSize": {
       "width": 1080,
@@ -133,9 +146,10 @@
     },
     "alphaReviewed": true,
     "promptMetadataPresent": true,
-    "noRejectedFilesInAcceptedSet": true,
-    "visualSpotCheckComplete": true
+    "acceptedSetHasNoRejectedFilename": true,
+    "visualSpotCheckComplete": true,
+    "runtimeReady": false
   },
-  "nextAction": "Regenerate target-size Moonlake base composition and weak layers before any assets or runtime promotion."
+  "nextAction": "Human visual review of v2 direction and layered preview. If approved, do one lake edge cleanup/regeneration pass before any runtime promotion."
 }
 

@@ -1,0 +1,133 @@
+{
+  "id": "ethereal_moon_lakefront",
+  "label": "Ethereal Moon Lakefront",
+  "version": 2,
+  "artSize": {
+    "width": 1080,
+    "height": 1920
+  },
+  "sourceNote": "TP-HAB-AUTO-2 generated target-size layer draft. Staging only; not runtime-integrated.",
+  "layers": [
+    "v2/layers/moonlake_v2_sky.png",
+    "v2/layers/moonlake_v2_mountains.png",
+    "v2/layers/moonlake_v2_lake_water.png",
+    "v2/layers/moonlake_v2_shore_ground_platform.png",
+    "v2/layers/moonlake_v2_foreground_occlusion.png"
+  ],
+  "preview": "v2/layered-preview-v2.png",
+  "reference": "v2/reference/moonlake_v2_direction_preview_1080x1920.png",
+  "companion": {
+    "anchor": {
+      "x": 0.5,
+      "y": 0.7
+    },
+    "reservedRect": {
+      "x": 0.38,
+      "y": 0.45,
+      "w": 0.24,
+      "h": 0.27
+    }
+  },
+  "ui": {
+    "extraForbidden": [
+      {
+        "id": "hud_top_static",
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 1,
+          "h": 0.12
+        }
+      },
+      {
+        "id": "bottom_nav_static",
+        "rect": {
+          "x": 0,
+          "y": 0.8,
+          "w": 1,
+          "h": 0.2
+        }
+      }
+    ]
+  },
+  "zones": {
+    "water": [
+      {
+        "id": "lake_main",
+        "rect": {
+          "x": 0.18,
+          "y": 0.35,
+          "w": 0.64,
+          "h": 0.24
+        },
+        "maxTraces": 5
+      },
+      {
+        "id": "lake_near_edge",
+        "rect": {
+          "x": 0.22,
+          "y": 0.55,
+          "w": 0.56,
+          "h": 0.08
+        },
+        "maxTraces": 3
+      }
+    ],
+    "ground": [
+      {
+        "id": "stone_platform",
+        "rect": {
+          "x": 0.25,
+          "y": 0.62,
+          "w": 0.5,
+          "h": 0.16
+        },
+        "maxTraces": 4
+      },
+      {
+        "id": "shore_path",
+        "rect": {
+          "x": 0.2,
+          "y": 0.76,
+          "w": 0.6,
+          "h": 0.13
+        },
+        "maxTraces": 3
+      },
+      {
+        "id": "shore_left",
+        "rect": {
+          "x": 0.08,
+          "y": 0.66,
+          "w": 0.18,
+          "h": 0.18
+        },
+        "maxTraces": 2
+      },
+      {
+        "id": "shore_right",
+        "rect": {
+          "x": 0.74,
+          "y": 0.66,
+          "w": 0.18,
+          "h": 0.18
+        },
+        "maxTraces": 2
+      }
+    ]
+  },
+  "qa": {
+    "visualSelfReview": "V2 fixes target canvas and lower composition. Lake layer still has a hard color band near the far water edge; keep as review candidate only.",
+    "runtimeBlockers": [
+      "humanApproved is false",
+      "referenceAuditPassed is false",
+      "lake edge requires cleanup or regeneration",
+      "not copied to assets and not referenced by runtime"
+    ]
+  },
+  "status": {
+    "runtimeIntegrated": false,
+    "humanApproved": false,
+    "referenceAuditPassed": false
+  }
+}

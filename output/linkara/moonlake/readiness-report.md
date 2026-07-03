@@ -8,62 +8,63 @@ Human approval: pending.
 
 - Region id: `ethereal_moon_lakefront`
 - Output root: `output/linkara/moonlake/`
-- Profile draft: `output/linkara/moonlake/profile-draft.json`
+- V1 profile draft: `output/linkara/moonlake/profile-draft.json`
+- V2 profile draft: `output/linkara/moonlake/profile-draft-v2.json`
 - Job file: `output/linkara/moonlake/habitat-job.json`
-- Composite preview: `output/linkara/moonlake/layered-preview.png`
+- V1 composite preview: `output/linkara/moonlake/layered-preview.png`
+- V2 composite preview: `output/linkara/moonlake/v2/layered-preview-v2.png`
+- V2 direction preview: `output/linkara/moonlake/v2/reference/moonlake_v2_direction_preview_1080x1920.png`
 - Props preview: `output/linkara/moonlake/props-preview.png`
-- Source notes: `output/linkara/moonlake/prompts/moonlake_layer_generation_notes.txt`
+- V2 prompt log: `output/linkara/moonlake/v2/prompts/moonlake_v2_generation_prompts.md`
 
-This package is useful as a first Moonlake layered-generation staging set. It is not runtime-ready. The main blocker is canvas and composition readiness: all scene layers are `941x1672`, while the target mobile art size remains `1080x1920`, and the composite has a large lower empty area that needs a stricter runtime-frame redraw or normalization pass.
+V2 fixes the two largest V1 blockers: target canvas and lower composition. The v2 layer candidates in `v2/layers/` are normalized to `1080x1920`, and the lower half now contains an intentional stone platform and shore path instead of a large blank area.
+
+V2 is still not runtime-ready. Visual self-review found a hard color band near the far lake-water edge after chroma-key cleanup. Keep this as a human-review candidate and regeneration evidence, not an approved asset package.
 
 ## Automated Checks
 
 | Check | Result | Notes |
 | --- | --- | --- |
-| Profile JSON parses | Pass | `ethereal_moon_lakefront`, six layers, five props. |
-| Layer files exist | Pass | Six listed layer files are present. |
-| Prop files exist | Pass | Five listed prop files are present. |
-| Scene layer dimensions match | Pass with blocker | Scene layers all match each other at `941x1672`, but not the target `1080x1920`. |
-| Alpha-capable layers / props | Pass | Non-sky scene layers and all prop candidates are `Format32bppArgb`. |
-| Prompt metadata exists | Pass | Prompt notes explain layer locks, source paths, and rejected attempts. |
-| No rejected files in accepted set | Pass | No remaining file path contains `rejected`. |
-| Visual spot check complete | Pass with blocker | Composite and prop preview are reviewable; not runtime-ready. |
+| Profile JSON parses | Pass | `profile-draft.json`, `profile-draft-v2.json`, and `habitat-job.json` parse. |
+| V2 layer files exist | Pass | Five v2 layer files are present under `v2/layers/`. |
+| Prop files exist | Pass | Five v1 prop candidates remain present for review. |
+| V2 scene layer dimensions match | Pass | All v2 scene layers are `1080x1920`. |
+| Alpha-capable v2 layers | Pass | All v2 layer files are `Format32bppArgb`. |
+| Prompt metadata exists | Pass | V2 prompts are logged in `v2/prompts/moonlake_v2_generation_prompts.md`. |
+| Accepted set has no rejected filename | Pass | Accepted v2 layer/profile paths do not include rejected filenames. |
+| Visual spot check complete | Pass with blocker | Direction preview is strong; layered preview still needs lake-edge cleanup. |
 
 ## Asset Classification
 
 | Asset | Classification | Decision | Reason |
 | --- | --- | --- | --- |
-| `layers/moonlake_sky.png` | foundation layer | `regenerate` | Direction is useful, but canvas is `941x1672`, and sky should be regenerated to target frame with stronger lower boundary control. |
-| `layers/moonlake_mountains.png` | foundation layer | `keep_for_review` | Alpha-capable distant layer; needs target-canvas normalization and visual approval. |
-| `layers/moonlake_lake_water.png` | foundation layer | `keep_for_review` | Useful water-plane candidate for zone review. |
-| `layers/moonlake_shore_ground_platform.png` | foundation layer | `regenerate` | Current composite leaves too much lower empty area; platform must lock companion floor and bottom UI clearance. |
-| `layers/moonlake_camp_structures.png` | structure layer | `keep_for_review` | Useful structure layer; review for baked runtime props before approval. |
-| `layers/moonlake_foreground_occlusion.png` | foreground occlusion | `regenerate` | Needs stricter companion-foot occlusion and bottom-edge composition pass. |
-| `props/prop_crystal_cluster.png` | compact prop | `keep_for_review` | Readable cyan memory-crystal candidate. |
+| `v2/reference/moonlake_v2_direction_preview_1080x1920.png` | direction preview | `keep_for_review` | Stronger composition than v1: target-size, clear companion platform, no empty lower half. Not a runtime layer. |
+| `v2/layers/moonlake_v2_sky.png` | foundation layer | `keep_for_review` | Target-size sky-only layer. |
+| `v2/layers/moonlake_v2_mountains.png` | foundation layer | `keep_for_review` | Target-size alpha-capable cliffs/waterfalls layer; review edge quality. |
+| `v2/layers/moonlake_v2_lake_water.png` | foundation layer | `regenerate_or_manual_cleanup` | Target-size water plane, but self-review found a hard color band near the far water edge. |
+| `v2/layers/moonlake_v2_shore_ground_platform.png` | foundation layer | `keep_for_review` | Fixes the v1 empty lower-half problem and gives a clear companion platform. |
+| `v2/layers/moonlake_v2_foreground_occlusion.png` | foreground occlusion | `keep_for_review` | Sparse bottom/side foliage candidate; review companion-foot occlusion. |
+| `v2/layered-preview-v2.png` | preview | `keep_for_review` | QA preview only, never runtime asset. |
+| `props/prop_crystal_cluster.png` | compact prop | `keep_for_review` | Readable cyan memory-crystal candidate from v1 staging. |
 | `props/prop_lantern_post.png` | tall prop | `keep_for_review` | Good candidate, but placement must avoid companion and UI safe zones. |
-| `props/prop_dock_posts.png` | compact prop | `keep_for_review` | Useful dock-post candidate. |
+| `props/prop_dock_posts.png` | compact prop | `keep_for_review` | Useful dock-post candidate from v1 staging. |
 | `props/prop_shrine_marker.png` | tall prop | `keep_for_review` | Strong identity candidate; needs height and occlusion review. |
-| `props/prop_firefly_glow.png` | FX candidate | `regenerate` | Too subtle after chroma-key removal; runtime particles may be better. |
-| `layered-preview.png` | preview | `keep_for_review` | QA preview only, never runtime asset. |
-| `layered-preview-candidate-01.png` | reference | `keep_for_review` | Concept/reference only, not a layer deliverable. |
+| `props/prop_firefly_glow.png` | FX candidate | `use_runtime_particle_instead` | Too subtle as a cutout; better handled as lightweight Pixi particles in a later FX pack. |
 
 ## Runtime Blockers
 
-- Canvas is `941x1672`, not the target `1080x1920`.
-- Composite has a large lower empty area that would waste mobile viewport space.
 - Human approval is not recorded.
 - `referenceAuditPassed` is false.
-- Asset paths are under `output/**`, not approved `assets/**`.
+- Lake-water edge needs cleanup or regeneration.
+- V2 files are under `output/**`, not approved `assets/**`.
 - No runtime manifest or scene profile module should reference these files yet.
 
 ## Regeneration Orders
 
-1. Regenerate Moonlake target-frame foundation pass at `1080x1920`.
-2. Keep the layer stack: sky, mountains, lake water, shore/platform, structures, foreground occlusion.
-3. Lock companion anchor around `{ x: 0.5, y: 0.7 }` and keep the reserved rect clear.
-4. Regenerate platform/shore so the lower half feels intentional, not blank.
-5. Regenerate foreground occlusion as sparse bottom/side edge elements only.
-6. Treat firefly glow as runtime particle or regenerate as a stronger FX sprite candidate.
+1. If human likes the v2 direction, regenerate or manually clean only `lake_water` next.
+2. Keep the v2 platform/shore composition as the next prompt reference.
+3. Keep firefly glow out of static prop generation; plan it as runtime particle FX.
+4. Do not touch `assets/**`, `assetManifest.js`, `pixiApp.js`, or save schema before a separate GROUNDWORK runtime promotion task.
 
 ## Approval Gate
 
@@ -72,5 +73,6 @@ Do not copy this package into `assets/**` or reference it from runtime code unti
 - Human visual approval is recorded.
 - `referenceAuditPassed` is true.
 - Canvas, alpha, anchor, and UI-safe checks pass.
+- Lake-water edge cleanup passes visual QA.
 - A separate GROUNDWORK runtime promotion task is approved.
 

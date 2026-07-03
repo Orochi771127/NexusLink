@@ -1270,6 +1270,18 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Next safe action: Run `TP-HAB-AUTO-2` as a generation-only pass: regenerate Moonlake target-size foundation layers and weak FX/foreground candidates under `output/linkara/moonlake/`, then update the readiness report. Do not touch `assets/**` or runtime paths until human approval.
 - Required reading: `docs/assets/HABITAT_AUTOMATION_WORKFLOW.md`, `templates/habitat-generation-job.template.json`, `output/linkara/moonlake/readiness-report.md`, `docs/assets/LINKARA_HABITAT_LAYERING_AND_VISUAL_LOCKS.md`, `docs/architecture/HABITAT_SCENE_PROFILE_SPEC.md`, `AGENTS.md`, `CLAUDE.md`, `ACCEPTANCE.md`, and this lane.
 
+### 2026-07-03 - Codex - Moonlake V2 Target-Size Regeneration Pass
+
+- Lane: `Game Art, UI, And Visual Production`
+- Status: `VERIFIED`
+- Branch / commit: `main` / pending scoped staging commit for this package.
+- Scope: Ran `TP-HAB-AUTO-2` as a generation-only Moonlake regeneration pass under `output/linkara/moonlake/v2/`. No `assets/**`, `src/**`, `pixiApp.js`, `assetManifest.js`, save schema, `scripts/**`, `tools/**`, package/dependency, scene switching, or runtime wiring changed.
+- Work performed: Generated a v2 direction preview, target-size layer candidates for sky, mountains, lake water, shore/platform, and foreground occlusion, preserved raw generation sources, normalized review layers to `1080x1920`, composed `v2/layered-preview-v2.png`, added `profile-draft-v2.json`, updated `habitat-job.json`, and logged generation prompts in `v2/prompts/moonlake_v2_generation_prompts.md`.
+- Verification: `habitat-job.json`, `profile-draft.json`, `profile-draft-v2.json`, and the habitat generation template parse as JSON. V2 review layers and preview are `1080x1920` and alpha-capable. Visual self-review confirms the direction preview and lower platform composition are stronger than v1, but the lake-water layer still has a visible hard color band near the far water edge. `git diff --check` passed for the scoped package.
+- Problems / risks: V2 is not runtime-ready and must not be promoted to `assets/**`. Human visual approval, reference audit, lake edge cleanup/regeneration, and a separate GROUNDWORK runtime-promotion task are still required. The firefly cutout remains better modeled as a later lightweight Pixi particle effect than as a static prop.
+- Next safe action: Human review `output/linkara/moonlake/v2/reference/moonlake_v2_direction_preview_1080x1920.png` and `output/linkara/moonlake/v2/layered-preview-v2.png`. If the direction is accepted, regenerate or manually clean only `v2/layers/moonlake_v2_lake_water.png` before any asset-readiness promotion.
+- Required reading: `output/linkara/moonlake/readiness-report.md`, `output/linkara/moonlake/profile-draft-v2.json`, `output/linkara/moonlake/v2/prompts/moonlake_v2_generation_prompts.md`, `docs/assets/HABITAT_AUTOMATION_WORKFLOW.md`, `docs/assets/LINKARA_HABITAT_LAYERING_AND_VISUAL_LOCKS.md`, `docs/architecture/HABITAT_SCENE_PROFILE_SPEC.md`, `AGENTS.md`, `CLAUDE.md`, `ACCEPTANCE.md`, and this lane.
+
 ### 2026-07-02 - Codex - Next Gameplay Systems Spec Consolidation
 
 - Lane: `Game Engineering And Architecture`
