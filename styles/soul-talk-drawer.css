@@ -41,12 +41,25 @@ html[data-ui="v2"] .soul-talk-drawer {
     height 180ms ease, max-height 180ms ease;
 }
 
+/* 鍵盤開啟：drawer 往上長，composer 底部貼合鍵盤上緣（不再用 42svh 地板墊高）。 */
 html[data-ui="v2"] body.st-focus .soul-talk-drawer {
   top: max(8px, var(--top-safe));
-  bottom: calc(max(var(--kb-inset, 0px), 42svh) + 8px);
   height: auto;
   max-height: none;
   border-radius: 22px 22px 18px 18px;
+}
+
+/* 已量到鍵盤（真實 visualViewport 或估計 fallback，kb-open 由 dom.js 切換）：
+   底部 = 實際鍵盤高度 + 8px → 精準貼合。Android resizes-content 下 --kb-inset≈0，
+   版面已縮短，同一式子一樣貼合。 */
+html[data-ui="v2"] body.st-focus.kb-open .soul-talk-drawer {
+  bottom: calc(var(--kb-inset, 0px) + 8px);
+}
+
+/* 開啟中「尚未量到」（量測空窗 / 完全不回報的 in-app webview）：保守保留一段，
+   避免輸入框在量到之前瞬間被鍵盤蓋住。比舊的 42svh 小，量到後即由上面規則接管貼合。 */
+html[data-ui="v2"] body.st-focus:not(.kb-open) .soul-talk-drawer {
+  bottom: calc(38svh + 8px);
 }
 
 html[data-ui="v2"] body.st-focus .soul-talk-drawer .soul-drawer-kicker {

@@ -58,6 +58,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-07-04 - Claude Opus 4.8 - Soul Talk keyboard-avoiding rebuild (composer hugs the keyboard)
+
+- Status: `VERIFIED` (CSS/logic; real-device is a HUMAN GATE) — committed + pushed to origin/main per explicit human instruction ("現在就 push")
+- Branch / commit: `main` / pushed (see git log)
+- Scope: mobile virtual-keyboard viewport adaptation for Soul Talk. Files: `index.html` (viewport meta — **global, §5.1-adjacent**, flagged + human-approved this round), `src/utils/dom.js`, `styles/soul-talk-drawer.css`, `src/ui/soulTalkController.js`.
+- Work performed: root cause = `bottom: calc(max(var(--kb-inset), 42svh) + 8px)` in the composer — the `42svh` floor overrode the *measured* keyboard height → permanent gap. Fix: (1) meta `interactive-widget` `resizes-visual`→`resizes-content` (Android shrinks layout → `--kb-inset`≈0 + composer hugs; iOS ignores → visualViewport path; self-consistent, one CSS for both). (2) Remove the floor: `body.st-focus.kb-open .soul-talk-drawer { bottom: calc(var(--kb-inset)+8px) }` (exact hug); `st-focus:not(.kb-open)` → conservative `38svh` reserve only for the unmeasured window / broken webviews. (3) `dom.js resetViewportVars()` hard-zeros the viewport vars on blur (iOS 26 vv-residual regression); added `kb-measured`/`kb-estimated` classes. Kept the estimator fallback (in-app webviews) and the "no active scroll / don't move the focused element" red line (iOS cancels the keyboard otherwise). **Skipped VirtualKeyboard API** — requires `overlaysContent=true` which conflicts with `resizes-content`, and is redundant once Android resizes the layout.
+- Verification: `node --check` PASS on dom.js + soulTalkController.js. Preview computed-style probe (inject `--kb-inset` + `st-focus.kb-open`, read `getComputedStyle(drawer).bottom`): `300px → 308px`, `240px → 248px` — composer tracks the real keyboard height exactly; the 42svh gap is gone.
+- Problems / risks: **real-device matrix is a HUMAN GATE** (cannot drive a real soft keyboard in preview): iPhone Safari / Android Chrome / IG·FB·LINE in-app — confirm the input hugs the keyboard (no gap / no black band), that dismissing the keyboard fully restores the layout (iOS 26), and no regression to the onboarding name input or Pixi layout from the global meta. If any platform regresses, revert the `index.html` meta line alone (decoupled from the rest).
+- Next safe action: human real-device pass. Follow-up: `ob-focus` (onboarding name input) can adopt the same `kb-open`/`--kb-inset` model for consistency.
+- Required reading: this entry, `styles/soul-talk-drawer.css` (st-focus block), `src/utils/dom.js` (`setViewportVars`/`resetViewportVars`), plan file `ai-immutable-liskov.md` (2026-07-04 addendum).
+
 ### 2026-07-04 - Claude Opus 4.8 - Content line fill: Soul Talk (A2) + exploration (A4) + evolution lines (A5)
 
 - Status: `VERIFIED` (data/logic, deterministic) — committed + pushed to origin/main per standing instruction

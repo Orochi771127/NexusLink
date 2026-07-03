@@ -6,7 +6,7 @@ import { updateMemoryLifecycles } from "../engine/memoryLifecycleEngine.js";
 import { isEmotionalHabitatTrace } from "../engine/habitatTraceEngine.js";
 import { applyRaphaelAgentReduction, reduceRaphaelAgentIntent } from "../engine/raphaelIntentReducer.js";
 import { buildEventReflection, composeMemoryReflection } from "../engine/soulTalkComposer.js";
-import { clearSoftKeyboardExpectation, expectSoftKeyboard, qs, syncViewportDuringTransition } from "../utils/dom.js";
+import { clearSoftKeyboardExpectation, expectSoftKeyboard, qs, resetViewportVars, syncViewportDuringTransition } from "../utils/dom.js";
 
 const DEFAULT_STATUS_TEXT = "心湖 / 安靜待命";
 const DEFAULT_PREVIEW_TEXT = "你可以慢慢說，灰影會聽。";
@@ -106,7 +106,9 @@ export function createSoulTalkController({ store, saveCurrentState }) {
       setSoulTalkState("idle");
       document.body.classList.remove("st-focus");
       clearSoftKeyboardExpectation();
-      syncViewportDuringTransition(620);
+      // 硬歸零版面（iOS 26：鍵盤收起後 vv 殘留變矮/offsetTop 不歸零 → 不靠可能仍不準的 re-measure）。
+      // 好的瀏覽器之後的真實 resize 事件（bindViewportVars 的 vv listener）會再校正。
+      resetViewportVars();
     });
   }
 

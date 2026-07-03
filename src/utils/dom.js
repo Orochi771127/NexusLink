@@ -46,6 +46,19 @@ export function clearSoftKeyboardExpectation() {
   document.body?.classList.remove("kb-fallback");
 }
 
+// 鍵盤收起硬歸零（iOS 26 回歸：鍵盤收起後 visualViewport.offsetTop 不歸零、height 殘留變矮，
+// 導致 fixed 元素殘留錯位、drawer 卡在變矮的高度）。blur 時直接把版面還原成「無鍵盤」狀態，
+// 不依賴可能仍不可靠的 vv 重量值。之後真實的 resize 事件會再校正。
+export function resetViewportVars() {
+  const root = document.documentElement;
+  const full = Math.max(root.clientHeight || 0, window.innerHeight || 0);
+  if (full > 0) root.style.setProperty("--app-height", `${full}px`);
+  root.style.setProperty("--vv-offset-top", "0px");
+  root.style.setProperty("--kb-inset", "0px");
+  lastSoftKeyboardHeight = 0;
+  document.body?.classList.remove("kb-open", "kb-fallback", "kb-measured", "kb-estimated");
+}
+
 export function setViewportVars() {
   const vv = window.visualViewport;
   const rawHeight = Math.round(vv?.height || window.innerHeight);
@@ -82,6 +95,9 @@ export function setViewportVars() {
   root.style.setProperty("--kb-inset", `${kbInset}px`);
   document.body?.classList.toggle("kb-open", kbInset > 80);
   document.body?.classList.toggle("kb-fallback", usingKeyboardFallback);
+  // 區分「真的量到」(vv/VK) 與「估計」(壞 webview)，供 CSS/除錯用；貼合邏輯只需 kb-open。
+  document.body?.classList.toggle("kb-measured", detectedKeyboard);
+  document.body?.classList.toggle("kb-estimated", usingKeyboardFallback);
 
   // Measure nav height after image/CSS layout; page and soul-strip reserve this.
   const nav = document.querySelector(".bottom-nav");
