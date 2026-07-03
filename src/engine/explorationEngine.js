@@ -1,6 +1,14 @@
 import { clamp } from "../utils/clamp.js";
 import { EmotionDict } from "../data/emotionDictionary.js";
 
+// A4：高羈絆時，夥伴在探索中多一個主動的小舉動——讓「關係在長」被看見（非任務、無獎勵框架）。
+const HIGH_BOND_FLOURISH = [
+  "牠走在你前面一點點，又回頭確認你有跟上。",
+  "牠的尾巴輕輕碰了你一下，像在說「我在」。",
+  "你發現牠悄悄把好走的那一側讓給了你。",
+  "牠停下來等你，等你到了，才又邁開步子。"
+];
+
 /**
  * 結算一次節點探索。純函數：回傳 patch 與事件，不直接改 state。
  * @returns {{ statePatch, message, memoryObject|null, encounter|null }}
@@ -48,14 +56,14 @@ export function resolveExplorationEvent(state, node, { now = Date.now(), rng = M
     memoryObject = {
       id: `emem_${now}_explore`,
       theme: calmDict.theme,
-      label: "霧潮邊的安靜",
+      label: `${node.label?.zh || "湖畔"}的安靜`,
       emotion: calmDict.key,
       intensity: 0.4,
       symbol: calmDict.symbol,
       place: calmDict.place,
       status: "fresh",
       source: "exploration",
-      excerpt: "在霧潮河岸，你看著潮水安靜下來。",
+      excerpt: node.reflectiveExcerpt || "你在這裡，看著一切慢慢靜下來。",
       createdAt: now,
       lastUpdatedAt: now,
       isVisibleInHabitat: true
@@ -71,6 +79,12 @@ export function resolveExplorationEvent(state, node, { now = Date.now(), rng = M
     if (node.eventType !== "danger") {
       message = `${message}\n——不遠處傳來不對勁的聲音，有什麼正在靠近。`;
     }
+  }
+
+  // A4：關係夠深（bond ≥ 45）且非遭遇/危險時，探索多一句夥伴主動的溫柔舉動。
+  const bond = state.bond || 0;
+  if (!encounter && node.eventType !== "danger" && bond >= 45) {
+    message = `${message}\n${HIGH_BOND_FLOURISH[Math.floor(rng() * HIGH_BOND_FLOURISH.length)] || HIGH_BOND_FLOURISH[0]}`;
   }
 
   return { statePatch, message, memoryObject, encounter };

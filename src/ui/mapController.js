@@ -16,7 +16,8 @@ const NODE_LAYOUT = {
   starwood_trail: { x: 22, y: 57, tone: "calm", glyph: "✶" },
   misttide_shore: { x: 78, y: 61, tone: "calm", glyph: "≋" },
   crystal_ruins: { x: 28, y: 24, tone: "discovery", glyph: "◇" },
-  rift_observatory: { x: 74, y: 15, tone: "danger", glyph: "✕" }
+  rift_observatory: { x: 74, y: 15, tone: "danger", glyph: "✕" },
+  mirror_hollow: { x: 50, y: 42, tone: "calm", glyph: "☽" }
 };
 
 // 光路：靈魂連線（從營地往外延伸，再延伸到外圈）。
@@ -24,7 +25,8 @@ const PATH_LINKS = [
   { from: "moonlake_camp", to: "starwood_trail" },
   { from: "moonlake_camp", to: "misttide_shore" },
   { from: "starwood_trail", to: "crystal_ruins" },
-  { from: "misttide_shore", to: "rift_observatory", danger: true }
+  { from: "misttide_shore", to: "rift_observatory", danger: true },
+  { from: "moonlake_camp", to: "mirror_hollow" }
 ];
 
 const VIEWBOX_W = 100;

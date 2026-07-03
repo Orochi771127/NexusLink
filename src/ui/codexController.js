@@ -104,7 +104,8 @@ export function createCodexController({ store, panelManager }) {
     if (!bodyEl) return;
     const companion = getCompanionById(companionId);
     const state = store.getState();
-    const wins = state.battleRecord?.wins || 0;
+    // 演化由「關係」推進，不由勝負（契約：不打怪 farm）。
+    const bond = state.bond || 0;
     const elementLabel = ELEMENT_LABELS[companion.element];
     const accent = ELEMENT_ACCENTS[companion.element] || ELEMENT_ACCENTS.neutral;
 
@@ -156,7 +157,7 @@ export function createCodexController({ store, panelManager }) {
 
     const evolutionSection = document.createElement("section");
     evolutionSection.innerHTML = `<h4 class="codex-section-title">進化線 ・ Evolution Line</h4>`;
-    evolutionSection.appendChild(buildEvolutionStrip(companion, wins));
+    evolutionSection.appendChild(buildEvolutionStrip(companion, bond));
     detail.appendChild(evolutionSection);
 
     const lore = document.createElement("p");
@@ -246,7 +247,7 @@ export function createCodexController({ store, panelManager }) {
     bodyEl.appendChild(detail);
   }
 
-  function buildEvolutionStrip(companion, wins) {
+  function buildEvolutionStrip(companion, bond) {
     const strip = document.createElement("div");
     strip.className = "codex-evolution-strip";
     const line = getEvolutionLine(companion.evolutionLineId);
@@ -257,7 +258,7 @@ export function createCodexController({ store, panelManager }) {
     }
 
     line.stages.forEach((stage, index) => {
-      const isUnlocked = wins >= (stage.unlockWins || 0);
+      const isUnlocked = bond >= (stage.bondThreshold || 0);
       const chip = document.createElement("div");
       chip.className = `codex-stage-chip${isUnlocked ? "" : " is-locked"}`;
       chip.innerHTML = `

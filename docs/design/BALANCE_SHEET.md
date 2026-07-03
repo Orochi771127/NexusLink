@@ -172,9 +172,10 @@ pulseBonus           = 1 + clamp(dev(power)×0.004, −0.12, 0.18)
 | starwood_trail 星林步道 | peaceful | 0.15 | static_wisp | bond +2, mood warm |
 | crystal_ruins 晶岩遺跡 | discovery | 0.35 | crystal_golemite, static_wisp | trust +2, bond +1 |
 | misttide_shore 霧潮河岸 | reflective | 0.10 | static_wisp | energy +1, mood calm（掛記憶種子） |
-| rift_observatory 裂隙觀測點 | danger | 1.00 | 五情緒隨機 | trust +3 |
+| rift_observatory 裂隙觀測點 | danger | 1.00 | 五情緒隨機（10 隻池） | trust +3 |
+| mirror_hollow 湖心倒影 | reflective | 0.08 | tearveil_wisp | trust +1, mood calm（掛記憶種子） |
 
-> 缺口：僅 5 節點、單一月湖區。roadmap A4 在區內加 2–4 節點、節點狀態隨 bond/記憶回應；**不擴世界地圖、不做每日派遣**。
+> A4 已做：6 節點（單一月湖區）；每節點 result 訊息加厚到 4–5 句；reflective 記憶改為**節點感知**（label/excerpt 依節點，見 `explorationEngine`）；`bond ≥ 45` 時非危險節點多一句夥伴主動舉動（`HIGH_BOND_FLOURISH`）。**不擴世界地圖、不做每日派遣**。
 
 ---
 
@@ -189,6 +190,18 @@ pulseBonus           = 1 + clamp(dev(power)×0.004, −0.12, 0.18)
 | bond_milestone_5 | 4 | 90 | 不滅的湖光 |
 
 里程碑記憶：`emotion=gratitude`、`intensity=0.9`、`symbol=bond_rune`、`place=magic_circle`。一次綻放一階、只增不減（契約一）。五元守護有各自 tone 台詞（`MILESTONE_LINES_BY_TONE`）。
+
+### 5.1 演化線（`src/data/evolutionLines.js`，A5 已填充）
+
+六條線各 3 階（幼年→成長→成熟）。**解鎖由羈絆推進、不由勝負**（契約：不打怪 farm）——`codexController` 以 `bondThreshold` 判定（已移除 `unlockWins`）：
+
+| 階 | bondThreshold | 對齊里程碑 |
+|---|---|---|
+| 幼年期 | 0 | 一開始即見 |
+| 成長期 | 25 | 信任萌芽 |
+| 成熟期 | 70 | 並肩 |
+
+> 鎖住階顯示 `unlockHint`（關係/儀式語言，明文不寫「打贏 N 場」）；解鎖階顯示 `lore`。完全體/究極體留待未來章節。
 
 ---
 

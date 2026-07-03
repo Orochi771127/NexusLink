@@ -58,6 +58,20 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-07-04 - Claude Opus 4.8 - Content line fill: Soul Talk (A2) + exploration (A4) + evolution lines (A5)
+
+- Status: `VERIFIED` (data/logic, deterministic) — committed + pushed to origin/main per standing instruction
+- Branch / commit: `main` / pushed (see git log)
+- Scope: EXPERIENCE + data/content. Files: `src/data/emotionDictionary.js`, `src/data/soulTalkResponsePacks.js` (A2); `src/data/explorationNodes.js`, `src/engine/explorationEngine.js`, `src/ui/mapController.js` (A4); `src/data/evolutionLines.js`, `src/ui/codexController.js` (A5); `docs/design/BALANCE_SHEET.md` (§4, §5.1). NO index.html / save schema / Pixi core / GROUNDWORK.
+- Work performed:
+  1. A2: +6–8 nuanced emotion keywords per emotion (avoiding the safety-shield caution words 消失/撐不住了/沒有意義, which are handled first — red line 7); Soul Talk RESPONSE_PACKS expanded 2 → 4 variants per (emotion × bond-tier) slot = 84 lines, matching the sparse/evocative habitat voice so the constitution/generic critics don't flag them.
+  2. A4: existing node result lines thickened to 4–5 each; reflective memory is now node-aware (label `${node.label.zh}的安靜`, `node.reflectiveExcerpt`) instead of hardcoded misttide; new node `mirror_hollow` 湖心倒影 (reflective) + map layout/path; `bond ≥ 45` appends a warm companion flourish (HIGH_BOND_FLOURISH) on non-danger nodes.
+  3. A5: all 6 evolution lines filled to 3 relationship-driven stages (幼年→成長→成熟) with lore; **removed battle-farm gating** — codex now gates on `bondThreshold` (0/25/70, aligned to milestones) instead of `unlockWins`; locked stages show relationship/ritual `unlockHint`, never "win N battles".
+- Verification: bundled codex node content smoke test **18/18 PASS** (7 emotions + new keywords; all packs ≥4 variants; 6 lines ×3 stages, bond 25/70, no `unlockWins`; 6 nodes incl. mirror_hollow; node-aware reflective memory label/excerpt; high-bond flourish appended at bond≥45, absent below). `node --check` PASS on all 7 files. Data modules import + run cleanly under Node.
+- Problems / risks: Content-only + a bond-gated engine branch (no combat/save changes). `mirror_hollow` map node placed at (50,42) — a central free gap; **map placement not eyeballed in browser** (preview boot transient this session), so confirm it doesn't visually crowd paths on a real device. Soul Talk lines are TC-only by design. Evolution higher forms (perfect/ultimate) intentionally deferred.
+- Next safe action: Human eyeballs the new map node + reads a few new Soul Talk lines / codex evolution on a live build. Remaining roadmap: Initial Bond / chapter / monetization are separate GROUNDWORK gates.
+- Required reading: this entry, `docs/design/BALANCE_SHEET.md` §4 + §5.1, `src/data/evolutionLines.js`, `src/engine/explorationEngine.js`.
+
 ### 2026-07-03 - Claude Opus 4.8 - Phase 2 combat: action economy (B3) + juice (B4) + enemy roster (A3)
 
 - Status: `VERIFIED` (engine/data, deterministic) / battle-modal browser E2E BLOCKED by preview transient — committed + pushed to origin/main per standing instruction
