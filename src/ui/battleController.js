@@ -92,6 +92,10 @@ export function createBattleController({ store, panelManager, soulTalkController
   let removeCloseGuard = null;
   let renderedLogCount = 0;
   let lastOutcome = null;
+  // B4 juice：追蹤上一次的值，偵測變化播一次性視覺回饋。
+  let prevNoise = null;
+  let prevStability = null;
+  let prevShards = null;
 
   // UI 不直接碰 Pixi：所有動畫回饋只透過 EventBus 發送 intent，由 app/Pixi bridge 接。
   function emitBattleAnimationIntent(intent, meta = {}) {
@@ -122,6 +126,9 @@ export function createBattleController({ store, panelManager, soulTalkController
     session = createStandoffSession({ companion, enemyId, nodeId, state });
     renderedLogCount = 0;
     lastOutcome = null;
+    prevNoise = null;
+    prevStability = null;
+    prevShards = null;
     if (logEl) logEl.innerHTML = "";
 
     const node = getExplorationNodeById(nodeId);
@@ -263,6 +270,19 @@ export function createBattleController({ store, panelManager, soulTalkController
       shardsEl.classList.toggle("is-glowing", session.shards >= SHARD_GOAL - 1);
     }
 
+    // B4 juice：雜訊放輕→柔光一閃；心核被撞→晃動（重擊更晃）；回收微光→晶光爆閃。
+    if (!prefersBattleReducedMotion()) {
+      if (prevNoise !== null && session.noise.current < prevNoise) flashOnce(noiseFillEl, "fx-soothe", 500);
+      if (prevStability !== null && session.stability.current < prevStability) {
+        const drop = prevStability - session.stability.current;
+        flashOnce(stabilityFillEl, drop >= 6 ? "fx-shake-strong" : "fx-shake", drop >= 6 ? 380 : 260);
+      }
+      if (prevShards !== null && session.shards > prevShards) flashOnce(shardsEl, "fx-burst", 700);
+    }
+    prevNoise = session.noise.current;
+    prevStability = session.stability.current;
+    prevShards = session.shards;
+
     if (logEl) {
       for (let index = renderedLogCount; index < session.log.length; index += 1) {
         const entry = session.log[index];
@@ -318,7 +338,27 @@ function injectTelegraphStyles() {
     '.standoff-telegraph[data-tone="warn"] .tel-label{color:#ffe08a}',
     '.standoff-telegraph[data-tone="danger"]{border-color:rgba(255,150,150,.45);box-shadow:0 0 16px rgba(255,120,120,.16)}',
     '.standoff-telegraph[data-tone="danger"] .tel-label{color:#ff9a9a}',
-    '.standoff-telegraph[data-tone="calm"]{border-color:rgba(138,217,255,.3)}'
+    '.standoff-telegraph[data-tone="calm"]{border-color:rgba(138,217,255,.3)}',
+    "@keyframes fx-soothe{0%{filter:brightness(1)}50%{filter:brightness(1.7)}100%{filter:brightness(1)}}",
+    ".standoff-fill.fx-soothe{animation:fx-soothe 500ms ease-out}",
+    "@keyframes fx-shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-2px)}75%{transform:translateX(2px)}}",
+    ".standoff-fill.fx-shake{animation:fx-shake 260ms ease-in-out}",
+    "@keyframes fx-shake-strong{0%,100%{transform:translateX(0)}20%{transform:translateX(-4px)}40%{transform:translateX(3px)}60%{transform:translateX(-3px)}80%{transform:translateX(2px)}}",
+    ".standoff-fill.fx-shake-strong{animation:fx-shake-strong 380ms ease-in-out}",
+    "@keyframes fx-burst{0%{transform:scale(1)}40%{transform:scale(1.35);filter:brightness(1.8)}100%{transform:scale(1)}}",
+    "#standoff-shards.fx-burst{display:inline-block;animation:fx-burst 700ms ease-out}"
   ].join("");
   document.head.appendChild(style);
+}
+
+function prefersBattleReducedMotion() {
+  return typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+}
+
+function flashOnce(el, className, ms = 500) {
+  if (!el) return;
+  el.classList.remove(className);
+  void el.offsetWidth; // 重啟一次性動畫
+  el.classList.add(className);
+  window.setTimeout(() => el.classList.remove(className), ms);
 }

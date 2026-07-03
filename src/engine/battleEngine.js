@@ -135,6 +135,12 @@ function getRiftPhase(session) {
 function pickRiftIntent(session, rng = Math.random) {
   const weights = { ...PHASE_INTENT_WEIGHTS[getRiftPhase(session)] };
   weights.lull += (session?.enemyLullChance || 0) * 0.4; // 高「暫歇率」裂隙更常觀察
+  const bias = session?.intentBias || null; // 各敵人原型的意圖傾向（A3）
+  if (bias) {
+    weights.surge = Math.max(0, weights.surge + (bias.surge || 0));
+    weights.gather = Math.max(0, weights.gather + (bias.gather || 0));
+    weights.lull = Math.max(0, weights.lull + (bias.lull || 0));
+  }
   const total = weights.surge + weights.gather + weights.lull;
   let roll = rng() * total;
   if ((roll -= weights.surge) < 0) return "surge";
@@ -180,6 +186,7 @@ export function createStandoffSession({ companion, enemyId, nodeId, state, now =
     enemyName: enemy.name.zh,
     enemySurge: enemy.attack,
     enemyLullChance: enemy.guardChance,
+    intentBias: enemy.intentBias || null,
     // 裂隙心相
     riftEmotion: affinity.emotion,
     riftEmotionLabelZh: affinity.labelZh,
@@ -262,7 +269,10 @@ export function applyPlayerAction(session, actionId, rng = Math.random) {
 
     const flavor = RESONANCE_FLAVOR[next.emblem] || { name: "情感共鳴", line: "你們的節奏疊在一起，雜訊低了下去。" };
     const attuneTag = next.affinityTier === "attuned" ? "・心相共鳴" : "";
-    if (next.shards < SHARD_GOAL) {
+    // B3：記憶微光只在「進入節奏」（同步 ≥ 3）時才接得住——讓 recovered 成為
+    // 一條刻意的路線（養同步、少脈衝），和 stabilized（把雜訊清零）明確分開。
+    const inRhythm = next.sync >= 3;
+    if (inRhythm && next.shards < SHARD_GOAL) {
       next.shards += 1;
       next.log.push({
         kind: "player",
@@ -270,6 +280,9 @@ export function applyPlayerAction(session, actionId, rng = Math.random) {
       });
     } else {
       next.log.push({ kind: "player", text: `${flavor.name}${attuneTag}——${flavor.line}（雜訊 -${quieted}）` });
+      if (!inRhythm && next.shards < SHARD_GOAL) {
+        next.log.push({ kind: "system", text: "同步還不夠穩——養起節奏（設界／持續共鳴、少用脈衝），才接得住記憶微光。" });
+      }
     }
     if (tired) {
       next.log.push({ kind: "system", text: "牠的呼吸有點亂了。也許該立個邊界，或者先離開。" });

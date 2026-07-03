@@ -21,7 +21,7 @@ export const EXPLORATION_NODES = [
     eventType: "peaceful",
     emotionalTone: "wonder",
     encounterChance: 0.15,
-    enemyPool: ["static_wisp"],
+    enemyPool: ["static_wisp", "tearveil_wisp"],
     possibleRewards: [{ stat: "bond", delta: 2 }, { stat: "mood", value: "warm" }],
     resultMessages: [
       "一顆星晶從枝頭落下，夥伴用鼻尖碰了碰它。",
@@ -36,7 +36,7 @@ export const EXPLORATION_NODES = [
     eventType: "discovery",
     emotionalTone: "mystery",
     encounterChance: 0.35,
-    enemyPool: ["crystal_golemite", "static_wisp"],
+    enemyPool: ["crystal_golemite", "static_wisp", "dread_coil"],
     possibleRewards: [{ stat: "trust", delta: 2 }, { stat: "bond", delta: 1 }],
     resultMessages: [
       "你們在一根晶柱底下找到一塊溫熱的記憶碎片。",
@@ -51,7 +51,7 @@ export const EXPLORATION_NODES = [
     eventType: "reflective",
     emotionalTone: "calm",
     encounterChance: 0.1,
-    enemyPool: ["static_wisp"],
+    enemyPool: ["static_wisp", "drift_murmur"],
     possibleRewards: [{ stat: "energy", delta: 1 }, { stat: "mood", value: "calm" }],
     resultMessages: [
       "霧氣裡，你看見水面映出自己安靜下來的樣子。",
@@ -67,7 +67,7 @@ export const EXPLORATION_NODES = [
     emotionalTone: "dread",
     encounterChance: 1,
     // 每次裂隙隨機呈現一種情緒（五行各一）；帶對的元素守護來會更契合（見 battleEngine 裂隙心相）。
-    enemyPool: ["rift_shade", "crystal_golemite", "weary_husk", "hollow_echo", "static_wisp"],
+    enemyPool: ["rift_shade", "crystal_golemite", "weary_husk", "hollow_echo", "static_wisp", "tearveil_wisp", "sink_weight", "spite_ember", "drift_murmur", "dread_coil"],
     possibleRewards: [{ stat: "trust", delta: 3 }],
     resultMessages: [
       "裂隙邊緣的空氣在發出細小的雜訊聲——有東西過來了。"

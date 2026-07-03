@@ -58,6 +58,20 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-07-03 - Claude Opus 4.8 - Phase 2 combat: action economy (B3) + juice (B4) + enemy roster (A3)
+
+- Status: `VERIFIED` (engine/data, deterministic) / battle-modal browser E2E BLOCKED by preview transient — committed + pushed to origin/main per standing instruction
+- Branch / commit: `main` / pushed (see git log)
+- Scope: EXPERIENCE + data. Files: `src/data/enemyRegistry.js` (A3), `src/data/explorationNodes.js` (A3 pools), `src/engine/battleEngine.js` (intentBias + B3), `src/ui/battleController.js` (B4), `docs/design/BALANCE_SHEET.md` (§2.2, §3). NO index.html / save schema / Pixi core / GROUNDWORK.
+- Work performed:
+  1. A3 roster: 5 → 10 enemies (five rift emotions ×2), each a distinct archetype with an `intentBias` that nudges the phase intent weights (e.g., spite_ember surge+, drift_murmur/sink_weight lull+, dread_coil gather+). Wired new enemies into exploration node pools (starwood/crystal_ruins/misttide + all 5 into rift_observatory). Engine `pickRiftIntent` now reads `session.intentBias`.
+  2. B3 economy: `resonance` recovers a memory shard ONLY when `sync >= 3` ("in rhythm"), splitting recovered (build sync, avoid pulse) from stabilized (spend pulse to zero noise) into two deliberate playstyles; adds a legibility hint when sync is too low.
+  3. B4 juice: battleController one-shot visual feedback (noise→soothe brightness flash, stability→shake with a stronger variant for hits ≥6, shard→burst), reduced-motion aware, styles self-injected (no base styles.css edit).
+- Verification: bundled codex node deterministic engine test **18/18 PASS** (adds: dread_coil loaded + intentBias carried; resonance +1 sync; no shard when sync<3; shard collected when sync>=3). `node --check` PASS on all 4 files. Data modules import + run cleanly under Node. Preview boots and renders home with no console/server errors (my data changes don't break boot — screenshot confirms).
+- Problems / risks: **Battle-modal in-browser E2E again NOT completed** — the preview session's companion async-load hangs on "載入中" (nav wiring never activates); no failed network / no console error, so it's an environment transient (Pixi/asset load in the sandbox), not a code defect (same class as the prior Phase 2 entry). B4 juice + telegraph render + B3 shard-hint still need a **manual playthrough gate** (Explore → star map → 裂隙觀測點, play a standoff). B3 shard-gating tuning (sync≥3) is a first pass and may want live-feel adjustment.
+- Next safe action: Human plays a standoff on the live/preview build to confirm telegraph + juice + the two win-paths feel right. Roadmap remaining: content (A2 Soul Talk depth, A4 exploration, A5 evolution lines); Initial Bond is a separate GROUNDWORK gate.
+- Required reading: this entry, `src/engine/battleEngine.js`, `src/data/enemyRegistry.js`, `docs/design/BALANCE_SHEET.md` §2.1–2.2 + §3.
+
 ### 2026-07-03 - Claude Opus 4.8 - Phase 2 combat deepening: rift telegraph + phases (B1/B2)
 
 - Status: `VERIFIED` (engine, deterministic) / browser E2E BLOCKED by preview transient (see risks) — committed + pushed to origin/main per standing instruction

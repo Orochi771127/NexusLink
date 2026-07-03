@@ -133,6 +133,14 @@ pulseBonus           = 1 + clamp(dev(power)×0.004, −0.12, 0.18)
 - **意圖效果**：`surge` 湧動＝扣穩定（邊界每層減 25%）；`gather` 蓄能＝這拍不扣、設 `charged`，**下一次 surge ×1.5**（telegraph 標「蓄勢」danger 色）；`lull` 暫歇＝不扣、可安心共鳴回收微光。
 - 全程仍非懲罰、撤退永遠有效；深度來自可讀性與節奏，非傷害膨脹。
 
+### 2.2 記憶微光的節奏門檻（B3）+ 手感（B4）
+
+- **B3**：`resonance` 回收記憶微光（shard）只在 **`sync ≥ 3`（進入節奏）** 時發生。這讓兩條收束路線明確分開：
+  - `stabilized`＝把 noise 清零（多用 `pulse`，但 pulse 耗 2 sync、會打斷節奏）。
+  - `recovered`＝集滿 3 微光（養 sync、少 pulse、持續 `resonance`／`barrier`）。
+  同步不足時共鳴會提示「養起節奏才接得住微光」。
+- **B4 手感**（`battleController.js` 一次性視覺，尊重 reduced-motion）：雜訊放輕→noise 條柔光一閃；心核被撞→stability 條晃動（單次掉 ≥6 更晃）；回收微光→shard 晶光爆閃。
+
 ---
 
 ## 3. 敵人（裂殘影）（`src/data/enemyRegistry.js`）
@@ -143,9 +151,16 @@ pulseBonus           = 1 + clamp(dev(power)×0.004, −0.12, 0.18)
 | weary_husk 倦怠殘殼 | fatigue | 32 | 5 | 0.25 |
 | crystal_golemite 晶屑魔像 | anger | 38 | 6 | 0.30 |
 | hollow_echo 空鳴回響 | loneliness | 42 | 7 | 0.18 |
-| rift_shade 裂隙暗影 | anxiety | 46 | 8 | 0.20 |
+| rift_shade 裂隙暗影 | anxiety | 46 | 8 | 0.20 | — |
+| tearveil_wisp 淚幕殘影 | sadness | 22 | 3 | 0.22 | lull +0.15（溫和易安撫） |
+| sink_weight 沉墜殘殼 | fatigue | 52 | 4 | 0.30 | surge −0.15 / lull +0.2（沉重多歇） |
+| spite_ember 慍火殘影 | anger | 40 | 9 | 0.12 | surge +0.2 / lull −0.1（一點就炸） |
+| drift_murmur 飄鳴回響 | loneliness | 44 | 6 | 0.28 | lull +0.2（常停下等回應） |
+| dread_coil 纏懼暗影 | anxiety | 48 | 7 | 0.18 | gather +0.25（纏緊後重擊） |
 
-> 缺口：僅 5 隻、皆單相位、五情緒各 1。roadmap A3 擴到 ~10 並補「意圖/相位」欄位（B1/B2）。`maxHp/attack` 命名底層仍是 HP 形狀（B5 可選：改名 `noiseDensity/surge`）。
+（表頭第 6 欄＝`intentBias`：加到相位意圖權重上的傾向，見 §2.1。）
+
+> 現況（A3 已做）：10 隻、五情緒各 2、各具原型與 intentBias。`maxHp/attack` 命名底層仍是 HP 形狀（B5 可選：改名 `noiseDensity/surge`）。
 
 ---
 
