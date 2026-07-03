@@ -74,43 +74,69 @@
       "profileDraft": "profile-draft-v2.json",
       "promptLog": "v2/prompts/moonlake_v2_generation_prompts.md",
       "notes": "Fixes the target canvas and lower composition, but does not pass the updated art lock: sky bakes the moon, material/lighting is too painterly, and the lake-water layer has a visible hard color band."
+    },
+    {
+      "id": "v3",
+      "status": "keep_for_human_review_not_runtime_ready",
+      "actualSceneLayerSize": {
+        "width": 1080,
+        "height": 1920
+      },
+      "preview": "v3/layered-preview-v3.png",
+      "profileDraft": "profile-draft-v3.json",
+      "promptLog": "v3/prompts/moonlake_v3_generation_prompts.md",
+      "notes": "Improves material response, lighting, platform readability, and celestial separation. Still not runtime-ready because lake-water edge cleanup, human approval, and reference audit are pending."
     }
   ],
   "layers": [
     {
-      "id": "sky",
-      "path": "v2/layers/moonlake_v2_sky.png",
+      "id": "sky_atmosphere",
+      "path": "v3/layers/moonlake_v3_sky_atmosphere.png",
       "classification": "foundation_layer",
-      "decision": "regenerate",
-      "reason": "Bakes the moon into the sky and conflicts with the runtime celestial arc contract. Future layer must be sky_atmosphere only."
+      "decision": "keep_for_review",
+      "reason": "Target-size sky atmosphere layer separated from runtime celestial bodies. Review for any unwanted stars before promotion."
+    },
+    {
+      "id": "celestial_bodies",
+      "path": "v3/layers/moonlake_v3_celestial_bodies.png",
+      "classification": "celestial_layer",
+      "decision": "keep_for_review",
+      "reason": "Moon, sun, and sparse star candidates are separated from sky_atmosphere and can be profile-positioned or cropped in a later runtime task."
+    },
+    {
+      "id": "celestial_occlusion",
+      "path": "v3/layers/moonlake_v3_celestial_occlusion.png",
+      "classification": "celestial_occlusion",
+      "decision": "keep_for_review",
+      "reason": "Upper cloud/canopy/cliff-edge occlusion candidate for passing in front of runtime celestial bodies."
     },
     {
       "id": "mountains",
-      "path": "v2/layers/moonlake_v2_mountains.png",
+      "path": "v3/layers/moonlake_v3_mountains.png",
       "classification": "foundation_layer",
-      "decision": "regenerate_for_realism_pass",
-      "reason": "Composition is usable, but cliffs/waterfalls need more realistic material depth, lighting, and atmospheric perspective."
+      "decision": "keep_for_review",
+      "reason": "Target-size cliffs and waterfalls layer with stronger semi-realistic material depth and lighting."
     },
     {
       "id": "lake_water",
-      "path": "v2/layers/moonlake_v2_lake_water.png",
+      "path": "v3/layers/moonlake_v3_lake_water.png",
       "classification": "foundation_layer",
-      "decision": "regenerate",
-      "reason": "Target-size water plane improves canvas fit, but visual self-review found a hard color band and the water needs more realistic reflection/ripple structure."
+      "decision": "regenerate_or_manual_cleanup",
+      "reason": "Water material is more realistic than V2, but the edge still needs cleanup before runtime promotion. A green-key retry was rejected due to visible green spill."
     },
     {
       "id": "shore_ground_platform",
-      "path": "v2/layers/moonlake_v2_shore_ground_platform.png",
+      "path": "v3/layers/moonlake_v3_shore_ground_platform.png",
       "classification": "foundation_layer",
-      "decision": "regenerate_for_realism_pass",
-      "reason": "Target-size shore/platform layer fixes the previous lower empty-area issue, but stone material, wetness, and contact lighting need the semi-realistic pass."
+      "decision": "keep_for_review",
+      "reason": "Strong target-size platform candidate with wet stone material, contact shadows, and clear companion floor."
     },
     {
       "id": "foreground_occlusion",
-      "path": "v2/layers/moonlake_v2_foreground_occlusion.png",
+      "path": "v3/layers/moonlake_v3_foreground_occlusion.png",
       "classification": "foreground_occlusion",
-      "decision": "regenerate_for_realism_pass",
-      "reason": "Composition is usable, but foliage/stone material and lighting need the semi-realistic pass."
+      "decision": "keep_for_review",
+      "reason": "Material and lighting are improved; review density and companion-foot occlusion before approval."
     }
   ],
   "props": [
@@ -167,9 +193,10 @@
     "promptMetadataPresent": true,
     "acceptedSetHasNoRejectedFilename": true,
     "visualSpotCheckComplete": true,
-    "celestialSeparationPass": false,
-    "materialLightingRealismPass": false,
+    "celestialSeparationPass": true,
+    "materialLightingRealismPass": true,
+    "lakeEdgeCleanupPass": false,
     "runtimeReady": false
   },
-  "nextAction": "Regenerate Moonlake from V2 composition only, using semi-realistic material/lighting prompts and separate sky_atmosphere/celestial_bodies layers. Do not runtime-promote V2."
+  "nextAction": "Human visual review of V3 direction and layered preview. If direction is accepted, clean or regenerate only lake_water edge before any GROUNDWORK runtime promotion."
 }

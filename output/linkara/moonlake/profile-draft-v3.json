@@ -1,0 +1,195 @@
+{
+  "id": "ethereal_moon_lakefront",
+  "label": "Ethereal Moon Lakefront",
+  "version": 3,
+  "artSize": {
+    "width": 1080,
+    "height": 1920
+  },
+  "sourceNote": "TP-HAB-AUTO-3 generated semi-realistic material/lighting layer draft. Staging only; not runtime-integrated.",
+  "displayContract": {
+    "safeViewport": {
+      "width": 390,
+      "height": 844
+    },
+    "coverMode": "cover-height",
+    "coverScaleAt390x844": 0.439583,
+    "cropCssPxAt390x844": {
+      "left": 42.38,
+      "right": 42.38,
+      "top": 0,
+      "bottom": 0
+    },
+    "visibleArtXRangeAt390x844": [
+      0.089,
+      0.911
+    ]
+  },
+  "layers": [
+    "v3/layers/moonlake_v3_sky_atmosphere.png",
+    "v3/layers/moonlake_v3_celestial_bodies.png",
+    "v3/layers/moonlake_v3_celestial_occlusion.png",
+    "v3/layers/moonlake_v3_mountains.png",
+    "v3/layers/moonlake_v3_lake_water.png",
+    "v3/layers/moonlake_v3_shore_ground_platform.png",
+    "v3/layers/moonlake_v3_foreground_occlusion.png"
+  ],
+  "preview": "v3/layered-preview-v3.png",
+  "reference": "v3/reference/moonlake_v3_direction_preview_1080x1920.png",
+  "companion": {
+    "anchor": {
+      "x": 0.5,
+      "y": 0.7
+    },
+    "reservedRect": {
+      "x": 0.38,
+      "y": 0.49,
+      "w": 0.24,
+      "h": 0.25
+    }
+  },
+  "celestial": {
+    "enabled": true,
+    "anchor": "art-space",
+    "mode": "sharedHorizonArc",
+    "xRange": [
+      0.12,
+      0.88
+    ],
+    "yRange": [
+      0.12,
+      0.42
+    ],
+    "twilightMinutes": 45,
+    "sourceLayer": "v3/layers/moonlake_v3_celestial_bodies.png",
+    "occlusionLayer": "v3/layers/moonlake_v3_celestial_occlusion.png"
+  },
+  "ui": {
+    "extraForbidden": [
+      {
+        "id": "hud_top_static",
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 1,
+          "h": 0.12
+        }
+      },
+      {
+        "id": "bottom_nav_static",
+        "rect": {
+          "x": 0,
+          "y": 0.8,
+          "w": 1,
+          "h": 0.2
+        }
+      }
+    ]
+  },
+  "zones": {
+    "water": [
+      {
+        "id": "lake_main",
+        "rect": {
+          "x": 0.12,
+          "y": 0.38,
+          "w": 0.76,
+          "h": 0.24
+        },
+        "allowedTraceKinds": [
+          "ripple",
+          "blue_lantern",
+          "mist",
+          "glow"
+        ],
+        "maxTraces": 5
+      },
+      {
+        "id": "lake_near_edge",
+        "rect": {
+          "x": 0.24,
+          "y": 0.56,
+          "w": 0.52,
+          "h": 0.06
+        },
+        "allowedTraceKinds": [
+          "ripple",
+          "mist"
+        ],
+        "maxTraces": 3
+      }
+    ],
+    "ground": [
+      {
+        "id": "stone_platform",
+        "rect": {
+          "x": 0.24,
+          "y": 0.62,
+          "w": 0.52,
+          "h": 0.14
+        },
+        "allowedTraceKinds": [
+          "golden_rune",
+          "repaired_light",
+          "boundary"
+        ],
+        "maxTraces": 4
+      },
+      {
+        "id": "shore_left",
+        "rect": {
+          "x": 0.08,
+          "y": 0.66,
+          "w": 0.2,
+          "h": 0.12
+        },
+        "maxTraces": 2
+      },
+      {
+        "id": "shore_right",
+        "rect": {
+          "x": 0.72,
+          "y": 0.66,
+          "w": 0.2,
+          "h": 0.12
+        },
+        "maxTraces": 2
+      }
+    ],
+    "forbidden": [
+      {
+        "id": "companion_reserved",
+        "rect": {
+          "x": 0.38,
+          "y": 0.49,
+          "w": 0.24,
+          "h": 0.25
+        }
+      },
+      {
+        "id": "foreground_occlusion_max_band",
+        "rect": {
+          "x": 0,
+          "y": 0.73,
+          "w": 1,
+          "h": 0.07
+        }
+      }
+    ]
+  },
+  "qa": {
+    "visualSelfReview": "V3 passes the semi-realistic material/lighting direction and celestial separation direction. Lake-water edge still needs cleanup before runtime promotion; green-key lake retry was rejected due visible green spill.",
+    "runtimeBlockers": [
+      "humanApproved is false",
+      "referenceAuditPassed is false",
+      "lake edge requires cleanup or regeneration",
+      "foreground occlusion density needs companion-foot review",
+      "not copied to assets and not referenced by runtime"
+    ]
+  },
+  "status": {
+    "runtimeIntegrated": false,
+    "humanApproved": false,
+    "referenceAuditPassed": false
+  }
+}

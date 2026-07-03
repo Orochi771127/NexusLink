@@ -1294,6 +1294,18 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Next safe action: Run a new Moonlake semi-realistic regeneration pass: `sky_atmosphere`, `celestial_bodies`, `celestial_occlusion`, `mountains`, `lake_water`, `shore_ground_platform`, and `foreground_occlusion`, with material/light realism and art-space profile constraints in the prompts.
 - Required reading: `docs/assets/LINKARA_HABITAT_LAYERING_AND_VISUAL_LOCKS.md`, `docs/assets/HABITAT_AUTOMATION_WORKFLOW.md`, `output/linkara/moonlake/readiness-report.md`, `output/linkara/moonlake/profile-draft-v2.json`, `output/linkara/moonlake/habitat-job.json`, `AGENTS.md`, `CLAUDE.md`, `ACCEPTANCE.md`, and this lane.
 
+### 2026-07-03 - Codex - Moonlake V3 Semi-Realistic Layer Staging
+
+- Lane: `Game Art, UI, And Visual Production`
+- Status: `VERIFIED`
+- Branch / commit: `main` / pending scoped staging commit for this package.
+- Scope: Ran the Moonlake V3 generation-only pass under `output/linkara/moonlake/v3/`. No `assets/**`, `src/**`, `pixiApp.js`, `assetManifest.js`, save schema, `scripts/**`, `tools/**`, package/dependency, scene switching, or runtime wiring changed.
+- Work performed: Generated a V3 semi-realistic direction preview, separated `sky_atmosphere`, `celestial_bodies`, `celestial_occlusion`, `mountains`, `lake_water`, `shore_ground_platform`, and `foreground_occlusion`, preserved raw sources, normalized accepted review layers to `1080x1920`, composed `v3/layered-preview-v3.png`, added `profile-draft-v3.json`, updated `habitat-job.json`, rewrote the readiness report, and logged prompts in `v3/prompts/moonlake_v3_generation_prompts.md`.
+- Verification: JSON parse passed for `habitat-job.json`, `profile-draft.json`, `profile-draft-v2.json`, `profile-draft-v3.json`, and the habitat template. PNG readback confirms accepted V3 layers and preview are `1080x1920` and `Format32bppArgb`. Visual self-review confirms V3 improves material response, lighting, celestial separation, and companion-platform readability versus V2.
+- Problems / risks: V3 is still not runtime-ready. The accepted lake layer still needs edge cleanup before promotion; a green-key retry was rejected because it produced visible green spill. Foreground occlusion needs companion-foot/body review. Human approval and reference audit remain false.
+- Next safe action: Human review `output/linkara/moonlake/v3/reference/moonlake_v3_direction_preview_1080x1920.png` and `output/linkara/moonlake/v3/layered-preview-v3.png`. If direction is accepted, run a narrow lake-edge cleanup/regeneration pass only before any GROUNDWORK runtime promotion.
+- Required reading: `output/linkara/moonlake/readiness-report.md`, `output/linkara/moonlake/profile-draft-v3.json`, `output/linkara/moonlake/v3/prompts/moonlake_v3_generation_prompts.md`, `docs/assets/LINKARA_HABITAT_LAYERING_AND_VISUAL_LOCKS.md`, `docs/assets/HABITAT_AUTOMATION_WORKFLOW.md`, `docs/architecture/HABITAT_SCENE_PROFILE_SPEC.md`, `AGENTS.md`, `CLAUDE.md`, `ACCEPTANCE.md`, and this lane.
+
 ### 2026-07-02 - Codex - Next Gameplay Systems Spec Consolidation
 
 - Lane: `Game Engineering And Architecture`
