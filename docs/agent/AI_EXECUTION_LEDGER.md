@@ -1234,6 +1234,30 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Next safe action: Use `docs/assets/LINKARA_HABITAT_LAYERING_AND_VISUAL_LOCKS.md` as the entry document in the next generation window. Start with TP-HAB-1 Moonlake layered art generation and keep generated candidates outside `assets/**` until human visual approval.
 - Required reading: `docs/assets/LINKARA_HABITAT_LAYERING_AND_VISUAL_LOCKS.md`, `docs/architecture/HABITAT_SCENE_PROFILE_SPEC.md`, `assets/backgrounds/linkara/README.md`, `assets/backgrounds/linkara/linkara-map-data.json`, `AGENTS.md`, `CLAUDE.md`, `ACCEPTANCE.md`, and this lane.
 
+### 2026-07-03 - Codex - Habitat Weather And Mood Preset Spec
+
+- Lane: `Game Art, UI, And Visual Production`
+- Status: `VERIFIED`
+- Branch / commit: `main` / uncommitted docs-only package.
+- Scope: Added a docs-only translation spec for turning throwaway weather/lighting demos into Nexus Link habitat presets. No `src/**`, `assets/**`, `pixiApp.js`, `assetManifest.js`, save schema, scene switching, BGM routing, package/dependency, Three.js, React, or runtime wiring changed.
+- Work performed: Added `docs/architecture/HABITAT_WEATHER_MOOD_PRESET_SPEC.md`. The document defines the correct translation model: prototype demos may explore visuals, extraction captures rules, and formal runtime rebuilds approved rules as lightweight PixiJS v8 FX governed by Scene Profile zones. It defines Moonlake-first presets (`clear`, `rain`, `night`, `quiet_after_talk`, `rift_pressure`, `after_repair`), mobile FX budgets, prohibitions against baked-weather backgrounds and FOMO/reward framing, and follow-on TASK_PACKs TP-HAB-WEATHER-0 through TP-HAB-WEATHER-4.
+- Verification: `git diff --check` passed. Scope review confirmed the package is docs-only and keeps weather/mood as habitat atmosphere, not dependency detection, rewards, daily pressure, or a Three.js runtime import.
+- Problems / risks: This is a planning spec only. Any Pixi prototype or Scene Profile integration still needs a separate implementation task and normal GROUNDWORK approval if protected renderer, asset, manifest, or save paths are touched.
+- Next safe action: If implementation is approved, start with TP-HAB-WEATHER-1 for Moonlake only: rain lines, lake ripple, low fog, and wet stone overlay under mobile FPS and companion-readability constraints.
+- Required reading: `docs/architecture/HABITAT_WEATHER_MOOD_PRESET_SPEC.md`, `docs/architecture/HABITAT_SCENE_PROFILE_SPEC.md`, `docs/assets/LINKARA_HABITAT_LAYERING_AND_VISUAL_LOCKS.md`, `AGENTS.md`, `CLAUDE.md`, `ACCEPTANCE.md`, and this lane.
+
+### 2026-07-03 - Codex - Moonlake Layered Art Staging Cleanup
+
+- Lane: `Game Art, UI, And Visual Production`
+- Status: `VERIFIED`
+- Branch / commit: `main` / pending scoped staging commit for this package.
+- Scope: Preserved the Moonlake TP-HAB-1 layered generation output under `output/linkara/moonlake/` as review-only staging, and removed only rejected foreground-occlusion source attempts. No `assets/**`, `src/**`, `pixiApp.js`, `assetManifest.js`, save schema, scene switching, BGM routing, package/dependency, or runtime wiring changed.
+- Work performed: Kept six full-size scene layer candidates, five standalone prop candidates, source/provenance images, prompt notes, preview composites, and `profile-draft.json`. Removed three files whose prompt notes explicitly marked them rejected because they baked too much platform content into foreground occlusion or attempted fake checkerboard transparency.
+- Verification: `profile-draft.json` parses and reports `ethereal_moon_lakefront`, six layers, five props, `humanApproved:false`, and `runtimeIntegrated:false`. PNG readback found 26 remaining images; all scene layers are 941x1672, props are 1254x1254, and no filename containing `rejected` remains. Visual spot check confirmed the composite and prop preview are usable for review, but the composite is a vertical staging candidate with a large empty lower area and is not runtime-ready.
+- Problems / risks: This is not an approved asset package. The current generated Moonlake staging is useful for layer-direction review only; it must not be copied into `assets/**` or referenced by runtime code until human visual approval, aspect/anchor review, alpha cleanup, and a separate GROUNDWORK asset-readiness task pass. The prop preview includes checkerboard display context and should not be treated as the final transparent asset audit.
+- Next safe action: Review `output/linkara/moonlake/layered-preview.png`, `props-preview.png`, and the individual layer/prop PNGs. If the art direction is accepted, open a separate Moonlake asset-readiness TASK_PACK to normalize canvas size, alpha, anchors, Scene Profile data, and manifest entries before touching runtime paths.
+- Required reading: `output/linkara/moonlake/prompts/moonlake_layer_generation_notes.txt`, `output/linkara/moonlake/profile-draft.json`, `docs/assets/LINKARA_HABITAT_LAYERING_AND_VISUAL_LOCKS.md`, `docs/architecture/HABITAT_SCENE_PROFILE_SPEC.md`, `AGENTS.md`, `CLAUDE.md`, `ACCEPTANCE.md`, and this lane.
+
 ### 2026-07-02 - Codex - Next Gameplay Systems Spec Consolidation
 
 - Lane: `Game Engineering And Architecture`

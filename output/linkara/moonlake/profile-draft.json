@@ -1,0 +1,119 @@
+{
+  "id": "ethereal_moon_lakefront",
+  "label": "Ethereal Moon Lakefront",
+  "artSize": {
+    "width": 941,
+    "height": 1672
+  },
+  "sourceNote": "TP-HAB-1 generated layer draft. Staging only; not runtime-integrated.",
+  "layers": [
+    "layers/moonlake_sky.png",
+    "layers/moonlake_mountains.png",
+    "layers/moonlake_lake_water.png",
+    "layers/moonlake_shore_ground_platform.png",
+    "layers/moonlake_camp_structures.png",
+    "layers/moonlake_foreground_occlusion.png"
+  ],
+  "props": [
+    "props/prop_crystal_cluster.png",
+    "props/prop_lantern_post.png",
+    "props/prop_dock_posts.png",
+    "props/prop_shrine_marker.png",
+    "props/prop_firefly_glow.png"
+  ],
+  "companion": {
+    "anchor": {
+      "x": 0.5,
+      "y": 0.7
+    },
+    "reservedRect": {
+      "x": 0.38,
+      "y": 0.45,
+      "w": 0.24,
+      "h": 0.27
+    }
+  },
+  "ui": {
+    "extraForbidden": [
+      {
+        "id": "hud_top_static",
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 1,
+          "h": 0.12
+        }
+      },
+      {
+        "id": "bottom_nav_static",
+        "rect": {
+          "x": 0,
+          "y": 0.8,
+          "w": 1,
+          "h": 0.2
+        }
+      }
+    ]
+  },
+  "zones": {
+    "water": [
+      {
+        "id": "lake_main",
+        "rect": {
+          "x": 0.24,
+          "y": 0.34,
+          "w": 0.52,
+          "h": 0.22
+        },
+        "maxTraces": 5
+      },
+      {
+        "id": "lake_near_edge",
+        "rect": {
+          "x": 0.3,
+          "y": 0.53,
+          "w": 0.4,
+          "h": 0.08
+        },
+        "maxTraces": 3
+      }
+    ],
+    "ground": [
+      {
+        "id": "stone_platform",
+        "rect": {
+          "x": 0.32,
+          "y": 0.6,
+          "w": 0.36,
+          "h": 0.14
+        },
+        "maxTraces": 4
+      },
+      {
+        "id": "shore_left",
+        "rect": {
+          "x": 0.12,
+          "y": 0.64,
+          "w": 0.18,
+          "h": 0.1
+        },
+        "maxTraces": 2
+      },
+      {
+        "id": "shore_right",
+        "rect": {
+          "x": 0.7,
+          "y": 0.64,
+          "w": 0.18,
+          "h": 0.1
+        },
+        "maxTraces": 2
+      }
+    ]
+  },
+  "status": {
+    "runtimeIntegrated": false,
+    "humanApproved": false,
+    "referenceAuditPassed": false
+  }
+}

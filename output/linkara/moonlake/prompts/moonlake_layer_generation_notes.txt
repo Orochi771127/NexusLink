@@ -1,0 +1,70 @@
+TP-HAB-1 Moonlake true layer generation notes
+
+Mode: built-in image_gen plus local chroma-key alpha removal.
+Status: staging only. No assets/** copy, no runtime integration, no manifest update.
+
+The earlier full-scene candidate is retained only as a concept/reference:
+- reference/moonlake_concept_reference_01.png
+- layered-preview-candidate-01.png
+
+Generated foundation layers:
+1. layers/moonlake_sky.png
+   - Opaque base layer.
+   - Prompt lock: ONLY sky, clouds, moon/celestial atmosphere; no mountains, lake, ground, structures, props, companion, UI, or text.
+   - First sky attempt was replaced because it baked a fake checkerboard transparency pattern into the lower half.
+
+2. layers/moonlake_mountains.png
+   - RGBA layer from sources/moonlake_mountains_chroma_source.png.
+   - Prompt lock: ONLY distant mountains, cliffs, waterfalls, and subtle far shrine silhouette; no sky, lake, shore, platform, tents, props, companion, UI, or text.
+
+3. layers/moonlake_lake_water.png
+   - RGBA layer from sources/moonlake_lake_water_chroma_source.png.
+   - Prompt lock: ONLY luminous lake water plane and subtle ripples/mist/glimmers; no sky, mountains, shore, platform, structures, props, companion, UI, or text.
+
+4. layers/moonlake_shore_ground_platform.png
+   - RGBA layer from sources/moonlake_shore_ground_platform_chroma_source.png.
+   - Prompt lock: ONLY lower shore ground and pale stone platform threshold; no water, mountains, structures, props, companion, UI, or text.
+
+5. layers/moonlake_camp_structures.png
+   - RGBA layer from sources/moonlake_camp_structures_chroma_source.png.
+   - Prompt lock: ONLY side shoreline tents, low dock pieces, and distant camp structures; no runtime props, crystals, lantern posts, campfire, shrine marker, companion, UI, or text.
+
+6. layers/moonlake_foreground_occlusion.png
+   - RGBA layer from sources/moonlake_foreground_occlusion_chroma_source.png.
+   - Prompt lock: ONLY sparse edge foliage/flowers; no platform, stone floor, water, structures, props, companion, UI, or text.
+
+Rejected source:
+- sources/moonlake_foreground_occlusion_rejected_01_chroma_source.png
+  Reason: baked in too much lower stone ground and side platform content, overlapping the platform layer.
+- sources/moonlake_foreground_occlusion_rejected_02_chroma_source.png
+- sources/moonlake_foreground_occlusion_rejected_02_alpha_attempt.png
+  Reason: baked a fake checkerboard transparency pattern into the unused canvas area.
+
+Composite preview:
+- layered-preview.png
+  Purpose: visual QA only. The actual deliverables are the separate layer files.
+
+Generated prop candidates:
+1. props/prop_crystal_cluster.png
+   - RGBA prop from sources/props/prop_crystal_cluster_chroma_source.png.
+   - Small cyan-blue memory crystal cluster for shore-edge placement.
+
+2. props/prop_lantern_post.png
+   - RGBA prop from sources/props/prop_lantern_post_chroma_source.png.
+   - Slender lakefront lantern post. Candidate placement should avoid the companion safe zone.
+
+3. props/prop_dock_posts.png
+   - RGBA prop from sources/props/prop_dock_posts_chroma_source.png.
+   - Small dock-post group, not a full dock.
+
+4. props/prop_shrine_marker.png
+   - RGBA prop from sources/props/prop_shrine_marker_chroma_source.png.
+   - Shrine marker candidate. Visual review should decide whether it is too tall for Moonlake runtime placement.
+
+5. props/prop_firefly_glow.png
+   - RGBA VFX candidate from sources/props/prop_firefly_glow_chroma_source.png.
+   - Very subtle after chroma-key removal; runtime particle rendering may be preferable if stronger glow is needed.
+
+Prop preview:
+- props-preview.png
+  Purpose: contact sheet for human visual review only.

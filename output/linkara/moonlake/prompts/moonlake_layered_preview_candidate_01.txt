@@ -1,0 +1,26 @@
+Use case: stylized-concept
+Asset type: Nexus Link Moonlake habitat layered-preview candidate, mobile-first game background concept
+Mode: built-in image_gen
+Source output copied from: C:\Users\User\.codex\generated_images\019f24de-7be7-77c2-a702-427e27d1d4d2\ig_01e801b43245bc89016a46e17e37ac8191bd8e28bc7b31882d.png
+Workspace output: C:\Users\User\NexusLink_RaphaelAI_Workspace\NexusLink\output\linkara\moonlake\layered-preview-candidate-01.png
+
+Prompt:
+Create an ethereal Moon Lakefront visual candidate for Nexus Link, a sacred quiet lake camp and Chapter 1 first habitat for Greyshade Cat. This is a replacement-candidate reference only, not a final runtime asset.
+
+Scene/backdrop: vertical mobile-first lakefront composition with soft sky at the top, distant cliffs, waterfalls, a subtle far shrine silhouette, luminous lake water as a clear mid-plane, shoreline camp structures, and a lower-center pale stone platform threshold for the companion.
+
+Subject: The habitat environment only. No companion character. Keep the lower-center companion area intentionally clean and open.
+
+Style/medium: high-detail illustrated painterly game environment, Cyber-Taoism / sacred quiet technology-mysticism, clean HD, production concept art, not pixel art.
+
+Composition/framing: portrait 9:16, mobile UI aware. Reserve the top 12 percent for HUD readability and the bottom 20 percent for navigation. Keep a clean companion safe zone around center-lower area: roughly x 38-62 percent, y 45-72 percent. Place the stone platform around lower center without heavy symbols. Put cliffs, waterfalls, tents, docks, and shrine details outside the companion safe zone.
+
+Lighting/mood: gentle first-session coherence, moonlit blue with soft daylight gold memory light, safe threshold, calm, sacred, not dramatic combat lighting.
+
+Color palette: moonlit blue, soft daylight gold, pale stone, white-blue tents, crystal cyan accents.
+
+Materials/textures: luminous lake water, pale stone, low wood dock, soft cliff rock, waterfalls, light fabric tents, subtle crystal accents.
+
+Constraints: no text, no UI, no watermark, no companion, no combat arena, no dense prop clutter, no large foreground crystals blocking the center, no strong UI-like symbols, no gacha or RPG battle feeling. Do not bake runtime props prominently into the base; lantern posts, campfire, fireflies, dock posts, shrine marker, memory crystals, and dialogue traces should remain subtle or peripheral.
+
+Avoid: chunky pixel art, nearest-neighbor pixel style, hard sci-fi interface panels, theme-park busyness, large foreground occluders in the companion zone, red danger lighting, HP battle arena composition.
