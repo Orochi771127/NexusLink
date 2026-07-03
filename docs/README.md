@@ -1,93 +1,93 @@
-# NexusLink Docs Index
+# NexusLink Docs Index / 文件地圖
 
 This folder contains the planning and production references for NexusLink.
-
 本資料夾即為《Nexus Link / 心核連結》目前的正式企劃案、工程規格、製作流程與留存文件集合。
 
-## Start Here
+> 有 40+ 份文件，容易「不知從何讀起」。本索引解決那個問題：**哪份是什麼、誰是權威、多久更新一次。**
+> 更新：2026-07-03（v2，新增權威階層 / 更新節奏 / 數值 SSOT，並修正過期的 scope rule）。
 
-0. `production/NEXUS_LINK_COMMERCIAL_UIUX_HANDOFF.md`
-   - Current commercial UI/UX execution entry point for Claude Code / Fable 5.
-   - Use this before starting the commercial First Session Flow or V3 UI/UX
-     vertical slice.
+---
 
-1. `agent/AI_EXECUTION_LEDGER.md`
-   - The current cross-AI operational handoff. Read the relevant lane before
-     starting work and append the final status, problems, and next safe action.
+## 0. 權威階層（衝突時誰說了算）
 
-2. `nexuslink-development-direction.md`
-   - Current product direction and emotional habitat north star.
-   - Use this to understand the core positioning, emotional sedimentation system, companion principles, MVP scope guard, and current companion direction.
+```
+strategy/NEXUS_LINK_MASTER_CANON_v3.1.md   ← 最高戰略上位法（為什麼存在、賣什麼、永不變成什麼）
+        │  只在「策略轉向」時動
+        ▼
+../CLAUDE.md / ../AGENTS.md                 ← 可動的作業手冊（紅線、授權分級、施工協定）
+        │  流程改善時可動；不得與 Master Canon 衝突
+        ▼
+agent/AI_EXECUTION_LEDGER.md                ← 「當前真實狀態」唯一真相來源（SSOT）
+        │  每次工作完成就追加
+        ▼
+其餘 docs/**                                 ← 設計細節、規格、歷史參考
+```
 
-3. `nexuslink-design-brief.md`
-   - One-page product and design orientation.
-   - Use this to understand the north star, player promise, design pillars, MVP loop, and first release gate.
+**黃金守則**：遠端分支或歷史測試報告 ≠ 當前 runtime 狀態；一切以 checked-out worktree + 執行分類帳最新條目為準。
 
-4. `nexuslink-game-plan.md`
-   - Implementation-facing game plan.
-   - Use this to understand the current runtime baseline, state model, companion motion priorities, UI surface, and acceptance criteria.
+---
 
-5. `nexuslink-implementation-roadmap.md`
-   - Ordered milestones for the first complete habitat loop.
-   - Use this to sequence engineering and asset work without expanding scope too early.
+## 1. Start Here（一定要先讀）
 
-6. `nexuslink-production-backlog.md`
-   - Concrete work packages.
-   - Use this to pick the next implementation or production task.
+| 文件 | 用途 | 更新頻率 |
+|---|---|---|
+| `../CLAUDE.md` | 開發憲法：三契約、七紅線、技術邊界、授權分級 | 流程改善時 |
+| `../AGENTS.md` | 跨 AI 協作入口（與 CLAUDE.md 對齊） | 流程改善時 |
+| `../CONTRIBUTING.md` | 一頁上手：Gate 0–6 + 新 AI 六步 + 完成定義 | 流程改善時 |
+| `../ACCEPTANCE.md` | 可驗收條件（每個功能對照自評） | 每 release |
+| `strategy/NEXUS_LINK_MASTER_CANON_v3.1.md` | 最高戰略：定位、賣點、商業紅線 | 策略轉向時 |
+| `agent/AI_EXECUTION_LEDGER.md` | 當前三線狀態 SSOT（Engineering / Art / Raphael） | 每次工作 |
+| `design/BALANCE_SHEET.md` | 所有調校數值的單一可調表（本輪新增） | 每次動數值 |
+| `production/NEXUS_LINK_COMMERCIAL_UIUX_HANDOFF.md` | 商業 UI/UX 執行入口 | 商業切片期 |
 
-7. `nexuslink-sprint-01.md`
-   - First execution slice.
-   - Use this to run the baseline verification sprint before generating new art.
+進一步的規劃連續讀物（規劃脈絡，非權威）：
+`nexuslink-development-direction.md`（產品北極星）→ `nexuslink-design-brief.md`（一頁定位）→ `nexuslink-game-plan.md`（實作面）→ `nexuslink-implementation-roadmap.md`（里程碑）→ `nexuslink-production-backlog.md`（工作包）→ `nexuslink-sprint-01.md`（首片）→ `nexuslink-first-habitat-qa.md`（首輪 QA）。
 
-8. `nexuslink-first-habitat-qa.md`
-   - First-loop QA checklist.
-   - Use this before deciding the habitat is ready for broader feature expansion.
+---
 
-9. `asset-pipeline.md`
-   - Official local art and animation pipeline.
-   - Use this before generating, processing, registering, or QAing any visual asset.
+## 2. 依主題分類
 
-## Current Document Status
+- **戰略 / 商業**：`strategy/NEXUS_LINK_MASTER_CANON_v3.1.md`、`strategy/NEXUS_LINK_STEAM_DEMO_MASTER_BLUEPRINT.md`、`research/MARKET_EVIDENCE_AI_COMPANION.md`、`production/NEXUS_LINK_COMMERCIAL_UIUX_HANDOFF.md`。
+- **AI 協作流程（作業核心）**：`agent/AI_WORKFLOW.md`（6-Gate 全文）、`agent/TASK_TEMPLATE.md`、`agent/REVIEW_CHECKLIST.md`、`agent/AI_EXECUTION_LEDGER.md`（**當前狀態 SSOT**）。
+- **架構 / 檔案治理**：`architecture/FILE_OWNERSHIP.md`、`architecture/RAPHAEL_CORE_JS_V1.md`、`architecture/COMPANION_PREFERENCE_PERSISTENCE_V1.md`、`architecture/RAPHAEL_GATEWAY_SERVER_V1.md`、`architecture/PACKAGING_ROADMAP.md`、`architecture/RUNTIME_MAP.md`（⚠️ NEEDS UPDATE：對照現行程式驗證舊 storage/runtime 陳述）。
+- **設計規格**：`design/NEXUS_LINK_V3_VISUAL_SYSTEM.md`、`design/BALANCE_SHEET.md`（**數值 SSOT**）、`r2-canon/*`（R2 詳規：pillars/system/faction/companion/evolution/scope）、`rfc/RFC_2_5D_HABITAT_RENDERER.md`。
+- **品保 / 測試**：`testing/MANUAL_TEST_CHECKLIST.md`、`testing/PRIVATE_TEST_SCRIPT.md`、`testing/STEAM_DEMO_WEB_RELEASE_CHECKLIST.md`、`qa/WEB_RELEASE_EVIDENCE.md`、`qa/RAPHAEL_CORE_JS_V1_TEST_PROTOCOL.md`。
+- **資產 / 美術管線**：`assets/CHARACTER_ASSET_PIPELINE.md`、`assets/COMPANION_ANIMATION_CATALOG.md`、`assets/COMPANION_ASSET_AUTOMATION.md`、`assets/SKILL_ORCHESTRATED_COMPANION_PIPELINE.md`、`asset-pipeline.md`（⚠️ NEEDS UPDATE：64×64 步驟需與現行 illustrated 512 政策分開）、`prompts/*`。
+- **交接歷史**：`handoff/*` — 各輪 AI 交接；**歷史軌跡非當前狀態**，當前狀態一律查執行分類帳。
+- **歷史參考（⚠️ 僅供歷史，保留勿刪）**：`legacy-bible/**`、早期 v0.3/v1 規劃文件、`r2-canon/**`（除非現行文件明確引用某段，否則 REFERENCE ONLY）。
 
-- `production/NEXUS_LINK_COMMERCIAL_UIUX_HANDOFF.md`: CURRENT commercial UI/UX handoff.
-- `strategy/NEXUS_LINK_MASTER_CANON_v3.1.md`: CURRENT highest strategic canon.
-  Use the commercial UI/UX handoff as the practical execution entry, but resolve
-  strategic conflicts against the Master Canon.
-- `architecture/RUNTIME_MAP.md`: NEEDS UPDATE; useful map, but verify stale
-  storage/runtime facts against current code.
-- `asset-pipeline.md`: NEEDS UPDATE; useful pipeline base, but 64x64 character
-  steps must be separated from the current illustrated 512 companion policy.
-- `legacy-bible/**`, `r2-canon/**`, and early v0.3/v1 planning docs:
-  REFERENCE ONLY unless a current file explicitly promotes a section.
+### 中文完整企劃留存
+- `NexusLink_Full_Game_Architecture_v1.md` — 企劃案 v1.0：情緒棲地型 AI 夥伴養成遊戲完整架構書。
+- `NexusLink_Phase1_Engine_Refactor_Report.md` — 第一階段引擎重構總結（DOM/PixiJS 分層、固定投影、時間引擎、2.5D、state 信任邊界）。
+- 其他：`Asset_Generation_Plan.md`、`NexusLink_Emotional_Habitat_Plan.md`、`NexusLink_HomeScreen_DesignSpec_v1.md`。部分舊檔可能有編碼問題，實作決策優先看 `nexuslink-*` 與 `design/`。
 
-## Full Planning Documents / 中文完整企劃留存
+---
 
-- `NexusLink_Full_Game_Architecture_v1.md`
-  - 《Nexus Link》企劃案 v1.0：情緒棲地型 AI 夥伴養成遊戲完整架構書。
-  - Use this as the full Chinese planning archive for product vision, player target, companion personality matrix, memory, care, exploration, purification, AI direction, and version roadmap.
+## 3. 更新節奏（Cadence）
 
-- `NexusLink_Phase1_Engine_Refactor_Report.md`
-  - 《Nexus Link 心核連結》第一階段：物理棲地與底層引擎架構重構總結報告。
-  - Use this as the retained architecture summary for DOM/PixiJS separation, fixed projection, environment time engine, 2.5D layers, UI/audio foundation, state trust boundary, and next route decision.
+| 何時 | 更新什麼 |
+|---|---|
+| 每次工作完成 | `agent/AI_EXECUTION_LEDGER.md`（對應 lane） |
+| 每次動數值 | `design/BALANCE_SHEET.md` |
+| 每個 TASK_PACK | 相關 handoff / 規格文件 |
+| 每 release | `../ACCEPTANCE.md`、`testing/*`、`strategy/STEAM_DEMO_*` |
+| 策略轉向 | `strategy/NEXUS_LINK_MASTER_CANON_v3.1.md` |
 
-## Legacy And Reference Docs
+---
 
-- `Asset_Generation_Plan.md`
-- `NexusLink_Emotional_Habitat_Plan.md`
-- `NexusLink_HomeScreen_DesignSpec_v1.md`
-- `prompts/`
+## 4. 已知文件債（待收斂）
+- **三套 canon 並存**：`strategy/`（現行最高）、`r2-canon/`（現行詳規）、`legacy-bible/`（歷史）。本索引先宣告階層；實體歸檔（例如搬 `legacy-bible/` 到 `docs/_archive/`）待核可，搬移前列清單報備（不可逆）。
+- **handoff 增生**：當前狀態只信執行分類帳，不要逐份讀 handoff。
+- **文件漂移**：程式常跑在文件前面。發現漂移就地修並在分類帳註記。
 
-Some older documents may contain encoding issues. Prefer the new `nexuslink-*` documents and `asset-pipeline.md` for current implementation decisions. Use the two full planning documents above for long-form Chinese product memory and architectural continuity.
+---
 
-## Current Scope Rule
+## 5. Current Scope Rule（現行範圍守則，已更新）
 
-The active target is the first complete emotional habitat loop:
+當前主線是把**第一次見面（First Session Flow）做對 + 既有系統加深**：
 
-- One habitat
-- One companion
-- Touch, hug, Soul Talk, and care actions
-- Persistent emotional state
-- Trustworthy registered animations
-- At least one separated habitat FX layer
+- 一個棲地（月湖）、一位主夥伴（灰影貓）、觸碰/擁抱/Soul Talk/照顧、持久情緒狀態、可信任的已註冊動畫、至少一層分離的棲地 FX。
+- **戰鬥已存在且已改造為「穩住裂隙」情緒對峙**（非傳統打怪；四結局不懲罰）。本輪工作是**加深**它（意圖/相位/經濟），不是重做，也不是回退成 HP 戰鬥。
 
-Do not expand into battle, inventory, large maps, multiplayer, or full AI memory until the first loop passes the QA gate in `nexuslink-production-backlog.md`.
+> 過期守則已修正：舊版寫「Do not expand into battle … until first loop passes QA」。事實上情緒對峙戰鬥早已實裝並通過首輪。**不要**據舊句把戰鬥當未開發。
+> 仍然延後（需獨立 gate）：inventory、開放大地圖、多人、章節擴張、Initial Bond 夥伴 roster 選擇、商業變現框架。

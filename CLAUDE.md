@@ -213,14 +213,15 @@ RaphaelCore 與角色外型解耦。RaphaelCore 是共用的心核大腦與人�
 
 ## 6. 兩個指定優先改造項（帶警語）
 
-### 6.1 `battleEngine.js` + `battleController.js` — 需「體質改造」，非調參
-**現況問題**：目前是普通 RPG 打怪——`basic_attack`、敵我 HP bar、HP 歸零判勝負（見 `index.html` battle-modal 的 `data-skill="basic_attack"`、`battle-enemy-hp`）。這**違反** Bible：Nexus Link 的「對峙」不是把對方血條清零。
+### 6.1 `battleEngine.js` + `battleController.js` — 情緒對峙**已完成**，本輪為「深化」（非重做）
+**現況（已更新 2026-07-03）**：情緒對峙改造**已完成並上線**，不是待辦。`battleEngine.js` 已是純函數的「穩住裂隙」模型——`noise / stability / sync / fatigue / boundary / shards` + 五行裂隙心相 + 四種**不懲罰**結局（stabilized / recovered / overwhelmed_but_safe / retreated），沒有 win/lose。`index.html` battle-modal 也已改為 `standoff-action-row` + `data-action-id="resonance|barrier|pulse|retreat"`（共鳴/邊界/脈衝/先撤退）；**舊的 `basic_attack`、`battle-enemy-hp` 標記已不存在**。
+> ⚠️ 文件漂移修正：本節舊版仍寫「目前是普通 RPG 打怪、待體質改造」——那是過期敘述，程式早已改完。**不要據舊句去重做戰鬥或把它當未開發。**
 
-**改造方向**（內部：情緒對峙；玩家端：穩住裂隙）：對峙的目標應是**穩定心核 / 建立邊界 / 回收記憶**之類的情緒性結算，而非 enemy HP→0。玩家要理解「裂隙裡有卡住的情緒，你們不需要消滅它，只要讓它安靜下來」。`resonance`（情感共鳴）已是對的方向，`basic_attack`（直覺爪擊）是要被重新定義的舊骨。retreat（先撤退）「懂得離開也是照顧」的設計是對的，保留。勝負回饋必須「勝不驕、敗不罰」（`summarizeBattleOutcome` 已是對的基調，延續它）。
+**本輪方向＝加深，不是改造**：深度來自「敵人意圖可讀（telegraph）／裂隙相位弧／sync·fatigue 經濟張力／手感回饋」，**不是**加大傷害或掉寶。詳見 `plan`（roadmap B1–B4）與 `docs/design/BALANCE_SHEET.md` 第 2 節的常數。`resonance` 是主軸、`retreat`「懂得離開也是照顧」保留、`summarizeStandoffOutcome` 的「勝不驕、敗不罰」延續。
 
-**玩家端用語規則**：主名稱用「穩住裂隙」；狀態用「雜訊 / 心核穩定 / 記憶微光」；行動優先用「穩住 / 設界 / 共鳴 / 退一步」。不要把 UI 寫成攻擊、防禦、技能、傷害、擊敗、掉落。每個按鈕盡量 2–4 個字，每個說明盡量一句話。
+**玩家端用語規則（仍有效，續守）**：主名稱用「穩住裂隙」；狀態用「雜訊 / 心核穩定 / 記憶微光」；行動優先用「穩住 / 設界 / 共鳴 / 退一步」。不要把 UI 寫成攻擊、防禦、技能、傷害、擊敗、掉落。每個按鈕盡量 2–4 個字，每個說明盡量一句話。
 
-**警語**：這是一次**體質改造**，會動到 engine 的核心迴圈與 controller 的渲染，屬於「授權的大改」，但因為它同時牽涉 `index.html` 的 battle-modal **結構**，所以開工計畫要明確標出哪些是純體驗層、哪些觸及 5.1，分開確認。
+**警語**：`battleEngine.js` 核心迴圈與 `battleController.js` 渲染屬**授權的體驗層大改**（§5.2）。battle-modal 目前**文案**調整為純體驗層；但若動到 `index.html` battle-modal 的 **DOM 結構**仍觸及 §5.1 GROUNDWORK，開工計畫要分開標示、分開確認。
 
 ### 6.2 `safeHarborMode.js` + `emotionalSedimentationEngine.js` — 需安全審查，動前先讀紅線
 **現況**：`safeHarborMode` 目前由情緒輸入 / safetyShield 命中驅動（符合紅線 1，這是對的，不要改壞）。`buildSafetyShieldReply` 提供現實求助導引（符合紅線 7）。
