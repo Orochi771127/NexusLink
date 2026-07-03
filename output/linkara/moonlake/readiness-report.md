@@ -19,7 +19,9 @@ Human approval: pending.
 
 V2 fixes the two largest V1 blockers: target canvas and lower composition. The v2 layer candidates in `v2/layers/` are normalized to `1080x1920`, and the lower half now contains an intentional stone platform and shore path instead of a large blank area.
 
-V2 is still not runtime-ready. Visual self-review found a hard color band near the far lake-water edge after chroma-key cleanup. Keep this as a human-review candidate and regeneration evidence, not an approved asset package.
+V2 is still not runtime-ready. The composition is useful, but the current generated style no longer matches the tightened art lock: the layer set is too painterly/illustrated, material response and lighting are not realistic enough, and the sky layer bakes a moon into the background instead of separating celestial bodies for runtime time-of-day movement. Visual self-review also found a hard color band near the far lake-water edge after chroma-key cleanup.
+
+Keep V2 as composition and prompt evidence only. Do not promote it to runtime, and do not copy it into `assets/**`.
 
 ## Automated Checks
 
@@ -32,19 +34,21 @@ V2 is still not runtime-ready. Visual self-review found a hard color band near t
 | Alpha-capable v2 layers | Pass | All v2 layer files are `Format32bppArgb`. |
 | Prompt metadata exists | Pass | V2 prompts are logged in `v2/prompts/moonlake_v2_generation_prompts.md`. |
 | Accepted set has no rejected filename | Pass | Accepted v2 layer/profile paths do not include rejected filenames. |
-| Visual spot check complete | Pass with blocker | Direction preview is strong; layered preview still needs lake-edge cleanup. |
+| Visual spot check complete | Pass with blockers | Direction preview has useful composition; layered preview still needs lake-edge cleanup and art-style regeneration. |
+| Celestial separation | Fail | `moonlake_v2_sky.png` bakes the moon into the sky. Future `sky_atmosphere` must not include sun, moon, stars, or other moving celestial bodies. |
+| Material / lighting realism | Fail | Current V2 layers read as painterly fantasy concept art. Future pass must use semi-realistic material response, believable shadows/reflections, and restrained bloom. |
 
 ## Asset Classification
 
 | Asset | Classification | Decision | Reason |
 | --- | --- | --- | --- |
-| `v2/reference/moonlake_v2_direction_preview_1080x1920.png` | direction preview | `keep_for_review` | Stronger composition than v1: target-size, clear companion platform, no empty lower half. Not a runtime layer. |
-| `v2/layers/moonlake_v2_sky.png` | foundation layer | `keep_for_review` | Target-size sky-only layer. |
-| `v2/layers/moonlake_v2_mountains.png` | foundation layer | `keep_for_review` | Target-size alpha-capable cliffs/waterfalls layer; review edge quality. |
-| `v2/layers/moonlake_v2_lake_water.png` | foundation layer | `regenerate_or_manual_cleanup` | Target-size water plane, but self-review found a hard color band near the far water edge. |
-| `v2/layers/moonlake_v2_shore_ground_platform.png` | foundation layer | `keep_for_review` | Fixes the v1 empty lower-half problem and gives a clear companion platform. |
-| `v2/layers/moonlake_v2_foreground_occlusion.png` | foreground occlusion | `keep_for_review` | Sparse bottom/side foliage candidate; review companion-foot occlusion. |
-| `v2/layered-preview-v2.png` | preview | `keep_for_review` | QA preview only, never runtime asset. |
+| `v2/reference/moonlake_v2_direction_preview_1080x1920.png` | direction preview | `composition_reference_only` | Strong composition and platform framing, but not a runtime layer and not the final art style target. |
+| `v2/layers/moonlake_v2_sky.png` | foundation layer | `regenerate` | Bakes the moon into the sky and does not support runtime celestial arc movement. |
+| `v2/layers/moonlake_v2_mountains.png` | foundation layer | `regenerate_for_realism_pass` | Useful composition, but material depth and lighting need the semi-realistic pass. |
+| `v2/layers/moonlake_v2_lake_water.png` | foundation layer | `regenerate` | Has a hard color band near the far water edge and needs more realistic water reflections/ripples. |
+| `v2/layers/moonlake_v2_shore_ground_platform.png` | foundation layer | `regenerate_for_realism_pass` | Strong platform composition, but stone material and contact lighting need more realism. |
+| `v2/layers/moonlake_v2_foreground_occlusion.png` | foreground occlusion | `regenerate_for_realism_pass` | Composition is usable; foliage/stone material and lighting need a realistic pass. |
+| `v2/layered-preview-v2.png` | preview | `composition_reference_only` | QA preview only, never runtime asset. |
 | `props/prop_crystal_cluster.png` | compact prop | `keep_for_review` | Readable cyan memory-crystal candidate from v1 staging. |
 | `props/prop_lantern_post.png` | tall prop | `keep_for_review` | Good candidate, but placement must avoid companion and UI safe zones. |
 | `props/prop_dock_posts.png` | compact prop | `keep_for_review` | Useful dock-post candidate from v1 staging. |
@@ -55,16 +59,21 @@ V2 is still not runtime-ready. Visual self-review found a hard color band near t
 
 - Human approval is not recorded.
 - `referenceAuditPassed` is false.
+- Art direction lock is not met: generated style is too painterly and lacks realistic material/light response.
+- Celestial separation is not met: moon is baked into the sky layer.
 - Lake-water edge needs cleanup or regeneration.
 - V2 files are under `output/**`, not approved `assets/**`.
 - No runtime manifest or scene profile module should reference these files yet.
 
 ## Regeneration Orders
 
-1. If human likes the v2 direction, regenerate or manually clean only `lake_water` next.
-2. Keep the v2 platform/shore composition as the next prompt reference.
-3. Keep firefly glow out of static prop generation; plan it as runtime particle FX.
-4. Do not touch `assets/**`, `assetManifest.js`, `pixiApp.js`, or save schema before a separate GROUNDWORK runtime promotion task.
+1. Use V2 only as a composition reference, not as a style reference.
+2. Regenerate Moonlake as semi-realistic material/lighting layers: `sky_atmosphere`, `celestial_bodies`, `celestial_occlusion`, `mountains`, `lake_water`, `shore_ground_platform`, and `foreground_occlusion`.
+3. `sky_atmosphere` must not include moon, sun, stars, UI, text, companion, traces, or runtime props.
+4. `celestial_bodies` should be a separate runtime-controlled pass or separate generated sprite/layer set placed from the profile arc.
+5. Keep the v2 platform/shore framing as the composition reference, but rework stone material, wetness, contact shadows, water reflection, and lighting.
+6. Keep firefly glow out of static prop generation; plan it as runtime particle FX.
+7. Do not touch `assets/**`, `assetManifest.js`, `pixiApp.js`, or save schema before a separate GROUNDWORK runtime promotion task.
 
 ## Approval Gate
 
@@ -73,6 +82,7 @@ Do not copy this package into `assets/**` or reference it from runtime code unti
 - Human visual approval is recorded.
 - `referenceAuditPassed` is true.
 - Canvas, alpha, anchor, and UI-safe checks pass.
+- Semi-realistic material and lighting review passes.
+- Celestial bodies are separated from `sky_atmosphere`.
 - Lake-water edge cleanup passes visual QA.
 - A separate GROUNDWORK runtime promotion task is approved.
-

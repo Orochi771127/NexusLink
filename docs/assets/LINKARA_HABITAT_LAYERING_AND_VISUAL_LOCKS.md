@@ -25,12 +25,42 @@ Current caution:
 - The world map image is atlas/reference content, not a live habitat base.
 - The source-image fields in `manifest.json` should be rechecked before any provenance-sensitive generation pass; use visual inspection and file dimensions as the authority for the locks below.
 
+## Global Display And Art-Direction Lock
+
+Production habitat generation should use `1080x1920` mobile art-space first, then project into the runtime viewport. For the current `390x844` safe viewport, a `1080x1920` artboard cover-scales by height to `474.75x844` CSS px. That crops `42.38` CSS px per side, equivalent to about `96.4` art px or `8.93%` of the art width per side. The visible art-space x range is approximately `0.089..0.911`.
+
+Placement must be computed in art-space and projected to screen-space:
+
+```text
+screenX = artX * coverScale - cropX
+screenY = artY * coverScale - cropY
+```
+
+Do not bind sun, moon, stars, or time-moving celestial bodies to viewport-fixed x/y points. Celestial objects must ride a Scene Profile `celestialArc` derived from the painted horizon. Sky base layers may carry atmosphere and color only; active time-of-day bodies belong in runtime `celestial_bodies` or a dedicated generated celestial pass.
+
+Default mobile zones:
+
+| Zone | Normalized rect | Role |
+| --- | --- | --- |
+| `hud_top_static` | `{ x: 0.00, y: 0.00, w: 1.00, h: 0.12 }` | Forbidden for traces, props, companion, and celestial bodies. |
+| `sky_celestial` | `{ x: 0.10, y: 0.12, w: 0.80, h: 0.30 }` | Celestial arc and sky-only atmosphere. |
+| `lake_or_mid_plane` | `{ x: 0.12, y: 0.38, w: 0.76, h: 0.24 }` | Water-plausible traces, ripples, mist, reflection. |
+| `companion_reserved` | `{ x: 0.38, y: 0.49, w: 0.24, h: 0.25 }` | No opaque layer or prop may cover the companion body. |
+| `platform_ground` | `{ x: 0.24, y: 0.62, w: 0.52, h: 0.14 }` | Companion floor and ground/platform traces. |
+| `foreground_occlusion_band` | `{ x: 0.00, y: 0.73, w: 1.00, h: 0.07 }` | Low foot occlusion only. |
+| `bottom_ui_static` | `{ x: 0.00, y: 0.80, w: 1.00, h: 0.20 }` | Forbidden for habitat traces and props. |
+
+Art direction is semi-realistic fantasy, not flat anime concept art. Generated layers must preserve Nexus Link's clean HD readability while adding realistic material response and plausible lighting: wet stone with contact shadows, water with believable reflection/ripple structure, cliffs with atmospheric depth, foliage with leaf translucency, metal/crystal with controlled specular highlights, and restrained bloom. Reject plastic surfaces, over-smoothed painterly gradients, generic photobash, noisy AI texture, or baked glow that hides material form.
+
 ## Global Layer Model
 
 Every Linkara habitat should be planned as this layered stack:
 
 ```text
-background_sky
+sky_atmosphere
+distant_clouds_back
+celestial_bodies
+celestial_occlusion
 distant_mountains_or_city
 water_or_atmosphere_plane
 shore_ground_platform
@@ -44,7 +74,10 @@ ui_dom
 
 Layer responsibilities:
 
-- `background_sky`: sky, cloud mass, atmospheric color, storm or dawn base. Celestial bodies may be separate if they animate.
+- `sky_atmosphere`: sky, cloud mass, atmospheric color, storm or dawn base. No baked sun, moon, stars, or time-moving celestial bodies in active habitats.
+- `distant_clouds_back`: optional slow cloud mass or far cloud silhouettes that do not need independent hit testing.
+- `celestial_bodies`: sun, moon, stars, rift eyes, and time-of-day bodies positioned by Scene Profile arc rules.
+- `celestial_occlusion`: clouds, tree canopy, cliff silhouettes, or shrine edges that can draw over celestial bodies.
 - `distant_mountains_or_city`: far cliffs, skyline, distant buildings, far waterfalls, far volcanoes, horizon silhouettes.
 - `water_or_atmosphere_plane`: lake, sea, harbor water, lava haze, mist pools, reflective planes. Keep trace-compatible surfaces separate where possible.
 - `shore_ground_platform`: the companion's stable floor, plaza, dock apron, platform ring, or stone threshold.
@@ -63,7 +96,16 @@ Unless a region overrides them:
 {
   artSize: { width: 1280, height: 720 },
   targetMobileArtSize: { width: 1080, height: 1920 },
-  background: { mode: "profiled-cover-or-redraw", sameComposition: true },
+  background: {
+    mode: "profiled-cover-or-redraw",
+    sameComposition: true,
+    mobileProjection: {
+      artSize: { width: 1080, height: 1920 },
+      safeViewport: { width: 390, height: 844 },
+      coverMode: "cover-height",
+      visibleArtXRange: [0.089, 0.911]
+    }
+  },
   safeZone: { referenceWidth: 390, referenceHeight: 844 },
   ui: {
     subtractTopInset: true,
@@ -380,14 +422,16 @@ Canon role: Demo and Chapter 1 first habitat, Greyshade Cat first-session focus.
 - Mood: safe Moonlake threshold, gentle first-session coherence, not a busy theme park.
 - Palette: moonlit blue, soft daylight gold, pale stone, white-blue tents, crystal cyan.
 - Camera: mobile-first vertical lakefront, companion lower-center on clean stone/platform threshold.
-- Material language: lake water, cliffs, waterfalls, tents, low wood dock, pale stone, crystal accents.
+- Material language: semi-realistic lake water, wet pale stone, layered cliff faces, waterfall mist, linen tents, low wood dock, controlled crystal specular accents, physically plausible moon/day light and contact shadows.
 - Must avoid: combat arena, dense prop clutter, strong UI-like symbols, large foreground crystals blocking companion.
 
 ### Layer Plan
 
 | Layer | Contents |
 | --- | --- |
-| `sky` | Soft sky, cloud mass, moon/day phase base. |
+| `sky_atmosphere` | Soft sky and cloud mass only; no baked moon, sun, stars, or time-moving celestial body. |
+| `celestial_bodies` | Runtime or separately generated moon/sun/star pass riding `sharedHorizonArc`. |
+| `celestial_occlusion` | Optional cloud, tree canopy, or cliff-edge masks that can pass in front of celestial bodies. |
 | `mountains` | Cliffs, waterfalls, distant shrine, distant camp. |
 | `lake_water` | Main lake water as independent plane for ripples, reflection, mist, glimmers. |
 | `shore_ground_platform` | Lower-center stone circle and dock threshold; companion floor. |
@@ -442,11 +486,13 @@ Large foreground crystals, lantern posts, campfire, firefly clusters, dock posts
 ### Moonlake Replacement Protocol
 
 1. Treat new Moonlake art as a replacement candidate, not an automatic runtime swap.
-2. Produce layered reference passes first: `sky`, `mountains`, `lake_water`, `shore_ground_platform`, `camp_structures`, `foreground_occlusion`.
-3. Produce runtime props separately: crystal clusters, lantern posts, dock posts, campfire/firefly glow, shrine marker.
-4. Do not delete `LakeNightCamp_v2` or legacy Moonlake assets until a reference audit and runtime QA pass approve the replacement.
-5. Keep Greyshade Cat as the first-session focus. Do not introduce a visual fallback to another companion.
-6. Any runtime swap touching `assets/**`, `assetManifest.js`, `pixiApp.js`, or scene switching is a separate approved GROUNDWORK task.
+2. Produce layered reference passes first: `sky_atmosphere`, `celestial_bodies`, `celestial_occlusion`, `mountains`, `lake_water`, `shore_ground_platform`, `camp_structures`, `foreground_occlusion`.
+3. Do not bake moon, sun, or star bodies into `sky_atmosphere`; time-of-day bodies must be separate so their positions can follow the profile arc.
+4. Produce runtime props separately: crystal clusters, lantern posts, dock posts, campfire/firefly glow, shrine marker.
+5. Require semi-realistic material and lighting review before any asset-readiness promotion; painterly composition references are not enough.
+6. Do not delete `LakeNightCamp_v2` or legacy Moonlake assets until a reference audit and runtime QA pass approve the replacement.
+7. Keep Greyshade Cat as the first-session focus. Do not introduce a visual fallback to another companion.
+8. Any runtime swap touching `assets/**`, `assetManifest.js`, `pixiApp.js`, or scene switching is a separate approved GROUNDWORK task.
 
 ### Generation Pack
 
@@ -628,10 +674,11 @@ Asset type: Nexus Link habitat layered raster layer, preview candidate only
 Primary request: Generate the [layer_name] layer for [region_id].
 Reference role: Use the approved Linkara region reference and this Visual Lock as the style and composition source.
 Scene/backdrop: [region visual lock summary].
-Style/medium: clean HD illustrated fantasy game background, painterly but sharp, project-native Nexus Link aesthetic, not pixel art.
+Style/medium: clean HD semi-realistic fantasy game environment layer, project-native Nexus Link aesthetic, not pixel art, not flat anime concept art.
+Material/lighting lock: realistic material response and plausible cinematic lighting. Preserve wet stone, water reflection/ripple structure, atmospheric depth, leaf translucency, controlled specular highlights, contact shadows, and restrained bloom. Avoid plastic surfaces, over-smoothed painterly gradients, noisy AI texture, or glow that hides surface form.
 Composition/framing: mobile-first 9:16 portrait habitat composition, compatible with 390x844 safe-zone runtime. Keep the companion reserved area readable where this layer overlaps the lower center.
 Layer responsibility: This layer contains only [allowed contents].
-Layer separation constraints: Do not include [forbidden contents]. No UI, no text, no labels, no characters, no animals, no companion sprite, no trace FX unless this is a trace layer.
+Layer separation constraints: Do not include [forbidden contents]. No UI, no text, no labels, no characters, no animals, no companion sprite, no trace FX unless this is a trace layer. Do not bake sun, moon, stars, or time-moving celestial bodies into `sky_atmosphere`.
 Runtime readability: Preserve top HUD and bottom nav/Soul Talk quiet zones. Keep lower-center companion platform visually clear.
 Avoid: baked-in interactables, baked-in memory traces, chunky pixel art, clutter, combat-only framing, water/fire placement contradictions.
 ```
@@ -645,11 +692,11 @@ Use case: stylized-concept
 Asset type: Nexus Link transparent runtime habitat prop
 Primary request: Create a single [prop_name] prop matching [region_id].
 Reference role: Match the approved [region_id] visual lock and layer reference.
-Style/medium: clean hand-painted HD 2D game asset style, crisp silhouette, smooth painted surfaces, low texture noise, controlled accent lighting, project-native Nexus Link aesthetic. Do not make pixel art.
+Style/medium: clean HD semi-realistic 2D game asset style, crisp silhouette, realistic material response, controlled accent lighting, project-native Nexus Link aesthetic. Do not make pixel art or flat anime prop art.
 View: mostly front-facing 3/4 top-down RPG object view; upright object centered, only a small visible top face.
 Background: perfectly flat solid #FF00FF magenta for background removal.
 Constraints: full object visible, generous magenta margin on all sides, no part touches image edge, no floor plane, no cast shadow, no text, no UI, no labels, no watermark.
-Avoid: scenery, companion, characters, baked trace FX unless this prop is explicitly an FX asset.
+Avoid: scenery, companion, characters, baked trace FX unless this prop is explicitly an FX asset, plastic material, noisy AI texture, or glow that hides the object's form.
 ```
 
 ## TASK_PACK: TP-HAB-1 Moonlake Layered Art Generation

@@ -1282,6 +1282,18 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Next safe action: Human review `output/linkara/moonlake/v2/reference/moonlake_v2_direction_preview_1080x1920.png` and `output/linkara/moonlake/v2/layered-preview-v2.png`. If the direction is accepted, regenerate or manually clean only `v2/layers/moonlake_v2_lake_water.png` before any asset-readiness promotion.
 - Required reading: `output/linkara/moonlake/readiness-report.md`, `output/linkara/moonlake/profile-draft-v2.json`, `output/linkara/moonlake/v2/prompts/moonlake_v2_generation_prompts.md`, `docs/assets/HABITAT_AUTOMATION_WORKFLOW.md`, `docs/assets/LINKARA_HABITAT_LAYERING_AND_VISUAL_LOCKS.md`, `docs/architecture/HABITAT_SCENE_PROFILE_SPEC.md`, `AGENTS.md`, `CLAUDE.md`, `ACCEPTANCE.md`, and this lane.
 
+### 2026-07-03 - Codex - Habitat Display Contract And Realism Art Lock
+
+- Lane: `Game Art, UI, And Visual Production`
+- Status: `VERIFIED`
+- Branch / commit: `main` / pending scoped docs-and-metadata commit for this package.
+- Scope: Indexed the new habitat display contract and tightened art direction for future Linkara habitat generation. No `assets/**`, `src/**`, `pixiApp.js`, `assetManifest.js`, save schema, `scripts/**`, `tools/**`, package/dependency, scene switching, or runtime wiring changed.
+- Work performed: Updated the Linkara habitat visual lock with `1080x1920` art-space projection rules for the `390x844` safe viewport, cover-height crop math, default normalized scene zones, separated `sky_atmosphere` / `celestial_bodies` / `celestial_occlusion`, and a semi-realistic material/lighting lock. Updated the automation workflow readiness gates and prompt rules. Reclassified Moonlake V2 as composition reference only because it bakes the moon into the sky layer and does not meet the new material/lighting lock.
+- Verification: `habitat-job.json` and `profile-draft-v2.json` parse as JSON. Scope review confirms only docs and `output/linkara/moonlake/**` metadata/prompt/report files changed; no runtime or approved asset paths changed. `git diff --check` passed for the scoped package.
+- Problems / risks: Current Moonlake V2 generated PNGs remain useful for composition reference only. They are not suitable for runtime promotion and should not be copied into `assets/**`. A future regeneration pass must use V2 framing only, not V2 art style, and must separate celestial bodies from the sky base.
+- Next safe action: Run a new Moonlake semi-realistic regeneration pass: `sky_atmosphere`, `celestial_bodies`, `celestial_occlusion`, `mountains`, `lake_water`, `shore_ground_platform`, and `foreground_occlusion`, with material/light realism and art-space profile constraints in the prompts.
+- Required reading: `docs/assets/LINKARA_HABITAT_LAYERING_AND_VISUAL_LOCKS.md`, `docs/assets/HABITAT_AUTOMATION_WORKFLOW.md`, `output/linkara/moonlake/readiness-report.md`, `output/linkara/moonlake/profile-draft-v2.json`, `output/linkara/moonlake/habitat-job.json`, `AGENTS.md`, `CLAUDE.md`, `ACCEPTANCE.md`, and this lane.
+
 ### 2026-07-02 - Codex - Next Gameplay Systems Spec Consolidation
 
 - Lane: `Game Engineering And Architecture`

@@ -4,6 +4,10 @@ Status: `STAGING PROMPT LOG`
 Runtime status: not integrated.
 Mode: built-in `imagegen` plus local chroma-key removal and deterministic 1080x1920 normalization.
 
+## Supersession Note
+
+These prompts produced V2 composition evidence only. They are superseded for future generation because they allowed a baked moon in the sky layer and targeted clean illustrated/painterly rendering instead of the updated semi-realistic material and lighting lock. Future Moonlake prompts must separate `sky_atmosphere`, `celestial_bodies`, and `celestial_occlusion`, and must request realistic material response, plausible light, contact shadows, water reflection/ripple structure, and restrained bloom.
+
 ## Direction Preview
 
 ```text

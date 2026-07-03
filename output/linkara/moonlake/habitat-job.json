@@ -26,7 +26,26 @@
     ],
     "collisionModel": "trigger_zones",
     "engineTarget": "project-native",
-    "artStyle": "project-native clean HD illustrated 2.5D"
+    "artStyle": "project-native clean HD semi-realistic 2.5D with realistic material response and plausible lighting"
+  },
+  "artDirection": {
+    "target": "semi_realistic_material_lighting",
+    "requirements": [
+      "realistic material response",
+      "plausible cinematic lighting",
+      "contact shadows",
+      "believable water reflection and ripple structure",
+      "atmospheric depth",
+      "controlled specular highlights",
+      "restrained bloom"
+    ],
+    "avoid": [
+      "flat anime concept art",
+      "over-smoothed painterly gradients",
+      "plastic surfaces",
+      "noisy AI texture",
+      "baked glow that hides surface form"
+    ]
   },
   "outputRoot": "output/linkara/moonlake",
   "targetMobileArtSize": {
@@ -46,7 +65,7 @@
     },
     {
       "id": "v2",
-      "status": "keep_for_human_review_not_runtime_ready",
+      "status": "composition_reference_only_not_runtime_ready",
       "actualSceneLayerSize": {
         "width": 1080,
         "height": 1920
@@ -54,7 +73,7 @@
       "preview": "v2/layered-preview-v2.png",
       "profileDraft": "profile-draft-v2.json",
       "promptLog": "v2/prompts/moonlake_v2_generation_prompts.md",
-      "notes": "Fixes the target canvas and lower composition. Still requires visual review because the lake-water layer has a visible hard color band at the far water edge."
+      "notes": "Fixes the target canvas and lower composition, but does not pass the updated art lock: sky bakes the moon, material/lighting is too painterly, and the lake-water layer has a visible hard color band."
     }
   ],
   "layers": [
@@ -62,36 +81,36 @@
       "id": "sky",
       "path": "v2/layers/moonlake_v2_sky.png",
       "classification": "foundation_layer",
-      "decision": "keep_for_review",
-      "reason": "Target-size 1080x1920 sky-only layer. Opaque source normalized to alpha-capable PNG for consistent preview compositing."
+      "decision": "regenerate",
+      "reason": "Bakes the moon into the sky and conflicts with the runtime celestial arc contract. Future layer must be sky_atmosphere only."
     },
     {
       "id": "mountains",
       "path": "v2/layers/moonlake_v2_mountains.png",
       "classification": "foundation_layer",
-      "decision": "keep_for_review",
-      "reason": "Target-size alpha-capable distant cliffs and waterfalls layer. Review for edge cleanup before runtime promotion."
+      "decision": "regenerate_for_realism_pass",
+      "reason": "Composition is usable, but cliffs/waterfalls need more realistic material depth, lighting, and atmospheric perspective."
     },
     {
       "id": "lake_water",
       "path": "v2/layers/moonlake_v2_lake_water.png",
       "classification": "foundation_layer",
-      "decision": "regenerate_or_manual_cleanup",
-      "reason": "Target-size water plane improves canvas fit, but visual self-review found a hard color band along the far water edge."
+      "decision": "regenerate",
+      "reason": "Target-size water plane improves canvas fit, but visual self-review found a hard color band and the water needs more realistic reflection/ripple structure."
     },
     {
       "id": "shore_ground_platform",
       "path": "v2/layers/moonlake_v2_shore_ground_platform.png",
       "classification": "foundation_layer",
-      "decision": "keep_for_review",
-      "reason": "Target-size shore/platform layer fixes the previous lower empty-area issue and keeps companion center readable."
+      "decision": "regenerate_for_realism_pass",
+      "reason": "Target-size shore/platform layer fixes the previous lower empty-area issue, but stone material, wetness, and contact lighting need the semi-realistic pass."
     },
     {
       "id": "foreground_occlusion",
       "path": "v2/layers/moonlake_v2_foreground_occlusion.png",
       "classification": "foreground_occlusion",
-      "decision": "keep_for_review",
-      "reason": "Target-size sparse bottom/side foliage and stones; review companion-foot occlusion before approval."
+      "decision": "regenerate_for_realism_pass",
+      "reason": "Composition is usable, but foliage/stone material and lighting need the semi-realistic pass."
     }
   ],
   "props": [
@@ -148,8 +167,9 @@
     "promptMetadataPresent": true,
     "acceptedSetHasNoRejectedFilename": true,
     "visualSpotCheckComplete": true,
+    "celestialSeparationPass": false,
+    "materialLightingRealismPass": false,
     "runtimeReady": false
   },
-  "nextAction": "Human visual review of v2 direction and layered preview. If approved, do one lake edge cleanup/regeneration pass before any runtime promotion."
+  "nextAction": "Regenerate Moonlake from V2 composition only, using semi-realistic material/lighting prompts and separate sky_atmosphere/celestial_bodies layers. Do not runtime-promote V2."
 }
-

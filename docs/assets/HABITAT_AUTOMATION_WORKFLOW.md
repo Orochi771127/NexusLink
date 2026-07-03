@@ -30,6 +30,7 @@ Hard exclusions:
 - Do not use Phaser, React, TypeScript, npm, backend, database, or build step.
 - Do not treat a complete generated painting as a runtime habitat.
 - Do not bake companion, UI, labels, weather, memory traces, or stateful props into base layers.
+- Do not bake sun, moon, stars, or time-of-day celestial bodies into `sky_atmosphere`; they must be separate when they move or change with time.
 - Do not copy generated output into `assets/**` before human approval.
 
 ## 3. Folder Contract
@@ -67,7 +68,9 @@ Those runtime targets are GROUNDWORK-gated and are not part of staging automatio
 1. Create `habitat-job.json` from `templates/habitat-generation-job.template.json`.
 2. Lock the region's visual identity from `docs/assets/LINKARA_HABITAT_LAYERING_AND_VISUAL_LOCKS.md`.
 3. Generate foundation-only layers first:
-   - `sky`
+   - `sky_atmosphere`
+   - `celestial_bodies` when the region uses time-of-day sun/moon/star motion
+   - `celestial_occlusion` when clouds, canopy, cliffs, or shrine edges should pass over celestial bodies
    - `distant_landmarks`
    - `water_or_atmosphere`
    - `ground_platform`
@@ -91,11 +94,20 @@ Those runtime targets are GROUNDWORK-gated and are not part of staging automatio
 
 Foundation layers must say what they contain and what they must not contain.
 
+Art direction lock:
+
+```text
+Clean HD semi-realistic fantasy game environment, project-native Nexus Link aesthetic.
+Preserve realistic material response and plausible cinematic lighting: contact shadows, water reflection and ripple structure, atmospheric depth, wet stone, foliage translucency, controlled specular highlights, and restrained bloom.
+Avoid flat anime concept art, plastic surfaces, over-smoothed painterly gradients, noisy AI texture, and glow that hides surface form.
+```
+
 Base layer prompt lock:
 
 ```text
 Foundation-only habitat layer. Include only stable non-interactive environment art for this named layer.
 Do not include companion, UI, labels, text, weather effects, memory traces, clickable props, glowing runtime props, foreground occluders outside this layer, or any object that should animate, be replaced, or have independent render order.
+For `sky_atmosphere`, do not include sun, moon, stars, or time-of-day celestial bodies.
 ```
 
 Transparent prop prompt lock:
@@ -132,6 +144,8 @@ Minimum checks:
 - No filename containing `rejected` remains in the accepted staging set.
 - Composite preview does not hide companion reserved area.
 - UI forbidden zones remain readable in the profile.
+- Time-of-day celestial bodies are separated from `sky_atmosphere` and can be positioned from art-space profile data.
+- Material and lighting review passes the semi-realistic lock: believable surface response, depth, shadows, reflections, and restrained bloom.
 
 ## 7. Runtime Promotion Rules
 
@@ -162,4 +176,3 @@ Default: no save schema change. Scene switching and unlock persistence require a
 5. `TP-HAB-AUTO-4`: Moonlake runtime promotion, GROUNDWORK-gated.
 6. `TP-HAB-AUTO-5`: Moonlake weather / mood prototype.
 7. `TP-HAB-AUTO-6`: seven-region rollout using the same gate.
-

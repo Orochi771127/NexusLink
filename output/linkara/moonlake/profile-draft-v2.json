@@ -6,7 +6,39 @@
     "width": 1080,
     "height": 1920
   },
-  "sourceNote": "TP-HAB-AUTO-2 generated target-size layer draft. Staging only; not runtime-integrated.",
+  "sourceNote": "TP-HAB-AUTO-2 generated target-size layer draft. Composition reference only after the semi-realistic material/lighting and celestial separation lock; staging only; not runtime-integrated.",
+  "displayContract": {
+    "artSpace": {
+      "width": 1080,
+      "height": 1920
+    },
+    "safeViewport": {
+      "width": 390,
+      "height": 844
+    },
+    "coverMode": "cover-height",
+    "coverScaleAt390x844": 0.439583,
+    "cropCssPxAt390x844": {
+      "left": 42.38,
+      "right": 42.38,
+      "top": 0,
+      "bottom": 0
+    },
+    "visibleArtXRangeAt390x844": [
+      0.089,
+      0.911
+    ],
+    "celestialRule": "Sun, moon, and stars must be separate from sky_atmosphere and positioned from art-space celestialArc data."
+  },
+  "artDirection": {
+    "target": "semi-realistic material and lighting",
+    "currentAssessment": "composition_reference_only",
+    "blockers": [
+      "V2 sky bakes the moon into the background",
+      "V2 style is too painterly/illustrated for the new material-lighting lock",
+      "lake-water edge has a visible hard color band"
+    ]
+  },
   "layers": [
     "v2/layers/moonlake_v2_sky.png",
     "v2/layers/moonlake_v2_mountains.png",
@@ -117,10 +149,12 @@
     ]
   },
   "qa": {
-    "visualSelfReview": "V2 fixes target canvas and lower composition. Lake layer still has a hard color band near the far water edge; keep as review candidate only.",
+    "visualSelfReview": "V2 fixes target canvas and lower composition, but is composition reference only. It fails the updated celestial separation and semi-realistic material/lighting locks, and the lake layer still has a hard color band near the far water edge.",
     "runtimeBlockers": [
       "humanApproved is false",
       "referenceAuditPassed is false",
+      "celestial bodies are not separated from sky_atmosphere",
+      "semi-realistic material and lighting pass is required",
       "lake edge requires cleanup or regeneration",
       "not copied to assets and not referenced by runtime"
     ]
