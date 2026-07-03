@@ -36,6 +36,8 @@ import { createCompanionFeedbackController } from "./ui/companionFeedbackControl
 import { createSoulTalkController } from "./ui/soulTalkController.js";
 import { createOnboardingController } from "./ui/onboardingController.js";
 import { createFirstLoopController } from "./ui/firstLoopController.js";
+import { createInteractionHintController } from "./ui/interactionHintController.js";
+import { createGentleInvitationController } from "./ui/gentleInvitationController.js";
 import { createActionSheetController } from "./ui/actionSheetController.js";
 import { createCalmSyncController } from "./ui/calmSyncController.js";
 import { createPageRouter } from "./ui/pageRouter.js";
@@ -190,6 +192,17 @@ async function bootstrap() {
     store,
     saveCurrentState: () => saveQueue.enqueue(SAVE_LEVEL.CRITICAL)
   });
+  // 互動可讀性提示（支柱一）：貓身上的輕觸光暈，firstTouch 前指引新玩家「牠可以被碰」。
+  const interactionHintController = createInteractionHintController({
+    store,
+    isPanelOpen: () => panelManager.isPanelOpen(),
+    isOnboardingActive: () => onboardingController?.isActive?.()
+  });
+  // 柔性邀請（支柱二）：首輪後由夥伴狀態驅動的一句溫柔下一步，讓核心迴圈不再沉默。
+  const gentleInvitationController = createGentleInvitationController({
+    store,
+    isPanelOpen: () => panelManager.isPanelOpen()
+  });
   const settingsController = createSettingsController({
     panelManager,
     restartOnboarding: () => onboardingController.restart(),
@@ -309,6 +322,8 @@ async function bootstrap() {
   soulTalkController.bind();
   onboardingController.bind();
   firstLoopController.bind();
+  interactionHintController.bind();
+  gentleInvitationController.bind();
   settingsController.bind();
   pageRouter.bind();
   actionSheetController.bind();
@@ -394,6 +409,8 @@ async function bootstrap() {
     soulTalkController.renderChat();
     onboardingController.render();
     firstLoopController.render();
+    interactionHintController.render();
+    gentleInvitationController.render();
     pageRouter.render();
     devPanelController?.renderReadout();
     observeRaphaelAgentStateEvents(store.getState());

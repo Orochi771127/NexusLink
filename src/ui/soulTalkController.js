@@ -13,6 +13,16 @@ const DEFAULT_PREVIEW_TEXT = "你可以慢慢說，灰影會聽。";
 const FIRST_TRACE_SYSTEM_TEXT = "月湖留下了第一道很淡的光。這不是獎勵，是牠記得你說過的事。";
 const FIRST_TRACE_STATUS_TEXT = "第一道痕跡已安靜留在月湖。";
 const NON_REWARDING_MODES = new Set(["safety_redirect", "withdraw", "reject"]);
+// 痕跡回響（First-Session 支柱三）：第一道痕跡有專屬提示（FIRST_TRACE_SYSTEM_TEXT），
+// 但之後每次有意義的傾訴讓新痕跡亮起時原本「完全沒有回饋」——迴圈缺少「有回報感」。
+// 這組輪播句讓每一輪都「看得見牠記住了」。語氣守則：是「記得」的觀察，不是獎勵、不是稱讚、
+// 無數值、無 FOMO（對齊 CLAUDE.md §2 紅線 6/7）。敘事層維持中文（同 first-trace 設計）。
+const TRACE_ECHO_LINES = Object.freeze([
+  "湖邊又亮起一點微光——牠把這一刻，也收下了。",
+  "你剛說的話，化成一點光，落在了月湖上。",
+  "牠沒多說什麼，但湖面記得你此刻的心情。",
+  "又一道很淡的光留在了岸邊，是你們一起攢的。"
+]);
 
 export function createSoulTalkController({ store, saveCurrentState }) {
   const chatLog = qs("#chat-log");
@@ -33,6 +43,13 @@ export function createSoulTalkController({ store, saveCurrentState }) {
   let scrollAnchorText = null;
   // 上次渲染的內容簽章：內容沒變就跳過重建，避免捲動位置被無關 state 變動重置。
   let lastRenderSig = null;
+  // 痕跡回響輪播索引（支柱三）：讓「牠記住了」的句子不重複、每輪迴圈都有回報感。
+  let traceEchoIndex = 0;
+  function pickTraceEchoLine() {
+    const line = TRACE_ECHO_LINES[traceEchoIndex % TRACE_ECHO_LINES.length];
+    traceEchoIndex += 1;
+    return line;
+  }
 
   function setCreature(creature) {
     currentCreature = creature;
@@ -179,6 +196,9 @@ export function createSoulTalkController({ store, saveCurrentState }) {
 
       if (firstTraceCreated) {
         appendChatLine(state, "system", FIRST_TRACE_SYSTEM_TEXT);
+      } else if (shouldAcknowledgeTrace({ traceCountBefore, traceCountAfter, coreResult: coreResultToApply })) {
+        // 第一道之後：每次新痕跡亮起也讓玩家「看得見牠記住了」，把迴圈的回報感補齊。
+        appendChatLine(state, "system", pickTraceEchoLine());
       }
 
       const agentIntent = createRaphaelAgentIntent({
@@ -398,6 +418,13 @@ function shouldAnnounceFirstTrace({ traceCountBefore, traceCountAfter, coreResul
   const memoryDecision = coreResult?.memoryDecision || {};
   const traceDecision = coreResult?.traceDecision || {};
   return Boolean(awakeningResult?.applied || memoryDecision.shouldWrite || traceDecision.shouldApplyTrace);
+}
+
+// 第一道之後的痕跡回響（支柱三）：只有「真的新增了一道可見痕跡」且非安全轉導/拒絕情境才回應。
+function shouldAcknowledgeTrace({ traceCountBefore, traceCountAfter, coreResult }) {
+  if (traceCountBefore <= 0) return false; // 第一道由 shouldAnnounceFirstTrace 專屬處理
+  if (traceCountAfter <= traceCountBefore) return false; // 沒有新增可見痕跡就不回應
+  return shouldAllowFirstAwakening(coreResult); // 安全轉導 / 非獎勵模式 / 高風險時不回應
 }
 
 function shouldAllowFirstAwakening(coreResult) {

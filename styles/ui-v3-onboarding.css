@@ -353,3 +353,126 @@ html[data-ui="v2"] .first-loop-skip {
     transition: none;
   }
 }
+
+/* =========================================================================
+   互動可讀性提示（First-Session 支柱一）：貓身上的輕觸光暈
+   讓新玩家「看見」貓可以被輕觸。純視覺、pointer-events:none、firstTouch 後永久停止。
+   垂直錨點 --touch-affordance-y 可微調（貓 baseline 約 stage 69%，body 中心略高）。
+   ========================================================================= */
+html[data-ui="v2"] .touch-affordance {
+  position: fixed;
+  left: 50%;
+  top: var(--touch-affordance-y, 60%);
+  width: 128px;
+  height: 128px;
+  transform: translate(-50%, -50%);
+  pointer-events: none;             /* 點擊穿透到 Pixi 貓 */
+  z-index: calc(var(--z-nav, 30) - 4);
+  opacity: 0;
+  transition: opacity 640ms ease;
+}
+
+html[data-ui="v2"] .touch-affordance.is-visible {
+  opacity: 1;
+}
+
+html[data-ui="v2"] .touch-affordance__ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1.5px solid rgba(138, 217, 255, 0.5);
+  box-shadow: 0 0 26px rgba(120, 190, 255, 0.26), inset 0 0 18px rgba(120, 190, 255, 0.14);
+  transform-origin: center;
+  animation: touch-affordance-breathe 3200ms ease-in-out infinite;
+}
+
+html[data-ui="v2"] .touch-affordance__core {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 12px;
+  height: 12px;
+  margin: -6px 0 0 -6px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(223, 243, 255, 0.95) 0%, rgba(138, 217, 255, 0.35) 70%, transparent 100%);
+  animation: touch-affordance-pulse 3200ms ease-in-out infinite;
+}
+
+@keyframes touch-affordance-breathe {
+  0%, 100% { transform: scale(0.82); opacity: 0.42; }
+  50%      { transform: scale(1.08); opacity: 0.85; }
+}
+
+@keyframes touch-affordance-pulse {
+  0%, 100% { transform: scale(0.7); opacity: 0.55; }
+  50%      { transform: scale(1.15); opacity: 1; }
+}
+
+html[data-ui="v2"] .touch-affordance.is-lowmotion .touch-affordance__ring,
+html[data-ui="v2"] .touch-affordance.is-lowmotion .touch-affordance__core {
+  animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-ui="v2"] .touch-affordance__ring,
+  html[data-ui="v2"] .touch-affordance__core {
+    animation: none;
+  }
+}
+
+/* =========================================================================
+   柔性邀請（First-Session 支柱二）：首輪後由夥伴狀態驅動的一句溫柔下一步。
+   非任務、無紅點、可忽略；pointer-events:none 不阻擋操作。
+   nav 暖光是「呼吸的柔光」不是徽章/數字/紅點。
+   ========================================================================= */
+html[data-ui="v2"] .gentle-invitation {
+  position: fixed;
+  left: 50%;
+  bottom: calc(var(--bottom-safe, 0px) + var(--nav-block-h, 104px) + 96px);
+  transform: translateX(-50%);
+  margin: 0;
+  max-width: min(80vw, 400px);
+  padding: 7px 15px;
+  border-radius: 999px;
+  border: 1px solid rgba(138, 217, 255, 0.16);
+  background: rgba(10, 16, 32, 0.55);
+  color: rgba(223, 243, 255, 0.86);
+  font-size: 12.5px;
+  line-height: 1.5;
+  text-align: center;
+  pointer-events: none;
+  opacity: 0;
+  z-index: calc(var(--z-nav, 30) - 3);
+  transition: opacity 800ms ease;
+}
+
+html[data-ui="v2"] .gentle-invitation.is-visible {
+  opacity: 1;
+}
+
+html[data-ui="v2"] .bottom-nav .bottom-nav__item.invite-glow {
+  position: relative;
+}
+
+html[data-ui="v2"] .bottom-nav .bottom-nav__item.invite-glow::after {
+  content: "";
+  position: absolute;
+  inset: 6px 10px;
+  border-radius: 16px;
+  background: radial-gradient(circle at 50% 40%, rgba(138, 217, 255, 0.3), transparent 70%);
+  animation: invite-glow-breathe 3600ms ease-in-out infinite;
+  pointer-events: none;
+  z-index: -1;
+}
+
+@keyframes invite-glow-breathe {
+  0%, 100% { opacity: 0.22; }
+  50% { opacity: 0.72; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-ui="v2"] .bottom-nav .bottom-nav__item.invite-glow::after {
+    animation: none;
+    opacity: 0.4;
+  }
+}
