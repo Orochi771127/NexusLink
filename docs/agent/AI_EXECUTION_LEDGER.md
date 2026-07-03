@@ -1258,6 +1258,18 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Next safe action: Review `output/linkara/moonlake/layered-preview.png`, `props-preview.png`, and the individual layer/prop PNGs. If the art direction is accepted, open a separate Moonlake asset-readiness TASK_PACK to normalize canvas size, alpha, anchors, Scene Profile data, and manifest entries before touching runtime paths.
 - Required reading: `output/linkara/moonlake/prompts/moonlake_layer_generation_notes.txt`, `output/linkara/moonlake/profile-draft.json`, `docs/assets/LINKARA_HABITAT_LAYERING_AND_VISUAL_LOCKS.md`, `docs/architecture/HABITAT_SCENE_PROFILE_SPEC.md`, `AGENTS.md`, `CLAUDE.md`, `ACCEPTANCE.md`, and this lane.
 
+### 2026-07-03 - Codex - Habitat Automation Workflow And Moonlake Readiness Audit
+
+- Lane: `Game Art, UI, And Visual Production`
+- Status: `VERIFIED`
+- Branch / commit: `main` / pending scoped workflow commit for this package.
+- Scope: Implemented the safe staging portion of the habitat automation plan. Added the AI/skill routing workflow, reusable job/report templates, and Moonlake readiness audit artifacts. No `assets/**`, `src/**`, `pixiApp.js`, `assetManifest.js`, save schema, `scripts/**`, `tools/**`, package/dependency, scene switching, or runtime wiring changed.
+- Work performed: Added `docs/assets/HABITAT_AUTOMATION_WORKFLOW.md` as the production entry point for Codex-led habitat generation. Added `templates/habitat-generation-job.template.json` and `templates/habitat-readiness-report.template.md`. Added `output/linkara/moonlake/habitat-job.json` and `output/linkara/moonlake/readiness-report.md`, classifying the current Moonlake staging as review-only and recording regeneration blockers.
+- Verification: `habitat-job.json`, `profile-draft.json`, and `templates/habitat-generation-job.template.json` parse as JSON. PNG readback confirmed remaining Moonlake scene layers are `941x1672`, props are `1254x1254`, non-sky layers/props are alpha-capable, and no accepted staging filename contains `rejected`. `git diff --check` passed for the scoped package.
+- Problems / risks: The Moonlake staged composite remains not runtime-ready because its scene canvas is `941x1672` instead of the target `1080x1920` and the composite has a large lower empty area. The workflow intentionally stops before official asset promotion or Pixi wiring.
+- Next safe action: Run `TP-HAB-AUTO-2` as a generation-only pass: regenerate Moonlake target-size foundation layers and weak FX/foreground candidates under `output/linkara/moonlake/`, then update the readiness report. Do not touch `assets/**` or runtime paths until human approval.
+- Required reading: `docs/assets/HABITAT_AUTOMATION_WORKFLOW.md`, `templates/habitat-generation-job.template.json`, `output/linkara/moonlake/readiness-report.md`, `docs/assets/LINKARA_HABITAT_LAYERING_AND_VISUAL_LOCKS.md`, `docs/architecture/HABITAT_SCENE_PROFILE_SPEC.md`, `AGENTS.md`, `CLAUDE.md`, `ACCEPTANCE.md`, and this lane.
+
 ### 2026-07-02 - Codex - Next Gameplay Systems Spec Consolidation
 
 - Lane: `Game Engineering And Architecture`

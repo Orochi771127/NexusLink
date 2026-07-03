@@ -1,0 +1,141 @@
+{
+  "schemaVersion": 1,
+  "jobType": "linkara_habitat_generation",
+  "status": {
+    "stage": "staging",
+    "humanApproved": false,
+    "runtimeIntegrated": false,
+    "referenceAuditPassed": false
+  },
+  "region": {
+    "id": "ethereal_moon_lakefront",
+    "label": "Ethereal Moon Lakefront",
+    "canonRole": "Moonlake camp and reflective emotional habitat",
+    "visualLockSource": "docs/assets/LINKARA_HABITAT_LAYERING_AND_VISUAL_LOCKS.md"
+  },
+  "pipeline": {
+    "orchestrator": "Codex",
+    "mapSkill": "generate2dmap",
+    "imageSkill": "imagegen",
+    "mapMode": "scene_mode",
+    "visualModel": "layered_raster",
+    "runtimeObjectModel": [
+      "separate_props",
+      "foreground_occluders",
+      "scene_hooks"
+    ],
+    "collisionModel": "trigger_zones",
+    "engineTarget": "project-native",
+    "artStyle": "project-native clean HD illustrated 2.5D"
+  },
+  "outputRoot": "output/linkara/moonlake",
+  "targetMobileArtSize": {
+    "width": 1080,
+    "height": 1920
+  },
+  "actualArtSize": {
+    "width": 941,
+    "height": 1672
+  },
+  "layers": [
+    {
+      "id": "sky",
+      "path": "layers/moonlake_sky.png",
+      "classification": "foundation_layer",
+      "decision": "regenerate",
+      "reason": "Opaque sky layer is usable as direction, but actual canvas is 941x1672 instead of the target 1080x1920."
+    },
+    {
+      "id": "mountains",
+      "path": "layers/moonlake_mountains.png",
+      "classification": "foundation_layer",
+      "decision": "keep_for_review",
+      "reason": "Alpha-capable distant layer; needs visual approval and target-canvas normalization before runtime promotion."
+    },
+    {
+      "id": "lake_water",
+      "path": "layers/moonlake_lake_water.png",
+      "classification": "foundation_layer",
+      "decision": "keep_for_review",
+      "reason": "Alpha-capable water plane; useful for profile zone review."
+    },
+    {
+      "id": "shore_ground_platform",
+      "path": "layers/moonlake_shore_ground_platform.png",
+      "classification": "foundation_layer",
+      "decision": "regenerate",
+      "reason": "Direction is useful, but composite preview leaves a large lower empty area and needs stronger target-frame fit."
+    },
+    {
+      "id": "camp_structures",
+      "path": "layers/moonlake_camp_structures.png",
+      "classification": "structure_layer",
+      "decision": "keep_for_review",
+      "reason": "Alpha-capable structure layer; must be checked for baked runtime props before approval."
+    },
+    {
+      "id": "foreground_occlusion",
+      "path": "layers/moonlake_foreground_occlusion.png",
+      "classification": "foreground_occlusion",
+      "decision": "regenerate",
+      "reason": "Accepted candidate is sparse, but occlusion needs a stricter companion-foot and bottom-edge review pass."
+    }
+  ],
+  "props": [
+    {
+      "id": "crystal_cluster",
+      "path": "props/prop_crystal_cluster.png",
+      "classification": "compact_prop",
+      "decision": "keep_for_review",
+      "reason": "Readable cyan crystal prop candidate."
+    },
+    {
+      "id": "lantern_post",
+      "path": "props/prop_lantern_post.png",
+      "classification": "tall_or_large_object",
+      "decision": "keep_for_review",
+      "reason": "Useful prop candidate but placement must avoid companion and UI safe zones."
+    },
+    {
+      "id": "dock_posts",
+      "path": "props/prop_dock_posts.png",
+      "classification": "compact_prop",
+      "decision": "keep_for_review",
+      "reason": "Small dock-post group candidate."
+    },
+    {
+      "id": "shrine_marker",
+      "path": "props/prop_shrine_marker.png",
+      "classification": "tall_or_large_object",
+      "decision": "keep_for_review",
+      "reason": "Strong identity prop; needs height and occlusion review."
+    },
+    {
+      "id": "firefly_glow",
+      "path": "props/prop_firefly_glow.png",
+      "classification": "fx_candidate",
+      "decision": "regenerate",
+      "reason": "Very subtle after chroma-key removal; runtime particle rendering may be preferable."
+    }
+  ],
+  "checks": {
+    "jsonParse": true,
+    "layerFilesExist": true,
+    "propFilesExist": true,
+    "sceneLayerDimensionsMatch": true,
+    "actualSceneLayerSize": {
+      "width": 941,
+      "height": 1672
+    },
+    "targetSceneLayerSize": {
+      "width": 1080,
+      "height": 1920
+    },
+    "alphaReviewed": true,
+    "promptMetadataPresent": true,
+    "noRejectedFilesInAcceptedSet": true,
+    "visualSpotCheckComplete": true
+  },
+  "nextAction": "Regenerate target-size Moonlake base composition and weak layers before any assets or runtime promotion."
+}
+

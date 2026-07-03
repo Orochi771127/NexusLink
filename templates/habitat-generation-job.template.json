@@ -1,0 +1,135 @@
+{
+  "schemaVersion": 1,
+  "jobType": "linkara_habitat_generation",
+  "status": {
+    "stage": "staging",
+    "humanApproved": false,
+    "runtimeIntegrated": false,
+    "referenceAuditPassed": false
+  },
+  "region": {
+    "id": "<region-id>",
+    "label": "<Region Label>",
+    "canonRole": "<canon role>",
+    "visualLockSource": "docs/assets/LINKARA_HABITAT_LAYERING_AND_VISUAL_LOCKS.md"
+  },
+  "pipeline": {
+    "orchestrator": "Codex",
+    "mapSkill": "generate2dmap",
+    "imageSkill": "imagegen",
+    "mapMode": "scene_mode",
+    "visualModel": "layered_raster",
+    "runtimeObjectModel": [
+      "separate_props",
+      "foreground_occluders",
+      "scene_hooks"
+    ],
+    "collisionModel": "trigger_zones",
+    "engineTarget": "project-native",
+    "artStyle": "project-native clean HD illustrated 2.5D"
+  },
+  "outputRoot": "output/linkara/<region-id>",
+  "targetMobileArtSize": {
+    "width": 1080,
+    "height": 1920
+  },
+  "layerPlan": [
+    {
+      "id": "sky",
+      "required": true,
+      "contains": "sky, clouds, celestial atmosphere only",
+      "mustNotContain": "terrain, water, platform, props, companion, UI, text"
+    },
+    {
+      "id": "distant_landmarks",
+      "required": true,
+      "contains": "far mountains, city silhouettes, cliffs, waterfalls, skyline",
+      "mustNotContain": "near props, companion, UI, text"
+    },
+    {
+      "id": "water_or_atmosphere",
+      "required": false,
+      "contains": "water, lava haze, mist plane, or reflective atmosphere",
+      "mustNotContain": "ground props, companion, UI, text"
+    },
+    {
+      "id": "ground_platform",
+      "required": true,
+      "contains": "companion-safe floor, shore, dock apron, plaza, platform",
+      "mustNotContain": "runtime props, companion, UI, text"
+    },
+    {
+      "id": "structures",
+      "required": false,
+      "contains": "noninteractive camp structures, far architecture, tents, docks",
+      "mustNotContain": "stateful props, glowing clickable objects, companion, UI, text"
+    },
+    {
+      "id": "foreground_occlusion",
+      "required": true,
+      "contains": "sparse edge foliage, flowers, rails, low rocks, occlusion-only silhouettes",
+      "mustNotContain": "main platform, water plane, large structures, companion, UI, text"
+    }
+  ],
+  "propPlan": [
+    {
+      "id": "<prop-id>",
+      "classification": "compact_prop | wide_or_long_object | tall_or_large_object | collision_bearing_object | fx_candidate",
+      "generationStrategy": "one_by_one | prop_pack_2x2 | prop_pack_3x3 | custom_wide_pack | runtime_particle",
+      "targetLayer": "runtime_props | trace_fx | foreground_occlusion",
+      "interactive": false,
+      "stateful": false
+    }
+  ],
+  "sceneProfileDraft": {
+    "companion": {
+      "anchor": {
+        "x": 0.5,
+        "y": 0.7
+      },
+      "reservedRect": {
+        "x": 0.38,
+        "y": 0.45,
+        "w": 0.24,
+        "h": 0.27
+      }
+    },
+    "uiForbidden": [
+      {
+        "id": "hud_top_static",
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 1,
+          "h": 0.12
+        }
+      },
+      {
+        "id": "bottom_nav_static",
+        "rect": {
+          "x": 0,
+          "y": 0.8,
+          "w": 1,
+          "h": 0.2
+        }
+      }
+    ],
+    "zones": {
+      "water": [],
+      "ground": [],
+      "affinity": []
+    }
+  },
+  "checks": {
+    "jsonParse": false,
+    "layerFilesExist": false,
+    "propFilesExist": false,
+    "sceneLayerDimensionsMatch": false,
+    "alphaReviewed": false,
+    "promptMetadataPresent": false,
+    "noRejectedFilesInAcceptedSet": false,
+    "visualSpotCheckComplete": false
+  },
+  "nextAction": "Create staging output and readiness-report.md. Do not promote to assets or runtime until human approval."
+}
+
