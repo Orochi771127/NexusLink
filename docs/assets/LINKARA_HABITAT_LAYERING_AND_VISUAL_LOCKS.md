@@ -52,6 +52,19 @@ Default mobile zones:
 
 Art direction is semi-realistic fantasy, not flat anime concept art. Generated layers must preserve Nexus Link's clean HD readability while adding realistic material response and plausible lighting: wet stone with contact shadows, water with believable reflection/ripple structure, cliffs with atmospheric depth, foliage with leaf translucency, metal/crystal with controlled specular highlights, and restrained bloom. Reject plastic surfaces, over-smoothed painterly gradients, generic photobash, noisy AI texture, or baked glow that hides material form.
 
+## Production Source Model
+
+High-quality habitat bases should use a 3D-assisted 2.5D source pipeline. The Nexus Link runtime remains PixiJS / DOM; the 3D or DCC scene is an offline art-production source, not a runtime engine change.
+
+Required source discipline:
+
+- Lock one mobile portrait camera at `1080x1920` before final pass export.
+- Separate major forms in source: sky, celestial bodies, celestial occlusion, far terrain/city, water or atmosphere plane, shore/platform, structures, foreground occlusion, and runtime props.
+- Use believable material response before paintover: water reflection and ripple structure, wet stone contact shadows, atmospheric depth, controlled crystal/metal specular, and restrained bloom.
+- Export or document masks/depth references when they help water cleanup, foreground occlusion, or future Pixi FX placement.
+- Use `imagegen` only for concept targets, paintover proposals, small prop candidates, or texture exploration unless the output passes the same source-pass, layer-separation, and human approval gates.
+- Do not introduce Three.js, GLB runtime loading, TypeScript, Vite, npm, or a new build step as part of habitat art production.
+
 ## Global Layer Model
 
 Every Linkara habitat should be planned as this layered stack:
@@ -486,21 +499,24 @@ Large foreground crystals, lantern posts, campfire, firefly clusters, dock posts
 ### Moonlake Replacement Protocol
 
 1. Treat new Moonlake art as a replacement candidate, not an automatic runtime swap.
-2. Produce layered reference passes first: `sky_atmosphere`, `celestial_bodies`, `celestial_occlusion`, `mountains`, `lake_water`, `shore_ground_platform`, `camp_structures`, `foreground_occlusion`.
-3. Do not bake moon, sun, or star bodies into `sky_atmosphere`; time-of-day bodies must be separate so their positions can follow the profile arc.
-4. Produce runtime props separately: crystal clusters, lantern posts, dock posts, campfire/firefly glow, shrine marker.
-5. Require semi-realistic material and lighting review before any asset-readiness promotion; painterly composition references are not enough.
-6. Do not delete `LakeNightCamp_v2` or legacy Moonlake assets until a reference audit and runtime QA pass approve the replacement.
-7. Keep Greyshade Cat as the first-session focus. Do not introduce a visual fallback to another companion.
-8. Any runtime swap touching `assets/**`, `assetManifest.js`, `pixiApp.js`, or scene switching is a separate approved GROUNDWORK task.
+2. Build or block out Moonlake in a 3D/DCC-style source first, with camera locked to `1080x1920`.
+3. Produce layered reference/render passes: `sky_atmosphere`, `celestial_bodies`, `celestial_occlusion`, `mountains`, `lake_water`, `shore_ground_platform`, `camp_structures`, `foreground_occlusion`, plus optional mask/depth references.
+4. Do not bake moon, sun, or star bodies into `sky_atmosphere`; time-of-day bodies must be separate so their positions can follow the profile arc.
+5. Produce runtime props separately: crystal clusters, lantern posts, dock posts, campfire/firefly glow, shrine marker.
+6. Require semi-realistic material and lighting review before any asset-readiness promotion; painterly composition references are not enough.
+7. Require companion readability review against Greyshade Cat before approval; foreground occlusion may lightly cover feet but not body/face silhouette.
+8. Do not delete `LakeNightCamp_v2` or legacy Moonlake assets until a reference audit and runtime QA pass approve the replacement.
+9. Keep Greyshade Cat as the first-session focus. Do not introduce a visual fallback to another companion.
+10. Any runtime swap touching `assets/**`, `assetManifest.js`, `pixiApp.js`, or scene switching is a separate approved GROUNDWORK task.
 
 ### Generation Pack
 
 1. Start here before other regions.
-2. Generate vertical mobile-first layer set, not a complete baked painting.
-3. Generate dressed reference only after a foundation layer stack exists.
-4. Use one-by-one transparent prop generation for crystals, lanterns, dock posts, and shrine marker.
-5. Use trace FX only as metadata/planning until placement resolver exists.
+2. Produce a 3D/DCC blockout or equivalent source scene before any final layer export.
+3. Export vertical mobile-first render passes, not a complete baked painting.
+4. Generate dressed reference only after a foundation render-pass stack exists.
+5. Use one-by-one transparent prop generation for crystals, lanterns, dock posts, and shrine marker.
+6. Use trace FX only as metadata/planning until placement resolver exists.
 
 ## Region 6: Eastern Mystic Mountains
 
@@ -672,7 +688,7 @@ Use this template in the generation window. Replace bracketed fields.
 Use case: stylized-concept
 Asset type: Nexus Link habitat layered raster layer, preview candidate only
 Primary request: Generate the [layer_name] layer for [region_id].
-Reference role: Use the approved Linkara region reference and this Visual Lock as the style and composition source.
+Reference role: Use the approved Linkara region reference, this Visual Lock, and the current DCC/3D render pass or approved source layer as the style and composition source.
 Scene/backdrop: [region visual lock summary].
 Style/medium: clean HD semi-realistic fantasy game environment layer, project-native Nexus Link aesthetic, not pixel art, not flat anime concept art.
 Material/lighting lock: realistic material response and plausible cinematic lighting. Preserve wet stone, water reflection/ripple structure, atmospheric depth, leaf translucency, controlled specular highlights, contact shadows, and restrained bloom. Avoid plastic surfaces, over-smoothed painterly gradients, noisy AI texture, or glow that hides surface form.
@@ -699,9 +715,82 @@ Constraints: full object visible, generous magenta margin on all sides, no part 
 Avoid: scenery, companion, characters, baked trace FX unless this prop is explicitly an FX asset, plastic material, noisy AI texture, or glow that hides the object's form.
 ```
 
+## TASK_PACK: TP-HAB-RESET-1 Rejected Moonlake Image Cleanup
+
+Layer: `GROUNDWORK staging cleanup`, not runtime integration.
+
+Expected outputs:
+
+```text
+output/linkara/moonlake/**/*.png removed
+output/linkara/moonlake/**/*.jpg removed
+output/linkara/moonlake/**/*.jpeg removed
+output/linkara/moonlake/**/*.webp removed
+```
+
+Preserve:
+
+```text
+output/linkara/moonlake/**/*.json
+output/linkara/moonlake/**/*.md
+output/linkara/moonlake/**/*.txt
+```
+
+Non-goals:
+
+- No `assets/**` deletion.
+- No source runtime deletion.
+- No `assetManifest.js` update.
+- No `pixiApp.js` update.
+- No save/schema change.
+
+## TASK_PACK: TP-HAB-PIPE-1 3D-Assisted 2.5D Production Reset
+
+Layer: `PLANNING / VISUAL PRODUCTION`, not runtime integration.
+
+Expected outputs:
+
+- Habitat workflow marks direct 2D generation as concept/paintover support, not the default final-background source.
+- Moonlake uses an offline 3D/DCC source package for camera, material, lighting, render-pass, mask, and depth discipline.
+- PixiJS remains the runtime target; Three.js is not introduced.
+
+## TASK_PACK: TP-HAB-MOON-3D-1 Moonlake 3D/DCC Render-Pass Brief
+
+Layer: `GROUNDWORK asset generation/staging`, not runtime integration.
+
+Expected outputs:
+
+```text
+output/linkara/moonlake/source-brief.md
+output/linkara/moonlake/profile-draft-3d-assisted.json
+output/linkara/moonlake/render-pass-manifest.json
+```
+
+Required render-pass plan:
+
+- `sky_atmosphere`: sky and cloud mass only; no celestial bodies.
+- `celestial_bodies`: sun, moon, stars, or time-of-day bodies as movable pass candidates.
+- `celestial_occlusion`: clouds, canopy, cliff edges, or shrine edges that can pass in front of celestial bodies.
+- `mountains`: cliffs, waterfalls, distant shrine, atmospheric depth.
+- `lake_water`: believable water reflection and ripple structure, clean near/far edges.
+- `shore_ground_platform`: companion platform with wet stone, contact shadows, and no opaque body blockers.
+- `camp_structures`: tents, docks, and shoreline structures only when not runtime-stateful.
+- `foreground_occlusion`: low flowers, grass, dock lip, near posts, and subtle leaves for foot-depth only.
+- Optional `masks/depth`: water mask, companion reserved mask, foreground occlusion mask, and depth reference for later Pixi FX.
+
+Approval gate:
+
+- Human approval of composition and visual quality.
+- Companion readability passes.
+- UI forbidden zones remain quiet.
+- Celestial separation passes.
+- Material/lighting realism passes.
+
 ## TASK_PACK: TP-HAB-1 Moonlake Layered Art Generation
 
 Layer: `GROUNDWORK asset generation/staging`, not runtime integration.
+
+Status: superseded for final-quality work by `TP-HAB-MOON-3D-1`. Use only for historical context or low-risk concept exploration.
 
 Expected outputs:
 

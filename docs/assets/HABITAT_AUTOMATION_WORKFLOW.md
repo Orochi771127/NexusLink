@@ -18,9 +18,11 @@ Human approval is the only runtime promotion gate. Generated images are not runt
 | --- | --- | --- |
 | Orchestration | Codex | Read repo, write job specs, create prompts, validate outputs, maintain ledger, keep GROUNDWORK boundaries. |
 | Code discovery | codebase-memory-mcp | Use `index_status`, `get_architecture`, `get_code_snippet`, and graph search before runtime planning. |
-| Map / habitat production | `generate2dmap` skill | Use `scene_mode`, `layered_raster`, `separate_props`, `foreground_occluders`, and `project-native`. |
-| Bitmap generation | `imagegen` skill | Use built-in image generation by default. Use chroma-key removal for simple transparent props. Ask before CLI native transparency. |
+| Map / habitat contract | `generate2dmap` skill | Use `scene_mode`, `layered_raster`, `separate_props`, `foreground_occluders`, and `project-native` for scene contracts, layer ownership, prop strategy, placement metadata, and QA previews. |
+| Bitmap exploration | `imagegen` skill | Use for concepts, paintovers, texture/prop exploration, and small prop candidates. Do not treat direct 2D image generation as the sole final-background source for high-quality habitat bases. |
 | Architecture guard | `game-studio:web-game-foundations` skill | Keep simulation/state outside renderer; keep DOM UI outside canvas; keep manifest keys stable. |
+| Offline 3D / DCC source | `game-studio:web-3d-asset-pipeline` skill | Use for high-quality habitat blockouts, camera lock, render-pass naming, material/lighting discipline, masks, depth, and source hygiene before exporting Pixi-friendly 2.5D layers. |
+| 3D runtime evaluation | `game-studio:three-webgl-game` skill | Evaluation only. Do not adopt Three.js / GLB / TypeScript / Vite runtime for Nexus Link without a separate architecture pivot approval. |
 | FX / animation strips | `game-studio:sprite-pipeline` skill | Use only for approved FX sprite strips or companion animation work, not for base habitat images. |
 | Prototype partner | Fable / Claude Code | Optional throwaway weather or visual FX prototypes; output must be extracted into Nexus Link data/runtime rules, not imported wholesale. |
 | Visual reviewer | Gemini or human visual QA | Inspect composition, alpha, UI clearance, companion readability, and baked-object mistakes. |
@@ -28,7 +30,9 @@ Human approval is the only runtime promotion gate. Generated images are not runt
 Hard exclusions:
 
 - Do not use Phaser, React, TypeScript, npm, backend, database, or build step.
+- Do not switch the Nexus Link habitat runtime from PixiJS to Three.js as part of art production.
 - Do not treat a complete generated painting as a runtime habitat.
+- Do not treat direct 2D image generation as final-quality production for high-value habitat bases unless it passes the same render-pass and human-approval gates as a DCC-assisted package.
 - Do not bake companion, UI, labels, weather, memory traces, or stateful props into base layers.
 - Do not bake sun, moon, stars, or time-of-day celestial bodies into `sky_atmosphere`; they must be separate when they move or change with time.
 - Do not copy generated output into `assets/**` before human approval.
@@ -67,7 +71,12 @@ Those runtime targets are GROUNDWORK-gated and are not part of staging automatio
 
 1. Create `habitat-job.json` from `templates/habitat-generation-job.template.json`.
 2. Lock the region's visual identity from `docs/assets/LINKARA_HABITAT_LAYERING_AND_VISUAL_LOCKS.md`.
-3. Generate foundation-only layers first:
+3. For high-quality habitat bases, author or block out the scene in an offline 3D / DCC-style source first:
+   - lock one mobile portrait camera at `1080x1920`
+   - establish terrain, water plane, platform, major silhouettes, and companion clearance before paintover
+   - validate material response and lighting in source before exporting raster passes
+   - export optional mask, depth, and normal references for cleanup and future FX placement
+4. Generate or export foundation-only passes next:
    - `sky_atmosphere`
    - `celestial_bodies` when the region uses time-of-day sun/moon/star motion
    - `celestial_occlusion` when clouds, canopy, cliffs, or shrine edges should pass over celestial bodies
@@ -76,23 +85,25 @@ Those runtime targets are GROUNDWORK-gated and are not part of staging automatio
    - `ground_platform`
    - `structures`
    - `foreground_occlusion`
-4. Generate an in-world preview or dressed reference only as a planning checkpoint.
-5. Generate runtime props separately:
+5. Generate an in-world preview or dressed reference only as a planning checkpoint.
+6. Generate runtime props separately:
    - Important, tall, irregular, collision-aligned, or identity-critical props use one-by-one generation.
    - Compact decorative props may use a small prop pack only if they do not need exact placement.
-6. Generate or stage FX separately:
+7. Generate or stage FX separately:
    - memory glimmers
    - water ripples
    - mist
    - firefly glow
    - rain / splash sprite candidates
-7. Validate dimensions, alpha, prompt metadata, profile JSON, and rejected files.
-8. Write `readiness-report.md`.
-9. Stop for human approval before runtime promotion.
+8. Validate dimensions, alpha, source-pass metadata, prompt metadata, profile JSON, and rejected files.
+9. Write `readiness-report.md`.
+10. Stop for human approval before runtime promotion.
 
 ## 5. Generation Prompt Rules
 
 Foundation layers must say what they contain and what they must not contain.
+
+Direct 2D generation is no longer the default final-background path for Moonlake or other high-quality habitat bases. It can create concept targets, paintover references, prop candidates, and exploratory texture treatments, but final promotion requires either a DCC/3D-assisted render-pass package or an equivalent hand-authored layer package that passes the same gates.
 
 Art direction lock:
 
@@ -140,12 +151,14 @@ Minimum checks:
 - All listed prop files exist.
 - Scene layers share one canvas size.
 - Transparent layers / props use an alpha-capable format.
+- DCC/3D-assisted packages include source-pass notes for camera, layer ownership, materials, lighting, and any masks/depth references.
 - Prompt notes or prompt files exist.
 - No filename containing `rejected` remains in the accepted staging set.
 - Composite preview does not hide companion reserved area.
 - UI forbidden zones remain readable in the profile.
 - Time-of-day celestial bodies are separated from `sky_atmosphere` and can be positioned from art-space profile data.
 - Material and lighting review passes the semi-realistic lock: believable surface response, depth, shadows, reflections, and restrained bloom.
+- Companion readability passes against the active companion reserved rect; foreground occlusion may cover feet lightly but not face/body silhouette.
 
 ## 7. Runtime Promotion Rules
 
@@ -169,10 +182,11 @@ Default: no save schema change. Scene switching and unlock persistence require a
 
 ## 8. Pack Order
 
-1. `TP-HAB-AUTO-0`: this automation workflow plus templates.
-2. `TP-HAB-AUTO-1`: Moonlake readiness audit under `output/linkara/moonlake/`.
-3. `TP-HAB-AUTO-2`: Moonlake regeneration pass for rejected or weak layers.
-4. `TP-HAB-AUTO-3`: Scene Profile data pack, data-only, no Pixi wiring.
-5. `TP-HAB-AUTO-4`: Moonlake runtime promotion, GROUNDWORK-gated.
-6. `TP-HAB-AUTO-5`: Moonlake weather / mood prototype.
-7. `TP-HAB-AUTO-6`: seven-region rollout using the same gate.
+1. `TP-HAB-RESET-1`: delete rejected generated Moonlake image files under `output/linkara/moonlake/**`, preserving JSON / Markdown / prompt records.
+2. `TP-HAB-PIPE-1`: revise the production workflow around 3D-assisted 2.5D habitat bases and keep PixiJS as the runtime.
+3. `TP-HAB-MOON-3D-1`: produce the Moonlake 3D/DCC blockout and render-pass brief under staging only.
+4. `TP-HAB-MOON-APPROVAL-1`: human visual approval of source composition, render passes, companion readability, UI safe zones, and celestial separation.
+5. `TP-HAB-AUTO-3`: Scene Profile data pack, data-only, no Pixi wiring.
+6. `TP-HAB-RUNTIME-1`: Moonlake runtime promotion, GROUNDWORK-gated and only after approval.
+7. `TP-HAB-AUTO-5`: Moonlake weather / mood prototype.
+8. `TP-HAB-AUTO-6`: seven-region rollout using the same gate.

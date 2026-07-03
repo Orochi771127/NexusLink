@@ -1,0 +1,93 @@
+{
+  "schemaVersion": 1,
+  "taskPack": "TP-HAB-MOON-3D-1",
+  "regionId": "ethereal_moon_lakefront",
+  "status": "planned_no_images_generated",
+  "runtimeBoundary": {
+    "renderer": "PixiJS",
+    "runtime3d": false,
+    "noRuntimeWiring": true,
+    "noAssetsPromotion": true
+  },
+  "artSize": {
+    "width": 1080,
+    "height": 1920
+  },
+  "sourceModel": "3d_assisted_2_5d",
+  "passes": [
+    {
+      "id": "sky_atmosphere",
+      "required": true,
+      "contents": "Sky color, cloud mass, atmospheric gradient only.",
+      "forbidden": "Sun, moon, stars, labels, UI, companion, trace FX."
+    },
+    {
+      "id": "celestial_bodies",
+      "required": true,
+      "contents": "Moon, sun, and star candidates as movable pass elements.",
+      "forbidden": "Sky base, clouds that should occlude celestial bodies, UI, labels."
+    },
+    {
+      "id": "celestial_occlusion",
+      "required": true,
+      "contents": "Cloud, canopy, cliff-edge, or shrine-edge masks that can draw over celestial bodies.",
+      "forbidden": "Opaque full sky repaint, companion, UI, trace FX."
+    },
+    {
+      "id": "mountains",
+      "required": true,
+      "contents": "Cliffs, waterfalls, distant shrine, atmospheric depth.",
+      "forbidden": "Runtime props, foreground foot occluders, companion, UI."
+    },
+    {
+      "id": "lake_water",
+      "required": true,
+      "contents": "Lake water plane with believable reflection, ripple structure, and clean near/far edges.",
+      "forbidden": "Baked firefly FX, memory traces, opaque shore/platform geometry."
+    },
+    {
+      "id": "shore_ground_platform",
+      "required": true,
+      "contents": "Lower-center stone platform and shore threshold for companion placement.",
+      "forbidden": "Companion, large crystals, lantern posts, campfire, memory traces."
+    },
+    {
+      "id": "camp_structures",
+      "required": true,
+      "contents": "Tents, docks, shoreline camp structures that are non-stateful and non-clickable.",
+      "forbidden": "Clickable props, companion, UI, labels, trace FX."
+    },
+    {
+      "id": "foreground_occlusion",
+      "required": true,
+      "contents": "Low flowers, grass, dock lip, near posts, or subtle leaves for foot-depth only.",
+      "forbidden": "Face/body occlusion, tall opaque objects over companion reserved rect."
+    },
+    {
+      "id": "water_mask",
+      "required": false,
+      "contents": "Binary or grayscale mask for water-only trace and ripple placement.",
+      "forbidden": "Visible art layer."
+    },
+    {
+      "id": "companion_reserved_mask",
+      "required": false,
+      "contents": "Mask documenting the reserved area that opaque props and occlusion must avoid.",
+      "forbidden": "Visible art layer."
+    },
+    {
+      "id": "depth_reference",
+      "required": false,
+      "contents": "Depth or z-order reference for future Pixi FX and occlusion tuning.",
+      "forbidden": "Runtime dependency unless separately approved."
+    }
+  ],
+  "approvalGates": [
+    "human_visual_approval",
+    "material_lighting_realism_pass",
+    "celestial_separation_pass",
+    "companion_readability_pass",
+    "ui_forbidden_zone_pass",
+    "scene_profile_alignment_pass"
+  ]
+}

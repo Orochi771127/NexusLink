@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "jobType": "linkara_habitat_generation",
   "status": {
-    "stage": "staging",
+    "stage": "rejected_images_removed",
     "humanApproved": false,
     "runtimeIntegrated": false,
     "referenceAuditPassed": false
@@ -19,6 +19,7 @@
     "imageSkill": "imagegen",
     "mapMode": "scene_mode",
     "visualModel": "layered_raster",
+    "sourceModel": "3d_assisted_2_5d_required_for_next_final_quality_pass",
     "runtimeObjectModel": [
       "separate_props",
       "foreground_occluders",
@@ -26,7 +27,8 @@
     ],
     "collisionModel": "trigger_zones",
     "engineTarget": "project-native",
-    "artStyle": "project-native clean HD semi-realistic 2.5D with realistic material response and plausible lighting"
+    "artStyle": "project-native clean HD semi-realistic 2.5D with realistic material response and plausible lighting",
+    "direct2dGenerationPolicy": "concept_and_paintover_only_not_final_background_source"
   },
   "artDirection": {
     "target": "semi_realistic_material_lighting",
@@ -55,7 +57,7 @@
   "passes": [
     {
       "id": "v1",
-      "status": "superseded_by_v2_for_composition",
+      "status": "rejected_image_files_removed",
       "actualSceneLayerSize": {
         "width": 941,
         "height": 1672
@@ -65,7 +67,7 @@
     },
     {
       "id": "v2",
-      "status": "composition_reference_only_not_runtime_ready",
+      "status": "rejected_image_files_removed",
       "actualSceneLayerSize": {
         "width": 1080,
         "height": 1920
@@ -77,7 +79,7 @@
     },
     {
       "id": "v3",
-      "status": "keep_for_human_review_not_runtime_ready",
+      "status": "rejected_image_files_removed",
       "actualSceneLayerSize": {
         "width": 1080,
         "height": 1920
@@ -178,9 +180,9 @@
   ],
   "checks": {
     "jsonParse": true,
-    "layerFilesExist": true,
-    "propFilesExist": true,
-    "sceneLayerDimensionsMatch": true,
+    "layerFilesExist": false,
+    "propFilesExist": false,
+    "sceneLayerDimensionsMatch": false,
     "actualSceneLayerSize": {
       "width": 1080,
       "height": 1920
@@ -189,14 +191,19 @@
       "width": 1080,
       "height": 1920
     },
-    "alphaReviewed": true,
+    "alphaReviewed": false,
     "promptMetadataPresent": true,
     "acceptedSetHasNoRejectedFilename": true,
-    "visualSpotCheckComplete": true,
-    "celestialSeparationPass": true,
-    "materialLightingRealismPass": true,
+    "visualSpotCheckComplete": false,
+    "celestialSeparationPass": false,
+    "materialLightingRealismPass": false,
     "lakeEdgeCleanupPass": false,
     "runtimeReady": false
   },
-  "nextAction": "Human visual review of V3 direction and layered preview. If direction is accepted, clean or regenerate only lake_water edge before any GROUNDWORK runtime promotion."
+  "cleanup": {
+    "taskPack": "TP-HAB-RESET-1",
+    "policy": "Delete rejected generated PNG/JPG/WebP files only; preserve JSON, Markdown, and prompt records as failure evidence.",
+    "reason": "Direct 2D generation did not meet final-quality Moonlake habitat background requirements."
+  },
+  "nextAction": "Produce TP-HAB-MOON-3D-1: a 3D/DCC-assisted Moonlake blockout and render-pass brief. Do not promote anything to assets or runtime until human approval and a separate GROUNDWORK task."
 }

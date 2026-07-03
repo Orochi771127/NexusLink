@@ -1,0 +1,177 @@
+{
+  "schemaVersion": 1,
+  "profileId": "ethereal_moon_lakefront_3d_assisted_draft",
+  "regionId": "ethereal_moon_lakefront",
+  "status": "draft_no_runtime_wiring",
+  "artSize": {
+    "width": 1080,
+    "height": 1920
+  },
+  "safeViewport": {
+    "width": 390,
+    "height": 844
+  },
+  "projection": {
+    "mode": "cover-height",
+    "visibleArtXRange": [
+      0.089,
+      0.911
+    ]
+  },
+  "uiForbiddenZones": [
+    {
+      "id": "hud_top_static",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 1,
+        "h": 0.12
+      }
+    },
+    {
+      "id": "bottom_ui_static",
+      "rect": {
+        "x": 0,
+        "y": 0.8,
+        "w": 1,
+        "h": 0.2
+      }
+    }
+  ],
+  "sky": {
+    "exists": true,
+    "rect": {
+      "x": 0,
+      "y": 0.02,
+      "w": 1,
+      "h": 0.28
+    },
+    "horizonY": 0.35
+  },
+  "celestial": {
+    "enabled": true,
+    "anchor": "background",
+    "mode": "sharedHorizonArc",
+    "xRange": [
+      0.12,
+      0.88
+    ],
+    "yRange": [
+      0.1,
+      0.35
+    ],
+    "twilightMinutes": 45,
+    "skyAtmosphereMayContainBodies": false
+  },
+  "companion": {
+    "anchor": {
+      "x": 0.5,
+      "y": 0.7
+    },
+    "reservedRect": {
+      "x": 0.38,
+      "y": 0.45,
+      "w": 0.24,
+      "h": 0.27
+    },
+    "readabilityRule": "No opaque prop or foreground occlusion may cover face or body; foot-only occlusion may be reviewed after Greyshade Cat overlay QA."
+  },
+  "zones": {
+    "water": [
+      {
+        "id": "lake_main",
+        "rect": {
+          "x": 0.24,
+          "y": 0.34,
+          "w": 0.52,
+          "h": 0.22
+        },
+        "maxTraces": 5
+      },
+      {
+        "id": "lake_near_edge",
+        "rect": {
+          "x": 0.3,
+          "y": 0.53,
+          "w": 0.4,
+          "h": 0.08
+        },
+        "maxTraces": 3
+      }
+    ],
+    "ground": [
+      {
+        "id": "stone_platform",
+        "rect": {
+          "x": 0.32,
+          "y": 0.6,
+          "w": 0.36,
+          "h": 0.14
+        },
+        "maxTraces": 4
+      },
+      {
+        "id": "shore_left",
+        "rect": {
+          "x": 0.12,
+          "y": 0.64,
+          "w": 0.18,
+          "h": 0.1
+        },
+        "maxTraces": 2
+      },
+      {
+        "id": "shore_right",
+        "rect": {
+          "x": 0.7,
+          "y": 0.64,
+          "w": 0.18,
+          "h": 0.1
+        },
+        "maxTraces": 2
+      }
+    ],
+    "affinity": [
+      {
+        "id": "left_crystal",
+        "kind": "crystal",
+        "rect": {
+          "x": 0.12,
+          "y": 0.6,
+          "w": 0.16,
+          "h": 0.14
+        }
+      },
+      {
+        "id": "right_crystal",
+        "kind": "crystal",
+        "rect": {
+          "x": 0.72,
+          "y": 0.58,
+          "w": 0.16,
+          "h": 0.14
+        }
+      },
+      {
+        "id": "dock_threshold",
+        "kind": "pier",
+        "rect": {
+          "x": 0.42,
+          "y": 0.52,
+          "w": 0.16,
+          "h": 0.1
+        }
+      },
+      {
+        "id": "platform_rune",
+        "kind": "platform",
+        "rect": {
+          "x": 0.42,
+          "y": 0.62,
+          "w": 0.16,
+          "h": 0.08
+        }
+      }
+    ]
+  }
+}
