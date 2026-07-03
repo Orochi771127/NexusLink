@@ -119,6 +119,20 @@ pulseBonus           = 1 + clamp(dev(power)×0.004, −0.12, 0.18)
 
 > 調校備註：深度應來自「意圖可讀 + 心相選擇 + sync/fatigue 經濟 + 相位弧」（見 roadmap B1–B3），**不是**把傷害/掉寶加大。四結局的 bond/trust 差距刻意小（±1–3），避免逼玩家追求「最優結局」。
 
+### 2.1 裂隙相位 + 意圖 telegraph（Phase 2・B1/B2，已實作）
+
+每個玩家回合，裂隙「預示」下一拍意圖（telegraph），玩家據此選穩住/設界/脈衝；相位隨 noise 比例推移，給對峙一條情緒弧。
+
+| 相位（noise 比例） | 意圖權重 surge / gather / lull | 感覺 |
+|---|---|---|
+| turbulent 翻湧（≥ 66%） | 0.60 / 0.30 / 0.10 | 一開場最躁，多湧動 |
+| contested 拉鋸（33–66%） | 0.45 / 0.25 / 0.30 | 拉鋸、混合 |
+| settling 漸靜（< 33%） | 0.20 / 0.10 / 0.70 | 安撫下來、多暫歇 |
+
+- 高 `enemyLullChance` 裂隙：lull 權重額外 +`guardChance × 0.4`（觀察型更常暫歇）。
+- **意圖效果**：`surge` 湧動＝扣穩定（邊界每層減 25%）；`gather` 蓄能＝這拍不扣、設 `charged`，**下一次 surge ×1.5**（telegraph 標「蓄勢」danger 色）；`lull` 暫歇＝不扣、可安心共鳴回收微光。
+- 全程仍非懲罰、撤退永遠有效；深度來自可讀性與節奏，非傷害膨脹。
+
 ---
 
 ## 3. 敵人（裂殘影）（`src/data/enemyRegistry.js`）

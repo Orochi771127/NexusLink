@@ -104,7 +104,64 @@ export function getRadarModifiers(radar = {}) {
   };
 }
 
-export function createStandoffSession({ companion, enemyId, nodeId, state, now = Date.now() }) {
+// ======================================================================
+// 裂隙相位 + 意圖 telegraph（Phase 2 戰鬥深化 B1/B2）
+// 讓對峙「可讀」：每個玩家回合開始時，裂隙預示下一拍會做什麼，玩家據此選穩住/設界/脈衝。
+// 相位隨 noise 比例推移，給對峙一條「翻湧→拉鋸→漸靜」的情緒弧（非懲罰、撤退永遠有效）。
+// 深度來源＝可讀性與節奏，不是傷害膨脹或掉寶。
+// ======================================================================
+export const RIFT_PHASES = Object.freeze(["turbulent", "contested", "settling"]);
+
+const PHASE_COPY = Object.freeze({
+  turbulent: { label: "翻湧", enter: "裂隙翻湧得厲害，雜訊一波一波撞來。穩住，別跟它硬碰。" },
+  contested: { label: "拉鋸", enter: "雜訊和你們拉鋸著——它還在掙，但你們正一點點把它按下去。" },
+  settling: { label: "漸靜", enter: "雜訊低了下來，裂隙漸漸安靜——你們正在把它安撫下來。" }
+});
+
+// 各相位的意圖傾向（surge 湧動 / gather 蓄能 / lull 暫歇）。翻湧多湧動、漸靜多暫歇。
+const PHASE_INTENT_WEIGHTS = Object.freeze({
+  turbulent: { surge: 0.6, gather: 0.3, lull: 0.1 },
+  contested: { surge: 0.45, gather: 0.25, lull: 0.3 },
+  settling: { surge: 0.2, gather: 0.1, lull: 0.7 }
+});
+
+function getRiftPhase(session) {
+  const ratio = session?.noise?.max ? session.noise.current / session.noise.max : 0;
+  if (ratio >= 0.66) return "turbulent";
+  if (ratio >= 0.33) return "contested";
+  return "settling";
+}
+
+function pickRiftIntent(session, rng = Math.random) {
+  const weights = { ...PHASE_INTENT_WEIGHTS[getRiftPhase(session)] };
+  weights.lull += (session?.enemyLullChance || 0) * 0.4; // 高「暫歇率」裂隙更常觀察
+  const total = weights.surge + weights.gather + weights.lull;
+  let roll = rng() * total;
+  if ((roll -= weights.surge) < 0) return "surge";
+  if ((roll -= weights.gather) < 0) return "gather";
+  return "lull";
+}
+
+export function getPhaseLabel(phase) {
+  return PHASE_COPY[phase]?.label || "";
+}
+
+// UI 用：把「下一拍意圖」翻成玩家看得懂的預示 + 對策提示（只在玩家回合有值）。
+export function getIntentTelegraph(session) {
+  if (!session || session.turn !== "player" || !session.nextIntent) return null;
+  const charged = Boolean(session.charged);
+  if (session.nextIntent === "surge") {
+    return charged
+      ? { intent: "surge", tone: "danger", label: "湧動・蓄勢", hint: "它積起了力，下一拍會重重撞來——立起邊界，或用脈衝搶先壓下。" }
+      : { intent: "surge", tone: "warn", label: "湧動", hint: "它會撞向心核——立起邊界能擋下大半。" };
+  }
+  if (session.nextIntent === "gather") {
+    return { intent: "gather", tone: "warn", label: "蓄能", hint: "它正低低地蓄力……趁現在設界，別讓它積起來。" };
+  }
+  return { intent: "lull", tone: "calm", label: "暫歇", hint: "雜訊歇了一拍，像在看你——放心共鳴、回收微光。" };
+}
+
+export function createStandoffSession({ companion, enemyId, nodeId, state, now = Date.now(), rng = Math.random }) {
   const enemy = getEnemyById(enemyId);
   const radar = companion?.radar || { power: 50, emotion: 50 };
   const stabilityMax = Math.round(22 + (radar.emotion || 50) * 0.16 + (state?.bond || 0) * 0.18);
@@ -113,7 +170,7 @@ export function createStandoffSession({ companion, enemyId, nodeId, state, now =
   const affinity = getRiftAffinity(companion, enemy);
   const radarMods = getRadarModifiers(radar);
 
-  return {
+  const session = {
     nodeId: nodeId || null,
     companionId: companion?.id || "greyshade-cat",
     companionName: companion?.name || "夥伴",
@@ -153,6 +210,12 @@ export function createStandoffSession({ companion, enemyId, nodeId, state, now =
       { kind: "system", text: "穩住心核，把雜訊放輕。你們不需要消滅誰。" }
     ]
   };
+
+  // 裂隙相位 + 第一拍意圖預示（telegraph）。
+  session.charged = false;
+  session.phase = getRiftPhase(session);
+  session.nextIntent = pickRiftIntent(session, rng);
+  return session;
 }
 
 export function canUseAction(session, actionId) {
@@ -221,12 +284,22 @@ export function applyNoiseTurn(session, rng = Math.random) {
   const next = cloneSession(session);
   if (next.turn !== "noise") return next;
 
-  if (rng() < next.enemyLullChance) {
+  // 執行上一個玩家回合就已「預示」的意圖（telegraph）——玩家看得見、才能事先設界。
+  const intent = next.nextIntent || "surge";
+  const prevPhase = next.phase;
+
+  if (intent === "lull") {
     next.log.push({ kind: "noise", text: `${next.enemyName}的雜訊暫歇了一拍，像在觀察你們。` });
+  } else if (intent === "gather") {
+    next.charged = true; // 下一次湧動更重（已在 telegraph 預告）
+    next.log.push({ kind: "noise", text: `${next.enemyName}低低地蓄著力，雜訊繃緊了一瞬……` });
   } else {
+    // surge（湧動）：蓄勢過的更重；邊界層仍能減緩。
+    const chargedMult = next.charged ? 1.5 : 1;
     const damping = 1 - next.boundary * BOUNDARY_DAMPING_PER_LAYER;
-    const surge = Math.max(1, Math.round(next.enemySurge * (0.85 + rng() * 0.3) * damping));
+    const surge = Math.max(1, Math.round(next.enemySurge * (0.85 + rng() * 0.3) * chargedMult * damping));
     next.stability.current = clamp(next.stability.current - surge, 0, next.stability.max);
+    next.charged = false;
     if (next.boundary > 0) {
       next.log.push({
         kind: "noise",
@@ -240,6 +313,14 @@ export function applyNoiseTurn(session, rng = Math.random) {
 
   next.turn = "player";
   next.round += 1;
+
+  // 相位推移 + 下一拍意圖預示。相位變化時給一句弧線提示（翻湧→拉鋸→漸靜）。
+  const newPhase = getRiftPhase(next);
+  if (newPhase !== prevPhase && PHASE_COPY[newPhase]) {
+    next.log.push({ kind: "system", text: PHASE_COPY[newPhase].enter });
+  }
+  next.phase = newPhase;
+  next.nextIntent = pickRiftIntent(next, rng);
   return next;
 }
 

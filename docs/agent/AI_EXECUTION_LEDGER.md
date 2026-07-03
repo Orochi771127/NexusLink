@@ -58,6 +58,19 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-07-03 - Claude Opus 4.8 - Phase 2 combat deepening: rift telegraph + phases (B1/B2)
+
+- Status: `VERIFIED` (engine, deterministic) / browser E2E BLOCKED by preview transient (see risks) — committed + pushed to origin/main per standing instruction
+- Branch / commit: `main` / pushed (see git log)
+- Scope: EXPERIENCE layer, additive to the existing emotional-standoff model (noise/stability/sync/fatigue/boundary/shards + four non-punishing outcomes UNCHANGED). Files: `src/engine/battleEngine.js`, `src/ui/battleController.js`, `docs/design/BALANCE_SHEET.md` §2.1. NO index.html / save schema / Pixi core / assets / GROUNDWORK.
+- Work performed:
+  1. battleEngine: rift PHASES (turbulent/contested/settling by noise ratio) with phase-transition arc lines; telegraphed INTENTS (surge/gather/lull) picked per phase and exposed via `getIntentTelegraph`; `gather` sets `charged` → next surge ×1.5 (telegraphed as "蓄勢"). `applyNoiseTurn` now executes the previously-telegraphed intent deterministically (was random lull/surge). `createStandoffSession` + `applyNoiseTurn` accept injectable rng.
+  2. battleController: telegraph line dynamically inserted above `#standoff-action-row` (no index.html edit), style self-injected via one <style>; shows "下一拍・<label>" + counterplay hint on player turns, hidden on noise turns / ended.
+- Verification: bundled codex node deterministic engine test **12/12 PASS** (telegraph present on player turn / null on noise turn; initial phase turbulent; low-noise → settling; gather sets charged; charged surge drop 10 > normal 7; surge consumes charged; phase labels 翻湧/漸靜). `node --check` PASS on both files.
+- Problems / risks: **In-browser battle-modal E2E was NOT completed.** After repeated localStorage resets the preview session hit a boot transient (companion asset stuck on "載入中", bottom-nav wiring never activated), so I could not reach the standoff modal to eyeball the telegraph render. The same app booted and ran fully earlier this session (pillars 1–3), so this is an environment transient, not a code defect; engine logic + node --check are green and the telegraph UI mirrors already-verified dynamic-DOM patterns. Still, the on-screen render needs a manual playthrough gate: open Explore → star map → 裂隙觀測點 → confirm "下一拍・…" shows and updates each turn.
+- Next safe action: Human confirms telegraph render on a live standoff. Then continue Phase 2: enemy roster expansion (A3, 5→~10 with per-enemy intent flavor) + combat juice (B4).
+- Required reading: this entry, `src/engine/battleEngine.js` (`getIntentTelegraph` / `applyNoiseTurn`), `docs/design/BALANCE_SHEET.md` §2.1.
+
 ### 2026-07-03 - Claude Opus 4.8 - First-Session legibility: gentle invitation loop (Phase 0, pillar 2)
 
 - Status: `VERIFIED` (committed + pushed to origin/main this round per explicit human instruction "完成就 commit 然後 push 到 main")

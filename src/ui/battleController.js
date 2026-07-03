@@ -6,6 +6,7 @@ import {
   applyPlayerAction,
   canUseAction,
   createStandoffSession,
+  getIntentTelegraph,
   getOutcomeCopy,
   getResonanceSkillName,
   settleStandoff,
@@ -66,6 +67,25 @@ export function createBattleController({ store, panelManager, soulTalkController
     retreat: qs("#standoff-act-retreat")
   };
   const finishButton = qs("#battle-finish");
+  const actionRowEl = qs("#standoff-action-row");
+  let telegraphEl = null;
+
+  // 意圖預示（telegraph）：動態插到行動列上方（不動 index.html），玩家在選行動前先讀懂
+  // 「裂隙下一拍要做什麼」。樣式由本檔一次性注入 <style>，避免動基底 styles.css。
+  function ensureTelegraphElement() {
+    if (telegraphEl || !actionRowEl) return telegraphEl;
+    injectTelegraphStyles();
+    telegraphEl = document.createElement("p");
+    telegraphEl.className = "standoff-telegraph";
+    telegraphEl.hidden = true;
+    const label = document.createElement("b");
+    label.className = "tel-label";
+    const hint = document.createElement("span");
+    hint.className = "tel-hint";
+    telegraphEl.append(label, hint);
+    actionRowEl.parentNode.insertBefore(telegraphEl, actionRowEl);
+    return telegraphEl;
+  }
 
   let session = null;
   let noiseTurnTimer = null;
@@ -266,7 +286,39 @@ export function createBattleController({ store, panelManager, soulTalkController
       }
       button.disabled = !isPlayerTurn || !canUseAction(session, actionId);
     });
+
+    // 意圖預示：只在玩家回合顯示（讓玩家據此選穩住/設界/脈衝）；雜訊回合與結束時隱藏。
+    ensureTelegraphElement();
+    if (telegraphEl) {
+      const tel = getIntentTelegraph(session);
+      if (tel && isPlayerTurn) {
+        telegraphEl.hidden = false;
+        telegraphEl.dataset.tone = tel.tone;
+        telegraphEl.querySelector(".tel-label").textContent = `下一拍・${tel.label}`;
+        telegraphEl.querySelector(".tel-hint").textContent = tel.hint;
+      } else {
+        telegraphEl.hidden = true;
+      }
+    }
   }
 
   return { bind, startBattle };
+}
+
+function injectTelegraphStyles() {
+  if (document.getElementById("standoff-telegraph-styles")) return;
+  const style = document.createElement("style");
+  style.id = "standoff-telegraph-styles";
+  style.textContent = [
+    ".standoff-telegraph{margin:4px 0 8px;padding:7px 12px;border-radius:12px;border:1px solid rgba(138,217,255,.2);background:rgba(10,16,32,.5);display:flex;flex-direction:column;gap:2px;font-size:12.5px;line-height:1.4}",
+    ".standoff-telegraph[hidden]{display:none}",
+    ".standoff-telegraph .tel-label{color:#dff3ff;font-weight:700;letter-spacing:.02em}",
+    ".standoff-telegraph .tel-hint{color:rgba(200,222,245,.82)}",
+    '.standoff-telegraph[data-tone="warn"]{border-color:rgba(255,209,102,.4)}',
+    '.standoff-telegraph[data-tone="warn"] .tel-label{color:#ffe08a}',
+    '.standoff-telegraph[data-tone="danger"]{border-color:rgba(255,150,150,.45);box-shadow:0 0 16px rgba(255,120,120,.16)}',
+    '.standoff-telegraph[data-tone="danger"] .tel-label{color:#ff9a9a}',
+    '.standoff-telegraph[data-tone="calm"]{border-color:rgba(138,217,255,.3)}'
+  ].join("");
+  document.head.appendChild(style);
 }
