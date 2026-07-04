@@ -21,9 +21,10 @@ Required pre-read:
 3. CLAUDE.md
 4. ACCEPTANCE.md
 5. docs/design/NEXUS_LINK_V3_VISUAL_SYSTEM.md
-6. docs/strategy/NEXUS_LINK_STEAM_DEMO_MASTER_BLUEPRINT.md
-7. docs/testing/STEAM_DEMO_WEB_RELEASE_CHECKLIST.md
-8. docs/agent/AI_EXECUTION_LEDGER.md, latest relevant lane entries
+6. docs/content/NEXUSLINK_COPYWRITING_FINAL_PASS.md
+7. docs/strategy/NEXUS_LINK_STEAM_DEMO_MASTER_BLUEPRINT.md
+8. docs/testing/STEAM_DEMO_WEB_RELEASE_CHECKLIST.md
+9. docs/agent/AI_EXECUTION_LEDGER.md, latest relevant lane entries
 
 Important source status:
 - docs/strategy/NEXUS_LINK_MASTER_CANON_v3.1.md is the highest strategic canon.
@@ -77,6 +78,7 @@ Design rules:
   - Keep Pixi responsible for habitat, companion, motion, and traces.
   - Protect the companion focal zone on 390x844 mobile.
   - Use short, concrete copy.
+  - Run all player-facing copy through docs/content/NEXUSLINK_COPYWRITING_FINAL_PASS.md.
   - Make boundary and refusal readable as companion agency, not punishment.
   - Make return continuity warm but non-blaming.
 
@@ -96,6 +98,7 @@ Verification expectation:
     behavior is touched.
   - Run python docs/qa/_run_web_release_gate.py when the environment supports it.
   - Browser-check 390x844 and desktop viewports.
+  - Run the NexusLink copywriting final pass if player-facing copy changed.
   - Record any real-device Safari/Chrome gaps honestly.
   - Append ledger entries to each affected lane before final report.
 

@@ -58,6 +58,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-07-04 - Codex - NexusLink AI Development Mode
+
+- Status: `COMPLETED`
+- Branch / commit: `main` / uncommitted docs-only package
+- Scope: Defined the repo-safe AI development mode for coordinating Cursor, Claude Code / Fable 5, Codex, codebase-memory-mcp, and future sidecar orchestration. No runtime code, GROUNDWORK, assets, tools, scripts, package/dependency, dashboard scaffold, LangGraph/CrewAI install, Streamlit/Gradio install, backend, or external API wiring changed.
+- Work performed: Added `docs/agent/NEXUSLINK_AI_DEVELOPMENT_MODE.md` with the eight development-agent role model, tool/skill routing, worktree model, Gate 0-6 workflow, sidecar multi-agent office roadmap, dashboard boundary, Cursor rule seed, and first manual pilot. Added `docs/handoff/NEXUSLINK_MULTI_AGENT_OFFICE_PILOT_PROMPT.md` as a paste-ready prompt for a no-dependency Research-to-TASK_PACK pilot.
+- Verification: codebase-memory project was present and architecture was read before drafting. `git status --short` was clean before edits. Scope review kept this package docs-only and out of `src/**`, `assets/**`, GROUNDWORK files, package files, dashboard scaffolds, and sidecar dependency installs.
+- Problems / risks: This is a development-process package only. It does not build the Streamlit/Gradio dashboard, install LangGraph/CrewAI, run the pilot, or prove an automated orchestration loop. Any sidecar implementation must be a separate human-approved task in a sibling workspace.
+- Next safe action: Run Pilot A manually from `docs/handoff/NEXUSLINK_MULTI_AGENT_OFFICE_PILOT_PROMPT.md` to produce one bounded First Session Flow TASK_PACK before building any dashboard or orchestration framework.
+- Required reading: `docs/agent/NEXUSLINK_AI_DEVELOPMENT_MODE.md`, `docs/handoff/NEXUSLINK_MULTI_AGENT_OFFICE_PILOT_PROMPT.md`, `docs/agent/AI_WORKFLOW.md`, `docs/agent/TASK_TEMPLATE.md`, `docs/agent/REVIEW_CHECKLIST.md`, `docs/production/NEXUS_LINK_COMMERCIAL_UIUX_HANDOFF.md`, `AGENTS.md`, `CLAUDE.md`, `ACCEPTANCE.md`, and this lane.
+
 ### 2026-07-04 - Claude Opus 4.8 - Soul Talk keyboard-avoiding rebuild (composer hugs the keyboard)
 
 - Status: `VERIFIED` (CSS/logic; real-device is a HUMAN GATE) — committed + pushed to origin/main per explicit human instruction ("現在就 push")
@@ -599,6 +610,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 2 - Game Art, UI, And Visual Production
 
+### 2026-07-04 - Codex - Anti-Vibe Copywriting Final Pass
+
+- Status: `COMPLETED`
+- Branch / commit: `main` / uncommitted docs-only package
+- Scope: Added a NexusLink-specific copywriting final-pass guide inspired by `weijt606/anti-vibe-writing` and wired it into commercial UI/UX handoff docs. Also added guardrails and reviewed reference entries for external persona-skill links after the user supplied an X post plus `alchaincyf/paul-graham-skill`, `alchaincyf/karpathy-skill`, `alchaincyf/steve-jobs-skill`, `alchaincyf/elon-musk-skill`, and `alchaincyf/nuwa-skill`. No runtime code, GROUNDWORK, assets, package/dependency, skill install, submodule, backend, or external API wiring changed.
+- Work performed: Added `docs/content/NEXUSLINK_COPYWRITING_FINAL_PASS.md` with NexusLink copy voice, anti-AI-smell rules, surface presets, final checklist, deterministic review scan, attribution to the MIT-licensed external reference, and a policy for external writing/persona references. Registered anti-vibe-writing as a final-pass editing lens, Paul Graham as an optional product/writing critique lens, Karpathy as an optional AI reliability critique lens, Steve Jobs as an optional product focus/taste critique lens, Elon Musk as an optional first-principles complexity critique lens, and Nuwa as an optional persona-skill methodology reference. Updated `docs/production/NEXUS_LINK_COMMERCIAL_UIUX_HANDOFF.md`, `docs/handoff/FABLE5_COMMERCIAL_UIUX_TAKEOVER_PROMPT.md`, and `docs/agent/NEXUSLINK_AI_DEVELOPMENT_MODE.md` so future agents run this pass when player-facing copy changes.
+- Verification: Read GitHub repository metadata, README, LICENSE, and SKILL files for `alchaincyf/paul-graham-skill`, `alchaincyf/karpathy-skill`, `alchaincyf/steve-jobs-skill`, `alchaincyf/elon-musk-skill`, and `alchaincyf/nuwa-skill`; all are MIT. The persona skills include first-person roleplay behavior and Nuwa creates persona skills, so NexusLink documents explicitly restrict them to critique or methodology lenses only. Also read metadata, README, LICENSE, core skill file, Chinese pattern rules, final checklist, and scenario presets for `weijt606/anti-vibe-writing`. X post `2072873659698700343` did not expose full content through the page reader; search snippets showed it references a persona-skill collection and Paul Graham-style skill repositories, so it was integrated only as an external-source caution, not as canon.
+- Problems / risks: This does not automatically rewrite existing UI strings. Existing runtime copy still needs a separate approved TASK_PACK if the human wants in-code text changes. The linked X post remains partially unverified unless the user pastes its full text or individual repositories are audited.
+- Next safe action: For the next commercial UI/UX or first-session copy task, use `docs/content/NEXUSLINK_COPYWRITING_FINAL_PASS.md` as a required final pass before handoff.
+- Required reading: `docs/content/NEXUSLINK_COPYWRITING_FINAL_PASS.md`, `docs/production/NEXUS_LINK_COMMERCIAL_UIUX_HANDOFF.md`, `docs/design/NEXUS_LINK_V3_VISUAL_SYSTEM.md`, `AGENTS.md`, `CLAUDE.md`, `ACCEPTANCE.md`, and this lane.
+
 ### 2026-07-02 - Claude Fable 5 - First Session UX Repair TASK_PACK B (P1) — UI Visuals
 
 - Status: `VERIFIED`
@@ -1067,6 +1089,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 ---
 
 ## Lane 3 - Raphael Core, Companion Reasoning, And Soul Talk
+
+### 2026-07-04 - Codex - Raphael Natural Daily-Life Replies v1
+
+- Status: `VERIFIED`
+- Branch / commit: `main` / uncommitted runtime + test changes
+- Scope: EXPERIENCE-layer Soul Talk / Raphael NLU naturalness pass. Added a narrow daily-life topic and grounded short replies for everyday prompts such as feeling lazy, getting off work with an empty head, or wanting to lie down after eating. No `index.html`, save schema, Pixi renderer, assets, tools, scripts, package/dependency, external LLM/API, LangGraph/CrewAI runtime, memory writer, safetyShield, or state mutation policy changed.
+- Work performed: Added `daily_life` topic classification, short daily-life detail extraction, natural daily-life response lines in the deterministic NLU reply builder, and critic grounding support so daily-life replies do not get repaired into category/template language. Expanded NLU training and Stage 4 human playtest fixtures for everyday conversation.
+- Verification: Bundled Node `--check` passed for all touched JS. NLU training passed 16/16. Stage 4 human playtest passed 12/12. Raphael smoke passed 17/17. Manual deterministic probe confirmed `今天只是有點懶懶的`, `我下班了，腦袋空空的`, and `剛吃完飯，有點想躺一下` now return daily-life replies, while dependency pressure still produced no relationship reward / no memory write and high-risk safety still produced no relationship reward / no memory write.
+- Problems / risks: This is a first narrow phrase set, not a full conversational style rewrite. Other daily-life phrasings may still fall back to generic clarification and should be added through new test cases before broadening the classifier.
+- Next safe action: Human read-through in live Soul Talk; if accepted, add a second small phrase pack for sleep, morning, commuting, and quiet return prompts without changing safety or memory policy.
+- Required reading: `src/ai/nlu/topicClassifier.js`, `src/ai/nlu/specificDetailExtractor.js`, `src/ai/nlu/nluReplyBuilder.js`, `src/ai/eval/genericReplyCritic.js`, `src/ai/testHarness/nluTrainingCases.js`, `src/ai/testHarness/stage4HumanPlaytestCases.js`, `docs/handoff/RAPHAEL_AI_HANDOFF.md`, `ACCEPTANCE.md`, and this lane.
 
 ### 2026-07-01 - Codex - RaphaelCore Agent Classification Canon
 

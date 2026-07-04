@@ -7,6 +7,7 @@ export const TOPICS = Object.freeze({
   MEMORY: "memory",
   AWAKENING: "awakening",
   EXPLORATION: "exploration",
+  DAILY_LIFE: "daily_life",
   PHYSICAL_TIREDNESS: "physical_tiredness",
   WORK_PRESSURE: "work_pressure",
   SOCIAL_CONFLICT: "social_conflict",
@@ -39,6 +40,9 @@ export function classifyTopic(inputText = "", entities = [], analysis = {}) {
   }
   if (/地圖|外面|探索|走走|湖面外/i.test(text) || entities.includes("地圖")) {
     return TOPICS.EXPLORATION;
+  }
+  if (/下班|放空|腦袋空|腦袋空空|吃完飯|吃飽|想躺|躺一下|懶懶|懶得動|剛醒|睡醒|日常|今天普通/.test(text)) {
+    return TOPICS.DAILY_LIFE;
   }
   if (/心裡卡住|不是身體累|心裡累/.test(text)) {
     return TOPICS.EMOTION;

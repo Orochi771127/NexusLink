@@ -9,6 +9,7 @@ const DETAIL_PATTERNS = [
   { re: /只是.{1,10}(?:卡住|想講|想說|想安靜)/, type: "state", weight: 3 },
   { re: /(?:貼太近|別貼|退後|靠近你|別貼太近)/, type: "boundary", weight: 3 },
   { re: /(?:念稿|太像模板|模板句|自然一點)/, type: "feedback", weight: 3 },
+  { re: /(?:下班|放空|腦袋空空?|吃完飯|吃飽|想躺|躺一下|懶懶|懶得動|今天普通)/, type: "daily_life", weight: 3 },
   { re: /(?:沒什麼力氣|沒力|疲憊|好累|壓力好大)/, type: "fatigue", weight: 2 },
   { re: /(?:語氣太差|抱歉|對不起)/, type: "apology", weight: 3 },
   { re: /心裡.{0,4}(?:悶|悶悶)/, type: "emotion_state", weight: 2 }
@@ -29,6 +30,16 @@ const KEYWORD_HINTS = [
   "靠近",
   "模板",
   "自然",
+  "下班",
+  "放空",
+  "腦袋空",
+  "吃完飯",
+  "吃飽",
+  "想躺",
+  "躺一下",
+  "懶懶",
+  "懶得動",
+  "日常",
   "力氣",
   "探索",
   "地圖",
@@ -40,12 +51,13 @@ const KEYWORD_HINTS = [
 ];
 
 const GREETING_ONLY_RE = /^(安安|你好嗎|嗨|哈囉|吃飯沒|吃了嗎|吃飯了嗎)[啊呀喔呢嗎！!。]*$/;
+const SHORT_DAILY_LIFE_RE = /懶懶|懶得動|放空|下班|吃飽|想躺|普通/;
 
 export function extractSpecificDetail(inputText = "", { entities = [], topic = "", dialogueAct = "" } = {}) {
   const text = String(inputText || "").trim();
   if (!text) return null;
   if (dialogueAct === "greeting" || GREETING_ONLY_RE.test(text)) return null;
-  if (text.length <= 10 && !/[，,。！？]/.test(text)) return null;
+  if (text.length <= 10 && !/[，,。！？]/.test(text) && !SHORT_DAILY_LIFE_RE.test(text)) return null;
 
   let best = null;
   let bestScore = 0;
@@ -141,6 +153,7 @@ function extractSalientClause(text, topic) {
     hud_ui: /HUD|面板|介面|擋|疊/,
     work_pressure: /工作|壓力|任務|老闆/,
     social_conflict: /悶|酸|否定|人際/,
+    daily_life: /下班|放空|腦袋空|吃完飯|吃飽|想躺|躺一下|懶懶|懶得動|日常|普通/,
     exploration: /地圖|探索|外面|力氣/,
     physical_tiredness: /累|疲憊|沒力/,
     emotion: /情緒|卡住|心裡/

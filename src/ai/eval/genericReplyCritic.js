@@ -124,7 +124,8 @@ function topicLabel(topic) {
     raphael_ai: "理解",
     exploration: "探索",
     awakening: "初醒",
-    social_conflict: "悶"
+    social_conflict: "悶",
+    daily_life: "日常"
   };
   return labels[topic] || topic;
 }
@@ -137,6 +138,7 @@ function mentionsTopicKeyword(text, topic) {
     exploration: /地圖|探索|外面|湖面/,
     awakening: /初醒|醒來|心核/,
     social_conflict: /悶|否定|委屈/,
+    daily_life: /日常|下班|吃|躺|放空|腦袋空|懶懶|普通|肩膀|身體/,
     work_pressure: /工作|壓力|任務|老闆/,
     physical_tiredness: /累|疲憊|沒力/,
     emotion: /情緒|卡住|心裡/

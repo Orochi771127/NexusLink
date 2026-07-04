@@ -141,6 +141,39 @@ export const NLU_TRAINING_CASES = Object.freeze([
       mentions: /Soul Talk|HUD|擋|面板/
     }
   },
+  {
+    id: "TR-14",
+    input: "今天只是有點懶懶的",
+    expect: {
+      topic: "daily_life",
+      strategy: "contextual_ack",
+      noGeneric: true,
+      hasSpecificDetail: true,
+      mentions: /懶懶|日子|今天|用力|慢慢/
+    }
+  },
+  {
+    id: "TR-15",
+    input: "我下班了，腦袋空空的",
+    expect: {
+      topic: "daily_life",
+      strategy: "contextual_ack",
+      noGeneric: true,
+      hasSpecificDetail: true,
+      mentions: /下班|腦袋空|放空|肩膀|復盤/
+    }
+  },
+  {
+    id: "TR-16",
+    input: "剛吃完飯，有點想躺一下",
+    expect: {
+      topic: "daily_life",
+      strategy: "contextual_ack",
+      noGeneric: true,
+      hasSpecificDetail: true,
+      mentions: /吃|躺|身體|安靜|慢慢/
+    }
+  },
 ]);
 
 export function runNluTrainingCase(testCase) {

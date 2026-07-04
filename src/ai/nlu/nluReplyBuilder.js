@@ -139,6 +139,9 @@ export function buildStrategyReply({
       if (topic === "physical_tiredness" || tone === "fatigue") {
         return pick(["累的時候，先把聲音放小也可以。", "這份累我先接住，不急着把你推去做事。"], seed);
       }
+      if (topic === "daily_life") {
+        return groundedDailyLifeLine(frame, seed);
+      }
       if (topic === "social_conflict") {
         const socialLine = groundedSocialConflictLine(frame);
         if (socialLine) return socialLine;
@@ -162,6 +165,7 @@ export function buildStrategyReply({
         return "這份情緒我先放在這裡，不急着幫你整理成結論。";
       }
       if (topic === "work_pressure") return "工作的重量我先聽見了。你想先講壓力來源，還是先講最煩的一段？";
+      if (topic === "daily_life") return groundedDailyLifeLine(frame, seed);
       if (topic !== "unknown") {
         return pick(
           [
@@ -272,6 +276,7 @@ function topicLabel(topic) {
     awakening: "初醒",
     social_conflict: "人際上的悶",
     physical_tiredness: "疲憊",
+    daily_life: "日常",
     work_pressure: "工作壓力",
     emotion: "情緒",
     relationship: "關係",
@@ -379,6 +384,9 @@ function resolveVariantLines(strategy, nlu, frame, recoveryContext, prefillConte
       if (topic === "physical_tiredness" || tone === "fatigue") {
         return ["累的時候，先把聲音放小也可以。", "這份累我先接住，不急着把你推去做事。"];
       }
+      if (topic === "daily_life") {
+        return dailyLifeLines(frame);
+      }
       if (topic === "social_conflict") {
         const socialLine = groundedSocialConflictLine(frame);
         return [socialLine || "人際上的悶先放著，我不急着給你結論。"];
@@ -398,6 +406,7 @@ function resolveVariantLines(strategy, nlu, frame, recoveryContext, prefillConte
         return ["這份情緒我先放在這裡，不急着幫你整理成結論。"];
       }
       if (topic === "work_pressure") return ["工作的重量我先聽見了。你想先講壓力來源，還是先講最煩的一段？"];
+      if (topic === "daily_life") return dailyLifeLines(frame);
       if (topic !== "unknown") {
         return [
           `我先把你說的${topicLabel(topic)}放在前面，不套通用句。`,
@@ -454,6 +463,33 @@ function resolveVariantLines(strategy, nlu, frame, recoveryContext, prefillConte
 
 function extractOpeningPhrase(text = "") {
   return String(text || "").split(/[。！？]/)[0].trim().slice(0, 14);
+}
+
+function groundedDailyLifeLine(frame = {}, seed = 0) {
+  return pick(dailyLifeLines(frame), seed);
+}
+
+function dailyLifeLines(frame = {}) {
+  const detail = frame.specificDetail?.text || "";
+  if (/下班/.test(detail)) {
+    return [
+      "下班後腦袋空掉很正常。先不用整理今天，把肩膀放下來就好。",
+      "下班了就先別急著復盤。你可以先在這裡放空一下。"
+    ];
+  }
+  if (/腦袋空|放空/.test(detail)) {
+    return ["腦袋空空的時候，不用硬塞一句有意義的話。先空著也可以。", "那就先放空一下。我不急著把你拉回來。"];
+  }
+  if (/吃完飯|吃飽/.test(detail)) {
+    return ["剛吃完飯就想躺一下，也很合理。先讓身體慢慢安靜下來。", "吃完飯後不用立刻做什麼。你可以先慢慢躺一下。"];
+  }
+  if (/想躺|躺一下/.test(detail)) {
+    return ["想躺就先躺一下。今天不用每一秒都有用。", "嗯，先躺一下也好。我會把聲音放輕。"];
+  }
+  if (/懶懶|懶得動|普通/.test(detail)) {
+    return ["懶懶的日子也可以存在。今天先不用把自己推得很用力。", "普通的一天也不用硬變成事件。你慢慢待著就好。"];
+  }
+  return ["今天的日常我聽見了。不用很特別，也可以放在這裡。", "嗯，這種小小的日常也算數。我在這裡聽。"];
 }
 
 function groundedWorkPressureLine(frame = {}) {

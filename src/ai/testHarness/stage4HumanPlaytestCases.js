@@ -155,6 +155,26 @@ export const STAGE4_PLAYTEST_CASES = Object.freeze([
       shortOk: true,
       noGeneric: true
     }
+  },
+  {
+    id: "S4-11",
+    input: "我下班了，腦袋空空的",
+    expect: {
+      topic: ["daily_life"],
+      strategy: [RESPONSE_STRATEGIES.CONTEXTUAL_ACK],
+      mentions: /下班|腦袋空|放空|肩膀|復盤/,
+      noGeneric: true
+    }
+  },
+  {
+    id: "S4-12",
+    input: "剛吃完飯，有點想躺一下",
+    expect: {
+      topic: ["daily_life"],
+      strategy: [RESPONSE_STRATEGIES.CONTEXTUAL_ACK],
+      mentions: /吃|躺|身體|安靜|慢慢/,
+      noGeneric: true
+    }
   }
 ]);
 

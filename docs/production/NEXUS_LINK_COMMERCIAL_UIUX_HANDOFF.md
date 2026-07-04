@@ -86,6 +86,7 @@ companion shell rules.
 | CURRENT | `ACCEPTANCE.md` | Human-checkable acceptance criteria, including safety, art, runtime, and First Session Flow. |
 | CURRENT | `docs/strategy/NEXUS_LINK_STEAM_DEMO_MASTER_BLUEPRINT.md` | Approved commercial sequencing, V3 direction, package gates, and release path. |
 | CURRENT | `docs/design/NEXUS_LINK_V3_VISUAL_SYSTEM.md` | Current V3 visual grammar and UI/UX screen behavior. |
+| CURRENT | `docs/content/NEXUSLINK_COPYWRITING_FINAL_PASS.md` | NexusLink player-facing copy final pass, adapted from anti-vibe-writing principles. |
 | CURRENT | `docs/testing/STEAM_DEMO_WEB_RELEASE_CHECKLIST.md` | Web release gate and private-test evidence rules. |
 | CURRENT | `docs/testing/PRIVATE_TEST_SCRIPT.md` | Moderated private-test script and pass criteria. |
 | CURRENT | `docs/qa/WEB_RELEASE_EVIDENCE.md` | Current evidence record; automated pass does not mean public release approval. |
@@ -123,6 +124,9 @@ emotionally safe, and usable on mobile.
 - Keep text-heavy and accessibility-sensitive surfaces in DOM.
 - Keep Pixi responsible for habitat, companion, motion, and traces.
 - Keep copy short and concrete.
+- Run player-facing copy through `docs/content/NEXUSLINK_COPYWRITING_FINAL_PASS.md`
+  before final handoff. This is a final-pass writing guide only; it does not add
+  an external dependency or change runtime behavior.
 - Show relationship evidence through traces, body language, remembered lines, or
   quiet state changes before exposing numbers.
 - Preserve the four core destinations: Explore, Care, Growth, and Memory. Home
@@ -176,6 +180,9 @@ Minimum commercial UI/UX pass:
 - Boundary/refusal does not read as punishment.
 - Return Echo does not blame absence.
 - Soul Talk remains readable and usable on mobile.
+- Player-facing copy has passed the NexusLink copywriting final pass: no generic
+  AI scaffolding, business jargon, FOMO/reward phrasing, dependency copy, or
+  decorative Markdown.
 - Explore, Care, Growth, and Memory are true product surfaces or clearly scoped
   transitional surfaces, not shop/task dashboards.
 - No blocked GROUNDWORK file is changed without explicit approval.
