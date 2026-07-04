@@ -1455,3 +1455,15 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Problems / risks: This reset intentionally leaves no image candidates to review under Moonlake output. The next art-production step needs an external or tool-assisted 3D/DCC source pass; those outputs remain staging-only until human approval and a separate GROUNDWORK runtime-promotion task.
 - Next safe action: Execute `TP-HAB-MOON-3D-1`: create or obtain the offline Moonlake source/blockout, export separated render passes at `1080x1920`, then run human visual approval before any `assets/**` or runtime work.
 - Required reading: `docs/assets/HABITAT_AUTOMATION_WORKFLOW.md`, `docs/assets/LINKARA_HABITAT_LAYERING_AND_VISUAL_LOCKS.md`, `output/linkara/moonlake/source-brief.md`, `output/linkara/moonlake/render-pass-manifest.json`, `output/linkara/moonlake/profile-draft-3d-assisted.json`, `output/linkara/moonlake/readiness-report.md`, `AGENTS.md`, `CLAUDE.md`, `ACCEPTANCE.md`, and this lane.
+
+### 2026-07-05 - Codex - Project-Native Art Style Target V2 From Reference Image
+
+- Lane: `Game Art, UI, And Visual Production`
+- Status: `VERIFIED`
+- Branch / commit: `main` / current scoped docs commit.
+- Scope: Added a docs-only global visual target derived from the supplied reference image. No `assets/**`, `src/**`, `pixiApp.js`, `assetManifest.js`, save schema, package/dependency, `scripts/**`, `tools/**`, scene switching, BGM routing, generated images, or runtime wiring changed.
+- Work performed: Added `docs/assets/NEXUS_LINK_ART_STYLE_TARGET.md`, defining the target as project-native premium 3D storybook diorama: cozy fantasy, soft stylized forms, believable material response, cinematic moonlit lighting, controlled cyan/gold magical glow, companion-first framing, glassy mobile UI direction, and mobile-first readability. Updated habitat workflow, Linkara habitat visual locks, and companion automation policy to reference the global target and reject flat anime, photoreal animal/photo treatment, chunky pixel art, plastic surfaces, noisy AI texture, and baked UI/stateful elements.
+- Verification: `git diff --check` passed. Scoped path review confirmed this package is docs-only and does not touch `assets/**`, `src/**`, `pixiApp.js`, `assetManifest.js`, save schema, dependency files, `scripts/**`, or `tools/**`.
+- Problems / risks: This is a visual direction/spec update only. Any UI reskin, runtime scene replacement, companion art regeneration, or asset promotion still requires a separate approved task and human art approval.
+- Next safe action: Use `docs/assets/NEXUS_LINK_ART_STYLE_TARGET.md` as the first style reference for future Moonlake 3D/DCC source work and companion prompt generation.
+- Required reading: `docs/assets/NEXUS_LINK_ART_STYLE_TARGET.md`, `docs/assets/HABITAT_AUTOMATION_WORKFLOW.md`, `docs/assets/LINKARA_HABITAT_LAYERING_AND_VISUAL_LOCKS.md`, `docs/assets/COMPANION_ASSET_AUTOMATION.md`, `AGENTS.md`, `CLAUDE.md`, `ACCEPTANCE.md`, and this lane.

@@ -6,6 +6,8 @@ Runtime status: no runtime wiring. No `assets/**`, `src/**`, `pixiApp.js`, `asse
 
 This document turns habitat production into a repeatable pipeline. It is the entry point for future generation windows and agent handoffs.
 
+Global art target: `docs/assets/NEXUS_LINK_ART_STYLE_TARGET.md`.
+
 ## 1. Authority Model
 
 Codex is the production orchestrator. Other AI tools may generate images, prototypes, or candidate diffs, but Codex owns repo boundaries, task packs, acceptance checks, and final staging review.
@@ -108,9 +110,9 @@ Direct 2D generation is no longer the default final-background path for Moonlake
 Art direction lock:
 
 ```text
-Clean HD semi-realistic fantasy game environment, project-native Nexus Link aesthetic.
-Preserve realistic material response and plausible cinematic lighting: contact shadows, water reflection and ripple structure, atmospheric depth, wet stone, foliage translucency, controlled specular highlights, and restrained bloom.
-Avoid flat anime concept art, plastic surfaces, over-smoothed painterly gradients, noisy AI texture, and glow that hides surface form.
+Project-native premium 3D storybook diorama, cozy fantasy, soft stylized forms, realistic material response, cinematic moonlit lighting, controlled magical glow, mobile-first readability.
+Preserve diorama depth, companion-first framing, contact shadows, water reflection and ripple structure, atmospheric depth, wet stone, soft fur, foliage translucency, carved wood, controlled crystal/metal specular highlights, and restrained bloom.
+Avoid flat anime concept art, photoreal animal/photo treatment, chunky pixel art, plastic surfaces, over-smoothed painterly gradients, noisy AI texture, one-note blue palettes, and glow that hides surface form.
 ```
 
 Base layer prompt lock:
@@ -126,7 +128,7 @@ Transparent prop prompt lock:
 ```text
 Create this single runtime habitat prop on a perfectly flat solid chroma-key background for background removal.
 No floor plane, cast shadow, reflection, UI, labels, text, companion, scenery, or extra props.
-Generous padding. Crisp edges. Match the region's art style and lighting.
+Generous padding. Crisp edges. Match the project-native premium 3D storybook diorama style, region material language, and lighting.
 ```
 
 Reference handoff rule:
@@ -159,6 +161,7 @@ Minimum checks:
 - Time-of-day celestial bodies are separated from `sky_atmosphere` and can be positioned from art-space profile data.
 - Material and lighting review passes the semi-realistic lock: believable surface response, depth, shadows, reflections, and restrained bloom.
 - Companion readability passes against the active companion reserved rect; foreground occlusion may cover feet lightly but not face/body silhouette.
+- Style review passes `NEXUS_LINK_ART_STYLE_TARGET.md`: premium 3D storybook diorama, cozy fantasy, mobile-first readability, controlled moon/cyan/gold glow, and no flat anime / photoreal / pixel-art drift.
 
 ## 7. Runtime Promotion Rules
 

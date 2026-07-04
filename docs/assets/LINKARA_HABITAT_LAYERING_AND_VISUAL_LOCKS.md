@@ -6,6 +6,8 @@ Runtime status: no runtime wiring. No save schema change. No `pixiApp.js` change
 
 This document turns the staged Linkara region images into a production contract for later image generation and runtime integration. A habitat is not a single background image. It is a layered spatial contract: sky, terrain, water, ground, camp/structure layers, runtime props, trace FX, foreground occlusion, companion anchor, and UI-safe placement all need explicit ownership before any asset is promoted.
 
+Global art target: `docs/assets/NEXUS_LINK_ART_STYLE_TARGET.md`.
+
 ## Source Assets
 
 Staged sources live under:
@@ -50,7 +52,7 @@ Default mobile zones:
 | `foreground_occlusion_band` | `{ x: 0.00, y: 0.73, w: 1.00, h: 0.07 }` | Low foot occlusion only. |
 | `bottom_ui_static` | `{ x: 0.00, y: 0.80, w: 1.00, h: 0.20 }` | Forbidden for habitat traces and props. |
 
-Art direction is semi-realistic fantasy, not flat anime concept art. Generated layers must preserve Nexus Link's clean HD readability while adding realistic material response and plausible lighting: wet stone with contact shadows, water with believable reflection/ripple structure, cliffs with atmospheric depth, foliage with leaf translucency, metal/crystal with controlled specular highlights, and restrained bloom. Reject plastic surfaces, over-smoothed painterly gradients, generic photobash, noisy AI texture, or baked glow that hides material form.
+Art direction is project-native premium 3D storybook diorama: cozy fantasy, soft stylized forms, realistic material response, cinematic moonlit lighting, controlled magical glow, and mobile-first readability. Generated layers must preserve Nexus Link's clean HD readability while adding diorama depth and believable materials: wet stone with contact shadows, water with reflection/ripple structure, cliffs with atmospheric depth, foliage with leaf translucency, carved wood, soft fur where companions appear, metal/crystal with controlled specular highlights, and restrained bloom. Reject flat anime concept art, photoreal animal/photo treatment, chunky pixel art, plastic surfaces, over-smoothed painterly gradients, generic photobash, noisy AI texture, one-note blue palettes, or baked glow that hides material form.
 
 ## Production Source Model
 
@@ -60,7 +62,8 @@ Required source discipline:
 
 - Lock one mobile portrait camera at `1080x1920` before final pass export.
 - Separate major forms in source: sky, celestial bodies, celestial occlusion, far terrain/city, water or atmosphere plane, shore/platform, structures, foreground occlusion, and runtime props.
-- Use believable material response before paintover: water reflection and ripple structure, wet stone contact shadows, atmospheric depth, controlled crystal/metal specular, and restrained bloom.
+- Use believable material response before paintover: water reflection and ripple structure, wet stone contact shadows, atmospheric depth, carved wood, soft foliage, controlled crystal/metal specular, and restrained bloom.
+- Preserve the premium 3D storybook diorama target in `NEXUS_LINK_ART_STYLE_TARGET.md`; do not let the source drift toward flat anime, photorealism, or chunky pixel art.
 - Export or document masks/depth references when they help water cleanup, foreground occlusion, or future Pixi FX placement.
 - Use `imagegen` only for concept targets, paintover proposals, small prop candidates, or texture exploration unless the output passes the same source-pass, layer-separation, and human approval gates.
 - Do not introduce Three.js, GLB runtime loading, TypeScript, Vite, npm, or a new build step as part of habitat art production.
@@ -690,8 +693,8 @@ Asset type: Nexus Link habitat layered raster layer, preview candidate only
 Primary request: Generate the [layer_name] layer for [region_id].
 Reference role: Use the approved Linkara region reference, this Visual Lock, and the current DCC/3D render pass or approved source layer as the style and composition source.
 Scene/backdrop: [region visual lock summary].
-Style/medium: clean HD semi-realistic fantasy game environment layer, project-native Nexus Link aesthetic, not pixel art, not flat anime concept art.
-Material/lighting lock: realistic material response and plausible cinematic lighting. Preserve wet stone, water reflection/ripple structure, atmospheric depth, leaf translucency, controlled specular highlights, contact shadows, and restrained bloom. Avoid plastic surfaces, over-smoothed painterly gradients, noisy AI texture, or glow that hides surface form.
+Style/medium: project-native premium 3D storybook diorama, cozy fantasy, soft stylized forms, realistic material response, mobile-first readability, not pixel art, not flat anime concept art, not photorealism.
+Material/lighting lock: cinematic moonlit lighting with controlled cyan and warm gold magical accents. Preserve wet stone, water reflection/ripple structure, atmospheric depth, leaf translucency, carved wood, controlled crystal/metal specular highlights, contact shadows, and restrained bloom. Avoid plastic surfaces, over-smoothed painterly gradients, noisy AI texture, one-note blue palettes, or glow that hides surface form.
 Composition/framing: mobile-first 9:16 portrait habitat composition, compatible with 390x844 safe-zone runtime. Keep the companion reserved area readable where this layer overlaps the lower center.
 Layer responsibility: This layer contains only [allowed contents].
 Layer separation constraints: Do not include [forbidden contents]. No UI, no text, no labels, no characters, no animals, no companion sprite, no trace FX unless this is a trace layer. Do not bake sun, moon, stars, or time-moving celestial bodies into `sky_atmosphere`.
@@ -708,7 +711,7 @@ Use case: stylized-concept
 Asset type: Nexus Link transparent runtime habitat prop
 Primary request: Create a single [prop_name] prop matching [region_id].
 Reference role: Match the approved [region_id] visual lock and layer reference.
-Style/medium: clean HD semi-realistic 2D game asset style, crisp silhouette, realistic material response, controlled accent lighting, project-native Nexus Link aesthetic. Do not make pixel art or flat anime prop art.
+Style/medium: project-native premium 3D storybook diorama prop style, crisp silhouette, soft stylized forms, realistic material response, controlled accent lighting, mobile-first readability. Do not make pixel art, flat anime prop art, or photoreal isolated product art.
 View: mostly front-facing 3/4 top-down RPG object view; upright object centered, only a small visible top face.
 Background: perfectly flat solid #FF00FF magenta for background removal.
 Constraints: full object visible, generous magenta margin on all sides, no part touches image edge, no floor plane, no cast shadow, no text, no UI, no labels, no watermark.

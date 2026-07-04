@@ -10,7 +10,7 @@ No part of this pipeline may modify runtime renderer code, move existing assets,
 
 ## Core Policy
 
-- New companion art style: illustrated / painterly / high-detail.
+- New companion art style: project-native premium 3D storybook diorama as defined in `docs/assets/NEXUS_LINK_ART_STYLE_TARGET.md`; illustrated / painterly / high-detail, with soft stylized forms and believable material response.
 - New companion master frame: `512x512`.
 - Final runtime asset: transparent PNG.
 - Forbidden baked-in elements: white background, UI, text, scene, pedestal, codex frame.
@@ -22,6 +22,7 @@ No part of this pipeline may modify runtime renderer code, move existing assets,
 - Scale basis: `frameHeight`, not `sheetHeight`.
 - `greyshade-cat` current 443/444 frame is legacy accepted and must never be upscaled to 512.
 - Pixel-style concept sheets, 64 PPU references, and 96px codex markers are reference / art canon only, not runtime sprites.
+- Reject style drift toward chunky pixel art, flat sticker/anime art, photoreal animal photos, plastic surfaces, or baked display backgrounds.
 
 ---
 
