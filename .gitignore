@@ -1,0 +1,11 @@
+# Local Claude Code / GSD Core install artifacts
+.claude/gsd-core/
+.claude/commands/
+.claude/agents/
+.claude/hooks/
+.claude/scripts/
+.claude/package.json
+.claude/.gsd-profile
+.claude/gsd-install-state.json
+.claude/gsd-file-manifest.json
+.claude/settings.local.json
