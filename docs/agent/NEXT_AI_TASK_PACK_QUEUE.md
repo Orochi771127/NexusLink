@@ -1,10 +1,19 @@
 # Next AI TASK_PACK Queue
 
 Created: 2026-07-05 (FABLE5-P0 reconciliation audit)
+Updated: 2026-07-06 (TP-1B product audit — TP-1 marked DONE; TP-6..TP-8
+player-impact packs added; recommended order re-ranked)
 Status: proposal — every pack still requires human approval before work
 starts (Gate 1 → Gate 2 per `docs/agent/AI_WORKFLOW.md`).
-Ordering: TP-1 is blocking; TP-2..TP-5 are ordered by leverage but are
-mutually independent after TP-1 resolves.
+
+**Recommended order after TP-1B (player-impact-first):**
+1. **TP-6** (audio reality — biggest perceived-quality jump, bounded)
+2. **TP-7** (companion-initiated micro-moments — biggest differentiation)
+3. **TP-2** (status/handoff refresh — now also carries the TP-1B doc-drift
+   corrections list)
+4. **TP-8** (Initial Bond decision — human design gate, blocks store/chapter)
+5. TP-3 (eval pack), TP-4 (i18n fill), TP-5 (cursor rules) as capacity allows.
+Rationale and evidence: `docs/agent/PRODUCT_QUALITY_FUN_FACTOR_AUDIT.md`.
 
 Standing constraints for every pack below: no commit/push without explicit
 human instruction; no new dependencies; no backend/API/LLM routing; no save
@@ -13,7 +22,16 @@ explicitly grants them; ledger entry required at close.
 
 ---
 
-## TP-1 — Nuwa advisory package review + branch reconciliation (HIGHEST LEVERAGE)
+## TP-1 — Nuwa advisory package review + branch reconciliation — ✅ DONE 2026-07-05/06
+
+Completed: TP-1A fresh-context review classified the Nuwa package
+KEEP_CANDIDATE (all gates re-verified); human committed, rebased, and
+fast-forwarded — `main` == `origin/main` == `cbd2aa8`, working tree clean.
+Reports: `docs/agent/NUWA_ADVISORY_PACKAGE_REVIEW.md`,
+`docs/agent/BRANCH_RECONCILIATION_REPORT.md`. Original pack text kept below
+for the record.
+
+### (archived) TP-1 — Nuwa advisory package review + branch reconciliation (HIGHEST LEVERAGE)
 
 - **Why first:** Codex-verified runtime work (Nuwa distillation advisory
   layer) sits uncommitted on `chore/install-ai-workflow-tools`, which is
@@ -116,6 +134,91 @@ explicitly grants them; ledger entry required at close.
   each rule line traces to an existing canon sentence (no invented policy).
 - **Human gate:** approval of rule wording (these steer every future Cursor
   session).
+
+---
+
+## TP-6 — Sensory Feedback Pack v1: audio reality (added by TP-1B, 2026-07-06)
+
+- **Goal:** end the silent-game state. Wire 6–10 SFX (touch accept/guarded/
+  reject, Soul Talk send/reply, trace bloom, standoff action/telegraph,
+  milestone) + 1 ambient lake loop through the EXISTING
+  `src/audio/audioManager.js` (it already persists `sfxVolume` —
+  `audioManager.js:22` — but nothing plays). Includes the dead-UI honesty
+  fix: until SFX land, the Settings SFX slider must be hidden or labeled;
+  after, it controls real sound. Same pack gates the placeholder Atlas
+  button ("尚未開放" state) — two known dead-UI items, one pass.
+- **Recommended owner:** HUMAN selects/approves audio assets (assets/** =
+  GROUNDWORK; licensing check); **Codex** wires playback + slider +
+  atlas-button gate. Fable 5 not needed.
+- **Allowed files:** `src/audio/audioManager.js`,
+  `src/ui/settingsController.js`, the emitting call sites
+  (`interactionController.js`, `soulTalkController.js`,
+  `battleController.js`, trace-echo path), `assets/audio/**` [NEW files,
+  human-approved only], `docs/agent/AI_EXECUTION_LEDGER.md`.
+- **Forbidden files:** `index.html` (unless one approved line),
+  `src/state/**`, `src/pixi/pixiApp.js`, everything else.
+- **Red-line check:** no notification-style chimes, no reward fanfares for
+  safety turns (red line 7), sounds must respect the quiet aesthetic;
+  safety-redirect turns stay silent.
+- **Verification plan:** `node --check` touched JS; web release gate 10/10
+  on clean port; safety-turn silence asserted; HUMAN listen pass on real
+  device (headphones + speaker).
+- **Human gate:** REQUIRED — asset selection/licensing + final listen pass.
+
+## TP-7 — Companion Presence Pack v1: companion-initiated micro-moments (added by TP-1B)
+
+- **Goal:** the companion acts first, occasionally and quietly — e.g. walks
+  to the lake edge and looks back at the player, one first-person line at
+  most. Reuses the EXISTING autonomy stack (`needModel`, `goalManager`,
+  `actionPolicy`, `initiativeCooldown`) and the gentle-invitation surface;
+  no new AI systems. This closes the biggest differentiation gap found by
+  TP-1B (chat apps initiate; our cat never does, despite built
+  infrastructure).
+- **Recommended owner:** HUMAN approves the behavior list first (design
+  gate); **Claude Code** implements; **Codex** adds eval fixtures; **Fable
+  5** does the red-line review of the behavior list + a fresh-context diff
+  review (dev auditor only).
+- **Allowed files (after design gate):** `src/ui/gentleInvitationController.js`
+  or a new sibling controller [NEW], `src/engine/gentleInvitationEngine.js`,
+  autonomy wiring call sites, one testHarness file [NEW ok],
+  `docs/agent/AI_EXECUTION_LEDGER.md`.
+- **Forbidden files:** `src/ai/raphaelCore.js` core pipeline,
+  `safetyShield.js`, `memoryWriter.js`, `stateMutationPolicy.js`, all
+  GROUNDWORK, save schema.
+- **Red-line check (hard):** triggers must derive ONLY from companion state
+  (energy/mood/boundary/time-of-day) — NEVER from player absence, login
+  frequency, or loneliness detection (red line 1). `initiativeCooldown`
+  enforced so initiative never becomes nagging (red line 6). Eval cases must
+  assert both.
+- **Verification plan:** `node --check`; new harness cases pass; Raphael
+  smoke + release gate; browser check that moments fire ≤ N per session and
+  never during onboarding/safety turns.
+- **Human gate:** REQUIRED twice — behavior list before implementation;
+  feel check after.
+
+## TP-8 — Initial Bond decision gate (added by TP-1B)
+
+- **Goal:** resolve the canon-vs-code contradiction. Current state IS the
+  degraded state Master Canon §86 warns about: `defaultState.js:67-69`
+  unlocks only `greyshade-cat` with no first-meeting choice UI ("強制只有
+  一隻、又無選擇畫面"). Two exits, human must pick: (A) build the 初遇
+  choose-one ceremony (2–3 companions, one line each, pick-and-commit — per
+  Canon §80); or (B) accept greyshade-cat as the fixed first companion for
+  the vertical slice and amend Canon §176 / AGENTS.md §7 wording (both
+  currently describe a stale unlock-all state). Option B is docs-only;
+  Option A is GROUNDWORK (defaultState/store migration + UI).
+- **Recommended owner:** HUMAN design decision first. Then: (A) → Claude
+  Code implementation + Codex migration tests; (B) → Codex docs pack.
+- **Allowed files:** decision doc + (B) canon/AGENTS wording, or (A)
+  onboarding controller + `src/state/defaultState.js` + `src/state/store.js`
+  normalize (GROUNDWORK — item-level approval) + migration cases.
+- **Forbidden files:** everything else; no store/shop/chapter code in
+  either option.
+- **Verification plan:** (B) `git diff --check` only; (A) migration suite
+  extended (veteran saves keep their unlocked set; fresh saves get the
+  ceremony exactly once), release gate, K1–K5 acceptance refs.
+- **Human gate:** REQUIRED — this is a product-identity decision
+  ("sell souls" credibility), not an engineering call.
 
 ---
 
