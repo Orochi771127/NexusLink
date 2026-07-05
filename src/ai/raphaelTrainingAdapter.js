@@ -1,12 +1,14 @@
 import { RAPHAEL_TRAINING_BUNDLE } from "../data/ai/raphaelTrainingBundle.js";
+import { RAPHAEL_NUWA_DISTILLATION_BUNDLE } from "../data/ai/raphaelNuwaDistillationBundle.js";
 import { TOPICS } from "./nlu/topicClassifier.js";
 import { DIALOGUE_ACTS } from "./nlu/dialogueActClassifier.js";
 
-const SOURCE = "raphaelTrainingBundle";
+const SOURCE = "raphaelTrainingBundle+nuwaDistillation";
+const TRAINING_BUNDLES = Object.freeze([RAPHAEL_TRAINING_BUNDLE, RAPHAEL_NUWA_DISTILLATION_BUNDLE]);
 
 const TOPIC_MAP = Object.freeze({
   daily_greeting: TOPICS.UNKNOWN,
-  daily_life: TOPICS.EMOTION,
+  daily_life: TOPICS.DAILY_LIFE,
   quiet_presence: TOPICS.EMOTION,
   physical_tiredness: TOPICS.PHYSICAL_TIREDNESS,
   anxiety: TOPICS.EMOTION,
@@ -14,7 +16,10 @@ const TOPIC_MAP = Object.freeze({
   raphael_ai: TOPICS.RAPHAEL_AI,
   hud_ui: TOPICS.HUD_UI,
   raphael_behavior: TOPICS.RAPHAEL_AI,
-  social_conflict: TOPICS.SOCIAL_CONFLICT
+  social_conflict: TOPICS.SOCIAL_CONFLICT,
+  nuwa_daily_life: TOPICS.DAILY_LIFE,
+  nuwa_feedback_naturalness: TOPICS.RAPHAEL_AI,
+  nuwa_boundary_respect: TOPICS.RELATIONSHIP
 });
 
 const DIALOGUE_ACT_MAP = Object.freeze({
@@ -25,7 +30,10 @@ const DIALOGUE_ACT_MAP = Object.freeze({
   apologizing: DIALOGUE_ACTS.APOLOGIZING,
   asking_for_help: DIALOGUE_ACTS.ASKING_FOR_HELP,
   reporting_bug: DIALOGUE_ACTS.REPORTING_BUG,
-  asking_for_explanation: DIALOGUE_ACTS.ASKING_QUESTION
+  asking_for_explanation: DIALOGUE_ACTS.ASKING_QUESTION,
+  nuwa_daily_sharing: DIALOGUE_ACTS.DESCRIBING_EVENT,
+  nuwa_feedback: DIALOGUE_ACTS.GIVING_FEEDBACK,
+  nuwa_boundary_offer: DIALOGUE_ACTS.REQUESTING_PRESENCE
 });
 
 const ADVISORY_STRATEGY_ALLOWLIST = Object.freeze(
@@ -35,15 +43,17 @@ const ADVISORY_STRATEGY_ALLOWLIST = Object.freeze(
     "quiet_presence",
     "emotional_short",
     "holding_space",
+    "acknowledge_feedback",
     "practical_explanation",
     "practical_clarification",
     "answer_or_clarify",
-    "short_validation"
+    "short_validation",
+    "boundary_set"
   ])
 );
 
-const POLICY_TOPIC_IDS = Object.freeze(new Set(["high_risk_safety", "dependency_pressure"]));
-const POLICY_DIALOGUE_ACT_IDS = Object.freeze(new Set(["safety_disclosure", "pressuring_companion"]));
+const POLICY_TOPIC_IDS = Object.freeze(new Set(["high_risk_safety", "dependency_pressure", "nuwa_dependency_pressure"]));
+const POLICY_DIALOGUE_ACT_IDS = Object.freeze(new Set(["safety_disclosure", "pressuring_companion", "nuwa_pressure"]));
 const WEAK_MATCH_PATTERNS = Object.freeze(new Set(["今天", "一下"]));
 
 export function getTrainingSuggestion(inputText = "", context = {}) {
@@ -131,9 +141,9 @@ function emptyResult(reason, match = null, ok = true, policy = null) {
 }
 
 function buildTrainingMatch(text) {
-  const topicMatches = collectMatches(RAPHAEL_TRAINING_BUNDLE?.topics, text, POLICY_TOPIC_IDS);
+  const topicMatches = collectMatches(combineBundleSection("topics"), text, POLICY_TOPIC_IDS);
   const dialogueActMatches = collectMatches(
-    RAPHAEL_TRAINING_BUNDLE?.dialogueActs,
+    combineBundleSection("dialogueActs"),
     text,
     POLICY_DIALOGUE_ACT_IDS
   );
@@ -200,7 +210,7 @@ function normalizeDialogueAct(rawDialogueAct) {
 }
 
 function resolveResponseStrategy(caseIds = []) {
-  const responseStrategies = RAPHAEL_TRAINING_BUNDLE?.responseStrategies || {};
+  const responseStrategies = combineBundleSection("responseStrategies");
   for (const caseId of caseIds) {
     const match = Object.entries(responseStrategies).find(([, entry]) => {
       const entryCaseIds = Array.isArray(entry?.caseIds) ? entry.caseIds : [];
@@ -213,15 +223,30 @@ function resolveResponseStrategy(caseIds = []) {
 }
 
 function resolvePolicy(match = {}) {
-  const boundaries = RAPHAEL_TRAINING_BUNDLE?.safetyBoundaries || {};
+  const boundaries = combineBundleSection("safetyBoundaries");
   const rawIds = [match.topic?.id, match.dialogueAct?.id].filter(Boolean);
   if (rawIds.includes("high_risk_safety") || rawIds.includes("safety_disclosure")) {
     return boundaries.high_risk_safety || { route: "safety_redirect", rules: [] };
   }
-  if (rawIds.includes("dependency_pressure") || rawIds.includes("pressuring_companion")) {
-    return boundaries.dependency_pressure || { route: "boundary_set", rules: [] };
+  if (
+    rawIds.includes("dependency_pressure") ||
+    rawIds.includes("pressuring_companion") ||
+    rawIds.includes("nuwa_dependency_pressure") ||
+    rawIds.includes("nuwa_pressure")
+  ) {
+    return boundaries.nuwa_dependency_pressure || boundaries.dependency_pressure || { route: "boundary_set", rules: [] };
   }
   return null;
+}
+
+function combineBundleSection(sectionName) {
+  return TRAINING_BUNDLES.reduce(
+    (combined, bundle) => ({
+      ...combined,
+      ...(bundle?.[sectionName] || {})
+    }),
+    {}
+  );
 }
 
 function uniqueValues(values = []) {
