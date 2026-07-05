@@ -336,7 +336,7 @@
             "energy": 10,
             "defense": 34,
             "touchFatigue": 0.5,
-            "lastTouchAt": 1783277387362,
+            "lastTouchAt": 1783294489488,
             "lastRejectAt": null,
             "lastTouchReaction": "guarded_accept",
             "firstTouchCompleted": true,
@@ -355,7 +355,7 @@
               "shouldApply": true,
               "reason": "first_awakening",
               "memoryObject": {
-                "id": "emem_1783277387362_awakening_118",
+                "id": "emem_1783294489488_awakening_287",
                 "type": "awakening_memory",
                 "theme": "心核初醒",
                 "label": "初醒",
@@ -366,20 +366,20 @@
                 "status": "fresh",
                 "source": "first_awakening",
                 "excerpt": "心核在月湖邊第一次睜眼。",
-                "createdAt": 1783277387362,
-                "lastUpdatedAt": 1783277387362,
+                "createdAt": 1783294489488,
+                "lastUpdatedAt": 1783294489488,
                 "isVisibleInHabitat": true
               },
               "traceObject": {
-                "id": "htrace_emem_1783277387362_awakening_118",
-                "memoryId": "emem_1783277387362_awakening_118",
+                "id": "htrace_emem_1783294489488_awakening_287",
+                "memoryId": "emem_1783294489488_awakening_287",
                 "type": "core_awakening_glow",
                 "emotion": "calm",
                 "intensity": 0.55,
                 "status": "fresh",
-                "createdAt": 1783277387362,
-                "lastUpdatedAt": 1783277387362,
-                "expiresAt": 1784486987362,
+                "createdAt": 1783294489488,
+                "lastUpdatedAt": 1783294489488,
+                "expiresAt": 1784504089488,
                 "visualHint": "faint_glow",
                 "textHint": "月湖中心浮起一道心核微光，像有什麼慢慢睜開了眼。"
               },
@@ -427,40 +427,112 @@
       {
         "ok": true,
         "result": {
-          "blocked": false,
-          "reaction": "wake",
-          "motionState": "idle_wake"
+          "reaction": "hesitate",
+          "bodyCue": "ears_back",
+          "motionState": "touch_guarded",
+          "previewText": "灰影貓看著你，尾巴末端有些緊繃。",
+          "statePatch": {
+            "bond": 1,
+            "trust": 5,
+            "mood": "calm",
+            "energy": 10,
+            "defense": 36,
+            "touchFatigue": 2.5,
+            "lastTouchAt": 1783294497016,
+            "lastRejectAt": null,
+            "lastTouchReaction": "hesitate",
+            "firstTouchCompleted": true,
+            "firstHugCompleted": false,
+            "blockedTouchCount": 0,
+            "lastBlockedTouchAt": null,
+            "reactionPreview": "灰影貓看著你，尾巴末端有些緊繃。"
+          },
+          "awakening": null
         }
       },
       {
         "ok": true,
         "result": {
-          "blocked": false,
-          "reaction": "wake",
-          "motionState": "idle_wake"
+          "reaction": "hesitate",
+          "bodyCue": "ears_back",
+          "motionState": "touch_guarded",
+          "previewText": "灰影貓看著你，尾巴末端有些緊繃。",
+          "statePatch": {
+            "bond": 1,
+            "trust": 5,
+            "mood": "calm",
+            "energy": 10,
+            "defense": 37,
+            "touchFatigue": 3.5,
+            "lastTouchAt": 1783294499300,
+            "lastRejectAt": null,
+            "lastTouchReaction": "hesitate",
+            "firstTouchCompleted": true,
+            "firstHugCompleted": false,
+            "blockedTouchCount": 0,
+            "lastBlockedTouchAt": null,
+            "reactionPreview": "灰影貓看著你，尾巴末端有些緊繃。"
+          },
+          "awakening": null
         }
       },
       {
         "ok": true,
         "result": {
-          "blocked": false,
-          "reaction": "wake",
-          "motionState": "idle_wake"
+          "reaction": "hesitate",
+          "bodyCue": "ears_back",
+          "motionState": "touch_guarded",
+          "previewText": "灰影貓看著你，尾巴末端有些緊繃。",
+          "statePatch": {
+            "bond": 1,
+            "trust": 5,
+            "mood": "calm",
+            "energy": 10,
+            "defense": 38,
+            "touchFatigue": 4.5,
+            "lastTouchAt": 1783294501562,
+            "lastRejectAt": null,
+            "lastTouchReaction": "hesitate",
+            "firstTouchCompleted": true,
+            "firstHugCompleted": false,
+            "blockedTouchCount": 0,
+            "lastBlockedTouchAt": null,
+            "reactionPreview": "灰影貓看著你，尾巴末端有些緊繃。"
+          },
+          "awakening": null
         }
       },
       {
         "ok": true,
         "result": {
-          "blocked": false,
-          "reaction": "wake",
-          "motionState": "idle_wake"
+          "reaction": "hesitate",
+          "bodyCue": "ears_back",
+          "motionState": "touch_guarded",
+          "previewText": "灰影貓看著你，尾巴末端有些緊繃。",
+          "statePatch": {
+            "bond": 1,
+            "trust": 5,
+            "mood": "calm",
+            "energy": 10,
+            "defense": 39,
+            "touchFatigue": 5.5,
+            "lastTouchAt": 1783294503840,
+            "lastRejectAt": null,
+            "lastTouchReaction": "hesitate",
+            "firstTouchCompleted": true,
+            "firstHugCompleted": false,
+            "blockedTouchCount": 0,
+            "lastBlockedTouchAt": null,
+            "reactionPreview": "灰影貓看著你，尾巴末端有些緊繃。"
+          },
+          "awakening": null
         }
       }
     ],
     "after_spam": {
-      "touchFatigue": 0.5,
+      "touchFatigue": 5.5,
       "mood": "calm",
-      "lastTouchReaction": "guarded_accept"
+      "lastTouchReaction": "hesitate"
     }
   },
   "storage": {

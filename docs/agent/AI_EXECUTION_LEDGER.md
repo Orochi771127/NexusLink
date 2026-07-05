@@ -654,6 +654,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 2 - Game Art, UI, And Visual Production
 
+### 2026-07-06 - Claude Fable 5 - 心語視窗通訊軟體化：桌面聚焦佈局修正 + 寬螢幕裁切修復
+
+- Status: `VERIFIED`（preview 多視口實測；手機真機 v5 路徑 = 人類 gate）
+- Branch / commit: `main` / 本包 commit（見 git log）
+- Scope: 人類需求（「聊天視窗在上半部、要像通訊軟體、鍵盤貼合、各裝置不裁切」）。**鍵盤模型 v5 / --kb-inset 貼合一行未動（人類明令 + ledger 紅線）**。Files: `styles/soul-talk-drawer.css`、`styles/mobile-safari-polish.css` only。無 JS、無 GROUNDWORK。
+- Work performed: 勘察證實兩個真因：(1) drawer **常態本來就是底部錨定**（通訊軟體樣式已是現狀）；「跑到上半部」= `st-focus` 讓位佈局（soulTalkController.js:96 聚焦時無條件加 class），在**沒有虛擬鍵盤的電腦上也觸發**——修法：`@media (hover:hover) and (pointer:fine)` 內覆蓋 `st-focus:not(.kb-open)` 回底部錨定常態；`.kb-open`（真的量到虛擬鍵盤，如觸控筆電）不受覆蓋、仍走 v5 貼合；手機 coarse pointer 不命中此塊，v5 原樣。(2) 寬螢幕裁切：app 在寬螢幕是置中窄列（panel-layer=列寬），drawer 寬度公式用 `100vw` → iPad 768 實測右緣溢出 +70px——修法：兩處 `width` 改 `auto`（由 base `.modal-panel` 的 left/right edge + margin auto 決定，永不溢出容器），`max-width:720` 保留。
+- Verification: preview（:8128）視口矩陣全 `fits:true`：375×812（drawer 343w，top103/bottom720）、430×932（398w）、768×1024（448w 置中對齊遊戲列；修復前 720w 溢出）、1280×800（448w，left416 對齊遊戲列）。桌面聚焦（st-focus 加上、kb-open 無）drawer **全程底部錨定不跳頂**（top 130 不變）、blur 後復原。375 截圖：標準通訊視窗佈局（玩家右對齊/夥伴左對齊/系統置中/輸入欄貼底）。live playtest gate ×2：soul_talk 9/10（唯一失敗 = 既有 no_recall_bleed，與基線一致）、HUD 13/13；第一輪出現 2 個 `null.split` console error，重跑 0 個且 src/runner 皆無此模式 → 偶發 transient（疑 preview 工具鏈），非本包引入。`git diff --check` PASS；diff 自審：v5 區塊（st-focus top / kb-open bottom / 38svh fallback）零觸碰。
+- Problems / risks: (a) 手機真機（coarse pointer）不受本包影響是 CSS 條件推理 + 靜態審查結論，真機重測仍是人類 gate。(b) preview 工具在超寬模擬視口的截圖是縮放假象（佈局以 DOM 量測為準）。(c) presence 行偶顯「已載入 idle_c…」dev 字樣 = 既有 content-tier 殘留（companionRenderer 載入狀態行），非本包範圍。(d) CSS heuristic 快取：真機驗證請硬刷新。
+- Next safe action: 人類真機三平台快測（iPhone Safari / Android Chrome / iPad）：聚焦時鍵盤貼合如舊、電腦聚焦不再跳頂、無裁切。之後 TP-6 音訊包。
+- Required reading: `styles/soul-talk-drawer.css`（新 media 塊 + width 註解）、本 lane 前一條（心語入口緊湊化）。
+
 ### 2026-07-06 - Claude Fable 5 - 心語入口緊湊化（滿寬大欄位 → 右下小圓鈕）
 
 - Status: `VERIFIED`

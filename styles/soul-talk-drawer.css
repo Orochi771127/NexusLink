@@ -8,7 +8,10 @@
 html[data-ui="v2"] .soul-talk-drawer {
   top: auto;
   bottom: calc(var(--bottom-safe) + var(--nav-block-h, 104px) + 12px);
-  width: min(720px, calc(100vw - 24px));
+  /* 寬度由 base .modal-panel 的 left/right: var(--edge) + margin-inline:auto 決定（width:auto），
+     再以 max-width 限制。不可用 100vw：寬螢幕（iPad/桌面）時 app 是置中窄列，panel-layer
+     只有列寬，100vw 會讓 drawer 溢出容器與視口（右緣被裁切，2026-07-06 iPad 768 實測 +70px）。 */
+  width: auto;
   max-width: 720px;
   /* 高度隨可視視窗（--app-height）收縮：鍵盤開啟時 visualViewport 變矮 → drawer 變矮 → 不溢出、不留黑塊。 */
   height: min(72svh, calc(var(--app-height, 100dvh) - var(--top-safe) - 24px));
@@ -70,6 +73,32 @@ html[data-ui="v2"] body.st-focus .soul-talk-drawer .quick-reply-row {
   max-height: 52px;
   padding-bottom: 4px;
   overflow-y: hidden;
+}
+
+/* =========================================================================
+   桌面 / 實體鍵盤環境（hover + 精確指標）：沒有虛擬鍵盤要讓位。
+   st-focus 的「吊到頂部 + 底部保留 38svh」只為虛擬鍵盤存在；在電腦上聚焦輸入框
+   時應維持通訊軟體常態（底部錨定）。只覆蓋 :not(.kb-open) —— 觸控筆電若真的
+   彈出虛擬鍵盤，dom.js 會量到 --kb-inset 並切 kb-open，v5 貼合規則不受此覆蓋。
+   手機（pointer: coarse）完全不命中此塊：鍵盤模型 v5 原樣保留（ledger 紅線）。
+   ========================================================================= */
+@media (hover: hover) and (pointer: fine) {
+  html[data-ui="v2"] body.st-focus:not(.kb-open) .soul-talk-drawer {
+    top: auto;
+    bottom: calc(var(--bottom-safe) + var(--nav-block-h, 104px) + 12px);
+    height: min(72svh, calc(var(--app-height, 100dvh) - var(--top-safe) - 24px));
+    border-radius: 28px 28px 18px 18px;
+  }
+
+  html[data-ui="v2"] body.st-focus:not(.kb-open) .soul-talk-drawer .soul-drawer-kicker {
+    display: block;
+  }
+
+  html[data-ui="v2"] body.st-focus:not(.kb-open) .soul-talk-drawer .quick-reply-row {
+    max-height: 96px;
+    padding-bottom: 0;
+    overflow-y: auto;
+  }
 }
 
 /* ---- Header：夥伴名 + presence 狀態行 + 收合鍵；只以髮絲線與下方分隔 ---- */
