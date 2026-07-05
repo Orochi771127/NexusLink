@@ -58,6 +58,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-07-06 - Claude Fable 5 - TP-7 Companion Presence Pack v1（夥伴主動微時刻）
+
+- Status: `VERIFIED`（engine 測試 + 瀏覽器驗證均過；**未 commit/push — 等人類台詞覆核與授權**）
+- Branch / commit: `main` / `3cd7b47` 基線，uncommitted TP-7 package
+- Scope: EXPERIENCE 層。人類授權開工（「判斷複雜度高、難度高、對品質體驗有幫助的先做」→ 選定 TP-7）。Files: `src/engine/gentleInvitationEngine.js`（+`deriveInitiativeMoment` 純函數）、`src/ai/autonomy/initiativeCooldown.js`（+`evaluateAmbientInitiativeCooldown` 純函數）、`src/ui/companionInitiativeController.js` [NEW]、`src/app.js`（照 gentleInvitation 模式 wire）、`src/ai/testHarness/companionInitiativeCases.js` [NEW]。無 GROUNDWORK、無 save schema、無新 localStorage key、無 styles.css/index.html 修改（樣式自注入，同 battleController juice 先例）。
+- Work performed: 夥伴首次獲得**主動微時刻**——三種 v1 時刻全由夥伴狀態驅動：`quiet_approach`（暖+trust≥10+energy≥5 → soul.happy + 夥伴一句話）、`fireside_settle`（energy≤4/tired → soul.rest + 一句話）、`moon_gaze`（夜 22-6 + calm + bond≥25 → 抬頭看月亮，旁白語態，體現敢於無聊）。動畫走既有 `COMPANION_ANIMATION_INTENT` EventBus 事件（H1 解耦）；台詞為瞬時呈現、**不寫 chatHistory**（不製造未讀，紅線 6）；冷卻強制（開機 90s 靜默、間隔 4 分鐘、session 上限 2 次、同 kind 不連發、safeUnstable 靜默）；邊界優先（safeHarbor/defensive/distant/touchFatigue≥6/defense≥70/trust<6 → 永不主動）。主動台詞顯示期間 gentle-invitation 旁白自動讓位（截圖發現兩句同屏疊壓後修復）。
+- Verification: `node --check` PASS ×5。新 harness **17/17**（含紅線 1 absence-invariance 斷言：state 帶 lastSeenAt/absenceDays/loginCount/lonelinessScore 時輸出逐位元相同；紅線 6 無獎勵欄位斷言；全部冷卻分支）。Raphael smoke **17/17** 不回歸。瀏覽器驗證（preview :8128，0 console errors）：quiet_approach/fireside_settle 依序觸發、台詞與語態 class 正確、intent 事件發出（soul.happy/soul.rest）、同 kind 連發擋、session cap 擋、safeHarbor 擋、讓位機制 giOpacity=0、dispose 清理正確。`git diff --check` PASS。
+- Problems / risks: (a) **Pre-existing 發現（非本包引入，git stash A/B 證明）**：live playtest gate `soul_talk` 現為 **9/10** —「我只是想安靜一下」的 `no_recall_bleed` 檢查失敗；基線（3cd7b47，無 TP-7 改動）同樣失敗。嫌疑範圍：`359dfff`（daily-life replies，2026-07-04）或 Nuwa 合入（TP-1A 跑的五個 gate 不含 live playtest gate）。建議併入 TP-3 eval 包或開單獨小修包。(b) 台詞 6 句（3 時刻 ×2 輪播）為 AI 起草，**人類覆核是 gate**。(c) 真機 feel check（時刻頻率/位置感受）是人類 gate；`.companion-initiative-line` 位置 bottom 46% 在寬視口偏高，390×844 為主目標。(d) `docs/qa/_live_playtest_gate_output.json` 因 gate 重跑而更新，commit 時人類可含可棄。
+- Next safe action: 人類覆核六句台詞 + 授權 commit/push；真機 390×844 感受一輪（等 45s 節拍或用測試實例）。後續：TP-6 音訊包（讓時刻有聲音）會直接放大本包效果。
+- Required reading: `src/engine/gentleInvitationEngine.js`（deriveInitiativeMoment 區塊）、`src/ui/companionInitiativeController.js`、`src/ai/testHarness/companionInitiativeCases.js`、`docs/agent/PRODUCT_QUALITY_FUN_FACTOR_AUDIT.md` §7b。
+
 ### 2026-07-06 - Claude Fable 5 - TP-1B Product Quality / Fun Factor / Commercial Hook Audit
 
 - Status: `COMPLETED`

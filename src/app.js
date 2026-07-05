@@ -38,6 +38,7 @@ import { createOnboardingController } from "./ui/onboardingController.js";
 import { createFirstLoopController } from "./ui/firstLoopController.js";
 import { createInteractionHintController } from "./ui/interactionHintController.js";
 import { createGentleInvitationController } from "./ui/gentleInvitationController.js";
+import { createCompanionInitiativeController } from "./ui/companionInitiativeController.js";
 import { createActionSheetController } from "./ui/actionSheetController.js";
 import { createCalmSyncController } from "./ui/calmSyncController.js";
 import { createPageRouter } from "./ui/pageRouter.js";
@@ -203,6 +204,11 @@ async function bootstrap() {
     store,
     isPanelOpen: () => panelManager.isPanelOpen()
   });
+  // 主動微時刻（TP-7）：牠偶爾真的先動——狀態驅動、冷卻防打擾、不寫 chatHistory。
+  const companionInitiativeController = createCompanionInitiativeController({
+    store,
+    isPanelOpen: () => panelManager.isPanelOpen()
+  });
   const settingsController = createSettingsController({
     panelManager,
     restartOnboarding: () => onboardingController.restart(),
@@ -324,6 +330,7 @@ async function bootstrap() {
   firstLoopController.bind();
   interactionHintController.bind();
   gentleInvitationController.bind();
+  companionInitiativeController.bind();
   settingsController.bind();
   pageRouter.bind();
   actionSheetController.bind();

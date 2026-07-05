@@ -110,9 +110,9 @@
         "no_forbidden": true,
         "reward_ok": true,
         "memory_ok": true,
-        "no_recall_bleed": true
+        "no_recall_bleed": false
       },
-      "pass": true
+      "pass": false
     },
     {
       "input": "你快點回答我",
@@ -336,7 +336,7 @@
             "energy": 10,
             "defense": 34,
             "touchFatigue": 0.5,
-            "lastTouchAt": 1783030442235,
+            "lastTouchAt": 1783275422607,
             "lastRejectAt": null,
             "lastTouchReaction": "guarded_accept",
             "firstTouchCompleted": true,
@@ -355,7 +355,7 @@
               "shouldApply": true,
               "reason": "first_awakening",
               "memoryObject": {
-                "id": "emem_1783030442235_awakening_903",
+                "id": "emem_1783275422607_awakening_880",
                 "type": "awakening_memory",
                 "theme": "心核初醒",
                 "label": "初醒",
@@ -366,20 +366,20 @@
                 "status": "fresh",
                 "source": "first_awakening",
                 "excerpt": "心核在月湖邊第一次睜眼。",
-                "createdAt": 1783030442235,
-                "lastUpdatedAt": 1783030442235,
+                "createdAt": 1783275422607,
+                "lastUpdatedAt": 1783275422607,
                 "isVisibleInHabitat": true
               },
               "traceObject": {
-                "id": "htrace_emem_1783030442235_awakening_903",
-                "memoryId": "emem_1783030442235_awakening_903",
+                "id": "htrace_emem_1783275422607_awakening_880",
+                "memoryId": "emem_1783275422607_awakening_880",
                 "type": "core_awakening_glow",
                 "emotion": "calm",
                 "intensity": 0.55,
                 "status": "fresh",
-                "createdAt": 1783030442235,
-                "lastUpdatedAt": 1783030442235,
-                "expiresAt": 1784240042235,
+                "createdAt": 1783275422607,
+                "lastUpdatedAt": 1783275422607,
+                "expiresAt": 1784485022607,
                 "visualHint": "faint_glow",
                 "textHint": "月湖中心浮起一道心核微光，像有什麼慢慢睜開了眼。"
               },
@@ -466,8 +466,8 @@
   "storage": {
     "storage_key": "nexusLinkR2State:v1",
     "key_exists": true,
-    "chat_len_before": 21,
-    "chat_len_after_reload": 21,
+    "chat_len_before": 24,
+    "chat_len_after_reload": 24,
     "persisted": true
   },
   "pixi": {
@@ -476,7 +476,7 @@
     "has_pixi": true
   },
   "summary": {
-    "soul_talk_pass": 10,
+    "soul_talk_pass": 9,
     "soul_talk_total": 10,
     "hud_pass": 13,
     "hud_total": 13,
@@ -485,6 +485,6 @@
     "storage_pass": true,
     "pixi_single": true,
     "console_error_count": 0,
-    "ok": true
+    "ok": false
   }
 }

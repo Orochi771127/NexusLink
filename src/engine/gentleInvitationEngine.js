@@ -70,6 +70,92 @@ function invitation(kind) {
   return { kind, navHint: NAV_HINT[kind] };
 }
 
+// ---------------------------------------------------------------------------
+// 主動微時刻（TP-7 Companion Presence v1）。
+//
+// 與上方邀請同一條紅線：**只讀夥伴自身狀態**（energy / mood / defense / touchFatigue /
+// trust / bond / safeHarbor / 時段）。絕不讀 lastSeenAt、上線頻率、離線時長、孤獨或
+// 依賴推斷（紅線 1）——這些欄位即使存在於 state 上，本函數也不得引用。
+//
+// 邀請是「旁白說牠像是想什麼」；微時刻是「牠真的做了什麼」——一個動畫意圖加至多一句話。
+// 邊界優先：牠想要空間（safeHarbor / defensive / distant / 高疲勞 / 高防備）時，
+// 主動 = 不存在（回傳 null），不是「主動要求空間」。信任太低時也不主動——還不熟。
+
+export const INITIATIVE_MOMENTS = Object.freeze({
+  QUIET_APPROACH: "quiet_approach",
+  FIRESIDE_SETTLE: "fireside_settle",
+  MOON_GAZE: "moon_gaze"
+});
+
+const MOMENT_DEFS = Object.freeze({
+  quiet_approach: Object.freeze({
+    id: "quiet_approach",
+    intent: "soul.happy",
+    voice: "companion",
+    lines: Object.freeze([
+      "……你在。那我就在這裡多待一會兒。",
+      "今天的你，聞起來比較放鬆。"
+    ])
+  }),
+  fireside_settle: Object.freeze({
+    id: "fireside_settle",
+    intent: "soul.rest",
+    voice: "companion",
+    lines: Object.freeze([
+      "我先去火邊瞇一下。你在，我就睡得安。",
+      "有點睏了。不用管我，你做你的。"
+    ])
+  }),
+  moon_gaze: Object.freeze({
+    id: "moon_gaze",
+    intent: "soul.acknowledge",
+    voice: "narration",
+    lines: Object.freeze([
+      "牠抬起頭，安靜地看了一會兒月亮。",
+      "牠望著湖面上的月光，尾巴輕輕擺了一下。"
+    ])
+  })
+});
+
+export function deriveInitiativeMoment(state = {}, now = Date.now()) {
+  const energy = num(state.energy, 10);
+  const defense = num(state.defense, 0);
+  const trust = num(state.trust, 0);
+  const bond = num(state.bond, 0);
+  const touchFatigue = num(state.touchFatigue, 0);
+  const mood = state.mood || "calm";
+  const safeHarbor = Boolean(state.safeHarborMode);
+  const hour = new Date(now).getHours();
+  const isNight = hour >= 22 || hour < 6;
+
+  // 1) 邊界 / 安全優先：想要空間時，「不主動」就是主動的形式。
+  if (safeHarbor || mood === "defensive" || mood === "distant" || touchFatigue >= 6 || defense >= 70) {
+    return null;
+  }
+  // 2) 還不熟：低信任時主動靠近是越界，不是溫柔。
+  if (trust < 6) return null;
+
+  // 3) 累了 → 牠自己去火邊瞇著（狀態驅動的休息，不是提醒玩家做事）。
+  if (energy <= 4 || mood === "tired") {
+    return moment(INITIATIVE_MOMENTS.FIRESIDE_SETTLE);
+  }
+  // 4) 暖且信任夠 → 牠先靠近一步。
+  if ((mood === "warm" || mood === "happy") && trust >= 10 && energy >= 5) {
+    return moment(INITIATIVE_MOMENTS.QUIET_APPROACH);
+  }
+  // 5) 夜裡安穩、關係到了 → 牠抬頭看月亮（敢於無聊；可以完全沒有台詞感）。
+  if (isNight && mood === "calm" && bond >= 25) {
+    return moment(INITIATIVE_MOMENTS.MOON_GAZE);
+  }
+  return null;
+}
+
+function moment(id) {
+  const def = MOMENT_DEFS[id];
+  if (!def) return null;
+  return { id: def.id, intent: def.intent, voice: def.voice, lines: def.lines };
+}
+
 function num(value, fallback) {
   const n = Number(value);
   return Number.isFinite(n) ? n : fallback;
