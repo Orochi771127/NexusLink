@@ -65,6 +65,39 @@ html[data-ui="v2"] .panel-layer[data-active-panel="soulTalk"] .soul-talk-drawer 
   }
 }
 
+/* ---- 心語入口緊湊化（2026-07-06 人類需求）：滿寬大欄位 → 右下小圓鈕。 ----
+   首頁文字降噪：預覽字/波形/內部「對話」pill 只是隱藏（display:none），DOM 與
+   #soul-talk-preview 的 JS 更新路徑不動；點開後的聊天視窗（soul-talk-drawer）不變。
+   本段刻意放在上方 soul-strip 規則與其 max-width:400px 覆蓋之後，後聲明勝出。 */
+html[data-ui="v2"] .soul-strip {
+  left: auto;
+  right: var(--edge);
+  width: auto;
+  max-width: none;
+  min-height: 0;
+  margin-inline: 0;
+  display: inline-grid;
+  grid-template-columns: auto;
+  column-gap: 0;
+  padding: 11px 22px;
+  border-radius: 999px;
+}
+html[data-ui="v2"] .soul-strip > span:first-child {
+  padding-right: 0;
+}
+html[data-ui="v2"] .soul-strip em,
+html[data-ui="v2"] .soul-strip .soul-wave-deco,
+html[data-ui="v2"] .soul-strip .btn-primary {
+  display: none;
+}
+html[data-ui="v2"] .soul-strip strong {
+  font-size: 0.9rem;
+  letter-spacing: 0.16em;
+}
+html[data-ui="v2"] .soul-strip .soul-core-glow {
+  width: 150%;
+}
+
 /* ---- Aurora typography polish (V2: 中文標題 Noto Serif TC) ---- */
 html[data-ui="v2"] .core-name,
 html[data-ui="v2"] .panel-header h2,

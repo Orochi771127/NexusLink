@@ -654,6 +654,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 2 - Game Art, UI, And Visual Production
 
+### 2026-07-06 - Claude Fable 5 - 心語入口緊湊化（滿寬大欄位 → 右下小圓鈕）
+
+- Status: `VERIFIED`
+- Branch / commit: `main` / 本包 commit（見 git log）
+- Scope: 人類直接需求（截圖圈出首頁文字重複：心語欄預覽字 + 邀請旁白 + 主動台詞三層疊）。優先級評估：此改動 > TP-6 音訊（TP-6 卡音色資產人類 gate；本需求 gate 已開）。Files: `styles/ui-v2-aurora.css` only。**未動** `index.html`（launcher 本身就是 `<button data-panel-trigger="soulTalk">`，純 CSS 縮小）、無 GROUNDWORK、無 JS 變更。
+- Work performed: 心語常駐條（滿寬 grid、min-height 70、預覽字+波形+內部「對話」pill）縮為右下小圓鈕：`left:auto; right:var(--edge); width:auto; inline-grid 單欄; border-radius 999px`；`em#soul-talk-preview` / `.soul-wave-deco` / 內部 `.btn-primary` 以 `display:none` 隱藏（DOM 與 `#soul-talk-preview` 的 JS 更新路徑不動）；「心語」strong 放大 + `.soul-core-glow` 呼吸光保留。點開後的聊天視窗（soul-talk-drawer）零變更——本來就是單面板玻璃聊天視窗。規則刻意置於既有 soul-strip 區塊與其 max-width:400px 覆蓋之後（後聲明勝出）。
+- Verification: 375×812 preview（port 8128）：鈕縮至 79×54 右下、預覽字消失、棲地（貓/營火/湖面）大幅露出、與 gentle-invitation（nav+96px）垂直錯開不重疊；點鈕 → drawer 正常開啟（activePanel=soulTalk、transform 到位）；drawer 內發送「今天有點累」→ 玩家行/情境回覆/疲憊回覆/首痕跡訊息/存檔全部正常；探索分頁時鈕 opacity 0 + pointer-events none（page-content.css 讓位規則仍勝出）、回首頁恢復；0 console errors。live playtest gate（NEXUS_QA_BASE=:8128）：soul_talk 9/10（唯一失敗 = 既有 `no_recall_bleed`，與基線一致，非本包引入——見 Lane 1 TP-7 條目）、HUD 13/13、awakening/touch/storage/pixi 全過、0 console errors。`node` 無涉；`git diff --check` PASS。自審對照 REVIEW_CHECKLIST：授權範圍/依賴/localStorage/耦合/紅線全過；aria-label 保留。
+- Problems / risks: (a) 驗證時遇本機 CSS heuristic 快取（reload 不足），以 stylesheet cache-bust 確認——真機請硬刷新或等 Pages 部署（有 ETag）。(b) `hud.talk`（「對話」）鍵仍在字典但不再顯示（無害）。(c) 真機各寬度的鈕位置感受仍是人類 gate。
+- Next safe action: 人類真機確認小鈕手感與位置；後續 TP-6 音訊包（音色資產 gate 待人類）。
+- Required reading: `styles/ui-v2-aurora.css` 心語緊湊化區塊、本 lane 前一條、Lane 1 的 TP-7 條目。
+
 ### 2026-07-04 - Codex - Anti-Vibe Copywriting Final Pass
 
 - Status: `COMPLETED`
