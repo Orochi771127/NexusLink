@@ -220,6 +220,10 @@ def run_soul_talk_turn(page, text):
     state_before = get_state(page)
     chat_before = state_before.get("chatHistory") or []
     companion_before = companion_message_count(chat_before)
+    # recall-bleed 只該檢查「本回合新增」的行：先快照送出前的可見行，
+    # 否則前幾回合殘留的合法系統敘事（如含「月湖」的首痕提示）會被誤判為本回合滲漏，
+    # 且是否命中取決於 chat-log 14 行上限有沒有把舊行擠出——純偶然性（2026-07-06 修正）。
+    ui_lines_before = set(page.locator("#chat-log .chat-line").all_text_contents())
 
     input_el = page.locator("#message-input")
     send_btn = page.locator("#send-button")
@@ -292,8 +296,9 @@ def run_soul_talk_turn(page, text):
         )
     if expect.get("no_recall_bleed"):
         bleed_hits = [m for m in RECALL_BLEED_MARKERS if m in reply_text]
+        new_ui_lines = [line for line in ui_lines if line not in ui_lines_before]
         checks["no_recall_bleed"] = not bleed_hits and not any(
-            m in line for m in RECALL_BLEED_MARKERS for line in ui_lines
+            m in line for m in RECALL_BLEED_MARKERS for line in new_ui_lines
         )
 
     return {

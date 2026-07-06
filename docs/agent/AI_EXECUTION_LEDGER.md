@@ -1189,6 +1189,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 3 - Raphael Core, Companion Reasoning, And Soul Talk
 
+### 2026-07-06 - Claude Fable 5 - no_recall_bleed 修復：live gate 判定 false positive（soul_talk 恢復 10/10）
+
+- Status: `VERIFIED`
+- Branch / commit: `main` / 本包 commit（見 git log）
+- Scope: 修復 TP-7 期間以 git-stash A/B 定位出的 pre-existing live gate 失敗（soul_talk 9/10，「我只是想安靜一下」的 `no_recall_bleed`）。Files: `docs/qa/_run_live_playtest_gate.py` only——**runtime 零修改**。
+- Work performed: 根因不是 runtime 滲漏，是**判定 bug（false positive）**：實測該回合回覆為「嗯，我安靜陪著。」（零 marker 命中），但判定掃描 `#chat-log` **全部殘留可見行**——第 1 回合「今天有點累」產生的首痕系統行「**月湖**留下了第一道很淡的光…」（2026-07-02 TASK_PACK A 的設計文案，含 marker「月湖」）殘留至第 5 回合被誤判。是否踩中取決於前四回合行數是否把該行擠出 chat-log 14 行上限——純偶然性（07-04 daily-life replies 改變回覆條目數後現形；07-03 前靠行數巧合通過）。修正：送出前快照可見行集合，`no_recall_bleed` 的 UI 掃描改為**本回合新增行**（集合差）；`reply_text` 檢查原樣保留——本回合回覆或新增行若真的引用記憶（「我還記得」等）依然會抓，非放水。
+- Verification: `python -m py_compile` PASS。live gate 連跑兩次：**soul_talk 10/10、HUD 13/13、0 console errors、整體 ok:true**——自 07-04 以來首次恢復全綠，且第二次驗證穩定性（原 bug 特徵即偶然性，修後判定與殘留行數無關）。`git diff --check` PASS。清除本輪誤生的 `nul` 殘留檔與 `docs/qa/__pycache__/`。
+- Problems / risks: 無 runtime 行為變更。判定語義現在正確對齊意圖（「安靜回合的**回覆**不引用記憶」）；若未來想更嚴（如檢查 quick replies 也不引用），另開 eval 包。
+- Next safe action: web release gate 全量重跑時應回到 10/10 required；CH-2（初遇選角 UI）為下一實作包。
+- Required reading: `docs/qa/_run_live_playtest_gate.py`（ui_lines_before 快照 + new_ui_lines 集合差）、Lane 1 的 TP-7 條目（A/B 定位過程）。
+
 ### 2026-07-05 - Codex - Nuwa Distillation Advisory Layer For RaphaelCore
 
 - Status: `VERIFIED`
