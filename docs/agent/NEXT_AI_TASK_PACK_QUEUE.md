@@ -6,6 +6,11 @@ player-impact packs added; recommended order re-ranked)
 Status: proposal — every pack still requires human approval before work
 starts (Gate 1 → Gate 2 per `docs/agent/AI_WORKFLOW.md`).
 
+**2026-07-06 Owner 拍板產品主線 V2（章節旅程 × 共鳴圈對峙）**：TP-6/TP-7 已出貨；
+TP-8 已由 Owner 決策為選項 A（初遇選角），併入新的 **CH-1..CH-7 分包**（CH-1 對峙
+視覺 v1 已出貨）——完整設計與分包表見
+`docs/design/CHAPTER_RESONANCE_ROADMAP_V2.md` §8。下一包 = **CH-2 初遇選角 UI**。
+
 **Recommended order after TP-1B (player-impact-first):**
 1. **TP-6** (audio reality — biggest perceived-quality jump, bounded)
 2. **TP-7** (companion-initiated micro-moments — biggest differentiation)

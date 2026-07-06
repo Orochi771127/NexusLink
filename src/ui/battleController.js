@@ -45,6 +45,18 @@ const ACTION_INTENT = Object.freeze({
   pulse: "standoff.pulse"
 });
 
+// 裂隙形體（對峙視覺 v1，零美術資產）：依裂隙心相配色的程序化情緒霧體。
+// 敵人不是怪物，是「卡住的情緒」——所以形體是霧、光與雜訊，不是身體。
+// hue/sat 進 CSS 變數；濃度（--rift-density）跟著 noise 比例走：雜訊越輕、霧越淡。
+const RIFT_EMOTION_TINT = Object.freeze({
+  sadness: { hue: 215, sat: "70%" },
+  anger: { hue: 18, sat: "72%" },
+  anxiety: { hue: 268, sat: "68%" },
+  loneliness: { hue: 226, sat: "55%" },
+  fatigue: { hue: 40, sat: "28%" },
+  gratitude: { hue: 190, sat: "60%" }
+});
+
 /**
  * 心核對峙 controller。
  * 介面維持 createBattleController / startBattle，app.js 與 mapController wiring 不變。
@@ -70,6 +82,7 @@ export function createBattleController({ store, panelManager, soulTalkController
   const finishButton = qs("#battle-finish");
   const actionRowEl = qs("#standoff-action-row");
   let telegraphEl = null;
+  let riftFigureEl = null;
 
   // 意圖預示（telegraph）：動態插到行動列上方（不動 index.html），玩家在選行動前先讀懂
   // 「裂隙下一拍要做什麼」。樣式由本檔一次性注入 <style>，避免動基底 styles.css。
@@ -86,6 +99,45 @@ export function createBattleController({ store, panelManager, soulTalkController
     telegraphEl.append(label, hint);
     actionRowEl.parentNode.insertBefore(telegraphEl, actionRowEl);
     return telegraphEl;
+  }
+
+  // 裂隙形體：動態插在對峙日誌上方（不動 index.html），樣式自注入。
+  function ensureRiftFigure() {
+    if (riftFigureEl || !logEl) return riftFigureEl;
+    injectRiftFigureStyles();
+    riftFigureEl = document.createElement("div");
+    riftFigureEl.className = "rift-figure";
+    riftFigureEl.setAttribute("aria-hidden", "true");
+    riftFigureEl.innerHTML =
+      '<span class="rf-mist"></span><span class="rf-core"></span><span class="rf-glitch"></span>';
+    logEl.parentNode.insertBefore(riftFigureEl, logEl);
+    return riftFigureEl;
+  }
+
+  function updateRiftFigure() {
+    const el = ensureRiftFigure();
+    if (!el || !session) return;
+    const tint = RIFT_EMOTION_TINT[session.riftEmotion] || RIFT_EMOTION_TINT.gratitude;
+    el.style.setProperty("--rift-hue", String(tint.hue));
+    el.style.setProperty("--rift-sat", tint.sat);
+    const density = Math.max(0.2, Math.min(1, session.noise.current / session.noise.max));
+    el.style.setProperty("--rift-density", density.toFixed(2));
+    el.dataset.phase = session.phase || "turbulent";
+    const intent = session.turn === "player" ? session.nextIntent : null;
+    el.dataset.intent = intent || "none";
+    el.classList.toggle("is-charged", Boolean(session.charged));
+  }
+
+  function setRiftOutcome(outcome) {
+    if (!riftFigureEl) return;
+    riftFigureEl.classList.remove("rift-dissolve", "rift-recede", "rift-dim");
+    if (outcome === "stabilized" || outcome === "recovered") {
+      riftFigureEl.classList.add("rift-dissolve"); // 雜訊散開：不是被消滅，是被放輕。
+    } else if (outcome === "retreated") {
+      riftFigureEl.classList.add("rift-recede"); // 你們退開，它留在原地。
+    } else {
+      riftFigureEl.classList.add("rift-dim");
+    }
   }
 
   let session = null;
@@ -131,6 +183,7 @@ export function createBattleController({ store, panelManager, soulTalkController
     prevStability = null;
     prevShards = null;
     if (logEl) logEl.innerHTML = "";
+    if (riftFigureEl) riftFigureEl.classList.remove("rift-dissolve", "rift-recede", "rift-dim");
 
     const node = getExplorationNodeById(nodeId);
     // 節點名/敵名/心相標籤是內容層資料（維持繁中）；外框模板走 i18n key（{name} 佔位）。
@@ -229,6 +282,7 @@ export function createBattleController({ store, panelManager, soulTalkController
     const copy = getOutcomeCopy(outcome);
     session.log.push({ kind: "system", text: `【${copy.title}】${summary.message}` });
     render();
+    setRiftOutcome(outcome);
 
     // 結算回寫：patch + 對峙記憶/棲地痕跡（走既有沉積鏈）。
     store.updateState((draft) => {
@@ -275,7 +329,10 @@ export function createBattleController({ store, panelManager, soulTalkController
 
     // B4 juice：雜訊放輕→柔光一閃；心核被撞→晃動（重擊更晃）；回收微光→晶光爆閃。
     if (!prefersBattleReducedMotion()) {
-      if (prevNoise !== null && session.noise.current < prevNoise) flashOnce(noiseFillEl, "fx-soothe", 500);
+      if (prevNoise !== null && session.noise.current < prevNoise) {
+        flashOnce(noiseFillEl, "fx-soothe", 500);
+        flashOnce(riftFigureEl, "rift-hit", 460); // 形體同步收縮一拍：被放輕了。
+      }
       if (prevStability !== null && session.stability.current < prevStability) {
         const drop = prevStability - session.stability.current;
         flashOnce(stabilityFillEl, drop >= 6 ? "fx-shake-strong" : "fx-shake", drop >= 6 ? 380 : 260);
@@ -309,6 +366,8 @@ export function createBattleController({ store, panelManager, soulTalkController
       }
       button.disabled = !isPlayerTurn || !canUseAction(session, actionId);
     });
+
+    updateRiftFigure();
 
     // 意圖預示：只在玩家回合顯示（讓玩家據此選穩住/設界/脈衝）；雜訊回合與結束時隱藏。
     ensureTelegraphElement();
@@ -350,6 +409,45 @@ function injectTelegraphStyles() {
     ".standoff-fill.fx-shake-strong{animation:fx-shake-strong 380ms ease-in-out}",
     "@keyframes fx-burst{0%{transform:scale(1)}40%{transform:scale(1.35);filter:brightness(1.8)}100%{transform:scale(1)}}",
     "#standoff-shards.fx-burst{display:inline-block;animation:fx-burst 700ms ease-out}"
+  ].join("");
+  document.head.appendChild(style);
+}
+
+// 裂隙形體樣式：三層（外霧/內核/雜訊紋）＋ 相位節奏 ＋ 意圖姿態 ＋ 結局動畫。
+// 顏色全部由 --rift-hue/--rift-sat 驅動；濃度由 --rift-density（noise 比例）驅動。
+function injectRiftFigureStyles() {
+  if (document.getElementById("rift-figure-styles")) return;
+  const style = document.createElement("style");
+  style.id = "rift-figure-styles";
+  style.textContent = [
+    ".rift-figure{position:relative;width:min(72%,280px);height:88px;margin:2px auto 6px;pointer-events:none;--rf-speed:3.2s}",
+    ".rift-figure .rf-mist,.rift-figure .rf-core,.rift-figure .rf-glitch{position:absolute;inset:0}",
+    ".rift-figure .rf-mist{background:radial-gradient(52% 48% at 50% 52%,hsla(var(--rift-hue),var(--rift-sat),62%,calc(.36*var(--rift-density))),transparent 72%);filter:blur(10px);animation:rfBreath var(--rf-speed) ease-in-out infinite}",
+    ".rift-figure .rf-core{background:radial-gradient(26% 24% at 50% 50%,hsla(var(--rift-hue),var(--rift-sat),78%,calc(.55*var(--rift-density))),transparent 66%);filter:blur(3px);animation:rfBreath var(--rf-speed) ease-in-out infinite reverse}",
+    ".rift-figure .rf-glitch{background:repeating-linear-gradient(0deg,transparent 0 3px,hsla(var(--rift-hue),var(--rift-sat),72%,calc(.13*var(--rift-density))) 3px 4px);mix-blend-mode:screen;opacity:.55;animation:rfGlitch 2.4s steps(7) infinite}",
+    "@keyframes rfBreath{0%,100%{transform:scale(.96);opacity:.8}50%{transform:scale(1.05);opacity:1}}",
+    "@keyframes rfGlitch{0%,100%{transform:translateY(0)}30%{transform:translateY(-2px)}60%{transform:translateY(1.5px)}}",
+    // 相位節奏：翻湧快、拉鋸中、漸靜慢且轉柔。
+    '.rift-figure[data-phase="turbulent"]{--rf-speed:2.2s}',
+    '.rift-figure[data-phase="contested"]{--rf-speed:3.2s}',
+    '.rift-figure[data-phase="settling"]{--rf-speed:5.2s;opacity:.82}',
+    // 意圖姿態：蓄能=膨脹變亮；湧動=低頻顫；暫歇=放緩。
+    '.rift-figure[data-intent="gather"] .rf-core{animation:rfGather 1.6s ease-in-out infinite}',
+    "@keyframes rfGather{0%,100%{transform:scale(1)}50%{transform:scale(1.22);filter:blur(2px) brightness(1.35)}}",
+    '.rift-figure[data-intent="surge"]{animation:rfTremble .5s ease-in-out infinite}',
+    "@keyframes rfTremble{0%,100%{transform:translateX(0)}25%{transform:translateX(-1.5px)}75%{transform:translateX(1.5px)}}",
+    '.rift-figure[data-intent="lull"]{--rf-speed:6s}',
+    ".rift-figure.is-charged{filter:brightness(1.25) saturate(1.2)}",
+    // 受擊（雜訊被放輕）：收縮一拍。
+    "@keyframes rfHit{0%{transform:scale(1)}35%{transform:scale(.86);filter:brightness(1.4)}100%{transform:scale(1)}}",
+    ".rift-figure.rift-hit{animation:rfHit 460ms ease-out}",
+    // 結局：散開（被放輕，不是被消滅）／緩退（你們離開）／轉暗（撐住了）。
+    "@keyframes rfDissolve{0%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1.4);filter:blur(16px)}}",
+    ".rift-figure.rift-dissolve{animation:rfDissolve 1.4s ease-out forwards}",
+    "@keyframes rfRecede{0%{opacity:1}100%{opacity:.25;transform:scale(.9) translateY(-6px)}}",
+    ".rift-figure.rift-recede{animation:rfRecede 1s ease-out forwards}",
+    ".rift-figure.rift-dim{opacity:.35;transition:opacity .8s ease}",
+    "@media (prefers-reduced-motion: reduce){.rift-figure,.rift-figure *{animation:none !important}}"
   ].join("");
   document.head.appendChild(style);
 }

@@ -58,6 +58,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-07-06 - Claude Fable 5 - 產品主線 V2 拍板落地：章節×共鳴圈設計 + Canon 修訂 + 對峙視覺 v1（CH-1）
+
+- Status: `VERIFIED`（CH-1 視覺實測；設計/canon 為 Owner 決策的忠實記錄）
+- Branch / commit: `main` / 本包 commit（見 git log）
+- Scope: Owner 2026-07-06 拍板產品主線：初遇選角、七區七章（自月湖）、每章相遇一隻夥伴、通關後意願制加入、共鳴圈最多三隻同場對峙、對峙視覺化。**紅線處理聲明**：Owner 授權「有紅線就取消」——經審查，設計僅衝突「single-active/no-party」**產品時程條款**（已依 Owner 決策修訂）；**七條安全紅線全部相容、一條未取消**（設計文件 §9 附逐條審查表；意願制反而把契約三機制化）。Files: `docs/design/CHAPTER_RESONANCE_ROADMAP_V2.md` [NEW]、`docs/strategy/NEXUS_LINK_MASTER_CANON_v3.1.md`（新增 §1.3.1 Owner 修訂記錄）、`AGENTS.md` §7 runtime model、`CLAUDE.md` §0.6、`docs/agent/NEXT_AI_TASK_PACK_QUEUE.md`（CH 分包指標）、`src/ui/battleController.js`（CH-1 對峙視覺 v1）。
+- Work performed: (1) 設計文件：玩家旅程、初遇 3 選 1（灰影貓/焰紋狐/冰晶狼，資產全 runtime-ready）、七章動線建議表、**共鳴邀請優化**（通關=解鎖詢問資格，牠依該章關係狀態回應，可「還不是時候」且永遠可再培養）、共鳴圈非戰力設計（玩家仍四鍵；夥伴貢獻五行心相+陪伴被動；各有疲勞會退圈）、CH-1..CH-7 施工分包（CH-3/4 為 GROUNDWORK+遷移）。(2) Canon 三檔同步修訂（Master Canon §1.3.1 為權威記錄）。(3) **CH-1 對峙視覺 v1 實作**：程序化「裂隙形體」——依裂隙心相配色的三層情緒霧體（外霧/內核/雜訊紋，零美術資產），相位驅動呼吸節奏（翻湧 2.2s/拉鋸 3.2s/漸靜 5.2s）、意圖驅動姿態（蓄能膨脹/湧動顫動/暫歇放緩）、噪音比例驅動濃度、受擊收縮一拍、四結局收場動畫（散開＝被放輕≠被消滅/緩退/轉暗）、reduced-motion 全關；動態插入+樣式自注入（不動 index.html/styles.css，同 telegraph 先例）。
+- Verification: `node --check` PASS。preview（:8128，375×812）真實 UI 流程實測：探索→地圖→裂隙觀測點→modal 開啟，形體三層渲染、配色按心相（孤獨 hue226/倦怠 hue40 低飽和）、density 1.00→0.69 跟噪音下降、rift-hit 受擊 class、撤退→rift-recede、新場重置乾淨；截圖存證（倦怠殘殼霧體+蓄能 telegraph 同幀）。console 0 錯誤。live gate：soul_talk 9/10（既有 no_recall_bleed）、HUD 13/13、0 console errors——基線一致。`git diff --check` PASS。
+- Problems / risks: (a) 形體是 v1 程序化版——十隻敵人的剪影美術（v2）與共鳴圈夥伴顯示（v3）見設計文件 §7 分層。(b) 七章動線/相遇分配是**建議案**，Owner 可改。(c) CH-2 起逐包施工：CH-2 初遇 UI（體驗層）→ CH-3 解鎖遷移（GROUNDWORK，Canon §86 順序不可顛倒）。(d) fatigue 形體刻意低飽和（倦怠是灰的），若 Owner 覺得太淡可調 RIFT_EMOTION_TINT。
+- Next safe action: Owner 過目設計文件（尤其七章動線表與共鳴邀請機制）；認可後開 CH-2（初遇選角 UI）。真機看一眼裂隙形體動畫手感。
+- Required reading: `docs/design/CHAPTER_RESONANCE_ROADMAP_V2.md`、Master Canon §1.3.1、`src/ui/battleController.js`（RIFT_EMOTION_TINT / ensureRiftFigure / injectRiftFigureStyles）。
+
 ### 2026-07-06 - Claude Fable 5 - TP-6 感官回饋包 v1：程序化 SFX（音色由人類授權 AI 選定）
 
 - Status: `VERIFIED`（合成引擎 + app 流程 + 紅線路徑實測；音色聽感 = 人類真機 gate）
