@@ -676,6 +676,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 2 - Game Art, UI, And Visual Production
 
+### 2026-07-06 - Claude Fable 5 - 環繞式對峙佈局：夥伴登場 + 狀態併排一行（Owner 參考圖方向）
+
+- Status: `VERIFIED`（preview 完整回合實測；真機手感 = 人類 gate）
+- Branch / commit: `main` / 本包 commit（見 git log）
+- Scope: Owner 需求（參考概念圖）：①灰影貓的戰鬥動畫要在對峙中用上 ②雙方狀態條精簡縮小、併排只佔一行。勘察發現動畫層**零缺口**（standoff.resonance→skill_cast、barrier→defend、pulse→attack_basic、battle.hit 受擊、victory/defeated/back_walk 結局全部既有映射且已在 emit）——唯一問題是 modal 全屏蓋住 canvas，動畫白播。Files: `src/ui/battleController.js` only（樣式全自注入；index.html/styles.css 零修改）。
+- Work performed: **環繞式對峙佈局**：(1) battle-modal 透明化（背景/邊框/陰影全除），backdrop 改上深/中透/下深漸層——夥伴從 modal 後現身場中，戰鬥動畫從此可見；進場加警戒姿態（soul.defensive）。(2) `.standoff-field` grid 兩欄：雜訊條｜心核條併排一行，hint 收起、vitals（同步/疲勞/微光）縮排到卡內。(3) 對峙期間 `body.standoff-active` 隱藏 bottom-nav + 夥伴名片 + 設定鈕（全神貫注；finish 恢復），modal 貼底、日誌壓縮至 56px 半透明、行動列縮緊——底部塊下移讓出 157px+ 舞台帶給夥伴。(4) 裂隙形體加 `rf-shadow` 暗暈底層（白天藍天上藍/淡色情緒霧原本隱形——實測發現）。
+- Verification: preview（:8128，375×812）真實流程實測：狀態卡 sideBySide（top 相同、各 ~150px 寬）、modal 背景 transparent、nav/HUD 對峙中 opacity 0、舞台帶 y329→486+、貓在湖畔完整可見（夜景截圖存證：月亮/湖面/貓/倦怠霧體/telegraph/2×2 行動列同框）；完整回合（設界→共鳴→撤退→回營地）：finish 後 nav/HUD 恢復、standoff-active 清除、activePanel none。console 0 錯誤。live gate：soul_talk 9/10（既有）、HUD 13/13、0 console errors。`node --check` + `git diff --check` PASS。
+- Problems / risks: (a) 白天場景下低飽和情緒（倦怠）的霧體即使有暗暈仍偏淡——語義上正確（倦怠=幾乎不可見的灰），但 Owner 若要更醒目可調 RIFT_EMOTION_TINT 或暗暈 alpha。(b) 真機動畫手感（skill_cast/defend/hit 在對峙中的觀感）待人類確認。(c) 行動列為 2×2 佈局（既有結構），參考圖的 4 欄大卡風格屬 v2 美術方向。(d) 貓的站位固定在棲地平台（bottom-center）；參考圖的「面對裂隙」構圖需未來 focal/走位系統（CH-6 可一併考慮）。
+- Next safe action: Owner 真機打一場對峙看動畫手感與佈局；CH-2（初遇選角 UI）仍為下一包。
+- Required reading: `src/ui/battleController.js`（injectStandoffLayoutStyles / rf-shadow / standoff-active 生命週期）、`docs/design/CHAPTER_RESONANCE_ROADMAP_V2.md` §7。
+
 ### 2026-07-06 - Claude Fable 5 - 心語視窗通訊軟體化：桌面聚焦佈局修正 + 寬螢幕裁切修復
 
 - Status: `VERIFIED`（preview 多視口實測；手機真機 v5 路徑 = 人類 gate）

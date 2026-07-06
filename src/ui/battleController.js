@@ -105,11 +105,13 @@ export function createBattleController({ store, panelManager, soulTalkController
   function ensureRiftFigure() {
     if (riftFigureEl || !logEl) return riftFigureEl;
     injectRiftFigureStyles();
+    injectStandoffLayoutStyles();
     riftFigureEl = document.createElement("div");
     riftFigureEl.className = "rift-figure";
     riftFigureEl.setAttribute("aria-hidden", "true");
+    // rf-shadow：暗暈底層——確保情緒霧在任何背景（白天藍天/夜景）都可讀。
     riftFigureEl.innerHTML =
-      '<span class="rf-mist"></span><span class="rf-core"></span><span class="rf-glitch"></span>';
+      '<span class="rf-shadow"></span><span class="rf-mist"></span><span class="rf-core"></span><span class="rf-glitch"></span>';
     logEl.parentNode.insertBefore(riftFigureEl, logEl);
     return riftFigureEl;
   }
@@ -169,6 +171,7 @@ export function createBattleController({ store, panelManager, soulTalkController
       // 回棲地：先發出「被看見的後果」動畫意圖，再關閉 modal。
       // lazy load + modal 淡出（180ms）的時間差，剛好讓動畫落在夥伴可見後播放。
       emitBattleAnimationIntent(OUTCOME_RETURN_INTENT[lastOutcome], { source: "standoff" });
+      document.body.classList.remove("standoff-active");
       panelManager.closePanel({ force: true });
     });
   }
@@ -226,7 +229,11 @@ export function createBattleController({ store, panelManager, soulTalkController
     });
 
     render();
+    // 對峙是全神貫注的時刻：藏起 bottom-nav，把底部舞台讓給夥伴（finish 時恢復）。
+    document.body.classList.add("standoff-active");
     panelManager.openPanel("battle");
+    // 環繞式佈局後夥伴在對峙中可見：進場先給一個警戒面對的姿態（idle_defensive）。
+    emitBattleAnimationIntent("soul.defensive", { reason: "standoff-engage" });
   }
 
   function handleAction(actionId) {
@@ -421,7 +428,9 @@ function injectRiftFigureStyles() {
   style.id = "rift-figure-styles";
   style.textContent = [
     ".rift-figure{position:relative;width:min(72%,280px);height:88px;margin:2px auto 6px;pointer-events:none;--rf-speed:3.2s}",
-    ".rift-figure .rf-mist,.rift-figure .rf-core,.rift-figure .rf-glitch{position:absolute;inset:0}",
+    ".rift-figure .rf-shadow,.rift-figure .rf-mist,.rift-figure .rf-core,.rift-figure .rf-glitch{position:absolute;inset:0}",
+    // 暗暈底層：讓情緒霧在白天藍天上也讀得出形體（夜景時只是多一點深度）。
+    ".rift-figure .rf-shadow{background:radial-gradient(56% 52% at 50% 52%,rgba(4,8,18,calc(.42*var(--rift-density))),transparent 74%);filter:blur(12px)}",
     ".rift-figure .rf-mist{background:radial-gradient(52% 48% at 50% 52%,hsla(var(--rift-hue),var(--rift-sat),62%,calc(.36*var(--rift-density))),transparent 72%);filter:blur(10px);animation:rfBreath var(--rf-speed) ease-in-out infinite}",
     ".rift-figure .rf-core{background:radial-gradient(26% 24% at 50% 50%,hsla(var(--rift-hue),var(--rift-sat),78%,calc(.55*var(--rift-density))),transparent 66%);filter:blur(3px);animation:rfBreath var(--rf-speed) ease-in-out infinite reverse}",
     ".rift-figure .rf-glitch{background:repeating-linear-gradient(0deg,transparent 0 3px,hsla(var(--rift-hue),var(--rift-sat),72%,calc(.13*var(--rift-density))) 3px 4px);mix-blend-mode:screen;opacity:.55;animation:rfGlitch 2.4s steps(7) infinite}",
@@ -448,6 +457,43 @@ function injectRiftFigureStyles() {
     ".rift-figure.rift-recede{animation:rfRecede 1s ease-out forwards}",
     ".rift-figure.rift-dim{opacity:.35;transition:opacity .8s ease}",
     "@media (prefers-reduced-motion: reduce){.rift-figure,.rift-figure *{animation:none !important}}"
+  ].join("");
+  document.head.appendChild(style);
+}
+
+// 環繞式對峙佈局（Owner 參考圖方向，2026-07-06）：modal 透明化、夥伴現身場中。
+// 狀態雙欄併一行、日誌壓縮半透明、backdrop 中段放淡——夥伴的戰鬥動畫
+// （skill_cast/defend/attack_basic/hit/victory…既有映射）從此對玩家可見。
+// 全部 override 自注入，不動 index.html / styles.css 基底。
+function injectStandoffLayoutStyles() {
+  if (document.getElementById("standoff-layout-styles")) return;
+  const style = document.createElement("style");
+  style.id = "standoff-layout-styles";
+  style.textContent = [
+    // modal 透明化 + 上下貼邊：中段讓出「舞台」給 canvas 上的夥伴。
+    // 對峙期間 bottom-nav 隱藏（standoff-active），modal 直接貼到底部安全區。
+    'html[data-ui="v2"] .battle-modal{background:transparent;border-color:transparent;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none;max-height:none;top:calc(var(--top-safe, 0px) + 8px);bottom:calc(var(--bottom-safe, 0px) + 10px);display:flex;flex-direction:column;gap:8px;overflow:hidden;padding:12px 14px}',
+    'html[data-ui="v2"] body.standoff-active .bottom-nav--aurora{opacity:0;pointer-events:none;transition:opacity 260ms ease}',
+    // 對峙全神貫注：夥伴名片與右上設定一併退場，避免與對峙標題疊字（finish 時恢復）。
+    'html[data-ui="v2"] body.standoff-active .core-hud,html[data-ui="v2"] body.standoff-active .quick-hud{opacity:0;pointer-events:none;transition:opacity 260ms ease}',
+    'html[data-ui="v2"] .battle-modal .panel-header{flex:0 0 auto;text-shadow:0 1px 6px rgba(0,0,0,.8)}',
+    // 狀態併一行：雜訊 | 心核，各自保留半透明深底；hint 收起（開場日誌已說明）。
+    'html[data-ui="v2"] .standoff-field{flex:0 0 auto;grid-template-columns:1fr 1fr;gap:8px}',
+    'html[data-ui="v2"] .standoff-meter{padding:8px 10px;gap:5px;background:rgba(8,13,32,.66)}',
+    'html[data-ui="v2"] .standoff-meter-hint{display:none}',
+    'html[data-ui="v2"] .standoff-meter-head{font-size:12px;gap:6px}',
+    'html[data-ui="v2"] .standoff-meter-head strong{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}',
+    'html[data-ui="v2"] .standoff-vitals-row{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:10px}',
+    // 形體＝夥伴面對的對象：略放大、置中段上方；其後以彈性空隙讓出舞台。
+    'html[data-ui="v2"] .battle-modal .rift-figure{flex:0 0 auto;width:min(80%,300px);height:104px;margin:0 auto auto}',
+    // 日誌壓縮半透明貼下；行動列縮緊——底部塊越矮，夥伴的舞台越大。
+    'html[data-ui="v2"] .battle-modal #battle-log{flex:0 0 auto;margin-top:auto;max-height:56px;overflow-y:auto;padding:5px 10px;border-radius:12px;background:rgba(5,9,22,.42);font-size:12px;line-height:1.35}',
+    'html[data-ui="v2"] .battle-modal .standoff-telegraph{flex:0 0 auto;margin:2px 0 4px;padding:5px 10px}',
+    'html[data-ui="v2"] .battle-modal #standoff-action-row{flex:0 0 auto}',
+    'html[data-ui="v2"] .battle-modal #standoff-action-row button{padding-top:8px;padding-bottom:8px}',
+    'html[data-ui="v2"] .battle-modal #standoff-action-row button em{font-size:9.5px;opacity:.85}',
+    // backdrop：上深（狀態可讀）、中淡（夥伴可見）、下略深（行動列對比）。
+    'html[data-ui="v2"] .panel-layer[data-active-panel="battle"] .panel-backdrop{background:linear-gradient(180deg,rgba(2,6,12,.5),rgba(2,6,12,.12) 42%,rgba(2,6,12,.12) 62%,rgba(2,6,12,.38))}'
   ].join("");
   document.head.appendChild(style);
 }
