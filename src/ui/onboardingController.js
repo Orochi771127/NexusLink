@@ -1,5 +1,6 @@
 import { qs, qsa } from "../utils/dom.js";
 import { getCompanionById } from "../data/companionRegistry.js";
+import { isVeteranSave } from "../state/store.js";
 
 const STEP_ORDER = ["start", "identity", "guidance", "bond", "meet"];
 const FINAL_GREETING = "我在這裡。你可以慢慢靠近，也可以先只是看著月湖。";
@@ -121,17 +122,20 @@ export function createOnboardingController({ store, saveCurrentState, onBondChos
     }
   }
 
-  // 初遇定情：寫入既有欄位（activeCompanionId + unlockedCompanionIds 聯集——
-  // 階段一不動解鎖模型，嚴格「選後即唯一」由 CH-3 遷移實現，restart 不丟已解鎖），
-  // 再走 app 的既有切換鏈（hud/soulTalk/scene swap），最後進 meet 步。
+  // 初遇定情（CH-3 嚴格模型）：fresh 玩家「選後即唯一」——unlocked=[選定者]，
+  // 未選者是「未走的那條人生」，章節中再遇見；veteran（restart 重看引導、已有
+  // 遊玩痕跡）用聯集，不沒收已解鎖。判據與 store 的 veteran heuristic 同源。
   async function chooseBond(companionId) {
     const choice = BOND_CHOICES.find((entry) => entry.id === companionId);
     if (!choice) return;
     const state = store.getState();
     const unlocked = Array.isArray(state.unlockedCompanionIds) ? state.unlockedCompanionIds : [];
+    const nextUnlocked = isVeteranSave(state)
+      ? (unlocked.includes(companionId) ? unlocked : [...unlocked, companionId])
+      : [companionId];
     store.setState({
       activeCompanionId: companionId,
-      unlockedCompanionIds: unlocked.includes(companionId) ? unlocked : [...unlocked, companionId]
+      unlockedCompanionIds: nextUnlocked
     });
     persist();
     try {

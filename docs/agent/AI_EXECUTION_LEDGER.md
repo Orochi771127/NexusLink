@@ -58,6 +58,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-07-07 - Claude Fable 5 - CH-3 解鎖模型嚴格化（Initial Bond 階段二，GROUNDWORK + 遷移）
+
+- Status: `VERIFIED`
+- Branch / commit: `main` / 本包 commit（見 git log）
+- Scope: **GROUNDWORK**（Owner 明示「先開CH3」授權；Master Canon §1.3 階段二）。Files: `src/data/companionRuntimePolicy.js`（解鎖語義核心）、`src/state/store.js`（僅 +export `isVeteranSave`，normalizeState 邏輯零改動）、`src/ui/onboardingController.js`（chooseBond fresh/veteran 分流）、`docs/qa/state-onboarding-migration-cases.mjs`（+5 案例）。**schema 結構零變更**（unlocked 仍為字串陣列、無新欄位、STORAGE_KEY 不變）。
+- Work performed: 「選後即唯一」的兩個真正障礙都在 policy：(1) `normalizeUnlockedCompanionIds` 原本**無條件把灰影貓塞回**解鎖集（每次 boot 都會破壞唯一性）→ 改為不塞；空集才兜底 [灰影]（壞存檔/缺欄位安全）；`preserveActiveCompanion` 補 active 照舊（現任夥伴永不消失）。(2) `getCompanionRuntimeEligibility` 原本給灰影**永遠已解鎖特權** → 移除，未選者=`chapter_locked`（章節中再遇見）。(3) `chooseBond`：fresh 玩家嚴格替換 `unlocked=[選定者]`；veteran（restart 重看引導）聯集不沒收——判據 `isVeteranSave` 與 store veteran heuristic **同源 export**，不另造分叉。
+- Verification: `node --check` ×3 PASS。migration suite **22/22**（17 條既有案例在新語義下全過——legacy 六隻全解鎖保留、active-only 補進、damaged 兜底 [灰影]；+5 條新案例：chosen-only 不被回塞、未選灰影 chapter_locked、veteran 多隻保留、空集兜底、active 不在清單時 preserve）。preview 端到端（fresh save）：選焰紋狐 → `unlocked=["flame-flicker"]` → **reload（normalizeState）後灰影未被塞回**、灰影 chapter_locked、可選清單=[狐]、HUD/active 保持。live gate soul_talk **10/10**、HUD 13/13（veteran 流程無回歸）；Raphael smoke 17/17。`git diff --check` PASS。（gate 首跑出現 2 個 `null.split` console error——與 07-06 同款環境 transient，重跑 0，src 全掃無 null.split 模式，記錄為 flaky-environment。）
+- Problems / risks: (a) 已選非灰影的玩家其灰影為 chapter_locked——**章節相遇（CH-5）上線前**，這批玩家無法再遇灰影；demo 期玩家若困擾可由 restart 重選（veteran 聯集會保留兩隻）。(b) 老 test build 六隻全解鎖存檔完整保留（不沒收），其「唯一性」敘事由未來章節語境消化。(c) flaky `null.split` transient 已連續兩日出現於 gate 首跑，疑 preview 工具鏈，後續若三現再開調查包。
+- Next safe action: Owner 真機清存檔完整走：三契約 → 三選一 → 首輪 → 確認切換面板只剩選定者。之後佇列：CH-4（章節骨架 schema，GROUNDWORK）或 CH-7（章節敘事內容，可並行）。
+- Required reading: `src/data/companionRuntimePolicy.js`（normalizeUnlockedCompanionIds / eligibility 註解）、`docs/qa/state-onboarding-migration-cases.mjs` CH-3 案例、`docs/design/CHAPTER_RESONANCE_ROADMAP_V2.md` §3/§8。
+
 ### 2026-07-07 - Claude Fable 5 - CH-2 初遇定情 UI（Initial Bond 階段一，三選一）
 
 - Status: `VERIFIED`（三條路徑 preview 實測；真機手感與文案覆核 = 人類 gate）

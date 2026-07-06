@@ -190,7 +190,9 @@ function normalizeFirstLoop(rawFirstLoop, baseFirstLoop, { completed, completedA
   };
 }
 
-function isVeteranSave(targetState) {
+// CH-3：export 供初遇定情判斷「fresh 嚴格替換 vs veteran(restart) 聯集」——
+// 與 normalizeOnboarding 的 veteran heuristic 共用同一份判據，不另造分叉。
+export function isVeteranSave(targetState) {
   if (Number(targetState.bond) > 0) return true;
   if (Boolean(targetState.firstTouchCompleted) || Boolean(targetState.firstHugCompleted)) return true;
   if (hasArrayItems(targetState.memories)) return true;

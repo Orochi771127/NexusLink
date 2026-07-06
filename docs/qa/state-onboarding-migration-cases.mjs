@@ -112,6 +112,59 @@ runCase("damaged save values normalize to safe defaults", () => {
   assertEqual(state.energy, 0, "damaged energy clamp");
 });
 
+runCase("CH-3 initial bond: chosen-only unlock survives normalization (no greyshade backfill)", () => {
+  // 初遇選了焰紋狐（fresh 嚴格模型 unlocked=[flame-flicker]）→ 每次 boot 的
+  // normalizeState 不得把灰影貓塞回來（「選後即唯一」）。
+  const state = normalizeState({
+    activeCompanionId: "flame-flicker",
+    unlockedCompanionIds: ["flame-flicker"],
+    onboarding: { status: "meet", identityCompleted: true, guidanceCompleted: true }
+  });
+  assertEqual(state.activeCompanionId, "flame-flicker", "chosen active preserved");
+  assertArrayEqual(state.unlockedCompanionIds, ["flame-flicker"], "chosen-only unlock preserved");
+});
+
+runCase("CH-3 initial bond: unchosen greyshade is chapter_locked, chosen fox selectable", () => {
+  const state = normalizeState({
+    activeCompanionId: "flame-flicker",
+    unlockedCompanionIds: ["flame-flicker"]
+  });
+  const fox = getCompanionRuntimeEligibility("flame-flicker", state);
+  const greyshade = getCompanionRuntimeEligibility("greyshade-cat", state);
+  assertEqual(fox.canSelect, true, "chosen fox selectable");
+  assertEqual(greyshade.canSelect, false, "unchosen greyshade locked");
+  assertEqual(greyshade.reason, "chapter_locked", "unchosen greyshade reason");
+});
+
+runCase("CH-3 veteran saves keep their full unlock list (no confiscation)", () => {
+  const state = normalizeState({
+    activeCompanionId: "greyshade-cat",
+    unlockedCompanionIds: ["greyshade-cat", "ice-talon"],
+    bond: 20
+  });
+  assertIncludes(state.unlockedCompanionIds, "greyshade-cat", "veteran greyshade kept");
+  assertIncludes(state.unlockedCompanionIds, "ice-talon", "veteran ice-talon kept");
+});
+
+runCase("CH-3 empty unlock list falls back to default companion", () => {
+  const state = normalizeState({
+    unlockedCompanionIds: []
+  });
+  assertArrayEqual(state.unlockedCompanionIds, ["greyshade-cat"], "empty unlock fallback");
+  assertEqual(state.activeCompanionId, "greyshade-cat", "empty unlock active fallback");
+});
+
+runCase("CH-3 active companion outside unlock list is preserved via active-preserve", () => {
+  // 壞存檔：active 不在 unlocked → normalize 用 preserveActiveCompanion 補進，
+  // 玩家的現任夥伴不會憑空消失。
+  const state = normalizeState({
+    activeCompanionId: "ice-talon",
+    unlockedCompanionIds: ["flame-flicker"]
+  });
+  assertIncludes(state.unlockedCompanionIds, "ice-talon", "active preserved into unlocks");
+  assertEqual(state.activeCompanionId, "ice-talon", "active kept");
+});
+
 runCase("veteran heuristic accepts traces, memories, battles, and exploration", () => {
   const variants = [
     { label: "memory", state: { memories: [{ text: "remembered" }] } },
