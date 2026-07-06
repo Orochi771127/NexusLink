@@ -39,6 +39,7 @@ import { createFirstLoopController } from "./ui/firstLoopController.js";
 import { createInteractionHintController } from "./ui/interactionHintController.js";
 import { createGentleInvitationController } from "./ui/gentleInvitationController.js";
 import { createCompanionInitiativeController } from "./ui/companionInitiativeController.js";
+import { createAudioCueController } from "./ui/audioCueController.js";
 import { createActionSheetController } from "./ui/actionSheetController.js";
 import { createCalmSyncController } from "./ui/calmSyncController.js";
 import { createPageRouter } from "./ui/pageRouter.js";
@@ -209,6 +210,8 @@ async function bootstrap() {
     store,
     isPanelOpen: () => panelManager.isPanelOpen()
   });
+  // 音訊提示（TP-6）：觸碰回饋與主動微時刻的極輕合成音（監聽既有事件）。
+  const audioCueController = createAudioCueController();
   const settingsController = createSettingsController({
     panelManager,
     restartOnboarding: () => onboardingController.restart(),
@@ -331,6 +334,7 @@ async function bootstrap() {
   interactionHintController.bind();
   gentleInvitationController.bind();
   companionInitiativeController.bind();
+  audioCueController.bind();
   settingsController.bind();
   pageRouter.bind();
   actionSheetController.bind();

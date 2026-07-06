@@ -7,6 +7,7 @@ import { isEmotionalHabitatTrace } from "../engine/habitatTraceEngine.js";
 import { applyRaphaelAgentReduction, reduceRaphaelAgentIntent } from "../engine/raphaelIntentReducer.js";
 import { buildEventReflection, composeMemoryReflection } from "../engine/soulTalkComposer.js";
 import { clearSoftKeyboardExpectation, expectSoftKeyboard, qs, resetViewportVars, syncViewportDuringTransition } from "../utils/dom.js";
+import AudioManager from "../audio/audioManager.js";
 
 const DEFAULT_STATUS_TEXT = "心湖 / 安靜待命";
 const DEFAULT_PREVIEW_TEXT = "你可以慢慢說，灰影會聽。";
@@ -152,6 +153,8 @@ export function createSoulTalkController({ store, saveCurrentState }) {
     setStatusText("灰影正在聽，先把湖面放慢……");
     scrollAnchorText = message;
     addChat("player", message);
+    // 送出音＝「我說了」的動作回饋，與內容無關（safety 判斷只影響回覆音）。
+    AudioManager.playSfx("soul_send");
 
     let result;
 
@@ -196,11 +199,13 @@ export function createSoulTalkController({ store, saveCurrentState }) {
         state
       });
 
+      let traceEchoed = false;
       if (firstTraceCreated) {
         appendChatLine(state, "system", FIRST_TRACE_SYSTEM_TEXT);
       } else if (shouldAcknowledgeTrace({ traceCountBefore, traceCountAfter, coreResult: coreResultToApply })) {
         // 第一道之後：每次新痕跡亮起也讓玩家「看得見牠記住了」，把迴圈的回報感補齊。
         appendChatLine(state, "system", pickTraceEchoLine());
+        traceEchoed = true;
       }
 
       const agentIntent = createRaphaelAgentIntent({
@@ -228,6 +233,7 @@ export function createSoulTalkController({ store, saveCurrentState }) {
         agentIntent,
         agentReduction,
         firstTraceCreated,
+        traceEchoed,
         deferredOrdinaryTrace: Boolean(awakeningResult?.applied)
       };
     });
@@ -236,6 +242,21 @@ export function createSoulTalkController({ store, saveCurrentState }) {
     saveCurrentState();
     renderChat();
     renderQuickReplies(lastQuickReplies);
+    // 回覆音：safety 回合完全靜音（紅線 7——求助導引不得有任何獎勵化呈現）。
+    {
+      const appliedCore = result?.coreResult || {};
+      const isSafetyTurn =
+        appliedCore.plan?.mode === "safety_redirect" ||
+        appliedCore.safety?.isHighRisk === true ||
+        appliedCore.perception?.safety?.isHighRisk === true;
+      if (!isSafetyTurn) {
+        if (result?.firstTraceCreated || result?.traceEchoed) {
+          AudioManager.playSfx("trace_bloom");
+        } else {
+          AudioManager.playSfx("soul_reply");
+        }
+      }
+    }
     if (result?.agentReduction) {
       applyRaphaelAgentReduction(result.agentReduction, {
         setPresenceState: setRaphaelAgentPresence,

@@ -58,6 +58,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-07-06 - Claude Fable 5 - TP-6 感官回饋包 v1：程序化 SFX（音色由人類授權 AI 選定）
+
+- Status: `VERIFIED`（合成引擎 + app 流程 + 紅線路徑實測；音色聽感 = 人類真機 gate）
+- Branch / commit: `main` / 本包 commit（見 git log）
+- Scope: EXPERIENCE。人類指示「TP-6 交由你選音色完成」。**音色決策：Web Audio API 程序化合成**（水滴/玻璃風鈴/低頻氣息，全部 <0.6s 低音量）——零資產（不碰 assets/** GROUNDWORK）、零依賴（瀏覽器原生）、`playSfx(name)` API 固定（未來換真實錄音只改實作）。Files: `src/audio/audioManager.js`（+SFX_DEFS 10 音色 + playSfx 合成引擎）、`src/ui/audioCueController.js` [NEW]（監聽既有 COMPANION_REACTION_FEEDBACK / COMPANION_ANIMATION_INTENT 事件）、`src/ui/soulTalkController.js`（送出/回覆/痕跡 3 點 + traceEchoed flag）、`src/ui/battleController.js`（行動/撤退 2 點）、`src/app.js`（wire）。環境音層（湖水/夜風）本輪**不做**——合成環境音易顯廉價，留給真資產。Atlas 鈕**不 gate**（佇列原案）：它有 SVG 七區功能、非死 UI，降級反而傷體驗。
+- Work performed: 10 音色：touch_accept（雙音水滴）/guarded/refusal（低沉中性，非懲罰音）/calm、soul_send（極短嗒）、soul_reply（柔和雙音鈴）、trace_bloom（玻璃琶音「微光落下」，首痕+echo 共用、取代該回合 reply 音）、initiative_breath（TP-7 主動時刻氣息鈴）、standoff_action（低頻脈動）、standoff_retreat（下行柔音——「懂得離開」不是失敗音）。防護：未解鎖/靜音/sfxVolume=0/未知名/同名 120ms 節流 → 安靜略過；AudioContext lazy + try-catch（音訊失敗永不阻斷 gameplay）。**Settings SFX 滑桿自此控制真系統（死 UI 修復）**。
+- Verification: `node --check` ×5 PASS。preview（:8128，module 快取以 fetch cache:'reload' 刷新）：10 音色播放全 true、解鎖前/節流/零音量/未知名全部略過；app 實測「謝謝你陪我」→ soul_send+trace_bloom（痕跡回合正確取代 reply 音）、「嗯」→ soul_send+soul_reply；**紅線 7 實測：高風險輸入「我現在有傷害自己的念頭」→ 僅 soul_send，回覆/痕跡音完全靜默**；觸碰事件 refusal→touch_refusal、companion-initiative intent→initiative_breath、其他 source（return-echo）不配音。console 0 錯誤。live gate：soul_talk 9/10（既有 no_recall_bleed，基線一致）、HUD 13/13、0 console errors。`git diff --check` PASS。自審對照 REVIEW_CHECKLIST 全過。
+- Problems / risks: (a) **音色聽感是人耳 gate**：合成音的實際質感（尤其 iOS Safari 的 AudioContext 特性）需真機聽一輪；不滿意時調 SFX_DEFS 頻率/時長即可，或未來換真資產。(b) BGM 與 SFX 疊加的混音平衡未經人耳確認（SFX 係數已保守 <0.5）。(c) 里程碑/對峙結算音留待 v1.1（結算點分散，本輪聚焦高頻互動）。(d) preview 的 JS module 快取需 fetch cache:'reload' 刷新（真機硬刷新即可）。
+- Next safe action: 人類真機聽感一輪（開聲音摸貓/發訊息/打一場對峙；SFX 滑桿現在有效）；不滿意的音色回報名字即可單獨調。之後佇列：TP-8 Initial Bond 決策、no_recall_bleed 修復包。
+- Required reading: `src/audio/audioManager.js`（SFX_DEFS + playSfx）、`src/ui/audioCueController.js`、`docs/agent/PRODUCT_QUALITY_FUN_FACTOR_AUDIT.md` §7a。
+
 ### 2026-07-06 - Claude Fable 5 - TP-7 Companion Presence Pack v1（夥伴主動微時刻）
 
 - Status: `VERIFIED`（engine 測試 + 瀏覽器驗證均過；**未 commit/push — 等人類台詞覆核與授權**）

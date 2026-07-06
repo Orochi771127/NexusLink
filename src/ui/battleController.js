@@ -23,6 +23,7 @@ import {
   upsertHabitatTrace
 } from "../engine/habitatTraceEngine.js";
 import EventBus from "../utils/eventBus.js";
+import AudioManager from "../audio/audioManager.js";
 
 const NOISE_TURN_DELAY_MS = 620;
 const COMPANION_ANIMATION_INTENT_EVENT = "COMPANION_ANIMATION_INTENT";
@@ -179,7 +180,8 @@ export function createBattleController({ store, panelManager, soulTalkController
     if (!session || session.turn !== "player") return;
 
     if (actionId === "retreat") {
-      // 撤退不是失敗：給一個回身的 cue（back_walk），再走「被尊重的離開」結算。
+      // 撤退不是失敗：下行柔音 + 回身 cue，再走「被尊重的離開」結算。
+      AudioManager.playSfx("standoff_retreat");
       emitBattleAnimationIntent("standoff.retreat");
       endStandoff("retreated");
       return;
@@ -187,6 +189,7 @@ export function createBattleController({ store, panelManager, soulTalkController
 
     if (!canUseAction(session, actionId)) return;
 
+    AudioManager.playSfx("standoff_action");
     session = applyPlayerAction(session, actionId);
     render();
     // 即時 cue：行動已照原流程成立後才發；能播就播，不能播也不阻斷 gameplay。
