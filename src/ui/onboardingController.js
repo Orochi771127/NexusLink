@@ -1,17 +1,41 @@
 import { qs, qsa } from "../utils/dom.js";
+import { getCompanionById } from "../data/companionRegistry.js";
 
-const STEP_ORDER = ["start", "identity", "guidance", "meet"];
+const STEP_ORDER = ["start", "identity", "guidance", "bond", "meet"];
 const FINAL_GREETING = "我在這裡。你可以慢慢靠近，也可以先只是看著月湖。";
 
-export function createOnboardingController({ store, saveCurrentState } = {}) {
+// 初遇定情（CH-2，Master Canon §1.3 階段一）：三道初醒的心核光，每隻只給
+// 一句話、一個氛圍——非六隻選單逛街。未選者不是收集品，章節旅途中會再遇見。
+// 注意：bond 不是持久化的 status 值（store normalizeOnboarding 有白名單）；
+// 它由「status=guidance 且 guidanceCompleted」推導，reload 會安全回到本步。
+const BOND_CHOICES = Object.freeze([
+  {
+    id: "greyshade-cat",
+    hue: 200,
+    line: "……你來了。我會在這裡，不吵你。"
+  },
+  {
+    id: "flame-flicker",
+    hue: 18,
+    line: "嘿，你身上有光的味道！要一起走嗎？"
+  },
+  {
+    id: "ice-talon",
+    hue: 205,
+    line: "可以靠近。但太快的話，我會退開。"
+  }
+]);
+
+export function createOnboardingController({ store, saveCurrentState, onBondChosen } = {}) {
   const root = qs("#onboarding-root");
   const shell = root?.querySelector(".onboarding-shell");
-  const steps = root ? qsa(".onboarding-step", root) : [];
+  let steps = root ? qsa(".onboarding-step", root) : [];
   const nameInput = qs("#player-display-name");
   let activeStep = "start";
 
   function bind() {
     if (!root) return;
+    ensureBondStep();
     root.addEventListener("click", handleAction);
     nameInput?.addEventListener("keydown", (event) => {
       if (event.key === "Enter") {
@@ -47,8 +71,8 @@ export function createOnboardingController({ store, saveCurrentState } = {}) {
       nameInput.value = storedName;
     }
 
-    activeStep = resolveStep(state.onboarding?.status);
-    showStep(activeStep);
+    activeStep = resolveStep(state.onboarding?.status, state.onboarding);
+    showStep(activeStep, state);
     markStarted(state);
   }
 
@@ -86,10 +110,37 @@ export function createOnboardingController({ store, saveCurrentState } = {}) {
     } else if (action === "save-identity") {
       saveIdentity(false);
     } else if (action === "guidance-next") {
-      setOnboardingStep("meet", { guidanceCompleted: true });
+      // status 維持 "guidance"（bond 不是白名單 status 值）；guidanceCompleted=true
+      // 讓 resolveStep 推導出 bond 步，中斷 reload 也會安全回到這裡。
+      setOnboardingStep("guidance", { guidanceCompleted: true });
+      render();
+    } else if (action === "bond-choose") {
+      chooseBond(button.dataset.bondId);
     } else if (action === "complete") {
       completeOnboarding();
     }
+  }
+
+  // 初遇定情：寫入既有欄位（activeCompanionId + unlockedCompanionIds 聯集——
+  // 階段一不動解鎖模型，嚴格「選後即唯一」由 CH-3 遷移實現，restart 不丟已解鎖），
+  // 再走 app 的既有切換鏈（hud/soulTalk/scene swap），最後進 meet 步。
+  async function chooseBond(companionId) {
+    const choice = BOND_CHOICES.find((entry) => entry.id === companionId);
+    if (!choice) return;
+    const state = store.getState();
+    const unlocked = Array.isArray(state.unlockedCompanionIds) ? state.unlockedCompanionIds : [];
+    store.setState({
+      activeCompanionId: companionId,
+      unlockedCompanionIds: unlocked.includes(companionId) ? unlocked : [...unlocked, companionId]
+    });
+    persist();
+    try {
+      await onBondChosen?.(companionId);
+    } catch (error) {
+      console.warn("initial bond swap failed; companion will load on next boot", error);
+    }
+    setOnboardingStep("meet");
+    render();
   }
 
   function saveIdentity(skipIdentity) {
@@ -163,7 +214,7 @@ export function createOnboardingController({ store, saveCurrentState } = {}) {
     persist();
   }
 
-  function showStep(step) {
+  function showStep(step, state) {
     if (shell) shell.dataset.onboardingStep = step;
     // 安全網：離開 identity 步驟時輸入框可能來不及觸發 blur，避免 ob-focus 卡住。
     if (step !== "identity") document.body.classList.remove("ob-focus");
@@ -172,6 +223,50 @@ export function createOnboardingController({ store, saveCurrentState } = {}) {
       stepEl.classList.toggle("is-active", isActiveStep);
       stepEl.hidden = !isActiveStep;
     });
+    // meet 標題跟著定情對象走（從 state 取，reload 也正確；i18n 動態化留給內容翻譯包）。
+    if (step === "meet") {
+      const companion = getCompanionById(state?.activeCompanionId || store.getState().activeCompanionId);
+      const meetTitle = qs("#onboarding-meet-title");
+      if (meetTitle && companion?.name) {
+        meetTitle.textContent = `${companion.name}在月湖邊等你。`;
+      }
+    }
+  }
+
+  // 初遇定情步（動態建立，不動 index.html）：插在 guidance 步之後。
+  function ensureBondStep() {
+    if (!root || root.querySelector('[data-step="bond"]')) return;
+    const guidanceStep = root.querySelector('[data-step="guidance"]');
+    if (!guidanceStep) return;
+
+    const section = document.createElement("section");
+    section.className = "onboarding-step";
+    section.dataset.step = "bond";
+    section.hidden = true;
+    section.setAttribute("aria-labelledby", "onboarding-bond-title");
+
+    const cards = BOND_CHOICES.map((choice) => {
+      const companion = getCompanionById(choice.id);
+      const name = companion?.name || choice.id;
+      const temperament = companion?.temperament?.zh || "";
+      return (
+        `<button type="button" class="bond-card" data-onboarding-action="bond-choose" data-bond-id="${choice.id}" style="--bond-hue:${choice.hue}">` +
+        `<span class="bond-card-glow" aria-hidden="true"></span>` +
+        `<strong>${name}</strong>` +
+        `<em>${temperament}</em>` +
+        `<p>${choice.line}</p>` +
+        `</button>`
+      );
+    }).join("");
+
+    section.innerHTML =
+      '<p class="onboarding-kicker">Initial Bond</p>' +
+      '<h2 id="onboarding-bond-title">三道初醒的心核光，在月湖邊亮著。</h2>' +
+      '<p class="onboarding-copy">你選擇走近誰，誰就成為你的開始。未選的，會在旅途中再遇見。</p>' +
+      `<div class="bond-choice-list">${cards}</div>`;
+
+    guidanceStep.after(section);
+    steps = qsa(".onboarding-step", root);
   }
 
   function persist() {
@@ -186,7 +281,9 @@ export function createOnboardingController({ store, saveCurrentState } = {}) {
   };
 }
 
-function resolveStep(status) {
+function resolveStep(status, onboarding = {}) {
+  // bond 步不是持久化 status：guidance 完成但尚未定情（status 仍為 guidance）→ 顯示 bond。
+  if (status === "guidance" && onboarding.guidanceCompleted) return "bond";
   return STEP_ORDER.includes(status) ? status : "start";
 }
 

@@ -58,6 +58,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-07-07 - Claude Fable 5 - CH-2 初遇定情 UI（Initial Bond 階段一，三選一）
+
+- Status: `VERIFIED`（三條路徑 preview 實測；真機手感與文案覆核 = 人類 gate）
+- Branch / commit: `main` / 本包 commit（見 git log）
+- Scope: EXPERIENCE（Master Canon §1.3 階段一：初遇 UI 先行）。**零 GROUNDWORK**：不動 `defaultState.js`/`store.js`/`normalizeState`、無新 localStorage key（K3）、schema 零變更。Files: `src/ui/onboardingController.js`（bond 步 + 定情流程）、`src/app.js`（提取 `applyCompanionChange` 共用切換鏈，companionSelect 與初遇共用）、`styles/ui-v3-onboarding.css`（bond 卡樣式）。
+- Work performed: onboarding 新增**初遇定情步**（guidance 三契約之後、meet 之前）：三道初醒心核光——灰影貓（靜觀內斂）/焰紋狐（熱切靈動）/冰晶狼（冷靜守界），每卡一句初醒語、一個氣質色暈（canon §80「一句話、一個氛圍」）；副句「未選的，會在旅途中再遇見」。**白名單規避設計**：bond 不是持久化 status 值（store `normalizeOnboarding` 有 ONBOARDING_STATUSES 白名單，改它=GROUNDWORK）——由 `status=guidance && guidanceCompleted` 推導，中斷 reload 安全回到本步。選定 → 寫入既有欄位（`activeCompanionId` + `unlockedCompanionIds` **聯集**，不丟 restart 玩家已解鎖；嚴格「選後即唯一」留給 CH-3 遷移）→ 走既有切換鏈（normalize 於 state 寫入後放行）→ meet 標題動態「{名字}在月湖邊等你。」bond 步 DOM 動態建立（不動 index.html）。
+- Verification: `node --check` ×2 PASS。preview（:8128，375×812，fresh save）：guidance-next → bond 步顯示（三卡、registry 動態氣質）；選**焰紋狐** → state（active=flame-flicker、unlocked 聯集）、meet 標題「焰紋狐在月湖邊等你。」、完成後 **HUD=焰紋狐、棲地 sprite=焰紋狐**（截圖：狐狸臥於月湖魔法陣+觸碰光環+首輪提示正常銜接）；完成後 reload 不重跑且 HUD 保持狐；**bond 步中斷 reload → 推導恢復回 bond**；對照組選灰影貓 → 標題正確、unlocked 不重複。console 0 錯誤。live gate **soul_talk 10/10**、HUD 13/13（veteran 流程不受影響）；Raphael smoke 17/17。`git diff --check` PASS。K1/K3/K4 實測、K5 機制未動。
+- Problems / risks: (a) **四句玩家向文案待 Owner 覆核**：步驟標題「三道初醒的心核光，在月湖邊亮著。」+ 三句初醒語（灰影貓「……你來了。我會在這裡，不吵你。」／焰紋狐「嘿，你身上有光的味道！要一起走嗎？」／冰晶狼「可以靠近。但太快的話，我會退開。」）。(b) i18n known gap：bond 步 TC-only（同 first-loop 先例）；EN 模式切語言後 meet 標題會被 data-i18n 蓋回預設——CH-7 內容翻譯包處理。(c) CH-3（unlocked 嚴格模型+遷移）為下一 GROUNDWORK 包。
+- Next safe action: Owner 真機走一次三選一（含文案覆核）；認可後開 CH-3（GROUNDWORK：`unlockedCompanionIds` 僅含選定者 + veteran 遷移 + migration cases）。
+- Required reading: `src/ui/onboardingController.js`（BOND_CHOICES / ensureBondStep / chooseBond / resolveStep 推導）、`docs/design/CHAPTER_RESONANCE_ROADMAP_V2.md` §3。
+
 ### 2026-07-06 - Claude Fable 5 - 產品主線 V2 拍板落地：章節×共鳴圈設計 + Canon 修訂 + 對峙視覺 v1（CH-1）
 
 - Status: `VERIFIED`（CH-1 視覺實測；設計/canon 為 Owner 決策的忠實記錄）

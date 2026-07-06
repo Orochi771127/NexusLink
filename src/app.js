@@ -185,9 +185,22 @@ async function bootstrap() {
   companionFeedbackController.bind();
   const soulTalkController = createSoulTalkController({ store, saveCurrentState: saveInteraction });
   const panelManager = createPanelManager({ onSoulTalkFocus: () => soulTalkController.focusInput() });
+  // 夥伴切換鏈（companionSelect 與初遇定情共用）：normalize → registry → HUD/心語 → scene swap。
+  async function applyCompanionChange(companionId) {
+    const normalizedCompanionId = normalizeRuntimeCompanionId(companionId, store.getState());
+    const nextCompanion = getCompanionById(normalizedCompanionId);
+    currentCreature = nextCompanion;
+    hudController.setCreature(nextCompanion);
+    soulTalkController.setCreature(nextCompanion);
+    hudController.renderHUD();
+    await sceneApi?.swapCompanion(nextCompanion);
+  }
+
   const onboardingController = createOnboardingController({
     store,
-    saveCurrentState: () => saveQueue.enqueue(SAVE_LEVEL.CRITICAL)
+    saveCurrentState: () => saveQueue.enqueue(SAVE_LEVEL.CRITICAL),
+    // 初遇定情（CH-2）：選定即切換棲地夥伴（state 已先寫入，normalize 會放行）。
+    onBondChosen: (companionId) => applyCompanionChange(companionId)
   });
   // Meet 之後的首輪閉環（觸碰→心語→痕跡）：完成/跳過前只開心核與心語入口。
   const firstLoopController = createFirstLoopController({
@@ -284,15 +297,7 @@ async function bootstrap() {
         store,
         panelManager,
         saveCurrentState,
-        onCompanionChanged: async (companion) => {
-          const normalizedCompanionId = normalizeRuntimeCompanionId(companion?.id, store.getState());
-          const nextCompanion = getCompanionById(normalizedCompanionId);
-          currentCreature = nextCompanion;
-          hudController.setCreature(nextCompanion);
-          soulTalkController.setCreature(nextCompanion);
-          hudController.renderHUD();
-          await sceneApi?.swapCompanion(nextCompanion);
-        }
+        onCompanionChanged: (companion) => applyCompanionChange(companion?.id)
       });
     }
     return companionSelectController;
