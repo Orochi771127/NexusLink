@@ -77,9 +77,16 @@ def run():
         context = browser.new_context(viewport=VIEWPORT)
         page = context.new_page()
 
-        page.on("console", lambda msg: (
-            report["console_errors"].append(msg.text) if msg.type == "error" else None
-        ))
+        # 附加來源位置：偶發 `null.split` transient 已三現（2026-07-06/07/10），
+        # 每次重跑即消失、src 全掃無此模式——留下 url:line 以便下次直接定位。
+        def _capture_console_error(msg):
+            if msg.type != "error":
+                return
+            loc = msg.location or {}
+            where = f" @ {loc.get('url', '?')}:{loc.get('lineNumber', '?')}"
+            report["console_errors"].append(msg.text + where)
+
+        page.on("console", _capture_console_error)
         page.on("pageerror", lambda err: report["console_errors"].append(str(err)))
 
         # --- Fresh player: awakening / touch (devPanel exposes companion node) ---

@@ -58,6 +58,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-07-10 - Claude Fable 5 - CH-4 章節骨架（chapterProgress schema + 七區章節地圖，GROUNDWORK + 遷移）
+
+- Status: `VERIFIED`
+- Branch / commit: `main` / 本包 commit（見 git log）
+- Scope: **GROUNDWORK**（Owner 明示「CH4」授權；設計文件 §8 CH-4）。Files: `src/data/chapterRegistry.js` [NEW]（七章定義 + 純函數）、`src/state/defaultState.js`（+`chapterProgress {current:1, completed:[]}`）、`src/state/store.js`（+`normalizeChapterProgress` + createDefaultState 深拷貝）、`src/ui/atlasController.js`（七區狀態由章節進度動態推導）、`styles/world-atlas.css`（completed 青光樣式）、`src/i18n/strings.js`（+`atlas.walked`/`atlas.chapterOf` 四語）、`src/app.js`（atlas 傳 store）、`docs/qa/state-onboarding-migration-cases.mjs`（+4 案例）、`docs/qa/_run_live_playtest_gate.py`（console error 捕捉附 url:line——flaky 調查武裝）。無新 localStorage key。
+- Work performed: (1) `chapterRegistry`：七章⇄七區對映（月湖=第1章起，動線依設計文件 §4：平原→熔爐→南港→輝耀核心→潮汐→秘境終章）、每章相遇夥伴與裂隙情緒主題、`getChapterStatus`（current/completed/locked）與 `advanceChapterProgress` 純推進函數（**推進觸發屬 CH-5**，重打舊章不回退不重複、終章封頂）。(2) schema：`chapterProgress` 巢狀物件走 normalize 防護（老存檔回填第 1 章、current clamp 1..7、completed 過濾去重排序）。(3) 世界地圖：每次開啟以 `chapterProgress` 重建——當前章金色「你在這裡」、已通關青光「走過」、其餘「遠方」，圖例附「第 N 章」；**反任務清單原則保留**（無 %、無倒數、「走過」是位置敘事不是獎章）。
+- Verification: `node --check` ×5 PASS。migration suite **26/26**（+4：fresh 第 1 章、老存檔回填、壞資料 clamp/清洗 `{current:99, completed:[3,"bad",3,0,8,1.7,2]}→{7,[2,3]}`、advance 推進/重打不回退/終章封頂）。preview（:8128，375×812）：注入 `{current:3, completed:[1,2]}` → reload（normalize）保留 → 世界地圖：熔爐=金色你在這裡+第3章、月湖/平原=青光走過、其餘遠方（截圖存證）；fresh save → `{current:1, completed:[]}`。strings integrity tc/en 0 missing。live gate soul_talk 10/10、HUD 13/13。`git diff --check` PASS。（flaky `null.split` ×2 第三次出現於首跑——依前議開最小調查：runner console 捕捉已附 url:line，重跑 0 錯誤，下次再現即可直接定位。）
+- Problems / risks: (a) 章節推進的玩法觸發（章節對峙通關 → advanceChapterProgress）屬 **CH-5**，本包僅骨架——現階段玩家永遠在第 1 章，地圖如舊。(b) atlas.intro 文案寫死「停在月湖一帶」——章節推進後會過時，CH-7 內容包動態化。(c) 章節⇄相遇夥伴的初遇替補規則（選了 flame-flicker 者第 5 章改遇誰）留給 CH-5。
+- Next safe action: Owner 過目世界地圖章節可視化；佇列：**CH-5**（章節相遇+共鳴邀請，把 advanceChapterProgress 接上對峙結算）或 **CH-7**（七章敘事內容，可並行）。
+- Required reading: `src/data/chapterRegistry.js`、`docs/design/CHAPTER_RESONANCE_ROADMAP_V2.md` §4/§8、migration CH-4 案例。
+
 ### 2026-07-07 - Claude Fable 5 - CH-3 解鎖模型嚴格化（Initial Bond 階段二，GROUNDWORK + 遷移）
 
 - Status: `VERIFIED`

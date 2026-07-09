@@ -74,6 +74,12 @@ const defaultState = {
     lastResult: null,
     lastBattleAt: null
   },
+  // 章節旅程（CH-4 骨架）：current=當前章（1-7）、completed=已通關章號。
+  // 推進由章節對峙通關觸發（CH-5，advanceChapterProgress）。存於既有 STORAGE_KEY，無新 key。
+  chapterProgress: {
+    current: 1,
+    completed: []
+  },
   explorationProgress: {
     totalExplorations: 0,
     lastNodeId: null,

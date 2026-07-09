@@ -286,7 +286,7 @@ async function bootstrap() {
 
   function getAtlasController() {
     if (!atlasController) {
-      atlasController = createAtlasController({ panelManager });
+      atlasController = createAtlasController({ panelManager, store });
     }
     return atlasController;
   }

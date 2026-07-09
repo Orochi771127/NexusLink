@@ -1,19 +1,20 @@
 import { qs } from "../utils/dom.js";
 import { t } from "../i18n/i18n.js";
+import { getChapterForRegion, getChapterStatus } from "../data/chapterRegistry.js";
 
-// 唯讀世界地圖（Linkara 遠景）。資料純前端、不接 schema、不改存檔。
-// 月湖營地（區域 5 / Ethereal Moon Lakefront）＝玩家當前所在；其餘為遠方鎖定。
-// 不做完成度 %、不做倒數、不做解鎖任務——只是「你在這裡，其餘還在遠處」。
+// 唯讀世界地圖（Linkara 遠景）。七區各為一章（CH-4 章節骨架）：
+// 區域狀態由 state.chapterProgress 推導（current／completed／locked），
+// 不做完成度 %、不做倒數、不做解鎖任務——只是「你走到哪裡了」。
 // 位置座標為 viewBox(0..100) 的示意佈局，概略對應人工世界地圖的相對方位，
 // 之後若批准匯入正式底圖 PNG，可保留座標、僅替換背景層。
 const LINKARA_REGIONS = [
-  { id: "forge", no: "1", zh: "東南熔爐丘陵區", en: "Southeast Forge Hills", x: 80, y: 64, status: "locked" },
-  { id: "core", no: "2", zh: "中央輝耀核心區", en: "Central Radiant Core", x: 46, y: 46, status: "locked" },
-  { id: "plains", no: "3", zh: "北部翠綠平原區", en: "Northern Verdant Plains", x: 32, y: 27, status: "locked" },
-  { id: "harbor", no: "4", zh: "南港", en: "Southern Harbor Nexus", x: 50, y: 90, status: "locked" },
-  { id: "moonlake", no: "5", zh: "月湖營地", en: "Ethereal Moon Lakefront", x: 71, y: 38, status: "current" },
-  { id: "mystic", no: "6", zh: "秘境山脈核心", en: "Eastern Mystic Mountains", x: 80, y: 18, status: "locked" },
-  { id: "tidal", no: "7", zh: "西南潮汐邊疆區", en: "Southwest Tidal Frontier", x: 19, y: 78, status: "locked" }
+  { id: "forge", no: "1", zh: "東南熔爐丘陵區", en: "Southeast Forge Hills", x: 80, y: 64 },
+  { id: "core", no: "2", zh: "中央輝耀核心區", en: "Central Radiant Core", x: 46, y: 46 },
+  { id: "plains", no: "3", zh: "北部翠綠平原區", en: "Northern Verdant Plains", x: 32, y: 27 },
+  { id: "harbor", no: "4", zh: "南港", en: "Southern Harbor Nexus", x: 50, y: 90 },
+  { id: "moonlake", no: "5", zh: "月湖營地", en: "Ethereal Moon Lakefront", x: 71, y: 38 },
+  { id: "mystic", no: "6", zh: "秘境山脈核心", en: "Eastern Mystic Mountains", x: 80, y: 18 },
+  { id: "tidal", no: "7", zh: "西南潮汐邊疆區", en: "Southwest Tidal Frontier", x: 19, y: 78 }
 ];
 
 // 聯結之河：區域之間的細光路（純視覺，與當前所在相連者較亮）。
@@ -30,28 +31,37 @@ const RIVER_LINKS = [
 const VIEW_W = 100;
 const VIEW_H = 96;
 
-export function createAtlasController({ panelManager }) {
+export function createAtlasController({ panelManager, store }) {
   const canvas = qs("#atlas-canvas");
   const legend = qs("#atlas-legend");
-  let built = false;
 
-  function buildOnce() {
-    if (built) return;
-    built = true;
-    if (canvas) canvas.innerHTML = buildMapSvg();
-    if (legend) legend.innerHTML = buildLegend();
+  function regionStatus(region, chapterProgress) {
+    const chapter = getChapterForRegion(region.id);
+    if (!chapter) return "locked";
+    return getChapterStatus(chapter.chapter, chapterProgress);
+  }
+
+  function build() {
+    // 每次開啟重建：章節推進（CH-5）後再開地圖即反映新狀態；渲染很輕。
+    const chapterProgress = store?.getState?.().chapterProgress || { current: 1, completed: [] };
+    const regions = LINKARA_REGIONS.map((region) => ({
+      ...region,
+      status: regionStatus(region, chapterProgress)
+    }));
+    if (canvas) canvas.innerHTML = buildMapSvg(regions);
+    if (legend) legend.innerHTML = buildLegend(regions);
   }
 
   function open() {
-    buildOnce();
+    build();
     panelManager.openPanel("atlas");
   }
 
   return { open };
 }
 
-function buildMapSvg() {
-  const byId = new Map(LINKARA_REGIONS.map((region) => [region.id, region]));
+function buildMapSvg(regions) {
+  const byId = new Map(regions.map((region) => [region.id, region]));
 
   const links = RIVER_LINKS.map(([from, to]) => {
     const a = byId.get(from);
@@ -61,7 +71,7 @@ function buildMapSvg() {
     return `<line class="atlas-link${live ? " is-live" : ""}" x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" />`;
   }).join("");
 
-  const nodes = LINKARA_REGIONS.map((region) => {
+  const nodes = regions.map((region) => {
     const isCurrent = region.status === "current";
     const haloR = isCurrent ? 7.4 : 5;
     const dotR = isCurrent ? 3.4 : 2.6;
@@ -78,17 +88,20 @@ function buildMapSvg() {
   </svg>`;
 }
 
-function buildLegend() {
-  return LINKARA_REGIONS
+function buildLegend(regions) {
+  return regions
     .slice()
     .sort((left, right) => Number(left.no) - Number(right.no))
     .map((region) => {
-      const tagKey = region.status === "current" ? "atlas.here" : "atlas.far";
+      const chapter = getChapterForRegion(region.id);
+      const tagKey =
+        region.status === "current" ? "atlas.here" : region.status === "completed" ? "atlas.walked" : "atlas.far";
+      const chapterLabel = chapter ? t("atlas.chapterOf").replace("{no}", String(chapter.chapter)) : "";
       return `<li class="atlas-region atlas-region--${region.status}">
         <span class="atlas-region-no" aria-hidden="true">${region.no}</span>
         <span class="atlas-region-copy">
           <strong>${region.zh}</strong>
-          <em>${region.en}</em>
+          <em>${region.en}${chapterLabel ? `・${chapterLabel}` : ""}</em>
         </span>
         <span class="atlas-region-tag" data-i18n="${tagKey}">${t(tagKey)}</span>
       </li>`;

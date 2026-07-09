@@ -165,6 +165,40 @@ runCase("CH-3 active companion outside unlock list is preserved via active-prese
   assertEqual(state.activeCompanionId, "ice-talon", "active kept");
 });
 
+runCase("CH-4 fresh state starts at chapter 1 with none completed", () => {
+  const state = createDefaultState();
+  assertEqual(state.chapterProgress.current, 1, "fresh chapter current");
+  assertArrayEqual(state.chapterProgress.completed, [], "fresh chapter completed");
+});
+
+runCase("CH-4 legacy save without chapterProgress is backfilled to chapter 1", () => {
+  const state = normalizeState({ bond: 30, firstTouchCompleted: true });
+  assertEqual(state.chapterProgress.current, 1, "legacy chapter backfill current");
+  assertArrayEqual(state.chapterProgress.completed, [], "legacy chapter backfill completed");
+});
+
+runCase("CH-4 damaged chapterProgress values clamp and clean", () => {
+  const state = normalizeState({
+    chapterProgress: { current: 99, completed: [3, "bad", 3, 0, 8, 1.7, 2] }
+  });
+  assertEqual(state.chapterProgress.current, 7, "chapter current clamped to max");
+  // "bad"→濾掉、0/8→越界濾掉、1.7→round 2、重複 3 與(1.7→2 vs 2)→去重 → [2,3]
+  assertArrayEqual(state.chapterProgress.completed, [2, 3], "chapter completed cleaned");
+});
+
+runCase("CH-4 advanceChapterProgress moves current forward and records completion", async () => {
+  const { advanceChapterProgress } = await import("../../src/data/chapterRegistry.js");
+  const step1 = advanceChapterProgress({ current: 1, completed: [] }, 1);
+  assertEqual(step1.current, 2, "advance to chapter 2");
+  assertArrayEqual(step1.completed, [1], "chapter 1 recorded");
+  const replay = advanceChapterProgress(step1, 1); // 重打舊章：不回退、不重複
+  assertEqual(replay.current, 2, "replay does not regress");
+  assertArrayEqual(replay.completed, [1], "replay does not duplicate");
+  const final = advanceChapterProgress({ current: 7, completed: [1, 2, 3, 4, 5, 6] }, 7);
+  assertEqual(final.current, 7, "final chapter caps");
+  assertArrayEqual(final.completed, [1, 2, 3, 4, 5, 6, 7], "final chapter recorded");
+});
+
 runCase("veteran heuristic accepts traces, memories, battles, and exploration", () => {
   const variants = [
     { label: "memory", state: { memories: [{ text: "remembered" }] } },

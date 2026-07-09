@@ -19,6 +19,7 @@ export function createDefaultState() {
     onboarding: { ...defaultState.onboarding, firstLoop: { ...defaultState.onboarding.firstLoop } },
     unlockedCompanionIds: [...defaultState.unlockedCompanionIds],
     battleRecord: { ...defaultState.battleRecord },
+    chapterProgress: { current: defaultState.chapterProgress.current, completed: [...defaultState.chapterProgress.completed] },
     explorationProgress: { ...defaultState.explorationProgress, visitCounts: {} },
     settings: { ...defaultState.settings }
   };
@@ -95,6 +96,7 @@ export function normalizeState(rawState = {}) {
     unlockedCompanionIds,
     activeCompanionId: normalizeRuntimeCompanionId(targetState.activeCompanionId, runtimeState),
     battleRecord: normalizeBattleRecord(targetState.battleRecord, baseState.battleRecord),
+    chapterProgress: normalizeChapterProgress(targetState.chapterProgress),
     explorationProgress: normalizeExplorationProgress(targetState.explorationProgress, baseState.explorationProgress),
     settings: normalizeSettings(targetState.settings, baseState.settings),
     chatHistory: chatHistory.map((item) => ({
@@ -222,6 +224,21 @@ function hasExplorationProgress(rawProgress) {
     ? rawProgress.visitCounts
     : {};
   return Object.values(visitCounts).some((count) => (Number(count) || 0) > 0);
+}
+
+// 章節旅程（CH-4）：老存檔無此欄位 → 第一章起步；壞資料 clamp/清洗。
+// current 固定 1..7；completed 僅收 1..7 整數、去重排序。推進邏輯不在 normalize
+//（見 chapterRegistry.advanceChapterProgress，CH-5 由對峙結算調用）。
+function normalizeChapterProgress(rawProgress) {
+  const progress = rawProgress && typeof rawProgress === "object" ? rawProgress : {};
+  const current = clamp(Math.round(Number(progress.current) || 1), 1, 7);
+  const completedSource = Array.isArray(progress.completed) ? progress.completed : [];
+  const completed = [...new Set(
+    completedSource
+      .map((value) => Math.round(Number(value)))
+      .filter((value) => Number.isInteger(value) && value >= 1 && value <= 7)
+  )].sort((a, b) => a - b);
+  return { current, completed };
 }
 
 function normalizeBattleRecord(rawRecord, baseRecord) {

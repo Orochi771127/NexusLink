@@ -111,6 +111,22 @@ html[data-ui="v2"] .atlas-node--current .atlas-node-no {
   50% { opacity: 1; }
 }
 
+/* 已走過的章節（CH-4）：安靜的青光——不是獎章，是「這段路留著光」。 */
+html[data-ui="v2"] .atlas-node--completed .atlas-node-dot {
+  fill: rgba(138, 217, 255, 0.75);
+}
+html[data-ui="v2"] .atlas-node--completed .atlas-node-halo {
+  fill: rgba(138, 217, 255, 0.08);
+  stroke: rgba(138, 217, 255, 0.35);
+  stroke-width: 0.5;
+}
+html[data-ui="v2"] .atlas-node--completed .atlas-node-no {
+  fill: #0a1228;
+}
+html[data-ui="v2"] .atlas-region--completed .atlas-region-tag {
+  color: rgba(138, 217, 255, 0.85);
+}
+
 /* 圖例 */
 html[data-ui="v2"] .atlas-legend {
   display: grid;

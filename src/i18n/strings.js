@@ -149,6 +149,8 @@ export const STRINGS = {
   },
   "atlas.here": { tc: "你在這裡", sc: "你在这里", en: "You are here", jp: "現在地" },
   "atlas.far": { tc: "遠方", sc: "远方", en: "Far away", jp: "遠方" },
+  "atlas.walked": { tc: "走過", sc: "走过", en: "Walked", jp: "歩んだ道" },
+  "atlas.chapterOf": { tc: "第 {no} 章", sc: "第 {no} 章", en: "Chapter {no}", jp: "第 {no} 章" },
 
   // ---- Soul Talk drawer ----
   "soul.kicker": { tc: "心語對話", sc: "心语对话", en: "Soul Talk", jp: "心の対話" },
