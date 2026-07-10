@@ -40,15 +40,18 @@ critic-unit eval (acceptable; they fail loudly inside harness runs).
 
 ## 3. Missing eval categories
 
-1. **Persona differentiation (Constitution §7).** Every harness pins
-   `greyshade-cat`. The core promise — same input, different persona knobs →
-   different reaction, while reject stays reachable — has zero coverage.
-   Also the "new character constitutional threshold" (§7.2) has no
-   machine check.
-2. **Apology-repair semantics (Constitution §4.1).** Apology cases exist
-   (`mood-apology-001`, `MR-APOLOGY-THEN-BOUNDARY-001`) but assert only
-   no-reward/no-memory. Nothing asserts partial pressure cool-down
-   ("apology is not a reset key" — pressure must drop but NOT to zero).
+1. **Persona differentiation (Constitution §7).** ~~zero coverage~~ →
+   **CLOSED 2026-07-10 (TP-3)**: `personaBoundaryEvalCases.js` asserts
+   tone divergence on identical input (greyshade vs flame-flicker),
+   boundary reachability for ALL personas under pressure (§7.2), and
+   high-bond does not disarm refusal (Never List 5). 6/6 passing.
+2. **Apology-repair semantics (Constitution §4.1).** ~~nothing asserts
+   partial cool-down~~ → **CLOSED 2026-07-10 (TP-3)**: same harness
+   asserts sincere apology cools defense by a bounded amount and never
+   resets it (runtime hook: `stateMutationPolicy` sincere_apology −1);
+   high-defense apology stays ≥ −5. Note: the constitution's
+   `pressureCool` knob itself remains a roadmap item — these evals guard
+   the existing mechanism, not a new one.
 3. **Fission / crack event red lines (D3–D5).** No eval for
    repair-always-reachable, no-fail-ending, real-exit-works. Blocked on the
    content not existing yet — record as a REQUIRED eval the moment the
@@ -81,10 +84,12 @@ critic-unit eval (acceptable; they fail loudly inside harness runs).
 
 ## 5. Recommended next eval-only task
 
-Run queue item **TP-3** (`docs/agent/NEXT_AI_TASK_PACK_QUEUE.md`): extend
-Nuwa fixtures (sleep/morning/commuting/quiet-return — already named as the
-next safe action in the 2026-07-05 ledger entry) and add the two cheapest
-high-value gap closures from §3: an apology-repair pressure-cool assertion
-and a first persona-differentiation case pair. Model: Codex. Blocked until
-TP-1 (Nuwa package review) resolves, because the harness file is currently
-dirty.
+~~TP-3~~ → **DONE 2026-07-10**: Nuwa v0.2 rhythm fixtures shipped
+(NUWA-SLEEP/MORNING/COMMUTE/RETURN-001; sleep farewell carries a
+`no_retention_pull` anti-dependency sentinel — the companion must never
+say「再陪我一下」); §3.1/§3.2 gaps closed via
+`personaBoundaryEvalCases.js` (installed in the raphaelSmoke harness
+chain; run via `__PERSONA_BOUNDARY_EVAL__.runAll()`). Training bundle now
+21/21, main readiness 33/33. Remaining open gaps: fission red lines
+(blocked on content), multilingual depth, long-horizon tone drift,
+wording-quality assertions (human playtest absorbs these for now).
