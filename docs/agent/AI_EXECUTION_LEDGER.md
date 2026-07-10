@@ -58,6 +58,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-07-10 - Claude Fable 5 - 新玩家視角完整檢測（Owner 指示：問題記錄不修，過審也記錄）
+
+- Status: `COMPLETED`（檢測+報告；修復另輪）
+- Branch / commit: `main` / 本包 commit（見 git log）
+- Scope: 模擬新玩家以真實 UI 操作走完整流程（boot→身份→三契約→初遇選**冰晶狼**〔第三條未測路徑〕→首輪閉環→四頁→照顧/探索→對峙〔記憶回收路徑〕→章節推進→世界地圖→設定→reload 回歸）。docs-only 產出：`docs/qa/NEW_PLAYER_PLAYTEST_2026-07-10.md`。
+- Work performed: **12 站 PASS**（含冰晶狼全鏈：嚴格解鎖/人格一致的照顧分支/首觸回饋帶名；對峙第二條勝利路徑「記憶回收」；reload 後名字/章節/記憶全保留;全程 0 console errors）。**3 個問題記錄待修**：#1[中] 開場 start 文案在選角前寫死「灰影」（劇透錯主角；i18n 值通用化可修）；#2[低中] 心語回覆「不急**着**」混簡體字形（corpus 用字不一致，全語料「着→著」統一）；#3[中] 首痕儀式句「月湖留下了第一道很淡的光…」從未出現——awakening 痕跡偷跑第 1 條，心語首句直接 echo 分支（shouldAnnounceFirstTrace 時序）。一項誤報已澄清（trace 欄位名 visualHint，非資料缺失）。
+- Verification: 檢測本身即驗證（全程真實 UI 操作、console 監控、逐站證據在報告內）。`git diff --check` PASS。
+- Problems / risks: 三問題全為**文案層**（劇透/用字/遺失儀式句），無功能性斷裂；#3 修復需小心 TASK_PACK A 的既有首痕 QA。
+- Next safe action: 依 Owner 指示另開修復輪處理 #1-#3（#1/#2 為低風險文案修，#3 需時序判定小改+回歸測試）。
+- Required reading: `docs/qa/NEW_PLAYER_PLAYTEST_2026-07-10.md`（逐站證據與修復方向）。
+
 ### 2026-07-10 - Claude Fable 5 - CH-7 七章敘事內容包（章引 + 專屬通關句，相遇者名留空位）
 
 - Status: `VERIFIED`
