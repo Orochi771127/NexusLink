@@ -1,6 +1,7 @@
 import { qs } from "../utils/dom.js";
 import { t } from "../i18n/i18n.js";
 import { getChapterForRegion, getChapterStatus, getChapterByNumber } from "../data/chapterRegistry.js";
+import { getChapterNarrative } from "../data/chapterNarrative.js";
 import { getCompanionById } from "../data/companionRegistry.js";
 
 // 唯讀世界地圖（Linkara 遠景）。七區各為一章（CH-4 章節骨架）：
@@ -67,6 +68,24 @@ export function createAtlasController({ panelManager, store }) {
     introEl.textContent = t("atlas.intro")
       .replace("{name}", companion?.name || "牠")
       .replace("{region}", region?.zh || "月湖營地");
+    renderEpigraph(introEl, chapterProgress);
+  }
+
+  // 章引（CH-7）：當前章的一句氣息，掛在 intro 之後——位置敘事、可忽略、
+  // 無任務語氣（紅線 6）。元素動態建立（不動 index.html）。
+  function renderEpigraph(introEl, chapterProgress) {
+    let epigraphEl = introEl.parentNode.querySelector(".atlas-chapter-epigraph");
+    const narrative = getChapterNarrative(chapterProgress.current);
+    if (!narrative?.epigraph) {
+      epigraphEl?.remove();
+      return;
+    }
+    if (!epigraphEl) {
+      epigraphEl = document.createElement("p");
+      epigraphEl.className = "atlas-chapter-epigraph";
+      introEl.after(epigraphEl);
+    }
+    epigraphEl.textContent = `「${narrative.epigraph}」`;
   }
 
   function open() {

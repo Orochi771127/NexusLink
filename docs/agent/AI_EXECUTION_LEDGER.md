@@ -58,6 +58,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-07-10 - Claude Fable 5 - CH-7 七章敘事內容包（章引 + 專屬通關句，相遇者名留空位）
+
+- Status: `VERIFIED`
+- Branch / commit: `main` / 本包 commit（見 git log）
+- Scope: 內容 + 輕呈現（設計文件 §8 CH-7，依賴 CH-4 ✓ 可並行；Codex sprite 產線持續中——本包**零資產/零相遇功能/零佔位 ID 依賴**，文案刻意不提相遇夥伴名，留給 CH-5b 補位）。Files: `src/data/chapterNarrative.js` [NEW]（七章 ×3 句 = 21 句）、`src/ui/battleController.js`（專屬通關句優先、通用模板 fallback）、`src/ui/atlasController.js`（章引動態行）、`styles/world-atlas.css`（章引淡金樣式）。零 GROUNDWORK、零新 key。
+- Work performed: 每章三句（短句留白，對應章節情緒主題）：**章引 epigraph**（世界地圖 intro 後一行「這一章的氣息」，如 ch1「湖水不催人。累了，就先在這裡。」ch5 悲傷「最亮的地方，影子也最深。」）、**專屬通關句**（蓋掉 CH-5a 通用模板，如 ch1「月湖的水面靜下來了。第一次，你們一起把雜訊放輕。」）、**通關夥伴心語句**（如 ch2「風還在吹，但不再只有風的聲音了。」）。全部位置敘事、無任務語氣、無倒數獎勵（紅線 6）；情緒句是氛圍非診斷、無說教（Never List）。narrative 缺項自動退通用模板。
+- Verification: `node --check` ×3 PASS。preview 真打一場通關全鏈實證：ch1 章引顯示 → 對峙穩住 → **專屬旅程句**「月湖的水面靜下來了…」（非通用模板）→ 心語兩句（reflection + 專屬夥伴句）→ 世界地圖章引自動換 ch2「風很大，草很高…」。live gate soul_talk 10/10、HUD 13/13、0 console errors；migration 26/26。`git diff --check` PASS。
+- Problems / risks: (a) **21 句文案待 Owner 覆核**（全文在 `src/data/chapterNarrative.js`，逐句可改）。(b) 章引僅掛世界地圖——「進入新章的開場推送」（心語/return echo 時機)留給 CH-5b 與相遇流程一起設計，避免與相遇敘事搶同一時刻。(c) ch2-ch7 的通關句實際觸發需該章節點上線（CH-5b+），現階段只有 ch1 可實打——其餘由 fallback 鏈保證不炸。
+- Next safe action: Owner 覆核 21 句；Codex 幼獸資產 ready 後開佔位 ID 替換 GROUNDWORK + CH-5b（相遇+共鳴邀請+各章節點）。
+- Required reading: `src/data/chapterNarrative.js`（21 句全文）、本 lane 的 CH-5a 條目。
+
 ### 2026-07-10 - Claude Fable 5 - CH-5a 章節推進接線（章節試煉 → advanceChapterProgress，避開 Codex sprite 產線）
 
 - Status: `VERIFIED`

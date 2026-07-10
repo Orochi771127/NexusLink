@@ -111,6 +111,16 @@ html[data-ui="v2"] .atlas-node--current .atlas-node-no {
   50% { opacity: 1; }
 }
 
+/* 章引（CH-7）：當前章的一句氣息——淡金、細字、可忽略。 */
+html[data-ui="v2"] .atlas-chapter-epigraph {
+  margin: 6px 0 2px;
+  color: rgba(247, 223, 170, 0.72);
+  font-size: 12px;
+  font-style: normal;
+  letter-spacing: 0.05em;
+  line-height: 1.6;
+}
+
 /* 已走過的章節（CH-4）：安靜的青光——不是獎章，是「這段路留著光」。 */
 html[data-ui="v2"] .atlas-node--completed .atlas-node-dot {
   fill: rgba(138, 217, 255, 0.75);

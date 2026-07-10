@@ -22,6 +22,7 @@ import {
   getChapterByNumber,
   getChapterForNode
 } from "../data/chapterRegistry.js";
+import { getChapterNarrative } from "../data/chapterNarrative.js";
 import { t } from "../i18n/i18n.js";
 import {
   createHabitatTraceFromMemory,
@@ -530,9 +531,12 @@ function injectStandoffLayoutStyles() {
   document.head.appendChild(style);
 }
 
-// 章節通關敘事（CH-5a）：安靜一句，位置敘事而非成就——「路亮了」不是「解鎖了」。
-// 最終章（第 7 章通關）另一句收束。內容層維持 TC。
+// 章節通關敘事（CH-5a 骨架 → CH-7 專屬內容）：安靜一句，位置敘事而非成就——
+// 「路亮了」不是「解鎖了」。優先取 chapterNarrative 的每章專屬句（對應該章情緒主題），
+// 缺項時退回通用模板。內容層維持 TC。
 function buildChapterAdvanceLine(chapterAdvance) {
+  const narrative = getChapterNarrative(chapterAdvance.from?.chapter);
+  if (narrative?.clearLine) return `【旅程】${narrative.clearLine}`;
   const fromZh = chapterAdvance.from?.zh || "這裡";
   const toZh = chapterAdvance.to?.zh || "";
   if (chapterAdvance.from?.chapter === 7) {
@@ -542,6 +546,8 @@ function buildChapterAdvanceLine(chapterAdvance) {
 }
 
 function buildChapterAdvanceCompanionLine(chapterAdvance) {
+  const narrative = getChapterNarrative(chapterAdvance.from?.chapter);
+  if (narrative?.clearCompanionLine) return narrative.clearCompanionLine;
   if (chapterAdvance.from?.chapter === 7) {
     return "七片土地都走過了。接下來去哪，我們慢慢想，不急。";
   }
