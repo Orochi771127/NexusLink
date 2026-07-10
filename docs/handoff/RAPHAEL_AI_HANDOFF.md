@@ -10,11 +10,10 @@
 
 | 欄位 | 值 |
 |------|-----|
-| `last_updated` | 2026-06-24 |
-| `last_agent` | Grok Agent |
-| `active_branch` | `main` |
-| `last_commit` | 執行 `git log -1 --oneline` 取得 tip（PR #87 merge：`4338d76`） |
-| `merged_to_main` | **是** — PR #87 merged（2026-06-24）；Stage 4 + handoff 已在 `main` |
+| `last_updated` | 2026-07-10（本檔 2026-06-24 起曾長期未更新；**當前操作真相以 `docs/agent/AI_EXECUTION_LEDGER.md` Lane 3 為準**） |
+| `last_agent` | Claude Fable 5 |
+| `active_branch` | `main`（2026-07-02 起單線開發，integrate 分支已退役） |
+| `last_commit` | 執行 `git log -1 --oneline` 取得 tip |
 | `workspace` | `C:\Users\User\NexusLink_RaphaelAI_Workspace\NexusLink` |
 | `do_not_touch` | `AIForgeNexus2\NexusLink`（舊 checkout，易與本工作區分叉） |
 
@@ -22,7 +21,9 @@
 
 ## 一句話現況
 
-RaphaelCore JS v1 → Soul Architecture v1.5 → NLU v1 → **Stage 4 human playtest** 已全部在 `main`（PR #87）。下一步：**在 `main` 重跑 QA sign-off + expanded real human playtest**。
+RaphaelCore JS v1 → Soul Architecture v1.5 → NLU v1 → Stage 4 → **靜態訓練 advisory 層（training bundle + Nuwa 蒸餾，trusted:false）→ daily-life NLU v1** 已全部在 `main`。2026-07-05 起的最新進展（Nuwa 合入、F1 碰撞修復、eval 覆蓋矩陣）逐條見 ledger Lane 3；機器可讀快照見 `RAPHAEL_AI_STATUS.yaml`。下一步：CH-5 章節相遇接線、TP-3 eval 擴充、真機人類 gate。
+
+> 以下章節（Stage 進度表、模組地圖、QA 數字）為 2026-06-24 的歷史快照，架構描述仍有效；**數字與「下一步」以上方與 ledger 為準**。
 
 ---
 

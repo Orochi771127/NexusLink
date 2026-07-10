@@ -1,7 +1,7 @@
 # Nexus Link V3 Visual System
 
 > Package: V3 Visual System Tokens
-> Status: design-only, not yet integrated with the runtime
+> Status: INTEGRATED — V3 tokens/rules shipped to runtime（`styles/ui-v3-onboarding.css`、HUD V3 pill、Soul Talk 單面板重建等，見 ledger 2026-06-25 起 Lane 2）。本檔保留為設計依據；「design-only」為 2026-06-25 撰寫時的舊狀態（2026-07-10 修正文件漂移）。
 > Canon: `NEXUS_LINK_MASTER_CANON_v3.1.md` and `NEXUS_LINK_STEAM_DEMO_MASTER_BLUEPRINT.md` take precedence.
 
 ## Intent

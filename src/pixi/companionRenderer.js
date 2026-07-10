@@ -8,7 +8,8 @@ export async function createCreatureNode(creature, statusText, { bootOnly = true
     const animationPack = await loadCompanionAnimationPack(creature.animationsManifest, { bootOnly });
     const animatedCompanion = createAnimatedCompanionNode(animationPack, creature);
     if (animatedCompanion) {
-      statusText.textContent = `${creature.name}已載入 idle_calm 動畫棲地。`;
+      // 玩家可見的狀態行不寫技術詞（動畫 key / 載入）——牠只是「在這裡」。
+      statusText.textContent = `${creature.name}在月湖邊安靜待著。`;
       return registerCompanionEditorObject(animatedCompanion);
     }
     statusText.textContent = `${creature.name}動畫載入失敗，已保留預設動態。`;

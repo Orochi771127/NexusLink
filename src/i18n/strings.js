@@ -136,10 +136,10 @@ export const STRINGS = {
   // ---- World Atlas ----
   "atlas.title": { tc: "世界地圖", sc: "世界地图", en: "World Atlas", jp: "世界地図" },
   "atlas.intro": {
-    tc: "「聯結之河」串起 Linkara 的各個區域。你與灰影現在停在月湖一帶；其餘地方仍在遠處，會在之後的旅程裡慢慢靠近。",
-    sc: "“联结之河”串起 Linkara 的各个区域。你与灰影现在停在月湖一带；其余地方仍在远处，会在之后的旅程里慢慢靠近。",
-    en: "The River of Linking threads Linkara's regions together. You and Greyshade rest near the Moonlake; the rest remains far off, drawing closer on journeys to come.",
-    jp: "「連結の河」が Linkara の各地をつなぐ。あなたと灰影は今、月湖のあたりに。ほかの地はまだ遠く、これからの旅で少しずつ近づく。"
+    tc: "「聯結之河」串起 Linkara 的各個區域。你與{name}現在停在{region}一帶；其餘地方仍在遠處，會在之後的旅程裡慢慢靠近。",
+    sc: "“联结之河”串起 Linkara 的各个区域。你与{name}现在停在{region}一带；其余地方仍在远处，会在之后的旅程里慢慢靠近。",
+    en: "The River of Linking threads Linkara's regions together. You and {name} rest near {region}; the rest remains far off, drawing closer on journeys to come.",
+    jp: "「連結の河」が Linkara の各地をつなぐ。あなたと{name}は今、{region}のあたりに。ほかの地はまだ遠く、これからの旅で少しずつ近づく。"
   },
   "atlas.note": {
     tc: "這是一張遠景示意圖，不是任務清單，也沒有要趕著抵達的地方。",

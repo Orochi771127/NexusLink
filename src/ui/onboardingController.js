@@ -1,6 +1,8 @@
 import { qs, qsa } from "../utils/dom.js";
 import { getCompanionById } from "../data/companionRegistry.js";
 import { isVeteranSave } from "../state/store.js";
+import EventBus from "../utils/eventBus.js";
+import { LANGUAGE_CHANGED_EVENT } from "../i18n/i18n.js";
 
 const STEP_ORDER = ["start", "identity", "guidance", "bond", "meet"];
 const FINAL_GREETING = "我在這裡。你可以慢慢靠近，也可以先只是看著月湖。";
@@ -38,6 +40,12 @@ export function createOnboardingController({ store, saveCurrentState, onBondChos
     if (!root) return;
     ensureBondStep();
     root.addEventListener("click", handleAction);
+    // 語言切換時 applyLanguage 會把 meet 標題蓋回字典預設（寫死灰影）；
+    // 若正停在 meet 步且已定情，於下一幀重寫為「{選定者}在月湖邊等你。」
+    EventBus.on(LANGUAGE_CHANGED_EVENT, () => {
+      if (!isActive() || activeStep !== "meet") return;
+      window.requestAnimationFrame(() => showStep("meet", store.getState()));
+    });
     nameInput?.addEventListener("keydown", (event) => {
       if (event.key === "Enter") {
         event.preventDefault();

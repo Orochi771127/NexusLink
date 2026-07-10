@@ -1,6 +1,7 @@
 import { qs } from "../utils/dom.js";
 import { t } from "../i18n/i18n.js";
-import { getChapterForRegion, getChapterStatus } from "../data/chapterRegistry.js";
+import { getChapterForRegion, getChapterStatus, getChapterByNumber } from "../data/chapterRegistry.js";
+import { getCompanionById } from "../data/companionRegistry.js";
 
 // 唯讀世界地圖（Linkara 遠景）。七區各為一章（CH-4 章節骨架）：
 // 區域狀態由 state.chapterProgress 推導（current／completed／locked），
@@ -43,13 +44,29 @@ export function createAtlasController({ panelManager, store }) {
 
   function build() {
     // 每次開啟重建：章節推進（CH-5）後再開地圖即反映新狀態；渲染很輕。
-    const chapterProgress = store?.getState?.().chapterProgress || { current: 1, completed: [] };
+    const state = store?.getState?.() || {};
+    const chapterProgress = state.chapterProgress || { current: 1, completed: [] };
     const regions = LINKARA_REGIONS.map((region) => ({
       ...region,
       status: regionStatus(region, chapterProgress)
     }));
     if (canvas) canvas.innerHTML = buildMapSvg(regions);
     if (legend) legend.innerHTML = buildLegend(regions);
+    renderIntro(state, chapterProgress);
+  }
+
+  // intro 跟著「定情夥伴 + 當前章區域」走（夥伴名/區名為內容層，維持 TC）。
+  // 語言切換時 applyLanguage 會把模板原樣寫回，但切語言必經 settings（atlas 已關），
+  // 重開地圖即重新代入。
+  function renderIntro(state, chapterProgress) {
+    const introEl = qs('[data-i18n="atlas.intro"]');
+    if (!introEl) return;
+    const companion = getCompanionById(state.activeCompanionId);
+    const chapter = getChapterByNumber(chapterProgress.current);
+    const region = LINKARA_REGIONS.find((entry) => entry.id === chapter?.regionId);
+    introEl.textContent = t("atlas.intro")
+      .replace("{name}", companion?.name || "牠")
+      .replace("{region}", region?.zh || "月湖營地");
   }
 
   function open() {

@@ -58,6 +58,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-07-10 - Claude Fable 5 - 缺陷清理輪：五項已知問題依嚴重度修復（Owner 指示）
+
+- Status: `VERIFIED`
+- Branch / commit: `main` / 本包 commit（見 git log）
+- Scope: Owner 指示「依嚴重程度排列處理」。盤點各條目累積的 known gaps，依「玩家影響×行為正確性」排序修復五項；不含新功能（CH-5 等 Owner 指示）與非缺陷（sc/jp fallback 為設計）。Files: `src/ai/raphaelTrainingAdapter.js`、`src/ai/testHarness/raphaelTrainingBundleCases.js`、`src/pixi/companionRenderer.js`（文字行）、`src/ui/atlasController.js`、`src/ui/onboardingController.js`、`src/i18n/strings.js`、`docs/handoff/RAPHAEL_AI_STATUS.yaml`、`docs/handoff/RAPHAEL_AI_HANDOFF.md`、`docs/design/NEXUS_LINK_V3_VISUAL_SYSTEM.md`。零 GROUNDWORK。
+- Work performed: **①[中高] Nuwa F1 鍵碰撞**（TP-1A finding，Lane 3 相關）：`combineBundleSection` 同名條目改為 caseIds **聯集**（其餘欄位後載優先）——base 案例 `daily-smalltalk-001` 的 `contextual_ack` 提示恢復（修復前 null）；harness 加專屬防回歸哨兵 `base_bundle_strategy_kept`。**②[中] dev 字樣洩漏**：companionRenderer 載入成功訊息「已載入 idle_calm 動畫棲地」→「{名}在月湖邊安靜待著。」（玩家可見 status 不寫技術詞）。**③[中] atlas.intro 寫死**：模板化 `{name}`/`{region}` 四語，atlasController 依定情夥伴+當前章動態代入（選狐+第2章 → 「你與焰紋狐現在停在北部翠綠平原區一帶」實證）。**④[低中] meet 標題 EN 蓋回**：onboarding 監聽 LANGUAGE_CHANGED，meet 步 rAF 重寫（EN/TC 切換實證保持「焰紋狐在月湖邊等你。」）。**⑤[低中] Raphael 狀態文件過時**：STATUS.yaml 全面刷新至 2026-07-10（QA 快照含日期、advisory 層現況、flaky 記錄、follow-ups）；HANDOFF 頂部改指 ledger 為操作真相+標注歷史快照；V3 Visual System「design-only」漂移修正（已 INTEGRATED）。
+- Verification: `node --check` ×6 PASS。training bundle + main readiness **29/29**（**含新 F1 哨兵**）；probe 實證 base/Nuwa 案例雙向解析 `contextual_ack` 且 trusted:false。live gate soul_talk 10/10、HUD 13/13、0 console errors；Raphael smoke 17/17；migration 26/26；preview 實證 ②③④（status 行無 dev 詞、intro 全動態無佔位殘留、語言切換標題保持）。`git diff --check` PASS。
+- Problems / risks: (a) RUNTIME_MAP.md 的 `NEEDS UPDATE` 標記保留——逐條對源驗證是獨立工作，未在本輪偽裝完成。(b) nlu_smoke 8/8 為 2026-06-30 數字未重跑（STATUS.yaml 已標注日期）。(c) flaky null.split 本輪未再現（url:line 捕捉已就位）。
+- Next safe action: 佇列不變：CH-5（章節相遇+共鳴邀請+推進接線）或 CH-7（敘事內容）等 Owner 指示；真機人類 gate 照舊。
+- Required reading: 本條 + Lane 3 的 Nuwa 條目（F1 背景）、`docs/handoff/RAPHAEL_AI_STATUS.yaml`（新快照格式）。
+
 ### 2026-07-10 - Claude Fable 5 - CH-4 章節骨架（chapterProgress schema + 七區章節地圖，GROUNDWORK + 遷移）
 
 - Status: `VERIFIED`

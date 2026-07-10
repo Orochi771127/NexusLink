@@ -211,6 +211,12 @@ export function runRaphaelTrainingBundleCase(testCase) {
     ...checksForKind(testCase.kind, { coreResult, reply, safety, plan, training })
   };
 
+  // F1 防回歸哨兵（TP-1A finding）：bundle 鍵碰撞（contextual_ack 同名於 base 與
+  // Nuwa）合併修復後，base 案例的策略提示不得再丟失（修復前實測為 null）。
+  if (testCase.id === "daily-smalltalk-001") {
+    checks.base_bundle_strategy_kept = training?.suggestion?.responseStrategy === "contextual_ack";
+  }
+
   return {
     id: testCase.id,
     kind: testCase.kind,

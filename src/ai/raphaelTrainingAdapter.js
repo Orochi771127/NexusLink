@@ -240,13 +240,23 @@ function resolvePolicy(match = {}) {
 }
 
 function combineBundleSection(sectionName) {
-  return TRAINING_BUNDLES.reduce(
-    (combined, bundle) => ({
-      ...combined,
-      ...(bundle?.[sectionName] || {})
-    }),
-    {}
-  );
+  // F1 修復（TP-1A finding）：同名條目不再整條覆蓋——淺覆蓋會讓後載 bundle
+  //（Nuwa 的 contextual_ack/boundary_set）丟掉 base bundle 的 caseIds，導致
+  // daily-smalltalk-001 等 base 案例解析不到策略提示。合併規則：caseIds 聯集
+  //（兩邊案例都保留解析能力）；其餘欄位（replyHints/constraints/patterns…）
+  // 後載 bundle 優先（Nuwa 是後來的 refinement）。
+  return TRAINING_BUNDLES.reduce((combined, bundle) => {
+    const section = bundle?.[sectionName] || {};
+    Object.entries(section).forEach(([key, entry]) => {
+      const existing = combined[key];
+      if (existing && Array.isArray(existing.caseIds) && Array.isArray(entry?.caseIds)) {
+        combined[key] = { ...existing, ...entry, caseIds: uniqueValues([...existing.caseIds, ...entry.caseIds]) };
+      } else {
+        combined[key] = entry;
+      }
+    });
+    return combined;
+  }, {});
 }
 
 function uniqueValues(values = []) {
