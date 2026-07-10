@@ -25,7 +25,7 @@
 | 11 | Reload 回歸 | 不重跑 onboarding;名字/章節/3 條記憶全保留;主動微時刻機制活(quiet_approach 可觸發) |
 | 12 | 穩定性 | 全程 **0 console errors** |
 
-## 問題清單(3 項,本輪僅記錄,另輪修復)
+## 問題清單(3 項 — **已全數修復**,見文末修復記錄)
 
 ### ISSUE #1[中] 開場文案在選角前劇透「灰影」
 - 現象:start 步文案「這不是電子寵物。這是一段會留下痕跡的陪伴。**灰影**會靠近,也會保留自己的邊界。」— 初遇三選一在其後,選狐/狼的玩家開場被預告錯誤主角。
@@ -44,6 +44,12 @@
 
 ### 誤報澄清
 - ~~trace 物件 kind 欄位為 null~~:實為 `visualHint` 欄位(檢測腳本讀錯欄位名),資料正常。
+
+## 修復記錄(2026-07-10 同日修復輪)
+
+- **#1 已修**:`ob.startCopy` 四語通用化(「牠會靠近…」)+ `index.html` fallback 同步(一行,DOM 結構零變更)。preview 實證。
+- **#2 已修**:`nluReplyBuilder.js`「急着」→「急著」×17,「着」歸零;NLU training 16/16 無回歸。`heartsparkCouncilCanon.js` 的 1 處移交 Codex(其活躍檔案)。
+- **#3 已修**:首痕計數排除 `core_awakening_glow` 痕跡(`soulTalkController.countVisibleRelationshipTraces`)——「第一道光」語義=第一道由你的話留下的痕跡。preview 實證:首觸喚醒後的第一句心語如期出現「月湖留下了第一道很淡的光。這不是獎勵,是牠記得你說過的事。」;awakening-by-chat 回合因 defer 機制天然不雙發。live gate 10/10(awakening pass)、smoke 17/17 無回歸。
 
 ## 總評(新玩家語感)
 

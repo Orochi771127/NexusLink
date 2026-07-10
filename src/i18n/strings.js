@@ -28,10 +28,11 @@ export const STRINGS = {
   // ---- Onboarding ----
   "ob.startTitle": { tc: "這不是電子寵物。", sc: "这不是电子宠物。", en: "This is not a virtual pet.", jp: "これは電子ペットではない。" },
   "ob.startCopy": {
-    tc: "這是一段會留下痕跡的陪伴。灰影會靠近，也會保留自己的邊界。",
-    sc: "这是一段会留下痕迹的陪伴。灰影会靠近，也会保留自己的边界。",
-    en: "This is companionship that leaves traces. Greyshade will draw near, and also keep its own boundaries.",
-    jp: "これは痕跡を残す寄り添い。灰影は近づくが、自分の境界も保つ。"
+    // 初遇選角（CH-2）在本句之後——開場不得預告特定夥伴（2026-07-10 新玩家檢測 #1）。
+    tc: "這是一段會留下痕跡的陪伴。牠會靠近，也會保留自己的邊界。",
+    sc: "这是一段会留下痕迹的陪伴。它会靠近，也会保留自己的边界。",
+    en: "This is companionship that leaves traces. They will draw near, and also keep their own boundaries.",
+    jp: "これは痕跡を残す寄り添い。その子は近づくが、自分の境界も保つ。"
   },
   "ob.startBtn": { tc: "開始連結", sc: "开始连结", en: "Begin the Link", jp: "つながりを始める" },
   "ob.identityKicker": { tc: "本地身份", sc: "本地身份", en: "Local Identity", jp: "ローカルの名前" },

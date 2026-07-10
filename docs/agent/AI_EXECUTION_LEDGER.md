@@ -58,6 +58,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-07-10 - Claude Fable 5 - 新玩家檢測三問題修復輪（#1 開場劇透 / #2 簡體字形 / #3 首痕儀式句）
+
+- Status: `VERIFIED`
+- Branch / commit: `main` / 本包 commit（見 git log）
+- Scope: Owner「請修復」——修檢測輪記錄的三問題。Files: `src/i18n/strings.js`（ob.startCopy 四語通用化）、`index.html`（**GROUNDWORK 觸碰**：僅一行 data-i18n fallback 文案同步，DOM 結構零變更，Owner 授權之修復）、`src/ai/nlu/nluReplyBuilder.js`（「急着」→「急著」×17）、`src/ui/soulTalkController.js`（首痕計數排除 awakening 痕跡）。`heartsparkCouncilCanon.js` 的 1 處「着」**未動**——Codex 活躍檔案，移交其產線順手修。
+- Work performed: **#1** 開場文案「灰影會靠近」→「牠會靠近」（選角在後，開場不得預告特定夥伴）。**#2** 回覆語料字形統一（同檔原有「陪著/放著」正確、僅「急着」系統性寫錯——單一來源筆誤模式）。**#3** `countVisibleRelationshipTraces` 排除 `type: core_awakening_glow`——「第一道光」語義修正為「第一道由**你的話**留下的痕跡」；喚醒有自己的開場敘事不衝突；awakening-by-chat 回合因既有 defer 機制天然不雙發（該回合普通痕跡延遲，排除後 after 仍 0）。
+- Verification: `node --check` ×3。preview 新玩家路徑重走：開場文案通用 ✓；首觸喚醒 → **第一句心語如期出現首痕儀式句**「月湖留下了第一道很淡的光。這不是獎勵，是牠記得你說過的事。」（修復前從未出現）→ 後續句正常。live gate soul_talk 10/10、awakening pass、HUD 13/13、0 console errors；Raphael smoke 17/17；**NLU training 16/16**（replyBuilder 字形替換無回歸）。`git diff --check` PASS。
+- Problems / risks: 無新增。首痕行含「月湖」marker——live gate 的 no_recall_bleed 已是本回合新增行判定（07-06 修復），首痕行出現在第 1 回合無 bleed 期望，安全（gate 實測 10/10 佐證）。
+- Next safe action: Codex 幼獸資產後續（佔位 ID 替換 GROUNDWORK + CH-5b）；Owner 累積覆核項不變（試煉規則、21 句章節文案、節律 fixtures）。
+- Required reading: `docs/qa/NEW_PLAYER_PLAYTEST_2026-07-10.md`（含修復記錄）。
+
 ### 2026-07-10 - Claude Fable 5 - 新玩家視角完整檢測（Owner 指示：問題記錄不修，過審也記錄）
 
 - Status: `COMPLETED`（檢測+報告；修復另輪）

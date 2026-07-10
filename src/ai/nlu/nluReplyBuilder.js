@@ -121,7 +121,7 @@ export function buildStrategyReply({
     [RESPONSE_STRATEGIES.BOUNDARY_SET]: () =>
       "你想靠近，也留了退後的空間。若太快，我會先退半步。",
     [RESPONSE_STRATEGIES.SHORT_VALIDATION]: () =>
-      pick(["嗯，被否定會悶。我先不講大道理。", "聽起來很悶。我先陪著，不急着給建議。"], seed),
+      pick(["嗯，被否定會悶。我先不講大道理。", "聽起來很悶。我先陪著，不急著給建議。"], seed),
     [RESPONSE_STRATEGIES.EMOTIONAL_SHORT]: () => {
       const tone = frame.emotionalTone || "calm";
       const act = frame.dialogueAct || nlu.dialogueAct || "";
@@ -137,7 +137,7 @@ export function buildStrategyReply({
         return "工作壓力堆上來時，先把最卡的那一段說出來就好。";
       }
       if (topic === "physical_tiredness" || tone === "fatigue") {
-        return pick(["累的時候，先把聲音放小也可以。", "這份累我先接住，不急着把你推去做事。"], seed);
+        return pick(["累的時候，先把聲音放小也可以。", "這份累我先接住，不急著把你推去做事。"], seed);
       }
       if (topic === "daily_life") {
         return groundedDailyLifeLine(frame, seed);
@@ -145,10 +145,10 @@ export function buildStrategyReply({
       if (topic === "social_conflict") {
         const socialLine = groundedSocialConflictLine(frame);
         if (socialLine) return socialLine;
-        return "人際上的悶先放著，我不急着給你結論。";
+        return "人際上的悶先放著，我不急著給你結論。";
       }
-      if (topic === "relationship") return "關係這件事我會慢慢聽，不急着定義你現在要什麼。";
-      return `這份${tone === "sadness" ? "悶" : "感覺"}我先接住，不急着分析。`;
+      if (topic === "relationship") return "關係這件事我會慢慢聽，不急著定義你現在要什麼。";
+      return `這份${tone === "sadness" ? "悶" : "感覺"}我先接住，不急著分析。`;
     },
     [RESPONSE_STRATEGIES.CLARIFYING_QUESTION]: () => {
       if (topic === "unknown") return "你比較想聊的是情緒、介面，還是開發節奏？";
@@ -162,7 +162,7 @@ export function buildStrategyReply({
         return "你想靠近，也願意給彼此空間。我會照這個節奏來。";
       }
       if (topic === "emotion" && need === "validation") {
-        return "這份情緒我先放在這裡，不急着幫你整理成結論。";
+        return "這份情緒我先放在這裡，不急著幫你整理成結論。";
       }
       if (topic === "work_pressure") return "工作的重量我先聽見了。你想先講壓力來源，還是先講最煩的一段？";
       if (topic === "daily_life") return groundedDailyLifeLine(frame, seed);
@@ -186,7 +186,7 @@ export function buildStrategyReply({
         seed
       ),
     [RESPONSE_STRATEGIES.HOLDING_SPACE]: () =>
-      pick(["好，我先不給答案。這件事就放在這裡。", "嗯，不用講太多。我陪著，不急着收走。"], seed),
+      pick(["好，我先不給答案。這件事就放在這裡。", "嗯，不用講太多。我陪著，不急著收走。"], seed),
     [RESPONSE_STRATEGIES.LIGHT_GREETING]: () => {
       const said = String(nlu.inputText || "").trim();
       if (/聽說.{0,12}很[型屌行]|^[你妳]很[型屌行]/.test(said)) {
@@ -235,7 +235,7 @@ export function buildStrategyReply({
       if (fatigueRecall && !awakeningRecall) {
         return pick(
           [
-            "我記得你上次說累的時候。那時候我們把節奏放慢，不急着把火燒旺。",
+            "我記得你上次說累的時候。那時候我們把節奏放慢，不急著把火燒旺。",
             "上次那段疲憊還在記憶裡。這次我們沿用那種慢一點的節奏。"
           ],
           seed
@@ -369,7 +369,7 @@ function resolveVariantLines(strategy, nlu, frame, recoveryContext, prefillConte
     case RESPONSE_STRATEGIES.BOUNDARY_SET:
       return ["你想靠近，也留了退後的空間。若太快，我會先退半步。"];
     case RESPONSE_STRATEGIES.SHORT_VALIDATION:
-      return ["嗯，被否定會悶。我先不講大道理。", "聽起來很悶。我先陪著，不急着給建議。"];
+      return ["嗯，被否定會悶。我先不講大道理。", "聽起來很悶。我先陪著，不急著給建議。"];
     case RESPONSE_STRATEGIES.EMOTIONAL_SHORT:
       if (act === "apologizing") {
         return [
@@ -382,17 +382,17 @@ function resolveVariantLines(strategy, nlu, frame, recoveryContext, prefillConte
         return [workLine || "工作壓力堆上來時，先把最卡的那一段說出來就好。"];
       }
       if (topic === "physical_tiredness" || tone === "fatigue") {
-        return ["累的時候，先把聲音放小也可以。", "這份累我先接住，不急着把你推去做事。"];
+        return ["累的時候，先把聲音放小也可以。", "這份累我先接住，不急著把你推去做事。"];
       }
       if (topic === "daily_life") {
         return dailyLifeLines(frame);
       }
       if (topic === "social_conflict") {
         const socialLine = groundedSocialConflictLine(frame);
-        return [socialLine || "人際上的悶先放著，我不急着給你結論。"];
+        return [socialLine || "人際上的悶先放著，我不急著給你結論。"];
       }
-      if (topic === "relationship") return ["關係這件事我會慢慢聽，不急着定義你現在要什麼。"];
-      return [`這份${tone === "sadness" ? "悶" : "感覺"}我先接住，不急着分析。`];
+      if (topic === "relationship") return ["關係這件事我會慢慢聽，不急著定義你現在要什麼。"];
+      return [`這份${tone === "sadness" ? "悶" : "感覺"}我先接住，不急著分析。`];
     case RESPONSE_STRATEGIES.CLARIFYING_QUESTION:
       if (topic === "unknown") return ["你比較想聊的是情緒、介面，還是開發節奏？"];
       return [`我想確認一下：你現在最想先處理的是${topicLabel(topic)}這塊嗎？`];
@@ -403,7 +403,7 @@ function resolveVariantLines(strategy, nlu, frame, recoveryContext, prefillConte
         return ["你想靠近，也願意給彼此空間。我會照這個節奏來。"];
       }
       if (topic === "emotion" && need === "validation") {
-        return ["這份情緒我先放在這裡，不急着幫你整理成結論。"];
+        return ["這份情緒我先放在這裡，不急著幫你整理成結論。"];
       }
       if (topic === "work_pressure") return ["工作的重量我先聽見了。你想先講壓力來源，還是先講最煩的一段？"];
       if (topic === "daily_life") return dailyLifeLines(frame);
@@ -420,7 +420,7 @@ function resolveVariantLines(strategy, nlu, frame, recoveryContext, prefillConte
         "這種疲憊又回來了。我不急著安慰你。先分清楚：是身體累，還是心裡卡住？"
       ];
     case RESPONSE_STRATEGIES.HOLDING_SPACE:
-      return ["好，我先不給答案。這件事就放在這裡。", "嗯，不用講太多。我陪著，不急着收走。"];
+      return ["好，我先不給答案。這件事就放在這裡。", "嗯，不用講太多。我陪著，不急著收走。"];
     case RESPONSE_STRATEGIES.LIGHT_GREETING:
       if (/聽說.{0,12}很[型屌行]|^[你妳]很[型屌行]/.test(said)) {
         return ["哈哈，你這樣開場我會害羞。", "型喔？那你今天心情好像不錯。", "嗯？突然這樣夸，我會當真的喔。"];
@@ -450,7 +450,7 @@ function resolveVariantLines(strategy, nlu, frame, recoveryContext, prefillConte
         (act === "asking_memory" && /累|疲憊|沒力/.test(topicLabel(topic) + entityRef));
       if (fatigueRecall && !awakeningRecall) {
         return [
-          "我記得你上次說累的時候。那時候我們把節奏放慢，不急着把火燒旺。",
+          "我記得你上次說累的時候。那時候我們把節奏放慢，不急著把火燒旺。",
           "上次那段疲憊還在記憶裡。這次我們沿用那種慢一點的節奏。"
         ];
       }
@@ -508,10 +508,10 @@ function groundedSocialConflictLine(frame = {}) {
   const detail = frame.specificDetail?.text || "";
   if (!detail) return null;
   if (/酸|否定|罵|拒絕/.test(detail)) {
-    return `被人${detail.includes("酸") ? "酸" : "否定"}的悶我先放著，不急着給你結論。`;
+    return `被人${detail.includes("酸") ? "酸" : "否定"}的悶我先放著，不急著給你結論。`;
   }
   if (/悶/.test(detail)) {
-    return "心裡悶悶的這份感覺我先接住，不急着分析。";
+    return "心裡悶悶的這份感覺我先接住，不急著分析。";
   }
   return null;
 }

@@ -429,7 +429,14 @@ export function createSoulTalkController({ store, saveCurrentState }) {
 
 function countVisibleRelationshipTraces(traces = []) {
   if (!Array.isArray(traces)) return 0;
-  return traces.filter((trace) => isEmotionalHabitatTrace(trace)).length;
+  // 首痕儀式句的計數基準排除「心核初醒」痕跡（type: core_awakening_glow）——
+  // 否則首觸喚醒偷跑第 1 條，玩家第一句心語直接落到 echo 分支，
+  // 「月湖留下了第一道很淡的光」永遠不出現（2026-07-10 新玩家檢測 #3）。
+  // 「第一道光」語義＝第一道由**你的話**留下的痕跡；喚醒有自己的開場敘事。
+  // 喚醒發生在「首句心語」的回合也安全：該回合普通痕跡被 defer，排除後 after 仍為 0。
+  return traces.filter(
+    (trace) => isEmotionalHabitatTrace(trace) && trace.type !== "core_awakening_glow"
+  ).length;
 }
 
 function shouldAnnounceFirstTrace({ traceCountBefore, traceCountAfter, coreResult, awakeningResult, state }) {
