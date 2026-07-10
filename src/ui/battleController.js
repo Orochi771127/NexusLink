@@ -16,6 +16,12 @@ import {
   SHARD_GOAL
 } from "../engine/battleEngine.js";
 import { buildEventReflection } from "../engine/soulTalkComposer.js";
+import {
+  CHAPTER_TRIAL_OUTCOMES,
+  advanceChapterProgress,
+  getChapterByNumber,
+  getChapterForNode
+} from "../data/chapterRegistry.js";
 import { t } from "../i18n/i18n.js";
 import {
   createHabitatTraceFromMemory,
@@ -288,10 +294,29 @@ export function createBattleController({ store, panelManager, soulTalkController
     const summary = summarizeStandoffOutcome(outcome, session, store.getState(), now);
     const copy = getOutcomeCopy(outcome);
     session.log.push({ kind: "system", text: `【${copy.title}】${summary.message}` });
+
+    // CH-5a 章節試煉：當前章首次「穩住/回收」即通關推進（規則見 chapterRegistry，Owner 可改）。
+    // 防刷：對峙節點必須屬於當前章（否則第一章節點可原地刷穿七章）；
+    // 重打已通關章不重複推進；overwhelmed/retreated 不算失敗、無任何懲罰。
+    let chapterAdvance = null;
+    if (CHAPTER_TRIAL_OUTCOMES.has(outcome)) {
+      const progressBefore = store.getState().chapterProgress || { current: 1, completed: [] };
+      const nodeChapter = getChapterForNode(session.nodeId);
+      if (nodeChapter === progressBefore.current && !progressBefore.completed.includes(progressBefore.current)) {
+        chapterAdvance = {
+          from: getChapterByNumber(progressBefore.current),
+          to: getChapterByNumber(Math.min(progressBefore.current + 1, 7))
+        };
+      }
+    }
+    if (chapterAdvance?.from) {
+      // 安靜的通關敘事：一句話、無成就框、無獎勵數字（紅線 6）。
+      session.log.push({ kind: "system", text: buildChapterAdvanceLine(chapterAdvance) });
+    }
     render();
     setRiftOutcome(outcome);
 
-    // 結算回寫：patch + 對峙記憶/棲地痕跡（走既有沉積鏈）。
+    // 結算回寫：patch + 對峙記憶/棲地痕跡（走既有沉積鏈）+ 章節推進。
     store.updateState((draft) => {
       Object.assign(draft, summary.statePatch);
       if (summary.memorySeed) {
@@ -302,11 +327,18 @@ export function createBattleController({ store, panelManager, soulTalkController
           draft.habitatTraces = pruneHabitatTraces(upsertHabitatTrace(draft.habitatTraces || [], trace));
         }
       }
+      if (chapterAdvance?.from) {
+        draft.chapterProgress = advanceChapterProgress(draft.chapterProgress, chapterAdvance.from.chapter);
+      }
     });
     // 閉環：回棲地後，夥伴用自己的聲音記得這件事（companion 角色，非 system）。
     const reflection = buildEventReflection(store.getState(), now, { outcomeOverride: outcome });
     if (reflection) {
       soulTalkController.addChat("companion", reflection);
+    }
+    if (chapterAdvance?.from) {
+      // 章節通關也留在心語裡（夥伴之聲，同 reflection 慣例）。
+      soulTalkController.addChat("companion", buildChapterAdvanceCompanionLine(chapterAdvance));
     }
     soulTalkController.renderChat();
     saveCurrentState?.(); // patch + 記憶 + 引用台詞一次落盤
@@ -496,6 +528,25 @@ function injectStandoffLayoutStyles() {
     'html[data-ui="v2"] .panel-layer[data-active-panel="battle"] .panel-backdrop{background:linear-gradient(180deg,rgba(2,6,12,.5),rgba(2,6,12,.12) 42%,rgba(2,6,12,.12) 62%,rgba(2,6,12,.38))}'
   ].join("");
   document.head.appendChild(style);
+}
+
+// 章節通關敘事（CH-5a）：安靜一句，位置敘事而非成就——「路亮了」不是「解鎖了」。
+// 最終章（第 7 章通關）另一句收束。內容層維持 TC。
+function buildChapterAdvanceLine(chapterAdvance) {
+  const fromZh = chapterAdvance.from?.zh || "這裡";
+  const toZh = chapterAdvance.to?.zh || "";
+  if (chapterAdvance.from?.chapter === 7) {
+    return `【旅程】${fromZh}的雜訊，也安靜下來了。Linkara 的七片土地，你們一起走過了。`;
+  }
+  return `【旅程】${fromZh}一帶的雜訊，被你們一起放輕了。往${toZh}的方向，好像亮了一點。`;
+}
+
+function buildChapterAdvanceCompanionLine(chapterAdvance) {
+  if (chapterAdvance.from?.chapter === 7) {
+    return "七片土地都走過了。接下來去哪，我們慢慢想，不急。";
+  }
+  const toZh = chapterAdvance.to?.zh || "下一片土地";
+  return `這一帶安靜下來了。${toZh}那邊……等你想去的時候，我們再一起走。`;
 }
 
 function prefersBattleReducedMotion() {

@@ -58,6 +58,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-07-10 - Claude Fable 5 - CH-5a 章節推進接線（章節試煉 → advanceChapterProgress，避開 Codex sprite 產線）
+
+- Status: `VERIFIED`
+- Branch / commit: `main` / 本包 commit（見 git log）
+- Scope: EXPERIENCE。Owner「請繼續」+ 告知 Codex 正在產製 sprite sheet（新五幼獸，見設計文件 §4 2026-07-10 修訂）——本包**刻意避開**相遇/共鳴邀請（依賴新角色資產）與一切 `output/**`/`assets/**`，只做章節系統的機制閉環。Files: `src/data/chapterRegistry.js`（+CHAPTER_TRIAL_OUTCOMES、+getChapterForNode 防刷歸屬、companionId 改註**技術佔位**聲明——正式名單為新五幼獸、資產 ready 後另開 GROUNDWORK 替換，不得基於佔位 ID 開發）、`src/ui/battleController.js`（試煉判定+推進+通關敘事）、`docs/qa/_run_live_playtest_gate.py`（pageerror 捕捉附 stack——flaky 第 4 現，前輪只武裝了 console 路徑，實為未捕獲頁面異常）。
+- Work performed: **章節試煉規則（Owner 可改）**：當前章的裂隙對峙以「穩住/回收」（stabilized/recovered）結束＝通關 → `advanceChapterProgress` 推進；**防刷**：對峙節點須屬當前章（getChapterForNode，現有節點全屬第 1 章）——否則月湖可原地刷穿七章（初版實測發現後補上）；重打已通關章不重複推進；overwhelmed/retreated 照舊不懲罰。**通關敘事**：對峙日誌一句「【旅程】{區域}一帶的雜訊，被你們一起放輕了。往{下一區}的方向，好像亮了一點。」+ 心語夥伴一句（「……等你想去的時候，我們再一起走。」）——位置敘事非成就框，無獎勵數字（紅線 6）；第 7 章通關有專屬收束句。
+- Verification: `node --check` ×2、migration 26/26。preview 真打兩場完整對峙：**第一場**（ch1）穩住 → `{current:2, completed:[1]}` + 旅程句「往北部翠綠平原區的方向，好像亮了一點。」+ atlas 即反映（月湖 completed / 平原 current / intro 動態「你與灰影貓現在停在北部翠綠平原區一帶」）；**第二場**（current=2 再打月湖節點）穩住 → **進度完全不變、無旅程句**（防刷實證）。live gate soul_talk 10/10、HUD 13/13。`git diff --check` PASS。（flaky pageerror 本輪首跑又現 ×2、重跑 0；stack 捕捉已就位，下次出現直接定位。）
+- Problems / risks: (a) 推進後玩家停在第 2 章**等內容**（第 2+ 章節點/劇情/相遇 = CH-5b+，依賴 Codex 新五幼獸資產）——骨架期誠實狀態。(b) 章節試煉規則（首次穩住即通關）為 AI 定案，Owner 可改（如要求特定節點/特定敵人）。(c) 本 commit 的 ledger 同時載有 Codex 的 Blazetail seed gate `IN PROGRESS` 條目（正常協作記錄）；`output/character-pilots/**` 為 Codex 工作區，**未加入版控**。
+- Next safe action: Owner 過目通關敘事兩句 + 試煉規則；Codex 資產 ready 後開「佔位 ID 替換 GROUNDWORK」與 CH-5b（章節相遇+共鳴邀請）。CH-7（各章敘事文案）可先行但相遇者名須留空位。
+- Required reading: `src/data/chapterRegistry.js`（試煉/防刷/佔位聲明）、`src/ui/battleController.js`（buildChapterAdvanceLine）、設計文件 §4（2026-07-10 修訂）、Lane 2 的 Codex Blazetail 條目。
+
 ### 2026-07-10 - Claude Fable 5 - 缺陷清理輪：五項已知問題依嚴重度修復（Owner 指示）
 
 - Status: `VERIFIED`
@@ -719,6 +730,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 ---
 
 ## Lane 2 - Game Art, UI, And Visual Production
+
+### 2026-07-10 - Codex - Formal Five Pilot Production Started: Blazetail Seed Gate
+
+- Status: `IN PROGRESS`
+- Branch / commit: `main` / uncommitted review staging.
+- Scope: Begin the Owner-approved five-motion-family pilot sequence outside runtime roots. First target is a Blazetail Kit `idle_calm` transparent seed candidate, followed only after human identity approval by a `touch_accept` 2x3 pilot sheet. No `assets/**`, runtime code, manifest, registry, save schema, tools, scripts, dependency, commit, or push changes.
+- Work performed: Routed through `generate2dsprite`, `imagegen`, and `sprite-pipeline`. Because Sprite Pipeline requires an approved transparent seed before whole-sheet animation, created a review-only generation job and manual prompt under `output/character-pilots/blazetail-kit/seed-frame/`.
+- Verification: Owner Photo 1 was viewed at original resolution; lock spec, species-motion guide, animation catalog, and latest Art lane were reread. Built-in image generation produced one magenta seed candidate. The source was copied to review staging, converted to alpha, normalized to 512x512, and visually inspected. First cleanup showed a visible key-color fringe; the required one-pixel matte contraction retry improved the edge. Selected seed has transparent corners, alpha bbox (46,26)-(466,486), complete paws/ears/tail, and preserved identity. Owner replied `OK`; seed gate recorded as approved for pilot animation.
+- Problems / risks: Flame-fur edges make transparency cleanup identity-sensitive. Built-in generation therefore uses a flat magenta source; alpha conversion and animation generation must wait for visual review. The reference JPG itself is canon/reference only and is not copied into `assets/**`.
+- Next safe action: Use the approved seed plus a 2x3 layout guide to generate one six-frame `touch_accept` candidate, then run transparent sheet processing, per-frame extraction, baseline/scale/identity QC, and human visual approval.
+- Required reading: `docs/art/character-locks/blazetail-kit.lock.md`, `docs/art/SPECIES_MOTION_TRANSLATION.md`, `docs/assets/COMPANION_ANIMATION_CATALOG.md`, `output/character-pilots/blazetail-kit/seed-frame/generation-job.json`, and this lane.
 
 ### 2026-07-10 - Codex - Formal Heartspark Five Character Locks And Species Motion Translation
 

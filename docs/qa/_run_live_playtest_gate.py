@@ -87,7 +87,14 @@ def run():
             report["console_errors"].append(msg.text + where)
 
         page.on("console", _capture_console_error)
-        page.on("pageerror", lambda err: report["console_errors"].append(str(err)))
+
+        # pageerror＝未捕獲的頁面異常（flaky null.split 走的是這條路，非 console.error）：
+        # 附上 stack 才能定位到檔案/行（str(err) 只有訊息）。
+        def _capture_page_error(err):
+            stack = getattr(err, "stack", "") or ""
+            report["console_errors"].append(f"{err} :: {stack[:400]}")
+
+        page.on("pageerror", _capture_page_error)
 
         # --- Fresh player: awakening / touch (devPanel exposes companion node) ---
         page.goto(BASE_DEV, wait_until="networkidle", timeout=90000)
