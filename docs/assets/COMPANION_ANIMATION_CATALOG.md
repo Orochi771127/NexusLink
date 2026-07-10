@@ -4,6 +4,8 @@ This catalog is the shared animation taxonomy for Nexus Link companion productio
 
 Shared means shared `animation_id`, meaning, frame count, FPS, loop policy, category, and priority. It does not mean every character shares the same acting. Each companion must adapt motion style through its approved Character Lock Spec.
 
+For the formal Heartspark Council five-seat roster, `docs/art/SPECIES_MOTION_TRANSLATION.md` is mandatory. Bird, aquatic-hover, cervid, vulpine, and feline bodies must not share a generic quadruped pose template.
+
 New companion animation uses illustrated / painterly / high-detail `512x512` master frames. Do not use 64x64, 96x96, 16-bit pixel art, clean pixel art, no anti-aliasing, or nearest-neighbor as the new companion standard. `greyshade-cat` current 443/444 frames are legacy accepted and must never be upscaled.
 
 Final runtime assets must be transparent PNG sheets.

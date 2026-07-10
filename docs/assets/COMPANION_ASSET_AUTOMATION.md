@@ -30,6 +30,7 @@ No part of this pipeline may modify runtime renderer code, move existing assets,
 
 1. Human provides old design art / concept sheet / art canon.
 2. Codex organizes a Character Lock Spec from `templates/character-lock.template.md`.
+   - For the formal Heartspark Council roster, start from `docs/art/STAGE1_CHARACTER_ASSET_INDEX.md`, the matching `docs/art/character-locks/*.lock.md`, and `docs/art/SPECIES_MOTION_TRANSLATION.md`.
 3. Human approves the Character Lock Spec.
 4. Human or Codex selects an `animation_id` from `docs/assets/COMPANION_ANIMATION_CATALOG.md`.
 5. Codex creates an Action Config from `templates/companion-action-config.template.json`.

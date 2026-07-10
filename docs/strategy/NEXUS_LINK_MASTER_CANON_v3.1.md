@@ -170,7 +170,7 @@
 
 ### 3.4 開場定情階段二的工程規格（地基層）
 
-**現況（盤點確認）**：`defaultState.js` 預設 `unlockedCompanionIds` 含灰影貓 + 五元守護全部；`companionSelectController.js` 提供隨意切換。
+**現況（2026-07-10）**：CH-2/CH-3 已使 fresh save 在初遇後只保留選定者；veteran／舊 test save 可保留既有測試載體解鎖。正式五元守護尚未 asset-ready，也尚未進入 `COMPANIONS`。
 
 **目標修正**：
 
@@ -256,26 +256,28 @@ Linkara Region 是 Nexus Link 的主舞台。世界地圖以七個區域構成�
 
 **中立角色不占三勢力五行席位**：灰影貓 `greyshade-cat` 與星能小山豬 `star-energy-boarlet` 屬中立心核生命。牠們可連接章節、旅痕與地圖事件，但不得被硬塞進心輝議會、黑鐵駭客或混頓裂隙 roster。
 
-### 5.2 五元守護的勢力歸屬（定版）
+### 5.2 五元守護的勢力歸屬（2026-07-10 Owner 定版）
 
-五元守護**屬心輝議會**，為「**可愛的第一梯隊／初醒形態**」，與 Character Bible 中更高階的議會守護線同屬心輝議會、但不同梯隊／世代。
+正式五元守護**屬心輝議會**，為「可愛的第一梯隊／Stage 1 初醒形態」。正式金木水火土席位如下；Owner 於 2026-07-10 提供並確認五張外觀參考，外觀鎖定見 `docs/art/character-locks/`。
 
-| 心輝議會 | 第一梯隊（可愛初醒，已 runtime） | 高階線（roadmap 世界觀） |
-|---|---|---|
-| 火 | 焰紋狐 `flame-flicker` | 焰尾狐 → 星焰狐王 → 永焰狐皇 |
-| 水 | 冰晶狼 `ice-talon` | 水晶海馬 → 冰洋海龍 → 蒼海龍皇 |
-| 木 | 青藤鹿 `vine-twist` | 青葉麋鹿 → 風暴麋將 → 聖林麋神 |
-| 金 | 晶石兔 `crystal-rabbit` | 金羽戰鷹 → 輝鋼鷹將 → 聖輝鷹皇 |
-| 土 | 磐石熊 `stone-shard` | 星核虎 → 晶聖虎王 → 星地虎皇 |
+| 五行席位 | 正式 Stage 1 五元守護 | 角色 ID | 物種動作族 |
+|---|---|---|---|
+| 金 | 金羽小梟 | `auriowl` | 鳥型／棲枝與短飛 |
+| 木 | 芽角小鹿 | `sprigfawn` | 鹿型／蹄類四足 |
+| 水 | 晶鰭小海馬 | `crystalfin-seahorse` | 水生懸浮／無足 |
+| 火 | 焰尾小狐 | `blazetail-kit` | 狐型四足 |
+| 土 | 星紋小虎 | `starstripe-cub` | 貓科四足 |
 
-### 5.3 焰尾狐 vs 焰紋狐（定版，非重複、不合併）
+`flame-flicker`、`ice-talon`、`stone-shard`、`vine-twist`、`crystal-rabbit` 雖在目前 build 已有完整動畫並可作 active companion，但其正式身分改列為**現行測試 runtime 載體**，不占心輝議會正式五行席位。不得因技術上 `full-runtime` 就把測試身分寫回產品 canon。其未來用途（測試專用、改編為其他角色／勢力、或退役）須另由 Owner 拍板並走 canon + migration TASK_PACK；在此之前保留資產與 ID，不刪、不改名、不暗自合併。
 
-兩隻不同角色，同屬心輝議會火屬性的不同世代：
+### 5.3 五元守護外觀與動作鎖定
 
-- 焰紋狐 `flame-flicker`：第一梯隊（可愛初醒），full-runtime。
-- 焰尾狐 `flametail-fox`：高階線起點／legacy candidate。舊靜態圖已因內容錯誤移除，需新 approved asset 才能恢復 static/runtime readiness；不可作為灰影貓的 fallback 圖。
-
-兩者 ID 不同，不可為對齊命名直接改 ID 或合併；改 ID 必開 migration。
+- 共用 29 個 `animation_id` 只代表語意，不代表共用四足姿勢。
+- 金羽小梟使用鳥型棲枝、收翼、展翼、振羽、跳躍與短飛語彙。
+- 晶鰭小海馬使用懸浮、鰭擺、尾部捲放、上下游移與水流退避語彙；無腳底基線。
+- 芽角小鹿使用蹄類步態、頸耳與芽角安全空間；禁止犬貓坐姿與洗臉。
+- 焰尾小狐與星紋小虎雖同為四足，仍分別使用狐型彈性步態與貓科沉穩重心，不得互套。
+- 新圖必先服從 `docs/art/character-locks/`，再進生成、QC、human approval 與 GROUNDWORK runtime promotion。
 
 ### 5.4 灰影貓（第一個已驗證 runtime 載體）
 
@@ -296,7 +298,8 @@ Linkara Region 是 Nexus Link 的主舞台。世界地圖以七個區域構成�
 | Tier | 角色 | 規則 |
 |---|---|---|
 | 1 首輪焦點 | 灰影貓 `greyshade-cat` | first validated runtime carrier，Demo / Chapter 1 行銷主體 |
-| 1.5 已實作梯隊 | 五元守護（火/水/木/金/土） | full-runtime，但透過章節解鎖，非開場全開 |
+| 1.5 正式五元守護 | 金羽小梟／芽角小鹿／晶鰭小海馬／焰尾小狐／星紋小虎 | 正式五行 roster；canon scaffold + 外觀鎖定，尚非 runtime-ready |
+| 1.6 技術測試載體 | `flame-flicker` / `ice-talon` / `stone-shard` / `vine-twist` / `crystal-rabbit` | 現行 full-runtime，用於流程與動畫驗證；不占正式五行 roster，未來用途待另案 |
 | 2 Legacy | 焰尾狐 `flametail-fox` | 舊錯圖已移除；需新 approved asset 才可恢復 static candidate，不可升級，不可作 fallback |
 | 3 Roadmap | 雷霆幼狼 / 星能小山豬 等 | 未通過 asset readiness 前不可選；可作未來章節或旅痕內容 |
 

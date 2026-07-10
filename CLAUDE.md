@@ -239,11 +239,12 @@ RaphaelCore 與角色外型解耦。RaphaelCore 是共用的心核大腦與人�
 | Tier | 角色 | ID | 規則 |
 |------|------|-----|------|
 | 1 First Runtime Carrier | 灰影貓 | `greyshade-cat` | 第一個已驗證 runtime 載體、預設 first-session companion、完整 spritesheet，P1 主線 |
-| 1 Runtime-ready 同行夥伴 | 心輝議會五元守護：焰紋狐(火)／冰晶狼(水)／磐石熊(土)／青藤鹿(木)／晶石兔(金) | `flame-flicker` / `ice-talon` / `stone-shard` / `vine-twist` / `crystal-rabbit` | `full-runtime`、512×512 動畫就緒、可作 active companion；正式為章節解鎖，目前 root test build 預設解鎖以利驗證 |
+| 1 Formal Heartspark Council Stage 1 | 金羽小梟(金)／芽角小鹿(木)／晶鰭小海馬(水)／焰尾小狐(火)／星紋小虎(土) | `auriowl` / `sprigfawn` / `crystalfin-seahorse` / `blazetail-kit` / `starstripe-cub` | 2026-07-10 Owner 定版；canon scaffold + Character Lock Spec，尚非 runtime-ready |
+| 1 Runtime Test Carriers | 焰紋狐／冰晶狼／磐石熊／青藤鹿／晶石兔 | `flame-flicker` / `ice-talon` / `stone-shard` / `vine-twist` / `crystal-rabbit` | 現行 `full-runtime` 動畫測試載體；不占正式心輝議會五行席位，最終用途待另案 |
 | 2 Chapter Runtime Candidate | 焰尾狐 | `flametail-fox` | 已登錄；舊靜態圖因內容錯誤移除，需新 approved asset 才可作章節解鎖 runtime candidate；不可成為灰影貓 fallback |
 | 3 Roadmap Runtime Candidate | 雷霆幼狼 `thunder-pup` / 星能小山豬 `star-energy-boarlet` | 可逐章節升級為 runtime candidate；未通過 asset readiness 前不可選 |
 
-註：`companionRegistry.js` 可含水晶海馬、青葉麋鹿等 placeholder 角色作圖鑑展示用。它們可成為 future runtime candidate，但必須先完成正式 companion spec、512×512 transparent master asset、human approval 與 asset readiness gate。多角色版本首版仍維持「同一時間只有一隻 active companion」。未來可做同行／組隊內容，但必須是章節後期、非戰力導向、非普通收集 RPG。
+註：正式五元守護的外觀鎖定與物種動作翻譯位於 `docs/art/`。鳥型、海馬型、鹿型不得套用通用四足動作；所有角色仍須先完成 512×512 transparent master、human approval 與 asset readiness gate。多角色版本首版仍維持「同一時間只有一隻 active companion」。
 
 註（命名債）：`crystal-rabbit`（晶石兔）的 runtime 動畫資產暫借 `assets/characters/thunder-pup/` 目錄，與 registry 的 `thunder-pup`（雷霆幼狼，Tier 3）為**不同角色**；雷霆幼狼維持原 Tier 3 狀態、未接入此批動畫。
 

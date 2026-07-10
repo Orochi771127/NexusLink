@@ -147,6 +147,8 @@ Acceptance refs:  <對應 ACCEPTANCE.md 的哪幾條>
 | Tier | 角色 | ID | 規則 |
 |------|------|-----|------|
 | 1 First Runtime Carrier | 灰影貓 | `greyshade-cat` | 第一個已驗證 runtime 載體、預設 first-session companion、P1 主線 |
+| 1 Formal Heartspark Council Stage 1 | 金羽小梟／芽角小鹿／晶鰭小海馬／焰尾小狐／星紋小虎 | `auriowl` / `sprigfawn` / `crystalfin-seahorse` / `blazetail-kit` / `starstripe-cub` | 2026-07-10 Owner 定版正式五行席位；已有 canon scaffold 與外觀鎖定，尚非 runtime-ready |
+| 1 Runtime Test Carriers | 焰紋狐／冰晶狼／磐石熊／青藤鹿／晶石兔 | `flame-flicker` / `ice-talon` / `stone-shard` / `vine-twist` / `crystal-rabbit` | 現行 `full-runtime` 測試載體，不占正式心輝議會五行席位；未來用途待 Owner 另開 canon/migration 包 |
 | 2 Chapter Runtime Candidate | 焰尾狐 | `flametail-fox` | 仍可作章節候選；舊靜態圖已因內容錯誤移除，需新 approved asset 才能成為 runtime candidate；不可成為灰影貓 fallback |
 | 3 Roadmap Runtime Candidate | 雷霆幼狼 / 星能小山豬 | `thunder-pup` / `star-energy-boarlet` | 可逐章節升級為 runtime candidate；未通過 asset readiness 前不可選 |
 
@@ -154,10 +156,11 @@ Acceptance refs:  <對應 ACCEPTANCE.md 的哪幾條>
 
 ### Runtime model（與現況同步）
 
-> 此區與目前 `companionRegistry.js` / `companionRuntimePolicy.js` 實況對齊；上方 Tier 表保留為產品節奏的歷史脈絡。
+> 此區描述目前 `companionRegistry.js` / `companionRuntimePolicy.js` 的技術實況；技術實況不覆蓋上方 2026-07-10 Owner 定版的正式 roster。
 
 - Greyshade Cat 仍是 default active companion（初遇選角上線後改為「選定者」，veteran 存檔視同已選灰影貓）。
-- 可以有多個 runtime-ready companion（目前心輝議會五元守護 `flame-flicker` / `ice-talon` / `stone-shard` / `vine-twist` / `crystal-rabbit` 已是 `full-runtime` / `runtime-ready` 並可選）。
+- 可以有多個 runtime-ready companion（目前 `flame-flicker` / `ice-talon` / `stone-shard` / `vine-twist` / `crystal-rabbit` 已是 `full-runtime` / `runtime-ready` 並可選，但屬測試載體，不是正式五元守護 roster）。
+- 正式五元守護 `auriowl` / `sprigfawn` / `crystalfin-seahorse` / `blazetail-kit` / `starstripe-cub` 目前是 canon scaffold + Character Lock Spec，未通過 human asset approval 與 GROUNDWORK promotion 前不可選。
 - 【2026-07-06 Owner 修訂，見 Master Canon §1.3.1】棲地日常仍以單一 active companion 為情感主體；**對峙可組共鳴圈**：最多三隻已結緣夥伴同場面對裂隙雜訊。
 - 共鳴圈不是戰力隊伍：無輸出排行、無等級裝備、無屬性刷關、無站位商品化；夥伴以五行心相與陪伴姿態參與，各有自身疲勞與邊界（過勞會先退到圈外）。
 - 夥伴加入採**意願制**：章節通關解鎖「共鳴邀請」資格，由牠依關係狀態回應；牠可以說「還不是時候」，且永遠可再培養。
@@ -167,6 +170,7 @@ Acceptance refs:  <對應 ACCEPTANCE.md 的哪幾條>
 - Greyshade 替換是 **asset-readiness-gated GROUNDWORK swap**：legacy 64 → illustrated 512，先並存後退役，audit 通過前不刪 legacy。
 - single-active-companion 模型不因替換而改變；灰影貓不得 fallback 到其他角色美術。
 - 註：`crystal-rabbit` 的 runtime 動畫資產暫借 `assets/characters/thunder-pup/` 目錄（命名債）；registry 的 `thunder-pup`（雷霆幼狼）與此為不同角色、維持原樣。
+- 正式五元守護共用 animation ID，但不得共用四足姿勢模板；鳥型、海馬懸浮、鹿型蹄步、狐型與虎型動作翻譯以 `docs/art/SPECIES_MOTION_TRANSLATION.md` 為準。
 
 ### World faction model（Linkara）
 

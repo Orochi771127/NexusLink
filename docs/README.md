@@ -4,7 +4,7 @@ This folder contains the planning and production references for NexusLink.
 本資料夾即為《Nexus Link / 心核連結》目前的正式企劃案、工程規格、製作流程與留存文件集合。
 
 > 有 40+ 份文件，容易「不知從何讀起」。本索引解決那個問題：**哪份是什麼、誰是權威、多久更新一次。**
-> 更新：2026-07-03（v2，新增權威階層 / 更新節奏 / 數值 SSOT，並修正過期的 scope rule）。
+> 更新：2026-07-10（v3，新增正式五元守護外觀鎖定與物種動作翻譯入口）。
 
 ---
 
@@ -52,7 +52,7 @@ agent/AI_EXECUTION_LEDGER.md                ← 「當前真實狀態」唯一�
 - **架構 / 檔案治理**：`architecture/FILE_OWNERSHIP.md`、`architecture/RAPHAEL_CORE_JS_V1.md`、`architecture/COMPANION_PREFERENCE_PERSISTENCE_V1.md`、`architecture/RAPHAEL_GATEWAY_SERVER_V1.md`、`architecture/PACKAGING_ROADMAP.md`、`architecture/RUNTIME_MAP.md`（⚠️ NEEDS UPDATE：對照現行程式驗證舊 storage/runtime 陳述）。
 - **設計規格**：`design/NEXUS_LINK_V3_VISUAL_SYSTEM.md`、`design/BALANCE_SHEET.md`（**數值 SSOT**）、`r2-canon/*`（R2 詳規：pillars/system/faction/companion/evolution/scope）、`rfc/RFC_2_5D_HABITAT_RENDERER.md`。
 - **品保 / 測試**：`testing/MANUAL_TEST_CHECKLIST.md`、`testing/PRIVATE_TEST_SCRIPT.md`、`testing/STEAM_DEMO_WEB_RELEASE_CHECKLIST.md`、`qa/WEB_RELEASE_EVIDENCE.md`、`qa/RAPHAEL_CORE_JS_V1_TEST_PROTOCOL.md`。
-- **資產 / 美術管線**：`assets/CHARACTER_ASSET_PIPELINE.md`、`assets/COMPANION_ANIMATION_CATALOG.md`、`assets/COMPANION_ASSET_AUTOMATION.md`、`assets/SKILL_ORCHESTRATED_COMPANION_PIPELINE.md`、`asset-pipeline.md`（⚠️ NEEDS UPDATE：64×64 步驟需與現行 illustrated 512 政策分開）、`prompts/*`。
+- **資產 / 美術管線**：`art/STAGE1_CHARACTER_ASSET_INDEX.md`（正式五元守護入口）、`art/character-locks/*`（外觀權威）、`art/SPECIES_MOTION_TRANSLATION.md`（鳥／海馬／鹿／狐／虎動作翻譯）、`assets/CHARACTER_ASSET_PIPELINE.md`、`assets/COMPANION_ANIMATION_CATALOG.md`、`assets/COMPANION_ASSET_AUTOMATION.md`、`assets/SKILL_ORCHESTRATED_COMPANION_PIPELINE.md`、`asset-pipeline.md`（⚠️ NEEDS UPDATE：64×64 步驟需與現行 illustrated 512 政策分開）、`prompts/*`。
 - **交接歷史**：`handoff/*` — 各輪 AI 交接；**歷史軌跡非當前狀態**，當前狀態一律查執行分類帳。
 - **歷史參考（⚠️ 僅供歷史，保留勿刪）**：`legacy-bible/**`、早期 v0.3/v1 規劃文件、`r2-canon/**`（除非現行文件明確引用某段，否則 REFERENCE ONLY）。
 
