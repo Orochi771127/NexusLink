@@ -1,0 +1,28 @@
+{
+  "jobId": "heartspark-crystalfin-seahorse-idle-calm-v1",
+  "status": "pilot-processed-owner-continue-signal",
+  "characterId": "crystalfin-seahorse",
+  "actionId": "idle_calm",
+  "seed": "output/character-pilots/crystalfin-seahorse/seed-frame/crystalfin-seahorse_idle_calm_seed_v1_512x512.png",
+  "layoutGuide": "output/character-pilots/crystalfin-seahorse/idle_calm/references/2x3-layout-guide.png",
+  "target": {
+    "rows": 2,
+    "cols": 3,
+    "cellSize": 512,
+    "sheetSize": "1536x1024",
+    "anchor": "bottom-center-hover-datum",
+    "sharedScale": true
+  },
+  "outputPolicy": {
+    "root": "output/character-pilots/crystalfin-seahorse/idle_calm",
+    "runtimePromotion": false,
+    "assetsWrite": false,
+    "humanApprovalRequired": true
+  },
+  "selectedOutput": {
+    "sheet": "output/character-pilots/crystalfin-seahorse/idle_calm/crystalfin-seahorse_idle_calm_v1_512x512_6f.png",
+    "preview": "output/character-pilots/crystalfin-seahorse/idle_calm/crystalfin-seahorse_idle_calm_v1_preview.gif",
+    "qcReport": "output/character-pilots/crystalfin-seahorse/idle_calm/qc-report.md",
+    "runtimeApproved": false
+  }
+}

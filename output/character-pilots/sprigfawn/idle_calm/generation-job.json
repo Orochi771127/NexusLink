@@ -1,0 +1,30 @@
+{
+  "jobId": "heartspark-sprigfawn-idle-calm-v1",
+  "status": "pilot-processed-owner-continue-signal",
+  "characterId": "sprigfawn",
+  "actionId": "idle_calm",
+  "seed": "output/character-pilots/sprigfawn/seed-frame/sprigfawn_idle_calm_seed_v2_512x512.png",
+  "layoutGuide": "output/character-pilots/sprigfawn/idle_calm/references/2x3-layout-guide.png",
+  "backgroundWorkflow": "solid-0000ff-then-alpha due documented brown-fur/magenta collision",
+  "target": {
+    "rows": 2,
+    "cols": 3,
+    "cellSize": 512,
+    "sheetSize": "1536x1024",
+    "anchor": "bottom-center-hoof-datum",
+    "sharedScale": true,
+    "antlerSafeMargin": true
+  },
+  "outputPolicy": {
+    "root": "output/character-pilots/sprigfawn/idle_calm",
+    "runtimePromotion": false,
+    "assetsWrite": false,
+    "humanApprovalRequired": true
+  },
+  "selectedOutput": {
+    "sheet": "output/character-pilots/sprigfawn/idle_calm/sprigfawn_idle_calm_v1_512x512_6f.png",
+    "preview": "output/character-pilots/sprigfawn/idle_calm/sprigfawn_idle_calm_v1_preview.gif",
+    "qcReport": "output/character-pilots/sprigfawn/idle_calm/qc-report.md",
+    "runtimeApproved": false
+  }
+}

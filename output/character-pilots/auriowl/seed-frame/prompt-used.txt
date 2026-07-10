@@ -1,0 +1,11 @@
+Use case: stylized-concept
+Asset type: candidate production seed frame for a 2D browser-game avian companion animation pipeline
+Primary request: Create one clean full-body production seed frame of the exact same juvenile golden owl shown in Owner Photo 4.
+Input image: Owner Photo 4 is the identity authority. Preserve the exact Stage 1 owlet species, silhouette, face, huge golden eyes, cream/gold palette, black hooked beak, feather crown, folded wings, shoulder medallion, chest gem, talons, and material language.
+Subject: Auriowl, a compact upright juvenile owl spirit with a round head and chest, very large golden-yellow eyes, short black hooked beak with gold bridge, cream facial disk and breast, layered metallic-gold feather crown and folded wings, two visible strong taloned feet, one round engraved gold shoulder medallion, and one large faceted golden diamond chest gem.
+Pose: calm grounded/perched-style idle without a branch, three-quarter view matching the reference, full body visible, both taloned feet readable on one stable bottom-center datum, wings fully folded, alert but shy expression, small precise head turn implied.
+Style: Nexus Link project-native premium illustrated 3D storybook diorama character rendering, painterly high detail, soft layered feathers with believable restrained metallic-gold response, faceted gem and engraved gold, not photoreal and not plastic.
+Composition: exactly one character, centered, occupying about 62% of a square frame, generous padding around crown feathers, folded wing tips, and talons.
+Background: perfectly flat solid #FF00FF chroma-key background, one uniform color only. No gradient, floor, branch, nest, perch prop, shadow, reflection, scenery, particles, text, labels, UI, watermark, or border. Do not use #FF00FF in the character.
+Identity locks: avian owl only; no four legs, paws, arms, hands, wing fingers, mammal ears, eagle/hawk head, griffin body, adult proportions, helmet, full armor, extra wings, altered eye color, or changed medallion/gem.
+Production constraint: crisp complete silhouette fully separated from the key background, no cropping, no feather or talon touching the image edge. This is a review seed, not a poster or scene.

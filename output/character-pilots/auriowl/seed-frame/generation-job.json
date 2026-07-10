@@ -1,0 +1,44 @@
+{
+  "jobId": "heartspark-auriowl-seed-v1",
+  "status": "seed-approved-for-pilot-animation",
+  "characterId": "auriowl",
+  "stage": "seed-frame",
+  "actionId": "idle_calm",
+  "assetType": "creature",
+  "artStyle": "project-native",
+  "view": "three-quarter",
+  "reference": {
+    "ownerPhoto": "Photo 4",
+    "sha256": "4cb137cd3026bc35ca51b8e8d760a9da90f25b4d1e1289af083defec80c2c6b9",
+    "role": "identity-authority"
+  },
+  "lockSpec": "docs/art/character-locks/auriowl.lock.md",
+  "motionSpec": "docs/art/SPECIES_MOTION_TRANSLATION.md",
+  "target": {
+    "masterFrame": "512x512",
+    "backgroundWorkflow": "solid-ff00ff-then-alpha",
+    "anchor": "bottom-center-talon-datum",
+    "positionSnap": true
+  },
+  "outputPolicy": {
+    "root": "output/character-pilots/auriowl/seed-frame",
+    "runtimePromotion": false,
+    "assetsWrite": false,
+    "humanApprovalRequired": true
+  },
+  "selectedOutput": {
+    "seed": "output/character-pilots/auriowl/seed-frame/auriowl_idle_calm_seed_v1_512x512.png",
+    "qcReport": "output/character-pilots/auriowl/seed-frame/qc-report.md",
+    "ownerIdentityApproved": true,
+    "approvalSignal": "Owner requested continuation after seed review",
+    "runtimeApproved": false
+  },
+  "nextActionAfterApproval": {
+    "animationId": "right_walk",
+    "speciesTranslation": "short grounded hop/step with optional low-flight phase only if explicitly approved",
+    "frames": 8,
+    "layout": "2x4",
+    "fps": 10,
+    "loop": true
+  }
+}

@@ -1,0 +1,249 @@
+{
+  "target": "creature",
+  "mode": "hover",
+  "prompt": "",
+  "role": "",
+  "input": "output\\character-pilots\\crystalfin-seahorse\\idle_calm\\crystalfin-seahorse_idle_calm_v1_alpha-source.png",
+  "threshold": 100,
+  "edge_threshold": 150,
+  "duration": 125,
+  "rows": 2,
+  "cols": 3,
+  "cell_size": 512,
+  "fit_scale": 0.86,
+  "trim_border": 4,
+  "edge_clean_depth": 3,
+  "align": "bottom",
+  "shared_scale": true,
+  "component_mode": "largest",
+  "component_padding": 2,
+  "min_component_area": 1,
+  "edge_touch_margin": 1,
+  "frame_labels": [
+    "idle_calm-1",
+    "idle_calm-2",
+    "idle_calm-3",
+    "idle_calm-4",
+    "idle_calm-5",
+    "idle_calm-6"
+  ],
+  "frames": [
+    {
+      "grid": [
+        0,
+        0
+      ],
+      "source_box": [
+        0,
+        0,
+        512,
+        512
+      ],
+      "component_mode": "largest",
+      "component_count": 1,
+      "selected_component_area": 70922,
+      "selected_component_bbox": [
+        147,
+        58,
+        445,
+        489
+      ],
+      "crop_bbox": [
+        145,
+        56,
+        447,
+        491
+      ],
+      "edge_touch": false,
+      "output_size": [
+        292,
+        420
+      ],
+      "paste_position": [
+        110,
+        57
+      ]
+    },
+    {
+      "grid": [
+        0,
+        1
+      ],
+      "source_box": [
+        512,
+        0,
+        1024,
+        512
+      ],
+      "component_mode": "largest",
+      "component_count": 1,
+      "selected_component_area": 73770,
+      "selected_component_bbox": [
+        126,
+        19,
+        424,
+        470
+      ],
+      "crop_bbox": [
+        124,
+        17,
+        426,
+        472
+      ],
+      "edge_touch": false,
+      "output_size": [
+        292,
+        440
+      ],
+      "paste_position": [
+        110,
+        37
+      ]
+    },
+    {
+      "grid": [
+        0,
+        2
+      ],
+      "source_box": [
+        1024,
+        0,
+        1536,
+        512
+      ],
+      "component_mode": "largest",
+      "component_count": 1,
+      "selected_component_area": 71988,
+      "selected_component_bbox": [
+        99,
+        34,
+        394,
+        476
+      ],
+      "crop_bbox": [
+        97,
+        32,
+        396,
+        478
+      ],
+      "edge_touch": false,
+      "output_size": [
+        289,
+        431
+      ],
+      "paste_position": [
+        111,
+        46
+      ]
+    },
+    {
+      "grid": [
+        1,
+        0
+      ],
+      "source_box": [
+        0,
+        512,
+        512,
+        1024
+      ],
+      "component_mode": "largest",
+      "component_count": 1,
+      "selected_component_area": 68361,
+      "selected_component_bbox": [
+        147,
+        34,
+        442,
+        450
+      ],
+      "crop_bbox": [
+        145,
+        32,
+        444,
+        452
+      ],
+      "edge_touch": false,
+      "output_size": [
+        289,
+        406
+      ],
+      "paste_position": [
+        111,
+        71
+      ]
+    },
+    {
+      "grid": [
+        1,
+        1
+      ],
+      "source_box": [
+        512,
+        512,
+        1024,
+        1024
+      ],
+      "component_mode": "largest",
+      "component_count": 1,
+      "selected_component_area": 69805,
+      "selected_component_bbox": [
+        125,
+        50,
+        422,
+        475
+      ],
+      "crop_bbox": [
+        123,
+        48,
+        424,
+        477
+      ],
+      "edge_touch": false,
+      "output_size": [
+        291,
+        415
+      ],
+      "paste_position": [
+        110,
+        62
+      ]
+    },
+    {
+      "grid": [
+        1,
+        2
+      ],
+      "source_box": [
+        1024,
+        512,
+        1536,
+        1024
+      ],
+      "component_mode": "largest",
+      "component_count": 1,
+      "selected_component_area": 68359,
+      "selected_component_bbox": [
+        101,
+        54,
+        394,
+        474
+      ],
+      "crop_bbox": [
+        99,
+        52,
+        396,
+        476
+      ],
+      "edge_touch": false,
+      "output_size": [
+        287,
+        410
+      ],
+      "paste_position": [
+        112,
+        67
+      ]
+    }
+  ],
+  "edge_touch_frames": []
+}

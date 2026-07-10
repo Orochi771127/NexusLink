@@ -1,0 +1,43 @@
+{
+  "jobId": "heartspark-crystalfin-seahorse-seed-v1",
+  "status": "seed-approved-for-pilot-animation",
+  "characterId": "crystalfin-seahorse",
+  "stage": "seed-frame",
+  "actionId": "idle_calm",
+  "assetType": "creature",
+  "artStyle": "project-native",
+  "view": "three-quarter-profile",
+  "reference": {
+    "ownerPhoto": "Photo 2",
+    "role": "identity-authority"
+  },
+  "lockSpec": "docs/art/character-locks/crystalfin-seahorse.lock.md",
+  "motionSpec": "docs/art/SPECIES_MOTION_TRANSLATION.md",
+  "target": {
+    "masterFrame": "512x512",
+    "backgroundWorkflow": "solid-ff00ff-then-alpha",
+    "anchor": "bottom-center-hover-datum",
+    "positionSnap": true
+  },
+  "outputPolicy": {
+    "root": "output/character-pilots/crystalfin-seahorse/seed-frame",
+    "runtimePromotion": false,
+    "assetsWrite": false,
+    "humanApprovalRequired": true
+  },
+  "selectedOutput": {
+    "seed": "output/character-pilots/crystalfin-seahorse/seed-frame/crystalfin-seahorse_idle_calm_seed_v1_512x512.png",
+    "qcReport": "output/character-pilots/crystalfin-seahorse/seed-frame/qc-report.md",
+    "ownerIdentityApproved": true,
+    "approvalSignal": "Owner explicitly approved and requested continuation",
+    "runtimeApproved": false
+  },
+  "nextActionAfterApproval": {
+    "animationId": "idle_calm",
+    "speciesTranslation": "gentle hover-bob with tail curl compression and fin shimmer; no feet or ground contact",
+    "frames": 6,
+    "layout": "2x3",
+    "fps": 8,
+    "loop": true
+  }
+}

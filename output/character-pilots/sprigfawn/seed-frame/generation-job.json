@@ -1,0 +1,51 @@
+{
+  "jobId": "heartspark-sprigfawn-seed-v1",
+  "status": "seed-v2-approved-for-pilot-animation",
+  "characterId": "sprigfawn",
+  "stage": "seed-frame",
+  "actionId": "idle_calm",
+  "assetType": "creature",
+  "artStyle": "project-native",
+  "view": "three-quarter",
+  "reference": {
+    "ownerPhoto": "Photo 3",
+    "role": "identity-authority"
+  },
+  "lockSpec": "docs/art/character-locks/sprigfawn.lock.md",
+  "motionSpec": "docs/art/SPECIES_MOTION_TRANSLATION.md",
+  "target": {
+    "masterFrame": "512x512",
+    "backgroundWorkflow": "v1-magenta-rejected-for-brown-fur-alpha-collision; v2-solid-0000ff-then-alpha",
+    "anchor": "bottom-center-hoof-datum",
+    "positionSnap": true,
+    "antlerSafeMargin": true
+  },
+  "outputPolicy": {
+    "root": "output/character-pilots/sprigfawn/seed-frame",
+    "runtimePromotion": false,
+    "assetsWrite": false,
+    "humanApprovalRequired": true
+  },
+  "selectedOutput": {
+    "seed": "output/character-pilots/sprigfawn/seed-frame/sprigfawn_idle_calm_seed_v2_512x512.png",
+    "sourceVersion": "v2-blue",
+    "qcReport": "output/character-pilots/sprigfawn/seed-frame/qc-report.md",
+    "ownerIdentityApproved": true,
+    "approvalSignal": "Owner requested continuation after v2 seed review",
+    "runtimeApproved": false
+  },
+  "nextActionAfterApproval": {
+    "animationId": "idle_calm",
+    "speciesTranslation": "cervid weight shift with ear flick, leaf sway, and restrained antler follow-through",
+    "frames": 6,
+    "layout": "2x3",
+    "fps": 8,
+    "loop": true
+  },
+  "rejectedOutputs": [
+    {
+      "version": "v1-magenta",
+      "reason": "Chroma distance partially keyed warm brown fur, causing unacceptable dark speckling and color shift after alpha processing. Not a review candidate."
+    }
+  ]
+}

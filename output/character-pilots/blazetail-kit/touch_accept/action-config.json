@@ -1,0 +1,39 @@
+{
+  "characterId": "blazetail-kit",
+  "animationId": "touch_accept",
+  "category": "touch",
+  "frames": 6,
+  "rows": 2,
+  "columns": 3,
+  "frameWidth": 512,
+  "frameHeight": 512,
+  "fps": 10,
+  "loop": false,
+  "anchor": {
+    "x": 0.5,
+    "y": 1
+  },
+  "view": "three-quarter",
+  "motionFamily": "vulpine-quadruped",
+  "effectPolicy": "body-only",
+  "seedFrame": "output/character-pilots/blazetail-kit/seed-frame/blazetail-kit_idle_calm_seed_v1_512x512.png",
+  "beats": [
+    "approved calm seed stance; notices welcome touch",
+    "ears soften and head inclines slightly",
+    "one small forepaw step closer; tail opens behind body",
+    "chest gem warms subtly; eyes soften; body leans closer",
+    "gentle consensual side lean while all paws remain controlled",
+    "settles into a warm open stance near the starting baseline"
+  ],
+  "forbidden": [
+    "human hand",
+    "forced embrace",
+    "submissive roll",
+    "licking or dog panting",
+    "detached fire VFX",
+    "extra tails",
+    "identity or marking drift",
+    "cell-edge crossing"
+  ],
+  "status": "approved-for-raw-generation-review-only"
+}

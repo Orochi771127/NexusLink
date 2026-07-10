@@ -1,0 +1,42 @@
+{
+  "jobId": "heartspark-blazetail-kit-seed-v1",
+  "status": "seed-approved-for-pilot-animation",
+  "characterId": "blazetail-kit",
+  "stage": "seed-frame",
+  "actionId": "idle_calm",
+  "assetType": "creature",
+  "artStyle": "project-native",
+  "view": "three-quarter",
+  "reference": {
+    "ownerPhoto": "Photo 1",
+    "sha256": "6655a7f737abcc9d2ea85cb6dc3a2428aeb24791e83b0148c40017a0338af928",
+    "role": "identity-authority"
+  },
+  "lockSpec": "docs/art/character-locks/blazetail-kit.lock.md",
+  "motionSpec": "docs/art/SPECIES_MOTION_TRANSLATION.md",
+  "target": {
+    "masterFrame": "512x512",
+    "backgroundWorkflow": "solid-ff00ff-then-alpha",
+    "anchor": "bottom-center-four-paw-baseline",
+    "positionSnap": true
+  },
+  "outputPolicy": {
+    "root": "output/character-pilots/blazetail-kit/seed-frame",
+    "runtimePromotion": false,
+    "assetsWrite": false,
+    "humanApprovalRequired": true
+  },
+  "nextActionAfterApproval": {
+    "animationId": "touch_accept",
+    "frames": 6,
+    "layout": "2x3",
+    "fps": 10,
+    "loop": false
+  },
+  "seedApproval": {
+    "ownerSignal": "OK",
+    "date": "2026-07-10",
+    "selectedFile": "output/character-pilots/blazetail-kit/seed-frame/blazetail-kit_idle_calm_seed_v1_512x512.png",
+    "alphaQc": "pass-after-1px-matte-contraction"
+  }
+}

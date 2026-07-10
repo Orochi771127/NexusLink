@@ -1,0 +1,13 @@
+{
+  "characterId": "sprigfawn",
+  "actionId": "idle_calm",
+  "speciesMotionFamily": "cervid-grounded-idle",
+  "frames": 6,
+  "layout": { "rows": 2, "cols": 3, "cellSize": 512 },
+  "fps": 8,
+  "loop": true,
+  "anchor": "bottom-center-hoof-datum",
+  "sharedScale": true,
+  "antlerSafeMargin": true,
+  "runtimeApproved": false
+}

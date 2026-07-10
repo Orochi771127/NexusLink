@@ -1,0 +1,28 @@
+{
+  "jobId": "heartspark-auriowl-right-walk-v1",
+  "status": "pilot-processed-owner-continue-signal",
+  "characterId": "auriowl",
+  "actionId": "right_walk",
+  "seed": "output/character-pilots/auriowl/seed-frame/auriowl_idle_calm_seed_v1_512x512.png",
+  "layoutGuide": "output/character-pilots/auriowl/right_walk/references/2x4-layout-guide.png",
+  "target": {
+    "rows": 2,
+    "cols": 4,
+    "cellSize": 512,
+    "sheetSize": "2048x1024",
+    "anchor": "bottom-center-talon-datum",
+    "sharedScale": true
+  },
+  "outputPolicy": {
+    "root": "output/character-pilots/auriowl/right_walk",
+    "runtimePromotion": false,
+    "assetsWrite": false,
+    "humanApprovalRequired": true
+  },
+  "selectedOutput": {
+    "sheet": "output/character-pilots/auriowl/right_walk/auriowl_right_walk_v1_512x512_8f.png",
+    "preview": "output/character-pilots/auriowl/right_walk/auriowl_right_walk_v1_preview.gif",
+    "qcReport": "output/character-pilots/auriowl/right_walk/qc-report.md",
+    "runtimeApproved": false
+  }
+}

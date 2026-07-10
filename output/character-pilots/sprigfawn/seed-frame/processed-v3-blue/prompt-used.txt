@@ -1,0 +1,8 @@
+Use case: stylized-concept
+Asset type: replacement production seed frame for a 2D browser-game cervid companion animation pipeline
+Primary request: Recreate the exact juvenile leaf-antlered fawn in Owner Photo 3 as one clean full-body animation seed. Preserve its long-legged young deer silhouette, large ears, huge green eyes, warm chestnut and cream coat, white fawn spots, four dark cloven hooves, short tail, leafy branch antlers, green vine markings, leaf collar, and faceted green chest gem.
+Pose: calm three-quarter standing idle matching the reference, all four cloven hooves on one stable bottom-center datum, full antlers and every leaf visible with generous clearance.
+Style: Nexus Link project-native premium illustrated 3D storybook game character, painterly high detail, soft fur, natural wood and leaves, restrained gem highlights.
+Background: perfectly flat uniform solid pure #0000FF chroma-key blue, exactly one background color. No gradient, texture, lighting variation, floor, shadow, scenery, grass, particles, text, UI, watermark, or border. Do not use #0000FF anywhere on the character.
+Composition: exactly one full-body fawn centered at about 58% of the square frame, no cropping or edge contact.
+Strict negatives: no paws, cat/canine feet, horse head or mane, goat horns, moose antlers, adult stag body, extra legs, missing hoof, oversized or leafless antlers, armor redesign, altered eyes, missing vine markings, missing chest gem, poster, scene, or display stand.

@@ -1,0 +1,13 @@
+{
+  "characterId": "crystalfin-seahorse",
+  "actionId": "idle_calm",
+  "speciesMotionFamily": "aquatic-hover",
+  "frames": 6,
+  "layout": { "rows": 2, "cols": 3, "cellSize": 512 },
+  "fps": 8,
+  "loop": true,
+  "anchor": "bottom-center-hover-datum",
+  "sharedScale": true,
+  "groundContactAllowed": false,
+  "runtimeApproved": false
+}

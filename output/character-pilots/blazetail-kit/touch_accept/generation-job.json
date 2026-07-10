@@ -1,0 +1,23 @@
+{
+  "jobId": "heartspark-blazetail-kit-touch-accept-v1",
+  "status": "pilot-processed-owner-continue-signal",
+  "characterId": "blazetail-kit",
+  "animationId": "touch_accept",
+  "lockSpec": "docs/art/character-locks/blazetail-kit.lock.md",
+  "actionConfig": "output/character-pilots/blazetail-kit/touch_accept/action-config.json",
+  "identitySeed": "output/character-pilots/blazetail-kit/seed-frame/blazetail-kit_idle_calm_seed_v1_512x512.png",
+  "layoutGuide": "output/character-pilots/blazetail-kit/touch_accept/references/2x3-layout-guide.png",
+  "outputPolicy": {
+    "root": "output/character-pilots/blazetail-kit/touch_accept",
+    "rawBackground": "#FF00FF",
+    "runtimePromotion": false,
+    "assetsWrite": false,
+    "humanApprovalRequired": true
+  },
+  "selectedOutput": {
+    "sheet": "output/character-pilots/blazetail-kit/touch_accept/blazetail-kit_touch_accept_v1_512x512_6f.png",
+    "preview": "output/character-pilots/blazetail-kit/touch_accept/blazetail-kit_touch_accept_v1_preview.gif",
+    "qcReport": "output/character-pilots/blazetail-kit/touch_accept/qc-report.md",
+    "runtimeApproved": false
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "target": "creature",
+  "mode": "single",
+  "prompt": "",
+  "role": "",
+  "input": "output\\character-pilots\\auriowl\\seed-frame\\auriowl_idle_calm_seed_v1_alpha-source.png",
+  "threshold": 100,
+  "edge_threshold": 150,
+  "duration": 200,
+  "single_size": 512
+}

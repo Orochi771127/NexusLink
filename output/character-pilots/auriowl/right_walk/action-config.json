@@ -1,0 +1,13 @@
+{
+  "characterId": "auriowl",
+  "actionId": "right_walk",
+  "speciesMotionFamily": "avian-grounded-step-hop",
+  "frames": 8,
+  "layout": { "rows": 2, "cols": 4, "cellSize": 512 },
+  "fps": 10,
+  "loop": true,
+  "anchor": "bottom-center-talon-datum",
+  "sharedScale": true,
+  "flightAllowed": false,
+  "runtimeApproved": false
+}

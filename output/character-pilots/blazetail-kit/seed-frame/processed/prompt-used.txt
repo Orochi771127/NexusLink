@@ -1,0 +1,11 @@
+Use case: stylized-concept
+Asset type: candidate production seed frame for a 2D browser-game companion animation pipeline
+Primary request: Create one clean full-body production seed frame of the exact same juvenile fire fox shown in the Owner reference image.
+Input image: Owner Photo 1 is the identity authority. Preserve the exact species, Stage 1 age, silhouette family, face, eyes, palette, markings, chest gem, material language, and single flame-tail identity.
+Subject: Blazetail Kit, a compact juvenile fox spirit with very large upright triangular ears, short fox muzzle, huge warm amber eyes, cream cheeks/chest, four sturdy small paws, one oversized upward S-curve flame-fur tail, orange diamond chest gem in a restrained gold mount, and stable golden spiral-flame markings.
+Pose: calm neutral standing idle, three-quarter view matching the reference direction, full body visible, all four paws readable and grounded on one stable bottom-center baseline, relaxed alert ears, quiet warm expression, tail held clearly behind the body without covering the paws.
+Style/medium: Nexus Link project-native premium illustrated 3D storybook diorama character rendering, painterly high detail, soft stylized fur, believable faceted gem and warm gold, luminous layered fur-fire rather than photoreal flames or plastic.
+Composition: one character only, centered, character occupies about 65% of the square frame, generous padding around ear tips, flame tail, and paws.
+Background: perfectly flat solid #FF00FF chroma-key background. Uniform color only; no gradient, texture, lighting variation, floor plane, reflection, cast shadow, contact shadow, scenery, particles, smoke, border, labels, UI, text, or watermark. Do not use #FF00FF anywhere in the character.
+Identity locks: exactly one tail; no wolf/dog/cat drift; no adult proportions; no extra flames detached from the body; no extra armor; no wings or horns; no altered eye color; no changed marking placement; no white presentation background.
+Production constraint: crisp complete silhouette fully separated from the key background, no cropping, no part touching the image edge. This is a review seed, not a poster or scene.

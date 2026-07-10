@@ -1,0 +1,41 @@
+{
+  "jobId": "heartspark-starstripe-cub-seed-v1",
+  "status": "seed-generated-awaiting-owner-identity-approval",
+  "characterId": "starstripe-cub",
+  "stage": "seed-frame",
+  "actionId": "idle_calm",
+  "assetType": "creature",
+  "artStyle": "project-native",
+  "view": "three-quarter",
+  "reference": {
+    "ownerPhoto": "Photo 5",
+    "role": "identity-authority"
+  },
+  "lockSpec": "docs/art/character-locks/starstripe-cub.lock.md",
+  "motionSpec": "docs/art/SPECIES_MOTION_TRANSLATION.md",
+  "target": {
+    "masterFrame": "512x512",
+    "backgroundWorkflow": "solid-ff00ff-then-alpha",
+    "anchor": "bottom-center-paw-datum",
+    "positionSnap": true
+  },
+  "outputPolicy": {
+    "root": "output/character-pilots/starstripe-cub/seed-frame",
+    "runtimePromotion": false,
+    "assetsWrite": false,
+    "humanApprovalRequired": true
+  },
+  "selectedOutput": {
+    "seed": "output/character-pilots/starstripe-cub/seed-frame/starstripe-cub_idle_calm_seed_v1_512x512.png",
+    "qcReport": "output/character-pilots/starstripe-cub/seed-frame/qc-report.md",
+    "runtimeApproved": false
+  },
+  "nextActionAfterApproval": {
+    "animationId": "touch_accept",
+    "speciesTranslation": "feline shoulder soften, head lean, slow blink, and tail curl release without canine play-bow",
+    "frames": 6,
+    "layout": "2x3",
+    "fps": 8,
+    "loop": false
+  }
+}

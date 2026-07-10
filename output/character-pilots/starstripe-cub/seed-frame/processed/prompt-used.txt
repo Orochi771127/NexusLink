@@ -1,0 +1,11 @@
+Use case: stylized-concept
+Asset type: candidate production seed frame for a 2D browser-game feline companion animation pipeline
+Primary request: Create one clean full-body production seed frame of the exact same juvenile blue-white tiger cub shown in Owner Photo 5.
+Input image: Owner Photo 5 is the identity authority. Preserve the exact tiger-cub species, compact sturdy feline silhouette, face, huge pink-magenta eyes, small pink nose, rounded ears, white fluffy coat, cobalt/sky-blue and charcoal-black tiger stripes, large rounded paws, curled striped tail, gold collar armor, and glowing pale-gold star chest gem.
+Subject: Starstripe Cub, a compact juvenile tiger cub with a broad rounded head, small rounded feline ears with pink inner fur, large pink-magenta eyes, small rose-pink nose, white cheek/chest/muzzle fur, layered white and blue coat, cobalt/sky-blue stripes edged by charcoal-black accents, four sturdy short feline legs with oversized rounded paws, a thick upward-curled striped tail, and one ornate gold collar carrying a softly glowing pale-gold star-shaped chest gem.
+Pose: calm standing feline idle, three-quarter view matching the reference, full body and all four paws visible on one stable bottom-center datum, shoulders relaxed, tail curled upward, gentle observant expression.
+Style: Nexus Link project-native premium illustrated 3D storybook game-character rendering, painterly high detail, soft layered fur, restrained gold and gem highlights; not photoreal and not plastic.
+Composition: exactly one character, centered, occupying about 62% of a square frame, generous padding around ears, tail curl, paws, and fur silhouette.
+Background: perfectly flat solid #FF00FF chroma-key background, one uniform color only. No gradient, floor, shadow, reflection, scenery, particles, text, labels, UI, watermark, or border. Do not use #FF00FF in the character.
+Identity locks: feline tiger cub only; no fox muzzle, canine ears, wolf body, dog paws, lion mane, adult tiger proportions, extra legs, missing paw, thin straight tail, orange tiger recolor, altered pink-magenta eyes, armor redesign, or missing star chest gem.
+Production constraint: crisp complete silhouette fully separated from the key background, no cropping, no ear, tail, paw, fur, collar, or gem touching the image edge. This is a review seed, not a poster or scene.
