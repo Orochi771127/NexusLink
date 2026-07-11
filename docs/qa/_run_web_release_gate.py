@@ -464,23 +464,25 @@ def complete_onboarding_for_probe(page):
         return {"startedVisible": False, "completed": True, "actions": []}
 
     actions = [
-        ("start", "identity"),
-        ("skip-identity", "guidance"),
-        ("guidance-next", "meet"),
-        ("complete", None),
+        ("start", '[data-onboarding-action="start"]', "identity"),
+        ("skip-identity", '[data-onboarding-action="skip-identity"]', "guidance"),
+        ("guidance-next", '[data-onboarding-action="guidance-next"]', "bond"),
+        # 初遇定情：選 greyshade-cat 保持 probe 與舊預設 companion 一致。
+        ("bond-choose", '[data-onboarding-action="bond-choose"][data-bond-id="greyshade-cat"]', "meet"),
+        ("complete", '[data-onboarding-action="complete"]', None),
     ]
     completed_actions = []
-    for action, expected_step in actions:
+    for action, selector, expected_step in actions:
         clicked = page.evaluate(
             """
-            (action) => {
-              const button = document.querySelector(`[data-onboarding-action="${action}"]`);
+            (selector) => {
+              const button = document.querySelector(selector);
               if (!button) return false;
               button.click();
               return true;
             }
             """,
-            action,
+            selector,
         )
         if not clicked:
             return {
