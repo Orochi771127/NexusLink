@@ -1866,3 +1866,12 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Owner authorized completion of the full workflow and publication to `main` after validation.
 - Visual approval covers the five 29-action review catalogs and the cross-character review board.
 - Approval does not by itself promote files into `assets/`, alter runtime selection, or mark the formal five runtime-ready; those remain a separate GROUNDWORK task.
+### 2026-07-11 - Codex - Formal Heartspark Council Catalog Publication - COMPLETED
+
+- Lane: Game Art, UI, And Visual Production
+- Published the Owner-approved review delivery package to `origin/main` in commit `68c786137ab5adb5a14a5fab4d3b68b7c2b3160c` (`Add approved Heartspark Council animation catalogs`).
+- Delivery includes 145 selected sheets, five character manifests and QC reports, the cross-catalog status/report, the Owner review board, and rejected-version cleanup already in task scope.
+- Verified local `main`, `origin/main`, and GitHub `main` resolved to the same commit after push.
+- Local raw, alpha, preview, split-frame, edit-canvas and pipeline intermediates were retained for future art repair but hidden through local `.git/info/exclude`; they are not part of repository history or Claude Code's normal status view.
+- Current handoff boundary: visual catalogs are Owner-approved review deliverables, but no file has been promoted into `assets/` and the formal five remain non-runtime-ready.
+- Next safe action for Claude Code: read `output/character-pilots/HEARTSPARK_COUNCIL_FULL_CATALOG_QC.md`, `output/character-pilots/heartspark-council-full-catalog-status.json`, each character's `catalog-selected-outputs.json`, `docs/art/SPECIES_MOTION_TRANSLATION.md`, and this lane. Open a separately authorized GROUNDWORK task before any `assets/` copy, registry promotion, Pixi wiring, or runtime selection change.
