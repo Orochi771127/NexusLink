@@ -1,6 +1,6 @@
 {
   "jobId": "heartspark-blazetail-kit-touch-accept-v1",
-  "status": "pilot-processed-owner-continue-signal",
+  "status": "v1-autonomous-reaudit-rejected-internal-boundary-crop-v2-prepared",
   "characterId": "blazetail-kit",
   "animationId": "touch_accept",
   "lockSpec": "docs/art/character-locks/blazetail-kit.lock.md",
@@ -14,10 +14,5 @@
     "assetsWrite": false,
     "humanApprovalRequired": true
   },
-  "selectedOutput": {
-    "sheet": "output/character-pilots/blazetail-kit/touch_accept/blazetail-kit_touch_accept_v1_512x512_6f.png",
-    "preview": "output/character-pilots/blazetail-kit/touch_accept/blazetail-kit_touch_accept_v1_preview.gif",
-    "qcReport": "output/character-pilots/blazetail-kit/touch_accept/qc-report.md",
-    "runtimeApproved": false
-  }
+  "rejectionHistory": [{"version":"v1","decision":"autonomous-reaudit-rejected","reason":"internal cell boundary audit found zero right margin in frame 1 and zero left margin in frame 2; tail/body crop risk","disposition":"generated assets and obsolete QC deleted"}]
 }

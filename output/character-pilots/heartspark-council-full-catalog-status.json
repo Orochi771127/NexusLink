@@ -1,0 +1,16 @@
+{
+  "roster": [
+    {"characterId": "blazetail-kit", "selectedActions": 29, "minimumTransparentMarginPx": 27},
+    {"characterId": "auriowl", "selectedActions": 29, "minimumTransparentMarginPx": 26},
+    {"characterId": "crystalfin-seahorse", "selectedActions": 29, "minimumTransparentMarginPx": 33},
+    {"characterId": "sprigfawn", "selectedActions": 29, "minimumTransparentMarginPx": 32},
+    {"characterId": "starstripe-cub", "selectedActions": 29, "minimumTransparentMarginPx": 37}
+  ],
+  "selectedSheetCount": 145,
+  "expectedSheetCount": 145,
+  "mechanicalQa": "passed",
+  "speciesMotionReview": "owner-approved-2026-07-11",
+  "sleepPolicy": "sleep-only loops; waking isolated in idle_wake",
+  "runtimeReady": false,
+  "nextGate": "separately authorized GROUNDWORK promotion task"
+}

@@ -1,0 +1,19 @@
+{
+  "characterId": "sprigfawn",
+  "strategy": "character-vertical-p1-p2-p3",
+  "catalogSize": 29,
+  "completedCount": 29,
+  "completed": [
+    "idle_calm", "idle_happy", "idle_angry", "idle_sad", "idle_defensive", "blink",
+    "right_walk", "left_walk", "touch_accept", "touch_guarded", "touch_reject",
+    "idle_sick", "idle_distant", "idle_enjoy", "sit", "sleep", "idle_wake",
+    "special_angry", "special_sad", "hug", "idle_dance", "idle_wash", "special_dance",
+    "attack_basic", "skill_cast", "defend", "hit", "faint", "victory"
+  ],
+  "inProgress": null,
+  "pending": [],
+  "autonomousQc": "passed-review-candidate",
+  "runtimeApproved": false,
+  "humanApprovalRequired": false,
+  "ownerVisualApproval": "approved-2026-07-11"
+}

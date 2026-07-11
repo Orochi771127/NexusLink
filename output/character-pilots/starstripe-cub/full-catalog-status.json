@@ -1,0 +1,18 @@
+{
+  "characterId": "starstripe-cub",
+  "status": "review-catalog-complete",
+  "runtimeReady": false,
+  "selectedActionCount": 29,
+  "expectedActionCount": 29,
+  "missingActions": [],
+  "technicalQa": {
+    "rgba": true,
+    "frameSize": "512x512",
+    "minimumTransparentMarginPx": 37,
+    "tailContainedInEveryFrame": true,
+    "sleepLoopContainsSleepingFramesOnly": true,
+    "wakeMotionIsSeparate": true
+  },
+  "ownerVisualApproval": "approved-2026-07-11",
+  "approvalGate": "visual review complete; separate GROUNDWORK authorization required before assets/runtime promotion"
+}

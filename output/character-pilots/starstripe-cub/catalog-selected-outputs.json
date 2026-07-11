@@ -1,0 +1,14 @@
+{
+  "characterId": "starstripe-cub",
+  "version": 1,
+  "frameSize": [512, 512],
+  "actions": [
+    "idle_calm", "idle_happy", "idle_angry", "idle_sad", "idle_defensive", "blink",
+    "right_walk", "left_walk", "touch_accept", "touch_guarded", "touch_reject",
+    "idle_sick", "idle_distant", "idle_enjoy", "sit", "sleep", "idle_wake",
+    "special_angry", "special_sad", "hug", "idle_dance", "idle_wash", "special_dance",
+    "attack_basic", "skill_cast", "defend", "hit", "faint", "victory"
+  ],
+  "selectionRule": "Use each action directory's starstripe-cub_<action>_v1_512x512_<frames>f.png",
+  "runtimeReady": false
+}

@@ -1,6 +1,6 @@
 {
   "jobId": "heartspark-starstripe-cub-seed-v1",
-  "status": "seed-generated-awaiting-owner-identity-approval",
+  "status": "seed-approved-for-pilot-animation",
   "characterId": "starstripe-cub",
   "stage": "seed-frame",
   "actionId": "idle_calm",
@@ -28,6 +28,8 @@
   "selectedOutput": {
     "seed": "output/character-pilots/starstripe-cub/seed-frame/starstripe-cub_idle_calm_seed_v1_512x512.png",
     "qcReport": "output/character-pilots/starstripe-cub/seed-frame/qc-report.md",
+    "ownerIdentityApproved": true,
+    "approvalSignal": "Owner requested continuation after seed review",
     "runtimeApproved": false
   },
   "nextActionAfterApproval": {

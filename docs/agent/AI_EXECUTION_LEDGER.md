@@ -764,6 +764,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 2 - Game Art, UI, And Visual Production
 
+### 2026-07-11 - Codex - Formal Five Pilot Set Completed In Review Staging
+
+- Status: `VERIFIED` review checkpoint; no runtime approval.
+- Branch / commit: `main` / uncommitted continuation after the previously pushed formal-five checkpoint.
+- Scope: Complete the missing Starstripe Cub species-specific pilot under `output/character-pilots/starstripe-cub/touch_accept/` so all five formal Heartspark Council members now have an approved identity seed and one processed motion-family review pilot. No `assets/**`, runtime, registry, manifest, save/state, tool, script, dependency, or integration changes.
+- Work performed: Recorded Owner continuation as Starstripe seed approval. Generated a six-frame 2x3 feline `touch_accept` sheet on a green key background to protect the locked pink-magenta eyes, then applied chroma cleanup, six-frame extraction, shared-scale normalization, and four-paw bottom alignment. Exported canonical transparent sheet and GIF preview with job/config/prompt/QC records.
+- Verification: Exact 1536x1024 RGBA sheet with six 512x512 cells; transparent corners; no edge-touch frames; grounded alpha bottoms y=474-475. Visual review confirms feline shoulder/neck softening, head lean, slow blink, relaxed cheeks, forepaw settle, and restrained tail-curl release. No human hand, canine play-bow, fox flourish, missing paw, eye-color loss, or green-key spill is visible. JSON parses, PNG decode checks and `git diff --check` pass.
+- Problems / risks: Like the other generated pilots, frame-level stripe, whisker, collar engraving, and fur microdetails drift slightly and frame 1 is not a pixel-identical seed lockback. All five pilots remain review candidates outside runtime roots; comparative Owner approval and a separate GROUNDWORK asset-readiness task are still required before any `assets/**` promotion.
+- Next safe action: Present the five selected pilot sheets/previews as one comparative review set. If approved, define a narrow promotion TASK_PACK with exact final actions, cleanup/lockback requirements, GPU-memory/loading budget, asset paths, metadata, and runtime integration tests.
+- Required reading: `docs/art/STAGE1_CHARACTER_ASSET_INDEX.md`, all five character locks, `docs/art/SPECIES_MOTION_TRANSLATION.md`, the five selected pilot `qc-report.md` files, and this lane.
+
 ### 2026-07-10 - Codex - Formal Five Species-Specific Character Pilot Checkpoint
 
 - Status: `VERIFIED` checkpoint; review outputs only, no runtime approval.
@@ -1720,3 +1731,138 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Problems / risks: This is a visual direction/spec update only. Any UI reskin, runtime scene replacement, companion art regeneration, or asset promotion still requires a separate approved task and human art approval.
 - Next safe action: Use `docs/assets/NEXUS_LINK_ART_STYLE_TARGET.md` as the first style reference for future Moonlake 3D/DCC source work and companion prompt generation.
 - Required reading: `docs/assets/NEXUS_LINK_ART_STYLE_TARGET.md`, `docs/assets/HABITAT_AUTOMATION_WORKFLOW.md`, `docs/assets/LINKARA_HABITAT_LAYERING_AND_VISUAL_LOCKS.md`, `docs/assets/COMPANION_ASSET_AUTOMATION.md`, `AGENTS.md`, `CLAUDE.md`, `ACCEPTANCE.md`, and this lane.
+
+### 2026-07-11 - Codex - Formal Five Full Catalog Autonomous Production
+
+- Lane: `Game Art, UI, And Visual Production`
+- Status: `IN PROGRESS`
+- Branch / commit: `main` / uncommitted review staging; no commit or push is authorized for this continuation.
+- Scope: Producing the formal Heartspark Council animation catalog under `output/character-pilots/**` only. The legacy five remain untouched, and this work does not write `assets/**`, `src/**`, runtime registries, Pixi wiring, save state, tools, or scripts.
+- Work strategy: Complete one character vertically through the animation catalog in P1 then P2 then P3 order, beginning with `blazetail-kit`. Every action is one coherent whole-sheet generation, reference-anchored to its approved seed, normalized to 512px cells with a bottom-center datum, and self-reviewed before it is marked as a review candidate.
+- Risks / gates: Species motion remains distinct (fox, owl, seahorse, deer, tiger); no generic quadruped reuse is allowed. Generated material is review-only and cannot be promoted into runtime assets without a separate GROUNDWORK task and human visual approval.
+- Required reading: `docs/assets/COMPANION_ANIMATION_CATALOG.md`, `docs/art/SPECIES_MOTION_TRANSLATION.md`, `output/character-pilots/FULL_CATALOG_PRODUCTION_PLAN.md`, the character seed and action records, `AGENTS.md`, `CLAUDE.md`, `ACCEPTANCE.md`, and this lane.
+
+### 2026-07-11 - Codex - Blazetail Kit Full Catalog Review Staging Completed
+
+- Lane: `Game Art, UI, And Visual Production`
+- Status: `VERIFIED`
+- Branch / commit: `main` / uncommitted review staging; no commit or push performed.
+- Scope: Completed the formal `blazetail-kit` animation catalog under `output/character-pilots/blazetail-kit/**` only. No `assets/**`, `src/**`, runtime registry, Pixi wiring, save state, tools, scripts, dependency, or build changes were made.
+- Work performed: Generated and normalized all 29 catalog actions through P1, P2, and P3. After the owner identified internal tail cropping, changed the production method from abstract grid prompting to identity-preserving edit canvases with pre-positioned complete silhouettes and large per-cell clearance. Re-audited earlier actions, replaced `idle_happy`, `touch_accept`, `idle_calm`, `skill_cast`, and `special_angry` candidates where necessary, and deleted rejected generated outputs.
+- Verification: `catalog-selected-outputs.json` contains 29 selected sheets. Every selected sheet decodes as RGBA, uses exact `512×512` cells, and matches its catalog grid. Raw per-cell alpha audit found no selected boundary contacts; minimum cell-side clearance is 12 source pixels. Visual review checked identity locks, vulpine motion, emotional boundary language, complete tails, body-only combat sheets, and absence of selected detached FX. `full-catalog-status.json` records `29/29` complete.
+- Problems / risks: These are AI-generated review candidates, not shipped assets. Human comparative review is still required, especially for left/right locomotion readability, higher-amplitude dance/combat actions, and emotional nuance. Runtime promotion remains a separate GROUNDWORK task.
+- Next safe action: Human review the previews listed by `catalog-selected-outputs.json`. If accepted, either begin `auriowl` catalog production in review staging or open a separately approved GROUNDWORK promotion package for selected Blazetail Kit assets.
+- Required reading: `output/character-pilots/blazetail-kit/CATALOG_QC_REPORT.md`, `output/character-pilots/blazetail-kit/catalog-selected-outputs.json`, `output/character-pilots/blazetail-kit/full-catalog-status.json`, `docs/assets/COMPANION_ANIMATION_CATALOG.md`, `docs/art/SPECIES_MOTION_TRANSLATION.md`, `AGENTS.md`, `CLAUDE.md`, `ACCEPTANCE.md`, and this lane.
+
+### 2026-07-11 - Codex - Auriowl Full Catalog Autonomous Production
+
+- Lane: `Game Art, UI, And Visual Production`
+- Status: `IN PROGRESS`
+- Branch / commit: `main` / uncommitted review staging; no commit or push authorized.
+- Scope: Produce the formal `auriowl` 29-action catalog under `output/character-pilots/auriowl/**`, using avian-specific perch, talon, wing, feather and short-flight motion. No `assets/**`, runtime, save state, tools, scripts, dependency, or build changes.
+- Owner correction: `sleep` is now a sleeping-only loop for every character; no lie-down, stand-up, eye-opening, or wake transition may appear. `idle_wake` owns waking motion.
+- Verification plan: exact 512px cells, RGBA delivery, internal cell-boundary alpha audit, bottom-center/perch datum, complete wing and tail-feather silhouettes, identity lock, avian action readability, and detached-FX rejection.
+- Required reading: `output/character-pilots/FULL_CATALOG_PRODUCTION_PLAN.md`, `docs/assets/COMPANION_ANIMATION_CATALOG.md`, `docs/art/SPECIES_MOTION_TRANSLATION.md`, Auriowl seed/pilot records, `AGENTS.md`, `CLAUDE.md`, `ACCEPTANCE.md`, and this lane.
+
+### 2026-07-11 - Codex - Auriowl Full Catalog Review Staging Completed
+
+- Lane: `Game Art, UI, And Visual Production`
+- Status: `VERIFIED`
+- Branch / commit: `main` / uncommitted review staging; no commit or push performed.
+- Scope: Completed the formal `auriowl` animation catalog under `output/character-pilots/auriowl/**` only. No `assets/**`, `src/**`, runtime registry, Pixi wiring, save state, tools, scripts, dependency, or build changes were made.
+- Work performed: Generated and normalized all 29 catalog actions through P1, P2, and P3 using identity-preserving edit canvases. Translated the common action IDs into grounded avian motion through short talon steps, beak preening, crown-feather expression, wing pressure, wing mantling, compact perch-height changes and contained wing flourishes. Kept combat actions body-only and rejected generic quadruped movement.
+- Owner sleep correction: Locked `sleep` to an already-asleep loop. All eight selected frames remain eyes-closed and compact with only subtle breathing/feather settling. Standing, lying-down, eye-opening and waking transitions are excluded; waking remains isolated to `idle_wake`.
+- Verification: `catalog-selected-outputs.json` contains 29 selected sheets. Every selected sheet decodes as RGBA, uses exact `512×512` cells, and matches its catalog grid. Per-cell alpha audit found no selected boundary contacts; minimum cell-side clearance is 26 pixels. Visual review checked identity locks, avian motion, full wing/talon/tail-feather silhouettes, body-only combat sheets and absence of selected detached FX. `full-catalog-status.json` records `29/29` complete.
+- Problems / risks: These are AI-generated review candidates, not shipped assets. Human comparative review is still required, especially for high-amplitude wing actions, left/right talon-step readability and emotional nuance. Runtime promotion remains a separate GROUNDWORK task.
+- Next safe action: Human review the previews listed by `catalog-selected-outputs.json`. If accepted, begin the next formal member in review staging; do not copy Auriowl into `assets/**` without a separately approved GROUNDWORK promotion task.
+- Required reading: `output/character-pilots/auriowl/CATALOG_QC_REPORT.md`, `output/character-pilots/auriowl/catalog-selected-outputs.json`, `output/character-pilots/auriowl/full-catalog-status.json`, `docs/assets/COMPANION_ANIMATION_CATALOG.md`, `docs/art/SPECIES_MOTION_TRANSLATION.md`, `AGENTS.md`, `CLAUDE.md`, `ACCEPTANCE.md`, and this lane.
+
+### 2026-07-11 - Codex - Crystalfin Seahorse Full Catalog Autonomous Production
+
+- Lane: `Game Art, UI, And Visual Production`
+- Status: `IN PROGRESS`
+- Branch / commit: `main` / uncommitted review staging; no commit or push authorized.
+- Scope: Produce the formal `crystalfin-seahorse` 29-action catalog under `output/character-pilots/crystalfin-seahorse/**`. No `assets/**`, runtime, save state, tools, scripts, dependency, or build changes.
+- Motion translation: Replace terrestrial steps with controlled horizontal hover-swim, fin paddling, torso buoyancy and spiral-tail pulses. Emotion and boundaries use gaze, snout angle, crystal-fin pressure and tail-coil tension. No legs, paws, quadruped gait or bird motion.
+- Owner sleep correction: `sleep` will remain already asleep in every frame with closed eyes, compact hover and only subtle breathing/fin/tail motion. Waking belongs only to `idle_wake`.
+- Progress: P1 eleven actions generated and normalized. Rejected the first `left_walk` for back-view orientation drift and the first `touch_reject` for detached motion lines; clean replacements were selected.
+- Required reading: `output/character-pilots/FULL_CATALOG_PRODUCTION_PLAN.md`, `docs/assets/COMPANION_ANIMATION_CATALOG.md`, `docs/art/SPECIES_MOTION_TRANSLATION.md`, Crystalfin Seahorse seed/pilot records, `AGENTS.md`, `CLAUDE.md`, `ACCEPTANCE.md`, and this lane.
+
+### 2026-07-11 - Codex - Crystalfin Seahorse Full Catalog Review Staging Completed
+
+- Lane: `Game Art, UI, And Visual Production`
+- Status: `VERIFIED`
+- Branch / commit: `main` / uncommitted review staging; no commit or push performed.
+- Scope: Completed the formal `crystalfin-seahorse` 29-action catalog under `output/character-pilots/crystalfin-seahorse/**` only. No `assets/**`, `src/**`, runtime registry, Pixi wiring, save state, tools, scripts, dependency, or build changes.
+- Work performed: Generated and normalized all P1, P2 and P3 actions through identity-preserving edit canvases. Translated common action IDs into aquatic motion using buoyancy, torso curves, crystal-fin pressure and spiral-tail thrust. Rejected and replaced the first `left_walk` for back-view orientation drift and the first `touch_reject` for detached motion lines.
+- Owner sleep correction: all eight selected `sleep` frames remain closed-eye, already-asleep floating poses with only subtle breathing, fin and tail movement. Waking remains isolated to `idle_wake`.
+- Verification: 29 selected RGBA sheets use exact `512×512` cells and correct grids. Per-cell alpha audit found no boundary contacts; minimum clearance is 33 pixels. Visual review confirmed complete crowns, fins and spiral tails, aquatic action readability, identity lock and absence of selected detached FX.
+- Problems / risks: Review candidates are not shipped assets. Human comparison remains required, especially for the elongated tail-thrust phase of `attack_basic`, locomotion direction readability and high-amplitude fin actions. Runtime promotion remains a separate GROUNDWORK task.
+- Next safe action: Human review the selected previews. If accepted, continue with `sprigfawn` in review staging; do not copy these files into `assets/**` without separate approval.
+- Required reading: `output/character-pilots/crystalfin-seahorse/CATALOG_QC_REPORT.md`, `output/character-pilots/crystalfin-seahorse/catalog-selected-outputs.json`, `output/character-pilots/crystalfin-seahorse/full-catalog-status.json`, `docs/assets/COMPANION_ANIMATION_CATALOG.md`, `docs/art/SPECIES_MOTION_TRANSLATION.md`, `AGENTS.md`, `CLAUDE.md`, `ACCEPTANCE.md`, and this lane.
+
+### 2026-07-11 - Codex - Sprigfawn Full Catalog Autonomous Production
+
+- Lane: `Game Art, UI, And Visual Production`
+- Status: `IN PROGRESS`
+- Branch / commit: `main` / uncommitted review staging; no commit or push authorized.
+- Scope: Produce the formal `sprigfawn` 29-action catalog under `output/character-pilots/sprigfawn/**`. No `assets/**`, runtime, save state, tools, scripts, dependency, or build changes.
+- Motion translation: Use juvenile deer cloven-hoof steps, ear rotation, neck height, antler angle and short-tail balance. Preserve every branch leaf and all four hooves; do not substitute generic pawed quadruped motion.
+- Owner sleep correction: `sleep` will contain only already-asleep frames with closed eyes, folded legs and subtle breathing/ear/leaf movement. Waking belongs only to `idle_wake`.
+- Progress: P1 eleven actions generated, visually reviewed, chroma-keyed, normalized to 512px cells and aligned to a shared hoof baseline.
+- Required reading: `output/character-pilots/FULL_CATALOG_PRODUCTION_PLAN.md`, `docs/assets/COMPANION_ANIMATION_CATALOG.md`, `docs/art/SPECIES_MOTION_TRANSLATION.md`, Sprigfawn seed/pilot records, `AGENTS.md`, `CLAUDE.md`, `ACCEPTANCE.md`, and this lane.
+
+### 2026-07-11 - Codex - Sprigfawn Full Catalog Review Staging Completed
+
+- Lane: `Game Art, UI, And Visual Production`
+- Status: `VERIFIED`
+- Branch / commit: `main` / uncommitted review staging; no commit or push performed.
+- Scope: Completed the formal `sprigfawn` 29-action catalog under `output/character-pilots/sprigfawn/**` only. No `assets/**`, `src/**`, runtime registry, Pixi wiring, save state, tools, scripts, dependency, or build changes.
+- Work performed: Generated and normalized P1, P2 and P3 using identity-preserving edit canvases. Translated actions into juvenile deer movement using cloven-hoof steps, ear rotation, neck height, gaze, antler angle and short-tail balance. Rest, sleep and faint use folded-leg sternal recumbency rather than a dog/cat sit.
+- Owner sleep correction: all eight selected `sleep` frames remain already-asleep curled poses with closed eyes and only subtle breathing, ear and leaf movement. Waking and standing are isolated to `idle_wake`.
+- Verification: 29 selected RGBA sheets use exact `512×512` cells and correct grids. Per-cell alpha audit found no boundary contacts; minimum clearance is 32 pixels. Visual review confirmed complete leafy branches, ears, four hooves and short tail, species-specific action readability and absence of selected detached FX.
+- Problems / risks: Review candidates are not shipped assets. Human comparison remains required, especially for antler readability during lowered-head actions, left/right gait distinction and the visual timing between `sit`, `sleep` and `idle_wake`. The new eight-frame `idle_calm` is selected as v2 to avoid the older six-frame v1 pilot.
+- Next safe action: Human review the selected previews. If accepted, continue with `starstripe-cub` in review staging; do not copy these files into `assets/**` without separate approval.
+- Required reading: `output/character-pilots/sprigfawn/CATALOG_QC_REPORT.md`, `output/character-pilots/sprigfawn/catalog-selected-outputs.json`, `output/character-pilots/sprigfawn/full-catalog-status.json`, `docs/assets/COMPANION_ANIMATION_CATALOG.md`, `docs/art/SPECIES_MOTION_TRANSLATION.md`, `AGENTS.md`, `CLAUDE.md`, `ACCEPTANCE.md`, and this lane.
+
+### 2026-07-11 - Codex - Starstripe Cub Full Catalog Autonomous Production
+
+- Lane: `Game Art, UI, And Visual Production`
+- Status: `IN PROGRESS`
+- Branch / commit: `main` / uncommitted review staging; no commit or push authorized.
+- Scope: Produce the formal `starstripe-cub` 29-action catalog under `output/character-pilots/starstripe-cub/**`. No `assets/**`, runtime, save state, tools, scripts, dependency, or build changes.
+- Motion translation: Use juvenile feline padded-paw gait, shoulder-blade roll, ear position, whisker/cheek expression, crouch height and complete ringed-tail pressure. Tail containment is a critical acceptance gate.
+- Owner sleep correction: `sleep` will contain only already-asleep curled frames with closed eyes and subtle breathing/ear/tail movement. Waking belongs only to `idle_wake`.
+- Progress: P1 eleven actions generated, visually reviewed, chroma-keyed and normalized to 512px cells. All selected P1 tails retain their full curved silhouette and visible tip.
+- Required reading: `output/character-pilots/FULL_CATALOG_PRODUCTION_PLAN.md`, `docs/assets/COMPANION_ANIMATION_CATALOG.md`, `docs/art/SPECIES_MOTION_TRANSLATION.md`, Starstripe Cub seed/pilot records, `AGENTS.md`, `CLAUDE.md`, `ACCEPTANCE.md`, and this lane.
+### 2026-07-11 - Codex - Starstripe Cub Full Catalog Autonomous Production - VERIFIED
+
+- Lane: Game Art, UI, And Visual Production
+- Completed the review-only `starstripe-cub` catalog at 29 / 29 actions under `output/character-pilots/starstripe-cub/`.
+- Visual QA preserved the appearance lock and verified that the complete blue-white-black ringed tail, including its tip, remains visible in every frame.
+- `sleep` contains only fully asleep poses; all waking motion remains isolated in `idle_wake`.
+- Technical QA passed exact 512 x 512 RGBA frame grids with a minimum transparent margin of 37 px and no failed sheets.
+- Added `full-catalog-status.json`, `CATALOG_QC_REPORT.md`, and `catalog-selected-outputs.json` for review handoff.
+- No files under `assets/` or runtime source were changed. No runtime-readiness claim, commit, or push was made.
+### 2026-07-11 - Codex - Formal Heartspark Council Cross-Catalog Audit - VERIFIED
+
+- Lane: Game Art, UI, And Visual Production
+- Cross-audited all five formal Stage 1 Heartspark Council review catalogs: 145 / 145 selected sheets across 29 shared action IDs per character.
+- Mechanical QA passed RGBA mode, exact 512 x 512 cells, divisible grids, the 4096 px sheet-edge limit, and transparent containment margins from 26 px to 37 px.
+- Species motion remained differentiated: fox, owl, hovering seahorse, deer, and tiger translations were not collapsed into one quadruped template.
+- Confirmed the global sleep rule: `sleep` is already-asleep-only and waking remains in `idle_wake`.
+- Added `output/character-pilots/HEARTSPARK_COUNCIL_FULL_CATALOG_QC.md` and `heartspark-council-full-catalog-status.json`.
+- Review staging only: no `assets/` or runtime changes, no runtime-readiness claim, and no commit or push.
+### 2026-07-11 - Codex - Heartspark Council Owner Review Board - VERIFIED
+
+- Lane: Game Art, UI, And Visual Production
+- Added `output/character-pilots/review-boards/heartspark-council-owner-review-board.png` with appearance-lock, locomotion, sleep, attack, and victory comparisons for all five formal members.
+- Investigated apparent height outliers found by cross-action bounding-box analysis. Direct sheet review confirmed pose redistribution rather than accidental scale drift: owl wings and seahorse tails extend horizontally, while sleep/faint/defend intentionally compress vertically.
+- Preserved the original selected sheets instead of applying harmful per-pose enlargement. Reaffirmed fixed frame-height scaling and bottom-center anchoring for any later runtime promotion.
+- Review staging only; no `assets/`, runtime, commit, or push changes.
+### 2026-07-11 - Owner - Formal Heartspark Council Visual Catalog Approval - APPROVED
+
+- Lane: Game Art, UI, And Visual Production
+- Owner authorized completion of the full workflow and publication to `main` after validation.
+- Visual approval covers the five 29-action review catalogs and the cross-character review board.
+- Approval does not by itself promote files into `assets/`, alter runtime selection, or mark the formal five runtime-ready; those remain a separate GROUNDWORK task.
