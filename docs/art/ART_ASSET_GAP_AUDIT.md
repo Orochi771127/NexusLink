@@ -118,7 +118,9 @@ Codex 產出的夥伴／進化型態 sheet 若要「不改程式即可用」，�
 
 ## 5. 給接手者 / Codex 的最短路徑
 
-1. 讀 §1 規格 + §2 GAP-1 表。
-2. 產 **10 張裂隙剪影**（512×512 透明 PNG，情緒配色，剪影霧體風、無臉）＋放 `assets/enemies/{enemyId}/`。
-3. 交回後由工程加 rift sprite 圖層分支（回退程序霧體）。
-4. GAP-2/3 待 Owner 對「範圍 + 是否接線」拍板後再啟。
+**機讀生產索引：`docs/art/ART_PRODUCTION_INDEX.json`**（Codex 直接讀這份逐項產圖；GAP-1 已 `status:"ready"`、GAP-2/3 `status:"blocked"`）。索引的敵人 name/flavor/emotion 由 `enemyRegistry.js` **程序生成、逐字對齊**（勿手改，registry 變了就重生）。
+
+1. 讀 `ART_PRODUCTION_INDEX.json`，迭代 `batches[].status=="ready"` 的 `items[]`。
+2. 每項產 **1 張 512×512 透明 PNG**（`frameCount:1`，剪影霧體風、無臉、情緒配色見 `emotionTints`），寫到 `item.output.stagingPath`（`output/` 工作區，**勿直接寫 `assets/**`**——GROUNDWORK，晉升是另一步 Owner 核可）。
+3. 交回後由工程加 rift sprite 圖層分支（`targetAssetPath` 依 enemyId 貼圖，回退程序霧體）。
+4. GAP-2/3 待 Owner 對「範圍 + 是否接線」拍板後才改 `status:"ready"`。

@@ -805,7 +805,8 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Verification: 敵人清單/emotion 對 `enemyRegistry`（10 敵 5 情緒各 2）交叉核對；規格三方一致（`ILLUSTRATED_COMPANION_RUNTIME_POLICY`＝`CLAUDE.md §4`＝實測 sprigfawn manifest）；Stage-1 已完成未計入。
 - Problems / risks: 5 幼獸未列入 `ASSET_MANIFEST`/`RUNTIME_COMPANION_ASSET_KEYS`＝QA 覆蓋缺口（gate 未驗這 145 張），**非美術缺口**；已在文件記錄，建議另開小工程任務補入（本輪不改程式）。GAP-2/3 需 Owner 對範圍與接線拍板。
 - Next safe action: Owner 指派 Codex 先產 GAP-1 的 10 張裂隙剪影；GAP-2/3 待功能接線與拍板。
-- Required reading: `docs/art/ART_ASSET_GAP_AUDIT.md`、`docs/design/CHAPTER_RESONANCE_ROADMAP_V2.md` §7。
+- Follow-up（2026-07-12 同日）：新增機讀生產索引 `docs/art/ART_PRODUCTION_INDEX.json`（Owner 指示「INDEX 要生產的圖，Codex 讀 INDEX 生成」）。GAP-1 十項 `status:"ready"`，敵人 name/flavor/emotion 由 `enemyRegistry.js` 程序生成、逐字對齊（allMatchRegistry 驗證通過）；含 emotionTints（RIFT_EMOTION_TINT HSL + 近似 hex）、shapeHint、staging→target 路徑與 GROUNDWORK 晉升 gate；每項＝1 張 512 靜態剪影（motion 由 runtime 相位驅動，不需動畫幀）。GAP-2/3 為 `status:"blocked"`（含 blockedOn）。
+- Required reading: `docs/art/ART_PRODUCTION_INDEX.json`、`docs/art/ART_ASSET_GAP_AUDIT.md`、`docs/design/CHAPTER_RESONANCE_ROADMAP_V2.md` §7。
 
 ### 2026-07-11 - Codex - Formal Five Pilot Set Completed In Review Staging
 

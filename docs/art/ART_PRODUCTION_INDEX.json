@@ -1,0 +1,291 @@
+{
+  "schemaVersion": 1,
+  "title": "NexusLink Art Production Index",
+  "generatedBy": "Claude Fable 5",
+  "date": "2026-07-12",
+  "sourceAudit": "docs/art/ART_ASSET_GAP_AUDIT.md",
+  "designRef": "docs/design/CHAPTER_RESONANCE_ROADMAP_V2.md",
+  "styleCanon": "CLAUDE.md §0 (Cyber-Taoism) + §4 (Companion art spec)",
+  "note": "Enemy nameZh/nameEn/emotion/emotionLabelZh/flavor are generated verbatim from src/data/enemyRegistry.js — do not hand-edit; regenerate if the registry changes.",
+  "howToUse": [
+    "Iterate batches[] where status == 'ready'. Generate every item in items[].",
+    "Write each PNG to item.output.stagingPath (Codex workspace under output/). DO NOT write into assets/** directly: assets/** is GROUNDWORK and promotion is a separate Owner-approved step (item.output.targetAssetPath is the eventual destination).",
+    "Match item.output exactly: 512x512, frameCount 1, transparent RGBA PNG; no baked background/UI/text/frame-border.",
+    "Colour: tint each figure to its emotion via batches[].emotionTints[emotion]; HSL hue+sat are the source of truth (runtime RIFT_EMOTION_TINT), hex is a convenience.",
+    "After generation, record a per-item QC note (dimensions, transparent corners, emotion colour) as the five-companion pilots did; Owner comparative approval + a GROUNDWORK asset-readiness task gate any assets/** promotion.",
+    "Do not generate batches with status != 'ready' — they are blocked on engineering wiring and/or an Owner scope decision (see batch.blockedOn)."
+  ],
+  "globalSpec": {
+    "format": "transparent PNG (RGBA)",
+    "frameSize": 512,
+    "colorSpace": "sRGB",
+    "maxSheetEdge": 4096,
+    "gridExact": true,
+    "frameCountToGrid": {
+      "1": "1x1",
+      "3": "1x3",
+      "4": "2x2",
+      "6": "2x3",
+      "8": "2x4"
+    },
+    "cleanFrameRule": "no baked white/background, no UI, no text, no display stand, no codex frame; clean subject only with transparent margins"
+  },
+  "batches": [
+    {
+      "id": "GAP-1",
+      "title": "Rift enemy silhouettes",
+      "status": "ready",
+      "count": 10,
+      "designRef": "CHAPTER_RESONANCE_ROADMAP_V2 §7 (v2): replace the procedural mist core with 10 x 512 rift silhouettes",
+      "deliverablePerItem": "ONE static 512x512 transparent PNG per enemy (frameCount 1). Motion stays code-driven: the runtime keeps the existing phase/intent-driven breathing (scale/opacity), so no animation frames are needed.",
+      "wiringNeeded": "Post-generation engineering (not art): add a rift-sprite layer in battleController that draws item.targetAssetPath keyed by enemyId, falling back to the current procedural mist when no sprite exists. Generation is NOT blocked by this.",
+      "styleRules": [
+        "Abstract emotion-mist / silhouette, NOT a creature: no face, no eyes, no mouth, no clear animal anatomy. It is emotional pollution leaking from a rift, not a monster.",
+        "Three-layer read (matches the procedural figure it replaces): soft outer mist halo / denser inner core / thin noise-vein filaments.",
+        "Cyber-Taoism aesthetic: ethereal, semi-transparent, faint glow; must read against both the day and night lake sky — keep a darker inner core so it does not vanish on a bright sky.",
+        "Subject centered in the 512 frame with transparent margins; the runtime positions/anchors it.",
+        "Each figure's overall SHAPE follows item.shapeHint (derived from its flavor) so the ten read as distinct, while all remain faceless emotion-mist."
+      ],
+      "negativePrompts": [
+        "no face",
+        "no eyes",
+        "no mouth",
+        "no realistic animal",
+        "no cute mascot",
+        "no white background",
+        "no UI or HUD",
+        "no text or watermark",
+        "no frame border",
+        "no display pedestal",
+        "no baked drop shadow on a ground plane"
+      ],
+      "emotionTints": {
+        "sadness": {
+          "labelZh": "低鳴",
+          "hslHue": 215,
+          "hslSat": "70%",
+          "approxHex": "#3C7FDD"
+        },
+        "anger": {
+          "labelZh": "沉怒",
+          "hslHue": 18,
+          "hslSat": "72%",
+          "approxHex": "#DF6B3A"
+        },
+        "anxiety": {
+          "labelZh": "迷茫",
+          "hslHue": 268,
+          "hslSat": "68%",
+          "approxHex": "#873EDA"
+        },
+        "loneliness": {
+          "labelZh": "孤鳴",
+          "hslHue": 226,
+          "hslSat": "55%",
+          "approxHex": "#4D6BCB"
+        },
+        "fatigue": {
+          "labelZh": "倦怠",
+          "hslHue": 40,
+          "hslSat": "28%",
+          "approxHex": "#AC976C"
+        }
+      },
+      "items": [
+        {
+          "enemyId": "static_wisp",
+          "nameZh": "雜訊殘影",
+          "nameEn": "Static Wisp",
+          "element": "glitch",
+          "emotion": "sadness",
+          "emotionLabelZh": "低鳴",
+          "flavor": "一縷從裂隙飄散出來的雜訊，碰到情緒就會嗡嗡作響。",
+          "shapeHint": "一縷飄散雜訊，嗡嗡震顫的細絲狀霧體，邊緣細碎。",
+          "output": {
+            "stagingPath": "output/rift-silhouettes/static_wisp/static_wisp_rift_512x512.png",
+            "targetAssetPath": "assets/enemies/static_wisp/static_wisp_rift_512x512.png",
+            "frameWidth": 512,
+            "frameHeight": 512,
+            "frameCount": 1
+          }
+        },
+        {
+          "enemyId": "tearveil_wisp",
+          "nameZh": "淚幕殘影",
+          "nameEn": "Tearveil Wisp",
+          "element": "glitch",
+          "emotion": "sadness",
+          "emotionLabelZh": "低鳴",
+          "flavor": "一層薄薄的淚光懸在裂隙口，輕輕一碰就會化開。",
+          "shapeHint": "最輕最透的一層懸垂淚光幕，將化未化。",
+          "output": {
+            "stagingPath": "output/rift-silhouettes/tearveil_wisp/tearveil_wisp_rift_512x512.png",
+            "targetAssetPath": "assets/enemies/tearveil_wisp/tearveil_wisp_rift_512x512.png",
+            "frameWidth": 512,
+            "frameHeight": 512,
+            "frameCount": 1
+          }
+        },
+        {
+          "enemyId": "crystal_golemite",
+          "nameZh": "晶屑魔像",
+          "nameEn": "Crystal Golemite",
+          "element": "earth",
+          "emotion": "anger",
+          "emotionLabelZh": "沉怒",
+          "flavor": "由遺跡碎晶聚成的小魔像，動作慢，但每一步都很沉。",
+          "shapeHint": "碎晶聚成的沉重稜角塊體，緩慢下壓感（抽象、無臉）。",
+          "output": {
+            "stagingPath": "output/rift-silhouettes/crystal_golemite/crystal_golemite_rift_512x512.png",
+            "targetAssetPath": "assets/enemies/crystal_golemite/crystal_golemite_rift_512x512.png",
+            "frameWidth": 512,
+            "frameHeight": 512,
+            "frameCount": 1
+          }
+        },
+        {
+          "enemyId": "spite_ember",
+          "nameZh": "慍火殘影",
+          "nameEn": "Spiteful Ember",
+          "element": "earth",
+          "emotion": "anger",
+          "emotionLabelZh": "沉怒",
+          "flavor": "一點按不下去的火星，動不動就往外炸。",
+          "shapeHint": "一點按不住的火星，邊緣往外炸的尖刺感。",
+          "output": {
+            "stagingPath": "output/rift-silhouettes/spite_ember/spite_ember_rift_512x512.png",
+            "targetAssetPath": "assets/enemies/spite_ember/spite_ember_rift_512x512.png",
+            "frameWidth": 512,
+            "frameHeight": 512,
+            "frameCount": 1
+          }
+        },
+        {
+          "enemyId": "rift_shade",
+          "nameZh": "裂隙暗影",
+          "nameEn": "Rift Shade",
+          "element": "void",
+          "emotion": "anxiety",
+          "emotionLabelZh": "迷茫",
+          "flavor": "貼著裂隙邊緣游動的影子，會試圖模仿你夥伴的輪廓。",
+          "shapeHint": "游動的影子，邊緣模糊擬態、似像又不像夥伴輪廓。",
+          "output": {
+            "stagingPath": "output/rift-silhouettes/rift_shade/rift_shade_rift_512x512.png",
+            "targetAssetPath": "assets/enemies/rift_shade/rift_shade_rift_512x512.png",
+            "frameWidth": 512,
+            "frameHeight": 512,
+            "frameCount": 1
+          }
+        },
+        {
+          "enemyId": "dread_coil",
+          "nameZh": "纏懼暗影",
+          "nameEn": "Dread Coil",
+          "element": "void",
+          "emotion": "anxiety",
+          "emotionLabelZh": "迷茫",
+          "flavor": "越纏越緊的影子，總在你以為沒事時又繃起來。",
+          "shapeHint": "越纏越緊的螺旋影，緊繃盤繞。",
+          "output": {
+            "stagingPath": "output/rift-silhouettes/dread_coil/dread_coil_rift_512x512.png",
+            "targetAssetPath": "assets/enemies/dread_coil/dread_coil_rift_512x512.png",
+            "frameWidth": 512,
+            "frameHeight": 512,
+            "frameCount": 1
+          }
+        },
+        {
+          "enemyId": "weary_husk",
+          "nameZh": "倦怠殘殼",
+          "nameEn": "Weary Husk",
+          "element": "void",
+          "emotion": "fatigue",
+          "emotionLabelZh": "倦怠",
+          "flavor": "一具被情緒掏空後留下的殼，沉沉地散著「好累」的低頻。",
+          "shapeHint": "被掏空的殼，中空、下垂、低頻沉重。",
+          "output": {
+            "stagingPath": "output/rift-silhouettes/weary_husk/weary_husk_rift_512x512.png",
+            "targetAssetPath": "assets/enemies/weary_husk/weary_husk_rift_512x512.png",
+            "frameWidth": 512,
+            "frameHeight": 512,
+            "frameCount": 1
+          }
+        },
+        {
+          "enemyId": "sink_weight",
+          "nameZh": "沉墜殘殼",
+          "nameEn": "Sinking Husk",
+          "element": "void",
+          "emotion": "fatigue",
+          "emotionLabelZh": "倦怠",
+          "flavor": "沉得幾乎不想動的殘殼，散著「好重、好想睡」的低頻。",
+          "shapeHint": "幾乎不動的沉墜塊，最重、往下拖。",
+          "output": {
+            "stagingPath": "output/rift-silhouettes/sink_weight/sink_weight_rift_512x512.png",
+            "targetAssetPath": "assets/enemies/sink_weight/sink_weight_rift_512x512.png",
+            "frameWidth": 512,
+            "frameHeight": 512,
+            "frameCount": 1
+          }
+        },
+        {
+          "enemyId": "hollow_echo",
+          "nameZh": "空鳴回響",
+          "nameEn": "Hollow Echo",
+          "element": "void",
+          "emotion": "loneliness",
+          "emotionLabelZh": "孤鳴",
+          "flavor": "在裂隙裡反覆迴盪的空響，像有人對著無人的夜一直喊。",
+          "shapeHint": "空心的回響環，一圈圈向外淡開。",
+          "output": {
+            "stagingPath": "output/rift-silhouettes/hollow_echo/hollow_echo_rift_512x512.png",
+            "targetAssetPath": "assets/enemies/hollow_echo/hollow_echo_rift_512x512.png",
+            "frameWidth": 512,
+            "frameHeight": 512,
+            "frameCount": 1
+          }
+        },
+        {
+          "enemyId": "drift_murmur",
+          "nameZh": "飄鳴回響",
+          "nameEn": "Drifting Murmur",
+          "element": "void",
+          "emotion": "loneliness",
+          "emotionLabelZh": "孤鳴",
+          "flavor": "在空曠裡反覆飄盪的回音，像對著沒人的夜輕輕問「還在嗎」。",
+          "shapeHint": "空曠中飄盪的回音環，鬆散、飄移。",
+          "output": {
+            "stagingPath": "output/rift-silhouettes/drift_murmur/drift_murmur_rift_512x512.png",
+            "targetAssetPath": "assets/enemies/drift_murmur/drift_murmur_rift_512x512.png",
+            "frameWidth": 512,
+            "frameHeight": 512,
+            "frameCount": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "GAP-2",
+      "title": "Companion evolution Stage-2 / Stage-3 sprites",
+      "status": "blocked",
+      "blockedOn": "Owner scope decision (core 12 forms vs full 22; MVP idle_calm loop vs full 29-animation set) AND engineering: visual-evolution switching in companionRenderer is not wired, and the 5 formal companions' evolution-line TEXT (EVOLUTION_LINES) is missing. Do not generate yet.",
+      "designRef": "heartsparkCouncilCanon.js (three-stage names) + evolutionLines.js",
+      "estimatedCount": {
+        "coreMvpIdle": 12,
+        "fullSets": 638
+      },
+      "items": []
+    },
+    {
+      "id": "GAP-3",
+      "title": "Per-region playable habitat backgrounds (chapters 2-7)",
+      "status": "blocked",
+      "blockedOn": "Engineering: region-habitat switching is not wired (game stays in the moonlake habitat; chapters play as a standoff overlay). Atlas far-view region JPGs already exist. Do not generate yet.",
+      "designRef": "assets/backgrounds/LakeNightCamp_v2 (the moonlake reference set to match)",
+      "estimatedCount": {
+        "backgrounds": 12
+      },
+      "items": []
+    }
+  ]
+}
