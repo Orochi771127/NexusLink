@@ -7,6 +7,14 @@ import {
   upsertHabitatTrace
 } from "../engine/habitatTraceEngine.js";
 import { buildEventReflection } from "../engine/soulTalkComposer.js";
+import { getChapterForNode, getChapterByNumber } from "../data/chapterRegistry.js";
+import { getChapterNarrative } from "../data/chapterNarrative.js";
+import { getCompanionById } from "../data/companionRegistry.js";
+import {
+  canAskResonance,
+  evaluateResonanceInvite,
+  listAskableChapters
+} from "../engine/resonanceInviteEngine.js";
 import EventBus from "../utils/eventBus.js";
 
 // ---- UI 層佈局常數（不動 explorationNodes 資料、不動 schema） ----
@@ -17,8 +25,31 @@ const NODE_LAYOUT = {
   misttide_shore: { x: 78, y: 61, tone: "calm", glyph: "≋" },
   crystal_ruins: { x: 28, y: 24, tone: "discovery", glyph: "◇" },
   rift_observatory: { x: 74, y: 15, tone: "danger", glyph: "✕" },
-  mirror_hollow: { x: 50, y: 42, tone: "calm", glyph: "☽" }
+  mirror_hollow: { x: 50, y: 42, tone: "calm", glyph: "☽" },
+  // 章節前沿節點（CH-5b）：同一時間只有「當前章」的一對會顯示（見 isNodeVisible），
+  // 故各章共用上方前沿帶（y 6-16），不與月湖下方群（y 24-83）重疊。
+  plains_windrest: { x: 34, y: 15, tone: "calm", glyph: "❋" },
+  plains_rift: { x: 48, y: 8, tone: "danger", glyph: "✕" },
+  forge_emberpath: { x: 40, y: 15, tone: "discovery", glyph: "◈" },
+  forge_rift: { x: 55, y: 8, tone: "danger", glyph: "✕" },
+  harbor_quayside: { x: 44, y: 15, tone: "calm", glyph: "≈" },
+  harbor_rift: { x: 58, y: 8, tone: "danger", glyph: "✕" },
+  core_lightwell: { x: 42, y: 15, tone: "discovery", glyph: "◇" },
+  core_rift: { x: 56, y: 8, tone: "danger", glyph: "✕" },
+  tidal_saltmarsh: { x: 38, y: 15, tone: "calm", glyph: "≋" },
+  tidal_rift: { x: 52, y: 8, tone: "danger", glyph: "✕" },
+  mystic_summitgate: { x: 46, y: 15, tone: "calm", glyph: "▲" },
+  mystic_rift: { x: 60, y: 8, tone: "danger", glyph: "✕" }
 };
+
+// 章節前沿節點的可見性（CH-5b）：月湖（第 1 章）＝家，永遠可見；
+// 其餘章節節點只在「當前章」顯示——旅程往前走，走過的章由世界地圖（atlas）留存，
+// 不在探索圖上堆積（避免最終 18 個節點擠成一團；也維持「當下能做什麼」的清爽）。
+function isNodeVisible(node, chapterProgress) {
+  const chapterNo = getChapterForNode(node.id);
+  if (chapterNo === 1) return true;
+  return chapterNo === Number(chapterProgress?.current);
+}
 
 // 光路：靈魂連線（從營地往外延伸，再延伸到外圈）。
 const PATH_LINKS = [
@@ -77,10 +108,12 @@ export function createMapController({ store, panelManager, soulTalkController, s
   const nodeButtons = new Map();
   let toastTimer = null;
   let pendingEncounterTimer = null;
+  let inviteBanner = null;
 
   function open() {
     ensurePaths();
     render();
+    renderInviteBanner();
     hideToast();
     panelManager.openPanel("map");
   }
@@ -132,12 +165,22 @@ export function createMapController({ store, panelManager, soulTalkController, s
     const state = store.getState();
     const visitCounts = state.explorationProgress?.visitCounts || {};
     const currentNodeId = state.explorationProgress?.lastNodeId || null;
+    const chapterProgress = state.chapterProgress || { current: 1, completed: [] };
 
     EXPLORATION_NODES.forEach((node) => {
       const layout = NODE_LAYOUT[node.id];
       if (!layout) return;
 
+      // 章節前沿節點：不屬當前章時隱藏（已建立過的按鈕改 hidden，未建立則跳過）。
+      const visible = isNodeVisible(node, chapterProgress);
+      if (!visible) {
+        const existing = nodeButtons.get(node.id);
+        if (existing) existing.hidden = true;
+        return;
+      }
+
       let button = nodeButtons.get(node.id);
+      if (button) button.hidden = false;
       if (!button) {
         button = document.createElement("button");
         button.type = "button";
@@ -274,6 +317,11 @@ export function createMapController({ store, panelManager, soulTalkController, s
     const state = store.getState();
     pingNode(node.id);
 
+    // 相遇（CH-5b）：踏入某章區域的第一個節點 = 與該章心核夥伴的初次相遇。
+    // 相遇是「自成一拍」的時刻——只演出、寫下 metAt 與關係快照，這一次不結算探索
+    // （下一次點擊才正常探索/對峙）。相遇不消耗能量、不解鎖、不給獎勵。
+    if (maybeMeetChapterCompanion(node, state)) return;
+
     if ((state.energy || 0) <= 0 && node.eventType !== "rest") {
       const message = "夥伴的能量見底了。先回月湖營地休息，再出發吧。";
       // 只走 toast：系統狀態不再塞進聊天紀錄（私測回報會被誤認成對話回覆）。
@@ -339,6 +387,141 @@ export function createMapController({ store, panelManager, soulTalkController, s
         );
       }
     }
+  }
+
+  // ---- 相遇（CH-5b）：首次踏入某章區域即與該章夥伴相遇（自成一拍） ----
+  function maybeMeetChapterCompanion(node, state) {
+    const chapterNo = getChapterForNode(node.id);
+    if (chapterNo <= 1) return false;
+    const chapter = getChapterByNumber(chapterNo);
+    const companionId = chapter?.companionId;
+    if (!companionId) return false;
+    if (state.resonance?.companions?.[companionId]?.metAt) return false;
+
+    const narrative = getChapterNarrative(chapterNo);
+    const meetLines = Array.isArray(narrative?.meetLines) ? narrative.meetLines : null;
+    const now = Date.now();
+
+    store.updateState((draft) => {
+      const companions = draft.resonance.companions;
+      companions[companionId] = { ...(companions[companionId] || {}), metAt: now };
+      // 關係快照：共鳴邀請以「相遇後的增量」判定意願——缺則於相遇當下建立基線。
+      if (!draft.resonance.chapterMarks[chapterNo]) {
+        draft.resonance.chapterMarks[chapterNo] = {
+          bondAtStart: Number(draft.bond) || 0,
+          trustAtStart: Number(draft.trust) || 0,
+          blockedTouchAtStart: Number(draft.blockedTouchCount) || 0,
+          overwhelmedCount: 0,
+          enteredAt: now,
+          reaskedAt: null
+        };
+      }
+    });
+
+    const companion = getCompanionById(companionId);
+    ringBurst(node.id);
+    // 相遇者不在 Pixi 舞台上（棲地只渲染 active companion）——故只演出於地圖 toast，
+    // 不發 companion 動畫 cue（避免誤動到 active 夥伴）、不寫 chatHistory（避免 active
+    // 夥伴替相遇者發聲）。相遇者的實體登場留待 CH-6 共鳴圈視覺（v3）。
+    showToast({
+      title: `相遇 ・ ${companion?.name || "心核夥伴"}`,
+      text: meetLines ? meetLines.join("\n") : "一個新的身影，在這片土地上第一次看向你們。",
+      tone: "calm"
+    });
+    if (statusText) statusText.textContent = "相遇";
+    render();
+    renderInviteBanner();
+    saveCurrentState?.();
+    return true;
+  }
+
+  // ---- 共鳴邀請橫幅（CH-5b）：通關且已相遇→「牠在附近。去打個招呼」 ----
+  // 動態建立、插在地圖畫布上方（不動 index.html 結構，§5.1）。無紅點、無倒數（紅線 6）。
+  function ensureInviteBanner() {
+    if (inviteBanner || !mapCanvas || !mapCanvas.parentNode) return;
+    inviteBanner = document.createElement("div");
+    inviteBanner.className = "map-invite-banner";
+    inviteBanner.hidden = true;
+    inviteBanner.innerHTML = `
+      <p class="map-invite-text"></p>
+      <button type="button" class="map-invite-btn"></button>
+    `;
+    mapCanvas.parentNode.insertBefore(inviteBanner, mapCanvas);
+    inviteBanner.querySelector(".map-invite-btn").addEventListener("click", () => {
+      const chapterNo = Number(inviteBanner.dataset.chapter);
+      if (chapterNo) handleResonanceInvite(chapterNo);
+    });
+  }
+
+  function renderInviteBanner() {
+    ensureInviteBanner();
+    if (!inviteBanner) return;
+    const askable = listAskableChapters(store.getState());
+    if (askable.length === 0) {
+      inviteBanner.hidden = true;
+      delete inviteBanner.dataset.chapter;
+      return;
+    }
+    const chapterNo = askable[0];
+    const companion = getCompanionById(getChapterByNumber(chapterNo)?.companionId);
+    inviteBanner.dataset.chapter = String(chapterNo);
+    inviteBanner.querySelector(".map-invite-text").textContent = `${companion?.name || "牠"}在附近。`;
+    inviteBanner.querySelector(".map-invite-btn").textContent = "去打個招呼";
+    inviteBanner.hidden = false;
+  }
+
+  function handleResonanceInvite(chapterNo) {
+    const state = store.getState();
+    if (!canAskResonance(state, chapterNo).eligible) {
+      renderInviteBanner();
+      return;
+    }
+    const result = evaluateResonanceInvite(state, chapterNo);
+    if (!result) return;
+    const now = Date.now();
+    const companion = getCompanionById(result.companionId);
+
+    if (result.willing) {
+      store.updateState((draft) => {
+        if (!draft.unlockedCompanionIds.includes(result.companionId)) {
+          draft.unlockedCompanionIds = [...draft.unlockedCompanionIds, result.companionId];
+        }
+        const entry = draft.resonance.companions[result.companionId] || {};
+        draft.resonance.companions[result.companionId] = { ...entry, joinedAt: now, lastAskAt: now };
+      });
+      showToast({
+        title: `共鳴 ・ ${companion?.name || "心核夥伴"}`,
+        text: result.line,
+        tone: "success",
+        chips: [{ kind: "bond", label: "＋ 共鳴圈多了一位同行者" }]
+      });
+    } else {
+      // 拒絕＝rolling window：從現在重新快照，之後的培養重新累積（永遠可再問，紅線 2 精神）。
+      store.updateState((draft) => {
+        const entry = draft.resonance.companions[result.companionId] || {};
+        draft.resonance.companions[result.companionId] = {
+          ...entry,
+          lastAskAt: now,
+          declinedCount: (Number(entry.declinedCount) || 0) + 1
+        };
+        const prev = draft.resonance.chapterMarks[chapterNo] || {};
+        draft.resonance.chapterMarks[chapterNo] = {
+          bondAtStart: Number(draft.bond) || 0,
+          trustAtStart: Number(draft.trust) || 0,
+          blockedTouchAtStart: Number(draft.blockedTouchCount) || 0,
+          overwhelmedCount: 0,
+          enteredAt: Number(prev.enteredAt) || now,
+          reaskedAt: now
+        };
+      });
+      showToast({
+        title: companion?.name || "牠",
+        text: result.line,
+        tone: "calm"
+      });
+    }
+    saveCurrentState?.();
+    renderInviteBanner();
   }
 
   return { open, render };

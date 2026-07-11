@@ -25,12 +25,26 @@ export const CHAPTER_TRIAL_OUTCOMES = Object.freeze(new Set(["stabilized", "reco
 
 /**
  * 節點 → 章節歸屬（CH-5a 防刷）：試煉只在「對峙節點屬於當前章」時推進，
- * 否則第一章的節點可以原地刷穿七章。現有探索節點全部在月湖營地周邊＝第 1 章；
- * 之後各章的節點/劇情上線時（CH-5b+），在此擴充對映。未知節點回傳 1（保守）。
+ * 否則第一章的節點可以原地刷穿七章。月湖營地周邊節點＝第 1 章；
+ * 章節區域節點（CH-5b）依下表歸屬。未知節點回傳 1（保守）。
  */
+const NODE_CHAPTER_MAP = Object.freeze({
+  plains_windrest: 2,
+  plains_rift: 2,
+  forge_emberpath: 3,
+  forge_rift: 3,
+  harbor_quayside: 4,
+  harbor_rift: 4,
+  core_lightwell: 5,
+  core_rift: 5,
+  tidal_saltmarsh: 6,
+  tidal_rift: 6,
+  mystic_summitgate: 7,
+  mystic_rift: 7
+});
+
 export function getChapterForNode(nodeId) {
-  void nodeId; // 現階段所有節點皆屬第 1 章；參數保留給未來章節節點。
-  return 1;
+  return NODE_CHAPTER_MAP[nodeId] || 1;
 }
 
 export function getChapterByNumber(chapterNo) {

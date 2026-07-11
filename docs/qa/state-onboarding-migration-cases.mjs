@@ -322,6 +322,55 @@ runCase("calm sync action alias resolves safely", () => {
   assertEqual(result.statePatch.memories.some((memory) => memory.type === "care_calm_sync"), true, "calm sync alias memory");
 });
 
+runCase("fresh default state has empty resonance", () => {
+  const state = createDefaultState();
+  assertEqual(JSON.stringify(state.resonance), JSON.stringify({ chapterMarks: {}, companions: {} }), "fresh resonance shape");
+});
+
+runCase("old save without resonance backfills empty objects", () => {
+  const state = normalizeState({ bond: 12, chapterProgress: { current: 2, completed: [1] } });
+  assertEqual(typeof state.resonance, "object", "resonance backfilled");
+  assertEqual(JSON.stringify(state.resonance.chapterMarks), "{}", "chapterMarks backfilled empty");
+  assertEqual(JSON.stringify(state.resonance.companions), "{}", "companions backfilled empty");
+});
+
+runCase("valid resonance data survives normalize", () => {
+  const state = normalizeState({
+    resonance: {
+      chapterMarks: { 2: { bondAtStart: 10, trustAtStart: 8, blockedTouchAtStart: 1, overwhelmedCount: 1, enteredAt: 1751000000000, reaskedAt: null } },
+      companions: { sprigfawn: { metAt: 1751000000001, lastAskAt: 1751000000002, declinedCount: 1, joinedAt: null } }
+    }
+  });
+  assertEqual(state.resonance.chapterMarks[2].bondAtStart, 10, "mark bondAtStart kept");
+  assertEqual(state.resonance.chapterMarks[2].overwhelmedCount, 1, "mark overwhelmedCount kept");
+  assertEqual(state.resonance.companions.sprigfawn.declinedCount, 1, "companion declinedCount kept");
+  assertEqual(state.resonance.companions.sprigfawn.joinedAt, null, "companion joinedAt kept null");
+});
+
+runCase("dirty resonance data is cleaned by normalize", () => {
+  const state = normalizeState({
+    resonance: {
+      chapterMarks: {
+        0: { bondAtStart: 5 },
+        9: { bondAtStart: 5 },
+        3: { bondAtStart: -20, trustAtStart: "abc", overwhelmedCount: 99999 }
+      },
+      companions: {
+        "not-a-real-companion": { metAt: 123 },
+        auriowl: { metAt: "bad", declinedCount: -3 }
+      }
+    }
+  });
+  assertEqual(state.resonance.chapterMarks[0], undefined, "chapter 0 dropped");
+  assertEqual(state.resonance.chapterMarks[9], undefined, "chapter 9 dropped");
+  assertEqual(state.resonance.chapterMarks[3].bondAtStart, 0, "negative bondAtStart clamped");
+  assertEqual(state.resonance.chapterMarks[3].trustAtStart, 0, "non-numeric trustAtStart cleaned");
+  assertEqual(state.resonance.chapterMarks[3].overwhelmedCount, 999, "overwhelmedCount clamped");
+  assertEqual(state.resonance.companions["not-a-real-companion"], undefined, "unknown companion dropped");
+  assertEqual(state.resonance.companions.auriowl.metAt, null, "bad metAt cleaned to null");
+  assertEqual(state.resonance.companions.auriowl.declinedCount, 0, "negative declinedCount clamped");
+});
+
 const failedCases = cases.filter((item) => item.status === "failed");
 console.log(JSON.stringify({ total: cases.length, failed: failedCases.length, cases }, null, 2));
 

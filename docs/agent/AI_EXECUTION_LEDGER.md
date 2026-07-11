@@ -58,6 +58,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-07-12 - Claude Fable 5 - CH-5b 章節相遇＋共鳴邀請（含地基層 resonance state）
+
+- Status: `VERIFIED`（本地完成＋全驗證，等 Owner commit/push 指示；進度看板與接手協定見 `docs/handoff/CH5B_TASK_PACK_HANDOFF.md`）
+- Branch / commit: `main`（基於 `6e50ab6`，未提交）
+- Scope: 設計文件 §5 的 CH-5 分包，四塊全數完成。Owner 2026-07-12 裁示「照 Fable 判斷處理」，唯一要求＝隨時可交棒 Codex（交棒文件已備）。
+- Work performed: **(D 地基層)** `defaultState.js` +`resonance{chapterMarks,companions}`；`store.js` +`normalizeResonance`（深層回填/清洗，未知 companionId 丟棄、章號 1-7、數值 clamp）+`createDefaultState` 深拷貝 +import `isKnownCompanionId`；無新 localStorage key。**(A 章節節點)** `explorationNodes.js` +12 節點（ch2-7 各區 氣氛+裂隙，rift enemyPool 按情緒配對）；`chapterRegistry.getChapterForNode` 改對映表（修復「通關 ch1 後 ch2 無節點＝旅程斷頭」）；`mapController` NODE_LAYOUT +12 + `isNodeVisible` 章節門控（月湖恆顯示、其餘只顯示 current 章，走過的章留在 atlas 不堆積）。**(B 相遇)** `chapterNarrative.js` ch2-6 +`meetLines`/`willingLine`（末句＝該章夥伴之聲，語氣取自 heartsparkCouncilCanon）；`mapController.maybeMeetChapterCompanion`＝首訪章區「自成一拍」相遇（toast 演出＋寫 metAt＋建關係快照，這拍不結算探索）。**(C 共鳴邀請)** 新純函數 `src/engine/resonanceInviteEngine.js`（canAsk/evaluate/listAskable；願意閾值 affinityGain6/maxBlocked2/maxOverwhelmed0；拒絕 rolling window，永不鎖死）；`mapController` 邀請橫幅（動態注入、「X在附近。去打個招呼」、接受→union unlock+joinedAt、拒絕→重快照+declinedCount）；`battleController` overwhelmed_but_safe→mark.overwhelmedCount；`styles.css` .map-invite-banner。**決策**：相遇/邀請台詞只走地圖 toast，不寫 chatHistory、不發 companion 動畫 cue（相遇者不在 Pixi 舞台，避免誤動 active 夥伴；實體登場留 CH-6 v3）。
+- Verification: `node --check` ×8 PASS；state migration **30/30**（+4 resonance：fresh 空形狀/老存檔回填/合法保留/髒資料清洗）；新 harness `docs/qa/_resonance_invite_cases.mjs` **12/12**（願意/三種拒絕主因/邊界優先序/缺快照保守/listAskable 排序）；瀏覽器全流程（port 8655 veteran 快進）：節點門控✓、相遇自成一拍（metAt+快照寫入、探索不結算）✓、邀請願意→union unlock+joinedAt 落盤✓、拒絕→declinedCount+reaskedAt 重快照+未鎖死✓、0 console error；**web release gate 10/10 required PASS**（exit 0、accessibilityWarnings 空、live playtest 10/10+13/13）。
+- Problems / risks: (a) 相遇者實體未上 Pixi 舞台（v1 只 toast，CH-6 v3 補共鳴圈視覺）。(b) 章節前沿節點與月湖既有 rift_observatory 座標略近（同時最多 8 節點，可讀，屬視覺 polish）。(c) meetLines/willingLine（ch2-6 共 ~11 句）與拒絕方向句待 Owner 文案審。(d) gate 輸出 JSON 為副產物，未 stage。
+- Next safe action: Owner 指示後 COMMIT/PUSH/INDEX。後續：CH-6 共鳴圈對峙（battleEngine 圈內相性/被動/夥伴疲勞）；五幼獸演化線文案；soulTalkTone ×5；ch7 相遇（共鳴圈集結，設計文件 §4 為「——」待定）。
+- Required reading: `docs/handoff/CH5B_TASK_PACK_HANDOFF.md`、`docs/design/CHAPTER_RESONANCE_ROADMAP_V2.md` §4-5、`src/engine/resonanceInviteEngine.js`（願意閾值＋紅線註解）。
+
 ### 2026-07-12 - Claude Fable 5 - Web release gate probe 修復：accessibilityProbe 跟上 CH-2 bond 步
 
 - Status: `COMPLETED`

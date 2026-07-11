@@ -80,6 +80,13 @@ const defaultState = {
     current: 1,
     completed: []
   },
+  // 共鳴圈（CH-5b）：章節相遇與共鳴邀請的持久層。存於既有 STORAGE_KEY，無新 key。
+  // chapterMarks[章號]＝進入該章時的關係快照（邀請判定用「現值−快照」＝這一章的增量；
+  // 被拒後重新快照＝可再培養再問，永不鎖死）。companions[id]＝相遇/邀請狀態。
+  resonance: {
+    chapterMarks: {},
+    companions: {}
+  },
   explorationProgress: {
     totalExplorations: 0,
     lastNodeId: null,

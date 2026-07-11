@@ -331,6 +331,13 @@ export function createBattleController({ store, panelManager, soulTalkController
       if (chapterAdvance?.from) {
         draft.chapterProgress = advanceChapterProgress(draft.chapterProgress, chapterAdvance.from.chapter);
       }
+      // CH-5b：章內對峙把牠推到過載（overwhelmed_but_safe）→ 記入該章共鳴邀請的 mark，
+      // 影響牠的同行意願（「撐得勉強」＝再陪穩一些日子）。只在已相遇（mark 存在）時計數。
+      if (outcome === "overwhelmed_but_safe") {
+        const nodeChapterNo = getChapterForNode(session.nodeId);
+        const mark = draft.resonance?.chapterMarks?.[nodeChapterNo];
+        if (mark) mark.overwhelmedCount = (Number(mark.overwhelmedCount) || 0) + 1;
+      }
     });
     // 閉環：回棲地後，夥伴用自己的聲音記得這件事（companion 角色，非 system）。
     const reflection = buildEventReflection(store.getState(), now, { outcomeOverride: outcome });

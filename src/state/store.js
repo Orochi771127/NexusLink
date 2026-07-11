@@ -2,6 +2,7 @@ import defaultState from "./defaultState.js";
 import { sanitizeEmotionalMemory, sanitizeMemory, sanitizeTrace } from "../engine/storageGuard.js";
 import { clamp } from "../utils/clamp.js";
 import { normalizeRuntimeCompanionId, normalizeUnlockedCompanionIds } from "../data/companionRuntimePolicy.js";
+import { isKnownCompanionId } from "../data/companionRegistry.js";
 import { EXPLORATION_NODE_IDS } from "../data/explorationNodes.js";
 
 let state = createDefaultState();
@@ -20,6 +21,7 @@ export function createDefaultState() {
     unlockedCompanionIds: [...defaultState.unlockedCompanionIds],
     battleRecord: { ...defaultState.battleRecord },
     chapterProgress: { current: defaultState.chapterProgress.current, completed: [...defaultState.chapterProgress.completed] },
+    resonance: { chapterMarks: {}, companions: {} },
     explorationProgress: { ...defaultState.explorationProgress, visitCounts: {} },
     settings: { ...defaultState.settings }
   };
@@ -97,6 +99,7 @@ export function normalizeState(rawState = {}) {
     activeCompanionId: normalizeRuntimeCompanionId(targetState.activeCompanionId, runtimeState),
     battleRecord: normalizeBattleRecord(targetState.battleRecord, baseState.battleRecord),
     chapterProgress: normalizeChapterProgress(targetState.chapterProgress),
+    resonance: normalizeResonance(targetState.resonance),
     explorationProgress: normalizeExplorationProgress(targetState.explorationProgress, baseState.explorationProgress),
     settings: normalizeSettings(targetState.settings, baseState.settings),
     chatHistory: chatHistory.map((item) => ({
@@ -239,6 +242,43 @@ function normalizeChapterProgress(rawProgress) {
       .filter((value) => Number.isInteger(value) && value >= 1 && value <= 7)
   )].sort((a, b) => a - b);
   return { current, completed };
+}
+
+// 共鳴圈（CH-5b）：老存檔無此欄位 → 空物件起步（章節快照由 battleController 於章節
+// 推進時寫入；缺快照時 resonanceInviteEngine lazy 補，見該檔）。壞資料清洗：章號限
+// 1..7、companionId 必須是 registry 已知者、數值 clamp。永遠回傳新物件，不共享參照。
+function normalizeResonance(rawResonance) {
+  const resonance = rawResonance && typeof rawResonance === "object" ? rawResonance : {};
+  const rawMarks = resonance.chapterMarks && typeof resonance.chapterMarks === "object" ? resonance.chapterMarks : {};
+  const chapterMarks = {};
+  Object.keys(rawMarks).forEach((key) => {
+    const chapterNo = Math.round(Number(key));
+    if (!Number.isInteger(chapterNo) || chapterNo < 1 || chapterNo > 7) return;
+    const mark = rawMarks[key] && typeof rawMarks[key] === "object" ? rawMarks[key] : {};
+    chapterMarks[chapterNo] = {
+      bondAtStart: clamp(Number(mark.bondAtStart) || 0, 0, 100),
+      trustAtStart: clamp(Number(mark.trustAtStart) || 0, 0, 100),
+      blockedTouchAtStart: clamp(Number(mark.blockedTouchAtStart) || 0, 0, 999),
+      overwhelmedCount: clamp(Number(mark.overwhelmedCount) || 0, 0, 999),
+      enteredAt: Number(mark.enteredAt) || null,
+      reaskedAt: Number(mark.reaskedAt) || null
+    };
+  });
+  const rawCompanions = resonance.companions && typeof resonance.companions === "object" ? resonance.companions : {};
+  const companions = {};
+  Object.keys(rawCompanions).forEach((companionId) => {
+    if (!isKnownCompanionId(companionId)) return;
+    const entry = rawCompanions[companionId] && typeof rawCompanions[companionId] === "object"
+      ? rawCompanions[companionId]
+      : {};
+    companions[companionId] = {
+      metAt: Number(entry.metAt) || null,
+      lastAskAt: Number(entry.lastAskAt) || null,
+      declinedCount: clamp(Number(entry.declinedCount) || 0, 0, 999),
+      joinedAt: Number(entry.joinedAt) || null
+    };
+  });
+  return { chapterMarks, companions };
 }
 
 function normalizeBattleRecord(rawRecord, baseRecord) {
