@@ -1,6 +1,6 @@
 {
-  "characterId": "auriowl",
-  "status": "canon-roadmap-scaffold",
-  "runtimeReady": false,
-  "notes": "Canon-only Heartspark Council character. Do not create animations.json until approved runtime sheets exist."
+    "characterId":  "auriowl",
+    "status":  "runtime-promoted",
+    "runtimeReady":  true,
+    "notes":  "GROUNDWORK 2026-07-11: 29-action owner-approved catalog promoted from output/character-pilots into spritesheets/ with metadata/animations.json (faint sheet keyed as runtime vocabulary \u0027defeated\u0027)."
 }

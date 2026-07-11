@@ -58,6 +58,27 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-07-12 - Claude Fable 5 - Web release gate probe 修復：accessibilityProbe 跟上 CH-2 bond 步
+
+- Status: `COMPLETED`
+- Branch / commit: `main`（`2fe7592`）
+- Scope: 單檔 `docs/qa/_run_web_release_gate.py` 的 `complete_onboarding_for_probe()`。修 2026-07-11 條目 Problems (a) 記載的既有腳本落後。
+- Work performed: actions 序列跟上 CH-2 五步 onboarding——`guidance-next` 期望步由 `meet` 改為 `bond`；新增 `bond-choose` 步點擊 `[data-onboarding-action="bond-choose"][data-bond-id="greyshade-cat"]`（保持 probe 預設 companion 與舊行為一致）後期望 `meet`；action tuple 改帶顯式 CSS selector 以支援 bond-id 定位。
+- Verification: 自起 `python -m http.server 8642`（乾淨 port）＋ `python docs/qa/_run_web_release_gate.py --base http://localhost:8642 --no-server`（NEXUS_NODE=codex node、PYTHONIOENCODING=utf-8）→ exit 0，required 10/10 PASS；accessibilityProbe 兩 viewport `onboardingRound.completed=true`、actions 含 `bond-choose`、0 console error。本輪 gate 是在含五幼獸資產包的 working tree 上跑的，等同也覆蓋了該包。
+- Problems / risks: 無。gate 輸出 JSON（`_web_release_gate_output.json` / `_live_playtest_gate_output.json`）為執行副產物，未入 commit。
+- Next safe action: 已完成。五幼獸資產包經 Owner 2026-07-12 指示「一同處理」隨後一併落地 main（見下一條 2026-07-11 條目）。
+
+### 2026-07-11 - Claude Fable 5 - GROUNDWORK：正式五幼獸資產升級 + 章節佔位 ID 替換（Owner 授權「照你判斷全包」）
+
+- Status: `COMPLETED`（Owner 2026-07-12 指示與 gate probe 修復一同落地；本包隨本 ledger 更新提交至 main，緊接 `2fe7592` 之後）
+- Branch / commit: `main`（基於 `521bd11` 完成、gate 於含本包 working tree 上 10/10 PASS 後落地）
+- Scope: Codex 交接的 Owner 視覺核可 catalog（145 sheets）promotion。Files: `assets/characters/{sprigfawn,starstripe-cub,auriowl,blazetail-kit,crystalfin-seahorse}/spritesheets/**`（145 張複製入庫，位元組不動、檔名去 v 版號）＋ 各自 `metadata/animations.json`（新建，29 條目/隻）＋ `metadata/animation-scaffold.json`（狀態→runtime-promoted）；`src/data/companionRegistry.js`（+5 正式條目，canon 取自 heartsparkCouncilCanon.js）；`src/data/chapterRegistry.js`（ch2-6 佔位替換為 sprigfawn/starstripe-cub/auriowl/blazetail-kit/crystalfin-seahorse，設計文件 §4 定案表）。
+- Work performed: **(1) 詞彙對映**——29 動作 key 與灰影貓詞彙同構，唯 `faint` 依灰影貓替換協定以 runtime 詞彙 **`defeated`** 為 manifest key 指向 faint 圖（`standoff.overwhelmed`/`battle.defeated` 消費）。**(2) profile 判定**——新五隻**不設** `animationProfile`（guardian profile 是為無走路幀的測試載體設計：會關 ambient 走動、alert/tired/safe_harbor 需 idle_alert/idle_downcast/idle_resonance 而新目錄無）；預設 profile 12 種 mood idle + touch + ambient walk 全部原生命中。**(3) registry**——五條目 runtime-ready/selectable，unlockChapter 對應章區（解鎖入口＝CH-5b，尚未實裝，故不影響任何現有存檔）；測試載體五隻依憲法 §7 原樣保留。**(4) 遷移評估**——chapterRegistry.companionId 當前零 runtime 消費者（已全 codebase 確認），無存檔遷移需求；初遇三選一（灰影/焰紋狐/冰晶狼）不受影響。
+- Verification: `node --check` ×2 PASS；manifest 驗證（29×5 條目、grid=PNG 實際尺寸、145 sheet 路徑全存在、`defeated` 有 `faint` 無）PASS；瀏覽器實測（port 5301 新 origin）：五隻各設為 activeCompanionId 開機——normalize 放行、boot 動畫（idle_calm+sleep）進 PIXI cache、0 console error；sprigfawn 全 29 張 texture 實載且尺寸吻合；晶鰭觸碰互動 → touch 三張 + idle_wake 經真實路徑 lazy-load；intent 斷言五隻全過（overwhelmed→defeated 原生、retreat→left_walk 安全鏈、calm_sync→sit、moodMisses=[]）；新玩家 fresh 開機正常；**live playtest gate 全 PASS**（soul_talk 10/10、HUD 13/13、awakening/touch/storage/pixi ✓、0 console errors）。
+- Problems / risks: (a) `_run_web_release_gate.py` accessibilityProbe 失敗＝**既有腳本落後**（腳本 07-01 版不知 CH-2 bond 步，guidance-next 現轉 bond 而非 meet；與本包無關，已另開修復任務）。(b) repo 新增約 194 MB 資產重量（Owner 核可位元組原樣入庫）。(c) 截圖工具對本 WebGL 頁逾時（capture 側問題，gate 自有瀏覽器正常）。
+- Next safe action: Owner 指示後 COMMIT/PUSH/INDEX；然後 **CH-5b 章節相遇 + 共鳴邀請**（佔位已換正式名單，依賴解除）。後續內容債：五幼獸演化線 stage 文案（canon 三階名已定，codex 顯示「演化資料整備中」）、soulTalkTone 語料包 ×5（缺席安全 fallback 已驗證）、web gate probe 修復。
+- Required reading: `output/character-pilots/HEARTSPARK_COUNCIL_FULL_CATALOG_QC.md`、`src/data/companionRegistry.js`（正式五條目區塊註解）、`docs/design/CHAPTER_RESONANCE_ROADMAP_V2.md` §4-5。
+
 ### 2026-07-10 - Claude Fable 5 - 新玩家檢測三問題修復輪（#1 開場劇透 / #2 簡體字形 / #3 首痕儀式句）
 
 - Status: `VERIFIED`

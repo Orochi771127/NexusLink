@@ -54,8 +54,10 @@ export const COMPANIONS = [
   },
 
   // ──────────────────────────────────────────────────────────────────────
-  // 心輝議會・五元守護（512×512 動畫 runtime 陣容）
+  // 心輝議會・runtime 測試載體（512×512 動畫陣容）
   // 由人類產出的 14 動作 spritesheet 接入；資產位於各自 spritesheets/ 與 metadata/animations.json。
+  // 2026-07-10 Owner 定版後不占正式心輝議會五行席位（CLAUDE.md §7），最終用途待另案；
+  // veteran 存檔已解鎖者照舊可用，初遇三選一（焰紋狐/冰晶狼）不受影響。
   // ──────────────────────────────────────────────────────────────────────
   {
     id: "flame-flicker",
@@ -197,6 +199,150 @@ export const COMPANIONS = [
     animationsManifest: "./assets/characters/crystal-rabbit/metadata/animations.json",
     placeholder: { bodyColor: 0x8a9486, accentColor: 0x7fd8ff, emblemShape: "droplet" },
     personality: { ...DEFAULT_TOUCH_PERSONALITY, baseDefense: 18, fatigueSensitivity: 1.1 }
+  },
+
+  // ──────────────────────────────────────────────────────────────────────
+  // 心輝議會・正式五元守護 Stage 1（2026-07-10 Owner 定版，canon 見 heartsparkCouncilCanon.js）
+  // 資產：Owner 2026-07-11 視覺核可的 29 動作 512×512 catalog（GROUNDWORK 升級入庫）。
+  // 動畫詞彙與灰影貓完全同構（含走路幀），故**不設 animationProfile**（走預設 profile）；
+  // manifest 內 faint 圖以 runtime 詞彙 `defeated` 為 key（見灰影貓替換協定）。
+  // 章節對應見 chapterRegistry（設計文件 §4）；解鎖入口為 CH-5b 章節相遇（尚未實裝）。
+  // 演化線（canon 三階名已定）與 soulTalkTone 語料為後續內容包，缺席時皆有安全 fallback。
+  // ──────────────────────────────────────────────────────────────────────
+  {
+    id: "sprigfawn",
+    name: "芽角小鹿",
+    displayName: { zh: "芽角小鹿", en: "Sprigfawn" },
+    element: "wood",
+    faction: { zh: "心輝議會", en: "Heartspark Council" },
+    emotionalEmblem: { zh: "生長・寬恕", en: "Growth / Forgiveness" },
+    temperament: { zh: "溫柔親人", en: "Gentle & Affectionate" },
+    battleRole: { zh: "療癒者", en: "Healer" },
+    habitatAffinity: { zh: "青葉聖林", en: "Verdant Sanctum Grove" },
+    soulTalkTone: "sprout_fawn",
+    evolutionLineId: "sprigfawn-line",
+    tier: COMPANION_TIERS.ROADMAP,
+    runtimeStatus: "full-runtime",
+    runtimeEnabled: true,
+    selectableWhenUnlocked: true,
+    unlockChapter: "plains",
+    assetReadiness: COMPANION_ASSET_READINESS.RUNTIME_READY,
+    radar: { power: 30, defense: 50, speed: 50, wisdom: 70, emotion: 80, healing: 90 },
+    defaultMood: "calm",
+    description: "屬木。角上還只是兩枝芽枝的小鹿，靠近受傷的心核時會長出新葉；牠正在學：溫柔不等於沒有邊界。",
+    image: null,
+    renderScale: 1.2,
+    animationsManifest: "./assets/characters/sprigfawn/metadata/animations.json",
+    placeholder: { bodyColor: 0x7a8a5c, accentColor: 0xa8e88f, emblemShape: "leaf" },
+    personality: { ...DEFAULT_TOUCH_PERSONALITY, baseDefense: 16, fatigueSensitivity: 1.1 }
+  },
+  {
+    id: "starstripe-cub",
+    name: "星紋小虎",
+    displayName: { zh: "星紋小虎", en: "Starstripe Cub" },
+    element: "earth",
+    faction: { zh: "心輝議會", en: "Heartspark Council" },
+    emotionalEmblem: { zh: "邊界・安定", en: "Boundary / Stability" },
+    temperament: { zh: "沉穩慢熱", en: "Steady & Reserved" },
+    battleRole: { zh: "壁壘", en: "Bulwark" },
+    habitatAffinity: { zh: "星地聖丘", en: "Stellar Earth Sanctum" },
+    soulTalkTone: "steady_cub",
+    evolutionLineId: "starstripe-cub-line",
+    tier: COMPANION_TIERS.ROADMAP,
+    runtimeStatus: "full-runtime",
+    runtimeEnabled: true,
+    selectableWhenUnlocked: true,
+    unlockChapter: "forge",
+    assetReadiness: COMPANION_ASSET_READINESS.RUNTIME_READY,
+    radar: { power: 60, defense: 80, speed: 40, wisdom: 50, emotion: 60, healing: 50 },
+    defaultMood: "calm",
+    description: "屬土。胸前星形心核會在地脈震動時發光的小虎，話不多，危險靠近時卻總站在最前面。",
+    image: null,
+    renderScale: 1.2,
+    animationsManifest: "./assets/characters/starstripe-cub/metadata/animations.json",
+    placeholder: { bodyColor: 0x7d6f5a, accentColor: 0xf0d98c, emblemShape: "star" },
+    personality: { ...DEFAULT_TOUCH_PERSONALITY, baseDefense: 30, fatigueSensitivity: 1.2 }
+  },
+  {
+    id: "auriowl",
+    name: "金羽小梟",
+    displayName: { zh: "金羽小梟", en: "Auriowl" },
+    element: "metal",
+    faction: { zh: "心輝議會", en: "Heartspark Council" },
+    emotionalEmblem: { zh: "判斷・守望", en: "Judgment / Vigilance" },
+    temperament: { zh: "好奇警覺", en: "Curious & Alert" },
+    battleRole: { zh: "偵察者", en: "Scout" },
+    habitatAffinity: { zh: "晨光高枝", en: "Dawnlit Highbranch" },
+    soulTalkTone: "dawnlit_owl",
+    evolutionLineId: "auriowl-line",
+    tier: COMPANION_TIERS.ROADMAP,
+    runtimeStatus: "full-runtime",
+    runtimeEnabled: true,
+    selectableWhenUnlocked: true,
+    unlockChapter: "harbor",
+    assetReadiness: COMPANION_ASSET_READINESS.RUNTIME_READY,
+    radar: { power: 40, defense: 30, speed: 70, wisdom: 80, emotion: 60, healing: 30 },
+    defaultMood: "calm",
+    description: "屬金。飛行還不穩的金羽小梟，卻天生看得見情緒流裡的細小裂縫；最早看見危險，就是守護的開始。",
+    image: null,
+    renderScale: 1.2,
+    animationsManifest: "./assets/characters/auriowl/metadata/animations.json",
+    placeholder: { bodyColor: 0x8a7a4f, accentColor: 0xffd76a, emblemShape: "star" },
+    personality: { ...DEFAULT_TOUCH_PERSONALITY, baseDefense: 26, fatigueSensitivity: 1.2 }
+  },
+  {
+    id: "blazetail-kit",
+    name: "焰尾小狐",
+    displayName: { zh: "焰尾小狐", en: "Blazetail Kit" },
+    element: "fire",
+    faction: { zh: "心輝議會", en: "Heartspark Council" },
+    emotionalEmblem: { zh: "熱意・勇氣", en: "Passion / Courage" },
+    temperament: { zh: "活潑熱烈", en: "Playful & Bright" },
+    battleRole: { zh: "突擊者", en: "Attacker" },
+    habitatAffinity: { zh: "星火林徑", en: "Starfire Woodland Path" },
+    soulTalkTone: "blaze_kit",
+    evolutionLineId: "blazetail-kit-line",
+    tier: COMPANION_TIERS.ROADMAP,
+    runtimeStatus: "full-runtime",
+    runtimeEnabled: true,
+    selectableWhenUnlocked: true,
+    unlockChapter: "core",
+    assetReadiness: COMPANION_ASSET_READINESS.RUNTIME_READY,
+    radar: { power: 70, defense: 30, speed: 80, wisdom: 50, emotion: 70, healing: 40 },
+    defaultMood: "calm",
+    description: "屬火。尾巴像不會熄滅的小火苗，夜路上總先一步亮起；勇氣不是不怕，是害怕時仍願意替人照路。",
+    image: null,
+    renderScale: 1.2,
+    animationsManifest: "./assets/characters/blazetail-kit/metadata/animations.json",
+    placeholder: { bodyColor: 0x8a4a2a, accentColor: 0xffa04d, emblemShape: "flame" },
+    personality: { ...DEFAULT_TOUCH_PERSONALITY, baseDefense: 14, fatigueSensitivity: 1.0 }
+  },
+  {
+    id: "crystalfin-seahorse",
+    name: "晶鰭小海馬",
+    displayName: { zh: "晶鰭小海馬", en: "Crystalfin Seahorse" },
+    element: "water",
+    faction: { zh: "心輝議會", en: "Heartspark Council" },
+    emotionalEmblem: { zh: "記憶・沉澱", en: "Memory / Stillness" },
+    temperament: { zh: "靜謐敏感", en: "Quiet & Sensitive" },
+    battleRole: { zh: "控場者", en: "Controller" },
+    habitatAffinity: { zh: "月湖營地", en: "Moonlake Camp" },
+    soulTalkTone: "tide_seahorse",
+    evolutionLineId: "crystalfin-seahorse-line",
+    tier: COMPANION_TIERS.ROADMAP,
+    runtimeStatus: "full-runtime",
+    runtimeEnabled: true,
+    selectableWhenUnlocked: true,
+    unlockChapter: "tidal",
+    assetReadiness: COMPANION_ASSET_READINESS.RUNTIME_READY,
+    radar: { power: 40, defense: 50, speed: 40, wisdom: 80, emotion: 70, healing: 80 },
+    defaultMood: "calm",
+    description: "屬水。水晶鰭會映出被遺忘記憶的小海馬，安靜地待在水面下；記憶不只是傷口，也是撐過來的痕跡。",
+    image: null,
+    renderScale: 1.2,
+    animationsManifest: "./assets/characters/crystalfin-seahorse/metadata/animations.json",
+    placeholder: { bodyColor: 0x5f7d96, accentColor: 0x8fd7ff, emblemShape: "droplet" },
+    personality: { ...DEFAULT_TOUCH_PERSONALITY, baseDefense: 30, fatigueSensitivity: 1.3 }
   }
 ];
 

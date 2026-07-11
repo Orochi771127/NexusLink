@@ -2,21 +2,20 @@
 // 七區各為一章，自月湖營地（世界觀區號 5）起。每章一位「相遇」心核夥伴與
 // 一個裂隙情緒主題；相遇/共鳴邀請的玩法觸發屬 CH-5，本檔只是資料與純函數。
 //
-// ⚠ companionId 為**技術佔位**（2026-07-10 設計修訂）：正式相遇名單已改為
-// 新五幼獸（sprigfawn / starstripe-cub / auriowl / blazetail-kit /
-// crystalfin-seahorse，設計文件 §4；Codex 產製 sprite sheet 中）。
-// 佔位 ID 替換須待資產 ready 後**另開 GROUNDWORK TASK_PACK**（含遷移）；
-// 在那之前不得基於下方佔位 ID 開發相遇/共鳴邀請功能。
+// companionId＝**正式相遇名單**（2026-07-11 GROUNDWORK 定案，設計文件 §4）：
+// 新五幼獸資產已升級入庫（assets/ + companionRegistry runtime-ready）。
+// 相遇/共鳴邀請的玩法觸發仍屬 CH-5b（尚未實裝）；本欄目前僅為資料，
+// 尚無 runtime 消費者，CH-5b 開工時以此為準接線。
 
 export const CHAPTER_COUNT = 7;
 
 export const CHAPTERS = Object.freeze([
   Object.freeze({ chapter: 1, regionId: "moonlake", zh: "月湖營地", companionId: null, riftEmotion: "fatigue" }),
-  Object.freeze({ chapter: 2, regionId: "plains", zh: "北部翠綠平原區", companionId: "vine-twist", riftEmotion: "loneliness" }),
-  Object.freeze({ chapter: 3, regionId: "forge", zh: "東南熔爐丘陵區", companionId: "stone-shard", riftEmotion: "anger" }),
-  Object.freeze({ chapter: 4, regionId: "harbor", zh: "南港", companionId: "crystal-rabbit", riftEmotion: "anxiety" }),
-  Object.freeze({ chapter: 5, regionId: "core", zh: "中央輝耀核心區", companionId: "flame-flicker", riftEmotion: "sadness" }),
-  Object.freeze({ chapter: 6, regionId: "tidal", zh: "西南潮汐邊疆區", companionId: "ice-talon", riftEmotion: "mixed" }),
+  Object.freeze({ chapter: 2, regionId: "plains", zh: "北部翠綠平原區", companionId: "sprigfawn", riftEmotion: "loneliness" }),
+  Object.freeze({ chapter: 3, regionId: "forge", zh: "東南熔爐丘陵區", companionId: "starstripe-cub", riftEmotion: "anger" }),
+  Object.freeze({ chapter: 4, regionId: "harbor", zh: "南港", companionId: "auriowl", riftEmotion: "anxiety" }),
+  Object.freeze({ chapter: 5, regionId: "core", zh: "中央輝耀核心區", companionId: "blazetail-kit", riftEmotion: "sadness" }),
+  Object.freeze({ chapter: 6, regionId: "tidal", zh: "西南潮汐邊疆區", companionId: "crystalfin-seahorse", riftEmotion: "mixed" }),
   Object.freeze({ chapter: 7, regionId: "mystic", zh: "秘境山脈核心", companionId: null, riftEmotion: "all" })
 ]);
 

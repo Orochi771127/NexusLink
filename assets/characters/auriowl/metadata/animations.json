@@ -1,0 +1,466 @@
+{
+  "idle_calm": {
+    "id": "idle_calm",
+    "category": "emotion",
+    "sheet": "./assets/characters/auriowl/spritesheets/emotion/auriowl_idle_calm_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 3,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "idle_happy": {
+    "id": "idle_happy",
+    "category": "emotion",
+    "sheet": "./assets/characters/auriowl/spritesheets/emotion/auriowl_idle_happy_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 3,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "idle_angry": {
+    "id": "idle_angry",
+    "category": "emotion",
+    "sheet": "./assets/characters/auriowl/spritesheets/emotion/auriowl_idle_angry_512x512_6f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 6,
+    "rows": 2,
+    "columns": 3,
+    "fps": 4,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "idle_sad": {
+    "id": "idle_sad",
+    "category": "emotion",
+    "sheet": "./assets/characters/auriowl/spritesheets/emotion/auriowl_idle_sad_512x512_6f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 6,
+    "rows": 2,
+    "columns": 3,
+    "fps": 3,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "idle_defensive": {
+    "id": "idle_defensive",
+    "category": "emotion",
+    "sheet": "./assets/characters/auriowl/spritesheets/emotion/auriowl_idle_defensive_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 4,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "blink": {
+    "id": "blink",
+    "category": "emotion",
+    "sheet": "./assets/characters/auriowl/spritesheets/emotion/auriowl_blink_512x512_3f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 3,
+    "rows": 1,
+    "columns": 3,
+    "fps": 6,
+    "loop": false,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "right_walk": {
+    "id": "right_walk",
+    "category": "movement",
+    "sheet": "./assets/characters/auriowl/spritesheets/movement/auriowl_right_walk_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 5,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "left_walk": {
+    "id": "left_walk",
+    "category": "movement",
+    "sheet": "./assets/characters/auriowl/spritesheets/movement/auriowl_left_walk_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 5,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "touch_accept": {
+    "id": "touch_accept",
+    "category": "touch",
+    "sheet": "./assets/characters/auriowl/spritesheets/touch/auriowl_touch_accept_512x512_6f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 6,
+    "rows": 2,
+    "columns": 3,
+    "fps": 6,
+    "loop": false,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "touch_guarded": {
+    "id": "touch_guarded",
+    "category": "touch",
+    "sheet": "./assets/characters/auriowl/spritesheets/touch/auriowl_touch_guarded_512x512_6f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 6,
+    "rows": 2,
+    "columns": 3,
+    "fps": 6,
+    "loop": false,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "touch_reject": {
+    "id": "touch_reject",
+    "category": "touch",
+    "sheet": "./assets/characters/auriowl/spritesheets/touch/auriowl_touch_reject_512x512_6f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 6,
+    "rows": 2,
+    "columns": 3,
+    "fps": 6,
+    "loop": false,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "idle_sick": {
+    "id": "idle_sick",
+    "category": "emotion",
+    "sheet": "./assets/characters/auriowl/spritesheets/emotion/auriowl_idle_sick_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 3,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "idle_distant": {
+    "id": "idle_distant",
+    "category": "emotion",
+    "sheet": "./assets/characters/auriowl/spritesheets/emotion/auriowl_idle_distant_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 3,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "idle_enjoy": {
+    "id": "idle_enjoy",
+    "category": "emotion",
+    "sheet": "./assets/characters/auriowl/spritesheets/emotion/auriowl_idle_enjoy_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 3,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "sit": {
+    "id": "sit",
+    "category": "daily",
+    "sheet": "./assets/characters/auriowl/spritesheets/daily/auriowl_sit_512x512_6f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 6,
+    "rows": 2,
+    "columns": 3,
+    "fps": 4,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "sleep": {
+    "id": "sleep",
+    "category": "daily",
+    "sheet": "./assets/characters/auriowl/spritesheets/daily/auriowl_sleep_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 3,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "idle_wake": {
+    "id": "idle_wake",
+    "category": "emotion",
+    "sheet": "./assets/characters/auriowl/spritesheets/emotion/auriowl_idle_wake_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 6,
+    "loop": false,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "special_angry": {
+    "id": "special_angry",
+    "category": "emotion",
+    "sheet": "./assets/characters/auriowl/spritesheets/emotion/auriowl_special_angry_512x512_6f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 6,
+    "rows": 2,
+    "columns": 3,
+    "fps": 4,
+    "loop": false,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "special_sad": {
+    "id": "special_sad",
+    "category": "emotion",
+    "sheet": "./assets/characters/auriowl/spritesheets/emotion/auriowl_special_sad_512x512_6f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 6,
+    "rows": 2,
+    "columns": 3,
+    "fps": 6,
+    "loop": false,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "hug": {
+    "id": "hug",
+    "category": "touch",
+    "sheet": "./assets/characters/auriowl/spritesheets/touch/auriowl_hug_512x512_6f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 6,
+    "rows": 2,
+    "columns": 3,
+    "fps": 6,
+    "loop": false,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "idle_dance": {
+    "id": "idle_dance",
+    "category": "daily",
+    "sheet": "./assets/characters/auriowl/spritesheets/daily/auriowl_idle_dance_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 5,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "idle_wash": {
+    "id": "idle_wash",
+    "category": "daily",
+    "sheet": "./assets/characters/auriowl/spritesheets/daily/auriowl_idle_wash_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 4,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "special_dance": {
+    "id": "special_dance",
+    "category": "daily",
+    "sheet": "./assets/characters/auriowl/spritesheets/daily/auriowl_special_dance_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 5,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "attack_basic": {
+    "id": "attack_basic",
+    "category": "battle",
+    "sheet": "./assets/characters/auriowl/spritesheets/battle/auriowl_attack_basic_512x512_6f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 6,
+    "rows": 2,
+    "columns": 3,
+    "fps": 8,
+    "loop": false,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "skill_cast": {
+    "id": "skill_cast",
+    "category": "battle",
+    "sheet": "./assets/characters/auriowl/spritesheets/battle/auriowl_skill_cast_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 8,
+    "loop": false,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "defend": {
+    "id": "defend",
+    "category": "battle",
+    "sheet": "./assets/characters/auriowl/spritesheets/battle/auriowl_defend_512x512_6f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 6,
+    "rows": 2,
+    "columns": 3,
+    "fps": 6,
+    "loop": false,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "hit": {
+    "id": "hit",
+    "category": "battle",
+    "sheet": "./assets/characters/auriowl/spritesheets/battle/auriowl_hit_512x512_4f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 4,
+    "rows": 2,
+    "columns": 2,
+    "fps": 8,
+    "loop": false,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "defeated": {
+    "id": "defeated",
+    "category": "battle",
+    "sheet": "./assets/characters/auriowl/spritesheets/battle/auriowl_faint_512x512_6f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 6,
+    "rows": 2,
+    "columns": 3,
+    "fps": 4,
+    "loop": false,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "victory": {
+    "id": "victory",
+    "category": "battle",
+    "sheet": "./assets/characters/auriowl/spritesheets/battle/auriowl_victory_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 3,
+    "loop": false,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  }
+}
