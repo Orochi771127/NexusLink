@@ -796,6 +796,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 2 - Game Art, UI, And Visual Production
 
+### 2026-07-12 - Claude Fable 5 - 美術資產缺口稽核（供 Owner 指派 Codex 產圖）
+
+- Status: `COMPLETED`（稽核文件，非產圖；`docs/art/ART_ASSET_GAP_AUDIT.md`）
+- Branch / commit: `main`（基於 CH-5b `9fca86a`）
+- Scope: Owner 2026-07-12 指示「計算缺少哪些跟多少美術圖並記錄怎麼生成」。盤點 `assets/**` 現況 vs `companionRegistry`/`assetManifest`/`enemyRegistry`/`evolutionLines`/`chapterRegistry` 引用；無程式變更。
+- Work performed: 建立稽核文件。**結論：runtime 無硬缺口**——11 隻夥伴 Stage-1 29 動作 512 全到齊。三個路線圖/升級缺口：**GAP-1 裂隙敵人剪影 10 張**（設計 §7 v2，★最推薦先做，規格已定、不需前置工程）；**GAP-2 進化型態圖**（Stage-2/3；核心 12 型態 MVP idle ～ 全量 638 sheet；需先做「進化視覺切換」接線 + 補 5 幼獸演化線文字）；**GAP-3 各章可玩棲地近景背景 12+ 張**（需先做區域棲地切換）。文件含 drop-in 生成規格（512/anchor/grid/`defeated←faint` 對映）與 29 動作表。
+- Verification: 敵人清單/emotion 對 `enemyRegistry`（10 敵 5 情緒各 2）交叉核對；規格三方一致（`ILLUSTRATED_COMPANION_RUNTIME_POLICY`＝`CLAUDE.md §4`＝實測 sprigfawn manifest）；Stage-1 已完成未計入。
+- Problems / risks: 5 幼獸未列入 `ASSET_MANIFEST`/`RUNTIME_COMPANION_ASSET_KEYS`＝QA 覆蓋缺口（gate 未驗這 145 張），**非美術缺口**；已在文件記錄，建議另開小工程任務補入（本輪不改程式）。GAP-2/3 需 Owner 對範圍與接線拍板。
+- Next safe action: Owner 指派 Codex 先產 GAP-1 的 10 張裂隙剪影；GAP-2/3 待功能接線與拍板。
+- Required reading: `docs/art/ART_ASSET_GAP_AUDIT.md`、`docs/design/CHAPTER_RESONANCE_ROADMAP_V2.md` §7。
+
 ### 2026-07-11 - Codex - Formal Five Pilot Set Completed In Review Staging
 
 - Status: `VERIFIED` review checkpoint; no runtime approval.
