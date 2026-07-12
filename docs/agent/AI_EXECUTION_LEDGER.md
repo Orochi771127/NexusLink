@@ -124,6 +124,39 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Next safe action: CH-6 resonance-circle standoff (per queue); or a small QA task adding the five formal companions' 145 sheets to gate integrity coverage (gap flagged in the `f80b888` audit self-review).
 - Required reading: `docs/art/ART_PRODUCTION_INDEX.json` (GAP-1), `output/rift-silhouettes/BATCH_QC.md`, `src/data/assetManifest.js`, `src/ui/battleController.js` (rift figure block), and this lane.
 
+### 2026-07-12 - Claude Code - Codebase index refresh + Codex continuation handoff
+
+- Status: `COMPLETED`
+- Branch / commit: `main` / `458b883` + uncommitted docs; no commit or push performed.
+- Scope: codebase-memory index refresh + docs-only handoff. No `src/**`, `assets/**`, state, or Pixi changes.
+- Work performed: Refreshed the codebase-memory graph (`moderate` mode, project `C-Users-User-NexusLink_RaphaelAI_Workspace-NexusLink`, ~12,465 nodes / 16,332 edges, call/usage + semantic edges). Added `docs/handoff/CODEX_CONTINUATION_HANDOFF_2026-07-12.md` as the single-read continuation entry for Codex (current state, uncommitted-file list, index usage, recommended packs TP-6/TP-4/TP-2 where Codex is owner, hard constraints, human gates, verification). Corrected stale commit references (`7729e54` → `458b883`) in the commercialization plan §2 and my two prior Lane-1 entries.
+- Verification: `git rev-parse HEAD` = `458b883`; `git status --short` shows only today's docs uncommitted (handoff + plan + handoff-drift + this ledger); `index_status` = ready.
+- Problems / risks: none code-level. The handoff's uncommitted-file list is a point-in-time snapshot and will list one fewer than reality by the time this ledger entry lands (expected).
+- Next safe action: Owner grants Gate-2 on TP-6 (audio, needs asset licensing), TP-4 (i18n sc/jp), or TP-2 (status refresh) for Codex; or schedules the human release gates.
+- Required reading: `docs/handoff/CODEX_CONTINUATION_HANDOFF_2026-07-12.md`, `docs/strategy/NEXUS_LINK_COMMERCIALIZATION_COMPLETION_PLAN.md`, and this lane.
+
+### 2026-07-12 - Claude Code - Step 5 (four core pages) live verification + handoff doc-drift fix
+
+- Status: `VERIFIED`
+- Branch / commit: `main` / `458b883` ("art: add rift silhouette review batch") + 3 uncommitted docs; no commit or push performed.
+- Scope: read-only runtime verification + docs-only correction. No `src/**`, `assets/**`, state, or Pixi changes.
+- Work performed: Confirmed blueprint step 5 (Explore/Care/Growth/Memory full pages) is already implemented and wired (`src/ui/pageRouter.js`, `src/app.js:317/344`, `styles/page-content.css`, `index.html` `#page-layer`). Corrected `docs/production/NEXUS_LINK_COMMERCIAL_UIUX_HANDOFF.md` §4 (stale "next slice" framing → dated "implemented/verified" status note) and `docs/strategy/NEXUS_LINK_COMMERCIALIZATION_COMPLETION_PLAN.md` §2/§4 (step 5 → Done).
+- Verification: Served `NexusLink/` via `python -m http.server 8128`, in-app browser at 390×844 (375×812). App booted to Home on a veteran save; programmatically triggered each bottom-nav action. Explore → `activePage=explore`, focus card "月湖營地" + evidence (3 traces / 2 memories) + 4 action buttons. Care → meters 邊界35/信任6/精力8 + non-coercive copy + presence/rest/calm-sync/observe. Growth → relationship-chapter card "下一段：初亮的記憶" + 羈絆 3/12 + tendencies (no power/level language). Memory → evidence strip (0/2/3) + memory list with intensity/date/status. All pages: viewState `ready`, real content, no HP/attack/FOMO copy. `read_console_messages(onlyErrors)` = none.
+- Problems / risks: In-app browser **screenshot capture times out (30s) on the PixiJS WebGL canvas** — tooling limitation, not a product defect (server 200s, zero console errors, all DOM verified). Real-device Safari/Chrome/in-app-webview matrix + moderated tester visual pass remain open HUMAN gates. Verification used the existing veteran save; a fresh-save first-session pass was not re-run here.
+- Next safe action: Owner picks next commercialization pack (TP-6 audio / TP-7 companion micro-moments — both need a human asset/behavior gate first), or schedules the human release gates (real-device, 3-tester, legal/store copy).
+- Required reading: `docs/strategy/NEXUS_LINK_COMMERCIALIZATION_COMPLETION_PLAN.md`, `docs/production/NEXUS_LINK_COMMERCIAL_UIUX_HANDOFF.md` §4, `src/ui/pageRouter.js`, and this lane.
+
+### 2026-07-12 - Claude Code - Commercialization Completion Plan (SSOT)
+
+- Status: `COMPLETED`
+- Branch / commit: `main` / `458b883` + uncommitted (this new doc); no commit or push performed.
+- Scope: docs-only planning artifact. No `src/**`, `assets/**`, root canon, or `ACCEPTANCE.md` changes.
+- Work performed: Added `docs/strategy/NEXUS_LINK_COMMERCIALIZATION_COMPLETION_PLAN.md`, consolidating the commercialization path into one SSOT — Steam-blueprint 10-step × current-status table, ethical-monetization spec locked to `CLAUDE.md` §0.6 + three contracts + seven red lines, human-gate checklist (the real release blockers), TP-8 Initial Bond A/B decision framing, AI-executable pack sequencing, and staged Definition of Done. Records the key architecture note: monetization cannot occur inside the web runtime (no backend/accounts/IAP permitted) and is realized at the distribution layer (Steam paid base + chapter DLC).
+- Verification: docs-only; no runtime touched, no code to `node --check`. Reconciled the commit-reference drift (queue `cbd2aa8` / memory `f80b888`) to the current ledger HEAD `7729e54`; plan §2 updated to cite it. Plan explicitly flags step-5/7/8 statuses as author inference pending per-item confirmation.
+- Problems / risks: Plan is a proposal, not an approval. §2 statuses need code-level confirmation before scheduling. Monetization vehicle (§7) and TP-8 A/B (§6) remain owner decisions. This doc closes no human gate.
+- Next safe action: Owner resolves plan §7 open decisions (monetization vehicle + TP-8 A/B); then open the chosen next TASK_PACK (recommended: finish step-5 full pages, or TP-6 audio) with a Gate-2 plan.
+- Required reading: `docs/strategy/NEXUS_LINK_COMMERCIALIZATION_COMPLETION_PLAN.md`, `docs/strategy/NEXUS_LINK_STEAM_DEMO_MASTER_BLUEPRINT.md`, `docs/agent/NEXT_AI_TASK_PACK_QUEUE.md`, and this lane.
+
 ### 2026-07-12 - Codex - Anti-AI-Slop First Session Interaction Contract
 
 - Status: `VERIFIED`

@@ -100,6 +100,8 @@ companion shell rules.
 
 ## 4. Fable 5 UI/UX Execution Boundary
 
+> **2026-07-12 status update (doc-drift fix):** The first-session vertical slice named below is **implemented and verified running**. Start / Local Identity / Heart-Core Guidance / Home plus the **Explore / Care / Growth / Memory full pages** ship via `src/ui/pageRouter.js` (wired and bound in `src/app.js`, styled in `styles/page-content.css`, four `#…-page-body` containers in `index.html` `#page-layer`). Live-verified at 390×844 on 2026-07-12: all four pages navigate, render real content and evidence, expose `ready/busy/completed/unavailable/recoverable-error` view states, and produce **no console errors**. This section now stands as the **standing spec / guardrail for further polish** of those surfaces — not a build-from-scratch backlog. See `docs/strategy/NEXUS_LINK_COMMERCIALIZATION_COMPLETION_PLAN.md` §2 (step 5 = Done).
+
 The first Fable 5 commercial TASK_PACK should focus on the UI/UX vertical slice:
 
 - Start
