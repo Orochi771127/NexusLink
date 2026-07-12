@@ -1,0 +1,11 @@
+Create one production-ready 2D game asset for Nexus Link.
+
+Use case: stylized-concept
+Asset type: single static rift-enemy silhouette, identity pilot
+Primary request: Static Wisp (雜訊殘影), an abstract manifestation of sadness leaking from a dimensional rift.
+Subject and shape: one centered vertical wisp made of thin drifting glitch filaments and softly vibrating mist; delicate scattered edges, lightest at the extremities, with a darker dense inner core. It must feel like emotional pollution, never like a creature.
+Style: Nexus Link Cyber-Taoism; illustrated, painterly, high-detail, ethereal, semi-transparent, restrained faint glow. Three-layer read: soft outer mist halo, denser inner core, thin noise-vein filaments.
+Color: sadness family centered on HSL hue 215 saturation 70%, approximately #3C7FDD; preserve a darker blue core so it remains readable on both bright daytime and dark nighttime skies.
+Composition: exactly one subject, centered in a square canvas, generous uniform padding, subject contained within the central 65%, no edge contact.
+Background: perfectly flat solid #FF00FF chroma-key background. It must be one uniform color with no gradient, texture, shadow, floor, reflection, lighting variation, or transparency. Do not use #FF00FF anywhere in the subject.
+Constraints: no face, no eyes, no mouth, no limbs, no animal anatomy, no mascot, no monster anatomy, no scenery, no ground plane, no cast shadow, no UI, no HUD, no text, no labels, no watermark, no border, no pedestal. Production asset tone, not a concept-art presentation. Output only the asset on the flat chroma-key background.

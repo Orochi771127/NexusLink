@@ -1,0 +1,11 @@
+Create one production-ready 2D game asset for Nexus Link.
+
+Use case: stylized-concept
+Asset type: single static rift-enemy silhouette, contrasting identity pilot
+Primary request: Crystal Golemite (晶屑魔像), an abstract manifestation of anger leaking from a dimensional rift.
+Subject and shape: one centered heavy angular mass assembled from suspended crystal-like shards and compressed mist, with a slow downward-pressure feeling. Broad, weighty, faceted silhouette with fractured pointed edges, but completely abstract and faceless; it must feel like emotional pollution, never a creature or humanoid.
+Style: Nexus Link Cyber-Taoism; illustrated, painterly, high-detail, ethereal, semi-transparent, restrained faint glow. Three-layer read: soft outer mist halo, denser dark inner core, thin noise-vein filaments threading between shards.
+Color: anger family centered on HSL hue 18 saturation 72%, approximately #DF6B3A; preserve a darker rust-red core so it remains readable on both bright daytime and dark nighttime skies.
+Composition: exactly one subject, centered in a square canvas, generous uniform padding, subject contained within the central 65%, no edge contact.
+Background: perfectly flat solid #FF00FF chroma-key background. It must be one uniform color with no gradient, texture, shadow, floor, reflection, lighting variation, or transparency. Do not use #FF00FF anywhere in the subject.
+Constraints: no face, no eyes, no mouth, no limbs, no humanoid body, no animal anatomy, no cute mascot, no conventional RPG monster, no scenery, no ground plane, no cast shadow, no UI, no HUD, no text, no labels, no watermark, no border, no pedestal. Production asset tone, not a concept-art presentation. Output only the asset on the flat chroma-key background.
