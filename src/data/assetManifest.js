@@ -25,6 +25,25 @@ function createIllustratedCompanionAsset({
   });
 }
 
+// 裂隙剪影（GAP-1，靜態 512×512 透明 PNG）：key 必須與 enemyRegistry 的 enemy id 一一對應。
+// 呼吸/相位/結局動態仍由 battleController 的程序層驅動；缺圖或載入失敗時回退程序霧體。
+export const ENEMY_RIFT_SILHOUETTES = Object.freeze({
+  static_wisp: "./assets/enemies/static_wisp/static_wisp_rift_512x512.png",
+  tearveil_wisp: "./assets/enemies/tearveil_wisp/tearveil_wisp_rift_512x512.png",
+  crystal_golemite: "./assets/enemies/crystal_golemite/crystal_golemite_rift_512x512.png",
+  spite_ember: "./assets/enemies/spite_ember/spite_ember_rift_512x512.png",
+  rift_shade: "./assets/enemies/rift_shade/rift_shade_rift_512x512.png",
+  dread_coil: "./assets/enemies/dread_coil/dread_coil_rift_512x512.png",
+  weary_husk: "./assets/enemies/weary_husk/weary_husk_rift_512x512.png",
+  sink_weight: "./assets/enemies/sink_weight/sink_weight_rift_512x512.png",
+  hollow_echo: "./assets/enemies/hollow_echo/hollow_echo_rift_512x512.png",
+  drift_murmur: "./assets/enemies/drift_murmur/drift_murmur_rift_512x512.png"
+});
+
+export function getEnemyRiftSilhouettePath(enemyId) {
+  return ENEMY_RIFT_SILHOUETTES[enemyId] || null;
+}
+
 export const RUNTIME_COMPANION_ASSET_KEYS = Object.freeze([
   "greyshadeCat",
   "flameFlicker",
@@ -51,6 +70,7 @@ export const ASSET_MANIFEST = Object.freeze({
   audio: Object.freeze({
     bgm: "./assets/audio/bgm_nexuslink.m4a"
   }),
+  enemies: ENEMY_RIFT_SILHOUETTES,
   characters: Object.freeze({
     greyshadeCat: createIllustratedCompanionAsset({
       id: "greyshade-cat",

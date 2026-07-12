@@ -1,5 +1,6 @@
 import { qs } from "../utils/dom.js";
 import { getCompanionById } from "../data/companionRegistry.js";
+import { getEnemyRiftSilhouettePath } from "../data/assetManifest.js";
 import { getExplorationNodeById } from "../data/explorationNodes.js";
 import {
   applyNoiseTurn,
@@ -117,15 +118,41 @@ export function createBattleController({ store, panelManager, soulTalkController
     riftFigureEl.className = "rift-figure";
     riftFigureEl.setAttribute("aria-hidden", "true");
     // rf-shadow：暗暈底層——確保情緒霧在任何背景（白天藍天/夜景）都可讀。
+    // rf-sprite：GAP-1 裂隙剪影（依 enemyId 載入）；載入成功前與失敗後都由程序霧體撐住畫面。
     riftFigureEl.innerHTML =
-      '<span class="rf-shadow"></span><span class="rf-mist"></span><span class="rf-core"></span><span class="rf-glitch"></span>';
+      '<span class="rf-shadow"></span><img class="rf-sprite" alt="" decoding="async">' +
+      '<span class="rf-mist"></span><span class="rf-core"></span><span class="rf-glitch"></span>';
+    const spriteEl = riftFigureEl.querySelector(".rf-sprite");
+    spriteEl.addEventListener("load", () => riftFigureEl?.classList.add("has-sprite"));
+    spriteEl.addEventListener("error", () => riftFigureEl?.classList.remove("has-sprite"));
     logEl.parentNode.insertBefore(riftFigureEl, logEl);
     return riftFigureEl;
+  }
+
+  // 依 enemyId 換上剪影。同一場對峙每次 render 都會經過這裡，dataset 防止重複觸發載入；
+  // manifest 查無此敵人時清空 src → 維持純程序霧體（向後相容未來新敵人）。
+  function applyRiftSprite(el) {
+    const img = el.querySelector(".rf-sprite");
+    if (!img || !session) return;
+    const path = getEnemyRiftSilhouettePath(session.enemyId);
+    if (!path) {
+      el.classList.remove("has-sprite");
+      if (img.dataset.spritePath) {
+        delete img.dataset.spritePath;
+        img.removeAttribute("src");
+      }
+      return;
+    }
+    if (img.dataset.spritePath === path) return;
+    el.classList.remove("has-sprite");
+    img.dataset.spritePath = path;
+    img.src = path;
   }
 
   function updateRiftFigure() {
     const el = ensureRiftFigure();
     if (!el || !session) return;
+    applyRiftSprite(el);
     const tint = RIFT_EMOTION_TINT[session.riftEmotion] || RIFT_EMOTION_TINT.gratitude;
     el.style.setProperty("--rift-hue", String(tint.hue));
     el.style.setProperty("--rift-sat", tint.sat);
@@ -469,6 +496,16 @@ function injectRiftFigureStyles() {
   style.textContent = [
     ".rift-figure{position:relative;width:min(72%,280px);height:88px;margin:2px auto 6px;pointer-events:none;--rf-speed:3.2s}",
     ".rift-figure .rf-shadow,.rift-figure .rf-mist,.rift-figure .rf-core,.rift-figure .rf-glitch{position:absolute;inset:0}",
+    // GAP-1 剪影：contain 鎖進既有容器（88/104px 高）＝維持「小型對峙對手」尺度，不放大成 Boss。
+    // 載入成功（has-sprite）前不顯示，程序霧體先撐住；濃度仍跟 --rift-density 走（雜訊越輕、影越淡）。
+    ".rift-figure .rf-sprite{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;display:none;opacity:calc(.5 + .5*var(--rift-density));filter:drop-shadow(0 3px 12px rgba(4,8,18,.55));animation:rfSpriteBreath var(--rf-speed) ease-in-out infinite}",
+    ".rift-figure.has-sprite .rf-sprite{display:block}",
+    // 剪影自帶三層霧體讀感（外霧/內核/絲紋都烘在圖裡）→ 程序霧/核退場；雜訊紋保留但放輕，維持「活著的雜訊」動態。
+    ".rift-figure.has-sprite .rf-mist,.rift-figure.has-sprite .rf-core{opacity:0;animation:none}",
+    ".rift-figure.has-sprite .rf-glitch{opacity:.3}",
+    "@keyframes rfSpriteBreath{0%,100%{transform:scale(.97)}50%{transform:scale(1.04)}}",
+    '.rift-figure[data-intent="gather"] .rf-sprite{animation:rfSpriteGather 1.6s ease-in-out infinite}',
+    "@keyframes rfSpriteGather{0%,100%{transform:scale(1)}50%{transform:scale(1.12);filter:drop-shadow(0 3px 12px rgba(4,8,18,.55)) brightness(1.3)}}",
     // 暗暈底層：讓情緒霧在白天藍天上也讀得出形體（夜景時只是多一點深度）。
     ".rift-figure .rf-shadow{background:radial-gradient(56% 52% at 50% 52%,rgba(4,8,18,calc(.42*var(--rift-density))),transparent 74%);filter:blur(12px)}",
     ".rift-figure .rf-mist{background:radial-gradient(52% 48% at 50% 52%,hsla(var(--rift-hue),var(--rift-sat),62%,calc(.36*var(--rift-density))),transparent 72%);filter:blur(10px);animation:rfBreath var(--rf-speed) ease-in-out infinite}",

@@ -220,10 +220,12 @@ def load_asset_manifest(node: str):
           RUNTIME_COMPANION_ASSET_KEYS,
           ILLUSTRATED_COMPANION_RUNTIME_POLICY
         } from './src/data/assetManifest.js';
+        import { ENEMIES } from './src/data/enemyRegistry.js';
         console.log(JSON.stringify({
           manifest: ASSET_MANIFEST,
           runtimeKeys: RUNTIME_COMPANION_ASSET_KEYS,
-          policy: ILLUSTRATED_COMPANION_RUNTIME_POLICY
+          policy: ILLUSTRATED_COMPANION_RUNTIME_POLICY,
+          enemyIds: Object.keys(ENEMIES)
         }));
         """
     )
@@ -246,6 +248,28 @@ def run_asset_integrity(node: str):
         for key, path in (manifest.get(category_name) or {}).items():
             if not root_path(path).exists():
                 failures.append(f"missing:{category_name}.{key}:{path}")
+
+    # GAP-1 rift silhouettes: every enemyRegistry id must have a manifest entry backed by a
+    # real 512x512 PNG, and the manifest must not point at enemies the registry does not know.
+    enemy_sprites = manifest.get("enemies") or {}
+    enemy_ids = manifest_bundle.get("enemyIds") or []
+    for enemy_id in enemy_ids:
+        if enemy_id not in enemy_sprites:
+            failures.append(f"missing-enemy-sprite-entry:{enemy_id}")
+    for key, path in enemy_sprites.items():
+        if key not in enemy_ids:
+            failures.append(f"orphan-enemy-sprite:{key}:{path}")
+        sprite_path = root_path(path)
+        if not sprite_path.exists():
+            failures.append(f"missing:enemies.{key}:{path}")
+            continue
+        try:
+            width, height = read_png_size(sprite_path)
+        except Exception as exc:  # noqa: BLE001 - QA report should preserve path
+            failures.append(f"bad-png:enemies:{key}:{exc}")
+            continue
+        if width != 512 or height != 512:
+            failures.append(f"enemy-sprite-size:{key}:{width}x{height}!=512x512")
 
     for key in runtime_keys:
         asset = (manifest.get("characters") or {}).get(key)
@@ -295,6 +319,7 @@ def run_asset_integrity(node: str):
     return {
         "name": "asset_integrity",
         "companions": companion_summaries,
+        "enemies": {"registryIds": len(enemy_ids), "sprites": len(enemy_sprites)},
         "failures": failures,
         "ok": not failures,
     }

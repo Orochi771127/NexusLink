@@ -34,11 +34,13 @@
     {
       "id": "GAP-1",
       "title": "Rift enemy silhouettes",
-      "status": "ready",
+      "status": "generated",
+      "generatedCommit": "458b883",
+      "reviewStatus": "review-approved candidate: Owner approved both pilots in chat and authorized batch completion without per-image gates; per-item QC in output/rift-silhouettes/BATCH_QC.md",
       "count": 10,
       "designRef": "CHAPTER_RESONANCE_ROADMAP_V2 §7 (v2): replace the procedural mist core with 10 x 512 rift silhouettes",
       "deliverablePerItem": "ONE static 512x512 transparent PNG per enemy (frameCount 1). Motion stays code-driven: the runtime keeps the existing phase/intent-driven breathing (scale/opacity), so no animation frames are needed.",
-      "wiringNeeded": "Post-generation engineering (not art): add a rift-sprite layer in battleController that draws item.targetAssetPath keyed by enemyId, falling back to the current procedural mist when no sprite exists. Generation is NOT blocked by this.",
+      "wiringStatus": "DONE (runtime-promoted): finals copied to assets/enemies/{enemyId}/, mapped via ASSET_MANIFEST.enemies (src/data/assetManifest.js), drawn by battleController rf-sprite layer keyed by enemyId; procedural mist retained as loading/failure fallback; release gate asset_integrity now cross-checks enemyRegistry vs manifest vs 512x512 PNGs. See AI_EXECUTION_LEDGER Lane 1, 2026-07-12.",
       "styleRules": [
         "Abstract emotion-mist / silhouette, NOT a creature: no face, no eyes, no mouth, no clear animal anatomy. It is emotional pollution leaking from a rift, not a monster.",
         "Three-layer read (matches the procedural figure it replaces): soft outer mist halo / denser inner core / thin noise-vein filaments.",

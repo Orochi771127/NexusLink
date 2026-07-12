@@ -58,6 +58,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-07-12 - Claude Fable 5 - GAP-1 rift silhouettes runtime promotion + standoff wiring
+
+- Status: `VERIFIED`
+- Branch / commit: `main` / lands with this commit (parent `458b883`); Owner authorized promote+wire+commit+push in chat this session.
+- Scope: GROUNDWORK `assets/**` promotion (Owner-authorized) + EXPERIENCE battleController wiring + QA gate extension + art index status. No `index.html`, state, or Pixi-core changes.
+- Work performed: Copied the ten Owner-approved GAP-1 rift silhouettes (Codex batch `458b883`, QC in `output/rift-silhouettes/BATCH_QC.md`) to `assets/enemies/{enemyId}/{enemyId}_rift_512x512.png` (per-file hash-verified against staging). Added `ENEMY_RIFT_SILHOUETTES` + `getEnemyRiftSilhouettePath` + `ASSET_MANIFEST.enemies` (`src/data/assetManifest.js`). `battleController` rift figure gained an `rf-sprite` `<img>` layer keyed by `session.enemyId`: `object-fit:contain` inside the existing 280x88 / 300x104 container (small-opponent scale preserved — not a boss), breathing/phase speed, gather intent, hit flash, outcome dissolve/recede/dim and `--rift-density` all reuse the existing pipeline; procedural mist+core hide only after the sprite actually loads (`has-sprite`), `rf-glitch` kept at 0.3, `rf-shadow` halo retained for bright-sky readability; missing manifest entry or load failure keeps the procedural fog (no dead art path). `docs/qa/_run_web_release_gate.py` `run_asset_integrity` now cross-checks enemyRegistry ids ↔ `ASSET_MANIFEST.enemies` ↔ real 512x512 PNGs (missing entries, orphans, wrong sizes all fail). `docs/art/ART_PRODUCTION_INDEX.json` GAP-1: `ready` → `generated` (generatedCommit `458b883`, review-approved candidate, wiringStatus DONE).
+- Verification: `node --check` on both JS files; web release gate **10/10 required PASS** on clean port 8646 (`asset_integrity` enemies `{registryIds:10, sprites:10}`, 0 failures); in-browser 10-id load audit via manifest — all HTTP 200 at 512x512; fresh-save e2e (port 8128): onboarding → explore → 月湖路徑 → 裂隙觀測點 standoff vs `crystal_golemite` rendered the silhouette (285x99, `has-sprite`), forced-404 test restored procedural fog live and recovered after, resonance x4 → stabilized → `rift-dissolve` played on the sprite → CH-1 clear narrative lines → finish restored HUD/nav; 0 console errors. Known tooling limitation: WebGL screenshot capture times out (DOM/computed-style verified instead).
+- Problems / risks: day/night compositing relies on Codex QC PASS + retained `rf-shadow` halo (both backdrops were not force-toggled this run; real-device pass remains a human gate). GAP-2/GAP-3 stay `blocked` in the art index — do not generate. The earlier Claude session's uncommitted docs (continuation handoff, commercialization plan, its two Lane-1 entries, UIUX handoff note) were deliberately left uncommitted — outside this pack's authorization.
+- Next safe action: CH-6 resonance-circle standoff (per queue); or a small QA task adding the five formal companions' 145 sheets to gate integrity coverage (gap flagged in the `f80b888` audit self-review).
+- Required reading: `docs/art/ART_PRODUCTION_INDEX.json` (GAP-1), `output/rift-silhouettes/BATCH_QC.md`, `src/data/assetManifest.js`, `src/ui/battleController.js` (rift figure block), and this lane.
+
 ### 2026-07-12 - Codex - Anti-AI-Slop First Session Interaction Contract
 
 - Status: `VERIFIED`
