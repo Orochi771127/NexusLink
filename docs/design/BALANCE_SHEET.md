@@ -141,6 +141,31 @@ pulseBonus           = 1 + clamp(dev(power)×0.004, −0.12, 0.18)
   同步不足時共鳴會提示「養起節奏才接得住微光」。
 - **B4 手感**（`battleController.js` 一次性視覺，尊重 reduced-motion）：雜訊放輕→noise 條柔光一閃；心核被撞→stability 條晃動（單次掉 ≥6 更晃）；回收微光→shard 晶光爆閃。
 
+### 2.3 共鳴圈（CH-6，`src/engine/resonanceCircleEngine.js`）
+
+非戰力隊伍：圈員貢獻共鳴與陪伴，不是輸出。玩家四鍵不變、對峙中不換人。
+
+| 常數 | 值 | 意義 |
+|---|---|---|
+| `MAX_CIRCLE_SIZE` | 3 | 同場上限（主夥伴＋最多 2 圈員；Owner 定版） |
+| `MAX_MEMBER_BREATH` | 3 | 圈員呼吸：姿態每發動一次用 1 口氣，用盡退圈喘息（非懲罰，下一場自動回歸） |
+| 圈組成 | 最早結緣優先 | `resonance.companions[id].joinedAt` 升冪、需已解鎖；進場前定圈 |
+| 圈內相性 | 取最佳 | attuned > neutral > dissonant；主夥伴相沖且有圈員陪同時稀釋回 neutral（圈只幫不害） |
+
+陪伴姿態（element → 一個輕量被動，全部 ±1/±2、有上限）：
+
+| 元素 | 姿態 | 效果 | 觸發 |
+|---|---|---|---|
+| 木 | 青蔭 | noise −1／位 | 每個雜訊拍 |
+| 水 | 霜緩 | 設界穩定 +1／位 | `barrier` |
+| 土 | 磐守 | 湧動衝擊 −1／位（至少留 1） | `surge` |
+| 火 | 餘燼 | 共鳴放輕 +1／位 | `resonance` |
+| 金 | 清鳴 | 同步 +1／位（上限 MAX_SYNC） | `lull` |
+| 中性 | 靜候 | 穩定 +2，一場一次 | 心核首次跌破 50% |
+
+主夥伴 `fatigue == MAX_FATIGUE` 時追加一次性「先撤退也是照顧彼此」建議（不強制、不懲罰）。
+> 紅線對照：無排行、無等級、無數值進度提示（紅線 6）；退圈是喘息不是死亡（紅線 2 精神）。
+
 ---
 
 ## 3. 敵人（裂殘影）（`src/data/enemyRegistry.js`）

@@ -58,6 +58,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-07-13 - Claude Fable 5 - Council-five soulTalkTone content pack + CH-6 balance-sheet section
+
+- Status: `VERIFIED`
+- Branch / commit: `main` / lands with this commit (parent `70b3305`); Owner approved commit/push in chat (「好照著繼續做」 after the self-review report).
+- Scope: EXPERIENCE content only — `src/engine/bondMilestoneEngine.js` (+5 tone entries), `src/data/soulTalkResponsePacks.js` (+5 TONE_FLAVOR entries), `docs/design/BALANCE_SHEET.md` (+§2.3 resonance-circle constants). No engine logic, no GROUNDWORK.
+- Work performed: Closed the council-five soulTalkTone content debt (flagged since `6e50ab6`): each formal companion now has its own voice instead of generic fallback. (1) `MILESTONE_LINES_BY_TONE` +5 tones × 5 bond-milestone lines (`sprout_fawn` 芽角小鹿・新芽/寬恕、`steady_cub` 星紋小虎・可以背對的位置、`dawnlit_owl` 金羽小梟・巡夜守望、`blaze_kit` 焰尾小狐・害怕仍照路、`tide_seahorse` 晶鰭小海馬・記憶沉澱), voices derived from registry emblem/temperament/description; companionship-not-clinginess register kept (contract 2), no numbers/FOMO. (2) `TONE_FLAVOR` +5 tones × 2 soul-talk tail fragments (body-language parentheticals matching each species). (3) BALANCE_SHEET §2.3 documents CH-6 circle constants + stance table + red-line mapping (the sheet-sync rule of its own 調校守則).
+- Verification: `node --check` ×2; cross-check script over all 11 runtime companions — every `soulTalkTone` resolves in both tables (greyshade-cat intentionally uses the generic milestone lines — pre-existing design), milestone arrays exactly 5, flavor ≥2; deterministic `composeFallbackReply` run shows all five new fragments composing into replies; full web release gate **10/10**.
+- Problems / risks: **35 player-facing TC lines await Owner copy review** (25 milestone + 10 tail fragments) — adjustable post-commit, content-layer only. sc/jp for these stay with the pending content-translation pack.
+- Next safe action: Owner approves commit/push; remaining council-five content debt = evolution-line copy (EVOLUTION_LINES, also unblocks GAP-2 scope decision).
+- Required reading: `src/engine/bondMilestoneEngine.js` (MILESTONE_LINES_BY_TONE), `src/data/soulTalkResponsePacks.js` (TONE_FLAVOR), `docs/design/BALANCE_SHEET.md` §2.3, and this lane.
+
 ### 2026-07-12 - Claude Fable 5 - CH-6 resonance-circle standoff (engine + circle strip UI)
 
 - Status: `VERIFIED`
