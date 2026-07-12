@@ -1,5 +1,6 @@
 import { clamp } from "../utils/clamp.js";
 import { getEnemyById } from "../data/enemyRegistry.js";
+import { getCircleStance, MAX_MEMBER_BREATH } from "./resonanceCircleEngine.js";
 
 // ======================================================================
 // 情緒對峙引擎（Emotional Standoff）
@@ -93,6 +94,9 @@ export function getRiftAffinity(companion, enemy) {
   };
 }
 
+// 相性排序（共鳴圈取圈內最佳用）：attuned > neutral > dissonant。
+const AFFINITY_RANK = Object.freeze({ attuned: 2, neutral: 1, dissonant: 0 });
+
 // 夥伴 radar 區分三個行動的強弱（偏離 50 才有小幅增減，全部限幅、不致任何夥伴無用）。
 export function getRadarModifiers(radar = {}) {
   const dev = (value) => (Number(value) || 50) - 50;
@@ -167,13 +171,41 @@ export function getIntentTelegraph(session) {
   return { intent: "lull", tone: "calm", label: "暫歇", hint: "雜訊歇了一拍，像在看你——放心共鳴、回收微光。" };
 }
 
-export function createStandoffSession({ companion, enemyId, nodeId, state, now = Date.now(), rng = Math.random }) {
+export function createStandoffSession({ companion, enemyId, nodeId, state, now = Date.now(), rng = Math.random, circle = [] }) {
   const enemy = getEnemyById(enemyId);
   const radar = companion?.radar || { power: 50, emotion: 50 };
   const stabilityMax = Math.round(22 + (radar.emotion || 50) * 0.16 + (state?.bond || 0) * 0.18);
   const resonancePower = Math.round(5 + (radar.emotion || 50) * 0.05 + (state?.bond || 0) * 0.08);
 
-  const affinity = getRiftAffinity(companion, enemy);
+  // CH-6 共鳴圈：圈員（不含主夥伴，最多 2）。牠們貢獻共鳴與陪伴姿態，不是輸出。
+  const supports = (Array.isArray(circle) ? circle : []).slice(0, 2).map((member) => {
+    const stance = getCircleStance(member?.element || "neutral");
+    return {
+      id: member?.id || null,
+      name: member?.name || "夥伴",
+      element: member?.element || "neutral",
+      affinityTier: getRiftAffinity(member, enemy).tier,
+      stanceId: stance.id,
+      stanceName: stance.name,
+      stanceHint: stance.hint,
+      breath: MAX_MEMBER_BREATH,
+      resting: false,
+      introduced: false, // 首次發動才說一次姿態句，避免洗版
+      steadied: false // neutral 靜候：一場只發動一次
+    };
+  });
+
+  // 圈內最佳相性：attuned > neutral > dissonant。圈只會幫忙、不會拖累——
+  // 主夥伴相沖但圈員契合時，共鳴由契合的牠接住（attuneLine 也換成牠的）。
+  let affinity = getRiftAffinity(companion, enemy);
+  for (const member of circle || []) {
+    const memberAffinity = getRiftAffinity(member, enemy);
+    if (AFFINITY_RANK[memberAffinity.tier] > AFFINITY_RANK[affinity.tier]) affinity = memberAffinity;
+  }
+  if (AFFINITY_RANK[affinity.tier] < AFFINITY_RANK.neutral && supports.length > 0) {
+    // 有圈員陪著時，主夥伴的相沖被圈稀釋回中性（非懲罰設計：圈=支持網）。
+    affinity = { ...affinity, tier: "neutral", multiplier: 1, attuneLine: null };
+  }
   const radarMods = getRadarModifiers(radar);
 
   const session = {
@@ -194,6 +226,8 @@ export function createStandoffSession({ companion, enemyId, nodeId, state, now =
     affinityMultiplier: affinity.multiplier,
     affinityLine: affinity.attuneLine,
     radarMods,
+    circle: supports,
+    fatigueRestSuggested: false,
     noise: { current: enemy.maxHp, max: enemy.maxHp },
     stability: { current: stabilityMax, max: stabilityMax },
     sync: 1,
@@ -210,6 +244,9 @@ export function createStandoffSession({ companion, enemyId, nodeId, state, now =
           ? `${enemy.name.zh}的雜訊籠罩過來——這片裂隙的情緒，是「${affinity.labelZh}」。${enemy.flavor}`
           : `${enemy.name.zh}的雜訊籠罩過來。${enemy.flavor}`
       },
+      ...(supports.length > 0
+        ? [{ kind: "system", text: `【共鳴圈】${supports.map((m) => m.name).join("和")}也站進了圈裡，安靜地陪著你們。` }]
+        : []),
       ...(affinity.attuneLine ? [{ kind: "system", text: affinity.attuneLine }] : []),
       ...(affinity.tier === "dissonant"
         ? [{ kind: "system", text: `${companion?.name || "夥伴"}的氣息和這片${affinity.labelZh}有點相沖，但你們仍能慢慢靠近。` }]
@@ -223,6 +260,28 @@ export function createStandoffSession({ companion, enemyId, nodeId, state, now =
   session.phase = getRiftPhase(session);
   session.nextIntent = pickRiftIntent(session, rng);
   return session;
+}
+
+// CH-6：發動符合條件圈員的陪伴姿態。每次發動用掉一口氣；首次發動說一次姿態句
+// （之後安靜地生效，避免洗版），氣用盡時牠退到圈外喘息——非死亡、非懲罰，
+// 下一場對峙自動回來（session 重建即回歸）。回傳發動數（被動效果的倍數）。
+function fireCircleStance(session, filterFn) {
+  let count = 0;
+  for (const member of session.circle || []) {
+    if (member.resting || !filterFn(member)) continue;
+    count += 1;
+    member.breath = Math.max(0, member.breath - 1);
+    if (!member.introduced) {
+      member.introduced = true;
+      const stance = getCircleStance(member.element);
+      session.log.push({ kind: "system", text: `【${member.stanceName}】${stance.line(member.name)}` });
+    }
+    if (member.breath === 0) {
+      member.resting = true;
+      session.log.push({ kind: "system", text: `${member.name}輕輕退到圈外，先喘一口氣。（牠沒事，下一場會自己回來）` });
+    }
+  }
+  return count;
 }
 
 export function canUseAction(session, actionId) {
@@ -239,7 +298,9 @@ export function applyPlayerAction(session, actionId, rng = Math.random) {
   const mods = next.radarMods || {}; // radar 行動修正
 
   if (actionId === "barrier") {
-    const stabilityGain = 5 + (mods.barrierStability || 0);
+    // 霜緩（水圈員）：設界時柔光更穩（每位 +1）。
+    const waterAssists = fireCircleStance(next, (m) => m.element === "water");
+    const stabilityGain = 5 + (mods.barrierStability || 0) + waterAssists;
     const boundaryGain = 1 + (mods.barrierBoundaryBonus || 0);
     next.boundary = clamp(next.boundary + boundaryGain, 0, MAX_BOUNDARY);
     next.stability.current = clamp(next.stability.current + stabilityGain, 0, next.stability.max);
@@ -262,7 +323,9 @@ export function applyPlayerAction(session, actionId, rng = Math.random) {
     // resonance（預設行動）——元素契合與治癒 radar 都疊在這裡，把戰術拉力導向「安撫」。
     const tired = next.fatigue >= MAX_FATIGUE - 1;
     const efficiency = tired ? 0.7 : 1;
-    const quieted = Math.max(1, Math.round(next.resonancePower * efficiency * aff * (mods.resonanceBonus || 1) + rng() * 3));
+    // 餘燼（火圈員）：貼著共鳴一起亮，雜訊多放輕一分（每位 +1）。
+    const fireAssists = fireCircleStance(next, (m) => m.element === "fire");
+    const quieted = Math.max(1, Math.round(next.resonancePower * efficiency * aff * (mods.resonanceBonus || 1) + rng() * 3)) + fireAssists;
     next.noise.current = clamp(next.noise.current - quieted, 0, next.noise.max);
     next.sync = clamp(next.sync + 1, 0, MAX_SYNC);
     next.fatigue = clamp(next.fatigue + 1, 0, MAX_FATIGUE);
@@ -289,6 +352,12 @@ export function applyPlayerAction(session, actionId, rng = Math.random) {
     }
   }
 
+  // 主夥伴過勞（CH-6：主夥伴撐不住＝該離開的訊號）：溫柔而明確地建議「先撤退」，一場只說一次。
+  if (next.fatigue >= MAX_FATIGUE && !next.fatigueRestSuggested) {
+    next.fatigueRestSuggested = true;
+    next.log.push({ kind: "system", text: "牠真的累了。先撤退，也是照顧彼此的方式——這不是失敗。" });
+  }
+
   next.turn = "noise";
   return next;
 }
@@ -301,8 +370,17 @@ export function applyNoiseTurn(session, rng = Math.random) {
   const intent = next.nextIntent || "surge";
   const prevPhase = next.phase;
 
+  // 青蔭（木圈員）：每拍雜訊自然回落（每位 -1）。安靜地生效，濃度變化自己會被看見。
+  const woodAssists = fireCircleStance(next, (m) => m.element === "wood");
+  if (woodAssists > 0) {
+    next.noise.current = clamp(next.noise.current - woodAssists, 0, next.noise.max);
+  }
+
   if (intent === "lull") {
     next.log.push({ kind: "noise", text: `${next.enemyName}的雜訊暫歇了一拍，像在觀察你們。` });
+    // 清鳴（金圈員）：暫歇的靜裡幫你們對上節奏（每位同步 +1）。
+    const metalAssists = fireCircleStance(next, (m) => m.element === "metal");
+    if (metalAssists > 0) next.sync = clamp(next.sync + metalAssists, 0, MAX_SYNC);
   } else if (intent === "gather") {
     next.charged = true; // 下一次湧動更重（已在 telegraph 預告）
     next.log.push({ kind: "noise", text: `${next.enemyName}低低地蓄著力，雜訊繃緊了一瞬……` });
@@ -310,7 +388,9 @@ export function applyNoiseTurn(session, rng = Math.random) {
     // surge（湧動）：蓄勢過的更重；邊界層仍能減緩。
     const chargedMult = next.charged ? 1.5 : 1;
     const damping = 1 - next.boundary * BOUNDARY_DAMPING_PER_LAYER;
-    const surge = Math.max(1, Math.round(next.enemySurge * (0.85 + rng() * 0.3) * chargedMult * damping));
+    // 磐守（土圈員）：替你們擋下衝擊的一角（每位 -1，衝擊至少保留 1）。
+    const earthAssists = fireCircleStance(next, (m) => m.element === "earth");
+    const surge = Math.max(1, Math.round(next.enemySurge * (0.85 + rng() * 0.3) * chargedMult * damping) - earthAssists);
     next.stability.current = clamp(next.stability.current - surge, 0, next.stability.max);
     next.charged = false;
     if (next.boundary > 0) {
@@ -321,6 +401,14 @@ export function applyNoiseTurn(session, rng = Math.random) {
       next.boundary = clamp(next.boundary - 1, 0, MAX_BOUNDARY); // 邊界需要維護
     } else {
       next.log.push({ kind: "noise", text: `${next.enemyName}的雜訊直接壓了過來。（穩定 -${surge}）` });
+    }
+    // 靜候（中性圈員）：心核首次跌到一半以下、還沒倒下時，牠靠近半步（+2，一場一次）。
+    if (next.stability.current > 0 && next.stability.current <= next.stability.max * 0.5) {
+      const steadyAssists = fireCircleStance(next, (m) => m.element === "neutral" && !m.steadied);
+      if (steadyAssists > 0) {
+        for (const member of next.circle) if (member.element === "neutral") member.steadied = true;
+        next.stability.current = clamp(next.stability.current + steadyAssists * 2, 0, next.stability.max);
+      }
     }
   }
 
@@ -492,6 +580,7 @@ function cloneSession(session) {
     ...session,
     noise: { ...session.noise },
     stability: { ...session.stability },
+    circle: Array.isArray(session.circle) ? session.circle.map((member) => ({ ...member })) : [],
     log: [...session.log]
   };
 }

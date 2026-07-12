@@ -17,6 +17,7 @@ import {
   SHARD_GOAL
 } from "../engine/battleEngine.js";
 import { buildEventReflection } from "../engine/soulTalkComposer.js";
+import { deriveResonanceCircle, MAX_MEMBER_BREATH } from "../engine/resonanceCircleEngine.js";
 import {
   CHAPTER_TRIAL_OUTCOMES,
   advanceChapterProgress,
@@ -91,6 +92,7 @@ export function createBattleController({ store, panelManager, soulTalkController
   const actionRowEl = qs("#standoff-action-row");
   let telegraphEl = null;
   let riftFigureEl = null;
+  let circleStripEl = null;
 
   // 意圖預示（telegraph）：動態插到行動列上方（不動 index.html），玩家在選行動前先讀懂
   // 「裂隙下一拍要做什麼」。樣式由本檔一次性注入 <style>，避免動基底 styles.css。
@@ -147,6 +149,50 @@ export function createBattleController({ store, panelManager, soulTalkController
     el.classList.remove("has-sprite");
     img.dataset.spritePath = path;
     img.src = path;
+  }
+
+  // 共鳴圈小像列（設計 §7 v3）：夥伴側顯示圈員的姿態名＋呼吸點；喘息中則轉淡。
+  // 動態插在狀態列（.standoff-field）下方，不動 index.html；無圈員時整列隱藏。
+  function ensureCircleStrip() {
+    if (circleStripEl) return circleStripEl;
+    const field = stabilityFillEl?.closest(".standoff-field");
+    if (!field) return null;
+    injectCircleStripStyles();
+    circleStripEl = document.createElement("div");
+    circleStripEl.className = "circle-strip";
+    circleStripEl.setAttribute("role", "note");
+    circleStripEl.setAttribute("aria-label", "共鳴圈夥伴");
+    circleStripEl.hidden = true;
+    field.insertAdjacentElement("afterend", circleStripEl);
+    return circleStripEl;
+  }
+
+  function renderCircleStrip() {
+    const strip = ensureCircleStrip();
+    if (!strip) return;
+    const members = session?.circle || [];
+    if (!members.length) {
+      strip.hidden = true;
+      return;
+    }
+    strip.hidden = false;
+    strip.innerHTML = "";
+    members.forEach((member) => {
+      const chip = document.createElement("span");
+      chip.className = member.resting ? "cs-chip is-resting" : "cs-chip";
+      chip.title = member.stanceHint || "";
+      const stanceEl = document.createElement("b");
+      stanceEl.textContent = member.stanceName;
+      const nameEl = document.createElement("span");
+      nameEl.textContent = member.name;
+      const breathEl = document.createElement("i");
+      breathEl.className = "cs-breath";
+      breathEl.textContent = member.resting
+        ? "喘息中"
+        : "●".repeat(member.breath) + "○".repeat(Math.max(0, MAX_MEMBER_BREATH - member.breath));
+      chip.append(stanceEl, nameEl, breathEl);
+      strip.appendChild(chip);
+    });
   }
 
   function updateRiftFigure() {
@@ -213,7 +259,9 @@ export function createBattleController({ store, panelManager, soulTalkController
   function startBattle({ enemyId, nodeId }) {
     const state = store.getState();
     const companion = getCompanionById(state.activeCompanionId);
-    session = createStandoffSession({ companion, enemyId, nodeId, state });
+    // CH-6 共鳴圈：進場前定圈（最早結緣者優先，最多 3 隻同場），對峙中不換。
+    const circle = deriveResonanceCircle(state);
+    session = createStandoffSession({ companion, enemyId, nodeId, state, circle });
     renderedLogCount = 0;
     lastOutcome = null;
     prevNoise = null;
@@ -442,6 +490,7 @@ export function createBattleController({ store, panelManager, soulTalkController
     });
 
     updateRiftFigure();
+    renderCircleStrip();
 
     // 意圖預示：只在玩家回合顯示（讓玩家據此選穩住/設界/脈衝）；雜訊回合與結束時隱藏。
     ensureTelegraphElement();
@@ -483,6 +532,23 @@ function injectTelegraphStyles() {
     ".standoff-fill.fx-shake-strong{animation:fx-shake-strong 380ms ease-in-out}",
     "@keyframes fx-burst{0%{transform:scale(1)}40%{transform:scale(1.35);filter:brightness(1.8)}100%{transform:scale(1)}}",
     "#standoff-shards.fx-burst{display:inline-block;animation:fx-burst 700ms ease-out}"
+  ].join("");
+  document.head.appendChild(style);
+}
+
+// 共鳴圈小像列樣式：玻璃小藥丸＋呼吸點；喘息中轉淡。全部自注入，不動基底 CSS。
+function injectCircleStripStyles() {
+  if (document.getElementById("circle-strip-styles")) return;
+  const style = document.createElement("style");
+  style.id = "circle-strip-styles";
+  style.textContent = [
+    ".circle-strip{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin:2px 0 0;flex:0 0 auto}",
+    ".circle-strip[hidden]{display:none}",
+    ".cs-chip{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:999px;border:1px solid rgba(138,217,255,.22);background:rgba(8,13,32,.6);font-size:10.5px;line-height:1.4;color:rgba(214,232,250,.92);transition:opacity .4s ease}",
+    ".cs-chip b{font-weight:700;color:#cfeaff}",
+    ".cs-chip .cs-breath{font-style:normal;letter-spacing:2px;color:#8ad9ff;font-size:9px}",
+    ".cs-chip.is-resting{opacity:.5}",
+    ".cs-chip.is-resting .cs-breath{letter-spacing:normal;color:rgba(200,222,245,.65)}"
   ].join("");
   document.head.appendChild(style);
 }
