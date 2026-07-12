@@ -58,6 +58,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-07-13 - Claude Fable 5 - Council-five evolution lines (canon three-stage names + lore)
+
+- Status: `VERIFIED`
+- Branch / commit: `main` / lands with this commit (parent `82ac4ae`); Owner's 「好照著繼續做」 approved continuing the established verify→commit→push→index flow for this announced pack.
+- Scope: EXPERIENCE content — `src/data/evolutionLines.js` (+5 lines) + `docs/art/ART_PRODUCTION_INDEX.json` (GAP-2 blockedOn wording). No engine logic, no GROUNDWORK.
+- Work performed: Filled the five formal Heartspark Council companions' EVOLUTION_LINES (the last council-five content debt): three stages each with **canon names taken verbatim from heartsparkCouncilCanon v0.6** (zh + en) — 芽角小鹿→風林鹿衛→聖林鹿靈, 星紋小虎→晶岩虎衛→星地虎御, 金羽小梟→輝羽梟衛→聖輝梟曜, 焰尾小狐→星焰狐衛→永焰狐曜, 晶鰭小海馬→冰洋海龍衛→蒼海龍靈. Lore stays relationship-language (演化不靠打怪：bond 25/70 thresholds + trace/ritual hints, same contract as existing lines); stage-2/3 identities extend each cub's emblem theme (寬恕/邊界/守望/勇氣/記憶). GAP-2 `blockedOn` updated: evolution-TEXT blocker RESOLVED; still blocked on Owner scope decision + visual-evolution runtime wiring — do not generate yet.
+- Verification: `node --check`; cross-check script — all 11 runtime companions resolve an evolution line, 3 stages each, stage-0 zh name == registry name, and all five canon stage-1/2/3 zh+en names match heartsparkCouncilCanon verbatim (0 problems); browser e2e: codex evolution strip for sprigfawn shows the line (placeholder 「演化資料整備中」 gone), low bond masks later stages as ？？？ (pre-existing anti-spoiler behavior), bond-80 save reveals 風林鹿衛/聖林鹿靈 with lore; JSON valid; full web release gate **10/10**; 0 console errors. Test save bond restored.
+- Problems / risks: **10 stage-lore lines await Owner copy review** (content-layer, adjustable post-commit). GAP-2 art generation remains blocked (scope decision + companionRenderer evolution-stage switching); this pack only supplies the text canon it needed.
+- Next safe action: Owner decides GAP-2 scope (core 12 vs full 22; MVP idle vs full 29) and whether to open the visual-evolution wiring GROUNDWORK pack; or Codex packs (TP-4 sc/jp, TP-2 status refresh) per continuation handoff.
+- Required reading: `src/data/evolutionLines.js`, `src/data/heartsparkCouncilCanon.js`, `docs/art/ART_PRODUCTION_INDEX.json` (GAP-2), and this lane.
+
 ### 2026-07-13 - Claude Fable 5 - Council-five soulTalkTone content pack + CH-6 balance-sheet section
 
 - Status: `VERIFIED`

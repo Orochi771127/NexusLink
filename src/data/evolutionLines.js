@@ -71,6 +71,49 @@ export const EVOLUTION_LINES = {
       "苔石身軀裡的晶核更亮了。牠的耳朵總先一步朝你，藏不住那點光。", CHILD_BOND, CHILD_HINT),
     stage(2, "曦鳴兔", "Dawnchime Rabbit",
       "金石很冷，但你讓這顆晶核學會了替人發熱。牠連你沒說出口的，都聽得見。", ADULT_BOND, ADULT_HINT)
+  ]),
+
+  // ── 心輝議會・正式五席（三階名逐字取自 heartsparkCouncilCanon v0.6；
+  //    幼態守護夥伴 → 議會守衛成熟體 → 聖域覺醒體）。演化仍不靠打怪，靠關係。──
+  "sprigfawn-line": line(true, [
+    stage(0, "芽角小鹿", "Sprigfawn",
+      "角上還只是兩枝芽枝的小鹿，靠近受傷的心核時會長出新葉。牠正在學：溫柔不等於沒有邊界。", 0, ""),
+    stage(1, "風林鹿衛", "Galegrove Stag Warden",
+      "芽枝長成了迎風的新角，風穿過林徑時會替牠傳話。牠學會了先問「可以嗎」，再把新葉借給誰。", CHILD_BOND, CHILD_HINT),
+    stage(2, "聖林鹿靈", "Sacred Grove Stag Spirit",
+      "牠走過的地方，枯掉的東西會重新綠回來。寬恕在牠身上不是忘記，是讓該長的，繼續長。", ADULT_BOND, ADULT_HINT)
+  ]),
+  "starstripe-cub-line": line(true, [
+    stage(0, "星紋小虎", "Starstripe Cub",
+      "胸前星形心核會在地脈震動時發光的小虎。話不多，危險靠近時卻總站在最前面。", 0, ""),
+    stage(1, "晶岩虎衛", "Crystalrock Tiger Warden",
+      "星紋沉進了晶岩般的肩甲裡。牠依然慢熱，但你已經是牠願意背對的人。", CHILD_BOND, CHILD_HINT),
+    stage(2, "星地虎御", "Stellar Earth Tiger Aegis",
+      "牠站定的地方，地脈就安定下來。胸前的星亮著，就代表兩件事：有危險，和，有牠在。", ADULT_BOND, ADULT_HINT)
+  ]),
+  "auriowl-line": line(true, [
+    stage(0, "金羽小梟", "Auriowl",
+      "飛行還不穩的金羽小梟，卻天生看得見情緒流裡的細小裂縫。最早看見危險，就是守護的開始。", 0, ""),
+    stage(1, "輝羽梟衛", "Radiant Owl Warden",
+      "翅膀終於穩了，牠把巡夜排成了固定的路線。每一圈的最後，都會經過你。", CHILD_BOND, CHILD_HINT),
+    stage(2, "聖輝梟曜", "Sacred Radiance Owl Luminary",
+      "牠的羽光亮得像提前抵達的晨光。看見裂縫不再只是預警——牠學會了在裂開之前，先把光放進去。", ADULT_BOND, ADULT_HINT)
+  ]),
+  "blazetail-kit-line": line(true, [
+    stage(0, "焰尾小狐", "Blazetail Kit",
+      "尾巴像不會熄滅的小火苗，夜路上總先一步亮起。勇氣不是不怕，是害怕時仍願意替人照路。", 0, ""),
+    stage(1, "星焰狐衛", "Starflame Fox Warden",
+      "尾焰裡開始有星火明滅。牠還是會怕黑——只是有你在後面，牠敢把尾巴舉得更高。", CHILD_BOND, CHILD_HINT),
+    stage(2, "永焰狐曜", "Eternal Flame Fox Luminary",
+      "牠的火不再需要燃料，因為裡面有一半是你給的。就算整個世界的火都熄了，這一簇會替你們亮著。", ADULT_BOND, ADULT_HINT)
+  ]),
+  "crystalfin-seahorse-line": line(true, [
+    stage(0, "晶鰭小海馬", "Crystalfin Seahorse",
+      "水晶鰭會映出被遺忘記憶的小海馬，安靜地待在水面下。記憶不只是傷口，也是撐過來的痕跡。", 0, ""),
+    stage(1, "冰洋海龍衛", "Frostocean Sea Dragon Warden",
+      "鰭紋長成了海龍的輪廓，替更深的水守著更多的記憶。你交給牠的，連漩渦都帶不走。", CHILD_BOND, CHILD_HINT),
+    stage(2, "蒼海龍靈", "Azure Sea Dragon Spirit",
+      "牠身後展開一片蒼海憶域——所有被好好記住的事，都在那裡發著微光。牠說：這片海，有一半是你陪牠沉澱的。", ADULT_BOND, ADULT_HINT)
   ])
 };
 
