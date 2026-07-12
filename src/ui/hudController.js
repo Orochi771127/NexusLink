@@ -49,17 +49,10 @@ export function createHudController({ store, statusText }) {
 
   function renderAvatarPortraits(creature) {
     qsa(".avatar-orb-portrait").forEach((portrait) => {
-      if (creature.id === "greyshade-cat") {
-        portrait.style.backgroundImage = "";
-        portrait.style.backgroundSize = "";
-        portrait.style.backgroundPosition = "";
-        portrait.style.transform = "";
-        return;
-      }
       if (creature.image) {
         portrait.style.backgroundImage = `url("${creature.image}")`;
-        portrait.style.backgroundSize = "contain";
-        portrait.style.backgroundPosition = "center 60%";
+        portrait.style.backgroundSize = "cover";
+        portrait.style.backgroundPosition = "center";
         portrait.style.transform = "scale(1)";
         return;
       }
