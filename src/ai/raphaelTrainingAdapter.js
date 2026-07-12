@@ -18,6 +18,9 @@ const TOPIC_MAP = Object.freeze({
   raphael_behavior: TOPICS.RAPHAEL_AI,
   social_conflict: TOPICS.SOCIAL_CONFLICT,
   nuwa_daily_life: TOPICS.DAILY_LIFE,
+  nuwa_daily_texture: TOPICS.DAILY_LIFE,
+  nuwa_small_moments: TOPICS.EMOTION,
+  nuwa_sleepless: TOPICS.EMOTION,
   nuwa_feedback_naturalness: TOPICS.RAPHAEL_AI,
   nuwa_boundary_respect: TOPICS.RELATIONSHIP
 });
@@ -32,6 +35,9 @@ const DIALOGUE_ACT_MAP = Object.freeze({
   reporting_bug: DIALOGUE_ACTS.REPORTING_BUG,
   asking_for_explanation: DIALOGUE_ACTS.ASKING_QUESTION,
   nuwa_daily_sharing: DIALOGUE_ACTS.DESCRIBING_EVENT,
+  nuwa_daily_texture_sharing: DIALOGUE_ACTS.DESCRIBING_EVENT,
+  nuwa_small_moments_sharing: DIALOGUE_ACTS.DESCRIBING_EVENT,
+  nuwa_sleepless_night: DIALOGUE_ACTS.VENTING,
   nuwa_feedback: DIALOGUE_ACTS.GIVING_FEEDBACK,
   nuwa_boundary_offer: DIALOGUE_ACTS.REQUESTING_PRESENCE
 });

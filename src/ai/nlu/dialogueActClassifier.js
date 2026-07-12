@@ -66,7 +66,7 @@ export function classifyDialogueAct(inputText = "", analysis = {}, intent = {}, 
   if (/陪我|在旁邊|不要走|想靠近|靠近你/.test(text) && !/安靜|不要問/.test(text)) {
     return DIALOGUE_ACTS.REQUESTING_PRESENCE;
   }
-  if (/好煩|好悶|好委屈|受不了|崩潰|壓力好大/.test(text)) {
+  if (/好煩|好悶|好委屈|受不了|崩潰|壓力好大|煩死|氣死|受夠了|心好累|好烦|好闷|崩溃|压力好大|气死/.test(text)) {
     return DIALOGUE_ACTS.VENTING;
   }
   if (topic === "raphael_ai" || topic === "development") return DIALOGUE_ACTS.META_DISCUSSION;

@@ -1464,6 +1464,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 3 - Raphael Core, Companion Reasoning, And Soul Talk
 
+### 2026-07-13 - Claude Fable 5 - NLU 訓練批次：詞庫擴充 + 日常質感語料 + Nuwa v0.3（Owner 直接指派）
+
+- Status: `VERIFIED`
+- Branch / commit: `main` / lands with this commit (parent `b090b45`; Codex 的 onboarding 包在本包驗證期間併入，檔案零重疊); Owner approved commit/push/index in chat after the verification report。Owner 指令：「訓練 RAPHAEL CORE AI，調整自然語言理解能力與詞庫內容」；理解確認後 Owner 授權 A（詞庫/NLU）+B（fixtures）+C（語料）合一包、簡體變體納入、措辭品質斷言另開。
+- Scope: 純規則/資料層訓練（案例先行：先寫 eval case 再擴分類器，沿 2026-07-04 Codex 守則）。12 files：`emotionDictionary` / `emotionInterpreter` / `intentClassifier` / NLU 四件（topic/dialogueAct/specificDetail/replyBuilder）/ Nuwa bundle v0.3 / trainingAdapter / 兩個 harness。**safetyShield／memoryWriter／stateMutationPolicy／狀態層零觸碰**；新詞逐一對照 safetyShieldDictionary 確認零碰撞（消失/撐不住了/受不了了/沒有意義等 caution 詞族刻意不收，維持既有註記守則）；不收英文縮寫俚語（substring 誤中風險，如 emo⊂memory）。
+- Work performed: (A) **詞庫**：emotionDictionary 7 情緒 +約 60 口語/簡體變體（心好累/累爆/內耗/想太多/氣炸/空虛/被治癒/躺平…＋难过/焦虑/孤单/生气/谢谢 等 sc 系）；情感詞典 19→60 詞（含 sc 對照組）、程度副詞 7→16（超級/太/有夠/整個/越來越/一點點…）、否定詞 6→11（沒那麼/没/别…）；mapKeywordToEmotion 同步。**NLU**：topicClassifier 日常質感（追劇/耍廢/滑手機/無聊/週末/收假/天氣）＋強社交訊號（冷戰/已讀不回/被排擠）改列於工作壓力**之前**（「被同事已讀不回」主體是人際）＋心累系歸情緒不歸身體累＋高頻 sc；intentClassifier「睡不著/失眠/睡前」豁免 rest_request（失眠=焦慮訊號、睡前=日常分享）；dialogueAct venting 擴充；specificDetailExtractor 新 pattern（sleepless/冷戰/做不完/日常質感）。(B) **Nuwa v0.3**：+3 topics（daily_texture/small_moments/sleepless）+3 acts +emotional_short 策略（allowlist 內）+8 fixtures（NUWA-TEXTURE-001/002、WEEKEND-001、BORED-001、COMMUTE-002、WIN-001、SETBACK-001、SLEEPLESS-001）；**新哨兵 no_sleep_pressure**（失眠回覆不得說「快去睡/早點睡」——陪伴不是催促）。(C) **語料**：nluReplyBuilder 睡前道別（「嗯，去睡吧。這裡有我看著。」零 retention pull）、失眠夜（不逼睡）、正向小分享（接住喜悅不浮誇、無獎勵語）、週末收假/雨天/追劇/滑手機/無聊五組日常句、早安問候、sc 壓力落地句。eval：nluTrainingCases +14（TR-17..TR-30，含 sc 端到端 ×2）。
+- Verification: 官方 runner（5173 本機 server）：nlu_training **30/30**（16→30）、nlu_smoke 8/8、training_bundle **29/29**（21→29）、main_readiness **41/41**（33→41）、harness_smoke **17/17**、constitution 5/5、dialogue_loop 10/10、stage4 12/12；node 層另證 personaBoundary 6/6、recallBleed 5/5、awakening 4/4。**live playtest gate：soul_talk 10/10、HUD 13/13、awakening/touch/storage/pixi 全過、0 console errors、ok:true**。**web release gate 10/10**。實機心語 probes：「今天整天都在追劇耍廢」→新日常句；sc「我好难过，想哭」→悶接住（sc 理解打通）；sc「压力好大」→工作壓力落地；「被同事已讀不回」→人際落地；「我要去睡了，晚安」→新睡前句（實測零強留）。`node --check` ×12。
+- Problems / risks: (a) 實機觀察到里程碑播報與 anti-loop 輪替會蓋過特定語料句——**設計行為非缺陷**（測試存檔 bond 已滿、同句連發觸發輪替）；記錄供之後測試者參考。(b) 過程中一次 coreSmoke「7/17」為**計數假警報**（該 harness 有 10 個純診斷結果物件本無 pass 欄位；官方 runner 17/17 為準）。(c) 語料為第一輪窄集，「未覆蓋說法仍會掉 clarifying」屬預期——後續照本包模式先加 case 再擴。(d) 多語深度（EN/jp）與措辭品質斷言（mustInclude/mustAvoid）維持覆蓋矩陣開口，本包不碰。**約 30 句新玩家可見語料待 Owner 審稿**。
+- Next safe action: Owner approves commit/push/index；後續訓練批次可沿「case 先行→詞庫→語料→哨兵」同模式擴（候選：EN 輸入路由、天氣/季節細分、寵物/家人日常）。
+- Required reading: `src/ai/testHarness/nluTrainingCases.js`（TR-17..30）、`src/data/ai/raphaelNuwaDistillationBundle.js` v0.3、`src/data/emotionDictionary.js` 擴詞守則註記、`docs/raphael/RAPHAEL_EVAL_COVERAGE_MATRIX.md`、and this lane.
+
 ### 2026-07-10 - Claude Fable 5 - TP-3 eval 擴充：Nuwa v0.2 日常節律 + persona/道歉語義防護（覆蓋矩陣兩缺口關閉）
 
 - Status: `VERIFIED`

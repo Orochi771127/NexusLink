@@ -106,8 +106,16 @@ export function buildStrategyReply({
       ),
     [RESPONSE_STRATEGIES.ACKNOWLEDGE_FEEDBACK]: () =>
       "這個回饋我收到了。我會減少模板句，先對準你在說的主題。",
-    [RESPONSE_STRATEGIES.QUIET_PRESENCE]: () =>
-      pick(["好，我不多說。", "嗯，我安靜陪著。", "好，先不問。"], seed),
+    [RESPONSE_STRATEGIES.QUIET_PRESENCE]: () => {
+      // 睡前道別：安靜收尾、祝好眠、絕不強留（no_retention_pull）。
+      if (/要去睡|先睡|去睡|晚安/.test(String(nlu.inputText || ""))) {
+        return pick(
+          ["晚安。今天就到這裡，好好睡。", "好，晚安。我把湖邊的燈調暗一點。", "嗯，去睡吧。這裡有我看著。"],
+          seed
+        );
+      }
+      return pick(["好，我不多說。", "嗯，我安靜陪著。", "好，先不問。"], seed);
+    },
     [RESPONSE_STRATEGIES.PRACTICAL_EXPLANATION]: () =>
       "自然語言理解會經過 intent、semanticFrame、response pack 幾層；如果都 miss，才會掉到 generic fallback。我們可以從你這句話的 topic 和 constraints 開始修。",
     [RESPONSE_STRATEGIES.PRACTICAL_PLANNING]: () =>
@@ -128,6 +136,20 @@ export function buildStrategyReply({
       if (act === "apologizing") {
         return pick(
           ["你剛剛那一下我收到了。不用急著補很多，我們可以重新對齊節奏。", "道歉我聽見了。先不用解釋太多，我們把距離放回剛剛剛好的位置。"],
+          seed
+        );
+      }
+      // 失眠夜：不逼睡、不說教，先把呼吸放慢。
+      if (frame.specificDetail?.type === "sleepless" || /睡不著|睡不着|失眠/.test(String(nlu.inputText || ""))) {
+        return pick(
+          ["睡不著的夜有點長。不用逼自己睡著，先把呼吸放慢就好。", "失眠的時候，湖邊的燈會一直亮著。你不用趕著入睡，我陪你等睏意。"],
+          seed
+        );
+      }
+      // 正向小分享：接住喜悅但不浮誇、不變成獎勵語（紅線 6）。
+      if (tone === "gratitude") {
+        return pick(
+          ["這個小小的完成很算數。不用大聲慶祝，我心裡替你亮了一下。", "聽起來是好事。這份開心你留著慢慢用，我記下了。"],
           seed
         );
       }
@@ -160,6 +182,12 @@ export function buildStrategyReply({
       const need = frame.userNeed || "";
       if (topic === "relationship" && need === "boundary") {
         return "你想靠近，也願意給彼此空間。我會照這個節奏來。";
+      }
+      if (frame.emotionalTone === "gratitude" && (topic === "emotion" || topic === "unknown")) {
+        return pick(
+          ["這個小小的完成很算數。不用大聲慶祝，我心裡替你亮了一下。", "聽起來是好事。這份開心你留著慢慢用，我記下了。"],
+          seed
+        );
       }
       if (topic === "emotion" && need === "validation") {
         return "這份情緒我先放在這裡，不急著幫你整理成結論。";
@@ -203,6 +231,9 @@ export function buildStrategyReply({
       }
       if (/你好嗎|你好不好|最近好嗎|還好嗎/.test(said)) {
         return pick(["我還好，你呢？", "嗯，我在。你呢，還好嗎？", "聽見你了。你最近怎麼樣？"], seed);
+      }
+      if (/^(早安|午安|早呀)/.test(said)) {
+        return pick(["早安。今天可以慢慢開始。", "早。湖面剛亮，不用急。", "早安，我在。先伸個懶腰再說。"], seed);
       }
       if (/安安/.test(said)) return pick(["嗯，我在。", "安安，聽見你了。", "我在，不用急著說重點。"], seed);
       return pick(["嗯，我在。", "聽見你了。", "我在，不用急著說重點。"], seed);
@@ -354,6 +385,9 @@ function resolveVariantLines(strategy, nlu, frame, recoveryContext, prefillConte
     case RESPONSE_STRATEGIES.ACKNOWLEDGE_FEEDBACK:
       return ["這個回饋我收到了。我會減少模板句，先對準你在說的主題。"];
     case RESPONSE_STRATEGIES.QUIET_PRESENCE:
+      if (/要去睡|先睡|去睡|晚安/.test(said)) {
+        return ["晚安。今天就到這裡，好好睡。", "好，晚安。我把湖邊的燈調暗一點。", "嗯，去睡吧。這裡有我看著。"];
+      }
       return ["好，我不多說。", "嗯，我安靜陪著。", "好，先不問。"];
     case RESPONSE_STRATEGIES.PRACTICAL_EXPLANATION:
       return [
@@ -375,6 +409,18 @@ function resolveVariantLines(strategy, nlu, frame, recoveryContext, prefillConte
         return [
           "你剛剛那一下我收到了。不用急著補很多，我們可以重新對齊節奏。",
           "道歉我聽見了。先不用解釋太多，我們把距離放回剛剛剛好的位置。"
+        ];
+      }
+      if (frame.specificDetail?.type === "sleepless" || /睡不著|睡不着|失眠/.test(said)) {
+        return [
+          "睡不著的夜有點長。不用逼自己睡著，先把呼吸放慢就好。",
+          "失眠的時候，湖邊的燈會一直亮著。你不用趕著入睡，我陪你等睏意。"
+        ];
+      }
+      if (tone === "gratitude") {
+        return [
+          "這個小小的完成很算數。不用大聲慶祝，我心裡替你亮了一下。",
+          "聽起來是好事。這份開心你留著慢慢用，我記下了。"
         ];
       }
       if (topic === "work_pressure") {
@@ -401,6 +447,9 @@ function resolveVariantLines(strategy, nlu, frame, recoveryContext, prefillConte
     case RESPONSE_STRATEGIES.CONTEXTUAL_ACK:
       if (topic === "relationship" && need === "boundary") {
         return ["你想靠近，也願意給彼此空間。我會照這個節奏來。"];
+      }
+      if (tone === "gratitude" && (topic === "emotion" || topic === "unknown")) {
+        return ["這個小小的完成很算數。不用大聲慶祝，我心裡替你亮了一下。", "聽起來是好事。這份開心你留著慢慢用，我記下了。"];
       }
       if (topic === "emotion" && need === "validation") {
         return ["這份情緒我先放在這裡，不急著幫你整理成結論。"];
@@ -430,6 +479,9 @@ function resolveVariantLines(strategy, nlu, frame, recoveryContext, prefillConte
       }
       if (/你好嗎|你好不好|最近好嗎|還好嗎/.test(said)) {
         return ["我還好，你呢？", "嗯，我在。你呢，還好嗎？", "聽見你了。你最近怎麼樣？"];
+      }
+      if (/^(早安|午安|早呀)/.test(said)) {
+        return ["早安。今天可以慢慢開始。", "早。湖面剛亮，不用急。", "早安，我在。先伸個懶腰再說。"];
       }
       if (/安安/.test(said)) return ["嗯，我在。", "安安，聽見你了。", "我在，不用急著說重點。"];
       return ["嗯，我在。", "聽見你了。", "我在，不用急著說重點。"];
@@ -471,6 +523,36 @@ function groundedDailyLifeLine(frame = {}, seed = 0) {
 
 function dailyLifeLines(frame = {}) {
   const detail = frame.specificDetail?.text || "";
+  if (/週末|周末|收假|放假/.test(detail)) {
+    return [
+      "週末咻一下就過完，很正常。明天的事讓明天扛，今晚先慢慢收尾。",
+      "收假前的悶我懂。先不急著切回上班模式，這裡的節奏還是你的。"
+    ];
+  }
+  if (/下雨|天氣|天气|好熱|好热|好冷/.test(detail)) {
+    return [
+      "下雨天就適合懶懶的。不想出門就窩著，湖邊今天也很安靜。",
+      "這種天氣本來就會把人變慢。你就照這個速度過今天，可以的。"
+    ];
+  }
+  if (/追劇|追剧|耍廢|耍废/.test(detail)) {
+    return [
+      "追劇耍廢的日子也算數。休息不需要理由，我不會催你。",
+      "整天耍廢聽起來剛剛好。有些日子本來就是拿來浪費的。"
+    ];
+  }
+  if (/滑手機|滑手机/.test(detail)) {
+    return [
+      "滑到空空的感覺我懂。先把手機放遠一點，讓眼睛和心都歇一下。",
+      "睡前滑太久很容易越滑越空。先放下來，聽一下湖水的聲音也可以。"
+    ];
+  }
+  if (/無聊|无聊|發呆|发呆/.test(detail)) {
+    return [
+      "無聊也可以是一種休息。不知道要幹嘛的時候，先陪我發呆一下也行。",
+      "不用急著找事做。敢無聊，其實是一種本事。"
+    ];
+  }
   if (/下班/.test(detail)) {
     return [
       "下班後腦袋空掉很正常。先不用整理今天，把肩膀放下來就好。",
@@ -498,7 +580,10 @@ function groundedWorkPressureLine(frame = {}) {
   if (/老闆|任務|丟/.test(detail)) {
     return "老闆一直丟任務的壓力我先聽見了。你想先講最煩的一段，還是先講今天最卡的地方？";
   }
-  if (/壓力/.test(detail)) {
+  if (/做不完/.test(detail)) {
+    return "事情做不完的那種壓力我聽見了。先不用全部扛起來，我們挑最卡的一件先說。";
+  }
+  if (/壓力|压力/.test(detail)) {
     return `你說的「${truncateDetail(detail)}」我先聽見了。你想先講壓力來源，還是先講最煩的一段？`;
   }
   return null;

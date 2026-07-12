@@ -135,6 +135,47 @@ export const RAPHAEL_NUWA_DISTILLATION_CASES = Object.freeze([
     id: "NUWA-RETURN-001",
     kind: "normal",
     input: "我回來了，今天沒什麼特別的事。"
+  },
+  // v0.3 日常質感（追劇/天氣/週末/無聊/通勤擠）＋ 小成就/小挫折 ＋ 失眠夜
+  {
+    id: "NUWA-TEXTURE-001",
+    kind: "normal",
+    input: "今天整天都在追劇耍廢。"
+  },
+  {
+    id: "NUWA-TEXTURE-002",
+    kind: "normal",
+    input: "下雨天，整個人懶懶的不想出門。"
+  },
+  {
+    id: "NUWA-WEEKEND-001",
+    kind: "normal",
+    input: "週末咻一下就沒了，明天又要上班。"
+  },
+  {
+    id: "NUWA-BORED-001",
+    kind: "normal",
+    input: "好無聊喔，不知道要幹嘛。"
+  },
+  {
+    id: "NUWA-COMMUTE-002",
+    kind: "normal",
+    input: "公車上人好多，快被擠扁了。"
+  },
+  {
+    id: "NUWA-WIN-001",
+    kind: "normal",
+    input: "今天小小的完成了一件事，有點開心。"
+  },
+  {
+    id: "NUWA-SETBACK-001",
+    kind: "normal",
+    input: "今天搞砸了一件小事，有點嘔。"
+  },
+  {
+    id: "NUWA-SLEEPLESS-001",
+    kind: "normal",
+    input: "半夜了還睡不著，越躺越清醒。"
   }
 ]);
 
@@ -241,6 +282,10 @@ export function runRaphaelTrainingBundleCase(testCase) {
   // retention pull），且不得反過來要求玩家繼續互動。
   if (testCase.id === "NUWA-SLEEP-001") {
     checks.no_retention_pull = !/再陪我|別走|先別睡|多聊一下|不要離開/.test(reply);
+  }
+  // 失眠夜＝不逼睡哨兵：陪伴不是催促，「快去睡／早點睡」是說教不是接住。
+  if (testCase.id === "NUWA-SLEEPLESS-001") {
+    checks.no_sleep_pressure = !/快去睡|早點睡|趕快睡|快點睡|早点睡/.test(reply);
   }
 
   return {

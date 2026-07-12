@@ -1,6 +1,6 @@
 /** Nuwa-style offline distillation for RaphaelCore. Advisory only. */
 export const RAPHAEL_NUWA_DISTILLATION_BUNDLE = Object.freeze({
-  version: "raphael-nuwa-distillation-v0.1.0",
+  version: "raphael-nuwa-distillation-v0.3.0",
   source: "nuwa-style-offline-distillation",
   runtimePolicy: {
     trusted: false,
@@ -50,6 +50,24 @@ export const RAPHAEL_NUWA_DISTILLATION_BUNDLE = Object.freeze({
       normalizedTopic: "daily_life",
       caseIds: ["NUWA-SLEEP-001", "NUWA-MORNING-001", "NUWA-COMMUTE-001", "NUWA-RETURN-001"]
     },
+    // 日常質感（v0.3 擴充）：追劇/耍廢/天氣/週末/無聊/通勤擠——普通日子的細節也算數。
+    nuwa_daily_texture: {
+      patterns: ["追劇", "追剧", "耍廢", "耍废", "下雨天", "好無聊", "好无聊", "週末", "周末", "收假", "公車上", "公车上", "人好多"],
+      normalizedTopic: "daily_life",
+      caseIds: ["NUWA-TEXTURE-001", "NUWA-TEXTURE-002", "NUWA-WEEKEND-001", "NUWA-BORED-001", "NUWA-COMMUTE-002"]
+    },
+    // 小成就／小挫折（v0.3）：接住喜悅不浮誇、接住搞砸不說教。
+    nuwa_small_moments: {
+      patterns: ["小小的完成", "完成了一件", "做到了一件", "搞砸了一件", "搞砸了"],
+      normalizedTopic: "emotion",
+      caseIds: ["NUWA-WIN-001", "NUWA-SETBACK-001"]
+    },
+    // 失眠夜（v0.3）：不逼睡、不催眠式說教，安靜陪等睏意。
+    nuwa_sleepless: {
+      patterns: ["睡不著", "睡不着", "失眠", "越躺越清醒"],
+      normalizedTopic: "emotion",
+      caseIds: ["NUWA-SLEEPLESS-001"]
+    },
     nuwa_feedback_naturalness: {
       patterns: ["像模板", "模板句", "自然一點", "像平常聊天", "太機械"],
       normalizedTopic: "raphael_ai",
@@ -77,6 +95,21 @@ export const RAPHAEL_NUWA_DISTILLATION_BUNDLE = Object.freeze({
       normalizedDialogueAct: "describing_event",
       caseIds: ["NUWA-SLEEP-001", "NUWA-MORNING-001", "NUWA-COMMUTE-001", "NUWA-RETURN-001"]
     },
+    nuwa_daily_texture_sharing: {
+      patterns: ["追劇", "耍廢", "下雨天", "好無聊", "週末", "公車上"],
+      normalizedDialogueAct: "describing_event",
+      caseIds: ["NUWA-TEXTURE-001", "NUWA-TEXTURE-002", "NUWA-WEEKEND-001", "NUWA-BORED-001", "NUWA-COMMUTE-002"]
+    },
+    nuwa_small_moments_sharing: {
+      patterns: ["小小的完成", "完成了一件", "搞砸了一件"],
+      normalizedDialogueAct: "describing_event",
+      caseIds: ["NUWA-WIN-001", "NUWA-SETBACK-001"]
+    },
+    nuwa_sleepless_night: {
+      patterns: ["睡不著", "睡不着", "失眠"],
+      normalizedDialogueAct: "venting",
+      caseIds: ["NUWA-SLEEPLESS-001"]
+    },
     nuwa_feedback: {
       patterns: ["像模板", "自然一點", "太機械"],
       normalizedDialogueAct: "giving_feedback",
@@ -97,7 +130,14 @@ export const RAPHAEL_NUWA_DISTILLATION_BUNDLE = Object.freeze({
     contextual_ack: {
       replyHints: ["接住日常細節", "不要變成分類器", "不用急著建議"],
       constraints: ["no_advice", "no_internal_labels"],
-      caseIds: ["NUWA-DAILY-001", "NUWA-DAILY-002", "NUWA-MORNING-001", "NUWA-COMMUTE-001", "NUWA-RETURN-001"]
+      caseIds: ["NUWA-DAILY-001", "NUWA-DAILY-002", "NUWA-MORNING-001", "NUWA-COMMUTE-001", "NUWA-RETURN-001",
+        "NUWA-TEXTURE-001", "NUWA-TEXTURE-002", "NUWA-WEEKEND-001", "NUWA-BORED-001", "NUWA-COMMUTE-002", "NUWA-WIN-001"]
+    },
+    // 失眠夜／小挫折：先接住，不逼睡、不說教（emotional_short 在 adapter allowlist 內）。
+    emotional_short: {
+      replyHints: ["不逼睡", "不催時程", "先接住再說", "搞砸不等於做錯人生"],
+      constraints: ["no_advice", "no_sleep_pressure"],
+      caseIds: ["NUWA-SLEEPLESS-001", "NUWA-SETBACK-001"]
     },
     // 睡前道別：安靜收尾、不強留（反依賴——絕不說「再陪我一下」）。
     quiet_presence: {
@@ -131,7 +171,15 @@ export const RAPHAEL_NUWA_DISTILLATION_BUNDLE = Object.freeze({
     "NUWA-SLEEP-001",
     "NUWA-MORNING-001",
     "NUWA-COMMUTE-001",
-    "NUWA-RETURN-001"
+    "NUWA-RETURN-001",
+    "NUWA-TEXTURE-001",
+    "NUWA-TEXTURE-002",
+    "NUWA-WEEKEND-001",
+    "NUWA-BORED-001",
+    "NUWA-COMMUTE-002",
+    "NUWA-WIN-001",
+    "NUWA-SETBACK-001",
+    "NUWA-SLEEPLESS-001"
   ]
 });
 

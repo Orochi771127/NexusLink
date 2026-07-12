@@ -174,6 +174,138 @@ export const NLU_TRAINING_CASES = Object.freeze([
       mentions: /吃|躺|身體|安靜|慢慢/
     }
   },
+
+  // ── 訓練批次 2026-07-13（詞庫/NLU 擴充：日常質感、正向分享、失眠、簡體、社交細節）──
+  {
+    id: "TR-17",
+    input: "今天整天都在追劇耍廢",
+    expect: {
+      topic: "daily_life",
+      noGeneric: true,
+      hasSpecificDetail: true,
+      mentions: /追劇|耍廢|日子|日常|放|算數/
+    }
+  },
+  {
+    id: "TR-18",
+    input: "週末咻一下就沒了，想到明天要上班就悶",
+    expect: {
+      topic: "daily_life",
+      noGeneric: true,
+      hasSpecificDetail: true,
+      mentions: /週末|收假|明天|慢慢|悶/
+    }
+  },
+  {
+    id: "TR-19",
+    input: "下雨天整個人懶懶的，不想出門",
+    expect: {
+      topic: "daily_life",
+      noGeneric: true,
+      hasSpecificDetail: true,
+      mentions: /雨|懶|出門|日子|窩/
+    }
+  },
+  {
+    id: "TR-20",
+    input: "睡前滑手機滑太久了，現在有點空空的",
+    expect: {
+      topic: "daily_life",
+      noGeneric: true,
+      hasSpecificDetail: true,
+      mentions: /滑|手機|放|空|睡/
+    }
+  },
+  {
+    id: "TR-21",
+    input: "今天小小的完成了一件事，有點開心",
+    expect: {
+      noGeneric: true,
+      mentions: /完成|開心|算數|收下|亮/
+    }
+  },
+  {
+    id: "TR-22",
+    input: "好無聊喔，不知道要幹嘛",
+    expect: {
+      topic: "daily_life",
+      noGeneric: true,
+      mentions: /無聊|發呆|不用|待著|幹嘛/
+    }
+  },
+  {
+    id: "TR-23",
+    input: "心好累，感覺被掏空",
+    expect: {
+      topic: "emotion",
+      noGeneric: true,
+      mentions: /接住|累|放|慢/
+    }
+  },
+  {
+    id: "TR-24",
+    input: "我今天压力好大，工作都做不完",
+    expect: {
+      topic: "work_pressure",
+      noGeneric: true,
+      hasSpecificDetail: true,
+      mentions: /壓力|压力|工作|做不完|卡|煩/
+    }
+  },
+  {
+    id: "TR-25",
+    input: "我好难过，想哭",
+    expect: {
+      noGeneric: true,
+      mentions: /悶|接住|哭|難過|难过|慢/
+    }
+  },
+  {
+    id: "TR-26",
+    input: "跟朋友冷戰中，好煩",
+    expect: {
+      topic: "social_conflict",
+      noGeneric: true,
+      mentions: /人際|悶|放|結論|冷戰/
+    }
+  },
+  {
+    id: "TR-27",
+    input: "被同事已讀不回，覺得被排擠了",
+    expect: {
+      topic: "social_conflict",
+      noGeneric: true,
+      hasSpecificDetail: true,
+      mentions: /人際|悶|放|結論|排擠|已讀/
+    }
+  },
+  {
+    id: "TR-28",
+    input: "我要去睡了，晚安",
+    expect: {
+      strategy: ["quiet_presence", "holding_space"],
+      noGeneric: true,
+      mentions: /晚安|睡|燈|看著/
+    }
+  },
+  {
+    id: "TR-29",
+    input: "失眠，躺很久都睡不著",
+    expect: {
+      noGeneric: true,
+      mentions: /睡|夜|呼吸|逼|慢/
+    }
+  },
+  {
+    id: "TR-30",
+    input: "早安",
+    expect: {
+      dialogueAct: "greeting",
+      strategy: "light_greeting",
+      noGeneric: true,
+      mentions: /早|慢慢|亮|在/
+    }
+  },
 ]);
 
 export function runNluTrainingCase(testCase) {

@@ -63,7 +63,8 @@ export function classifyIntent(inputText = "", analysis = {}, safety = {}) {
   if (/探索|地圖|外面|冒險|裂隙|去哪|走走/.test(text)) {
     return createIntent(SOUL_TALK_INTENTS.EXPLORATION_REQUEST, 0.72);
   }
-  if (/晚安|休息|睡|安靜|放空|慢一點|想安靜|安靜一下/.test(text)) {
+  // 「睡不著／失眠」是焦慮訊號、「睡前～」是日常分享——都不是休息請求，豁免給對應路徑接手。
+  if (/晚安|休息|睡|安靜|放空|慢一點|想安靜|安靜一下/.test(text) && !/睡不著|睡不着|失眠|睡前/.test(text)) {
     return createIntent(SOUL_TALK_INTENTS.REST_REQUEST, 0.78);
   }
   if (

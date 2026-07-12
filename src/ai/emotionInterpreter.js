@@ -1,5 +1,7 @@
 import { EmotionDict } from "../data/emotionDictionary.js";
 
+// 2026-07-13 訓練批次：擴充情感詞（含高頻簡體變體）。守則同 emotionDictionary——
+// 不收安全層詞族、不收易 substring 誤中的英文縮寫。
 const SENTIMENT_LEXICON = Object.freeze({
   開心: 0.8,
   快樂: 0.9,
@@ -9,6 +11,22 @@ const SENTIMENT_LEXICON = Object.freeze({
   感謝: 0.5,
   平靜: 0.3,
   安心: 0.4,
+  幸福: 0.8,
+  滿足: 0.6,
+  期待: 0.5,
+  興奮: 0.7,
+  放鬆: 0.4,
+  溫暖: 0.5,
+  感動: 0.6,
+  不錯: 0.5,
+  心情好: 0.6,
+  不错: 0.5,
+  心情好轉: 0.6,
+  开心: 0.8,
+  快乐: 0.9,
+  喜欢: 0.7,
+  谢谢: 0.5,
+  感谢: 0.5,
   難過: -0.8,
   傷心: -0.9,
   孤單: -0.7,
@@ -19,7 +37,31 @@ const SENTIMENT_LEXICON = Object.freeze({
   好累: -0.5,
   疲憊: -0.55,
   討厭: -0.7,
-  生氣: -0.65
+  生氣: -0.65,
+  難受: -0.7,
+  委屈: -0.6,
+  煩: -0.5,
+  悶: -0.4,
+  心累: -0.6,
+  崩潰: -0.85,
+  無力: -0.55,
+  失望: -0.65,
+  空虛: -0.6,
+  寂寞: -0.7,
+  不安: -0.5,
+  难过: -0.8,
+  伤心: -0.9,
+  孤单: -0.7,
+  紧张: -0.35,
+  压力: -0.45,
+  疲惫: -0.55,
+  讨厌: -0.7,
+  生气: -0.65,
+  难受: -0.7,
+  烦: -0.5,
+  闷: -0.4,
+  崩溃: -0.85,
+  无力: -0.55
 });
 
 const DEGREE_ADVERBS = Object.freeze({
@@ -29,10 +71,19 @@ const DEGREE_ADVERBS = Object.freeze({
   有點: 0.7,
   不太: 0.55,
   快要: 1.35,
-  超: 1.4
+  超: 1.4,
+  超級: 1.5,
+  太: 1.3,
+  有夠: 1.35,
+  整個: 1.3,
+  越來越: 1.3,
+  特別: 1.3,
+  一點點: 0.6,
+  有点: 0.7,
+  特别: 1.3
 });
 
-const NEGATION_WORDS = ["不", "沒有", "沒", "別", "不是", "not"];
+const NEGATION_WORDS = ["不", "沒有", "沒", "別", "不是", "沒那麼", "没有", "没", "别", "没那么", "not"];
 
 export function interpretEmotionInput(inputText = "", state = {}, runtime = {}) {
   const originalInput = String(inputText || "").trim();
@@ -131,11 +182,11 @@ function findDictionaryEmotion(text) {
 }
 
 function mapKeywordToEmotion(keyword, value) {
-  if (["開心", "快樂", "高興", "喜歡", "謝謝", "感謝", "安心"].includes(keyword)) return "gratitude";
-  if (["好累", "疲憊"].includes(keyword)) return "fatigue";
-  if (["孤單", "孤獨"].includes(keyword)) return "loneliness";
-  if (["害怕", "緊張", "壓力"].includes(keyword)) return "anxiety";
-  if (["生氣", "討厭"].includes(keyword)) return "anger";
+  if (["開心", "快樂", "高興", "喜歡", "謝謝", "感謝", "安心", "幸福", "滿足", "期待", "興奮", "溫暖", "感動", "不錯", "心情好", "不错", "心情好轉", "开心", "快乐", "喜欢", "谢谢", "感谢"].includes(keyword)) return "gratitude";
+  if (["好累", "疲憊", "心累", "無力", "无力", "疲惫"].includes(keyword)) return "fatigue";
+  if (["孤單", "孤獨", "寂寞", "空虛", "孤单"].includes(keyword)) return "loneliness";
+  if (["害怕", "緊張", "壓力", "不安", "紧张", "压力"].includes(keyword)) return "anxiety";
+  if (["生氣", "討厭", "煩", "生气", "讨厌", "烦"].includes(keyword)) return "anger";
   if (value < 0) return "sadness";
   return "calm";
 }
