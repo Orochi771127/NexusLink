@@ -58,6 +58,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-07-12 - Claude Fable 5 - Heartspark Council five: gate asset coverage + animation tempo parity with greyshade
+
+- Status: `VERIFIED`
+- Branch / commit: `main` / lands with this commit (parent `13645a5`); Owner authorized the `assets/**` GROUNDWORK edit + commit/push/index in chat ("動畫不要太快，跟灰影貓目前動畫速度一樣就好").
+- Scope: `src/data/assetManifest.js` + 5 x `assets/characters/{cub}/metadata/animations.json` (fps values only — GROUNDWORK, Owner-authorized). No sheet PNGs touched, no state or Pixi changes.
+- Work performed: (1) Added the five formal Heartspark Council companions (`sprigfawn` / `starstripe-cub` / `auriowl` / `blazetail-kit` / `crystalfin-seahorse`) to `ASSET_MANIFEST.characters` + `RUNTIME_COMPANION_ASSET_KEYS` (approvalStatus `formal-heartspark-council-runtime`), closing the QA gap flagged in the `f80b888` audit — the release gate `asset_integrity` now grid/edge/anchor-checks all 145 formal-cub sheets. Habitat rendering already loaded via `companionRegistry.animationsManifest` since `6e50ab6`, so the cubs were already renderable; coverage was the missing piece. (2) **Animation tempo parity**: audit found all 29 shared animations already carried greyshade's exact per-animation fps, but 14 of them ship fewer frames (3–6f vs greyshade's 8f) → same fps produced shorter clips (blink 0.50s vs 1.33s, hit 0.50s vs 1.00s) — the "too fast" feel the Owner flagged. Fix chosen by Owner: retune fps proportionally (`fps_new = frameCount x greyFps / 8`, e.g. blink 6→2.25, touch_* 6→4.5, hit 8→4, attack_basic 8→6) so **every clip's duration now equals greyshade's exactly**; identical 14-edit set applied to all five manifests; loader accepts non-integer fps (`animationSpeed = fps/60`).
+- Verification: JSON reload-validated; diff surgical (5 files x 14 fps lines, nothing else); web release gate **10/10** with `asset_integrity` listing 11 companions, 0 failures; live e2e with `sprigfawn` active (`?devPanel=1` handle): sprite-sheet mode, all 29 animations loaded through the real loader with **0 durationMs mismatches vs greyshade** (blink now 1333ms @ speed 0.0375, idle_calm unchanged 2667ms @ 0.05), `touch_accept` plays; other four cubs' manifests verified 0 duration mismatches via loader fetch. Only missing entries are the 5 greyshade-legacy extras (`front_walk`/`back_walk`/`special_wake`/`special_left_walk`/`special_wash`) — expected, covered by documented fallback chains. 0 console errors. Test save restored to greyshade after the run.
+- Problems / risks: the 14 retuned clips now run at lower frame rates (2.25–6 fps), so they are slightly choppier than greyshade's 8f equivalents — the Owner chose tempo parity over frame-rate parity; full smoothness parity would need a Codex art batch regenerating those 14 sheets at 8f (fps would then return to greyshade's values). Five test carriers (flame-flicker etc.) were NOT retuned — out of scope.
+- Next safe action: CH-6 resonance-circle standoff (per queue); optionally queue the 14-sheet 8f regeneration batch for smoothness parity.
+- Required reading: `src/data/assetManifest.js`, `assets/characters/sprigfawn/metadata/animations.json` (pattern for all five), `docs/qa/_run_web_release_gate.py` (`run_asset_integrity`), and this lane.
+
 ### 2026-07-12 - Claude Fable 5 - GAP-1 rift silhouettes runtime promotion + standoff wiring
 
 - Status: `VERIFIED`

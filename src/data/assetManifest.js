@@ -50,7 +50,14 @@ export const RUNTIME_COMPANION_ASSET_KEYS = Object.freeze([
   "iceTalon",
   "stoneShard",
   "vineTwist",
-  "crystalRabbit"
+  "crystalRabbit",
+  // 正式心輝議會五席（2026-07-10 Owner 定版；145 sheets 已 runtime 化）——
+  // 列入此清單後 release gate 會逐 sheet 檢查網格/邊長/anchor 完整性。
+  "sprigfawn",
+  "starstripeCub",
+  "auriowl",
+  "blazetailKit",
+  "crystalfinSeahorse"
 ]);
 
 export const ASSET_MANIFEST = Object.freeze({
@@ -102,6 +109,36 @@ export const ASSET_MANIFEST = Object.freeze({
       id: "crystal-rabbit",
       sourceRoot: "./assets/characters/crystal-rabbit",
       animations: "./assets/characters/crystal-rabbit/metadata/animations.json"
+    }),
+    sprigfawn: createIllustratedCompanionAsset({
+      id: "sprigfawn",
+      sourceRoot: "./assets/characters/sprigfawn",
+      animations: "./assets/characters/sprigfawn/metadata/animations.json",
+      approvalStatus: "formal-heartspark-council-runtime"
+    }),
+    starstripeCub: createIllustratedCompanionAsset({
+      id: "starstripe-cub",
+      sourceRoot: "./assets/characters/starstripe-cub",
+      animations: "./assets/characters/starstripe-cub/metadata/animations.json",
+      approvalStatus: "formal-heartspark-council-runtime"
+    }),
+    auriowl: createIllustratedCompanionAsset({
+      id: "auriowl",
+      sourceRoot: "./assets/characters/auriowl",
+      animations: "./assets/characters/auriowl/metadata/animations.json",
+      approvalStatus: "formal-heartspark-council-runtime"
+    }),
+    blazetailKit: createIllustratedCompanionAsset({
+      id: "blazetail-kit",
+      sourceRoot: "./assets/characters/blazetail-kit",
+      animations: "./assets/characters/blazetail-kit/metadata/animations.json",
+      approvalStatus: "formal-heartspark-council-runtime"
+    }),
+    crystalfinSeahorse: createIllustratedCompanionAsset({
+      id: "crystalfin-seahorse",
+      sourceRoot: "./assets/characters/crystalfin-seahorse",
+      animations: "./assets/characters/crystalfin-seahorse/metadata/animations.json",
+      approvalStatus: "formal-heartspark-council-runtime"
     }),
   })
 });
