@@ -11,21 +11,21 @@ const FINAL_GREETING = "我在這裡。你可以慢慢靠近，也可以先只�
 // 一句話、一個氛圍——非六隻選單逛街。未選者不是收集品，章節旅途中會再遇見。
 // 注意：bond 不是持久化的 status 值（store normalizeOnboarding 有白名單）；
 // 它由「status=guidance 且 guidanceCompleted」推導，reload 會安全回到本步。
-const BOND_CHOICES = Object.freeze([
+export const INITIAL_BOND_CHOICES = Object.freeze([
   {
     id: "greyshade-cat",
     hue: 200,
     line: "……你來了。我會在這裡，不吵你。"
   },
   {
-    id: "flame-flicker",
+    id: "blazetail-kit",
     hue: 18,
-    line: "嘿，你身上有光的味道！要一起走嗎？"
+    line: "就算心裡還有點怕，我也想替你照亮前面的路。"
   },
   {
-    id: "ice-talon",
-    hue: 205,
-    line: "可以靠近。但太快的話，我會退開。"
+    id: "crystalfin-seahorse",
+    hue: 194,
+    line: "有些記憶會沉到很深的地方。我可以陪你慢慢聽。"
   }
 ]);
 
@@ -178,7 +178,7 @@ export function createOnboardingController({ store, saveCurrentState, onBondChos
   // 未選者是「未走的那條人生」，章節中再遇見；veteran（restart 重看引導、已有
   // 遊玩痕跡）用聯集，不沒收已解鎖。判據與 store 的 veteran heuristic 同源。
   async function chooseBond(companionId) {
-    const choice = BOND_CHOICES.find((entry) => entry.id === companionId);
+    const choice = INITIAL_BOND_CHOICES.find((entry) => entry.id === companionId);
     if (!choice) return;
     const state = store.getState();
     const unlocked = Array.isArray(state.unlockedCompanionIds) ? state.unlockedCompanionIds : [];
@@ -312,16 +312,19 @@ export function createOnboardingController({ store, saveCurrentState, onBondChos
     section.hidden = true;
     section.setAttribute("aria-labelledby", "onboarding-bond-title");
 
-    const cards = BOND_CHOICES.map((choice) => {
+    const cards = INITIAL_BOND_CHOICES.map((choice) => {
       const companion = getCompanionById(choice.id);
       const name = companion?.name || choice.id;
       const temperament = companion?.temperament?.zh || "";
       return (
         `<button type="button" class="bond-card" data-onboarding-action="bond-choose" data-bond-id="${choice.id}" style="--bond-hue:${choice.hue}">` +
         `<span class="bond-card-glow" aria-hidden="true"></span>` +
-        `<strong>${name}</strong>` +
-        `<em>${temperament}</em>` +
-        `<p>${choice.line}</p>` +
+        `<img class="bond-card-portrait" src="${companion?.image || ""}" alt="" aria-hidden="true">` +
+        `<span class="bond-card-copy">` +
+          `<strong>${name}</strong>` +
+          `<em>${temperament}</em>` +
+          `<p>${choice.line}</p>` +
+        `</span>` +
         `</button>`
       );
     }).join("");

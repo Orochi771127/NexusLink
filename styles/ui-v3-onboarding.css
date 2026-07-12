@@ -488,6 +488,8 @@ html[data-ui="v2"] .bond-choice-list {
 html[data-ui="v2"] .bond-card {
   position: relative;
   display: grid;
+  grid-template-columns: 64px minmax(0, 1fr);
+  align-items: center;
   gap: 4px;
   padding: 13px 15px;
   border: 1px solid hsla(var(--bond-hue, 200), 65%, 70%, 0.28);
@@ -498,6 +500,26 @@ html[data-ui="v2"] .bond-card {
   cursor: pointer;
   overflow: hidden;
   transition: border-color 160ms ease, transform 130ms ease;
+}
+
+html[data-ui="v2"] .bond-card-portrait {
+  position: relative;
+  z-index: 1;
+  width: 64px;
+  height: 64px;
+  border: 1px solid hsla(var(--bond-hue, 200), 70%, 76%, 0.5);
+  border-radius: 14px;
+  object-fit: cover;
+  background: rgba(5, 10, 24, 0.72);
+  box-shadow: 0 0 18px hsla(var(--bond-hue, 200), 72%, 60%, 0.2);
+}
+
+html[data-ui="v2"] .bond-card-copy {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  min-width: 0;
+  gap: 4px;
 }
 
 html[data-ui="v2"] .bond-card:active {

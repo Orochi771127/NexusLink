@@ -58,6 +58,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-07-13 - Codex - Initial-bond roster correction and codex identity deduplication
+
+- Status: `VERIFIED`
+- Branch / commit: `main` / lands with this commit (parent `bad3690`); Owner authorized implementation, self-review, commit, and push to `main`.
+- Scope: EXPERIENCE-only onboarding and codex data composition plus a focused regression harness. No `index.html`, `assets/**`, save schema, renderer core, or Raphael/NLU changes.
+- Work performed: Replaced the two legacy test-carrier initial choices with the Owner-selected formal companions, making the fresh-player trio `greyshade-cat` / `blazetail-kit` / `crystalfin-seahorse`. Exported the choice contract for QA. Codex composition now suppresses canon rows whose character ID already has a runtime entry, removing all five duplicated formal-council rows while retaining the richer runtime detail.
+- Verification: `node --check` on both controllers; focused regression harness 4/4 (exact trio, portraits, full-runtime readiness, unique codex IDs); fresh-save Playwright at 390x844 selected all three paths independently — active ID and chosen-only unlock correct, dynamic meet title correct, all portraits loaded at 64x64, no horizontal overflow, 0 console/page errors; JS syntax 201/201, state migration PASS, asset integrity PASS; `git diff --check` clean for task files.
+- Problems / risks: Existing veteran saves and already completed onboarding are intentionally unchanged. Legacy test carriers remain valid runtime/test data and are not deleted; they are only removed from the fresh initial-bond choice.
+- Next safe action: Human visual review on real-device mobile Safari/Chrome; no further runtime change is required for this pack.
+- Required reading: `src/ui/onboardingController.js`, `src/ui/codexController.js`, `docs/qa/onboarding-codex-regression-cases.mjs`, and this lane.
+
 ### 2026-07-13 - Claude Fable 5 - Council-five evolution lines (canon three-stage names + lore)
 
 - Status: `VERIFIED`
@@ -861,6 +872,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 ---
 
 ## Lane 2 - Game Art, UI, And Visual Production
+
+### 2026-07-13 - Codex - Initial-bond portrait cards
+
+- Status: `VERIFIED`
+- Branch / commit: `main` / lands with this commit (parent `bad3690`).
+- Scope: EXPERIENCE UI styling only. Reused already approved runtime portrait paths; no image generation and no `assets/**` changes.
+- Work performed: Added each selected companion's existing 512x512 portrait to the initial-bond card, displayed as a restrained 64x64 framed portrait within the existing Cyber-Taoist card hierarchy. The layout preserves the playfield, uses the existing per-card hue, and adds no new overlay or persistent chrome.
+- Verification: All three image requests loaded with non-zero natural dimensions; screenshot review at 390x844 confirmed all names, temperaments, lines, and portraits fit inside the onboarding panel with viewport width equal to document width; reduced-motion behavior remains unchanged.
+- Problems / risks: Portrait crop uses `object-fit: cover`; future portraits should keep the face/emblem inside the central safe area.
+- Next safe action: Real-device visual confirmation only.
+- Required reading: `styles/ui-v3-onboarding.css`, the three registry portrait paths, and this lane.
 
 ### 2026-07-12 - Codex - Anti-AI-Slop Commercial UX Gate
 

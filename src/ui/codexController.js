@@ -38,7 +38,8 @@ const CANON_STAGE_LABELS = [
   { zh: "第三階", en: "Stage 3" }
 ];
 
-function getCodexEntries() {
+export function getCodexEntries() {
+  const runtimeIds = new Set(COMPANIONS.map((companion) => companion.id));
   return [
     ...COMPANIONS.map((companion) => ({
       kind: "runtime",
@@ -49,7 +50,9 @@ function getCodexEntries() {
       emblem: companion.emotionalEmblem,
       companion
     })),
-    ...HEARTSPARK_COUNCIL_CANON_V06.characters.map((character) => ({
+    ...HEARTSPARK_COUNCIL_CANON_V06.characters
+      .filter((character) => !runtimeIds.has(character.id))
+      .map((character) => ({
       kind: "canon",
       id: character.id,
       element: character.element,
@@ -57,7 +60,7 @@ function getCodexEntries() {
       name: character.names.stage1,
       emblem: character.emblem,
       character
-    }))
+      }))
   ];
 }
 
