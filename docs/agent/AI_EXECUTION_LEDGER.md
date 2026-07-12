@@ -58,6 +58,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-07-12 - Codex - Anti-AI-Slop First Session Interaction Contract
+
+- Status: `VERIFIED`
+- Branch / commit: `main` / `7729e54` with uncommitted task changes; no commit or push performed.
+- Scope: EXPERIENCE-only first-session controller hardening. No `index.html`, state foundation, Pixi foundation, assets, tools, scripts, dependency, or persisted-schema changes.
+- Work performed: Added controller-only `ready` / `busy` / `completed` / `unavailable` / `recoverable-error` behavior. Four core pages now reject silent missing callbacks, suppress duplicate in-flight actions, and provide concrete recovery copy. Onboarding reports save/action failure. First-loop completion and skip roll back their derived timestamps when persistence fails instead of presenting false success. `saveQueue` now returns the existing critical-save result so callers can observe `{ ok: false }`; save timing and schema are unchanged.
+- Verification: Changed JS and i18n syntax passed; state/onboarding migration passed 30/30; save-queue critical-result contract passed; injected `QuotaExceededError` at 390x844 kept onboarding on the original Start step, exposed `recoverable-error` through an assertive alert, and produced no page error. Isolated web release gate passed 10/10 required checks, including 198 JS syntax files, accessibility probes at 390x844 and 1280x900, browser gates, one Pixi canvas, no console errors, and no accessibility warnings. `git diff --check` passed.
+- Problems / risks: Real-device Safari/Chrome, moderated private testers, deliberate localStorage failure injection, legal/privacy copy, and visual review across every mature/empty state remain manual. The web gate's nested browser checks rewrote the two QA JSON files that were already dirty before this task; their prior uncommitted versions were not snapshotted and cannot be reconstructed safely, so they remain explicitly outside this task's intended change set.
+- Next safe action: Run the Anti-AI-Slop state matrix with real-device and moderated tester evidence. Open a separate GROUNDWORK package if a required semantic or persistence fix cannot stay inside controllers/CSS.
+- Required reading: `docs/production/ANTI_AI_SLOP_UX_GATE.md`, `docs/production/NEXUS_LINK_COMMERCIAL_UIUX_HANDOFF.md`, `ACCEPTANCE.md` M, `src/ui/pageRouter.js`, `src/ui/onboardingController.js`, `src/ui/firstLoopController.js`, and this lane.
+
 ### 2026-07-12 - Claude Fable 5 - CH-5b 章節相遇＋共鳴邀請（含地基層 resonance state）
 
 - Status: `VERIFIED`（本地完成＋全驗證，等 Owner commit/push 指示；進度看板與接手協定見 `docs/handoff/CH5B_TASK_PACK_HANDOFF.md`）
@@ -795,6 +806,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 ---
 
 ## Lane 2 - Game Art, UI, And Visual Production
+
+### 2026-07-12 - Codex - Anti-AI-Slop Commercial UX Gate
+
+- Status: `VERIFIED`
+- Branch / commit: `main` / `7729e54` with uncommitted task changes; no commit or push performed.
+- Scope: First Session Flow UX governance, recovery presentation, and copy across Start / Identity / Guidance / Home / Explore / Care / Growth / Memory / Soul Talk / Return Echo. No new visual system or asset work.
+- Work performed: Added the current Anti-AI-Slop UX Gate, linked it from the commercial handoff and Fable 5 takeover prompt, and made M1-M5 mandatory for First Session acceptance. Added restrained busy/recovery styling and Traditional Chinese, Simplified Chinese, English, and Japanese copy that explains what failed, what remains safe, and what the player can do next.
+- Verification: Mobile 390x844 and desktop 1280x900 screenshots were visually inspected from the isolated release probe. Companion focal zone, bottom navigation, Soul Talk launcher, one-canvas layout, labels, overflow, and onboarding completion all passed; no console or accessibility probe errors. Copy scan and human real-device review remain separate manual gates.
+- Problems / risks: Current screenshots prove the core first-loop view, not every state-matrix cell. The gate intentionally preserves the V3 Moonlake system; broader card/glow reduction requires evidence per surface rather than a blanket restyle.
+- Next safe action: Capture and review the remaining empty, mature-save, refusal, return, recovery, reduced-motion, and text-size states; do not redesign the visual system without a selected visual target and human review.
+- Required reading: `docs/production/ANTI_AI_SLOP_UX_GATE.md`, `docs/design/NEXUS_LINK_V3_VISUAL_SYSTEM.md`, `docs/content/NEXUSLINK_COPYWRITING_FINAL_PASS.md`, `ACCEPTANCE.md` M, and this lane.
 
 ### 2026-07-12 - Claude Fable 5 - 美術資產缺口稽核（供 Owner 指派 Codex 產圖）
 

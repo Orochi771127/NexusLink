@@ -367,6 +367,20 @@ html[data-ui="v2"] .page-empty-memory {
   padding: 16px;
 }
 
+html[data-ui="v2"] .page-layer[data-view-state="busy"] .page-action-grid {
+  cursor: progress;
+}
+
+html[data-ui="v2"] .page-action-grid button[aria-busy="true"] {
+  opacity: 0.68;
+  cursor: progress;
+}
+
+html[data-ui="v2"] .page-layer[data-view-state="recoverable-error"] .page-view.is-active,
+html[data-ui="v2"] .page-layer[data-view-state="unavailable"] .page-view.is-active {
+  border-color: rgba(247, 223, 170, 0.34);
+}
+
 html[data-ui="v2"] body.page-open .v3-home-presence {
   opacity: 0.25;
 }

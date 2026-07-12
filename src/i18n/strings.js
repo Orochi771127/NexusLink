@@ -66,6 +66,25 @@ export const STRINGS = {
   "fl.hintTrace": { tc: "牠在聽。慢慢說就好。", sc: "牠在听。慢慢说就好。", en: "It's listening. Take your time.", jp: "聞いているよ。ゆっくりでいい。" },
   "fl.reveal": { tc: "棲地的其他角落也醒了。", sc: "栖地的其他角落也醒了。", en: "Other corners of the habitat have woken.", jp: "棲み処のほかの場所も目を覚ました。" },
   "fl.skip": { tc: "先自己逛", sc: "先自己逛", en: "Explore on my own", jp: "自分で見て回る" },
+  "fl.retrySkip": { tc: "再試一次", sc: "再试一次", en: "Try again", jp: "もう一度試す" },
+  "fl.recoverableError": {
+    tc: "剛才的選擇沒有保存。你仍在月湖，可以再試一次；這不會影響牠。",
+    sc: "刚才的选择没有保存。你仍在月湖，可以再试一次；这不会影响牠。",
+    en: "That choice was not saved. You are still at Moonlake and can try again; this does not affect the companion.",
+    jp: "さっきの選択は保存されなかった。月湖にいるまま、もう一度試せる。相手には影響しない。"
+  },
+  "onboarding.busy": {
+    tc: "正在把這一步留在這台裝置上。",
+    sc: "正在把这一步留在这台装置上。",
+    en: "Saving this step on this device.",
+    jp: "この端末にこの一歩を残している。"
+  },
+  "onboarding.recoverableError": {
+    tc: "這一步還沒有保存。你仍留在原處，可以再試一次；先離開也不會受罰。",
+    sc: "这一步还没有保存。你仍留在原处，可以再试一次；先离开也不会受罚。",
+    en: "This step was not saved. You are still here and can try again; leaving now carries no penalty.",
+    jp: "この一歩はまだ保存されていない。ここにいるまま、もう一度試せる。いったん離れても不利益はない。"
+  },
 
   // ---- Page headers ----
   "page.explore.title": { tc: "探索", sc: "探索", en: "Explore", jp: "探索" },
@@ -206,6 +225,24 @@ export const STRINGS = {
   "page.status.care": { tc: "陪伴、休息、觀察。", sc: "陪伴、休息、观察。", en: "Stay, rest, observe.", jp: "寄り添い、休み、見守る。" },
   "page.status.grow": { tc: "關係章節翻開了。", sc: "关系章节翻开了。", en: "A relationship chapter opens.", jp: "関係の章がひらいた。" },
   "page.status.memory": { tc: "已保存的回憶在這裡。", sc: "已保存的回忆在这里。", en: "Saved memories live here.", jp: "保存された思い出はここに。" },
+  "page.status.busy": {
+    tc: "這個動作正在發生，先留在這裡。",
+    sc: "这个动作正在发生，先留在这里。",
+    en: "This action is in progress. Stay here for a moment.",
+    jp: "いま動いている。少しだけここで待って。"
+  },
+  "page.status.unavailable": {
+    tc: "這條路現在沒有打開。你仍留在原處，可以換一個動作。",
+    sc: "这条路现在没有打开。你仍留在原处，可以换一个动作。",
+    en: "That path is not open right now. You are still here and can choose another action.",
+    jp: "その道はいま開いていない。ここにいるまま、別の動きを選べる。"
+  },
+  "page.status.recoverableError": {
+    tc: "剛才的動作沒有完成。這一頁還在，你可以再試一次或先回心核。",
+    sc: "刚才的动作没有完成。这一页还在，你可以再试一次或先回心核。",
+    en: "That action did not finish. This page is still here; try again or return to the heart-core.",
+    jp: "さっきの動きは完了しなかった。この画面は残っている。もう一度試すか、心核へ戻れる。"
+  },
 
   // ---- Mood labels（心情標籤）----
   "mood.calm": { tc: "平靜", sc: "平静", en: "Calm", jp: "おだやか" },

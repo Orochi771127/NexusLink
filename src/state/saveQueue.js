@@ -19,10 +19,10 @@ export function createSaveQueue(saveFn) {
       timerId = null;
     }
 
-    if (pendingLevel === null) return;
+    if (pendingLevel === null) return undefined;
 
     pendingLevel = null;
-    saveFn();
+    return saveFn();
   }
 
   function scheduleFlush() {
@@ -39,11 +39,11 @@ export function createSaveQueue(saveFn) {
     pendingLevel = Math.max(pendingLevel ?? SAVE_LEVEL.DEBOUNCE, level);
 
     if (level === SAVE_LEVEL.CRITICAL) {
-      flush();
-      return;
+      return flush();
     }
 
     scheduleFlush();
+    return undefined;
   }
 
   function onVisibilityChange() {

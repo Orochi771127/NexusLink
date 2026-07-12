@@ -252,14 +252,15 @@ export function createActionSheetController({
       } else {
         EventBus.emit(HABITAT_STATUS_TOAST_EVENT, { text: "探索地圖整備中。", tone: "calm" });
       }
-      return;
+      return { ok: typeof openMap === "function" };
     }
 
     if (row?.kind === "calm_sync") {
       calmSyncController?.start();
-      return;
+      return { ok: Boolean(calmSyncController?.start) };
     }
 
+    const stateBeforeAction = store.getState();
     const choice = row?.choice;
     const result = evaluateActionEffect(store.getState(), action, choice);
     store.setState(result.statePatch);
@@ -267,7 +268,15 @@ export function createActionSheetController({
     const message = row?.status || actionMeta.message;
     EventBus.emit(HABITAT_STATUS_TOAST_EVENT, { text: message, tone: "calm" });
     statusText.textContent = message;
-    saveCurrentState();
+    const saveResult = saveCurrentState();
+    if (saveResult?.ok === false) {
+      store.replaceState(stateBeforeAction);
+      const error = new Error("Page action state was not saved");
+      error.code = "SAVE_FAILED";
+      error.cause = saveResult.error;
+      throw error;
+    }
+    return saveResult;
   }
 
   function setActiveNav(action) {

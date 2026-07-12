@@ -87,6 +87,7 @@ companion shell rules.
 | CURRENT | `docs/strategy/NEXUS_LINK_STEAM_DEMO_MASTER_BLUEPRINT.md` | Approved commercial sequencing, V3 direction, package gates, and release path. |
 | CURRENT | `docs/design/NEXUS_LINK_V3_VISUAL_SYSTEM.md` | Current V3 visual grammar and UI/UX screen behavior. |
 | CURRENT | `docs/content/NEXUSLINK_COPYWRITING_FINAL_PASS.md` | NexusLink player-facing copy final pass, adapted from anti-vibe-writing principles. |
+| CURRENT | `docs/production/ANTI_AI_SLOP_UX_GATE.md` | Decision prompts, truthful-affordance rules, edge-state matrix, and evidence gate for the First Session Flow. |
 | CURRENT | `docs/testing/STEAM_DEMO_WEB_RELEASE_CHECKLIST.md` | Web release gate and private-test evidence rules. |
 | CURRENT | `docs/testing/PRIVATE_TEST_SCRIPT.md` | Moderated private-test script and pass criteria. |
 | CURRENT | `docs/qa/WEB_RELEASE_EVIDENCE.md` | Current evidence record; automated pass does not mean public release approval. |
@@ -186,6 +187,10 @@ Minimum commercial UI/UX pass:
 - Explore, Care, Growth, and Memory are true product surfaces or clearly scoped
   transitional surfaces, not shop/task dashboards.
 - No blocked GROUNDWORK file is changed without explicit approval.
+- Every visible affordance has a real result, and every unavailable action gives
+  a concrete reason and safe next step.
+- Fresh, busy, empty, recoverable-error, unavailable, and completed states are
+  either implemented or explicitly ruled out for each first-session surface.
 
 ## 6. Required Final Report For The Next Agent
 

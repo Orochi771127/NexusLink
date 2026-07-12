@@ -34,6 +34,7 @@ export function createPageRouter({
   };
   let activePage = "home";
   let renderedMemoryEntries = [];
+  let actionInFlight = false;
 
   function bind() {
     if (!pageLayer) return;
@@ -64,6 +65,7 @@ export function createPageRouter({
 
     activePage = action;
     pageLayer?.setAttribute("data-active-page", action);
+    setViewState(action === "home" ? "completed" : "ready");
     document.body.classList.toggle("page-open", action !== "home");
 
     pageViews.forEach((view) => {
@@ -267,39 +269,54 @@ export function createPageRouter({
     openMemoryReflection(Number(memoryButton.dataset.memoryOpen));
   }
 
-  function handlePageAction(button) {
+  async function handlePageAction(button) {
+    if (actionInFlight || button.disabled) return;
     const action = button.dataset.pageAction;
-    if (action === "open-map") {
-      openMap?.();
-      return;
+    const wasDisabled = button.disabled;
+    actionInFlight = true;
+    button.disabled = true;
+    button.setAttribute("aria-busy", "true");
+    setViewState("busy");
+    statusText.textContent = t("page.status.busy");
+
+    try {
+      if (action === "open-map") await runRequiredAction(openMap);
+      else if (action === "open-atlas") await runRequiredAction(openAtlas);
+      else if (action === "open-character") await panelManager.openPanel("character");
+      else if (action === "open-codex") await runRequiredAction(openCodex);
+      else if (action === "open-soul-talk") await soulTalkController.openSoulTalk(panelManager);
+      else if (action === "open-calm-sync") await runRequiredAction(calmSyncController?.start?.bind(calmSyncController));
+      else if (action === "commit") {
+        const actionResult = await actionSheetController.performAction(button.dataset.navAction, {
+          choice: button.dataset.choice,
+          status: button.dataset.status
+        });
+        if (actionResult?.ok === false) {
+          const error = new Error("First-session page action is unavailable");
+          error.code = actionResult.error ? "SAVE_FAILED" : "ACTION_UNAVAILABLE";
+          throw error;
+        }
+        render();
+      } else {
+        throw new Error(`Unsupported page action: ${action || "missing"}`);
+      }
+      setViewState(action === "commit" ? "completed" : "ready");
+      if (action !== "commit") statusText.textContent = getPageStatus(activePage);
+    } catch (error) {
+      console.warn("First-session page action unavailable", { action, error });
+      setViewState(error?.code === "ACTION_UNAVAILABLE" ? "unavailable" : "recoverable-error");
+      statusText.textContent = error?.code === "ACTION_UNAVAILABLE"
+        ? t("page.status.unavailable")
+        : t("page.status.recoverableError");
+    } finally {
+      actionInFlight = false;
+      button.disabled = wasDisabled;
+      button.removeAttribute("aria-busy");
     }
-    if (action === "open-atlas") {
-      openAtlas?.();
-      return;
-    }
-    if (action === "open-character") {
-      panelManager.openPanel("character");
-      return;
-    }
-    if (action === "open-codex") {
-      openCodex?.();
-      return;
-    }
-    if (action === "open-soul-talk") {
-      soulTalkController.openSoulTalk(panelManager);
-      return;
-    }
-    if (action === "open-calm-sync") {
-      calmSyncController?.start();
-      return;
-    }
-    if (action === "commit") {
-      actionSheetController.performAction(button.dataset.navAction, {
-        choice: button.dataset.choice,
-        status: button.dataset.status
-      });
-      render();
-    }
+  }
+
+  function setViewState(state) {
+    pageLayer?.setAttribute("data-view-state", state);
   }
 
   function openMemoryReflection(index) {
@@ -315,6 +332,15 @@ export function createPageRouter({
     render,
     getActivePage: () => activePage
   };
+}
+
+function runRequiredAction(action) {
+  if (typeof action !== "function") {
+    const error = new Error("Required first-session action is unavailable");
+    error.code = "ACTION_UNAVAILABLE";
+    throw error;
+  }
+  return Promise.resolve(action());
 }
 
 function getPageStatus(action) {

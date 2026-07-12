@@ -2,7 +2,7 @@ import { qs, qsa } from "../utils/dom.js";
 import { getCompanionById } from "../data/companionRegistry.js";
 import { isVeteranSave } from "../state/store.js";
 import EventBus from "../utils/eventBus.js";
-import { LANGUAGE_CHANGED_EVENT } from "../i18n/i18n.js";
+import { LANGUAGE_CHANGED_EVENT, t } from "../i18n/i18n.js";
 
 const STEP_ORDER = ["start", "identity", "guidance", "bond", "meet"];
 const FINAL_GREETING = "我在這裡。你可以慢慢靠近，也可以先只是看著月湖。";
@@ -35,10 +35,14 @@ export function createOnboardingController({ store, saveCurrentState, onBondChos
   let steps = root ? qsa(".onboarding-step", root) : [];
   const nameInput = qs("#player-display-name");
   let activeStep = "start";
+  let interactionInFlight = false;
+  let feedbackEl = null;
+  let markingStarted = false;
 
   function bind() {
     if (!root) return;
     ensureBondStep();
+    ensureFeedback();
     root.addEventListener("click", handleAction);
     // 語言切換時 applyLanguage 會把 meet 標題蓋回字典預設（寫死灰影）；
     // 若正停在 meet 步且已定情，於下一幀重寫為「{選定者}在月湖邊等你。」
@@ -107,27 +111,67 @@ export function createOnboardingController({ store, saveCurrentState, onBondChos
     render();
   }
 
-  function handleAction(event) {
+  async function handleAction(event) {
     const button = event.target.closest("[data-onboarding-action]");
-    if (!button) return;
+    if (!button || interactionInFlight || button.disabled) return;
 
     const action = button.dataset.onboardingAction;
-    if (action === "start") {
-      setOnboardingStep("identity", { startedAt: Date.now() });
-    } else if (action === "skip-identity") {
-      saveIdentity(true);
-    } else if (action === "save-identity") {
-      saveIdentity(false);
-    } else if (action === "guidance-next") {
-      // status 維持 "guidance"（bond 不是白名單 status 值）；guidanceCompleted=true
-      // 讓 resolveStep 推導出 bond 步，中斷 reload 也會安全回到這裡。
-      setOnboardingStep("guidance", { guidanceCompleted: true });
+    const stateBeforeAction = store.getState();
+    interactionInFlight = true;
+    button.disabled = true;
+    button.setAttribute("aria-busy", "true");
+    root.dataset.viewState = "busy";
+    setFeedback(t("onboarding.busy"), "status");
+
+    try {
+      if (action === "start") {
+        setOnboardingStep("identity", { startedAt: Date.now() });
+      } else if (action === "skip-identity") {
+        saveIdentity(true);
+      } else if (action === "save-identity") {
+        saveIdentity(false);
+      } else if (action === "guidance-next") {
+        // status 維持 "guidance"（bond 不是白名單 status 值）；guidanceCompleted=true
+        // 讓 resolveStep 推導出 bond 步，中斷 reload 也會安全回到這裡。
+        setOnboardingStep("guidance", { guidanceCompleted: true });
+        render();
+      } else if (action === "bond-choose") {
+        await chooseBond(button.dataset.bondId);
+      } else if (action === "complete") {
+        completeOnboarding();
+      } else {
+        throw new Error(`Unsupported onboarding action: ${action || "missing"}`);
+      }
+      root.dataset.viewState = "completed";
+      setFeedback("", "status");
+    } catch (error) {
+      console.warn("First-session onboarding action did not complete", { action, error });
+      store.replaceState(stateBeforeAction);
       render();
-    } else if (action === "bond-choose") {
-      chooseBond(button.dataset.bondId);
-    } else if (action === "complete") {
-      completeOnboarding();
+      root.dataset.viewState = "recoverable-error";
+      setFeedback(t("onboarding.recoverableError"), "alert");
+    } finally {
+      interactionInFlight = false;
+      button.disabled = false;
+      button.removeAttribute("aria-busy");
     }
+  }
+
+  function ensureFeedback() {
+    if (feedbackEl || !shell) return;
+    feedbackEl = document.createElement("p");
+    feedbackEl.className = "onboarding-feedback";
+    feedbackEl.hidden = true;
+    shell.appendChild(feedbackEl);
+  }
+
+  function setFeedback(message, role) {
+    ensureFeedback();
+    if (!feedbackEl) return;
+    feedbackEl.hidden = !message;
+    feedbackEl.textContent = message;
+    feedbackEl.setAttribute("role", role);
+    feedbackEl.setAttribute("aria-live", role === "alert" ? "assertive" : "polite");
   }
 
   // 初遇定情（CH-3 嚴格模型）：fresh 玩家「選後即唯一」——unlocked=[選定者]，
@@ -216,14 +260,25 @@ export function createOnboardingController({ store, saveCurrentState, onBondChos
   }
 
   function markStarted(state) {
-    if (state.onboarding?.startedAt) return;
-    store.setState({
-      onboarding: {
-        ...state.onboarding,
-        startedAt: Date.now()
-      }
-    });
-    persist();
+    if (state.onboarding?.startedAt || markingStarted) return;
+    markingStarted = true;
+    const stateBeforeStart = store.getState();
+    try {
+      store.setState({
+        onboarding: {
+          ...state.onboarding,
+          startedAt: Date.now()
+        }
+      });
+      persist();
+    } catch (error) {
+      console.warn("First-session start marker was not saved", error);
+      store.replaceState(stateBeforeStart);
+      root.dataset.viewState = "recoverable-error";
+      setFeedback(t("onboarding.recoverableError"), "alert");
+    } finally {
+      markingStarted = false;
+    }
   }
 
   function showStep(step, state) {
@@ -282,7 +337,14 @@ export function createOnboardingController({ store, saveCurrentState, onBondChos
   }
 
   function persist() {
-    saveCurrentState?.();
+    const result = saveCurrentState?.();
+    if (result?.ok === false) {
+      const error = new Error("First-session state was not saved");
+      error.code = "SAVE_FAILED";
+      error.cause = result.error;
+      throw error;
+    }
+    return result;
   }
 
   return {

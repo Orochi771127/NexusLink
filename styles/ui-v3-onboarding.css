@@ -544,6 +544,26 @@ html[data-ui="v2"] .bond-card p {
   color: rgba(223, 238, 255, 0.85);
 }
 
+html[data-ui="v2"] .onboarding-feedback {
+  margin: 12px 0 0;
+  padding: 10px 12px;
+  border: 1px solid rgba(247, 223, 170, 0.34);
+  border-radius: 12px;
+  color: var(--v3-moon-100, #e8f1ff);
+  background: rgba(10, 16, 32, 0.72);
+  font-size: 0.8rem;
+  line-height: 1.55;
+}
+
+html[data-ui="v2"] .onboarding-layer[data-view-state="busy"] button[aria-busy="true"] {
+  opacity: 0.68;
+  cursor: progress;
+}
+
+html[data-ui="v2"] .first-loop-hint-wrap[data-view-state="recoverable-error"] {
+  border-color: rgba(247, 223, 170, 0.38);
+}
+
 @media (prefers-reduced-motion: reduce) {
   html[data-ui="v2"] .bond-card-glow { animation: none; opacity: 0.7; }
 }

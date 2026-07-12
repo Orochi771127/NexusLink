@@ -91,6 +91,7 @@ export function createFirstLoopController({ store, saveCurrentState } = {}) {
     hintEl.textContent = t(`fl.hint${stage === "touch" ? "Touch" : stage === "talk" ? "Talk" : "Trace"}`);
     skipEl.textContent = t("fl.skip");
     skipEl.hidden = false;
+    delete wrapEl.dataset.viewState;
     wrapEl.classList.add("is-visible");
   }
 
@@ -104,6 +105,7 @@ export function createFirstLoopController({ store, saveCurrentState } = {}) {
       ensureElements();
       hintEl.textContent = t("fl.reveal");
       skipEl.hidden = true;
+      delete wrapEl.dataset.viewState;
       wrapEl.classList.add("is-visible");
       window.clearTimeout(revealTimer);
       revealTimer = window.setTimeout(() => wrapEl.classList.remove("is-visible"), REVEAL_LINGER_MS);
@@ -123,22 +125,64 @@ export function createFirstLoopController({ store, saveCurrentState } = {}) {
   function completeLoop() {
     if (completing) return;
     completing = true;
-    store.updateState((draft) => {
-      if (!draft.onboarding.firstLoop.completedAt) {
-        draft.onboarding.firstLoop.completedAt = Date.now();
-      }
-    });
-    saveCurrentState?.();
-    completing = false;
+    const previousCompletedAt = store.getState().onboarding?.firstLoop?.completedAt || null;
+    try {
+      store.updateState((draft) => {
+        if (!draft.onboarding.firstLoop.completedAt) {
+          draft.onboarding.firstLoop.completedAt = Date.now();
+        }
+      });
+      persistOrThrow();
+    } catch (error) {
+      console.warn("First-loop completion was not saved", error);
+      store.updateState((draft) => {
+        draft.onboarding.firstLoop.completedAt = previousCompletedAt;
+      });
+      showRecoverableError();
+    } finally {
+      completing = false;
+    }
   }
 
   function skipLoop() {
-    store.updateState((draft) => {
-      if (!draft.onboarding.firstLoop.skippedAt) {
-        draft.onboarding.firstLoop.skippedAt = Date.now();
-      }
-    });
-    saveCurrentState?.();
+    const previousSkippedAt = store.getState().onboarding?.firstLoop?.skippedAt || null;
+    try {
+      store.updateState((draft) => {
+        if (!draft.onboarding.firstLoop.skippedAt) {
+          draft.onboarding.firstLoop.skippedAt = Date.now();
+        }
+      });
+      persistOrThrow();
+    } catch (error) {
+      console.warn("First-loop skip was not saved", error);
+      store.updateState((draft) => {
+        draft.onboarding.firstLoop.skippedAt = previousSkippedAt;
+      });
+      showRecoverableError();
+    }
+  }
+
+  function showRecoverableError() {
+    ensureElements();
+    wasActive = true;
+    document.body.classList.add("first-loop-active");
+    setNavGated(true);
+    hintEl.textContent = t("fl.recoverableError");
+    skipEl.textContent = t("fl.retrySkip");
+    skipEl.hidden = false;
+    wrapEl.dataset.viewState = "recoverable-error";
+    wrapEl.classList.add("is-visible");
+  }
+
+  function persistOrThrow() {
+    const result = saveCurrentState?.();
+    if (result?.ok === false) {
+      const error = new Error("First-loop state was not saved");
+      error.code = "SAVE_FAILED";
+      error.cause = result.error;
+      throw error;
+    }
+    return result;
   }
 
   return { bind, render };

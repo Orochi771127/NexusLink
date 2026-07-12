@@ -280,7 +280,32 @@
 - **戰鬥改造**：E1–E6 + D（全）+ H + I。
 - **裂變事件**：D1–D6 全過（尤其 D3–D5）+ C1 + H + I。
 - **Greyshade illustrated 替換**：J1–J6 + G1–G7 + H + I 全過。
-- **First Session Flow / Vertical Slice**：K1–K10 + D6 + B1–B2 + C1–C2 + H + I 全過。
+- **First Session Flow / Vertical Slice**：K1–K10 + M1–M5 + D6 + B1–B2 + C1–C2 + H + I 全過。
 - **商業章節 / 旅痕 / 未來同行規格**：L1–L9 + D6 + H5 全過。
 
 任一 D 條（安全紅線）未過 → 整個 TASK_PACK 不通過，無論其他多漂亮。
+
+## M. Anti-AI-Slop First Session UX Gate
+
+**M1 — 視覺語言有 Nexus Link 的理由**
+- 月湖、夥伴焦點、關係痕跡與 V3 層級清楚；卡片、圓角、glass、glow、
+  pill 或符號若不承擔資訊或互動功能，必須移除或降噪。
+
+**M2 — 所有 affordance 都是真的**
+- 每個 hover、focus、pressed、cursor、glow 或展開提示都對應可觀察結果。
+- callback 缺失或操作失敗時不得靜默；必須說明未完成事項與安全下一步。
+
+**M3 — 首輪狀態完整**
+- Start、Identity、Guidance、Home、Explore、Care、Growth、Memory、Soul Talk、
+  Return Echo 逐一檢查 ready、busy、empty、recoverable-error、unavailable、
+  completed；不適用者須在稽核證據中說明原因。
+
+**M4 — 錯誤有內容也有人味**
+- 不得只顯示「發生錯誤，請再試一次」。文案必須說明什麼未完成、當前
+  session 是否仍安全，以及可重試、退出或改走哪個動作。
+- 拒絕與邊界不可呈現為懲罰；Return Echo 不得包含缺席責備或錯過天數。
+
+**M5 — 證據足以支撐商業判定**
+- 至少包含 390×844 與 desktop、鍵盤、reduced motion、文字放大、fresh、
+  interrupted、skip、mature-save、empty-memory、refusal、return 情境。
+- 詳細判定依 `docs/production/ANTI_AI_SLOP_UX_GATE.md`。
