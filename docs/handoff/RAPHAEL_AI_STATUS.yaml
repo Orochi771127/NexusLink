@@ -25,6 +25,7 @@ qa:
   main_readiness: "41/41 (2026-07-13)"
   nlu_training: "38/38 (2026-07-13; 8 natural-conversation v2 cases)"
   nlu_smoke: "8/8 (2026-07-13)"
+  natural_conversation_audit: "0 natural, 12 formulaic, 12 context/intent misses across 24 unseen turns; UI replay 6/6 visible, 0 console errors (2026-07-13)"
   state_migration: "26/26 (2026-07-10)"
   forbidden_phrases: 0
   known_flaky: "null.split console error x2 on first gate run (3 occurrences, rerun always clean; runner now captures url:line)"
@@ -47,6 +48,7 @@ constraints:
 
 blockers: []
 follow_ups:
+  - "P0 Natural Conversation v3: ordinary-question answers plus subject/entity continuity; use the 24-turn audit transcript as regression input"
   - "Human naturalness blind test: 3 testers x 20 turns; track irrelevant, template-like, grounded, and unnecessary-question rates"
   - "Natural conversation v3 candidates: wider paraphrases, entity continuity, and local player reply-style preferences"
   - "CH-5: chapter encounters + resonance invite (wires advanceChapterProgress)"

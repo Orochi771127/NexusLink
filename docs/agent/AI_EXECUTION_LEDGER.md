@@ -1497,6 +1497,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 3 - Raphael Core, Companion Reasoning, And Soul Talk
 
+### 2026-07-13 - Codex - Post-push natural conversation audit
+
+- Status: `VERIFIED`
+- Branch / commit: `main` / implementation `22636e6` pushed to `origin/main`; this audit record lands in the follow-up QA commit.
+- Scope: Read-only behavioural audit plus reproducible QA runner/report. No Raphael runtime, safety, memory, state, UI, asset, or dependency change.
+- Work performed: Held three unseen eight-turn conversations (24 total) covering a casual mishap/dinner choice, uncertain friendship, and a mixed-English meeting complaint/topic change. Replayed six representative turns through the real Soul Talk UI at 390×844. Recorded the full transcript and independently judged naturalness instead of treating reply presence as success.
+- Verification: Direct core produced 24/24 replies but strict naturalness scoring was **0 natural / 12 formulaic / 12 context-or-intent misses**. Real UI rendered **6/6** inputs and replies with two chat entries per turn and **0 console/page errors**. UI replies matched direct-core behaviour, localising the issues to NLU/strategy/reply policy rather than presentation or persistence.
+- Problems / risks: Open conversation remains too mechanical despite v2 fixture success. P0 gaps are ordinary-question answering and subject/entity continuity; P1 gaps are repeated classifier meta-language, venting-vs-feedback confusion, and companion/world questions. Do not claim general natural-language conversation maturity from deterministic gates alone.
+- Next safe action: Open a separately approved Natural Conversation v3 EXPERIENCE pack using this transcript as case-first regression input; centre it on referential multi-turn state and answer policies, not another broad keyword-only expansion.
+- Required reading: `docs/qa/RAPHAEL_NATURAL_CONVERSATION_AUDIT_2026-07-13.md`, `docs/qa/_run_raphael_natural_conversation_audit.py`, and this lane.
+
 ### 2026-07-13 - Codex - Raphael Local Natural Conversation v2
 
 - Status: `VERIFIED`
