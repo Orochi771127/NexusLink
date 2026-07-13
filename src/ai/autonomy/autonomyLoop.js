@@ -9,6 +9,7 @@ import { repairGenericReply } from "../nlu/nluReplyBuilder.js";
 import { resolveConstitutionRepair } from "../eval/constitutionCritic.js";
 import { buildPrefillGroundedReply } from "../dialogue/prefillGrounding.js";
 import { buildSafetyRedirectReply } from "../safetyShield.js";
+import { buildBoundaryPolicyReply } from "../dialogue/boundaryReplyPolicy.js";
 import { sanitizeReply } from "../forbiddenPhrases.js";
 import { renderReply } from "../external/externalModelGateway.js";
 import {
@@ -86,7 +87,7 @@ export function runAutonomyLoop({
   });
 
   if (!critique.pass) {
-    execution = applyCriticRepairs(execution, critique, perception);
+    execution = applyCriticRepairs(execution, critique, perception, state);
     critique = runCritics({
       perception,
       state,
@@ -121,7 +122,7 @@ export function runAutonomyLoop({
       }
     });
     if (!critique.pass) {
-      execution = applyCriticRepairs(execution, critique, perception);
+      execution = applyCriticRepairs(execution, critique, perception, state);
     }
   }
 
@@ -150,6 +151,40 @@ export function runAutonomyLoop({
       shouldStaySilent: execution.shouldStaySilent
     }
   });
+  if (!critique.pass) {
+    execution = applyCriticRepairs(execution, critique, perception, state);
+    critique = runCritics({
+      perception,
+      state,
+      reply: execution.reply,
+      actionPlan: execution.actionPlan,
+      memoryDecision: execution.memoryDecision,
+      output: {
+        shouldSpeak: execution.shouldSpeak,
+        shouldStaySilent: execution.shouldStaySilent
+      }
+    });
+  }
+  const previousReply = getPreviousCompanionReply(state, perception);
+  if (previousReply && normalizeReply(execution.reply) === normalizeReply(previousReply)) {
+    execution = applyCriticRepairs(
+      execution,
+      { failureCodes: ["too_similar_to_previous_reply"] },
+      perception,
+      state
+    );
+    critique = runCritics({
+      perception,
+      state,
+      reply: execution.reply,
+      actionPlan: execution.actionPlan,
+      memoryDecision: execution.memoryDecision,
+      output: {
+        shouldSpeak: execution.shouldSpeak,
+        shouldStaySilent: execution.shouldStaySilent
+      }
+    });
+  }
 
   const reflectionPass2 = buildInteractionReflection({
     perception,
@@ -189,7 +224,7 @@ function maybeRenderReply(execution, perception, runtime, preferenceProfile) {
   });
 }
 
-function applyCriticRepairs(execution, critique, perception) {
+function applyCriticRepairs(execution, critique, perception, state = {}) {
   const codes = critique.failureCodes || [];
   let reply = execution.reply;
   let shouldSpeak = execution.shouldSpeak;
@@ -215,7 +250,7 @@ function applyCriticRepairs(execution, critique, perception) {
   }
 
   if (codes.some((code) => String(code).includes("too_affectionate") || code === "pressure_requires_boundary_action")) {
-    reply = buildSafetyRedirectReply({ category: "dependency_pressure" });
+    reply = buildBoundaryPolicyReply(perception.safety);
     shouldSpeak = true;
   }
 
@@ -251,12 +286,15 @@ function applyCriticRepairs(execution, critique, perception) {
     codes.includes("comfort_instead_of_practical") ||
     codes.includes("too_similar_to_previous_reply")
   ) {
-    reply = repairGenericReply({
-      strategy: perception.responseStrategy?.strategy,
-      nlu: perception.nlu,
-      semanticFrame: perception.nlu?.semanticFrame,
-      seed: (perception.gateway?.normalizedInput || "").length
-    });
+    reply = perception.safety?.isBoundaryPressure
+      ? buildBoundaryPolicyReply(perception.safety)
+      : repairGenericReply({
+          strategy: perception.responseStrategy?.strategy,
+          nlu: perception.nlu,
+          semanticFrame: perception.nlu?.semanticFrame,
+          seed: (perception.gateway?.normalizedInput || "").length,
+          previousReply: getPreviousCompanionReply(state, perception)
+        });
     shouldSpeak = Boolean(reply);
   }
 
@@ -278,4 +316,19 @@ function applyCriticRepairs(execution, critique, perception) {
     shouldStaySilent: !shouldSpeak,
     criticRepaired: true
   };
+}
+
+function getPreviousCompanionReply(state = {}, perception = {}) {
+  const history = Array.isArray(state.chatHistory) ? state.chatHistory : [];
+  for (let index = history.length - 1; index >= 0; index -= 1) {
+    if (history[index]?.role === "companion") return history[index].text || "";
+  }
+  return perception.nlu?.semanticFrame?.conversationContext?.previousReply || "";
+}
+
+function normalizeReply(text = "") {
+  return String(text || "")
+    .replace(/\s+/g, "")
+    .replace(/[，。！？、；：,.!?;:]/g, "")
+    .trim();
 }

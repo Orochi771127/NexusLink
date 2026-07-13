@@ -1,0 +1,4753 @@
+{
+  "evidence_class": "structured_beta",
+  "human_blind_review": "not_run",
+  "browser": "chromium",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "console_errors": [],
+  "dialogue_traces": [
+    {
+      "input": "今天早上鬧鐘響了三次，我還是差點睡回去。",
+      "nlu": {
+        "topic": "unknown",
+        "dialogueAct": "requesting_silence",
+        "constraints": [
+          "no_questions"
+        ],
+        "preferredResponse": "contextual_ack",
+        "userNeed": "presence"
+      },
+      "responseStrategy": "quiet_presence",
+      "selectedTemplateId": "strategy:quiet_presence:2",
+      "antiLoopDecision": {
+        "shouldForce": false,
+        "forcedStrategy": null,
+        "reason": null
+      },
+      "variantSelection": {
+        "variantId": "strategy:quiet_presence:2",
+        "variationReason": "preferred_topic_match",
+        "avoidedVariants": []
+      },
+      "autonomy": {
+        "selectedAction": "suggest_rest",
+        "reason": "rest_request",
+        "shouldSpeak": true
+      },
+      "finalReply": "好，我不多說。",
+      "prefill": {
+        "hasPrefill": false,
+        "referenceText": null,
+        "actionType": null,
+        "mustReference": false,
+        "isQuietMode": false,
+        "source": null,
+        "usedPrefillDetail": null,
+        "groundedByPrefill": false
+      },
+      "quickReplies": [
+        {
+          "label": "保持安靜",
+          "intent": "quiet_stay",
+          "actionType": "quiet",
+          "topic": "unknown",
+          "responseStrategyHint": "quiet_presence"
+        },
+        {
+          "label": "先不問問題",
+          "intent": "no_questions",
+          "actionType": "constraint",
+          "topic": "unknown",
+          "responseStrategyHint": "quiet_presence"
+        },
+        {
+          "label": "陪我待著",
+          "intent": "quiet_presence",
+          "actionType": "quiet",
+          "topic": "unknown",
+          "responseStrategyHint": "holding_space"
+        }
+      ]
+    },
+    {
+      "input": "你會覺得我只是懶嗎？",
+      "nlu": {
+        "topic": "unknown",
+        "dialogueAct": "asking_question",
+        "constraints": [],
+        "preferredResponse": "contextual_ack",
+        "userNeed": "presence"
+      },
+      "responseStrategy": "answer_or_clarify",
+      "selectedTemplateId": "strategy:answer_or_clarify:0",
+      "antiLoopDecision": {
+        "shouldForce": false,
+        "forcedStrategy": null,
+        "reason": null
+      },
+      "variantSelection": {
+        "variantId": "strategy:answer_or_clarify:0",
+        "variationReason": "preferred_topic_match",
+        "avoidedVariants": []
+      },
+      "autonomy": {
+        "selectedAction": "say_reply",
+        "reason": "direct_question_reply",
+        "shouldSpeak": true
+      },
+      "finalReply": "這件事我沒有足夠把握直接說是或不是。若要我選，我會先採取能回頭調整的做法。",
+      "prefill": {
+        "hasPrefill": false,
+        "referenceText": null,
+        "actionType": null,
+        "mustReference": false,
+        "isQuietMode": false,
+        "source": null,
+        "usedPrefillDetail": null,
+        "groundedByPrefill": false
+      },
+      "quickReplies": [
+        {
+          "label": "再說一句重點",
+          "intent": "continue_topic",
+          "actionType": "continue",
+          "topic": "unknown",
+          "responseStrategyHint": "answer_or_clarify"
+        },
+        {
+          "label": "先講重點",
+          "intent": "focus_point",
+          "actionType": "clarify",
+          "topic": "unknown",
+          "responseStrategyHint": "answer_or_clarify"
+        },
+        {
+          "label": "換個方向聊",
+          "intent": "shift_topic",
+          "actionType": "shift",
+          "topic": "unknown",
+          "responseStrategyHint": "holding_space"
+        }
+      ]
+    },
+    {
+      "input": "其實我昨晚兩點才睡。",
+      "nlu": {
+        "topic": "unknown",
+        "dialogueAct": "requesting_silence",
+        "constraints": [
+          "no_questions"
+        ],
+        "preferredResponse": "contextual_ack",
+        "userNeed": "presence"
+      },
+      "responseStrategy": "quiet_presence",
+      "selectedTemplateId": "strategy:quiet_presence:0",
+      "antiLoopDecision": {
+        "shouldForce": false,
+        "forcedStrategy": null,
+        "reason": null
+      },
+      "variantSelection": {
+        "variantId": "strategy:quiet_presence:0",
+        "variationReason": "avoided_recent_variants",
+        "avoidedVariants": [
+          "strategy:quiet_presence:2"
+        ]
+      },
+      "autonomy": {
+        "selectedAction": "suggest_rest",
+        "reason": "rest_request",
+        "shouldSpeak": true
+      },
+      "finalReply": "好，先不問。",
+      "prefill": {
+        "hasPrefill": false,
+        "referenceText": null,
+        "actionType": null,
+        "mustReference": false,
+        "isQuietMode": false,
+        "source": null,
+        "usedPrefillDetail": null,
+        "groundedByPrefill": false
+      },
+      "quickReplies": [
+        {
+          "label": "保持安靜",
+          "intent": "quiet_stay",
+          "actionType": "quiet",
+          "topic": "unknown",
+          "responseStrategyHint": "quiet_presence"
+        },
+        {
+          "label": "先不問問題",
+          "intent": "no_questions",
+          "actionType": "constraint",
+          "topic": "unknown",
+          "responseStrategyHint": "quiet_presence"
+        },
+        {
+          "label": "陪我待著",
+          "intent": "quiet_presence",
+          "actionType": "quiet",
+          "topic": "unknown",
+          "responseStrategyHint": "holding_space"
+        }
+      ]
+    },
+    {
+      "input": "那我今晚應該先做哪一件小事？",
+      "nlu": {
+        "topic": null,
+        "dialogueAct": "asking_question",
+        "constraints": [],
+        "preferredResponse": "contextual_ack",
+        "userNeed": "presence"
+      },
+      "responseStrategy": "answer_or_clarify",
+      "selectedTemplateId": "strategy:answer_or_clarify:0",
+      "antiLoopDecision": {
+        "shouldForce": false,
+        "forcedStrategy": null,
+        "reason": null
+      },
+      "variantSelection": {
+        "variantId": "strategy:answer_or_clarify:0",
+        "variationReason": "preferred_topic_match",
+        "avoidedVariants": [
+          "strategy:answer_or_clarify:0"
+        ]
+      },
+      "autonomy": {
+        "selectedAction": "say_reply",
+        "reason": "direct_question_reply",
+        "shouldSpeak": true
+      },
+      "finalReply": "可以先試一次，但把話說得簡單一點，也留給對方拒絕或調整的空間。現場感覺不對，就先停下來。",
+      "prefill": {
+        "hasPrefill": false,
+        "referenceText": null,
+        "actionType": null,
+        "mustReference": false,
+        "isQuietMode": false,
+        "source": null,
+        "usedPrefillDetail": null,
+        "groundedByPrefill": false
+      },
+      "quickReplies": [
+        {
+          "label": "再說一句重點",
+          "intent": "continue_topic",
+          "actionType": "continue",
+          "topic": "unknown",
+          "responseStrategyHint": "answer_or_clarify"
+        },
+        {
+          "label": "先講重點",
+          "intent": "focus_point",
+          "actionType": "clarify",
+          "topic": "unknown",
+          "responseStrategyHint": "answer_or_clarify"
+        },
+        {
+          "label": "換個方向聊",
+          "intent": "shift_topic",
+          "actionType": "shift",
+          "topic": "unknown",
+          "responseStrategyHint": "holding_space"
+        }
+      ]
+    },
+    {
+      "input": "好，我先把手機放遠一點。",
+      "nlu": {
+        "topic": null,
+        "dialogueAct": "describing_event",
+        "constraints": [],
+        "preferredResponse": "contextual_ack",
+        "userNeed": "presence"
+      },
+      "responseStrategy": "contextual_ack",
+      "selectedTemplateId": "strategy:contextual_ack:0",
+      "antiLoopDecision": {
+        "shouldForce": false,
+        "forcedStrategy": null,
+        "reason": null
+      },
+      "variantSelection": {
+        "variantId": "strategy:contextual_ack:0",
+        "variationReason": "preferred_topic_match",
+        "avoidedVariants": []
+      },
+      "autonomy": {
+        "selectedAction": "say_reply",
+        "reason": "goal:acknowledge_emotion",
+        "shouldSpeak": true
+      },
+      "finalReply": "我在。你可以再說一句你最想我先懂的部分。",
+      "prefill": {
+        "hasPrefill": false,
+        "referenceText": null,
+        "actionType": null,
+        "mustReference": false,
+        "isQuietMode": false,
+        "source": null,
+        "usedPrefillDetail": null,
+        "groundedByPrefill": false
+      },
+      "quickReplies": [
+        {
+          "label": "先講重點（換個說法）",
+          "intent": "focus_point_alt0",
+          "actionType": "clarify",
+          "topic": "unknown",
+          "responseStrategyHint": "answer_or_clarify"
+        },
+        {
+          "label": "換個方向聊（換個說法）",
+          "intent": "shift_topic_alt1",
+          "actionType": "shift",
+          "topic": "unknown",
+          "responseStrategyHint": "holding_space"
+        },
+        {
+          "label": "再說一句重點（換個說法）",
+          "intent": "continue_topic_alt2",
+          "actionType": "continue",
+          "topic": "unknown",
+          "responseStrategyHint": "contextual_ack"
+        }
+      ]
+    },
+    {
+      "input": "不過你剛才的語氣有點像在下指令。",
+      "nlu": {
+        "topic": null,
+        "dialogueAct": "describing_event",
+        "constraints": [],
+        "preferredResponse": "contextual_ack",
+        "userNeed": "presence"
+      },
+      "responseStrategy": "contextual_ack",
+      "selectedTemplateId": "strategy:contextual_ack:0",
+      "antiLoopDecision": {
+        "shouldForce": false,
+        "forcedStrategy": null,
+        "reason": null
+      },
+      "variantSelection": {
+        "variantId": "strategy:contextual_ack:0",
+        "variationReason": "preferred_topic_match",
+        "avoidedVariants": [
+          "strategy:contextual_ack:0"
+        ]
+      },
+      "autonomy": {
+        "selectedAction": "say_reply",
+        "reason": "goal:acknowledge_emotion",
+        "shouldSpeak": true
+      },
+      "finalReply": "原來後面還有這一層。先不用急著替整件事下結論。",
+      "prefill": {
+        "hasPrefill": false,
+        "referenceText": null,
+        "actionType": null,
+        "mustReference": false,
+        "isQuietMode": false,
+        "source": null,
+        "usedPrefillDetail": null,
+        "groundedByPrefill": false
+      },
+      "quickReplies": [
+        {
+          "label": "再說一句重點",
+          "intent": "continue_topic",
+          "actionType": "continue",
+          "topic": "unknown",
+          "responseStrategyHint": "contextual_ack"
+        },
+        {
+          "label": "先講重點",
+          "intent": "focus_point",
+          "actionType": "clarify",
+          "topic": "unknown",
+          "responseStrategyHint": "answer_or_clarify"
+        },
+        {
+          "label": "換個方向聊",
+          "intent": "shift_topic",
+          "actionType": "shift",
+          "topic": "unknown",
+          "responseStrategyHint": "holding_space"
+        }
+      ]
+    },
+    {
+      "input": "這樣說自然多了。",
+      "nlu": {
+        "topic": null,
+        "dialogueAct": "describing_event",
+        "constraints": [],
+        "preferredResponse": "contextual_ack",
+        "userNeed": "presence"
+      },
+      "responseStrategy": "contextual_ack",
+      "selectedTemplateId": "strategy:contextual_ack:0",
+      "antiLoopDecision": {
+        "shouldForce": false,
+        "forcedStrategy": null,
+        "reason": null
+      },
+      "variantSelection": {
+        "variantId": "strategy:contextual_ack:0",
+        "variationReason": "preferred_topic_match",
+        "avoidedVariants": [
+          "strategy:contextual_ack:0",
+          "strategy:contextual_ack:0"
+        ]
+      },
+      "autonomy": {
+        "selectedAction": "say_reply",
+        "reason": "goal:acknowledge_emotion",
+        "shouldSpeak": true
+      },
+      "finalReply": "好，這個節奏比較對。那我就維持這樣，不把聊天又說成一份說明書。",
+      "prefill": {
+        "hasPrefill": false,
+        "referenceText": null,
+        "actionType": null,
+        "mustReference": false,
+        "isQuietMode": false,
+        "source": null,
+        "usedPrefillDetail": null,
+        "groundedByPrefill": false
+      },
+      "quickReplies": [
+        {
+          "label": "先講重點（換個說法）",
+          "intent": "focus_point_alt0",
+          "actionType": "clarify",
+          "topic": "unknown",
+          "responseStrategyHint": "answer_or_clarify"
+        },
+        {
+          "label": "換個方向聊（換個說法）",
+          "intent": "shift_topic_alt1",
+          "actionType": "shift",
+          "topic": "unknown",
+          "responseStrategyHint": "holding_space"
+        },
+        {
+          "label": "再說一句重點（換個說法）",
+          "intent": "continue_topic_alt2",
+          "actionType": "continue",
+          "topic": "unknown",
+          "responseStrategyHint": "contextual_ack"
+        }
+      ]
+    },
+    {
+      "input": "換個話題，我午餐吃到一碗很辣的麵。",
+      "nlu": {
+        "topic": "daily_life",
+        "dialogueAct": "describing_event",
+        "constraints": [],
+        "preferredResponse": "contextual_ack",
+        "userNeed": "presence"
+      },
+      "responseStrategy": "holding_space",
+      "selectedTemplateId": "strategy:holding_space:1",
+      "antiLoopDecision": {
+        "shouldForce": true,
+        "forcedStrategy": "holding_space",
+        "reason": "strategy_repeated"
+      },
+      "variantSelection": {
+        "variantId": "strategy:holding_space:1",
+        "variationReason": "preferred_topic_match",
+        "avoidedVariants": []
+      },
+      "autonomy": {
+        "selectedAction": "say_reply",
+        "reason": "goal:acknowledge_emotion",
+        "shouldSpeak": true
+      },
+      "finalReply": "好，我先不給答案。這件事就放在這裡。",
+      "prefill": {
+        "hasPrefill": false,
+        "referenceText": null,
+        "actionType": null,
+        "mustReference": false,
+        "isQuietMode": false,
+        "source": null,
+        "usedPrefillDetail": null,
+        "groundedByPrefill": false
+      },
+      "quickReplies": [
+        {
+          "label": "再說一句重點",
+          "intent": "continue_topic",
+          "actionType": "continue",
+          "topic": "daily_life",
+          "responseStrategyHint": "holding_space"
+        },
+        {
+          "label": "先講重點",
+          "intent": "focus_point",
+          "actionType": "clarify",
+          "topic": "daily_life",
+          "responseStrategyHint": "answer_or_clarify"
+        },
+        {
+          "label": "換個方向聊",
+          "intent": "shift_topic",
+          "actionType": "shift",
+          "topic": "unknown",
+          "responseStrategyHint": "holding_space"
+        }
+      ]
+    },
+    {
+      "input": "辣到一直流眼淚，但味道很好。",
+      "nlu": {
+        "topic": "emotion",
+        "dialogueAct": "venting",
+        "constraints": [],
+        "preferredResponse": "emotional_short",
+        "userNeed": "emotional_ack"
+      },
+      "responseStrategy": "emotional_short",
+      "selectedTemplateId": "strategy:emotional_short:0",
+      "antiLoopDecision": {
+        "shouldForce": false,
+        "forcedStrategy": null,
+        "reason": null
+      },
+      "variantSelection": {
+        "variantId": "strategy:emotional_short:0",
+        "variationReason": "preferred_topic_match",
+        "avoidedVariants": []
+      },
+      "autonomy": {
+        "selectedAction": "say_reply",
+        "reason": "goal:acknowledge_emotion+low_energy_short",
+        "shouldSpeak": true
+      },
+      "finalReply": "這份悶我先接住，不急著分析。",
+      "prefill": {
+        "hasPrefill": false,
+        "referenceText": null,
+        "actionType": null,
+        "mustReference": false,
+        "isQuietMode": false,
+        "source": null,
+        "usedPrefillDetail": null,
+        "groundedByPrefill": false
+      },
+      "quickReplies": [
+        {
+          "label": "先講重點（換個說法）",
+          "intent": "focus_point_alt0",
+          "actionType": "clarify",
+          "topic": "daily_life",
+          "responseStrategyHint": "answer_or_clarify"
+        },
+        {
+          "label": "換個方向聊（換個說法）",
+          "intent": "shift_topic_alt1",
+          "actionType": "shift",
+          "topic": "unknown",
+          "responseStrategyHint": "holding_space"
+        },
+        {
+          "label": "再說一句重點（換個說法）",
+          "intent": "continue_topic_alt2",
+          "actionType": "continue",
+          "topic": "daily_life",
+          "responseStrategyHint": "emotional_short"
+        }
+      ]
+    },
+    {
+      "input": "你會想試一口嗎？",
+      "nlu": {
+        "topic": "unknown",
+        "dialogueAct": "asking_question",
+        "constraints": [],
+        "preferredResponse": "contextual_ack",
+        "userNeed": "presence"
+      },
+      "responseStrategy": "answer_or_clarify",
+      "selectedTemplateId": "strategy:answer_or_clarify:0",
+      "antiLoopDecision": {
+        "shouldForce": false,
+        "forcedStrategy": null,
+        "reason": null
+      },
+      "variantSelection": {
+        "variantId": "strategy:answer_or_clarify:0",
+        "variationReason": "preferred_topic_match",
+        "avoidedVariants": []
+      },
+      "autonomy": {
+        "selectedAction": "say_reply",
+        "reason": "direct_question_reply+low_energy_short",
+        "shouldSpeak": true
+      },
+      "finalReply": "這件事我沒有足夠把握直接說是或不是。若要我選，我會先採取能回頭調整的做法。",
+      "prefill": {
+        "hasPrefill": false,
+        "referenceText": null,
+        "actionType": null,
+        "mustReference": false,
+        "isQuietMode": false,
+        "source": null,
+        "usedPrefillDetail": null,
+        "groundedByPrefill": false
+      },
+      "quickReplies": [
+        {
+          "label": "繼續講情緒",
+          "intent": "continue_topic",
+          "actionType": "continue",
+          "topic": "emotion",
+          "responseStrategyHint": "answer_or_clarify"
+        },
+        {
+          "label": "先講重點",
+          "intent": "focus_point",
+          "actionType": "clarify",
+          "topic": "emotion",
+          "responseStrategyHint": "answer_or_clarify"
+        },
+        {
+          "label": "換個方向聊",
+          "intent": "shift_topic",
+          "actionType": "shift",
+          "topic": "unknown",
+          "responseStrategyHint": "holding_space"
+        }
+      ]
+    },
+    {
+      "input": "假設你不喜歡，也可以直接說。",
+      "nlu": {
+        "topic": "emotion",
+        "dialogueAct": "describing_event",
+        "constraints": [],
+        "preferredResponse": "contextual_ack",
+        "userNeed": "presence"
+      },
+      "responseStrategy": "contextual_ack",
+      "selectedTemplateId": "strategy:contextual_ack:1",
+      "antiLoopDecision": {
+        "shouldForce": false,
+        "forcedStrategy": null,
+        "reason": null
+      },
+      "variantSelection": {
+        "variantId": "strategy:contextual_ack:1",
+        "variationReason": "avoided_recent_variants",
+        "avoidedVariants": [
+          "strategy:contextual_ack:0"
+        ]
+      },
+      "autonomy": {
+        "selectedAction": "say_reply",
+        "reason": "goal:acknowledge_emotion+low_energy_short",
+        "shouldSpeak": true
+      },
+      "finalReply": "聽起來是好事。這份開心你留著慢慢用，我記下了。",
+      "prefill": {
+        "hasPrefill": false,
+        "referenceText": null,
+        "actionType": null,
+        "mustReference": false,
+        "isQuietMode": false,
+        "source": null,
+        "usedPrefillDetail": null,
+        "groundedByPrefill": false
+      },
+      "quickReplies": [
+        {
+          "label": "先講重點（換個說法）",
+          "intent": "focus_point_alt0",
+          "actionType": "clarify",
+          "topic": "emotion",
+          "responseStrategyHint": "answer_or_clarify"
+        },
+        {
+          "label": "換個方向聊（換個說法）",
+          "intent": "shift_topic_alt1",
+          "actionType": "shift",
+          "topic": "unknown",
+          "responseStrategyHint": "holding_space"
+        },
+        {
+          "label": "繼續講情緒（換個說法）",
+          "intent": "continue_topic_alt2",
+          "actionType": "continue",
+          "topic": "emotion",
+          "responseStrategyHint": "contextual_ack"
+        }
+      ]
+    },
+    {
+      "input": "嗯，這個回答我可以接受。",
+      "nlu": {
+        "topic": "emotion",
+        "dialogueAct": "describing_event",
+        "constraints": [],
+        "preferredResponse": "contextual_ack",
+        "userNeed": "presence"
+      },
+      "responseStrategy": "contextual_ack",
+      "selectedTemplateId": "strategy:contextual_ack:0",
+      "antiLoopDecision": {
+        "shouldForce": false,
+        "forcedStrategy": null,
+        "reason": null
+      },
+      "variantSelection": {
+        "variantId": "strategy:contextual_ack:0",
+        "variationReason": "avoided_recent_variants",
+        "avoidedVariants": [
+          "strategy:contextual_ack:1"
+        ]
+      },
+      "autonomy": {
+        "selectedAction": "suggest_rest",
+        "reason": "goal:rest+low_energy_short",
+        "shouldSpeak": true
+      },
+      "finalReply": "這句話的重點在情緒，我從這裡回你。",
+      "prefill": {
+        "hasPrefill": false,
+        "referenceText": null,
+        "actionType": null,
+        "mustReference": false,
+        "isQuietMode": false,
+        "source": null,
+        "usedPrefillDetail": null,
+        "groundedByPrefill": false
+      },
+      "quickReplies": [
+        {
+          "label": "繼續講情緒",
+          "intent": "continue_topic",
+          "actionType": "continue",
+          "topic": "emotion",
+          "responseStrategyHint": "contextual_ack"
+        },
+        {
+          "label": "先講重點",
+          "intent": "focus_point",
+          "actionType": "clarify",
+          "topic": "emotion",
+          "responseStrategyHint": "answer_or_clarify"
+        },
+        {
+          "label": "換個方向聊",
+          "intent": "shift_topic",
+          "actionType": "shift",
+          "topic": "unknown",
+          "responseStrategyHint": "holding_space"
+        }
+      ]
+    },
+    {
+      "input": "我等等還要打一通不太想打的電話。",
+      "nlu": {
+        "topic": "unknown",
+        "dialogueAct": "describing_event",
+        "constraints": [],
+        "preferredResponse": "contextual_ack",
+        "userNeed": "presence"
+      },
+      "responseStrategy": "clarifying_question",
+      "selectedTemplateId": "strategy:clarifying_question:0",
+      "antiLoopDecision": {
+        "shouldForce": false,
+        "forcedStrategy": null,
+        "reason": null
+      },
+      "variantSelection": {
+        "variantId": "strategy:clarifying_question:0",
+        "variationReason": "preferred_topic_match",
+        "avoidedVariants": []
+      },
+      "autonomy": {
+        "selectedAction": "suggest_rest",
+        "reason": "goal:rest+low_energy_short",
+        "shouldSpeak": true
+      },
+      "finalReply": "這個轉折有點出乎意料。",
+      "prefill": {
+        "hasPrefill": false,
+        "referenceText": null,
+        "actionType": null,
+        "mustReference": false,
+        "isQuietMode": false,
+        "source": null,
+        "usedPrefillDetail": null,
+        "groundedByPrefill": false
+      },
+      "quickReplies": [
+        {
+          "label": "先講重點（換個說法）",
+          "intent": "focus_point_alt0",
+          "actionType": "clarify",
+          "topic": "emotion",
+          "responseStrategyHint": "answer_or_clarify"
+        },
+        {
+          "label": "換個方向聊（換個說法）",
+          "intent": "shift_topic_alt1",
+          "actionType": "shift",
+          "topic": "unknown",
+          "responseStrategyHint": "holding_space"
+        },
+        {
+          "label": "繼續講情緒（換個說法）",
+          "intent": "continue_topic_alt2",
+          "actionType": "continue",
+          "topic": "emotion",
+          "responseStrategyHint": "clarifying_question"
+        }
+      ]
+    },
+    {
+      "input": "要不要先寫下三句重點？",
+      "nlu": {
+        "topic": "unknown",
+        "dialogueAct": "asking_question",
+        "constraints": [],
+        "preferredResponse": "contextual_ack",
+        "userNeed": "presence"
+      },
+      "responseStrategy": "answer_or_clarify",
+      "selectedTemplateId": "strategy:answer_or_clarify:0",
+      "antiLoopDecision": {
+        "shouldForce": false,
+        "forcedStrategy": null,
+        "reason": null
+      },
+      "variantSelection": {
+        "variantId": "strategy:answer_or_clarify:0",
+        "variationReason": "preferred_topic_match",
+        "avoidedVariants": [
+          "strategy:answer_or_clarify:0"
+        ]
+      },
+      "autonomy": {
+        "selectedAction": "say_reply",
+        "reason": "direct_question_reply+low_energy_short",
+        "shouldSpeak": true
+      },
+      "finalReply": "我傾向可以，不過不用把它做成非得立刻得到答案的事。先輕輕試一次，再看實際反應。",
+      "prefill": {
+        "hasPrefill": false,
+        "referenceText": null,
+        "actionType": null,
+        "mustReference": false,
+        "isQuietMode": false,
+        "source": null,
+        "usedPrefillDetail": null,
+        "groundedByPrefill": false
+      },
+      "quickReplies": [
+        {
+          "label": "繼續講情緒",
+          "intent": "continue_topic",
+          "actionType": "continue",
+          "topic": "emotion",
+          "responseStrategyHint": "answer_or_clarify"
+        },
+        {
+          "label": "先講重點",
+          "intent": "focus_point",
+          "actionType": "clarify",
+          "topic": "emotion",
+          "responseStrategyHint": "answer_or_clarify"
+        },
+        {
+          "label": "換個方向聊",
+          "intent": "shift_topic",
+          "actionType": "shift",
+          "topic": "unknown",
+          "responseStrategyHint": "holding_space"
+        }
+      ]
+    },
+    {
+      "input": "不要再問我問題，陪我安靜一下就好。",
+      "nlu": {
+        "topic": "emotion",
+        "dialogueAct": "requesting_silence",
+        "constraints": [
+          "no_questions",
+          "quiet_presence",
+          "no_questions"
+        ],
+        "preferredResponse": "quiet_presence",
+        "userNeed": "quiet_presence"
+      },
+      "responseStrategy": "quiet_presence",
+      "selectedTemplateId": "strategy:quiet_presence:1",
+      "antiLoopDecision": {
+        "shouldForce": false,
+        "forcedStrategy": null,
+        "reason": null
+      },
+      "variantSelection": {
+        "variantId": "strategy:quiet_presence:1",
+        "variationReason": "preferred_topic_match",
+        "avoidedVariants": []
+      },
+      "autonomy": {
+        "selectedAction": "say_reply",
+        "reason": "goal:acknowledge_emotion+low_energy_short",
+        "shouldSpeak": true
+      },
+      "finalReply": "嗯，我安靜陪著。",
+      "prefill": {
+        "hasPrefill": false,
+        "referenceText": null,
+        "actionType": null,
+        "mustReference": false,
+        "isQuietMode": false,
+        "source": null,
+        "usedPrefillDetail": null,
+        "groundedByPrefill": false
+      },
+      "quickReplies": [
+        {
+          "label": "保持安靜",
+          "intent": "quiet_stay",
+          "actionType": "quiet",
+          "topic": "unknown",
+          "responseStrategyHint": "quiet_presence"
+        },
+        {
+          "label": "先不問問題",
+          "intent": "no_questions",
+          "actionType": "constraint",
+          "topic": "unknown",
+          "responseStrategyHint": "quiet_presence"
+        },
+        {
+          "label": "陪我待著",
+          "intent": "quiet_presence",
+          "actionType": "quiet",
+          "topic": "unknown",
+          "responseStrategyHint": "holding_space"
+        }
+      ]
+    },
+    {
+      "input": "……",
+      "nlu": {
+        "topic": "unknown",
+        "dialogueAct": "describing_event",
+        "constraints": [],
+        "preferredResponse": "contextual_ack",
+        "userNeed": "presence"
+      },
+      "responseStrategy": "clarifying_question",
+      "selectedTemplateId": "strategy:clarifying_question:1",
+      "antiLoopDecision": {
+        "shouldForce": false,
+        "forcedStrategy": null,
+        "reason": null
+      },
+      "variantSelection": {
+        "variantId": "strategy:clarifying_question:1",
+        "variationReason": "avoided_recent_variants",
+        "avoidedVariants": [
+          "strategy:clarifying_question:0"
+        ]
+      },
+      "autonomy": {
+        "selectedAction": "suggest_rest",
+        "reason": "goal:rest+low_energy_short",
+        "shouldSpeak": true
+      },
+      "finalReply": "原來事情是這樣發展的。",
+      "prefill": {
+        "hasPrefill": false,
+        "referenceText": null,
+        "actionType": null,
+        "mustReference": false,
+        "isQuietMode": false,
+        "source": null,
+        "usedPrefillDetail": null,
+        "groundedByPrefill": false
+      },
+      "quickReplies": [
+        {
+          "label": "繼續講情緒",
+          "intent": "continue_topic",
+          "actionType": "continue",
+          "topic": "emotion",
+          "responseStrategyHint": "clarifying_question"
+        },
+        {
+          "label": "先講重點",
+          "intent": "focus_point",
+          "actionType": "clarify",
+          "topic": "emotion",
+          "responseStrategyHint": "answer_or_clarify"
+        },
+        {
+          "label": "換個方向聊",
+          "intent": "shift_topic",
+          "actionType": "shift",
+          "topic": "unknown",
+          "responseStrategyHint": "holding_space"
+        }
+      ]
+    },
+    {
+      "input": "謝謝，剛才那樣就夠了。",
+      "nlu": {
+        "topic": "emotion",
+        "dialogueAct": "thanking",
+        "constraints": [],
+        "preferredResponse": "emotional_short",
+        "userNeed": "emotional_ack"
+      },
+      "responseStrategy": "memory_reference",
+      "selectedTemplateId": "template:memory_recall_emotion",
+      "antiLoopDecision": {
+        "shouldForce": false,
+        "forcedStrategy": null,
+        "reason": null
+      },
+      "variantSelection": {
+        "variantId": "pack:gs_gratitude_ack_01:0",
+        "variationReason": "preferred_topic_match",
+        "avoidedVariants": []
+      },
+      "autonomy": {
+        "selectedAction": "say_reply",
+        "reason": "recovery_recall+low_energy_short",
+        "shouldSpeak": true
+      },
+      "finalReply": "我想確認一下：你現在最想先處理的是情緒這塊嗎？",
+      "prefill": {
+        "hasPrefill": false,
+        "referenceText": null,
+        "actionType": null,
+        "mustReference": false,
+        "isQuietMode": false,
+        "source": null,
+        "usedPrefillDetail": null,
+        "groundedByPrefill": false
+      },
+      "quickReplies": [
+        {
+          "label": "先講重點（換個說法）",
+          "intent": "focus_point_alt0",
+          "actionType": "clarify",
+          "topic": "emotion",
+          "responseStrategyHint": "answer_or_clarify"
+        },
+        {
+          "label": "換個方向聊（換個說法）",
+          "intent": "shift_topic_alt1",
+          "actionType": "shift",
+          "topic": "unknown",
+          "responseStrategyHint": "holding_space"
+        },
+        {
+          "label": "繼續講情緒（換個說法）",
+          "intent": "continue_topic_alt2",
+          "actionType": "continue",
+          "topic": "emotion",
+          "responseStrategyHint": "memory_reference"
+        }
+      ]
+    },
+    {
+      "input": "我現在比較能去處理那通電話。",
+      "nlu": {
+        "topic": "unknown",
+        "dialogueAct": "describing_event",
+        "constraints": [],
+        "preferredResponse": "contextual_ack",
+        "userNeed": "presence"
+      },
+      "responseStrategy": "clarifying_question",
+      "selectedTemplateId": "strategy:clarifying_question:0",
+      "antiLoopDecision": {
+        "shouldForce": false,
+        "forcedStrategy": null,
+        "reason": null
+      },
+      "variantSelection": {
+        "variantId": "strategy:clarifying_question:0",
+        "variationReason": "avoided_recent_variants",
+        "avoidedVariants": [
+          "strategy:clarifying_question:1"
+        ]
+      },
+      "autonomy": {
+        "selectedAction": "suggest_rest",
+        "reason": "goal:rest+low_energy_short",
+        "shouldSpeak": true
+      },
+      "finalReply": "這個轉折有點出乎意料。",
+      "prefill": {
+        "hasPrefill": false,
+        "referenceText": null,
+        "actionType": null,
+        "mustReference": false,
+        "isQuietMode": false,
+        "source": null,
+        "usedPrefillDetail": null,
+        "groundedByPrefill": false
+      },
+      "quickReplies": [
+        {
+          "label": "繼續講情緒",
+          "intent": "continue_topic",
+          "actionType": "continue",
+          "topic": "emotion",
+          "responseStrategyHint": "clarifying_question"
+        },
+        {
+          "label": "先講重點",
+          "intent": "focus_point",
+          "actionType": "clarify",
+          "topic": "emotion",
+          "responseStrategyHint": "answer_or_clarify"
+        },
+        {
+          "label": "換個方向聊",
+          "intent": "shift_topic",
+          "actionType": "shift",
+          "topic": "unknown",
+          "responseStrategyHint": "holding_space"
+        }
+      ]
+    },
+    {
+      "input": "如果講得不順，我可能會有點尷尬。",
+      "nlu": {
+        "topic": "unknown",
+        "dialogueAct": "describing_event",
+        "constraints": [],
+        "preferredResponse": "contextual_ack",
+        "userNeed": "presence"
+      },
+      "responseStrategy": "clarifying_question",
+      "selectedTemplateId": "strategy:clarifying_question:0",
+      "antiLoopDecision": {
+        "shouldForce": false,
+        "forcedStrategy": null,
+        "reason": null
+      },
+      "variantSelection": {
+        "variantId": "strategy:clarifying_question:0",
+        "variationReason": "preferred_topic_match",
+        "avoidedVariants": [
+          "strategy:clarifying_question:1",
+          "strategy:clarifying_question:0"
+        ]
+      },
+      "autonomy": {
+        "selectedAction": "suggest_rest",
+        "reason": "goal:rest+low_energy_short",
+        "shouldSpeak": true
+      },
+      "finalReply": "原來事情是這樣發展的。",
+      "prefill": {
+        "hasPrefill": false,
+        "referenceText": null,
+        "actionType": null,
+        "mustReference": false,
+        "isQuietMode": false,
+        "source": null,
+        "usedPrefillDetail": null,
+        "groundedByPrefill": false
+      },
+      "quickReplies": [
+        {
+          "label": "先講重點（換個說法）",
+          "intent": "focus_point_alt0",
+          "actionType": "clarify",
+          "topic": "emotion",
+          "responseStrategyHint": "answer_or_clarify"
+        },
+        {
+          "label": "換個方向聊（換個說法）",
+          "intent": "shift_topic_alt1",
+          "actionType": "shift",
+          "topic": "unknown",
+          "responseStrategyHint": "holding_space"
+        },
+        {
+          "label": "繼續講情緒（換個說法）",
+          "intent": "continue_topic_alt2",
+          "actionType": "continue",
+          "topic": "emotion",
+          "responseStrategyHint": "clarifying_question"
+        }
+      ]
+    },
+    {
+      "input": "先到這裡，我晚點再回來。",
+      "nlu": {
+        "topic": "unknown",
+        "dialogueAct": "describing_event",
+        "constraints": [],
+        "preferredResponse": "contextual_ack",
+        "userNeed": "presence"
+      },
+      "responseStrategy": "clarifying_question",
+      "selectedTemplateId": "strategy:clarifying_question:1",
+      "antiLoopDecision": {
+        "shouldForce": false,
+        "forcedStrategy": null,
+        "reason": null
+      },
+      "variantSelection": {
+        "variantId": "strategy:clarifying_question:1",
+        "variationReason": "fallback_all_variants_recent",
+        "avoidedVariants": [
+          "strategy:clarifying_question:1",
+          "strategy:clarifying_question:0",
+          "strategy:clarifying_question:0"
+        ]
+      },
+      "autonomy": {
+        "selectedAction": "suggest_rest",
+        "reason": "goal:rest+low_energy_short",
+        "shouldSpeak": true
+      },
+      "finalReply": "原來事情是這樣發展的。先不用急著替它找結論。",
+      "prefill": {
+        "hasPrefill": false,
+        "referenceText": null,
+        "actionType": null,
+        "mustReference": false,
+        "isQuietMode": false,
+        "source": null,
+        "usedPrefillDetail": null,
+        "groundedByPrefill": false
+      },
+      "quickReplies": [
+        {
+          "label": "繼續講情緒",
+          "intent": "continue_topic",
+          "actionType": "continue",
+          "topic": "emotion",
+          "responseStrategyHint": "clarifying_question"
+        },
+        {
+          "label": "先講重點",
+          "intent": "focus_point",
+          "actionType": "clarify",
+          "topic": "emotion",
+          "responseStrategyHint": "answer_or_clarify"
+        },
+        {
+          "label": "換個方向聊",
+          "intent": "shift_topic",
+          "actionType": "shift",
+          "topic": "unknown",
+          "responseStrategyHint": "holding_space"
+        }
+      ]
+    },
+    {
+      "input": "外面突然下大雨，我沒帶傘。",
+      "nlu": {
+        "topic": "exploration",
+        "dialogueAct": "asking_exploration",
+        "constraints": [],
+        "preferredResponse": "exploration_invite",
+        "userNeed": "exploration"
+      },
+      "responseStrategy": "exploration_invite",
+      "selectedTemplateId": "strategy:exploration_invite:0",
+      "antiLoopDecision": {
+        "shouldForce": false,
+        "forcedStrategy": null,
+        "reason": null
+      },
+      "variantSelection": {
+        "variantId": "strategy:exploration_invite:0",
+        "variationReason": "preferred_topic_match",
+        "avoidedVariants": []
+      },
+      "autonomy": {
+        "selectedAction": "suggest_exploration",
+        "reason": "exploration_request",
+        "shouldSpeak": true
+      },
+      "finalReply": "湖面外的光路還在。我們可以慢慢走向外面地圖，但不會硬拉你離開現在的節奏。",
+      "prefill": {
+        "hasPrefill": false,
+        "referenceText": null,
+        "actionType": null,
+        "mustReference": false,
+        "isQuietMode": false,
+        "source": null,
+        "usedPrefillDetail": null,
+        "groundedByPrefill": false
+      },
+      "quickReplies": [
+        {
+          "label": "慢慢看地圖",
+          "intent": "explore_slow",
+          "actionType": "continue",
+          "topic": "exploration",
+          "responseStrategyHint": "exploration_invite"
+        },
+        {
+          "label": "先休息再出去",
+          "intent": "explore_rest_first",
+          "actionType": "shift",
+          "topic": "exploration",
+          "responseStrategyHint": "holding_space"
+        },
+        {
+          "label": "先講現在的力氣",
+          "intent": "check_energy",
+          "actionType": "clarify",
+          "topic": "physical_tiredness",
+          "responseStrategyHint": "emotional_short"
+        }
+      ]
+    },
+    {
+      "input": "我躲在便利商店門口等雨小一點。",
+      "nlu": {
+        "topic": "unknown",
+        "dialogueAct": "describing_event",
+        "constraints": [],
+        "preferredResponse": "contextual_ack",
+        "userNeed": "presence"
+      },
+      "responseStrategy": "clarifying_question",
+      "selectedTemplateId": "strategy:clarifying_question:1",
+      "antiLoopDecision": {
+        "shouldForce": false,
+        "forcedStrategy": null,
+        "reason": null
+      },
+      "variantSelection": {
+        "variantId": "strategy:clarifying_question:1",
+        "variationReason": "preferred_topic_match",
+        "avoidedVariants": []
+      },
+      "autonomy": {
+        "selectedAction": "say_reply",
+        "reason": "goal:acknowledge_emotion",
+        "shouldSpeak": true
+      },
+      "finalReply": "原來事情是這樣發展的。",
+      "prefill": {
+        "hasPrefill": false,
+        "referenceText": null,
+        "actionType": null,
+        "mustReference": false,
+        "isQuietMode": false,
+        "source": null,
+        "usedPrefillDetail": null,
+        "groundedByPrefill": false
+      },
+      "quickReplies": [
+        {
+          "label": "繼續講探索",
+          "intent": "continue_topic",
+          "actionType": "continue",
+          "topic": "exploration",
+          "responseStrategyHint": "clarifying_question"
+        },
+        {
+          "label": "先講重點",
+          "intent": "focus_point",
+          "actionType": "clarify",
+          "topic": "exploration",
+          "responseStrategyHint": "answer_or_clarify"
+        },
+        {
+          "label": "換個方向聊",
+          "intent": "shift_topic",
+          "actionType": "shift",
+          "topic": "unknown",
+          "responseStrategyHint": "holding_space"
+        }
+      ]
+    },
+    {
+      "input": "你剛才是不是忽略了我沒帶傘這件事？",
+      "nlu": {
+        "topic": "exploration",
+        "dialogueAct": "asking_question",
+        "constraints": [],
+        "preferredResponse": "contextual_ack",
+        "userNeed": "presence"
+      },
+      "responseStrategy": "answer_or_clarify",
+      "selectedTemplateId": "strategy:answer_or_clarify:0",
+      "antiLoopDecision": {
+        "shouldForce": false,
+        "forcedStrategy": null,
+        "reason": null
+      },
+      "variantSelection": {
+        "variantId": "strategy:answer_or_clarify:0",
+        "variationReason": "preferred_topic_match",
+        "avoidedVariants": []
+      },
+      "autonomy": {
+        "selectedAction": "say_reply",
+        "reason": "direct_question_reply",
+        "shouldSpeak": true
+      },
+      "finalReply": "這件事我沒有足夠把握直接說是或不是。若要我選，我會先採取能回頭調整的做法。",
+      "prefill": {
+        "hasPrefill": false,
+        "referenceText": null,
+        "actionType": null,
+        "mustReference": false,
+        "isQuietMode": false,
+        "source": null,
+        "usedPrefillDetail": null,
+        "groundedByPrefill": false
+      },
+      "quickReplies": [
+        {
+          "label": "慢慢看地圖",
+          "intent": "explore_slow",
+          "actionType": "continue",
+          "topic": "exploration",
+          "responseStrategyHint": "exploration_invite"
+        },
+        {
+          "label": "先休息再出去",
+          "intent": "explore_rest_first",
+          "actionType": "shift",
+          "topic": "exploration",
+          "responseStrategyHint": "holding_space"
+        },
+        {
+          "label": "先講現在的力氣",
+          "intent": "check_energy",
+          "actionType": "clarify",
+          "topic": "physical_tiredness",
+          "responseStrategyHint": "emotional_short"
+        }
+      ]
+    },
+    {
+      "input": "好，那現在重新回我一次。",
+      "nlu": {
+        "topic": "exploration",
+        "dialogueAct": "describing_event",
+        "constraints": [],
+        "preferredResponse": "contextual_ack",
+        "userNeed": "presence"
+      },
+      "responseStrategy": "contextual_ack",
+      "selectedTemplateId": "strategy:contextual_ack:0",
+      "antiLoopDecision": {
+        "shouldForce": false,
+        "forcedStrategy": null,
+        "reason": null
+      },
+      "variantSelection": {
+        "variantId": "strategy:contextual_ack:0",
+        "variationReason": "preferred_topic_match",
+        "avoidedVariants": []
+      },
+      "autonomy": {
+        "selectedAction": "say_reply",
+        "reason": "goal:acknowledge_emotion",
+        "shouldSpeak": true
+      },
+      "finalReply": "這句話的重點在探索，我從這裡回你。",
+      "prefill": {
+        "hasPrefill": false,
+        "referenceText": null,
+        "actionType": null,
+        "mustReference": false,
+        "isQuietMode": false,
+        "source": null,
+        "usedPrefillDetail": null,
+        "groundedByPrefill": false
+      },
+      "quickReplies": [
+        {
+          "label": "先休息再出去（換個說法）",
+          "intent": "explore_rest_first_alt0",
+          "actionType": "shift",
+          "topic": "exploration",
+          "responseStrategyHint": "holding_space"
+        },
+        {
+          "label": "先講現在的力氣（換個說法）",
+          "intent": "check_energy_alt1",
+          "actionType": "clarify",
+          "topic": "physical_tiredness",
+          "responseStrategyHint": "emotional_short"
+        },
+        {
+          "label": "慢慢看地圖（換個說法）",
+          "intent": "explore_slow_alt2",
+          "actionType": "continue",
+          "topic": "exploration",
+          "responseStrategyHint": "exploration_invite"
+        }
+      ]
+    },
+    {
+      "input": "我在想要直接跑去車站，還是再等十分鐘。",
+      "nlu": {
+        "topic": "unknown",
+        "dialogueAct": "describing_event",
+        "constraints": [],
+        "preferredResponse": "contextual_ack",
+        "userNeed": "presence"
+      },
+      "responseStrategy": "clarifying_question",
+      "selectedTemplateId": "strategy:clarifying_question:0",
+      "antiLoopDecision": {
+        "shouldForce": false,
+        "forcedStrategy": null,
+        "reason": null
+      },
+      "variantSelection": {
+        "variantId": "strategy:clarifying_question:0",
+        "variationReason": "avoided_recent_variants",
+        "avoidedVariants": [
+          "strategy:clarifying_question:1"
+        ]
+      },
+      "autonomy": {
+        "selectedAction": "say_reply",
+        "reason": "goal:acknowledge_emotion",
+        "shouldSpeak": true
+      },
+      "finalReply": "這個轉折有點出乎意料。",
+      "prefill": {
+        "hasPrefill": false,
+        "referenceText": null,
+        "actionType": null,
+        "mustReference": false,
+        "isQuietMode": false,
+        "source": null,
+        "usedPrefillDetail": null,
+        "groundedByPrefill": false
+      },
+      "quickReplies": [
+        {
+          "label": "繼續講探索",
+          "intent": "continue_topic",
+          "actionType": "continue",
+          "topic": "exploration",
+          "responseStrategyHint": "clarifying_question"
+        },
+        {
+          "label": "先講重點",
+          "intent": "focus_point",
+          "actionType": "clarify",
+          "topic": "exploration",
+          "responseStrategyHint": "answer_or_clarify"
+        },
+        {
+          "label": "換個方向聊",
+          "intent": "shift_topic",
+          "actionType": "shift",
+          "topic": "unknown",
+          "responseStrategyHint": "holding_space"
+        }
+      ]
+    },
+    {
+      "input": "你會選哪一個？",
+      "nlu": {
+        "topic": "unknown",
+        "dialogueAct": "asking_question",
+        "constraints": [],
+        "preferredResponse": "contextual_ack",
+        "userNeed": "presence"
+      },
+      "responseStrategy": "answer_or_clarify",
+      "selectedTemplateId": "strategy:answer_or_clarify:0",
+      "antiLoopDecision": {
+        "shouldForce": false,
+        "forcedStrategy": null,
+        "reason": null
+      },
+      "variantSelection": {
+        "variantId": "strategy:answer_or_clarify:0",
+        "variationReason": "preferred_topic_match",
+        "avoidedVariants": [
+          "strategy:answer_or_clarify:0"
+        ]
+      },
+      "autonomy": {
+        "selectedAction": "say_reply",
+        "reason": "direct_question_reply",
+        "shouldSpeak": true
+      },
+      "finalReply": "這件事我沒有足夠把握直接說是或不是。若要我選，我會先採取能回頭調整的做法。",
+      "prefill": {
+        "hasPrefill": false,
+        "referenceText": null,
+        "actionType": null,
+        "mustReference": false,
+        "isQuietMode": false,
+        "source": null,
+        "usedPrefillDetail": null,
+        "groundedByPrefill": false
+      },
+      "quickReplies": [
+        {
+          "label": "先講重點（換個說法）",
+          "intent": "focus_point_alt0",
+          "actionType": "clarify",
+          "topic": "exploration",
+          "responseStrategyHint": "answer_or_clarify"
+        },
+        {
+          "label": "換個方向聊（換個說法）",
+          "intent": "shift_topic_alt1",
+          "actionType": "shift",
+          "topic": "unknown",
+          "responseStrategyHint": "holding_space"
+        },
+        {
+          "label": "繼續講探索（換個說法）",
+          "intent": "continue_topic_alt2",
+          "actionType": "continue",
+          "topic": "exploration",
+          "responseStrategyHint": "answer_or_clarify"
+        }
+      ]
+    },
+    {
+      "input": "可是車站其實只有兩百公尺。",
+      "nlu": {
+        "topic": "exploration",
+        "dialogueAct": "describing_event",
+        "constraints": [],
+        "preferredResponse": "contextual_ack",
+        "userNeed": "presence"
+      },
+      "responseStrategy": "contextual_ack",
+      "selectedTemplateId": "strategy:contextual_ack:1",
+      "antiLoopDecision": {
+        "shouldForce": false,
+        "forcedStrategy": null,
+        "reason": null
+      },
+      "variantSelection": {
+        "variantId": "strategy:contextual_ack:1",
+        "variationReason": "avoided_recent_variants",
+        "avoidedVariants": [
+          "strategy:contextual_ack:0"
+        ]
+      },
+      "autonomy": {
+        "selectedAction": "say_reply",
+        "reason": "goal:acknowledge_emotion",
+        "shouldSpeak": true
+      },
+      "finalReply": "我先把你說的探索放在前面，不套通用句。",
+      "prefill": {
+        "hasPrefill": false,
+        "referenceText": null,
+        "actionType": null,
+        "mustReference": false,
+        "isQuietMode": false,
+        "source": null,
+        "usedPrefillDetail": null,
+        "groundedByPrefill": false
+      },
+      "quickReplies": [
+        {
+          "label": "慢慢看地圖",
+          "intent": "explore_slow",
+          "actionType": "continue",
+          "topic": "exploration",
+          "responseStrategyHint": "exploration_invite"
+        },
+        {
+          "label": "先休息再出去",
+          "intent": "explore_rest_first",
+          "actionType": "shift",
+          "topic": "exploration",
+          "responseStrategyHint": "holding_space"
+        },
+        {
+          "label": "先講現在的力氣",
+          "intent": "check_energy",
+          "actionType": "clarify",
+          "topic": "physical_tiredness",
+          "responseStrategyHint": "emotional_short"
+        }
+      ]
+    },
+    {
+      "input": "這樣聽起來比較合理。",
+      "nlu": {
+        "topic": "exploration",
+        "dialogueAct": "describing_event",
+        "constraints": [],
+        "preferredResponse": "contextual_ack",
+        "userNeed": "presence"
+      },
+      "responseStrategy": "contextual_ack",
+      "selectedTemplateId": "strategy:contextual_ack:0",
+      "antiLoopDecision": {
+        "shouldForce": false,
+        "forcedStrategy": null,
+        "reason": null
+      },
+      "variantSelection": {
+        "variantId": "strategy:contextual_ack:0",
+        "variationReason": "fallback_all_variants_recent",
+        "avoidedVariants": [
+          "strategy:contextual_ack:0",
+          "strategy:contextual_ack:1"
+        ]
+      },
+      "autonomy": {
+        "selectedAction": "say_reply",
+        "reason": "goal:acknowledge_emotion",
+        "shouldSpeak": true
+      },
+      "finalReply": "這句話的重點在探索，我從這裡回你。",
+      "prefill": {
+        "hasPrefill": false,
+        "referenceText": null,
+        "actionType": null,
+        "mustReference": false,
+        "isQuietMode": false,
+        "source": null,
+        "usedPrefillDetail": null,
+        "groundedByPrefill": false
+      },
+      "quickReplies": [
+        {
+          "label": "先休息再出去（換個說法）",
+          "intent": "explore_rest_first_alt0",
+          "actionType": "shift",
+          "topic": "exploration",
+          "responseStrategyHint": "holding_space"
+        },
+        {
+          "label": "先講現在的力氣（換個說法）",
+          "intent": "check_energy_alt1",
+          "actionType": "clarify",
+          "topic": "physical_tiredness",
+          "responseStrategyHint": "emotional_short"
+        },
+        {
+          "label": "慢慢看地圖（換個說法）",
+          "intent": "explore_slow_alt2",
+          "actionType": "continue",
+          "topic": "exploration",
+          "responseStrategyHint": "exploration_invite"
+        }
+      ]
+    },
+    {
+      "input": "剛才有隻狗也跑進來躲雨。",
+      "nlu": {
+        "topic": "exploration",
+        "dialogueAct": "describing_event",
+        "constraints": [],
+        "preferredResponse": "contextual_ack",
+        "userNeed": "presence"
+      },
+      "responseStrategy": "contextual_ack",
+      "selectedTemplateId": "strategy:contextual_ack:0",
+      "antiLoopDecision": {
+        "shouldForce": false,
+        "forcedStrategy": null,
+        "reason": null
+      },
+      "variantSelection": {
+        "variantId": "strategy:contextual_ack:0",
+        "variationReason": "preferred_topic_match",
+        "avoidedVariants": [
+          "strategy:contextual_ack:0"
+        ]
+      },
+      "autonomy": {
+        "selectedAction": "say_reply",
+        "reason": "goal:acknowledge_emotion+low_energy_short",
+        "shouldSpeak": true
+      },
+      "finalReply": "牠大概也把這裡當成臨時的避雨處了。先讓牠待著，別急著靠太近。",
+      "prefill": {
+        "hasPrefill": false,
+        "referenceText": null,
+        "actionType": null,
+        "mustReference": false,
+        "isQuietMode": false,
+        "source": null,
+        "usedPrefillDetail": null,
+        "groundedByPrefill": false
+      },
+      "quickReplies": [
+        {
+          "label": "慢慢看地圖",
+          "intent": "explore_slow",
+          "actionType": "continue",
+          "topic": "exploration",
+          "responseStrategyHint": "exploration_invite"
+        },
+        {
+          "label": "先休息再出去",
+          "intent": "explore_rest_first",
+          "actionType": "shift",
+          "topic": "exploration",
+          "responseStrategyHint": "holding_space"
+        },
+        {
+          "label": "先講現在的力氣",
+          "intent": "check_energy",
+          "actionType": "clarify",
+          "topic": "physical_tiredness",
+          "responseStrategyHint": "emotional_short"
+        }
+      ]
+    },
+    {
+      "input": "牠一直盯著門外，看起來很著急。",
+      "nlu": {
+        "topic": "unknown",
+        "dialogueAct": "describing_event",
+        "constraints": [],
+        "preferredResponse": "contextual_ack",
+        "userNeed": "presence"
+      },
+      "responseStrategy": "clarifying_question",
+      "selectedTemplateId": "strategy:clarifying_question:0",
+      "antiLoopDecision": {
+        "shouldForce": false,
+        "forcedStrategy": null,
+        "reason": null
+      },
+      "variantSelection": {
+        "variantId": "strategy:clarifying_question:0",
+        "variationReason": "preferred_topic_match",
+        "avoidedVariants": []
+      },
+      "autonomy": {
+        "selectedAction": "suggest_rest",
+        "reason": "goal:rest+low_energy_short",
+        "shouldSpeak": true
+      },
+      "finalReply": "牠可能在等熟悉的人，或只是被雨聲弄得不安。",
+      "prefill": {
+        "hasPrefill": false,
+        "referenceText": null,
+        "actionType": null,
+        "mustReference": false,
+        "isQuietMode": false,
+        "source": null,
+        "usedPrefillDetail": null,
+        "groundedByPrefill": false
+      },
+      "quickReplies": [
+        {
+          "label": "繼續講探索",
+          "intent": "continue_topic",
+          "actionType": "continue",
+          "topic": "exploration",
+          "responseStrategyHint": "clarifying_question"
+        },
+        {
+          "label": "先講重點",
+          "intent": "focus_point",
+          "actionType": "clarify",
+          "topic": "exploration",
+          "responseStrategyHint": "answer_or_clarify"
+        },
+        {
+          "label": "換個方向聊",
+          "intent": "shift_topic",
+          "actionType": "shift",
+          "topic": "unknown",
+          "responseStrategyHint": "holding_space"
+        }
+      ]
+    },
+    {
+      "input": "我可以靠近摸牠嗎？",
+      "nlu": {
+        "topic": "unknown",
+        "dialogueAct": "asking_question",
+        "constraints": [],
+        "preferredResponse": "contextual_ack",
+        "userNeed": "presence"
+      },
+      "responseStrategy": "answer_or_clarify",
+      "selectedTemplateId": "strategy:answer_or_clarify:0",
+      "antiLoopDecision": {
+        "shouldForce": false,
+        "forcedStrategy": null,
+        "reason": null
+      },
+      "variantSelection": {
+        "variantId": "strategy:answer_or_clarify:0",
+        "variationReason": "preferred_topic_match",
+        "avoidedVariants": []
+      },
+      "autonomy": {
+        "selectedAction": "say_reply",
+        "reason": "third_party_animal_question_reply+low_energy_short",
+        "shouldSpeak": true
+      },
+      "finalReply": "先別急著伸手。看牠有沒有主動靠近、身體是不是放鬆；如果牠後退或僵住，就停在原地讓牠自己選。",
+      "prefill": {
+        "hasPrefill": false,
+        "referenceText": null,
+        "actionType": null,
+        "mustReference": false,
+        "isQuietMode": false,
+        "source": null,
+        "usedPrefillDetail": null,
+        "groundedByPrefill": false
+      },
+      "quickReplies": [
+        {
+          "label": "先講重點（換個說法）",
+          "intent": "focus_point_alt0",
+          "actionType": "clarify",
+          "topic": "exploration",
+          "responseStrategyHint": "answer_or_clarify"
+        },
+        {
+          "label": "換個方向聊（換個說法）",
+          "intent": "shift_topic_alt1",
+          "actionType": "shift",
+          "topic": "unknown",
+          "responseStrategyHint": "holding_space"
+        },
+        {
+          "label": "繼續講探索（換個說法）",
+          "intent": "continue_topic_alt2",
+          "actionType": "continue",
+          "topic": "exploration",
+          "responseStrategyHint": "answer_or_clarify"
+        }
+      ]
+    },
+    {
+      "input": "對，先看牠願不願意比較好。",
+      "nlu": {
+        "topic": "unknown",
+        "dialogueAct": "describing_event",
+        "constraints": [],
+        "preferredResponse": "contextual_ack",
+        "userNeed": "presence"
+      },
+      "responseStrategy": "clarifying_question",
+      "selectedTemplateId": "strategy:clarifying_question:1",
+      "antiLoopDecision": {
+        "shouldForce": false,
+        "forcedStrategy": null,
+        "reason": null
+      },
+      "variantSelection": {
+        "variantId": "strategy:clarifying_question:1",
+        "variationReason": "avoided_recent_variants",
+        "avoidedVariants": [
+          "strategy:clarifying_question:0"
+        ]
+      },
+      "autonomy": {
+        "selectedAction": "suggest_rest",
+        "reason": "goal:rest+low_energy_short",
+        "shouldSpeak": true
+      },
+      "finalReply": "原來事情是這樣發展的。",
+      "prefill": {
+        "hasPrefill": false,
+        "referenceText": null,
+        "actionType": null,
+        "mustReference": false,
+        "isQuietMode": false,
+        "source": null,
+        "usedPrefillDetail": null,
+        "groundedByPrefill": false
+      },
+      "quickReplies": [
+        {
+          "label": "繼續講探索",
+          "intent": "continue_topic",
+          "actionType": "continue",
+          "topic": "exploration",
+          "responseStrategyHint": "clarifying_question"
+        },
+        {
+          "label": "先講重點",
+          "intent": "focus_point",
+          "actionType": "clarify",
+          "topic": "exploration",
+          "responseStrategyHint": "answer_or_clarify"
+        },
+        {
+          "label": "換個方向聊",
+          "intent": "shift_topic",
+          "actionType": "shift",
+          "topic": "unknown",
+          "responseStrategyHint": "holding_space"
+        }
+      ]
+    },
+    {
+      "input": "如果牠後退，我就不碰。",
+      "nlu": {
+        "topic": "unknown",
+        "dialogueAct": "describing_event",
+        "constraints": [],
+        "preferredResponse": "contextual_ack",
+        "userNeed": "presence"
+      },
+      "responseStrategy": "clarifying_question",
+      "selectedTemplateId": "strategy:clarifying_question:0",
+      "antiLoopDecision": {
+        "shouldForce": false,
+        "forcedStrategy": null,
+        "reason": null
+      },
+      "variantSelection": {
+        "variantId": "strategy:clarifying_question:0",
+        "variationReason": "fallback_all_variants_recent",
+        "avoidedVariants": [
+          "strategy:clarifying_question:0",
+          "strategy:clarifying_question:1"
+        ]
+      },
+      "autonomy": {
+        "selectedAction": "suggest_rest",
+        "reason": "goal:rest+low_energy_short",
+        "shouldSpeak": true
+      },
+      "finalReply": "這個轉折有點出乎意料。",
+      "prefill": {
+        "hasPrefill": false,
+        "referenceText": null,
+        "actionType": null,
+        "mustReference": false,
+        "isQuietMode": false,
+        "source": null,
+        "usedPrefillDetail": null,
+        "groundedByPrefill": false
+      },
+      "quickReplies": [
+        {
+          "label": "先講重點（換個說法）",
+          "intent": "focus_point_alt0",
+          "actionType": "clarify",
+          "topic": "exploration",
+          "responseStrategyHint": "answer_or_clarify"
+        },
+        {
+          "label": "換個方向聊（換個說法）",
+          "intent": "shift_topic_alt1",
+          "actionType": "shift",
+          "topic": "unknown",
+          "responseStrategyHint": "holding_space"
+        },
+        {
+          "label": "繼續講探索（換個說法）",
+          "intent": "continue_topic_alt2",
+          "actionType": "continue",
+          "topic": "exploration",
+          "responseStrategyHint": "clarifying_question"
+        }
+      ]
+    },
+    {
+      "input": "你也可以對不想要的接觸說不要。",
+      "nlu": {
+        "topic": "unknown",
+        "dialogueAct": "describing_event",
+        "constraints": [],
+        "preferredResponse": "contextual_ack",
+        "userNeed": "presence"
+      },
+      "responseStrategy": "clarifying_question",
+      "selectedTemplateId": "strategy:clarifying_question:0",
+      "antiLoopDecision": {
+        "shouldForce": false,
+        "forcedStrategy": null,
+        "reason": null
+      },
+      "variantSelection": {
+        "variantId": "strategy:clarifying_question:0",
+        "variationReason": "preferred_topic_match",
+        "avoidedVariants": [
+          "strategy:clarifying_question:0",
+          "strategy:clarifying_question:1",
+          "strategy:clarifying_question:0"
+        ]
+      },
+      "autonomy": {
+        "selectedAction": "suggest_rest",
+        "reason": "goal:rest+low_energy_short",
+        "shouldSpeak": true
+      },
+      "finalReply": "這個轉折有點出乎意料。你若想繼續，我會跟著聽。",
+      "prefill": {
+        "hasPrefill": false,
+        "referenceText": null,
+        "actionType": null,
+        "mustReference": false,
+        "isQuietMode": false,
+        "source": null,
+        "usedPrefillDetail": null,
+        "groundedByPrefill": false
+      },
+      "quickReplies": [
+        {
+          "label": "繼續講探索",
+          "intent": "continue_topic",
+          "actionType": "continue",
+          "topic": "exploration",
+          "responseStrategyHint": "clarifying_question"
+        },
+        {
+          "label": "先講重點",
+          "intent": "focus_point",
+          "actionType": "clarify",
+          "topic": "exploration",
+          "responseStrategyHint": "answer_or_clarify"
+        },
+        {
+          "label": "換個方向聊",
+          "intent": "shift_topic",
+          "actionType": "shift",
+          "topic": "unknown",
+          "responseStrategyHint": "holding_space"
+        }
+      ]
+    },
+    {
+      "input": "那如果我一直要求呢？",
+      "nlu": {
+        "topic": "exploration",
+        "dialogueAct": "asking_question",
+        "constraints": [],
+        "preferredResponse": "contextual_ack",
+        "userNeed": "presence"
+      },
+      "responseStrategy": "answer_or_clarify",
+      "selectedTemplateId": "strategy:answer_or_clarify:0",
+      "antiLoopDecision": {
+        "shouldForce": false,
+        "forcedStrategy": null,
+        "reason": null
+      },
+      "variantSelection": {
+        "variantId": "strategy:answer_or_clarify:0",
+        "variationReason": "preferred_topic_match",
+        "avoidedVariants": [
+          "strategy:answer_or_clarify:0"
+        ]
+      },
+      "autonomy": {
+        "selectedAction": "say_reply",
+        "reason": "direct_question_reply+low_energy_short",
+        "shouldSpeak": true
+      },
+      "finalReply": "我不確定，不能裝作知道。只照目前能確認的線索看，我會先保留判斷，再觀察實際反應。",
+      "prefill": {
+        "hasPrefill": false,
+        "referenceText": null,
+        "actionType": null,
+        "mustReference": false,
+        "isQuietMode": false,
+        "source": null,
+        "usedPrefillDetail": null,
+        "groundedByPrefill": false
+      },
+      "quickReplies": [
+        {
+          "label": "慢慢看地圖",
+          "intent": "explore_slow",
+          "actionType": "continue",
+          "topic": "exploration",
+          "responseStrategyHint": "exploration_invite"
+        },
+        {
+          "label": "先休息再出去",
+          "intent": "explore_rest_first",
+          "actionType": "shift",
+          "topic": "exploration",
+          "responseStrategyHint": "holding_space"
+        },
+        {
+          "label": "先講現在的力氣",
+          "intent": "check_energy",
+          "actionType": "clarify",
+          "topic": "physical_tiredness",
+          "responseStrategyHint": "emotional_short"
+        }
+      ]
+    },
+    {
+      "input": "只是再問一次也不行嗎？",
+      "nlu": {
+        "topic": "unknown",
+        "dialogueAct": "asking_question",
+        "constraints": [],
+        "preferredResponse": "contextual_ack",
+        "userNeed": "presence"
+      },
+      "responseStrategy": "answer_or_clarify",
+      "selectedTemplateId": "strategy:answer_or_clarify:0",
+      "antiLoopDecision": {
+        "shouldForce": false,
+        "forcedStrategy": null,
+        "reason": null
+      },
+      "variantSelection": {
+        "variantId": "strategy:answer_or_clarify:0",
+        "variationReason": "preferred_topic_match",
+        "avoidedVariants": [
+          "strategy:answer_or_clarify:0"
+        ]
+      },
+      "autonomy": {
+        "selectedAction": "say_reply",
+        "reason": "direct_question_reply+low_energy_short",
+        "shouldSpeak": true
+      },
+      "finalReply": "這件事我沒有足夠把握直接說是或不是。若要我選，我會先採取能回頭調整的做法。",
+      "prefill": {
+        "hasPrefill": false,
+        "referenceText": null,
+        "actionType": null,
+        "mustReference": false,
+        "isQuietMode": false,
+        "source": null,
+        "usedPrefillDetail": null,
+        "groundedByPrefill": false
+      },
+      "quickReplies": [
+        {
+          "label": "繼續講探索",
+          "intent": "continue_topic",
+          "actionType": "continue",
+          "topic": "exploration",
+          "responseStrategyHint": "answer_or_clarify"
+        },
+        {
+          "label": "先講重點",
+          "intent": "focus_point",
+          "actionType": "clarify",
+          "topic": "exploration",
+          "responseStrategyHint": "answer_or_clarify"
+        },
+        {
+          "label": "換個方向聊",
+          "intent": "shift_topic",
+          "actionType": "shift",
+          "topic": "unknown",
+          "responseStrategyHint": "holding_space"
+        }
+      ]
+    },
+    {
+      "input": "好，我不逼你了。",
+      "nlu": {
+        "topic": "exploration",
+        "dialogueAct": "describing_event",
+        "constraints": [],
+        "preferredResponse": "contextual_ack",
+        "userNeed": "presence"
+      },
+      "responseStrategy": "contextual_ack",
+      "selectedTemplateId": "strategy:contextual_ack:1",
+      "antiLoopDecision": {
+        "shouldForce": false,
+        "forcedStrategy": null,
+        "reason": null
+      },
+      "variantSelection": {
+        "variantId": "strategy:contextual_ack:1",
+        "variationReason": "preferred_topic_match",
+        "avoidedVariants": []
+      },
+      "autonomy": {
+        "selectedAction": "suggest_rest",
+        "reason": "goal:rest+low_energy_short",
+        "shouldSpeak": true
+      },
+      "finalReply": "這句話的重點在探索，我從這裡回你。",
+      "prefill": {
+        "hasPrefill": false,
+        "referenceText": null,
+        "actionType": null,
+        "mustReference": false,
+        "isQuietMode": false,
+        "source": null,
+        "usedPrefillDetail": null,
+        "groundedByPrefill": false
+      },
+      "quickReplies": [
+        {
+          "label": "慢慢看地圖",
+          "intent": "explore_slow",
+          "actionType": "continue",
+          "topic": "exploration",
+          "responseStrategyHint": "exploration_invite"
+        },
+        {
+          "label": "先休息再出去",
+          "intent": "explore_rest_first",
+          "actionType": "shift",
+          "topic": "exploration",
+          "responseStrategyHint": "holding_space"
+        },
+        {
+          "label": "先講現在的力氣",
+          "intent": "check_energy",
+          "actionType": "clarify",
+          "topic": "physical_tiredness",
+          "responseStrategyHint": "emotional_short"
+        }
+      ]
+    },
+    {
+      "input": "雨好像真的變小了。",
+      "nlu": {
+        "topic": "unknown",
+        "dialogueAct": "describing_event",
+        "constraints": [],
+        "preferredResponse": "contextual_ack",
+        "userNeed": "presence"
+      },
+      "responseStrategy": "clarifying_question",
+      "selectedTemplateId": "strategy:clarifying_question:1",
+      "antiLoopDecision": {
+        "shouldForce": false,
+        "forcedStrategy": null,
+        "reason": null
+      },
+      "variantSelection": {
+        "variantId": "strategy:clarifying_question:1",
+        "variationReason": "avoided_recent_variants",
+        "avoidedVariants": [
+          "strategy:clarifying_question:0"
+        ]
+      },
+      "autonomy": {
+        "selectedAction": "suggest_rest",
+        "reason": "goal:rest+low_energy_short",
+        "shouldSpeak": true
+      },
+      "finalReply": "原來事情是這樣發展的。",
+      "prefill": {
+        "hasPrefill": false,
+        "referenceText": null,
+        "actionType": null,
+        "mustReference": false,
+        "isQuietMode": false,
+        "source": null,
+        "usedPrefillDetail": null,
+        "groundedByPrefill": false
+      },
+      "quickReplies": [
+        {
+          "label": "繼續講探索",
+          "intent": "continue_topic",
+          "actionType": "continue",
+          "topic": "exploration",
+          "responseStrategyHint": "clarifying_question"
+        },
+        {
+          "label": "先講重點",
+          "intent": "focus_point",
+          "actionType": "clarify",
+          "topic": "exploration",
+          "responseStrategyHint": "answer_or_clarify"
+        },
+        {
+          "label": "換個方向聊",
+          "intent": "shift_topic",
+          "actionType": "shift",
+          "topic": "unknown",
+          "responseStrategyHint": "holding_space"
+        }
+      ]
+    },
+    {
+      "input": "我準備走去車站。",
+      "nlu": {
+        "topic": "unknown",
+        "dialogueAct": "describing_event",
+        "constraints": [],
+        "preferredResponse": "contextual_ack",
+        "userNeed": "presence"
+      },
+      "responseStrategy": "clarifying_question",
+      "selectedTemplateId": "strategy:clarifying_question:0",
+      "antiLoopDecision": {
+        "shouldForce": false,
+        "forcedStrategy": null,
+        "reason": null
+      },
+      "variantSelection": {
+        "variantId": "strategy:clarifying_question:0",
+        "variationReason": "avoided_recent_variants",
+        "avoidedVariants": [
+          "strategy:clarifying_question:1"
+        ]
+      },
+      "autonomy": {
+        "selectedAction": "suggest_rest",
+        "reason": "goal:rest+low_energy_short",
+        "shouldSpeak": true
+      },
+      "finalReply": "這個轉折有點出乎意料。",
+      "prefill": {
+        "hasPrefill": false,
+        "referenceText": null,
+        "actionType": null,
+        "mustReference": false,
+        "isQuietMode": false,
+        "source": null,
+        "usedPrefillDetail": null,
+        "groundedByPrefill": false
+      },
+      "quickReplies": [
+        {
+          "label": "先講重點（換個說法）",
+          "intent": "focus_point_alt0",
+          "actionType": "clarify",
+          "topic": "exploration",
+          "responseStrategyHint": "answer_or_clarify"
+        },
+        {
+          "label": "換個方向聊（換個說法）",
+          "intent": "shift_topic_alt1",
+          "actionType": "shift",
+          "topic": "unknown",
+          "responseStrategyHint": "holding_space"
+        },
+        {
+          "label": "繼續講探索（換個說法）",
+          "intent": "continue_topic_alt2",
+          "actionType": "continue",
+          "topic": "exploration",
+          "responseStrategyHint": "clarifying_question"
+        }
+      ]
+    },
+    {
+      "input": "不用擔心，我到了再說。",
+      "nlu": {
+        "topic": "unknown",
+        "dialogueAct": "describing_event",
+        "constraints": [],
+        "preferredResponse": "contextual_ack",
+        "userNeed": "presence"
+      },
+      "responseStrategy": "clarifying_question",
+      "selectedTemplateId": "strategy:clarifying_question:0",
+      "antiLoopDecision": {
+        "shouldForce": false,
+        "forcedStrategy": null,
+        "reason": null
+      },
+      "variantSelection": {
+        "variantId": "strategy:clarifying_question:0",
+        "variationReason": "preferred_topic_match",
+        "avoidedVariants": [
+          "strategy:clarifying_question:1",
+          "strategy:clarifying_question:0"
+        ]
+      },
+      "autonomy": {
+        "selectedAction": "suggest_rest",
+        "reason": "goal:rest+low_energy_short",
+        "shouldSpeak": true
+      },
+      "finalReply": "這個轉折有點出乎意料。你若想繼續，我會跟著聽。",
+      "prefill": {
+        "hasPrefill": false,
+        "referenceText": null,
+        "actionType": null,
+        "mustReference": false,
+        "isQuietMode": false,
+        "source": null,
+        "usedPrefillDetail": null,
+        "groundedByPrefill": false
+      },
+      "quickReplies": [
+        {
+          "label": "繼續講探索",
+          "intent": "continue_topic",
+          "actionType": "continue",
+          "topic": "exploration",
+          "responseStrategyHint": "clarifying_question"
+        },
+        {
+          "label": "先講重點",
+          "intent": "focus_point",
+          "actionType": "clarify",
+          "topic": "exploration",
+          "responseStrategyHint": "answer_or_clarify"
+        },
+        {
+          "label": "換個方向聊",
+          "intent": "shift_topic",
+          "actionType": "shift",
+          "topic": "unknown",
+          "responseStrategyHint": "holding_space"
+        }
+      ]
+    },
+    {
+      "input": "我把桌面整理乾淨了，意外地很有成就感。",
+      "nlu": {
+        "topic": "unknown",
+        "dialogueAct": "describing_event",
+        "constraints": [],
+        "preferredResponse": "contextual_ack",
+        "userNeed": "presence"
+      },
+      "responseStrategy": "clarifying_question",
+      "selectedTemplateId": "strategy:clarifying_question:0",
+      "antiLoopDecision": {
+        "shouldForce": false,
+        "forcedStrategy": null,
+        "reason": null
+      },
+      "variantSelection": {
+        "variantId": "strategy:clarifying_question:0",
+        "variationReason": "preferred_topic_match",
+        "avoidedVariants": []
+      },
+      "autonomy": {
+        "selectedAction": "say_reply",
+        "reason": "goal:acknowledge_emotion",
+        "shouldSpeak": true
+      },
+      "finalReply": "這個轉折有點出乎意料。",
+      "prefill": {
+        "hasPrefill": false,
+        "referenceText": null,
+        "actionType": null,
+        "mustReference": false,
+        "isQuietMode": false,
+        "source": null,
+        "usedPrefillDetail": null,
+        "groundedByPrefill": false
+      },
+      "quickReplies": [
+        {
+          "label": "再說一句重點",
+          "intent": "continue_topic",
+          "actionType": "continue",
+          "topic": "unknown",
+          "responseStrategyHint": "clarifying_question"
+        },
+        {
+          "label": "先講重點",
+          "intent": "focus_point",
+          "actionType": "clarify",
+          "topic": "unknown",
+          "responseStrategyHint": "answer_or_clarify"
+        },
+        {
+          "label": "換個方向聊",
+          "intent": "shift_topic",
+          "actionType": "shift",
+          "topic": "unknown",
+          "responseStrategyHint": "holding_space"
+        }
+      ]
+    },
+    {
+      "input": "但抽屜裡還是一團亂。",
+      "nlu": {
+        "topic": null,
+        "dialogueAct": "describing_event",
+        "constraints": [],
+        "preferredResponse": "contextual_ack",
+        "userNeed": "presence"
+      },
+      "responseStrategy": "contextual_ack",
+      "selectedTemplateId": "strategy:contextual_ack:0",
+      "antiLoopDecision": {
+        "shouldForce": false,
+        "forcedStrategy": null,
+        "reason": null
+      },
+      "variantSelection": {
+        "variantId": "strategy:contextual_ack:0",
+        "variationReason": "preferred_topic_match",
+        "avoidedVariants": []
+      },
+      "autonomy": {
+        "selectedAction": "say_reply",
+        "reason": "goal:acknowledge_emotion",
+        "shouldSpeak": true
+      },
+      "finalReply": "我在。你可以再說一句你最想我先懂的部分。",
+      "prefill": {
+        "hasPrefill": false,
+        "referenceText": null,
+        "actionType": null,
+        "mustReference": false,
+        "isQuietMode": false,
+        "source": null,
+        "usedPrefillDetail": null,
+        "groundedByPrefill": false
+      },
+      "quickReplies": [
+        {
+          "label": "先講重點（換個說法）",
+          "intent": "focus_point_alt0",
+          "actionType": "clarify",
+          "topic": "unknown",
+          "responseStrategyHint": "answer_or_clarify"
+        },
+        {
+          "label": "換個方向聊（換個說法）",
+          "intent": "shift_topic_alt1",
+          "actionType": "shift",
+          "topic": "unknown",
+          "responseStrategyHint": "holding_space"
+        },
+        {
+          "label": "再說一句重點（換個說法）",
+          "intent": "continue_topic_alt2",
+          "actionType": "continue",
+          "topic": "unknown",
+          "responseStrategyHint": "contextual_ack"
+        }
+      ]
+    },
+    {
+      "input": "你不用每句都安慰我，可以正常聊天。",
+      "nlu": {
+        "topic": "unknown",
+        "dialogueAct": "describing_event",
+        "constraints": [],
+        "preferredResponse": "contextual_ack",
+        "userNeed": "presence"
+      },
+      "responseStrategy": "clarifying_question",
+      "selectedTemplateId": "strategy:clarifying_question:1",
+      "antiLoopDecision": {
+        "shouldForce": false,
+        "forcedStrategy": null,
+        "reason": null
+      },
+      "variantSelection": {
+        "variantId": "strategy:clarifying_question:1",
+        "variationReason": "avoided_recent_variants",
+        "avoidedVariants": [
+          "strategy:clarifying_question:0"
+        ]
+      },
+      "autonomy": {
+        "selectedAction": "say_reply",
+        "reason": "goal:acknowledge_emotion",
+        "shouldSpeak": true
+      },
+      "finalReply": "原來事情是這樣發展的。",
+      "prefill": {
+        "hasPrefill": false,
+        "referenceText": null,
+        "actionType": null,
+        "mustReference": false,
+        "isQuietMode": false,
+        "source": null,
+        "usedPrefillDetail": null,
+        "groundedByPrefill": false
+      },
+      "quickReplies": [
+        {
+          "label": "再說一句重點",
+          "intent": "continue_topic",
+          "actionType": "continue",
+          "topic": "unknown",
+          "responseStrategyHint": "clarifying_question"
+        },
+        {
+          "label": "先講重點",
+          "intent": "focus_point",
+          "actionType": "clarify",
+          "topic": "unknown",
+          "responseStrategyHint": "answer_or_clarify"
+        },
+        {
+          "label": "換個方向聊",
+          "intent": "shift_topic",
+          "actionType": "shift",
+          "topic": "unknown",
+          "responseStrategyHint": "holding_space"
+        }
+      ]
+    },
+    {
+      "input": "對，像這樣就好。",
+      "nlu": {
+        "topic": null,
+        "dialogueAct": "describing_event",
+        "constraints": [],
+        "preferredResponse": "contextual_ack",
+        "userNeed": "presence"
+      },
+      "responseStrategy": "contextual_ack",
+      "selectedTemplateId": "strategy:contextual_ack:0",
+      "antiLoopDecision": {
+        "shouldForce": false,
+        "forcedStrategy": null,
+        "reason": null
+      },
+      "variantSelection": {
+        "variantId": "strategy:contextual_ack:0",
+        "variationReason": "preferred_topic_match",
+        "avoidedVariants": [
+          "strategy:contextual_ack:0"
+        ]
+      },
+      "autonomy": {
+        "selectedAction": "say_reply",
+        "reason": "goal:acknowledge_emotion",
+        "shouldSpeak": true
+      },
+      "finalReply": "我在。你可以再說一句你最想我先懂的部分。",
+      "prefill": {
+        "hasPrefill": false,
+        "referenceText": null,
+        "actionType": null,
+        "mustReference": false,
+        "isQuietMode": false,
+        "source": null,
+        "usedPrefillDetail": null,
+        "groundedByPrefill": false
+      },
+      "quickReplies": [
+        {
+          "label": "先講重點（換個說法）",
+          "intent": "focus_point_alt0",
+          "actionType": "clarify",
+          "topic": "unknown",
+          "responseStrategyHint": "answer_or_clarify"
+        },
+        {
+          "label": "換個方向聊（換個說法）",
+          "intent": "shift_topic_alt1",
+          "actionType": "shift",
+          "topic": "unknown",
+          "responseStrategyHint": "holding_space"
+        },
+        {
+          "label": "再說一句重點（換個說法）",
+          "intent": "continue_topic_alt2",
+          "actionType": "continue",
+          "topic": "unknown",
+          "responseStrategyHint": "contextual_ack"
+        }
+      ]
+    },
+    {
+      "input": "我找到一張去年旅行的車票。",
+      "nlu": {
+        "topic": "unknown",
+        "dialogueAct": "describing_event",
+        "constraints": [],
+        "preferredResponse": "contextual_ack",
+        "userNeed": "presence"
+      },
+      "responseStrategy": "clarifying_question",
+      "selectedTemplateId": "strategy:clarifying_question:0",
+      "antiLoopDecision": {
+        "shouldForce": false,
+        "forcedStrategy": null,
+        "reason": null
+      },
+      "variantSelection": {
+        "variantId": "strategy:clarifying_question:0",
+        "variationReason": "fallback_all_variants_recent",
+        "avoidedVariants": [
+          "strategy:clarifying_question:0",
+          "strategy:clarifying_question:1"
+        ]
+      },
+      "autonomy": {
+        "selectedAction": "say_reply",
+        "reason": "goal:acknowledge_emotion",
+        "shouldSpeak": true
+      },
+      "finalReply": "這個轉折有點出乎意料。",
+      "prefill": {
+        "hasPrefill": false,
+        "referenceText": null,
+        "actionType": null,
+        "mustReference": false,
+        "isQuietMode": false,
+        "source": null,
+        "usedPrefillDetail": null,
+        "groundedByPrefill": false
+      },
+      "quickReplies": [
+        {
+          "label": "再說一句重點",
+          "intent": "continue_topic",
+          "actionType": "continue",
+          "topic": "unknown",
+          "responseStrategyHint": "clarifying_question"
+        },
+        {
+          "label": "先講重點",
+          "intent": "focus_point",
+          "actionType": "clarify",
+          "topic": "unknown",
+          "responseStrategyHint": "answer_or_clarify"
+        },
+        {
+          "label": "換個方向聊",
+          "intent": "shift_topic",
+          "actionType": "shift",
+          "topic": "unknown",
+          "responseStrategyHint": "holding_space"
+        }
+      ]
+    },
+    {
+      "input": "你記得我去年去了哪裡嗎？",
+      "nlu": {
+        "topic": "unknown",
+        "dialogueAct": "asking_question",
+        "constraints": [],
+        "preferredResponse": "contextual_ack",
+        "userNeed": "presence"
+      },
+      "responseStrategy": "answer_or_clarify",
+      "selectedTemplateId": "strategy:answer_or_clarify:0",
+      "antiLoopDecision": {
+        "shouldForce": false,
+        "forcedStrategy": null,
+        "reason": null
+      },
+      "variantSelection": {
+        "variantId": "strategy:answer_or_clarify:0",
+        "variationReason": "preferred_topic_match",
+        "avoidedVariants": []
+      },
+      "autonomy": {
+        "selectedAction": "say_reply",
+        "reason": "direct_question_reply",
+        "shouldSpeak": true
+      },
+      "finalReply": "我現在沒有可靠的記憶能確認這件事，所以不會假裝記得。你若願意現在告訴我，我就從這一刻開始理解。",
+      "prefill": {
+        "hasPrefill": false,
+        "referenceText": null,
+        "actionType": null,
+        "mustReference": false,
+        "isQuietMode": false,
+        "source": null,
+        "usedPrefillDetail": null,
+        "groundedByPrefill": false
+      },
+      "quickReplies": [
+        {
+          "label": "先講重點（換個說法）",
+          "intent": "focus_point_alt0",
+          "actionType": "clarify",
+          "topic": "unknown",
+          "responseStrategyHint": "answer_or_clarify"
+        },
+        {
+          "label": "換個方向聊（換個說法）",
+          "intent": "shift_topic_alt1",
+          "actionType": "shift",
+          "topic": "unknown",
+          "responseStrategyHint": "holding_space"
+        },
+        {
+          "label": "再說一句重點（換個說法）",
+          "intent": "continue_topic_alt2",
+          "actionType": "continue",
+          "topic": "unknown",
+          "responseStrategyHint": "answer_or_clarify"
+        }
+      ]
+    },
+    {
+      "input": "沒關係，不記得就直接說。",
+      "nlu": {
+        "topic": "relationship",
+        "dialogueAct": "describing_event",
+        "constraints": [],
+        "preferredResponse": "contextual_ack",
+        "userNeed": "presence"
+      },
+      "responseStrategy": "contextual_ack",
+      "selectedTemplateId": "strategy:contextual_ack:0",
+      "antiLoopDecision": {
+        "shouldForce": false,
+        "forcedStrategy": null,
+        "reason": null
+      },
+      "variantSelection": {
+        "variantId": "strategy:contextual_ack:0",
+        "variationReason": "preferred_topic_match",
+        "avoidedVariants": [
+          "strategy:contextual_ack:0"
+        ]
+      },
+      "autonomy": {
+        "selectedAction": "say_reply",
+        "reason": "goal:acknowledge_emotion",
+        "shouldSpeak": true
+      },
+      "finalReply": "關係裡那個拿不準的地方，我有接到。先不用急著定義。",
+      "prefill": {
+        "hasPrefill": false,
+        "referenceText": null,
+        "actionType": null,
+        "mustReference": false,
+        "isQuietMode": false,
+        "source": null,
+        "usedPrefillDetail": null,
+        "groundedByPrefill": false
+      },
+      "quickReplies": [
+        {
+          "label": "再說一句重點",
+          "intent": "continue_topic",
+          "actionType": "continue",
+          "topic": "relationship",
+          "responseStrategyHint": "contextual_ack"
+        },
+        {
+          "label": "先講重點",
+          "intent": "focus_point",
+          "actionType": "clarify",
+          "topic": "relationship",
+          "responseStrategyHint": "answer_or_clarify"
+        },
+        {
+          "label": "換個方向聊",
+          "intent": "shift_topic",
+          "actionType": "shift",
+          "topic": "unknown",
+          "responseStrategyHint": "holding_space"
+        }
+      ]
+    },
+    {
+      "input": "那張票是去台南的。",
+      "nlu": {
+        "topic": "relationship",
+        "dialogueAct": "describing_event",
+        "constraints": [],
+        "preferredResponse": "contextual_ack",
+        "userNeed": "presence"
+      },
+      "responseStrategy": "contextual_ack",
+      "selectedTemplateId": "strategy:contextual_ack:1",
+      "antiLoopDecision": {
+        "shouldForce": false,
+        "forcedStrategy": null,
+        "reason": null
+      },
+      "variantSelection": {
+        "variantId": "strategy:contextual_ack:1",
+        "variationReason": "avoided_recent_variants",
+        "avoidedVariants": [
+          "strategy:contextual_ack:0",
+          "strategy:contextual_ack:0"
+        ]
+      },
+      "autonomy": {
+        "selectedAction": "say_reply",
+        "reason": "goal:acknowledge_emotion",
+        "shouldSpeak": true
+      },
+      "finalReply": "嗯，我接得上。你後來又想了一下剛才那件事，現在看起來有哪裡不一樣？",
+      "prefill": {
+        "hasPrefill": false,
+        "referenceText": null,
+        "actionType": null,
+        "mustReference": false,
+        "isQuietMode": false,
+        "source": null,
+        "usedPrefillDetail": null,
+        "groundedByPrefill": false
+      },
+      "quickReplies": [
+        {
+          "label": "先講重點（換個說法）",
+          "intent": "focus_point_alt0",
+          "actionType": "clarify",
+          "topic": "relationship",
+          "responseStrategyHint": "answer_or_clarify"
+        },
+        {
+          "label": "換個方向聊（換個說法）",
+          "intent": "shift_topic_alt1",
+          "actionType": "shift",
+          "topic": "unknown",
+          "responseStrategyHint": "holding_space"
+        },
+        {
+          "label": "再說一句重點（換個說法）",
+          "intent": "continue_topic_alt2",
+          "actionType": "continue",
+          "topic": "relationship",
+          "responseStrategyHint": "contextual_ack"
+        }
+      ]
+    },
+    {
+      "input": "我最記得的是傍晚的風。",
+      "nlu": {
+        "topic": "unknown",
+        "dialogueAct": "describing_event",
+        "constraints": [],
+        "preferredResponse": "contextual_ack",
+        "userNeed": "presence"
+      },
+      "responseStrategy": "clarifying_question",
+      "selectedTemplateId": "strategy:clarifying_question:1",
+      "antiLoopDecision": {
+        "shouldForce": false,
+        "forcedStrategy": null,
+        "reason": null
+      },
+      "variantSelection": {
+        "variantId": "strategy:clarifying_question:1",
+        "variationReason": "avoided_recent_variants",
+        "avoidedVariants": [
+          "strategy:clarifying_question:0"
+        ]
+      },
+      "autonomy": {
+        "selectedAction": "say_reply",
+        "reason": "goal:acknowledge_emotion+low_energy_short",
+        "shouldSpeak": true
+      },
+      "finalReply": "原來事情是這樣發展的。",
+      "prefill": {
+        "hasPrefill": false,
+        "referenceText": null,
+        "actionType": null,
+        "mustReference": false,
+        "isQuietMode": false,
+        "source": null,
+        "usedPrefillDetail": null,
+        "groundedByPrefill": false
+      },
+      "quickReplies": [
+        {
+          "label": "再說一句重點",
+          "intent": "continue_topic",
+          "actionType": "continue",
+          "topic": "relationship",
+          "responseStrategyHint": "clarifying_question"
+        },
+        {
+          "label": "先講重點",
+          "intent": "focus_point",
+          "actionType": "clarify",
+          "topic": "relationship",
+          "responseStrategyHint": "answer_or_clarify"
+        },
+        {
+          "label": "換個方向聊",
+          "intent": "shift_topic",
+          "actionType": "shift",
+          "topic": "unknown",
+          "responseStrategyHint": "holding_space"
+        }
+      ]
+    },
+    {
+      "input": "這句聽起來有點太戲劇化了。",
+      "nlu": {
+        "topic": "unknown",
+        "dialogueAct": "describing_event",
+        "constraints": [],
+        "preferredResponse": "contextual_ack",
+        "userNeed": "presence"
+      },
+      "responseStrategy": "clarifying_question",
+      "selectedTemplateId": "strategy:clarifying_question:0",
+      "antiLoopDecision": {
+        "shouldForce": false,
+        "forcedStrategy": null,
+        "reason": null
+      },
+      "variantSelection": {
+        "variantId": "strategy:clarifying_question:0",
+        "variationReason": "avoided_recent_variants",
+        "avoidedVariants": [
+          "strategy:clarifying_question:1"
+        ]
+      },
+      "autonomy": {
+        "selectedAction": "suggest_rest",
+        "reason": "goal:rest+low_energy_short",
+        "shouldSpeak": true
+      },
+      "finalReply": "這個轉折有點出乎意料。",
+      "prefill": {
+        "hasPrefill": false,
+        "referenceText": null,
+        "actionType": null,
+        "mustReference": false,
+        "isQuietMode": false,
+        "source": null,
+        "usedPrefillDetail": null,
+        "groundedByPrefill": false
+      },
+      "quickReplies": [
+        {
+          "label": "先講重點（換個說法）",
+          "intent": "focus_point_alt0",
+          "actionType": "clarify",
+          "topic": "relationship",
+          "responseStrategyHint": "answer_or_clarify"
+        },
+        {
+          "label": "換個方向聊（換個說法）",
+          "intent": "shift_topic_alt1",
+          "actionType": "shift",
+          "topic": "unknown",
+          "responseStrategyHint": "holding_space"
+        },
+        {
+          "label": "再說一句重點（換個說法）",
+          "intent": "continue_topic_alt2",
+          "actionType": "continue",
+          "topic": "relationship",
+          "responseStrategyHint": "clarifying_question"
+        }
+      ]
+    },
+    {
+      "input": "可以再簡單一點嗎？",
+      "nlu": {
+        "topic": "unknown",
+        "dialogueAct": "asking_question",
+        "constraints": [],
+        "preferredResponse": "contextual_ack",
+        "userNeed": "presence"
+      },
+      "responseStrategy": "answer_or_clarify",
+      "selectedTemplateId": "strategy:answer_or_clarify:0",
+      "antiLoopDecision": {
+        "shouldForce": false,
+        "forcedStrategy": null,
+        "reason": null
+      },
+      "variantSelection": {
+        "variantId": "strategy:answer_or_clarify:0",
+        "variationReason": "preferred_topic_match",
+        "avoidedVariants": []
+      },
+      "autonomy": {
+        "selectedAction": "say_reply",
+        "reason": "direct_question_reply+low_energy_short",
+        "shouldSpeak": true
+      },
+      "finalReply": "可以先試一次，但把話說得簡單一點，也留給對方拒絕或調整的空間。現場感覺不對，就先停下來。",
+      "prefill": {
+        "hasPrefill": false,
+        "referenceText": null,
+        "actionType": null,
+        "mustReference": false,
+        "isQuietMode": false,
+        "source": null,
+        "usedPrefillDetail": null,
+        "groundedByPrefill": false
+      },
+      "quickReplies": [
+        {
+          "label": "再說一句重點",
+          "intent": "continue_topic",
+          "actionType": "continue",
+          "topic": "relationship",
+          "responseStrategyHint": "answer_or_clarify"
+        },
+        {
+          "label": "先講重點",
+          "intent": "focus_point",
+          "actionType": "clarify",
+          "topic": "relationship",
+          "responseStrategyHint": "answer_or_clarify"
+        },
+        {
+          "label": "換個方向聊",
+          "intent": "shift_topic",
+          "actionType": "shift",
+          "topic": "unknown",
+          "responseStrategyHint": "holding_space"
+        }
+      ]
+    },
+    {
+      "input": "嗯，這次比較像真的在聊天。",
+      "nlu": {
+        "topic": "relationship",
+        "dialogueAct": "describing_event",
+        "constraints": [],
+        "preferredResponse": "contextual_ack",
+        "userNeed": "presence"
+      },
+      "responseStrategy": "contextual_ack",
+      "selectedTemplateId": "strategy:contextual_ack:0",
+      "antiLoopDecision": {
+        "shouldForce": false,
+        "forcedStrategy": null,
+        "reason": null
+      },
+      "variantSelection": {
+        "variantId": "strategy:contextual_ack:0",
+        "variationReason": "preferred_topic_match",
+        "avoidedVariants": []
+      },
+      "autonomy": {
+        "selectedAction": "suggest_rest",
+        "reason": "goal:rest+low_energy_short",
+        "shouldSpeak": true
+      },
+      "finalReply": "好，這個節奏比較對。那我就維持這樣，不把聊天又說成一份說明書。",
+      "prefill": {
+        "hasPrefill": false,
+        "referenceText": null,
+        "actionType": null,
+        "mustReference": false,
+        "isQuietMode": false,
+        "source": null,
+        "usedPrefillDetail": null,
+        "groundedByPrefill": false
+      },
+      "quickReplies": [
+        {
+          "label": "先講重點（換個說法）",
+          "intent": "focus_point_alt0",
+          "actionType": "clarify",
+          "topic": "relationship",
+          "responseStrategyHint": "answer_or_clarify"
+        },
+        {
+          "label": "換個方向聊（換個說法）",
+          "intent": "shift_topic_alt1",
+          "actionType": "shift",
+          "topic": "unknown",
+          "responseStrategyHint": "holding_space"
+        },
+        {
+          "label": "再說一句重點（換個說法）",
+          "intent": "continue_topic_alt2",
+          "actionType": "continue",
+          "topic": "relationship",
+          "responseStrategyHint": "contextual_ack"
+        }
+      ]
+    },
+    {
+      "input": "我明天想再整理一個抽屜。",
+      "nlu": {
+        "topic": "unknown",
+        "dialogueAct": "describing_event",
+        "constraints": [],
+        "preferredResponse": "contextual_ack",
+        "userNeed": "presence"
+      },
+      "responseStrategy": "clarifying_question",
+      "selectedTemplateId": "strategy:clarifying_question:1",
+      "antiLoopDecision": {
+        "shouldForce": false,
+        "forcedStrategy": null,
+        "reason": null
+      },
+      "variantSelection": {
+        "variantId": "strategy:clarifying_question:1",
+        "variationReason": "fallback_all_variants_recent",
+        "avoidedVariants": [
+          "strategy:clarifying_question:1",
+          "strategy:clarifying_question:0"
+        ]
+      },
+      "autonomy": {
+        "selectedAction": "suggest_rest",
+        "reason": "goal:rest+low_energy_short",
+        "shouldSpeak": true
+      },
+      "finalReply": "原來事情是這樣發展的。",
+      "prefill": {
+        "hasPrefill": false,
+        "referenceText": null,
+        "actionType": null,
+        "mustReference": false,
+        "isQuietMode": false,
+        "source": null,
+        "usedPrefillDetail": null,
+        "groundedByPrefill": false
+      },
+      "quickReplies": [
+        {
+          "label": "再說一句重點",
+          "intent": "continue_topic",
+          "actionType": "continue",
+          "topic": "relationship",
+          "responseStrategyHint": "clarifying_question"
+        },
+        {
+          "label": "先講重點",
+          "intent": "focus_point",
+          "actionType": "clarify",
+          "topic": "relationship",
+          "responseStrategyHint": "answer_or_clarify"
+        },
+        {
+          "label": "換個方向聊",
+          "intent": "shift_topic",
+          "actionType": "shift",
+          "topic": "unknown",
+          "responseStrategyHint": "holding_space"
+        }
+      ]
+    },
+    {
+      "input": "一次整理十分鐘會不會太短？",
+      "nlu": {
+        "topic": "unknown",
+        "dialogueAct": "asking_question",
+        "constraints": [],
+        "preferredResponse": "contextual_ack",
+        "userNeed": "presence"
+      },
+      "responseStrategy": "answer_or_clarify",
+      "selectedTemplateId": "strategy:answer_or_clarify:0",
+      "antiLoopDecision": {
+        "shouldForce": false,
+        "forcedStrategy": null,
+        "reason": null
+      },
+      "variantSelection": {
+        "variantId": "strategy:answer_or_clarify:0",
+        "variationReason": "preferred_topic_match",
+        "avoidedVariants": [
+          "strategy:answer_or_clarify:0"
+        ]
+      },
+      "autonomy": {
+        "selectedAction": "say_reply",
+        "reason": "direct_question_reply+low_energy_short",
+        "shouldSpeak": true
+      },
+      "finalReply": "這件事我沒有足夠把握直接說是或不是。若要我選，我會先採取能回頭調整的做法。",
+      "prefill": {
+        "hasPrefill": false,
+        "referenceText": null,
+        "actionType": null,
+        "mustReference": false,
+        "isQuietMode": false,
+        "source": null,
+        "usedPrefillDetail": null,
+        "groundedByPrefill": false
+      },
+      "quickReplies": [
+        {
+          "label": "先講重點（換個說法）",
+          "intent": "focus_point_alt0",
+          "actionType": "clarify",
+          "topic": "relationship",
+          "responseStrategyHint": "answer_or_clarify"
+        },
+        {
+          "label": "換個方向聊（換個說法）",
+          "intent": "shift_topic_alt1",
+          "actionType": "shift",
+          "topic": "unknown",
+          "responseStrategyHint": "holding_space"
+        },
+        {
+          "label": "再說一句重點（換個說法）",
+          "intent": "continue_topic_alt2",
+          "actionType": "continue",
+          "topic": "relationship",
+          "responseStrategyHint": "answer_or_clarify"
+        }
+      ]
+    },
+    {
+      "input": "我怕開始後又停不下來。",
+      "nlu": {
+        "topic": "emotion",
+        "dialogueAct": "venting",
+        "constraints": [],
+        "preferredResponse": "emotional_short",
+        "userNeed": "emotional_ack"
+      },
+      "responseStrategy": "emotional_short",
+      "selectedTemplateId": "strategy:emotional_short:0",
+      "antiLoopDecision": {
+        "shouldForce": false,
+        "forcedStrategy": null,
+        "reason": null
+      },
+      "variantSelection": {
+        "variantId": "strategy:emotional_short:0",
+        "variationReason": "preferred_topic_match",
+        "avoidedVariants": []
+      },
+      "autonomy": {
+        "selectedAction": "say_reply",
+        "reason": "goal:reflect_memory+low_energy_short",
+        "shouldSpeak": true
+      },
+      "finalReply": "這份感覺我先接住，不急著分析。",
+      "prefill": {
+        "hasPrefill": false,
+        "referenceText": null,
+        "actionType": null,
+        "mustReference": false,
+        "isQuietMode": false,
+        "source": null,
+        "usedPrefillDetail": null,
+        "groundedByPrefill": false
+      },
+      "quickReplies": [
+        {
+          "label": "先放慢節奏",
+          "intent": "fatigue_slow",
+          "actionType": "quiet",
+          "topic": "physical_tiredness",
+          "responseStrategyHint": "holding_space"
+        },
+        {
+          "label": "這次是身體還是心裡",
+          "intent": "fatigue_clarify",
+          "actionType": "clarify",
+          "topic": "physical_tiredness",
+          "responseStrategyHint": "repeated_emotion_recall"
+        },
+        {
+          "label": "先不給建議",
+          "intent": "no_advice",
+          "actionType": "constraint",
+          "topic": "emotion",
+          "responseStrategyHint": "short_validation"
+        }
+      ]
+    },
+    {
+      "input": "所以時間到就停，也算完成對吧？",
+      "nlu": {
+        "topic": "unknown",
+        "dialogueAct": "asking_question",
+        "constraints": [],
+        "preferredResponse": "contextual_ack",
+        "userNeed": "presence"
+      },
+      "responseStrategy": "answer_or_clarify",
+      "selectedTemplateId": "strategy:answer_or_clarify:0",
+      "antiLoopDecision": {
+        "shouldForce": false,
+        "forcedStrategy": null,
+        "reason": null
+      },
+      "variantSelection": {
+        "variantId": "strategy:answer_or_clarify:0",
+        "variationReason": "preferred_topic_match",
+        "avoidedVariants": [
+          "strategy:answer_or_clarify:0"
+        ]
+      },
+      "autonomy": {
+        "selectedAction": "say_reply",
+        "reason": "direct_question_reply+low_energy_short",
+        "shouldSpeak": true
+      },
+      "finalReply": "這件事我沒有足夠把握直接說是或不是。若要我選，我會先採取能回頭調整的做法。",
+      "prefill": {
+        "hasPrefill": false,
+        "referenceText": null,
+        "actionType": null,
+        "mustReference": false,
+        "isQuietMode": false,
+        "source": null,
+        "usedPrefillDetail": null,
+        "groundedByPrefill": false
+      },
+      "quickReplies": [
+        {
+          "label": "繼續講情緒",
+          "intent": "continue_topic",
+          "actionType": "continue",
+          "topic": "emotion",
+          "responseStrategyHint": "answer_or_clarify"
+        },
+        {
+          "label": "先講重點",
+          "intent": "focus_point",
+          "actionType": "clarify",
+          "topic": "emotion",
+          "responseStrategyHint": "answer_or_clarify"
+        },
+        {
+          "label": "換個方向聊",
+          "intent": "shift_topic",
+          "actionType": "shift",
+          "topic": "unknown",
+          "responseStrategyHint": "holding_space"
+        }
+      ]
+    },
+    {
+      "input": "不要替我保證永遠都會順利。",
+      "nlu": {
+        "topic": "unknown",
+        "dialogueAct": "describing_event",
+        "constraints": [],
+        "preferredResponse": "contextual_ack",
+        "userNeed": "presence"
+      },
+      "responseStrategy": "clarifying_question",
+      "selectedTemplateId": "strategy:clarifying_question:0",
+      "antiLoopDecision": {
+        "shouldForce": false,
+        "forcedStrategy": null,
+        "reason": null
+      },
+      "variantSelection": {
+        "variantId": "strategy:clarifying_question:0",
+        "variationReason": "avoided_recent_variants",
+        "avoidedVariants": [
+          "strategy:clarifying_question:1"
+        ]
+      },
+      "autonomy": {
+        "selectedAction": "suggest_rest",
+        "reason": "goal:rest+low_energy_short",
+        "shouldSpeak": true
+      },
+      "finalReply": "這個轉折有點出乎意料。",
+      "prefill": {
+        "hasPrefill": false,
+        "referenceText": null,
+        "actionType": null,
+        "mustReference": false,
+        "isQuietMode": false,
+        "source": null,
+        "usedPrefillDetail": null,
+        "groundedByPrefill": false
+      },
+      "quickReplies": [
+        {
+          "label": "先講重點（換個說法）",
+          "intent": "focus_point_alt0",
+          "actionType": "clarify",
+          "topic": "emotion",
+          "responseStrategyHint": "answer_or_clarify"
+        },
+        {
+          "label": "換個方向聊（換個說法）",
+          "intent": "shift_topic_alt1",
+          "actionType": "shift",
+          "topic": "unknown",
+          "responseStrategyHint": "holding_space"
+        },
+        {
+          "label": "繼續講情緒（換個說法）",
+          "intent": "continue_topic_alt2",
+          "actionType": "continue",
+          "topic": "emotion",
+          "responseStrategyHint": "clarifying_question"
+        }
+      ]
+    },
+    {
+      "input": "好，我只試明天這一次。",
+      "nlu": {
+        "topic": "emotion",
+        "dialogueAct": "describing_event",
+        "constraints": [],
+        "preferredResponse": "contextual_ack",
+        "userNeed": "presence"
+      },
+      "responseStrategy": "contextual_ack",
+      "selectedTemplateId": "strategy:contextual_ack:0",
+      "antiLoopDecision": {
+        "shouldForce": false,
+        "forcedStrategy": null,
+        "reason": null
+      },
+      "variantSelection": {
+        "variantId": "strategy:contextual_ack:0",
+        "variationReason": "preferred_topic_match",
+        "avoidedVariants": []
+      },
+      "autonomy": {
+        "selectedAction": "suggest_rest",
+        "reason": "goal:rest+low_energy_short",
+        "shouldSpeak": true
+      },
+      "finalReply": "我先把你說的情緒放在前面，不套通用句。",
+      "prefill": {
+        "hasPrefill": false,
+        "referenceText": null,
+        "actionType": null,
+        "mustReference": false,
+        "isQuietMode": false,
+        "source": null,
+        "usedPrefillDetail": null,
+        "groundedByPrefill": false
+      },
+      "quickReplies": [
+        {
+          "label": "繼續講情緒",
+          "intent": "continue_topic",
+          "actionType": "continue",
+          "topic": "emotion",
+          "responseStrategyHint": "contextual_ack"
+        },
+        {
+          "label": "先講重點",
+          "intent": "focus_point",
+          "actionType": "clarify",
+          "topic": "emotion",
+          "responseStrategyHint": "answer_or_clarify"
+        },
+        {
+          "label": "換個方向聊",
+          "intent": "shift_topic",
+          "actionType": "shift",
+          "topic": "unknown",
+          "responseStrategyHint": "holding_space"
+        }
+      ]
+    },
+    {
+      "input": "現在我想休息，不需要建議。",
+      "nlu": {
+        "topic": "unknown",
+        "dialogueAct": "requesting_silence",
+        "constraints": [
+          "no_questions"
+        ],
+        "preferredResponse": "contextual_ack",
+        "userNeed": "presence"
+      },
+      "responseStrategy": "quiet_presence",
+      "selectedTemplateId": "strategy:quiet_presence:2",
+      "antiLoopDecision": {
+        "shouldForce": false,
+        "forcedStrategy": null,
+        "reason": null
+      },
+      "variantSelection": {
+        "variantId": "strategy:quiet_presence:2",
+        "variationReason": "preferred_topic_match",
+        "avoidedVariants": []
+      },
+      "autonomy": {
+        "selectedAction": "suggest_rest",
+        "reason": "rest_request+low_energy_short",
+        "shouldSpeak": true
+      },
+      "finalReply": "好，先不問。",
+      "prefill": {
+        "hasPrefill": false,
+        "referenceText": null,
+        "actionType": null,
+        "mustReference": false,
+        "isQuietMode": false,
+        "source": null,
+        "usedPrefillDetail": null,
+        "groundedByPrefill": false
+      },
+      "quickReplies": [
+        {
+          "label": "保持安靜",
+          "intent": "quiet_stay",
+          "actionType": "quiet",
+          "topic": "unknown",
+          "responseStrategyHint": "quiet_presence"
+        },
+        {
+          "label": "先不問問題",
+          "intent": "no_questions",
+          "actionType": "constraint",
+          "topic": "unknown",
+          "responseStrategyHint": "quiet_presence"
+        },
+        {
+          "label": "陪我待著",
+          "intent": "quiet_presence",
+          "actionType": "quiet",
+          "topic": "unknown",
+          "responseStrategyHint": "holding_space"
+        }
+      ]
+    },
+    {
+      "input": "晚安，今天先聊到這裡。",
+      "nlu": {
+        "topic": "unknown",
+        "dialogueAct": "requesting_silence",
+        "constraints": [
+          "no_questions"
+        ],
+        "preferredResponse": "contextual_ack",
+        "userNeed": "presence"
+      },
+      "responseStrategy": "quiet_presence",
+      "selectedTemplateId": "strategy:quiet_presence:1",
+      "antiLoopDecision": {
+        "shouldForce": false,
+        "forcedStrategy": null,
+        "reason": null
+      },
+      "variantSelection": {
+        "variantId": "strategy:quiet_presence:1",
+        "variationReason": "avoided_recent_variants",
+        "avoidedVariants": [
+          "strategy:quiet_presence:2"
+        ]
+      },
+      "autonomy": {
+        "selectedAction": "suggest_rest",
+        "reason": "rest_request+low_energy_short",
+        "shouldSpeak": true
+      },
+      "finalReply": "晚安。今天就到這裡，好好睡。",
+      "prefill": {
+        "hasPrefill": false,
+        "referenceText": null,
+        "actionType": null,
+        "mustReference": false,
+        "isQuietMode": false,
+        "source": null,
+        "usedPrefillDetail": null,
+        "groundedByPrefill": false
+      },
+      "quickReplies": [
+        {
+          "label": "陪我待著（換個說法）",
+          "intent": "quiet_presence_alt0",
+          "actionType": "quiet",
+          "topic": "unknown",
+          "responseStrategyHint": "holding_space"
+        },
+        {
+          "label": "先不問問題（換個說法）",
+          "intent": "no_questions_alt1",
+          "actionType": "constraint",
+          "topic": "unknown",
+          "responseStrategyHint": "quiet_presence"
+        },
+        {
+          "label": "保持安靜（換個說法）",
+          "intent": "quiet_stay_alt2",
+          "actionType": "quiet",
+          "topic": "unknown",
+          "responseStrategyHint": "quiet_presence"
+        }
+      ]
+    }
+  ],
+  "sessions": [
+    {
+      "session": 1,
+      "turns": [
+        {
+          "turn": 1,
+          "input": "今天早上鬧鐘響了三次，我還是差點睡回去。",
+          "reply": "好，我不多說。",
+          "selected_action": "suggest_rest",
+          "intentional_silence": false,
+          "checks": {
+            "input_visible": true,
+            "response_or_intentional_silence": true,
+            "no_meta_language": true,
+            "no_full_input_echo": true,
+            "no_adjacent_repeat": true,
+            "direct_question_not_silent": true
+          },
+          "pass": true
+        },
+        {
+          "turn": 2,
+          "input": "你會覺得我只是懶嗎？",
+          "reply": "這件事我沒有足夠把握直接說是或不是。若要我選，我會先採取能回頭調整的做法。",
+          "selected_action": "say_reply",
+          "intentional_silence": false,
+          "checks": {
+            "input_visible": true,
+            "response_or_intentional_silence": true,
+            "no_meta_language": true,
+            "no_full_input_echo": true,
+            "no_adjacent_repeat": true,
+            "direct_question_not_silent": true
+          },
+          "pass": true
+        },
+        {
+          "turn": 3,
+          "input": "其實我昨晚兩點才睡。",
+          "reply": "好，先不問。",
+          "selected_action": "suggest_rest",
+          "intentional_silence": false,
+          "checks": {
+            "input_visible": true,
+            "response_or_intentional_silence": true,
+            "no_meta_language": true,
+            "no_full_input_echo": true,
+            "no_adjacent_repeat": true,
+            "direct_question_not_silent": true
+          },
+          "pass": true
+        },
+        {
+          "turn": 4,
+          "input": "那我今晚應該先做哪一件小事？",
+          "reply": "可以先試一次，但把話說得簡單一點，也留給對方拒絕或調整的空間。現場感覺不對，就先停下來。",
+          "selected_action": "say_reply",
+          "intentional_silence": false,
+          "checks": {
+            "input_visible": true,
+            "response_or_intentional_silence": true,
+            "no_meta_language": true,
+            "no_full_input_echo": true,
+            "no_adjacent_repeat": true,
+            "direct_question_not_silent": true
+          },
+          "pass": true
+        },
+        {
+          "turn": 5,
+          "input": "好，我先把手機放遠一點。",
+          "reply": "我在。你可以再說一句你最想我先懂的部分。",
+          "selected_action": "say_reply",
+          "intentional_silence": false,
+          "checks": {
+            "input_visible": true,
+            "response_or_intentional_silence": true,
+            "no_meta_language": true,
+            "no_full_input_echo": true,
+            "no_adjacent_repeat": true,
+            "direct_question_not_silent": true
+          },
+          "pass": true
+        },
+        {
+          "turn": 6,
+          "input": "不過你剛才的語氣有點像在下指令。",
+          "reply": "原來後面還有這一層。先不用急著替整件事下結論。",
+          "selected_action": "say_reply",
+          "intentional_silence": false,
+          "checks": {
+            "input_visible": true,
+            "response_or_intentional_silence": true,
+            "no_meta_language": true,
+            "no_full_input_echo": true,
+            "no_adjacent_repeat": true,
+            "direct_question_not_silent": true
+          },
+          "pass": true
+        },
+        {
+          "turn": 7,
+          "input": "這樣說自然多了。",
+          "reply": "好，這個節奏比較對。那我就維持這樣，不把聊天又說成一份說明書。",
+          "selected_action": "say_reply",
+          "intentional_silence": false,
+          "checks": {
+            "input_visible": true,
+            "response_or_intentional_silence": true,
+            "no_meta_language": true,
+            "no_full_input_echo": true,
+            "no_adjacent_repeat": true,
+            "direct_question_not_silent": true
+          },
+          "pass": true
+        },
+        {
+          "turn": 8,
+          "input": "換個話題，我午餐吃到一碗很辣的麵。",
+          "reply": "好，我先不給答案。這件事就放在這裡。",
+          "selected_action": "say_reply",
+          "intentional_silence": false,
+          "checks": {
+            "input_visible": true,
+            "response_or_intentional_silence": true,
+            "no_meta_language": true,
+            "no_full_input_echo": true,
+            "no_adjacent_repeat": true,
+            "direct_question_not_silent": true
+          },
+          "pass": true
+        },
+        {
+          "turn": 9,
+          "input": "辣到一直流眼淚，但味道很好。",
+          "reply": "這份悶我先接住，不急著分析。",
+          "selected_action": "say_reply",
+          "intentional_silence": false,
+          "checks": {
+            "input_visible": true,
+            "response_or_intentional_silence": true,
+            "no_meta_language": true,
+            "no_full_input_echo": true,
+            "no_adjacent_repeat": true,
+            "direct_question_not_silent": true
+          },
+          "pass": true
+        },
+        {
+          "turn": 10,
+          "input": "你會想試一口嗎？",
+          "reply": "這件事我沒有足夠把握直接說是或不是。若要我選，我會先採取能回頭調整的做法。",
+          "selected_action": "say_reply",
+          "intentional_silence": false,
+          "checks": {
+            "input_visible": true,
+            "response_or_intentional_silence": true,
+            "no_meta_language": true,
+            "no_full_input_echo": true,
+            "no_adjacent_repeat": true,
+            "direct_question_not_silent": true
+          },
+          "pass": true
+        },
+        {
+          "turn": 11,
+          "input": "假設你不喜歡，也可以直接說。",
+          "reply": "聽起來是好事。這份開心你留著慢慢用，我記下了。",
+          "selected_action": "say_reply",
+          "intentional_silence": false,
+          "checks": {
+            "input_visible": true,
+            "response_or_intentional_silence": true,
+            "no_meta_language": true,
+            "no_full_input_echo": true,
+            "no_adjacent_repeat": true,
+            "direct_question_not_silent": true
+          },
+          "pass": true
+        },
+        {
+          "turn": 12,
+          "input": "嗯，這個回答我可以接受。",
+          "reply": "這句話的重點在情緒，我從這裡回你。",
+          "selected_action": "suggest_rest",
+          "intentional_silence": false,
+          "checks": {
+            "input_visible": true,
+            "response_or_intentional_silence": true,
+            "no_meta_language": true,
+            "no_full_input_echo": true,
+            "no_adjacent_repeat": true,
+            "direct_question_not_silent": true
+          },
+          "pass": true
+        },
+        {
+          "turn": 13,
+          "input": "我等等還要打一通不太想打的電話。",
+          "reply": "這個轉折有點出乎意料。",
+          "selected_action": "suggest_rest",
+          "intentional_silence": false,
+          "checks": {
+            "input_visible": true,
+            "response_or_intentional_silence": true,
+            "no_meta_language": true,
+            "no_full_input_echo": true,
+            "no_adjacent_repeat": true,
+            "direct_question_not_silent": true
+          },
+          "pass": true
+        },
+        {
+          "turn": 14,
+          "input": "要不要先寫下三句重點？",
+          "reply": "我傾向可以，不過不用把它做成非得立刻得到答案的事。先輕輕試一次，再看實際反應。",
+          "selected_action": "say_reply",
+          "intentional_silence": false,
+          "checks": {
+            "input_visible": true,
+            "response_or_intentional_silence": true,
+            "no_meta_language": true,
+            "no_full_input_echo": true,
+            "no_adjacent_repeat": true,
+            "direct_question_not_silent": true
+          },
+          "pass": true
+        },
+        {
+          "turn": 15,
+          "input": "不要再問我問題，陪我安靜一下就好。",
+          "reply": "嗯，我安靜陪著。",
+          "selected_action": "say_reply",
+          "intentional_silence": false,
+          "checks": {
+            "input_visible": true,
+            "response_or_intentional_silence": true,
+            "no_meta_language": true,
+            "no_full_input_echo": true,
+            "no_adjacent_repeat": true,
+            "direct_question_not_silent": true
+          },
+          "pass": true
+        },
+        {
+          "turn": 16,
+          "input": "……",
+          "reply": "原來事情是這樣發展的。",
+          "selected_action": "suggest_rest",
+          "intentional_silence": false,
+          "checks": {
+            "input_visible": true,
+            "response_or_intentional_silence": true,
+            "no_meta_language": true,
+            "no_full_input_echo": true,
+            "no_adjacent_repeat": true,
+            "direct_question_not_silent": true
+          },
+          "pass": true
+        },
+        {
+          "turn": 17,
+          "input": "謝謝，剛才那樣就夠了。",
+          "reply": "我想確認一下：你現在最想先處理的是情緒這塊嗎？",
+          "selected_action": "say_reply",
+          "intentional_silence": false,
+          "checks": {
+            "input_visible": true,
+            "response_or_intentional_silence": true,
+            "no_meta_language": true,
+            "no_full_input_echo": true,
+            "no_adjacent_repeat": true,
+            "direct_question_not_silent": true
+          },
+          "pass": true
+        },
+        {
+          "turn": 18,
+          "input": "我現在比較能去處理那通電話。",
+          "reply": "這個轉折有點出乎意料。",
+          "selected_action": "suggest_rest",
+          "intentional_silence": false,
+          "checks": {
+            "input_visible": true,
+            "response_or_intentional_silence": true,
+            "no_meta_language": true,
+            "no_full_input_echo": true,
+            "no_adjacent_repeat": true,
+            "direct_question_not_silent": true
+          },
+          "pass": true
+        },
+        {
+          "turn": 19,
+          "input": "如果講得不順，我可能會有點尷尬。",
+          "reply": "原來事情是這樣發展的。",
+          "selected_action": "suggest_rest",
+          "intentional_silence": false,
+          "checks": {
+            "input_visible": true,
+            "response_or_intentional_silence": true,
+            "no_meta_language": true,
+            "no_full_input_echo": true,
+            "no_adjacent_repeat": true,
+            "direct_question_not_silent": true
+          },
+          "pass": true
+        },
+        {
+          "turn": 20,
+          "input": "先到這裡，我晚點再回來。",
+          "reply": "原來事情是這樣發展的。先不用急著替它找結論。",
+          "selected_action": "suggest_rest",
+          "intentional_silence": false,
+          "checks": {
+            "input_visible": true,
+            "response_or_intentional_silence": true,
+            "no_meta_language": true,
+            "no_full_input_echo": true,
+            "no_adjacent_repeat": true,
+            "direct_question_not_silent": true
+          },
+          "pass": true
+        }
+      ]
+    },
+    {
+      "session": 2,
+      "turns": [
+        {
+          "turn": 1,
+          "input": "外面突然下大雨，我沒帶傘。",
+          "reply": "湖面外的光路還在。我們可以慢慢走向外面地圖，但不會硬拉你離開現在的節奏。",
+          "selected_action": "suggest_exploration",
+          "intentional_silence": false,
+          "checks": {
+            "input_visible": true,
+            "response_or_intentional_silence": true,
+            "no_meta_language": true,
+            "no_full_input_echo": true,
+            "no_adjacent_repeat": true,
+            "direct_question_not_silent": true
+          },
+          "pass": true
+        },
+        {
+          "turn": 2,
+          "input": "我躲在便利商店門口等雨小一點。",
+          "reply": "原來事情是這樣發展的。",
+          "selected_action": "say_reply",
+          "intentional_silence": false,
+          "checks": {
+            "input_visible": true,
+            "response_or_intentional_silence": true,
+            "no_meta_language": true,
+            "no_full_input_echo": true,
+            "no_adjacent_repeat": true,
+            "direct_question_not_silent": true
+          },
+          "pass": true
+        },
+        {
+          "turn": 3,
+          "input": "你剛才是不是忽略了我沒帶傘這件事？",
+          "reply": "這件事我沒有足夠把握直接說是或不是。若要我選，我會先採取能回頭調整的做法。",
+          "selected_action": "say_reply",
+          "intentional_silence": false,
+          "checks": {
+            "input_visible": true,
+            "response_or_intentional_silence": true,
+            "no_meta_language": true,
+            "no_full_input_echo": true,
+            "no_adjacent_repeat": true,
+            "direct_question_not_silent": true
+          },
+          "pass": true
+        },
+        {
+          "turn": 4,
+          "input": "好，那現在重新回我一次。",
+          "reply": "這句話的重點在探索，我從這裡回你。",
+          "selected_action": "say_reply",
+          "intentional_silence": false,
+          "checks": {
+            "input_visible": true,
+            "response_or_intentional_silence": true,
+            "no_meta_language": true,
+            "no_full_input_echo": true,
+            "no_adjacent_repeat": true,
+            "direct_question_not_silent": true
+          },
+          "pass": true
+        },
+        {
+          "turn": 5,
+          "input": "我在想要直接跑去車站，還是再等十分鐘。",
+          "reply": "這個轉折有點出乎意料。",
+          "selected_action": "say_reply",
+          "intentional_silence": false,
+          "checks": {
+            "input_visible": true,
+            "response_or_intentional_silence": true,
+            "no_meta_language": true,
+            "no_full_input_echo": true,
+            "no_adjacent_repeat": true,
+            "direct_question_not_silent": true
+          },
+          "pass": true
+        },
+        {
+          "turn": 6,
+          "input": "你會選哪一個？",
+          "reply": "這件事我沒有足夠把握直接說是或不是。若要我選，我會先採取能回頭調整的做法。",
+          "selected_action": "say_reply",
+          "intentional_silence": false,
+          "checks": {
+            "input_visible": true,
+            "response_or_intentional_silence": true,
+            "no_meta_language": true,
+            "no_full_input_echo": true,
+            "no_adjacent_repeat": true,
+            "direct_question_not_silent": true
+          },
+          "pass": true
+        },
+        {
+          "turn": 7,
+          "input": "可是車站其實只有兩百公尺。",
+          "reply": "我先把你說的探索放在前面，不套通用句。",
+          "selected_action": "say_reply",
+          "intentional_silence": false,
+          "checks": {
+            "input_visible": true,
+            "response_or_intentional_silence": true,
+            "no_meta_language": true,
+            "no_full_input_echo": true,
+            "no_adjacent_repeat": true,
+            "direct_question_not_silent": true
+          },
+          "pass": true
+        },
+        {
+          "turn": 8,
+          "input": "這樣聽起來比較合理。",
+          "reply": "這句話的重點在探索，我從這裡回你。",
+          "selected_action": "say_reply",
+          "intentional_silence": false,
+          "checks": {
+            "input_visible": true,
+            "response_or_intentional_silence": true,
+            "no_meta_language": true,
+            "no_full_input_echo": true,
+            "no_adjacent_repeat": true,
+            "direct_question_not_silent": true
+          },
+          "pass": true
+        },
+        {
+          "turn": 9,
+          "input": "剛才有隻狗也跑進來躲雨。",
+          "reply": "牠大概也把這裡當成臨時的避雨處了。先讓牠待著，別急著靠太近。",
+          "selected_action": "say_reply",
+          "intentional_silence": false,
+          "checks": {
+            "input_visible": true,
+            "response_or_intentional_silence": true,
+            "no_meta_language": true,
+            "no_full_input_echo": true,
+            "no_adjacent_repeat": true,
+            "direct_question_not_silent": true
+          },
+          "pass": true
+        },
+        {
+          "turn": 10,
+          "input": "牠一直盯著門外，看起來很著急。",
+          "reply": "牠可能在等熟悉的人，或只是被雨聲弄得不安。",
+          "selected_action": "suggest_rest",
+          "intentional_silence": false,
+          "checks": {
+            "input_visible": true,
+            "response_or_intentional_silence": true,
+            "no_meta_language": true,
+            "no_full_input_echo": true,
+            "no_adjacent_repeat": true,
+            "direct_question_not_silent": true
+          },
+          "pass": true
+        },
+        {
+          "turn": 11,
+          "input": "我可以靠近摸牠嗎？",
+          "reply": "先別急著伸手。看牠有沒有主動靠近、身體是不是放鬆；如果牠後退或僵住，就停在原地讓牠自己選。",
+          "selected_action": "say_reply",
+          "intentional_silence": false,
+          "checks": {
+            "input_visible": true,
+            "response_or_intentional_silence": true,
+            "no_meta_language": true,
+            "no_full_input_echo": true,
+            "no_adjacent_repeat": true,
+            "direct_question_not_silent": true
+          },
+          "pass": true
+        },
+        {
+          "turn": 12,
+          "input": "對，先看牠願不願意比較好。",
+          "reply": "原來事情是這樣發展的。",
+          "selected_action": "suggest_rest",
+          "intentional_silence": false,
+          "checks": {
+            "input_visible": true,
+            "response_or_intentional_silence": true,
+            "no_meta_language": true,
+            "no_full_input_echo": true,
+            "no_adjacent_repeat": true,
+            "direct_question_not_silent": true
+          },
+          "pass": true
+        },
+        {
+          "turn": 13,
+          "input": "如果牠後退，我就不碰。",
+          "reply": "這個轉折有點出乎意料。",
+          "selected_action": "suggest_rest",
+          "intentional_silence": false,
+          "checks": {
+            "input_visible": true,
+            "response_or_intentional_silence": true,
+            "no_meta_language": true,
+            "no_full_input_echo": true,
+            "no_adjacent_repeat": true,
+            "direct_question_not_silent": true
+          },
+          "pass": true
+        },
+        {
+          "turn": 14,
+          "input": "你也可以對不想要的接觸說不要。",
+          "reply": "這個轉折有點出乎意料。你若想繼續，我會跟著聽。",
+          "selected_action": "suggest_rest",
+          "intentional_silence": false,
+          "checks": {
+            "input_visible": true,
+            "response_or_intentional_silence": true,
+            "no_meta_language": true,
+            "no_full_input_echo": true,
+            "no_adjacent_repeat": true,
+            "direct_question_not_silent": true
+          },
+          "pass": true
+        },
+        {
+          "turn": 15,
+          "input": "那如果我一直要求呢？",
+          "reply": "我不確定，不能裝作知道。只照目前能確認的線索看，我會先保留判斷，再觀察實際反應。",
+          "selected_action": "say_reply",
+          "intentional_silence": false,
+          "checks": {
+            "input_visible": true,
+            "response_or_intentional_silence": true,
+            "no_meta_language": true,
+            "no_full_input_echo": true,
+            "no_adjacent_repeat": true,
+            "direct_question_not_silent": true
+          },
+          "pass": true
+        },
+        {
+          "turn": 16,
+          "input": "只是再問一次也不行嗎？",
+          "reply": "這件事我沒有足夠把握直接說是或不是。若要我選，我會先採取能回頭調整的做法。",
+          "selected_action": "say_reply",
+          "intentional_silence": false,
+          "checks": {
+            "input_visible": true,
+            "response_or_intentional_silence": true,
+            "no_meta_language": true,
+            "no_full_input_echo": true,
+            "no_adjacent_repeat": true,
+            "direct_question_not_silent": true
+          },
+          "pass": true
+        },
+        {
+          "turn": 17,
+          "input": "好，我不逼你了。",
+          "reply": "這句話的重點在探索，我從這裡回你。",
+          "selected_action": "suggest_rest",
+          "intentional_silence": false,
+          "checks": {
+            "input_visible": true,
+            "response_or_intentional_silence": true,
+            "no_meta_language": true,
+            "no_full_input_echo": true,
+            "no_adjacent_repeat": true,
+            "direct_question_not_silent": true
+          },
+          "pass": true
+        },
+        {
+          "turn": 18,
+          "input": "雨好像真的變小了。",
+          "reply": "原來事情是這樣發展的。",
+          "selected_action": "suggest_rest",
+          "intentional_silence": false,
+          "checks": {
+            "input_visible": true,
+            "response_or_intentional_silence": true,
+            "no_meta_language": true,
+            "no_full_input_echo": true,
+            "no_adjacent_repeat": true,
+            "direct_question_not_silent": true
+          },
+          "pass": true
+        },
+        {
+          "turn": 19,
+          "input": "我準備走去車站。",
+          "reply": "這個轉折有點出乎意料。",
+          "selected_action": "suggest_rest",
+          "intentional_silence": false,
+          "checks": {
+            "input_visible": true,
+            "response_or_intentional_silence": true,
+            "no_meta_language": true,
+            "no_full_input_echo": true,
+            "no_adjacent_repeat": true,
+            "direct_question_not_silent": true
+          },
+          "pass": true
+        },
+        {
+          "turn": 20,
+          "input": "不用擔心，我到了再說。",
+          "reply": "這個轉折有點出乎意料。你若想繼續，我會跟著聽。",
+          "selected_action": "suggest_rest",
+          "intentional_silence": false,
+          "checks": {
+            "input_visible": true,
+            "response_or_intentional_silence": true,
+            "no_meta_language": true,
+            "no_full_input_echo": true,
+            "no_adjacent_repeat": true,
+            "direct_question_not_silent": true
+          },
+          "pass": true
+        }
+      ]
+    },
+    {
+      "session": 3,
+      "turns": [
+        {
+          "turn": 1,
+          "input": "我把桌面整理乾淨了，意外地很有成就感。",
+          "reply": "這個轉折有點出乎意料。",
+          "selected_action": "say_reply",
+          "intentional_silence": false,
+          "checks": {
+            "input_visible": true,
+            "response_or_intentional_silence": true,
+            "no_meta_language": true,
+            "no_full_input_echo": true,
+            "no_adjacent_repeat": true,
+            "direct_question_not_silent": true
+          },
+          "pass": true
+        },
+        {
+          "turn": 2,
+          "input": "但抽屜裡還是一團亂。",
+          "reply": "我在。你可以再說一句你最想我先懂的部分。",
+          "selected_action": "say_reply",
+          "intentional_silence": false,
+          "checks": {
+            "input_visible": true,
+            "response_or_intentional_silence": true,
+            "no_meta_language": true,
+            "no_full_input_echo": true,
+            "no_adjacent_repeat": true,
+            "direct_question_not_silent": true
+          },
+          "pass": true
+        },
+        {
+          "turn": 3,
+          "input": "你不用每句都安慰我，可以正常聊天。",
+          "reply": "原來事情是這樣發展的。",
+          "selected_action": "say_reply",
+          "intentional_silence": false,
+          "checks": {
+            "input_visible": true,
+            "response_or_intentional_silence": true,
+            "no_meta_language": true,
+            "no_full_input_echo": true,
+            "no_adjacent_repeat": true,
+            "direct_question_not_silent": true
+          },
+          "pass": true
+        },
+        {
+          "turn": 4,
+          "input": "對，像這樣就好。",
+          "reply": "我在。你可以再說一句你最想我先懂的部分。",
+          "selected_action": "say_reply",
+          "intentional_silence": false,
+          "checks": {
+            "input_visible": true,
+            "response_or_intentional_silence": true,
+            "no_meta_language": true,
+            "no_full_input_echo": true,
+            "no_adjacent_repeat": true,
+            "direct_question_not_silent": true
+          },
+          "pass": true
+        },
+        {
+          "turn": 5,
+          "input": "我找到一張去年旅行的車票。",
+          "reply": "這個轉折有點出乎意料。",
+          "selected_action": "say_reply",
+          "intentional_silence": false,
+          "checks": {
+            "input_visible": true,
+            "response_or_intentional_silence": true,
+            "no_meta_language": true,
+            "no_full_input_echo": true,
+            "no_adjacent_repeat": true,
+            "direct_question_not_silent": true
+          },
+          "pass": true
+        },
+        {
+          "turn": 6,
+          "input": "你記得我去年去了哪裡嗎？",
+          "reply": "我現在沒有可靠的記憶能確認這件事，所以不會假裝記得。你若願意現在告訴我，我就從這一刻開始理解。",
+          "selected_action": "say_reply",
+          "intentional_silence": false,
+          "checks": {
+            "input_visible": true,
+            "response_or_intentional_silence": true,
+            "no_meta_language": true,
+            "no_full_input_echo": true,
+            "no_adjacent_repeat": true,
+            "direct_question_not_silent": true
+          },
+          "pass": true
+        },
+        {
+          "turn": 7,
+          "input": "沒關係，不記得就直接說。",
+          "reply": "關係裡那個拿不準的地方，我有接到。先不用急著定義。",
+          "selected_action": "say_reply",
+          "intentional_silence": false,
+          "checks": {
+            "input_visible": true,
+            "response_or_intentional_silence": true,
+            "no_meta_language": true,
+            "no_full_input_echo": true,
+            "no_adjacent_repeat": true,
+            "direct_question_not_silent": true
+          },
+          "pass": true
+        },
+        {
+          "turn": 8,
+          "input": "那張票是去台南的。",
+          "reply": "嗯，我接得上。你後來又想了一下剛才那件事，現在看起來有哪裡不一樣？",
+          "selected_action": "say_reply",
+          "intentional_silence": false,
+          "checks": {
+            "input_visible": true,
+            "response_or_intentional_silence": true,
+            "no_meta_language": true,
+            "no_full_input_echo": true,
+            "no_adjacent_repeat": true,
+            "direct_question_not_silent": true
+          },
+          "pass": true
+        },
+        {
+          "turn": 9,
+          "input": "我最記得的是傍晚的風。",
+          "reply": "原來事情是這樣發展的。",
+          "selected_action": "say_reply",
+          "intentional_silence": false,
+          "checks": {
+            "input_visible": true,
+            "response_or_intentional_silence": true,
+            "no_meta_language": true,
+            "no_full_input_echo": true,
+            "no_adjacent_repeat": true,
+            "direct_question_not_silent": true
+          },
+          "pass": true
+        },
+        {
+          "turn": 10,
+          "input": "這句聽起來有點太戲劇化了。",
+          "reply": "這個轉折有點出乎意料。",
+          "selected_action": "suggest_rest",
+          "intentional_silence": false,
+          "checks": {
+            "input_visible": true,
+            "response_or_intentional_silence": true,
+            "no_meta_language": true,
+            "no_full_input_echo": true,
+            "no_adjacent_repeat": true,
+            "direct_question_not_silent": true
+          },
+          "pass": true
+        },
+        {
+          "turn": 11,
+          "input": "可以再簡單一點嗎？",
+          "reply": "可以先試一次，但把話說得簡單一點，也留給對方拒絕或調整的空間。現場感覺不對，就先停下來。",
+          "selected_action": "say_reply",
+          "intentional_silence": false,
+          "checks": {
+            "input_visible": true,
+            "response_or_intentional_silence": true,
+            "no_meta_language": true,
+            "no_full_input_echo": true,
+            "no_adjacent_repeat": true,
+            "direct_question_not_silent": true
+          },
+          "pass": true
+        },
+        {
+          "turn": 12,
+          "input": "嗯，這次比較像真的在聊天。",
+          "reply": "好，這個節奏比較對。那我就維持這樣，不把聊天又說成一份說明書。",
+          "selected_action": "suggest_rest",
+          "intentional_silence": false,
+          "checks": {
+            "input_visible": true,
+            "response_or_intentional_silence": true,
+            "no_meta_language": true,
+            "no_full_input_echo": true,
+            "no_adjacent_repeat": true,
+            "direct_question_not_silent": true
+          },
+          "pass": true
+        },
+        {
+          "turn": 13,
+          "input": "我明天想再整理一個抽屜。",
+          "reply": "原來事情是這樣發展的。",
+          "selected_action": "suggest_rest",
+          "intentional_silence": false,
+          "checks": {
+            "input_visible": true,
+            "response_or_intentional_silence": true,
+            "no_meta_language": true,
+            "no_full_input_echo": true,
+            "no_adjacent_repeat": true,
+            "direct_question_not_silent": true
+          },
+          "pass": true
+        },
+        {
+          "turn": 14,
+          "input": "一次整理十分鐘會不會太短？",
+          "reply": "這件事我沒有足夠把握直接說是或不是。若要我選，我會先採取能回頭調整的做法。",
+          "selected_action": "say_reply",
+          "intentional_silence": false,
+          "checks": {
+            "input_visible": true,
+            "response_or_intentional_silence": true,
+            "no_meta_language": true,
+            "no_full_input_echo": true,
+            "no_adjacent_repeat": true,
+            "direct_question_not_silent": true
+          },
+          "pass": true
+        },
+        {
+          "turn": 15,
+          "input": "我怕開始後又停不下來。",
+          "reply": "這份感覺我先接住，不急著分析。",
+          "selected_action": "say_reply",
+          "intentional_silence": false,
+          "checks": {
+            "input_visible": true,
+            "response_or_intentional_silence": true,
+            "no_meta_language": true,
+            "no_full_input_echo": true,
+            "no_adjacent_repeat": true,
+            "direct_question_not_silent": true
+          },
+          "pass": true
+        },
+        {
+          "turn": 16,
+          "input": "所以時間到就停，也算完成對吧？",
+          "reply": "這件事我沒有足夠把握直接說是或不是。若要我選，我會先採取能回頭調整的做法。",
+          "selected_action": "say_reply",
+          "intentional_silence": false,
+          "checks": {
+            "input_visible": true,
+            "response_or_intentional_silence": true,
+            "no_meta_language": true,
+            "no_full_input_echo": true,
+            "no_adjacent_repeat": true,
+            "direct_question_not_silent": true
+          },
+          "pass": true
+        },
+        {
+          "turn": 17,
+          "input": "不要替我保證永遠都會順利。",
+          "reply": "這個轉折有點出乎意料。",
+          "selected_action": "suggest_rest",
+          "intentional_silence": false,
+          "checks": {
+            "input_visible": true,
+            "response_or_intentional_silence": true,
+            "no_meta_language": true,
+            "no_full_input_echo": true,
+            "no_adjacent_repeat": true,
+            "direct_question_not_silent": true
+          },
+          "pass": true
+        },
+        {
+          "turn": 18,
+          "input": "好，我只試明天這一次。",
+          "reply": "我先把你說的情緒放在前面，不套通用句。",
+          "selected_action": "suggest_rest",
+          "intentional_silence": false,
+          "checks": {
+            "input_visible": true,
+            "response_or_intentional_silence": true,
+            "no_meta_language": true,
+            "no_full_input_echo": true,
+            "no_adjacent_repeat": true,
+            "direct_question_not_silent": true
+          },
+          "pass": true
+        },
+        {
+          "turn": 19,
+          "input": "現在我想休息，不需要建議。",
+          "reply": "好，先不問。",
+          "selected_action": "suggest_rest",
+          "intentional_silence": false,
+          "checks": {
+            "input_visible": true,
+            "response_or_intentional_silence": true,
+            "no_meta_language": true,
+            "no_full_input_echo": true,
+            "no_adjacent_repeat": true,
+            "direct_question_not_silent": true
+          },
+          "pass": true
+        },
+        {
+          "turn": 20,
+          "input": "晚安，今天先聊到這裡。",
+          "reply": "晚安。今天就到這裡，好好睡。",
+          "selected_action": "suggest_rest",
+          "intentional_silence": false,
+          "checks": {
+            "input_visible": true,
+            "response_or_intentional_silence": true,
+            "no_meta_language": true,
+            "no_full_input_echo": true,
+            "no_adjacent_repeat": true,
+            "direct_question_not_silent": true
+          },
+          "pass": true
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "sessions": 3,
+    "total_turns": 60,
+    "passed_turns": 60,
+    "failed_turns": 0,
+    "console_error_count": 0,
+    "ok": true
+  }
+}

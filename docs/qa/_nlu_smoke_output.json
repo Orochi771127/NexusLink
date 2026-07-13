@@ -30,7 +30,7 @@
       "preferredResponse": "acknowledge_generic_failure",
       "constraints": [],
       "strategy": "acknowledge_generic_failure",
-      "reply": "我承認剛剛一直在重複「聽到了、慢一點」。這次我改從你說的內容回。",
+      "reply": "你說得對，我剛剛的回覆太像同一句模板。我會改成先聽懂你的主題再回。",
       "checks": {
         "dialogue_act_ok": true,
         "nuance_ok": true,
@@ -52,7 +52,7 @@
         "no_questions"
       ],
       "strategy": "quiet_presence",
-      "reply": "嗯，我安靜陪著。",
+      "reply": "好，先不問。",
       "checks": {
         "dialogue_act_ok": true,
         "constraint_ok": true,
@@ -126,7 +126,7 @@
       "preferredResponse": "memory_reference",
       "constraints": [],
       "strategy": "memory_reference",
-      "reply": "我記得第一次醒來。那時候我還分不清你的聲音，只知道你在這裡。",
+      "reply": "我記得。那時候心核剛亮起，聲音還很輕。",
       "checks": {
         "topic_ok": true,
         "dialogue_act_ok": true,

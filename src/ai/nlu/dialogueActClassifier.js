@@ -38,7 +38,10 @@ export function classifyDialogueAct(inputText = "", analysis = {}, intent = {}, 
   ) {
     return DIALOGUE_ACTS.GREETING;
   }
-  if (/不管我說什麼|一直講|都會說|重複|generic|一樣的話|好我聽到了|念稿|自然一點|太機械|像在念/.test(text)) {
+  if (
+    /不管我說什麼|一直講|都會說|重複|generic|一樣的話|好我聽到了|念稿|自然一點|太機械|像在念/.test(text) ||
+    /(?:回覆|回复|回答|語氣|语气|說法|说法|這句|这句|那句).{0,16}(?:制式|罐頭|罐头|生硬|不像聊天|像.{0,6}(?:客服|機器|机器|表單|表单|表格))/.test(text)
+  ) {
     return DIALOGUE_ACTS.CORRECTING_RAPHAEL;
   }
   if (/問太多|問太多了/.test(text) && /安靜|少問|不要問/.test(text)) {

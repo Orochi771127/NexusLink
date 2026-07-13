@@ -7,6 +7,7 @@ export function buildConversationDebugTrace({
   composeMeta = null,
   antiLoopDecision = null,
   variantSelection = null,
+  actionPlan = null,
   quickReplies = [],
   reply = ""
 } = {}) {
@@ -33,6 +34,13 @@ export function buildConversationDebugTrace({
           variantId: variantSelection.variantId,
           variationReason: variantSelection.variationReason,
           avoidedVariants: variantSelection.avoidedVariants || []
+        }
+      : null,
+    autonomy: actionPlan
+      ? {
+          selectedAction: actionPlan.selectedAction || null,
+          reason: actionPlan.reason || null,
+          shouldSpeak: Boolean(actionPlan.shouldSpeak)
         }
       : null,
     finalReply: reply,

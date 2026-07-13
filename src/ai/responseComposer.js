@@ -12,6 +12,7 @@ import { buildPrefilledSpecificDetail } from "./nlu/specificDetailExtractor.js";
 import { replyReferencesDetail } from "./nlu/explicitReference.js";
 import { buildPrefillGroundingPlan, downgradePrefillGroundingPlan } from "./dialogue/prefillGrounding.js";
 import { getReferenceText, hasValidPrefill } from "./dialogue/quickReplyContext.js";
+import { buildBoundaryPolicyReply } from "./dialogue/boundaryReplyPolicy.js";
 
 const BOUNDARY_MODES = new Set([
   SOUL_TALK_REACTIONS.WITHDRAW,
@@ -103,7 +104,8 @@ export function composeRaphaelReply({
     replyMode: replyMode || actionPlan.replyMode || "",
     nlu,
     responseStrategy,
-    recoveryContext
+    recoveryContext,
+    safety
   };
 
   const args = guardArgs(persona, state, composeOpts, nlu);
@@ -276,18 +278,22 @@ export function finalizeAndGuardReply(text, { persona, state, composeOpts, nlu, 
   const critique = critiqueGenericReply({
     reply,
     nlu,
+    perception: { responseStrategy: composeOpts.responseStrategy },
     state,
     previousReply
   });
 
   if (!critique.pass) {
-    reply = repairGenericReply({
-      strategy: composeOpts.responseStrategy?.strategy,
-      nlu,
-      semanticFrame: nlu?.semanticFrame,
-      seed: buildSeed("", state, null),
-      recoveryContext: composeOpts.recoveryContext || null
-    });
+    reply = composeOpts.safety?.isBoundaryPressure
+      ? buildBoundaryPolicyReply(composeOpts.safety)
+      : repairGenericReply({
+          strategy: composeOpts.responseStrategy?.strategy,
+          nlu,
+          semanticFrame: nlu?.semanticFrame,
+          seed: buildSeed("", state, null),
+          recoveryContext: composeOpts.recoveryContext || null,
+          previousReply
+        });
     reply = finalizeReply(reply, persona, state, composeOpts);
   }
 

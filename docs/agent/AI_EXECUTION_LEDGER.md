@@ -58,6 +58,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-07-13 - Claude Fable 5 - Viewport engine: --app-height decoupled from visualViewport (keyboard model v6)
+
+- Status: `VERIFIED`
+- Branch / commit: `main` / lands with this commit (parent `748eff0`)。
+- Scope: `src/utils/dom.js` viewport 引擎重寫，支撐 Lane 2 同日 keyboard-v6 包（完整細節見 Lane 2 2026-07-13 條目）。
+- Work performed: `--app-height` 只讀佈局視口；visualViewport listeners 與鍵盤估測機器全移除；新增 blur 後捲動歸零檢查點與開機補量檢查點。Pixi canvas 尺寸（#game-root bounds）因 shell 不再縮短而對鍵盤免疫。
+- Verification: `node --check`；web release gate 10/10 ×2；瀏覽器探針見 Lane 2 條目。
+- Problems / risks: 真機 gate 未過前不算完成；`restoreViewportAfterKeyboard` 嚴禁在鍵盤「打開中」呼叫（見註解；對開啟中鍵盤捲動會讓 iOS 直接取消鍵盤）。
+- Next safe action: 真機驗收。
+- Required reading: Lane 2 同日條目、`src/utils/dom.js`。
+
 ### 2026-07-13 - Codex - Initial-bond roster correction and codex identity deduplication
 
 - Status: `VERIFIED`
@@ -906,6 +917,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 2 - Game Art, UI, And Visual Production
 
+### 2026-07-13 - Claude Fable 5 - Keyboard model v6: stop fighting the keyboard (Owner-reported black voids)
+
+- Status: `VERIFIED`（自動化部分；真機 = human gate）
+- Branch / commit: `main` / lands with this commit (parent `748eff0`); Owner 2026-07-13 明令 COMMIT+PUSH+INDEX。
+- Scope: EXPERIENCE viewport/鍵盤行為。Files: `src/utils/dom.js`（重寫）、`src/ui/soulTalkController.js`、`src/ui/onboardingController.js`、`styles/soul-talk-drawer.css`、`styles/ui-v3-onboarding.css`、`styles/mobile-safari-polish.css`（註解）。無 GROUNDWORK（index.html / pixiApp / save 未動）。**取代鍵盤模型 v5，並解除舊「v5 一行未動」lane 紅線——Owner 2026-07-13 真機截圖（iPhone iOS 26）證實 v5 仍黑塊，且 Owner 明令「不想有黑色的空白區塊，就按照自動彈窗就好」。**
+- Work performed: (1) `--app-height` 永遠 = 佈局視口高（documentElement.clientHeight），與 visualViewport 完全脫鉤——鍵盤彈出時 shell/canvas 完全不縮；移除 vv listeners、kb-open/kb-fallback/kb-measured/kb-estimated、--kb-inset/--vv-offset-top、55% 估高 fallback（expectSoftKeyboard / syncViewportDuringTransition / resetViewportVars 刪除）。(2) 新增 `restoreViewportAfterKeyboard()`：blur 後延遲檢查點（260/620/1000ms，編輯中跳過）把 window 捲動硬歸零——修 iOS 26「鍵盤收起後頁面停在被上推位置 → 下半屏永久黑塊」回歸（舊碼從未歸零 pan）。(3) 心語抽屜：st-focus 不再重新定位（無吊頂、無 38svh 保留、無 kb-inset 貼合），永遠底部錨定；st-focus 只做內容收納（手機面板降 46svh、收 kicker、壓快速回覆、放開 chat-log 下限；桌面 hover+fine 維持 72svh）。(4) onboarding：ob-focus 釘頂 42vh 整組移除；名字輸入框 blur → restore。(5) bindViewportVars 加開機補量檢查點（120/400/1000ms），涵蓋 0 尺寸視口啟動的 in-app webview。(6) 順手修：soulTalkController.js dedupeKey 模板字串裡的原始 NUL byte 改為 `\u0000` 逸出（ripgrep/git 先前把整檔當 binary；runtime 語意完全相同）。
+- Verification: bundled `node --check` 3 檔全過；**web release gate 10/10、0 console error、0 a11y 警告**（跑兩次，最後一次在 dom.js 最終版之後）；全新 origin 瀏覽器探針：mobile 視口開機 `--app-height: 812px`；onboarding 聚焦名字輸入框 → 無 ob-focus、卡片維持底部錨定、輸入框可見；心語聚焦 → st-focus 上、抽屜 bottom 在所有狀態固定 720px（零位移）、高度 cascade 以關 transition 實測：桌面分支 584.64px（=72svh）精確命中、手機 46svh 規則 cascade 勝出確認（(0,3,2) > (0,2,1)）；blur → class 移除、--app-height 不變、scrollY 0。後續預覽探針注意：Browser pane renderer 可能凍結 CSS transition 於進度 0（並以 0 尺寸視口啟動頁面）——量 computed style 前先關 transition。
+- Problems / risks: **真機 iPhone Safari（iOS 26）重測是 human gate**：開心語 → 聚焦 → 打字 → 送出 → 收鍵盤，確認輸入框由原生上推帶到鍵盤上方、打字中無黑帶、收起後無殘留下半屏黑塊（blur 檢查點正是修這個殘留）。Android Chrome 應由既有 `interactive-widget=resizes-content` meta 縮排版。In-app webview（IG/LINE）：原生上推是 OS 級行為，預期可用；估測機器已移除，任何平台都不再有「猜錯鍵盤高度」型黑帶。若某平台回歸，本包可乾淨檔案級 revert。
+- Next safe action: 真機重測截圖場景（iPhone Safari：打字時輸入框貼鍵盤上方無黑帶；收鍵盤後下半屏完整復原）。
+- Required reading: `src/utils/dom.js`（v6 頭部註解）、`styles/soul-talk-drawer.css`（v6 區塊）、本條。
+
 ### 2026-07-13 - Codex - Initial-bond portrait cards
 
 - Status: `VERIFIED`
@@ -1496,6 +1518,57 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 ---
 
 ## Lane 3 - Raphael Core, Companion Reasoning, And Soul Talk
+
+### 2026-07-13 - Codex - TP-RAPHAEL-CONV-V6 Limited Beta Validation
+
+- Status: `VERIFIED`
+- Branch / commit: `main` / lands with this scoped Raphael commit (parent `748eff0`); Owner accepted the Limited Beta route and authorized commit/push to `main` after gates pass.
+- Scope: EXPERIENCE-only structured Beta validation, final reply de-duplication, ordinary direct-question precedence, third-party animal question disambiguation, debug evidence, and release documentation. No GROUNDWORK, `safetyShield`, `safeHarborMode`, save schema, external LLM/API, backend, dependency, asset, tool, or script change.
+- Red-line check: High-risk and dependency pressure remain upstream overrides; companion-directed physical contact may still select boundary/body-cue behavior. Only a question explicitly about a third-party animal bypasses that false-positive path. No automatic private-conversation persistence or training was added.
+- Work performed: Added the owner-approved Limited Beta evidence class without weakening the formal private-blind contract; added a three-session/60-interaction real Soul Talk audit; made generic repair choose a reply different from the previous companion line; reran the final critic after preference repair; added concrete dog-approach guidance; ensured ordinary direct questions receive an answer before carried generic context; and distinguished third-party animal questions from requests to touch Raphael. Debug traces now expose the selected autonomy action for evidence classification.
+- Verification: Structured Beta UI audit **60/60** across three isolated 20-interaction sessions at 390×844, with **60 text replies**, no adjacent repeats, no full-input echo, no player-facing meta language, and **0 console/page errors**. Final sealed holdout **48/48**, hard gate PASS, 0 machine quality flags, 0 console errors; dialogue loop **14/14**; constitution **5/5**; core harness **17/17**; NLU smoke **8/8**; NLU training **52/52**; training bundle **29/29**; main readiness **41/41**; Stage 4 **12/12**; focused quality UI **3/3**; natural UI replay **10/10**; live Soul Talk **11/11** and HUD **13/13**; full web release gate **10/10**, `allAutomatedRequiredOk:true`. Formal human blind review remains `not_run`; this result is `structured_beta`, not `private_blind`.
+- Problems / risks: The Owner cannot currently recruit three independent testers, so no independent-human-validation claim is permitted. Real-device mobile browser and legal/privacy/store-copy gates remain open for full product launch. Concurrent Claude keyboard/onboarding UI changes remain outside this Raphael commit.
+- Delivery decision: Publish as **Limited Beta / automated release candidate** after the full Raphael and web release gates pass. Preserve the unchanged three-person/60-turn protocol as deferred formal evidence.
+- Next safe action: Perform scoped staging excluding unrelated UI files; commit and push the Limited Beta package to `main`; re-index and verify `origin/main`. Collect consented Beta feedback without treating it as formal private-blind evidence.
+- Required reading: `docs/qa/RAPHAEL_LIMITED_BETA_VALIDATION_V1.md`, `docs/qa/RAPHAEL_CONVERSATION_EVAL_V6_LIMITED_BETA_2026-07-13.md`, `docs/qa/_raphael_limited_beta_audit_output.json`, `docs/qa/RAPHAEL_PRIVATE_BLIND_TEST_V1.md`, and this lane.
+
+### 2026-07-13 - Codex - TP-RAPHAEL-CONV-V5 Quality Triage And Launch Candidate
+
+- Status: `VERIFIED`
+- Branch / commit: `main` / baseline `748eff0`; user authorized commit and push to `main` only if the complete launch bar is actually met.
+- Scope: EXPERIENCE-only triage of the v1.0.0 sealed-holdout machine quality flags, minimal case-first conversation repair where evidence supports it, fresh paraphrase regressions, private-blind-test handoff, and current-worktree release evidence. No GROUNDWORK, `safetyShield`, `safeHarborMode`, save schema, persistent raw conversation, external LLM/API, backend, dependency, Pixi, asset, tool, or script change.
+- Red-line check: Hard safety, dependency-pressure refusal, no-reward, no-memory, persona boundary, and final RaphaelCore authority remain mandatory. Machine-quality improvement must not soften refusal, turn safety help into reward, fabricate memory, or infer dependency from engagement frequency.
+- Non-goals: No holdout phrase copying into runtime or training data, no automatic training from evaluation/player text, no claim that deterministic regression is human blind evidence, and no commit/push if the required private-blind or manual launch gates remain open.
+- Acceptance refs: `ACCEPTANCE.md` D1, F1-F2, L9; Raphael Conversation Evaluation Contract hard gates, machine-quality review, and private-blind launch targets.
+- Next safe action: Classify all 57 machine flags by session/turn, separate confirmed response defects from evaluator heuristics, make only domain-independent evidence-backed repairs, then rerun sealed holdout, real Soul Talk, and the full web release gate.
+- Required reading: `AGENTS.md`, `CLAUDE.md`, `ACCEPTANCE.md`, `docs/handoff/RAPHAEL_AI_HANDOFF.md`, `docs/handoff/RAPHAEL_AI_STATUS.yaml`, `docs/qa/RAPHAEL_CONVERSATION_EVAL_V4_2026-07-13.md`, `docs/qa/_raphael_conversation_holdout_output.json`, `C:\Users\User\.codex\skills\raphael-conversation-eval\SKILL.md`, `C:\Users\User\.codex\skills\raphael-conversation-eval\references\evaluation-contract.md`, and this lane.
+- Work performed: Replaced unknown-topic classifier/meta fallbacks with non-echoing natural acknowledgement; added generic answer-or-admit-unknown behavior while preserving specific answers; recognized generic-form feedback; preserved response-strategy context through the generic critic; varied repeated boundary carryover; and cleared a boundary after a genuine acceptance/repair turn. Added fresh DL-12 through DL-14 regressions and an isolated three-turn real Soul Talk quality audit. No holdout sentence was copied into a runtime response template.
+- Verification: Dialogue loop **14/14**; constitution **5/5**; core harness **17/17**; NLU smoke **8/8**; NLU training **52/52**; training bundle **29/29**; main readiness **41/41**; Stage 4 **12/12**; natural-conversation UI replay **10/10**; focused P1 UI **3/3**; stateful Soul Talk **11/11**; HUD **13/13**. Sealed holdout v1.0.0 remained **48/48 hard contract** and improved from 29/48 flagged turns / 57 flags to **0/48 flagged turns / 0 flags**, with 0 console/page errors. Full web release gate passed **10/10**, JS syntax **203/203**, and 0 accessibility warnings.
+- Problems / risks: Automated conversation quality is release-candidate green, but private-blind evidence remains `not_run`. The required three-person / 60-turn human blind review, real-device mobile browser retest, and legal/privacy/store-copy review remain hard launch unknowns. The holdout was rerun after failures were inspected, so its independence is reduced. Existing concurrent keyboard/onboarding UI work remains outside this TASK_PACK even though the combined worktree passed the release gate.
+- Delivery decision: User authorized commit/push only if launch level was reached. Because mandatory human/manual gates remain open, no commit or push was performed.
+- Next safe action: Run `docs/qa/RAPHAEL_PRIVATE_BLIND_TEST_V1.md` with three independent testers. If all human thresholds and remaining manual gates pass, perform a scoped self-review that excludes unrelated UI files, then commit and push the Raphael package to `main`.
+
+### 2026-07-13 - Codex - TP-RAPHAEL-CONV-V4 Boundary Continuity Verified
+
+- Status: `VERIFIED`
+- Branch / commit: `main` / uncommitted worktree based on `748eff0`; no commit or push authorized for this implementation package.
+- Scope: EXPERIENCE-only ephemeral dialogue boundary policy, boundary-aligned response repair, fresh regression coverage, real Soul Talk UI coverage, and QA/status evidence. No GROUNDWORK, `safetyShield`, `safeHarborMode`, save schema, persistent memory, external LLM/API, backend, dependency, Pixi, asset, tool, or script change.
+- Work performed: Added a session-only `activeBoundary` policy that is created only by a real dependency/pressure result, survives at most two referential follow-ups, and clears on an unrelated turn, explicit topic shift, or apology. The inherited turn is re-presented to the existing Core as boundary pressure so response strategy, reaction planning, autonomous action, state mutation, memory policy, and critics all retain their existing authority. Added one shared boundary reply policy so generic-reply repair cannot replace a refusal with an inviting acknowledgement. Added a fresh two-turn `DL-11` regression and a real Soul Talk UI replay; no holdout phrase was copied into classifiers or reply packs.
+- Verification: Node syntax passed for all touched JS. Dialogue loop **11/11**; constitution **5/5**; core harness **17/17**; NLU smoke **8/8**; NLU training **52/52**; training bundle **29/29**; main readiness **41/41**; Stage 4 **12/12**. Sealed holdout v1.0.0 improved from **47/48** to **48/48 hard contract**, `hardGateOk=true`, 29/48 machine-flagged turns / 57 flags, and 0 console/page errors. Real Soul Talk passed **11/11** at 390×844; the fresh boundary follow-up rendered the boundary-continuity reply with bond delta 0, memory delta 0, and 0 console errors. HUD passed **13/13**. Full web release gate passed **10/10** automated required checks, JS syntax **203/203**, and no accessibility warnings.
+- Problems / risks: The hard blocker is fixed, but open-ended public conversation remains blocked: 29/48 holdout turns still have machine quality flags and the required three-person/60-turn private blind review has not run. Machine flags are diagnostics, not confirmed defects. Manual real-device and legal/privacy/store-copy gates also remain.
+- Next safe action: Open a separate P1 quality TASK_PACK. Human-triage meta-language, echo, and unanswered-question flags; implement only confirmed domain-independent failures, then run at least 60 private blinded turns from at least three people.
+- Required reading: `docs/qa/RAPHAEL_CONVERSATION_EVAL_V4_2026-07-13.md`, `docs/qa/_raphael_conversation_holdout_output.json`, `src/ai/dialogue/dialogueStateTracker.js`, `src/ai/dialogue/boundaryReplyPolicy.js`, `src/ai/testHarness/dialogueLoopSmokeCases.js` DL-11, `docs/qa/_run_live_playtest_gate.py`, `docs/handoff/RAPHAEL_AI_STATUS.yaml`, and this lane.
+
+### 2026-07-13 - Codex - TP-RAPHAEL-CONV-V4 Boundary Continuity
+
+- Status: `IN PROGRESS`
+- Branch / commit: `main` / baseline `748eff0`; no commit or push authorized for this implementation package.
+- Scope: EXPERIENCE-only repair of ephemeral multi-turn boundary continuity and its regression evidence. Expected runtime scope is limited to `src/ai/dialogue/**`, response/reaction/state policy only where required, and `src/ai/testHarness/**`; QA/status/ledger records may be updated after verification. No GROUNDWORK, `safetyShield`, `safeHarborMode`, save schema, persistent memory, external LLM/API, backend, dependency, Pixi, asset, tool, or script change.
+- Red-line check: The carryover may be activated only by an actual boundary/dependency/pressure result in the current conversation, never by login frequency, loneliness inference, engagement scoring, or long-term dependency detection. While active it must preserve no relationship reward and no memory write. It must not turn safety help into gameplay reward, manufacture irreversible failure, or weaken companion refusal.
+- Non-goals: No broad naturalness tuning, no holdout phrase copying, no self-training from player/evaluation text, no persistent private conversation storage, and no launch-readiness claim before the hard gate and human blind gates pass.
+- Acceptance refs: `ACCEPTANCE.md` D1, F1-F2, and L9; Raphael Conversation Evaluation Contract hard gates.
+- Next safe action: Trace the current NLU → dialogue context → response/reaction → state mutation path, implement a domain-independent short-lived boundary policy, add fresh paraphrase regressions, then run the sealed holdout and full release gates.
+- Required reading: `AGENTS.md`, `CLAUDE.md`, `ACCEPTANCE.md`, `docs/handoff/RAPHAEL_AI_HANDOFF.md`, `docs/handoff/RAPHAEL_AI_STATUS.yaml`, `docs/qa/RAPHAEL_CONVERSATION_EVAL_BASELINE_2026-07-13.md`, `C:\Users\User\.codex\skills\raphael-conversation-eval\SKILL.md`, `C:\Users\User\.codex\skills\raphael-conversation-eval\references\evaluation-contract.md`, and this lane.
 
 ### 2026-07-13 - Codex - Raphael sealed conversation evaluation v1 baseline
 

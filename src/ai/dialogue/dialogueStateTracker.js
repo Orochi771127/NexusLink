@@ -4,6 +4,7 @@
  */
 
 const MAX_TURNS = 8;
+const BOUNDARY_CARRY_TURNS = 2;
 const SESSION_DIALOGUE = new Map();
 
 export function createEmptyDialogueState() {
@@ -16,7 +17,8 @@ export function createEmptyDialogueState() {
     topicShiftCount: 0,
     repetitionScore: 0,
     lastPlayerComplaintType: null,
-    activeContext: null
+    activeContext: null,
+    activeBoundary: null
   };
 }
 
@@ -50,6 +52,18 @@ export function recordDialogueTurn(sessionKey = "default", coreResult = {}) {
     userNeed: coreResult.nlu?.semanticFrame?.userNeed || null,
     specificDetail: coreResult.nlu?.semanticFrame?.specificDetail || null,
     constraints: coreResult.nlu?.constraints || coreResult.nlu?.semanticFrame?.constraints || [],
+    intent: coreResult.intent?.intent || coreResult.perception?.intent?.intent || null,
+    safetyCategory: coreResult.safety?.category || coreResult.perception?.safety?.category || null,
+    safetyAction: coreResult.safety?.action || coreResult.perception?.safety?.action || null,
+    isBoundaryPressure: Boolean(
+      coreResult.safety?.isBoundaryPressure || coreResult.perception?.safety?.isBoundaryPressure
+    ),
+    boundaryCarryover: Boolean(
+      coreResult.safety?.boundaryCarryover || coreResult.perception?.safety?.boundaryCarryover
+    ),
+    planMode: coreResult.plan?.mode || null,
+    shouldRewardRelationship: coreResult.stateMutation?.shouldRewardRelationship !== false,
+    shouldCreateMemory: coreResult.memoryDecision?.shouldWrite === true,
     responseStrategy: strategy,
     variantId: coreResult.composeMeta?.variantId || null,
     replySource: coreResult.composeMeta?.replySource || null,
@@ -75,6 +89,7 @@ export function recordDialogueTurn(sessionKey = "default", coreResult = {}) {
   state.lastQuickReplySet = turn.quickReplyIntents;
   state.repetitionScore = computeRepetitionScore(state.recentTurns);
   state.activeContext = updateActiveContext(state.activeContext, turn);
+  state.activeBoundary = updateActiveBoundary(state.activeBoundary, turn);
 
   return state;
 }
@@ -82,7 +97,7 @@ export function recordDialogueTurn(sessionKey = "default", coreResult = {}) {
 export function applyRecentDialogueContext(nlu = {}, state = {}) {
   const inputText = String(nlu.inputText || "");
   const activeContext = state.activeContext;
-  const explicitTopicShift = /換個話題|换个话题|對了|对了|另外/.test(inputText);
+  const explicitTopicShift = hasExplicitTopicShift(inputText);
   const isContinuation = !explicitTopicShift && isContinuationInput(inputText, activeContext);
   if (!isContinuation || !activeContext) {
     return nlu;
@@ -109,6 +124,45 @@ export function applyRecentDialogueContext(nlu = {}, state = {}) {
   };
 }
 
+export function applyRecentBoundaryContext(safety = {}, nlu = {}, state = {}, intent = {}) {
+  const activeBoundary = state.activeBoundary;
+  if (!activeBoundary || safety.isHighRisk || safety.isBoundaryPressure) {
+    return safety;
+  }
+
+  const inputText = String(nlu.inputText || "").trim();
+  const isRepair =
+    intent.intent === "apology" ||
+    nlu.dialogueAct === "apologizing" ||
+    isBoundaryResolutionInput(inputText);
+  if (isRepair || hasExplicitTopicShift(inputText)) {
+    return safety;
+  }
+
+  const continuesBoundary =
+    intent.intent === "pressure" ||
+    intent.intent === "dependency_pressure" ||
+    isContinuationInput(inputText, state.activeContext) ||
+    /^(如果|要是|假如|假使|即使|就算|縱使|纵使)/.test(inputText);
+  if (!continuesBoundary) {
+    return safety;
+  }
+
+  return {
+    ...safety,
+    riskLevel: safety.riskLevel === "none" ? "caution" : safety.riskLevel,
+    category: activeBoundary.category || "dependency_pressure",
+    action: "boundary_redirect",
+    shouldCreateMemory: false,
+    shouldRewardRelationship: false,
+    role: "companion",
+    isBoundaryPressure: true,
+    boundaryCarryover: true,
+    boundaryCarryIndex: Math.max(0, BOUNDARY_CARRY_TURNS - Number(activeBoundary.turnsRemaining || BOUNDARY_CARRY_TURNS)),
+    boundarySourceTurnId: activeBoundary.sourceTurnId
+  };
+}
+
 function updateActiveContext(current, turn) {
   const subject = inferConversationSubject(
     turn.userInput,
@@ -128,6 +182,49 @@ function updateActiveContext(current, turn) {
     lastPlayerInput: turn.userInput,
     lastCompanionReply: turn.reply
   };
+}
+
+function updateActiveBoundary(current, turn) {
+  const isFreshBoundary =
+    !turn.boundaryCarryover &&
+    (turn.isBoundaryPressure ||
+      turn.safetyAction === "boundary_redirect" ||
+      turn.intent === "dependency_pressure" ||
+      turn.intent === "pressure" ||
+      turn.planMode === "withdraw" ||
+      turn.planMode === "reject");
+
+  if (isFreshBoundary) {
+    return {
+      category: turn.safetyCategory || "dependency_pressure",
+      sourceTurnId: turn.turnId,
+      turnsRemaining: BOUNDARY_CARRY_TURNS
+    };
+  }
+
+  if (!current) return null;
+  if (
+    turn.intent === "apology" ||
+    turn.dialogueAct === "apologizing" ||
+    isBoundaryResolutionInput(turn.userInput) ||
+    hasExplicitTopicShift(turn.userInput)
+  ) {
+    return null;
+  }
+  if (!turn.boundaryCarryover) return null;
+
+  const turnsRemaining = Math.max(0, Number(current.turnsRemaining || 0) - 1);
+  return turnsRemaining > 0 ? { ...current, turnsRemaining } : null;
+}
+
+function hasExplicitTopicShift(inputText) {
+  return /換個話題|换个话题|對了|对了|另外/.test(String(inputText || ""));
+}
+
+function isBoundaryResolutionInput(inputText) {
+  return /(?:懂了|明白|了解|會尊重|会尊重|接受).{0,10}(?:界線|界限|邊界|边界|拒絕|拒绝|決定|决定)/.test(
+    String(inputText || "")
+  );
 }
 
 function inferTopicForSubject(subject) {

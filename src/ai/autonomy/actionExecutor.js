@@ -1,6 +1,7 @@
 import { composeRaphaelReply } from "../responseComposer.js";
 import { repairGenericReply } from "../nlu/nluReplyBuilder.js";
 import { buildSafetyRedirectReply } from "../safetyShield.js";
+import { buildBoundaryPolicyReply } from "../dialogue/boundaryReplyPolicy.js";
 import { deriveStateMutation } from "../stateMutationPolicy.js";
 import { buildMemoryDecision } from "../memoryWriter.js";
 import { mapHabitatTraceIntent } from "../habitatTraceMapper.js";
@@ -122,12 +123,14 @@ export function executeAutonomousAction({
   const validation = validatePlannedAction(coerced, reply);
   if (!validation.allowed && reply) {
     reply = sanitizeReply(
-      repairGenericReply({
-        strategy: perception.responseStrategy?.strategy,
-        nlu: perception.nlu,
-        semanticFrame: perception.nlu?.semanticFrame,
-        seed
-      }),
+      perception.safety?.isBoundaryPressure
+        ? buildBoundaryPolicyReply(perception.safety)
+        : repairGenericReply({
+            strategy: perception.responseStrategy?.strategy,
+            nlu: perception.nlu,
+            semanticFrame: perception.nlu?.semanticFrame,
+            seed
+          }),
       seed
     ).text;
   }

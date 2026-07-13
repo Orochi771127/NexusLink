@@ -76,6 +76,20 @@ export function buildStrategyReply({
   recoveryContext = null,
   variantIndex = null
 } = {}) {
+  const earlyFrame = semanticFrame || nlu.semanticFrame || {};
+  const earlyAnswer = buildConversationalAnswer({
+    inputText: nlu.inputText,
+    frame: earlyFrame,
+    seed
+  });
+  if (
+    earlyAnswer &&
+    nlu.dialogueAct === "asking_question" &&
+    /(?:嗎|吗)[？?]?$/.test(String(nlu.inputText || "").trim())
+  ) {
+    return earlyAnswer;
+  }
+
   if (Number.isFinite(variantIndex)) {
     return buildStrategyReplyAtVariant({ strategy, nlu, semanticFrame, variantIndex, recoveryContext });
   }
@@ -98,6 +112,17 @@ export function buildStrategyReply({
     seed
   });
   const ventingReply = buildVentingReply({ inputText: nlu.inputText, frame });
+
+  // A concrete answer policy must win over a carried acknowledgement on an
+  // ordinary direct question. Safety and boundary modes are resolved by the
+  // composer before this builder is reached.
+  if (
+    conversationalAnswer &&
+    nlu.dialogueAct === "asking_question" &&
+    /(?:嗎|吗)[？?]?$/.test(String(nlu.inputText || "").trim())
+  ) {
+    return conversationalAnswer;
+  }
 
   const builders = {
     [RESPONSE_STRATEGIES.PRACTICAL_CLARIFICATION]: () => {
@@ -124,6 +149,9 @@ export function buildStrategyReply({
     [RESPONSE_STRATEGIES.ACKNOWLEDGE_FEEDBACK]: () =>
       "這個回饋我收到了。我會減少模板句，先對準你在說的主題。",
     [RESPONSE_STRATEGIES.QUIET_PRESENCE]: () => {
+      if ((frame.constraints || []).includes("not_seeking_comfort")) {
+        return "好，不安慰，也不追問。";
+      }
       // 睡前道別：安靜收尾、祝好眠、絕不強留（no_retention_pull）。
       if (/要去睡|先睡|去睡|晚安/.test(String(nlu.inputText || ""))) {
         return pick(
@@ -229,8 +257,8 @@ export function buildStrategyReply({
       if (topic !== "unknown") {
         return pick(
           [
-            `我先把你說的${topicLabel(topic)}放在前面，不套通用句。`,
-            `這句話的重點在${topicLabel(topic)}，我從這裡回你。`
+            `你提到的${topicLabel(topic)}不只是背景，我會從這裡跟上。`,
+            `${topicLabel(topic)}的部分我沒有略過。先照它現在的樣子放著。`
           ],
           seed
         );
@@ -317,18 +345,56 @@ export function buildStrategyReply({
   return reply;
 }
 
-export function repairGenericReply({ strategy, nlu, semanticFrame, seed, recoveryContext }) {
-  return (
-    buildStrategyReply({ strategy, nlu, semanticFrame, seed, recoveryContext }) ||
+export function repairGenericReply({
+  strategy,
+  nlu,
+  semanticFrame,
+  seed,
+  recoveryContext,
+  previousReply = ""
+}) {
+  const previous = normalizeReplyForComparison(previousReply);
+  const candidates = [];
+
+  for (let offset = 1; offset <= 4; offset += 1) {
+    candidates.push(
+      buildStrategyReply({
+        strategy,
+        nlu,
+        semanticFrame,
+        seed: seed + offset,
+        recoveryContext,
+        variantIndex: seed + offset
+      })
+    );
+  }
+
+  candidates.push(
+    buildStrategyReply({ strategy, nlu, semanticFrame, seed: seed + 5, recoveryContext }),
     buildStrategyReply({
       strategy: RESPONSE_STRATEGIES.CLARIFYING_QUESTION,
       nlu,
       semanticFrame,
-      seed: seed + 1,
-      recoveryContext
-    }) ||
+      seed: seed + 6,
+      recoveryContext,
+      variantIndex: seed + 6
+    })
+  );
+
+  return (
+    candidates.find(
+      (candidate) => candidate && (!previous || normalizeReplyForComparison(candidate) !== previous)
+    ) ||
+    candidates.find(Boolean) ||
     "我在。你想我先懂的是哪一段？"
   );
+}
+
+function normalizeReplyForComparison(text = "") {
+  return String(text || "")
+    .replace(/\s+/g, "")
+    .replace(/[，。！？、；：,.!?;:]/g, "")
+    .trim();
 }
 
 function topicLabel(topic) {
@@ -422,6 +488,9 @@ function resolveVariantLines(strategy, nlu, frame, recoveryContext, prefillConte
     case RESPONSE_STRATEGIES.ACKNOWLEDGE_FEEDBACK:
       return ["這個回饋我收到了。我會減少模板句，先對準你在說的主題。"];
     case RESPONSE_STRATEGIES.QUIET_PRESENCE:
+      if ((frame.constraints || []).includes("not_seeking_comfort")) {
+        return ["好，不安慰，也不追問。", "好，我不補安慰句，也不問你問題。"];
+      }
       if (/要去睡|先睡|去睡|晚安/.test(said)) {
         return ["晚安。今天就到這裡，好好睡。", "好，晚安。我把湖邊的燈調暗一點。", "嗯，去睡吧。這裡有我看著。"];
       }
@@ -584,7 +653,7 @@ function dailyLifeLines(frame = {}) {
   if (/捷運|地鐵|地铁|公車|公交|坐過站|坐过站/.test(detail)) {
     return [
       `差點坐過站真的會讓人瞬間清醒。你這段${detail.includes("糗") ? "糗事" : "插曲"}我收到了。`,
-      "捷運坐過站前被自己拉回來，算是有驚無險；那個超糗的瞬間可以笑一下了。"
+      "發現坐過站的那一刻真的會瞬間清醒；既然最後趕上了，這個小插曲現在可以笑一下。"
     ];
   }
   if (/晚餐|午餐|早餐|便當|便当|青菜|冷掉|難吃|难吃/.test(detail)) {
@@ -688,15 +757,30 @@ function groundedOpenConversationLine(frame = {}, nlu = {}, seed = 0) {
 }
 
 function groundedOpenConversationLines(frame = {}, nlu = {}) {
-  const detail = frame.specificDetail?.text || String(nlu.inputText || "").trim();
-  const shortDetail = truncateDetail(detail, 24);
-  if (shortDetail) {
+  const constraints = frame.constraints || nlu.constraints || [];
+  const context = frame.conversationContext || {};
+  if (constraints.includes("no_questions")) {
     return [
-      `你說的「${shortDetail}」我有接到。你可以照原本的方式繼續說。`,
-      `「${shortDetail}」聽起來像今天的一個片段。我先不替它分類。`
+      "好，先讓它停在這裡。我不整理，也不催你往下說。",
+      "先放著就好。我不追問，也不急著替你找結論。"
     ];
   }
-  return ["我有在聽。你不用先決定這算哪一類，照想到的說就好。"];
+  if (frame.emotionalTone === "gratitude" || frame.emotionalTone === "positive") {
+    return [
+      "這確實值得開心一下。事情不必很大，感覺才算數。",
+      "這種小小的亮點很好。先讓開心留一會兒，不用急著解釋。"
+    ];
+  }
+  if (context.source === "recent_dialogue") {
+    return [
+      "原來後面還有這一層。先不用急著替整件事下結論。",
+      "這讓前面的事多了一個轉折。我跟得上，你照自己的速度說。"
+    ];
+  }
+  return [
+    "這個轉折有點出乎意料。你若想繼續，我會跟著聽。",
+    "原來事情是這樣發展的。先不用急著替它找結論。"
+  ];
 }
 
 function groundedWorkPressureLine(frame = {}) {

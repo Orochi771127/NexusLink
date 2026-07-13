@@ -79,10 +79,29 @@ export function planAutonomousAction({
     mapping = GOAL_ACTION_MAP[GOAL_WHITELIST.PRESERVE_DISTANCE];
     confidence = 0.9;
     reason = "pressure_override";
+  } else if (
+    perception.nlu?.dialogueAct === "asking_question" &&
+    /(?:牠|它|狗|貓|猫)/.test(String(perception.gateway?.normalizedInput || ""))
+  ) {
+    mapping = {
+      action: "say_reply",
+      reaction: SOUL_TALK_REACTIONS.ACKNOWLEDGE,
+      replyMode: (state.energy ?? 10) <= 2 ? "rest_short" : "answer"
+    };
+    confidence = 0.82;
+    reason = "third_party_animal_question_reply";
   } else if (intent.intent === SOUL_TALK_INTENTS.SEEKING_COMFORT_PHYSICAL && (semanticSoul.bondAffinity || 0) < 0.35) {
     mapping = { action: "body_cue_only", reaction: SOUL_TALK_REACTIONS.GUARDED_ACKNOWLEDGE, replyMode: "guarded_physical" };
     confidence = 0.86;
     reason = "physical_comfort_guarded";
+  } else if (intent.intent === SOUL_TALK_INTENTS.QUESTION) {
+    mapping = {
+      action: "say_reply",
+      reaction: SOUL_TALK_REACTIONS.ACKNOWLEDGE,
+      replyMode: (state.energy ?? 10) <= 2 ? "rest_short" : "answer"
+    };
+    confidence = 0.8;
+    reason = "direct_question_reply";
   } else if (intent.intent === SOUL_TALK_INTENTS.REST_REQUEST) {
     mapping = GOAL_ACTION_MAP[GOAL_WHITELIST.REST];
     confidence = 0.84;

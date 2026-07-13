@@ -3,6 +3,7 @@ import { buildPrefilledSpecificDetail } from "../nlu/specificDetailExtractor.js"
 import { getReferenceText, hasValidPrefill } from "../dialogue/quickReplyContext.js";
 import { shouldSuppressExplicitReference } from "./constitutionCritic.js";
 import { PersonaConstitution } from "../persona/PersonaConstitution.js";
+import { buildConversationalAnswer } from "../dialogue/conversationAnswerPolicy.js";
 
 const GENERIC_PATTERNS = [
   /^好[，,]?\s*我聽見了/,
@@ -35,6 +36,8 @@ export function critiqueGenericReply({
   const specificDetail = frame.specificDetail || null;
   const prefillContext = nlu.prefillContext || perception?.nlu?.prefillContext || null;
   const strategy = perception?.responseStrategy?.strategy || "";
+  const policyAnswer = buildConversationalAnswer({ inputText: nlu.inputText, frame, seed: 0 });
+  const isConcretePolicyAnswer = Boolean(policyAnswer && text === policyAnswer);
 
   if (!text) return { pass: true, issues: [], repairHint: "" };
 
@@ -59,6 +62,7 @@ export function critiqueGenericReply({
   if (
     topic !== "unknown" &&
     !hasTopicRef &&
+    !isConcretePolicyAnswer &&
     !["quiet_presence", "acknowledge_generic_failure", "practical_short"].includes(preferred)
   ) {
     issues.push("missing_topic_reference");
@@ -67,7 +71,9 @@ export function critiqueGenericReply({
   if (
     specificDetail?.text &&
     !replyReferencesDetail(text, specificDetail) &&
-    !["quiet_presence", "light_greeting"].includes(preferred)
+    !isConcretePolicyAnswer &&
+    !["quiet_presence", "light_greeting"].includes(preferred) &&
+    !(strategy === "clarifying_question" && topic === "unknown")
   ) {
     issues.push("missing_specific_detail_reference");
   }

@@ -22,7 +22,13 @@ import { buildRecoveryContext } from "./recovery/recoveryLoop.js";
 import { runNluPipeline } from "./nlu/runNluPipeline.js";
 import { selectResponseStrategy, RESPONSE_STRATEGIES } from "./responseStrategySelector.js";
 import { LOW_RECALL_INTENTS } from "./memoryRecallPolicy.js";
-import { applyRecentDialogueContext, getDialogueState, recordDialogueTurn, getRepetitionScore } from "./dialogue/dialogueStateTracker.js";
+import {
+  applyRecentBoundaryContext,
+  applyRecentDialogueContext,
+  getDialogueState,
+  recordDialogueTurn,
+  getRepetitionScore
+} from "./dialogue/dialogueStateTracker.js";
 import { evaluateAntiLoop } from "./dialogue/antiLoopPolicy.js";
 import { selectReplyVariant } from "./dialogue/replyVariantSelector.js";
 import { planQuickReplies } from "./dialogue/quickReplyPlanner.js";
@@ -36,7 +42,7 @@ export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
   const gateway = prepareSoulTalkInput(inputText, state, runtime);
   const corpus = loadRaphaelCorpus();
 
-  const safety = assessInputSafety(gateway.normalizedInput);
+  let safety = assessInputSafety(gateway.normalizedInput);
   const analysis = interpretEmotionInput(gateway.originalInput, state, { repeated: gateway.repeated });
   const intent = classifyIntent(gateway.normalizedInput, analysis, safety);
   const dialogueSessionKey = companionId;
@@ -44,6 +50,7 @@ export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
   let nlu = runNluPipeline(gateway.normalizedInput, analysis, intent, safety);
   nlu = applyRecentDialogueContext(nlu, dialogueState);
   nlu = applyQuickReplyContext(nlu, runtime.quickReply);
+  safety = applyRecentBoundaryContext(safety, nlu, dialogueState, intent);
   let responseStrategy = selectResponseStrategy(nlu, intent, safety);
   responseStrategy = resolveQuickReplyStrategy(runtime.quickReply, responseStrategy);
 
@@ -186,6 +193,7 @@ export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
     composeMeta: execution.composeMeta || null,
     antiLoopDecision,
     variantSelection,
+    actionPlan,
     quickReplies,
     reply: finalReply
   });
