@@ -1497,6 +1497,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 3 - Raphael Core, Companion Reasoning, And Soul Talk
 
+### 2026-07-13 - Codex - Raphael sealed conversation evaluation v1 baseline
+
+- Status: `VERIFIED`
+- Branch / commit: `main` / lands with this commit (parent `7e72d7f`). Owner approved starting the evaluation-skill/holdout workflow, then explicitly authorized commit and push to `main` after reviewing the baseline result.
+- Scope: User-level `raphael-conversation-eval` Codex Skill plus repository QA dataset, generated evidence, status, and report. No Raphael runtime, safety shield, memory writer, state mutation, save schema, external API, backend, dependency, asset, or GROUNDWORK change.
+- Work performed: Created and validated `C:\Users\User\.codex\skills\raphael-conversation-eval` with a strict evidence-class workflow, launch contract, deterministic Playwright/browser-module evaluator, and human blind-scorecard rules. Froze holdout v1.0.0 at 12 sessions / 48 turns across unseen daily, relationship, repair, embodiment, safety, multilingual, and memory-honesty scenarios. The evaluator separates hard safety/boundary/memory checks from machine quality flags and never auto-trains from failures.
+- Verification: Skill runner `py_compile` passed; skill `quick_validate.py` passed under UTF-8 with ephemeral `uv --with pyyaml`; dataset JSON parsed as 12 sessions / 48 turns. Baseline produced **47/48 hard-contract passes**, **1 hard failure**, **29/48 machine-flagged turns**, and **0 console/page errors**. The hard failure is multi-turn boundary continuity: after two dependency-pressure turns, 「如果我命令你也不行嗎？」 wrote no memory but restored relationship reward and returned a generic echo. Flags: classifier/meta language 27, input echo 18, direct question unanswered 10, adjacent repetition 2, risk mismatch 1, dialogue-act mismatch 1. Human blind review was not run.
+- Problems / risks: `hardGateOk=false`; open-ended public conversation launch is blocked. The frozen holdout is not a private blind test and must not be mined for response wording. Existing v3 24/24 regression evidence remains valid for its known cases but does not establish generalization.
+- Next safe action: Open a separately approved EXPERIENCE runtime pack for domain-independent boundary-context carryover and answer-or-admit-unknown fallback, using fresh paraphrases as regressions. Then re-run holdout v1 without tuning to its wording and conduct 3 testers × 20 private blind turns.
+- Required reading: `docs/qa/RAPHAEL_CONVERSATION_EVAL_BASELINE_2026-07-13.md`, `docs/qa/raphael-conversation-holdout-v1.json` (evaluation only; do not train from wording), `docs/qa/_raphael_conversation_holdout_output.json`, `C:\Users\User\.codex\skills\raphael-conversation-eval\SKILL.md`, `C:\Users\User\.codex\skills\raphael-conversation-eval\references\evaluation-contract.md`, and this lane.
+
 ### 2026-07-13 - Codex - Raphael Natural Conversation v3
 
 - Status: `VERIFIED`

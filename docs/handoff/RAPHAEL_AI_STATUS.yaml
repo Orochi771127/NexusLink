@@ -26,6 +26,7 @@ qa:
   nlu_training: "52/52 (2026-07-13; 14 natural-conversation v3 regressions)"
   nlu_smoke: "8/8 (2026-07-13)"
   natural_conversation_audit: "v3: 24 natural, 0 repetitive, 0 context/intent misses across 24 turns; UI replay 10/10 visible, 0 console errors (2026-07-13); v2 baseline was 0/12/12"
+  sealed_holdout_v1: "47/48 hard contract; 29/48 turns machine-flagged; hard gate BLOCKED on multi-turn boundary/no-reward continuity; human blind review not run (2026-07-13)"
   state_migration: "26/26 (2026-07-10)"
   forbidden_phrases: 0
   known_flaky: "null.split console error x2 on first gate run (3 occurrences, rerun always clean; runner now captures url:line)"
@@ -48,6 +49,7 @@ constraints:
 
 blockers: []
 follow_ups:
+  - "P0 sealed-holdout blocker: preserve boundary/no-reward state through referential follow-up questions; validate with fresh paraphrases, not holdout wording"
   - "Human naturalness blind test: 3 testers x 20 turns; track irrelevant, template-like, grounded, and unnecessary-question rates"
   - "Natural conversation candidates: wider paraphrases and local player reply-style preferences"
   - "CH-5: chapter encounters + resonance invite (wires advanceChapterProgress)"
