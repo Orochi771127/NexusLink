@@ -6,7 +6,7 @@ import { updateMemoryLifecycles } from "../engine/memoryLifecycleEngine.js";
 import { isEmotionalHabitatTrace } from "../engine/habitatTraceEngine.js";
 import { applyRaphaelAgentReduction, reduceRaphaelAgentIntent } from "../engine/raphaelIntentReducer.js";
 import { buildEventReflection, composeMemoryReflection } from "../engine/soulTalkComposer.js";
-import { clearSoftKeyboardExpectation, expectSoftKeyboard, qs, resetViewportVars, syncViewportDuringTransition } from "../utils/dom.js";
+import { qs, restoreViewportAfterKeyboard } from "../utils/dom.js";
 import AudioManager from "../audio/audioManager.js";
 
 const DEFAULT_STATUS_TEXT = "心湖 / 安靜待命";
@@ -85,18 +85,13 @@ export function createSoulTalkController({ store, saveCurrentState }) {
 
     messageInput.addEventListener("focus", () => {
       setSoulTalkState("active");
-      expectSoftKeyboard();
-      syncViewportDuringTransition(1200);
-      // Real-device testing (kbtest.html) proved visualViewport/innerHeight never
-      // update on some iOS builds, position:fixed itself breaks while the keyboard
-      // is shown, and even native scroll-into-view can't be trusted (same broken
-      // signal underlies all three). So this doesn't measure the keyboard at all —
-      // body.st-focus just pins the drawer to a static top-of-screen zone (CSS),
-      // which is safely above any keyboard because keyboards only ever grow from
-      // the bottom.
+      // 鍵盤模型 v6（見 dom.js / soul-talk-drawer.css）：不量測、不補償、版面不動，
+      // 交給瀏覽器原生「自動彈窗」行為——iOS 把頁面上推露出輸入框，Android
+      // resizes-content 直接縮排版。body.st-focus 只做「打字時的內容收納」
+      // （面板降高、收次要區塊），讓原生上推後整個面板（含 header）都在可視區內。
       document.body.classList.add("st-focus");
       window.requestAnimationFrame(() => scrollChatLog());
-      // drawer 有 180ms 的 top/height transition，rAF 落在轉場前、量到的是舊高度；
+      // drawer 高度有 180ms transition，rAF 落在轉場前、量到的是舊高度；
       // 轉場結束後補一次，確保鍵盤模式下捲動位置正確。
       window.setTimeout(() => scrollChatLog(), 240);
     });
@@ -106,10 +101,9 @@ export function createSoulTalkController({ store, saveCurrentState }) {
     messageInput.addEventListener("blur", () => {
       setSoulTalkState("idle");
       document.body.classList.remove("st-focus");
-      clearSoftKeyboardExpectation();
-      // 硬歸零版面（iOS 26：鍵盤收起後 vv 殘留變矮/offsetTop 不歸零 → 不靠可能仍不準的 re-measure）。
-      // 好的瀏覽器之後的真實 resize 事件（bindViewportVars 的 vv listener）會再校正。
-      resetViewportVars();
+      // iOS 26 回歸：鍵盤收起後頁面可能停在被上推的位置（下半屏黑塊）。
+      // 延遲檢查點把捲動歸零；玩家若立刻聚焦別的輸入框會自動跳過（見 dom.js）。
+      restoreViewportAfterKeyboard();
     });
   }
 
@@ -359,7 +353,7 @@ export function createSoulTalkController({ store, saveCurrentState }) {
     let prevKey = null;
     for (const item of visibleHistory) {
       const role = item.role === "fox" ? "companion" : item.role;
-      const dedupeKey = `${role} ${item.text}`;
+      const dedupeKey = `${role}\u0000${item.text}`;
       // 連續相同訊息不重複顯示（僅 companion/system；玩家的重複輸入必須照實顯示）
       if (role !== "player" && dedupeKey === prevKey) continue;
       prevKey = dedupeKey;
@@ -379,8 +373,8 @@ export function createSoulTalkController({ store, saveCurrentState }) {
   }
 
   // 捲動策略：玩家剛送出的那句要「錨定在可視區頂端」，回覆在它下方陸續出現——
-  // 鍵盤模式 drawer 只剩 42vh、可視 2~4 行時，盲捲到底會把玩家自己的話推出視野
-  //（私測回報：「我打出去的自我看不到內容，就只有他回覆」）。無錨點時維持捲到底。
+  // 打字中（st-focus）drawer 收到 46svh、可視只剩幾行時，盲捲到底會把玩家自己的話
+  // 推出視野（私測回報：「我打出去的自我看不到內容，就只有他回覆」）。無錨點時維持捲到底。
   function scrollChatLog() {
     if (!chatLog) return;
     let anchorLine = null;

@@ -1,4 +1,4 @@
-import { qs, qsa } from "../utils/dom.js";
+import { qs, qsa, restoreViewportAfterKeyboard } from "../utils/dom.js";
 import { getCompanionById } from "../data/companionRegistry.js";
 import { isVeteranSave } from "../state/store.js";
 import EventBus from "../utils/eventBus.js";
@@ -56,14 +56,11 @@ export function createOnboardingController({ store, saveCurrentState, onBondChos
         saveIdentity(false);
       }
     });
-    // 鍵盤模型 v5（同 Soul Talk drawer，見 soul-talk-drawer.css）：不偵測、不量測、不用 fixed。
-    // kbtest.html 真機三輪已證實 visualViewport/innerHeight/fixed/scroll-into-view 全不可靠。
-    // focus 時 body.ob-focus 直接把身份卡釘到螢幕頂端 42vh 安全區（CSS），鍵盤只會從下緣往上長。
-    nameInput?.addEventListener("focus", () => {
-      document.body.classList.add("ob-focus");
-    });
+    // 鍵盤模型 v6（見 dom.js / ui-v3-onboarding.css，2026-07-13 Owner 指示）：
+    // 不偵測、不量測、也不再釘頂（v5 的 body.ob-focus 已移除）。聚焦時交給
+    // 瀏覽器原生「自動彈窗」上推；收起後把 iOS 26 可能殘留的上推歸零。
     nameInput?.addEventListener("blur", () => {
-      document.body.classList.remove("ob-focus");
+      restoreViewportAfterKeyboard();
     });
   }
 
@@ -283,8 +280,6 @@ export function createOnboardingController({ store, saveCurrentState, onBondChos
 
   function showStep(step, state) {
     if (shell) shell.dataset.onboardingStep = step;
-    // 安全網：離開 identity 步驟時輸入框可能來不及觸發 blur，避免 ob-focus 卡住。
-    if (step !== "identity") document.body.classList.remove("ob-focus");
     steps.forEach((stepEl) => {
       const isActiveStep = stepEl.dataset.step === step;
       stepEl.classList.toggle("is-active", isActiveStep);

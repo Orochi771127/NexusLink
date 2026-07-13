@@ -13,7 +13,8 @@ html[data-ui="v2"] .soul-talk-drawer {
      只有列寬，100vw 會讓 drawer 溢出容器與視口（右緣被裁切，2026-07-06 iPad 768 實測 +70px）。 */
   width: auto;
   max-width: 720px;
-  /* 高度隨可視視窗（--app-height）收縮：鍵盤開啟時 visualViewport 變矮 → drawer 變矮 → 不溢出、不留黑塊。 */
+  /* 高度上限吃 --app-height（佈局視口高；鍵盤模型 v6 下鍵盤不再改變它——見 dom.js）。
+     Android resizes-content 縮排版時它才會真的變小，drawer 隨之收合、不溢出。 */
   height: min(72svh, calc(var(--app-height, 100dvh) - var(--top-safe) - 24px));
   max-height: none;
   display: flex;
@@ -30,39 +31,27 @@ html[data-ui="v2"] .soul-talk-drawer {
 }
 
 /* =========================================================================
-   iOS 鍵盤模型 v5 —— 不偵測、不量測、不用 fixed。
-   真機（kbtest.html 三輪測試）已證實這裝置上以下三個標準機制全部不可靠：
-   (1) visualViewport / innerHeight 鍵盤開啟時不會更新；
-   (2) position:fixed 在鍵盤顯示期間本身會失效（畫面捲動時會跟著跑掉）；
-   (3) 瀏覽器原生 scroll-into-view 也不可信（依賴同一組壞掉的訊號）。
-   三條路都走不通，所以 focus 時先用保守底部保留區貼近鍵盤上緣；若 visualViewport
-   或 dom.js fallback 量到 --kb-inset，則用實際 inset 微調。body.st-focus 由
-   soulTalkController.js 的 input focus/blur 切換，kb-open 只作被動補償訊號。
+   鍵盤模型 v6 —— 不對抗鍵盤（2026-07-13 Owner 指示，取代 v5；歷程見 dom.js）。
+   v5 的「吊頂 + 38svh 保留區 + --kb-inset 貼合」在真機 iOS 26 仍產生黑塊：
+   iOS 原生已把頁面上推（自動彈窗）露出輸入框，CSS 再自行墊高 = 雙重抬升——
+   抽屜浮在半空、下方露出文件外的黑底；鍵盤收起後 visualViewport 殘值又讓
+   版面卡在錯位。v6 徹底不補償：
+   - 抽屜永遠底部錨定（與未聚焦時同一位置），不吊頂、不保留、不量鍵盤。
+   - iOS Safari：鍵盤覆蓋頁面，瀏覽器原生上推露出輸入框；收起後由
+     dom.js restoreViewportAfterKeyboard 把殘留上推歸零。
+   - Android Chrome：viewport meta interactive-widget=resizes-content 直接
+     縮排版，--app-height 隨之變小，抽屜自然落在鍵盤上方。
+   - body.st-focus（打字中，soulTalkController 切換）只做「內容收納」：
+     面板降到 46svh、收 kicker、壓縮快速回覆、放開 chat-log 下限——
+     原生上推後整個面板（含 header）都落在鍵盤上方的可視區內。
    ========================================================================= */
 html[data-ui="v2"] .soul-talk-drawer {
-  transition: opacity 180ms ease, transform 180ms ease, top 180ms ease, bottom 180ms ease,
-    height 180ms ease, max-height 180ms ease;
+  transition: opacity 180ms ease, transform 180ms ease, height 180ms ease;
 }
 
-/* 鍵盤開啟：drawer 往上長，composer 底部貼合鍵盤上緣（不再用 42svh 地板墊高）。 */
+/* 打字中：面板收矮（仍底部錨定）。46svh 讓原生上推後 header 也保持可見。 */
 html[data-ui="v2"] body.st-focus .soul-talk-drawer {
-  top: max(8px, var(--top-safe));
-  height: auto;
-  max-height: none;
-  border-radius: 22px 22px 18px 18px;
-}
-
-/* 已量到鍵盤（真實 visualViewport 或估計 fallback，kb-open 由 dom.js 切換）：
-   底部 = 實際鍵盤高度 + 8px → 精準貼合。Android resizes-content 下 --kb-inset≈0，
-   版面已縮短，同一式子一樣貼合。 */
-html[data-ui="v2"] body.st-focus.kb-open .soul-talk-drawer {
-  bottom: calc(var(--kb-inset, 0px) + 8px);
-}
-
-/* 開啟中「尚未量到」（量測空窗 / 完全不回報的 in-app webview）：保守保留一段，
-   避免輸入框在量到之前瞬間被鍵盤蓋住。比舊的 42svh 小，量到後即由上面規則接管貼合。 */
-html[data-ui="v2"] body.st-focus:not(.kb-open) .soul-talk-drawer {
-  bottom: calc(38svh + 8px);
+  height: min(46svh, calc(var(--app-height, 100dvh) - var(--top-safe) - 24px));
 }
 
 html[data-ui="v2"] body.st-focus .soul-talk-drawer .soul-drawer-kicker {
@@ -75,29 +64,33 @@ html[data-ui="v2"] body.st-focus .soul-talk-drawer .quick-reply-row {
   overflow-y: hidden;
 }
 
+/* 打字中放開 chat-log 的 96px 可讀下限：46svh 面板在小螢幕（如 iPhone SE）
+   也要裝得下 header + 輸入列而不溢出；flex 自動把剩餘空間分給訊息列。 */
+html[data-ui="v2"] body.st-focus .soul-talk-drawer .chat-log {
+  min-height: 0;
+}
+
 /* =========================================================================
-   桌面 / 實體鍵盤環境（hover + 精確指標）：沒有虛擬鍵盤要讓位。
-   st-focus 的「吊到頂部 + 底部保留 38svh」只為虛擬鍵盤存在；在電腦上聚焦輸入框
-   時應維持通訊軟體常態（底部錨定）。只覆蓋 :not(.kb-open) —— 觸控筆電若真的
-   彈出虛擬鍵盤，dom.js 會量到 --kb-inset 並切 kb-open，v5 貼合規則不受此覆蓋。
-   手機（pointer: coarse）完全不命中此塊：鍵盤模型 v5 原樣保留（ledger 紅線）。
+   桌面 / 實體鍵盤環境（hover + 精確指標）：沒有虛擬鍵盤要讓位，
+   聚焦時維持通訊軟體常態——尺寸與位置都不變。
    ========================================================================= */
 @media (hover: hover) and (pointer: fine) {
-  html[data-ui="v2"] body.st-focus:not(.kb-open) .soul-talk-drawer {
-    top: auto;
-    bottom: calc(var(--bottom-safe) + var(--nav-block-h, 104px) + 12px);
+  html[data-ui="v2"] body.st-focus .soul-talk-drawer {
     height: min(72svh, calc(var(--app-height, 100dvh) - var(--top-safe) - 24px));
-    border-radius: 28px 28px 18px 18px;
   }
 
-  html[data-ui="v2"] body.st-focus:not(.kb-open) .soul-talk-drawer .soul-drawer-kicker {
+  html[data-ui="v2"] body.st-focus .soul-talk-drawer .soul-drawer-kicker {
     display: block;
   }
 
-  html[data-ui="v2"] body.st-focus:not(.kb-open) .soul-talk-drawer .quick-reply-row {
+  html[data-ui="v2"] body.st-focus .soul-talk-drawer .quick-reply-row {
     max-height: 96px;
     padding-bottom: 0;
     overflow-y: auto;
+  }
+
+  html[data-ui="v2"] body.st-focus .soul-talk-drawer .chat-log {
+    min-height: clamp(0px, calc(var(--app-height, 100dvh) - 220px), 96px);
   }
 }
 
@@ -256,10 +249,9 @@ html[data-ui="v2"] .soul-talk-drawer #message-input {
   height: 46px;
 }
 
-/* 對話可讀下限「自適應」：可視高度（--app-height，鍵盤開啟時變小）夠時保 96px 可讀；
-   可視高度很小（大鍵盤 / 橫向）時自動讓位給輸入列，避免輸入框被擠到鍵盤下方而看不到。
-   下限隨 --app-height 線性縮放後，再扣掉 220px（header/輸入列/間距的固定開銷 + 裝置字體
-   度量安全餘裕），確保 floor 永遠 <= 可用空間、輸入框不被擠出；不需要 JS。
+/* 對話可讀下限：一般（未打字）狀態保 96px 可讀。極矮視口（橫向手機 / Android
+   resizes-content 縮排版）時隨 --app-height 線性讓位給輸入列；打字中（st-focus）
+   另由上方規則放開為 0（v6：鍵盤不再改變 iOS 的 --app-height，收納靠面板降高）。
    注意：此值只是「下限」，chat-log 以 flex 自動填滿可用空間，正常高度仍會 >= 96px。 */
 html[data-ui="v2"] .soul-talk-drawer .chat-log {
   min-height: clamp(0px, calc(var(--app-height, 100dvh) - 220px), 96px);
@@ -267,8 +259,8 @@ html[data-ui="v2"] .soul-talk-drawer .chat-log {
 
 /* ---- Backdrop：心語是非阻斷式抽屜（aria-modal=false）。
    一般 modal 的 62% 深色遮罩在夜景上讀起來就是「黑掉」；心語改用淡遮罩，
-   讓棲地與夥伴保持可見（V3 scene visibility）。鍵盤開啟（st-focus）時 drawer
-   收到上半部，下方帶狀區改為極淡漸層——顯示湖面棲地，而非黑色空區（真機回報修正）。 ---- */
+   讓棲地與夥伴保持可見（V3 scene visibility）。打字中（st-focus）遮罩再調淡，
+   原生上推後露出的棲地保持可見，而非黑色空區。 ---- */
 html[data-ui="v2"] .panel-layer[data-active-panel="soulTalk"] .panel-backdrop {
   background: radial-gradient(circle at 50% 70%, rgba(4, 107, 255, 0.08), rgba(2, 6, 12, 0.34));
 }

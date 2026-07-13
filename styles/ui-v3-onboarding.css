@@ -17,33 +17,14 @@ html[data-ui="v2"] .onboarding-layer[hidden] {
 }
 
 /* =========================================================================
-   鍵盤模型 v5（同 soul-talk-drawer.css）—— 不偵測、不量測、不用 fixed。
-   真機（kbtest.html 三輪測試）已證實 visualViewport/innerHeight 不更新、
-   position:fixed 在鍵盤顯示期間失效、原生 scroll-into-view 不可信。
-   所以名字輸入框 focus 時（body.ob-focus，由 onboardingController 切換），
-   把身份卡從底部改釘到螢幕頂端 42vh 安全區——鍵盤只會從螢幕下緣往上長，
-   頂端永遠不會被蓋到，不需要知道鍵盤實際高度。舊 body.kb-open 規則已移除。
+   鍵盤模型 v6（同 soul-talk-drawer.css，2026-07-13 Owner 指示）—— 不對抗鍵盤。
+   v5「focus 時把身份卡釘到頂端 42vh」與 iOS 原生上推疊加會造成位移與黑塊，
+   整組 body.ob-focus 規則已移除。名字輸入框聚焦時版面不動：iOS 原生把頁面
+   上推露出輸入框（自動彈窗），Android resizes-content 縮排版；卡片本身
+   max-height 受 --app-height 約束且可內部捲動（見 .onboarding-shell）。
+   鍵盤收起後的殘留上推由 onboardingController 呼叫
+   restoreViewportAfterKeyboard 歸零。
    ========================================================================= */
-html[data-ui="v2"] body.ob-focus .onboarding-layer {
-  place-items: start center;
-  padding-top: max(12px, var(--top-safe));
-}
-
-html[data-ui="v2"] body.ob-focus .onboarding-shell {
-  min-height: 0;
-  max-height: 42vh;
-  overflow-y: auto;
-}
-
-html[data-ui="v2"] body.ob-focus .onboarding-step {
-  min-height: 0;
-  justify-content: flex-start;
-  gap: 10px;
-}
-
-html[data-ui="v2"] body.ob-focus .onboarding-step h2 {
-  font-size: clamp(1.2rem, 5vw, 1.6rem);
-}
 
 html[data-ui="v2"] body.onboarding-active .core-hud,
 html[data-ui="v2"] body.onboarding-active .quick-hud,
@@ -61,9 +42,10 @@ html[data-ui="v2"] .onboarding-shell {
   padding: clamp(22px, 5vw, 34px);
   border: 1px solid var(--v3-line-strong);
   border-radius: var(--v3-radius-card);
-  /* 鍵盤/短高度安全：盒子高度受可視視窗（--app-height，dom.js 量 visualViewport）約束並可內部捲動，
-     避免身份頁的「繼續/稍後決定」action 落到 viewport 之外而點不到（不必先收鍵盤）。
-     max-height 平滑過渡：鍵盤動畫期間 --app-height 可能變化好幾次，用 transition 取代瞬間跳動。 */
+  /* 短高度安全：盒子高度受 --app-height（佈局視口高，見 dom.js v6）約束並可內部捲動，
+     避免身份頁的「繼續/稍後決定」action 落到 viewport 之外而點不到。
+     iOS 鍵盤不改變 --app-height（覆蓋+原生上推）；Android resizes-content 縮排版時
+     它會變小，max-height 的 transition 讓收縮平滑。 */
   max-height: calc(var(--app-height, 100dvh) - var(--top-safe) - var(--bottom-safe) - 32px);
   transition: max-height 220ms ease;
   overflow-x: hidden;

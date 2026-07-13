@@ -6,18 +6,26 @@ export function qsa(selector, root = document) {
   return Array.from(root.querySelectorAll(selector));
 }
 
-const SOFT_KEYBOARD_FALLBACK_DELAY_MS = 340;
-const SOFT_KEYBOARD_FALLBACK_RATIO = 0.55;
-let softKeyboardExpectedUntil = 0;
-let softKeyboardFallbackAfter = 0;
-let lastSoftKeyboardHeight = 0;
-
-function hasTouchKeyboard() {
-  return Boolean(
-    typeof navigator !== "undefined" &&
-      (navigator.maxTouchPoints > 0 || "ontouchstart" in window)
-  );
-}
+// ============================================================================
+// 鍵盤模型 v6 —— 不對抗鍵盤（2026-07-13 Owner 指示：改用瀏覽器原生「自動彈窗」
+// 行為，黑色空白區塊不可接受；取代 v5 的吊頂／保留區／--kb-inset 貼合整套補償）。
+//
+// 歷史教訓（v1–v5，詳見 ledger 2026-06-29 ~ 2026-07-04 各條）：所有「量測或猜測
+// 鍵盤高度、把 --app-height 縮成 visualViewport 高」的路線，真機 iOS 26 都以黑塊
+// 收場——vv 有時整段不回報、收起後 height 殘留變矮、offsetTop 不歸零；只要版面
+// 高度跟著 vv 走，.app-shell 就被剪短，文件底下露出 html 背景 = 黑色空白區塊。
+//
+// v6 原則：
+//   1. --app-height 永遠 = 佈局視口高度（documentElement.clientHeight），與
+//      visualViewport 完全脫鉤。鍵盤彈出時版面一動不動：
+//      - iOS Safari：鍵盤覆蓋頁面，瀏覽器原生把頁面上推（pan）露出輸入框。
+//      - Android Chrome：viewport meta 已含 interactive-widget=resizes-content，
+//        鍵盤直接縮排版 → clientHeight 真的變小 → resize 事件驅動重新量測。
+//   2. 鍵盤收起後唯一的修正：把 iOS 26 可能殘留的頁面上推捲回 0
+//      （restoreViewportAfterKeyboard），修「收起後下半屏黑塊」。
+//   3. 鍵盤「打開中」嚴禁任何主動捲動／搬動（真機證實會讓 iOS 直接取消顯示
+//      鍵盤）；restore 只掛在 blur 之後的延遲檢查點，且聚焦中一律跳過。
+// ============================================================================
 
 function isTextEditingActive() {
   const active = document.activeElement;
@@ -26,78 +34,12 @@ function isTextEditingActive() {
   return tag === "input" || tag === "textarea" || active.isContentEditable;
 }
 
-function estimateKeyboardHeight(layoutHeight) {
-  const remembered = lastSoftKeyboardHeight || 0;
-  const estimated = remembered || Math.round(layoutHeight * SOFT_KEYBOARD_FALLBACK_RATIO);
-  const minHeight = Math.min(260, Math.max(180, layoutHeight - 360));
-  const maxHeight = Math.max(minHeight, layoutHeight - 120);
-  return Math.min(maxHeight, Math.max(minHeight, estimated));
-}
-
-export function expectSoftKeyboard(durationMs = 1600) {
-  const now = Date.now();
-  softKeyboardExpectedUntil = now + durationMs;
-  softKeyboardFallbackAfter = now + SOFT_KEYBOARD_FALLBACK_DELAY_MS;
-}
-
-export function clearSoftKeyboardExpectation() {
-  softKeyboardExpectedUntil = 0;
-  softKeyboardFallbackAfter = 0;
-  document.body?.classList.remove("kb-fallback");
-}
-
-// 鍵盤收起硬歸零（iOS 26 回歸：鍵盤收起後 visualViewport.offsetTop 不歸零、height 殘留變矮，
-// 導致 fixed 元素殘留錯位、drawer 卡在變矮的高度）。blur 時直接把版面還原成「無鍵盤」狀態，
-// 不依賴可能仍不可靠的 vv 重量值。之後真實的 resize 事件會再校正。
-export function resetViewportVars() {
-  const root = document.documentElement;
-  const full = Math.max(root.clientHeight || 0, window.innerHeight || 0);
-  if (full > 0) root.style.setProperty("--app-height", `${full}px`);
-  root.style.setProperty("--vv-offset-top", "0px");
-  root.style.setProperty("--kb-inset", "0px");
-  lastSoftKeyboardHeight = 0;
-  document.body?.classList.remove("kb-open", "kb-fallback", "kb-measured", "kb-estimated");
-}
-
 export function setViewportVars() {
-  const vv = window.visualViewport;
-  const rawHeight = Math.round(vv?.height || window.innerHeight);
-  const offsetTop = Math.max(0, Math.round(vv?.offsetTop || 0));
   const root = document.documentElement;
-
-  // 穩定的版面高度基準（不隨鍵盤縮短）：某些 iOS innerHeight 會跟鍵盤縮短，clientHeight 才是 layout viewport。
-  const layoutHeight = Math.max(root.clientHeight || 0, window.innerHeight || 0, rawHeight);
-  let height = rawHeight;
-  let kbInset = Math.max(0, Math.round(layoutHeight - rawHeight - offsetTop));
-  const detectedKeyboard = kbInset > 80;
-  let usingKeyboardFallback = false;
-
-  if (detectedKeyboard) {
-    lastSoftKeyboardHeight = rawHeight;
-  } else if (
-    hasTouchKeyboard() &&
-    isTextEditingActive() &&
-    Date.now() >= softKeyboardFallbackAfter &&
-    Date.now() < softKeyboardExpectedUntil
-  ) {
-    height = estimateKeyboardHeight(layoutHeight);
-    kbInset = Math.max(0, Math.round(layoutHeight - height - offsetTop));
-    usingKeyboardFallback = kbInset > 80;
-  }
-
-  // 只用「真的量到」的 visualViewport 值，不猜測、不主動觸發捲動。
-  // （先前版本試過「捲動 jiggle 強迫重算」與「focus 當下立即套用估計高度」，
-  // 兩者都會在鍵盤正在打開的瞬間搬動 focus 元素的容器／觸發捲動事件，
-  // 這是 iOS 已知會直接取消顯示鍵盤的反模式 —— 真機證實會整個不彈鍵盤，比黑塊更糟。
-  // 現在改成純被動讀值 + CSS transition 讓最終套用的高度變化平滑，不再主動干預鍵盤生命週期。）
-  root.style.setProperty("--app-height", `${height}px`);
-  root.style.setProperty("--vv-offset-top", `${offsetTop}px`);
-  root.style.setProperty("--kb-inset", `${kbInset}px`);
-  document.body?.classList.toggle("kb-open", kbInset > 80);
-  document.body?.classList.toggle("kb-fallback", usingKeyboardFallback);
-  // 區分「真的量到」(vv/VK) 與「估計」(壞 webview)，供 CSS/除錯用；貼合邏輯只需 kb-open。
-  document.body?.classList.toggle("kb-measured", detectedKeyboard);
-  document.body?.classList.toggle("kb-estimated", usingKeyboardFallback);
+  // 佈局視口高度：iOS 鍵盤不改 clientHeight（覆蓋模式）；Android resizes-content
+  // 縮排版時 clientHeight 會真的變小並發 resize。innerHeight 僅作 0 值保險。
+  const height = Math.max(root.clientHeight || 0, window.innerHeight || 0);
+  if (height > 0) root.style.setProperty("--app-height", `${height}px`);
 
   // Measure nav height after image/CSS layout; page and soul-strip reserve this.
   const nav = document.querySelector(".bottom-nav");
@@ -114,45 +56,38 @@ export function setViewportVars() {
   }
 }
 
-// iOS 虛擬鍵盤要 ~250–350ms 才動畫完成，且某些版本要等鍵盤完全展開後才會回報新的
-// visualViewport.height。此函式在 focus/blur 後的整段鍵盤動畫窗口內，被動地重複重量 viewport
-// （只讀值、不捲動、不搬動任何元素），讓 --app-height 能盡快跟上鍵盤真正的可視高度。
-// 用「rAF 迴圈 + setTimeout 檢查點」雙保險：iOS Safari 在鍵盤動畫期間有時會節流/暫停 rAF，
-// 故再加幾個固定時間點的 setTimeout 重量，rAF 即使被節流也能補上。重複呼叫只延長 rAF 截止時間。
-// 注意：這裡刻意只「讀」，不做任何主動觸發（捲動 jiggle、focus 時立即套用估計高度）——
-// 兩者都曾在真機證實會讓 iOS 直接取消顯示鍵盤（比黑塊更糟）。剩餘的版面跳動改交給 CSS
-// transition（見 mobile-safari-polish.css / soul-talk-drawer.css）讓套用新高度時是平滑滑入，
-// 而不是瞬間跳動。
-let viewportSyncRaf = 0;
-let viewportSyncDeadline = 0;
-const VIEWPORT_SYNC_CHECKPOINTS = [60, 140, 260, 420, 620, 820];
-export function syncViewportDuringTransition(durationMs = 800) {
-  viewportSyncDeadline = Date.now() + durationMs;
-  for (const t of VIEWPORT_SYNC_CHECKPOINTS) {
-    if (t <= durationMs + 40) window.setTimeout(setViewportVars, t);
-  }
-  if (viewportSyncRaf) return;
-  const tick = () => {
+// iOS 26 回歸（真機截圖 2026-07-13）：鍵盤收起後，Safari 有時不把「為了露出輸入框
+// 而上推的頁面」推回原位（visual viewport 的 offsetTop 殘留），整頁停在被推高的
+// 位置，文件底部以下露出 html 背景 = 下半屏黑塊。把捲動硬歸零即可復原；本頁本身
+// 不可捲（overflow hidden、文件高 = 視口高），因此歸零在正常狀態是 no-op、安全。
+// 時點：只在 blur 後的延遲檢查點執行（跨過 ~250–350ms 的收鍵盤動畫）。不立即執行
+// ——blur 當下可能正處於「聚焦下一個輸入框」的空窗（activeElement 還是 body），
+// 對開著的鍵盤捲動是 iOS 已知會直接取消鍵盤的反模式；檢查點時刻若又在編輯中，
+// 一律跳過。
+const RESTORE_CHECKPOINTS_MS = [260, 620, 1000];
+let restoreTimers = [];
+export function restoreViewportAfterKeyboard() {
+  for (const timer of restoreTimers) window.clearTimeout(timer);
+  const restore = () => {
+    if (isTextEditingActive()) return;
+    window.scrollTo(0, 0);
+    const scroller = document.scrollingElement || document.documentElement;
+    scroller.scrollTop = 0;
+    scroller.scrollLeft = 0;
     setViewportVars();
-    if (Date.now() < viewportSyncDeadline) {
-      viewportSyncRaf = requestAnimationFrame(tick);
-    } else {
-      viewportSyncRaf = 0;
-    }
   };
-  viewportSyncRaf = requestAnimationFrame(tick);
+  restoreTimers = RESTORE_CHECKPOINTS_MS.map((ms) => window.setTimeout(restore, ms));
 }
 
 export function bindViewportVars() {
   setViewportVars();
   // Re-measure after first paint; image-backed nav can be zero before layout.
   requestAnimationFrame(setViewportVars);
+  // 開機保險：部分 in-app webview（與預覽面板）會以 0 尺寸視口先跑 boot，
+  // 首輪量測被 height>0 守門擋下（此時 CSS fallback 100dvh 接手，畫面仍正確），
+  // 之後也不一定補發 resize。等視口就緒後補量幾次——純讀值，與鍵盤生命週期無關。
+  for (const ms of [120, 400, 1000]) window.setTimeout(setViewportVars, ms);
   window.addEventListener("load", setViewportVars);
   window.addEventListener("resize", setViewportVars);
   window.addEventListener("orientationchange", setViewportVars);
-
-  if (window.visualViewport) {
-    window.visualViewport.addEventListener("resize", setViewportVars);
-    window.visualViewport.addEventListener("scroll", setViewportVars);
-  }
 }
