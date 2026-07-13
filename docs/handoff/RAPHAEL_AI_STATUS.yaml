@@ -32,7 +32,7 @@ qa:
   dialogue_loop: "21/21 incl. six care/symbolic cases + one safety-precedence case (2026-07-14; RC)"
   sealed_holdout_v1: "48/48 hard contract; 0 machine quality flags; hard gate PASS; human blind review not_run (2026-07-14; RC + V6)"
   web_release_gate: "10/10 automated required checks; allAutomatedRequiredOk=true (RC + V6)"
-  js_syntax: "204/204 (2026-07-14; RC)"
+  js_syntax: "205/205 (2026-07-14; commercial ship pack gate)"
   state_migration: "30/30 (2026-07-14; RC)"
   live_playtest_gate: "soul_talk 11/11, hud 13/13, 0 console errors (2026-07-14; RC + V6)"
   limited_beta_structured_audit: "3 isolated sessions / 60 interactions; 60/60 pass; 0 console errors; evidence_class=structured_beta; human_blind_review=not_run (2026-07-13; V6)"

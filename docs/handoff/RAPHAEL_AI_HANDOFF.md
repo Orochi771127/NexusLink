@@ -44,7 +44,7 @@ RaphaelCore JS v1 → Soul Architecture v1.5 → NLU v1 → Stage 4 → 靜態�
 | Reflective Care V1 | dialogue loop 21/21（含 6 care/symbolic + 1 safety-precedence）；opt-in、無獎勵、無記憶寫入 | `docs/qa/RAPHAEL_REFLECTIVE_CARE_V1_2026-07-14.md` |
 | Nuwa advisory v0.3 | +daily_texture/small_moments/sleepless、no_sleep_pressure 哨兵；trusted:false | ledger Lane 3 2026-07-13（NLU 訓練批次） |
 | NLU 詞庫擴充 | 情感詞 19→60、程度副詞 7→16、否定詞 6→11、約 60 口語/簡體變體；TR-17..30 | ledger Lane 3 2026-07-13（NLU 訓練批次） |
-| Web release gate | 10/10 自動必要檢查；JS syntax 204/204；state migration 30/30 | `docs/qa/RAPHAEL_REFLECTIVE_CARE_V1_2026-07-14.md` |
+| Web release gate | 10/10 自動必要檢查；JS syntax 205/205；state migration 30/30 | `docs/qa/RAPHAEL_REFLECTIVE_CARE_V1_2026-07-14.md` |
 | Live gate | Soul Talk 11/11、HUD 13/13、0 console errors | 同上 |
 
 **尚未關閉的人類 gate：** 真機三平台重測、3 位獨立測試者 moderated private test（formal private-blind）、法務/隱私/商店文案審查、密封 holdout 人類盲審。

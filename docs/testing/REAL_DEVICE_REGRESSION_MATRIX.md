@@ -3,7 +3,7 @@
 > Status: checklist（供 Owner 真機執行；此 gate 只有人類能關）
 > Date: 2026-07-14
 > 補充既有 `docs/testing/STEAM_DEMO_WEB_RELEASE_CHECKLIST.md` 的「Manual real-device gate」，展開為逐機型 × 逐項的可打勾矩陣。
-> 測試 build：`main` 最新 commit，本機 `python -m http.server 8128 --directory NexusLink` 或已部署的 Pages URL。
+> 測試 build：`main` 最新 commit。本機靜態伺服：自 **RaphaelAI workspace 根目錄**（`NexusLink` 的上一層）執行 `python -m http.server 8128 --directory NexusLink`；或自 **NexusLink repo 根目錄**執行 `python -m http.server 8128`。亦可使用已部署的 Pages URL。
 
 ---
 
