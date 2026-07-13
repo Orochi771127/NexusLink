@@ -16,35 +16,9 @@ import {
   listAskableChapters
 } from "../engine/resonanceInviteEngine.js";
 import EventBus from "../utils/eventBus.js";
+import { MOONLAKE_NODE_LAYOUT, MOONLAKE_ROUTE_ART } from "../data/mapArtLayout.js";
 
-// ---- UI 層佈局常數（不動 explorationNodes 資料、不動 schema） ----
-// 視覺概念：月湖營地為中心起點，其他節點是心核感知到的外圍記憶座標。
-const NODE_LAYOUT = {
-  moonlake_camp: { x: 50, y: 83, tone: "safe", glyph: "☾" },
-  starwood_trail: { x: 22, y: 57, tone: "calm", glyph: "✶" },
-  misttide_shore: { x: 78, y: 61, tone: "calm", glyph: "≋" },
-  crystal_ruins: { x: 26, y: 24, tone: "discovery", glyph: "◇" },
-  rift_observatory: { x: 74, y: 15, tone: "danger", glyph: "✕" },
-  mirror_hollow: { x: 50, y: 42, tone: "calm", glyph: "☽" },
-  // 章節前沿節點（CH-5b；2026-07-13 Owner 真機截圖修正）：同一時間只有「當前章」
-  // 的一對會顯示（見 isNodeVisible），所以全部章節共用同兩個「安全槽位」——
-  // 裂隙＝頂中 (50,7)（危險在遠方，晶岩遺跡 28,24 與裂隙觀測點 74,15 各距 ≥22% x）、
-  // 探索點＝右中 (86,36)（霧潮河岸 78,61 下方 25% y、觀測點標籤帶上方淨空）。
-  // 舊版把 12 節點全擠在 y8-15 頂帶，直接壓在晶岩遺跡/觀測點上（節點含標籤
-  // 佔位約 26% 寬 × 21% 高，頂帶塞不下第三顆）。槽位共用＝永不互撞、位置可預期。
-  plains_windrest: { x: 86, y: 36, tone: "calm", glyph: "❋" },
-  plains_rift: { x: 50, y: 7, tone: "danger", glyph: "✕" },
-  forge_emberpath: { x: 86, y: 36, tone: "discovery", glyph: "◈" },
-  forge_rift: { x: 50, y: 7, tone: "danger", glyph: "✕" },
-  harbor_quayside: { x: 86, y: 36, tone: "calm", glyph: "≈" },
-  harbor_rift: { x: 50, y: 7, tone: "danger", glyph: "✕" },
-  core_lightwell: { x: 86, y: 36, tone: "discovery", glyph: "◇" },
-  core_rift: { x: 50, y: 7, tone: "danger", glyph: "✕" },
-  tidal_saltmarsh: { x: 86, y: 36, tone: "calm", glyph: "≋" },
-  tidal_rift: { x: 50, y: 7, tone: "danger", glyph: "✕" },
-  mystic_summitgate: { x: 86, y: 36, tone: "calm", glyph: "▲" },
-  mystic_rift: { x: 50, y: 7, tone: "danger", glyph: "✕" }
-};
+const NODE_LAYOUT = MOONLAKE_NODE_LAYOUT;
 
 // 章節前沿節點的可見性（CH-5b）：月湖（第 1 章）＝家，永遠可見；
 // 其餘章節節點只在「當前章」顯示——旅程往前走，走過的章由世界地圖（atlas）留存，
@@ -64,8 +38,8 @@ const PATH_LINKS = [
   { from: "moonlake_camp", to: "mirror_hollow" }
 ];
 
-const VIEWBOX_W = 100;
-const VIEWBOX_H = 132;
+const VIEWBOX_W = MOONLAKE_ROUTE_ART.viewWidth;
+const VIEWBOX_H = MOONLAKE_ROUTE_ART.viewHeight;
 const TOAST_HIDE_MS = 4600;
 const ENCOUNTER_DELAY_MS = 650;
 
@@ -115,11 +89,30 @@ export function createMapController({ store, panelManager, soulTalkController, s
   let inviteBanner = null;
 
   function open() {
+    ensureMapArt();
     ensurePaths();
     render();
     renderInviteBanner();
     hideToast();
     panelManager.openPanel("map");
+  }
+
+  function ensureMapArt() {
+    if (!mapCanvas || mapCanvas.querySelector(".map-art-layer")) return;
+    const image = document.createElement("img");
+    image.className = "map-art-layer";
+    image.src = MOONLAKE_ROUTE_ART.image;
+    image.alt = "";
+    image.decoding = "async";
+    image.draggable = false;
+    image.setAttribute("aria-hidden", "true");
+    image.addEventListener("load", () => mapCanvas.classList.add("is-art-ready"), { once: true });
+    image.addEventListener("error", () => {
+      mapCanvas.classList.add("is-art-fallback");
+      image.remove();
+    }, { once: true });
+    mapCanvas.prepend(image);
+    if (image.complete && image.naturalWidth > 0) mapCanvas.classList.add("is-art-ready");
   }
 
   // UI 不直接碰 Pixi：方向 cue 只透過 EventBus 發送 intent，由 app/Pixi bridge 接。
@@ -194,6 +187,7 @@ export function createMapController({ store, panelManager, soulTalkController, s
         button.title = node.description;
         button.innerHTML = `
           <span class="map-node-orb" aria-hidden="true">
+            ${layout.vignette ? `<img class="map-node-art" src="${layout.vignette}" alt="" decoding="async" draggable="false" />` : ""}
             <span class="map-node-glyph">${layout.glyph}</span>
             <span class="map-node-visits" hidden></span>
           </span>
@@ -202,6 +196,12 @@ export function createMapController({ store, panelManager, soulTalkController, s
             <em>${node.label.en}</em>
           </span>
         `;
+        const nodeArt = button.querySelector(".map-node-art");
+        if (nodeArt?.complete && nodeArt.naturalWidth > 0) {
+          button.classList.add("is-node-art-ready");
+        } else {
+          nodeArt?.addEventListener("load", () => button.classList.add("is-node-art-ready"), { once: true });
+        }
         button.addEventListener("click", () => exploreNode(node));
         nodeLayer.appendChild(button);
         nodeButtons.set(node.id, button);

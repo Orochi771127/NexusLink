@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="zh-Hant" data-ui="v2">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <base href="/" />
+    <link rel="stylesheet" href="../../../styles.css" />
+    <link rel="stylesheet" href="../../../styles/world-atlas.css" />
+    <style>
+      body { margin: 0; padding: 12px; background: #050a18; }
+      .panel-layer { position: relative; inset: auto; width: 366px; min-height: 820px; }
+      .modal-panel { position: relative !important; inset: auto !important; width: 100% !important; opacity: 1 !important; transform: none !important; pointer-events: auto !important; }
+      .atlas-modal { height: 800px; }
+      .map-modal { display: block; }
+    </style>
+  </head>
+  <body>
+    <main class="panel-layer">
+      <section class="modal-panel atlas-modal" data-panel="atlas">
+        <p class="atlas-intro" data-i18n="atlas.intro"></p>
+        <div id="atlas-canvas" class="atlas-canvas"></div>
+        <ul id="atlas-legend" class="atlas-legend"></ul>
+      </section>
+      <section class="modal-panel map-modal" data-panel="map">
+        <div id="map-canvas" class="soul-map rune-border">
+          <svg id="map-paths" viewBox="0 0 100 132" preserveAspectRatio="none"></svg>
+          <div id="map-node-layer"></div>
+        </div>
+        <div id="map-result" class="map-toast">
+          <p id="map-result-title"></p><p id="map-result-text"></p><div id="map-result-chips"></div>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

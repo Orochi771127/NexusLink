@@ -2222,3 +2222,27 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Problems / risks: This is supportive companion dialogue, not psychotherapy. Jung-inspired language remains a narrow opt-in self-reflection tool. Real-device mobile review, moderated private testers, and legal/privacy/store-copy review remain manual launch gates. Pre-existing dirty `_live_playtest_gate_output.json` and `_web_release_gate_output.json` were backed up and restored after the gate; they remain outside this package unless separately reviewed.
 - Next safe action: Collect consented Limited Beta feedback on the care tone and symbolic prompts while preserving the formal human-validation gate. Do not market Raphael as a therapist, counsellor, crisis service, or independently human-validated public release.
 - Required reading: `docs/qa/RAPHAEL_REFLECTIVE_CARE_V1_2026-07-14.md`, `docs/qa/RAPHAEL_CONVERSATION_EVAL_V6_LIMITED_BETA_2026-07-13.md`, `docs/raphael/RAPHAEL_CONSTITUTION.md`, and this Lane 3 entry.
+
+### 2026-07-14 - Codex - Linkara Atlas And Moonlake Route Art V1 - IN PROGRESS
+
+- Lane: `Game Art, UI, And Visual Production`
+- Status: `IN PROGRESS`; Owner approved implementation of the proposed plan. No commit or push authorized.
+- Task name: `Linkara Atlas + Moonlake Route Art V1`.
+- Layer: `GROUNDWORK + EXPERIENCE`; GROUNDWORK is limited to new versioned map art under `assets/maps/**`. EXPERIENCE is limited to shared map-layout data, `atlasController.js`, `mapController.js`, and `styles/world-atlas.css`.
+- Files touched: expected `assets/maps/linkara/**`, `src/data/mapArtLayout.js`, `src/ui/atlasController.js`, `src/ui/mapController.js`, `styles/world-atlas.css`, map-art QA/prompt records, and this ledger. No `index.html`, save state, Pixi habitat, battle, safety, tool, script, dependency, or build changes.
+- Red-line check: no dependency detection, reward pressure, FOMO, countdown, red dot, safetyShield, safeHarborMode, battle policy, or relationship-state behavior changes. Existing locked/current/visited semantics and exploration outcomes remain authoritative.
+- Non-goals: no active-habitat replacement, region switching, BGM wiring, collision, chapter progression changes, companion art, legacy Linkara deletion, commit, or push.
+- Acceptance refs: `D6`, `J5`, `K9`, `L6`, `M1`, `M2`, `M5`, plus the `390x844` manual viewport gate.
+- Required reading: `AGENTS.md`, `CLAUDE.md`, `ACCEPTANCE.md`, `docs/architecture/HABITAT_SCENE_PROFILE_SPEC.md`, `assets/backgrounds/linkara/linkara-map-data.json`, `src/ui/atlasController.js`, `src/ui/mapController.js`, `styles/world-atlas.css`, and this lane.
+
+### 2026-07-14 - Codex - Linkara Atlas And Moonlake Route Art V1 - VERIFIED
+
+- Lane: `Game Art, UI, And Visual Production`
+- Status: `VERIFIED`; implementation and technical visual QA complete. Final production-art lock still requires Owner visual approval under the Companion / generated-art policy. No commit or push performed.
+- Completed: generated and normalized one 1200x888 Linkara atlas, one 1200x1584 Moonlake route scene, and six 512x512 Moonlake node vignettes in the approved premium miniature-diorama direction. Added per-asset prompt records, `assets/maps/map-art-manifest-v1.json`, and alignment/review boards under `output/map-pilots/linkara-moonlake-diorama-v1/`.
+- Runtime integration: added `src/data/mapArtLayout.js` as the single coordinate/art contract; the atlas SVG now renders the Linkara art beneath its seven authoritative nodes; the exploration map progressively loads its route art and six vignette orbs while preserving the existing gradient/glyph fallback, paths, statuses, outcomes, and chapter-slot behavior.
+- Verification: all `src/**/*.js` plus locked `script.js` passed `node --check`; `git diff --check` passed; layout contract check passed (`7` atlas regions, `18` route slots, `8` referenced assets); Pillow dimensions passed for all eight assets. A headless Chromium controller/CSS harness at `390x844` confirmed seven atlas nodes and six visible Moonlake nodes all remain in bounds, all route/vignette art loads, and there are no console errors or failed requests. Runtime captures: `runtime-atlas-390x844.png` and `runtime-moonlake-390x844.png`.
+- Problems / risks: the full `index.html` boot could not reach `networkidle` in the isolated browser because its external PixiJS CDN request remained unavailable, so the map controllers and production CSS were exercised in a local no-Pixi harness instead. This does not replace Owner real-device review. The new JPEG scenes total roughly 1.5 MB and should be revisited only if Pages/mobile profiling shows a real load issue.
+- Unrelated dirty files preserved: `docs/qa/_live_playtest_gate_output.json`, `docs/qa/_web_release_gate_output.json`, and `docs/design/TEST_CARRIER_ROSTER_MEMO.md` were not modified by this package.
+- Branch / commit: `main` at starting `de57e92`; changes remain uncommitted and unpushed.
+- Next safe action: Owner reviews the two runtime captures and the review board. If approved, keep these versioned assets; if rejected, replace only the `-v1` art and prompt/manifest records while preserving `mapArtLayout.js` coordinates and fallback behavior.

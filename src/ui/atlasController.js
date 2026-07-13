@@ -3,21 +3,13 @@ import { t } from "../i18n/i18n.js";
 import { getChapterForRegion, getChapterStatus, getChapterByNumber } from "../data/chapterRegistry.js";
 import { getChapterNarrative } from "../data/chapterNarrative.js";
 import { getCompanionById } from "../data/companionRegistry.js";
+import { LINKARA_ATLAS_ART, LINKARA_ATLAS_REGIONS } from "../data/mapArtLayout.js";
 
 // 唯讀世界地圖（Linkara 遠景）。七區各為一章（CH-4 章節骨架）：
 // 區域狀態由 state.chapterProgress 推導（current／completed／locked），
 // 不做完成度 %、不做倒數、不做解鎖任務——只是「你走到哪裡了」。
-// 位置座標為 viewBox(0..100) 的示意佈局，概略對應人工世界地圖的相對方位，
-// 之後若批准匯入正式底圖 PNG，可保留座標、僅替換背景層。
-const LINKARA_REGIONS = [
-  { id: "forge", no: "1", zh: "東南熔爐丘陵區", en: "Southeast Forge Hills", x: 80, y: 64 },
-  { id: "core", no: "2", zh: "中央輝耀核心區", en: "Central Radiant Core", x: 46, y: 46 },
-  { id: "plains", no: "3", zh: "北部翠綠平原區", en: "Northern Verdant Plains", x: 32, y: 27 },
-  { id: "harbor", no: "4", zh: "南港", en: "Southern Harbor Nexus", x: 50, y: 90 },
-  { id: "moonlake", no: "5", zh: "月湖營地", en: "Ethereal Moon Lakefront", x: 71, y: 38 },
-  { id: "mystic", no: "6", zh: "秘境山脈核心", en: "Eastern Mystic Mountains", x: 80, y: 18 },
-  { id: "tidal", no: "7", zh: "西南潮汐邊疆區", en: "Southwest Tidal Frontier", x: 19, y: 78 }
-];
+// 底圖尺寸與節點座標由 mapArtLayout.js 共用契約提供，避免換圖後點位漂移。
+const LINKARA_REGIONS = LINKARA_ATLAS_REGIONS;
 
 // 聯結之河：區域之間的細光路（純視覺，與當前所在相連者較亮）。
 const RIVER_LINKS = [
@@ -30,8 +22,8 @@ const RIVER_LINKS = [
   ["plains", "tidal"]
 ];
 
-const VIEW_W = 100;
-const VIEW_H = 96;
+const VIEW_W = LINKARA_ATLAS_ART.viewWidth;
+const VIEW_H = LINKARA_ATLAS_ART.viewHeight;
 
 export function createAtlasController({ panelManager, store }) {
   const canvas = qs("#atlas-canvas");
@@ -119,6 +111,8 @@ function buildMapSvg(regions) {
   }).join("");
 
   return `<svg viewBox="0 0 ${VIEW_W} ${VIEW_H}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Linkara 世界地圖示意：你目前在月湖一帶">
+    <image class="atlas-map-art" href="${LINKARA_ATLAS_ART.image}" x="0" y="0" width="${VIEW_W}" height="${VIEW_H}" preserveAspectRatio="none" />
+    <rect class="atlas-map-scrim" x="0" y="0" width="${VIEW_W}" height="${VIEW_H}" />
     <g class="atlas-links">${links}</g>
     <g class="atlas-nodes">${nodes}</g>
   </svg>`;

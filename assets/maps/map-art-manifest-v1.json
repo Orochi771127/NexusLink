@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "style": "premium stylized 3D miniature diorama; rounded clay/resin forms; moonlit cyan, navy, violet and restrained warm gold",
+  "approvalGate": "Generated assets require human visual approval before final production lock.",
+  "layoutSource": "src/data/mapArtLayout.js",
+  "assets": [
+    { "id": "linkara-atlas", "path": "assets/maps/linkara/atlas/linkara-atlas-mobile-v1.jpg", "width": 1200, "height": 888 },
+    { "id": "moonlake-route", "path": "assets/maps/moonlake/route/moonlake-route-v1.jpg", "width": 1200, "height": 1584 },
+    { "id": "moonlake-camp", "path": "assets/maps/moonlake/route/nodes/moonlake-camp-v1.jpg", "width": 512, "height": 512 },
+    { "id": "starwood-trail", "path": "assets/maps/moonlake/route/nodes/starwood-trail-v1.jpg", "width": 512, "height": 512 },
+    { "id": "misttide-shore", "path": "assets/maps/moonlake/route/nodes/misttide-shore-v1.jpg", "width": 512, "height": 512 },
+    { "id": "crystal-ruins", "path": "assets/maps/moonlake/route/nodes/crystal-ruins-v1.jpg", "width": 512, "height": 512 },
+    { "id": "rift-observatory", "path": "assets/maps/moonlake/route/nodes/rift-observatory-v1.jpg", "width": 512, "height": 512 },
+    { "id": "mirror-hollow", "path": "assets/maps/moonlake/route/nodes/mirror-hollow-v1.jpg", "width": 512, "height": 512 }
+  ]
+}
