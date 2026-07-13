@@ -12,6 +12,13 @@ const DETAIL_PATTERNS = [
   { re: /(?:念稿|太像模板|模板句|自然一點)/, type: "feedback", weight: 3 },
   { re: /(?:下班|放空|腦袋空空?|吃完飯|吃飽|想躺|躺一下|懶懶|懶得動|今天普通|追劇|追剧|耍廢|耍废|滑手機|滑手机|發呆|发呆|無聊|无聊|週末|周末|收假|放假|下雨|天氣|天气|好熱|好热|好冷|躺平)/, type: "daily_life", weight: 3 },
   { re: /(?:睡不著|睡不着|失眠)/, type: "sleepless", weight: 3 },
+  { re: /(?:捷運|地鐵|地铁|公車|公交).{0,14}(?:坐過站|坐过站|差點|差点|超糗)/, type: "commute_mishap", weight: 3 },
+  { re: /(?:晚餐|午餐|早餐|便當|便当).{0,18}(?:難吃|难吃|冷掉|不好吃)/, type: "meal_detail", weight: 3 },
+  { re: /(?:朋友).{0,16}(?:怪怪|變了|变了|疏遠|疏远|想太多)/, type: "relationship_uncertainty", weight: 3 },
+  { re: /(?:想來找你講兩句|想来找你讲两句|想聊兩句|想聊两句|沒發生什麼|没发生什么)/, type: "casual_check_in", weight: 3 },
+  { re: /(?:該不該|该不该|你覺得|你觉得).{0,12}(?:睡|休息)/, type: "rest_opinion", weight: 3 },
+  { re: /(?:不知道要幹嘛|不知道要干嘛|有夠荒謬|有够荒谬)/, type: "daily_texture", weight: 3 },
+  { re: /(?:剛才|剛剛|刚才|刚刚).{0,12}(?:那件事|問我的|问我的)|(?:後來|后来).{0,8}(?:想了一下|想過|想过)/, type: "conversation_continuation", weight: 3 },
   { re: /(?:沒什麼力氣|沒力|疲憊|好累|壓力好大|压力好大|心好累|被掏空)/, type: "fatigue", weight: 2 },
   { re: /(?:語氣太差|抱歉|對不起)/, type: "apology", weight: 3 },
   { re: /心裡.{0,4}(?:悶|悶悶)/, type: "emotion_state", weight: 2 }
@@ -63,11 +70,19 @@ const KEYWORD_HINTS = [
   "睡不著",
   "失眠",
   "做不完",
-  "压力"
+  "压力",
+  "捷運",
+  "坐過站",
+  "便當",
+  "青菜",
+  "朋友",
+  "講兩句",
+  "荒謬",
+  "早點睡"
 ];
 
 const GREETING_ONLY_RE = /^(安安|你好嗎|嗨|哈囉|吃飯沒|吃了嗎|吃飯了嗎)[啊呀喔呢嗎！!。]*$/;
-const SHORT_DAILY_LIFE_RE = /懶懶|懶得動|放空|下班|吃飽|想躺|普通|無聊|无聊|發呆|发呆|追劇|追剧|耍廢|耍废|滑手機|滑手机|週末|周末|下雨/;
+const SHORT_DAILY_LIFE_RE = /懶懶|懶得動|放空|下班|吃飽|想躺|普通|無聊|无聊|發呆|发呆|追劇|追剧|耍廢|耍废|滑手機|滑手机|週末|周末|下雨|捷運|坐過站|便當|朋友|荒謬|講兩句/;
 
 export function extractSpecificDetail(inputText = "", { entities = [], topic = "", dialogueAct = "" } = {}) {
   const text = String(inputText || "").trim();
@@ -169,10 +184,11 @@ function extractSalientClause(text, topic) {
     hud_ui: /HUD|面板|介面|擋|疊/,
     work_pressure: /工作|壓力|压力|任務|老闆|做不完|上班|開會/,
     social_conflict: /悶|酸|否定|人際|冷戰|已讀|排擠/,
-    daily_life: /下班|放空|腦袋空|吃完飯|吃飽|想躺|躺一下|懶懶|懶得動|日常|普通|追劇|滑手機|無聊|週末|收假|下雨|天氣|發呆|耍廢/,
+    daily_life: /下班|放空|腦袋空|吃完飯|吃飽|想躺|躺一下|懶懶|懶得動|日常|普通|追劇|滑手機|無聊|週末|收假|下雨|天氣|發呆|耍廢|捷運|地鐵|公車|坐過站|晚餐|便當|青菜|講兩句|荒謬|早點睡/,
     exploration: /地圖|探索|外面|力氣/,
     physical_tiredness: /累|疲憊|沒力/,
-    emotion: /情緒|卡住|心裡|睡不著|失眠/
+    emotion: /情緒|卡住|心裡|睡不著|失眠/,
+    relationship: /朋友|關係|怪怪|想太多|疏遠/
   };
 
   const topicRe = topicHints[topic];

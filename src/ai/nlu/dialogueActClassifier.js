@@ -47,7 +47,7 @@ export function classifyDialogueAct(inputText = "", analysis = {}, intent = {}, 
   if (intent.intent === "silence_request" || intent.intent === "quiet_presence") {
     return DIALOGUE_ACTS.REQUESTING_SILENCE;
   }
-  if (intent.intent === "rest_request" && !/不管|重複|一樣/.test(text)) {
+  if (intent.intent === "rest_request" && !analysis?.isQuestion && !/不管|重複|一樣|你覺得|你觉得|該不該|该不该|可以嗎|可以吗/.test(text)) {
     return DIALOGUE_ACTS.REQUESTING_SILENCE;
   }
   if (intent.intent === "exploration_request") return DIALOGUE_ACTS.ASKING_EXPLORATION;
@@ -65,6 +65,9 @@ export function classifyDialogueAct(inputText = "", analysis = {}, intent = {}, 
   }
   if (/陪我|在旁邊|不要走|想靠近|靠近你/.test(text) && !/安靜|不要問/.test(text)) {
     return DIALOGUE_ACTS.REQUESTING_PRESENCE;
+  }
+  if (/想來找你講兩句|想来找你讲两句|想聊兩句|想聊两句|沒發生什麼|没发生什么/.test(text)) {
+    return DIALOGUE_ACTS.DESCRIBING_EVENT;
   }
   if (/好煩|好悶|好委屈|受不了|崩潰|壓力好大|煩死|氣死|受夠了|心好累|好烦|好闷|崩溃|压力好大|气死/.test(text)) {
     return DIALOGUE_ACTS.VENTING;

@@ -169,15 +169,22 @@ export function buildStrategyReply({
         if (socialLine) return socialLine;
         return "人際上的悶先放著，我不急著給你結論。";
       }
-      if (topic === "relationship") return "關係這件事我會慢慢聽，不急著定義你現在要什麼。";
+      if (topic === "relationship") return groundedRelationshipLine(frame, seed);
       return `這份${tone === "sadness" ? "悶" : "感覺"}我先接住，不急著分析。`;
     },
     [RESPONSE_STRATEGIES.CLARIFYING_QUESTION]: () => {
-      if (topic === "unknown") return "你比較想聊的是情緒、介面，還是開發節奏？";
+      if (topic === "unknown") return groundedOpenConversationLine(frame, nlu, seed);
+      if (topic === "relationship" && frame.conversationContext?.source === "recent_dialogue") {
+        return groundedRelationshipLine(frame, seed);
+      }
       return `我想確認一下：你現在最想先處理的是${topicLabel(topic)}這塊嗎？`;
     },
-    [RESPONSE_STRATEGIES.ANSWER_OR_CLARIFY]: () =>
-      `這個問題我先對準${topicLabel(topic)}。若你要的是步驟，我可以拆；若你要的是陪伴，我就少說。`,
+    [RESPONSE_STRATEGIES.ANSWER_OR_CLARIFY]: () => {
+      if (/早點睡|早点睡|該不該睡|该不该睡/.test(String(nlu.inputText || ""))) {
+        return "如果你已經在打呵欠、眼睛發酸或精神往下掉，早點睡大概會比較舒服；還不睏的話，也不用逼自己立刻睡著。";
+      }
+      return groundedOpenConversationLine(frame, nlu, seed);
+    },
     [RESPONSE_STRATEGIES.CONTEXTUAL_ACK]: () => {
       const need = frame.userNeed || "";
       if (topic === "relationship" && need === "boundary") {
@@ -194,6 +201,7 @@ export function buildStrategyReply({
       }
       if (topic === "work_pressure") return "工作的重量我先聽見了。你想先講壓力來源，還是先講最煩的一段？";
       if (topic === "daily_life") return groundedDailyLifeLine(frame, seed);
+      if (topic === "relationship") return groundedRelationshipLine(frame, seed);
       if (topic !== "unknown") {
         return pick(
           [
@@ -437,13 +445,22 @@ function resolveVariantLines(strategy, nlu, frame, recoveryContext, prefillConte
         const socialLine = groundedSocialConflictLine(frame);
         return [socialLine || "人際上的悶先放著，我不急著給你結論。"];
       }
-      if (topic === "relationship") return ["關係這件事我會慢慢聽，不急著定義你現在要什麼。"];
+      if (topic === "relationship") return groundedRelationshipLines(frame);
       return [`這份${tone === "sadness" ? "悶" : "感覺"}我先接住，不急著分析。`];
     case RESPONSE_STRATEGIES.CLARIFYING_QUESTION:
-      if (topic === "unknown") return ["你比較想聊的是情緒、介面，還是開發節奏？"];
+      if (topic === "unknown") return groundedOpenConversationLines(frame, nlu);
+      if (topic === "relationship" && frame.conversationContext?.source === "recent_dialogue") {
+        return groundedRelationshipLines(frame);
+      }
       return [`我想確認一下：你現在最想先處理的是${topicLabel(topic)}這塊嗎？`];
     case RESPONSE_STRATEGIES.ANSWER_OR_CLARIFY:
-      return [`這個問題我先對準${topicLabel(topic)}。若你要的是步驟，我可以拆；若你要的是陪伴，我就少說。`];
+      if (/早點睡|早点睡|該不該睡|该不该睡/.test(said)) {
+        return [
+          "如果你已經在打呵欠、眼睛發酸或精神往下掉，早點睡大概會比較舒服；還不睏的話，也不用逼自己立刻睡著。",
+          "可以先看身體的訊號：累了就早點收尾，還有精神也不用把睡覺變成命令。"
+        ];
+      }
+      return groundedOpenConversationLines(frame, nlu);
     case RESPONSE_STRATEGIES.CONTEXTUAL_ACK:
       if (topic === "relationship" && need === "boundary") {
         return ["你想靠近，也願意給彼此空間。我會照這個節奏來。"];
@@ -456,6 +473,7 @@ function resolveVariantLines(strategy, nlu, frame, recoveryContext, prefillConte
       }
       if (topic === "work_pressure") return ["工作的重量我先聽見了。你想先講壓力來源，還是先講最煩的一段？"];
       if (topic === "daily_life") return dailyLifeLines(frame);
+      if (topic === "relationship") return groundedRelationshipLines(frame);
       if (topic !== "unknown") {
         return [
           `我先把你說的${topicLabel(topic)}放在前面，不套通用句。`,
@@ -523,6 +541,36 @@ function groundedDailyLifeLine(frame = {}, seed = 0) {
 
 function dailyLifeLines(frame = {}) {
   const detail = frame.specificDetail?.text || "";
+  if (/捷運|地鐵|地铁|公車|公交|坐過站|坐过站/.test(detail)) {
+    return [
+      `差點坐過站真的會讓人瞬間清醒。你這段${detail.includes("糗") ? "糗事" : "插曲"}我收到了。`,
+      "捷運坐過站前被自己拉回來，算是有驚無險；那個超糗的瞬間可以笑一下了。"
+    ];
+  }
+  if (/晚餐|午餐|早餐|便當|便当|青菜|冷掉|難吃|难吃/.test(detail)) {
+    return [
+      "便當已經難吃了，青菜還冷掉，這頓真的很敷衍人。",
+      "晚餐踩雷就算了，連青菜都是冷的；難怪會想抱怨兩句。"
+    ];
+  }
+  if (/想來找你講兩句|想来找你讲两句|想聊兩句|想聊两句|沒發生什麼|没发生什么/.test(detail)) {
+    return [
+      "沒發生什麼也可以來講兩句。普通的一天不需要先變成故事。",
+      "你只是想來找我說說話，我懂。今天平平的也沒關係。"
+    ];
+  }
+  if (/不知道要幹嘛|不知道要干嘛/.test(detail)) {
+    return [
+      "沒有難過，只是不知道要幹嘛——那就先別急著替空白找用途。",
+      "這比較像沒方向，不一定是難過。先發呆一下也成立。"
+    ];
+  }
+  if (/荒謬|荒谬/.test(detail)) {
+    return [
+      "光聽你說有夠荒謬，我就有點想知道今天到底演到哪一齣。",
+      "今天看來很有戲。這個荒謬程度，是能笑的還是只想翻白眼的？"
+    ];
+  }
   if (/週末|周末|收假|放假/.test(detail)) {
     return [
       "週末咻一下就過完，很正常。明天的事讓明天扛，今晚先慢慢收尾。",
@@ -572,6 +620,43 @@ function dailyLifeLines(frame = {}) {
     return ["懶懶的日子也可以存在。今天先不用把自己推得很用力。", "普通的一天也不用硬變成事件。你慢慢待著就好。"];
   }
   return ["今天的日常我聽見了。不用很特別，也可以放在這裡。", "嗯，這種小小的日常也算數。我在這裡聽。"];
+}
+
+function groundedRelationshipLine(frame = {}, seed = 0) {
+  return pick(groundedRelationshipLines(frame), seed);
+}
+
+function groundedRelationshipLines(frame = {}) {
+  const detail = frame.specificDetail?.text || "";
+  if (/朋友|怪怪|想太多|疏遠/.test(detail)) {
+    return [
+      "朋友最近怪怪的，又怕只是自己想太多，這種拿不準最磨人。先別急著替關係下結論。",
+      "你有注意到朋友不太一樣，但還留著『也可能是我想太多』的空間。可以先看看是哪個細節讓你起疑。"
+    ];
+  }
+  if (frame.conversationContext?.source === "recent_dialogue") {
+    return [
+      "嗯，我接得上。你後來又想了一下剛才那件事，現在看起來有哪裡不一樣？",
+      "剛才那段關係上的不確定還在。你想了一下之後，比較靠近哪個感覺了？"
+    ];
+  }
+  return ["關係裡那個拿不準的地方，我有接到。先不用急著定義。"];
+}
+
+function groundedOpenConversationLine(frame = {}, nlu = {}, seed = 0) {
+  return pick(groundedOpenConversationLines(frame, nlu), seed);
+}
+
+function groundedOpenConversationLines(frame = {}, nlu = {}) {
+  const detail = frame.specificDetail?.text || String(nlu.inputText || "").trim();
+  const shortDetail = truncateDetail(detail, 24);
+  if (shortDetail) {
+    return [
+      `你說的「${shortDetail}」我有接到。你可以照原本的方式繼續說。`,
+      `「${shortDetail}」聽起來像今天的一個片段。我先不替它分類。`
+    ];
+  }
+  return ["我有在聽。你不用先決定這算哪一類，照想到的說就好。"];
 }
 
 function groundedWorkPressureLine(frame = {}) {

@@ -2,7 +2,7 @@
 # Current operational truth lives in docs/agent/AI_EXECUTION_LEDGER.md (Lane 3);
 # this file is a snapshot index, refreshed 2026-07-10 (was stale at 2026-06-24).
 last_updated: "2026-07-10"
-last_agent: Claude Fable 5
+last_agent: Codex
 
 branch:
   active: main
@@ -15,16 +15,16 @@ do_not_touch: "AIForgeNexus2\\NexusLink"
 
 stage:
   current: 6
-  label: "Advisory training layer (static bundle + Nuwa distillation) + daily-life NLU v1"
-  next: "CH-5 chapter encounters wiring; eval expansion (TP-3); real-device human gates"
+  label: "Local natural conversation v2 + advisory training layer + Nuwa distillation"
+  next: "Human naturalness blind test; broader paraphrase coverage; CH-5 chapter encounters wiring"
 
 qa:
-  harness_smoke: "17/17 (2026-07-10)"
-  live_playtest_gate: "soul_talk 10/10, hud 13/13, 0 console errors (2026-07-10)"
-  training_bundle: "17/17 incl. 5 Nuwa cases (2026-07-05; F1 collision fixed 2026-07-10 with sentinel check)"
-  main_readiness: "29/29 (2026-07-05)"
-  nlu_training: "16/16 (2026-07-05)"
-  nlu_smoke: "8/8 (2026-06-30; not re-run recently)"
+  harness_smoke: "17/17 (2026-07-13)"
+  live_playtest_gate: "soul_talk 10/10, hud 13/13, 0 console errors (2026-07-13)"
+  training_bundle: "29/29 incl. Nuwa v0.3 cases (2026-07-13)"
+  main_readiness: "41/41 (2026-07-13)"
+  nlu_training: "38/38 (2026-07-13; 8 natural-conversation v2 cases)"
+  nlu_smoke: "8/8 (2026-07-13)"
   state_migration: "26/26 (2026-07-10)"
   forbidden_phrases: 0
   known_flaky: "null.split console error x2 on first gate run (3 occurrences, rerun always clean; runner now captures url:line)"
@@ -47,6 +47,7 @@ constraints:
 
 blockers: []
 follow_ups:
+  - "Human naturalness blind test: 3 testers x 20 turns; track irrelevant, template-like, grounded, and unnecessary-question rates"
+  - "Natural conversation v3 candidates: wider paraphrases, entity continuity, and local player reply-style preferences"
   - "CH-5: chapter encounters + resonance invite (wires advanceChapterProgress)"
-  - "TP-3 eval expansion: Nuwa sleep/morning/commute fixtures + persona-differentiation + apology-repair cases"
   - "Human gates: real-device 3-platform retest, SFX sound-palette listen, 3-tester private playtest, legal/store copy"

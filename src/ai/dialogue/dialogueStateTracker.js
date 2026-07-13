@@ -47,6 +47,7 @@ export function recordDialogueTurn(sessionKey = "default", coreResult = {}) {
     topic,
     dialogueAct: coreResult.nlu?.dialogueAct || coreResult.nlu?.semanticFrame?.dialogueAct || null,
     userNeed: coreResult.nlu?.semanticFrame?.userNeed || null,
+    specificDetail: coreResult.nlu?.semanticFrame?.specificDetail || null,
     constraints: coreResult.nlu?.constraints || coreResult.nlu?.semanticFrame?.constraints || [],
     responseStrategy: strategy,
     variantId: coreResult.composeMeta?.variantId || null,
@@ -63,17 +64,39 @@ export function recordDialogueTurn(sessionKey = "default", coreResult = {}) {
     state.recentTurns.shift();
   }
 
-  if (previousTopic && topic && previousTopic !== topic) {
+  if (previousTopic && topic && topic !== "unknown" && previousTopic !== topic) {
     state.topicShiftCount += 1;
   }
 
-  state.currentTopic = topic;
+  if (topic && topic !== "unknown") state.currentTopic = topic;
   state.lastResponseStrategy = strategy;
   state.lastVariantId = turn.variantId;
   state.lastQuickReplySet = turn.quickReplyIntents;
   state.repetitionScore = computeRepetitionScore(state.recentTurns);
 
   return state;
+}
+
+export function applyRecentDialogueContext(nlu = {}, state = {}) {
+  const inputText = String(nlu.inputText || "");
+  const isContinuation = /剛才|剛剛|刚才|刚刚|那件事|後來|后来|接著|接着|然後|然后/.test(inputText);
+  const previousTopic = state.currentTopic;
+  if (!isContinuation || !previousTopic || previousTopic === "unknown" || nlu.topic !== "unknown") {
+    return nlu;
+  }
+
+  return {
+    ...nlu,
+    topic: previousTopic,
+    semanticFrame: {
+      ...nlu.semanticFrame,
+      topic: previousTopic,
+      conversationContext: {
+        inheritedTopic: previousTopic,
+        source: "recent_dialogue"
+      }
+    }
+  };
 }
 
 export function setLastPlayerComplaint(sessionKey = "default", complaintType = null) {

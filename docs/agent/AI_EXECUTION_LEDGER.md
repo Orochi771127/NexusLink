@@ -1497,6 +1497,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 3 - Raphael Core, Companion Reasoning, And Soul Talk
 
+### 2026-07-13 - Codex - Raphael Local Natural Conversation v2
+
+- Status: `VERIFIED`
+- Branch / commit: `main` / uncommitted; baseline `e81dbba`. Owner approved the previously proposed local-first natural-conversation plan by saying「請繼續」. No commit or push authorized.
+- Scope: EXPERIENCE-only local NLU, session dialogue context, grounded reply composition, and regression coverage. No `safetyShield`, memory writer, state mutation policy, save schema, external LLM/API, backend, dependency, Pixi, asset, or GROUNDWORK change.
+- Work performed: Converted eight out-of-corpus failures into regression cases TR-31..38. Expanded daily-life and relationship understanding for commute mishaps, casual check-ins, uncertain friendships, meal details, sleep-opinion questions, negated emotion, mixed-English reactions, and explicit continuation phrases. Rest requests no longer override genuine questions. Unknown fallback now grounds itself in the player's actual clause instead of asking the fixed「情緒／介面／開發」triad. Session dialogue state preserves the last known topic across unknown turns and feeds it back only for explicit continuation markers; it remains in-memory and non-persistent. Added grounded response variants that reference concrete details without changing safety or memory authority.
+- Verification: `node --check` passed for all seven changed JS runtime/test files. NLU training **38/38** (30 baseline + 8 new), training bundle **29/29**, main readiness **41/41**, NLU smoke **8/8**, Raphael core smoke **17/17**, dialogue loop **10/10**, constitution **5/5**, Stage 4 **12/12**. Live gate: Soul Talk **10/10**, HUD **13/13**, awakening/touch/storage/Pixi pass, 0 console errors, `ok:true`. Full web release gate passed **10/10** automated required checks (JS syntax 201/201; manual real-device/private-test/legal gates remain). `git diff --check` passed.
+- Problems / risks: This remains deterministic local NLU, not open-domain generative understanding. Topic inheritance requires explicit continuation language and intentionally does not persist across reloads. Naturalness still needs a blinded human conversation test; broader paraphrases may fall back to grounded open acknowledgement rather than a domain-specific answer.
+- Next safe action: Run a 3-tester × 20-turn naturalness blind test and record irrelevant/template/grounded/unnecessary-question rates before widening more classifiers. Keep future corpus work case-first and local-first unless Owner separately approves a backend advisory TASK_PACK.
+- Required reading: `src/ai/testHarness/nluTrainingCases.js` TR-31..38, `src/ai/dialogue/dialogueStateTracker.js`, `src/ai/nlu/nluReplyBuilder.js`, `docs/handoff/RAPHAEL_AI_STATUS.yaml`, and this lane.
+
 ### 2026-07-13 - Claude Fable 5 - NLU 訓練批次：詞庫擴充 + 日常質感語料 + Nuwa v0.3（Owner 直接指派）
 
 - Status: `VERIFIED`

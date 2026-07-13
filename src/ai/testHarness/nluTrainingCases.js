@@ -306,10 +306,103 @@ export const NLU_TRAINING_CASES = Object.freeze([
       mentions: /早|慢慢|亮|在/
     }
   },
+  {
+    id: "TR-31",
+    input: "剛剛搭捷運差點坐過站，超糗",
+    expect: {
+      topic: "daily_life",
+      dialogueAct: "describing_event",
+      noGeneric: true,
+      hasSpecificDetail: true,
+      mentions: /捷運|坐過站|糗|差點/
+    }
+  },
+  {
+    id: "TR-32",
+    input: "今天沒發生什麼，就是突然想來找你講兩句",
+    expect: {
+      topic: "daily_life",
+      dialogueAct: "describing_event",
+      noGeneric: true,
+      hasSpecificDetail: true,
+      mentions: /講兩句|沒發生|來找|普通/
+    }
+  },
+  {
+    id: "TR-33",
+    input: "我朋友最近怪怪的，但也可能是我想太多",
+    expect: {
+      topic: "relationship",
+      noGeneric: true,
+      hasSpecificDetail: true,
+      mentions: /朋友|怪怪|想太多|關係/
+    }
+  },
+  {
+    id: "TR-34",
+    input: "晚餐吃了很難吃的便當，青菜還冷掉",
+    expect: {
+      topic: "daily_life",
+      noGeneric: true,
+      hasSpecificDetail: true,
+      mentions: /便當|青菜|冷掉|晚餐/
+    }
+  },
+  {
+    id: "TR-35",
+    input: "你覺得我今天該早點睡嗎",
+    expect: {
+      topic: "daily_life",
+      dialogueAct: "asking_question",
+      strategy: "answer_or_clarify",
+      noGeneric: true,
+      mentions: /睡|累|精神|身體/
+    }
+  },
+  {
+    id: "TR-36",
+    input: "其實我沒有難過，只是有點不知道要幹嘛",
+    expect: {
+      topic: "daily_life",
+      noGeneric: true,
+      hasSpecificDetail: true,
+      mentions: /不知道要幹嘛|無聊|發呆|難過/
+    }
+  },
+  {
+    id: "TR-37",
+    input: "lol 今天真的有夠荒謬",
+    expect: {
+      topic: "daily_life",
+      dialogueAct: "describing_event",
+      noGeneric: true,
+      hasSpecificDetail: true,
+      mentions: /荒謬|今天|怎麼了|發生/
+    }
+  },
+  {
+    id: "TR-38",
+    priorInputs: ["我朋友最近怪怪的，但也可能是我想太多"],
+    input: "你剛才問我的那件事，我後來想了一下",
+    expect: {
+      topic: "relationship",
+      noGeneric: true,
+      hasSpecificDetail: true,
+      mentions: /剛才|那件事|後來|關係|想了一下/
+    }
+  },
 ]);
 
 export function runNluTrainingCase(testCase) {
   clearDialogueState(GREYSHADE.id);
+  for (const priorInput of testCase.priorInputs || []) {
+    runRaphaelCore(priorInput, { ...BASE_STATE }, {
+      now: Date.now() - 1000,
+      idSuffix: "tr-prior",
+      companion: GREYSHADE,
+      repeated: false
+    });
+  }
   const coreResult = runRaphaelCore(testCase.input, { ...BASE_STATE }, {
     now: Date.now(),
     idSuffix: "tr",

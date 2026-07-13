@@ -22,7 +22,7 @@ import { buildRecoveryContext } from "./recovery/recoveryLoop.js";
 import { runNluPipeline } from "./nlu/runNluPipeline.js";
 import { selectResponseStrategy, RESPONSE_STRATEGIES } from "./responseStrategySelector.js";
 import { LOW_RECALL_INTENTS } from "./memoryRecallPolicy.js";
-import { getDialogueState, recordDialogueTurn, getRepetitionScore } from "./dialogue/dialogueStateTracker.js";
+import { applyRecentDialogueContext, getDialogueState, recordDialogueTurn, getRepetitionScore } from "./dialogue/dialogueStateTracker.js";
 import { evaluateAntiLoop } from "./dialogue/antiLoopPolicy.js";
 import { selectReplyVariant } from "./dialogue/replyVariantSelector.js";
 import { planQuickReplies } from "./dialogue/quickReplyPlanner.js";
@@ -39,7 +39,10 @@ export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
   const safety = assessInputSafety(gateway.normalizedInput);
   const analysis = interpretEmotionInput(gateway.originalInput, state, { repeated: gateway.repeated });
   const intent = classifyIntent(gateway.normalizedInput, analysis, safety);
+  const dialogueSessionKey = companionId;
+  const dialogueState = getDialogueState(dialogueSessionKey);
   let nlu = runNluPipeline(gateway.normalizedInput, analysis, intent, safety);
+  nlu = applyRecentDialogueContext(nlu, dialogueState);
   nlu = applyQuickReplyContext(nlu, runtime.quickReply);
   let responseStrategy = selectResponseStrategy(nlu, intent, safety);
   responseStrategy = resolveQuickReplyStrategy(runtime.quickReply, responseStrategy);
@@ -73,8 +76,6 @@ export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
     responseStrategy = { strategy: RESPONSE_STRATEGIES.MEMORY_REFERENCE, reason: "memory_recall_gate" };
   }
 
-  const dialogueSessionKey = companionId;
-  const dialogueState = getDialogueState(dialogueSessionKey);
   const antiLoopDecision = evaluateAntiLoop({
     nlu,
     responseStrategy,
