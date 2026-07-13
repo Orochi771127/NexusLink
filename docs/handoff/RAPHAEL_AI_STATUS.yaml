@@ -1,7 +1,7 @@
 # Machine-readable Raphael AI status. Human narrative: RAPHAEL_AI_HANDOFF.md
 # Current operational truth lives in docs/agent/AI_EXECUTION_LEDGER.md (Lane 3);
 # this file is a snapshot index, refreshed 2026-07-10 (was stale at 2026-06-24).
-last_updated: "2026-07-13"
+last_updated: "2026-07-14"
 last_agent: Codex
 
 branch:
@@ -15,7 +15,7 @@ do_not_touch: "AIForgeNexus2\\NexusLink"
 
 stage:
   current: 6
-  label: "Raphael v6 Limited Beta automated release candidate"
+  label: "Raphael v6.1 Limited Beta with Reflective Care V1"
   next: "Limited Beta distribution; collect consented feedback and defer formal private-blind evidence"
 
 qa:
@@ -27,7 +27,8 @@ qa:
   nlu_smoke: "8/8 (2026-07-13)"
   natural_conversation_audit: "v6: dialogue regressions 14/14; focused UI 3/3; UI replay 10/10 visible; 0 console errors (2026-07-13)"
   limited_beta_structured_audit: "3 isolated sessions / 60 interactions; 60/60 pass; 0 console errors; evidence_class=structured_beta; human_blind_review=not_run (2026-07-13)"
-  sealed_holdout_v1: "48/48 hard contract; 0/48 turns machine-flagged (0 flags); hard gate PASS; human blind review not run (2026-07-13)"
+  sealed_holdout_v1: "48/48 hard contract; 0/48 turns machine-flagged (0 flags); hard gate PASS; human blind review not run (2026-07-14)"
+  reflective_care_v1: "dialogue loop 21/21; explicit symbolic reflection is opt-in; care/symbolic turns no reward and no memory; safety precedence pass (2026-07-14)"
   web_release_gate: "10/10 automated required checks; allAutomatedRequiredOk=true (2026-07-13)"
   state_migration: "30/30 (2026-07-13)"
   forbidden_phrases: 0

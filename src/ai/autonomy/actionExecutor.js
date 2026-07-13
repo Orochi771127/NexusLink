@@ -40,7 +40,8 @@ export function executeAutonomousAction({
     plan: alignedPlan,
     semanticSoul: perception.semanticSoul,
     memories: perception.memories,
-    sedimentationResult
+    sedimentationResult,
+    responseStrategy: perception.responseStrategy
   });
 
   if (!coerced.shouldRewardRelationship) {

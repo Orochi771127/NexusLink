@@ -1,6 +1,7 @@
 import { clamp } from "../utils/clamp.js";
 import { SOUL_TALK_INTENTS } from "./intentClassifier.js";
 import { SOUL_TALK_REACTIONS } from "./reactionPlanner.js";
+import { isPrivateCareStrategy } from "./dialogue/reflectiveCarePolicy.js";
 
 const NON_REWARDING_MODES = new Set([
   SOUL_TALK_REACTIONS.SAFETY_REDIRECT,
@@ -17,7 +18,8 @@ export function deriveStateMutation({
   plan = {},
   semanticSoul = {},
   memories = {},
-  sedimentationResult = {}
+  sedimentationResult = {},
+  responseStrategy = {}
 } = {}) {
   const bond = Number(state.bond) || 0;
   const trust = Number(state.trust) || 0;
@@ -144,6 +146,26 @@ export function deriveStateMutation({
       shouldCreateMemory: sedimentationResult.shouldCreateMemory && plan.shouldCreateMemory,
       reason,
       spamScoreDelta: -1
+    });
+  }
+
+  if (isPrivateCareStrategy(responseStrategy?.strategy)) {
+    reason = "private_reflective_care";
+    return finalize({
+      statePatch: {
+        safeHarborMode: false,
+        mood: state.mood || "calm",
+        bond,
+        trust,
+        defense,
+        energy: Math.max(0, energy - 1),
+        reactionPreview: patch.reactionPreview || ""
+      },
+      shouldRewardRelationship: false,
+      shouldTriggerMilestone: false,
+      shouldCreateMemory: false,
+      reason,
+      spamScoreDelta: 0
     });
   }
 

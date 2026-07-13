@@ -1,6 +1,10 @@
 import { DIALOGUE_ACTS } from "./nlu/dialogueActClassifier.js";
 import { NUANCE_FLAGS } from "./nlu/nuanceDetector.js";
 import { canUseTrainingResponseStrategy } from "./raphaelTrainingAdapter.js";
+import {
+  shouldUseReflectiveCare,
+  shouldUseSymbolicReflection
+} from "./dialogue/reflectiveCarePolicy.js";
 
 export const RESPONSE_STRATEGIES = Object.freeze({
   PRACTICAL_CLARIFICATION: "practical_clarification",
@@ -20,6 +24,8 @@ export const RESPONSE_STRATEGIES = Object.freeze({
   CLARIFYING_QUESTION: "clarifying_question",
   REPEATED_EMOTION_RECALL: "repeated_emotion_recall",
   HOLDING_SPACE: "holding_space",
+  REFLECTIVE_CARE: "reflective_care",
+  SYMBOLIC_REFLECTION: "symbolic_reflection",
   LIGHT_GREETING: "light_greeting"
 });
 
@@ -79,6 +85,12 @@ export function selectResponseStrategy(nlu = {}, intent = {}, safety = {}) {
     (frame.emotionalTone === "fatigue" || frame.topic === "physical_tiredness")
   ) {
     return { strategy: RESPONSE_STRATEGIES.REPEATED_EMOTION_RECALL, reason: "repeated_fatigue_signal" };
+  }
+  if (shouldUseSymbolicReflection({ inputText: nlu.inputText, frame })) {
+    return { strategy: RESPONSE_STRATEGIES.SYMBOLIC_REFLECTION, reason: "player_opted_into_symbolic_reflection" };
+  }
+  if (shouldUseReflectiveCare({ inputText: nlu.inputText, frame })) {
+    return { strategy: RESPONSE_STRATEGIES.REFLECTIVE_CARE, reason: "player_requested_reflective_care" };
   }
   if (
     nuances.includes(NUANCE_FLAGS.WANTS_HOLDING_SPACE) ||

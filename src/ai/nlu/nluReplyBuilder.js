@@ -6,6 +6,10 @@ import {
   buildConversationalReaction,
   buildVentingReply
 } from "../dialogue/conversationAnswerPolicy.js";
+import {
+  buildReflectiveCareReply,
+  buildReflectiveCareVariants
+} from "../dialogue/reflectiveCarePolicy.js";
 
 const GENERIC_FALLBACK_BANNED = /我聽見了[。.]?\s*我們先慢一點|好[，,]?\s*我聽到了[，,]?\s*我們慢一點/;
 
@@ -112,6 +116,12 @@ export function buildStrategyReply({
     seed
   });
   const ventingReply = buildVentingReply({ inputText: nlu.inputText, frame });
+  const reflectiveCareReply = buildReflectiveCareReply({
+    inputText: nlu.inputText,
+    frame,
+    mode: "support",
+    seed
+  });
 
   // A concrete answer policy must win over a carried acknowledgement on an
   // ordinary direct question. Safety and boundary modes are resolved by the
@@ -171,10 +181,14 @@ export function buildStrategyReply({
       }
       return "湖面外的光路還在。我們可以慢慢走向外面地圖，但不會硬拉你離開現在的節奏。";
     },
+    [RESPONSE_STRATEGIES.REFLECTIVE_CARE]: () =>
+      reflectiveCareReply || "好，我先聽，不急著把你的感受整理成結論。",
+    [RESPONSE_STRATEGIES.SYMBOLIC_REFLECTION]: () =>
+      buildReflectiveCareReply({ inputText: nlu.inputText, frame, mode: "symbolic", seed }),
     [RESPONSE_STRATEGIES.BOUNDARY_SET]: () =>
       "你想靠近，也留了退後的空間。若太快，我會先退半步。",
     [RESPONSE_STRATEGIES.SHORT_VALIDATION]: () =>
-      ventingReply || conversationalReaction ||
+      reflectiveCareReply || ventingReply || conversationalReaction ||
       pick(["嗯，被否定會悶。我先不講大道理。", "聽起來很悶。我先陪著，不急著給建議。"], seed),
     [RESPONSE_STRATEGIES.EMOTIONAL_SHORT]: () => {
       const tone = frame.emotionalTone || "calm";
@@ -185,6 +199,7 @@ export function buildStrategyReply({
           seed
         );
       }
+      if (reflectiveCareReply) return reflectiveCareReply;
       if (ventingReply) return ventingReply;
       if (conversationalReaction) return conversationalReaction;
       // 失眠夜：不逼睡、不說教，先把呼吸放慢。
@@ -237,6 +252,7 @@ export function buildStrategyReply({
       return groundedOpenConversationLine(frame, nlu, seed);
     },
     [RESPONSE_STRATEGIES.CONTEXTUAL_ACK]: () => {
+      if (reflectiveCareReply) return reflectiveCareReply;
       if (conversationalReaction) return conversationalReaction;
       const need = frame.userNeed || "";
       if (topic === "relationship" && need === "boundary") {
@@ -274,7 +290,7 @@ export function buildStrategyReply({
         seed
       ),
     [RESPONSE_STRATEGIES.HOLDING_SPACE]: () =>
-      conversationalReaction ||
+      reflectiveCareReply || conversationalReaction ||
       pick(["好，我先不給答案。這件事就放在這裡。", "嗯，不用講太多。我陪著，不急著收走。"], seed),
     [RESPONSE_STRATEGIES.LIGHT_GREETING]: () => {
       const said = String(nlu.inputText || "").trim();
@@ -465,6 +481,7 @@ function resolveVariantLines(strategy, nlu, frame, recoveryContext, prefillConte
   const conversationalReaction = buildConversationalReaction({ inputText: said, frame, seed: said.length });
   const conversationalAnswer = buildConversationalAnswer({ inputText: said, frame, seed: said.length });
   const ventingReply = buildVentingReply({ inputText: said, frame });
+  const reflectiveCareLines = buildReflectiveCareVariants({ inputText: said, frame, mode: "support" });
 
   switch (strategy) {
     case RESPONSE_STRATEGIES.PRACTICAL_CLARIFICATION:
@@ -506,9 +523,16 @@ function resolveVariantLines(strategy, nlu, frame, recoveryContext, prefillConte
         return ["湖面外的路還在。你現在有點沒力，我們可以慢慢走，不硬拉節奏。"];
       }
       return ["湖面外的光路還在。我們可以慢慢走向外面地圖，但不會硬拉你離開現在的節奏。"];
+    case RESPONSE_STRATEGIES.REFLECTIVE_CARE:
+      return reflectiveCareLines.length
+        ? reflectiveCareLines
+        : ["好，我先聽，不急著把你的感受整理成結論。"];
+    case RESPONSE_STRATEGIES.SYMBOLIC_REFLECTION:
+      return buildReflectiveCareVariants({ inputText: said, frame, mode: "symbolic" });
     case RESPONSE_STRATEGIES.BOUNDARY_SET:
       return ["你想靠近，也留了退後的空間。若太快，我會先退半步。"];
     case RESPONSE_STRATEGIES.SHORT_VALIDATION:
+      if (reflectiveCareLines.length) return reflectiveCareLines;
       if (ventingReply) return [ventingReply];
       if (conversationalReaction) return [conversationalReaction];
       return ["嗯，被否定會悶。我先不講大道理。", "聽起來很悶。我先陪著，不急著給建議。"];
@@ -519,6 +543,7 @@ function resolveVariantLines(strategy, nlu, frame, recoveryContext, prefillConte
           "道歉我聽見了。先不用解釋太多，我們把距離放回剛剛剛好的位置。"
         ];
       }
+      if (reflectiveCareLines.length) return reflectiveCareLines;
       if (ventingReply) return [ventingReply];
       if (conversationalReaction) return [conversationalReaction];
       if (frame.specificDetail?.type === "sleepless" || /睡不著|睡不着|失眠/.test(said)) {
@@ -569,6 +594,7 @@ function resolveVariantLines(strategy, nlu, frame, recoveryContext, prefillConte
       }
       return groundedOpenConversationLines(frame, nlu);
     case RESPONSE_STRATEGIES.CONTEXTUAL_ACK:
+      if (reflectiveCareLines.length) return reflectiveCareLines;
       if (conversationalReaction) return [conversationalReaction];
       if (topic === "relationship" && need === "boundary") {
         return ["你想靠近，也願意給彼此空間。我會照這個節奏來。"];
@@ -595,6 +621,7 @@ function resolveVariantLines(strategy, nlu, frame, recoveryContext, prefillConte
         "這種疲憊又回來了。我不急著安慰你。先分清楚：是身體累，還是心裡卡住？"
       ];
     case RESPONSE_STRATEGIES.HOLDING_SPACE:
+      if (reflectiveCareLines.length) return reflectiveCareLines;
       if (conversationalReaction) return [conversationalReaction];
       return ["好，我先不給答案。這件事就放在這裡。", "嗯，不用講太多。我陪著，不急著收走。"];
     case RESPONSE_STRATEGIES.LIGHT_GREETING:

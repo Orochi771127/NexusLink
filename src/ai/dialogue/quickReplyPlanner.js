@@ -44,6 +44,11 @@ export function planQuickReplies({
     strategy === RESPONSE_STRATEGIES.QUIET_PRESENCE
   ) {
     candidates = buildQuietPresenceQuickReplies();
+  } else if (
+    strategy === RESPONSE_STRATEGIES.REFLECTIVE_CARE ||
+    strategy === RESPONSE_STRATEGIES.SYMBOLIC_REFLECTION
+  ) {
+    candidates = buildReflectiveCareQuickReplies(strategy);
   } else if (userNeed === "clarity" || topic === "raphael_ai" || dialogueAct === DIALOGUE_ACTS.ASKING_FOR_HELP) {
     candidates = buildClarificationQuickReplies(topic);
   } else if (strategy === RESPONSE_STRATEGIES.EXPLORATION_INVITE || topic === "exploration") {
@@ -56,6 +61,72 @@ export function planQuickReplies({
 
   candidates = diversifyQuickReplySet(candidates, dialogueState);
   return candidates.slice(0, 3);
+}
+
+function buildReflectiveCareQuickReplies(strategy) {
+  if (strategy === RESPONSE_STRATEGIES.SYMBOLIC_REFLECTION) {
+    return [
+      createQuickReply({
+        label: "說說那個畫面",
+        intent: "symbolic_continue",
+        actionType: QUICK_REPLY_ACTION_TYPES.CONTINUE,
+        topic: "emotion",
+        dialogueAct: "describing_event",
+        responseStrategyHint: RESPONSE_STRATEGIES.SYMBOLIC_REFLECTION,
+        priority: 3
+      }),
+      createQuickReply({
+        label: "先不解釋它",
+        intent: "symbolic_no_interpretation",
+        actionType: QUICK_REPLY_ACTION_TYPES.CONSTRAINT,
+        topic: "emotion",
+        dialogueAct: "describing_event",
+        responseStrategyHint: RESPONSE_STRATEGIES.SYMBOLIC_REFLECTION,
+        payload: { constraints: ["no_advice"] },
+        priority: 2
+      }),
+      createQuickReply({
+        label: "換回日常聊",
+        intent: "leave_symbolic_mode",
+        actionType: QUICK_REPLY_ACTION_TYPES.SHIFT,
+        topic: "daily_life",
+        dialogueAct: "describing_event",
+        responseStrategyHint: RESPONSE_STRATEGIES.CONTEXTUAL_ACK,
+        priority: 1
+      })
+    ];
+  }
+
+  return [
+    createQuickReply({
+      label: "先把話說完",
+      intent: "care_continue",
+      actionType: QUICK_REPLY_ACTION_TYPES.CONTINUE,
+      topic: "emotion",
+      dialogueAct: "describing_event",
+      responseStrategyHint: RESPONSE_STRATEGIES.REFLECTIVE_CARE,
+      priority: 3
+    }),
+    createQuickReply({
+      label: "找一個小步驟",
+      intent: "care_small_step",
+      actionType: QUICK_REPLY_ACTION_TYPES.CLARIFY,
+      topic: "emotion",
+      dialogueAct: "asking_for_help",
+      responseStrategyHint: RESPONSE_STRATEGIES.REFLECTIVE_CARE,
+      priority: 2
+    }),
+    createQuickReply({
+      label: "先安靜一下",
+      intent: "care_quiet",
+      actionType: QUICK_REPLY_ACTION_TYPES.QUIET,
+      topic: "emotion",
+      dialogueAct: "requesting_silence",
+      responseStrategyHint: RESPONSE_STRATEGIES.QUIET_PRESENCE,
+      payload: { constraints: ["no_questions", "quiet_presence"] },
+      priority: 1
+    })
+  ];
 }
 
 function buildPracticalQuickReplies(topic, constraints = []) {
