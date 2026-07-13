@@ -10,7 +10,7 @@
 
 | 欄位 | 值 |
 |------|-----|
-| `last_updated` | 2026-07-10（本檔 2026-06-24 起曾長期未更新；**當前操作真相以 `docs/agent/AI_EXECUTION_LEDGER.md` Lane 3 為準**） |
+| `last_updated` | 2026-07-14（TP-2 docs-only refresh；**當前操作真相以 `docs/agent/AI_EXECUTION_LEDGER.md` Lane 3 為準**） |
 | `last_agent` | Claude Fable 5 |
 | `active_branch` | `main`（2026-07-02 起單線開發，integrate 分支已退役） |
 | `last_commit` | 執行 `git log -1 --oneline` 取得 tip |
@@ -21,9 +21,33 @@
 
 ## 一句話現況
 
-RaphaelCore JS v1 → Soul Architecture v1.5 → NLU v1 → Stage 4 → **靜態訓練 advisory 層（training bundle + Nuwa 蒸餾，trusted:false）→ daily-life NLU v1** 已全部在 `main`。2026-07-05 起的最新進展（Nuwa 合入、F1 碰撞修復、eval 覆蓋矩陣）逐條見 ledger Lane 3；機器可讀快照見 `RAPHAEL_AI_STATUS.yaml`。下一步：CH-5 章節相遇接線、TP-3 eval 擴充、真機人類 gate。
+RaphaelCore JS v1 → Soul Architecture v1.5 → NLU v1 → Stage 4 → 靜態訓練 advisory 層（training bundle + Nuwa 蒸餾 v0.3，trusted:false）→ daily-life NLU → 詞庫擴充批次 → **自然對話 v2–v6（Limited Beta 自動化候選）→ 密封 holdout eval（48/48 hard gate PASS）→ Reflective Care V1** 已全部在 `main`。逐條進展見 ledger Lane 3（2026-07-10..14）；機器可讀快照見 `RAPHAEL_AI_STATUS.yaml`。
 
-> 以下章節（Stage 進度表、模組地圖、QA 數字）為 2026-06-24 的歷史快照，架構描述仍有效；**數字與「下一步」以上方與 ledger 為準**。
+**誠實邊界（不可誇大）：**
+
+- Limited Beta 是 **Owner 明示風險接受下的自動化候選**；正式 3 人 × 20 回合 private-blind 人測 **not_run**，不得宣稱「獨立人類驗證」。
+- 訓練層（training bundle / Nuwa / gateway）全部 **advisory-only、trusted:false**；runtime **無外部 LLM / API / 後端**，也不會自動從玩家或 eval 文字自我訓練。
+- Reflective Care V1 是陪伴對話政策，**不是心理治療 / 診斷 / 危機服務**；care/symbolic 回合不給獎勵、不寫記憶。
+
+下一步：Limited Beta 發佈與同意制回饋收集、真機人類 gate、法務/商店文案審查。
+
+> 以下章節（Stage 進度表、模組地圖、QA 數字）為 2026-06-24 的歷史快照，架構描述仍有效；**數字與「下一步」以上方、`RAPHAEL_AI_STATUS.yaml` 與 ledger 為準**。
+
+---
+
+## 2026-07 進展摘要（TP-2 refresh，證據皆可追溯）
+
+| 項目 | 狀態 | 證據 |
+|------|------|------|
+| 自然對話 v2–v6 | v6 通過結構化 Beta 稽核（3 sessions / 60 互動 60/60；evidence_class=structured_beta） | `docs/qa/RAPHAEL_CONVERSATION_EVAL_V6_LIMITED_BETA_2026-07-13.md` |
+| 密封 holdout v1.0.0 | 48/48 hard contract、hard gate PASS、機器品質 flag 0；**人類盲審 not_run** | 同上 + `docs/qa/RAPHAEL_REFLECTIVE_CARE_V1_2026-07-14.md` |
+| Reflective Care V1 | dialogue loop 21/21（含 6 care/symbolic + 1 safety-precedence）；opt-in、無獎勵、無記憶寫入 | `docs/qa/RAPHAEL_REFLECTIVE_CARE_V1_2026-07-14.md` |
+| Nuwa advisory v0.3 | +daily_texture/small_moments/sleepless、no_sleep_pressure 哨兵；trusted:false | ledger Lane 3 2026-07-13（NLU 訓練批次） |
+| NLU 詞庫擴充 | 情感詞 19→60、程度副詞 7→16、否定詞 6→11、約 60 口語/簡體變體；TR-17..30 | ledger Lane 3 2026-07-13（NLU 訓練批次） |
+| Web release gate | 10/10 自動必要檢查；JS syntax 204/204；state migration 30/30 | `docs/qa/RAPHAEL_REFLECTIVE_CARE_V1_2026-07-14.md` |
+| Live gate | Soul Talk 11/11、HUD 13/13、0 console errors | 同上 |
+
+**尚未關閉的人類 gate：** 真機三平台重測、3 位獨立測試者 moderated private test（formal private-blind）、法務/隱私/商店文案審查、密封 holdout 人類盲審。
 
 ---
 
@@ -36,7 +60,9 @@ RaphaelCore JS v1 → Soul Architecture v1.5 → NLU v1 → Stage 4 → **靜態
 | 3 | Awakening gate（心核初醒、first touch / first Soul Talk） | ✅ `main` |
 | 3b | NLU v1（semanticFrame、responseStrategy、anti-generic） | ✅ `main` |
 | 4 | Human playtest pack（fatigue recall、touch fatigue daytime、10 human-feel cases） | ✅ `main`（PR #87） |
-| 5 | Expanded real human playtest + corpus tuning | ⏳ 下一步 |
+| 5 | Advisory 訓練層 + NLU 詞庫/語料擴充 + 自然對話 v2–v6 + 密封 holdout eval | ✅ `main`（2026-07-05..13，見 ledger Lane 3） |
+| 6 | Limited Beta + Reflective Care V1（自動化 gate 全綠；人類 gate 未關） | ✅ `main`（2026-07-13..14） |
+| 7 | 同意制 Beta 回饋收集 + 正式 private-blind 人測 + 真機/法務 gate | ⏳ 下一步 |
 
 ---
 
@@ -83,7 +109,7 @@ Player input
 | `src/ai/autonomy/` | 有界自主迴圈 |
 | `src/ai/awakening/` | 心核初醒 gate |
 | `src/ai/eval/` | Critic 層（safety / boundary / persona / generic reply） |
-| `src/ai/dialogue/` | 反迴圈、quick reply、debug trace |
+| `src/ai/dialogue/` | 反迴圈、quick reply、debug trace、對話狀態追蹤、boundary/answer policy、**Reflective Care V1**（`reflectiveCarePolicy.js`） |
 | `src/ai/external/` | External gateway（stub，預設關） |
 | `src/ai/evolution/` | 自我迭代提案（需 human approval） |
 | `src/ai/testHarness/` | Smoke / stage4 / NLU cases |
@@ -91,13 +117,14 @@ Player input
 
 ---
 
-## 未完成 / 建議下一步
+## 未完成 / 建議下一步（2026-07-14）
 
-1. 在 `main` 重跑 QA pack 做 canonical sign-off（PR #87 merge 後）
-2. **Expanded real human playtest**（規則 harness 通過 ≠ 真人語感驗收）
-4. 可選：道歉線 `我剛剛對你太急了，對不起` 專用 repair pack（目前 contextual ack）
+1. **正式 private-blind 人測**：3 位獨立測試者 × 20 回合（協定：`docs/qa/RAPHAEL_PRIVATE_BLIND_TEST_V1.md`）；目前 not_run，是「獨立人類驗證」宣稱的硬前提
+2. **真機三平台重測** + 法務/隱私/商店文案審查（product launch gate）
+3. 同意制 Limited Beta 回饋收集（care 語氣 / symbolic prompts），**不得**當作 private-blind 證據
+4. 自然對話後續：更廣 paraphrases、本地玩家回覆風格偏好（case-first）
 5. 可選：睡眠時段觸摸仍先 `wake`、疲勞不累積（live UI 已知限制；engine QA 已覆蓋數學）
-6. 長線：corpus 擴充、NLU regex 邊界語句、gateway 真實 advisor 接入（仍須 RaphaelCore 最終裁決）
+6. 長線：corpus 擴充、gateway 真實 advisor 接入（仍須 RaphaelCore 最終裁決、trusted:false）
 
 ---
 
@@ -135,10 +162,11 @@ Player input
 
 | 風險 | 嚴重度 | 說明 |
 |------|--------|------|
-| Post-merge QA 未重跑 | 低 | PR #87 已 merge；建議在 `main` 再跑一輪 QA 做 sign-off |
-| NLU rule-based 覆蓋率 | 低 | 邊界語句需 corpus / regex 擴充 |
+| 人類驗證缺口 | **高** | private-blind 人測 not_run；自動化 gate 全綠 ≠ 獨立人類驗證，對外宣稱受限於 Limited Beta 標籤 |
+| Care 定位漂移 | 中 | Reflective Care V1 不得被行銷/描述為治療、諮商、診斷或危機服務 |
+| NLU rule-based 覆蓋率 | 低 | 未覆蓋說法會落到 clarifying/grounded fallback；後續 case-first 擴充 |
 | 睡眠窗觸摸 → wake 短路 | 低 | Live UI 行為；engine 層 fatigue 已單測 |
-| Apology 無專用 pack | 低 | 語氣可接受，非 merge blocker |
+| 首跑 flaky console error | 低 | null.split ×2 首次 gate run 偶發（3 次紀錄，重跑必乾淨；runner 已補 url:line 擷取） |
 | Port 5173 衝突 | 中 | 多 checkout 並行時易測錯 codebase |
 
 ---
@@ -150,8 +178,9 @@ Player input
 2. AGENTS.md + CLAUDE.md（協作規範）
 3. docs/architecture/RAPHAEL_SOUL_ARCHITECTURE_V1.md（架構）
 4. docs/raphael/RAPHAEL_CONSTITUTION.md（人格邊界）
-5. docs/qa/RAPHAEL_CORE_JS_V1_TEST_RUNS.md（最新測試證據）
-6. src/ai/raphaelCore.js（程式入口）
+5. docs/agent/AI_EXECUTION_LEDGER.md Lane 3（操作真相，newest-first）
+6. docs/qa/RAPHAEL_REFLECTIVE_CARE_V1_2026-07-14.md + docs/qa/RAPHAEL_CONVERSATION_EVAL_V6_LIMITED_BETA_2026-07-13.md（最新測試證據）
+7. src/ai/raphaelCore.js（程式入口）
 ```
 
 遊戲內容（非 AI 實作）另讀：`docs/r2-canon/R2_CANON_REGISTRY.md`
@@ -175,7 +204,7 @@ python docs/qa/_run_stage4_human_playtest.py
 python docs/qa/_run_touch_fatigue_daytime.py
 ```
 
-預期：與上表一致（17/17、8/8、live pass、10/10、7/7）。
+預期（2026-07-14 快照）：harness 17/17、NLU smoke 8/8、live gate soul_talk **11/11** + HUD 13/13 + 0 console errors、stage4 pass、touch fatigue pass。完整 gate 清單與最新數字見 `RAPHAEL_AI_STATUS.yaml` 的 `qa:` 區塊。
 
 ---
 

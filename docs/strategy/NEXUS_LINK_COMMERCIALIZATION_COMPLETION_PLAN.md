@@ -53,7 +53,7 @@
 
 ## 2. 10 步藍圖 × 現況對照
 
-> 狀態為本計畫作者依現有文件＋專案記憶研判；**精確 commit/gate 以 `docs/agent/AI_EXECUTION_LEDGER.md` 為準**。當前 HEAD＝`main` / `458b883`（"art: add rift silhouette review batch"，2026-07-12）；工作區僅本計畫相關 3 份 doc 未提交。先前 doc/記憶/分類帳的 `cbd2aa8` / `f80b888` / `7729e54` 均為過期 commit 引用。開工前先對帳。
+> 狀態為本計畫作者依現有文件＋專案記憶研判；**精確 commit/gate 以 `docs/agent/AI_EXECUTION_LEDGER.md` 為準**。當前 HEAD＝`main` / `ed3acb2`（2026-07-14 對帳）。詳見 `docs/agent/COMMERCIAL_SHIP_READINESS_2026-07-14.md`。
 
 | # | 藍圖步驟 | 研判狀態 | 負責 | 備註 |
 |---|----------|----------|------|------|
@@ -63,10 +63,10 @@
 | 4 | Start / Identity / Guidance / Home | ✅ 大致 Done | AI+人核 | First Session 九拍已上線並做過易讀性修補 |
 | 5 | Explore/Care/Growth/Memory 全頁 | ✅ Done（2026-07-12 查證程式碼） | AI(EXPERIENCE) | `src/ui/pageRouter.js` 四頁皆完整 DOM 全頁（焦點卡/證據條/量表/進度/傾向/可反思記憶清單）+ 五種 view state + i18n + 接真效果；`index.html` `#page-layer` 四 body 已接、`styles/page-content.css` 已樣式化、`app.js:317/344` 已 wire+bind。⚠️ **`COMMERCIAL_UIUX_HANDOFF §4` 仍稱此為「下一個切片」＝過期 doc drift，待修** |
 | 6 | First Trace / Return Echo loop | ✅ 大致 Done | AI | 已含於 First Session；需確認無重複記憶寫入 |
-| 7 | Illustrated runtime asset audit | 🟡 Partial | 人核(資產)+AI | `ART_ASSET_GAP_AUDIT.md` 開著（GAP-1 10 個裂隙剪影）、灰影貓 512 runtime 替換未完成 |
-| 8 | Raphael Restricted Habitat Agent | 🟡 Partial | AI+人核 | RaphaelCore 已 load-bearing；受限棲地 agent adapter/reducer 接線需確認 |
-| 9 | Web release gate / 私測包 | 🟡 自動過、人類 gate 開 | **人核 gate** | 自動 release gate 曾 10/10；但**真機回歸 + 3 人私測**未關 |
-| 10 | Desktop wrapper ADR | 🔴 未開始 | **人核 gate** | `PACKAGING_ROADMAP` 明載 web 仍為 canonical、尚未建任何封裝專案 |
+| 7 | Illustrated runtime asset audit | ✅ v1 Done | 人核(資產)+AI | GAP-1 裂隙剪影 10/10 runtime 已接（2026-07-12）；灰影貓 512 runtime **已完成**（舊述為 doc drift）。六區近景棲地＋進化美術列 post-v1（GAP-3/GAP-2） |
+| 8 | Raphael Restricted Habitat Agent | 🟡 Partial | AI+人核 | RaphaelCore load-bearing；Limited Beta 候選（holdout 48/48）；人類盲評 not_run |
+| 9 | Web release gate / 私測包 | 🟡 自動過、人類 gate 開 | **人核 gate** | 2026-07-14 自動 gate **10/10**；真機回歸 + 3 人私測未關 |
+| 10 | Desktop wrapper ADR | 🟡 草案 | **人核 gate** | `ADR-001-DESKTOP-WRAPPER.md` 已起草（建議 Tauri）；待 Owner 拍板後建原型 |
 
 **→ 產品體驗本體已走到 7～8 成；商業化的『最後一哩』集中在 step 7–10 的資產、agent 收尾，以及全部人類 gate。**
 
@@ -107,11 +107,12 @@
 
 | 包 | 目標 | 層級 | 建議模型 | 人核 gate |
 |----|------|------|----------|-----------|
-| **TP-6** | 音效現實：接 6–10 SFX + 湖景 ambient，終結靜音；安全轉場保持靜默 | EXPERIENCE + assets(GROUNDWORK) | Codex 接線；人核選/授權音檔 | 資產授權 + 真機聆聽 |
+| **TP-6** | 音效現實：Web Audio 合成 SFX v1 **已出貨**（10 種 + BGM）；CC0 錄音升級列 v1.1 polish | EXPERIENCE + assets | — | 真機聆聽 + 可選 CC0 升級 |
 | **TP-7** | 夥伴主動微時刻（僅由夥伴狀態驅動，非玩家缺席）——最大差異化 | EXPERIENCE | Claude Code 實作、Codex eval、Fable5 紅線審 | 行為清單前置 + 手感後審 |
 | ~~step 5 收尾~~ | ✅ 已完成（見 §2）——四頁真頁面已上線，本項移除，僅剩可選的 live 驗證/內容加厚 | — | — | 若要做＝EXPERIENCE 級 polish，非「補建」 |
-| **step 7 稽核** | 執行 `ART_ASSET_GAP_AUDIT`：裂隙剪影、灰影貓 512 runtime | assets GROUNDWORK | 人核選資產、AI 接線 | 資產 readiness gate |
-| **TP-2/TP-4** | 狀態/handoff 刷新、i18n sc/jp 補齊 53 keys | doc / 資料 | 便宜模型 | 語氣審 |
+| **step 7 稽核** | ✅ v1 完成（GAP-1 + greyshade 512）；post-v1：六區棲地、進化美術 | — | — | — |
+| ~~TP-2~~ | ✅ 2026-07-14 完成 — Raphael status/handoff 刷新 | doc | — | Owner review |
+| ~~TP-4~~ | ✅ 已完成 — 252 keys × 4 語言零缺漏（2026-07-06 起）；語氣校對仍待人核 | doc / 資料 | — | 日文語氣審 |
 
 > 註：所有變現程式（store/chapter economy）在 **TP-8 決策前不排入**——那是憲法明文延後、需獨立 gate 的 GROUNDWORK。
 

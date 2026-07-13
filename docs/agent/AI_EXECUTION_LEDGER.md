@@ -58,6 +58,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-07-14 - Claude Fable 5 - Commercial ship readiness pack (docs + QA evidence)
+
+- Status: `VERIFIED`
+- Branch / commit: `main` / uncommitted docs-only based on `ed3acb2`; Owner authorized commit+push.
+- Scope: Commercial launch plan execution — docs, QA evidence refresh, decision records, human-gate checklists. No `src/**` or `assets/**` change in this pack.
+- Work performed: Added `COMMERCIAL_SHIP_READINESS_2026-07-14.md` (six-phase status SSOT); updated `NEXUS_LINK_COMMERCIALIZATION_COMPLETION_PLAN.md` (HEAD ed3acb2, step 7/9/10 status, TP-6/TP-2/TP-4 done); Owner decisions in `TEST_CARRIER_ROSTER_MEMO.md` §7.1 (元素精靈); human gates: `REAL_DEVICE_REGRESSION_MATRIX.md`, `ADR-001-DESKTOP-WRAPPER.md`, `PRIVACY_AND_STORE_COPY_DRAFT.md`; TP6 spec updated (synth v1 shipped); `verify_i18n_strings.mjs`; `RAPHAEL_BLIND_REVIEW_SHEET_2026-07-14.md`; refreshed `_web_release_gate_output.json` and `_live_playtest_gate_output.json`.
+- Verification: Web release gate **10/10** `allAutomatedRequiredOk:true` (2026-07-14T05:02); sealed holdout **48/48** `hardGateOk:true` quality flags 0; i18n 252×4 keys (script added); map runtime capture `runtime-atlas-390x844.png` exists; art audit confirms GAP-1 10/10 + greyshade 512 runtime active.
+- Problems / risks: Human gates still open (real-device, 3-person private test, legal/store copy, ADR approval, Steam). Human blind review `not_run`. H10-1 holdout reply may need human spot-check despite hard pass. Element spirits identity needs canon expansion TASK_PACK.
+- Next safe action: Owner runs `REAL_DEVICE_REGRESSION_MATRIX.md` + fills blind review sheet; approves map v1 visual lock.
+- Required reading: `docs/agent/COMMERCIAL_SHIP_READINESS_2026-07-14.md`, `docs/testing/REAL_DEVICE_REGRESSION_MATRIX.md`, `docs/qa/RAPHAEL_BLIND_REVIEW_SHEET_2026-07-14.md`.
+
 ### 2026-07-13 - Claude Fable 5 - Viewport engine: --app-height decoupled from visualViewport (keyboard model v6)
 
 - Status: `VERIFIED`
@@ -1529,6 +1540,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 ---
 
 ## Lane 3 - Raphael Core, Companion Reasoning, And Soul Talk
+
+### 2026-07-14 - Claude Fable 5 - TP-2 docs-only refresh: handoff/status/runtime-map de-staling
+
+- Status: `VERIFIED`
+- Branch / commit: `main` / uncommitted docs-only worktree based on `ed3acb2`; no commit or push authorized.
+- Scope: TP-2 docs-only refresh. Files touched: `docs/handoff/RAPHAEL_AI_STATUS.yaml`, `docs/handoff/RAPHAEL_AI_HANDOFF.md`, `docs/architecture/RUNTIME_MAP.md`, and this ledger entry. Zero `src/**`, `assets/**`, root canon, or `ACCEPTANCE.md` change.
+- Work performed: Refreshed STATUS.yaml to 2026-07-14 with a capabilities block (natural conversation v2-v6 Limited Beta candidate, Reflective Care V1, Nuwa v0.3 advisory trusted:false, NLU lexicon expansion, ~112 src/ai JS modules) and QA numbers each annotated with its evidence file; added explicit `human_gates_remaining`. Refreshed HANDOFF.md: 一句話現況 rewritten to cover advisory training layer through Reflective Care V1 with an honesty-boundary block (advisory-only training, no external LLM, Limited Beta ≠ independent human validation); added a 2026-07 progress table with evidence links; updated stage table (5-7), module map (reflectiveCarePolicy), next steps, risk table, reading order, and local-verification expectations (Soul Talk 11/11). RUNTIME_MAP.md: replaced the NEEDS UPDATE flag with a dated partial-verification note; corrected storage key to `nexusLinkR2State:v1` and the companion policy (CURRENT_CREATURE_ID removed; 11 full-runtime companions in companionRegistry.js, active companion from state `activeCompanionId`), both verified against live source.
+- Verification: Cross-checked every stated QA number against `docs/qa/RAPHAEL_REFLECTIVE_CARE_V1_2026-07-14.md` (dialogue loop 21/21, sealed holdout 48/48 hard gate PASS human blind not_run, web release gate 10/10, JS syntax 204/204, state migration 30/30, live Soul Talk 11/11, HUD 13/13), `docs/qa/RAPHAEL_CONVERSATION_EVAL_V6_LIMITED_BETA_2026-07-13.md` (structured beta 60/60, dialogue regressions 14/14, holdout 48/48), and Lane 3 entries 2026-07-10..14. RUNTIME_MAP corrections verified by reading `src/state/saveManager.js`, `src/engine/personalityProfile.js`, `src/data/companionRegistry.js`, `src/data/companionRuntimePolicy.js`, `src/state/defaultState.js` (read-only). `git diff --check` clean; `git status -sb` shows only the four allowed files modified.
+- Problems / risks: RUNTIME_MAP is only partially re-verified (storage key + companion policy); the per-file Pixi/UI/Engine descriptions and assets tree were not re-scanned and remain orientation-only. The formal private-blind human review remains `not_run`; no doc in this refresh claims independent human validation.
+- Next safe action: Owner review of the three refreshed docs, then commit. Optional follow-up pack: full RUNTIME_MAP re-scan if it is to regain implementation-authority status.
+- Required reading: `docs/handoff/RAPHAEL_AI_STATUS.yaml`, `docs/handoff/RAPHAEL_AI_HANDOFF.md`, `docs/architecture/RUNTIME_MAP.md`, `docs/qa/RAPHAEL_REFLECTIVE_CARE_V1_2026-07-14.md`, `docs/qa/RAPHAEL_CONVERSATION_EVAL_V6_LIMITED_BETA_2026-07-13.md`, and this lane.
 
 ### 2026-07-13 - Codex - TP-RAPHAEL-CONV-V6 Limited Beta Validation
 

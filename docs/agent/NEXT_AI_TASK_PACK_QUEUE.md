@@ -100,7 +100,14 @@ for the record.
 - **Human gate:** approval to start (depends on TP-1 outcome — these files
   are currently dirty); review of new fixture wording.
 
-## TP-4 — i18n fill: sc/jp for the 53 EN keys (cheap-model candidate)
+## TP-4 — i18n fill: sc/jp for the 53 EN keys — ✅ DONE 2026-07-06 / 查證 2026-07-14
+
+Completed: `src/i18n/strings.js` 現有 **252 keys × 4 語言（tc/sc/en/jp）零缺漏**。
+驗證：`docs/qa/verify_i18n_strings.mjs`（本輪新增）。
+殘餘：日文/簡中**語氣人工校對**仍待人核（非缺 key）。
+原 pack 文字保留如下供紀錄。
+
+### (archived) TP-4 — i18n fill: sc/jp for the 53 EN keys (cheap-model candidate)
 
 - **Goal:** fill simplified-Chinese and Japanese values for the 53 content
   keys added in the Commercial RC pass (currently falling back to tc), per

@@ -2,11 +2,14 @@
 
 > 本文件根據實際 repo 掃描建立，描述各模組的職責與依賴關係。  
 > AI agent 讀取此文件以快速理解 runtime 結構，不得根據此文件修改任何 runtime code。
-> Status: NEEDS UPDATE. This map is useful for orientation, but some facts are
-> stale. Verify storage keys, active companion policy, and current UI/runtime
-> wiring against the live source files before using it as an implementation
-> authority. The current commercial UI/UX entry point is
-> `docs/production/NEXUS_LINK_COMMERCIAL_UIUX_HANDOFF.md`.
+> Status: 2026-07-14 TP-2 部分驗證（docs-only）。已對照 live source 修正：
+> (1) 存檔 key（`src/state/saveManager.js`：`nexusLinkR2State:v1`，見下方 saveManager 節）；
+> (2) 主夥伴政策（`CURRENT_CREATURE_ID` 已不存在於 `personalityProfile.js`；現行來源為
+> `src/data/companionRegistry.js` + `src/data/companionRuntimePolicy.js` + state 的
+> `activeCompanionId`，見下方角色分類節的更新註記）。
+> 其餘章節（Pixi/UI/Engine 逐檔描述、assets 樹）未在本次逐一重掃，僅供定位，
+> 實作前仍應以 live source 為準。商業 UI/UX 入口：
+> `docs/production/NEXUS_LINK_COMMERCIAL_UIUX_HANDOFF.md`。
 
 ---
 
@@ -68,13 +71,20 @@ index.html
 
 ## 角色狀態三層分類
 
+> **2026-07-14 更新註記（對照 live source 驗證）**：本節的「單一 runtime 主夥伴」描述已過時。
+> 現行事實：`src/data/companionRegistry.js` 定義 11 隻 `runtimeStatus: "full-runtime"` 夥伴
+> （tier 制：primary/legacy/roadmap/placeholder）；預設主夥伴為 `DEFAULT_COMPANION_ID = "greyshade-cat"`，
+> 實際使用中的夥伴由 state 的 `activeCompanionId`（`src/state/defaultState.js`）決定，
+> 解鎖/可選政策見 `src/data/companionRuntimePolicy.js`。
+> 以下三層表為歷史快照，僅供理解演進脈絡；角色現況以上述三檔為準。
+
 ### Tier 1 — Active Runtime Companion（主動 Runtime 夥伴）
 
 | 角色 | ID | Runtime 狀態 | 說明 |
 |------|-----|------------|------|
-| 灰影貓 | `greyshade-cat` | ✅ 完整 spritesheet | 目前唯一的 runtime 主夥伴，擁有完整動畫 pipeline（spritesheet + animations.json）|
+| 灰影貓 | `greyshade-cat` | ✅ 完整 spritesheet | 預設主夥伴（`DEFAULT_COMPANION_ID`），擁有完整動畫 pipeline（spritesheet + animations.json）|
 
-**P1 主線優先**：`personalityProfile.js` 中的 `CURRENT_CREATURE_ID = "greyshade-cat"` 確定目前 runtime 使用的主角色為灰影貓。P1 所有開發工作以第一棲地與灰影貓為主，不擴張成多角色系統。
+**（歷史敘述）P1 主線優先**：舊版 `personalityProfile.js` 曾以 `CURRENT_CREATURE_ID` 鎖定灰影貓；該常數已移除，`personalityProfile.js` 現只保留 `DEFAULT_TOUCH_PERSONALITY` 與 `FALLBACK_CREATURE`。
 
 ---
 
@@ -144,7 +154,7 @@ index.html
 
 ### `src/state/saveManager.js`
 - localStorage 唯一寫入點
-- `STORAGE_KEY = "nexusLinkPrototypeState:v2"`
+- `STORAGE_KEY = "nexusLinkR2State:v1"`（2026-07-14 對照 live source 驗證）
 - Legacy keys：`"nexusLinkPrototypeState"`、`"nexusLinkState"`
 - `loadState()` / `saveState(state)` / `clearState()`
 - 包含 QuotaExceededError 處理與 emergency pruning
@@ -205,7 +215,7 @@ index.html
 - 棲地修復計算
 
 ### `src/engine/personalityProfile.js`
-- 定義 `CURRENT_CREATURE_ID`（目前為 `"greyshade-cat"`）和 `FALLBACK_CREATURE`
+- 定義 `DEFAULT_TOUCH_PERSONALITY` 與 `FALLBACK_CREATURE`（2026-07-14 驗證：`CURRENT_CREATURE_ID` 已移除；主夥伴選擇改由 `companionRegistry.js` / `companionRuntimePolicy.js` / state `activeCompanionId` 決定）
 
 ### `src/engine/companionPersonality.js`
 - 夥伴性格計算輔助

@@ -1,12 +1,13 @@
 # Machine-readable Raphael AI status. Human narrative: RAPHAEL_AI_HANDOFF.md
 # Current operational truth lives in docs/agent/AI_EXECUTION_LEDGER.md (Lane 3);
-# this file is a snapshot index, refreshed 2026-07-10 (was stale at 2026-06-24).
+# this file is a snapshot index. TP-2 docs-only refresh 2026-07-14: every QA
+# number below was cross-checked against the evidence file cited next to it.
 last_updated: "2026-07-14"
-last_agent: Codex
+last_agent: "Claude Fable 5 (TP-2 docs-only refresh)"
 
 branch:
   active: main
-  last_commit: "see git log -1 on main"
+  last_commit: "ed3acb2 (at refresh time; run git log -1 for live tip)"
   merged_to_main: true
   note: "single-line development on main since 2026-07-02; integrate branch retired"
 
@@ -18,28 +19,46 @@ stage:
   label: "Raphael v6.1 Limited Beta with Reflective Care V1"
   next: "Limited Beta distribution; collect consented feedback and defer formal private-blind evidence"
 
+capabilities:
+  natural_conversation: "v2-v6 iterations landed; Limited Beta automated release candidate (evidence_class=structured_beta, NOT independently human-validated). Ledger Lane 3 2026-07-13 entries."
+  reflective_care_v1: "EXPERIENCE-layer companion-care policy; explicit symbolic reflection opt-in; care/symbolic turns grant no reward and write no memory. docs/qa/RAPHAEL_REFLECTIVE_CARE_V1_2026-07-14.md"
+  nuwa_advisory: "Nuwa distillation bundle v0.3 (daily_texture/small_moments/sleepless + no_sleep_pressure sentinel); advisory-only, trusted:false; RaphaelCore final authority"
+  training_adapter: "static training bundle layer via src/ai/raphaelTrainingAdapter.js; advisory-only, no runtime self-training from player/eval text"
+  nlu_lexicon: "2026-07-13 lexicon expansion: ~60 colloquial/simplified variants, sentiment 19->60 words, degree adverbs 7->16, negations 6->11; TR-17..30 regressions"
+  module_count: "src/ai/ ~112 JS files (glob count 2026-07-14)"
+
 qa:
-  harness_smoke: "17/17 (2026-07-13)"
-  live_playtest_gate: "soul_talk 11/11 incl. boundary follow-up, focused quality UI 3/3, hud 13/13, 0 console errors (2026-07-13)"
-  training_bundle: "29/29 incl. Nuwa v0.3 cases (2026-07-13)"
-  main_readiness: "41/41 (2026-07-13)"
-  nlu_training: "52/52 (2026-07-13; 14 natural-conversation v3 regressions)"
-  nlu_smoke: "8/8 (2026-07-13)"
-  natural_conversation_audit: "v6: dialogue regressions 14/14; focused UI 3/3; UI replay 10/10 visible; 0 console errors (2026-07-13)"
-  limited_beta_structured_audit: "3 isolated sessions / 60 interactions; 60/60 pass; 0 console errors; evidence_class=structured_beta; human_blind_review=not_run (2026-07-13)"
-  sealed_holdout_v1: "48/48 hard contract; 0/48 turns machine-flagged (0 flags); hard gate PASS; human blind review not run (2026-07-14)"
-  reflective_care_v1: "dialogue loop 21/21; explicit symbolic reflection is opt-in; care/symbolic turns no reward and no memory; safety precedence pass (2026-07-14)"
-  web_release_gate: "10/10 automated required checks; allAutomatedRequiredOk=true (2026-07-13)"
-  state_migration: "30/30 (2026-07-13)"
+  # evidence: docs/qa/RAPHAEL_REFLECTIVE_CARE_V1_2026-07-14.md (RC), docs/qa/RAPHAEL_CONVERSATION_EVAL_V6_LIMITED_BETA_2026-07-13.md (V6)
+  dialogue_loop: "21/21 incl. six care/symbolic cases + one safety-precedence case (2026-07-14; RC)"
+  sealed_holdout_v1: "48/48 hard contract; 0 machine quality flags; hard gate PASS; human blind review not_run (2026-07-14; RC + V6)"
+  web_release_gate: "10/10 automated required checks; allAutomatedRequiredOk=true (RC + V6)"
+  js_syntax: "204/204 (2026-07-14; RC)"
+  state_migration: "30/30 (2026-07-14; RC)"
+  live_playtest_gate: "soul_talk 11/11, hud 13/13, 0 console errors (2026-07-14; RC + V6)"
+  limited_beta_structured_audit: "3 isolated sessions / 60 interactions; 60/60 pass; 0 console errors; evidence_class=structured_beta; human_blind_review=not_run (2026-07-13; V6)"
+  natural_conversation_audit: "v6: dialogue regressions 14/14; focused quality UI 3/3; natural UI replay 10/10; 0 console errors (2026-07-13; V6)"
+  harness_smoke: "17/17 (2026-07-13; V6)"
+  constitution: "5/5 (2026-07-13; V6)"
+  nlu_training: "52/52 (2026-07-13; V6)"
+  nlu_smoke: "8/8 (2026-07-13; V6)"
+  training_bundle: "29/29 incl. Nuwa v0.3 cases (2026-07-13; V6)"
+  main_readiness: "41/41 (2026-07-13; V6)"
   forbidden_phrases: 0
   known_flaky: "null.split console error x2 on first gate run (3 occurrences, rerun always clean; runner now captures url:line)"
   last_record: docs/agent/AI_EXECUTION_LEDGER.md
+
+human_gates_remaining:
+  - "Real-device mobile browser retest (3-platform)"
+  - "Moderated private test: 3 independent testers x 20 turns (formal private-blind evidence; currently not_run)"
+  - "Legal / privacy / store-copy review"
+  - "Human blind review of sealed holdout conversations (machine hard gate PASS is not human validation)"
 
 entrypoints:
   orchestrator: src/ai/raphaelCore.js
   ui: src/ui/soulTalkController.js
   training_adapter: src/ai/raphaelTrainingAdapter.js
   nuwa_bundle: src/data/ai/raphaelNuwaDistillationBundle.js
+  reflective_care: src/ai/dialogue/reflectiveCarePolicy.js
   handoff: docs/handoff/RAPHAEL_AI_HANDOFF.md
   architecture: docs/architecture/RAPHAEL_SOUL_ARCHITECTURE_V1.md
   eval_coverage: docs/raphael/RAPHAEL_EVAL_COVERAGE_MATRIX.md
@@ -49,12 +68,13 @@ constraints:
   external_llm_in_runtime: false
   ai_may_commit: false
   advisory_only: "training bundles / Nuwa / gateway are trusted:false; RaphaelCore final authority"
+  care_positioning: "Reflective Care V1 is companion dialogue, not therapy/diagnosis/crisis service; never market as therapist"
 
 blockers:
   - "Independent human-validation claim: required 3-person / 60-turn private blind review has not run; Owner accepted Limited Beta without this claim"
   - "Product launch: real-device mobile browser and legal/privacy/store-copy reviews remain open"
 follow_ups:
   - "Deferred formal evidence: 3 testers x 20 turns when independent testers become available"
+  - "Collect consented Limited Beta feedback on care tone / symbolic prompts (not formal private-blind evidence)"
   - "Natural conversation candidates: wider paraphrases and local player reply-style preferences"
-  - "CH-5: chapter encounters + resonance invite (wires advanceChapterProgress)"
   - "Human gates: real-device 3-platform retest, SFX sound-palette listen, 3-tester private playtest, legal/store copy"
