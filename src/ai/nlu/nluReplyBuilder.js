@@ -1,6 +1,11 @@
 import { RESPONSE_STRATEGIES } from "../responseStrategySelector.js";
 import { buildPrefillGroundedReply } from "../dialogue/prefillGrounding.js";
 import { hasValidPrefill } from "../dialogue/quickReplyContext.js";
+import {
+  buildConversationalAnswer,
+  buildConversationalReaction,
+  buildVentingReply
+} from "../dialogue/conversationAnswerPolicy.js";
 
 const GENERIC_FALLBACK_BANNED = /我聽見了[。.]?\s*我們先慢一點|好[，,]?\s*我聽到了[，,]?\s*我們慢一點/;
 
@@ -82,9 +87,21 @@ export function buildStrategyReply({
   const topic = frame.topic || nlu.topic || "unknown";
   const entities = frame.entities || [];
   const entityRef = entities[0] || topicLabel(topic);
+  const conversationalReaction = buildConversationalReaction({
+    inputText: nlu.inputText,
+    frame,
+    seed
+  });
+  const conversationalAnswer = buildConversationalAnswer({
+    inputText: nlu.inputText,
+    frame,
+    seed
+  });
+  const ventingReply = buildVentingReply({ inputText: nlu.inputText, frame });
 
   const builders = {
     [RESPONSE_STRATEGIES.PRACTICAL_CLARIFICATION]: () => {
+      if (conversationalAnswer) return conversationalAnswer;
       if (topic === "hud_ui" || entities.includes("HUD")) {
         return "先不安慰你。我們把 HUD 問題拆開：是 top HUD、bottom dock，還是 Soul Talk 面板被擋住？";
       }
@@ -129,6 +146,7 @@ export function buildStrategyReply({
     [RESPONSE_STRATEGIES.BOUNDARY_SET]: () =>
       "你想靠近，也留了退後的空間。若太快，我會先退半步。",
     [RESPONSE_STRATEGIES.SHORT_VALIDATION]: () =>
+      ventingReply || conversationalReaction ||
       pick(["嗯，被否定會悶。我先不講大道理。", "聽起來很悶。我先陪著，不急著給建議。"], seed),
     [RESPONSE_STRATEGIES.EMOTIONAL_SHORT]: () => {
       const tone = frame.emotionalTone || "calm";
@@ -139,6 +157,8 @@ export function buildStrategyReply({
           seed
         );
       }
+      if (ventingReply) return ventingReply;
+      if (conversationalReaction) return conversationalReaction;
       // 失眠夜：不逼睡、不說教，先把呼吸放慢。
       if (frame.specificDetail?.type === "sleepless" || /睡不著|睡不着|失眠/.test(String(nlu.inputText || ""))) {
         return pick(
@@ -173,6 +193,7 @@ export function buildStrategyReply({
       return `這份${tone === "sadness" ? "悶" : "感覺"}我先接住，不急著分析。`;
     },
     [RESPONSE_STRATEGIES.CLARIFYING_QUESTION]: () => {
+      if (conversationalReaction) return conversationalReaction;
       if (topic === "unknown") return groundedOpenConversationLine(frame, nlu, seed);
       if (topic === "relationship" && frame.conversationContext?.source === "recent_dialogue") {
         return groundedRelationshipLine(frame, seed);
@@ -180,12 +201,15 @@ export function buildStrategyReply({
       return `我想確認一下：你現在最想先處理的是${topicLabel(topic)}這塊嗎？`;
     },
     [RESPONSE_STRATEGIES.ANSWER_OR_CLARIFY]: () => {
+      const answer = buildConversationalAnswer({ inputText: nlu.inputText, frame, seed });
+      if (answer) return answer;
       if (/早點睡|早点睡|該不該睡|该不该睡/.test(String(nlu.inputText || ""))) {
         return "如果你已經在打呵欠、眼睛發酸或精神往下掉，早點睡大概會比較舒服；還不睏的話，也不用逼自己立刻睡著。";
       }
       return groundedOpenConversationLine(frame, nlu, seed);
     },
     [RESPONSE_STRATEGIES.CONTEXTUAL_ACK]: () => {
+      if (conversationalReaction) return conversationalReaction;
       const need = frame.userNeed || "";
       if (topic === "relationship" && need === "boundary") {
         return "你想靠近，也願意給彼此空間。我會照這個節奏來。";
@@ -222,6 +246,7 @@ export function buildStrategyReply({
         seed
       ),
     [RESPONSE_STRATEGIES.HOLDING_SPACE]: () =>
+      conversationalReaction ||
       pick(["好，我先不給答案。這件事就放在這裡。", "嗯，不用講太多。我陪著，不急著收走。"], seed),
     [RESPONSE_STRATEGIES.LIGHT_GREETING]: () => {
       const said = String(nlu.inputText || "").trim();
@@ -371,9 +396,13 @@ function resolveVariantLines(strategy, nlu, frame, recoveryContext, prefillConte
   const act = frame.dialogueAct || nlu.dialogueAct || "";
   const said = String(nlu.inputText || "").trim();
   const need = frame.userNeed || "";
+  const conversationalReaction = buildConversationalReaction({ inputText: said, frame, seed: said.length });
+  const conversationalAnswer = buildConversationalAnswer({ inputText: said, frame, seed: said.length });
+  const ventingReply = buildVentingReply({ inputText: said, frame });
 
   switch (strategy) {
     case RESPONSE_STRATEGIES.PRACTICAL_CLARIFICATION:
+      if (conversationalAnswer) return [conversationalAnswer];
       if (topic === "hud_ui" || entities.includes("HUD")) {
         const hudLine = groundedHudClarificationLine(frame);
         return [hudLine || "先不安慰你。我們把 HUD 問題拆開：是 top HUD、bottom dock，還是 Soul Talk 面板被擋住？"];
@@ -411,6 +440,8 @@ function resolveVariantLines(strategy, nlu, frame, recoveryContext, prefillConte
     case RESPONSE_STRATEGIES.BOUNDARY_SET:
       return ["你想靠近，也留了退後的空間。若太快，我會先退半步。"];
     case RESPONSE_STRATEGIES.SHORT_VALIDATION:
+      if (ventingReply) return [ventingReply];
+      if (conversationalReaction) return [conversationalReaction];
       return ["嗯，被否定會悶。我先不講大道理。", "聽起來很悶。我先陪著，不急著給建議。"];
     case RESPONSE_STRATEGIES.EMOTIONAL_SHORT:
       if (act === "apologizing") {
@@ -419,6 +450,8 @@ function resolveVariantLines(strategy, nlu, frame, recoveryContext, prefillConte
           "道歉我聽見了。先不用解釋太多，我們把距離放回剛剛剛好的位置。"
         ];
       }
+      if (ventingReply) return [ventingReply];
+      if (conversationalReaction) return [conversationalReaction];
       if (frame.specificDetail?.type === "sleepless" || /睡不著|睡不着|失眠/.test(said)) {
         return [
           "睡不著的夜有點長。不用逼自己睡著，先把呼吸放慢就好。",
@@ -448,12 +481,17 @@ function resolveVariantLines(strategy, nlu, frame, recoveryContext, prefillConte
       if (topic === "relationship") return groundedRelationshipLines(frame);
       return [`這份${tone === "sadness" ? "悶" : "感覺"}我先接住，不急著分析。`];
     case RESPONSE_STRATEGIES.CLARIFYING_QUESTION:
+      if (conversationalReaction) return [conversationalReaction];
       if (topic === "unknown") return groundedOpenConversationLines(frame, nlu);
       if (topic === "relationship" && frame.conversationContext?.source === "recent_dialogue") {
         return groundedRelationshipLines(frame);
       }
       return [`我想確認一下：你現在最想先處理的是${topicLabel(topic)}這塊嗎？`];
     case RESPONSE_STRATEGIES.ANSWER_OR_CLARIFY:
+      {
+        const answer = buildConversationalAnswer({ inputText: said, frame, seed: said.length });
+        if (answer) return [answer];
+      }
       if (/早點睡|早点睡|該不該睡|该不该睡/.test(said)) {
         return [
           "如果你已經在打呵欠、眼睛發酸或精神往下掉，早點睡大概會比較舒服；還不睏的話，也不用逼自己立刻睡著。",
@@ -462,6 +500,7 @@ function resolveVariantLines(strategy, nlu, frame, recoveryContext, prefillConte
       }
       return groundedOpenConversationLines(frame, nlu);
     case RESPONSE_STRATEGIES.CONTEXTUAL_ACK:
+      if (conversationalReaction) return [conversationalReaction];
       if (topic === "relationship" && need === "boundary") {
         return ["你想靠近，也願意給彼此空間。我會照這個節奏來。"];
       }
@@ -487,6 +526,7 @@ function resolveVariantLines(strategy, nlu, frame, recoveryContext, prefillConte
         "這種疲憊又回來了。我不急著安慰你。先分清楚：是身體累，還是心裡卡住？"
       ];
     case RESPONSE_STRATEGIES.HOLDING_SPACE:
+      if (conversationalReaction) return [conversationalReaction];
       return ["好，我先不給答案。這件事就放在這裡。", "嗯，不用講太多。我陪著，不急著收走。"];
     case RESPONSE_STRATEGIES.LIGHT_GREETING:
       if (/聽說.{0,12}很[型屌行]|^[你妳]很[型屌行]/.test(said)) {

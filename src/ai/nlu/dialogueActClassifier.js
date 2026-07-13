@@ -57,6 +57,8 @@ export function classifyDialogueAct(inputText = "", analysis = {}, intent = {}, 
   if (/壞掉|bug|錯誤|擋住|疊層|修到|亂了|釐清/.test(text)) return DIALOGUE_ACTS.REPORTING_BUG;
   if (/先修|下一步|優先|開發順序|要先做/.test(text)) return DIALOGUE_ACTS.PRACTICAL_PLANNING;
   if (/幫我拆解|為什麼理解不了|怎麼改|怎麼修/.test(text)) return DIALOGUE_ACTS.ASKING_FOR_HELP;
+  if (/吐槽|抱怨兩句|抱怨两句/.test(text)) return DIALOGUE_ACTS.VENTING;
+  if (/你會不會|你会不会/.test(text)) return DIALOGUE_ACTS.ASKING_QUESTION;
   if (/心裡卡住|不是身體累|不是身體/.test(text)) {
     return DIALOGUE_ACTS.CLARIFYING_PROBLEM;
   }

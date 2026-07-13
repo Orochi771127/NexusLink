@@ -15,7 +15,8 @@ export function createEmptyDialogueState() {
     lastQuickReplySet: [],
     topicShiftCount: 0,
     repetitionScore: 0,
-    lastPlayerComplaintType: null
+    lastPlayerComplaintType: null,
+    activeContext: null
   };
 }
 
@@ -73,30 +74,89 @@ export function recordDialogueTurn(sessionKey = "default", coreResult = {}) {
   state.lastVariantId = turn.variantId;
   state.lastQuickReplySet = turn.quickReplyIntents;
   state.repetitionScore = computeRepetitionScore(state.recentTurns);
+  state.activeContext = updateActiveContext(state.activeContext, turn);
 
   return state;
 }
 
 export function applyRecentDialogueContext(nlu = {}, state = {}) {
   const inputText = String(nlu.inputText || "");
-  const isContinuation = /剛才|剛剛|刚才|刚刚|那件事|後來|后来|接著|接着|然後|然后/.test(inputText);
-  const previousTopic = state.currentTopic;
-  if (!isContinuation || !previousTopic || previousTopic === "unknown" || nlu.topic !== "unknown") {
+  const activeContext = state.activeContext;
+  const explicitTopicShift = /換個話題|换个话题|對了|对了|另外/.test(inputText);
+  const isContinuation = !explicitTopicShift && isContinuationInput(inputText, activeContext);
+  if (!isContinuation || !activeContext) {
     return nlu;
   }
 
+  const inheritedTopic = nlu.topic === "unknown" ? activeContext.topic : nlu.topic;
+
   return {
     ...nlu,
-    topic: previousTopic,
+    topic: inheritedTopic,
     semanticFrame: {
       ...nlu.semanticFrame,
-      topic: previousTopic,
+      topic: inheritedTopic,
       conversationContext: {
-        inheritedTopic: previousTopic,
-        source: "recent_dialogue"
+        inheritedTopic,
+        source: "recent_dialogue",
+        isContinuation: true,
+        subject: activeContext.subject,
+        previousDetail: activeContext.detail,
+        previousInput: activeContext.lastPlayerInput,
+        previousReply: activeContext.lastCompanionReply
       }
     }
   };
+}
+
+function updateActiveContext(current, turn) {
+  const subject = inferConversationSubject(
+    turn.userInput,
+    turn.topic && turn.topic !== "unknown" ? turn.topic : current?.topic,
+    current?.subject
+  );
+  const subjectChanged = Boolean(current?.subject && subject !== current.subject);
+  const topic = turn.topic && turn.topic !== "unknown"
+    ? turn.topic
+    : (subjectChanged ? inferTopicForSubject(subject) : current?.topic) || inferTopicForSubject(subject);
+  const detail = turn.specificDetail?.text || current?.detail || turn.userInput;
+  if (!topic && !detail) return current || null;
+  return {
+    topic,
+    subject,
+    detail,
+    lastPlayerInput: turn.userInput,
+    lastCompanionReply: turn.reply
+  };
+}
+
+function inferTopicForSubject(subject) {
+  if (subject === "friend_reply" || subject === "relationship") return "social_conflict";
+  if (subject === "meeting_mishap") return "work_pressure";
+  if (["clothing_mishap", "dinner_choice", "companion_day"].includes(subject)) return "daily_life";
+  return null;
+}
+
+function isContinuationInput(inputText, activeContext) {
+  if (!activeContext) return false;
+  if (/剛才|剛剛|刚才|刚刚|那件事|後來|后来|接著|接着|然後|然后|而且|可是|不過|不过|反正|以前|最後|最后|這樣|这样|吐槽/.test(inputText)) {
+    return true;
+  }
+  if (/[他她它]什麼|[他她它]什么|^[他她它]|我知道[他她它]|[他她它]可能|直接問|直接问|顯得很黏|显得很黏|算逃避|有什麼想法|有什么想法/.test(inputText)) {
+    return true;
+  }
+  return inputText.length <= 14 && /^(嗯|咦|蛤|好|算了|但|那|所以|沒事|没事)/.test(inputText);
+}
+
+function inferConversationSubject(inputText, topic, previousSubject = "") {
+  const text = String(inputText || "");
+  if (/朋友|回訊息|回消息|已讀|已读/.test(text)) return "friend_reply";
+  if (/會議|会议|主管|投影機|投影仪/.test(text)) return "meeting_mishap";
+  if (/襪子|袜子|穿反/.test(text)) return "clothing_mishap";
+  if (/晚餐|吃什麼|吃什么|太油/.test(text)) return "dinner_choice";
+  if (/湖邊|湖边|你今天.*做什麼|你今天.*做什么/.test(text)) return "companion_day";
+  if (topic === "relationship" || topic === "social_conflict") return previousSubject || "relationship";
+  return previousSubject || topic || "daily_event";
 }
 
 export function setLastPlayerComplaint(sessionKey = "default", complaintType = null) {

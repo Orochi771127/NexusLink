@@ -1497,6 +1497,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 3 - Raphael Core, Companion Reasoning, And Soul Talk
 
+### 2026-07-13 - Codex - Raphael Natural Conversation v3
+
+- Status: `VERIFIED`
+- Branch / commit: `main` / uncommitted; baseline `cd06353`. Owner approved continuing the announced v3 EXPERIENCE pack, but did not issue a new commit/push instruction for these changes.
+- Scope: EXPERIENCE-only in-session dialogue state, local answer policy, response routing, and case-first regressions. No GROUNDWORK, save schema, safety shield, memory authority, state mutation, external LLM/API, backend, dependency, Pixi, or asset change.
+- Work performed: Added an active conversation subject/detail to ephemeral dialogue state and conservative continuity for pronouns, conjunctions, acknowledgements, and explicit follow-ups while preserving explicit topic changes. Added direct local answers/reactions for the audit's dinner, friendship, meeting-venting, companion-day, humour, closure, and short-repair paths. Corrected 「只是想吐槽」 to venting rather than Raphael feedback and prevented the no-comfort constraint from forcing unnecessary practical clarification. Added TR-39..52 before widening the policy, including reply-aware dinner variation and a short subject-grounded repair for bare 「嗯？」.
+- Verification: `node --check` passed on all changed JS. NLU training **52/52**; training bundle **29/29**; main readiness **41/41**; NLU smoke **8/8**; core harness **17/17**; dialogue loop **10/10**; constitution **5/5**; Stage 4 **12/12**. Live gate passed Soul Talk **10/10**, HUD **13/13**, awakening/touch/storage/Pixi, and 0 console errors. Web release gate passed **10/10** automated required checks. Strict 24-turn re-audit improved from v2's 0 natural / 12 formulaic / 12 misses to **24 natural / 0 repetitive / 0 misses**. Real Soul Talk replay rendered **10/10** inputs and replies at 390×844 with exactly two chat entries per turn and 0 console/page errors.
+- Problems / risks: This is deterministic local domain coverage, not unrestricted open-domain generative intelligence. Human blind testing and broader paraphrases remain necessary; passing this fixed audit is not evidence of general open-domain maturity.
+- Next safe action: Run the planned 3-testers × 20-turn blind test, then add only failures that reproduce as case-first regressions. Do not add an external model without a separately approved architecture task.
+- Required reading: `docs/qa/RAPHAEL_NATURAL_CONVERSATION_AUDIT_2026-07-13.md`, `src/ai/dialogue/conversationAnswerPolicy.js`, `src/ai/dialogue/dialogueStateTracker.js`, `src/ai/testHarness/nluTrainingCases.js` TR-39..52, `docs/handoff/RAPHAEL_AI_STATUS.yaml`, and this lane.
+
 ### 2026-07-13 - Codex - Post-push natural conversation audit
 
 - Status: `VERIFIED`

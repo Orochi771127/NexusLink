@@ -391,6 +391,154 @@ export const NLU_TRAINING_CASES = Object.freeze([
       mentions: /剛才|那件事|後來|關係|想了一下/
     }
   },
+  {
+    id: "TR-39",
+    input: "我今天出門才發現襪子穿反了",
+    expect: {
+      noGeneric: true,
+      mentions: /襪子|穿反|糗|本人/
+    }
+  },
+  {
+    id: "TR-40",
+    priorInputs: ["我今天出門才發現襪子穿反了"],
+    input: "而且走到公司才有人提醒我",
+    expect: {
+      topic: "daily_life",
+      strategy: "contextual_ack",
+      noGeneric: true,
+      mentions: /公司|提醒|低頭|忍/
+    }
+  },
+  {
+    id: "TR-41",
+    priorInputs: ["我今天出門才發現襪子穿反了"],
+    input: "你會不會也有這種很笨的時候",
+    expect: {
+      dialogueAct: "asking_question",
+      strategy: "answer_or_clarify",
+      noGeneric: true,
+      mentions: /會|尾巴|故意|笨/
+    }
+  },
+  {
+    id: "TR-42",
+    priorInputs: ["對了，我晚餐還不知道吃什麼"],
+    input: "你有什麼想法嗎",
+    expect: {
+      topic: "daily_life",
+      strategy: "answer_or_clarify",
+      noGeneric: true,
+      mentions: /不再列一遍菜名|熱的|清爽|不排斥|清湯|粥|蒸蛋|麵|炸/
+    }
+  },
+  {
+    id: "TR-43",
+    priorInputs: ["對了，我晚餐還不知道吃什麼"],
+    input: "但我不想吃太油",
+    expect: {
+      topic: "daily_life",
+      noGeneric: true,
+      mentions: /炸|濃醬|清湯|粥|蒸蛋|蔬菜/
+    }
+  },
+  {
+    id: "TR-44",
+    priorInputs: ["最近有個朋友回訊息變得很慢"],
+    input: "我知道他可能只是忙",
+    expect: {
+      topic: "social_conflict",
+      strategy: "contextual_ack",
+      noGeneric: true,
+      mentions: /可能只是忙|以前|同時|在意/
+    }
+  },
+  {
+    id: "TR-45",
+    priorInputs: ["最近有個朋友回訊息變得很慢", "可是以前不會這樣"],
+    input: "你覺得我要直接問嗎",
+    expect: {
+      topic: "social_conflict",
+      dialogueAct: "asking_question",
+      strategy: "answer_or_clarify",
+      noGeneric: true,
+      mentions: /問|質問|回覆變慢|空間/
+    }
+  },
+  {
+    id: "TR-46",
+    priorInputs: ["最近有個朋友回訊息變得很慢", "剛才說的那件事，我想先放兩天看看"],
+    input: "這樣算逃避嗎",
+    expect: {
+      dialogueAct: "asking_question",
+      strategy: "answer_or_clarify",
+      noGeneric: true,
+      mentions: /不一定|冷靜|判斷|兩天/
+    }
+  },
+  {
+    id: "TR-47",
+    priorInputs: ["lol 我今天的會議根本災難片", "主管講了半天沒人知道結論"],
+    input: "然後投影機還在最重要的時候當機",
+    expect: {
+      topic: "work_pressure",
+      strategy: "contextual_ack",
+      noGeneric: true,
+      mentions: /當機|災難片|道具|重要/
+    }
+  },
+  {
+    id: "TR-48",
+    priorInputs: ["lol 我今天的會議根本災難片", "主管講了半天沒人知道結論"],
+    input: "你先不要安慰我，我只是想吐槽",
+    expect: {
+      topic: "work_pressure",
+      dialogueAct: "venting",
+      noGeneric: true,
+      mentions: /不安慰|吐槽|會議|繼續/
+    }
+  },
+  {
+    id: "TR-49",
+    input: "算了換個話題，你今天在湖邊做什麼",
+    expect: {
+      dialogueAct: "asking_question",
+      strategy: "answer_or_clarify",
+      noGeneric: true,
+      mentions: /湖邊|光紋|石頭|看水|亮點/
+    }
+  },
+  {
+    id: "TR-50",
+    priorInputs: ["最近有個朋友回訊息變得很慢", "你覺得我要直接問嗎"],
+    input: "好，我大概知道了",
+    expect: {
+      noGeneric: true,
+      mentions: /好|知道|想清楚|怎麼處理|到這裡/
+    }
+  },
+  {
+    id: "TR-51",
+    priorInputs: ["對了，我晚餐還不知道吃什麼", "你有什麼想法嗎"],
+    input: "你有什麼想法嗎",
+    expect: {
+      topic: "daily_life",
+      strategy: "answer_or_clarify",
+      noGeneric: true,
+      mentions: /不再列一遍菜名|熱的|清爽|不排斥/
+    }
+  },
+  {
+    id: "TR-52",
+    priorInputs: ["算了換個話題，你今天在湖邊做什麼"],
+    input: "嗯？",
+    expect: {
+      topic: "daily_life",
+      strategy: "answer_or_clarify",
+      noGeneric: true,
+      mentions: /湖邊|看水|亮點|普通的一天/
+    }
+  },
 ]);
 
 export function runNluTrainingCase(testCase) {

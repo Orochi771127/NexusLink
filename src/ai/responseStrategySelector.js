@@ -64,7 +64,7 @@ export function selectResponseStrategy(nlu = {}, intent = {}, safety = {}) {
     return { strategy: RESPONSE_STRATEGIES.QUIET_PRESENCE, reason: "requesting_silence" };
   }
   if (
-    constraints.includes("not_seeking_comfort") ||
+    (constraints.includes("not_seeking_comfort") && dialogueAct !== DIALOGUE_ACTS.VENTING) ||
     nuances.includes(NUANCE_FLAGS.WANTS_PRACTICAL_ANSWER) ||
     dialogueAct === DIALOGUE_ACTS.REPORTING_BUG ||
     dialogueAct === DIALOGUE_ACTS.CLARIFYING_PROBLEM
@@ -114,6 +114,9 @@ export function selectResponseStrategy(nlu = {}, intent = {}, safety = {}) {
   }
   if (dialogueAct === DIALOGUE_ACTS.ASKING_QUESTION) {
     return { strategy: RESPONSE_STRATEGIES.ANSWER_OR_CLARIFY, reason: "asking_question" };
+  }
+  if (frame.conversationContext?.isContinuation && dialogueAct === DIALOGUE_ACTS.DESCRIBING_EVENT) {
+    return { strategy: RESPONSE_STRATEGIES.CONTEXTUAL_ACK, reason: "continued_dialogue" };
   }
   const trainingStrategy = resolveTrainingStrategy(nlu, safety);
   if (trainingStrategy) {

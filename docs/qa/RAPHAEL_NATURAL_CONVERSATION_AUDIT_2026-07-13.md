@@ -117,3 +117,43 @@ but open a v3 TASK_PACK centred on referential multi-turn state and answer
 policies before adding more isolated keyword phrases. Acceptance should include
 this 24-turn transcript as regression material and a human blind-test target,
 not only topic/strategy assertions.
+
+## V3 Follow-up — Referential Context And Direct Answers
+
+Natural Conversation v3 was implemented as an EXPERIENCE-only local policy
+pass against the 24-turn audit above. It adds an in-session active subject and
+detail, carries that subject through pronouns and short continuations, and
+answers the audited ordinary questions directly. Safety, memory authority,
+state persistence, and the no-external-LLM boundary are unchanged.
+
+### V3 result
+
+| Measure | V2 | V3 |
+|---|---:|---:|
+| Natural | 0/24 | 24/24 |
+| Formulaic or repetitive | 12/24 | 0/24 |
+| Context/intent miss | 12/24 | 0/24 |
+| Real-UI turns visible | 6/6 | 10/10 |
+| UI console errors | 0 | 0 |
+
+An initial v3 probe still found two narrow repetition issues: the follow-up
+dinner question repeated the preceding recommendation, and a bare 「嗯？」
+repeated the complete prior answer. Both were corrected in the same pack with
+reply-aware dinner variation and a short subject-grounded repair; TR-51..52
+lock those paths without widening the classifier.
+
+### Representative real Soul Talk replay
+
+| Player | Raphael v3 |
+|---|---|
+| 最近有個朋友回訊息變得很慢 | 回覆突然變慢，最難受的通常不是等，而是不知道這個變化是不是在指向你。 |
+| 我知道他可能只是忙 | 對，他可能只是忙；但你會在意，是因為「以前不會這樣」也是真的。兩件事可以同時成立。 |
+| 你覺得我要直接問嗎 | 我會建議輕輕問一次，不質問。說你注意到回覆變慢，再讓他決定要不要多講。 |
+| lol 我今天的會議根本災難片 | 光是「會議災難片」這個片名，我就知道今天不只一個環節出事。 |
+| 你先不要安慰我，我只是想吐槽 | 好，不安慰，也不替它找意義。這場會議就是很值得吐槽，你繼續。 |
+| 算了換個話題，你今天在湖邊做什麼 | 我在湖邊看光紋慢慢移，還追了一小段風裡的亮點。沒有大事，但不無聊。 |
+
+All ten inputs and replies were visible at 390×844, each turn added exactly
+one player and one companion chat entry, and Chromium reported no console or
+page errors. The v3 score is a strict audit of these three known conversational
+domains, not a claim of unrestricted open-domain generative intelligence.
