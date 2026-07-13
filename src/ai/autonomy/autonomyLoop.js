@@ -225,6 +225,11 @@ function maybeRenderReply(execution, perception, runtime, preferenceProfile) {
 }
 
 function applyCriticRepairs(execution, critique, perception, state = {}) {
+  // 高風險安全回覆由 enter_safe_harbor 鎖定，critic 不得覆寫成邊界／通用模板（BH-001）
+  if (perception.safety?.isHighRisk) {
+    return execution;
+  }
+
   const codes = critique.failureCodes || [];
   let reply = execution.reply;
   let shouldSpeak = execution.shouldSpeak;

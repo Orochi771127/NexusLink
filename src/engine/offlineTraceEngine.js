@@ -1,5 +1,3 @@
-import { clamp } from "../utils/clamp.js";
-
 const SIX_HOURS_MS = 6 * 60 * 60 * 1000;
 const DAY_MS = 24 * 60 * 60 * 1000;
 const THREE_DAYS_MS = 72 * 60 * 60 * 1000;
@@ -39,20 +37,14 @@ export function evaluateOfflineTrace(currentState, now = Date.now()) {
     return { statePatch, traces, statusMessage };
   }
 
+  // L4：旅痕只記敘事痕跡，不因離線扣 energy／升 defense／改 mood（BH-002）
   if (elapsedMs < DAY_MS) {
-    statePatch.energy = clamp(currentState.energy - 1, 0, 10);
     traces.push(createTrace("small_silence", 0.28, now));
     statusMessage = "湖邊比上次安靜了一點。";
   } else if (elapsedMs < THREE_DAYS_MS) {
-    statePatch.energy = clamp(currentState.energy - 2, 0, 10);
-    statePatch.defense = clamp(currentState.defense + 1, 0, 100);
-    statePatch.mood = "distant";
     traces.push(createTrace("fallen_leaf", 0.42, now));
     statusMessage = "一片落葉停在心核旁。";
   } else {
-    statePatch.energy = clamp(currentState.energy - 3, 0, 10);
-    statePatch.defense = clamp(currentState.defense + 2, 0, 100);
-    statePatch.mood = "distant";
     traces.push(createTrace("campfire_dim", 0.5, now));
     statusMessage = "營火暗了一些，但還留著微溫。";
   }

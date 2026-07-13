@@ -122,7 +122,7 @@ export function executeAutonomousAction({
   reply = sanitized.text;
 
   const validation = validatePlannedAction(coerced, reply);
-  if (!validation.allowed && reply) {
+  if (!validation.allowed && reply && !perception.safety?.isHighRisk) {
     reply = sanitizeReply(
       perception.safety?.isBoundaryPressure
         ? buildBoundaryPolicyReply(perception.safety)

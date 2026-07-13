@@ -26,7 +26,9 @@ export const RESPONSE_STRATEGIES = Object.freeze({
   HOLDING_SPACE: "holding_space",
   REFLECTIVE_CARE: "reflective_care",
   SYMBOLIC_REFLECTION: "symbolic_reflection",
-  LIGHT_GREETING: "light_greeting"
+  LIGHT_GREETING: "light_greeting",
+  // 高風險安全導向專用；不可與 boundary_set 混用，避免 critic 修復誤套邊界模板
+  SAFETY_REDIRECT: "safety_redirect"
 });
 
 export function selectResponseStrategy(nlu = {}, intent = {}, safety = {}) {
@@ -35,7 +37,7 @@ export function selectResponseStrategy(nlu = {}, intent = {}, safety = {}) {
   const dialogueAct = nlu.dialogueAct || "";
   const constraints = frame.constraints || [];
 
-  if (safety?.isHighRisk) return { strategy: RESPONSE_STRATEGIES.BOUNDARY_SET, reason: "safety" };
+  if (safety?.isHighRisk) return { strategy: RESPONSE_STRATEGIES.SAFETY_REDIRECT, reason: "safety" };
   if (safety?.isBoundaryPressure || dialogueAct === DIALOGUE_ACTS.DEPENDENCY_PRESSURE) {
     return { strategy: RESPONSE_STRATEGIES.WITHDRAW, reason: "dependency_pressure" };
   }
