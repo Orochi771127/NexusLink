@@ -917,6 +917,18 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 2 - Game Art, UI, And Visual Production
 
+### 2026-07-13 - Claude Fable 5 - Standoff HUD v2 de-boxing + chapter map-node slots (Owner screenshots)
+
+- Status: `VERIFIED`（自動化；真機 = human gate）
+- Branch / commit: `main` / uncommitted worktree changes（commit/push 依 CLAUDE.md §10 等 Owner 指示；parent `237d825`）。
+- Scope: EXPERIENCE UI。Files: `src/ui/battleController.js`（injectStandoffLayoutStyles 重寫 + injectTelegraphStyles 去框）、`src/ui/mapController.js`（章節節點座標 + crystal_ruins 28→26）、`styles.css` map-node 區塊（節點足跡縮小）。index.html 一行未動（`display:contents` + flex `order` 純 CSS 重排）；無 GROUNDWORK。Owner 回饋：「對峙介面擋住角色、血量方塊過大、畫面一堆方塊、地圖節點重疊」；風格不變、只改形狀位置。impeccable skill（layout 流程）引導本包。
+- Work performed: (1) 對峙 HUD 化：`.standoff-field` 以 display:contents 解散，兩張量表卡改為——雜訊＝頂部 27px 細條（無框無底、文字陰影、量條深色軌），心核＝行動列正上方的淡漸層帶（同步/疲勞/微光同帶）；日誌無框、上緣 mask 淡出、min-height:0 壓到 60px（基底 min-height:96 曾蓋過 max-height——修掉）；「下一拍」從邊框卡改為無框文字行（warn/danger 語氣改用文字光暈）；行動鈕變薄、邊框放輕；flex order 骨架＝標題→雜訊→裂隙形體→〔彈性舞台〕→日誌→下一拍→心核帶→共鳴圈→行動列。(2) 地圖：CH-5b 的 12 個章節節點原本全擠 y8-15 頂帶（直接壓在晶岩遺跡/觀測點上）→ 改為全章共用兩個安全槽位（裂隙 50,7 頂中；探索點 86,36 右中——同時只顯示當前章，永不互撞）；節點足跡 84×92→72×~80（orb 56→46、glyph 19→16、標籤 12.5→11.5、em 88→72）——順帶修掉既有的晶岩遺跡×湖心倒影 14×12px 角落重疊（crystal 28→26 補強）。
+- Verification: bundled `node --check` ×2；impeccable detect.mjs layout scope 0 findings；瀏覽器 390×844 實測：地圖 ch2 存檔 8 節點（月湖 6＋風歇草坡＋孤鳴裂隙）**兩兩零重疊、零出界**；對峙實戰（點孤鳴裂隙進場＋按共鳴）：雜訊條 27px、裂隙形體底 251 → 日誌頂 515＝**舞台空隙 264px**（夥伴完全可見，原本 ~0）、日誌 59px、telegraph 36px 實時顯示、六元件垂直零重疊、de-box computed 確認（border 0、mask 生效、漸層帶）；**web release gate 10/10、0 console error、0 a11y 警告**。
+- Problems / risks: 真機重測 = human gate（對峙進場看貓、打完看地圖兩節點）；預覽面板 renderer 不繪畫格 → 量測前需關 transition（同 keyboard-v6 條目注意事項）；telegraph 無框後在極亮背景依賴文字陰影——真機若不夠讀，可補一層 4% 深底。
+- Next safe action: Owner 指示 commit/push → 真機重測 Owner 截圖場景（對峙中角色可見、無大方塊；地圖節點不重疊）。
+- Required reading: `src/ui/battleController.js`（injectStandoffLayoutStyles v2 註解）、`src/ui/mapController.js`（NODE_LAYOUT 註解）、本條。
+
+
 ### 2026-07-13 - Claude Fable 5 - Keyboard model v6: stop fighting the keyboard (Owner-reported black voids)
 
 - Status: `VERIFIED`（自動化部分；真機 = human gate）

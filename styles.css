@@ -2662,8 +2662,9 @@ body.panel-open .dev-reaction-lab {
   position: absolute;
   display: grid;
   justify-items: center;
-  gap: 5px;
-  width: 84px;
+  gap: 4px;
+  /* 72px：手機 318px 畫布上 8 節點（月湖 6 + 章節 2）不重疊的上限（2026-07-13 真機修正） */
+  width: 72px;
   margin: 0;
   padding: 0;
   border: 0;
@@ -2678,8 +2679,8 @@ body.panel-open .dev-reaction-lab {
   position: relative;
   display: grid;
   place-items: center;
-  width: 56px;
-  height: 56px;
+  width: 46px;
+  height: 46px;
   border-radius: 999px;
   border: 1.5px dashed rgba(155, 195, 230, 0.35);
   background:
@@ -2690,7 +2691,7 @@ body.panel-open .dev-reaction-lab {
 }
 
 .map-node-glyph {
-  font-size: 19px;
+  font-size: 16px;
   line-height: 1;
   opacity: 0.65;
   transition: opacity 260ms ease;
@@ -2703,14 +2704,14 @@ body.panel-open .dev-reaction-lab {
 }
 
 .map-node-label strong {
-  font-size: 12.5px;
+  font-size: 11.5px;
   font-weight: 800;
   text-shadow: 0 1px 6px rgba(0, 0, 0, 0.8);
   white-space: nowrap;
 }
 
 .map-node-label em {
-  max-width: 88px;
+  max-width: 72px;
   overflow: hidden;
   color: var(--muted);
   font-size: 8.5px;

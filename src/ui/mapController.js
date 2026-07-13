@@ -23,23 +23,27 @@ const NODE_LAYOUT = {
   moonlake_camp: { x: 50, y: 83, tone: "safe", glyph: "☾" },
   starwood_trail: { x: 22, y: 57, tone: "calm", glyph: "✶" },
   misttide_shore: { x: 78, y: 61, tone: "calm", glyph: "≋" },
-  crystal_ruins: { x: 28, y: 24, tone: "discovery", glyph: "◇" },
+  crystal_ruins: { x: 26, y: 24, tone: "discovery", glyph: "◇" },
   rift_observatory: { x: 74, y: 15, tone: "danger", glyph: "✕" },
   mirror_hollow: { x: 50, y: 42, tone: "calm", glyph: "☽" },
-  // 章節前沿節點（CH-5b）：同一時間只有「當前章」的一對會顯示（見 isNodeVisible），
-  // 故各章共用上方前沿帶（y 6-16），不與月湖下方群（y 24-83）重疊。
-  plains_windrest: { x: 34, y: 15, tone: "calm", glyph: "❋" },
-  plains_rift: { x: 48, y: 8, tone: "danger", glyph: "✕" },
-  forge_emberpath: { x: 40, y: 15, tone: "discovery", glyph: "◈" },
-  forge_rift: { x: 55, y: 8, tone: "danger", glyph: "✕" },
-  harbor_quayside: { x: 44, y: 15, tone: "calm", glyph: "≈" },
-  harbor_rift: { x: 58, y: 8, tone: "danger", glyph: "✕" },
-  core_lightwell: { x: 42, y: 15, tone: "discovery", glyph: "◇" },
-  core_rift: { x: 56, y: 8, tone: "danger", glyph: "✕" },
-  tidal_saltmarsh: { x: 38, y: 15, tone: "calm", glyph: "≋" },
-  tidal_rift: { x: 52, y: 8, tone: "danger", glyph: "✕" },
-  mystic_summitgate: { x: 46, y: 15, tone: "calm", glyph: "▲" },
-  mystic_rift: { x: 60, y: 8, tone: "danger", glyph: "✕" }
+  // 章節前沿節點（CH-5b；2026-07-13 Owner 真機截圖修正）：同一時間只有「當前章」
+  // 的一對會顯示（見 isNodeVisible），所以全部章節共用同兩個「安全槽位」——
+  // 裂隙＝頂中 (50,7)（危險在遠方，晶岩遺跡 28,24 與裂隙觀測點 74,15 各距 ≥22% x）、
+  // 探索點＝右中 (86,36)（霧潮河岸 78,61 下方 25% y、觀測點標籤帶上方淨空）。
+  // 舊版把 12 節點全擠在 y8-15 頂帶，直接壓在晶岩遺跡/觀測點上（節點含標籤
+  // 佔位約 26% 寬 × 21% 高，頂帶塞不下第三顆）。槽位共用＝永不互撞、位置可預期。
+  plains_windrest: { x: 86, y: 36, tone: "calm", glyph: "❋" },
+  plains_rift: { x: 50, y: 7, tone: "danger", glyph: "✕" },
+  forge_emberpath: { x: 86, y: 36, tone: "discovery", glyph: "◈" },
+  forge_rift: { x: 50, y: 7, tone: "danger", glyph: "✕" },
+  harbor_quayside: { x: 86, y: 36, tone: "calm", glyph: "≈" },
+  harbor_rift: { x: 50, y: 7, tone: "danger", glyph: "✕" },
+  core_lightwell: { x: 86, y: 36, tone: "discovery", glyph: "◇" },
+  core_rift: { x: 50, y: 7, tone: "danger", glyph: "✕" },
+  tidal_saltmarsh: { x: 86, y: 36, tone: "calm", glyph: "≋" },
+  tidal_rift: { x: 50, y: 7, tone: "danger", glyph: "✕" },
+  mystic_summitgate: { x: 86, y: 36, tone: "calm", glyph: "▲" },
+  mystic_rift: { x: 50, y: 7, tone: "danger", glyph: "✕" }
 };
 
 // 章節前沿節點的可見性（CH-5b）：月湖（第 1 章）＝家，永遠可見；
