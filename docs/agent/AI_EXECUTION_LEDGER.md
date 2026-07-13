@@ -928,7 +928,6 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Next safe action: Owner 指示 commit/push → 真機重測 Owner 截圖場景（對峙中角色可見、無大方塊；地圖節點不重疊）。
 - Required reading: `src/ui/battleController.js`（injectStandoffLayoutStyles v2 註解）、`src/ui/mapController.js`（NODE_LAYOUT 註解）、本條。
 
-
 ### 2026-07-13 - Claude Fable 5 - Keyboard model v6: stop fighting the keyboard (Owner-reported black voids)
 
 - Status: `VERIFIED`（自動化部分；真機 = human gate）
