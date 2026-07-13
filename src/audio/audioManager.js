@@ -108,10 +108,28 @@ function createAudioManager() {
       sfxVolume = clampVolume(settings.sfx);
     }
 
-    if (!isMuted && isUnlocked) {
-      bgmAudio.volume = getTargetBgmVolume();
-      if (!bgmAudio.paused) safePlay();
+    // 玩家拖動音量時立刻生效：中斷淡入，避免 fade interval 蓋掉新音量。
+    stopFadeIn();
+
+    if (isMuted) {
+      bgmAudio.volume = 0;
+      return;
     }
+
+    const target = getTargetBgmVolume();
+    if (!isUnlocked) {
+      // 尚未解鎖：只記住目標音量，等第一次點擊再播。
+      return;
+    }
+
+    if (target <= 0.0001) {
+      bgmAudio.volume = 0;
+      bgmAudio.pause();
+      return;
+    }
+
+    bgmAudio.volume = target;
+    if (bgmAudio.paused) safePlay();
   }
 
   function getVolumeSettings() {

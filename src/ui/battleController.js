@@ -1,4 +1,5 @@
 import { qs } from "../utils/dom.js";
+import { prefersReducedMotion } from "../utils/motionPreference.js";
 import { getCompanionById } from "../data/companionRegistry.js";
 import { getEnemyRiftSilhouettePath } from "../data/assetManifest.js";
 import { getExplorationNodeById } from "../data/explorationNodes.js";
@@ -450,7 +451,7 @@ export function createBattleController({ store, panelManager, soulTalkController
     }
 
     // B4 juice：雜訊放輕→柔光一閃；心核被撞→晃動（重擊更晃）；回收微光→晶光爆閃。
-    if (!prefersBattleReducedMotion()) {
+    if (!prefersReducedMotion()) {
       if (prevNoise !== null && session.noise.current < prevNoise) {
         flashOnce(noiseFillEl, "fx-soothe", 500);
         flashOnce(riftFigureEl, "rift-hit", 460); // 形體同步收縮一拍：被放輕了。
@@ -598,7 +599,8 @@ function injectRiftFigureStyles() {
     "@keyframes rfRecede{0%{opacity:1}100%{opacity:.25;transform:scale(.9) translateY(-6px)}}",
     ".rift-figure.rift-recede{animation:rfRecede 1s ease-out forwards}",
     ".rift-figure.rift-dim{opacity:.35;transition:opacity .8s ease}",
-    "@media (prefers-reduced-motion: reduce){.rift-figure,.rift-figure *{animation:none !important}}"
+    "@media (prefers-reduced-motion: reduce){.rift-figure,.rift-figure *{animation:none !important}}",
+    'html[data-reduced-motion-preference="reduced"] .rift-figure,html[data-reduced-motion-preference="reduced"] .rift-figure *{animation:none !important}'
   ].join("");
   document.head.appendChild(style);
 }
@@ -678,10 +680,6 @@ function buildChapterAdvanceCompanionLine(chapterAdvance) {
   }
   const toZh = chapterAdvance.to?.zh || "下一片土地";
   return `這一帶安靜下來了。${toZh}那邊……等你想去的時候，我們再一起走。`;
-}
-
-function prefersBattleReducedMotion() {
-  return typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
 }
 
 function flashOnce(el, className, ms = 500) {

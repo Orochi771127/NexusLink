@@ -42,3 +42,24 @@ html[data-ui="v2"][data-quality="medium"] .modal-panel {
 }
 
 /* high：使用各檔原本最強的 blur/glow/vignette/bloom，不覆寫。 */
+
+/* 中畫質：略降場景光暈，讓切換比「只有 blur 差」更可感知。 */
+html[data-ui="v2"][data-quality="medium"] .companion-focal-zone {
+  opacity: 0.72;
+  filter: saturate(0.92);
+}
+
+html[data-ui="v2"][data-quality="medium"] .scene-layer::after {
+  opacity: 0.55;
+}
+
+/* 低畫質：狀態點與地圖光環改為靜態，並略降 HUD 透明度開銷。 */
+html[data-ui="v2"][data-quality="low"] .soul-wave-deco,
+html[data-ui="v2"][data-quality="low"] .soul-core-glow {
+  animation: none !important;
+  opacity: 0.35;
+}
+
+html[data-ui="v2"][data-quality="low"] .page-orb {
+  animation: none !important;
+}

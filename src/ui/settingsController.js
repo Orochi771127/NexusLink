@@ -5,6 +5,9 @@ import { applyLanguage } from "../i18n/i18n.js";
 
 // data-settings-range key → state.settings 欄位
 const VOLUME_FIELD = { master: "volMaster", bgm: "volBgm", sfx: "volSfx" };
+// 拖動音效滑桿時給極輕預覽，讓玩家立刻聽到「音效音量有作用」。
+const SFX_PREVIEW_THROTTLE_MS = 220;
+let lastSfxPreviewAt = 0;
 
 export function createSettingsController({ panelManager, restartOnboarding, store, saveSettings } = {}) {
   const panel = qs('[data-panel="settings"]');
@@ -23,8 +26,11 @@ export function createSettingsController({ panelManager, restartOnboarding, stor
     saveSettings?.();
   }
 
-  // 套用到 runtime：音量走既有 AudioManager.setVolume；低動態/畫質/文字大小寫 root dataset
-  // （低動態沿用既有 reducedMotionPreference 標記；畫質/文字大小目前為持久化標記，視覺套用另案）。
+  /**
+   * 把設定套到 runtime：
+   * - 音量 → AudioManager（BGM／SFX 即時）
+   * - 低動態／文字大小／畫質 → html dataset（CSS + Pixi 輕量讀取）
+   */
   function applyToRuntime(settings = getSettings()) {
     AudioManager.setVolume?.({
       master: Number(settings.volMaster),
@@ -35,11 +41,13 @@ export function createSettingsController({ panelManager, restartOnboarding, stor
     root.dataset.reducedMotionPreference = settings.lowMotion ? "reduced" : "standard";
     root.dataset.textSize = settings.textSize || "medium";
     root.dataset.quality = settings.quality || "high";
+    document.body?.classList.toggle("is-low-motion", Boolean(settings.lowMotion));
   }
 
   function bind() {
     if (!panel) return;
     panel.addEventListener("input", handleInput);
+    panel.addEventListener("change", handleInput);
     panel.addEventListener("click", handleClick);
     observePanelState();
     syncControlsFromState();
@@ -49,6 +57,7 @@ export function createSettingsController({ panelManager, restartOnboarding, stor
 
   function open() {
     syncControlsFromState();
+    applyToRuntime();
     panelManager?.openPanel("settings");
     settingsToggleButton?.setAttribute("aria-expanded", "true");
   }
@@ -61,8 +70,28 @@ export function createSettingsController({ panelManager, restartOnboarding, stor
     const value = Number(range.value);
     const output = panel.querySelector(`[data-settings-output="${range.dataset.settingsRange}"]`);
     if (output) output.textContent = range.value;
-    AudioManager.setVolume?.({ [range.dataset.settingsRange]: value });
-    patchSettings({ [field]: value });
+
+    // 即時寫入 AudioManager；完整三軌再走一次，避免只改單軌時其餘不同步。
+    const nextPatch = { [field]: value };
+    const merged = { ...getSettings(), ...nextPatch };
+    AudioManager.setVolume?.({
+      master: Number(merged.volMaster),
+      bgm: Number(merged.volBgm),
+      sfx: Number(merged.volSfx)
+    });
+    patchSettings(nextPatch);
+
+    // 音效滑桿：節流預覽一聲，證明 SFX 音量真的有接上。
+    if (range.dataset.settingsRange === "sfx") {
+      previewSfxVolume();
+    }
+  }
+
+  function previewSfxVolume() {
+    const now = Date.now();
+    if (now - lastSfxPreviewAt < SFX_PREVIEW_THROTTLE_MS) return;
+    lastSfxPreviewAt = now;
+    AudioManager.playSfx?.("touch_calm");
   }
 
   function handleClick(event) {
@@ -83,6 +112,7 @@ export function createSettingsController({ panelManager, restartOnboarding, stor
     if (action === "toggle-audio") {
       // 靜音維持既有獨立 key（nexusLinkAudioMuted:v1），不併入 settings schema。
       const isMuted = AudioManager.toggleMute();
+      // aria-pressed=true 表示「聲音開啟中」
       button.setAttribute("aria-pressed", String(!isMuted));
       return;
     }
@@ -197,6 +227,7 @@ export function createSettingsController({ panelManager, restartOnboarding, stor
 
   return {
     bind,
-    open
+    open,
+    applyToRuntime
   };
 }

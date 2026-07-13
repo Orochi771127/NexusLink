@@ -166,9 +166,33 @@ export function createParticles() {
 }
 
 export function animateParticles(particles, timeSeconds, ticker) {
+  if (!particles) return;
+
+  // 畫質／低動態：不動 renderer，只降載環境粒子（可感知、可還原）。
+  const quality = typeof document !== "undefined"
+    ? document.documentElement?.dataset?.quality || "high"
+    : "high";
+  const lowMotion = typeof document !== "undefined"
+    && document.documentElement?.dataset?.reducedMotionPreference === "reduced";
+
+  if (quality === "low" || lowMotion) {
+    particles.visible = false;
+    return;
+  }
+
+  particles.visible = true;
+  const speedScale = quality === "medium" ? 0.55 : 1;
+  const alphaScale = quality === "medium" ? 0.7 : 1;
+
   particles.children.forEach((particle, index) => {
-    particle.y -= (0.15 + index * 0.002) * ticker.deltaTime;
-    particle.alpha = 0.25 + Math.sin(timeSeconds + index) * 0.12;
+    // 中畫質：只更新偶數粒子，視覺仍在但運算更少。
+    if (quality === "medium" && index % 2 === 1) {
+      particle.visible = false;
+      return;
+    }
+    particle.visible = true;
+    particle.y -= (0.15 + index * 0.002) * ticker.deltaTime * speedScale;
+    particle.alpha = (0.25 + Math.sin(timeSeconds + index) * 0.12) * alphaScale;
     if (particle.y < 110) particle.y = 760;
   });
 }

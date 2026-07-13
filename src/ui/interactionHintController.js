@@ -1,3 +1,5 @@
+import { prefersReducedMotion } from "../utils/motionPreference.js";
+
 // 互動可讀性提示（First-Session 支柱一）。
 //
 // 私測回報：朋友「不知道怎麼跟貓互動、不知道怎麼摸」。
@@ -45,7 +47,8 @@ export function createInteractionHintController({ store, isPanelOpen, isOnboardi
       return;
     }
     const node = ensureElement();
-    node.classList.toggle("is-lowmotion", Boolean(state.settings?.lowMotion));
+    // 遊戲設定或系統無障礙偏好任一成立 → 靜態微光
+    node.classList.toggle("is-lowmotion", Boolean(state.settings?.lowMotion) || prefersReducedMotion());
     node.classList.add("is-visible");
   }
 

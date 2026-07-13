@@ -100,8 +100,8 @@ export const STRINGS = {
   "explore.cardTitle": { tc: "月湖營地", sc: "月湖营地", en: "Moonlake Camp", jp: "月湖の野営地" },
   "explore.openMap": { tc: "查看月湖路徑", sc: "查看月湖路径", en: "View Moonlake paths", jp: "月湖の小道を見る" },
   "explore.atlas": { tc: "世界地圖", sc: "世界地图", en: "World Atlas", jp: "世界地図" },
-  "explore.lakeGlow": { tc: "靠近湖面微光", sc: "靠近湖面微光", en: "Approach the lake glow", jp: "湖面の微光に近づく" },
-  "explore.crystal": { tc: "觀察靜默晶簇", sc: "观察静默晶簇", en: "Observe the quiet crystals", jp: "静かな晶簇を眺める" },
+  "explore.lakeGlow": { tc: "與夥伴走近湖畔", sc: "与伙伴走近湖畔", en: "Walk to the shore together", jp: "相棒と湖畔へ近づく" },
+  "explore.crystal": { tc: "對準靜默錨點", sc: "对准静默锚点", en: "Attune the silent anchor", jp: "静かな錨に合わせる" },
   "explore.evTraces": { tc: "可見痕跡", sc: "可见痕迹", en: "Visible traces", jp: "見える痕跡" },
   "explore.evMemories": { tc: "情緒記憶", sc: "情绪记忆", en: "Emotional memories", jp: "感情の記憶" },
 
@@ -110,15 +110,16 @@ export const STRINGS = {
   "care.trust": { tc: "信任", sc: "信任", en: "Trust", jp: "信頼" },
   "care.energy": { tc: "精力", sc: "精力", en: "Energy", jp: "活力" },
   "care.sitQuiet": { tc: "靜靜陪伴", sc: "静静陪伴", en: "Sit quietly together", jp: "静かに寄り添う" },
-  "care.keepDistance": { tc: "保持距離陪伴", sc: "保持距离陪伴", en: "Stay near, at a distance", jp: "距離を保って寄り添う" },
+  "care.softComfort": { tc: "輕聲安撫", sc: "轻声安抚", en: "Soft comfort", jp: "やさしくなだめる" },
+  "care.keepDistance": { tc: "靜靜陪伴", sc: "静静陪伴", en: "Sit quietly nearby", jp: "静かに寄り添う" },
   "care.restTogether": { tc: "一起休息", sc: "一起休息", en: "Rest together", jp: "一緒に休む" },
-  "care.observe": { tc: "觀察狀態", sc: "观察状态", en: "Observe its state", jp: "様子を見る" },
+  "care.observe": { tc: "讀身體語言", sc: "读身体语言", en: "Read its body language", jp: "からだの言葉を読む" },
   "care.calmSync": { tc: "心核共息", sc: "心核共息", en: "Calm Sync", jp: "心核の共息" },
 
   // ---- Growth page body ----
-  "growth.trustTune": { tc: "信任校準", sc: "信任校准", en: "Tune trust", jp: "信頼を整える" },
-  "growth.emotionBalance": { tc: "情緒穩定", sc: "情绪稳定", en: "Steady emotions", jp: "感情を落ち着ける" },
-  "growth.review": { tc: "回看資料", sc: "回看资料", en: "Review records", jp: "記録を見返す" },
+  "growth.trustTune": { tc: "回顧信任時刻", sc: "回顾信任时刻", en: "Recall a trust moment", jp: "信頼のときを振り返る" },
+  "growth.emotionBalance": { tc: "心核共息", sc: "心核共息", en: "Calm Sync", jp: "心核の共息" },
+  "growth.review": { tc: "翻開關係圖鑑", sc: "翻开关系图鉴", en: "Open the bond codex", jp: "関係の図鑑をひらく" },
 
   // ---- Memory page body ----
   "memory.evInteractions": { tc: "互動記憶", sc: "互动记忆", en: "Interaction memories", jp: "やり取りの記憶" },
@@ -186,10 +187,10 @@ export const STRINGS = {
   "set.sfx": { tc: "音效", sc: "音效", en: "Sound FX", jp: "効果音" },
   "set.soundToggle": { tc: "聲音開關", sc: "声音开关", en: "Sound on/off", jp: "サウンド オン/オフ" },
   "set.audioNote": {
-    tc: "背景音樂會即時隨「主音量／背景音樂」變化（首次需輕觸畫面以啟用聲音）。音效素材仍在準備中。",
-    sc: "背景音乐会即时随“主音量／背景音乐”变化（首次需轻触画面以启用声音）。音效素材仍在准备中。",
-    en: "Music responds live to Master / Music (tap the screen once to enable sound). Sound FX assets are still in preparation.",
-    jp: "BGM は「全体音量／BGM」に即時反応します（最初に画面を一度タップして音を有効化）。効果音の素材は準備中です。"
+    tc: "主音量、背景音樂與音效可即時調整（首次需輕觸畫面以啟用聲音）。",
+    sc: "主音量、背景音乐与音效可即时调整（首次需轻触画面以启用声音）。",
+    en: "Master, music, and sound FX update live (tap the screen once to enable audio).",
+    jp: "全体音量・BGM・効果音は即時に変わります（最初に画面を一度タップして音を有効化）。"
   },
   "set.display": { tc: "畫面", sc: "画面", en: "Display", jp: "画面" },
   "set.quality": { tc: "畫質", sc: "画质", en: "Quality", jp: "画質" },
@@ -274,10 +275,10 @@ export const STRINGS = {
   "explore.stateAria": { tc: "探索狀態", sc: "探索状态", en: "Exploration state", jp: "探索の状態" },
   "explore.openMapSub": { tc: "看看月湖的小路。", sc: "看看月湖的小路。", en: "Walk the small paths of the Moonlake.", jp: "月湖の小道を歩いてみる。" },
   "explore.atlasSub": { tc: "遠望整片大陸。", sc: "远望整片大陆。", en: "Gaze at the wider continent.", jp: "大陸を遠くから眺める。" },
-  "explore.lakeGlowSub": { tc: "安靜觀察牠留下的回應。", sc: "安静观察牠留下的回应。", en: "Quietly watch the response it leaves.", jp: "残された応えを静かに見つめる。" },
-  "explore.lakeGlowStatus": { tc: "湖面留下了一圈柔和微光。", sc: "湖面留下了一圈柔和微光。", en: "A soft ring of light lingers on the lake.", jp: "湖面にやわらかな光の輪が残った。" },
-  "explore.crystalSub": { tc: "留下可見的棲地痕跡。", sc: "留下可见的栖地痕迹。", en: "Leave a visible trace in the habitat.", jp: "棲み処に見える痕跡を残す。" },
-  "explore.crystalStatus": { tc: "晶簇亮起微光，空氣變得穩定。", sc: "晶簇亮起微光，空气变得稳定。", en: "The crystals glow faintly; the air settles.", jp: "晶簇がほのかに灯り、空気が落ち着いた。" },
+  "explore.lakeGlowSub": { tc: "一起走到岸邊，看牠怎麼回應。", sc: "一起走到岸边，看牠怎么回应。", en: "Walk to the shore together and watch how it responds.", jp: "岸まで一緒に行き、応え方を見る。" },
+  "explore.lakeGlowStatus": { tc: "你們一起走近湖岸。湖面留下一圈柔和微光。", sc: "你们一起走近湖岸。湖面留下一圈柔和微光。", en: "You walk to the shore together. A soft ring of light lingers on the lake.", jp: "一緒に岸へ近づいた。湖面にやわらかな光の輪が残った。" },
+  "explore.crystalSub": { tc: "把散落的微光收成可回看的晶簇。", sc: "把散落的微光收成可回看的晶簇。", en: "Gather scattered glimmers into a crystal you can revisit.", jp: "散った微光を、見返せる晶簇にまとめる。" },
+  "explore.crystalStatus": { tc: "散落的微光被收進晶簇。空氣安定下來。", sc: "散落的微光被收进晶簇。空气安定下来。", en: "Scattered glimmers gather into the crystal. The air settles.", jp: "散った微光が晶簇に収まり、空気が落ち着いた。" },
 
   // ---- Care page content ----
   "care.hintBoundary": { tc: "牠是否需要更多空間", sc: "牠是否需要更多空间", en: "Whether it needs more space", jp: "もっと空間が要るかどうか" },
@@ -289,13 +290,14 @@ export const STRINGS = {
     en: "No trading, no pleasing here. Stay with it, and let it choose the distance.",
     jp: "ここでは取引も機嫌取りもしない。寄り添いながら、距離は相手に選ばせる。"
   },
-  "care.keepDistanceStatus": { tc: "你放慢靠近的速度，讓牠保有自己的距離。", sc: "你放慢靠近的速度，让牠保有自己的距离。", en: "You slow your approach, letting it keep its own distance.", jp: "近づく足を緩め、相手の距離を守った。" },
+  "care.keepDistanceStatus": { tc: "你只是待在牠身邊，沒有伸手。牠的肩膀慢慢鬆了。", sc: "你只是待在牠身边，没有伸手。牠的肩膀慢慢松了。", en: "You stay nearby without reaching out. Its shoulders slowly ease.", jp: "手を伸ばさず、そばにいるだけ。肩がゆっくりゆるんだ。" },
   "care.sitQuietStatus": { tc: "你沒有要求牠回應，只是安靜地待在旁邊。", sc: "你没有要求牠回应，只是安静地待在旁边。", en: "You ask nothing of it — you simply stay nearby, quietly.", jp: "応えを求めず、ただ静かにそばにいた。" },
+  "care.softComfortStatus": { tc: "你放輕聲音。夥伴稍微放鬆了一點。", sc: "你放轻声音。伙伴稍微放松了一点。", en: "You soften your voice. It eases a little.", jp: "声をやわらげた。少し肩の力が抜けた。" },
   "care.primarySub": { tc: "尊重牠此刻的邊界。", sc: "尊重牠此刻的边界。", en: "Respect the boundary it holds right now.", jp: "いまの境界を尊重する。" },
-  "care.restSub": { tc: "讓棲地慢下來。", sc: "让栖地慢下来。", en: "Let the habitat slow down.", jp: "棲み処をゆっくりさせる。" },
-  "care.restStatus": { tc: "棲地安靜下來，適合一起休息。", sc: "栖地安静下来，适合一起休息。", en: "The habitat grows quiet — a good time to rest together.", jp: "棲み処が静かになり、一緒に休むのにいい頃合い。" },
+  "care.restSub": { tc: "依牠的精力，一起把節奏放慢。", sc: "依牠的精力，一起把节奏放慢。", en: "Slow the rhythm together, matching its energy.", jp: "相手の余裕に合わせて、一緒にゆっくりする。" },
+  "care.restStatus": { tc: "你們一起休息，棲地安靜下來。", sc: "你们一起休息，栖地安静下来。", en: "You rest together. The habitat grows quiet.", jp: "一緒に休み、棲み処が静かになった。" },
   "care.calmSyncSub": { tc: "和牠一起把節奏放慢。", sc: "和牠一起把节奏放慢。", en: "Slow the rhythm down together.", jp: "一緒にリズムをゆっくりにする。" },
-  "care.observeSub": { tc: "看牠的身體語言。", sc: "看牠的身体语言。", en: "Read its body language.", jp: "からだの言葉を見る。" },
+  "care.observeSub": { tc: "讀懂耳朵、肩線與距離。", sc: "读懂耳朵、肩线与距离。", en: "Read its ears, shoulders, and distance.", jp: "耳・肩・距離を読み取る。" },
 
   // ---- Calm Sync session ----
   "cs.hint": { tc: "慢一點。看著光圈就好。", sc: "慢一点。看着光圈就好。", en: "Slowly. Just stay with the ring.", jp: "ゆっくり。輪を見ているだけでいい。" },
@@ -311,11 +313,11 @@ export const STRINGS = {
   "growth.nextCopy": { tc: "不是能力排行，是關係慢慢往前。", sc: "不是能力排行，是关系慢慢往前。", en: "Not a power ranking — a relationship moving forward, slowly.", jp: "能力の順位ではなく、関係がゆっくり進んでいく。" },
   "growth.endCopy": { tc: "這一章先到這裡。不用追。", sc: "这一章先到这里。不用追。", en: "This chapter rests here. No need to chase.", jp: "この章はここまで。急がなくていい。" },
   "growth.progressAria": { tc: "關係章節進度", sc: "关系章节进度", en: "Relationship chapter progress", jp: "関係の章の進み" },
-  "growth.trustTuneSub": { tc: "把節奏調回來。", sc: "把节奏调回来。", en: "Bring the rhythm back.", jp: "リズムを取り戻す。" },
-  "growth.trustTuneStatus": { tc: "信任回路略微對齊。", sc: "信任回路略微对齐。", en: "The trust loop aligns a little.", jp: "信頼の回路が少し揃った。" },
-  "growth.balanceSub": { tc: "整理現在的狀態。", sc: "整理现在的状态。", en: "Settle how things are now.", jp: "いまの状態をととのえる。" },
-  "growth.balanceStatus": { tc: "心核回到更穩定的節奏。", sc: "心核回到更稳定的节奏。", en: "The heart-core returns to a steadier rhythm.", jp: "心核がより安定したリズムに戻った。" },
-  "growth.reviewSub": { tc: "翻翻牠的圖鑑。", sc: "翻翻牠的图鉴。", en: "Leaf through its codex.", jp: "図鑑をめくってみる。" },
+  "growth.trustTuneSub": { tc: "回看你們一起度過的安靜片刻。", sc: "回看你们一起度过的安静片刻。", en: "Look back on quiet moments you shared.", jp: "一緒に過ごした静かなときを見返す。" },
+  "growth.trustTuneStatus": { tc: "信任在安靜裡往前了一點。", sc: "信任在安静里往前了一点。", en: "Trust moves forward a little in the quiet.", jp: "静けさの中で、信頼が少し進んだ。" },
+  "growth.balanceSub": { tc: "一起把節奏放慢，比按鈕更靠近牠。", sc: "一起把节奏放慢，比按钮更靠近牠。", en: "Slow the rhythm together — closer than a button.", jp: "一緒にリズムを落とす。ボタンより近い。" },
+  "growth.balanceStatus": { tc: "節奏在你們之間安定下來。", sc: "节奏在你们之间安定下来。", en: "The rhythm settles between you.", jp: "ふたりの間のリズムが落ち着いた。" },
+  "growth.reviewSub": { tc: "查閱牠的關係紀錄與圖鑑。", sc: "查阅牠的关系纪录与图鉴。", en: "Browse its bond record and codex.", jp: "関係の記録と図鑑をひらく。" },
 
   // ---- Memory page content ----
   "memory.evidenceAria": { tc: "記憶證據", sc: "记忆证据", en: "Memory evidence", jp: "記憶の証" },

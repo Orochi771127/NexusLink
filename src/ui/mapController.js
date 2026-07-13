@@ -1,4 +1,5 @@
 import { qs } from "../utils/dom.js";
+import { prefersReducedMotion } from "../utils/motionPreference.js";
 import { EXPLORATION_NODES } from "../data/explorationNodes.js";
 import { resolveExplorationEvent } from "../engine/explorationEngine.js";
 import {
@@ -49,10 +50,6 @@ const COMPANION_ANIMATION_INTENT_EVENT = "COMPANION_ANIMATION_INTENT";
 const MAP_CENTER = { x: 50, y: 50 };
 const MAP_CUE_DELAY_MS = 150;
 const MAP_DIRECTION_EPS = 3; // x/y 差距都很小時不播（避免無意義 cue）
-
-function prefersReducedMotion() {
-  return typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
-}
 
 // 純函數：依「目標節點 vs 參考點」的相對位置解析方向意圖（取絕對差較大的軸）。
 // 只回傳意圖字串，實際動畫解析/播放由 app bridge 的 resolveAnimationIntent 處理。

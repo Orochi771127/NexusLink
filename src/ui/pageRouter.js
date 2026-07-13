@@ -141,11 +141,16 @@ export function createPageRouter({
     const defense = toNumber(state.defense);
     const energy = toNumber(state.energy);
     const trust = toNumber(state.trust);
-    const primaryCareChoice = defense >= 60 ? "gentle_presence" : "soft_comfort";
-    const primaryCareLabel = defense >= 60 ? t("care.keepDistance") : t("care.sitQuiet");
-    const primaryCareStatus = defense >= 60
+    // 高防備／剛拒絕 → 靜靜陪伴；平常 → 輕聲安撫（修正舊版標籤錯位）
+    const primaryCareChoice = defense >= 60 || state.lastTouchReaction === "reject"
+      ? "gentle_presence"
+      : "soft_comfort";
+    const primaryCareLabel = primaryCareChoice === "gentle_presence"
+      ? t("care.keepDistance")
+      : t("care.softComfort");
+    const primaryCareStatus = primaryCareChoice === "gentle_presence"
       ? t("care.keepDistanceStatus")
-      : t("care.sitQuietStatus");
+      : t("care.softComfortStatus");
 
     body.innerHTML = `
       <div class="page-meter-card">
@@ -167,7 +172,7 @@ export function createPageRouter({
           <strong>${t("care.calmSync")}</strong>
           <em>${t("care.calmSyncSub")}</em>
         </button>
-        <button type="button" data-page-action="open-character">
+        <button type="button" data-page-action="observe-body" data-nav-action="care" data-choice="observe_body">
           <strong>${t("care.observe")}</strong>
           <em>${t("care.observeSub")}</em>
         </button>
@@ -202,11 +207,11 @@ export function createPageRouter({
         ${renderTendency(t("char.boundary"), toNumber(state.defense))}
       </div>
       <div class="page-action-grid">
-        <button type="button" data-page-action="commit" data-nav-action="grow" data-choice="trust_tuning" data-status="${t("growth.trustTuneStatus")}">
+        <button type="button" data-page-action="commit" data-nav-action="grow" data-choice="trust_reflection" data-status="${t("growth.trustTuneStatus")}">
           <strong>${t("growth.trustTune")}</strong>
           <em>${t("growth.trustTuneSub")}</em>
         </button>
-        <button type="button" data-page-action="commit" data-nav-action="grow" data-choice="emotional_balance" data-status="${t("growth.balanceStatus")}">
+        <button type="button" data-page-action="open-calm-sync">
           <strong>${t("growth.emotionBalance")}</strong>
           <em>${t("growth.balanceSub")}</em>
         </button>
@@ -286,7 +291,19 @@ export function createPageRouter({
       else if (action === "open-codex") await runRequiredAction(openCodex);
       else if (action === "open-soul-talk") await soulTalkController.openSoulTalk(panelManager);
       else if (action === "open-calm-sync") await runRequiredAction(calmSyncController?.start?.bind(calmSyncController));
-      else if (action === "commit") {
+      else if (action === "observe-body") {
+        // 先跑「讀身體語言」效果，再打開角色面板（保留查閱價值）。
+        const actionResult = await actionSheetController.performAction(button.dataset.navAction || "care", {
+          choice: button.dataset.choice || "observe_body"
+        });
+        if (actionResult?.ok === false) {
+          const error = new Error("First-session page action is unavailable");
+          error.code = actionResult.error ? "SAVE_FAILED" : "ACTION_UNAVAILABLE";
+          throw error;
+        }
+        await panelManager.openPanel("character");
+        render();
+      } else if (action === "commit") {
         const actionResult = await actionSheetController.performAction(button.dataset.navAction, {
           choice: button.dataset.choice,
           status: button.dataset.status
@@ -300,8 +317,9 @@ export function createPageRouter({
       } else {
         throw new Error(`Unsupported page action: ${action || "missing"}`);
       }
-      setViewState(action === "commit" ? "completed" : "ready");
-      if (action !== "commit") statusText.textContent = getPageStatus(activePage);
+      const isCommitLike = action === "commit" || action === "observe-body";
+      setViewState(isCommitLike ? "completed" : "ready");
+      if (!isCommitLike) statusText.textContent = getPageStatus(activePage);
     } catch (error) {
       console.warn("First-session page action unavailable", { action, error });
       setViewState(error?.code === "ACTION_UNAVAILABLE" ? "unavailable" : "recoverable-error");

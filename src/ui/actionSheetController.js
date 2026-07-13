@@ -30,6 +30,7 @@ export function createActionSheetController({
   store,
   calmSyncController,
   openMap,
+  openCodex,
   routeNavAction
 }) {
   const bottomNavButtons = qsa(".bottom-nav button[data-action]");
@@ -260,12 +261,22 @@ export function createActionSheetController({
       return { ok: Boolean(calmSyncController?.start) };
     }
 
+    if (row?.kind === "open_codex") {
+      if (typeof openCodex === "function") {
+        openCodex();
+      } else {
+        EventBus.emit(HABITAT_STATUS_TOAST_EVENT, { text: "圖鑑整備中。", tone: "calm" });
+      }
+      return { ok: typeof openCodex === "function" };
+    }
+
     const stateBeforeAction = store.getState();
     const choice = row?.choice;
     const result = evaluateActionEffect(store.getState(), action, choice);
     store.setState(result.statePatch);
     if (result.environmentEvent) EventBus.emit(ENVIRONMENT_INTERACTION_EVENT, result.environmentEvent);
-    const message = row?.status || actionMeta.message;
+    // 優先用引擎情境文案（條件分支／尊重沉積），靜態 status 只作後備。
+    const message = result.message || row?.status || actionMeta.message;
     EventBus.emit(HABITAT_STATUS_TOAST_EVENT, { text: message, tone: "calm" });
     statusText.textContent = message;
     const saveResult = saveCurrentState();
@@ -301,13 +312,13 @@ function getActionMeta(action, state = {}) {
   const actions = {
     explore: {
       title: "探索",
-      copy: "走出營地，或在棲地裡找個安靜的地方。",
+      copy: "走出營地，或與夥伴在棲地找個安靜的地方。",
       message: "探索完成。",
       rows: [
         { label: "開啟探索地圖", kind: "open_map", status: "探索地圖展開。" },
-        { label: "湖畔微光", choice: "lake_glow", status: "湖畔留下了一圈柔和微光。" },
+        { label: "與夥伴走近湖畔", choice: "lake_glow", status: "你們一起走近湖岸。" },
         { label: "星圖回廊", choice: "star_corridor", status: "星圖回廊回應了一道安靜脈動。" },
-        { label: "靜默晶簇", choice: "silent_crystal", status: "晶簇亮起微光，空氣變得穩定。" }
+        { label: "對準靜默錨點", choice: "silent_crystal", status: "把散落的微光收成可回看的晶簇。" }
       ]
     },
     care: {
@@ -315,20 +326,21 @@ function getActionMeta(action, state = {}) {
       copy: "提供支持，但不強迫靠近。",
       message: "照顧完成。",
       rows: [
-        { label: "輕聲安撫", choice: "soft_comfort", status: "夥伴稍微放鬆了一點。" },
+        { label: "輕聲安撫", choice: "soft_comfort", status: "你放輕聲音。夥伴稍微放鬆了一點。" },
         { label: "能量補給", choice: "energy_supply", status: "溫暖能量回到心核。" },
-        { label: "陪伴休息", choice: "rest_together", status: "棲地安靜下來，適合一起休息。" },
+        { label: "一起休息", choice: "rest_together", status: "你們一起把節奏放慢。" },
+        { label: "讀身體語言", choice: "observe_body", status: "你看懂了牠此刻的身體語言。" },
         { label: "心核共息", kind: "calm_sync" }
       ]
     },
     grow: {
       title: "成長",
-      copy: "校準羈絆與信任的回路。",
+      copy: "回顧你們一起走過的距離，不是調校儀表。",
       message: "成長調整完成。",
       rows: [
-        { label: "信任校準", choice: "trust_tuning", status: "信任回路略微對齊。" },
-        { label: "情緒穩定", choice: "emotional_balance", status: "心核回到更穩定的節奏。" },
-        { label: "技能回路", choice: "skill_circuit", status: "技能回路仍保持休眠。" }
+        { label: "回顧信任時刻", choice: "trust_reflection", status: "信任在安靜裡往前了一點。" },
+        { label: "心核共息", kind: "calm_sync" },
+        { label: "翻開關係圖鑑", kind: "open_codex", status: "圖鑑翻開了。" }
       ]
     },
     memory: {

@@ -50,6 +50,7 @@ const CSS = `
 @media (prefers-reduced-motion: reduce) {
   .companion-initiative-line { transition: none; }
 }
+html[data-reduced-motion-preference="reduced"] .companion-initiative-line { transition: none; }
 /* 牠「真的在做」的時候，旁白「牠像是想…」讓位——兩句同屏會互相壓住、語意也矛盾。 */
 body.companion-initiative-active .gentle-invitation { opacity: 0 !important; }
 `;

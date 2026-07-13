@@ -1,0 +1,98 @@
+/* 設定頁 runtime 套用：文字大小 + 低動態偏好。
+   settingsController 會寫入：
+   - html[data-text-size="small|medium|large"]
+   - html[data-reduced-motion-preference="reduced|standard"]
+   - html[data-quality="low|medium|high"]（細節見 quality-modes.css）
+*/
+
+/* ---- 文字大小：縮放 rem 根字級，並用 --nl-font-scale 給固定 px 區塊微調 ---- */
+html[data-ui="v2"] {
+  --nl-font-scale: 1;
+  font-size: 16px;
+}
+
+html[data-ui="v2"][data-text-size="small"] {
+  --nl-font-scale: 0.9;
+  font-size: 14.5px;
+}
+
+html[data-ui="v2"][data-text-size="medium"] {
+  --nl-font-scale: 1;
+  font-size: 16px;
+}
+
+html[data-ui="v2"][data-text-size="large"] {
+  --nl-font-scale: 1.14;
+  font-size: 18px;
+}
+
+/* 主要 UI 容器跟著縮放（多數新樣式用 rem；舊 px 區塊用 scale 變數補強）。 */
+html[data-ui="v2"][data-text-size="small"] .content-layer,
+html[data-ui="v2"][data-text-size="small"] .panel-layer,
+html[data-ui="v2"][data-text-size="small"] .bottom-nav,
+html[data-ui="v2"][data-text-size="small"] .core-hud-open,
+html[data-ui="v2"][data-text-size="large"] .content-layer,
+html[data-ui="v2"][data-text-size="large"] .panel-layer,
+html[data-ui="v2"][data-text-size="large"] .bottom-nav,
+html[data-ui="v2"][data-text-size="large"] .core-hud-open {
+  font-size: calc(1rem * var(--nl-font-scale));
+}
+
+html[data-ui="v2"][data-text-size="large"] .soul-talk-drawer,
+html[data-ui="v2"][data-text-size="large"] .page-view,
+html[data-ui="v2"][data-text-size="large"] .modal-panel,
+html[data-ui="v2"][data-text-size="large"] .settings-page-body,
+html[data-ui="v2"][data-text-size="small"] .soul-talk-drawer,
+html[data-ui="v2"][data-text-size="small"] .page-view,
+html[data-ui="v2"][data-text-size="small"] .modal-panel,
+html[data-ui="v2"][data-text-size="small"] .settings-page-body {
+  line-height: calc(1.45 * var(--nl-font-scale));
+}
+
+html[data-ui="v2"][data-text-size="large"] .status-text,
+html[data-ui="v2"][data-text-size="large"] .page-soft-note,
+html[data-ui="v2"][data-text-size="large"] .habitat-status-toast,
+html[data-ui="v2"][data-text-size="small"] .status-text,
+html[data-ui="v2"][data-text-size="small"] .page-soft-note,
+html[data-ui="v2"][data-text-size="small"] .habitat-status-toast {
+  font-size: calc(0.92rem * var(--nl-font-scale));
+}
+
+/* ---- 低動態模式（設定頁）：等效於系統 prefers-reduced-motion ---- */
+html[data-reduced-motion-preference="reduced"] .map-path,
+html[data-reduced-motion-preference="reduced"] .map-node.is-current .map-node-orb::after,
+html[data-reduced-motion-preference="reduced"] .map-node.tone-danger .map-node-glyph,
+html[data-reduced-motion-preference="reduced"] .feedback-pulse,
+html[data-reduced-motion-preference="reduced"] .bottom-nav button.active,
+html[data-reduced-motion-preference="reduced"] .bottom-nav button.is-active,
+html[data-reduced-motion-preference="reduced"] .bottom-nav button[aria-current="true"],
+html[data-reduced-motion-preference="reduced"] .bottom-nav button[aria-current="page"],
+html[data-reduced-motion-preference="reduced"] .soul-wave-deco,
+html[data-reduced-motion-preference="reduced"] .soul-core-glow,
+html[data-reduced-motion-preference="reduced"] .core-status-dot,
+html[data-reduced-motion-preference="reduced"] .atlas-node--current .atlas-node-halo,
+html[data-reduced-motion-preference="reduced"] .touch-affordance__ring,
+html[data-reduced-motion-preference="reduced"] .touch-affordance__core,
+html[data-reduced-motion-preference="reduced"] .page-orb,
+html[data-reduced-motion-preference="reduced"] .companion-initiative-line {
+  animation: none !important;
+  transition: none !important;
+}
+
+html[data-reduced-motion-preference="reduced"] .glass-interactive:active {
+  transform: none;
+}
+
+html[data-reduced-motion-preference="reduced"] .map-toast {
+  transform: none;
+  transition: opacity 280ms ease;
+}
+
+html[data-reduced-motion-preference="reduced"] .companion-initiative-line {
+  transition: none;
+}
+
+/* 低動態時關掉較吵的場景光暈呼吸，保留靜態可讀性。 */
+html[data-reduced-motion-preference="reduced"] .companion-focal-zone {
+  animation: none !important;
+}

@@ -311,6 +311,7 @@ async function bootstrap() {
     store,
     calmSyncController,
     openMap: () => getMapController().open(),
+    openCodex: () => getCodexController().open(),
     routeNavAction: (action) => pageRouter?.navigate(action)
   });
 
