@@ -3,6 +3,7 @@ import { getStrategyVariantLines, buildStrategyVariantMeta } from "../nlu/nluRep
 import { listResponsePackVariants } from "../corpus/responsePackSelector.js";
 import { RESPONSE_STRATEGIES } from "../responseStrategySelector.js";
 import { HEARTSPARK_COUNCIL_COMPANION_IDS } from "../../data/ai/heartsparkCouncilVoicePacks.js";
+import { GREYSHADE_COMPANION_ID } from "../../data/ai/greyshadeVoicePacks.js";
 
 // 情緒陪伴類策略：用字面字串（避免循環依賴時 RESPONSE_STRATEGIES 尚未就緒）。
 const COMPANION_VOICE_STRATEGIES = Object.freeze(
@@ -15,7 +16,10 @@ const COMPANION_VOICE_STRATEGIES = Object.freeze(
   ])
 );
 
-const HEARTSPARK_VOICE_IDS = Object.freeze(new Set(HEARTSPARK_COUNCIL_COMPANION_IDS));
+// 心輝五席 + 灰影貓（Nuwa 蒸餾 voice）：情緒策略下優先用物種定稿句。
+const COMPANION_VOICE_PACK_IDS = Object.freeze(
+  new Set([...HEARTSPARK_COUNCIL_COMPANION_IDS, GREYSHADE_COMPANION_ID])
+);
 
 export function selectReplyVariant({
   responseStrategy = null,
@@ -58,10 +62,10 @@ export function selectReplyVariant({
     recoveryContext
   });
 
-  // 心輝正式五席：情緒策略下把 voice pack 併入候選並提高分數，讓玩家「聽得出是誰」。
-  // 灰影貓維持既有 NLU 優先（holdout／訓練語料以灰影為主），不改其預設行為。
+  // 心輝五席＋灰影貓：情緒策略下把 Nuwa voice pack 併入候選並提高分數，讓玩家「聽得出是誰」。
+  // 實用／問答策略仍走 NLU（holdout／能力題不改）。
   const preferCompanionVoice =
-    HEARTSPARK_VOICE_IDS.has(companionId) &&
+    COMPANION_VOICE_PACK_IDS.has(companionId) &&
     packVariants.length > 0 &&
     COMPANION_VOICE_STRATEGIES.has(strategy);
 
@@ -132,7 +136,7 @@ export function selectReplyVariant({
 
 function scoreVariant(variant, { preferred, topic, strategy, preferCompanionVoice = false }) {
   let score = 0;
-  // 心輝五席：物種 voice pack 必須壓過 NLU 的 preferred/topic 加分，才進得了遊戲對話。
+  // 物種 voice pack 必須壓過 NLU 的 preferred/topic 加分，才進得了遊戲對話。
   if (preferCompanionVoice && variant.replySource === "response_pack") score += 8;
   if (variant.replySource === "nlu_builder") score += 1;
   if (preferred && String(variant.variantId || "").includes(preferred)) score += 2;

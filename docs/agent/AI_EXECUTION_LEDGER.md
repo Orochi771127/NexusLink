@@ -1541,6 +1541,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 3 - Raphael Core, Companion Reasoning, And Soul Talk
 
+### 2026-07-14 - Cursor Grok - Nuwa v0.6 灰影貓 Expression DNA＋voice pack 接入
+
+- Status: `VERIFIED`
+- Branch / commit: `main` / uncommitted → lands with this commit; Owner 明示灰影也要用女媧做出來並接入。
+- Scope: 灰影貓 Nuwa 蒸餾＋Soul Talk runtime。**safetyShield／memoryWriter／save schema／外部 LLM 零觸碰**；不混入 Moonlake habitat 資產刪除。
+- Work performed: (1) Nuwa bundle → v0.6：`companionPersonas.greyshade-cat`＋心智模型 `first_carrier_is_quiet_observer`。(2) 新增 `greyshadeVoicePacks.js`（疲憊／焦慮／難過／安靜／感謝／邊界退後／拒絕），以同 pack.id 覆寫 corpus 情緒核心，道歉／孤獨／回憶等保留。(3) `corpusLoader` 改為 by-id merge。(4) `replyVariantSelector` 將灰影納入 companion voice 優先（與五席同路徑）。(5) eval：`PB-GS-DNA-ALIGN`／`PB-GS-VOICE-001`／`LIVE`／`DIFF`。
+- Verification: persona boundary **20/20**；training **35/35**；main readiness **12/12**；live 灰影疲憊句 `response_pack`＋exact authored。`node --check` PASS。
+- Problems / risks: 非情緒策略（能力題／實用澄清）仍走 NLU（刻意保留）。人類盲審仍 `not_run`。
+- Next safe action: 可選——用 Nuwa 再蒸餾灰影道歉／孤獨／回憶 packs；或補灰影 memory-recall tone coda。
+- Required reading: `src/data/ai/greyshadeVoicePacks.js`, `src/data/ai/raphaelNuwaDistillationBundle.js`, `src/ai/corpusLoader.js`, and this lane.
+
 ### 2026-07-14 - Cursor Grok - 心輝五席 voice pack 接入 Soul Talk runtime
 
 - Status: `VERIFIED`

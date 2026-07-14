@@ -107,6 +107,12 @@ that RaphaelCore is complete as a general conversational AI.
 DNA for the five formal seats. Runtime knobs live in `personaResolver.js`.
 Nuwa does not speak as those companions and cannot override RaphaelCore.
 
+**v0.6 Greyshade note:** `companionPersonas["greyshade-cat"]` records the first
+carrier's quiet-observer Expression DNA. Emotional voice packs live in
+`greyshadeVoicePacks.js` and overlay corpus packs by `pack.id` (apology /
+loneliness / recovery packs are kept). Emotional Soul Talk strategies prefer
+these packs the same way as the Heartspark five.
+
 ## Runtime Contract
 
 All Nuwa-generated data must enter runtime through the advisory adapter path.

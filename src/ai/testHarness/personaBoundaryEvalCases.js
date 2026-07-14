@@ -2,7 +2,8 @@ import { runRaphaelCore } from "../raphaelCore.js";
 import { resolvePersona } from "../personaResolver.js";
 import { RAPHAEL_NUWA_DISTILLATION_BUNDLE } from "../../data/ai/raphaelNuwaDistillationBundle.js";
 import { HEARTSPARK_COUNCIL_VOICE_PACKS } from "../../data/ai/heartsparkCouncilVoicePacks.js";
-import { loadRaphaelCorpus } from "../corpusLoader.js";
+import { GREYSHADE_VOICE_PACKS_LIST } from "../../data/ai/greyshadeVoicePacks.js";
+import { loadRaphaelCorpus, clearRaphaelCorpusCache } from "../corpusLoader.js";
 import { selectResponsePackLine } from "../corpus/responsePackSelector.js";
 import { clearDialogueState } from "../dialogue/dialogueStateTracker.js";
 import { clearSessionPreferenceProfiles } from "../companionPreferenceProfile.js";
@@ -264,6 +265,60 @@ export const PERSONA_BOUNDARY_CASES = Object.freeze([
     run: () => {
       const input = "今天真的好累，我不太想說太多。";
       const replies = HEARTSPARK_FIVE.map((companion) => runFor(companion, input).reply || "");
+      if (replies.some((reply) => !reply)) return false;
+      return new Set(replies).size === replies.length;
+    }
+  },
+  {
+    id: "PB-GS-DNA-ALIGN",
+    name: "灰影 Nuwa companionPersona tone 與 personaResolver 對齊",
+    run: () => {
+      const entry = RAPHAEL_NUWA_DISTILLATION_BUNDLE.companionPersonas?.["greyshade-cat"];
+      const persona = resolvePersona(GREYSHADE);
+      return (
+        entry?.tone === "quiet_observer" &&
+        persona?.tone === "quiet_observer" &&
+        entry?.tone === persona?.tone &&
+        entry?.emblem?.includes("靜觀")
+      );
+    }
+  },
+  {
+    id: "PB-GS-VOICE-001",
+    name: "灰影 Nuwa voice packs 已覆寫 corpus 情緒核心且保留其餘 packs",
+    run: () => {
+      clearRaphaelCorpusCache();
+      const corpus = loadRaphaelCorpus();
+      const packs = corpus.responsePacks?.["greyshade-cat"] || [];
+      const authoredIds = new Set(GREYSHADE_VOICE_PACKS_LIST.map((pack) => pack.id));
+      const overlayHit = GREYSHADE_VOICE_PACKS_LIST.every((authored) => {
+        const live = packs.find((pack) => pack.id === authored.id);
+        return live && live.lines?.[0] === authored.lines[0];
+      });
+      // 道歉／孤獨等非 overlay id 仍應存在（不可整包蓋掉灰影語料）
+      const keepsExtras = packs.some((pack) => !authoredIds.has(pack.id) && pack.id.startsWith("gs_"));
+      return overlayHit && keepsExtras && packs.length >= GREYSHADE_VOICE_PACKS_LIST.length + 3;
+    }
+  },
+  {
+    id: "PB-GS-VOICE-LIVE",
+    name: "Soul Talk runtime：灰影疲憊輸入走 Nuwa voice pack（接入遊戲）",
+    run: () => {
+      const result = runFor(GREYSHADE, "今天真的好累，我不太想說太多。");
+      const source =
+        result.composeMeta?.replySource || result.dialogueLoop?.variantSelection?.replySource || "";
+      const reply = result.reply || "";
+      const authoredLines = GREYSHADE_VOICE_PACKS_LIST.flatMap((pack) => pack.lines || []);
+      return source === "response_pack" && authoredLines.includes(reply);
+    }
+  },
+  {
+    id: "PB-GS-VOICE-DIFF",
+    name: "同句疲憊：灰影與五席回覆皆互異",
+    run: () => {
+      const input = "今天真的好累，我不太想說太多。";
+      const seats = [GREYSHADE, ...HEARTSPARK_FIVE];
+      const replies = seats.map((companion) => runFor(companion, input).reply || "");
       if (replies.some((reply) => !reply)) return false;
       return new Set(replies).size === replies.length;
     }

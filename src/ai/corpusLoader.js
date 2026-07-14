@@ -1,10 +1,11 @@
 import { RAPHAEL_CORPUS_BUNDLE } from "../data/ai/raphaelCorpusBundle.js";
 import { HEARTSPARK_COUNCIL_VOICE_PACKS } from "../data/ai/heartsparkCouncilVoicePacks.js";
+import { GREYSHADE_VOICE_PACKS } from "../data/ai/greyshadeVoicePacks.js";
 
 /**
  * Local static corpus loader.
  * Primary: exported bundle from aiforge-raphael-corpus.
- * Overlay: Heartspark Council formal-five voice packs (hand-authored, Nuwa v0.5).
+ * Overlay: Heartspark five + Nuwa greyshade voice packs (hand-authored).
  * Fallback: minimal internal pack if bundle import fails.
  */
 const FALLBACK_CORPUS = Object.freeze({
@@ -36,25 +37,42 @@ export function loadRaphaelCorpus() {
   return cachedCorpus;
 }
 
+/** 測試／熱重載用：清掉快取，讓 overlay 變更立刻生效。 */
+export function clearRaphaelCorpusCache() {
+  cachedCorpus = null;
+}
+
 function normalizeCorpus(raw = {}) {
   if (!raw.sentences?.length && !raw.responsePacks) return FALLBACK_CORPUS;
+  // 先合五席，再合灰影 Nuwa packs（同 id 覆寫 corpus 舊句，其餘保留）。
+  const withHeartspark = mergeResponsePacks(raw.responsePacks || {}, HEARTSPARK_COUNCIL_VOICE_PACKS);
+  const withGreyshade = mergeResponsePacks(withHeartspark, GREYSHADE_VOICE_PACKS);
   return {
     version: raw.version || "1.0.0",
     source: raw.source || "unknown",
     concepts: raw.concepts || [],
     sentences: raw.sentences || [],
     mappings: raw.mappings || [],
-    // 五席 voice packs 覆寫／補齊：正式席不應再落到 greyshade 預設台詞。
-    responsePacks: mergeResponsePacks(raw.responsePacks || {}, HEARTSPARK_COUNCIL_VOICE_PACKS),
+    responsePacks: withGreyshade,
     templates: raw.templates || {}
   };
 }
 
+/**
+ * 依 companionId 合併；同一 pack.id 時 overlay 勝出。
+ * 好處：灰影可只覆寫情緒核心 7 packs，不丟掉道歉／孤獨／回憶等既有語料。
+ */
 function mergeResponsePacks(basePacks = {}, overlayPacks = {}) {
-  return {
-    ...basePacks,
-    ...overlayPacks
-  };
+  const result = { ...basePacks };
+  for (const [companionId, overlayList] of Object.entries(overlayPacks)) {
+    const baseList = Array.isArray(result[companionId]) ? result[companionId] : [];
+    const byId = new Map(baseList.map((item) => [item.id, item]));
+    for (const pack of overlayList || []) {
+      if (pack?.id) byId.set(pack.id, pack);
+    }
+    result[companionId] = [...byId.values()];
+  }
+  return result;
 }
 
 export function getCompanionResponsePacks(companionId = "greyshade-cat") {
