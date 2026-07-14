@@ -1,22 +1,31 @@
 # Next AI TASK_PACK Queue
 
 Created: 2026-07-05 (FABLE5-P0 reconciliation audit)
-Updated: 2026-07-06 (TP-1B product audit — TP-1 marked DONE; TP-6..TP-8
-player-impact packs added; recommended order re-ranked)
+Updated: 2026-07-14 (Raphael training ops playbook — RA/RS packs + skill routing)
 Status: proposal — every pack still requires human approval before work
 starts (Gate 1 → Gate 2 per `docs/agent/AI_WORKFLOW.md`).
+
+**Raphael training ops (2026-07-14):** skill／外掛／進度路由見
+[`docs/agent/RAPHAEL_TRAINING_OPS_PLAYBOOK.md`](./RAPHAEL_TRAINING_OPS_PLAYBOOK.md)。
+外部名人人格只當批評透鏡；不安裝通用戰鬥 AI skill；自主 → 對峙 → 遠征。
 
 **2026-07-06 Owner 拍板產品主線 V2（章節旅程 × 共鳴圈對峙）**：TP-6/TP-7 已出貨；
 TP-8 已由 Owner 決策為選項 A（初遇選角），併入新的 **CH-1..CH-7 分包**（CH-1 對峙
 視覺 v1 已出貨）——完整設計與分包表見
-`docs/design/CHAPTER_RESONANCE_ROADMAP_V2.md` §8。下一包 = **CH-2 初遇選角 UI**。
+`docs/design/CHAPTER_RESONANCE_ROADMAP_V2.md` §8。章節下一包 = **CH-2 初遇選角 UI**。
 
-**Recommended order after TP-1B (player-impact-first):**
+**Recommended order (Raphael training lane, after voice-pack wiring):**
+1. ~~**RA-1**~~ — autonomy sealed-case contract + harness shape — ✅ 2026-07-14
+2. **RA-2** — Nuwa-style autonomy heuristics (`trusted:false`) — after Owner feel-check
+3. **RS-1** — standoff eval contract (emotion／retreat ≠ DPS)
+4. **RA-3** / **RS-2** / **RS-3** as capacity allows (eval skills + light advisory)
+5. Chapter packs (CH-2…) and remaining TP-* as product capacity allows
+
+**Legacy recommended order after TP-1B (player-impact-first, kept for history):**
 1. **TP-6** (audio reality — biggest perceived-quality jump, bounded)
-2. **TP-7** (companion-initiated micro-moments — biggest differentiation)
-3. **TP-2** (status/handoff refresh — now also carries the TP-1B doc-drift
-   corrections list)
-4. **TP-8** (Initial Bond decision — human design gate, blocks store/chapter)
+2. **TP-7** (companion-initiated micro-moments — biggest differentiation) — ✅ shipped
+3. **TP-2** (status/handoff refresh)
+4. **TP-8** (Initial Bond decision — folded into CH packs)
 5. TP-3 (eval pack), TP-4 (i18n fill), TP-5 (cursor rules) as capacity allows.
 Rationale and evidence: `docs/agent/PRODUCT_QUALITY_FUN_FACTOR_AUDIT.md`.
 
@@ -24,6 +33,100 @@ Standing constraints for every pack below: no commit/push without explicit
 human instruction; no new dependencies; no backend/API/LLM routing; no save
 schema or localStorage key changes; no GROUNDWORK files unless the pack
 explicitly grants them; ledger entry required at close.
+
+---
+
+## RA-1 — Autonomy sealed-case contract + harness shape — ✅ DONE 2026-07-14
+
+Completed: sealed contract `docs/raphael/RAPHAEL_AUTONOMY_EVAL_CONTRACT.md`;
+exported `AMBIENT_INITIATIVE_LIMITS`; extended `companionInitiativeCases.js`
+(+ RA1-* cases); new `raphaelAutonomyEvalCases.js` suite **25/25** via node.
+Owner feel-check on sparsity still required before RA-2. Original pack text
+kept below for the record.
+
+### (archived) RA-1 — Autonomy sealed-case contract + harness shape
+
+- **Goal:** freeze what “companion initiates” must prove before deepening lines
+  or behaviour lists. Cover: max moments per session, never during
+  onboarding／safety turns, triggers from companion state only (energy／mood／
+  boundary／time-of-day) — **never** player absence, login frequency, or
+  loneliness detection; `initiativeCooldown` enforced.
+- **Recommended model:** **Codex or Cursor** (docs + extend existing harness).
+- **Allowed files:** `docs/agent/RAPHAEL_TRAINING_OPS_PLAYBOOK.md` (if needed),
+  `docs/raphael/RAPHAEL_EVAL_COVERAGE_MATRIX.md`,
+  `src/ai/testHarness/companionInitiativeCases.js`,
+  optional new `src/ai/testHarness/raphaelAutonomyEvalCases.js` `[NEW]`,
+  `docs/agent/AI_EXECUTION_LEDGER.md`.
+- **Forbidden files:** `safetyShield.js`, `memoryWriter.js`,
+  `stateMutationPolicy.js`, save schema, GROUNDWORK, new npm deps.
+- **Verification plan:** `node --check`; initiative harness green; assert
+  red-line silence cases; `git diff --check`.
+- **Human gate:** REQUIRED — behaviour list feel check after cases land.
+- **Required reading:** `RAPHAEL_TRAINING_OPS_PLAYBOOK.md`,
+  `src/ui/companionInitiativeController.js`,
+  `src/ai/autonomy/initiativeCooldown.js`.
+
+## RA-2 — Nuwa-style autonomy heuristics (advisory only)
+
+- **Goal:** distill “when to walk to the lake / glance back / one quiet line”
+  into mental models + decision heuristics in the Nuwa advisory bundle
+  (`trusted:false`). Does not rebuild autonomy systems.
+- **Recommended model:** **Codex** (pattern follows Nuwa voice distillation).
+  Karpathy lens for “demo ≠ ship”; Jobs lens to keep the behaviour list tiny.
+- **Allowed files:** `src/data/ai/raphaelNuwaDistillationBundle.js` (heuristics /
+  mental models only), `src/ai/raphaelTrainingAdapter.js` only if a gated
+  advisory hint path already exists and stays allowlisted,
+  harness fixtures, `docs/agent/AI_EXECUTION_LEDGER.md`.
+- **Forbidden files:** `safetyShield.js`, `memoryWriter.js`,
+  `stateMutationPolicy.js`, battle numeric tables, installing celebrity
+  persona skills into `companionPersonas`.
+- **Verification plan:** training bundle + main readiness; advisory probes
+  show `trusted:false`; no memory／reward side effects from heuristics.
+- **Human gate:** REQUIRED before any player-visible line text ships from this pack.
+- **Depends on:** RA-1 contract merged or explicitly waived by Owner.
+
+## RS-1 — Standoff eval contract (emotion／retreat ≠ DPS)
+
+- **Goal:** define sealed success criteria for rift standoff: telegraph
+  readability, four non-punishing endings, fatigue withdraw respected,
+  “retreat affirmed” language. Explicitly reject HP／combo framing.
+- **Recommended model:** **Codex or Cursor** (docs-first). Jobs lens to say no
+  to traditional combat skill installs.
+- **Allowed files:** `docs/raphael/` standoff contract section or new
+  `docs/raphael/RAPHAEL_STANDOFF_EVAL_CONTRACT.md` `[NEW]`,
+  `docs/raphael/RAPHAEL_EVAL_COVERAGE_MATRIX.md`,
+  optional harness stub under `src/ai/testHarness/` or `docs/qa/` `[NEW]`,
+  `docs/agent/AI_EXECUTION_LEDGER.md`.
+- **Forbidden files:** installing Godot／AAA combat skills; rewriting
+  `battleEngine.js` numbers in this pack; GROUNDWORK.
+- **Verification plan:** `git diff --check`; contract cross-links to
+  `battleEngine.js`／`battleController.js` behaviours that already exist;
+  every claim without a harness marked NOT VERIFIED.
+- **Human gate:** REQUIRED — Owner confirms “stabilize rift” success definition.
+- **Required reading:** `RAPHAEL_TRAINING_OPS_PLAYBOOK.md`,
+  `docs/agent/PRODUCT_QUALITY_FUN_FACTOR_AUDIT.md` (standoff section),
+  `src/engine/battleEngine.js`.
+
+## RA-3 — Install `raphael-autonomy-eval` skill (planned)
+
+- **Goal:** mirror `raphael-conversation-eval` for initiative／autonomy gates.
+  Skill lives under `%USERPROFILE%\.codex\skills\raphael-autonomy-eval\`.
+- **Allowed files:** skill directory only + ledger pointer; no runtime until
+  RA-1／RA-2 evidence exists.
+- **Forbidden files:** all `src/**` unless a follow-up pack grants them.
+- **Human gate:** REQUIRED before `npx skills` or skill scaffold lands.
+- **Depends on:** RA-1.
+
+## RS-2 — Light standoff intent advisory (planned)
+
+- **Goal:** intent naming／companion reaction heuristics as advisory only;
+  combat numbers stay in `battleEngine.js`.
+- **Depends on:** RS-1.
+
+## RS-3 — Install `raphael-standoff-eval` skill (planned)
+
+- **Goal:** sealed standoff evaluator skill; ban traditional combo／hitbox skills.
+- **Depends on:** RS-1.
 
 ---
 

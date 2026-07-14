@@ -56,6 +56,13 @@ const AMBIENT_BOOT_QUIET_MS = 90_000; // 開機後先安靜：讓玩家自己安
 const AMBIENT_MIN_INTERVAL_MS = 240_000; // 兩次主動至少隔 4 分鐘。
 const AMBIENT_SESSION_CAP = 2; // 一個 session 最多主動 2 次；再多就是黏人。
 
+/** RA-1 密封契約用：與 evaluateAmbientInitiativeCooldown 同一組常數。 */
+export const AMBIENT_INITIATIVE_LIMITS = Object.freeze({
+  BOOT_QUIET_MS: AMBIENT_BOOT_QUIET_MS,
+  MIN_INTERVAL_MS: AMBIENT_MIN_INTERVAL_MS,
+  SESSION_CAP: AMBIENT_SESSION_CAP
+});
+
 export function evaluateAmbientInitiativeCooldown({
   now = Date.now(),
   bootAt = 0,

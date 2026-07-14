@@ -338,4 +338,5 @@ if (typeof window !== "undefined" && new URLSearchParams(window.location.search)
   import("./testHarness/constitutionSmokeCases.js").then((mod) => mod.installConstitutionSmokeHarness(window));
   import("./testHarness/raphaelAgentEventCases.js").then((mod) => mod.installRaphaelAgentEventHarness(window));
   import("./testHarness/personaBoundaryEvalCases.js").then((mod) => mod.installPersonaBoundaryHarness(window));
+  import("./testHarness/raphaelAutonomyEvalCases.js").then((mod) => mod.installRaphaelAutonomyEvalHarness(window));
 }

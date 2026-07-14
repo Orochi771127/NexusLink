@@ -68,6 +68,18 @@ critic-unit eval (acceptable; they fail loudly inside harness runs).
    current checks are structural/policy booleans plus forbidden-phrase
    scans. This is the main reason "harness pass ≠ human feel" — the gap the
    human playtest gate currently absorbs.
+7. **Companion autonomy / initiative (player-visible).** ~~Partial coverage~~
+   → **RA-1 SEALED 2026-07-14**: contract
+   `docs/raphael/RAPHAEL_AUTONOMY_EVAL_CONTRACT.md`; harness
+   `raphaelAutonomyEvalCases.js` (+ extended `companionInitiativeCases.js`)
+   asserts absence-invariance, safety quiet, session cap／boot／interval
+   constants, no reward fields. **Still open:** Owner feel-check; Codex skill
+   `raphael-autonomy-eval` (RA-3); Nuwa heuristics (RA-2).
+8. **Standoff / rift combat quality.** Runtime exists (`battleEngine.js`,
+   telegraph, four endings) but **no sealed Raphael-lane eval** asserts
+   “stabilize rift ≠ DPS”, retreat-affirmed outcomes, or fatigue withdraw.
+   Queue **RS-1 → RS-3** (`raphael-standoff-eval`). Do not fill this gap by
+   installing generic combat-design skills.
 
 ## 4. Duplicate / low-value evals
 
@@ -93,3 +105,9 @@ chain; run via `__PERSONA_BOUNDARY_EVAL__.runAll()`). Training bundle now
 21/21, main readiness 33/33. Remaining open gaps: fission red lines
 (blocked on content), multilingual depth, long-horizon tone drift,
 wording-quality assertions (human playtest absorbs these for now).
+
+**2026-07-14 training-ops update:** ~~RA-1~~ → **DONE 2026-07-14** (sealed
+contract + autonomy eval harness **25/25**). Next Raphael-lane eval pack is
+**RS-1** (standoff contract) or **RA-2** (Nuwa autonomy heuristics) after
+Owner feel-check on initiative sparsity. Do not substitute external
+game-AI／combat skills for these gaps.

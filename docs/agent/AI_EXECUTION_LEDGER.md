@@ -1541,6 +1541,28 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 3 - Raphael Core, Companion Reasoning, And Soul Talk
 
+### 2026-07-14 - Cursor Grok - RA-1 自主行為密封契約＋eval harness
+
+- Status: `VERIFIED` (machine); Owner feel-check still required before RA-2
+- Branch / commit: `main` / uncommitted until Owner COMMIT
+- Scope: RA-1 autonomy sealed contract + harness。**safetyShield／memoryWriter／save schema 零觸碰**；不裝外部戰鬥 skill；不混 Moonlake／expedition dirty。
+- Work performed: (1) `docs/raphael/RAPHAEL_AUTONOMY_EVAL_CONTRACT.md`。(2) `AMBIENT_INITIATIVE_LIMITS` 匯出自 `initiativeCooldown.js`。(3) `companionInitiativeCases.js` 加 RA1-CONST／ABSENCE／SAFE-TURN／CAP。(4) 新 `raphaelAutonomyEvalCases.js`（基線∪契約 extras）；`?raphaelSmoke=1` 安裝 `__RAPHAEL_AUTONOMY_EVAL__`。(5) matrix／queue／playbook 標 RA-1 DONE。
+- Verification: `node --check` PASS；`runAllRaphaelAutonomyEvalCases` **25/25**。
+- Problems / risks: UI 表面閘門（st-focus／onboarding）仍靠 Owner feel-check，未做 DOM 自動化；RA-2 不得在 feel-check 前偷跑。
+- Next safe action: Owner 在棲地感受「每 session ≤2 次、不黏人」後批 **RA-2** 或開 **RS-1**。
+- Required reading: `docs/raphael/RAPHAEL_AUTONOMY_EVAL_CONTRACT.md`, `src/ai/testHarness/raphaelAutonomyEvalCases.js`, and this lane.
+
+### 2026-07-14 - Cursor Grok - Raphael training ops playbook（技能／外掛／進度路由）
+
+- Status: `VERIFIED`
+- Branch / commit: `main` / docs-only (uncommitted until Owner COMMIT); Lane A of training-ops plan.
+- Scope: docs only。落地「自主 → 對峙 → 遠征」進度與技能／外掛路由；**零 `src/**`、零新 skill 安裝、零 Moonlake 資產**。
+- Work performed: (1) 新增 `docs/agent/RAPHAEL_TRAINING_OPS_PLAYBOOK.md`（三層分工、路由表、決策樹、Gate 0–6、週循環、RA／RS 對照）。(2) `NEXT_AI_TASK_PACK_QUEUE.md` 插入 **RA-1／RA-2／RS-1**（及 RA-3／RS-2／RS-3 計畫條）並更新 Raphael training 推薦順序。(3) `RAPHAEL_EVAL_COVERAGE_MATRIX.md` §3 補 autonomy／standoff 缺口指標；§5 指向 RA-1／RS-1。
+- Verification: docs cross-links resolve; routing matches `NEXUSLINK_AI_DEVELOPMENT_MODE.md` §4 + copywriting persona whitelist; explicitly forbids celebrity voices in player packs and generic combat-skill installs.
+- Problems / risks: RA／RS runtime／skill scaffolds still require separate Owner-approved TASK_PACKs; chapter CH-2 與 RA-1 可能搶 Owner 注意力——playbook 已把 Raphael training lane 與章節 lane 分開列序。
+- Next safe action: Owner 批 **RA-1**（autonomy sealed contract + harness）或繼續章節 CH-2；勿先裝外部戰鬥 skill。
+- Required reading: `docs/agent/RAPHAEL_TRAINING_OPS_PLAYBOOK.md`, `docs/agent/NEXT_AI_TASK_PACK_QUEUE.md`, `docs/raphael/RAPHAEL_EVAL_COVERAGE_MATRIX.md`, and this lane.
+
 ### 2026-07-14 - Cursor Grok - Nuwa v0.6 灰影貓 Expression DNA＋voice pack 接入
 
 - Status: `VERIFIED`
