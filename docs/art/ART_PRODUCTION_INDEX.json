@@ -2,18 +2,132 @@
   "schemaVersion": 1,
   "title": "NexusLink Art Production Index",
   "generatedBy": "Claude Fable 5",
-  "date": "2026-07-12",
+  "date": "2026-07-14",
+  "lastHabitatIndexUpdate": "2026-07-14",
   "sourceAudit": "docs/art/ART_ASSET_GAP_AUDIT.md",
   "designRef": "docs/design/CHAPTER_RESONANCE_ROADMAP_V2.md",
+  "habitatSpecRef": "docs/architecture/HABITAT_SYSTEM_MASTER_SPEC.md",
   "styleCanon": "CLAUDE.md §0 (Cyber-Taoism) + §4 (Companion art spec)",
-  "note": "Enemy nameZh/nameEn/emotion/emotionLabelZh/flavor are generated verbatim from src/data/enemyRegistry.js — do not hand-edit; regenerate if the registry changes.",
+  "note": "Enemy nameZh/nameEn/emotion/emotionLabelZh/flavor are generated verbatim from src/data/enemyRegistry.js — do not hand-edit; regenerate if the registry changes. habitats[] is inventory (not a Codex generate queue); only batches[] with status=='ready' are generation work.",
   "howToUse": [
     "Iterate batches[] where status == 'ready'. Generate every item in items[].",
     "Write each PNG to item.output.stagingPath (Codex workspace under output/). DO NOT write into assets/** directly: assets/** is GROUNDWORK and promotion is a separate Owner-approved step (item.output.targetAssetPath is the eventual destination).",
     "Match item.output exactly: 512x512, frameCount 1, transparent RGBA PNG; no baked background/UI/text/frame-border.",
     "Colour: tint each figure to its emotion via batches[].emotionTints[emotion]; HSL hue+sat are the source of truth (runtime RIFT_EMOTION_TINT), hex is a convenience.",
     "After generation, record a per-item QC note (dimensions, transparent corners, emotion colour) as the five-companion pilots did; Owner comparative approval + a GROUNDWORK asset-readiness task gate any assets/** promotion.",
-    "Do not generate batches with status != 'ready' — they are blocked on engineering wiring and/or an Owner scope decision (see batch.blockedOn)."
+    "Do not generate batches with status != 'ready' — they are blocked on engineering wiring and/or an Owner scope decision (see batch.blockedOn).",
+    "For habitat truth, read habitats[] first. Do not invent sky/mountains/lake/ground split plates or GAP-3 region habitats — those remain gaps."
+  ],
+  "habitats": [
+    {
+      "id": "HAB-MOONLAKE-V3",
+      "title": "Moonlake Vivarium (playable habitat)",
+      "packId": "MoonlakeVivarium_v3",
+      "status": "runtime-wired-local",
+      "statusNote": "Base backgrounds/platform/props are committed under assets/**. Incremental layers (camp_structures, foreground_occlusion) exist on disk and are wired in local working tree, but assets/layers/ is still untracked and assetManifest.js / pixiApp.js / moonlakeProfile.js layer wiring may still be uncommitted — treat as local truth until committed.",
+      "verifiedOnDisk": "2026-07-14",
+      "artDirection": "Clay/resin miniature diorama, Nexus moonlake navy/cyan, no glass frame",
+      "designRef": "docs/architecture/HABITAT_SYSTEM_MASTER_SPEC.md + src/data/sceneProfiles/moonlakeProfile.js",
+      "stagingRef": "output/linkara/moonlake/v5/manifest.json",
+      "wiring": {
+        "assetManifest": "src/data/assetManifest.js → MOONLAKE_VIVARIUM_V3 + ASSET_MANIFEST.backgrounds/layers/platforms/props",
+        "pixiLayers": "src/pixi/pixiApp.js → layerMidground (camp_structures), layerPlatform (magic_circle), layerOcclusion (foreground_occlusion)",
+        "sceneProfile": "src/data/sceneProfiles/moonlakeProfile.js"
+      },
+      "ready": {
+        "backgrounds": [
+          {
+            "id": "bg_day_base",
+            "path": "assets/backgrounds/MoonlakeVivarium_v3/bg_day_base.png",
+            "git": "tracked"
+          },
+          {
+            "id": "bg_night_base",
+            "path": "assets/backgrounds/MoonlakeVivarium_v3/bg_night_base.png",
+            "git": "tracked"
+          }
+        ],
+        "platforms": [
+          {
+            "id": "magic_circle",
+            "path": "assets/platforms/MoonlakeVivarium_v3/magic_circle.png",
+            "git": "tracked"
+          }
+        ],
+        "props": [
+          {
+            "id": "lantern_post",
+            "path": "assets/props/MoonlakeVivarium_v3/lantern_post.png",
+            "git": "tracked"
+          },
+          {
+            "id": "stone_arch",
+            "path": "assets/props/MoonlakeVivarium_v3/stone_arch.png",
+            "git": "tracked"
+          },
+          {
+            "id": "campfire",
+            "path": "assets/props/MoonlakeVivarium_v3/campfire.png",
+            "git": "tracked"
+          },
+          {
+            "id": "crystal_cluster",
+            "path": "assets/props/MoonlakeVivarium_v3/crystal_cluster.png",
+            "git": "tracked"
+          }
+        ],
+        "layers": [
+          {
+            "id": "camp_structures",
+            "path": "assets/layers/MoonlakeVivarium_v3/camp_structures.png",
+            "pixiLayer": "layerMidground",
+            "git": "untracked-on-disk",
+            "stagingPath": "output/linkara/moonlake/v5/layers/moonlake_camp_structures.png"
+          },
+          {
+            "id": "foreground_occlusion",
+            "path": "assets/layers/MoonlakeVivarium_v3/foreground_occlusion.png",
+            "pixiLayer": "layerOcclusion",
+            "git": "untracked-on-disk",
+            "stagingPath": "output/linkara/moonlake/v5/layers/moonlake_foreground_occlusion.png"
+          }
+        ],
+        "legacyCelestialsStillUsed": [
+          {
+            "id": "celestial_sun",
+            "path": "assets/props/LakeNightCamp_v2/celestial_sun.png",
+            "note": "Still referenced by ASSET_MANIFEST.props.sun"
+          },
+          {
+            "id": "celestial_moon",
+            "path": "assets/props/LakeNightCamp_v2/celestial_moon.png",
+            "note": "Still referenced by ASSET_MANIFEST.props.moon"
+          }
+        ]
+      },
+      "gaps": [
+        {
+          "id": "parallax-split-plates",
+          "status": "not-done",
+          "detail": "Separated sky / mountains / lake / ground parallax layers are still baked into bg_day_base + bg_night_base. Not blocking current runtime."
+        },
+        {
+          "id": "weather-dusk-dawn-plates",
+          "status": "not-required",
+          "detail": "Weather / dusk / dawn remain code FX (nightAlpha blend + procedural weather). No dedicated art plates required for day-one habitat contract."
+        },
+        {
+          "id": "GAP-3-region-habitats",
+          "status": "blocked",
+          "detail": "Chapters 2–7 playable near-habitat sets remain blocked on region-habitat switching engineering. See batches id GAP-3."
+        }
+      ],
+      "doNotGenerate": [
+        "Invented sky/mountains/lake/ground split plates that are not on disk",
+        "GAP-3 region habitat near-views",
+        "Dedicated weather or dusk/dawn art plates (code FX covers these)"
+      ]
+    }
   ],
   "globalSpec": {
     "format": "transparent PNG (RGBA)",
@@ -282,8 +396,8 @@
       "id": "GAP-3",
       "title": "Per-region playable habitat backgrounds (chapters 2-7)",
       "status": "blocked",
-      "blockedOn": "Engineering: region-habitat switching is not wired (game stays in the moonlake habitat; chapters play as a standoff overlay). Atlas far-view region JPGs already exist. Do not generate yet.",
-      "designRef": "assets/backgrounds/LakeNightCamp_v2 (the moonlake reference set to match)",
+      "blockedOn": "Engineering: region-habitat switching is not wired (game stays in the moonlake habitat; chapters play as a standoff overlay). Atlas far-view region JPGs already exist. Moonlake itself is NOT part of this gap — see habitats[HAB-MOONLAKE-V3]. Do not generate yet.",
+      "designRef": "assets/backgrounds/MoonlakeVivarium_v3 + assets/platforms|props|layers/MoonlakeVivarium_v3 (current playable moonlake reference set to match); LakeNightCamp_v2 remains legacy celestial sun/moon only",
       "estimatedCount": {
         "backgrounds": 12
       },

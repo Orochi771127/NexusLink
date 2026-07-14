@@ -1,6 +1,8 @@
-# Nexus Link Character Art Locks
+# Nexus Link Art Docs
 
-This directory is the authority for Stage 1 character identity and species-motion translation before image generation.
+This directory holds Stage 1 character identity locks **and** the machine-readable art production / habitat index.
+
+## Character locks
 
 Reading order:
 
@@ -13,3 +15,9 @@ Reading order:
 The five Owner-supplied reference images dated 2026-07-10 define the formal Heartspark Council Stage 1 roster. They are identity references only. Their white backgrounds, shadows, and presentation framing must not enter runtime assets.
 
 No file in this directory grants runtime readiness. Image generation, asset writes, registry changes, and runtime promotion require later approval-gated tasks.
+
+## Production / habitat index
+
+- `ART_PRODUCTION_INDEX.json` — Codex generation queue (`batches[]`) + habitat inventory (`habitats[]`, e.g. Moonlake Vivarium v3).
+- `ART_ASSET_GAP_AUDIT.md` — human-readable gap audit aligned with the index.
+- Staging notes for Moonlake incremental layers: `output/linkara/moonlake/v5/`.

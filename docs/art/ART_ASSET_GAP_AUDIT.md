@@ -1,8 +1,8 @@
 # 美術資產缺口稽核（Art Asset Gap Audit）
 
-> 日期：2026-07-12 ・ 稽核者：Claude Fable 5 ・ 對象 commit：`6e50ab6`（五幼獸資產升級後）+ CH-5b working tree
+> 日期：2026-07-12 ・ 最後棲地現況更新：2026-07-14 ・ 稽核者：Claude Fable 5 ・ 對象 commit：`6e50ab6`（五幼獸資產升級後）+ CH-5b working tree；月湖現況另見 `docs/art/ART_PRODUCTION_INDEX.json` → `habitats[HAB-MOONLAKE-V3]`
 > 目的：盤點「缺哪些、缺多少美術圖」，並寫清楚**每一項要怎麼生成才能 drop-in 使用**，供 Owner 指派 Codex 產圖。
-> 一句話結論：**目前 runtime 沒有任何「壞掉／缺圖」的硬缺口**——11 隻夥伴的 Stage-1 動畫全到齊。以下所有缺口都是**路線圖／畫質升級**性質（設計文件已規劃、尚未接線），可依優先序分批生成。
+> 一句話結論：**目前 runtime 沒有任何「壞掉／缺圖」的硬缺口**——11 隻夥伴的 Stage-1 動畫全到齊；月湖可玩棲地已升至 `MoonlakeVivarium_v3`（含 v5 增量層）。以下缺口都是**路線圖／畫質升級**性質（設計文件已規劃、尚未接線），可依優先序分批生成。
 
 ---
 
@@ -13,12 +13,13 @@
 | 夥伴 Stage-1 動畫 | **11 隻 × 29 動作 512×512 全到齊** | `assets/characters/{id}/spritesheets/**` + `metadata/animations.json` |
 | — 灰影貓 | 373 png（含 legacy 64px + 立繪 + icon + qc）| `assets/characters/greyshade-cat/` |
 | — 正式五幼獸 + 5 測試載體 | 各 29 png | 同上 |
-| 月湖可玩棲地 | 日/夜背景 + 魔法陣平台 + 營火/水晶/日/月道具 | `assets/backgrounds/LakeNightCamp_v2/`、`platforms/`、`props/` |
+| 月湖可玩棲地 | **MoonlakeVivarium_v3 runtime 已接線（本機）**：日/夜 full-bleed 背景 + 魔法陣平台 + lantern/arch/campfire/crystal；**新增** `camp_structures` + `foreground_occlusion` 增量層。日/月 celestial 仍沿用 LakeNightCamp_v2。 | `assets/backgrounds|platforms|props|layers/MoonlakeVivarium_v3/`；索引見 `ART_PRODUCTION_INDEX.json` → `habitats[HAB-MOONLAKE-V3]` |
+| — 月湖仍缺（非硬缺口） | sky/mountains/lake/ground **分層視差板仍 baked 在 day/night**；天氣／晨昏＝程式 FX，**不需專用美術板**；`assets/layers/` 與層接線**可能尚未 commit**（本機已存在並已接線） | 見 INDEX `habitats[].gaps` |
 | 七區世界地圖遠景 | 7 張區域 JPG（atlas 遠景底圖）+ 世界圖 | `assets/backgrounds/linkara/regions/*.jpg` |
-| 裂隙敵人 | **程序生成**霧體（無 sprite，設計內定 vertical-slice）| `battleController.js` RIFT_EMOTION_TINT |
+| 裂隙敵人 | **runtime 已晉升剪影 PNG**（程序霧體保留為 fallback）| `assets/enemies/{enemyId}/` + GAP-1 `generated` |
 | 圖鑑視覺 | **程序生成**（能力雷達 SVG + 徽記/演化文字），非圖檔 | `codexController.js` |
 
-> 換句話說：**夥伴本體圖 = 完成**；缺的是（1）裂隙敵人的圖、（2）夥伴進化型態的圖、（3）各章可玩棲地的近景背景。三者都尚未接線，屬設計文件規劃中的後續。
+> 換句話說：**夥伴本體圖 = 完成**；**月湖近景棲地 = 完成（本機接線，層檔 commit 狀態另記）**；仍缺的是（1）夥伴進化型態的圖（GAP-2）、（2）各章可玩棲地的近景背景（GAP-3，工程未接區域切換）。裂隙剪影 GAP-1 已 generated／runtime-promoted，勿重做。
 
 ---
 
@@ -86,11 +87,11 @@ Codex 產出的夥伴／進化型態 sheet 若要「不改程式即可用」，�
 
 ### GAP-3 ─ 各章可玩棲地近景背景（章 2–7）
 
-- **缺什麼**：只有月湖有「可玩棲地」近景美術（`LakeNightCamp_v2`：日/夜背景 + 平台 + 道具）。其餘 6 區只有 atlas **遠景 JPG**，沒有等價的近景可玩棲地。
-- **缺多少**：6 區 × {日背景, 夜背景} = **12 張背景**（最小）；若各區要專屬平台/道具，另計（月湖用了 1 平台 + 4 道具當基準）。
-- **怎麼生成**：對齊 `LakeNightCamp_v2` 規格（分層 PNG：`bg_day_base` / `bg_night_base` + 選用 `magic_circle` 平台 + props）；賽博道教美學、月光/湖畔/魔法陣語彙；每區依 riftEmotion 主題調色（平原孤獨、熔爐沉怒…）。命名 `assets/backgrounds/{Region}_v1/bg_{day|night}_base.png`。
+- **缺什麼**：只有月湖有「可玩棲地」近景美術（現況：`MoonlakeVivarium_v3` 日/夜背景 + 平台 + props + v5 增量層；見 INDEX `habitats[HAB-MOONLAKE-V3]`）。其餘 6 區只有 atlas **遠景 JPG**，沒有等價的近景可玩棲地。
+- **缺多少**：6 區 × {日背景, 夜背景} = **12 張背景**（最小）；若各區要專屬平台/道具，另計（月湖基準：1 平台 + 4 props + 2 增量層）。
+- **怎麼生成**：對齊 `MoonlakeVivarium_v3` 規格（分層 PNG：`bg_day_base` / `bg_night_base` + 選用 `magic_circle` 平台 + props；增量層可選 `camp_structures` / `foreground_occlusion`）；賽博道教美學、月光/湖畔/魔法陣語彙；每區依 riftEmotion 主題調色（平原孤獨、熔爐沉怒…）。命名 `assets/backgrounds/{Region}_v1/bg_{day|night}_base.png`。**不要**為月湖重做已存在的 v3 資產；sky/mountains/lake/ground 分層視差屬升級項、非 GAP-3 範圍。
 - **需要的接線**：目前遊戲**恆在月湖棲地**，章節以 map→對峙 overlay 呈現，**未實作「進入該區換棲地背景」**。要先做區域棲地切換才掛得上。
-- **優先序**：**低**。功能未接線、範圍大；商業版擴充再做。atlas 遠景 JPG 已足夠支撐目前的「你走到哪」敘事。
+- **優先序**：**低**。功能未接線、範圍大；商業版擴充再做。atlas 遠景 JPG 已足夠支撐目前的「你走到哪」敘事。月湖本身已就緒，勿與 GAP-3 混算。
 
 ---
 
@@ -98,11 +99,11 @@ Codex 產出的夥伴／進化型態 sheet 若要「不改程式即可用」，�
 
 | 缺口 | 立即可產（drop-in，不需先接線） | 需先接線/拍板才適合大量產 |
 | --- | --- | --- |
-| GAP-1 裂隙剪影 | **10 張**（★建議先做） | — |
+| GAP-1 裂隙剪影 | ~~10 張~~ **已 generated + runtime-promoted（勿重做）** | — |
 | GAP-2 進化型態 | — | 12（MVP idle）～ 638（全量） |
-| GAP-3 區域棲地 | — | 12+ 背景 |
+| GAP-3 區域棲地 | — | 12+ 背景（月湖本身已就緒，見 INDEX `habitats`） |
 
-> **建議 Owner 指派 Codex 的第一批 = GAP-1 的 10 張裂隙剪影**：範圍明確、規格已定、不需前置工程、戰鬥畫面收益最高。GAP-2/3 待對應功能接線與 Owner 拍板後再排。
+> **建議**：勿重做 GAP-1 或月湖 v3。下一美術決策點在 GAP-2（需進化視覺切換接線＋Owner 範圍拍板）與 GAP-3（需區域棲地切換）。月湖視差分層屬可選升級，非硬缺口。
 
 ---
 
@@ -118,9 +119,9 @@ Codex 產出的夥伴／進化型態 sheet 若要「不改程式即可用」，�
 
 ## 5. 給接手者 / Codex 的最短路徑
 
-**機讀生產索引：`docs/art/ART_PRODUCTION_INDEX.json`**（Codex 直接讀這份逐項產圖；GAP-1 已 `status:"ready"`、GAP-2/3 `status:"blocked"`）。索引的敵人 name/flavor/emotion 由 `enemyRegistry.js` **程序生成、逐字對齊**（勿手改，registry 變了就重生）。
+**機讀生產索引：`docs/art/ART_PRODUCTION_INDEX.json`**（Codex 直接讀這份逐項產圖；GAP-1 已 `status:"generated"` 且 runtime-promoted、GAP-2/3 `status:"blocked"`；月湖棲地現況在 `habitats[]`，不是產圖佇列）。索引的敵人 name/flavor/emotion 由 `enemyRegistry.js` **程序生成、逐字對齊**（勿手改，registry 變了就重生）。
 
-1. 讀 `ART_PRODUCTION_INDEX.json`，迭代 `batches[].status=="ready"` 的 `items[]`。
+1. 讀 `ART_PRODUCTION_INDEX.json`，先看 `habitats[]`（月湖已就緒則勿重產），再迭代 `batches[].status=="ready"` 的 `items[]`。
 2. 每項產 **1 張 512×512 透明 PNG**（`frameCount:1`，剪影霧體風、無臉、情緒配色見 `emotionTints`），寫到 `item.output.stagingPath`（`output/` 工作區，**勿直接寫 `assets/**`**——GROUNDWORK，晉升是另一步 Owner 核可）。
-3. 交回後由工程加 rift sprite 圖層分支（`targetAssetPath` 依 enemyId 貼圖，回退程序霧體）。
+3. 交回後由工程加 rift sprite 圖層分支（`targetAssetPath` 依 enemyId 貼圖，回退程序霧體）。（GAP-1 已完成此步，僅作歷史流程參考。）
 4. GAP-2/3 待 Owner 對「範圍 + 是否接線」拍板後才改 `status:"ready"`。
