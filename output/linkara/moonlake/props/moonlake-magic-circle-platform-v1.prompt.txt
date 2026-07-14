@@ -1,9 +1,0 @@
-Moonlit Storybook Vivarium — Phase 1 magic circle platform prop (separate runtime sprite).
-
-Asset: low circular stone magic platform dais for moonlake habitat. Premium illustrated 3D storybook diorama, weathered dark stone disc, concentric carved rings, glowing cyan-teal Cyber-Tao runes, subtle gold accents, soft contact shadow, wet stone material, restrained bloom. Slight 3/4 top-down view like diorama base stage.
-
-STRICT: one object only, transparent or solid-magenta background for postprocess, no character, no UI, no text labels.
-
-Pipeline: generate2dsprite prop one_by_one, clean_hd / map_style.
-
-Reference: existing Nexus Link moonlake magic circle in runtime screenshot.

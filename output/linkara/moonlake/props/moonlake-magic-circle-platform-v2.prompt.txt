@@ -1,9 +1,0 @@
-Moonlit Storybook Vivarium v2 — magic circle platform prop.
-
-CRITICAL STYLE: clay/resin miniature diorama accessory, hand-sculpted scale model macro photo. Matte-satin clay and cast resin, chunky rounded beveled edges, soft studio lighting, slight 3/4 top-down. NOT 2D painted art, NOT glossy vinyl.
-
-Palette: blue-grey clay stone, glowing cyan-teal rune channels, tiny restrained gold inlay, soft contact shadow.
-
-One isolated platform object, centered, for PixiJS layerPlatform overlay.
-
-Refs: Digimon diorama material language + Nexus moonlake magic circle.

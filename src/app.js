@@ -59,6 +59,17 @@ import {
   createWorld,
   updateEnvironmentLayer
 } from "./pixi/pixiApp.js";
+import {
+  createHabitatWeatherFx,
+  HABITAT_WEATHER_HOOKS,
+  onHabitatWeatherChange,
+  setHabitatWeather,
+  updateHabitatWeatherFx
+} from "./pixi/habitatWeatherFx.js";
+import {
+  clearSceneTimePhaseOverride,
+  setSceneTimePhaseOverride
+} from "./engine/environmentController.js";
 import { bindCompanionTap, createCreatureNode, positionCompanion } from "./pixi/companionRenderer.js";
 import { createHabitatTraceRenderer } from "./pixi/habitatTraceRenderer.js";
 import { enableEditorMode, readSceneEditorFlag } from "./tools/sceneEditor.js";
@@ -596,6 +607,35 @@ async function bootScene(
   const particles = createParticles();
   layers.layerFX.addChild(particles);
 
+  // 天氣 FX（TP-HAB-WEATHER-1）：掛在 layerFX，氛圍 only。
+  const weatherFx = createHabitatWeatherFx(PIXI, { width: 390, height: 844 });
+  layers.layerFX.addChild(weatherFx.root);
+  // setHabitatWeather 會改 active id；ticker 內 updateHabitatWeatherFx 偵測差異後套用視覺。
+  onHabitatWeatherChange(() => {
+    weatherFx.weatherId = "__pending__";
+  });
+
+  // 預覽覆寫：?weather=rain|mist|clear|…  ?timePhase=dawn|day|dusk|night
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const weatherParam = params.get("weather");
+    if (weatherParam) setHabitatWeather(weatherParam);
+    const timeParam = params.get("timePhase");
+    if (timeParam) setSceneTimePhaseOverride(timeParam);
+    else clearSceneTimePhaseOverride();
+  } catch {
+    // ignore malformed query
+  }
+
+  if (typeof window !== "undefined") {
+    window.__NEXUS_HABITAT = {
+      setWeather: setHabitatWeather,
+      setTimePhase: setSceneTimePhaseOverride,
+      clearTimePhase: clearSceneTimePhaseOverride,
+      weatherHooks: HABITAT_WEATHER_HOOKS
+    };
+  }
+
   const environmentEffects = new PIXI.Container();
   environmentEffects.name = "environment_effects";
   layers.layerFX.addChild(environmentEffects);
@@ -610,6 +650,22 @@ async function bootScene(
   EventBus.on(ENVIRONMENT_INTERACTION_EVENT, (event) => {
     if (event?.type !== "crystal_touch") return;
     activeEnvironmentEffects.push(createCrystalTouchEffect(environmentEffects, event));
+  });
+
+  // 氛圍鉤子：對峙／心語相關動畫意圖 → 天氣 preset（無獎勵、無 FOMO）
+  EventBus.on(COMPANION_ANIMATION_INTENT_EVENT, (payload) => {
+    const source = payload?.source || "";
+    if (source === "battle" || source === "standoff" || source === "map-exploration") {
+      setHabitatWeather(HABITAT_WEATHER_HOOKS.afterStandoffPressure);
+      return;
+    }
+    if (source === "soul-talk" || source === "soulTalk" || source === "raphael") {
+      setHabitatWeather(HABITAT_WEATHER_HOOKS.afterSoulTalk);
+      return;
+    }
+    if (source === "calm-sync" || source === "care") {
+      setHabitatWeather(HABITAT_WEATHER_HOOKS.afterRepair);
+    }
   });
 
   // 效能：habitat trace 的 map+sync 從 ticker（每幀）移到「痕跡內容改變時」才跑。
@@ -756,6 +812,7 @@ async function bootScene(
     }
 
     updateEnvironmentLayer(environmentLayer, safeTicker);
+    updateHabitatWeatherFx(weatherFx, safeTicker);
     animateParticles(particles, t, safeTicker);
     updateEnvironmentEffects(activeEnvironmentEffects, safeTicker);
 

@@ -1,9 +1,0 @@
-Moonlit Storybook Vivarium v3 — stone arch gateway runtime prop.
-
-CRITICAL STYLE: clay/resin miniature diorama accessory, hand-sculpted scale model macro photo. Matte-satin clay and cast resin, chunky rounded stone blocks, soft studio lighting, slight 3/4 top-down. NOT 2D painted art, NOT glossy vinyl.
-
-Palette: grey-blue clay stone, glowing cyan rune portal, restrained gold bands, small moss/log base detail, Nexus moonlake navy/cyan accents.
-
-Isolated single object on solid magenta #FF00FF for chroma-key removal. Soft contact shadow on magenta floor.
-
-Refs: v2 foundation baked arch (demoted to prop) + Nexus moonlake stone arch reference.
