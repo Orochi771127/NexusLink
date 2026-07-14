@@ -1,4 +1,5 @@
 import { clamp } from "../utils/clamp.js";
+import { applyCraftByChoice } from "../expedition/expeditionCraftEngine.js";
 
 const MEMORY_DEDUPE_WINDOW_MS = 5 * 60 * 1000;
 const TRACE_TTL_MS = 7 * 24 * 60 * 60 * 1000;
@@ -33,6 +34,10 @@ const ACTION_CHOICE_ALIASES = Object.freeze({
   "Trust tuning": "trust_reflection",
   trust_tuning: "trust_reflection",
   "Trust reflection": "trust_reflection",
+  shard_resonance: "shard_resonance",
+  shard_breath: "shard_breath",
+  shard_ember_ward: "shard_ember_ward",
+  shard_tide_calm: "shard_tide_calm",
   "Emotional balance": "emotional_balance",
   "Skill circuit": "skill_circuit",
   "Lake fragment": "lake_fragment",
@@ -384,6 +389,38 @@ export function evaluateActionEffect(currentState, action, choice, context = {})
         statePatch.growthHint = "trust_reflection_blocked";
         statePatch.reactionPreview = "牠看著你，像在等一個還沒發生的共同片刻。";
         message = "還沒有足夠的共同記憶可回顧。先一起度過安靜的時刻——陪伴、休息，或心核共息。";
+      }
+    } else if (
+      normalizedChoice === "shard_resonance"
+      || normalizedChoice === "shard_breath"
+      || normalizedChoice === "shard_ember_ward"
+      || normalizedChoice === "shard_tide_calm"
+    ) {
+      // 遠征碎晶消耗：關係向強化，數值由配方 vitals 決定。
+      const craft = applyCraftByChoice(currentState, normalizedChoice, now);
+      if (!craft.ok) {
+        statePatch.growthHint = `${normalizedChoice}_blocked`;
+        statePatch.reactionPreview = craft.reactionPreview;
+        message = craft.message;
+      } else {
+        Object.assign(statePatch, craft.statePatch);
+        if (craft.vitals) setVitals(craft.vitals);
+        if (craft.memory) {
+          statePatch.memories = appendMemoryDeduped(
+            memories,
+            createMemory(
+              currentState,
+              craft.memory.type,
+              craft.memory.title,
+              craft.memory.text,
+              now
+            ),
+            now
+          );
+        }
+        statePatch.reactionPreview = craft.reactionPreview;
+        statePatch.growthHint = craft.growthHint;
+        message = craft.message;
       }
     } else if (normalizedChoice === "emotional_balance") {
       // 舊按鈕相容：不再免費加能量，引導玩家去共息。

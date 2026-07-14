@@ -23,6 +23,7 @@ export function createDefaultState() {
     chapterProgress: { current: defaultState.chapterProgress.current, completed: [...defaultState.chapterProgress.completed] },
     resonance: { chapterMarks: {}, companions: {} },
     explorationProgress: { ...defaultState.explorationProgress, visitCounts: {} },
+    expeditionVault: normalizeExpeditionVault(defaultState.expeditionVault),
     settings: { ...defaultState.settings }
   };
 }
@@ -101,6 +102,7 @@ export function normalizeState(rawState = {}) {
     chapterProgress: normalizeChapterProgress(targetState.chapterProgress),
     resonance: normalizeResonance(targetState.resonance),
     explorationProgress: normalizeExplorationProgress(targetState.explorationProgress, baseState.explorationProgress),
+    expeditionVault: normalizeExpeditionVault(targetState.expeditionVault, baseState.expeditionVault),
     settings: normalizeSettings(targetState.settings, baseState.settings),
     chatHistory: chatHistory.map((item) => ({
       role: item.role === "fox" ? "companion" : item.role || "companion",
@@ -304,6 +306,33 @@ function normalizeExplorationProgress(rawProgress, baseProgress) {
     totalExplorations: clamp(Number(progress.totalExplorations) || 0, 0, 99999),
     lastNodeId: EXPLORATION_NODE_IDS.includes(progress.lastNodeId) ? progress.lastNodeId : baseProgress.lastNodeId,
     visitCounts
+  };
+}
+
+const EXPEDITION_SHARD_IDS = new Set(["forest_shard", "tide_shard", "ember_shard"]);
+
+function normalizeExpeditionVault(rawVault, baseVault) {
+  const vault = rawVault && typeof rawVault === "object" ? rawVault : {};
+  const rawShards = vault.shards && typeof vault.shards === "object" ? vault.shards : {};
+  const shards = {};
+  Object.keys(rawShards).forEach((shardId) => {
+    if (!EXPEDITION_SHARD_IDS.has(shardId)) return;
+    const count = clamp(Number(rawShards[shardId]) || 0, 0, 99999);
+    if (count > 0) shards[shardId] = count;
+  });
+  const rawLogs = Array.isArray(vault.logs) ? vault.logs : [];
+  const logs = rawLogs.slice(0, 12).map((entry) => ({
+    at: Number(entry?.at) || null,
+    regionId: typeof entry?.regionId === "string" ? entry.regionId : null,
+    loot: entry?.loot && typeof entry.loot === "object" ? entry.loot : {},
+    kills: clamp(Number(entry?.kills) || 0, 0, 99),
+    retreated: Boolean(entry?.retreated)
+  }));
+  return {
+    shards,
+    logs,
+    totalExpeditions: clamp(Number(vault.totalExpeditions) || 0, 0, 99999),
+    lastExpeditionAt: Number(vault.lastExpeditionAt) || null
   };
 }
 

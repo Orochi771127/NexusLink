@@ -60,17 +60,32 @@ export const RUNTIME_COMPANION_ASSET_KEYS = Object.freeze([
   "crystalfinSeahorse"
 ]);
 
+export const MOONLAKE_VIVARIUM_V3 = Object.freeze({
+  backgrounds: Object.freeze({
+    night: "./assets/backgrounds/MoonlakeVivarium_v3/bg_night_base.png"
+  }),
+  platforms: Object.freeze({
+    magicCircle: "./assets/platforms/MoonlakeVivarium_v3/magic_circle.png"
+  }),
+  props: Object.freeze({
+    lanternPost: "./assets/props/MoonlakeVivarium_v3/lantern_post.png",
+    stoneArch: "./assets/props/MoonlakeVivarium_v3/stone_arch.png"
+  })
+});
+
 export const ASSET_MANIFEST = Object.freeze({
   backgrounds: Object.freeze({
     lakeDay: "./assets/backgrounds/LakeNightCamp_v2/bg_day_base.png",
-    lakeNight: "./assets/backgrounds/LakeNightCamp_v2/bg_night_base.png"
+    lakeNight: MOONLAKE_VIVARIUM_V3.backgrounds.night
   }),
   platforms: Object.freeze({
-    magicCircle: "./assets/platforms/LakeNightCamp_v2/magic_circle.png"
+    magicCircle: MOONLAKE_VIVARIUM_V3.platforms.magicCircle
   }),
   props: Object.freeze({
     campfire: "./assets/props/LakeNightCamp_v2/prop_campfire.png",
     crystal: "./assets/props/LakeNightCamp_v2/prop_crystal.png",
+    lanternPost: MOONLAKE_VIVARIUM_V3.props.lanternPost,
+    stoneArch: MOONLAKE_VIVARIUM_V3.props.stoneArch,
     sun: "./assets/props/LakeNightCamp_v2/celestial_sun.png",
     moon: "./assets/props/LakeNightCamp_v2/celestial_moon.png"
   }),

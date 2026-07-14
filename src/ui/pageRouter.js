@@ -1,4 +1,6 @@
 import { BOND_MILESTONES } from "../engine/bondMilestoneEngine.js";
+import { canAffordRecipe, listCraftRecipesForUi } from "../expedition/expeditionCraftEngine.js";
+import { getShardType } from "../data/lootTables.js";
 import { getTraceDisplayCopy } from "../engine/traceVisualMapper.js";
 import { qs, qsa } from "../utils/dom.js";
 import EventBus from "../utils/eventBus.js";
@@ -101,6 +103,14 @@ export function createPageRouter({
     if (!body) return;
     const traceCount = Array.isArray(state.habitatTraces) ? state.habitatTraces.length : 0;
     const memoryCount = Array.isArray(state.emotionalMemories) ? state.emotionalMemories.length : 0;
+    const vaultShards = state.expeditionVault?.shards || {};
+    const shardStrip = Object.entries(vaultShards)
+      .filter(([, count]) => Number(count) > 0)
+      .map(([shardId, count]) => {
+        const label = getShardType(shardId).label.zh;
+        return `<span><strong>${Number(count)}</strong><em>${escapeHtml(label)}</em></span>`;
+      })
+      .join("");
     body.innerHTML = `
       <div class="page-focus-card page-focus-card--moonlake">
         <span class="page-orb" aria-hidden="true">☾</span>
@@ -113,6 +123,7 @@ export function createPageRouter({
       <div class="page-evidence-strip" aria-label="${t("explore.stateAria")}">
         <span><strong>${traceCount}</strong><em>${t("explore.evTraces")}</em></span>
         <span><strong>${memoryCount}</strong><em>${t("explore.evMemories")}</em></span>
+        ${shardStrip}
       </div>
       <div class="page-action-grid">
         <button type="button" data-page-action="open-map">
@@ -187,6 +198,30 @@ export function createPageRouter({
     const reachedMilestones = getReachedMilestones(state);
     const nextMilestone = BOND_MILESTONES.find((milestone) => !reachedMilestones.has(milestone.id));
     const nextProgress = nextMilestone ? Math.min(100, Math.round((bond / nextMilestone.threshold) * 100)) : 100;
+    const vaultShards = state.expeditionVault?.shards || {};
+    const shardStrip = Object.entries(vaultShards)
+      .filter(([, count]) => Number(count) > 0)
+      .map(([shardId, count]) => {
+        const label = getShardType(shardId).label.zh;
+        return `<span><strong>${Number(count)}</strong><em>${escapeHtml(label)}</em></span>`;
+      })
+      .join("");
+    const craftRecipes = listCraftRecipesForUi();
+    const craftButtons = craftRecipes.map((recipe) => {
+      const afford = canAffordRecipe(state, recipe.id);
+      return `
+        <button type="button"
+          data-page-action="commit"
+          data-nav-action="grow"
+          data-choice="${recipe.choice}"
+          data-status="${escapeHtml(recipe.status)}"
+          ${afford ? "" : "disabled"}
+        >
+          <strong>${escapeHtml(recipe.label.zh)}</strong>
+          <em>${escapeHtml(recipe.sub.zh)}</em>
+        </button>
+      `;
+    }).join("");
 
     body.innerHTML = `
       <div class="page-focus-card">
@@ -206,6 +241,16 @@ export function createPageRouter({
         ${renderTendency(t("char.mood"), moodLabel(state.mood), false)}
         ${renderTendency(t("char.boundary"), toNumber(state.defense))}
       </div>
+      ${shardStrip ? `
+        <div class="page-evidence-strip" aria-label="遠征碎晶庫存">
+          ${shardStrip}
+        </div>
+      ` : ""}
+      ${craftButtons ? `
+        <div class="page-action-grid page-action-grid--craft" aria-label="碎晶共鳴">
+          ${craftButtons}
+        </div>
+      ` : ""}
       <div class="page-action-grid">
         <button type="button" data-page-action="commit" data-nav-action="grow" data-choice="trust_reflection" data-status="${t("growth.trustTuneStatus")}">
           <strong>${t("growth.trustTune")}</strong>

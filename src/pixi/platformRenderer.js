@@ -1,3 +1,4 @@
+import { ASSET_MANIFEST } from "../data/assetManifest.js";
 import {
   applySceneBlendMode,
   PLATFORM_Y,
@@ -5,12 +6,13 @@ import {
   WORLD_HEIGHT,
   WORLD_WIDTH
 } from "./pixiApp.js";
+import { loadChromaKeyedTexture } from "./chromaKeyTexture.js";
 
-export const PLATFORM_LAKE_PATH = "./assets/platforms/LakeNightCamp_v2/magic_circle.png";
+export const PLATFORM_LAKE_PATH = ASSET_MANIFEST.platforms.magicCircle;
 
 export async function createPlatformNode() {
   try {
-    const texture = await PIXI.Assets.load(PLATFORM_LAKE_PATH);
+    const texture = await loadChromaKeyedTexture(PLATFORM_LAKE_PATH);
     const platform = new PIXI.Sprite(texture);
     platform.name = "magic_circle";
     platform.anchor.set(0.5);

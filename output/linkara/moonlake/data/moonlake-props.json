@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 2,
+  "habitatId": "moonlake",
+  "activeRevision": "v3",
+  "artSpace": { "width": 1080, "height": 1920 },
+  "runtimeViewport": { "width": 390, "height": 844 },
+  "placement": [
+    {
+      "id": "magic_circle",
+      "asset": "../props/moonlake-magic-circle-platform-v3.png",
+      "layer": "layerPlatform",
+      "anchor": { "x": 0.5, "y": 0.5 },
+      "artSpace": { "x": 540, "y": 1240, "scale": 0.42 },
+      "normalized": { "x": 0.5, "y": 0.646 },
+      "postprocess": "chroma-key magenta before runtime",
+      "notes": "沿用 v1 錨點；晉升前需 Scene Editor 實機微調 + 去背"
+    },
+    {
+      "id": "lantern_post_left",
+      "asset": "../props/moonlake-lantern-post-v3.png",
+      "layer": "layerMidground",
+      "anchor": { "x": 0.5, "y": 1.0 },
+      "artSpace": { "x": 200, "y": 1100, "scale": 0.28 },
+      "normalized": { "x": 0.185, "y": 0.573 },
+      "postprocess": "chroma-key magenta before runtime",
+      "notes": "對齊 v2 foundation 左側燈柱位置；晉升前需 Scene Editor 實機微調"
+    },
+    {
+      "id": "stone_arch_right",
+      "asset": "../props/moonlake-stone-arch-v3.png",
+      "layer": "layerMidground",
+      "anchor": { "x": 0.5, "y": 1.0 },
+      "artSpace": { "x": 880, "y": 1050, "scale": 0.32 },
+      "normalized": { "x": 0.815, "y": 0.547 },
+      "postprocess": "chroma-key magenta before runtime",
+      "notes": "對齊 v2 foundation 右側石拱位置；晉升前需 Scene Editor 實機微調"
+    }
+  ],
+  "zones": {
+    "companion_reserved": { "x": 0.38, "y": 0.49, "w": 0.24, "h": 0.25 },
+    "platform_ground": { "x": 0.24, "y": 0.62, "w": 0.52, "h": 0.14 },
+    "bottom_ui_static": { "x": 0.0, "y": 0.8, "w": 1.0, "h": 0.2 }
+  }
+}

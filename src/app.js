@@ -48,6 +48,7 @@ import { createCompanionSelectController } from "./ui/companionSelectController.
 import { createMapController } from "./ui/mapController.js";
 import { createAtlasController } from "./ui/atlasController.js";
 import { createBattleController } from "./ui/battleController.js";
+import { createExpeditionController } from "./ui/expeditionController.js";
 import { createCodexController } from "./ui/codexController.js";
 import {
   animateParticles,
@@ -236,6 +237,7 @@ async function bootstrap() {
   // 效能：戰鬥／地圖／圖鑑／夥伴切換不是首屏必需，改為 lazy factory——
   // 只有玩家真的需要時才建立，縮短啟動成本。首屏只建 HUD/SoulTalk/PanelManager/ActionSheet。
   let battleController = null;
+  let expeditionController = null;
   let mapController = null;
   let codexController = null;
   let companionSelectController = null;
@@ -263,6 +265,21 @@ async function bootstrap() {
     return battleController;
   }
 
+  function getExpeditionController() {
+    if (!expeditionController) {
+      expeditionController = createExpeditionController({
+        store,
+        panelManager,
+        statusText,
+        saveCurrentState: saveInteraction,
+        getSceneBridge: () => sceneApi?.sceneBridge || null,
+        soulTalkController
+      });
+      expeditionController.bind();
+    }
+    return expeditionController;
+  }
+
   function getMapController() {
     if (!mapController) {
       mapController = createMapController({
@@ -271,6 +288,7 @@ async function bootstrap() {
         soulTalkController,
         saveCurrentState: saveInteraction,
         battleController: getBattleController(),
+        expeditionController: getExpeditionController(),
         statusText
       });
     }
@@ -462,7 +480,8 @@ async function bootstrap() {
       soulTalkController,
       saveQueue,
       onboardingController,
-      emitRestrictedRaphaelAgentEvent
+      emitRestrictedRaphaelAgentEvent,
+      getExpeditionController
     );
     markPerf("nexus:first-scene-ready");
 
@@ -565,7 +584,8 @@ async function bootScene(
   soulTalkController,
   saveQueue,
   onboardingController,
-  raphaelAgentEventBridge = null
+  raphaelAgentEventBridge = null,
+  getExpeditionControllerRef = null
 ) {
   const runtimeGuard = createRuntimeGuard(app);
   const world = createWorld(app);
@@ -670,11 +690,40 @@ async function bootScene(
     enableEditorMode(app.stage);
   }
 
+  const expeditionHost = new PIXI.Container();
+  expeditionHost.name = "expedition_host";
+  expeditionHost.visible = false;
+  app.stage.addChild(expeditionHost);
+
+  const sceneBridge = {
+    PIXI: window.PIXI,
+    getViewSize() {
+      return { width: app.renderer.width, height: app.renderer.height };
+    },
+    mountExpedition(root) {
+      expeditionHost.removeChildren();
+      expeditionHost.addChild(root);
+      world.visible = false;
+      expeditionHost.visible = true;
+    },
+    unmountExpedition() {
+      expeditionHost.removeChildren();
+      expeditionHost.visible = false;
+      world.visible = true;
+    }
+  };
+
   let t = 0;
   app.ticker.add((ticker) => {
     if (runtimeGuard.shouldSkipFrame()) return;
 
     const safeTicker = runtimeGuard.getSafeTicker(ticker);
+    const expedition = getExpeditionControllerRef?.();
+    if (expedition?.isActive()) {
+      expedition.update(safeTicker);
+      return;
+    }
+
     t += safeTicker.deltaMS / 1000;
 
     if (!isSceneEditorMode) {
@@ -714,7 +763,7 @@ async function bootScene(
     habitatTraceRenderer.update(t);
   });
 
-  return { swapCompanion };
+  return { swapCompanion, sceneBridge };
 }
 
 function createCrystalTouchEffect(parent, event) {

@@ -1,0 +1,61 @@
+{
+  "version": 3,
+  "pack": "moonlit-storybook-vivarium-phase1",
+  "status": "staging",
+  "activeRevision": "v3",
+  "styleLock": "STYLE-LOCK-v2.md",
+  "approvalGate": "Owner visual approval required before promoting any file to assets/**",
+  "artDirection": "Clay/resin miniature diorama macro photography + Nexus moonlake navy/cyan palette",
+  "mapMode": "scene_mode",
+  "visualModel": "layered_raster",
+  "canvas": { "width": 1080, "height": 1920, "aspect": "9:16" },
+  "assets": [
+    {
+      "id": "moonlake-night-foundation-v3",
+      "role": "foundation_base",
+      "path": "layers/moonlake-night-foundation-v3.png",
+      "promptPath": "layers/moonlake-night-foundation-v3.prompt.txt",
+      "supersedes": "moonlake-night-foundation-v2",
+      "layerStack": "sky_atmosphere + distant_mountains + water_plane + shore_platform",
+      "notes": "Foundation-only: no baked lantern, arch, magic circle, characters, moon"
+    },
+    {
+      "id": "moonlake-lantern-post-v3",
+      "role": "runtime_prop",
+      "path": "props/moonlake-lantern-post-v3.png",
+      "promptPath": "props/moonlake-lantern-post-v3.prompt.txt",
+      "layerStack": "layerMidground",
+      "postprocess": "chroma-key magenta #FF00FF → transparent PNG"
+    },
+    {
+      "id": "moonlake-stone-arch-v3",
+      "role": "runtime_prop",
+      "path": "props/moonlake-stone-arch-v3.png",
+      "promptPath": "props/moonlake-stone-arch-v3.prompt.txt",
+      "layerStack": "layerMidground",
+      "postprocess": "chroma-key magenta #FF00FF → transparent PNG"
+    },
+    {
+      "id": "moonlake-magic-circle-platform-v3",
+      "role": "runtime_prop",
+      "path": "props/moonlake-magic-circle-platform-v3.png",
+      "promptPath": "props/moonlake-magic-circle-platform-v3.prompt.txt",
+      "supersedes": "moonlake-magic-circle-platform-v2",
+      "layerStack": "layerPlatform",
+      "postprocess": "chroma-key magenta #FF00FF → transparent PNG"
+    }
+  ],
+  "deprecated": [
+    "layers/moonlake-night-foundation-v1.png",
+    "layers/moonlake-night-foundation-v2.png",
+    "props/moonlake-magic-circle-platform-v1.png",
+    "props/moonlake-magic-circle-platform-v2.png"
+  ],
+  "notYetGenerated": [
+    "layers/moonlake-night-far-v3.png",
+    "layers/moonlake-night-mid-v3.png",
+    "layers/moonlake-day-foundation-v3.png",
+    "previews/moonlake-layered-preview-v3.png"
+  ],
+  "engineeringBlockedOn": "GAP-3 region-habitat switching — moonlake-only promotion OK after Owner approval"
+}

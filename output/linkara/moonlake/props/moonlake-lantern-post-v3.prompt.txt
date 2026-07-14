@@ -1,0 +1,9 @@
+Moonlit Storybook Vivarium v3 — lantern post runtime prop.
+
+CRITICAL STYLE: clay/resin miniature diorama accessory, hand-sculpted scale model macro photo. Matte-satin clay and cast resin, chunky rounded edges, soft studio lighting, slight 3/4 top-down. NOT 2D painted art, NOT glossy vinyl.
+
+Palette: warm brown wood post, amber lantern glow, subtle cyan accent trim, Nexus moonlake restrained warm anchor.
+
+Isolated single object on solid magenta #FF00FF for chroma-key removal. Soft contact shadow on magenta floor.
+
+Refs: v2 foundation baked lantern (demoted to prop) + Nexus moonlake warm light accents.

@@ -1,6 +1,7 @@
 import EnvironmentController from "../engine/environmentController.js";
 import { ASSET_MANIFEST } from "../data/assetManifest.js";
 import { SCENE_LAYOUT } from "../data/sceneLayout.js";
+import { loadChromaKeyedTexture } from "./chromaKeyTexture.js";
 
 export const GAME_WIDTH = 390;
 export const GAME_HEIGHT = 844;
@@ -14,8 +15,8 @@ export const SCENE_ASSETS = Object.freeze({
   bgDay: ASSET_MANIFEST.backgrounds.lakeDay,
   bgNight: ASSET_MANIFEST.backgrounds.lakeNight,
   magicCircle: ASSET_MANIFEST.platforms.magicCircle,
-  campfire: ASSET_MANIFEST.props.campfire,
-  crystal: ASSET_MANIFEST.props.crystal,
+  lanternPost: ASSET_MANIFEST.props.lanternPost,
+  stoneArch: ASSET_MANIFEST.props.stoneArch,
   sun: ASSET_MANIFEST.props.sun,
   moon: ASSET_MANIFEST.props.moon
 });
@@ -110,28 +111,27 @@ export async function createEnvironmentLayer(layers, app) {
   moon.visible = true;
   layers.layerCelestial.addChild(moon);
 
-  const magicCircle = await createSceneSprite("magic_circle", SCENE_ASSETS.magicCircle, {
-    anchor: 0.5,
+  const magicCircle = await createChromaKeyedSceneSprite("magic_circle", SCENE_ASSETS.magicCircle, {
+    anchor: getSceneLayoutAnchor("magic_circle"),
     editorEnabled: true
   });
   applyResponsiveLayout(magicCircle, "magic_circle");
   magicCircle.alpha = 0.76;
   layers.layerPlatform.addChild(magicCircle);
 
-  const campfire = await createScenePropContainer("campfire", SCENE_ASSETS.campfire, {
-    anchor: 0.5
-  });
-  applyResponsiveLayout(campfire.container, "campfire");
-  campfire.container.alpha = 0;
-  layers.layerForeground.addChild(campfire.container);
-
-  const crystal = await createSceneSprite("crystal", SCENE_ASSETS.crystal, {
-    anchor: 0.5,
+  const lanternPost = await createChromaKeyedSceneSprite("lantern_post_left", SCENE_ASSETS.lanternPost, {
+    anchor: getSceneLayoutAnchor("lantern_post_left"),
     editorEnabled: true
   });
-  applyResponsiveLayout(crystal, "crystal");
-  crystal.alpha = 0.86;
-  layers.layerForeground.addChild(crystal);
+  applyResponsiveLayout(lanternPost, "lantern_post_left");
+  layers.layerForeground.addChild(lanternPost);
+
+  const stoneArch = await createChromaKeyedSceneSprite("stone_arch_right", SCENE_ASSETS.stoneArch, {
+    anchor: getSceneLayoutAnchor("stone_arch_right"),
+    editorEnabled: true
+  });
+  applyResponsiveLayout(stoneArch, "stone_arch_right");
+  layers.layerForeground.addChild(stoneArch);
 
   const environmentLayer = {
     bgDay,
@@ -139,8 +139,8 @@ export async function createEnvironmentLayer(layers, app) {
     sun,
     moon,
     magicCircle,
-    campfire,
-    crystal
+    lanternPost,
+    stoneArch
   };
 
   registerResponsiveEnvironmentLayer(layers, environmentLayer);
@@ -215,19 +215,10 @@ export function updateEnvironmentLayer(environmentLayer, ticker) {
 
   const state = EnvironmentController.getEnvironmentState();
   const nightAlpha = state.nightAlpha;
-  const isEditor = isSceneEditorMode();
   environmentLayer.bgNight.alpha = nightAlpha;
 
   updateCelestialSprite(environmentLayer.sun, "sun", state.sunProgress, state.sunAlpha);
   updateCelestialSprite(environmentLayer.moon, "moon", state.moonProgress, state.moonAlpha);
-  updateCampfireLayer(environmentLayer.campfire, nightAlpha, ticker);
-  if (!environmentLayer.crystal.__sceneEditorSelected) {
-    if (isEditor) {
-      environmentLayer.crystal.alpha = 1;
-    } else {
-      environmentLayer.crystal.alpha = 0.58 + nightAlpha * 0.36;
-    }
-  }
 }
 
 function createSceneLayers(world) {
@@ -311,8 +302,8 @@ function resizeEnvironmentLayout(environmentLayer, app) {
   applyResponsiveLayout(environmentLayer.sun, "sun");
   applyResponsiveLayout(environmentLayer.moon, "moon");
   applyResponsiveLayout(environmentLayer.magicCircle, "magic_circle");
-  applyResponsiveLayout(environmentLayer.campfire.container, "campfire");
-  applyResponsiveLayout(environmentLayer.crystal, "crystal");
+  applyResponsiveLayout(environmentLayer.lanternPost, "lantern_post_left");
+  applyResponsiveLayout(environmentLayer.stoneArch, "stone_arch_right");
 }
 
 function readGameRootSize(gameRoot) {
@@ -334,12 +325,40 @@ function observeGameRootResize(app, world) {
   world.__gameRootResizeObserver = observer;
 }
 
+async function createChromaKeyedSceneSprite(id, texturePath, options = {}) {
+  const texture = await loadChromaKeyedTexture(texturePath, options.chromaKey);
+  const sprite = new PIXI.Sprite(texture);
+  sprite.name = id;
+  sprite.roundPixels = true;
+  const anchor = normalizeAnchor(options.anchor);
+  sprite.anchor?.set?.(anchor.x, anchor.y);
+  sprite.x = Math.round(options.x ?? 0);
+  sprite.y = Math.round(options.y ?? 0);
+
+  if (options.width && options.height) {
+    sprite.width = options.width;
+    sprite.height = options.height;
+  } else if (options.targetWidth) {
+    const scale = options.targetWidth / sprite.width;
+    sprite.scale.set(scale);
+  }
+
+  applySceneBlendMode(sprite, id);
+  registerSceneEditorObject(sprite, {
+    id,
+    texturePath,
+    editorEnabled: Boolean(options.editorEnabled)
+  });
+  return sprite;
+}
+
 async function createSceneSprite(id, texturePath, options = {}) {
   const texture = await PIXI.Assets.load(texturePath);
   const sprite = new PIXI.Sprite(texture);
   sprite.name = id;
   sprite.roundPixels = true;
-  sprite.anchor?.set?.(options.anchor ?? 0);
+  const anchor = normalizeAnchor(options.anchor);
+  sprite.anchor?.set?.(anchor.x, anchor.y);
   sprite.x = Math.round(options.x ?? 0);
   sprite.y = Math.round(options.y ?? 0);
 
@@ -487,4 +506,20 @@ function isSceneEditorMode() {
 
 function getSceneLayoutObject(objectId) {
   return SCENE_LAYOUT.objects.find((object) => object.id === objectId) || null;
+}
+
+function getSceneLayoutAnchor(objectId) {
+  const anchor = SCENE_LAYOUT.anchors?.[objectId];
+  if (anchor) return anchor;
+  return { x: 0.5, y: 0.5 };
+}
+
+function normalizeAnchor(anchor) {
+  if (typeof anchor === "number") {
+    return { x: anchor, y: anchor };
+  }
+  return {
+    x: Number(anchor?.x ?? 0.5),
+    y: Number(anchor?.y ?? 0.5)
+  };
 }

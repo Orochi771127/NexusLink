@@ -71,7 +71,7 @@ function resolveExploreDirectionIntent(state, node) {
   return pickDirectionIntent(target, fromLayout || MAP_CENTER);
 }
 
-export function createMapController({ store, panelManager, soulTalkController, saveCurrentState, battleController, statusText }) {
+export function createMapController({ store, panelManager, soulTalkController, saveCurrentState, battleController, expeditionController, statusText }) {
   const mapCanvas = qs("#map-canvas");
   const pathsSvg = qs("#map-paths");
   const nodeLayer = qs("#map-node-layer");
@@ -90,6 +90,7 @@ export function createMapController({ store, panelManager, soulTalkController, s
     ensurePaths();
     render();
     renderInviteBanner();
+    expeditionController?.renderMapLaunch?.(qs(".map-modal"));
     hideToast();
     panelManager.openPanel("map");
   }
@@ -221,6 +222,7 @@ export function createMapController({ store, panelManager, soulTalkController, s
         visitsEl.textContent = `×${visits}`;
       }
     });
+    expeditionController?.renderMapLaunch?.(qs(".map-modal"));
   }
 
   // ---- Game feel：一次性 WAAPI 回饋 ----

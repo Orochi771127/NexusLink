@@ -93,6 +93,14 @@ const defaultState = {
     visitCounts: {}
   },
 
+  // 心域遠征（Phase 2）：結晶碎片庫 + 遠征日誌。存於既有 STORAGE_KEY，無新 key。
+  expeditionVault: {
+    shards: {},
+    logs: [],
+    totalExpeditions: 0,
+    lastExpeditionAt: null
+  },
+
   // 玩家偏好（Settings 持久化）。存在既有 STORAGE_KEY 之內，不新增 localStorage key。
   // 預設值對齊 index.html 的 Settings 初始狀態。音效靜音(mute)維持既有獨立 key，不併入此處。
   settings: {

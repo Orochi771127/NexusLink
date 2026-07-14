@@ -1,0 +1,13 @@
+Moonlit Storybook Vivarium v3 — clay/resin miniature diorama foundation (props removed).
+
+CRITICAL STYLE: physical clay/resin miniature diorama macro studio photograph. Matte-satin air-dry clay and hand-cast resin, chunky rounded modular terrain pieces, terrarium display stage. Tilt-shift shallow DOF, center sharp edges soft. NOT 2D digital painting, NOT flat illustration, NOT glossy plastic toy.
+
+Palette: Nexus moonlake navy indigo sky, cyan #00CED1 lake glow, violet shadows, tiny restrained warm gold accents only. NO Digimon primary colors.
+
+Scene: 1080x1920 vertical, slight 3/4 downward camera. Chunky clay pine modules frame sides. Far miniature clay mountains. Distant narrow cyan lake band. Center-lower EMPTY circular clay sand platform pad — bare, no runes.
+
+STRICT foundation-only: NO lantern posts, NO stone arch, NO magic circle, NO characters, NO moon, NO UI, NO text. Pure terrarium terrain only.
+
+v3 delta from v2: remove baked left lantern post and right stone arch (now separate props).
+
+Refs: v2 foundation composition + Digimon diorama spatial staging + Nexus moonlake palette.

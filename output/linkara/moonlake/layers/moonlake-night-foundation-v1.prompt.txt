@@ -1,0 +1,11 @@
+Moonlit Storybook Vivarium — Phase 1 night foundation layer (GAP-3 pre-work, moonlake only).
+
+Scene: 1080x1920 vertical mobile-first night lake camp foundation background. Premium illustrated 3D storybook diorama with slight 3/4 downward camera like a miniature terrarium stage. Starry dark blue-purple sky, distant jagged mountains, pine forest silhouettes. Small calm lake far away as narrow reflective cyan water band through forest. Lower half: sandy shore, forest floor, low rocks, clear empty platform zone in lower-center for separate props.
+
+Style: Cyber-Taoism mood through palette only; wet stone contact shadows; clean HD hand-painted game art. NOT plastic toy, NOT photoreal, NOT anime cel-shade.
+
+STRICT FOUNDATION RULE: no magic circle, campfire, crystals, lanterns, characters, UI, text. (Celestial bodies such as moon should be separate runtime layer in final pipeline.)
+
+Reference: Nexus Link current moonlake habitat UI screenshot + Digimon vivarium spatial staging (modular platform, contained stage feel).
+
+Pipeline: generate2dmap scene_mode + layered_raster — this file is foundation-only base.
