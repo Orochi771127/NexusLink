@@ -28,8 +28,15 @@ import {
   syncExpeditionScene
 } from "../pixi/expeditionScene.js";
 
+const TACTIC_LABELS = Object.freeze({
+  conservative: "保守",
+  balanced: "平衡",
+  aggressive: "積極",
+  focus: "集火"
+});
+
 /**
- * 心域遠征 UI + 生命週期（Phase C/D：戰鬥、掉落、戰術、冒險日誌）。
+ * 心域遠征 UI + 生命週期（Phase C/D + 4A 審查優化）。
  */
 export function createExpeditionController({
   store,
@@ -46,6 +53,26 @@ export function createExpeditionController({
   let camera = null;
   let overlayEl = null;
   let mapLaunchContainer = null;
+
+  function pickFocusEnemy(currentSession) {
+    const living = getLivingEnemies(currentSession);
+    if (!living.length) return null;
+    // 集火：優先最近的敵人，比固定取 [0] 更像「指眼前那個」。
+    const cx = currentSession.companion.x;
+    const cy = currentSession.companion.y;
+    return [...living].sort((a, b) => {
+      const da = Math.hypot(a.x - cx, a.y - cy);
+      const db = Math.hypot(b.x - cx, b.y - cy);
+      return da - db;
+    })[0];
+  }
+
+  function syncTacticButtons(activeTactic = "balanced") {
+    if (!overlayEl) return;
+    overlayEl.querySelectorAll("[data-tactic]").forEach((btn) => {
+      btn.classList.toggle("is-active", btn.dataset.tactic === activeTactic);
+    });
+  }
 
   function bind() {
     ensureOverlay();
@@ -102,17 +129,18 @@ export function createExpeditionController({
         session.playerInterventions = (session.playerInterventions || 0) + 1;
 
         if (tactic === "focus") {
-          const enemy = getLivingEnemies(session)[0];
+          const enemy = pickFocusEnemy(session);
           session.playerFocusTargetId = enemy?.id || null;
-          session.playerTactics = session.playerTactics || "balanced";
+          // 集火是「指定目標」，底層節奏維持目前戰術（預設平衡）。
+          if (!session.playerTactics || session.playerTactics === "focus") {
+            session.playerTactics = "balanced";
+          }
         } else {
           session.playerTactics = tactic;
           session.playerFocusTargetId = null;
         }
 
-        overlayEl.querySelectorAll("[data-tactic]").forEach((b) => {
-          b.classList.toggle("is-active", b.dataset.tactic === tactic);
-        });
+        syncTacticButtons(tactic);
       });
     });
 
@@ -190,8 +218,9 @@ export function createExpeditionController({
     panelManager.closePanel({ force: true });
     document.body.classList.add("expedition-active");
     ensureOverlay();
+    syncTacticButtons("balanced");
     renderHud();
-    if (statusText) statusText.textContent = "心域遠征進行中…";
+    if (statusText) statusText.textContent = `心域遠征・${region?.label?.zh || "進行中"}…`;
     return true;
   }
 
@@ -268,27 +297,44 @@ export function createExpeditionController({
     const shardLabel = getShardType(primaryShard).label.zh;
     const lootCount = session.lootCollected?.[primaryShard] || 0;
     const hpPct = Math.round((session.companion.hp / session.companion.hpMax) * 100);
+    const tacticKey = session.playerFocusTargetId
+      ? "focus"
+      : (session.playerTactics || "balanced");
+    const tacticLabel = TACTIC_LABELS[tacticKey] || TACTIC_LABELS.balanced;
 
     overlayEl.querySelector(".expedition-region-title").textContent =
-      `${region?.label?.zh || "風歇草坡"} · ${region?.regionLabel?.zh || "北部翠綠平原"}`;
+      `${region?.label?.zh || "遠征區"} · ${region?.regionLabel?.zh || ""}`.replace(/\s·\s$/, "");
     overlayEl.querySelector(".expedition-region-copy").textContent =
-      "微縮黏土樹脂地景 · 夥伴自主探索與遭遇";
+      region?.hudCopy || "讓牠自己決定走多遠。";
     overlayEl.querySelector(".expedition-companion").textContent =
       `夥伴：${session.companionName}`;
     overlayEl.querySelector(".expedition-vitals").textContent =
-      `穩定 ${hpPct}% · Energy ${session.relationship.energy}/10 · ${session.playerTactics || "balanced"}`;
+      `穩定 ${hpPct}% · 能量 ${session.relationship.energy}/10 · ${tacticLabel}`;
     overlayEl.querySelector(".expedition-loot").textContent =
       lootCount > 0 ? `${shardLabel} ×${lootCount}` : "尚未拾取碎晶";
 
     const intent = session.lastIntent || {};
+    const holdingMemory = Boolean(session.memoryHoldUntil && Date.now() < session.memoryHoldUntil);
     overlayEl.querySelector(".expedition-intent-text").textContent =
       intent.reason || "牠正在觀察周圍。";
-    overlayEl.querySelector(".expedition-intent-debug").textContent =
-      `[${intent.type || "—"}] target=${intent.targetId || "—"} · conf=${(intent.confidence ?? 0).toFixed(2)} · kills=${session.stats?.kills || 0} · enemies=${getLivingEnemies(session).length}`;
+    overlayEl.querySelector(".expedition-intent-text").classList.toggle("is-memory", holdingMemory);
+
+    // 除錯列預設隱藏；需要時在 body 加 data-expedition-debug="1"
+    const debugEl = overlayEl.querySelector(".expedition-intent-debug");
+    if (debugEl) {
+      debugEl.textContent =
+        `[${intent.type || "—"}] target=${intent.targetId || "—"} · conf=${(intent.confidence ?? 0).toFixed(2)} · kills=${session.stats?.kills || 0} · enemies=${getLivingEnemies(session).length}`;
+    }
 
     const extractBtn = overlayEl.querySelector(".expedition-extract-btn");
     if (extractBtn) {
       extractBtn.hidden = session.phase !== "extract_ready";
+      if (session.phase === "extract_ready") {
+        const peaceful = (session.stats?.kills || 0) < 1;
+        extractBtn.textContent = peaceful
+          ? "完成巡視 · 返回棲地"
+          : "完成遠征 · 返回棲地";
+      }
     }
   }
 

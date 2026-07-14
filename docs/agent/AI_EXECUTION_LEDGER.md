@@ -2391,3 +2391,23 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Unrelated work preserved: pre-existing expedition source/CSS/QA changes remain unstaged and must not be included in this habitat commit.
 - Next safe action: use the six promoted crystal-state files only in a separately scoped experience task that maps existing emotional-memory state to reversible visual texture changes. Keep `MoonlakeVivarium_v3` and `LakeNightCamp_v2` until a later reference-audit cleanup is explicitly approved.
 - Required reading: `assets/props/MoonlakeDiorama_r1/manifest.json`, `src/data/assetManifest.js`, `src/pixi/pixiApp.js`, `src/data/sceneProfiles/moonlakeProfile.js`, `docs/art/ART_PRODUCTION_INDEX.json`, and this lane.
+
+### 2026-07-14 - Codex - Moonlake Companion Plaza Placement - VERIFIED
+
+- Lane: `Game Art, UI, And Visual Production`.
+- Status: `VERIFIED`; the Owner-requested character-position correction is complete and remains uncommitted/unpushed pending later instruction.
+- Scope: EXPERIENCE layout data only. Changed the Moonlake companion bottom-center position from `(195,532)` to `(195,590)` at the `390x844` reference size and synchronized the Scene Profile anchor from `(0.50,0.63)` to `(0.50,0.70)`. Scale remains `0.72`.
+- Visual review: fresh day/night Pixi captures place the companion on the central rune plaza instead of the narrow dock edge. Feet remain grounded; face, body and heart core remain readable; the companion does not overlap the lantern, crystal, Soul Talk control, bottom navigation, top HUD or foreground occlusion.
+- Verification: both changed JavaScript files pass `node --check`; scoped `git diff --check` passes. Chromium at `390x844` reports one Pixi canvas, body height `844`, no page error and no failed asset request in both phases. WebGL ReadPixels and preload messages remain non-failing browser advisories.
+- Unrelated work preserved: pre-existing expedition source/CSS/QA changes were not modified. No asset, state/save, safety, dependency, backend or build-step change was made.
+- Next safe action: keep the corrected placement as the Moonlake reference anchor and apply the same reserved-plaza rule when staging the remaining six Linkara region habitats.
+
+### 2026-07-14 - Codex - Six Linkara Region Diorama Art R1 - IN PROGRESS
+
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `TP-HAB-SIX-REGION-ART-1`.
+- Layer / scope: EXPERIENCE visual-production staging only. The six existing region JPGs under `assets/backgrounds/linkara/regions/**` are read-only geography/landmark canon. Expected writes are limited to `output/habitat/linkara-six-region-diorama-r1/**` and this ledger.
+- Art direction: preserve each region's identity while applying Moonlake's locked hybrid direction: B2 clear central companion plaza and mobile interaction corridor, A2 clay/resin miniature material, and C2 depth-banded atmospheric haze. Produce same-composition day/night review assets and `390x844` safe-zone previews without baked companions, UI, text or logos.
+- Red-line check: no dependency detection, relationship reward, FOMO, countdown, safety-help reward, unreachable repair, state/save, battle or companion-policy change.
+- Non-goals: no `assets/**` promotion, runtime region switching, `index.html`, Pixi groundworks, manifest wiring, new dependency/build step, commit or push. Human approval remains required before any generated art enters formal assets.
+- Acceptance: six recognizable regional geographies; consistent miniature-diorama family; readable ground plane; progressively softened/desaturated far scenery; same-composition day/night pairs; top `.12` and bottom `.20` UI bands clear; companion focal area unobstructed; prompt/manifest/QC evidence retained.

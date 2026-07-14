@@ -1,4 +1,3 @@
-import { clamp } from "../utils/clamp.js";
 import { getShardType } from "../data/lootTables.js";
 import {
   getCraftRecipe,
@@ -104,7 +103,13 @@ export function applyCraftByChoice(currentState = {}, choice, now = Date.now()) 
   return applyCraftRecipe(currentState, recipe.id, now);
 }
 
-/** UI：列出所有配方（成長頁按鈕）。 */
-export function listCraftRecipesForUi() {
-  return listCraftRecipes();
+/**
+ * UI：只列出「玩家手上已有相關碎晶」的配方。
+ * 好處：不會在只有森息時，堆一排永遠灰掉的餘燼／潮汐按鈕。
+ */
+export function listCraftRecipesForUi(state = {}) {
+  const shards = state.expeditionVault?.shards || {};
+  return listCraftRecipes().filter((recipe) => {
+    return Object.keys(recipe.cost || {}).some((shardId) => (Number(shards[shardId]) || 0) > 0);
+  });
 }

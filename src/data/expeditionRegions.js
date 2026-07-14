@@ -12,6 +12,8 @@ export const PLAINS_WINDREST_REGION = Object.freeze({
   nodeId: "plains_windrest",
   label: { zh: "風歇草坡", en: "Windrest Meadow" },
   regionLabel: { zh: "北部翠綠平原", en: "Northern Verdant Plains" },
+  /** HUD 一句話：先給情緒，再給玩法。 */
+  hudCopy: "風會停的地方。讓牠自己決定走多遠。",
   /** 約 3 個螢幕寬（390×3）的俯視地景。 */
   worldWidth: 1170,
   worldHeight: 780,
@@ -76,6 +78,7 @@ export const FORGE_EMBERPATH_REGION = Object.freeze({
   nodeId: "forge_emberpath",
   label: { zh: "餘燼小徑", en: "Emberpath Trail" },
   regionLabel: { zh: "南部鍛造遺跡區", en: "Southern Forge Ruins" },
+  hudCopy: "熱意還沒散盡。靠近一點，但不必催牠。",
   worldWidth: 1040,
   worldHeight: 720,
   spawn: Object.freeze({ x: 120, y: 360 }),
@@ -128,6 +131,7 @@ export const HARBOR_QUAYSIDE_REGION = Object.freeze({
   nodeId: "harbor_quayside",
   label: { zh: "靜泊碼頭", en: "Stillharbor Quay" },
   regionLabel: { zh: "南港", en: "Southern Harbor" },
+  hudCopy: "潮水比心跳慢。這裡適合先呼吸，再前進。",
   worldWidth: 1100,
   worldHeight: 740,
   spawn: Object.freeze({ x: 130, y: 370 }),

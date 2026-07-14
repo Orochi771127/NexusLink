@@ -13,7 +13,7 @@ export const SCENE_LAYOUT = {
     { id: "campfire_left", x: 118, y: 552, scale: { x: 0.088, y: 0.088 } },
     { id: "crystal_cluster", x: 290, y: 604, scale: { x: 0.13, y: 0.13 } },
     { id: "stone_arch_right", x: 330, y: 465, scale: { x: 0.106, y: 0.106 } },
-    { id: "companion", x: 195, y: 532, scale: { x: 0.72, y: 0.72 } }
+    { id: "companion", x: 195, y: 590, scale: { x: 0.72, y: 0.72 } }
   ],
   anchors: {
     magic_circle: { x: 0.5, y: 0.5 },

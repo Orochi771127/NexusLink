@@ -206,7 +206,7 @@ export function createPageRouter({
         return `<span><strong>${Number(count)}</strong><em>${escapeHtml(label)}</em></span>`;
       })
       .join("");
-    const craftRecipes = listCraftRecipesForUi();
+    const craftRecipes = listCraftRecipesForUi(state);
     const craftButtons = craftRecipes.map((recipe) => {
       const afford = canAffordRecipe(state, recipe.id);
       return `
@@ -216,6 +216,7 @@ export function createPageRouter({
           data-choice="${recipe.choice}"
           data-status="${escapeHtml(recipe.status)}"
           ${afford ? "" : "disabled"}
+          title="${afford ? escapeHtml(recipe.status) : "碎晶還不夠，先完成遠征再回來"}"
         >
           <strong>${escapeHtml(recipe.label.zh)}</strong>
           <em>${escapeHtml(recipe.sub.zh)}</em>

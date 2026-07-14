@@ -152,6 +152,25 @@ body.expedition-active #page-layer {
   white-space: pre-wrap;
 }
 
+/* 玩家預設看不到技術除錯列；開發時可設 body[data-expedition-debug="1"] */
+.expedition-intent-debug {
+  display: none;
+}
+
+body[data-expedition-debug="1"] .expedition-intent-debug {
+  display: block;
+  margin-top: 4px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.68rem;
+  opacity: 0.75;
+  white-space: pre-wrap;
+}
+
+.expedition-intent-text.is-memory {
+  color: #d8f0ff;
+  font-style: italic;
+}
+
 .map-expedition-launch-list {
   display: flex;
   flex-direction: column;

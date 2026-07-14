@@ -59,12 +59,14 @@ export function createExpeditionSession({
     lastIntent: {
       type: "EXPLORE",
       targetId: null,
-      reason: "INIT_PATROL",
+      reason: "牠在入口附近嗅了嗅，準備開始巡邏。",
       confidence: 1
     },
     visitedExplorePoints: [],
     triggeredMemoryEvents: [],
     pendingMemoryEvent: null,
+    /** 記憶旁白停頓截止時間（epoch ms）；期間不重算 Utility AI。 */
+    memoryHoldUntil: 0,
     activeTargetId: null,
     relationship: {
       bond: Number(state.bond) || 0,

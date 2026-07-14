@@ -13,15 +13,21 @@ import {
 import { DETECT_RADIUS } from "./combatResolver.js";
 import { getLivingEnemies } from "./encounterDirector.js";
 import { countUncollectedLoot } from "./lootSystem.js";
+import { getEnemyById } from "../data/enemyRegistry.js";
 
+/**
+ * 意圖旁白：用語避免綁死單一地圖（「草叢」），
+ * 讓三區共用時仍像「這隻夥伴在想什麼」，而不是系統 log。
+ */
 const REASON_COPY = Object.freeze({
   EXPLORE: {
     default: "牠想先看看附近有什麼可疑的地方。",
     low_energy: "牠放慢腳步，只敢在附近轉轉。",
-    target_near: "牠在那片草叢邊停了下來，正在查看。"
+    target_near: "牠在那裡停了下來，正在查看。"
   },
   ATTACK: {
-    default: "牠決定試著驅散那道空鳴。",
+    default: "牠決定試著驅散那道雜訊。",
+    named: "牠決定試著驅散{enemy}。",
     focus: "牠相信你的判斷，朝那個目標撲去。",
     angry: "牠的背脊微微拱起，準備接戰。",
     low_hp: "儘管受傷，牠仍選擇守在你前面。"
@@ -55,13 +61,22 @@ function pickReason(type, context = {}) {
     return pool.target_near;
   }
   if (type === "ATTACK" && context.playerFocus) return pool.focus;
+  if (type === "ATTACK" && context.hpRatio != null && context.hpRatio < 0.4) return pool.low_hp;
   if (type === "ATTACK" && context.mood === "defensive") return pool.angry;
+  if (type === "ATTACK" && context.enemyName) {
+    return (pool.named || pool.default).replace("{enemy}", context.enemyName);
+  }
   if (type === "EVADE" && context.mood === "anxious") return pool.anxious;
   if (type === "COLLECT" && context.distToLoot != null && context.distToLoot < 40) return pool.near;
   if (type === "RETREAT" && context.playerOrdered && context.trust < 35) return pool.low_trust;
   if (type === "RETREAT" && context.playerOrdered && context.trust >= 35) return pool.ordered;
   if (type === "RETREAT" && context.refuseDeep) return pool.refuse;
   return pool.default;
+}
+
+function enemyDisplayName(enemy) {
+  if (!enemy) return null;
+  return getEnemyById(enemy.enemyId)?.name?.zh || null;
 }
 
 function pickNearestLoot(session, nav) {
@@ -89,8 +104,14 @@ function pickCombatTarget(session, nav, detectRadius, focusId) {
     const focused = visible.find((e) => e.id === focusId);
     if (focused) return focused;
   }
-  // 灰影貓偏好低威脅
-  return visible.sort((a, b) => (a.threat ?? 0) - (b.threat ?? 0))[0];
+  // 灰影貓偏好低威脅；同威脅時選較近的，感覺更像「先處理眼前的」。
+  return visible.sort((a, b) => {
+    const threatDelta = (a.threat ?? 0) - (b.threat ?? 0);
+    if (threatDelta !== 0) return threatDelta;
+    const da = nav.distance(session.companion.x, session.companion.y, a.x, a.y);
+    const db = nav.distance(session.companion.x, session.companion.y, b.x, b.y);
+    return da - db;
+  })[0];
 }
 
 /**
@@ -98,7 +119,7 @@ function pickCombatTarget(session, nav, detectRadius, focusId) {
  */
 export function decideCompanionIntent(session, region, nav) {
   if (!session || !region) {
-    return { type: "IDLE", targetId: null, reason: "NO_SESSION", confidence: 0 };
+    return { type: "IDLE", targetId: null, reason: "牠還在對齊方向。", confidence: 0 };
   }
 
   const profile = session.profile || {};
@@ -205,7 +226,8 @@ export function decideCompanionIntent(session, region, nav) {
       reason: pickReason("ATTACK", {
         playerFocus: session.playerFocusTargetId === enemyTarget.id,
         mood: rel.mood,
-        hpRatio
+        hpRatio,
+        enemyName: enemyDisplayName(enemyTarget)
       }),
       confidence: Math.min(0.98, score)
     };

@@ -2,6 +2,7 @@ import { BRAIN_TICK_MS } from "./expeditionConfig.js";
 import { decideCompanionIntent } from "./companionBrain.js";
 import { createNavigationGrid } from "./navigationGrid.js";
 import { getExpeditionRegionByNodeId } from "../data/expeditionRegions.js";
+import { getEnemyById } from "../data/enemyRegistry.js";
 import {
   applyAttack,
   ATTACK_RANGE,
@@ -11,11 +12,12 @@ import {
 } from "./combatResolver.js";
 import { getLivingEnemies, markEnemyAlert } from "./encounterDirector.js";
 import { spawnLootFromEnemy, updateLootPhysics, countUncollectedLoot } from "./lootSystem.js";
-import { tryTriggerMemoryEvent } from "./memoryEventDirector.js";
+import { consumePendingMemoryEvent, tryTriggerMemoryEvent } from "./memoryEventDirector.js";
 
 const ARRIVE_RADIUS = 22;
 const EVADE_SPEED_MULT = 1.15;
-const RETREAT_SPAWN = { x: 140, y: 390 };
+/** 探索點記憶事件：旁白停頓，避免下一拍 AI 立刻蓋掉情緒時刻。 */
+const MEMORY_HOLD_MS = 2800;
 
 /**
  * 遠征引擎 tick：AI + 移動 + 簡化戰鬥 + 掉落。
@@ -23,6 +25,7 @@ const RETREAT_SPAWN = { x: 140, y: 390 };
 export function createExpeditionEngine(session) {
   const region = getExpeditionRegionByNodeId(session?.nodeId);
   const nav = createNavigationGrid(region);
+  const retreatPoint = region?.spawn || { x: 140, y: 390 };
 
   function tick(deltaMs, now = Date.now()) {
     if (!session || !region) return session;
@@ -35,19 +38,27 @@ export function createExpeditionEngine(session) {
     updateLootPhysics(session, deltaMs);
 
     if (session.phase === "retreating") {
-      moveToward(session, region, nav, RETREAT_SPAWN.x, RETREAT_SPAWN.y, deltaMs, 1.1);
-      if (nav.distance(session.companion.x, session.companion.y, RETREAT_SPAWN.x, RETREAT_SPAWN.y) < 36) {
+      // 撤退必須回「本區入口」，不可寫死風歇草坡座標。
+      moveToward(session, region, nav, retreatPoint.x, retreatPoint.y, deltaMs, 1.1);
+      if (nav.distance(session.companion.x, session.companion.y, retreatPoint.x, retreatPoint.y) < 36) {
         session.phase = "complete";
         session.lastIntent = {
           type: "RETREAT",
-          reason: "牠回到了入口營地一帶，遠征結束。",
+          reason: "牠回到了入口一帶，遠征結束。",
           confidence: 1
         };
       }
       return session;
     }
 
-    if (session.brainAccumMs >= BRAIN_TICK_MS) {
+    // 記憶停頓期間：不重算意圖，讓玩家讀完那句 excerpt。
+    const holdingMemory = Boolean(session.memoryHoldUntil && now < session.memoryHoldUntil);
+    if (!holdingMemory && session.pendingMemoryEvent) {
+      consumePendingMemoryEvent(session);
+      session.memoryHoldUntil = 0;
+    }
+
+    if (!holdingMemory && session.brainAccumMs >= BRAIN_TICK_MS) {
       session.brainAccumMs = 0;
       session.lastIntent = decideCompanionIntent(session, region, nav);
       session.debug.brainTicks += 1;
@@ -59,19 +70,23 @@ export function createExpeditionEngine(session) {
     const intent = session.lastIntent || {};
     tickEnemyAwareness(session, now);
 
-    if (intent.type === "ATTACK") {
+    // 記憶停頓時仍可微幅減速（像愣住），但不主動開打。
+    if (holdingMemory || intent.type === "INVESTIGATE") {
+      session.companion.vx *= 0.7;
+      session.companion.vy *= 0.7;
+    } else if (intent.type === "ATTACK") {
       handleAttackIntent(session, region, nav, intent, deltaMs, now);
     } else if (intent.type === "EVADE") {
       handleEvadeIntent(session, region, nav, intent, deltaMs);
     } else if (intent.type === "COLLECT" || intent.type === "EXPLORE") {
-      handleMoveIntent(session, region, nav, intent, deltaMs);
+      handleMoveIntent(session, region, nav, intent, deltaMs, now);
     } else if (intent.type === "REST" || intent.type === "IDLE") {
       session.companion.vx *= 0.85;
       session.companion.vy *= 0.85;
     }
 
     tickEnemyAttacks(session, deltaMs, now);
-    checkExtractReady(session);
+    checkExtractReady(session, region);
 
     if (session.companion.hp <= 0) {
       session.phase = "retreating";
@@ -100,7 +115,7 @@ function tickEnemyAwareness(session, now) {
 function handleAttackIntent(session, region, nav, intent, deltaMs, now) {
   const enemy = getLivingEnemies(session).find((e) => e.id === intent.targetId);
   if (!enemy) {
-    handleMoveIntent(session, region, nav, intent, deltaMs);
+    handleMoveIntent(session, region, nav, intent, deltaMs, now);
     return;
   }
 
@@ -112,9 +127,10 @@ function handleAttackIntent(session, region, nav, intent, deltaMs, now) {
       if (enemy.hp <= 0) {
         session.stats.kills += 1;
         spawnLootFromEnemy(session, enemy, session.regionId);
+        const enemyName = getEnemyById(enemy.enemyId)?.name?.zh || "雜訊";
         session.lastIntent = {
           ...intent,
-          reason: "空鳴回響散開了，碎晶落在草叢裡。"
+          reason: `${enemyName}散開了，碎晶落在附近。`
         };
       }
     }
@@ -135,7 +151,7 @@ function handleEvadeIntent(session, region, nav, intent, deltaMs) {
   moveToward(session, region, nav, fleeX, fleeY, deltaMs, EVADE_SPEED_MULT);
 }
 
-function handleMoveIntent(session, region, nav, intent, deltaMs) {
+function handleMoveIntent(session, region, nav, intent, deltaMs, now = Date.now()) {
   if (intent.targetX == null || intent.targetY == null) return;
 
   const dx = intent.targetX - session.companion.x;
@@ -145,8 +161,11 @@ function handleMoveIntent(session, region, nav, intent, deltaMs) {
   if (dist <= ARRIVE_RADIUS) {
     if (intent.type === "EXPLORE" && intent.targetId && !session.visitedExplorePoints.includes(intent.targetId)) {
       session.visitedExplorePoints.push(intent.targetId);
-      tryTriggerMemoryEvent(session, intent.targetId);
-      if (!session.pendingMemoryEvent) {
+      const memory = tryTriggerMemoryEvent(session, intent.targetId);
+      if (memory) {
+        // 觸發後進入停頓：HUD 會停在記憶 excerpt 約 2.8 秒。
+        session.memoryHoldUntil = now + MEMORY_HOLD_MS;
+      } else {
         session.lastIntent = {
           ...intent,
           reason: "牠在那裡查看了一會兒，似乎沒有發現什麼異樣。"
@@ -197,12 +216,23 @@ function tickEnemyAttacks(session, deltaMs, now) {
   });
 }
 
-/** 清場且碎晶撿完 → 可立即結算（不必走回入口）。 */
-function checkExtractReady(session) {
+/**
+ * 可結算條件：
+ * - 清場 + 撿完碎晶（有擊殺），或
+ * - 和平路徑：探索點全訪 + 無存活敵 + 無未撿碎晶
+ * 不必強迫走回入口。
+ */
+function checkExtractReady(session, region) {
   if (session.phase === "retreating" || session.phase === "complete") return;
   if (getLivingEnemies(session).length > 0) return;
   if (countUncollectedLoot(session) > 0) return;
-  if ((session.stats?.kills || 0) < 1) return;
+
+  const kills = session.stats?.kills || 0;
+  const exploreTotal = region?.explorePoints?.length || 0;
+  const visited = session.visitedExplorePoints?.length || 0;
+  const fullyExplored = exploreTotal > 0 && visited >= exploreTotal;
+
+  if (kills < 1 && !fullyExplored) return;
   session.phase = "extract_ready";
 }
 
@@ -211,5 +241,7 @@ export function getExpeditionRegionForSession(session) {
 }
 
 export function shouldAutoFinish(session) {
-  return session?.phase === "complete" || session?.phase === "retreating" && session.companion.hp <= 0;
+  if (!session) return false;
+  if (session.phase === "complete") return true;
+  return session.phase === "retreating" && session.companion.hp <= 0;
 }

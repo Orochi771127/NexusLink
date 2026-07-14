@@ -10,7 +10,8 @@ import { buildExpeditionSettlement, mergeExpeditionVault } from "../../src/exped
 import { tryTriggerMemoryEvent } from "../../src/expedition/memoryEventDirector.js";
 import { createNavigationGrid } from "../../src/expedition/navigationGrid.js";
 import { getExpeditionRegionByNodeId } from "../../src/data/expeditionRegions.js";
-import { applyCraftRecipe, canAffordRecipe } from "../../src/expedition/expeditionCraftEngine.js";
+import { applyCraftRecipe, canAffordRecipe, listCraftRecipesForUi } from "../../src/expedition/expeditionCraftEngine.js";
+import { shouldAutoFinish } from "../../src/expedition/expeditionEngine.js";
 
 const BASE_STATE = {
   bond: 50,
@@ -173,6 +174,52 @@ const cases = [
         "tide_calm"
       );
       return result.ok && result.statePatch.expeditionVault.shards.tide_shard === 1;
+    }
+  ),
+  runCase(
+    "成長頁配方過濾：只有森息時不顯示餘燼/潮汐",
+    () => {},
+    () => {
+      const list = listCraftRecipesForUi({ expeditionVault: { shards: { forest_shard: 2 } } });
+      const ids = list.map((r) => r.id);
+      return ids.includes("forest_resonance")
+        && ids.includes("forest_breath")
+        && !ids.includes("ember_ward")
+        && !ids.includes("tide_calm");
+    }
+  ),
+  runCase(
+    "記憶事件停頓：excerpt 不會立刻被 AI 蓋掉",
+    (s) => {
+      tryTriggerMemoryEvent(s, "ep_hidden");
+      s.memoryHoldUntil = Date.now() + 5000;
+      const engine = createExpeditionEngine(s);
+      const excerpt = s.lastIntent.reason;
+      for (let i = 0; i < 8; i += 1) {
+        engine.tick(400, Date.now() + i * 50);
+      }
+      s.__holdExcerpt = excerpt;
+    },
+    (_intent, s) => s.lastIntent?.type === "INVESTIGATE" && s.lastIntent.reason === s.__holdExcerpt
+  ),
+  runCase(
+    "三區皆有 hudCopy 情緒文案",
+    () => {},
+    () => {
+      return ["plains_windrest", "forge_emberpath", "harbor_quayside"].every((id) => {
+        const region = getExpeditionRegionByNodeId(id);
+        return typeof region?.hudCopy === "string" && region.hudCopy.length > 4;
+      });
+    }
+  ),
+  runCase(
+    "shouldAutoFinish 運算子優先順序正確",
+    () => {},
+    () => {
+      const complete = shouldAutoFinish({ phase: "complete", companion: { hp: 10 } });
+      const retreatingAlive = shouldAutoFinish({ phase: "retreating", companion: { hp: 10 } });
+      const retreatingDead = shouldAutoFinish({ phase: "retreating", companion: { hp: 0 } });
+      return complete && !retreatingAlive && retreatingDead;
     }
   )
 ];
