@@ -14,16 +14,15 @@ export const SCENE_ASSETS = Object.freeze({
   bgDay: ASSET_MANIFEST.backgrounds.lakeDay,
   bgNight: ASSET_MANIFEST.backgrounds.lakeNight,
   // 靜態營地帳篷／碼頭：畫在平台與 runtime props 之下
-  campStructures: ASSET_MANIFEST.layers.campStructures,
-  magicCircle: ASSET_MANIFEST.platforms.magicCircle,
+  campStructuresDay: ASSET_MANIFEST.layers.campStructuresDay,
+  campStructuresNight: ASSET_MANIFEST.layers.campStructuresNight,
   lanternPost: ASSET_MANIFEST.props.lanternPost,
-  stoneArch: ASSET_MANIFEST.props.stoneArch,
-  campfire: ASSET_MANIFEST.props.campfire,
   crystal: ASSET_MANIFEST.props.crystal,
   sun: ASSET_MANIFEST.props.sun,
   moon: ASSET_MANIFEST.props.moon,
   // 前景遮擋：畫在夥伴之上、天氣 FX 之下，製造 2.5D 景深
-  foregroundOcclusion: ASSET_MANIFEST.layers.foregroundOcclusion
+  foregroundOcclusionDay: ASSET_MANIFEST.layers.foregroundOcclusionDay,
+  foregroundOcclusionNight: ASSET_MANIFEST.layers.foregroundOcclusionNight
 });
 
 // 層序對齊 habitat 契約：midground(camp) → platform → props → entity → occlusion → FX
@@ -119,8 +118,7 @@ export async function createEnvironmentLayer(layers, app) {
   moon.visible = true;
   layers.layerCelestial.addChild(moon);
 
-  // 營地結構：已去背全幅層，對齊 safe zone；中央留空給夥伴
-  const campStructures = await createSceneSprite("camp_structures", SCENE_ASSETS.campStructures, {
+  const campStructuresDay = await createSceneSprite("camp_structures_day", SCENE_ASSETS.campStructuresDay, {
     anchor: 0.5,
     x: Math.round(GAME_WIDTH / 2),
     y: Math.round(GAME_HEIGHT / 2),
@@ -128,17 +126,18 @@ export async function createEnvironmentLayer(layers, app) {
     height: GAME_HEIGHT,
     editorEnabled: false
   });
-  layers.layerMidground.addChild(campStructures);
+  layers.layerMidground.addChild(campStructuresDay);
 
-  // props / platform 已離線去背成透明 PNG（tools/preprocess-magenta-props.mjs），
-  // 直接載入即可，避免 runtime chroma 再留下紅／洋紅 fringe。
-  const magicCircle = await createSceneSprite("magic_circle", SCENE_ASSETS.magicCircle, {
-    anchor: getSceneLayoutAnchor("magic_circle"),
-    editorEnabled: true
+  const campStructuresNight = await createSceneSprite("camp_structures_night", SCENE_ASSETS.campStructuresNight, {
+    anchor: 0.5,
+    x: Math.round(GAME_WIDTH / 2),
+    y: Math.round(GAME_HEIGHT / 2),
+    width: GAME_WIDTH,
+    height: GAME_HEIGHT,
+    editorEnabled: false
   });
-  applyResponsiveLayout(magicCircle, "magic_circle");
-  magicCircle.alpha = 0.68;
-  layers.layerPlatform.addChild(magicCircle);
+  campStructuresNight.alpha = 0;
+  layers.layerMidground.addChild(campStructuresNight);
 
   const lanternPost = await createSceneSprite("lantern_post_left", SCENE_ASSETS.lanternPost, {
     anchor: getSceneLayoutAnchor("lantern_post_left"),
@@ -147,18 +146,6 @@ export async function createEnvironmentLayer(layers, app) {
   applyResponsiveLayout(lanternPost, "lantern_post_left");
   layers.layerForeground.addChild(lanternPost);
 
-  const campfireSprite = await createSceneSprite("campfire_left", SCENE_ASSETS.campfire, {
-    anchor: getSceneLayoutAnchor("campfire_left"),
-    editorEnabled: true
-  });
-  applyResponsiveLayout(campfireSprite, "campfire_left");
-  layers.layerForeground.addChild(campfireSprite);
-  const campfire = {
-    container: campfireSprite,
-    sparks: [],
-    sparkCooldownMs: 0
-  };
-
   const crystal = await createSceneSprite("crystal_cluster", SCENE_ASSETS.crystal, {
     anchor: getSceneLayoutAnchor("crystal_cluster"),
     editorEnabled: true
@@ -166,17 +153,9 @@ export async function createEnvironmentLayer(layers, app) {
   applyResponsiveLayout(crystal, "crystal_cluster");
   layers.layerForeground.addChild(crystal);
 
-  const stoneArch = await createSceneSprite("stone_arch_right", SCENE_ASSETS.stoneArch, {
-    anchor: getSceneLayoutAnchor("stone_arch_right"),
-    editorEnabled: true
-  });
-  applyResponsiveLayout(stoneArch, "stone_arch_right");
-  layers.layerForeground.addChild(stoneArch);
-
-  // 前景遮擋：疊在夥伴腳邊之上，天氣 FX 仍在最上層
-  const foregroundOcclusion = await createSceneSprite(
-    "foreground_occlusion",
-    SCENE_ASSETS.foregroundOcclusion,
+  const foregroundOcclusionDay = await createSceneSprite(
+    "foreground_occlusion_day",
+    SCENE_ASSETS.foregroundOcclusionDay,
     {
       anchor: 0.5,
       x: Math.round(GAME_WIDTH / 2),
@@ -186,20 +165,34 @@ export async function createEnvironmentLayer(layers, app) {
       editorEnabled: false
     }
   );
-  layers.layerOcclusion.addChild(foregroundOcclusion);
+  layers.layerOcclusion.addChild(foregroundOcclusionDay);
+
+  const foregroundOcclusionNight = await createSceneSprite(
+    "foreground_occlusion_night",
+    SCENE_ASSETS.foregroundOcclusionNight,
+    {
+      anchor: 0.5,
+      x: Math.round(GAME_WIDTH / 2),
+      y: Math.round(GAME_HEIGHT / 2),
+      width: GAME_WIDTH,
+      height: GAME_HEIGHT,
+      editorEnabled: false
+    }
+  );
+  foregroundOcclusionNight.alpha = 0;
+  layers.layerOcclusion.addChild(foregroundOcclusionNight);
 
   const environmentLayer = {
     bgDay,
     bgNight,
     sun,
     moon,
-    campStructures,
-    magicCircle,
+    campStructuresDay,
+    campStructuresNight,
     lanternPost,
-    campfire,
     crystal,
-    stoneArch,
-    foregroundOcclusion
+    foregroundOcclusionDay,
+    foregroundOcclusionNight
   };
 
   registerResponsiveEnvironmentLayer(layers, environmentLayer);
@@ -275,12 +268,13 @@ export function updateEnvironmentLayer(environmentLayer, ticker) {
   const state = EnvironmentController.getEnvironmentState();
   const nightAlpha = state.nightAlpha;
   environmentLayer.bgNight.alpha = nightAlpha;
+  environmentLayer.campStructuresDay.alpha = 1 - nightAlpha;
+  environmentLayer.campStructuresNight.alpha = nightAlpha;
+  environmentLayer.foregroundOcclusionDay.alpha = 1 - nightAlpha;
+  environmentLayer.foregroundOcclusionNight.alpha = nightAlpha;
 
   updateCelestialSprite(environmentLayer.sun, "sun", state.sunProgress, state.sunAlpha);
   updateCelestialSprite(environmentLayer.moon, "moon", state.moonProgress, state.moonAlpha);
-  if (environmentLayer.campfire) {
-    updateCampfireLayer(environmentLayer.campfire, nightAlpha, ticker);
-  }
 }
 
 function createSceneLayers(world) {
@@ -382,15 +376,12 @@ function resizeEnvironmentLayout(environmentLayer, app) {
 
   applyResponsiveLayout(environmentLayer.sun, "sun");
   applyResponsiveLayout(environmentLayer.moon, "moon");
-  resizeSafeZonePlate(environmentLayer.campStructures);
-  applyResponsiveLayout(environmentLayer.magicCircle, "magic_circle");
+  resizeSafeZonePlate(environmentLayer.campStructuresDay);
+  resizeSafeZonePlate(environmentLayer.campStructuresNight);
   applyResponsiveLayout(environmentLayer.lanternPost, "lantern_post_left");
-  if (environmentLayer.campfire?.container) {
-    applyResponsiveLayout(environmentLayer.campfire.container, "campfire_left");
-  }
   applyResponsiveLayout(environmentLayer.crystal, "crystal_cluster");
-  applyResponsiveLayout(environmentLayer.stoneArch, "stone_arch_right");
-  resizeSafeZonePlate(environmentLayer.foregroundOcclusion);
+  resizeSafeZonePlate(environmentLayer.foregroundOcclusionDay);
+  resizeSafeZonePlate(environmentLayer.foregroundOcclusionNight);
 }
 
 function readGameRootSize(gameRoot) {

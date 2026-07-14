@@ -81,25 +81,55 @@ export const MOONLAKE_VIVARIUM_V3 = Object.freeze({
   })
 });
 
-export const ASSET_MANIFEST = Object.freeze({
+export const MOONLAKE_DIORAMA_R1 = Object.freeze({
   backgrounds: Object.freeze({
-    lakeDay: MOONLAKE_VIVARIUM_V3.backgrounds.day,
-    lakeNight: MOONLAKE_VIVARIUM_V3.backgrounds.night
+    night: "./assets/backgrounds/MoonlakeDiorama_r1/bg_night_base.png",
+    day: "./assets/backgrounds/MoonlakeDiorama_r1/bg_day_base.png"
   }),
   layers: Object.freeze({
-    campStructures: MOONLAKE_VIVARIUM_V3.layers.campStructures,
-    foregroundOcclusion: MOONLAKE_VIVARIUM_V3.layers.foregroundOcclusion
+    campStructuresDay: "./assets/layers/MoonlakeDiorama_r1/camp_structures_day.png",
+    campStructuresNight: "./assets/layers/MoonlakeDiorama_r1/camp_structures_night.png",
+    foregroundOcclusionDay: "./assets/layers/MoonlakeDiorama_r1/foreground_occlusion_day.png",
+    foregroundOcclusionNight: "./assets/layers/MoonlakeDiorama_r1/foreground_occlusion_night.png"
+  }),
+  props: Object.freeze({
+    lanternPost: "./assets/props/MoonlakeDiorama_r1/lantern_post.png",
+    crystal: "./assets/props/MoonlakeDiorama_r1/crystal_cluster.png",
+    sun: "./assets/props/MoonlakeDiorama_r1/celestial_sun.png",
+    moon: "./assets/props/MoonlakeDiorama_r1/celestial_moon.png",
+    crystalStates: Object.freeze({
+      glimmer: "./assets/props/MoonlakeDiorama_r1/crystal_states/crystal_glimmer.png",
+      seed: "./assets/props/MoonlakeDiorama_r1/crystal_states/crystal_seed.png",
+      cluster: "./assets/props/MoonlakeDiorama_r1/crystal_states/crystal_cluster.png",
+      attuned: "./assets/props/MoonlakeDiorama_r1/crystal_states/crystal_attuned.png",
+      transformed: "./assets/props/MoonlakeDiorama_r1/crystal_states/crystal_transformed.png",
+      released: "./assets/props/MoonlakeDiorama_r1/crystal_states/crystal_released.png"
+    })
+  })
+});
+
+export const ASSET_MANIFEST = Object.freeze({
+  backgrounds: Object.freeze({
+    lakeDay: MOONLAKE_DIORAMA_R1.backgrounds.day,
+    lakeNight: MOONLAKE_DIORAMA_R1.backgrounds.night
+  }),
+  layers: Object.freeze({
+    campStructuresDay: MOONLAKE_DIORAMA_R1.layers.campStructuresDay,
+    campStructuresNight: MOONLAKE_DIORAMA_R1.layers.campStructuresNight,
+    foregroundOcclusionDay: MOONLAKE_DIORAMA_R1.layers.foregroundOcclusionDay,
+    foregroundOcclusionNight: MOONLAKE_DIORAMA_R1.layers.foregroundOcclusionNight
   }),
   platforms: Object.freeze({
     magicCircle: MOONLAKE_VIVARIUM_V3.platforms.magicCircle
   }),
   props: Object.freeze({
     campfire: MOONLAKE_VIVARIUM_V3.props.campfire,
-    crystal: MOONLAKE_VIVARIUM_V3.props.crystal,
-    lanternPost: MOONLAKE_VIVARIUM_V3.props.lanternPost,
+    crystal: MOONLAKE_DIORAMA_R1.props.crystal,
+    crystalStates: MOONLAKE_DIORAMA_R1.props.crystalStates,
+    lanternPost: MOONLAKE_DIORAMA_R1.props.lanternPost,
     stoneArch: MOONLAKE_VIVARIUM_V3.props.stoneArch,
-    sun: "./assets/props/LakeNightCamp_v2/celestial_sun.png",
-    moon: "./assets/props/LakeNightCamp_v2/celestial_moon.png"
+    sun: MOONLAKE_DIORAMA_R1.props.sun,
+    moon: MOONLAKE_DIORAMA_R1.props.moon
   }),
   audio: Object.freeze({
     bgm: "./assets/audio/bgm_nexuslink.m4a"

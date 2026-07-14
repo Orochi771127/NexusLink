@@ -805,7 +805,7 @@ async function bootScene(
         isSleeping
       });
     }
-    if (!environmentLayer.magicCircle.__sceneEditorOriginalAlpha) {
+    if (environmentLayer.magicCircle && !environmentLayer.magicCircle.__sceneEditorOriginalAlpha) {
       environmentLayer.magicCircle.alpha = 0.76 + Math.sin(t * 1.4) * 0.03;
     }
 

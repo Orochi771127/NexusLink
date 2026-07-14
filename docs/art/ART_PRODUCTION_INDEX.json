@@ -20,90 +20,94 @@
   ],
   "habitats": [
     {
-      "id": "HAB-MOONLAKE-V3",
-      "title": "Moonlake Vivarium (playable habitat)",
-      "packId": "MoonlakeVivarium_v3",
+      "id": "HAB-MOONLAKE-DIORAMA-R1",
+      "title": "Moonlake clay-resin diorama (playable habitat)",
+      "packId": "MoonlakeDiorama_r1",
       "status": "runtime-wired-local",
-      "statusNote": "MoonlakeVivarium_v3 playable habitat is committed: day/night bg at 1080x1920, transparent clay-resin props/platform, camp_structures + foreground_occlusion layers wired in assetManifest / pixiApp / moonlakeProfile. Props are true-alpha PNG (no runtime magenta chroma).",
+      "statusNote": "Owner-approved MoonlakeDiorama_r1 is runtime-wired: same-composition 1080x1920 day/night foundations, day/night structure and foreground crossfades, separate clay-resin celestial and grounded props, and a clear companion plaza safe zone.",
       "verifiedOnDisk": "2026-07-14",
       "artDirection": "Clay/resin miniature diorama, Nexus moonlake navy/cyan, no glass frame",
       "designRef": "docs/architecture/HABITAT_SYSTEM_MASTER_SPEC.md + src/data/sceneProfiles/moonlakeProfile.js",
-      "stagingRef": "output/linkara/moonlake/v5/manifest.json",
+      "stagingRef": "output/habitat/moonlake-diorama-r1/manifest.json",
       "wiring": {
-        "assetManifest": "src/data/assetManifest.js → MOONLAKE_VIVARIUM_V3 + ASSET_MANIFEST.backgrounds/layers/platforms/props",
-        "pixiLayers": "src/pixi/pixiApp.js → layerMidground (camp_structures), layerPlatform (magic_circle), layerOcclusion (foreground_occlusion)",
+        "assetManifest": "src/data/assetManifest.js → MOONLAKE_DIORAMA_R1 + ASSET_MANIFEST.backgrounds/layers/props",
+        "pixiLayers": "src/pixi/pixiApp.js → background day/night, layerMidground structure day/night, separate props, layerOcclusion day/night",
         "sceneProfile": "src/data/sceneProfiles/moonlakeProfile.js"
       },
       "ready": {
         "backgrounds": [
           {
             "id": "bg_day_base",
-            "path": "assets/backgrounds/MoonlakeVivarium_v3/bg_day_base.png",
+            "path": "assets/backgrounds/MoonlakeDiorama_r1/bg_day_base.png",
             "git": "tracked"
           },
           {
             "id": "bg_night_base",
-            "path": "assets/backgrounds/MoonlakeVivarium_v3/bg_night_base.png",
+            "path": "assets/backgrounds/MoonlakeDiorama_r1/bg_night_base.png",
             "git": "tracked"
           }
         ],
-        "platforms": [
+        "legacyPlatformsPreserved": [
           {
             "id": "magic_circle",
             "path": "assets/platforms/MoonlakeVivarium_v3/magic_circle.png",
-            "git": "tracked"
+            "git": "tracked",
+            "note": "Reference-audited rollback only; the active plaza rune is part of the coherent day/night foundation."
           }
         ],
         "props": [
           {
             "id": "lantern_post",
-            "path": "assets/props/MoonlakeVivarium_v3/lantern_post.png",
+            "path": "assets/props/MoonlakeDiorama_r1/lantern_post.png",
             "git": "tracked"
           },
           {
-            "id": "stone_arch",
-            "path": "assets/props/MoonlakeVivarium_v3/stone_arch.png",
+            "id": "celestial_sun",
+            "path": "assets/props/MoonlakeDiorama_r1/celestial_sun.png",
             "git": "tracked"
           },
           {
-            "id": "campfire",
-            "path": "assets/props/MoonlakeVivarium_v3/campfire.png",
+            "id": "celestial_moon",
+            "path": "assets/props/MoonlakeDiorama_r1/celestial_moon.png",
             "git": "tracked"
           },
           {
             "id": "crystal_cluster",
-            "path": "assets/props/MoonlakeVivarium_v3/crystal_cluster.png",
+            "path": "assets/props/MoonlakeDiorama_r1/crystal_cluster.png",
             "git": "tracked"
           }
         ],
         "layers": [
           {
-            "id": "camp_structures",
-            "path": "assets/layers/MoonlakeVivarium_v3/camp_structures.png",
+            "id": "camp_structures_day",
+            "path": "assets/layers/MoonlakeDiorama_r1/camp_structures_day.png",
             "pixiLayer": "layerMidground",
-            "git": "untracked-on-disk",
-            "stagingPath": "output/linkara/moonlake/v5/layers/moonlake_camp_structures.png"
+            "git": "tracked"
           },
           {
-            "id": "foreground_occlusion",
-            "path": "assets/layers/MoonlakeVivarium_v3/foreground_occlusion.png",
+            "id": "camp_structures_night",
+            "path": "assets/layers/MoonlakeDiorama_r1/camp_structures_night.png",
+            "pixiLayer": "layerMidground",
+            "git": "tracked"
+          },
+          {
+            "id": "foreground_occlusion_day",
+            "path": "assets/layers/MoonlakeDiorama_r1/foreground_occlusion_day.png",
             "pixiLayer": "layerOcclusion",
-            "git": "untracked-on-disk",
-            "stagingPath": "output/linkara/moonlake/v5/layers/moonlake_foreground_occlusion.png"
+            "git": "tracked"
+          },
+          {
+            "id": "foreground_occlusion_night",
+            "path": "assets/layers/MoonlakeDiorama_r1/foreground_occlusion_night.png",
+            "pixiLayer": "layerOcclusion",
+            "git": "tracked"
           }
         ],
-        "legacyCelestialsStillUsed": [
-          {
-            "id": "celestial_sun",
-            "path": "assets/props/LakeNightCamp_v2/celestial_sun.png",
-            "note": "Still referenced by ASSET_MANIFEST.props.sun"
-          },
-          {
-            "id": "celestial_moon",
-            "path": "assets/props/LakeNightCamp_v2/celestial_moon.png",
-            "note": "Still referenced by ASSET_MANIFEST.props.moon"
-          }
-        ]
+        "crystalLifecycle": {
+          "directory": "assets/props/MoonlakeDiorama_r1/crystal_states",
+          "states": ["glimmer", "seed", "cluster", "attuned", "transformed", "released"],
+          "runtimeNote": "Assets are promoted and manifest-addressable; state-driven texture switching remains a later experience task."
+        }
       },
       "gaps": [
         {
@@ -396,8 +400,8 @@
       "id": "GAP-3",
       "title": "Per-region playable habitat backgrounds (chapters 2-7)",
       "status": "blocked",
-      "blockedOn": "Engineering: region-habitat switching is not wired (game stays in the moonlake habitat; chapters play as a standoff overlay). Atlas far-view region JPGs already exist. Moonlake itself is NOT part of this gap — see habitats[HAB-MOONLAKE-V3]. Do not generate yet.",
-      "designRef": "assets/backgrounds/MoonlakeVivarium_v3 + assets/platforms|props|layers/MoonlakeVivarium_v3 (current playable moonlake reference set to match); LakeNightCamp_v2 remains legacy celestial sun/moon only",
+      "blockedOn": "Engineering: region-habitat switching is not wired (game stays in the moonlake habitat; chapters play as a standoff overlay). Atlas far-view region JPGs already exist. Moonlake itself is NOT part of this gap — see habitats[HAB-MOONLAKE-DIORAMA-R1]. Do not generate yet.",
+      "designRef": "assets/backgrounds/MoonlakeDiorama_r1 + assets/props|layers/MoonlakeDiorama_r1 (current playable Moonlake reference set); MoonlakeVivarium_v3 and LakeNightCamp_v2 remain preserved legacy references",
       "estimatedCount": {
         "backgrounds": 12
       },

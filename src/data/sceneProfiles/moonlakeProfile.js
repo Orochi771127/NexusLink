@@ -4,27 +4,29 @@
  * Runtime 消費方：environmentController / weatherFx / 未來 placement resolver。
  */
 
-import { MOONLAKE_VIVARIUM_V3 } from "../assetManifest.js";
+import { MOONLAKE_DIORAMA_R1 } from "../assetManifest.js";
 
 export const moonlakeProfile = Object.freeze({
   id: "moonlake",
-  version: 1,
+  version: 2,
   label: "Moonlake / 月湖棲地",
 
   artSize: Object.freeze({ width: 1080, height: 1920 }),
 
   background: Object.freeze({
     mode: "cover",
-    day: MOONLAKE_VIVARIUM_V3.backgrounds.day,
-    night: MOONLAKE_VIVARIUM_V3.backgrounds.night,
+    day: MOONLAKE_DIORAMA_R1.backgrounds.day,
+    night: MOONLAKE_DIORAMA_R1.backgrounds.night,
     sameComposition: true
   }),
 
   // 增量分層（非取代 full-bleed）：營地靜態結構 + 前景遮擋（疊在夥伴之上）。
   // sky/mountains/lake/ground 仍 baked 在 day/night foundation；天氣 FX 為程序層。
   layers: Object.freeze({
-    campStructures: MOONLAKE_VIVARIUM_V3.layers.campStructures,
-    foregroundOcclusion: MOONLAKE_VIVARIUM_V3.layers.foregroundOcclusion
+    campStructuresDay: MOONLAKE_DIORAMA_R1.layers.campStructuresDay,
+    campStructuresNight: MOONLAKE_DIORAMA_R1.layers.campStructuresNight,
+    foregroundOcclusionDay: MOONLAKE_DIORAMA_R1.layers.foregroundOcclusionDay,
+    foregroundOcclusionNight: MOONLAKE_DIORAMA_R1.layers.foregroundOcclusionNight
   }),
 
   safeZone: Object.freeze({ referenceWidth: 390, referenceHeight: 844 }),
@@ -97,24 +99,19 @@ export const moonlakeProfile = Object.freeze({
     ]),
     affinity: Object.freeze([
       Object.freeze({
-        id: "campfire",
-        kind: "campfire",
-        rect: Object.freeze({ x: 0.22, y: 0.62, w: 0.16, h: 0.1 })
+        id: "lanternLeft",
+        kind: "lantern",
+        rect: Object.freeze({ x: 0.12, y: 0.64, w: 0.14, h: 0.1 })
       }),
       Object.freeze({
         id: "crystal",
         kind: "crystal",
-        rect: Object.freeze({ x: 0.58, y: 0.54, w: 0.16, h: 0.1 })
+        rect: Object.freeze({ x: 0.68, y: 0.62, w: 0.16, h: 0.12 })
       }),
       Object.freeze({
         id: "magicCircle",
         kind: "platform",
         rect: Object.freeze({ x: 0.38, y: 0.6, w: 0.24, h: 0.1 })
-      }),
-      Object.freeze({
-        id: "stoneArch",
-        kind: "portal",
-        rect: Object.freeze({ x: 0.72, y: 0.5, w: 0.18, h: 0.12 })
       })
     ]),
     weather: Object.freeze([

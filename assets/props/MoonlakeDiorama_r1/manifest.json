@@ -1,0 +1,54 @@
+{
+  "id": "moonlake-diorama-r1",
+  "status": "human-approved-runtime",
+  "artSize": {
+    "width": 1080,
+    "height": 1920
+  },
+  "safeZone": {
+    "width": 390,
+    "height": 844,
+    "uiForbidden": [
+      { "x": 0, "y": 0, "w": 1, "h": 0.12 },
+      { "x": 0, "y": 0.8, "w": 1, "h": 0.2 }
+    ],
+    "companionReservedRect": { "x": 0.38, "y": 0.45, "w": 0.24, "h": 0.27 }
+  },
+  "renderOrder": [
+    "background-day-night",
+    "camp-structures-day-night",
+    "celestial",
+    "grounded-props",
+    "companion",
+    "foreground-occlusion-day-night",
+    "weather-and-trace-fx",
+    "dom-ui"
+  ],
+  "placements": {
+    "lantern_post_left": {
+      "anchor": { "x": 0.5, "y": 1 },
+      "x": 72,
+      "y": 604,
+      "scale": 0.095
+    },
+    "crystal_cluster": {
+      "anchor": { "x": 0.5, "y": 1 },
+      "x": 290,
+      "y": 604,
+      "scale": 0.13,
+      "stateAssets": [
+        "crystal_glimmer.png",
+        "crystal_seed.png",
+        "crystal_cluster.png",
+        "crystal_attuned.png",
+        "crystal_transformed.png",
+        "crystal_released.png"
+      ]
+    }
+  },
+  "notes": [
+    "The distant mountains, waterfalls, lake and plaza remain a coherent day/night foundation so shoreline seams cannot open at runtime.",
+    "Structures, celestial bodies, grounded props and foreground occlusion remain independent PixiJS layers.",
+    "Legacy MoonlakeVivarium_v3 assets are preserved for reference-audited rollback."
+  ]
+}
