@@ -2471,6 +2471,15 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Known review points: Thunder crystal micro-detail interpolation, WaveCub face-angle strength, Phoenix talon-lift subtlety, Star Foal high foreleg stylization, and Goldenspark gear-tail motion amplitude remain Owner visual decisions.
 - Next safe action: wait for explicit Owner pilot approval. Do not promote to `assets/**` or touch registry/runtime without a separate GROUNDWORK task pack.
 
+### 2026-07-14 - Codex - Six Linkara Region Diorama Art R1 - PUBLISHED TO MAIN
+
+- Lane: `Game Art, UI, And Visual Production`.
+- Status: `PUBLISHED`; Owner explicitly authorized commit and push after confirming unrelated work was handled.
+- Commit / branch: `b41ba58` on `main`, pushed to `origin/main`.
+- Published scope: only `output/habitat/linkara-six-region-diorama-r1/**` (83 files): twelve day/night foundations, twelve masks, placement/safe-zone previews, contact sheets, prompt provenance, Scene Profile staging, manifest, reports, rejected baked-rain evidence and reproducible postprocessor.
+- Boundary: this publishes the human-review package, not formal `assets/**` promotion or runtime integration. `humanApproved`, `referenceAuditPassed` and `runtimeIntegrated` remain `false` in the manifest until a separately authorized GROUNDWORK promotion task.
+- Isolation: Black Iron Hacker, character-pilot and `docs/art/README.md` worktree changes were not staged or included.
+
 ### 2026-07-14 - Codex - Six Linkara Region Diorama Art R1 - COMPLETED
 
 - Lane: `Game Art, UI, And Visual Production`.
