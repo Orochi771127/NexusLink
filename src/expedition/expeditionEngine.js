@@ -13,11 +13,24 @@ import {
 import { getLivingEnemies, markEnemyAlert } from "./encounterDirector.js";
 import { spawnLootFromEnemy, updateLootPhysics, countUncollectedLoot } from "./lootSystem.js";
 import { consumePendingMemoryEvent, tryTriggerMemoryEvent } from "./memoryEventDirector.js";
+import { narrateKillAftermath, narrateMemoryEcho } from "./intentNarration.js";
+import {
+  heartOnDamageTaken,
+  heartOnEnemyAlert,
+  heartOnKill,
+  heartOnMemoryEvent,
+  heartOnPatrolTick,
+  heartOnRestTick
+} from "./sessionHeart.js";
 
 const ARRIVE_RADIUS = 22;
 const EVADE_SPEED_MULT = 1.15;
 /** 探索點記憶事件：旁白停頓，避免下一拍 AI 立刻蓋掉情緒時刻。 */
 const MEMORY_HOLD_MS = 2800;
+/** 記憶回聲：主 excerpt 之後再留一句短尾音。 */
+const MEMORY_ECHO_MS = 1600;
+/** 戰術確認旁白短停。 */
+const TACTIC_ACK_MS = 1400;
 
 /**
  * 遠征引擎 tick：AI + 移動 + 簡化戰鬥 + 掉落。
@@ -51,27 +64,42 @@ export function createExpeditionEngine(session) {
       return session;
     }
 
-    // 記憶停頓期間：不重算意圖，讓玩家讀完那句 excerpt。
-    const holdingMemory = Boolean(session.memoryHoldUntil && now < session.memoryHoldUntil);
-    if (!holdingMemory && session.pendingMemoryEvent) {
+    // 旁白停頓（記憶 / 回聲 / 戰術確認）：不重算意圖，讓玩家讀完。
+    const holdingNarration = Boolean(session.memoryHoldUntil && now < session.memoryHoldUntil);
+    if (!holdingNarration && session.pendingMemoryEcho) {
+      // 主記憶結束 → 接回聲一句，再短停。
+      session.lastIntent = {
+        type: "INVESTIGATE",
+        targetId: session.lastIntent?.targetId || null,
+        reason: session.pendingMemoryEcho,
+        confidence: 0.82
+      };
+      session.memoryHoldUntil = now + MEMORY_ECHO_MS;
+      session.pendingMemoryEcho = null;
+      return session;
+    }
+    if (!holdingNarration && session.pendingMemoryEvent) {
       consumePendingMemoryEvent(session);
       session.memoryHoldUntil = 0;
     }
 
-    if (!holdingMemory && session.brainAccumMs >= BRAIN_TICK_MS) {
+    if (!holdingNarration && session.brainAccumMs >= BRAIN_TICK_MS) {
       session.brainAccumMs = 0;
       session.lastIntent = decideCompanionIntent(session, region, nav);
       session.debug.brainTicks += 1;
       if (session.lastIntent.targetId) {
         session.activeTargetId = session.lastIntent.targetId;
       }
+      if (session.lastIntent.type === "EXPLORE" || session.lastIntent.type === "IDLE") {
+        heartOnPatrolTick(session);
+      }
     }
 
     const intent = session.lastIntent || {};
     tickEnemyAwareness(session, now);
 
-    // 記憶停頓時仍可微幅減速（像愣住），但不主動開打。
-    if (holdingMemory || intent.type === "INVESTIGATE") {
+    // 旁白停頓時仍可微幅減速（像愣住），但不主動開打。
+    if (holdingNarration || intent.type === "INVESTIGATE") {
       session.companion.vx *= 0.7;
       session.companion.vy *= 0.7;
     } else if (intent.type === "ATTACK") {
@@ -80,7 +108,12 @@ export function createExpeditionEngine(session) {
       handleEvadeIntent(session, region, nav, intent, deltaMs);
     } else if (intent.type === "COLLECT" || intent.type === "EXPLORE") {
       handleMoveIntent(session, region, nav, intent, deltaMs, now);
-    } else if (intent.type === "REST" || intent.type === "IDLE") {
+    } else if (intent.type === "REST") {
+      // REST 有實際恢復：降 fatigue/stress、升 feltSafety。
+      session.companion.vx *= 0.85;
+      session.companion.vy *= 0.85;
+      heartOnRestTick(session, deltaMs);
+    } else if (intent.type === "IDLE") {
       session.companion.vx *= 0.85;
       session.companion.vy *= 0.85;
     }
@@ -107,7 +140,9 @@ export function createExpeditionEngine(session) {
 function tickEnemyAwareness(session, now) {
   getLivingEnemies(session).forEach((enemy) => {
     if (isDetected(session.companion.x, session.companion.y, enemy.x, enemy.y, DETECT_RADIUS)) {
+      const wasIdle = enemy.state !== "alert";
       markEnemyAlert(enemy);
+      if (wasIdle) heartOnEnemyAlert(session);
     }
   });
 }
@@ -127,11 +162,16 @@ function handleAttackIntent(session, region, nav, intent, deltaMs, now) {
       if (enemy.hp <= 0) {
         session.stats.kills += 1;
         spawnLootFromEnemy(session, enemy, session.regionId);
+        heartOnKill(session);
         const enemyName = getEnemyById(enemy.enemyId)?.name?.zh || "雜訊";
         session.lastIntent = {
           ...intent,
-          reason: `${enemyName}散開了，碎晶落在附近。`
+          reason: narrateKillAftermath(enemyName, {
+            mood: session.relationship?.mood,
+            brainTicks: session.debug?.brainTicks || 0
+          })
         };
+        session.memoryHoldUntil = now + TACTIC_ACK_MS;
       }
     }
     return;
@@ -163,8 +203,10 @@ function handleMoveIntent(session, region, nav, intent, deltaMs, now = Date.now(
       session.visitedExplorePoints.push(intent.targetId);
       const memory = tryTriggerMemoryEvent(session, intent.targetId);
       if (memory) {
-        // 觸發後進入停頓：HUD 會停在記憶 excerpt 約 2.8 秒。
+        heartOnMemoryEvent(session);
+        // 觸發後進入停頓：HUD 會停在記憶 excerpt，結束後可接 echo。
         session.memoryHoldUntil = now + MEMORY_HOLD_MS;
+        session.pendingMemoryEcho = narrateMemoryEcho(memory);
       } else {
         session.lastIntent = {
           ...intent,
@@ -212,6 +254,7 @@ function tickEnemyAttacks(session, deltaMs, now) {
     if (result.hit) {
       session.stats.damageTaken += result.damage;
       session.combatLog.push({ t: now, who: "enemy", damage: result.damage, target: enemy.id });
+      heartOnDamageTaken(session, result.damage);
     }
   });
 }

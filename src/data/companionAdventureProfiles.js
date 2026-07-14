@@ -19,6 +19,16 @@ export const COMPANION_ADVENTURE_PROFILES = Object.freeze({
   })
 });
 
+/**
+ * 正式遠征人格查詢（fail-closed）。
+ * 未知角色回 null——禁止默默變成灰影貓（RE-1 E-PERSONA）。
+ */
 export function getAdventureProfile(companionId) {
-  return COMPANION_ADVENTURE_PROFILES[companionId] || COMPANION_ADVENTURE_PROFILES["greyshade-cat"];
+  if (!companionId) return null;
+  return COMPANION_ADVENTURE_PROFILES[companionId] || null;
+}
+
+/** 是否具備可開遠征的正式 adventure profile。 */
+export function hasAdventureProfile(companionId) {
+  return Boolean(getAdventureProfile(companionId));
 }

@@ -23,14 +23,34 @@ export function buildExpeditionSettlement(session, { retreated = false } = {}, e
   const visited = session?.visitedExplorePoints?.length || 0;
   const memoryEvents = session?.triggeredMemoryEvents?.length || 0;
 
+  // 能量消耗：出門本身的成本（與擊殺／碎晶脫鉤）。
   energy = Math.max(0, energy - 1);
-  if (kills > 0) trust = clamp(trust + 1, 0, 100);
-  if (primaryCount >= 3) bond = clamp(bond + 1, 0, 100);
-  if (visited >= 2 && !retreated) bond = clamp(bond + 1, 0, 100);
-  if (memoryEvents >= 2 && !retreated) trust = clamp(trust + 1, 0, 100);
+
+  // RE-1 E-FARM：關係成長來自共同發現／尊重節奏，不是擊殺或碎晶農場。
+  // 每趟硬上限 bond/trust 各 +2。
+  let bondGain = 0;
+  let trustGain = 0;
+  if (memoryEvents >= 1 && !retreated) bondGain += 1;
+  if (memoryEvents >= 2 && !retreated) trustGain += 1;
+  if (visited >= 2 && !retreated) bondGain += 1;
+  if (visited >= 3 && memoryEvents >= 1 && !retreated) trustGain += 1;
+  bondGain = Math.min(2, bondGain);
+  trustGain = Math.min(2, trustGain);
+  bond = clamp(bond + bondGain, 0, 100);
+  trust = clamp(trust + trustGain, 0, 100);
+  // primaryCount／kills 只影響 journal／vault，不進關係公式（E-FARM）。
 
   const vaultPatch = mergeExpeditionVault(existingVault, session, { lootSummary: loot, retreated, kills });
   const memoryObjects = buildExpeditionMemoryObjects(session, Date.now());
+
+  // journal 保留給除錯／摘要；UI 結算發言改走 expeditionSettlementVoice（E-CORE）。
+  const journal = buildExpeditionJournal(session, {
+    retreated,
+    primaryShard,
+    primaryCount,
+    kills,
+    memoryEvents
+  });
 
   return {
     statePatch: { energy, bond, trust },
@@ -38,13 +58,9 @@ export function buildExpeditionSettlement(session, { retreated = false } = {}, e
     memoryObjects,
     lootSummary: loot,
     retreated,
-    journal: buildExpeditionJournal(session, {
-      retreated,
-      primaryShard,
-      primaryCount,
-      kills,
-      memoryEvents
-    })
+    bondGain,
+    trustGain,
+    journal
   };
 }
 

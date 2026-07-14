@@ -1,6 +1,7 @@
 import { getCompanionById } from "../data/companionRegistry.js";
 import { getExpeditionRegionByNodeId } from "../data/expeditionRegions.js";
 import { getRegionLootTable, getShardType } from "../data/lootTables.js";
+import { hasAdventureProfile } from "../data/companionAdventureProfiles.js";
 import {
   canLaunchExpedition,
   EXPEDITION_LAUNCH_NODE_ID,
@@ -27,6 +28,13 @@ import {
   destroyExpeditionScene,
   syncExpeditionScene
 } from "../pixi/expeditionScene.js";
+import { narrateTacticAck } from "../expedition/intentNarration.js";
+import {
+  buildExpeditionSettlementVoice,
+  publishExpeditionSettlementVoice
+} from "../expedition/expeditionSettlementVoice.js";
+import { prepareExpeditionCoreSettlement } from "../expedition/expeditionCoreBridge.js";
+import { heartOnCoerciveIntervention, heartOnGentleTactic } from "../expedition/sessionHeart.js";
 
 const TACTIC_LABELS = Object.freeze({
   conservative: "保守",
@@ -34,6 +42,10 @@ const TACTIC_LABELS = Object.freeze({
   aggressive: "積極",
   focus: "集火"
 });
+
+/** RE-1 E-COERCE：只有施壓型戰術累加介入壓力。 */
+const COERCIVE_TACTICS = new Set(["aggressive", "focus"]);
+const TACTIC_ACK_HOLD_MS = 1400;
 
 /**
  * 心域遠征 UI + 生命週期（Phase C/D + 4A 審查優化）。
@@ -106,16 +118,22 @@ export function createExpeditionController({
         </div>
         <div class="expedition-actions">
           <button type="button" class="expedition-extract-btn" hidden>完成遠征 · 返回棲地</button>
-          <button type="button" class="expedition-retreat-btn">撤退 · 返回棲地</button>
+          <button type="button" class="expedition-retreat-btn">返回棲地</button>
         </div>
       </div>
     `;
 
+    // RE-1 E-EXIT：返回棲地＝安全出口，永遠成功、不計 coercive 介入。
     overlayEl.querySelector(".expedition-retreat-btn").addEventListener("click", () => {
       if (!session) return;
       session.playerRetreatRequested = true;
-      session.playerInterventions = (session.playerInterventions || 0) + 1;
+      session.returnHomeRequested = true;
       session.phase = "retreating";
+      session.lastIntent = {
+        type: "RETREAT",
+        reason: "你決定先回棲地。牠跟著轉向入口。",
+        confidence: 1
+      };
     });
 
     overlayEl.querySelector(".expedition-extract-btn").addEventListener("click", () => {
@@ -126,20 +144,40 @@ export function createExpeditionController({
       btn.addEventListener("click", () => {
         if (!session) return;
         const tactic = btn.dataset.tactic;
-        session.playerInterventions = (session.playerInterventions || 0) + 1;
+
+        if (COERCIVE_TACTICS.has(tactic)) {
+          heartOnCoerciveIntervention(session);
+        } else {
+          heartOnGentleTactic(session);
+        }
 
         if (tactic === "focus") {
           const enemy = pickFocusEnemy(session);
           session.playerFocusTargetId = enemy?.id || null;
-          // 集火是「指定目標」，底層節奏維持目前戰術（預設平衡）。
           if (!session.playerTactics || session.playerTactics === "focus") {
             session.playerTactics = "balanced";
           }
+          session.lastIntent = {
+            type: "IDLE",
+            reason: narrateTacticAck("focus", {
+              hasFocusTarget: Boolean(enemy),
+              brainTicks: session.debug?.brainTicks || 0
+            }),
+            confidence: 0.9
+          };
         } else {
           session.playerTactics = tactic;
           session.playerFocusTargetId = null;
+          session.lastIntent = {
+            type: "IDLE",
+            reason: narrateTacticAck(tactic, {
+              brainTicks: session.debug?.brainTicks || 0
+            }),
+            confidence: 0.9
+          };
         }
 
+        session.memoryHoldUntil = Date.now() + TACTIC_ACK_HOLD_MS;
         syncTacticButtons(tactic);
       });
     });
@@ -180,7 +218,9 @@ export function createExpeditionController({
         ? `俯視黏土地景 · 自主索敵、接戰、拾取${shardHint}`
         : (state.energy ?? 0) <= 0
           ? "夥伴能量不足，請先回營地休息"
-          : "尚未解鎖此區域";
+          : !hasAdventureProfile(state.activeCompanionId)
+            ? "這位夥伴的遠征習性尚未寫入"
+            : "尚未解鎖此區域";
       return `
         <button type="button" class="map-expedition-launch" data-expedition-node="${nodeId}" ${canLaunch ? "" : "disabled"}>
           <strong>心域遠征 · ${region?.label?.zh || nodeId}</strong>
@@ -236,6 +276,12 @@ export function createExpeditionController({
     const summary = summarizeExpeditionSession(session);
     const bridge = getSceneBridge?.();
 
+    // Core 橋：輕量記憶政策 + reflection composer 接點（尚未完整 intent/critic）。
+    const corePrep = prepareExpeditionCoreSettlement(session, settlement, {
+      state: stateBefore,
+      companion: getCompanionById(session.companionId)
+    });
+
     store.updateState((draft) => {
       const patch = settlement.statePatch || {};
       if (typeof patch.energy === "number") draft.energy = patch.energy;
@@ -247,7 +293,9 @@ export function createExpeditionController({
         ...progress,
         lastNodeId: session.nodeId || progress.lastNodeId
       };
-      (settlement.memoryObjects || []).forEach((memoryObject) => {
+      // 不再無腦直寫 settlement.memoryObjects；只寫入通過 lite policy 的記憶。
+      // TODO(RE-3): 改接正式 memoryWriter／sedimentation（需 expedition gateway）。
+      (corePrep.memoryObjects || []).forEach((memoryObject) => {
         draft.emotionalMemories.push(memoryObject);
         draft.lastEmotionTag = memoryObject.emotion;
         const trace = createHabitatTraceFromMemory(memoryObject, Date.now());
@@ -259,9 +307,15 @@ export function createExpeditionController({
       });
     });
 
-    if (settlement.journal && soulTalkController) {
-      soulTalkController.addChat("companion", settlement.journal);
-      soulTalkController.renderChat();
+    // RE-2 E-CORE：系統事實 → system；夥伴第一人稱感受 → companion（經 adapter）。
+    // 禁止再把第三人稱 journal 直接當 companion 發言。
+    if (soulTalkController) {
+      const voice = buildExpeditionSettlementVoice(session, settlement, {
+        composeReflection: corePrep.composeReflection,
+        bridgeStatus: corePrep.bridgeStatus,
+        reflectionPathNote: corePrep.reflectionPathNote
+      });
+      publishExpeditionSettlementVoice(soulTalkController, voice);
     }
 
     teardownScene(bridge);

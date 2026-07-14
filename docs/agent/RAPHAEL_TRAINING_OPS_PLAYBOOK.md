@@ -66,7 +66,11 @@ celebrity imitation.
 2. **Standoff / combat depth** (RS series) — emotional rift standoff, not
    DPS / combo combat.
 3. **Expedition brain** (optional, later) — `companionBrain` /
-   `combatResolver` only after RA／RS gates are stable.
+   `combatResolver` only after RA／RS gates are stable. Boundaries live in
+   [`RAPHAEL_EXPEDITION_EVAL_CONTRACT.md`](../raphael/RAPHAEL_EXPEDITION_EVAL_CONTRACT.md)
+   (RE-1 `draft awaiting seal`). RE-2 runtime (session heart + settlement
+   voice split) may proceed on Owner request, but must **not** be labeled
+   Core-complete or commercial-ready until Owner seals RE-1 and feel-checks.
 
 Rationale: product audit flagged “companion never initiates” as the largest
 differentiation gap; TP-7 already wired player-visible initiative.

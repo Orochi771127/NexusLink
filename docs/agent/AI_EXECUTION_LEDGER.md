@@ -2411,3 +2411,18 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Red-line check: no dependency detection, relationship reward, FOMO, countdown, safety-help reward, unreachable repair, state/save, battle or companion-policy change.
 - Non-goals: no `assets/**` promotion, runtime region switching, `index.html`, Pixi groundworks, manifest wiring, new dependency/build step, commit or push. Human approval remains required before any generated art enters formal assets.
 - Acceptance: six recognizable regional geographies; consistent miniature-diorama family; readable ground plane; progressively softened/desaturated far scenery; same-composition day/night pairs; top `.12` and bottom `.20` UI bands clear; companion focal area unobstructed; prompt/manifest/QC evidence retained.
+
+### 2026-07-14 - Cursor - Expedition RE-1／RE-2 Runtime + P1 FPS Fix - VERIFIED (uncommitted)
+
+- Lane: `Raphael Core × Nexus Expedition`.
+- Status: `VERIFIED` for this pack’s runtime／QA／docs — **not** sealed, **not** Core-complete, **not** commercial-ready. No commit/push unless Owner asks.
+- Contract: `docs/raphael/RAPHAEL_EXPEDITION_EVAL_CONTRACT.md` status `draft awaiting seal`（不可偽造 `sealed v1`）。
+- RE-1 aligned runtime in tree: E-EXIT（返回棲地不計 coercive）、E-COERCE（僅積極／集火）、E-FARM（擊殺／碎晶不加 bond/trust）、E-PERSONA fail-closed、結算 system／companion 拆分、session heart、區域旁白。
+- RE-2／P1 this round:
+  1. **FPS release blocker fixed** — `heartOnRestTick` 改純 `deltaMs/1000`（移除每 frame 0.2s 地板）；1/30/60/120 FPS 在相同 1 秒真實時間下 fatigue/stress/feltSafety 等價。
+  2. **Core 裁決鏈誠實接線** — `expeditionCoreBridge.js`：`prepareExpeditionCoreSettlement`＋lite memory（`expedition_lite_v1`）；controller 傳 `composeReflection`／bridgeStatus；**明確標記**未接完整 intent／critic／memoryWriter（禁止假整合）。
+  3. QA／docs — matrix 增 E-EXIT／E-COERCE／FPS 等價／記憶 lite policy；高疲勞無敵人必須 REST；合約現況表修正（不再寫「fallback 灰影貓」）；理順 RE-2 開工＝Owner 明示例外。
+- Verification: `node docs/qa/expedition-behavior-matrix.mjs` → **28/28 PASS**；`node --check` on `sessionHeart.js`／`expeditionCoreBridge.js`／`expeditionSettlementVoice.js`／`expeditionController.js` OK. 未碰 `output/habitat/**`。
+- Honest gaps remaining: full Raphael event→critic→voice pack path；memoryWriter expedition gateway；`suggest_retreat` UI 與 return_home 分離；Owner seal + feel-check；release gate 納管。
+- Next safe action: Owner feel-check 一趟遠征；若要進版控再明示 commit。後續 RE-3 可接 memoryWriter gateway／完整 intent-critic 鏈（需獨立 TASK_PACK）。
+- Required reading: `docs/raphael/RAPHAEL_EXPEDITION_EVAL_CONTRACT.md`, `src/expedition/sessionHeart.js`, `src/expedition/expeditionCoreBridge.js`, `docs/qa/expedition-behavior-matrix.mjs`.

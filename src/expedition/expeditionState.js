@@ -2,6 +2,7 @@ import { getExpeditionRegionByNodeId } from "../data/expeditionRegions.js";
 import { getRegionLootTable, getShardType } from "../data/lootTables.js";
 import { getAdventureProfile } from "../data/companionAdventureProfiles.js";
 import { bootstrapExpeditionEncounter } from "./encounterDirector.js";
+import { createSessionHeart } from "./sessionHeart.js";
 
 /**
  * 建立一次遠征 session（純資料，不碰 DOM / Pixi / store）。
@@ -16,7 +17,9 @@ export function createExpeditionSession({
   const region = getExpeditionRegionByNodeId(nodeId);
   if (!region) return null;
 
+  // RE-1 E-PERSONA：無正式 profile 直接拒絕建 session。
   const profile = getAdventureProfile(companionId);
+  if (!profile) return null;
   const spawn = region.spawn || { x: 80, y: 80 };
 
   const session = {
@@ -36,7 +39,23 @@ export function createExpeditionSession({
     playerTactics: "balanced",
     playerFocusTargetId: null,
     playerRetreatRequested: false,
+    /** 安全出口：永遠成功，不走信任閘（RE-1 E-EXIT）。 */
+    returnHomeRequested: false,
     playerInterventions: 0,
+    /**
+     * Session heart：場內情緒（不可持久化）。
+     * 見 sessionHeart.js；結束後只影響結算政策，不整包寫回存檔。
+     */
+    heart: createSessionHeart(
+      {
+        bond: Number(state.bond) || 0,
+        trust: Number(state.trust) || 0,
+        mood: state.mood || "calm",
+        energy: Number(state.energy) || 0,
+        defense: Number(state.defense) || 0
+      },
+      profile
+    ),
     companion: {
       x: spawn.x,
       y: spawn.y,
@@ -65,7 +84,9 @@ export function createExpeditionSession({
     visitedExplorePoints: [],
     triggeredMemoryEvents: [],
     pendingMemoryEvent: null,
-    /** 記憶旁白停頓截止時間（epoch ms）；期間不重算 Utility AI。 */
+    /** 記憶 excerpt 之後的短回聲（session-only）。 */
+    pendingMemoryEcho: null,
+    /** 旁白停頓截止時間（epoch ms）；期間不重算 Utility AI。 */
     memoryHoldUntil: 0,
     activeTargetId: null,
     relationship: {

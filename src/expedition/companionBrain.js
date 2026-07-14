@@ -14,17 +14,14 @@ import { DETECT_RADIUS } from "./combatResolver.js";
 import { getLivingEnemies } from "./encounterDirector.js";
 import { countUncollectedLoot } from "./lootSystem.js";
 import { getEnemyById } from "../data/enemyRegistry.js";
+import { narrateExplore, narrateIdle } from "./intentNarration.js";
+import { readSessionHeart } from "./sessionHeart.js";
 
 /**
- * 意圖旁白：用語避免綁死單一地圖（「草叢」），
- * 讓三區共用時仍像「這隻夥伴在想什麼」，而不是系統 log。
+ * 意圖旁白：戰鬥／撤退等關鍵句固定；
+ * 巡邏／待機交給 intentNarration 依區域輪換，避免刷同一句。
  */
 const REASON_COPY = Object.freeze({
-  EXPLORE: {
-    default: "牠想先看看附近有什麼可疑的地方。",
-    low_energy: "牠放慢腳步，只敢在附近轉轉。",
-    target_near: "牠在那裡停了下來，正在查看。"
-  },
   ATTACK: {
     default: "牠決定試著驅散那道雜訊。",
     named: "牠決定試著驅散{enemy}。",
@@ -48,18 +45,26 @@ const REASON_COPY = Object.freeze({
   },
   REST: {
     default: "牠的能量不太夠，決定先歇一會。"
-  },
-  IDLE: {
-    default: "牠停下來，耳朵轉向風的方向。"
   }
 });
 
 function pickReason(type, context = {}) {
-  const pool = REASON_COPY[type] || REASON_COPY.IDLE;
-  if (type === "EXPLORE" && context.energy <= 2) return pool.low_energy;
-  if (type === "EXPLORE" && context.distToTarget != null && context.distToTarget < 28) {
-    return pool.target_near;
+  if (type === "EXPLORE") {
+    return narrateExplore(context.regionId, {
+      energy: context.energy,
+      distToTarget: context.distToTarget,
+      brainTicks: context.brainTicks
+    });
   }
+  if (type === "IDLE") {
+    return narrateIdle(context.regionId, {
+      brainTicks: context.brainTicks,
+      visitedCount: context.visitedCount
+    });
+  }
+
+  const pool = REASON_COPY[type];
+  if (!pool) return narrateIdle(context.regionId, context);
   if (type === "ATTACK" && context.playerFocus) return pool.focus;
   if (type === "ATTACK" && context.hpRatio != null && context.hpRatio < 0.4) return pool.low_hp;
   if (type === "ATTACK" && context.mood === "defensive") return pool.angry;
@@ -142,8 +147,12 @@ export function decideCompanionIntent(session, region, nav) {
     ? nav.distance(session.companion.x, session.companion.y, exploreTarget.x, exploreTarget.y)
     : null;
 
-  const playerOrderedRetreat = Boolean(session.playerRetreatRequested);
-  const refuseDeep = rel.defense >= 70 && (session.playerInterventions || 0) >= 3;
+  const heart = readSessionHeart(session);
+  const playerOrderedRetreat = Boolean(session.playerRetreatRequested)
+    && !session.returnHomeRequested;
+  // RE-2：refuseDeep 看 interventionPressure（被強迫感），不再只靠任意按鈕次數。
+  const refuseDeep = rel.defense >= 70
+    && ((heart.interventionPressure || 0) >= 0.5 || (session.playerInterventions || 0) >= 3);
 
   const scores = {
     EXPLORE: scoreExplore({
@@ -152,7 +161,8 @@ export function decideCompanionIntent(session, region, nav) {
       curiosity: profile.curiosity,
       energy: rel.energy,
       mood: rel.mood,
-      inCombat
+      inCombat,
+      heart
     }),
     ATTACK: scoreAttack({
       enemyVisible: Boolean(enemyTarget),
@@ -161,19 +171,22 @@ export function decideCompanionIntent(session, region, nav) {
       trust: rel.trust,
       tacticalBias: bias.attack,
       mood: rel.mood,
-      playerFocus: Boolean(session.playerFocusTargetId && enemyTarget?.id === session.playerFocusTargetId)
+      playerFocus: Boolean(session.playerFocusTargetId && enemyTarget?.id === session.playerFocusTargetId),
+      heart
     }),
     EVADE: scoreEvade({
       enemyVisible: Boolean(enemyTarget),
       riskAversion: profile.riskAversion,
       hpRatio,
       mood: rel.mood,
-      tacticalBias: bias.attack
+      tacticalBias: bias.attack,
+      heart
     }),
     COLLECT: scoreCollect({
       hasLoot: countUncollectedLoot(session) > 0 && !inCombat,
       distToLoot: lootPick?.dist,
-      curiosity: profile.curiosity
+      curiosity: profile.curiosity,
+      heart
     }),
     RETREAT: scoreRetreat({
       hpRatio,
@@ -181,9 +194,10 @@ export function decideCompanionIntent(session, region, nav) {
       riskAversion: profile.riskAversion,
       trust: rel.trust,
       playerOrdered: playerOrderedRetreat,
-      tacticalBias: bias.retreat
+      tacticalBias: bias.retreat,
+      heart
     }),
-    REST: scoreRest({ energy: rel.energy, mood: rel.mood, inCombat }),
+    REST: scoreRest({ energy: rel.energy, mood: rel.mood, inCombat, heart }),
     IDLE: scoreIdle()
   };
 
@@ -227,7 +241,9 @@ export function decideCompanionIntent(session, region, nav) {
         playerFocus: session.playerFocusTargetId === enemyTarget.id,
         mood: rel.mood,
         hpRatio,
-        enemyName: enemyDisplayName(enemyTarget)
+        enemyName: enemyDisplayName(enemyTarget),
+        regionId: region.id,
+        brainTicks: session.debug?.brainTicks || 0
       }),
       confidence: Math.min(0.98, score)
     };
@@ -259,7 +275,12 @@ export function decideCompanionIntent(session, region, nav) {
       targetId: exploreTarget.id,
       targetX: exploreTarget.x,
       targetY: exploreTarget.y,
-      reason: pickReason("EXPLORE", { energy: rel.energy, distToTarget }),
+      reason: pickReason("EXPLORE", {
+        energy: rel.energy,
+        distToTarget,
+        regionId: region.id,
+        brainTicks: session.debug?.brainTicks || 0
+      }),
       confidence: Math.min(0.98, score)
     };
   }
@@ -276,7 +297,11 @@ export function decideCompanionIntent(session, region, nav) {
   return {
     type: "IDLE",
     targetId: null,
-    reason: pickReason("IDLE"),
+    reason: pickReason("IDLE", {
+      regionId: region.id,
+      brainTicks: session.debug?.brainTicks || 0,
+      visitedCount: session.visitedExplorePoints?.length || 0
+    }),
     confidence: score
   };
 }
