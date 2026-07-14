@@ -17,6 +17,8 @@ export const SCENE_ASSETS = Object.freeze({
   magicCircle: ASSET_MANIFEST.platforms.magicCircle,
   lanternPost: ASSET_MANIFEST.props.lanternPost,
   stoneArch: ASSET_MANIFEST.props.stoneArch,
+  campfire: ASSET_MANIFEST.props.campfire,
+  crystal: ASSET_MANIFEST.props.crystal,
   sun: ASSET_MANIFEST.props.sun,
   moon: ASSET_MANIFEST.props.moon
 });
@@ -126,6 +128,25 @@ export async function createEnvironmentLayer(layers, app) {
   applyResponsiveLayout(lanternPost, "lantern_post_left");
   layers.layerForeground.addChild(lanternPost);
 
+  const campfireSprite = await createChromaKeyedSceneSprite("campfire_left", SCENE_ASSETS.campfire, {
+    anchor: getSceneLayoutAnchor("campfire_left"),
+    editorEnabled: true
+  });
+  applyResponsiveLayout(campfireSprite, "campfire_left");
+  layers.layerForeground.addChild(campfireSprite);
+  const campfire = {
+    container: campfireSprite,
+    sparks: [],
+    sparkCooldownMs: 0
+  };
+
+  const crystal = await createChromaKeyedSceneSprite("crystal_cluster", SCENE_ASSETS.crystal, {
+    anchor: getSceneLayoutAnchor("crystal_cluster"),
+    editorEnabled: true
+  });
+  applyResponsiveLayout(crystal, "crystal_cluster");
+  layers.layerForeground.addChild(crystal);
+
   const stoneArch = await createChromaKeyedSceneSprite("stone_arch_right", SCENE_ASSETS.stoneArch, {
     anchor: getSceneLayoutAnchor("stone_arch_right"),
     editorEnabled: true
@@ -140,6 +161,8 @@ export async function createEnvironmentLayer(layers, app) {
     moon,
     magicCircle,
     lanternPost,
+    campfire,
+    crystal,
     stoneArch
   };
 
@@ -219,6 +242,9 @@ export function updateEnvironmentLayer(environmentLayer, ticker) {
 
   updateCelestialSprite(environmentLayer.sun, "sun", state.sunProgress, state.sunAlpha);
   updateCelestialSprite(environmentLayer.moon, "moon", state.moonProgress, state.moonAlpha);
+  if (environmentLayer.campfire) {
+    updateCampfireLayer(environmentLayer.campfire, nightAlpha, ticker);
+  }
 }
 
 function createSceneLayers(world) {
@@ -303,6 +329,10 @@ function resizeEnvironmentLayout(environmentLayer, app) {
   applyResponsiveLayout(environmentLayer.moon, "moon");
   applyResponsiveLayout(environmentLayer.magicCircle, "magic_circle");
   applyResponsiveLayout(environmentLayer.lanternPost, "lantern_post_left");
+  if (environmentLayer.campfire?.container) {
+    applyResponsiveLayout(environmentLayer.campfire.container, "campfire_left");
+  }
+  applyResponsiveLayout(environmentLayer.crystal, "crystal_cluster");
   applyResponsiveLayout(environmentLayer.stoneArch, "stone_arch_right");
 }
 

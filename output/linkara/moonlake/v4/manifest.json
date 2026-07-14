@@ -1,0 +1,18 @@
+{
+  "version": "v4",
+  "generatedAt": "2026-07-14",
+  "artDirection": "Borderless full-bleed clay/resin miniature diorama — removes v3 glass vivarium frame",
+  "backgrounds": {
+    "night": "layers/bg_night_base_v4.png",
+    "day": "layers/bg_day_base_v4.png"
+  },
+  "props": {
+    "campfire": "props/campfire_v4.png",
+    "crystal": "props/crystal_cluster_v4.png"
+  },
+  "promotedTo": {
+    "backgrounds": "assets/backgrounds/MoonlakeVivarium_v3/",
+    "props": "assets/props/MoonlakeVivarium_v3/"
+  },
+  "runtimeNotes": "Separate lakeDay/lakeNight paths; campfire + crystal in layerForeground; stone_arch repositioned"
+}

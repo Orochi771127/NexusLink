@@ -63,15 +63,16 @@ export const RUNTIME_COMPANION_ASSET_KEYS = Object.freeze([
 export const MOONLAKE_VIVARIUM_V3 = Object.freeze({
   backgrounds: Object.freeze({
     night: "./assets/backgrounds/MoonlakeVivarium_v3/bg_night_base.png",
-    // v3 日間底圖尚未就緒；暫共用 night foundation，避免白天仍顯示 LakeNightCamp_v2。
-    day: "./assets/backgrounds/MoonlakeVivarium_v3/bg_night_base.png"
+    day: "./assets/backgrounds/MoonlakeVivarium_v3/bg_day_base.png"
   }),
   platforms: Object.freeze({
     magicCircle: "./assets/platforms/MoonlakeVivarium_v3/magic_circle.png"
   }),
   props: Object.freeze({
     lanternPost: "./assets/props/MoonlakeVivarium_v3/lantern_post.png",
-    stoneArch: "./assets/props/MoonlakeVivarium_v3/stone_arch.png"
+    stoneArch: "./assets/props/MoonlakeVivarium_v3/stone_arch.png",
+    campfire: "./assets/props/MoonlakeVivarium_v3/campfire.png",
+    crystal: "./assets/props/MoonlakeVivarium_v3/crystal_cluster.png"
   })
 });
 
@@ -84,8 +85,8 @@ export const ASSET_MANIFEST = Object.freeze({
     magicCircle: MOONLAKE_VIVARIUM_V3.platforms.magicCircle
   }),
   props: Object.freeze({
-    campfire: "./assets/props/LakeNightCamp_v2/prop_campfire.png",
-    crystal: "./assets/props/LakeNightCamp_v2/prop_crystal.png",
+    campfire: MOONLAKE_VIVARIUM_V3.props.campfire,
+    crystal: MOONLAKE_VIVARIUM_V3.props.crystal,
     lanternPost: MOONLAKE_VIVARIUM_V3.props.lanternPost,
     stoneArch: MOONLAKE_VIVARIUM_V3.props.stoneArch,
     sun: "./assets/props/LakeNightCamp_v2/celestial_sun.png",
