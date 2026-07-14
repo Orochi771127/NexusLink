@@ -34,6 +34,7 @@ import {
   publishExpeditionSettlementVoice
 } from "../expedition/expeditionSettlementVoice.js";
 import { prepareExpeditionCoreSettlement } from "../expedition/expeditionCoreBridge.js";
+import { buildExpeditionResultEvent } from "../expedition/expeditionResultEvent.js";
 import { heartOnCoerciveIntervention, heartOnGentleTactic } from "../expedition/sessionHeart.js";
 
 const TACTIC_LABELS = Object.freeze({
@@ -276,10 +277,13 @@ export function createExpeditionController({
     const summary = summarizeExpeditionSession(session);
     const bridge = getSceneBridge?.();
 
-    // Core 橋：輕量記憶政策 + reflection composer 接點（尚未完整 intent/critic）。
+    // RE-3：先組可驗證 result event，再經 Core bridge（gateway + composer + lite critic）。
+    // 仍非完整 intent／runCritics／Soul Talk memoryWriter — bridgeStatus.coreIntegrated 必為 false。
+    const resultEvent = buildExpeditionResultEvent(session, settlement);
     const corePrep = prepareExpeditionCoreSettlement(session, settlement, {
       state: stateBefore,
-      companion: getCompanionById(session.companionId)
+      companion: getCompanionById(session.companionId),
+      resultEvent
     });
 
     store.updateState((draft) => {
@@ -293,8 +297,7 @@ export function createExpeditionController({
         ...progress,
         lastNodeId: session.nodeId || progress.lastNodeId
       };
-      // 不再無腦直寫 settlement.memoryObjects；只寫入通過 lite policy 的記憶。
-      // TODO(RE-3): 改接正式 memoryWriter／sedimentation（需 expedition gateway）。
+      // 只寫入通過 expedition memory gateway 的記憶（source===expedition）。
       (corePrep.memoryObjects || []).forEach((memoryObject) => {
         draft.emotionalMemories.push(memoryObject);
         draft.lastEmotionTag = memoryObject.emotion;
@@ -307,8 +310,7 @@ export function createExpeditionController({
       });
     });
 
-    // RE-2 E-CORE：系統事實 → system；夥伴第一人稱感受 → companion（經 adapter）。
-    // 禁止再把第三人稱 journal 直接當 companion 發言。
+    // 系統事實 → system；夥伴第一人稱 → companion（經 composer／critic；禁止 journal 直寫）。
     if (soulTalkController) {
       const voice = buildExpeditionSettlementVoice(session, settlement, {
         composeReflection: corePrep.composeReflection,

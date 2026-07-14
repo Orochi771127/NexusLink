@@ -27,8 +27,18 @@ import {
 } from "../../src/expedition/expeditionSettlementVoice.js";
 import {
   filterExpeditionMemoryObjects,
+  prepareExpeditionCoreSettlement,
   EXPEDITION_CORE_BRIDGE_STATUS
 } from "../../src/expedition/expeditionCoreBridge.js";
+import {
+  buildExpeditionResultEvent,
+  validateExpeditionResultEvent
+} from "../../src/expedition/expeditionResultEvent.js";
+import {
+  decideExpeditionMemoryWrites,
+  EXPEDITION_MEMORY_WRITE_POLICY
+} from "../../src/expedition/expeditionMemoryGateway.js";
+import { critiqueExpeditionReflection } from "../../src/expedition/expeditionSettlementCritic.js";
 
 /** 模擬固定真實時間的 REST，拆成不同 FPS 的幀。 */
 function simulateRestAtFps(fps, totalSeconds = 1) {
@@ -507,6 +517,86 @@ const cases = [
         && rejectedIds.has("miss")
         && rejectedIds.has("empty")
         && reasons.has("non_expedition_source");
+    }
+  ),
+  runCase(
+    "RE3 result event：schema 可驗證且無 companionJournal",
+    () => {},
+    () => {
+      const session = {
+        companionId: "greyshade-cat",
+        regionId: "plains_windrest",
+        stats: { kills: 1 },
+        visitedExplorePoints: ["a"],
+        triggeredMemoryEvents: ["ep_hidden"],
+        heart: createSessionHeart(),
+        returnHomeRequested: true
+      };
+      const settlement = {
+        retreated: false,
+        bondGain: 1,
+        trustGain: 0,
+        lootSummary: { forest_shard: 2 },
+        memoryObjects: [{ id: "m1", excerpt: "草坡有風。", source: "expedition" }],
+        journal: "牠決定回家了。"
+      };
+      const event = buildExpeditionResultEvent(session, settlement, { now: 1000 });
+      const check = validateExpeditionResultEvent(event);
+      const bad = validateExpeditionResultEvent({
+        ...event,
+        companionJournal: "假扮夥伴"
+      });
+      return check.ok
+        && event.kind === "expedition_result"
+        && event.intentStub.authority === "expedition_event"
+        && event.intentStub.wired === false
+        && event.redLines.eExitBlocked === false
+        && !bad.ok
+        && bad.errors.includes("forbidden_companion_journal_field");
+    }
+  ),
+  runCase(
+    "RE3 memory gateway：寫入標 expedition_gateway_v1 且拒非 expedition",
+    () => {},
+    () => {
+      const decided = decideExpeditionMemoryWrites([
+        { id: "ok", excerpt: "草坡有風。", source: "expedition" },
+        { id: "st", excerpt: "心語。", source: "soul_talk" }
+      ]);
+      return decided.accepted.length === 1
+        && decided.accepted[0].writePolicy === EXPEDITION_MEMORY_WRITE_POLICY
+        && decided.accepted[0].viaSoulTalkMemoryWriter === false
+        && decided.soulTalkMemoryWriter === false
+        && decided.rejected.some((r) => r.memory?.id === "st");
+    }
+  ),
+  runCase(
+    "RE3 composer：產出第一人稱且 lite critic 擋第三人稱 journal",
+    () => {},
+    () => {
+      const session = {
+        companionId: "greyshade-cat",
+        triggeredMemoryEvents: [],
+        heart: { fatigue: 0.2, stress: 0.2, feltSafety: 0.6, interventionPressure: 0 },
+        returnHomeRequested: false
+      };
+      const settlement = { retreated: false, memoryObjects: [] };
+      const prep = prepareExpeditionCoreSettlement(session, settlement, {
+        companion: { id: "greyshade-cat", soulTalkTone: "quiet_observer" }
+      });
+      const text = prep.composeReflection({ session, settlement });
+      const thirdPerson = critiqueExpeditionReflection("牠決定先歇一會，湊過去看碎晶。");
+      const farmTone = critiqueExpeditionReflection("這趟羈絆+2，刷怪升好感真爽。");
+      return typeof text === "string"
+        && text.trim().length > 0
+        && !/^牠/.test(text)
+        && prep.bridgeStatus.coreIntegrated === false
+        && prep.bridgeStatus.memoryWrite === "expedition_gateway_v1"
+        && prep.eventValidation.ok === true
+        && thirdPerson.pass === false
+        && thirdPerson.issues.includes("third_person_journal")
+        && farmTone.pass === false
+        && farmTone.issues.includes("farm_relationship_tone");
     }
   )
 ];

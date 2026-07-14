@@ -2412,17 +2412,75 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Non-goals: no `assets/**` promotion, runtime region switching, `index.html`, Pixi groundworks, manifest wiring, new dependency/build step, commit or push. Human approval remains required before any generated art enters formal assets.
 - Acceptance: six recognizable regional geographies; consistent miniature-diorama family; readable ground plane; progressively softened/desaturated far scenery; same-composition day/night pairs; top `.12` and bottom `.20` UI bands clear; companion focal area unobstructed; prompt/manifest/QC evidence retained.
 
-### 2026-07-14 - Cursor - Expedition RE-1／RE-2 Runtime + P1 FPS Fix - VERIFIED (uncommitted)
+### 2026-07-14 - Cursor - Expedition RE-3 TASK_PACK #1 - IN PROGRESS (uncommitted)
 
 - Lane: `Raphael Core × Nexus Expedition`.
-- Status: `VERIFIED` for this pack’s runtime／QA／docs — **not** sealed, **not** Core-complete, **not** commercial-ready. No commit/push unless Owner asks.
+- Status: `IN PROGRESS`／runtime progress — **not** sealed, **not** Core-complete, **not** commercial-ready. Part A（lite source gate + roadmap）已 push：`e269cc0`. 本 RE-3 包**不自動 commit**，待 Owner 另指示。
+- Work performed:
+  1. `expeditionResultEvent.js` — 可驗證 `expedition_result` schema（facts／heart／redLines／intentStub；禁 `companionJournal`）。
+  2. `expeditionMemoryGateway.js` — `decideExpeditionMemoryWrites`（保留 `source===expedition`；`expedition_gateway_v1`；**不**呼叫 Soul Talk `buildMemoryDecision`）。
+  3. `expeditionSettlementCritic.js` + bridge composer — 真實第一人稱草稿 + lite critic（第三人稱／農場語氣 fail-closed）；接 `critiqueConstitution`／`critiquePersona` 能接的部分。
+  4. Controller 結算：先 `buildExpeditionResultEvent` → `prepareExpeditionCoreSettlement`。
+  5. 合約／commercial readiness／本 ledger 進度更新（未偽造 sealed）。
+- Verification target: `node docs/qa/expedition-behavior-matrix.mjs` green（含 RE-3 cases）。
+- Honest gaps: 正式 intent classifier；完整 `runCritics`／voice pack；reducer 統一 delta；Soul Talk memoryWriter 適配；`suggest_retreat` UI；Owner seal + feel-check；release gate。
+- Next safe action: Owner 驗收 RE-3 #1 後指示 commit；或續 RE-3 #2（intent／reducer）。
+- Required reading: `docs/raphael/RAPHAEL_EXPEDITION_COMMERCIAL_READINESS.md`, `src/expedition/expeditionResultEvent.js`, `src/expedition/expeditionMemoryGateway.js`, `src/expedition/expeditionCoreBridge.js`.
+
+### 2026-07-14 - Cursor - Expedition RE-1／RE-2 Runtime + P1 FPS Fix - VERIFIED (`e269cc0` on main)
+
+- Lane: `Raphael Core × Nexus Expedition`.
+- Status: `VERIFIED` — lite memory source gate + commercial readiness roadmap landed on `main` as `e269cc0`（subsequent RE-3 work may sit uncommitted）.
 - Contract: `docs/raphael/RAPHAEL_EXPEDITION_EVAL_CONTRACT.md` status `draft awaiting seal`（不可偽造 `sealed v1`）。
-- RE-1 aligned runtime in tree: E-EXIT（返回棲地不計 coercive）、E-COERCE（僅積極／集火）、E-FARM（擊殺／碎晶不加 bond/trust）、E-PERSONA fail-closed、結算 system／companion 拆分、session heart、區域旁白。
-- RE-2／P1 this round:
-  1. **FPS release blocker fixed** — `heartOnRestTick` 改純 `deltaMs/1000`（移除每 frame 0.2s 地板）；1/30/60/120 FPS 在相同 1 秒真實時間下 fatigue/stress/feltSafety 等價。
-  2. **Core 裁決鏈誠實接線** — `expeditionCoreBridge.js`：`prepareExpeditionCoreSettlement`＋lite memory（`expedition_lite_v1`）；controller 傳 `composeReflection`／bridgeStatus；**明確標記**未接完整 intent／critic／memoryWriter（禁止假整合）。
-  3. QA／docs — matrix 增 E-EXIT／E-COERCE／FPS 等價／記憶 lite policy；高疲勞無敵人必須 REST；合約現況表修正（不再寫「fallback 灰影貓」）；理順 RE-2 開工＝Owner 明示例外。
-- Verification: `node docs/qa/expedition-behavior-matrix.mjs` → **28/28 PASS**；`node --check` on `sessionHeart.js`／`expeditionCoreBridge.js`／`expeditionSettlementVoice.js`／`expeditionController.js` OK. 未碰 `output/habitat/**`。
-- Honest gaps remaining: full Raphael event→critic→voice pack path；memoryWriter expedition gateway；`suggest_retreat` UI 與 return_home 分離；Owner seal + feel-check；release gate 納管。
-- Next safe action: Owner feel-check 一趟遠征；若要進版控再明示 commit。後續 RE-3 可接 memoryWriter gateway／完整 intent-critic 鏈（需獨立 TASK_PACK）。
-- Required reading: `docs/raphael/RAPHAEL_EXPEDITION_EVAL_CONTRACT.md`, `src/expedition/sessionHeart.js`, `src/expedition/expeditionCoreBridge.js`, `docs/qa/expedition-behavior-matrix.mjs`.
+- Note: earlier RE-1／RE-2 runtime（heart、E-EXIT／E-COERCE／E-FARM、voice split）已在 `fb1afbf`；`e269cc0` 補 P2 source 閘門與商業路線圖。
+- Required reading: `docs/raphael/RAPHAEL_EXPEDITION_COMMERCIAL_READINESS.md`, `src/expedition/expeditionCoreBridge.js`.
+
+### 2026-07-14 - Codex - Black Iron Hackers Stage 1 Full 8-Frame Catalog - IN PROGRESS
+
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `TP-BIH-STAGE1-FULL-8F-CATALOG`.
+- Layer / scope: EXPERIENCE visual-production documentation and review staging. Owner approved the supplied five-character sheet as the appearance-lock source and authorized the same seed → species pilot → full-catalog workflow used for the formal Heartspark Council batch. Expected writes are limited to `docs/art/**`, `output/character-pilots/**`, and this lane.
+- Production contract: `thunder-pup`, `wavecub`, `starflame-phoenix`, `star-foal`, and `goldenspark-wyrm`; all 29 shared action IDs per character; every action is eight frames generated as a `2×4` body grid before deterministic transparent cleanup and QC. `sleep` remains the runtime ID but is an already-deep-asleep loop in all eight frames; waking remains isolated to `idle_wake`.
+- Red-line check: touch accept/guard/reject preserve consent and non-punitive boundaries; battle actions remain emotional-standoff gestures, not HP-zero aggression; `faint` is temporary heart-core overload, not death; no dependency detection, safety-help reward, FOMO, or unreachable repair behavior is introduced.
+- Non-goals: no `assets/**`, registry, manifest, Pixi/runtime, state/save, canon authority, dependency, build step, commit, or push change. Formal faction/canon integration and any runtime promotion require later separately authorized tasks.
+- Required reading: `docs/art/BLACK_IRON_HACKERS_STAGE1_CHARACTER_ASSET_INDEX.md`, the five Black Iron lock specs, `docs/art/BLACK_IRON_HACKERS_STAGE1_SPECIES_MOTION_TRANSLATION.md`, `docs/assets/COMPANION_ANIMATION_CATALOG.md`, `output/character-pilots/FULL_CATALOG_PRODUCTION_PLAN.md`, `AGENTS.md`, `CLAUDE.md`, `ACCEPTANCE.md`, and this lane.
+
+### 2026-07-14 - Codex - Black Iron Hackers Identity Seed Gate - AWAITING OWNER REVIEW
+
+- Lane: `Game Art, UI, And Visual Production`.
+- Scope: Completed the first identity-seed gate under `output/character-pilots/**`; no pilot/full-catalog generation, `assets/**`, runtime, canon, commit, or push change.
+- Selected review seeds: ThunderPup v1, WaveCub v2, Starflame Phoenix v2, Star Foal v2, and Goldenspark Wyrm v2. WaveCub v1 was rejected for detached droplets; Phoenix v1 for detached embers/oversized plume; Star Foal v1 for tall adolescent drift; Goldenspark v1 for full-mecha drift.
+- Mechanical verification: all five selected seeds are RGBA `512×512`, have fully transparent corners, preserve at least 26 px transparent margin, and contain complete grounded silhouettes without pedestal/UI/text/scene/detached FX.
+- Human gate: review `output/character-pilots/review-boards/black-iron-hackers-seed-review-board.png` and `output/character-pilots/BLACK_IRON_HACKERS_SEED_QC.md`. Approval authorizes five species-specific eight-frame pilots under `output/**` only.
+
+### 2026-07-14 - Owner - Black Iron Hackers Identity Seed Gate - APPROVED
+
+- Lane: `Game Art, UI, And Visual Production`.
+- Owner signal: `請繼續開工`.
+- Approved seeds: ThunderPup v1, WaveCub v2, Starflame Phoenix v2, Star Foal v2, Goldenspark Wyrm v2. The previously flagged ThunderPup flank node and Goldenspark gear/ridge strength are accepted for pilot inheritance.
+- Authorization: proceed with one species-specific eight-frame pilot per character under `output/**`. This does not authorize `assets/**`, runtime, canon, commit, or push changes.
+
+### 2026-07-14 - Codex - Black Iron Hackers Five-Species Animation Pilot - AWAITING OWNER REVIEW
+
+- Lane: `Game Art, UI, And Visual Production`.
+- Status: `AWAITING OWNER REVIEW`; five species-specific pilot actions are generated, normalized and mechanically verified. No `assets/**`, runtime, canon, dependency, commit or push change was made.
+- Pilot outputs: ThunderPup `right_walk`, WaveCub `touch_reject`, Starflame Phoenix `right_walk`, Star Foal `right_walk`, and Goldenspark Wyrm `idle_calm`. Each selected output contains exactly eight 512 x 512 transparent frames in a 2048 x 1024 sheet plus an eight-frame GIF preview.
+- Correction record: initial raw sheets were retained as provenance but failed strict 8 px source-cell containment. A layout-only v2 pass reduced and recentered every pose; all five v2 sheets then passed `--reject-edge-touch`, shared-scale normalization, transparent-corner checks and exact dimension/frame-count checks.
+- Species review: ThunderPup reads as grounded canine walking; WaveCub as a non-attacking feline refusal; Phoenix as a grounded two-talon step/hop with folded wings; Star Foal as an equine four-beat hoof walk; Goldenspark as a wingless low saurian calm idle with an attached gear tail.
+- Human gate: review `output/character-pilots/BLACK_IRON_HACKERS_PILOT_QC.md`, the five named sheets and GIF previews. Approval authorizes expansion to the documented 29-action x five-character staging catalog; every action remains eight frames and the catalog sleep performance remains `deep_sleep` / 熟睡. Rejection of any pilot must be resolved before that species expands.
+- Known review points: Thunder crystal micro-detail interpolation, WaveCub face-angle strength, Phoenix talon-lift subtlety, Star Foal high foreleg stylization, and Goldenspark gear-tail motion amplitude remain Owner visual decisions.
+- Next safe action: wait for explicit Owner pilot approval. Do not promote to `assets/**` or touch registry/runtime without a separate GROUNDWORK task pack.
+
+### 2026-07-14 - Codex - Six Linkara Region Diorama Art R1 - COMPLETED
+
+- Lane: `Game Art, UI, And Visual Production`.
+- Status: `COMPLETED`; six-region review staging, day/night generation, placement correction, masks and QC are complete. No six-region asset promotion, runtime wiring, commit or push was performed.
+- Outputs: `output/habitat/linkara-six-region-diorama-r1/**` contains twelve normalized `1080x1920` RGBA foundations, six depth masks, six placement masks, twelve `390x844` clean previews, twelve safe-zone audits, twelve Greyshade placement previews, two contact sheets, prompt provenance, staging Scene Profiles, manifest, reports and QC.
+- Region identity: Central Radiant Core keeps the ivory/gold crystal capital and canals; Eastern Mystic Mountains keeps fractured amethyst plateaus/citadel; Northern Verdant Plains keeps farms/river/watermill/windmills; Southeast Forge Hills keeps the volcanic coastal foundries and orange/cobalt energy; Southern Harbor Nexus keeps ships/turquoise harbor/blue-domed city; Southwest Tidal Frontier keeps the storm coast, piers, violet seams and distant vortex.
+- Placement correction: each region now uses a plaza-specific bottom-center anchor instead of forcing Moonlake's `y=.70`: Central `.69`, Eastern `.62`, Northern `.66`, Forge `.62`, Harbor `.68`, Tidal `.63`. Visual cat composites confirm grounded feet and unobstructed face/body/heart core in both phases. Top `.12` HUD and bottom `.20` Dock bands remain reserved.
+- Self-review correction: the first Tidal Frontier night candidate introduced baked rain. It is preserved under `rejected/**`; a targeted no-rain edit replaced the active staging night so precipitation remains a future Pixi weather FX responsibility.
+- Layering: every candidate has a coherent day/night foundation plus separate depth and placement masks. Transparent foreground occlusion, camp structures and placeable props remain explicitly pending human selection; this avoids repeating the rejected Moonlake micro-plate seam failure while preserving the intended layered runtime contract.
+- Verification: habitat validator passes `12/12` foundations and `12/12` masks at `1080x1920`; manifest, Scene Profiles and reports parse; the postprocessor compiles; both contact sheets were visually inspected; Moonlake layout/Profile JavaScript passes `node --check`; scoped `git diff --check` passes.
+- Concurrent-state note: current `main` advanced to `e269cc0` during this work and already contains the corrected Moonlake companion `(195,590)` / `(0.50,0.70)` values. Unrelated Expedition and Black Iron Hacker worktree changes were preserved and not included in this package.
+- Human gate: `humanApproved:false`, `referenceAuditPassed:false`, `runtimeIntegrated:false`. Owner review is required before any file enters `assets/**`; promotion and region switching require a separate GROUNDWORK task.
+- Required reading: `output/habitat/linkara-six-region-diorama-r1/QC.md`, `output/habitat/linkara-six-region-diorama-r1/manifest.json`, `output/habitat/linkara-six-region-diorama-r1/scene-profiles.json`, both contact sheets, and this lane.

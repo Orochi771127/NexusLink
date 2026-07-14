@@ -13,8 +13,9 @@ Product ship（全產品）: [`COMMERCIAL_SHIP_READINESS_2026-07-14.md`](../agen
 | 標籤 | 可否宣稱 |
 | --- | --- |
 | **Prototype 合格** | ✅ Utility AI + FSM + session heart + 紅線 runtime |
-| **RE-2 partial bridge** | ✅ 結算 voice 拆分 + lite memory policy；**非**完整 Core |
-| **RaphaelCore 完整整合** | ❌ 尚未（intent→critic→reducer→memoryWriter 未全接） |
+| **RE-2 partial bridge** | ✅ 結算 voice 拆分 + lite memory policy |
+| **RE-3 TASK_PACK #1** | ✅ 進行中落地：result event schema + expedition memory gateway + composer／lite critic（**仍非**完整 Core） |
+| **RaphaelCore 完整整合** | ❌ 尚未（正式 intent→完整 runCritics→reducer→Soul Talk memoryWriter 未全接） |
 | **商業就緒 / Store-ready（遠征面）** | ❌ 尚未（缺 seal、feel-check、release gate、上架人類 gate） |
 
 > **做到才算過：** 只有通過本文件「Store」階段驗收，才可在對外文案寫「遠征已可商業上架」。機器綠燈 ≠ 上架。
@@ -82,6 +83,8 @@ Release gate 納管 → Soft launch → Store
 4. reducer 統一 delta（**M**）
 5. `suggest_retreat` UI（**S–M**）
 6. 第二隻正式角色 adventure profile（**M**，可後置）
+
+**RE-3 #1 進度（2026-07-14，未自動 commit）：** event schema／memory gateway／composer+lite critic 已進 runtime；尚缺正式 intent、完整 runCritics、reducer、Soul Talk memoryWriter、`suggest_retreat` UI。
 
 **本階段結束標籤：** `Core settlement chain wired` — 仍**不是** Store-ready。
 

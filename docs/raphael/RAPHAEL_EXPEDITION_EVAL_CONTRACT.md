@@ -170,7 +170,7 @@ node docs/qa/expedition-behavior-matrix.mjs
 - [ ] Owner 核准封印（`sealed v1`）或 ledger 明示 waiver
 - [x] E-EXIT／E-COERCE／E-FARM／E-PERSONA 自動化 cases（matrix；仍非正式 release gate）
 - [x] Soul Talk 結算不再直寫第三人稱 `companion` journal（已拆 system／第一人稱 adapter）
-- [ ] 完整 Raphael intent／critic／memoryWriter 事件鏈（仍為 partial／TODO）
+- [ ] 完整 Raphael intent／critic／memoryWriter 事件鏈（RE-3 #1：event＋lite critic＋expedition gateway 已接；正式 intent／runCritics／Soul Talk memoryWriter 仍缺）
 - [ ] Owner feel-check：一趟遠征感覺是「一起出門」而非「刷怪升好感」
 
 ### RE-2 開工條件（理順後）
@@ -190,16 +190,16 @@ node docs/qa/expedition-behavior-matrix.mjs
 - 安裝外部 game-ai／Godot combat skill 填洞
 - 在 Owner feel-check 前把 Expedition 標為 commercial-ready
 
-## 14. Current verdict snapshot（2026-07-14，RE-2 P1 後）
+## 14. Current verdict snapshot（2026-07-14，RE-3 #1 後）
 
 | 面向 | 判定 |
 | --- | --- |
 | Utility AI／狀態機 | Prototype 合格；session heart 已接（REST 已修 FPS 綁定） |
-| RaphaelCore 權限分工 | 方向正確；結算有 adapter＋lite memory policy，**完整裁決鏈未完成** |
+| RaphaelCore 權限分工 | RE-3 #1：`ExpeditionResultEvent`＋composer＋lite critic＋`expedition_gateway_v1`；**仍非完整整合**（`coreIntegrated:false`） |
 | 夥伴自主與邊界 | 進步：E-EXIT／E-COERCE／非農場已落地 |
 | 角色差異 | **已 fail-closed**（無 adventure profile 不可出發；不再 fallback 灰影貓） |
-| 記憶延續 | 部分合格：讀橋存在；寫入為 `expedition_lite_v1`，未走完整 memoryWriter |
-| QA／發布門檻 | matrix 加嚴；仍非正式 release proof |
+| 記憶延續 | 部分合格：寫入走 expedition gateway（保留 `source===expedition`）；**未**走 Soul Talk `memoryWriter` |
+| QA／發布門檻 | matrix 含 RE-3 event／gateway／critic cases；仍非正式 release proof；**非** sealed／commercial-ready |
 
 一句话：
 

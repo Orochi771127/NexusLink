@@ -65,7 +65,21 @@ export function buildExpeditionSystemFacts(session, settlement = {}) {
 
 /**
  * 依 persona tone 微調第一人稱句庫（輕量接點，不是完整 voice pack／critic）。
+ * 供 bridge composer 與本檔 fallback 共用，避免兩套文案漂移。
  */
+export function draftExpeditionReflectionText(session, settlement = {}, { tone = "quiet_observer" } = {}) {
+  const heart = session?.heart || {};
+  const ctx = {
+    retreated: Boolean(settlement.retreated || session?.returnHomeRequested),
+    memories: session?.triggeredMemoryEvents?.length || 0,
+    stress: Number(heart.stress) || 0,
+    fatigue: Number(heart.fatigue) || 0,
+    safety: Number(heart.feltSafety) || 0.5,
+    pressure: Number(heart.interventionPressure) || 0
+  };
+  return pickReflectionByTone(tone, ctx);
+}
+
 function pickReflectionByTone(tone, { retreated, memories, stress, fatigue, safety, pressure }) {
   const quiet = tone === "quiet_observer" || !tone;
 
@@ -115,16 +129,6 @@ export function buildExpeditionCompanionReflection(session, settlement = {}, opt
     }
   }
 
-  const heart = session?.heart || {};
-  const ctx = {
-    retreated: Boolean(settlement.retreated || session?.returnHomeRequested),
-    memories: session?.triggeredMemoryEvents?.length || 0,
-    stress: Number(heart.stress) || 0,
-    fatigue: Number(heart.fatigue) || 0,
-    safety: Number(heart.feltSafety) || 0.5,
-    pressure: Number(heart.interventionPressure) || 0
-  };
-
   let tone = "quiet_observer";
   let source = "heart_fallback";
   try {
@@ -141,7 +145,7 @@ export function buildExpeditionCompanionReflection(session, settlement = {}, opt
   }
 
   return {
-    text: pickReflectionByTone(tone, ctx),
+    text: draftExpeditionReflectionText(session, settlement, { tone }),
     source
   };
 }
