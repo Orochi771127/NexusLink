@@ -1,0 +1,95 @@
+{
+  "ok": true,
+  "root": "output\\habitat\\linkara-six-region-diorama-r1\\foundation",
+  "expected": {
+    "width": 1080,
+    "height": 1920
+  },
+  "count": 12,
+  "files": [
+    {
+      "path": "output\\habitat\\linkara-six-region-diorama-r1\\foundation\\central_radiant_core_day.png",
+      "width": 1080,
+      "height": 1920,
+      "mode": "RGBA",
+      "expectedSize": true
+    },
+    {
+      "path": "output\\habitat\\linkara-six-region-diorama-r1\\foundation\\central_radiant_core_night.png",
+      "width": 1080,
+      "height": 1920,
+      "mode": "RGBA",
+      "expectedSize": true
+    },
+    {
+      "path": "output\\habitat\\linkara-six-region-diorama-r1\\foundation\\eastern_mystic_mountains_day.png",
+      "width": 1080,
+      "height": 1920,
+      "mode": "RGBA",
+      "expectedSize": true
+    },
+    {
+      "path": "output\\habitat\\linkara-six-region-diorama-r1\\foundation\\eastern_mystic_mountains_night.png",
+      "width": 1080,
+      "height": 1920,
+      "mode": "RGBA",
+      "expectedSize": true
+    },
+    {
+      "path": "output\\habitat\\linkara-six-region-diorama-r1\\foundation\\northern_verdant_plains_day.png",
+      "width": 1080,
+      "height": 1920,
+      "mode": "RGBA",
+      "expectedSize": true
+    },
+    {
+      "path": "output\\habitat\\linkara-six-region-diorama-r1\\foundation\\northern_verdant_plains_night.png",
+      "width": 1080,
+      "height": 1920,
+      "mode": "RGBA",
+      "expectedSize": true
+    },
+    {
+      "path": "output\\habitat\\linkara-six-region-diorama-r1\\foundation\\southeast_forge_hills_day.png",
+      "width": 1080,
+      "height": 1920,
+      "mode": "RGBA",
+      "expectedSize": true
+    },
+    {
+      "path": "output\\habitat\\linkara-six-region-diorama-r1\\foundation\\southeast_forge_hills_night.png",
+      "width": 1080,
+      "height": 1920,
+      "mode": "RGBA",
+      "expectedSize": true
+    },
+    {
+      "path": "output\\habitat\\linkara-six-region-diorama-r1\\foundation\\southern_harbor_nexus_day.png",
+      "width": 1080,
+      "height": 1920,
+      "mode": "RGBA",
+      "expectedSize": true
+    },
+    {
+      "path": "output\\habitat\\linkara-six-region-diorama-r1\\foundation\\southern_harbor_nexus_night.png",
+      "width": 1080,
+      "height": 1920,
+      "mode": "RGBA",
+      "expectedSize": true
+    },
+    {
+      "path": "output\\habitat\\linkara-six-region-diorama-r1\\foundation\\southwest_tidal_frontier_day.png",
+      "width": 1080,
+      "height": 1920,
+      "mode": "RGBA",
+      "expectedSize": true
+    },
+    {
+      "path": "output\\habitat\\linkara-six-region-diorama-r1\\foundation\\southwest_tidal_frontier_night.png",
+      "width": 1080,
+      "height": 1920,
+      "mode": "RGBA",
+      "expectedSize": true
+    }
+  ]
+}

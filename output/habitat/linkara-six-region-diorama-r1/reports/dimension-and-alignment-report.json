@@ -1,0 +1,298 @@
+{
+  "artSize": {
+    "width": 1080,
+    "height": 1920
+  },
+  "safeZone": {
+    "width": 390,
+    "height": 844
+  },
+  "uiForbidden": [
+    {
+      "id": "hud_top",
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 0.12
+    },
+    {
+      "id": "dock_bottom",
+      "x": 0,
+      "y": 0.8,
+      "w": 1,
+      "h": 0.2
+    }
+  ],
+  "regions": {
+    "central_radiant_core": {
+      "companionAnchor": {
+        "x": 0.5,
+        "y": 0.69
+      },
+      "companionReservedRect": {
+        "x": 0.38,
+        "y": 0.44,
+        "w": 0.24,
+        "h": 0.27
+      },
+      "phases": {
+        "day": {
+          "source": "masters/central_radiant_core_day_raw.png",
+          "foundation": "foundation/central_radiant_core_day.png",
+          "preview": "previews/central_radiant_core_day_390x844.png",
+          "audit": "previews/central_radiant_core_day_safe-zone.png",
+          "placementPreview": "previews/central_radiant_core_day_companion-placement.png",
+          "size": [
+            1080,
+            1920
+          ],
+          "mode": "RGBA"
+        },
+        "night": {
+          "source": "masters/central_radiant_core_night_raw.png",
+          "foundation": "foundation/central_radiant_core_night.png",
+          "preview": "previews/central_radiant_core_night_390x844.png",
+          "audit": "previews/central_radiant_core_night_safe-zone.png",
+          "placementPreview": "previews/central_radiant_core_night_companion-placement.png",
+          "size": [
+            1080,
+            1920
+          ],
+          "mode": "RGBA"
+        }
+      },
+      "layers": {
+        "depthMask": "layers/central_radiant_core_depth_mask.png",
+        "placementMask": "layers/central_radiant_core_placement_mask.png",
+        "foregroundOcclusion": "pending_human_selected_extraction",
+        "placeableProps": "pending_separate_groundwork_promotion"
+      },
+      "dayNightEdgeCorrelation": 0.6753
+    },
+    "eastern_mystic_mountains": {
+      "companionAnchor": {
+        "x": 0.5,
+        "y": 0.62
+      },
+      "companionReservedRect": {
+        "x": 0.38,
+        "y": 0.37,
+        "w": 0.24,
+        "h": 0.27
+      },
+      "phases": {
+        "day": {
+          "source": "masters/eastern_mystic_mountains_day_raw.png",
+          "foundation": "foundation/eastern_mystic_mountains_day.png",
+          "preview": "previews/eastern_mystic_mountains_day_390x844.png",
+          "audit": "previews/eastern_mystic_mountains_day_safe-zone.png",
+          "placementPreview": "previews/eastern_mystic_mountains_day_companion-placement.png",
+          "size": [
+            1080,
+            1920
+          ],
+          "mode": "RGBA"
+        },
+        "night": {
+          "source": "masters/eastern_mystic_mountains_night_raw.png",
+          "foundation": "foundation/eastern_mystic_mountains_night.png",
+          "preview": "previews/eastern_mystic_mountains_night_390x844.png",
+          "audit": "previews/eastern_mystic_mountains_night_safe-zone.png",
+          "placementPreview": "previews/eastern_mystic_mountains_night_companion-placement.png",
+          "size": [
+            1080,
+            1920
+          ],
+          "mode": "RGBA"
+        }
+      },
+      "layers": {
+        "depthMask": "layers/eastern_mystic_mountains_depth_mask.png",
+        "placementMask": "layers/eastern_mystic_mountains_placement_mask.png",
+        "foregroundOcclusion": "pending_human_selected_extraction",
+        "placeableProps": "pending_separate_groundwork_promotion"
+      },
+      "dayNightEdgeCorrelation": 0.7043
+    },
+    "northern_verdant_plains": {
+      "companionAnchor": {
+        "x": 0.5,
+        "y": 0.66
+      },
+      "companionReservedRect": {
+        "x": 0.38,
+        "y": 0.41,
+        "w": 0.24,
+        "h": 0.27
+      },
+      "phases": {
+        "day": {
+          "source": "masters/northern_verdant_plains_day_raw.png",
+          "foundation": "foundation/northern_verdant_plains_day.png",
+          "preview": "previews/northern_verdant_plains_day_390x844.png",
+          "audit": "previews/northern_verdant_plains_day_safe-zone.png",
+          "placementPreview": "previews/northern_verdant_plains_day_companion-placement.png",
+          "size": [
+            1080,
+            1920
+          ],
+          "mode": "RGBA"
+        },
+        "night": {
+          "source": "masters/northern_verdant_plains_night_raw.png",
+          "foundation": "foundation/northern_verdant_plains_night.png",
+          "preview": "previews/northern_verdant_plains_night_390x844.png",
+          "audit": "previews/northern_verdant_plains_night_safe-zone.png",
+          "placementPreview": "previews/northern_verdant_plains_night_companion-placement.png",
+          "size": [
+            1080,
+            1920
+          ],
+          "mode": "RGBA"
+        }
+      },
+      "layers": {
+        "depthMask": "layers/northern_verdant_plains_depth_mask.png",
+        "placementMask": "layers/northern_verdant_plains_placement_mask.png",
+        "foregroundOcclusion": "pending_human_selected_extraction",
+        "placeableProps": "pending_separate_groundwork_promotion"
+      },
+      "dayNightEdgeCorrelation": 0.2086
+    },
+    "southeast_forge_hills": {
+      "companionAnchor": {
+        "x": 0.5,
+        "y": 0.62
+      },
+      "companionReservedRect": {
+        "x": 0.38,
+        "y": 0.37,
+        "w": 0.24,
+        "h": 0.27
+      },
+      "phases": {
+        "day": {
+          "source": "masters/southeast_forge_hills_day_raw.png",
+          "foundation": "foundation/southeast_forge_hills_day.png",
+          "preview": "previews/southeast_forge_hills_day_390x844.png",
+          "audit": "previews/southeast_forge_hills_day_safe-zone.png",
+          "placementPreview": "previews/southeast_forge_hills_day_companion-placement.png",
+          "size": [
+            1080,
+            1920
+          ],
+          "mode": "RGBA"
+        },
+        "night": {
+          "source": "masters/southeast_forge_hills_night_raw.png",
+          "foundation": "foundation/southeast_forge_hills_night.png",
+          "preview": "previews/southeast_forge_hills_night_390x844.png",
+          "audit": "previews/southeast_forge_hills_night_safe-zone.png",
+          "placementPreview": "previews/southeast_forge_hills_night_companion-placement.png",
+          "size": [
+            1080,
+            1920
+          ],
+          "mode": "RGBA"
+        }
+      },
+      "layers": {
+        "depthMask": "layers/southeast_forge_hills_depth_mask.png",
+        "placementMask": "layers/southeast_forge_hills_placement_mask.png",
+        "foregroundOcclusion": "pending_human_selected_extraction",
+        "placeableProps": "pending_separate_groundwork_promotion"
+      },
+      "dayNightEdgeCorrelation": 0.8554
+    },
+    "southern_harbor_nexus": {
+      "companionAnchor": {
+        "x": 0.5,
+        "y": 0.68
+      },
+      "companionReservedRect": {
+        "x": 0.38,
+        "y": 0.43,
+        "w": 0.24,
+        "h": 0.27
+      },
+      "phases": {
+        "day": {
+          "source": "masters/southern_harbor_nexus_day_raw.png",
+          "foundation": "foundation/southern_harbor_nexus_day.png",
+          "preview": "previews/southern_harbor_nexus_day_390x844.png",
+          "audit": "previews/southern_harbor_nexus_day_safe-zone.png",
+          "placementPreview": "previews/southern_harbor_nexus_day_companion-placement.png",
+          "size": [
+            1080,
+            1920
+          ],
+          "mode": "RGBA"
+        },
+        "night": {
+          "source": "masters/southern_harbor_nexus_night_raw.png",
+          "foundation": "foundation/southern_harbor_nexus_night.png",
+          "preview": "previews/southern_harbor_nexus_night_390x844.png",
+          "audit": "previews/southern_harbor_nexus_night_safe-zone.png",
+          "placementPreview": "previews/southern_harbor_nexus_night_companion-placement.png",
+          "size": [
+            1080,
+            1920
+          ],
+          "mode": "RGBA"
+        }
+      },
+      "layers": {
+        "depthMask": "layers/southern_harbor_nexus_depth_mask.png",
+        "placementMask": "layers/southern_harbor_nexus_placement_mask.png",
+        "foregroundOcclusion": "pending_human_selected_extraction",
+        "placeableProps": "pending_separate_groundwork_promotion"
+      },
+      "dayNightEdgeCorrelation": 0.1841
+    },
+    "southwest_tidal_frontier": {
+      "companionAnchor": {
+        "x": 0.5,
+        "y": 0.63
+      },
+      "companionReservedRect": {
+        "x": 0.38,
+        "y": 0.38,
+        "w": 0.24,
+        "h": 0.27
+      },
+      "phases": {
+        "day": {
+          "source": "masters/southwest_tidal_frontier_day_raw.png",
+          "foundation": "foundation/southwest_tidal_frontier_day.png",
+          "preview": "previews/southwest_tidal_frontier_day_390x844.png",
+          "audit": "previews/southwest_tidal_frontier_day_safe-zone.png",
+          "placementPreview": "previews/southwest_tidal_frontier_day_companion-placement.png",
+          "size": [
+            1080,
+            1920
+          ],
+          "mode": "RGBA"
+        },
+        "night": {
+          "source": "masters/southwest_tidal_frontier_night_raw.png",
+          "foundation": "foundation/southwest_tidal_frontier_night.png",
+          "preview": "previews/southwest_tidal_frontier_night_390x844.png",
+          "audit": "previews/southwest_tidal_frontier_night_safe-zone.png",
+          "placementPreview": "previews/southwest_tidal_frontier_night_companion-placement.png",
+          "size": [
+            1080,
+            1920
+          ],
+          "mode": "RGBA"
+        }
+      },
+      "layers": {
+        "depthMask": "layers/southwest_tidal_frontier_depth_mask.png",
+        "placementMask": "layers/southwest_tidal_frontier_placement_mask.png",
+        "foregroundOcclusion": "pending_human_selected_extraction",
+        "placeableProps": "pending_separate_groundwork_promotion"
+      },
+      "dayNightEdgeCorrelation": 0.0664
+    }
+  }
+}

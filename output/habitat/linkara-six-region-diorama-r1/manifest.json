@@ -1,0 +1,84 @@
+{
+  "id": "linkara-six-region-diorama-r1",
+  "taskPack": "TP-HAB-SIX-REGION-ART-1",
+  "status": "candidate_review",
+  "authoringMode": "built-in-imagegen-plus-local-normalization",
+  "stylePreset": [
+    "clay_resin_3d_miniature",
+    "premium_2_5d_storybook"
+  ],
+  "artSize": { "width": 1080, "height": 1920 },
+  "safeZone": { "width": 390, "height": 844 },
+  "uiForbidden": [
+    { "id": "hud_top", "rect": { "x": 0, "y": 0, "w": 1, "h": 0.12 } },
+    { "id": "dock_bottom", "rect": { "x": 0, "y": 0.8, "w": 1, "h": 0.2 } }
+  ],
+  "promptPath": "prompts/GENERATION_PROMPTS.md",
+  "sceneProfilePath": "scene-profiles.json",
+  "safeZoneAuditReference": "previews/six-region-day-night-safe-zone-contact-sheet.jpg",
+  "companionPlacementAuditReference": "previews/six-region-day-night-companion-placement-contact-sheet.jpg",
+  "dimensionAlignmentReport": "reports/dimension-and-alignment-report.json",
+  "dayNightCompositionIdentity": "Night candidates were relit from each generated day master. Camera, landmark order, plaza, approach and silhouettes are visually locked; pairs are not claimed pixel-identical until human promotion review.",
+  "layerContract": {
+    "foundation": "generated day/night RGBA pairs",
+    "depthMask": "generated per region for far-atmosphere control",
+    "placementMask": "generated per region for HUD, Dock and companion reservation",
+    "campStructures": "pending after human selection",
+    "foregroundOcclusion": "pending after human selection",
+    "placeableProps": "pending separate transparent-prop task",
+    "runtimeFx": "Pixi weather/time only; no baked rain"
+  },
+  "regions": [
+    {
+      "id": "central_radiant_core",
+      "sourceReference": "assets/backgrounds/linkara/regions/central_radiant_core.jpg",
+      "day": "foundation/central_radiant_core_day.png",
+      "night": "foundation/central_radiant_core_night.png",
+      "depthMask": "layers/central_radiant_core_depth_mask.png",
+      "placementMask": "layers/central_radiant_core_placement_mask.png"
+    },
+    {
+      "id": "eastern_mystic_mountains",
+      "sourceReference": "assets/backgrounds/linkara/regions/eastern_mystic_mountains.jpg",
+      "day": "foundation/eastern_mystic_mountains_day.png",
+      "night": "foundation/eastern_mystic_mountains_night.png",
+      "depthMask": "layers/eastern_mystic_mountains_depth_mask.png",
+      "placementMask": "layers/eastern_mystic_mountains_placement_mask.png"
+    },
+    {
+      "id": "northern_verdant_plains",
+      "sourceReference": "assets/backgrounds/linkara/regions/northern_verdant_plains.jpg",
+      "day": "foundation/northern_verdant_plains_day.png",
+      "night": "foundation/northern_verdant_plains_night.png",
+      "depthMask": "layers/northern_verdant_plains_depth_mask.png",
+      "placementMask": "layers/northern_verdant_plains_placement_mask.png"
+    },
+    {
+      "id": "southeast_forge_hills",
+      "sourceReference": "assets/backgrounds/linkara/regions/southeast_forge_hills.jpg",
+      "day": "foundation/southeast_forge_hills_day.png",
+      "night": "foundation/southeast_forge_hills_night.png",
+      "depthMask": "layers/southeast_forge_hills_depth_mask.png",
+      "placementMask": "layers/southeast_forge_hills_placement_mask.png"
+    },
+    {
+      "id": "southern_harbor_nexus",
+      "sourceReference": "assets/backgrounds/linkara/regions/southern_harbor_nexus.jpg",
+      "day": "foundation/southern_harbor_nexus_day.png",
+      "night": "foundation/southern_harbor_nexus_night.png",
+      "depthMask": "layers/southern_harbor_nexus_depth_mask.png",
+      "placementMask": "layers/southern_harbor_nexus_placement_mask.png"
+    },
+    {
+      "id": "southwest_tidal_frontier",
+      "sourceReference": "assets/backgrounds/linkara/regions/southwest_tidal_frontier.jpg",
+      "day": "foundation/southwest_tidal_frontier_day.png",
+      "night": "foundation/southwest_tidal_frontier_night.png",
+      "depthMask": "layers/southwest_tidal_frontier_depth_mask.png",
+      "placementMask": "layers/southwest_tidal_frontier_placement_mask.png"
+    }
+  ],
+  "humanApproved": false,
+  "referenceAuditPassed": false,
+  "runtimeIntegrated": false
+}

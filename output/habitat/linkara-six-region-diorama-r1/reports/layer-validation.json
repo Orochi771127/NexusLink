@@ -1,0 +1,95 @@
+{
+  "ok": true,
+  "root": "output\\habitat\\linkara-six-region-diorama-r1\\layers",
+  "expected": {
+    "width": 1080,
+    "height": 1920
+  },
+  "count": 12,
+  "files": [
+    {
+      "path": "output\\habitat\\linkara-six-region-diorama-r1\\layers\\central_radiant_core_depth_mask.png",
+      "width": 1080,
+      "height": 1920,
+      "mode": "L",
+      "expectedSize": true
+    },
+    {
+      "path": "output\\habitat\\linkara-six-region-diorama-r1\\layers\\central_radiant_core_placement_mask.png",
+      "width": 1080,
+      "height": 1920,
+      "mode": "L",
+      "expectedSize": true
+    },
+    {
+      "path": "output\\habitat\\linkara-six-region-diorama-r1\\layers\\eastern_mystic_mountains_depth_mask.png",
+      "width": 1080,
+      "height": 1920,
+      "mode": "L",
+      "expectedSize": true
+    },
+    {
+      "path": "output\\habitat\\linkara-six-region-diorama-r1\\layers\\eastern_mystic_mountains_placement_mask.png",
+      "width": 1080,
+      "height": 1920,
+      "mode": "L",
+      "expectedSize": true
+    },
+    {
+      "path": "output\\habitat\\linkara-six-region-diorama-r1\\layers\\northern_verdant_plains_depth_mask.png",
+      "width": 1080,
+      "height": 1920,
+      "mode": "L",
+      "expectedSize": true
+    },
+    {
+      "path": "output\\habitat\\linkara-six-region-diorama-r1\\layers\\northern_verdant_plains_placement_mask.png",
+      "width": 1080,
+      "height": 1920,
+      "mode": "L",
+      "expectedSize": true
+    },
+    {
+      "path": "output\\habitat\\linkara-six-region-diorama-r1\\layers\\southeast_forge_hills_depth_mask.png",
+      "width": 1080,
+      "height": 1920,
+      "mode": "L",
+      "expectedSize": true
+    },
+    {
+      "path": "output\\habitat\\linkara-six-region-diorama-r1\\layers\\southeast_forge_hills_placement_mask.png",
+      "width": 1080,
+      "height": 1920,
+      "mode": "L",
+      "expectedSize": true
+    },
+    {
+      "path": "output\\habitat\\linkara-six-region-diorama-r1\\layers\\southern_harbor_nexus_depth_mask.png",
+      "width": 1080,
+      "height": 1920,
+      "mode": "L",
+      "expectedSize": true
+    },
+    {
+      "path": "output\\habitat\\linkara-six-region-diorama-r1\\layers\\southern_harbor_nexus_placement_mask.png",
+      "width": 1080,
+      "height": 1920,
+      "mode": "L",
+      "expectedSize": true
+    },
+    {
+      "path": "output\\habitat\\linkara-six-region-diorama-r1\\layers\\southwest_tidal_frontier_depth_mask.png",
+      "width": 1080,
+      "height": 1920,
+      "mode": "L",
+      "expectedSize": true
+    },
+    {
+      "path": "output\\habitat\\linkara-six-region-diorama-r1\\layers\\southwest_tidal_frontier_placement_mask.png",
+      "width": 1080,
+      "height": 1920,
+      "mode": "L",
+      "expectedSize": true
+    }
+  ]
+}
