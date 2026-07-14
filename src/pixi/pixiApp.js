@@ -1,6 +1,7 @@
 import EnvironmentController from "../engine/environmentController.js";
 import { ASSET_MANIFEST } from "../data/assetManifest.js";
 import { SCENE_LAYOUT } from "../data/sceneLayout.js";
+import { getActiveSceneProfile, setActiveSceneProfile } from "../data/sceneProfiles/index.js";
 
 export const GAME_WIDTH = 390;
 export const GAME_HEIGHT = 844;
@@ -89,14 +90,16 @@ export function getSceneLayers(world) {
   return world.__sceneLayers;
 }
 
-export async function createEnvironmentLayer(layers, app) {
-  const bgDay = await createSceneSprite("bg_day", SCENE_ASSETS.bgDay, {
+export async function createEnvironmentLayer(layers, app, profile = getActiveSceneProfile()) {
+  setActiveSceneProfile(profile?.id);
+  const background = profile?.background || { day: SCENE_ASSETS.bgDay, night: SCENE_ASSETS.bgNight };
+  const bgDay = await createSceneSprite("bg_day", background.day, {
     anchor: 0.5,
     editorEnabled: false
   });
   layers.layerBackground.addChild(bgDay);
 
-  const bgNight = await createSceneSprite("bg_night", SCENE_ASSETS.bgNight, {
+  const bgNight = await createSceneSprite("bg_night", background.night, {
     anchor: 0.5,
     editorEnabled: false
   });
@@ -192,12 +195,63 @@ export async function createEnvironmentLayer(layers, app) {
     lanternPost,
     crystal,
     foregroundOcclusionDay,
-    foregroundOcclusionNight
+    foregroundOcclusionNight,
+    profileId: profile?.id || "moonlake",
+    backgroundPaths: Object.freeze({ day: background.day, night: background.night })
   };
 
+  applyHabitatSpecificVisibility(environmentLayer);
   registerResponsiveEnvironmentLayer(layers, environmentLayer);
   updateEnvironmentLayer(environmentLayer, { deltaMS: 0 });
   return environmentLayer;
+}
+
+export async function switchEnvironmentHabitat(environmentLayer, layers, app, profile) {
+  if (!environmentLayer || !profile?.background?.day || !profile?.background?.night) return false;
+  if (environmentLayer.profileId === profile.id) {
+    setActiveSceneProfile(profile.id);
+    applyHabitatSpecificVisibility(environmentLayer);
+    layers.layerBackground?.parent?.__resizeScene?.();
+    return true;
+  }
+
+  const previousDay = environmentLayer.bgDay;
+  const previousNight = environmentLayer.bgNight;
+  const previousPaths = environmentLayer.backgroundPaths;
+  const [nextDay, nextNight] = await Promise.all([
+    createSceneSprite("bg_day", profile.background.day, { anchor: 0.5, editorEnabled: false }),
+    createSceneSprite("bg_night", profile.background.night, { anchor: 0.5, editorEnabled: false })
+  ]);
+
+  const environmentState = EnvironmentController.getEnvironmentState();
+  nextNight.alpha = environmentState.nightAlpha;
+  layers.layerBackground.addChild(nextDay, nextNight);
+  environmentLayer.bgDay = nextDay;
+  environmentLayer.bgNight = nextNight;
+  environmentLayer.profileId = profile.id;
+  environmentLayer.backgroundPaths = Object.freeze({ day: profile.background.day, night: profile.background.night });
+  setActiveSceneProfile(profile.id);
+  applyHabitatSpecificVisibility(environmentLayer);
+  registerResponsiveEnvironmentLayer(layers, environmentLayer);
+  updateEnvironmentLayer(environmentLayer, { deltaMS: 0 });
+
+  previousDay?.parent?.removeChild(previousDay);
+  previousNight?.parent?.removeChild(previousNight);
+  previousDay?.destroy();
+  previousNight?.destroy();
+
+  const stalePaths = [previousPaths?.day, previousPaths?.night]
+    .filter((path) => path && path !== profile.background.day && path !== profile.background.night);
+  for (const path of stalePaths) {
+    try {
+      await PIXI.Assets.unload(path);
+    } catch (error) {
+      console.warn("Habitat texture unload failed:", path, error);
+    }
+  }
+
+  layers.layerBackground?.parent?.__resizeScene?.();
+  return true;
 }
 
 export function createParticles() {
@@ -268,13 +322,24 @@ export function updateEnvironmentLayer(environmentLayer, ticker) {
   const state = EnvironmentController.getEnvironmentState();
   const nightAlpha = state.nightAlpha;
   environmentLayer.bgNight.alpha = nightAlpha;
-  environmentLayer.campStructuresDay.alpha = 1 - nightAlpha;
-  environmentLayer.campStructuresNight.alpha = nightAlpha;
-  environmentLayer.foregroundOcclusionDay.alpha = 1 - nightAlpha;
-  environmentLayer.foregroundOcclusionNight.alpha = nightAlpha;
+  const showMoonlakeLayers = environmentLayer.profileId === "moonlake";
+  environmentLayer.campStructuresDay.alpha = showMoonlakeLayers ? 1 - nightAlpha : 0;
+  environmentLayer.campStructuresNight.alpha = showMoonlakeLayers ? nightAlpha : 0;
+  environmentLayer.foregroundOcclusionDay.alpha = showMoonlakeLayers ? 1 - nightAlpha : 0;
+  environmentLayer.foregroundOcclusionNight.alpha = showMoonlakeLayers ? nightAlpha : 0;
 
   updateCelestialSprite(environmentLayer.sun, "sun", state.sunProgress, state.sunAlpha);
   updateCelestialSprite(environmentLayer.moon, "moon", state.moonProgress, state.moonAlpha);
+}
+
+function applyHabitatSpecificVisibility(environmentLayer) {
+  const isMoonlake = environmentLayer.profileId === "moonlake";
+  environmentLayer.lanternPost.visible = isMoonlake;
+  environmentLayer.crystal.visible = isMoonlake;
+  environmentLayer.campStructuresDay.visible = isMoonlake;
+  environmentLayer.campStructuresNight.visible = isMoonlake;
+  environmentLayer.foregroundOcclusionDay.visible = isMoonlake;
+  environmentLayer.foregroundOcclusionNight.visible = isMoonlake;
 }
 
 function createSceneLayers(world) {

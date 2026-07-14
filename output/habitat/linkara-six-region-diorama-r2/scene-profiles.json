@@ -1,0 +1,48 @@
+{
+  "version": 1,
+  "status": "promoted_runtime_reference",
+  "artSize": { "width": 1080, "height": 1920 },
+  "safeZone": { "referenceWidth": 390, "referenceHeight": 844 },
+  "uiForbidden": [
+    { "id": "hud_top", "rect": { "x": 0, "y": 0, "w": 1, "h": 0.12 } },
+    { "id": "dock_bottom", "rect": { "x": 0, "y": 0.8, "w": 1, "h": 0.2 } }
+  ],
+  "profiles": {
+    "central_radiant_core": {
+      "companion": { "anchor": { "x": 0.5, "y": 0.69 }, "reservedRect": { "x": 0.38, "y": 0.44, "w": 0.24, "h": 0.27 } },
+      "ground": { "id": "radiant_plaza", "rect": { "x": 0.25, "y": 0.53, "w": 0.5, "h": 0.19 } },
+      "depthBands": { "farEnd": 0.4, "midEnd": 0.58 },
+      "layers": { "day": "foundation/central_radiant_core_day.png", "night": "foundation/central_radiant_core_night.png", "depthMask": "layers/central_radiant_core_depth_mask.png", "placementMask": "layers/central_radiant_core_placement_mask.png" }
+    },
+    "eastern_mystic_mountains": {
+      "companion": { "anchor": { "x": 0.5, "y": 0.52 }, "reservedRect": { "x": 0.38, "y": 0.27, "w": 0.24, "h": 0.27 } },
+      "ground": { "id": "mystic_rune_plaza", "rect": { "x": 0.2, "y": 0.29, "w": 0.6, "h": 0.23 } },
+      "depthBands": { "farEnd": 0.38, "midEnd": 0.54 },
+      "layers": { "day": "foundation/eastern_mystic_mountains_day.png", "night": "foundation/eastern_mystic_mountains_night.png", "depthMask": "layers/eastern_mystic_mountains_depth_mask.png", "placementMask": "layers/eastern_mystic_mountains_placement_mask.png" }
+    },
+    "northern_verdant_plains": {
+      "companion": { "anchor": { "x": 0.5, "y": 0.66 }, "reservedRect": { "x": 0.38, "y": 0.41, "w": 0.24, "h": 0.27 } },
+      "ground": { "id": "verdant_plaza", "rect": { "x": 0.23, "y": 0.49, "w": 0.54, "h": 0.2 } },
+      "depthBands": { "farEnd": 0.4, "midEnd": 0.57 },
+      "layers": { "day": "foundation/northern_verdant_plains_day.png", "night": "foundation/northern_verdant_plains_night.png", "depthMask": "layers/northern_verdant_plains_depth_mask.png", "placementMask": "layers/northern_verdant_plains_placement_mask.png" }
+    },
+    "southeast_forge_hills": {
+      "companion": { "anchor": { "x": 0.5, "y": 0.62 }, "reservedRect": { "x": 0.38, "y": 0.37, "w": 0.24, "h": 0.27 } },
+      "ground": { "id": "forge_platform", "rect": { "x": 0.2, "y": 0.45, "w": 0.6, "h": 0.2 } },
+      "depthBands": { "farEnd": 0.4, "midEnd": 0.56 },
+      "layers": { "day": "foundation/southeast_forge_hills_day.png", "night": "foundation/southeast_forge_hills_night.png", "depthMask": "layers/southeast_forge_hills_depth_mask.png", "placementMask": "layers/southeast_forge_hills_placement_mask.png" }
+    },
+    "southern_harbor_nexus": {
+      "companion": { "anchor": { "x": 0.5, "y": 0.68 }, "reservedRect": { "x": 0.38, "y": 0.43, "w": 0.24, "h": 0.27 } },
+      "ground": { "id": "harbor_compass_plaza", "rect": { "x": 0.2, "y": 0.5, "w": 0.6, "h": 0.21 } },
+      "depthBands": { "farEnd": 0.4, "midEnd": 0.57 },
+      "layers": { "day": "foundation/southern_harbor_nexus_day.png", "night": "foundation/southern_harbor_nexus_night.png", "depthMask": "layers/southern_harbor_nexus_depth_mask.png", "placementMask": "layers/southern_harbor_nexus_placement_mask.png" }
+    },
+    "southwest_tidal_frontier": {
+      "companion": { "anchor": { "x": 0.5, "y": 0.63 }, "reservedRect": { "x": 0.38, "y": 0.38, "w": 0.24, "h": 0.27 } },
+      "ground": { "id": "tidal_compass_plaza", "rect": { "x": 0.2, "y": 0.45, "w": 0.6, "h": 0.2 } },
+      "depthBands": { "farEnd": 0.42, "midEnd": 0.58 },
+      "layers": { "day": "foundation/southwest_tidal_frontier_day.png", "night": "foundation/southwest_tidal_frontier_night.png", "depthMask": "layers/southwest_tidal_frontier_depth_mask.png", "placementMask": "layers/southwest_tidal_frontier_placement_mask.png" }
+    }
+  }
+}

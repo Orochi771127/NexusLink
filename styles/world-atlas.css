@@ -93,6 +93,25 @@ html[data-ui="v2"] .atlas-node-no {
   text-anchor: middle;
 }
 
+html[data-ui="v2"] .atlas-node--selectable {
+  cursor: pointer;
+  outline: none;
+}
+html[data-ui="v2"] .atlas-node--selectable:hover .atlas-node-halo,
+html[data-ui="v2"] .atlas-node--selectable:focus-visible .atlas-node-halo {
+  fill: rgba(124, 231, 255, 0.2);
+  stroke: rgba(124, 231, 255, 0.9);
+  stroke-width: 1;
+}
+html[data-ui="v2"] .atlas-node.is-selected .atlas-node-halo {
+  fill: rgba(247, 223, 170, 0.2);
+  stroke: rgba(255, 238, 188, 0.95);
+  stroke-width: 1.1;
+}
+html[data-ui="v2"] .atlas-node.is-selected .atlas-node-dot {
+  fill: #fff0c4;
+}
+
 /* 鎖定（遠方）區域：低調、降亮 */
 html[data-ui="v2"] .atlas-node--locked .atlas-node-dot {
   fill: rgba(150, 178, 220, 0.32);
@@ -218,6 +237,10 @@ html[data-ui="v2"] .atlas-region--current .atlas-region-no {
 html[data-ui="v2"] .atlas-region--current .atlas-region-tag {
   border-color: rgba(247, 223, 170, 0.55);
   color: var(--v3-gold-200, #f7dfaa);
+}
+
+html[data-ui="v2"] .atlas-region.is-selected {
+  box-shadow: inset 3px 0 0 rgba(247, 223, 170, 0.82);
 }
 
 html[data-ui="v2"] .atlas-note {

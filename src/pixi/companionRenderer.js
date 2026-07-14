@@ -2,6 +2,7 @@ import { applyResponsiveLayout, registerSceneEditorObject, WORLD_HEIGHT, WORLD_W
 import { FALLBACK_CREATURE } from "../engine/personalityProfile.js";
 import { SCENE_LAYOUT } from "../data/sceneLayout.js";
 import { createAnimatedCompanionNode, loadCompanionAnimationPack } from "./spriteSheetAnimationLoader.js";
+import { getActiveSceneProfile } from "../data/sceneProfiles/index.js";
 
 export async function createCreatureNode(creature, statusText, { bootOnly = true } = {}) {
   if (creature.animationsManifest) {
@@ -92,8 +93,12 @@ function applyCompanionResponsiveLayout(companion, app) {
     app?.screen?.width ?? SCENE_LAYOUT.referenceWidth,
     app?.screen?.height ?? SCENE_LAYOUT.referenceHeight
   );
-  companion.x = Math.round(companion.x);
-  companion.y = Math.round(companion.y);
+  const profile = getActiveSceneProfile();
+  const anchor = profile?.companion?.anchor;
+  const referenceWidth = Number(profile?.safeZone?.referenceWidth) || SCENE_LAYOUT.referenceWidth;
+  const referenceHeight = Number(profile?.safeZone?.referenceHeight) || SCENE_LAYOUT.referenceHeight;
+  companion.x = Math.round((Number(anchor?.x) || 0.5) * referenceWidth);
+  companion.y = Math.round((Number(anchor?.y) || 0.7) * referenceHeight);
 }
 
 function isSceneEditorMode() {

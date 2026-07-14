@@ -4,6 +4,7 @@ import { clamp } from "../utils/clamp.js";
 import { normalizeRuntimeCompanionId, normalizeUnlockedCompanionIds } from "../data/companionRuntimePolicy.js";
 import { isKnownCompanionId } from "../data/companionRegistry.js";
 import { EXPLORATION_NODE_IDS } from "../data/explorationNodes.js";
+import { normalizeHabitatId } from "../data/habitatRegistry.js";
 
 let state = createDefaultState();
 const listeners = new Set();
@@ -94,6 +95,7 @@ export function normalizeState(rawState = {}) {
     lastEmotionTag: targetState.lastEmotionTag || null,
     habitatRepairFactor: clamp(targetState.habitatRepairFactor ?? 0, 0, 1),
     firstSessionOpeningSeenAt: Number(targetState.firstSessionOpeningSeenAt) || null,
+    activeHabitatId: normalizeHabitatId(targetState.activeHabitatId),
     playerProfile,
     onboarding,
     unlockedCompanionIds,

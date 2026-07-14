@@ -1,0 +1,156 @@
+{
+  "artSize": [
+    1080,
+    1920
+  ],
+  "previewSize": [
+    390,
+    844
+  ],
+  "files": [
+    {
+      "path": "foundation/central_radiant_core_day.png",
+      "size": [
+        1080,
+        1920
+      ],
+      "mode": "RGBA",
+      "anchor": [
+        0.5,
+        0.69
+      ]
+    },
+    {
+      "path": "foundation/central_radiant_core_night.png",
+      "size": [
+        1080,
+        1920
+      ],
+      "mode": "RGBA",
+      "anchor": [
+        0.5,
+        0.69
+      ]
+    },
+    {
+      "path": "foundation/eastern_mystic_mountains_day.png",
+      "size": [
+        1080,
+        1920
+      ],
+      "mode": "RGBA",
+      "anchor": [
+        0.5,
+        0.52
+      ]
+    },
+    {
+      "path": "foundation/eastern_mystic_mountains_night.png",
+      "size": [
+        1080,
+        1920
+      ],
+      "mode": "RGBA",
+      "anchor": [
+        0.5,
+        0.52
+      ]
+    },
+    {
+      "path": "foundation/northern_verdant_plains_day.png",
+      "size": [
+        1080,
+        1920
+      ],
+      "mode": "RGBA",
+      "anchor": [
+        0.5,
+        0.66
+      ]
+    },
+    {
+      "path": "foundation/northern_verdant_plains_night.png",
+      "size": [
+        1080,
+        1920
+      ],
+      "mode": "RGBA",
+      "anchor": [
+        0.5,
+        0.66
+      ]
+    },
+    {
+      "path": "foundation/southeast_forge_hills_day.png",
+      "size": [
+        1080,
+        1920
+      ],
+      "mode": "RGBA",
+      "anchor": [
+        0.5,
+        0.62
+      ]
+    },
+    {
+      "path": "foundation/southeast_forge_hills_night.png",
+      "size": [
+        1080,
+        1920
+      ],
+      "mode": "RGBA",
+      "anchor": [
+        0.5,
+        0.62
+      ]
+    },
+    {
+      "path": "foundation/southern_harbor_nexus_day.png",
+      "size": [
+        1080,
+        1920
+      ],
+      "mode": "RGBA",
+      "anchor": [
+        0.5,
+        0.68
+      ]
+    },
+    {
+      "path": "foundation/southern_harbor_nexus_night.png",
+      "size": [
+        1080,
+        1920
+      ],
+      "mode": "RGBA",
+      "anchor": [
+        0.5,
+        0.68
+      ]
+    },
+    {
+      "path": "foundation/southwest_tidal_frontier_day.png",
+      "size": [
+        1080,
+        1920
+      ],
+      "mode": "RGBA",
+      "anchor": [
+        0.5,
+        0.63
+      ]
+    },
+    {
+      "path": "foundation/southwest_tidal_frontier_night.png",
+      "size": [
+        1080,
+        1920
+      ],
+      "mode": "RGBA",
+      "anchor": [
+        0.5,
+        0.63
+      ]
+    }
+  ]
+}

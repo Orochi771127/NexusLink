@@ -47,6 +47,9 @@ import { createSettingsController } from "./ui/settingsController.js";
 import { createCompanionSelectController } from "./ui/companionSelectController.js";
 import { createMapController } from "./ui/mapController.js";
 import { createAtlasController } from "./ui/atlasController.js";
+import { getHabitatById, normalizeHabitatId } from "./data/habitatRegistry.js";
+import { getSceneProfile, setActiveSceneProfile } from "./data/sceneProfiles/index.js";
+import { LANGUAGE_CHANGED_EVENT } from "./i18n/i18n.js";
 import { createBattleController } from "./ui/battleController.js";
 import { createExpeditionController } from "./ui/expeditionController.js";
 import { createCodexController } from "./ui/codexController.js";
@@ -57,6 +60,7 @@ import {
   createPixiApp,
   getSceneLayers,
   createWorld,
+  switchEnvironmentHabitat,
   updateEnvironmentLayer
 } from "./pixi/pixiApp.js";
 import {
@@ -85,6 +89,17 @@ const COMPANION_ANIMATION_INTENT_EVENT = "COMPANION_ANIMATION_INTENT";
 const ENVIRONMENT_EFFECT_LIFETIME_MS = 720;
 let currentCreature = FALLBACK_CREATURE;
 let companionMotionController = null;
+
+function renderActiveHabitatName(habitatId) {
+  const habitat = getHabitatById(normalizeHabitatId(habitatId));
+  const language = document.documentElement.dataset.lang || "tc";
+  const label = qs(".v3-home-presence strong");
+  if (!label) return;
+  label.textContent = habitat.names?.[language] || habitat.name;
+  label.removeAttribute("data-i18n");
+  const kicker = qs(".v3-home-kicker");
+  if (kicker) kicker.textContent = habitat.nameEn;
+}
 let interactionController = null;
 let currentMotionState = "idle_calm";
 let devPanelController = null;
@@ -317,7 +332,21 @@ async function bootstrap() {
 
   function getAtlasController() {
     if (!atlasController) {
-      atlasController = createAtlasController({ panelManager, store });
+      atlasController = createAtlasController({
+        panelManager,
+        store,
+        onHabitatSelect: async (habitatId) => {
+          const normalizedId = normalizeHabitatId(habitatId);
+          const switched = await sceneApi?.switchHabitat?.(normalizedId);
+          if (!switched) return false;
+          store.setState({ activeHabitatId: normalizedId });
+          renderActiveHabitatName(normalizedId);
+          saveQueue.enqueue(SAVE_LEVEL.CRITICAL);
+          statusText.textContent = `你與${currentCreature.name}來到了${getHabitatById(normalizedId).name}。`;
+          panelManager.closePanel();
+          return true;
+        }
+      });
     }
     return atlasController;
   }
@@ -463,6 +492,7 @@ async function bootstrap() {
     devPanelController?.renderReadout();
     observeRaphaelAgentStateEvents(store.getState());
   });
+  EventBus.on(LANGUAGE_CHANGED_EVENT, () => renderActiveHabitatName(store.getState().activeHabitatId));
 
   stopEnvironmentHeartbeat?.();
   stopEnvironmentHeartbeat = startEnvironmentHeartbeat({
@@ -496,6 +526,7 @@ async function bootstrap() {
       emitRestrictedRaphaelAgentEvent,
       getExpeditionController
     );
+    renderActiveHabitatName(store.getState().activeHabitatId);
     markPerf("nexus:first-scene-ready");
 
     // Return Echo 動畫 cue：場景與 COMPANION_ANIMATION_INTENT 橋接已就緒，emit 一次性 intent。
@@ -604,7 +635,9 @@ async function bootScene(
   const world = createWorld(app);
   const layers = getSceneLayers(world);
 
-  const environmentLayer = await createEnvironmentLayer(layers, app);
+  const initialHabitatId = normalizeHabitatId(store.getState().activeHabitatId);
+  const initialProfile = setActiveSceneProfile(initialHabitatId);
+  const environmentLayer = await createEnvironmentLayer(layers, app, initialProfile);
 
   const particles = createParticles();
   layers.layerFX.addChild(particles);
@@ -634,7 +667,9 @@ async function bootScene(
       setWeather: setHabitatWeather,
       setTimePhase: setSceneTimePhaseOverride,
       clearTimePhase: clearSceneTimePhaseOverride,
-      weatherHooks: HABITAT_WEATHER_HOOKS
+      weatherHooks: HABITAT_WEATHER_HOOKS,
+      switchHabitat: (habitatId) => switchHabitat(habitatId),
+      getActiveHabitat: () => environmentLayer.profileId
     };
   }
 
@@ -743,6 +778,16 @@ async function bootScene(
     statusText.textContent = `${nextCreature.name}來到了你身邊。`;
   }
 
+  async function switchHabitat(habitatId) {
+    const normalizedId = normalizeHabitatId(habitatId);
+    const profile = getSceneProfile(normalizedId);
+    const switched = await switchEnvironmentHabitat(environmentLayer, layers, app, profile);
+    if (!switched) return false;
+    positionCompanion(companion, app);
+    weatherFx.weatherId = "__pending__";
+    return true;
+  }
+
   const isSceneEditorMode = readSceneEditorFlag();
   if (isSceneEditorMode) {
     enableEditorMode(app.stage);
@@ -822,7 +867,7 @@ async function bootScene(
     habitatTraceRenderer.update(t);
   });
 
-  return { swapCompanion, sceneBridge };
+  return { swapCompanion, switchHabitat, sceneBridge };
 }
 
 function createCrystalTouchEffect(parent, event) {

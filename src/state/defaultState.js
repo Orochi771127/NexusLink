@@ -63,6 +63,7 @@ const defaultState = {
   firstSessionOpeningSeenAt: null,
 
   // R2 vertical slice
+  activeHabitatId: "moonlake",
   activeCompanionId: "greyshade-cat",
   unlockedCompanionIds: [
     "greyshade-cat",

@@ -50,10 +50,11 @@ export const moonlakeProfile = Object.freeze({
     })
   }),
 
-  // sceneLayout companion (195, 590) → normalized ~ (0.50, 0.70)
+  // The current full-bleed diorama's foreground plaza sits below the dock.
+  // Keep the companion's foot anchor on that plaza, above the bottom UI inset.
   companion: Object.freeze({
-    anchor: Object.freeze({ x: 0.5, y: 0.7 }),
-    reservedRect: Object.freeze({ x: 0.38, y: 0.45, w: 0.24, h: 0.27 })
+    anchor: Object.freeze({ x: 0.5, y: 0.9 }),
+    reservedRect: Object.freeze({ x: 0.38, y: 0.63, w: 0.24, h: 0.27 })
   }),
 
   ui: Object.freeze({

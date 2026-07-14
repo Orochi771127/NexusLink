@@ -25,9 +25,10 @@ const RIVER_LINKS = [
 const VIEW_W = LINKARA_ATLAS_ART.viewWidth;
 const VIEW_H = LINKARA_ATLAS_ART.viewHeight;
 
-export function createAtlasController({ panelManager, store }) {
+export function createAtlasController({ panelManager, store, onHabitatSelect }) {
   const canvas = qs("#atlas-canvas");
   const legend = qs("#atlas-legend");
+  let switching = false;
 
   function regionStatus(region, chapterProgress) {
     const chapter = getChapterForRegion(region.id);
@@ -41,9 +42,13 @@ export function createAtlasController({ panelManager, store }) {
     const chapterProgress = state.chapterProgress || { current: 1, completed: [] };
     const regions = LINKARA_REGIONS.map((region) => ({
       ...region,
-      status: regionStatus(region, chapterProgress)
+      status: regionStatus(region, chapterProgress),
+      selected: region.id === state.activeHabitatId
     }));
-    if (canvas) canvas.innerHTML = buildMapSvg(regions);
+    if (canvas) {
+      canvas.innerHTML = buildMapSvg(regions);
+      canvas.setAttribute("aria-hidden", "false");
+    }
     if (legend) legend.innerHTML = buildLegend(regions);
     renderIntro(state, chapterProgress);
   }
@@ -85,6 +90,35 @@ export function createAtlasController({ panelManager, store }) {
     panelManager.openPanel("atlas");
   }
 
+  async function selectRegion(regionId) {
+    if (switching || typeof onHabitatSelect !== "function") return;
+    const node = canvas?.querySelector(`[data-region-id="${regionId}"]`);
+    if (!node || node.getAttribute("aria-disabled") === "true") return;
+    switching = true;
+    canvas?.setAttribute("aria-busy", "true");
+    try {
+      const changed = await onHabitatSelect(regionId);
+      if (changed !== false) build();
+    } catch (error) {
+      console.warn("Habitat switch failed:", error);
+    } finally {
+      switching = false;
+      canvas?.removeAttribute("aria-busy");
+    }
+  }
+
+  canvas?.addEventListener("click", (event) => {
+    const node = event.target?.closest?.("[data-region-id]");
+    if (node) selectRegion(node.dataset.regionId);
+  });
+  canvas?.addEventListener("keydown", (event) => {
+    if (event.key !== "Enter" && event.key !== " ") return;
+    const node = event.target?.closest?.("[data-region-id]");
+    if (!node) return;
+    event.preventDefault();
+    selectRegion(node.dataset.regionId);
+  });
+
   return { open };
 }
 
@@ -101,9 +135,21 @@ function buildMapSvg(regions) {
 
   const nodes = regions.map((region) => {
     const isCurrent = region.status === "current";
+    // Habitat viewing is independent from chapter progression: every atlas node
+    // may change the visual habitat, while its chapter status remains locked.
+    const isSelectable = true;
     const haloR = isCurrent ? 7.4 : 5;
     const dotR = isCurrent ? 3.4 : 2.6;
-    return `<g class="atlas-node atlas-node--${region.status}" transform="translate(${region.x} ${region.y})">
+    const classes = [
+      "atlas-node",
+      `atlas-node--${region.status}`,
+      isSelectable ? "atlas-node--selectable" : "",
+      region.selected ? "is-selected" : ""
+    ].filter(Boolean).join(" ");
+    const interaction = isSelectable
+      ? `role="button" tabindex="0" aria-disabled="false" aria-label="前往${region.zh}"`
+      : `aria-disabled="true"`;
+    return `<g class="${classes}" data-region-id="${region.id}" ${interaction} transform="translate(${region.x} ${region.y})">
       <circle class="atlas-node-halo" r="${haloR}"></circle>
       <circle class="atlas-node-dot" r="${dotR}"></circle>
       <text class="atlas-node-no" y="1.2">${region.no}</text>
@@ -127,7 +173,7 @@ function buildLegend(regions) {
       const tagKey =
         region.status === "current" ? "atlas.here" : region.status === "completed" ? "atlas.walked" : "atlas.far";
       const chapterLabel = chapter ? t("atlas.chapterOf").replace("{no}", String(chapter.chapter)) : "";
-      return `<li class="atlas-region atlas-region--${region.status}">
+      return `<li class="atlas-region atlas-region--${region.status}${region.selected ? " is-selected" : ""}">
         <span class="atlas-region-no" aria-hidden="true">${region.no}</span>
         <span class="atlas-region-copy">
           <strong>${region.zh}</strong>

@@ -108,6 +108,45 @@ export const MOONLAKE_DIORAMA_R1 = Object.freeze({
   })
 });
 
+export const LINKARA_HABITATS_R1 = Object.freeze({
+  core: Object.freeze({
+    day: "./assets/backgrounds/LinkaraHabitats_r1/core_day.png",
+    night: "./assets/backgrounds/LinkaraHabitats_r1/core_night.png",
+    depthMask: "./assets/layers/LinkaraHabitats_r1/core_depth_mask.png",
+    placementMask: "./assets/layers/LinkaraHabitats_r1/core_placement_mask.png"
+  }),
+  mystic: Object.freeze({
+    day: "./assets/backgrounds/LinkaraHabitats_r1/mystic_day.png",
+    night: "./assets/backgrounds/LinkaraHabitats_r1/mystic_night.png",
+    depthMask: "./assets/layers/LinkaraHabitats_r1/mystic_depth_mask.png",
+    placementMask: "./assets/layers/LinkaraHabitats_r1/mystic_placement_mask.png"
+  }),
+  plains: Object.freeze({
+    day: "./assets/backgrounds/LinkaraHabitats_r1/plains_day.png",
+    night: "./assets/backgrounds/LinkaraHabitats_r1/plains_night.png",
+    depthMask: "./assets/layers/LinkaraHabitats_r1/plains_depth_mask.png",
+    placementMask: "./assets/layers/LinkaraHabitats_r1/plains_placement_mask.png"
+  }),
+  forge: Object.freeze({
+    day: "./assets/backgrounds/LinkaraHabitats_r1/forge_day.png",
+    night: "./assets/backgrounds/LinkaraHabitats_r1/forge_night.png",
+    depthMask: "./assets/layers/LinkaraHabitats_r1/forge_depth_mask.png",
+    placementMask: "./assets/layers/LinkaraHabitats_r1/forge_placement_mask.png"
+  }),
+  harbor: Object.freeze({
+    day: "./assets/backgrounds/LinkaraHabitats_r1/harbor_day.png",
+    night: "./assets/backgrounds/LinkaraHabitats_r1/harbor_night.png",
+    depthMask: "./assets/layers/LinkaraHabitats_r1/harbor_depth_mask.png",
+    placementMask: "./assets/layers/LinkaraHabitats_r1/harbor_placement_mask.png"
+  }),
+  tidal: Object.freeze({
+    day: "./assets/backgrounds/LinkaraHabitats_r1/tidal_day.png",
+    night: "./assets/backgrounds/LinkaraHabitats_r1/tidal_night.png",
+    depthMask: "./assets/layers/LinkaraHabitats_r1/tidal_depth_mask.png",
+    placementMask: "./assets/layers/LinkaraHabitats_r1/tidal_placement_mask.png"
+  })
+});
+
 export const ASSET_MANIFEST = Object.freeze({
   backgrounds: Object.freeze({
     lakeDay: MOONLAKE_DIORAMA_R1.backgrounds.day,
@@ -135,6 +174,7 @@ export const ASSET_MANIFEST = Object.freeze({
     bgm: "./assets/audio/bgm_nexuslink.m4a"
   }),
   enemies: ENEMY_RIFT_SILHOUETTES,
+  habitats: LINKARA_HABITATS_R1,
   characters: Object.freeze({
     greyshadeCat: createIllustratedCompanionAsset({
       id: "greyshade-cat",
