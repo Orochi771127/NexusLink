@@ -62,6 +62,7 @@ export function createGentleInvitationController({ store, isPanelOpen } = {}) {
     if (
       body.contains("onboarding-active") ||
       body.contains("first-loop-active") ||
+      body.contains("first-loop-reveal-active") ||
       body.contains("page-open") ||
       body.contains("st-focus")
     ) {

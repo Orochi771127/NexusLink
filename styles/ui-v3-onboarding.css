@@ -284,10 +284,17 @@ html[data-ui="v2"] body.first-loop-active .bottom-nav .bottom-nav__item:not(.bot
   pointer-events: none;
 }
 
+/* =========================================================================
+   環境訊息欄（首輪提示 / 柔性邀請共用同一垂直槽位，互斥顯示）
+   ========================================================================= */
+html[data-ui="v2"] {
+  --ambient-msg-bottom: calc(var(--bottom-safe, 0px) + var(--nav-block-h, 104px) + 128px);
+}
+
 html[data-ui="v2"] .first-loop-hint-wrap {
   position: fixed;
   left: 50%;
-  bottom: calc(var(--bottom-safe, 0px) + var(--nav-block-h, 104px) + 118px);
+  bottom: var(--ambient-msg-bottom);
   transform: translateX(-50%);
   display: flex;
   flex-direction: column;
@@ -315,6 +322,8 @@ html[data-ui="v2"] .first-loop-hint {
   font-size: 13px;
   line-height: 1.45;
   text-align: center;
+  white-space: normal;
+  word-break: keep-all;
 }
 
 html[data-ui="v2"] .first-loop-skip {
@@ -410,7 +419,7 @@ html[data-ui="v2"] .touch-affordance.is-lowmotion .touch-affordance__core {
 html[data-ui="v2"] .gentle-invitation {
   position: fixed;
   left: 50%;
-  bottom: calc(var(--bottom-safe, 0px) + var(--nav-block-h, 104px) + 96px);
+  bottom: var(--ambient-msg-bottom, calc(var(--bottom-safe, 0px) + var(--nav-block-h, 104px) + 128px));
   transform: translateX(-50%);
   margin: 0;
   max-width: min(80vw, 400px);
@@ -422,6 +431,8 @@ html[data-ui="v2"] .gentle-invitation {
   font-size: 12.5px;
   line-height: 1.5;
   text-align: center;
+  white-space: normal;
+  word-break: keep-all;
   pointer-events: none;
   opacity: 0;
   z-index: calc(var(--z-nav, 30) - 3);
@@ -430,6 +441,12 @@ html[data-ui="v2"] .gentle-invitation {
 
 html[data-ui="v2"] .gentle-invitation.is-visible {
   opacity: 1;
+}
+
+/* 首輪提示 / 揭示期間，柔性邀請讓位同一欄位（防 JS 時序競態的 CSS 保險） */
+html[data-ui="v2"] body.first-loop-active .gentle-invitation,
+html[data-ui="v2"] body.first-loop-reveal-active .gentle-invitation {
+  opacity: 0 !important;
 }
 
 html[data-ui="v2"] .bottom-nav .bottom-nav__item.invite-glow {

@@ -15,7 +15,7 @@ import { qsa } from "../utils/dom.js";
 const REVEAL_LINGER_MS = 2600;
 const NAV_GATED_SELECTOR = ".bottom-nav .bottom-nav__item:not(.bottom-nav__item--core)";
 
-export function createFirstLoopController({ store, saveCurrentState } = {}) {
+export function createFirstLoopController({ store, saveCurrentState, onRevealEnd } = {}) {
   let wrapEl = null;
   let hintEl = null;
   let skipEl = null;
@@ -95,6 +95,17 @@ export function createFirstLoopController({ store, saveCurrentState } = {}) {
     wrapEl.classList.add("is-visible");
   }
 
+  function clearRevealState({ notify = false } = {}) {
+    document.body.classList.remove("first-loop-reveal-active");
+    window.clearTimeout(revealTimer);
+    revealTimer = null;
+    if (wrapEl) {
+      wrapEl.classList.remove("is-visible");
+      delete wrapEl.dataset.viewState;
+    }
+    if (notify) onRevealEnd?.();
+  }
+
   function deactivate({ reveal }) {
     document.body.classList.remove("first-loop-active");
     delete document.body.dataset.firstLoopStage;
@@ -105,14 +116,16 @@ export function createFirstLoopController({ store, saveCurrentState } = {}) {
       ensureElements();
       hintEl.textContent = t("fl.reveal");
       skipEl.hidden = true;
-      delete wrapEl.dataset.viewState;
+      wrapEl.dataset.viewState = "reveal";
       wrapEl.classList.add("is-visible");
+      document.body.classList.add("first-loop-reveal-active");
       window.clearTimeout(revealTimer);
-      revealTimer = window.setTimeout(() => wrapEl.classList.remove("is-visible"), REVEAL_LINGER_MS);
+      revealTimer = window.setTimeout(() => clearRevealState({ notify: true }), REVEAL_LINGER_MS);
       return;
     }
     wasActive = false;
-    if (wrapEl && !revealTimer) wrapEl.classList.remove("is-visible");
+    if (revealTimer) return;
+    clearRevealState();
   }
 
   function setNavGated(gated) {

@@ -25,7 +25,7 @@ const CSS = `
 .companion-initiative-line {
   position: fixed;
   left: 50%;
-  bottom: 46%;
+  bottom: 42%;
   transform: translateX(-50%);
   max-width: min(78vw, 340px);
   padding: 6px 14px;
@@ -36,6 +36,8 @@ const CSS = `
   line-height: 1.5;
   text-align: center;
   letter-spacing: 0.02em;
+  white-space: normal;
+  word-break: keep-all;
   pointer-events: none;
   opacity: 0;
   transition: opacity 720ms ease;
@@ -52,7 +54,8 @@ const CSS = `
 }
 html[data-reduced-motion-preference="reduced"] .companion-initiative-line { transition: none; }
 /* 牠「真的在做」的時候，旁白「牠像是想…」讓位——兩句同屏會互相壓住、語意也矛盾。 */
-body.companion-initiative-active .gentle-invitation { opacity: 0 !important; }
+body.companion-initiative-active .gentle-invitation,
+body.first-loop-reveal-active .companion-initiative-line { opacity: 0 !important; }
 `;
 
 export function createCompanionInitiativeController({ store, isPanelOpen } = {}) {
@@ -94,6 +97,7 @@ export function createCompanionInitiativeController({ store, isPanelOpen } = {})
     if (
       body.contains("onboarding-active") ||
       body.contains("first-loop-active") ||
+      body.contains("first-loop-reveal-active") ||
       body.contains("page-open") ||
       body.contains("st-focus")
     ) {

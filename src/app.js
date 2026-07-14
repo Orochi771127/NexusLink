@@ -214,21 +214,23 @@ async function bootstrap() {
     // 初遇定情（CH-2）：選定即切換棲地夥伴（state 已先寫入，normalize 會放行）。
     onBondChosen: (companionId) => applyCompanionChange(companionId)
   });
+  // 柔性邀請（支柱二）：首輪後由夥伴狀態驅動的一句溫柔下一步，讓核心迴圈不再沉默。
+  const gentleInvitationController = createGentleInvitationController({
+    store,
+    isPanelOpen: () => panelManager.isPanelOpen()
+  });
   // Meet 之後的首輪閉環（觸碰→心語→痕跡）：完成/跳過前只開心核與心語入口。
   const firstLoopController = createFirstLoopController({
     store,
-    saveCurrentState: () => saveQueue.enqueue(SAVE_LEVEL.CRITICAL)
+    saveCurrentState: () => saveQueue.enqueue(SAVE_LEVEL.CRITICAL),
+    // 揭示句淡出後才讓柔性邀請接手同一訊息欄位，避免兩句同屏疊字。
+    onRevealEnd: () => gentleInvitationController.render()
   });
   // 互動可讀性提示（支柱一）：貓身上的輕觸光暈，firstTouch 前指引新玩家「牠可以被碰」。
   const interactionHintController = createInteractionHintController({
     store,
     isPanelOpen: () => panelManager.isPanelOpen(),
     isOnboardingActive: () => onboardingController?.isActive?.()
-  });
-  // 柔性邀請（支柱二）：首輪後由夥伴狀態驅動的一句溫柔下一步，讓核心迴圈不再沉默。
-  const gentleInvitationController = createGentleInvitationController({
-    store,
-    isPanelOpen: () => panelManager.isPanelOpen()
   });
   // 主動微時刻（TP-7）：牠偶爾真的先動——狀態驅動、冷卻防打擾、不寫 chatHistory。
   const companionInitiativeController = createCompanionInitiativeController({
