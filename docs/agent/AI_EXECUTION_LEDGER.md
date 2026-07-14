@@ -2471,6 +2471,24 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Known review points: Thunder crystal micro-detail interpolation, WaveCub face-angle strength, Phoenix talon-lift subtlety, Star Foal high foreleg stylization, and Goldenspark gear-tail motion amplitude remain Owner visual decisions.
 - Next safe action: wait for explicit Owner pilot approval. Do not promote to `assets/**` or touch registry/runtime without a separate GROUNDWORK task pack.
 
+### 2026-07-15 - Owner - Black Iron Hackers Five-Species Animation Pilot - APPROVED
+
+- Lane: `Game Art, UI, And Visual Production`.
+- Owner signal: `同意請開工`.
+- Approved pilots: ThunderPup `right_walk`, WaveCub `touch_reject`, Starflame Phoenix `right_walk`, Star Foal `right_walk`, and Goldenspark Wyrm `idle_calm`.
+- Authorization: proceed with the complete staging catalog under `output/character-pilots/**`: all five characters, all 29 shared animation IDs, exactly eight frames per action. The shared ID remains `sleep`, while its performance is locked to an already-deeply-asleep loop; waking remains exclusive to `idle_wake`.
+- Scope boundary: this approval does not authorize `assets/**`, runtime, registry, manifest, state/save, canon promotion, dependency changes, commit, or push.
+
+### 2026-07-15 - Codex - Black Iron Hackers Full Catalog Generation - IN PROGRESS
+
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `TP-BIH-STAGE1-FULL-8F-CATALOG` continuation after approved seed and pilot gates.
+- Execution order: complete each character vertically through P1, P2 and P3, beginning with `thunder-pup`; preserve every approved pilot as that action's selected v1 output.
+- Mechanical contract: one built-in image-generation call per action; raw 4-column x 2-row action sheet; deterministic chroma removal; shared-scale bottom/species-datum normalization; eight 512 x 512 RGBA frames; 2048 x 1024 selected sheet; eight-frame GIF; strict cell-edge rejection and transparent-corner checks.
+- Red-line check: touch responses retain consent and non-punitive refusal; battle motions remain restrained boundary/stabilization gestures; `faint` is temporary core overload, never death; no dependency detection, FOMO, safety-help reward, domination framing, or unreachable repair is introduced.
+- Non-goals: no `assets/**`, runtime, registry, manifest, state/save, canon authority, external dependency, build step, commit, or push.
+- Required reading: `output/character-pilots/BLACK_IRON_HACKERS_FULL_CATALOG_PRODUCTION_PLAN.md`, `docs/assets/COMPANION_ANIMATION_CATALOG.md`, the five lock specs, `docs/art/BLACK_IRON_HACKERS_STAGE1_SPECIES_MOTION_TRANSLATION.md`, `AGENTS.md`, `CLAUDE.md`, `ACCEPTANCE.md`, and this lane.
+
 ### 2026-07-14 - Codex - Six Linkara Region Diorama Art R1 - PUBLISHED TO MAIN
 
 - Lane: `Game Art, UI, And Visual Production`.
@@ -2493,3 +2511,61 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Concurrent-state note: current `main` advanced to `e269cc0` during this work and already contains the corrected Moonlake companion `(195,590)` / `(0.50,0.70)` values. Unrelated Expedition and Black Iron Hacker worktree changes were preserved and not included in this package.
 - Human gate: `humanApproved:false`, `referenceAuditPassed:false`, `runtimeIntegrated:false`. Owner review is required before any file enters `assets/**`; promotion and region switching require a separate GROUNDWORK task.
 - Required reading: `output/habitat/linkara-six-region-diorama-r1/QC.md`, `output/habitat/linkara-six-region-diorama-r1/manifest.json`, `output/habitat/linkara-six-region-diorama-r1/scene-profiles.json`, both contact sheets, and this lane.
+### 2026-07-15 - Codex - Linkara Seven-Habitat Runtime Switch + Clay Resin R2 - IN PROGRESS
+
+- Lane: `Game Engineering And Architecture`.
+- Status: `IN PROGRESS`; Owner confirmed the GROUNDWORK task and additionally required a stronger 3D miniature / handmade clay-resin material pass before runtime promotion.
+- Task name: `TP-HAB-REGION-SWITCH-1`.
+- Scope: promote an Owner-reviewed six-region R2 day/night habitat set, add seven-region Habitat Registry and Scene Profiles, place the active companion at each authored plaza anchor, persist the active habitat, and make accessible unlocked atlas circles switch the live Pixi habitat.
+- Groundwork: expected changes include approved `assets/backgrounds|layers/LinkaraHabitats_r1/**`, `src/pixi/pixiApp.js`, state normalization/defaults, manifest data, atlas integration, focused CSS/QA, art INDEX, and this ledger. `index.html` and `saveManager.js` are not planned.
+- Performance contract: habitat pairs load on demand; previous non-active region textures are unloaded after a successful swap so all twelve large plates do not remain resident on mobile GPU memory.
+- Red-line check: no dependency detection, FOMO, countdown, reward pressure, safety-help reward, unreachable repair, battle policy, companion ownership or roster change.
+- Non-goals: no Unity/Three.js runtime, build step, new dependency, player navigation/collision map, emotional-crystal gameplay, or unrelated character-production files.
+- Art gate: preserve the published R1 package as provenance. R2 must read unmistakably as a cohesive handcrafted tabletop model kit with rounded clay/resin forms, physical contact shadows, matte-to-satin response, sharp companion plaza, and progressively hazed far scenery. New candidates remain staging until visual review passes.
+- Required reading: `AGENTS.md`, `CLAUDE.md`, `ACCEPTANCE.md`, `docs/art/ART_PRODUCTION_INDEX.json`, `output/habitat/linkara-six-region-diorama-r1/manifest.json`, `output/habitat/linkara-six-region-diorama-r1/scene-profiles.json`, `src/ui/atlasController.js`, `src/pixi/pixiApp.js`, the installed `generate-nexus-habitat` and `generate2dmap` Skills, and this lane.
+
+### 2026-07-15 - Codex - Linkara Six-Region Clay Resin R2 - IN PROGRESS
+
+- Lane: `Game Art, UI, And Visual Production`.
+- Status: `IN PROGRESS`; Owner rejected the R1 material strength as insufficiently 3D and asked for a stronger miniature / clay-resin pass while preserving each region's geography and plaza.
+- Visual lock: fixed elevated three-quarter portrait camera, clear central companion stage, rounded handcrafted forms, coherent model-kit scale, visible contact shadows and bevels, matte clay plus selective satin resin, restrained cyan/gold Cyber-Taoist emission, shallow depth of field only outside the interaction plane, and atmospheric haze in the far set.
+- Day/night contract: day remains the geometry master; night is a same-composition relight with no baked weather, actor, UI, text, celestial disc or stateful prop.
+- Placement anchors remain: Core `(.50,.69)`, Mystic `(.50,.62)`, Plains `(.50,.66)`, Forge `(.50,.62)`, Harbor `(.50,.68)`, Tidal `(.50,.63)`.
+- Output boundary: R2 generation and review remain under `output/habitat/linkara-six-region-diorama-r2/**` until the visual gate passes. R1 remains untouched.
+
+### 2026-07-15 - Codex - Linkara Six-Region Clay Resin R2 - AWAITING OWNER REVIEW
+
+- Lane: `Game Art, UI, And Visual Production`.
+- Status: `AWAITING OWNER REVIEW`; all six R2 day masters and their same-composition night relights are generated, normalized and visually audited. No candidate has entered `assets/**` or runtime.
+- Material result: the R1 painterly tendency is replaced by rounded polymer-clay construction, hand-painted model surfaces, selective translucent resin water/crystals/energy, physical contact shadows and a clearer shared tabletop scale.
+- Placement result: Greyshade composites confirm the authored plaza anchors remain grounded and unobstructed in both phases: Core `(.50,.69)`, Mystic `(.50,.62)`, Plains `(.50,.66)`, Forge `(.50,.62)`, Harbor `(.50,.68)`, Tidal `(.50,.63)`.
+- Layer result: each region has one coherent R2 day/night foundation plus a geometry-aligned depth mask and placement mask. Transparent occlusion/prop extraction remains intentionally gated until the Owner chooses the foundations.
+- Verification: habitat validator passes `12/12` foundations and `12/12` masks at `1080x1920`; 12 companion previews pass at `390x844`; manifest, Scene Profiles and report parse; both contact sheets were inspected for material consistency, far haze, plaza clarity and UI avoidance.
+- Human gate: review `output/habitat/linkara-six-region-diorama-r2/previews/six-region-day-night-companion-placement-contact-sheet.jpg` and the safe-zone contact sheet. Approval authorizes formal promotion and the already-approved seven-region runtime switching task; rejection should name the region(s) to regenerate.
+
+### 2026-07-15 - Codex - Linkara Seven-Habitat Runtime Switch - BLOCKED ON ART GATE
+
+- Lane: `Game Engineering And Architecture`.
+- Status: `BLOCKED ON HUMAN ART GATE`; runtime discovery and implementation design are complete, but the project rule forbids promoting unapproved generated images into `assets/**`.
+- Ready next action after approval: promote the selected R2 pair set, add the Habitat Registry and six Scene Profiles, switch/unload Pixi habitat textures on demand, persist the selected habitat, center the active companion on the region-specific plaza anchor, and make unlocked atlas circles accessible switch controls.
+- Scope remains unchanged: no `index.html`, `saveManager.js`, Unity/Three.js runtime, new dependency, build step, player navigation system, FOMO or unrelated character-production files.
+
+### 2026-07-15 - Codex - Linkara Six-Region Clay Resin R2 - COMPLETED
+
+- Lane: `Game Art, UI, And Visual Production`.
+- Status: `COMPLETED`; Owner continuation approved the R2 contact-sheet direction, and all six regions were promoted as twelve `1080x1920` day/night foundations plus twelve geometry-aligned depth/placement masks.
+- Visual result: one cohesive 3D miniature / handmade clay-resin set language, clear companion plazas, selective resin water/crystal/energy, foreground sharpness and progressively hazed distant scenery. Weather remains runtime FX rather than baked rain.
+- Runtime placement correction: 390×844 browser review confirmed Core, Plains, Forge, Harbor and Tidal anchors; Mystic was corrected to `(0.50,0.52)`. Moonlake was also moved from the dock to the foreground circular plaza at `(0.50,0.90)`.
+- Verification: habitat validator passes staging and formal assets at `12/12` foundations plus `12/12` masks; formal promotion SHA-256 comparison passes `24/24`; JSON/provenance scripts parse; day and night phases were visually inspected.
+- Commit / branch: `8985ee7` on `main`. R2 package: `output/habitat/linkara-six-region-diorama-r2/**`; formal assets: `assets/backgrounds/LinkaraHabitats_r1/**` and `assets/layers/LinkaraHabitats_r1/**`.
+- Isolation: concurrent Black Iron Hacker files, `docs/art/README.md`, `output/character-pilots/**`, and untracked Moonlake staging were preserved and excluded.
+
+### 2026-07-15 - Codex - Linkara Seven-Habitat Runtime Switch - VERIFIED
+
+- Lane: `Game Engineering And Architecture`.
+- Status: `VERIFIED`; seven Habitat Registry / Scene Profiles are live, active habitat persists through normalized state, Pixi loads the selected day/night pair on demand and unloads the previous pair, and Moonlake-only overlays do not leak into other regions.
+- Atlas contract: all seven circular nodes are mouse- and keyboard-selectable for habitat viewing. Chapter status remains independently `current/completed/locked`, so changing scenery does not unlock chapters, rewards, encounters or progression.
+- Mobile QA: complete map-circle switching loop tested in the browser at `390x844`; all seven visible names matched their backgrounds, all companions landed on authored plaza centres without HUD/Dock overlap, reload preserved Mystic selection, and Traditional Chinese / English habitat-name switching passed.
+- Automated QA: changed JavaScript passes `node --check`; registry/Profile coverage passes `7/7`; state normalization and `24/24` manifest-path checks pass; staged diff check passes.
+- Red-line result: no dependency detection, FOMO, countdown, reward pressure, safety-help reward, battle-policy change, roster change, new engine, dependency or build step.
+- Commit / branch: implementation and promoted assets are `8985ee7` on `main`; this completion ledger follows in the publication commit.
