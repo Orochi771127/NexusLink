@@ -484,6 +484,30 @@ const cases = [
         && EXPEDITION_CORE_BRIDGE_STATUS.coreIntegrated === false
         && gated.accepted[0].writePolicy === "expedition_lite_v1";
     }
+  ),
+  // P2 負向：非遠征來源不得寫入（含 soul_talk／unknown／缺 source）
+  runCase(
+    "RE2 記憶 lite policy：拒絕非 expedition source",
+    () => {},
+    () => {
+      const gated = filterExpeditionMemoryObjects([
+        { id: "ok", excerpt: "草坡有風。", source: "expedition" },
+        { id: "st", excerpt: "心語誤入。", source: "soul_talk" },
+        { id: "unk", excerpt: "未知來源。", source: "unknown" },
+        { id: "miss", excerpt: "缺 source 欄位。" },
+        { id: "empty", excerpt: "空字串 source。", source: "" }
+      ]);
+      const rejectedIds = new Set(gated.rejected.map((r) => r.memory?.id));
+      const reasons = new Set(gated.rejected.map((r) => r.reason));
+      return gated.accepted.length === 1
+        && gated.accepted[0].id === "ok"
+        && gated.accepted[0].source === "expedition"
+        && rejectedIds.has("st")
+        && rejectedIds.has("unk")
+        && rejectedIds.has("miss")
+        && rejectedIds.has("empty")
+        && reasons.has("non_expedition_source");
+    }
   )
 ];
 

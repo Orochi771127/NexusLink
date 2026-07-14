@@ -1,13 +1,21 @@
 # Raphael Expedition Eval Contract (RE-1)
 
-Status: `draft awaiting seal` — 2026-07-14（**尚未 sealed**；不可偽造 Owner 封印）  
-Lane: Raphael Core × Nexus Expedition  
-Parent ops: [`docs/agent/RAPHAEL_TRAINING_OPS_PLAYBOOK.md`](../agent/RAPHAEL_TRAINING_OPS_PLAYBOOK.md)  
+Status: `draft awaiting seal` — 2026-07-14（**尚未 sealed**；不可偽造 Owner 封印）
+
+Lane: Raphael Core × Nexus Expedition
+
+Parent ops: [`docs/agent/RAPHAEL_TRAINING_OPS_PLAYBOOK.md`](../agent/RAPHAEL_TRAINING_OPS_PLAYBOOK.md)
+
 Related: [`RAPHAEL_AUTONOMY_EVAL_CONTRACT.md`](./RAPHAEL_AUTONOMY_EVAL_CONTRACT.md) (RA-1)、[`RAPHAEL_STANDOFF_EVAL_CONTRACT.md`](./RAPHAEL_STANDOFF_EVAL_CONTRACT.md) (RS-1)
 
-> **RE-2 runtime 進度（2026-07-14，Owner 指示先開工）**  
-> 已落地：session heart、E-CORE 結算拆分（system facts + 第一人稱 adapter／fallback）、非農場關係、persona fail-closed、安全返回棲地。  
-> 尚未完成：完整 agent intent／critic／voice pack 政策鏈、正式 RE1 harness 進 release gate、Owner feel-check。  
+Commercial path: [`RAPHAEL_EXPEDITION_COMMERCIAL_READINESS.md`](./RAPHAEL_EXPEDITION_COMMERCIAL_READINESS.md)（階段門檻；非 sealed、非 Store-ready）
+
+> **RE-2 runtime 進度（2026-07-14，Owner 指示先開工）**
+>
+> 已落地：session heart、E-CORE 結算拆分（system facts + 第一人稱 adapter／fallback）、非農場關係、persona fail-closed、安全返回棲地。
+>
+> 尚未完成：完整 agent intent／critic／voice pack 政策鏈、正式 RE1 harness 進 release gate、Owner feel-check。
+>
 > 判定仍為：**Prototype＋RE-2 部分接線**，不是「RaphaelCore 完整整合」或商業上線。
 
 ## 1. Purpose

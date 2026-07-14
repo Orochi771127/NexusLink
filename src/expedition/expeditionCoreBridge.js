@@ -50,11 +50,16 @@ export function createExpeditionReflectionComposer({ state = {}, companion = nul
   };
 }
 
+/** lite policy 唯一合法來源；禁止 soul_talk／unknown／缺省混入遠征結算寫入 */
+export const EXPEDITION_MEMORY_SOURCE = "expedition";
+
 /**
  * 探索記憶寫入政策（lite）。
  * - 必須有 excerpt
- * - source 必須是 expedition（或未填則補上）
+ * - source 必須**明確**為 `"expedition"`（缺省／soul_talk／unknown／其他一律拒）
  * - 單次結算最多接受 maxAccept 筆
+ *
+ * 設計理念：結算記憶閘門 fail-closed，避免心語或其他系統物件誤寫成「遠征記憶」。
  *
  * TODO(RE-3): 接 memoryWriter / 正式 sedimentation policy（需 expedition-specific gateway，
  * 不可直接拿玩家對話 buildMemoryDecision 硬套）。
@@ -73,6 +78,12 @@ export function filterExpeditionMemoryObjects(memoryObjects = [], { maxAccept = 
       rejected.push({ memory, reason: "empty_excerpt" });
       return;
     }
+    // P2：來源閘門 — 只接受明確 expedition；不可默默補上 source
+    const source = String(memory.source ?? "").trim();
+    if (source !== EXPEDITION_MEMORY_SOURCE) {
+      rejected.push({ memory, reason: "non_expedition_source" });
+      return;
+    }
     if (accepted.length >= maxAccept) {
       rejected.push({ memory, reason: "per_settlement_cap" });
       return;
@@ -80,7 +91,7 @@ export function filterExpeditionMemoryObjects(memoryObjects = [], { maxAccept = 
     accepted.push({
       ...memory,
       excerpt,
-      source: memory.source || "expedition",
+      source: EXPEDITION_MEMORY_SOURCE,
       // 標記：此寫入尚未經完整 Core memoryWriter
       writePolicy: "expedition_lite_v1"
     });
