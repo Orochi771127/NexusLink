@@ -62,7 +62,9 @@ export const RUNTIME_COMPANION_ASSET_KEYS = Object.freeze([
 
 export const MOONLAKE_VIVARIUM_V3 = Object.freeze({
   backgrounds: Object.freeze({
-    night: "./assets/backgrounds/MoonlakeVivarium_v3/bg_night_base.png"
+    night: "./assets/backgrounds/MoonlakeVivarium_v3/bg_night_base.png",
+    // v3 日間底圖尚未就緒；暫共用 night foundation，避免白天仍顯示 LakeNightCamp_v2。
+    day: "./assets/backgrounds/MoonlakeVivarium_v3/bg_night_base.png"
   }),
   platforms: Object.freeze({
     magicCircle: "./assets/platforms/MoonlakeVivarium_v3/magic_circle.png"
@@ -75,7 +77,7 @@ export const MOONLAKE_VIVARIUM_V3 = Object.freeze({
 
 export const ASSET_MANIFEST = Object.freeze({
   backgrounds: Object.freeze({
-    lakeDay: "./assets/backgrounds/LakeNightCamp_v2/bg_day_base.png",
+    lakeDay: MOONLAKE_VIVARIUM_V3.backgrounds.day,
     lakeNight: MOONLAKE_VIVARIUM_V3.backgrounds.night
   }),
   platforms: Object.freeze({

@@ -18,7 +18,7 @@ export async function createPlatformNode() {
     platform.anchor.set(0.5);
     platform.x = WORLD_WIDTH / 2;
     platform.y = PLATFORM_Y;
-    platform.alpha = 0.76;
+    platform.alpha = 0.68;
     applySceneBlendMode(platform, "magic_circle");
     registerSceneEditorObject(platform, {
       id: "magic_circle",

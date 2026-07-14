@@ -9,7 +9,7 @@ export const WORLD_WIDTH = GAME_WIDTH;
 export const WORLD_HEIGHT = GAME_HEIGHT;
 export const BACKGROUND_DESIGN_WIDTH = 1080;
 export const BACKGROUND_DESIGN_HEIGHT = 1920;
-export const PLATFORM_Y = 540;
+export const PLATFORM_Y = 542;
 
 export const SCENE_ASSETS = Object.freeze({
   bgDay: ASSET_MANIFEST.backgrounds.lakeDay,
@@ -116,7 +116,7 @@ export async function createEnvironmentLayer(layers, app) {
     editorEnabled: true
   });
   applyResponsiveLayout(magicCircle, "magic_circle");
-  magicCircle.alpha = 0.76;
+  magicCircle.alpha = 0.68;
   layers.layerPlatform.addChild(magicCircle);
 
   const lanternPost = await createChromaKeyedSceneSprite("lantern_post_left", SCENE_ASSETS.lanternPost, {
