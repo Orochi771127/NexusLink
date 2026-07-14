@@ -103,6 +103,10 @@ The first Nuwa bundle is narrow. It is evidence for a small group of daily-life,
 quiet-presence, feedback, and boundary-respect phrasings only. It is not proof
 that RaphaelCore is complete as a general conversational AI.
 
+**v0.5 Heartspark Council note:** `companionPersonas` stores offline Expression
+DNA for the five formal seats. Runtime knobs live in `personaResolver.js`.
+Nuwa does not speak as those companions and cannot override RaphaelCore.
+
 ## Runtime Contract
 
 All Nuwa-generated data must enter runtime through the advisory adapter path.

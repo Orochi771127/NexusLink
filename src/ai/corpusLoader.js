@@ -1,8 +1,10 @@
 import { RAPHAEL_CORPUS_BUNDLE } from "../data/ai/raphaelCorpusBundle.js";
+import { HEARTSPARK_COUNCIL_VOICE_PACKS } from "../data/ai/heartsparkCouncilVoicePacks.js";
 
 /**
  * Local static corpus loader.
  * Primary: exported bundle from aiforge-raphael-corpus.
+ * Overlay: Heartspark Council formal-five voice packs (hand-authored, Nuwa v0.5).
  * Fallback: minimal internal pack if bundle import fails.
  */
 const FALLBACK_CORPUS = Object.freeze({
@@ -42,8 +44,16 @@ function normalizeCorpus(raw = {}) {
     concepts: raw.concepts || [],
     sentences: raw.sentences || [],
     mappings: raw.mappings || [],
-    responsePacks: raw.responsePacks || {},
+    // 五席 voice packs 覆寫／補齊：正式席不應再落到 greyshade 預設台詞。
+    responsePacks: mergeResponsePacks(raw.responsePacks || {}, HEARTSPARK_COUNCIL_VOICE_PACKS),
     templates: raw.templates || {}
+  };
+}
+
+function mergeResponsePacks(basePacks = {}, overlayPacks = {}) {
+  return {
+    ...basePacks,
+    ...overlayPacks
   };
 }
 

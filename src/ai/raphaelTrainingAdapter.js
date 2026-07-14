@@ -22,7 +22,13 @@ const TOPIC_MAP = Object.freeze({
   nuwa_small_moments: TOPICS.EMOTION,
   nuwa_sleepless: TOPICS.EMOTION,
   nuwa_feedback_naturalness: TOPICS.RAPHAEL_AI,
-  nuwa_boundary_respect: TOPICS.RELATIONSHIP
+  nuwa_boundary_respect: TOPICS.RELATIONSHIP,
+  nuwa_quiet_heart: TOPICS.EMOTION,
+  nuwa_heart_fatigue: TOPICS.EMOTION,
+  nuwa_heart_anxiety: TOPICS.EMOTION,
+  nuwa_sincere_repair: TOPICS.RELATIONSHIP,
+  nuwa_social_hurt: TOPICS.SOCIAL_CONFLICT,
+  nuwa_gratitude_heart: TOPICS.RELATIONSHIP
 });
 
 const DIALOGUE_ACT_MAP = Object.freeze({
@@ -39,7 +45,13 @@ const DIALOGUE_ACT_MAP = Object.freeze({
   nuwa_small_moments_sharing: DIALOGUE_ACTS.DESCRIBING_EVENT,
   nuwa_sleepless_night: DIALOGUE_ACTS.VENTING,
   nuwa_feedback: DIALOGUE_ACTS.GIVING_FEEDBACK,
-  nuwa_boundary_offer: DIALOGUE_ACTS.REQUESTING_PRESENCE
+  nuwa_boundary_offer: DIALOGUE_ACTS.REQUESTING_PRESENCE,
+  nuwa_quiet_request: DIALOGUE_ACTS.REQUESTING_SILENCE,
+  nuwa_heart_fatigue_vent: DIALOGUE_ACTS.VENTING,
+  nuwa_heart_anxiety_vent: DIALOGUE_ACTS.VENTING,
+  nuwa_sincere_apology: DIALOGUE_ACTS.APOLOGIZING,
+  nuwa_social_hurt_vent: DIALOGUE_ACTS.VENTING,
+  nuwa_gratitude_share: DIALOGUE_ACTS.DESCRIBING_EVENT
 });
 
 const ADVISORY_STRATEGY_ALLOWLIST = Object.freeze(

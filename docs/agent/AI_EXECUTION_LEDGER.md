@@ -1541,6 +1541,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 3 - Raphael Core, Companion Reasoning, And Soul Talk
 
+### 2026-07-14 - Cursor Grok - Nuwa v0.5 心輝議會五席人格＋voice packs
+
+- Status: `VERIFIED`
+- Branch / commit: `main` / uncommitted → lands with this commit (parent `267ff1f`); Owner 明示繼續完成後 COMMIT+PUSH。
+- Scope: EXPERIENCE／advisory 資料層。正式五席（芽角小鹿／星紋小虎／金羽小梟／焰尾小狐／晶鰭小海馬）persona 旋鈕、Nuwa v0.5 Expression DNA、獨立 voice packs。**safetyShield／memoryWriter／save schema／外部 LLM 零觸碰**；不混入同 worktree 的 Moonlake habitat 資產改動。
+- Work performed: (1) `personaResolver` 註冊五席旋鈕（不再落 `neutral_companion`）。(2) Nuwa bundle → v0.5：`companionPersonas`＋心智模型 `one_constitution_many_voices`；v0.4 心與夥伴人格 fixtures（安靜／心累／焦慮／修復／社交／感謝）保留。(3) 新增 `heartsparkCouncilVoicePacks.js`（每席 7 packs：疲憊／焦慮／難過／安靜／感謝／邊界退後／拒絕），經 `corpusLoader` overlay 合併，避免改 auto-generated corpus。(4) `personaBoundaryEvalCases` 擴至 14 案（五席互異 tone、高壓設界、最暖／最溫柔仍可拒、voice 載入／互異／無永遠承諾）。
+- Verification: `node --check` PASS；training bundle **35/35**；main readiness **12/12**；persona boundary **14/14**（含 PB-HS-VOICE-001..003）；五席 corpus packCounts 皆 7。
+- Problems / risks: NLU strategy 路徑仍可能先於 response pack 出句——五席「聽得出差別」在 pack 命中與 tone／里程碑台詞最明顯；若要讓每句日常閒聊也分席，需另開 nluReplyBuilder persona-aware TASK_PACK。人類盲審仍 `not_run`。
+- Next safe action: 可選——為五席補 memory-recall templates；或把 Nuwa Expression DNA 接到 nluReplyBuilder 的輕量 tone coda（需重新跑 holdout）。
+- Required reading: `src/data/ai/heartsparkCouncilVoicePacks.js`, `src/ai/personaResolver.js`, `src/data/ai/raphaelNuwaDistillationBundle.js`, `src/ai/testHarness/personaBoundaryEvalCases.js`, and this lane.
+
 ### 2026-07-14 - Claude Fable 5 - TP-2 docs-only refresh: handoff/status/runtime-map de-staling
 
 - Status: `VERIFIED`

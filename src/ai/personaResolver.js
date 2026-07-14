@@ -115,6 +115,109 @@ const PERSONA_TABLE = Object.freeze({
       physicalComfortThreshold: 0.36
     }
   },
+
+  // ── 心輝議會・正式五席（2026-07-10 Owner 定版）──
+  // 旋鈕來自 heartsparkCouncilCanon temperaments；憲法底線共用，差異只在聲音與暖度。
+  // 芽角小鹿：溫柔親人，怕衝突，但正在學「溫柔 ≠ 沒有邊界」。
+  sprigfawn: {
+    companionId: "sprigfawn",
+    tone: "sprout_fawn",
+    sentenceStyle: "balanced",
+    boundaries: {
+      noForeverPromise: true,
+      noDemandTouch: true,
+      slowWarmth: false,
+      rejectWithoutCruelty: true,
+      acceptWithoutCling: true
+    },
+    forbiddenPhrases: [...GLOBAL_FORBIDDEN_PATTERNS],
+    responseBias: {
+      maxSentences: 3,
+      preferSilence: false,
+      warmthCap: 0.74,
+      physicalComfortThreshold: 0.48
+    }
+  },
+  // 星紋小虎：沉穩慢熱，話少，危險時站最前面。
+  "starstripe-cub": {
+    companionId: "starstripe-cub",
+    tone: "steady_cub",
+    sentenceStyle: "short_quiet",
+    boundaries: {
+      noForeverPromise: true,
+      noDemandTouch: true,
+      slowWarmth: true,
+      rejectWithoutCruelty: true,
+      acceptWithoutCling: true
+    },
+    forbiddenPhrases: [...GLOBAL_FORBIDDEN_PATTERNS],
+    responseBias: {
+      maxSentences: 2,
+      preferSilence: true,
+      warmthCap: 0.5,
+      physicalComfortThreshold: 0.4
+    }
+  },
+  // 金羽小梟：好奇警覺，飛行未穩，最早看見危險。
+  auriowl: {
+    companionId: "auriowl",
+    tone: "dawnlit_owl",
+    sentenceStyle: "short_quiet",
+    boundaries: {
+      noForeverPromise: true,
+      noDemandTouch: true,
+      slowWarmth: true,
+      rejectWithoutCruelty: true,
+      acceptWithoutCling: true
+    },
+    forbiddenPhrases: [...GLOBAL_FORBIDDEN_PATTERNS],
+    responseBias: {
+      maxSentences: 2,
+      preferSilence: false,
+      warmthCap: 0.58,
+      physicalComfortThreshold: 0.38
+    }
+  },
+  // 焰尾小狐：活潑熱烈；勇氣不是不怕，是害怕時仍願意照路。
+  "blazetail-kit": {
+    companionId: "blazetail-kit",
+    tone: "blaze_kit",
+    sentenceStyle: "warm_direct",
+    boundaries: {
+      noForeverPromise: true,
+      noDemandTouch: true,
+      slowWarmth: false,
+      rejectWithoutCruelty: true,
+      acceptWithoutCling: true
+    },
+    forbiddenPhrases: [...GLOBAL_FORBIDDEN_PATTERNS],
+    responseBias: {
+      maxSentences: 3,
+      preferSilence: false,
+      warmthCap: 0.78,
+      physicalComfortThreshold: 0.5
+    }
+  },
+  // 晶鰭小海馬：靜謐敏感；記憶不只是傷口，也是撐過來的痕跡。
+  "crystalfin-seahorse": {
+    companionId: "crystalfin-seahorse",
+    tone: "tide_seahorse",
+    sentenceStyle: "short_quiet",
+    boundaries: {
+      noForeverPromise: true,
+      noDemandTouch: true,
+      slowWarmth: true,
+      rejectWithoutCruelty: true,
+      acceptWithoutCling: true
+    },
+    forbiddenPhrases: [...GLOBAL_FORBIDDEN_PATTERNS],
+    responseBias: {
+      maxSentences: 2,
+      preferSilence: true,
+      warmthCap: 0.54,
+      physicalComfortThreshold: 0.36
+    }
+  },
   default: {
     companionId: "default",
     tone: "neutral_companion",

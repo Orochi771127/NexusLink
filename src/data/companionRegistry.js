@@ -207,7 +207,7 @@ export const COMPANIONS = [
   // 動畫詞彙與灰影貓完全同構（含走路幀），故**不設 animationProfile**（走預設 profile）；
   // manifest 內 faint 圖以 runtime 詞彙 `defeated` 為 key（見灰影貓替換協定）。
   // 章節對應見 chapterRegistry（設計文件 §4）；解鎖入口為 CH-5b 章節相遇（尚未實裝）。
-  // 演化線（canon 三階名已定）與 soulTalkTone 語料為後續內容包，缺席時皆有安全 fallback。
+  // 演化線（canon 三階名已定）；soulTalkTone／羈絆台詞／persona 旋鈕已就緒（Nuwa v0.5）。
   // ──────────────────────────────────────────────────────────────────────
   {
     id: "sprigfawn",
