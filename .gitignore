@@ -9,3 +9,8 @@
 .claude/gsd-install-state.json
 .claude/gsd-file-manifest.json
 .claude/settings.local.json
+
+# Accidental local installs / art source backups
+node_modules/
+output/linkara/moonlake/v4/source_backups/
+output/linkara/moonlake/v4/props_regen/

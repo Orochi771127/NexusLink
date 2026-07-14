@@ -65,6 +65,11 @@ export const MOONLAKE_VIVARIUM_V3 = Object.freeze({
     night: "./assets/backgrounds/MoonlakeVivarium_v3/bg_night_base.png",
     day: "./assets/backgrounds/MoonlakeVivarium_v3/bg_day_base.png"
   }),
+  // Habitat 契約增量層（v5）：仍可與 full-bleed day/night 疊加；透明 PNG，中央留空給夥伴。
+  layers: Object.freeze({
+    campStructures: "./assets/layers/MoonlakeVivarium_v3/camp_structures.png",
+    foregroundOcclusion: "./assets/layers/MoonlakeVivarium_v3/foreground_occlusion.png"
+  }),
   platforms: Object.freeze({
     magicCircle: "./assets/platforms/MoonlakeVivarium_v3/magic_circle.png"
   }),
@@ -80,6 +85,10 @@ export const ASSET_MANIFEST = Object.freeze({
   backgrounds: Object.freeze({
     lakeDay: MOONLAKE_VIVARIUM_V3.backgrounds.day,
     lakeNight: MOONLAKE_VIVARIUM_V3.backgrounds.night
+  }),
+  layers: Object.freeze({
+    campStructures: MOONLAKE_VIVARIUM_V3.layers.campStructures,
+    foregroundOcclusion: MOONLAKE_VIVARIUM_V3.layers.foregroundOcclusion
   }),
   platforms: Object.freeze({
     magicCircle: MOONLAKE_VIVARIUM_V3.platforms.magicCircle

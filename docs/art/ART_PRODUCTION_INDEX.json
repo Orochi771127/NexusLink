@@ -24,7 +24,7 @@
       "title": "Moonlake Vivarium (playable habitat)",
       "packId": "MoonlakeVivarium_v3",
       "status": "runtime-wired-local",
-      "statusNote": "Base backgrounds/platform/props are committed under assets/**. Incremental layers (camp_structures, foreground_occlusion) exist on disk and are wired in local working tree, but assets/layers/ is still untracked and assetManifest.js / pixiApp.js / moonlakeProfile.js layer wiring may still be uncommitted — treat as local truth until committed.",
+      "statusNote": "MoonlakeVivarium_v3 playable habitat is committed: day/night bg at 1080x1920, transparent clay-resin props/platform, camp_structures + foreground_occlusion layers wired in assetManifest / pixiApp / moonlakeProfile. Props are true-alpha PNG (no runtime magenta chroma).",
       "verifiedOnDisk": "2026-07-14",
       "artDirection": "Clay/resin miniature diorama, Nexus moonlake navy/cyan, no glass frame",
       "designRef": "docs/architecture/HABITAT_SYSTEM_MASTER_SPEC.md + src/data/sceneProfiles/moonlakeProfile.js",

@@ -1,0 +1,21 @@
+{
+  "version": "v5",
+  "generatedAt": "2026-07-14",
+  "purpose": "Incremental habitat layers on top of full-bleed day/night foundations",
+  "artDirection": "Clay/resin miniature, Nexus moonlake navy/cyan, no glass frame",
+  "canonicalIndex": "docs/art/ART_PRODUCTION_INDEX.json#habitats[HAB-MOONLAKE-V3]",
+  "layers": {
+    "campStructures": "layers/moonlake_camp_structures.png",
+    "foregroundOcclusion": "layers/moonlake_foreground_occlusion.png"
+  },
+  "sources": {
+    "campStructures": "sources/moonlake_camp_structures_chroma_source.png",
+    "foregroundOcclusion": "sources/moonlake_foreground_occlusion_chroma_source.png"
+  },
+  "promotedTo": {
+    "campStructures": "assets/layers/MoonlakeVivarium_v3/camp_structures.png",
+    "foregroundOcclusion": "assets/layers/MoonlakeVivarium_v3/foreground_occlusion.png"
+  },
+  "gitStatusNote": "Promoted layer PNGs and wiring verified on disk 2026-07-14; assets/layers/ was still untracked and layer wiring files may be uncommitted at index time.",
+  "runtimeNotes": "Wired via ASSET_MANIFEST.layers + pixiApp layerMidground / layerOcclusion. Weather FX remains procedural. dusk/dawn remain nightAlpha tint. sky/mountains/lake/ground still baked into day/night plates."
+}

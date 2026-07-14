@@ -20,6 +20,13 @@ export const moonlakeProfile = Object.freeze({
     sameComposition: true
   }),
 
+  // 增量分層（非取代 full-bleed）：營地靜態結構 + 前景遮擋（疊在夥伴之上）。
+  // sky/mountains/lake/ground 仍 baked 在 day/night foundation；天氣 FX 為程序層。
+  layers: Object.freeze({
+    campStructures: MOONLAKE_VIVARIUM_V3.layers.campStructures,
+    foregroundOcclusion: MOONLAKE_VIVARIUM_V3.layers.foregroundOcclusion
+  }),
+
   safeZone: Object.freeze({ referenceWidth: 390, referenceHeight: 844 }),
 
   sky: Object.freeze({

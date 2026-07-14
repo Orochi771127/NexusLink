@@ -1,7 +1,6 @@
 import EnvironmentController from "../engine/environmentController.js";
 import { ASSET_MANIFEST } from "../data/assetManifest.js";
 import { SCENE_LAYOUT } from "../data/sceneLayout.js";
-import { loadChromaKeyedTexture } from "./chromaKeyTexture.js";
 
 export const GAME_WIDTH = 390;
 export const GAME_HEIGHT = 844;
@@ -14,21 +13,28 @@ export const PLATFORM_Y = 542;
 export const SCENE_ASSETS = Object.freeze({
   bgDay: ASSET_MANIFEST.backgrounds.lakeDay,
   bgNight: ASSET_MANIFEST.backgrounds.lakeNight,
+  // 靜態營地帳篷／碼頭：畫在平台與 runtime props 之下
+  campStructures: ASSET_MANIFEST.layers.campStructures,
   magicCircle: ASSET_MANIFEST.platforms.magicCircle,
   lanternPost: ASSET_MANIFEST.props.lanternPost,
   stoneArch: ASSET_MANIFEST.props.stoneArch,
   campfire: ASSET_MANIFEST.props.campfire,
   crystal: ASSET_MANIFEST.props.crystal,
   sun: ASSET_MANIFEST.props.sun,
-  moon: ASSET_MANIFEST.props.moon
+  moon: ASSET_MANIFEST.props.moon,
+  // 前景遮擋：畫在夥伴之上、天氣 FX 之下，製造 2.5D 景深
+  foregroundOcclusion: ASSET_MANIFEST.layers.foregroundOcclusion
 });
 
+// 層序對齊 habitat 契約：midground(camp) → platform → props → entity → occlusion → FX
 const SCENE_LAYER_NAMES = [
   "layerBackground",
   "layerCelestial",
+  "layerMidground",
   "layerPlatform",
   "layerForeground",
   "layerEntity",
+  "layerOcclusion",
   "layerFX"
 ];
 const CELESTIAL_PATHS = Object.freeze({
@@ -113,7 +119,20 @@ export async function createEnvironmentLayer(layers, app) {
   moon.visible = true;
   layers.layerCelestial.addChild(moon);
 
-  const magicCircle = await createChromaKeyedSceneSprite("magic_circle", SCENE_ASSETS.magicCircle, {
+  // 營地結構：已去背全幅層，對齊 safe zone；中央留空給夥伴
+  const campStructures = await createSceneSprite("camp_structures", SCENE_ASSETS.campStructures, {
+    anchor: 0.5,
+    x: Math.round(GAME_WIDTH / 2),
+    y: Math.round(GAME_HEIGHT / 2),
+    width: GAME_WIDTH,
+    height: GAME_HEIGHT,
+    editorEnabled: false
+  });
+  layers.layerMidground.addChild(campStructures);
+
+  // props / platform 已離線去背成透明 PNG（tools/preprocess-magenta-props.mjs），
+  // 直接載入即可，避免 runtime chroma 再留下紅／洋紅 fringe。
+  const magicCircle = await createSceneSprite("magic_circle", SCENE_ASSETS.magicCircle, {
     anchor: getSceneLayoutAnchor("magic_circle"),
     editorEnabled: true
   });
@@ -121,14 +140,14 @@ export async function createEnvironmentLayer(layers, app) {
   magicCircle.alpha = 0.68;
   layers.layerPlatform.addChild(magicCircle);
 
-  const lanternPost = await createChromaKeyedSceneSprite("lantern_post_left", SCENE_ASSETS.lanternPost, {
+  const lanternPost = await createSceneSprite("lantern_post_left", SCENE_ASSETS.lanternPost, {
     anchor: getSceneLayoutAnchor("lantern_post_left"),
     editorEnabled: true
   });
   applyResponsiveLayout(lanternPost, "lantern_post_left");
   layers.layerForeground.addChild(lanternPost);
 
-  const campfireSprite = await createChromaKeyedSceneSprite("campfire_left", SCENE_ASSETS.campfire, {
+  const campfireSprite = await createSceneSprite("campfire_left", SCENE_ASSETS.campfire, {
     anchor: getSceneLayoutAnchor("campfire_left"),
     editorEnabled: true
   });
@@ -140,30 +159,47 @@ export async function createEnvironmentLayer(layers, app) {
     sparkCooldownMs: 0
   };
 
-  const crystal = await createChromaKeyedSceneSprite("crystal_cluster", SCENE_ASSETS.crystal, {
+  const crystal = await createSceneSprite("crystal_cluster", SCENE_ASSETS.crystal, {
     anchor: getSceneLayoutAnchor("crystal_cluster"),
     editorEnabled: true
   });
   applyResponsiveLayout(crystal, "crystal_cluster");
   layers.layerForeground.addChild(crystal);
 
-  const stoneArch = await createChromaKeyedSceneSprite("stone_arch_right", SCENE_ASSETS.stoneArch, {
+  const stoneArch = await createSceneSprite("stone_arch_right", SCENE_ASSETS.stoneArch, {
     anchor: getSceneLayoutAnchor("stone_arch_right"),
     editorEnabled: true
   });
   applyResponsiveLayout(stoneArch, "stone_arch_right");
   layers.layerForeground.addChild(stoneArch);
 
+  // 前景遮擋：疊在夥伴腳邊之上，天氣 FX 仍在最上層
+  const foregroundOcclusion = await createSceneSprite(
+    "foreground_occlusion",
+    SCENE_ASSETS.foregroundOcclusion,
+    {
+      anchor: 0.5,
+      x: Math.round(GAME_WIDTH / 2),
+      y: Math.round(GAME_HEIGHT / 2),
+      width: GAME_WIDTH,
+      height: GAME_HEIGHT,
+      editorEnabled: false
+    }
+  );
+  layers.layerOcclusion.addChild(foregroundOcclusion);
+
   const environmentLayer = {
     bgDay,
     bgNight,
     sun,
     moon,
+    campStructures,
     magicCircle,
     lanternPost,
     campfire,
     crystal,
-    stoneArch
+    stoneArch,
+    foregroundOcclusion
   };
 
   registerResponsiveEnvironmentLayer(layers, environmentLayer);
@@ -295,9 +331,20 @@ function resizeWorld(app, world) {
 function resizeBackgroundCover(backgroundLayer, environmentLayer, app) {
   if (!environmentLayer) return;
 
+  // 用實際紋理尺寸算 cover，避免資產是 1024×1536 卻硬套設計常數 1080×1920
+  // 導致縮放不足、露出星空黑邊（letterbox）。
+  const sampleBg = environmentLayer.bgDay || environmentLayer.bgNight;
+  const textureWidth = Math.max(
+    1,
+    Number(sampleBg?.texture?.width) || BACKGROUND_DESIGN_WIDTH
+  );
+  const textureHeight = Math.max(
+    1,
+    Number(sampleBg?.texture?.height) || BACKGROUND_DESIGN_HEIGHT
+  );
   const bgScale = Math.max(
-    app.screen.width / BACKGROUND_DESIGN_WIDTH,
-    app.screen.height / BACKGROUND_DESIGN_HEIGHT
+    app.screen.width / textureWidth,
+    app.screen.height / textureHeight
   );
 
   if (backgroundLayer) {
@@ -322,11 +369,20 @@ function resizeSafeZoneLayer(safeZoneLayer, app) {
   safeZoneLayer.y = app.screen.height - GAME_HEIGHT * safeScale;
 }
 
+function resizeSafeZonePlate(sprite) {
+  if (!sprite) return;
+  sprite.anchor.set(0.5);
+  sprite.width = GAME_WIDTH;
+  sprite.height = GAME_HEIGHT;
+  sprite.position.set(Math.round(GAME_WIDTH / 2), Math.round(GAME_HEIGHT / 2));
+}
+
 function resizeEnvironmentLayout(environmentLayer, app) {
   if (!environmentLayer) return;
 
   applyResponsiveLayout(environmentLayer.sun, "sun");
   applyResponsiveLayout(environmentLayer.moon, "moon");
+  resizeSafeZonePlate(environmentLayer.campStructures);
   applyResponsiveLayout(environmentLayer.magicCircle, "magic_circle");
   applyResponsiveLayout(environmentLayer.lanternPost, "lantern_post_left");
   if (environmentLayer.campfire?.container) {
@@ -334,6 +390,7 @@ function resizeEnvironmentLayout(environmentLayer, app) {
   }
   applyResponsiveLayout(environmentLayer.crystal, "crystal_cluster");
   applyResponsiveLayout(environmentLayer.stoneArch, "stone_arch_right");
+  resizeSafeZonePlate(environmentLayer.foregroundOcclusion);
 }
 
 function readGameRootSize(gameRoot) {
@@ -353,33 +410,6 @@ function observeGameRootResize(app, world) {
   const observer = new ResizeObserver(() => world.__resizeScene?.());
   observer.observe(gameRoot);
   world.__gameRootResizeObserver = observer;
-}
-
-async function createChromaKeyedSceneSprite(id, texturePath, options = {}) {
-  const texture = await loadChromaKeyedTexture(texturePath, options.chromaKey);
-  const sprite = new PIXI.Sprite(texture);
-  sprite.name = id;
-  sprite.roundPixels = true;
-  const anchor = normalizeAnchor(options.anchor);
-  sprite.anchor?.set?.(anchor.x, anchor.y);
-  sprite.x = Math.round(options.x ?? 0);
-  sprite.y = Math.round(options.y ?? 0);
-
-  if (options.width && options.height) {
-    sprite.width = options.width;
-    sprite.height = options.height;
-  } else if (options.targetWidth) {
-    const scale = options.targetWidth / sprite.width;
-    sprite.scale.set(scale);
-  }
-
-  applySceneBlendMode(sprite, id);
-  registerSceneEditorObject(sprite, {
-    id,
-    texturePath,
-    editorEnabled: Boolean(options.editorEnabled)
-  });
-  return sprite;
 }
 
 async function createSceneSprite(id, texturePath, options = {}) {
