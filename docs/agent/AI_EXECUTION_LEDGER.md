@@ -1541,6 +1541,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 3 - Raphael Core, Companion Reasoning, And Soul Talk
 
+### 2026-07-14 - Cursor Grok - RS-1 對峙密封契約＋eval harness
+
+- Status: `VERIFIED` (machine); Owner success-definition ack still required before RS-2
+- Branch / commit: `main` / lands with this commit (after RA-1 `f6ddfab`)
+- Scope: RS-1 standoff sealed contract + harness。**不安裝外部戰鬥 skill；不改 battleEngine 數值；不混 Moonlake／expedition dirty**。
+- Work performed: (1) `docs/raphael/RAPHAEL_STANDOFF_EVAL_CONTRACT.md`（成功＝telegraph＋四結局＋撤退被肯定≠DPS）。(2) `raphaelStandoffEvalCases.js` 8 案；`?raphaelSmoke=1` → `__RAPHAEL_STANDOFF_EVAL__`。(3) matrix／queue／playbook 標 RS-1 DONE。
+- Verification: `node --check` PASS；`runAllRaphaelStandoffEvalCases` **8/8**。
+- Problems / risks: UI 節奏／汁感仍靠 Owner feel-check；legacy `battleRecord` 仍用 win/lose 標籤（文案層已非懲罰）——RS-2 勿把 legacy 當設計真理。
+- Next safe action: Owner 確認「穩住裂隙≠DPS」後批 **RS-2**；或先批 **RA-2**（需 initiative feel-check）。
+- Required reading: `docs/raphael/RAPHAEL_STANDOFF_EVAL_CONTRACT.md`, `src/ai/testHarness/raphaelStandoffEvalCases.js`, and this lane.
+
 ### 2026-07-14 - Cursor Grok - RA-1 自主行為密封契約＋eval harness
 
 - Status: `VERIFIED` (machine); Owner feel-check still required before RA-2

@@ -147,12 +147,12 @@ RaphaelCore remains final authority; advisory stays `trusted:false`.
 | **RA-1** | Autonomy sealed-case contract + harness shape | docs + `companionInitiativeCases.js` | loneliness／login triggers | ✅ 2026-07-14 |
 | **RA-2** | Nuwa-style autonomy heuristics advisory | Nuwa bundle mental models / heuristics only | `safetyShield`, `memoryWriter` | pending Owner feel-check |
 | **RA-3** | Install `raphael-autonomy-eval` skill | `~/.codex/skills/raphael-autonomy-eval/**` | deepening lines before skill gates pass | planned |
-| **RS-1** | Standoff success = emotion／retreat, not DPS | docs + eval contract | traditional combat skills | next |
-| **RS-2** | Light standoff intent advisory | advisory bundle; numbers stay in `battleEngine.js` | advisory writing combat stats | planned |
+| **RS-1** | Standoff success = emotion／retreat, not DPS | docs + eval contract | traditional combat skills | ✅ 2026-07-14 |
+| **RS-2** | Light standoff intent advisory | advisory bundle; numbers stay in `battleEngine.js` | advisory writing combat stats | pending Owner ack |
 | **RS-3** | Install `raphael-standoff-eval` skill | skill dir only until approved | combo／hitbox skill imports | planned |
 
-Contract: [`docs/raphael/RAPHAEL_AUTONOMY_EVAL_CONTRACT.md`](../raphael/RAPHAEL_AUTONOMY_EVAL_CONTRACT.md).  
-Runner: `__RAPHAEL_AUTONOMY_EVAL__.runAll()` (with `?raphaelSmoke=1`) or node import `raphaelAutonomyEvalCases.js`.
+Autonomy contract: [`RAPHAEL_AUTONOMY_EVAL_CONTRACT.md`](../raphael/RAPHAEL_AUTONOMY_EVAL_CONTRACT.md) — `__RAPHAEL_AUTONOMY_EVAL__.runAll()`.  
+Standoff contract: [`RAPHAEL_STANDOFF_EVAL_CONTRACT.md`](../raphael/RAPHAEL_STANDOFF_EVAL_CONTRACT.md) — `__RAPHAEL_STANDOFF_EVAL__.runAll()`.
 
 Full pack text lives in [`NEXT_AI_TASK_PACK_QUEUE.md`](./NEXT_AI_TASK_PACK_QUEUE.md).
 

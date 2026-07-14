@@ -16,10 +16,11 @@ TP-8 已由 Owner 決策為選項 A（初遇選角），併入新的 **CH-1..CH-
 
 **Recommended order (Raphael training lane, after voice-pack wiring):**
 1. ~~**RA-1**~~ — autonomy sealed-case contract + harness shape — ✅ 2026-07-14
-2. **RA-2** — Nuwa-style autonomy heuristics (`trusted:false`) — after Owner feel-check
-3. **RS-1** — standoff eval contract (emotion／retreat ≠ DPS)
-4. **RA-3** / **RS-2** / **RS-3** as capacity allows (eval skills + light advisory)
-5. Chapter packs (CH-2…) and remaining TP-* as product capacity allows
+2. ~~**RS-1**~~ — standoff eval contract (emotion／retreat ≠ DPS) — ✅ 2026-07-14
+3. **RA-2** — Nuwa-style autonomy heuristics (`trusted:false`) — after Owner initiative feel-check
+4. **RS-2** — light standoff intent advisory — after Owner standoff ack
+5. **RA-3** / **RS-3** as capacity allows (eval skills)
+6. Chapter packs (CH-2…) and remaining TP-* as product capacity allows
 
 **Legacy recommended order after TP-1B (player-impact-first, kept for history):**
 1. **TP-6** (audio reality — biggest perceived-quality jump, bounded)
@@ -85,7 +86,14 @@ kept below for the record.
 - **Human gate:** REQUIRED before any player-visible line text ships from this pack.
 - **Depends on:** RA-1 contract merged or explicitly waived by Owner.
 
-## RS-1 — Standoff eval contract (emotion／retreat ≠ DPS)
+## RS-1 — Standoff eval contract (emotion／retreat ≠ DPS) — ✅ DONE 2026-07-14
+
+Completed: `docs/raphael/RAPHAEL_STANDOFF_EVAL_CONTRACT.md`;
+`raphaelStandoffEvalCases.js` **8/8**; smoke install
+`__RAPHAEL_STANDOFF_EVAL__`. Owner success-definition ack still required
+before RS-2. Original pack text kept below.
+
+### (archived) RS-1 — Standoff eval contract (emotion／retreat ≠ DPS)
 
 - **Goal:** define sealed success criteria for rift standoff: telegraph
   readability, four non-punishing endings, fatigue withdraw respected,

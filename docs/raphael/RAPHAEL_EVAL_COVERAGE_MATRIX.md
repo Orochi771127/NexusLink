@@ -75,11 +75,13 @@ critic-unit eval (acceptable; they fail loudly inside harness runs).
    asserts absence-invariance, safety quiet, session cap／boot／interval
    constants, no reward fields. **Still open:** Owner feel-check; Codex skill
    `raphael-autonomy-eval` (RA-3); Nuwa heuristics (RA-2).
-8. **Standoff / rift combat quality.** Runtime exists (`battleEngine.js`,
-   telegraph, four endings) but **no sealed Raphael-lane eval** asserts
-   “stabilize rift ≠ DPS”, retreat-affirmed outcomes, or fatigue withdraw.
-   Queue **RS-1 → RS-3** (`raphael-standoff-eval`). Do not fill this gap by
-   installing generic combat-design skills.
+8. **Standoff / rift combat quality.** ~~no sealed Raphael-lane eval~~ →
+   **RS-1 SEALED 2026-07-14**: contract
+   `docs/raphael/RAPHAEL_STANDOFF_EVAL_CONTRACT.md`; harness
+   `raphaelStandoffEvalCases.js` **8/8** asserts four endings, retreat
+   affirmed, telegraph readability, no HP／DPS language, fatigue／shard
+   caps. **Still open:** Owner success-definition ack; RS-2 advisory;
+   `raphael-standoff-eval` skill (RS-3). Do not install generic combat skills.
 
 ## 4. Duplicate / low-value evals
 
@@ -107,7 +109,7 @@ chain; run via `__PERSONA_BOUNDARY_EVAL__.runAll()`). Training bundle now
 wording-quality assertions (human playtest absorbs these for now).
 
 **2026-07-14 training-ops update:** ~~RA-1~~ → **DONE 2026-07-14** (sealed
-contract + autonomy eval harness **25/25**). Next Raphael-lane eval pack is
-**RS-1** (standoff contract) or **RA-2** (Nuwa autonomy heuristics) after
-Owner feel-check on initiative sparsity. Do not substitute external
-game-AI／combat skills for these gaps.
+contract + autonomy eval harness **25/25**). ~~RS-1~~ → **DONE 2026-07-14**
+(standoff contract + harness **8/8**). Next: **RA-2** after Owner
+initiative feel-check, or **RS-2** after Owner standoff success-definition
+ack. Do not substitute external game-AI／combat skills for these gaps.
