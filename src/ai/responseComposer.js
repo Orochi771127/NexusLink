@@ -42,8 +42,16 @@ function applyPersonaStyle(text, persona = {}) {
 }
 
 function returnComposeResult(text, meta, guardArgs) {
-  const reply = finalizeAndGuardReply(text, guardArgs);
-  const prefillMeta = guardArgs.composeOpts?.prefillMeta || {};
+  const nextArgs = {
+    ...guardArgs,
+    composeOpts: {
+      ...(guardArgs.composeOpts || {}),
+      // 讓 finalize 知道這句是物種 voice pack／safety，勿用通用 NLU 覆寫。
+      replySource: meta.replySource || guardArgs.composeOpts?.replySource || null
+    }
+  };
+  const reply = finalizeAndGuardReply(text, nextArgs);
+  const prefillMeta = nextArgs.composeOpts?.prefillMeta || {};
   return {
     reply,
     variantId: meta.variantId || null,
@@ -117,6 +125,8 @@ export function composeRaphaelReply({
   const seed = buildSeed(inputText, state, companion);
   const emotionKey = analysis.emotionKey || "calm";
   const mode = plan.mode || actionPlan.reaction || SOUL_TALK_REACTIONS.ACKNOWLEDGE;
+  // guarded_acknowledge 與 acknowledge 共用情緒 voice pack（物種語氣不因防備語氣而消失）。
+  const packReaction = mode === SOUL_TALK_REACTIONS.GUARDED_ACKNOWLEDGE ? SOUL_TALK_REACTIONS.ACKNOWLEDGE : mode;
   const companionId = companion?.id || persona?.companionId || "greyshade-cat";
   const loadedCorpus = corpus || {};
   const strategy = responseStrategy?.strategy || RESPONSE_STRATEGIES.CONTEXTUAL_ACK;
@@ -190,29 +200,16 @@ export function composeRaphaelReply({
     }
   }
 
-  if (strategy !== RESPONSE_STRATEGIES.MEMORY_REFERENCE) {
-    const strategyReply = buildStrategyReply({
-      strategy,
-      nlu,
-      semanticFrame: nlu?.semanticFrame,
-      seed,
-      recoveryContext,
-      variantIndex: variantSelection?.variantIndex
-    });
-    if (strategyReply) {
-      return returnComposeResult(strategyReply, composeMetaFromSelection(variantSelection, strategyReply), args);
-    }
-  }
-
-  if (!blockComfort && !shouldSkipResponsePacks(nlu, strategy)) {
-    const packLine =
-      variantSelection?.replySource === "response_pack" && variantSelection.packId
+  // 心輝五席等：variant 已選 response_pack 時，先落 pack，避免通用 NLU 句蓋掉物種語氣。
+  if (variantSelection?.replySource === "response_pack" && !blockComfort) {
+    const preferredPack =
+      variantSelection.packId
         ? selectResponsePackAtVariant({
             corpus: loadedCorpus,
             companionId,
             emotion: emotionKey,
             intent: intent.intent,
-            reaction: mode,
+            reaction: packReaction,
             state,
             semanticSoul,
             recoveryContext,
@@ -224,7 +221,67 @@ export function composeRaphaelReply({
             companionId,
             emotion: emotionKey,
             intent: intent.intent,
-            reaction: mode,
+            reaction: packReaction,
+            state,
+            semanticSoul,
+            recoveryContext,
+            seed: seed + corpusSeedOffset(corpusHits)
+          });
+
+    if (preferredPack.line && !preferredPack.silent) {
+      return returnComposeResult(
+        preferredPack.line,
+        composeMetaFromSelection(variantSelection, preferredPack.line, {
+          variantId:
+            variantSelection?.variantId ||
+            (preferredPack.packId ? `pack:${preferredPack.packId}:${preferredPack.lineIndex ?? 0}` : "pack:unknown"),
+          replySource: "response_pack"
+        }),
+        args
+      );
+    }
+  }
+
+  if (strategy !== RESPONSE_STRATEGIES.MEMORY_REFERENCE) {
+    const strategyReply = buildStrategyReply({
+      strategy,
+      nlu,
+      semanticFrame: nlu?.semanticFrame,
+      seed,
+      recoveryContext,
+      variantIndex: variantSelection?.variantIndex
+    });
+    if (strategyReply) {
+      // pack 選取失敗時不可沿用 variant 的 response_pack 標籤，否則 UI／eval 會誤判。
+      return returnComposeResult(
+        strategyReply,
+        composeMetaFromSelection(variantSelection, strategyReply, { replySource: "nlu_builder" }),
+        args
+      );
+    }
+  }
+
+  if (!blockComfort && !shouldSkipResponsePacks(nlu, strategy)) {
+    const packLine =
+      variantSelection?.replySource === "response_pack" && variantSelection.packId
+        ? selectResponsePackAtVariant({
+            corpus: loadedCorpus,
+            companionId,
+            emotion: emotionKey,
+            intent: intent.intent,
+            reaction: packReaction,
+            state,
+            semanticSoul,
+            recoveryContext,
+            packId: variantSelection.packId,
+            lineIndex: variantSelection.lineIndex ?? variantSelection.variantIndex ?? 0
+          })
+        : selectResponsePackLine({
+            corpus: loadedCorpus,
+            companionId,
+            emotion: emotionKey,
+            intent: intent.intent,
+            reaction: packReaction,
             state,
             semanticSoul,
             recoveryContext,
@@ -283,7 +340,10 @@ export function finalizeAndGuardReply(text, { persona, state, composeOpts, nlu, 
     previousReply
   });
 
-  if (!critique.pass) {
+  // 物種 voice pack／safety／boundary pack 是手寫語料，critic 失敗時不可用灰影 NLU 覆寫。
+  const preserveAuthoredReply = ["response_pack", "safety", "template"].includes(composeOpts?.replySource);
+
+  if (!critique.pass && !preserveAuthoredReply) {
     reply = composeOpts.safety?.isBoundaryPressure
       ? buildBoundaryPolicyReply(composeOpts.safety)
       : repairGenericReply({
@@ -311,6 +371,8 @@ export function finalizeAndGuardReply(text, { persona, state, composeOpts, nlu, 
     frame
   });
 
+  // 定稿 pack 已含物種意象，再 weave 話題前綴會把五席聽起來像同一句通用安慰。
+  if (!preserveAuthoredReply) {
   if (
     groundingPlan.groundedMode === "explicit" &&
     groundingPlan.prefillDetail &&
@@ -339,6 +401,7 @@ export function finalizeAndGuardReply(text, { persona, state, composeOpts, nlu, 
       reply = weaveExplicitReference(reply, specificDetail, { strategy: weaveStrategy });
       reply = finalizeReply(reply, persona, state, composeOpts);
     }
+  }
   }
 
   if (!composeOpts.prefillMeta?.groundedByPrefill && hasValidPrefill(prefillContext)) {

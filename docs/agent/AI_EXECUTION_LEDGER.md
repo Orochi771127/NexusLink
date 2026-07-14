@@ -1541,6 +1541,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 3 - Raphael Core, Companion Reasoning, And Soul Talk
 
+### 2026-07-14 - Cursor Grok - 心輝五席 voice pack 接入 Soul Talk runtime
+
+- Status: `VERIFIED`
+- Branch / commit: `main` / uncommitted → lands with this commit (parent `28b99f9`); Owner 明示接入遊戲後 COMMIT+PUSH main。
+- Scope: Raphael runtime wiring only。讓正式五席在 Soul Talk 真的說出物種 voice pack，而不是灰影 NLU 通用句。**safetyShield／memoryWriter／save schema／外部 LLM 零觸碰**；不混入同 worktree 的 Moonlake habitat 資產刪除。
+- Work performed: (1) `replyVariantSelector`：五席情緒策略優先併入 companion voice pack（分數 +8）；`guarded_acknowledge`→`acknowledge`。(2) `responsePackSelector`：reaction 正規化；指定 `packId` 時直接取句。(3) `responseComposer`：pack 先於 NLU；pack 失敗時 meta 改標 `nlu_builder`；定稿 pack 略過 weave／NLU repair。(4) `actionExecutor`／`autonomyLoop`：preserve `response_pack`／`safety`／`template`，critic／policy 不得覆寫成灰影句。(5) `soulTalkController`：依 `activeCompanionId` 解析當前夥伴，狀態列不再寫死「灰影」。(6) eval 加 `PB-HS-VOICE-LIVE`／`PB-HS-VOICE-DIFF`。
+- Verification: persona boundary **16/16**；training bundle **35/35**；main readiness **12/12**；live probe 五席疲憊句皆 `response_pack`、exact authored、互異。`node --check` PASS。
+- Problems / risks: 日常非情緒策略仍可能走灰影 NLU（設計如此，holdout 以灰影為主）。人類盲審仍 `not_run`。
+- Next safe action: 可選——非情緒閒聊也加輕量 tone coda；或補 memory-recall templates。
+- Required reading: `src/ai/responseComposer.js`, `src/ai/dialogue/replyVariantSelector.js`, `src/ai/corpus/responsePackSelector.js`, `src/ui/soulTalkController.js`, and this lane.
+
 ### 2026-07-14 - Cursor Grok - Nuwa v0.5 心輝議會五席人格＋voice packs
 
 - Status: `VERIFIED`

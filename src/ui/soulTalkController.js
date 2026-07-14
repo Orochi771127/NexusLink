@@ -6,11 +6,12 @@ import { updateMemoryLifecycles } from "../engine/memoryLifecycleEngine.js";
 import { isEmotionalHabitatTrace } from "../engine/habitatTraceEngine.js";
 import { applyRaphaelAgentReduction, reduceRaphaelAgentIntent } from "../engine/raphaelIntentReducer.js";
 import { buildEventReflection, composeMemoryReflection } from "../engine/soulTalkComposer.js";
+import { getCompanionById } from "../data/companionRegistry.js";
 import { qs, restoreViewportAfterKeyboard } from "../utils/dom.js";
 import AudioManager from "../audio/audioManager.js";
 
 const DEFAULT_STATUS_TEXT = "心湖 / 安靜待命";
-const DEFAULT_PREVIEW_TEXT = "你可以慢慢說，灰影會聽。";
+const DEFAULT_PREVIEW_TEXT = "你可以慢慢說，牠會聽。";
 const FIRST_TRACE_SYSTEM_TEXT = "月湖留下了第一道很淡的光。這不是獎勵，是牠記得你說過的事。";
 const FIRST_TRACE_STATUS_TEXT = "第一道痕跡已安靜留在月湖。";
 const NON_REWARDING_MODES = new Set(["safety_redirect", "withdraw", "reject"]);
@@ -57,6 +58,15 @@ export function createSoulTalkController({ store, saveCurrentState }) {
     if (soulDrawerCompanionName) {
       soulDrawerCompanionName.textContent = creature?.name || "夥伴";
     }
+  }
+
+  /** 以當前 state 校正夥伴，避免切換後仍用舊 creature 說話。 */
+  function resolveActiveCompanion(state = store.getState()) {
+    const fromState = getCompanionById(state?.activeCompanionId);
+    if (fromState && (!currentCreature || currentCreature.id !== fromState.id)) {
+      setCreature(fromState);
+    }
+    return currentCreature || fromState || null;
   }
 
   function bind() {
@@ -114,6 +124,7 @@ export function createSoulTalkController({ store, saveCurrentState }) {
 
   function openSoulTalk(panelManager) {
     ensureWaveformShell();
+    resolveActiveCompanion();
     setSoulTalkState("idle");
     maybeReflectCrossSessionEvent();
     scrollAnchorText = null; // 重新打開 drawer 一律回到最新訊息
@@ -143,8 +154,10 @@ export function createSoulTalkController({ store, saveCurrentState }) {
   }
 
   function handlePlayerMessage(message, options = {}) {
+    const companion = resolveActiveCompanion();
+    const companionName = companion?.name || "夥伴";
     setSoulTalkState("thinking");
-    setStatusText("灰影正在聽，先把湖面放慢……");
+    setStatusText(`${companionName}正在聽，先把湖面放慢……`);
     scrollAnchorText = message;
     addChat("player", message);
     // 送出音＝「我說了」的動作回饋，與內容無關（safety 判斷只影響回覆音）。
@@ -157,6 +170,7 @@ export function createSoulTalkController({ store, saveCurrentState }) {
       const now = Date.now();
       const idSuffix = String(Math.floor(Math.random() * 1000)).padStart(3, "0");
       const traceCountBefore = countVisibleRelationshipTraces(state.habitatTraces);
+      const activeCompanion = resolveActiveCompanion(state);
 
       const lifecycleResult = updateMemoryLifecycles(state.emotionalMemories || [], now);
       state.emotionalMemories = lifecycleResult.updatedMemories;
@@ -164,7 +178,7 @@ export function createSoulTalkController({ store, saveCurrentState }) {
       const coreResult = runRaphaelCore(message, state, {
         now,
         idSuffix,
-        companion: currentCreature,
+        companion: activeCompanion,
         repeated: message === state.lastMessage,
         quickReply: options.quickReply || null
       });
@@ -172,7 +186,7 @@ export function createSoulTalkController({ store, saveCurrentState }) {
       let awakeningResult = null;
       if (!isRaphaelAwakened(state) && shouldAllowFirstAwakening(coreResult)) {
         awakeningResult = maybeTriggerFirstAwakening(state, {
-          companion: currentCreature,
+          companion: activeCompanion,
           now,
           dispatchAnimation: true
         });
@@ -183,7 +197,7 @@ export function createSoulTalkController({ store, saveCurrentState }) {
       const coreResultToApply = awakeningResult?.applied
         ? deferOrdinaryMemoryForFirstAwakeningTurn(coreResult)
         : coreResult;
-      const applied = applyRaphaelCoreResult(state, coreResultToApply, { companion: currentCreature, now });
+      const applied = applyRaphaelCoreResult(state, coreResultToApply, { companion: activeCompanion, now });
       const traceCountAfter = countVisibleRelationshipTraces(state.habitatTraces);
       const firstTraceCreated = shouldAnnounceFirstTrace({
         traceCountBefore,
@@ -206,7 +220,7 @@ export function createSoulTalkController({ store, saveCurrentState }) {
         eventType: "soul_talk",
         coreResult: coreResultToApply,
         state,
-        companion: currentCreature,
+        companion: activeCompanion,
         now,
         options: {
           speechAlreadyApplied: true,
@@ -339,11 +353,15 @@ export function createSoulTalkController({ store, saveCurrentState }) {
     const state = store.getState();
     const visibleHistory = state.chatHistory.slice(-12);
     const lastItem = state.chatHistory[state.chatHistory.length - 1];
-    soulTalkPreview.textContent = state.reactionPreview || (lastItem ? lastItem.text : DEFAULT_PREVIEW_TEXT);
+    const companion = resolveActiveCompanion(state);
+    const idlePreview = companion?.name
+      ? `你可以慢慢說，${companion.name}會聽。`
+      : DEFAULT_PREVIEW_TEXT;
+    soulTalkPreview.textContent = state.reactionPreview || (lastItem ? lastItem.text : idlePreview);
 
     // 內容簽章：store.subscribe 每次 state 變動（含 heartbeat/存檔）都會呼叫 renderChat；
     // 內容沒變就不重建 DOM 也不動捲動位置，玩家往上翻歷史不會被跳回底部。
-    const renderSig = `${currentCreature?.name || ""}|${visibleHistory
+    const renderSig = `${companion?.name || ""}|${visibleHistory
       .map((item) => `${item.role} ${item.text}`)
       .join("\n")}`;
     if (renderSig === lastRenderSig) return;
@@ -364,7 +382,7 @@ export function createSoulTalkController({ store, saveCurrentState }) {
       } else if (role === "system") {
         line.textContent = `心湖：${item.text}`;
       } else {
-        const name = currentCreature?.name || "夥伴";
+        const name = companion?.name || "夥伴";
         line.textContent = `${name}：${item.text}`;
       }
       chatLog.appendChild(line);
@@ -401,7 +419,7 @@ export function createSoulTalkController({ store, saveCurrentState }) {
     if (!memory) return;
     const line = composeMemoryReflection({
       memory,
-      companion: currentCreature,
+      companion: resolveActiveCompanion(),
       state: store.getState()
     });
     if (!line) return;

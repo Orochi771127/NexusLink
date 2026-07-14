@@ -240,6 +240,33 @@ export const PERSONA_BOUNDARY_CASES = Object.freeze([
           .every((pack) => (pack.lines || []).every((line) => !forever.test(line)));
       });
     }
+  },
+  {
+    id: "PB-HS-VOICE-LIVE",
+    name: "Soul Talk runtime：五席疲憊輸入走 companion voice pack（接入遊戲）",
+    run: () => {
+      const input = "今天真的好累，我不太想說太多。";
+      return HEARTSPARK_FIVE.every((companion) => {
+        const result = runFor(companion, input);
+        const source =
+          result.composeMeta?.replySource || result.dialogueLoop?.variantSelection?.replySource || "";
+        const reply = result.reply || "";
+        const authoredLines = (HEARTSPARK_COUNCIL_VOICE_PACKS[companion.id] || []).flatMap(
+          (pack) => pack.lines || []
+        );
+        return source === "response_pack" && authoredLines.includes(reply);
+      });
+    }
+  },
+  {
+    id: "PB-HS-VOICE-DIFF",
+    name: "同句疲憊：五席回覆互異（玩家聽得出差別）",
+    run: () => {
+      const input = "今天真的好累，我不太想說太多。";
+      const replies = HEARTSPARK_FIVE.map((companion) => runFor(companion, input).reply || "");
+      if (replies.some((reply) => !reply)) return false;
+      return new Set(replies).size === replies.length;
+    }
   }
 ]);
 

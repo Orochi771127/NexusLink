@@ -230,6 +230,11 @@ function applyCriticRepairs(execution, critique, perception, state = {}) {
     return execution;
   }
 
+  // 物種 voice pack／safety／template 為作者定稿；generic critic 不得改成灰影 NLU。
+  const preserveAuthoredReply = ["response_pack", "safety", "template"].includes(
+    execution.composeMeta?.replySource || perception.composeMeta?.replySource
+  );
+
   const codes = critique.failureCodes || [];
   let reply = execution.reply;
   let shouldSpeak = execution.shouldSpeak;
@@ -283,13 +288,16 @@ function applyCriticRepairs(execution, critique, perception, state = {}) {
   }
 
   if (
-    codes.includes("generic_fallback_reply") ||
-    codes.includes("generic_without_topic") ||
-    codes.includes("missing_topic_reference") ||
-    codes.includes("missing_specific_detail_reference") ||
-    codes.includes("comfort_violates_constraint") ||
-    codes.includes("comfort_instead_of_practical") ||
-    codes.includes("too_similar_to_previous_reply")
+    !preserveAuthoredReply &&
+    (
+      codes.includes("generic_fallback_reply") ||
+      codes.includes("generic_without_topic") ||
+      codes.includes("missing_topic_reference") ||
+      codes.includes("missing_specific_detail_reference") ||
+      codes.includes("comfort_violates_constraint") ||
+      codes.includes("comfort_instead_of_practical") ||
+      codes.includes("too_similar_to_previous_reply")
+    )
   ) {
     reply = perception.safety?.isBoundaryPressure
       ? buildBoundaryPolicyReply(perception.safety)

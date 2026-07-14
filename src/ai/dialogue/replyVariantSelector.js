@@ -2,6 +2,20 @@ import { getRecentVariantIds } from "./dialogueStateTracker.js";
 import { getStrategyVariantLines, buildStrategyVariantMeta } from "../nlu/nluReplyBuilder.js";
 import { listResponsePackVariants } from "../corpus/responsePackSelector.js";
 import { RESPONSE_STRATEGIES } from "../responseStrategySelector.js";
+import { HEARTSPARK_COUNCIL_COMPANION_IDS } from "../../data/ai/heartsparkCouncilVoicePacks.js";
+
+// 情緒陪伴類策略：用字面字串（避免循環依賴時 RESPONSE_STRATEGIES 尚未就緒）。
+const COMPANION_VOICE_STRATEGIES = Object.freeze(
+  new Set([
+    "contextual_ack",
+    "emotional_short",
+    "holding_space",
+    "quiet_presence",
+    "short_validation"
+  ])
+);
+
+const HEARTSPARK_VOICE_IDS = Object.freeze(new Set(HEARTSPARK_COUNCIL_COMPANION_IDS));
 
 export function selectReplyVariant({
   responseStrategy = null,
@@ -29,18 +43,32 @@ export function selectReplyVariant({
     recoveryContext
   });
 
+  // guarded_acknowledge 與 acknowledge 共用情緒 pack，否則五席 voice 會整段落空。
+  const packReaction =
+    plan.mode === "guarded_acknowledge" ? "acknowledge" : plan.mode || "acknowledge";
+
   const packVariants = listResponsePackVariants({
     corpus: corpus || {},
     companionId,
     emotion: analysis.emotionKey || "calm",
     intent: intent.intent || "",
-    reaction: plan.mode || "acknowledge",
+    reaction: packReaction,
     state,
     semanticSoul,
     recoveryContext
   });
 
+  // 心輝正式五席：情緒策略下把 voice pack 併入候選並提高分數，讓玩家「聽得出是誰」。
+  // 灰影貓維持既有 NLU 優先（holdout／訓練語料以灰影為主），不改其預設行為。
+  const preferCompanionVoice =
+    HEARTSPARK_VOICE_IDS.has(companionId) &&
+    packVariants.length > 0 &&
+    COMPANION_VOICE_STRATEGIES.has(strategy);
+
   let candidates = nluVariants.length ? nluVariants : packVariants;
+  if (preferCompanionVoice) {
+    candidates = [...packVariants, ...nluVariants];
+  }
   if (!candidates.length) {
     candidates = [
       {
@@ -72,7 +100,7 @@ export function selectReplyVariant({
   const scored = filtered
     .map((item) => ({
       ...item,
-      score: scoreVariant(item, { preferred, topic, strategy })
+      score: scoreVariant(item, { preferred, topic, strategy, preferCompanionVoice })
     }))
     .sort((left, right) => right.score - left.score);
 
@@ -85,7 +113,9 @@ export function selectReplyVariant({
       ? filtered.length < candidates.length && filtered.every((item) => recentVariantIds.includes(item.variantId))
         ? "fallback_all_variants_recent"
         : "avoided_recent_variants"
-      : "preferred_topic_match";
+      : preferCompanionVoice && picked?.replySource === "response_pack"
+        ? "companion_voice_pack"
+        : "preferred_topic_match";
 
   return {
     strategy,
@@ -100,8 +130,10 @@ export function selectReplyVariant({
   };
 }
 
-function scoreVariant(variant, { preferred, topic, strategy }) {
+function scoreVariant(variant, { preferred, topic, strategy, preferCompanionVoice = false }) {
   let score = 0;
+  // 心輝五席：物種 voice pack 必須壓過 NLU 的 preferred/topic 加分，才進得了遊戲對話。
+  if (preferCompanionVoice && variant.replySource === "response_pack") score += 8;
   if (variant.replySource === "nlu_builder") score += 1;
   if (preferred && String(variant.variantId || "").includes(preferred)) score += 2;
   if (topic !== "unknown" && variant.topic === topic) score += 1.5;

@@ -122,7 +122,9 @@ export function executeAutonomousAction({
   reply = sanitized.text;
 
   const validation = validatePlannedAction(coerced, reply);
-  if (!validation.allowed && reply && !perception.safety?.isHighRisk) {
+  // 物種 voice pack／safety／template 為作者定稿句，policy 失敗時勿用通用 NLU 覆寫。
+  const preserveAuthoredReply = ["response_pack", "safety", "template"].includes(composeMeta?.replySource);
+  if (!validation.allowed && reply && !perception.safety?.isHighRisk && !preserveAuthoredReply) {
     reply = sanitizeReply(
       perception.safety?.isBoundaryPressure
         ? buildBoundaryPolicyReply(perception.safety)

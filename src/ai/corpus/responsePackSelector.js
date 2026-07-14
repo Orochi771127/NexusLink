@@ -1,5 +1,10 @@
 import { detectForbiddenPhrases } from "../forbiddenPhrases.js";
 
+/** guarded_acknowledge 與 acknowledge 共用情緒 voice pack。 */
+function normalizePackReaction(reaction = "acknowledge") {
+  return reaction === "guarded_acknowledge" ? "acknowledge" : reaction;
+}
+
 export function listResponsePackVariants({
   corpus = {},
   companionId = "greyshade-cat",
@@ -15,7 +20,16 @@ export function listResponsePackVariants({
   const defense = (Number(state.defense) || 0) / 100;
   const energy = (Number(state.energy) ?? 10) / 10;
   const boundaryPressure = semanticSoul.boundaryPressure ?? 0;
-  const ctx = { emotion, intent, reaction, trust, defense, energy, boundaryPressure, recoveryContext };
+  const ctx = {
+    emotion,
+    intent,
+    reaction: normalizePackReaction(reaction),
+    trust,
+    defense,
+    energy,
+    boundaryPressure,
+    recoveryContext
+  };
 
   const candidates = packs
     .filter((pack) => packMatches(pack, ctx))
@@ -49,12 +63,32 @@ export function selectResponsePackAtVariant({
   packId = null,
   lineIndex = 0
 } = {}) {
+  const packs = corpus.responsePacks?.[companionId] || corpus.responsePacks?.["greyshade-cat"] || [];
+
+  // variant 已指定 packId 時直接取句，避免 plan.mode 對齊後 reaction 不一致導致落空。
+  if (packId) {
+    const pack = packs.find((item) => item.id === packId);
+    const lines = (pack?.lines || []).filter(Boolean);
+    if (pack && lines.length) {
+      const safeIndex = ((Number(lineIndex) || 0) % lines.length + lines.length) % lines.length;
+      const line = lines[safeIndex];
+      const forbidden = validatePackLine(line, pack.forbidden || []);
+      return {
+        line: forbidden.text,
+        packId: pack.id,
+        source: "response_pack",
+        forbiddenDetected: forbidden.hasForbidden,
+        lineIndex: safeIndex
+      };
+    }
+  }
+
   const variants = listResponsePackVariants({
     corpus,
     companionId,
     emotion,
     intent,
-    reaction,
+    reaction: normalizePackReaction(reaction),
     state,
     semanticSoul,
     recoveryContext
@@ -71,7 +105,7 @@ export function selectResponsePackAtVariant({
       companionId,
       emotion,
       intent,
-      reaction,
+      reaction: normalizePackReaction(reaction),
       state,
       semanticSoul,
       recoveryContext,
@@ -79,7 +113,6 @@ export function selectResponsePackAtVariant({
     });
   }
 
-  const packs = corpus.responsePacks?.[companionId] || corpus.responsePacks?.["greyshade-cat"] || [];
   const pack = packs.find((item) => item.id === matched.packId);
   const line = pack?.lines?.[matched.lineIndex] || "";
   const forbidden = validatePackLine(line, pack?.forbidden || []);
@@ -114,7 +147,7 @@ export function selectResponsePackLine({
     .filter((pack) => packMatches(pack, {
       emotion,
       intent,
-      reaction,
+      reaction: normalizePackReaction(reaction),
       trust,
       defense,
       energy,
