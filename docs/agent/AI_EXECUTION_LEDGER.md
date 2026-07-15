@@ -2729,3 +2729,12 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - UI preservation: the invitation remains in the upper habitat band with no frame, and the lower-left habitat name remains unframed / transparent. Neither overlaps the centered companion in the seven reviewed scenes.
 - Required reading: `design-qa.md` and the seven combined comparison images under the current task's visualization folder.
 - Scope boundary: no companion art regeneration, asset import, scale change, copy rewrite, DOM structure, dependency, commit or push.
+
+### 2026-07-15 - Codex - Habitat Compass-Center Package - PUBLISHED
+
+- Lanes: `Game Engineering And Architecture`; `Game Art, UI, And Visual Production`.
+- Task names: `TP-HAB-MOBILE-COMPOSITION-1`; `TP-HAB-COMPASS-CENTER-ALIGN-2`.
+- Published: the verified seven-region compass-center placement, motion rebase, and floating-text de-chrome package was committed on `main` as `7c201bb`.
+- Scope: exactly the nine reviewed files in that commit; unrelated untracked character provenance, rejected generations, and habitat staging output remained excluded.
+- Verification before publication: changed JavaScript syntax passed; full `src/**/*.js` syntax sweep passed `239/239`; seven Scene Profile targets passed `7/7`; motion rebase assertion passed; onboarding/Codex regression cases passed `4/4`; staged diff check passed.
+- Branch / commit: `main` / `7c201bb`; remote push recorded by the following ledger-only publication commit.
