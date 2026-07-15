@@ -80,6 +80,7 @@ import { enableEditorMode, readSceneEditorFlag } from "./tools/sceneEditor.js";
 import {
   createCompanionMotion,
   playDevMotion,
+  rebaseCompanionMotion,
   updateCompanionMotion
 } from "./pixi/motionController.js";
 import { resolveAnimationIntent } from "./engine/animationProfile.js";
@@ -784,6 +785,7 @@ async function bootScene(
     const switched = await switchEnvironmentHabitat(environmentLayer, layers, app, profile);
     if (!switched) return false;
     positionCompanion(companion, app);
+    rebaseCompanionMotion(companionMotionController, companion);
     weatherFx.weatherId = "__pending__";
     return true;
   }

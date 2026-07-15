@@ -419,20 +419,28 @@ html[data-ui="v2"] .touch-affordance.is-lowmotion .touch-affordance__core {
 html[data-ui="v2"] .gentle-invitation {
   position: fixed;
   left: 50%;
-  bottom: var(--ambient-msg-bottom, calc(var(--bottom-safe, 0px) + var(--nav-block-h, 104px) + 128px));
+  top: calc(var(--top-safe, 0px) + 112px);
+  bottom: auto;
   transform: translateX(-50%);
   margin: 0;
-  max-width: min(80vw, 400px);
-  padding: 7px 15px;
-  border-radius: 999px;
-  border: 1px solid rgba(138, 217, 255, 0.16);
-  background: rgba(10, 16, 32, 0.55);
-  color: rgba(223, 243, 255, 0.86);
+  width: min(78vw, 360px);
+  max-width: calc(100vw - 40px);
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: rgba(247, 250, 255, 0.95);
   font-size: 12.5px;
+  font-weight: 500;
   line-height: 1.5;
   text-align: center;
   white-space: normal;
   word-break: keep-all;
+  text-shadow:
+    0 1px 2px rgba(2, 6, 16, 0.98),
+    0 0 8px rgba(2, 6, 16, 0.84),
+    0 0 18px rgba(2, 6, 16, 0.72);
   pointer-events: none;
   opacity: 0;
   z-index: calc(var(--z-nav, 30) - 3);

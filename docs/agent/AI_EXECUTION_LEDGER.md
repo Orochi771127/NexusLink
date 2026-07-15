@@ -2659,3 +2659,73 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Commit / branch: `a53c3f3` on `main`; this publication-ledger follow-up records the completed push sequence.
 - Published scope: `323` files containing `145` selected RGBA sheets, `145` GIF previews, five approved identity seeds, five full-catalog QC records, final alignment/crop audit evidence, review boards, species/appearance locks and production documentation.
 - Excluded local provenance: raw generations, alpha-source intermediates, rejected candidates and duplicate processor outputs were intentionally kept out of Git history. No `assets/**`, registry, manifest, state/save, canon or runtime promotion was included.
+
+### 2026-07-15 - Codex - Habitat Mobile Composition Repair - IN PROGRESS
+
+- Lane: `Game Engineering And Architecture`.
+- Task name: `TP-HAB-MOBILE-COMPOSITION-1`.
+- Scope: keep each active companion on the selected habitat Scene Profile anchor after the motion ticker resumes; repair the stale motion-base handoff exposed by seven iPhone Safari screenshots.
+- Layer: EXPERIENCE only. Expected runtime changes are limited to `src/app.js` and `src/pixi/motionController.js`; no `pixiApp.js`, Scene Profile data, asset, state/save, dependency, build-step, commit or push change.
+- Red-line check: no dependency detection, FOMO, reward pressure, safety-help reward, battle policy, companion boundary, roster or progression change.
+- Acceptance refs: `G3`, `H1-H5`, `I`, `M1`, and `M5`.
+
+### 2026-07-15 - Codex - Habitat Floating Text De-chrome - IN PROGRESS
+
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `TP-HAB-MOBILE-COMPOSITION-1`.
+- Scope: move the post-onboarding gentle invitation into the upper habitat band, remove its pill surface, and remove the lower-left habitat-name pill while preserving readable floating text across light and dark regions.
+- Layer: EXPERIENCE CSS only. No generated art, asset import, copy rewrite, DOM structure, new icon, dependency, build step, commit or push.
+- Mobile contract: keep the invitation below the top HUD and above the companion plaza at both `390x844` and short Safari-like height; keep the habitat name clear of the companion, Soul Talk control and bottom navigation.
+- Acceptance refs: `I`, `M1`, `M2`, and `M5`.
+
+### 2026-07-15 - Codex - Habitat Mobile Composition Repair - VERIFIED
+
+- Lane: `Game Engineering And Architecture`.
+- Task name: `TP-HAB-MOBILE-COMPOSITION-1`.
+- Completed: added `rebaseCompanionMotion()` and invoked it immediately after `positionCompanion()` on habitat switches, so the next motion tick preserves the selected Scene Profile position, scale, alpha and rotation instead of restoring the initial Moonlake base.
+- Changed runtime files: `src/app.js`, `src/pixi/motionController.js`.
+- Verification: targeted motion rebase assertion passed; `src/**/*.js` syntax sweep passed `239/239`; onboarding/Codex regression cases passed `4/4`; `git diff --check` passed; seven atlas-driven habitat switches remained on the correct plaza/platform after one-second ticker settling.
+- Known unrelated gate issue: `docs/qa/_run_web_release_gate.py` stopped in `run_asset_integrity()` because a current object-form registry asset entry reached string-only `startswith()` handling. No gate output file changed, and the runner was not modified in this task.
+- Branch / commit: local `main`, no commit and no push.
+
+### 2026-07-15 - Codex - Habitat Floating Text De-chrome - VERIFIED
+
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `TP-HAB-MOBILE-COMPOSITION-1`.
+- Completed: moved `.gentle-invitation` to the upper habitat band and removed its pill surface; removed the `.v3-home-presence` pill surface while retaining contrast through layered text shadow.
+- Changed visual files: `styles/ui-v3-onboarding.css`, `styles/ui-v3-tokens.css`; visual QA record: `design-qa.md`.
+- Verification: in-app browser passed at `390x844` and `390x664`; invitation and habitat name both computed to transparent backgrounds with zero borders; no warning/error console entries; seven source-versus-implementation combined comparisons passed. At short height, the habitat name ended at `y=512`, before Soul Talk at `y=518.33` and bottom navigation at `y=584`.
+- Asset and scope check: no generated/imported art, `assets/**`, DOM structure, copy, dependency, build step, commit or push change.
+- Branch / commit: local `main`, no commit and no push.
+
+### 2026-07-15 - Codex - Habitat Compass-Center Alignment Correction - IN PROGRESS
+
+- Lane: `Game Engineering And Architecture`.
+- Task name: `TP-HAB-COMPASS-CENTER-ALIGN-2`.
+- Owner correction: the prior pass correctly stopped the motion ticker from restoring stale Moonlake coordinates, but its visual acceptance was wrong. The target is not the companion foot anchor or a broad plaza area; the companion's rendered visual center must coincide with the visible compass / cross center authored into each habitat plate.
+- Scope: separate the project-wide bottom-center sprite asset anchor from the per-habitat visual-center target, author seven compass-center targets in Scene Profiles, and validate all seven through the live atlas switch flow after animation settling.
+- Expected files: `src/pixi/companionRenderer.js`, `src/data/sceneProfiles/linkaraRegionProfiles.js`, `src/data/sceneProfiles/moonlakeProfile.js`, `design-qa.md`, and this ledger. Existing motion rebase and floating-text changes remain in scope but are not being redesigned.
+- Layer: EXPERIENCE only; no `index.html`, `src/pixi/pixiApp.js`, `assets/**`, save/state, dependency, build step, commit or push.
+- Red-line check: no safety, dependency detection, reward pressure, battle, boundary, roster, progression or companion-ownership behavior changes.
+- Acceptance refs: `G3`, `H1-H5`, `I`, `M1`, and `M5`.
+
+### 2026-07-15 - Codex - Habitat Compass-Center Alignment Correction - COMPLETED
+
+- Lane: `Game Engineering And Architecture`.
+- Task name: `TP-HAB-COMPASS-CENTER-ALIGN-2`.
+- Completed: each Scene Profile now records the visible compass / cross as a point in its `1080x1920` background artwork. `companionRenderer.js` projects that point through the same responsive cover geometry as the background, maps it back into the safe-zone coordinate system, and offsets the bottom-center sprite frame so the rendered companion's measured opaque visual center lands on that point.
+- Anchor contract: companion frame assets remain bottom-center anchored (`0.5, 1`); no sprite sheet, asset, registry, scale policy or art pipeline rule changed. The new visual-center alignment is a scene-placement concern only.
+- Changed correction files: `src/pixi/companionRenderer.js`, `src/data/sceneProfiles/linkaraRegionProfiles.js`, `src/data/sceneProfiles/moonlakeProfile.js`.
+- Verification: syntax checks passed for all three correction files; seven atlas-driven habitat switches passed after ticker settling at `390x664`; responsive projection also passed on representative core, mystic, tidal and Moonlake scenes at `390x844`; final-origin browser warnings/errors were empty; no horizontal overflow was present at `390x664`.
+- Scope boundary: no `index.html`, `src/pixi/pixiApp.js`, `assets/**`, state/save, dependency, build step, commit or push change.
+- Branch / commit: local `main`, no commit and no push.
+
+### 2026-07-15 - Codex - Habitat Compass-Center Visual QA - VERIFIED
+
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `TP-HAB-COMPASS-CENTER-ALIGN-2`.
+- Owner correction applied: the earlier plaza/foot-anchor interpretation was treated as a P1 visual mismatch and was not retained as final acceptance. The verified target is the character's visual center directly over the authored compass / cross center.
+- Visual evidence: all seven supplied iPhone screenshots were paired left-to-right with fresh `390x664` implementation captures in `habitat-mobile-composition/compare-1-forge.png` through `compare-7-moonlake.png`. The revised right-hand captures align the companion center with the marker in Forge Hills, Tidal Frontier, Harbor, Radiant Core, Verdant Plains, Mystic Mountains and Moonlake.
+- UI preservation: the invitation remains in the upper habitat band with no frame, and the lower-left habitat name remains unframed / transparent. Neither overlaps the centered companion in the seven reviewed scenes.
+- Required reading: `design-qa.md` and the seven combined comparison images under the current task's visualization folder.
+- Scope boundary: no companion art regeneration, asset import, scale change, copy rewrite, DOM structure, dependency, commit or push.

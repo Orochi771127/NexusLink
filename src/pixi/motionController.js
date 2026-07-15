@@ -53,6 +53,17 @@ export function createCompanionMotion(companion, initialMood) {
   return motion;
 }
 
+export function rebaseCompanionMotion(motion, companion) {
+  if (!motion || !companion) return motion;
+
+  motion.baseX = companion.x;
+  motion.baseY = companion.y;
+  motion.baseScale = companion.scale.x || motion.baseScale || 1;
+  motion.baseAlpha = companion.alpha;
+  motion.baseRotation = companion.rotation || 0;
+  return motion;
+}
+
 function scheduleNextAmbientAction(motion, nowMs) {
   motion.ambientActionNextAt = nowMs + randomBetween(AMBIENT_ACTION_COOLDOWN_MIN_MS, AMBIENT_ACTION_COOLDOWN_MAX_MS);
 }

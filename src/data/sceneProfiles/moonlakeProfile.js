@@ -50,11 +50,13 @@ export const moonlakeProfile = Object.freeze({
     })
   }),
 
-  // The current full-bleed diorama's foreground plaza sits below the dock.
-  // Keep the companion's foot anchor on that plaza, above the bottom UI inset.
+  // This scene anchor is the visible compass center. The renderer preserves the
+  // sprite asset's bottom-center frame anchor while aligning its visual center here.
   companion: Object.freeze({
-    anchor: Object.freeze({ x: 0.5, y: 0.9 }),
-    reservedRect: Object.freeze({ x: 0.38, y: 0.63, w: 0.24, h: 0.27 })
+    alignment: "visual-center",
+    backgroundPoint: Object.freeze({ x: 540, y: 1390 }),
+    anchor: Object.freeze({ x: 0.5, y: 1390 / 1920 }),
+    reservedRect: Object.freeze({ x: 0.38, y: 1390 / 1920 - 0.135, w: 0.24, h: 0.27 })
   }),
 
   ui: Object.freeze({

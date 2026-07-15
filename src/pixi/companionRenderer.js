@@ -97,8 +97,150 @@ function applyCompanionResponsiveLayout(companion, app) {
   const anchor = profile?.companion?.anchor;
   const referenceWidth = Number(profile?.safeZone?.referenceWidth) || SCENE_LAYOUT.referenceWidth;
   const referenceHeight = Number(profile?.safeZone?.referenceHeight) || SCENE_LAYOUT.referenceHeight;
-  companion.x = Math.round((Number(anchor?.x) || 0.5) * referenceWidth);
-  companion.y = Math.round((Number(anchor?.y) || 0.7) * referenceHeight);
+  const target = resolveCompanionTarget(profile, app, anchor, referenceWidth, referenceHeight);
+  const targetX = target.x;
+  const targetY = target.y;
+
+  if (profile?.companion?.alignment === "visual-center") {
+    const visualCenter = getCompanionVisualCenter(companion);
+    companion.x = Math.round(targetX - visualCenter.x * companion.scale.x);
+    companion.y = Math.round(targetY - visualCenter.y * companion.scale.y);
+    return;
+  }
+
+  companion.x = Math.round(targetX);
+  companion.y = Math.round(targetY);
+}
+
+function resolveCompanionTarget(profile, app, anchor, referenceWidth, referenceHeight) {
+  const backgroundPoint = profile?.companion?.backgroundPoint;
+  const artWidth = Number(profile?.artSize?.width);
+  const artHeight = Number(profile?.artSize?.height);
+  const screenWidth = Number(app?.screen?.width);
+  const screenHeight = Number(app?.screen?.height);
+  const pointX = Number(backgroundPoint?.x);
+  const pointY = Number(backgroundPoint?.y);
+
+  if ([artWidth, artHeight, screenWidth, screenHeight, pointX, pointY].every(Number.isFinite)) {
+    const backgroundScale = Math.max(screenWidth / artWidth, screenHeight / artHeight);
+    const screenTargetX = screenWidth / 2 + (pointX - artWidth / 2) * backgroundScale;
+    const screenTargetY = screenHeight / 2 + (pointY - artHeight / 2) * backgroundScale;
+    const safeScale = Math.min(screenWidth / referenceWidth, screenHeight / referenceHeight);
+    if (safeScale > 0) {
+      const safeX = (screenWidth - referenceWidth * safeScale) / 2;
+      const safeY = screenHeight - referenceHeight * safeScale;
+      return {
+        x: (screenTargetX - safeX) / safeScale,
+        y: (screenTargetY - safeY) / safeScale
+      };
+    }
+  }
+
+  return {
+    x: (Number(anchor?.x) || 0.5) * referenceWidth,
+    y: (Number(anchor?.y) || 0.7) * referenceHeight
+  };
+}
+
+function getCompanionVisualCenter(companion) {
+  if (companion.__opaqueVisualCenter) return companion.__opaqueVisualCenter;
+
+  const visual = companion.children?.find((child) => child instanceof PIXI.Sprite) || companion;
+  const bounds = visual.getLocalBounds?.();
+  const opaqueCenter = getOpaqueTextureCenter(visual);
+  const center = opaqueCenter || getBoundsCenter(bounds);
+  if (visual === companion) return center;
+
+  const scaleX = Number.isFinite(visual.scale?.x) ? visual.scale.x : 1;
+  const scaleY = Number.isFinite(visual.scale?.y) ? visual.scale.y : 1;
+  const pivotX = Number(visual.pivot?.x) || 0;
+  const pivotY = Number(visual.pivot?.y) || 0;
+  const rotation = Number(visual.rotation) || 0;
+  const localX = (center.x - pivotX) * scaleX;
+  const localY = (center.y - pivotY) * scaleY;
+  const cos = Math.cos(rotation);
+  const sin = Math.sin(rotation);
+
+  const resolvedCenter = {
+    x: (Number(visual.x) || 0) + localX * cos - localY * sin,
+    y: (Number(visual.y) || 0) + localX * sin + localY * cos
+  };
+  if (opaqueCenter) companion.__opaqueVisualCenter = resolvedCenter;
+  return resolvedCenter;
+}
+
+function getOpaqueTextureCenter(visual) {
+  if (typeof document === "undefined" || !visual?.texture) return null;
+  const texture = visual.texture;
+  const source = texture.source?.resource;
+  const frame = texture.frame;
+  const width = Math.round(Number(frame?.width));
+  const height = Math.round(Number(frame?.height));
+  if (!source || !Number.isFinite(width) || !Number.isFinite(height) || width <= 0 || height <= 0) return null;
+
+  try {
+    const canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+    const context = canvas.getContext("2d", { willReadFrequently: true });
+    if (!context) return null;
+    context.drawImage(
+      source,
+      Number(frame.x) || 0,
+      Number(frame.y) || 0,
+      width,
+      height,
+      0,
+      0,
+      width,
+      height
+    );
+    const pixels = context.getImageData(0, 0, width, height).data;
+    let minX = width;
+    let minY = height;
+    let maxX = -1;
+    let maxY = -1;
+    for (let y = 0; y < height; y += 1) {
+      for (let x = 0; x < width; x += 1) {
+        if (pixels[(y * width + x) * 4 + 3] < 16) continue;
+        if (x < minX) minX = x;
+        if (x > maxX) maxX = x;
+        if (y < minY) minY = y;
+        if (y > maxY) maxY = y;
+      }
+    }
+    if (maxX < minX || maxY < minY) return null;
+
+    const anchorX = Number(visual.anchor?.x) || 0;
+    const anchorY = Number(visual.anchor?.y) || 0;
+    return {
+      x: (minX + maxX + 1) / 2 - anchorX * width,
+      y: (minY + maxY + 1) / 2 - anchorY * height
+    };
+  } catch (error) {
+    console.warn("Companion visual-center measurement fell back to frame bounds:", error);
+    return null;
+  }
+}
+
+function getBoundsCenter(bounds) {
+  const minX = Number(bounds?.minX);
+  const maxX = Number(bounds?.maxX);
+  const minY = Number(bounds?.minY);
+  const maxY = Number(bounds?.maxY);
+  if ([minX, maxX, minY, maxY].every(Number.isFinite)) {
+    return { x: (minX + maxX) / 2, y: (minY + maxY) / 2 };
+  }
+
+  const x = Number(bounds?.x);
+  const y = Number(bounds?.y);
+  const width = Number(bounds?.width);
+  const height = Number(bounds?.height);
+  if ([x, y, width, height].every(Number.isFinite)) {
+    return { x: x + width / 2, y: y + height / 2 };
+  }
+
+  return { x: 0, y: 0 };
 }
 
 function isSceneEditorMode() {

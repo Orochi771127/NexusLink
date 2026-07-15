@@ -30,8 +30,7 @@ html[data-ui="v2"] .resource-hud {
   display: none;
 }
 
-/* 月湖棲地標註：小型藥丸 tag，緊貼在心語欄位正上方左側。
-   名稱（strong）會隨未來地圖切換而改字；故只顯示名稱、隱藏 kicker 與描述句。 */
+/* 棲地標註：只保留浮在場景上的地名；名稱會隨地圖切換而更新。 */
 html[data-ui="v2"] .v3-home-presence {
   position: absolute;
   left: 16px;
@@ -39,13 +38,13 @@ html[data-ui="v2"] .v3-home-presence {
   bottom: calc(var(--bottom-safe) + var(--nav-block-h, 104px) + var(--soul-strip-h, 76px) + 18px);
   width: fit-content;
   max-width: calc(100vw - 36px);
-  padding: 4px 11px;
-  border: 1px solid var(--v3-line-quiet);
-  border-radius: 999px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
   color: var(--v3-moon-100);
-  background: linear-gradient(145deg, rgba(9, 21, 42, 0.52), rgba(7, 16, 34, 0.7));
-  box-shadow: 0 0 12px rgba(82, 210, 255, 0.14);
-  opacity: 0.9;
+  background: transparent;
+  box-shadow: none;
+  opacity: 0.96;
   transform: translateY(0);
   pointer-events: none;
 }
@@ -54,7 +53,7 @@ html[data-ui="v2"] .v3-home-presence::before {
   display: none;
 }
 
-/* 英文小標與描述句在 tag 形態下隱藏，只留地點名。 */
+/* 英文小標與描述句維持隱藏，只讓地點名浮在場景上。 */
 html[data-ui="v2"] .v3-home-kicker,
 html[data-ui="v2"] .v3-home-presence em {
   display: none;
@@ -66,6 +65,10 @@ html[data-ui="v2"] .v3-home-presence strong {
   font-size: 0.82rem;
   font-weight: 600;
   letter-spacing: 0.08em;
+  text-shadow:
+    0 1px 2px rgba(2, 6, 16, 0.98),
+    0 0 8px rgba(2, 6, 16, 0.84),
+    0 0 16px rgba(2, 6, 16, 0.72);
 }
 
 html[data-ui="v2"] body.onboarding-active .v3-home-presence {
