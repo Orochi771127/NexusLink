@@ -71,6 +71,10 @@ import {
   updateHabitatWeatherFx
 } from "./pixi/habitatWeatherFx.js";
 import {
+  createHabitatLightingFx,
+  updateHabitatLightingFx
+} from "./pixi/habitatLightingFx.js";
+import {
   clearSceneTimePhaseOverride,
   setSceneTimePhaseOverride
 } from "./engine/environmentController.js";
@@ -640,6 +644,9 @@ async function bootScene(
   const initialProfile = setActiveSceneProfile(initialHabitatId);
   const environmentLayer = await createEnvironmentLayer(layers, app, initialProfile);
 
+  const lightingFx = createHabitatLightingFx(PIXI, { width: 390, height: 844 });
+  layers.layerFX.addChild(lightingFx.root);
+
   const particles = createParticles();
   layers.layerFX.addChild(particles);
 
@@ -861,6 +868,7 @@ async function bootScene(
     }
 
     updateEnvironmentLayer(environmentLayer, safeTicker);
+    updateHabitatLightingFx(lightingFx);
     updateHabitatWeatherFx(weatherFx, safeTicker);
     animateParticles(particles, t, safeTicker);
     updateEnvironmentEffects(activeEnvironmentEffects, safeTicker);

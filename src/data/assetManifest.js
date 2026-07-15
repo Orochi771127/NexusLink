@@ -108,6 +108,43 @@ export const MOONLAKE_DIORAMA_R1 = Object.freeze({
   })
 });
 
+export const MOONLAKE_DIORAMA_R2 = Object.freeze({
+  props: Object.freeze({
+    tentNearLeft: Object.freeze({
+      base: "./assets/props/MoonlakeDiorama_r2/tent_near_left_base.png",
+      emissive: "./assets/props/MoonlakeDiorama_r2/tent_near_left_emissive.png"
+    }),
+    tentNearRight: Object.freeze({
+      base: "./assets/props/MoonlakeDiorama_r2/tent_near_right_base.png",
+      emissive: "./assets/props/MoonlakeDiorama_r2/tent_near_right_emissive.png"
+    }),
+    tentMidLeft: Object.freeze({
+      base: "./assets/props/MoonlakeDiorama_r2/tent_mid_left_base.png",
+      emissive: "./assets/props/MoonlakeDiorama_r2/tent_mid_left_emissive.png"
+    }),
+    tentMidRight: Object.freeze({
+      base: "./assets/props/MoonlakeDiorama_r2/tent_mid_right_base.png",
+      emissive: "./assets/props/MoonlakeDiorama_r2/tent_mid_right_emissive.png"
+    }),
+    tentFar: Object.freeze({
+      base: "./assets/props/MoonlakeDiorama_r2/tent_far_base.png",
+      emissive: "./assets/props/MoonlakeDiorama_r2/tent_far_emissive.png"
+    }),
+    beaconMain: Object.freeze({
+      base: "./assets/props/MoonlakeDiorama_r2/beacon_main_base.png",
+      emissive: "./assets/props/MoonlakeDiorama_r2/beacon_main_emissive.png"
+    }),
+    beaconFar: Object.freeze({
+      base: "./assets/props/MoonlakeDiorama_r2/beacon_far_base.png",
+      emissive: "./assets/props/MoonlakeDiorama_r2/beacon_far_emissive.png"
+    }),
+    crescentShrine: Object.freeze({
+      base: "./assets/props/MoonlakeDiorama_r2/crescent_shrine_base.png",
+      emissive: "./assets/props/MoonlakeDiorama_r2/crescent_shrine_emissive.png"
+    })
+  })
+});
+
 export const LINKARA_HABITATS_R1 = Object.freeze({
   core: Object.freeze({
     day: "./assets/backgrounds/LinkaraHabitats_r1/core_day.png",

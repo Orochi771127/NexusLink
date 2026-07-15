@@ -1,0 +1,353 @@
+{
+  "base": "http://127.0.0.1:5185",
+  "cases": [
+    {
+      "name": "day-clear-390x844",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "params": {
+        "timePhase": "day",
+        "weather": "clear"
+      },
+      "result": {
+        "placementCount": 8,
+        "ids": [
+          "beacon_far",
+          "beacon_main",
+          "crescent_shrine",
+          "tent_far",
+          "tent_mid_left",
+          "tent_mid_right",
+          "tent_near_left",
+          "tent_near_right"
+        ],
+        "completeChildSets": true,
+        "rootVisible": true,
+        "rootTransform": {
+          "x": 195,
+          "y": 422,
+          "scaleX": 0.4395833333333333,
+          "scaleY": 0.4395833333333333
+        },
+        "gridPresent": false,
+        "oldCampPlatePresent": false,
+        "bgNightAlpha": 0,
+        "bgTexturesShared": true,
+        "emissiveAlpha": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "shadowAlpha": [
+          0.2,
+          0.22,
+          0.18,
+          0.18,
+          0.22,
+          0.26,
+          0.26,
+          0.22
+        ],
+        "ambientAlpha": 0,
+        "fogAlpha": 0,
+        "rainVisible": false,
+        "wetnessAlpha": 0,
+        "rippleVisibleCount": 3,
+        "editorMetadataComplete": true,
+        "habitatRoundTrip": [
+          "core",
+          "mystic",
+          "plains",
+          "forge",
+          "harbor",
+          "tidal"
+        ]
+      },
+      "consoleErrors": [],
+      "pageErrors": [],
+      "forbiddenLegacyRequests": [],
+      "screenshot": "runtime-qa\\day-clear-390x844.png"
+    },
+    {
+      "name": "night-clear-390x844",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "params": {
+        "timePhase": "night",
+        "weather": "clear"
+      },
+      "result": {
+        "placementCount": 8,
+        "ids": [
+          "beacon_far",
+          "beacon_main",
+          "crescent_shrine",
+          "tent_far",
+          "tent_mid_left",
+          "tent_mid_right",
+          "tent_near_left",
+          "tent_near_right"
+        ],
+        "completeChildSets": true,
+        "rootVisible": true,
+        "rootTransform": {
+          "x": 195,
+          "y": 422,
+          "scaleX": 0.4395833333333333,
+          "scaleY": 0.4395833333333333
+        },
+        "gridPresent": false,
+        "oldCampPlatePresent": false,
+        "bgNightAlpha": 0,
+        "bgTexturesShared": true,
+        "emissiveAlpha": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "shadowAlpha": [
+          0.021599999999999998,
+          0.024,
+          0.0264,
+          0.0264,
+          0.021599999999999998,
+          0.0264,
+          0.0312,
+          0.0312
+        ],
+        "ambientAlpha": 0.38,
+        "fogAlpha": 0,
+        "rainVisible": false,
+        "wetnessAlpha": 0,
+        "rippleVisibleCount": 3,
+        "editorMetadataComplete": true
+      },
+      "consoleErrors": [],
+      "pageErrors": [],
+      "forbiddenLegacyRequests": [],
+      "screenshot": "runtime-qa\\night-clear-390x844.png"
+    },
+    {
+      "name": "day-mist-390x844",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "params": {
+        "timePhase": "day",
+        "weather": "mist"
+      },
+      "result": {
+        "placementCount": 8,
+        "ids": [
+          "beacon_far",
+          "beacon_main",
+          "crescent_shrine",
+          "tent_far",
+          "tent_mid_left",
+          "tent_mid_right",
+          "tent_near_left",
+          "tent_near_right"
+        ],
+        "completeChildSets": true,
+        "rootVisible": true,
+        "rootTransform": {
+          "x": 195,
+          "y": 422,
+          "scaleX": 0.4395833333333333,
+          "scaleY": 0.4395833333333333
+        },
+        "gridPresent": false,
+        "oldCampPlatePresent": false,
+        "bgNightAlpha": 0,
+        "bgTexturesShared": true,
+        "emissiveAlpha": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "shadowAlpha": [
+          0.2,
+          0.18,
+          0.22,
+          0.18,
+          0.22,
+          0.22,
+          0.26,
+          0.26
+        ],
+        "ambientAlpha": 0,
+        "fogAlpha": 0.27985900004528197,
+        "rainVisible": false,
+        "wetnessAlpha": 0,
+        "rippleVisibleCount": 3,
+        "editorMetadataComplete": true
+      },
+      "consoleErrors": [],
+      "pageErrors": [],
+      "forbiddenLegacyRequests": [],
+      "screenshot": "runtime-qa\\day-mist-390x844.png"
+    },
+    {
+      "name": "night-rain-390x664",
+      "viewport": {
+        "width": 390,
+        "height": 664
+      },
+      "params": {
+        "timePhase": "night",
+        "weather": "rain"
+      },
+      "result": {
+        "placementCount": 8,
+        "ids": [
+          "beacon_far",
+          "beacon_main",
+          "crescent_shrine",
+          "tent_far",
+          "tent_mid_left",
+          "tent_mid_right",
+          "tent_near_left",
+          "tent_near_right"
+        ],
+        "completeChildSets": true,
+        "rootVisible": true,
+        "rootTransform": {
+          "x": 195,
+          "y": 332,
+          "scaleX": 0.3611111111111111,
+          "scaleY": 0.3611111111111111
+        },
+        "gridPresent": false,
+        "oldCampPlatePresent": false,
+        "bgNightAlpha": 0,
+        "bgTexturesShared": true,
+        "emissiveAlpha": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "shadowAlpha": [
+          0.024,
+          0.021599999999999998,
+          0.021599999999999998,
+          0.0264,
+          0.0264,
+          0.0264,
+          0.0312,
+          0.0312
+        ],
+        "ambientAlpha": 0.38,
+        "fogAlpha": 0.17973236826223013,
+        "rainVisible": true,
+        "wetnessAlpha": 0.1,
+        "rippleVisibleCount": 8,
+        "editorMetadataComplete": true
+      },
+      "consoleErrors": [],
+      "pageErrors": [],
+      "forbiddenLegacyRequests": [],
+      "screenshot": "runtime-qa\\night-rain-390x664.png"
+    },
+    {
+      "name": "dev-grid-390x844",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "params": {
+        "devSceneEditor": "1",
+        "showPlacementGrid": "1",
+        "timePhase": "day",
+        "weather": "clear"
+      },
+      "result": {
+        "placementCount": 8,
+        "ids": [
+          "beacon_far",
+          "beacon_main",
+          "crescent_shrine",
+          "tent_far",
+          "tent_mid_left",
+          "tent_mid_right",
+          "tent_near_left",
+          "tent_near_right"
+        ],
+        "completeChildSets": true,
+        "rootVisible": true,
+        "rootTransform": {
+          "x": 195,
+          "y": 422,
+          "scaleX": 0.4395833333333333,
+          "scaleY": 0.4395833333333333
+        },
+        "gridPresent": true,
+        "oldCampPlatePresent": false,
+        "bgNightAlpha": 0,
+        "bgTexturesShared": true,
+        "emissiveAlpha": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "shadowAlpha": [
+          0.18,
+          0.2,
+          0.22,
+          0.18,
+          0.22,
+          0.22,
+          0.26,
+          0.26
+        ],
+        "ambientAlpha": 0,
+        "fogAlpha": 0,
+        "rainVisible": false,
+        "wetnessAlpha": 0,
+        "rippleVisibleCount": 3,
+        "editorMetadataComplete": true,
+        "editorRoundTrip": {
+          "applied": {
+            "applied": 13,
+            "total": 13
+          },
+          "equal": true
+        }
+      },
+      "consoleErrors": [],
+      "pageErrors": [],
+      "forbiddenLegacyRequests": [],
+      "screenshot": "runtime-qa\\dev-grid-390x844.png"
+    }
+  ],
+  "passed": true
+}

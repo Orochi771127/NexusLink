@@ -1,4 +1,5 @@
 const EXPORT_BUTTON_ID = "dev-export-json";
+const IMPORT_BUTTON_ID = "dev-import-json";
 const RESET_BUTTON_ID = "dev-reset-objects";
 const EXPORT_MODAL_ID = "dev-export-modal";
 const SCALE_STEP = 0.06;
@@ -28,6 +29,9 @@ export function enableEditorMode(stage) {
   controlledObjects.forEach((object) => bindEditableObject(object, state));
   injectExportButton(state);
   bindScaleShortcuts(state);
+
+  window.__NEXUS_SCENE_EDITOR_EXPORT__ = () => createScenePayload(state);
+  window.__NEXUS_SCENE_EDITOR_IMPORT__ = (payload) => applyScenePayload(state, payload);
 
   stage.__sceneEditorEnabled = true;
   console.info("[NexusLink scene editor enabled]", controlledObjects.map((object) => object.__sceneEditor.id));
@@ -83,8 +87,18 @@ function moveDrag(event, state) {
 
   const { object, offsetX, offsetY } = state.dragging;
   const parentPoint = object.parent.toLocal(event.global);
-  object.x = roundSceneNumber(parentPoint.x + offsetX);
-  object.y = roundSceneNumber(parentPoint.y + offsetY);
+  const rawPosition = {
+    x: parentPoint.x + offsetX,
+    y: parentPoint.y + offsetY
+  };
+  const nextPosition = object.__sceneEditor?.placement
+    ? snapPlacementPosition(rawPosition, object.__sceneEditor)
+    : rawPosition;
+  object.x = roundSceneNumber(nextPosition.x);
+  object.y = roundSceneNumber(nextPosition.y);
+  if (object.__sceneEditor?.placement) {
+    object.zIndex = placementZIndex(object.__sceneEditor.renderLayer, nextPosition.y);
+  }
   object.__sceneEditorPinned = true;
 }
 
@@ -171,13 +185,23 @@ function injectExportButton(state) {
 
   resetButton.hidden = false;
   resetButton.onclick = () => resetControlledObjects(state);
+
+  let importButton = document.getElementById(IMPORT_BUTTON_ID);
+  if (!importButton) {
+    importButton = document.createElement("button");
+    importButton.id = IMPORT_BUTTON_ID;
+    importButton.type = "button";
+    importButton.textContent = "匯入 JSON";
+    importButton.style.cssText = createDevButtonStyle({ right: 212 });
+    document.body.appendChild(importButton);
+  }
+
+  importButton.hidden = false;
+  importButton.onclick = () => importSceneJson(state);
 }
 
 async function exportSceneJson(state) {
-  const payload = {
-    exportedAt: new Date().toISOString(),
-    objects: state.controlledObjects.map(serializeSceneObject)
-  };
+  const payload = createScenePayload(state);
   const json = JSON.stringify(payload, null, 2);
   console.log("[NexusLink scene export]", json);
   showExportModal(json);
@@ -190,6 +214,80 @@ async function exportSceneJson(state) {
   }
 
   return json;
+}
+
+function createScenePayload(state) {
+  return {
+    exportedAt: new Date().toISOString(),
+    objects: state.controlledObjects.map(serializeSceneObject)
+  };
+}
+
+function importSceneJson(state) {
+  const input = document.createElement("input");
+  input.type = "file";
+  input.accept = "application/json,.json";
+  input.hidden = true;
+  input.onchange = async () => {
+    const file = input.files?.[0];
+    if (!file) return;
+    try {
+      const payload = JSON.parse(await file.text());
+      applyScenePayload(state, payload);
+      console.info("[NexusLink scene import]", file.name);
+    } catch (error) {
+      console.error("NexusLink scene import failed", error);
+    } finally {
+      input.remove();
+    }
+  };
+  document.body.appendChild(input);
+  input.click();
+}
+
+function applyScenePayload(state, payload) {
+  if (!payload || !Array.isArray(payload.objects)) {
+    throw new Error("Invalid NexusLink scene payload");
+  }
+
+  const byId = new Map(state.controlledObjects.map((object) => [object.__sceneEditor.id, object]));
+  let applied = 0;
+  payload.objects.forEach((entry) => {
+    const object = byId.get(entry?.id);
+    if (!object) return;
+    if (object.__sceneEditor.placement) {
+      applyPlacementEntry(object, entry);
+    } else {
+      object.x = roundSceneNumber(entry.x);
+      object.y = roundSceneNumber(entry.y);
+      const scaleX = entry.scale?.x ?? 1;
+      const scaleY = entry.scale?.y ?? scaleX;
+      object.scale.set(clampScale(scaleX), clampScale(scaleY));
+    }
+    object.__sceneEditorPinned = true;
+    applied += 1;
+  });
+  return { applied, total: payload.objects.length };
+}
+
+function applyPlacementEntry(object, entry) {
+  const metadata = object.__sceneEditor;
+  const grid = metadata.placementGrid;
+  const column = clampGridIndex(entry.cell?.column ?? metadata.cell.column, grid.columns);
+  const row = clampGridIndex(entry.cell?.row ?? metadata.cell.row, grid.rows);
+  const offsetPx = {
+    x: Number(entry.offsetPx?.x ?? metadata.offsetPx.x) || 0,
+    y: Number(entry.offsetPx?.y ?? metadata.offsetPx.y) || 0
+  };
+  const artPosition = {
+    x: (column + 0.5) * grid.cellWidth + offsetPx.x,
+    y: (row + 0.5) * grid.cellHeight + offsetPx.y
+  };
+  object.x = roundSceneNumber(artPosition.x - grid.artWidth / 2);
+  object.y = roundSceneNumber(artPosition.y - grid.artHeight / 2);
+  const scale = clampScale((Number(entry.scale) || metadata.baseScale) / metadata.baseScale);
+  object.scale.set(scale);
+  object.zIndex = placementZIndex(metadata.renderLayer, object.y);
 }
 
 function showExportModal(json) {
@@ -292,8 +390,16 @@ function resetControlledObjects(state) {
 }
 
 function resetObjectPosition(object, x, y) {
-  object.x = x;
-  object.y = y;
+  const metadata = object.__sceneEditor;
+  if (metadata?.placement && metadata.initialArtPosition && metadata.placementGrid) {
+    object.x = metadata.initialArtPosition.x - metadata.placementGrid.artWidth / 2;
+    object.y = metadata.initialArtPosition.y - metadata.placementGrid.artHeight / 2;
+    object.scale.set(1);
+    object.zIndex = placementZIndex(metadata.renderLayer, object.y);
+  } else {
+    object.x = x;
+    object.y = y;
+  }
   object.__sceneEditorPinned = true;
 }
 
@@ -326,6 +432,9 @@ function createModalButtonStyle() {
 }
 
 function serializeSceneObject(object) {
+  if (object.__sceneEditor.placement) {
+    return serializePlacementObject(object);
+  }
   return {
     id: object.__sceneEditor.id,
     x: roundSceneNumber(object.x),
@@ -336,6 +445,75 @@ function serializeSceneObject(object) {
     },
     texture: object.__sceneEditor.texturePath || getTexturePath(object)
   };
+}
+
+function serializePlacementObject(object) {
+  const metadata = object.__sceneEditor;
+  const grid = metadata.placementGrid;
+  const artPosition = {
+    x: object.x + grid.artWidth / 2,
+    y: object.y + grid.artHeight / 2
+  };
+  const column = clampGridIndex(
+    Math.round((artPosition.x - metadata.offsetPx.x) / grid.cellWidth - 0.5),
+    grid.columns
+  );
+  const row = clampGridIndex(
+    Math.round((artPosition.y - metadata.offsetPx.y) / grid.cellHeight - 0.5),
+    grid.rows
+  );
+  const cellCenter = {
+    x: (column + 0.5) * grid.cellWidth,
+    y: (row + 0.5) * grid.cellHeight
+  };
+  const offsetPx = {
+    x: artPosition.x - cellCenter.x,
+    y: artPosition.y - cellCenter.y
+  };
+  return {
+    id: metadata.id,
+    slotId: metadata.slotId,
+    cell: { column, row },
+    offsetPx: {
+      x: roundSceneNumber(offsetPx.x),
+      y: roundSceneNumber(offsetPx.y)
+    },
+    artPosition: {
+      x: roundSceneNumber(artPosition.x),
+      y: roundSceneNumber(artPosition.y)
+    },
+    scale: roundSceneNumber((metadata.baseScale || 1) * object.scale.x),
+    renderLayer: metadata.renderLayer,
+    sortY: roundSceneNumber(artPosition.y),
+    texture: metadata.texturePath || getTexturePath(object)
+  };
+}
+
+function snapPlacementPosition(position, metadata) {
+  const grid = metadata.placementGrid;
+  const artX = position.x + grid.artWidth / 2;
+  const artY = position.y + grid.artHeight / 2;
+  const column = clampGridIndex(
+    Math.round((artX - metadata.offsetPx.x) / grid.cellWidth - 0.5),
+    grid.columns
+  );
+  const row = clampGridIndex(
+    Math.round((artY - metadata.offsetPx.y) / grid.cellHeight - 0.5),
+    grid.rows
+  );
+  return {
+    x: (column + 0.5) * grid.cellWidth + metadata.offsetPx.x - grid.artWidth / 2,
+    y: (row + 0.5) * grid.cellHeight + metadata.offsetPx.y - grid.artHeight / 2
+  };
+}
+
+function placementZIndex(renderLayer, centeredY) {
+  const layer = renderLayer === "nearStructures" ? 2 : renderLayer === "midStructures" ? 1 : 0;
+  return layer * 10000 + centeredY;
+}
+
+function clampGridIndex(value, count) {
+  return Math.max(0, Math.min(count - 1, Number(value) || 0));
 }
 
 function getTexturePath(object) {

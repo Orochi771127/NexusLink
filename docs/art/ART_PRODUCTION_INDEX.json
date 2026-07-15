@@ -3,7 +3,7 @@
   "title": "NexusLink Art Production Index",
   "generatedBy": "Claude Fable 5",
   "date": "2026-07-14",
-  "lastHabitatIndexUpdate": "2026-07-14",
+  "lastHabitatIndexUpdate": "2026-07-15",
   "sourceAudit": "docs/art/ART_ASSET_GAP_AUDIT.md",
   "designRef": "docs/design/CHAPTER_RESONANCE_ROADMAP_V2.md",
   "habitatSpecRef": "docs/architecture/HABITAT_SYSTEM_MASTER_SPEC.md",
@@ -20,19 +20,19 @@
   ],
   "habitats": [
     {
-      "id": "HAB-MOONLAKE-DIORAMA-R1",
-      "title": "Moonlake clay-resin diorama (playable habitat)",
-      "packId": "MoonlakeDiorama_r1",
-      "status": "runtime-wired-local",
-      "statusNote": "Owner-approved MoonlakeDiorama_r1 is runtime-wired: same-composition 1080x1920 day/night foundations, day/night structure and foreground crossfades, separate clay-resin celestial and grounded props, and a clear companion plaza safe zone.",
-      "verifiedOnDisk": "2026-07-14",
+      "id": "HAB-MOONLAKE-DIORAMA-R2",
+      "title": "Moonlake clay-resin diorama with independent slot props",
+      "packId": "MoonlakeDiorama_r1-foundation+MoonlakeDiorama_r2-props",
+      "status": "runtime-wired-local-qa-passed",
+      "statusNote": "The approved 1080x1920 R1 day foundation remains authoritative. Eight R2 identity props replace the monolithic camp plate through a hidden 12x20 art-space slot grid, shared base/emissive geometry, generated shadows, dynamic phase lighting and weather FX. The baked night and old camp plates remain rollback assets and are not loaded on the active Moonlake path.",
+      "verifiedOnDisk": "2026-07-15",
       "artDirection": "Clay/resin miniature diorama, Nexus moonlake navy/cyan, no glass frame",
       "designRef": "docs/architecture/HABITAT_SYSTEM_MASTER_SPEC.md + src/data/sceneProfiles/moonlakeProfile.js",
-      "stagingRef": "output/habitat/moonlake-diorama-r1/manifest.json",
+      "stagingRef": "output/habitat/moonlake-layered-r2/manifest.json",
       "wiring": {
-        "assetManifest": "src/data/assetManifest.js → MOONLAKE_DIORAMA_R1 + ASSET_MANIFEST.backgrounds/layers/props",
-        "pixiLayers": "src/pixi/pixiApp.js → background day/night, layerMidground structure day/night, separate props, layerOcclusion day/night",
-        "sceneProfile": "src/data/sceneProfiles/moonlakeProfile.js"
+        "assetManifest": "src/data/assetManifest.js: MOONLAKE_DIORAMA_R1 foundation/rollback + MOONLAKE_DIORAMA_R2 independent props",
+        "pixiLayers": "src/pixi/pixiApp.js + habitatObjectRenderer.js + habitatLightingFx.js + habitatWeatherFx.js",
+        "sceneProfile": "src/data/sceneProfiles/moonlakeProfile.js + moonlakeObjectPack.js"
       },
       "ready": {
         "backgrounds": [
@@ -44,7 +44,8 @@
           {
             "id": "bg_night_base",
             "path": "assets/backgrounds/MoonlakeDiorama_r1/bg_night_base.png",
-            "git": "tracked"
+            "git": "tracked",
+            "note": "Rollback/low-quality fallback only; active Moonlake reuses the day geometry texture and applies code-driven phase lighting."
           }
         ],
         "legacyPlatformsPreserved": [
@@ -77,18 +78,28 @@
             "git": "tracked"
           }
         ],
+        "separateObjectPack": {
+          "directory": "assets/props/MoonlakeDiorama_r2",
+          "baseCount": 8,
+          "emissiveCount": 8,
+          "objects": ["tent_near_left", "tent_near_right", "tent_mid_left", "tent_mid_right", "tent_far", "beacon_main", "beacon_far", "crescent_shrine"],
+          "placement": "src/data/sceneProfiles/moonlakeObjectPack.js",
+          "runtimeNote": "All objects use bottom-visible-center anchors and the same background cover transform; the grid is constructed only for devSceneEditor=1&showPlacementGrid=1."
+        },
         "layers": [
           {
             "id": "camp_structures_day",
             "path": "assets/layers/MoonlakeDiorama_r1/camp_structures_day.png",
             "pixiLayer": "layerMidground",
-            "git": "tracked"
+            "git": "tracked",
+            "note": "Rollback only; not created or preloaded by the active R2 runtime."
           },
           {
             "id": "camp_structures_night",
             "path": "assets/layers/MoonlakeDiorama_r1/camp_structures_night.png",
             "pixiLayer": "layerMidground",
-            "git": "tracked"
+            "git": "tracked",
+            "note": "Rollback only; not created or preloaded by the active R2 runtime."
           },
           {
             "id": "foreground_occlusion_day",
@@ -118,12 +129,12 @@
         {
           "id": "weather-dusk-dawn-plates",
           "status": "not-required",
-          "detail": "Weather / dusk / dawn remain code FX (nightAlpha blend + procedural weather). No dedicated art plates required for day-one habitat contract."
+          "detail": "Weather, dawn, dusk and night are code-driven: ambient/key light, per-prop directional shadow, emissive plates, fog, rain, wetness and water ripples. No additional full-scene plates are required."
         },
         {
           "id": "GAP-3-region-habitats",
           "status": "blocked",
-          "detail": "Chapters 2–7 playable near-habitat sets remain blocked on region-habitat switching engineering. See batches id GAP-3."
+          "detail": "Six region backgrounds and atlas switching exist, but their Moonlake-equivalent neutral foundations, independent prop packs and slot contracts remain a later Owner-approved production rollout. See batches id GAP-3."
         }
       ],
       "doNotGenerate": [

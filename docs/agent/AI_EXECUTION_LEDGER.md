@@ -2753,3 +2753,122 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Scope boundary: no `assets/**`, metadata, registry, runtime, state/save, dependency, tool or script change. Unrelated local generation provenance remains untracked and excluded.
 - Known unrelated harness issue: repository-wide `run_asset_integrity()` still stops before companion validation on a current object-form non-companion manifest entry reaching string-only `root_path()` handling; targeted sprite QA completed independently with no council-asset failures.
 - Branch / commit: `main`; this completion entry is the ledger-only publication follow-up to `018aa00`.
+
+### 2026-07-15 - Codex - Moonlake Layered R2 Dressed Reference - IN PROGRESS
+
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `TP-HAB-MOONLAKE-LAYERED-R2-A`.
+- Owner-approved direction: preserve the current `1080x1920` Moonlake terrain foundations and replace the monolithic camp-structure plate with eight individually generated identity props governed by a hidden `12x20` system-slot grid.
+- Current gate: staging-only corrected dressed reference using the existing Moonlake foundation as the exact camera/geography reference. The reference plans five tents, two beacon towers and one complete crescent shrine while keeping the companion plaza and mobile UI corridors clear.
+- Output scope: `output/habitat/moonlake-layered-r2/**` plus this ledger. No `assets/**`, asset manifest, Scene Profile, `pixiApp.js`, state/save, dependency, commit or push in this gate.
+- Red-line check: no dependency detection, reward pressure, FOMO, safety-help reward, battle policy, companion boundary, roster or progression change.
+- Acceptance refs: `G3`, `H1-H5`, `I`, `M1`, and `M5`; human visual approval is required before separate prop generation or GROUNDWORK runtime promotion.
+
+### 2026-07-15 - Codex - Moonlake Layered R2 Dressed Reference - VERIFIED
+
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `TP-HAB-MOONLAKE-LAYERED-R2-A`.
+- Gate result: candidate v1 was rejected for `7/8` objects and foundation drift. Candidate v2 passed as a staging-only placement/material reference with five tents, two beacon towers and one complete crescent shrine, while keeping the bridge, companion compass/plaza and mobile UI corridors clear.
+- Important limitation: the accepted candidate is `941x1672` RGB and contains full-scene generation/resampling differences. It is explicitly forbidden as a runtime plate. Runtime must use the untouched approved `1080x1920` foundation plus separately generated RGBA props.
+- Owner authorization: automatic stage-by-stage execution and self-review granted; proceed to eight independent base props, then emissive plates and composite QA. Generated assets remain staging until their own alpha/edge/placement audits pass.
+- Evidence: `output/habitat/moonlake-layered-r2/QC.md`, `manifest.json`, the v1/v2 candidates and `qc_compare_reference.py`.
+- Branch / commit: local `main`; no asset promotion, commit or push.
+
+### 2026-07-15 - Codex - Shared Habitat Dynamic Lighting And Weather Contract - IN PROGRESS
+
+- Lane: `Game Engineering And Architecture`.
+- Task name: `TP-HAB-ENVIRONMENT-RENDERER-R2`.
+- Owner direction: all seven habitat backgrounds should converge on one neutral/day terrain foundation plus independent props, dynamic 2D lighting and weather FX instead of relying on separate baked day/night scene images.
+- Current repo truth: `environmentController.js` already exposes `day / dusk / night / dawn`; `moonlakeProfile.js` already declares six weather/mood presets; `habitatWeatherFx.js` currently implements a lightweight tint, lake-band fog and rain-line prototype. Directional lighting, generated prop shadows, local point lights, wetness/reflection coupling and a shared cross-habitat renderer are not yet implemented.
+- Current gate: staging architecture only in `output/habitat/moonlake-layered-r2/ENVIRONMENT_RENDERING_CONTRACT.md`. Moonlake remains the first reference implementation; the other six habitats are rollout scope only after Moonlake mobile QA.
+- Quality contract: low = tint/static fog; medium = ambient/key light, cached prop shadows, capped local lights and weather; high = optional single bounded normal-map filter only after mobile QA. Existing baked night plates remain rollback/low-quality fallback until the dynamic path is proven.
+- Scope boundary: no runtime, Scene Profile, `pixiApp.js`, `assets/**`, state/save, dependency, commit or push change in this entry.
+
+### 2026-07-15 - Codex - Moonlake Separate Prop Alpha Gate - BLOCKED
+
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `TP-HAB-MOONLAKE-LAYERED-R2-A`.
+- Passed: the first four independent tent candidates are exact `512x512` ARGB, have transparent corners, zero edge contact and complete silhouettes. The remaining far tent, main beacon, far beacon and complete crescent shrine source concepts are also compositionally complete.
+- Blocker: Adobe background removal leaves visible horizontal alpha streaks around every second-batch subject. A repeated cutout did not remove them; a Firefly cleanup retained or introduced vertical streaks; a high-contrast two-pass experiment did not return transparency. These defects would become more visible under night additive lighting, so the four outputs are rejected for runtime.
+- Safe progress retained: `placements.candidate.json` now records eight hidden-grid slots, art-space offsets, depth/layer rules, footprints and visible-content bottom-center anchors. This specifically prevents transparent canvas padding from making props float above their slot.
+- Promotion gate: no emissive generation, composite acceptance, `assets/**` promotion, Pixi groundwork or shared lighting runtime wiring may continue until a clean alpha route is approved.
+- Evidence: `output/habitat/moonlake-layered-r2/props/QC.md`, `manifest.json`, accepted batch-one candidates and rejected batch-two diagnostics.
+- Branch / commit: local `main`; no commit and no push.
+
+### 2026-07-15 - Codex - Moonlake Separate Prop And Composite Art Gate - VERIFIED
+
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `TP-HAB-MOONLAKE-LAYERED-R2-A`.
+- Historical blocker resolved: after Owner approval, the Adobe streak-prone
+  cutout was replaced by a deterministic border-connected chroma cleanup and
+  premultiplied-alpha resize. Rejected attempts remain provenance only.
+- Package result: `8/8` independent base props and `8/8` matching emissive
+  plates are exact `512x512` RGBA. All sixteen have transparent corners, zero
+  edge contact, non-empty alpha bounds and zero hidden RGB in fully transparent
+  pixels.
+- Composite result: `1080x1920` day, night-emissive, day-mist and night-rain
+  previews passed. Five tents, two beacons and the complete crescent shrine are
+  readable by depth band and do not occupy the companion plaza, approach bridge,
+  top HUD or bottom navigation corridors.
+- Required reading: `output/habitat/moonlake-layered-r2/QC.md`, `props/QC.md`,
+  `manifest.json`, `placements.candidate.json` and the four `v4` previews.
+- Next safe action: GROUNDWORK promotion of only the verified sixteen textures,
+  Moonlake placement data and bounded Pixi renderer, followed by mobile runtime
+  QA before any six-region rollout.
+- Branch / commit: local `main`; no commit and no push.
+
+### 2026-07-15 - Codex - Moonlake R2 Independent Props And Environment Runtime - COMPLETED
+
+- Lane: `Game Engineering And Architecture`.
+- Task names: `TP-HAB-MOONLAKE-LAYERED-R2-A`; `TP-HAB-ENVIRONMENT-RENDERER-R2`.
+- Groundwork completed under the previously Owner-approved staged plan: promoted
+  eight `512x512` base props and eight matching emissive plates, added the
+  hidden `12x20` art-space slot contract, and replaced the active Moonlake
+  monolithic camp plate with a data-driven Pixi object renderer.
+- Projection and depth: every object uses the same `1080x1920` cover transform
+  as the foundation, a visible-content bottom-center anchor, render-layer plus
+  sortY ordering, depth tint, generated directional footprint shadow and a
+  localized night light. The companion remains in the established safe-zone
+  renderer and the foreground occlusion remains above it.
+- Time and weather: added a shared low-cost ambient/key lighting layer for all
+  habitats and extended the existing weather renderer with wetness and water
+  ripples. Moonlake is the first `dynamic-day-master` scene: its day texture is
+  shared by both background sprites, while phase light, prop shadows and
+  emissive plates express day/dawn/dusk/night. Other six regions retain their
+  approved baked day/night fallback until their own neutral art/prop packs pass
+  later production gates.
+- Loading budget: removed Moonlake baked-night and old camp-plate preloads; the
+  active Moonlake browser path requested neither old camp plate nor baked night.
+  Rollback files remain on disk and in the R1 manifest.
+- Dev editor: the placement grid is not constructed on formal URLs and requires
+  both `devSceneEditor=1` and `showPlacementGrid=1`. Slot-aware drag snapping,
+  scale, export fields and JSON import/export round-trip are implemented without
+  adding save fields or player-facing placement.
+- Verification: `src/**/*.js` syntax `242/242`; promoted texture integrity
+  `16/16`; five Chromium cases passed at `390x844` and `390x664`; console/page
+  errors `0/0`; production grid absent, dev grid present; six-region switch
+  round-trip passed; editor round-trip applied `13/13` controlled objects and
+  preserved all eight placement records.
+- Evidence: `output/habitat/moonlake-layered-r2/runtime-qa-report.json`, five
+  runtime screenshots, package QC/manifest, and the R2 asset manifest.
+- Scope boundary: no save/state schema, dependency, backend, Three.js, Unity
+  runtime, player free-placement, reward/FOMO, safety, battle, roster or
+  progression change. No commit or push performed.
+
+### 2026-07-15 - Codex - Moonlake R2 Runtime Visual QA - VERIFIED
+
+- Lane: `Game Art, UI, And Visual Production`.
+- Visual result: five tents, two beacons and the complete crescent shrine remain
+  fully visible, grounded and scaled by near/mid/far depth. Far structures use a
+  subtle fade/tint against the misted background; none appears cropped, half
+  generated, floating, or attached to the wrong island.
+- Composition result: the active companion remains centered on the authored
+  compass/plaza. New structures do not cover the companion, bridge, HUD, habitat
+  label, Soul Talk button or bottom navigation at either tested height.
+- Day/night identity: the object geometry never changes. Night uses phase tint,
+  reduced cast shadows, matching emissive plates and localized warm/cyan lights;
+  rain and mist preserve silhouette and UI readability.
+- INDEX truth: `docs/art/ART_PRODUCTION_INDEX.json` now records R1 as the
+  foundation/rollback pack and R2 as the active independent object pack. It does
+  not claim the other six regions have completed Moonlake-equivalent prop packs.
+- Branch / commit: local `main`; no commit and no push.

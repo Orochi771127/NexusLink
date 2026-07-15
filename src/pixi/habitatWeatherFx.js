@@ -78,6 +78,32 @@ export function createHabitatWeatherFx(PIXI, options = {}) {
   rainLayer.name = "weather_rain";
   root.addChild(rainLayer);
 
+  const wetness = new PIXI.Graphics();
+  wetness.name = "weather_wetness";
+  wetness.rect(0, height * 0.42, width, height * 0.34)
+    .fill({ color: 0x79a8cb, alpha: 1 });
+  wetness.blendMode = PIXI.BLEND_MODES?.SCREEN ?? "screen";
+  wetness.alpha = 0;
+  root.addChild(wetness);
+
+  const rippleLayer = new PIXI.Container();
+  rippleLayer.name = "weather_water_ripples";
+  rippleLayer.eventMode = "none";
+  root.addChild(rippleLayer);
+
+  const ripples = [];
+  for (let index = 0; index < 8; index += 1) {
+    const ripple = new PIXI.Graphics();
+    ripple.ellipse(0, 0, 13 + (index % 3) * 4, 4 + (index % 2) * 2)
+      .stroke({ width: 1.2, color: 0xbfe7ff, alpha: 0.72 });
+    ripple.x = width * (0.25 + ((index * 0.137) % 0.5));
+    ripple.y = height * (0.43 + ((index * 0.071) % 0.14));
+    ripple.__phase = index / 8;
+    ripple.visible = false;
+    rippleLayer.addChild(ripple);
+    ripples.push(ripple);
+  }
+
   const drops = [];
   const maxDrops = rainBudget();
   for (let i = 0; i < maxDrops; i += 1) {
@@ -97,6 +123,9 @@ export function createHabitatWeatherFx(PIXI, options = {}) {
     tint,
     fog,
     rainLayer,
+    wetness,
+    rippleLayer,
+    ripples,
     drops,
     width,
     height,
@@ -124,6 +153,14 @@ function applyWeatherVisuals(state, weatherId) {
   state.drops.forEach((drop) => {
     drop.visible = wantRain;
   });
+
+  const rippleMode = preset.waterRipple || "low";
+  const rippleAlpha = rippleMode === "medium" ? 0.7 : rippleMode === "high" ? 0.9 : 0.24;
+  state.rippleLayer.alpha = quality === "low" ? 0 : rippleAlpha;
+  state.ripples.forEach((ripple, index) => {
+    ripple.visible = quality !== "low" && (rippleMode !== "low" || index < 3);
+  });
+  state.wetness.alpha = preset.rainLines ? 0.1 : 0;
 }
 
 /**
@@ -162,29 +199,36 @@ export function updateHabitatWeatherFx(weatherState, ticker) {
   }
 
   const preset = resolvePreset(activeWeatherId);
-  if (!preset.rainLines) return;
-
   const delta = ticker?.deltaTime ?? 1;
   const { width, height, drops } = weatherState;
   const rainTop = height * 0.12;
   const rainBottom = height * 0.72;
 
-  for (let i = 0; i < drops.length; i += 1) {
-    const drop = drops[i];
-    if (!drop.visible) continue;
-    drop.y += drop.__speed * delta;
-    drop.x += drop.__drift * delta;
-    if (drop.y > rainBottom || drop.x < -4 || drop.x > width + 4) {
-      drop.y = rainTop + Math.random() * 40;
-      drop.x = Math.random() * width;
+  if (preset.rainLines) {
+    for (let i = 0; i < drops.length; i += 1) {
+      const drop = drops[i];
+      if (!drop.visible) continue;
+      drop.y += drop.__speed * delta;
+      drop.x += drop.__drift * delta;
+      if (drop.y > rainBottom || drop.x < -4 || drop.x > width + 4) {
+        drop.y = rainTop + Math.random() * 40;
+        drop.x = Math.random() * width;
+      }
     }
   }
+
+  const time = (typeof performance !== "undefined" ? performance.now() : Date.now()) / 1000;
+  weatherState.ripples.forEach((ripple) => {
+    if (!ripple.visible) return;
+    const progress = (time * 0.28 + ripple.__phase) % 1;
+    ripple.scale.set(0.72 + progress * 0.75);
+    ripple.alpha = (1 - progress) * 0.72;
+  });
 
   // 霧輕微呼吸
   if (weatherState.fog.alpha > 0.01) {
     const base = Number(preset.fogAlpha) || 0.2;
-    const t = (typeof performance !== "undefined" ? performance.now() : Date.now()) / 1000;
-    weatherState.fog.alpha = base * (0.85 + Math.sin(t * 0.4) * 0.15);
+    weatherState.fog.alpha = base * (0.85 + Math.sin(time * 0.4) * 0.15);
   }
 }
 

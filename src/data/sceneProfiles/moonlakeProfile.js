@@ -5,10 +5,11 @@
  */
 
 import { MOONLAKE_DIORAMA_R1 } from "../assetManifest.js";
+import { moonlakeObjectPack } from "./moonlakeObjectPack.js";
 
 export const moonlakeProfile = Object.freeze({
   id: "moonlake",
-  version: 2,
+  version: 3,
   label: "Moonlake / 月湖棲地",
 
   artSize: Object.freeze({ width: 1080, height: 1920 }),
@@ -17,7 +18,9 @@ export const moonlakeProfile = Object.freeze({
     mode: "cover",
     day: MOONLAKE_DIORAMA_R1.backgrounds.day,
     night: MOONLAKE_DIORAMA_R1.backgrounds.night,
-    sameComposition: true
+    sameComposition: true,
+    lightingMode: "dynamic-day-master",
+    bakedNightFallback: true
   }),
 
   // 增量分層（非取代 full-bleed）：營地靜態結構 + 前景遮擋（疊在夥伴之上）。
@@ -28,6 +31,8 @@ export const moonlakeProfile = Object.freeze({
     foregroundOcclusionDay: MOONLAKE_DIORAMA_R1.layers.foregroundOcclusionDay,
     foregroundOcclusionNight: MOONLAKE_DIORAMA_R1.layers.foregroundOcclusionNight
   }),
+
+  objectPack: moonlakeObjectPack,
 
   safeZone: Object.freeze({ referenceWidth: 390, referenceHeight: 844 }),
 

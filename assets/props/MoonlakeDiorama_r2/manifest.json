@@ -1,0 +1,30 @@
+{
+  "id": "moonlake-diorama-r2-separate-props",
+  "status": "runtime-candidate",
+  "artStyle": "3d-miniature-clay-resin",
+  "frameSize": { "width": 512, "height": 512 },
+  "anchor": "visible-content-bottom-center",
+  "dayNightPolicy": "shared-base-plus-emissive",
+  "objects": [
+    { "id": "tent_near_left", "base": "tent_near_left_base.png", "emissive": "tent_near_left_emissive.png" },
+    { "id": "tent_near_right", "base": "tent_near_right_base.png", "emissive": "tent_near_right_emissive.png" },
+    { "id": "tent_mid_left", "base": "tent_mid_left_base.png", "emissive": "tent_mid_left_emissive.png" },
+    { "id": "tent_mid_right", "base": "tent_mid_right_base.png", "emissive": "tent_mid_right_emissive.png" },
+    { "id": "tent_far", "base": "tent_far_base.png", "emissive": "tent_far_emissive.png" },
+    { "id": "beacon_main", "base": "beacon_main_base.png", "emissive": "beacon_main_emissive.png" },
+    { "id": "beacon_far", "base": "beacon_far_base.png", "emissive": "beacon_far_emissive.png" },
+    { "id": "crescent_shrine", "base": "crescent_shrine_base.png", "emissive": "crescent_shrine_emissive.png" }
+  ],
+  "rollback": {
+    "day": "../../layers/MoonlakeDiorama_r1/camp_structures_day.png",
+    "night": "../../layers/MoonlakeDiorama_r1/camp_structures_night.png"
+  },
+  "qa": {
+    "source": "../../../output/habitat/moonlake-layered-r2",
+    "baseCount": 8,
+    "emissiveCount": 8,
+    "transparentCorners": true,
+    "edgeTouch": 0,
+    "hiddenRgbAtZeroAlpha": 0
+  }
+}
