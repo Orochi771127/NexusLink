@@ -2569,3 +2569,85 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Automated QA: changed JavaScript passes `node --check`; registry/Profile coverage passes `7/7`; state normalization and `24/24` manifest-path checks pass; staged diff check passes.
 - Red-line result: no dependency detection, FOMO, countdown, reward pressure, safety-help reward, battle-policy change, roster change, new engine, dependency or build step.
 - Commit / branch: implementation and promoted assets are `8985ee7` on `main`; this completion ledger follows in the publication commit.
+
+### 2026-07-15 - Codex - ThunderPup Full 8-Frame Animation Catalog - VERIFIED
+
+- Lane: `Game Art, UI, And Visual Production`.
+- Parent task: `TP-BIH-STAGE1-FULL-8F-CATALOG` remains `IN PROGRESS` for the other four characters.
+- Status: ThunderPup is complete in review staging at `29/29` shared action IDs; every selected action has one `2048x1024` RGBA sheet containing eight `512x512` frames plus an eight-frame GIF preview.
+- Mechanical verification: inventory expected `29`, validated `29`, missing `0`, bad `0`; all selected PNG dimensions/modes/transparency and GIF frame counts pass; selected processor runs pass strict edge-touch rejection.
+- Semantic verification: `sleep` is deep sleep for all eight frames and waking is isolated to `idle_wake`; touch refusal remains non-punitive; standoff actions express warning, boundary resonance and self-protection; `faint` is recoverable temporary core overload, never death; `victory` is stabilization without domination.
+- Pipeline note: raw sheets that placed complete figures across implied cell boundaries were corrected by deterministic global-component sorting, shared-scale normalization and bottom-center placement, then re-run through the regular processor gate. No pose or identity was redrawn by normalization.
+- Required reading: `output/character-pilots/thunder-pup/THUNDER_PUP_FULL_CATALOG_QC.md`, the selected action sheets/previews, raw/rejected provenance, and this lane.
+- Scope boundary: no `assets/**`, runtime, registry, manifest, state/save, canon authority, dependency, commit, or push change. Next safe action is WaveCub P1-P3 production under the already approved staging scope.
+
+### 2026-07-15 - Codex - WaveCub Full 8-Frame Animation Catalog - VERIFIED
+
+- Lane: `Game Art, UI, And Visual Production`.
+- Parent task: `TP-BIH-STAGE1-FULL-8F-CATALOG` remains `IN PROGRESS` for Starflame Phoenix, Star Foal, and Goldenspark Wyrm.
+- Status: WaveCub is complete in review staging at `29/29` shared action IDs; every selected action has one `2048x1024` RGBA sheet containing eight `512x512` frames plus an eight-frame GIF preview.
+- Mechanical verification: inventory expected `29`, validated `29`, missing `0`, bad `0`; all selected PNG dimensions/modes/transparency and GIF frame counts pass; selected processor runs pass strict edge-touch rejection.
+- Species verification: feline grooming uses forepaw-to-face motion; dance remains quadrupedal; the initial bipedal/invalid-tail `special_dance` was rejected and replaced.
+- Semantic verification: `sleep` is deep sleep for all eight frames and waking is isolated to `idle_wake`; touch refusal remains non-punitive; `hug` is voluntary; standoff actions express current bracing, boundary resonance and self-protection; `faint` is recoverable temporary overload with retained core/wisp light; `victory` is stabilization without domination.
+- Pipeline note: nonuniform backgrounds, grids, contact shadows and detached motion marks were rejected or corrected before chroma removal. Global-component sorting, shared-scale normalization and bottom-center placement were followed by the regular strict processor gate.
+- Required reading: `output/character-pilots/wavecub/WAVECUB_FULL_CATALOG_QC.md`, the selected action sheets/previews, raw/rejected provenance, and this lane.
+- Scope boundary: no `assets/**`, runtime, registry, manifest, state/save, canon authority, dependency, commit, or push change. Next safe action is Starflame Phoenix P1-P3 production under the already approved staging scope.
+
+### 2026-07-15 - Codex - Starflame Phoenix Full 8-Frame Animation Catalog - VERIFIED
+
+- Lane: `Game Art, UI, And Visual Production`.
+- Parent task: `TP-BIH-STAGE1-FULL-8F-CATALOG` remains `IN PROGRESS` for Star Foal and Goldenspark Wyrm.
+- Status: Starflame Phoenix is complete in review staging at `29/29` shared action IDs; every selected action has one `2048x1024` RGBA sheet containing eight `512x512` frames plus an eight-frame GIF preview.
+- Mechanical verification: inventory expected `29`, validated `29`, missing `0`, bad `0`; all selected PNG dimensions/modes/transparency and GIF frame counts pass; selected processor runs pass strict edge-touch rejection.
+- Species verification: all locomotion is grounded two-talon hop/step motion with avian head bob; `sit` is a perch-settle; `idle_wash` uses beak preening; no selected action uses quadruped gait or sustained flight.
+- Semantic verification: `sleep` is deep sleep for all eight frames and waking is isolated to `idle_wake`; touch refusal remains non-punitive; `hug` is voluntary wing shelter; standoff actions use warning cry, core resonance and wing-mantle protection; `faint` is recoverable protected overload with live core/plume; `victory` is stabilization without domination.
+- Rejection record: detached motion lines in `touch_reject` and a detached breath symbol in `victory` were retained as rejected raw provenance and removed from selected outputs.
+- Required reading: `output/character-pilots/starflame-phoenix/STARFLAME_PHOENIX_FULL_CATALOG_QC.md`, the selected action sheets/previews, raw/rejected provenance, and this lane.
+- Scope boundary: no `assets/**`, runtime, registry, manifest, state/save, canon authority, dependency, commit, or push change. Next safe action is Star Foal P1-P3 production under the already approved staging scope.
+
+### 2026-07-15 - Codex - Star Foal Full 8-Frame Animation Catalog - VERIFIED
+
+- Lane: `Game Art, UI, And Visual Production`.
+- Parent task: `TP-BIH-STAGE1-FULL-8F-CATALOG` remains `IN PROGRESS` for Goldenspark Wyrm.
+- Status: Star Foal is complete in review staging at `29/29` shared action IDs; every selected action has one `2048x1024` RGBA sheet containing eight `512x512` frames plus an eight-frame GIF preview.
+- Mechanical verification: inventory expected `29`, validated `29`, missing `0`, bad `0`; all selected PNG dimensions/modes/transparency and GIF frame counts pass; selected processor runs pass strict edge-touch rejection.
+- Species verification: all locomotion and expressive movement uses equine four-hoof balance, neck arcs, ear response and controlled hoof cadence; `sit` is a folded equine rest and `idle_wash` uses muzzle/shoulder grooming rather than canine or feline templates.
+- Semantic verification: `sleep` is supported deep sleep with both eyes closed for all eight frames and waking is isolated to `idle_wake`; touch and `hug` preserve voluntary proximity; warning/standoff actions avoid kick, rear, charge and projectiles; `faint` is recoverable controlled overload with live core/tail-star; `victory` is stabilization without domination.
+- Required reading: `output/character-pilots/star-foal/STAR_FOAL_FULL_CATALOG_QC.md`, the selected action sheets/previews, raw provenance, and this lane.
+- Scope boundary: no `assets/**`, runtime, registry, manifest, state/save, canon authority, dependency, commit, or push change. Next safe action is Goldenspark Wyrm P1-P3 production under the already approved staging scope.
+
+### 2026-07-15 - Codex - Goldenspark Wyrm Full 8-Frame Animation Catalog - VERIFIED
+
+- Lane: `Game Art, UI, And Visual Production`.
+- Status: Goldenspark Wyrm is complete in review staging at `29/29` shared action IDs; every selected action has one `2048x1024` RGBA sheet containing eight `512x512` frames plus an eight-frame GIF preview.
+- Mechanical verification: inventory expected `29`, validated `29`, missing `0`, bad `0`; all selected PNG dimensions/modes/transparency and GIF frame counts pass; selected processor runs pass strict edge-touch rejection.
+- Species verification: locomotion remains low, wingless and quadrupedal with alternating reptilian feet and attached gear-tail counterbalance; `sit` is a sphinx-like saurian rest and `idle_wash` is muzzle-to-foreleg/shoulder grooming.
+- Semantic verification: `sleep` is supported deep sleep with both eyes closed for all eight frames and waking is isolated to `idle_wake`; touch and `hug` preserve voluntary proximity; standoff actions avoid bite, claw strike, charge, fire and projectiles; `faint` is recoverable overload with live cores/gear center; `victory` is stabilization without domination.
+- Correction record: a first `idle_wash` candidate retained faint black shake strokes and was preserved as rejected provenance; the selected v2 correction removes all motion strokes.
+- Required reading: `output/character-pilots/goldenspark-wyrm/GOLDENSPARK_WYRM_FULL_CATALOG_QC.md`, the selected action sheets/previews, raw/rejected provenance, and this lane.
+- Scope boundary: no `assets/**`, runtime, registry, manifest, state/save, canon authority, dependency, commit, or push change.
+
+### 2026-07-15 - Codex - Black Iron Hackers Full 8-Frame Animation Catalog - COMPLETED
+
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `TP-BIH-STAGE1-FULL-8F-CATALOG`.
+- Status: `COMPLETED` in review staging for all five approved appearance seeds: `thunder-pup`, `wavecub`, `starflame-phoenix`, `star-foal`, and `goldenspark-wyrm`.
+- Package verification: expected `145` selected action sheets and previews, validated `145`, bad `0`; every PNG is `2048x1024` RGBA with transparency and every GIF has exactly eight frames.
+- Species result: the five catalogs preserve distinct grounded canine, feline, two-talon avian, four-hoof equine, and low wingless saurian motion languages rather than sharing a generic quadruped template.
+- Semantic result: all five `sleep` loops remain deeply asleep for all eight frames with waking exclusive to `idle_wake`; touch and hug motions remain voluntary; confrontation motions preserve boundary/resonance framing; all `faint` motions remain temporary living overload rather than death.
+- Review package: `output/character-pilots/BLACK_IRON_HACKERS_FULL_CATALOG_QC.md` and the five character-level QC records.
+- Remaining gates: Owner visual acceptance; Owner resolution of ThunderPup's documented faction/canon conflict; separate GROUNDWORK authorization before any `assets/**`, registry, manifest, state/save, canon, or runtime promotion.
+- Commit / branch: no commit or push performed.
+
+### 2026-07-15 - Codex - Black Iron Hackers Full Catalog Final Alignment And Crop QA - VERIFIED
+
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `TP-BIH-STAGE1-FULL-CATALOG-FINAL-QA`.
+- Status: `VERIFIED`; all five complete staging catalogs passed final frame-level alignment, crop, transparency-layer and preview-parity review. Owner explicitly authorized commit and push to `main` if the result was clean.
+- Coverage: `145 / 145` selected action sheets, `145 / 145` eight-frame GIF previews and `1,160 / 1,160` final PNG frames. No empty frame, clipped anatomy, cell-edge contact, cross-cell contamination, misplaced layer, visible center jump or incomplete image was found.
+- Geometry evidence: minimum alpha margin `32 px`; global center range `x=254.0..257.0`; global bottom range `y=477..480`; maximum within-action center span `2.5 px`; maximum within-action bottom span `3 px`; audit problems `0`.
+- Preview evidence: every GIF alpha bound stays inside its source PNG bound. The small preview-only bound reduction is palette/alpha quantization and does not translate the character or its layers.
+- Visual evidence: five full 29-action review boards were inspected frame-by-frame. Distinct canine, feline, grounded avian, equine and low saurian anatomy remains complete and registered throughout all action families.
+- Reproducibility: `output/character-pilots/FINAL_ALIGNMENT_CROP_AUDIT.json`, `output/character-pilots/_work/audit_final_catalog_alignment.py`, and `output/character-pilots/review-boards/final-alignment-audit/*.png`.
+- Publication boundary: publish the selected final sheets/previews, selected identity seeds, QC/review evidence and art-lock documentation only. Raw generations, alpha-source intermediates, rejected candidates and processor copies remain local provenance and are intentionally excluded from Git history. No file enters `assets/**`, registry, manifest, state/save, canon or runtime in this task.
+- Remaining gate: ThunderPup faction/canon identity resolution and a separate GROUNDWORK promotion authorization are still required before runtime use.
