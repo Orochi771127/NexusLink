@@ -2738,3 +2738,18 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Scope: exactly the nine reviewed files in that commit; unrelated untracked character provenance, rejected generations, and habitat staging output remained excluded.
 - Verification before publication: changed JavaScript syntax passed; full `src/**/*.js` syntax sweep passed `239/239`; seven Scene Profile targets passed `7/7`; motion rebase assertion passed; onboarding/Codex regression cases passed `4/4`; staged diff check passed.
 - Branch / commit: `main` / `7c201bb`; remote push recorded by the following ledger-only publication commit.
+
+### 2026-07-15 - Codex - Heartspark Council Runtime Catalog Final Alignment And Crop QA - VERIFIED
+
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `TP-HEARTSPARK-COUNCIL-FINAL-ALIGNMENT-CROP-QA`.
+- Status: `VERIFIED`; all five formal Stage 1 council runtime catalogs passed the Owner-requested final center, position, crop and completeness audit.
+- Coverage: `145 / 145` sheets and `995 / 995` declared frames across `blazetail-kit`, `auriowl`, `starstripe-cub`, `crystalfin-seahorse`, and `sprigfawn`.
+- Mechanical result: all sheets are exact-grid RGBA PNGs with `512 x 512` cells, valid bottom-center `{x: 0.5, y: 1}` metadata anchors, no empty or unreferenced frames, no alpha contact with cell edges, and `145 / 145` byte-for-byte matches to the Owner-approved selected review sources.
+- Geometry result: global minimum transparent margin `26 px`; global horizontal center range `x=254.0..257.5`; maximum within-action horizontal center span `2.5 px`; grounded/perched maximum within-action bottom-datum span `2 px`.
+- Crystalfin interpretation: changing tail/fins and rotated or curled poses alter the silhouette bottom, but its opaque-bounds center remains `x=254.5..256.5`, `y=255.0..257.5`, with maximum within-action spans of `2.0 px` horizontally and `1.5 px` vertically. This is pose redistribution around a stable center, not normalization drift.
+- Visual result: five complete center/datum-guided review boards were inspected action-by-action. No clipped or incomplete anatomy, missing extremity/layer, cross-cell overflow, center jump, white/background contamination or baked UI was found.
+- QA record: `docs/qa/HEARTSPARK_COUNCIL_FINAL_ALIGNMENT_CROP_QA.md` in commit `018aa00`.
+- Scope boundary: no `assets/**`, metadata, registry, runtime, state/save, dependency, tool or script change. Unrelated local generation provenance remains untracked and excluded.
+- Known unrelated harness issue: repository-wide `run_asset_integrity()` still stops before companion validation on a current object-form non-companion manifest entry reaching string-only `root_path()` handling; targeted sprite QA completed independently with no council-asset failures.
+- Branch / commit: `main`; this completion entry is the ledger-only publication follow-up to `018aa00`.
