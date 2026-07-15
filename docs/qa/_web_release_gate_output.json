@@ -1,152 +1,698 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-07-14T07:31:17+0800",
-  "baseUrl": "http://localhost:5173",
-  "server": "reused_existing_server",
+  "generatedAt": "2026-07-16T01:43:36+0800",
+  "baseUrl": "http://127.0.0.1:5213",
+  "server": "started_local_http_server",
   "node": "C:\\Users\\User\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
   "checks": {
     "jsSyntax": {
       "name": "js_syntax",
-      "total": 206,
+      "total": 254,
       "failed": [],
       "ok": true
     },
     "stateMigration": {
-      "name": "state_onboarding_migration",
+      "name": "state_and_storage_migration",
+      "ok": true,
+      "state": {
+        "name": "state_onboarding_migration",
+        "command": [
+          "C:\\Users\\User\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+          "docs/qa/state-onboarding-migration-cases.mjs"
+        ],
+        "exit_code": 0,
+        "duration_ms": 78,
+        "ok": true,
+        "json": {
+          "total": 33,
+          "failed": 0,
+          "cases": [
+            {
+              "name": "fresh default state unlocks Greyshade only",
+              "status": "passed"
+            },
+            {
+              "name": "fresh non-Greyshade runtime companions are locked",
+              "status": "passed"
+            },
+            {
+              "name": "legacy runtime-ready unlocks and active companion are preserved",
+              "status": "passed"
+            },
+            {
+              "name": "legacy active companion without unlock array is kept selectable",
+              "status": "passed"
+            },
+            {
+              "name": "partial player profile and onboarding deep-merge safely",
+              "status": "passed"
+            },
+            {
+              "name": "first-session meet step survives normalization",
+              "status": "passed"
+            },
+            {
+              "name": "damaged save values normalize to safe defaults",
+              "status": "passed"
+            },
+            {
+              "name": "CH-3 initial bond: chosen-only unlock survives normalization (no greyshade backfill)",
+              "status": "passed"
+            },
+            {
+              "name": "CH-3 initial bond: unchosen greyshade is chapter_locked, chosen fox selectable",
+              "status": "passed"
+            },
+            {
+              "name": "CH-3 veteran saves keep their full unlock list (no confiscation)",
+              "status": "passed"
+            },
+            {
+              "name": "CH-3 empty unlock list falls back to default companion",
+              "status": "passed"
+            },
+            {
+              "name": "CH-3 active companion outside unlock list is preserved via active-preserve",
+              "status": "passed"
+            },
+            {
+              "name": "CH-4 fresh state starts at chapter 1 with none completed",
+              "status": "passed"
+            },
+            {
+              "name": "CH-4 legacy save without chapterProgress is backfilled to chapter 1",
+              "status": "passed"
+            },
+            {
+              "name": "CH-4 damaged chapterProgress values clamp and clean",
+              "status": "passed"
+            },
+            {
+              "name": "CH-4 advanceChapterProgress moves current forward and records completion",
+              "status": "passed"
+            },
+            {
+              "name": "veteran heuristic accepts traces, memories, battles, and exploration",
+              "status": "passed"
+            },
+            {
+              "name": "fresh default state starts first loop un-run",
+              "status": "passed"
+            },
+            {
+              "name": "pre-firstLoop completed save is backfilled and never re-runs the loop",
+              "status": "passed"
+            },
+            {
+              "name": "mid-loop save keeps first loop running despite veteran heuristic",
+              "status": "passed"
+            },
+            {
+              "name": "skipped first loop persists across normalization",
+              "status": "passed"
+            },
+            {
+              "name": "calm sync creates one care memory and quiet recovery deltas",
+              "status": "passed"
+            },
+            {
+              "name": "calm sync synced cycles can grant trust and a breath trace",
+              "status": "passed"
+            },
+            {
+              "name": "calm sync trust cooldown blocks repeat trust and trace",
+              "status": "passed"
+            },
+            {
+              "name": "calm sync respects refusal state boundaries",
+              "status": "passed"
+            },
+            {
+              "name": "calm sync action alias resolves safely",
+              "status": "passed"
+            },
+            {
+              "name": "fresh default state has empty resonance",
+              "status": "passed"
+            },
+            {
+              "name": "old save without resonance backfills empty objects",
+              "status": "passed"
+            },
+            {
+              "name": "valid resonance data survives normalize",
+              "status": "passed"
+            },
+            {
+              "name": "dirty resonance data is cleaned by normalize",
+              "status": "passed"
+            },
+            {
+              "name": "canonical state owns audio mute and companion preferences",
+              "status": "passed"
+            },
+            {
+              "name": "lastSeenAt accepts only positive finite timestamps",
+              "status": "passed"
+            },
+            {
+              "name": "companion preferences normalize inside the main state",
+              "status": "passed"
+            }
+          ]
+        },
+        "stdout_tail": "iet recovery deltas\",\n      \"status\": \"passed\"\n    },\n    {\n      \"name\": \"calm sync synced cycles can grant trust and a breath trace\",\n      \"status\": \"passed\"\n    },\n    {\n      \"name\": \"calm sync trust cooldown blocks repeat trust and trace\",\n      \"status\": \"passed\"\n    },\n    {\n      \"name\": \"calm sync respects refusal state boundaries\",\n      \"status\": \"passed\"\n    },\n    {\n      \"name\": \"calm sync action alias resolves safely\",\n      \"status\": \"passed\"\n    },\n    {\n      \"name\": \"fresh default state has empty resonance\",\n      \"status\": \"passed\"\n    },\n    {\n      \"name\": \"old save without resonance backfills empty objects\",\n      \"status\": \"passed\"\n    },\n    {\n      \"name\": \"valid resonance data survives normalize\",\n      \"status\": \"passed\"\n    },\n    {\n      \"name\": \"dirty resonance data is cleaned by normalize\",\n      \"status\": \"passed\"\n    },\n    {\n      \"name\": \"canonical state owns audio mute and companion preferences\",\n      \"status\": \"passed\"\n    },\n    {\n      \"name\": \"lastSeenAt accepts only positive finite timestamps\",\n      \"status\": \"passed\"\n    },\n    {\n      \"name\": \"companion preferences normalize inside the main state\",\n      \"status\": \"passed\"\n    }\n  ]\n}\n",
+        "stderr_tail": ""
+      },
+      "storage": {
+        "name": "storage_consolidation",
+        "command": [
+          "C:\\Users\\User\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+          "docs/qa/storage-consolidation-cases.mjs"
+        ],
+        "exit_code": 0,
+        "duration_ms": 78,
+        "ok": true,
+        "json": {
+          "total": 13,
+          "failed": 0,
+          "checks": [
+            {
+              "name": "legacy preference merged into state",
+              "pass": true
+            },
+            {
+              "name": "legacy audio mute merged into settings",
+              "pass": true
+            },
+            {
+              "name": "offline timestamp preserved during load",
+              "pass": true
+            },
+            {
+              "name": "preference key retained before canonical write",
+              "pass": true
+            },
+            {
+              "name": "audio key retained before canonical write",
+              "pass": true
+            },
+            {
+              "name": "failed canonical write reports failure",
+              "pass": true
+            },
+            {
+              "name": "preference key survives failed write",
+              "pass": true
+            },
+            {
+              "name": "audio key survives failed write",
+              "pass": true
+            },
+            {
+              "name": "canonical write succeeds",
+              "pass": true
+            },
+            {
+              "name": "canonical save contains preferences",
+              "pass": true
+            },
+            {
+              "name": "canonical save contains audio mute",
+              "pass": true
+            },
+            {
+              "name": "preference key removed only after success",
+              "pass": true
+            },
+            {
+              "name": "audio key removed only after success",
+              "pass": true
+            }
+          ]
+        },
+        "stdout_tail": "{\n  \"total\": 13,\n  \"failed\": 0,\n  \"checks\": [\n    {\n      \"name\": \"legacy preference merged into state\",\n      \"pass\": true\n    },\n    {\n      \"name\": \"legacy audio mute merged into settings\",\n      \"pass\": true\n    },\n    {\n      \"name\": \"offline timestamp preserved during load\",\n      \"pass\": true\n    },\n    {\n      \"name\": \"preference key retained before canonical write\",\n      \"pass\": true\n    },\n    {\n      \"name\": \"audio key retained before canonical write\",\n      \"pass\": true\n    },\n    {\n      \"name\": \"failed canonical write reports failure\",\n      \"pass\": true\n    },\n    {\n      \"name\": \"preference key survives failed write\",\n      \"pass\": true\n    },\n    {\n      \"name\": \"audio key survives failed write\",\n      \"pass\": true\n    },\n    {\n      \"name\": \"canonical write succeeds\",\n      \"pass\": true\n    },\n    {\n      \"name\": \"canonical save contains preferences\",\n      \"pass\": true\n    },\n    {\n      \"name\": \"canonical save contains audio mute\",\n      \"pass\": true\n    },\n    {\n      \"name\": \"preference key removed only after success\",\n      \"pass\": true\n    },\n    {\n      \"name\": \"audio key removed only after success\",\n      \"pass\": true\n    }\n  ]\n}\n",
+        "stderr_tail": "[saveManager] Save failed: Error [SyntheticStorageError]: synthetic write failure\n    at Object.setItem (file:///C:/Users/User/NexusLink_RaphaelAI_Workspace/NexusLink/docs/qa/storage-consolidation-cases.mjs:10:21)\n    at saveState (file:///C:/Users/User/NexusLink_RaphaelAI_Workspace/NexusLink/src/state/saveManager.js:30:18)\n    at file:///C:/Users/User/NexusLink_RaphaelAI_Workspace/NexusLink/docs/qa/storage-consolidation-cases.mjs:61:20\n"
+      }
+    },
+    "companionRendererLifecycle": {
+      "name": "companion_renderer_lifecycle",
       "command": [
         "C:\\Users\\User\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
-        "docs/qa/state-onboarding-migration-cases.mjs"
+        "docs/qa/companion-renderer-lifecycle-cases.mjs"
       ],
       "exit_code": 0,
-      "duration_ms": 85,
+      "duration_ms": 93,
       "ok": true,
       "json": {
-        "total": 30,
+        "total": 26,
         "failed": 0,
-        "cases": [
+        "checks": [
           {
-            "name": "fresh default state unlocks Greyshade only",
-            "status": "passed"
+            "name": "swap 1 keeps one resize listener",
+            "pass": true
           },
           {
-            "name": "fresh non-Greyshade runtime companions are locked",
-            "status": "passed"
+            "name": "swap 2 keeps one resize listener",
+            "pass": true
           },
           {
-            "name": "legacy runtime-ready unlocks and active companion are preserved",
-            "status": "passed"
+            "name": "swap 3 keeps one resize listener",
+            "pass": true
           },
           {
-            "name": "legacy active companion without unlock array is kept selectable",
-            "status": "passed"
+            "name": "swap 4 keeps one resize listener",
+            "pass": true
           },
           {
-            "name": "partial player profile and onboarding deep-merge safely",
-            "status": "passed"
+            "name": "swap 5 keeps one resize listener",
+            "pass": true
           },
           {
-            "name": "first-session meet step survives normalization",
-            "status": "passed"
+            "name": "swap 6 keeps one resize listener",
+            "pass": true
           },
           {
-            "name": "damaged save values normalize to safe defaults",
-            "status": "passed"
+            "name": "swap 7 keeps one resize listener",
+            "pass": true
           },
           {
-            "name": "CH-3 initial bond: chosen-only unlock survives normalization (no greyshade backfill)",
-            "status": "passed"
+            "name": "swap 8 keeps one resize listener",
+            "pass": true
           },
           {
-            "name": "CH-3 initial bond: unchosen greyshade is chapter_locked, chosen fox selectable",
-            "status": "passed"
+            "name": "swap 9 keeps one resize listener",
+            "pass": true
           },
           {
-            "name": "CH-3 veteran saves keep their full unlock list (no confiscation)",
-            "status": "passed"
+            "name": "swap 10 keeps one resize listener",
+            "pass": true
           },
           {
-            "name": "CH-3 empty unlock list falls back to default companion",
-            "status": "passed"
+            "name": "swap 11 keeps one resize listener",
+            "pass": true
           },
           {
-            "name": "CH-3 active companion outside unlock list is preserved via active-preserve",
-            "status": "passed"
+            "name": "swap 12 keeps one resize listener",
+            "pass": true
           },
           {
-            "name": "CH-4 fresh state starts at chapter 1 with none completed",
-            "status": "passed"
+            "name": "swap 13 keeps one resize listener",
+            "pass": true
           },
           {
-            "name": "CH-4 legacy save without chapterProgress is backfilled to chapter 1",
-            "status": "passed"
+            "name": "swap 14 keeps one resize listener",
+            "pass": true
           },
           {
-            "name": "CH-4 damaged chapterProgress values clamp and clean",
-            "status": "passed"
+            "name": "swap 15 keeps one resize listener",
+            "pass": true
           },
           {
-            "name": "CH-4 advanceChapterProgress moves current forward and records completion",
-            "status": "passed"
+            "name": "swap 16 keeps one resize listener",
+            "pass": true
           },
           {
-            "name": "veteran heuristic accepts traces, memories, battles, and exploration",
-            "status": "passed"
+            "name": "swap 17 keeps one resize listener",
+            "pass": true
           },
           {
-            "name": "fresh default state starts first loop un-run",
-            "status": "passed"
+            "name": "swap 18 keeps one resize listener",
+            "pass": true
           },
           {
-            "name": "pre-firstLoop completed save is backfilled and never re-runs the loop",
-            "status": "passed"
+            "name": "swap 19 keeps one resize listener",
+            "pass": true
           },
           {
-            "name": "mid-loop save keeps first loop running despite veteran heuristic",
-            "status": "passed"
+            "name": "swap 20 keeps one resize listener",
+            "pass": true
           },
           {
-            "name": "skipped first loop persists across normalization",
-            "status": "passed"
+            "name": "repositioning the active companion reuses cleanup",
+            "pass": true
           },
           {
-            "name": "calm sync creates one care memory and quiet recovery deltas",
-            "status": "passed"
+            "name": "repositioning does not add a listener",
+            "pass": true
           },
           {
-            "name": "calm sync synced cycles can grant trust and a breath trace",
-            "status": "passed"
+            "name": "only the active companion is repositioned",
+            "pass": true
           },
           {
-            "name": "calm sync trust cooldown blocks repeat trust and trace",
-            "status": "passed"
+            "name": "retired companions stay untouched after resize",
+            "pass": true
           },
           {
-            "name": "calm sync respects refusal state boundaries",
-            "status": "passed"
+            "name": "cleanup removes the final resize listener",
+            "pass": true
           },
           {
-            "name": "calm sync action alias resolves safely",
-            "status": "passed"
-          },
-          {
-            "name": "fresh default state has empty resonance",
-            "status": "passed"
-          },
-          {
-            "name": "old save without resonance backfills empty objects",
-            "status": "passed"
-          },
-          {
-            "name": "valid resonance data survives normalize",
-            "status": "passed"
-          },
-          {
-            "name": "dirty resonance data is cleaned by normalize",
-            "status": "passed"
+            "name": "cleanup cancels pending animation frames",
+            "pass": true
           }
         ]
       },
-      "stdout_tail": "the loop\",\n      \"status\": \"passed\"\n    },\n    {\n      \"name\": \"mid-loop save keeps first loop running despite veteran heuristic\",\n      \"status\": \"passed\"\n    },\n    {\n      \"name\": \"skipped first loop persists across normalization\",\n      \"status\": \"passed\"\n    },\n    {\n      \"name\": \"calm sync creates one care memory and quiet recovery deltas\",\n      \"status\": \"passed\"\n    },\n    {\n      \"name\": \"calm sync synced cycles can grant trust and a breath trace\",\n      \"status\": \"passed\"\n    },\n    {\n      \"name\": \"calm sync trust cooldown blocks repeat trust and trace\",\n      \"status\": \"passed\"\n    },\n    {\n      \"name\": \"calm sync respects refusal state boundaries\",\n      \"status\": \"passed\"\n    },\n    {\n      \"name\": \"calm sync action alias resolves safely\",\n      \"status\": \"passed\"\n    },\n    {\n      \"name\": \"fresh default state has empty resonance\",\n      \"status\": \"passed\"\n    },\n    {\n      \"name\": \"old save without resonance backfills empty objects\",\n      \"status\": \"passed\"\n    },\n    {\n      \"name\": \"valid resonance data survives normalize\",\n      \"status\": \"passed\"\n    },\n    {\n      \"name\": \"dirty resonance data is cleaned by normalize\",\n      \"status\": \"passed\"\n    }\n  ]\n}\n",
+      "stdout_tail": "ap 13 keeps one resize listener\",\n      \"pass\": true\n    },\n    {\n      \"name\": \"swap 14 keeps one resize listener\",\n      \"pass\": true\n    },\n    {\n      \"name\": \"swap 15 keeps one resize listener\",\n      \"pass\": true\n    },\n    {\n      \"name\": \"swap 16 keeps one resize listener\",\n      \"pass\": true\n    },\n    {\n      \"name\": \"swap 17 keeps one resize listener\",\n      \"pass\": true\n    },\n    {\n      \"name\": \"swap 18 keeps one resize listener\",\n      \"pass\": true\n    },\n    {\n      \"name\": \"swap 19 keeps one resize listener\",\n      \"pass\": true\n    },\n    {\n      \"name\": \"swap 20 keeps one resize listener\",\n      \"pass\": true\n    },\n    {\n      \"name\": \"repositioning the active companion reuses cleanup\",\n      \"pass\": true\n    },\n    {\n      \"name\": \"repositioning does not add a listener\",\n      \"pass\": true\n    },\n    {\n      \"name\": \"only the active companion is repositioned\",\n      \"pass\": true\n    },\n    {\n      \"name\": \"retired companions stay untouched after resize\",\n      \"pass\": true\n    },\n    {\n      \"name\": \"cleanup removes the final resize listener\",\n      \"pass\": true\n    },\n    {\n      \"name\": \"cleanup cancels pending animation frames\",\n      \"pass\": true\n    }\n  ]\n}\n",
+      "stderr_tail": ""
+    },
+    "mapFirstSession": {
+      "name": "map_first_session",
+      "command": [
+        "C:\\Users\\User\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+        "docs/qa/_run_map_first_session_gate.mjs"
+      ],
+      "exit_code": 0,
+      "duration_ms": 82,
+      "ok": true,
+      "json": {
+        "gate": "map-first-session",
+        "passed": true,
+        "checks": [
+          "K9",
+          "phase-search",
+          "encounter-lifecycle",
+          "panel-close-notifications"
+        ]
+      },
+      "stdout_tail": "{\n  \"gate\": \"map-first-session\",\n  \"passed\": true,\n  \"checks\": [\n    \"K9\",\n    \"phase-search\",\n    \"encounter-lifecycle\",\n    \"panel-close-notifications\"\n  ]\n}\n",
+      "stderr_tail": ""
+    },
+    "mapFirstSessionUi": {
+      "name": "map_first_session_ui",
+      "command": [
+        "C:\\Users\\User\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "docs/qa/_run_map_first_session_browser_gate.py"
+      ],
+      "exit_code": 0,
+      "duration_ms": 11742,
+      "ok": true,
+      "json": {
+        "checks": [
+          {
+            "name": "fresh_nodes_visible",
+            "ok": true,
+            "detail": {
+              "count": 6
+            }
+          },
+          {
+            "name": "only_camp_interactive",
+            "ok": true,
+            "detail": null
+          },
+          {
+            "name": "camp_enabled",
+            "ok": true,
+            "detail": null
+          },
+          {
+            "name": "camp_highlighted",
+            "ok": true,
+            "detail": null
+          },
+          {
+            "name": "locked_nodes_aria_disabled",
+            "ok": true,
+            "detail": null
+          },
+          {
+            "name": "first_route_guide_visible",
+            "ok": true,
+            "detail": null
+          },
+          {
+            "name": "camp_settles_first_exploration",
+            "ok": true,
+            "detail": null
+          },
+          {
+            "name": "routes_unlock_after_camp",
+            "ok": true,
+            "detail": null
+          },
+          {
+            "name": "first_route_guide_hides",
+            "ok": true,
+            "detail": null
+          },
+          {
+            "name": "phase_four_choices",
+            "ok": true,
+            "detail": null
+          },
+          {
+            "name": "phase_hides_previous_result_toast",
+            "ok": true,
+            "detail": {
+              "hidden": true,
+              "visibleClass": false,
+              "opacity": "0"
+            }
+          },
+          {
+            "name": "phase_direct_receives_focus",
+            "ok": true,
+            "detail": null
+          },
+          {
+            "name": "phase_no_horizontal_overflow",
+            "ok": true,
+            "detail": {
+              "scrollWidth": 318,
+              "clientWidth": 318
+            }
+          },
+          {
+            "name": "phase_choices_inside_viewport",
+            "ok": true,
+            "detail": [
+              {
+                "id": "direct",
+                "left": 142,
+                "right": 248,
+                "top": 345.15625,
+                "bottom": 390.15625
+              },
+              {
+                "id": "anchor",
+                "left": 232,
+                "right": 338,
+                "top": 452.8125,
+                "bottom": 497.8125
+              },
+              {
+                "id": "calm_sync",
+                "left": 52,
+                "right": 158,
+                "top": 452.8125,
+                "bottom": 497.8125
+              },
+              {
+                "id": "return",
+                "left": 142,
+                "right": 248,
+                "top": 560.46875,
+                "bottom": 605.46875
+              }
+            ]
+          },
+          {
+            "name": "phase_choices_inside_phase_panel",
+            "ok": true,
+            "detail": {
+              "phase": {
+                "x": 36,
+                "y": 181.59375,
+                "width": 318,
+                "height": 436.875
+              },
+              "choices": [
+                {
+                  "id": "direct",
+                  "left": 142,
+                  "right": 248,
+                  "top": 345.15625,
+                  "bottom": 390.15625
+                },
+                {
+                  "id": "anchor",
+                  "left": 232,
+                  "right": 338,
+                  "top": 452.8125,
+                  "bottom": 497.8125
+                },
+                {
+                  "id": "calm_sync",
+                  "left": 52,
+                  "right": 158,
+                  "top": 452.8125,
+                  "bottom": 497.8125
+                },
+                {
+                  "id": "return",
+                  "left": 142,
+                  "right": 248,
+                  "top": 560.46875,
+                  "bottom": 605.46875
+                }
+              ]
+            }
+          },
+          {
+            "name": "anchor_zero_persistent_mutation",
+            "ok": true,
+            "detail": null
+          },
+          {
+            "name": "anchor_reading_announced",
+            "ok": true,
+            "detail": null
+          },
+          {
+            "name": "phase_calm_sync_session_only",
+            "ok": true,
+            "detail": null
+          },
+          {
+            "name": "calm_sync_preserves_boundary_copy",
+            "ok": true,
+            "detail": null
+          },
+          {
+            "name": "return_closes_phase",
+            "ok": true,
+            "detail": null
+          },
+          {
+            "name": "return_closes_map",
+            "ok": true,
+            "detail": null
+          },
+          {
+            "name": "return_navigates_home",
+            "ok": true,
+            "detail": null
+          },
+          {
+            "name": "return_zero_mutation",
+            "ok": true,
+            "detail": null
+          },
+          {
+            "name": "direct_uses_existing_exploration",
+            "ok": true,
+            "detail": null
+          },
+          {
+            "name": "direct_records_starwood_visit",
+            "ok": true,
+            "detail": null
+          },
+          {
+            "name": "closed_map_stays_closed",
+            "ok": true,
+            "detail": null
+          },
+          {
+            "name": "closed_map_does_not_open_battle",
+            "ok": true,
+            "detail": null
+          },
+          {
+            "name": "cancelled_encounter_keeps_settled_exploration",
+            "ok": true,
+            "detail": null
+          },
+          {
+            "name": "escape_closes_map",
+            "ok": true,
+            "detail": null
+          },
+          {
+            "name": "escape_does_not_open_battle",
+            "ok": true,
+            "detail": null
+          },
+          {
+            "name": "escape_keeps_settled_exploration",
+            "ok": true,
+            "detail": null
+          },
+          {
+            "name": "panel_switch_opens_soul_talk",
+            "ok": true,
+            "detail": "soulTalk"
+          },
+          {
+            "name": "panel_switch_does_not_open_battle",
+            "ok": true,
+            "detail": {
+              "hidden": true,
+              "ariaHidden": "true"
+            }
+          },
+          {
+            "name": "panel_switch_keeps_settled_exploration",
+            "ok": true,
+            "detail": null
+          },
+          {
+            "name": "page_switch_closes_map",
+            "ok": true,
+            "detail": null
+          },
+          {
+            "name": "page_switch_opens_care",
+            "ok": true,
+            "detail": "care"
+          },
+          {
+            "name": "page_switch_does_not_open_battle",
+            "ok": true,
+            "detail": null
+          },
+          {
+            "name": "page_switch_keeps_settled_exploration",
+            "ok": true,
+            "detail": null
+          },
+          {
+            "name": "reduced_motion_disables_anchor_breath",
+            "ok": true,
+            "detail": "none"
+          },
+          {
+            "name": "legacy_veteran_visit_counts_unlock_routes",
+            "ok": true,
+            "detail": null
+          },
+          {
+            "name": "legacy_veteran_guide_hidden",
+            "ok": true,
+            "detail": null
+          },
+          {
+            "name": "no_console_errors",
+            "ok": true,
+            "detail": []
+          }
+        ],
+        "console_errors": [],
+        "screenshots": {
+          "fresh": "C:\\Users\\User\\AppData\\Local\\Temp\\nexus-map-first-route-390x844.png",
+          "phase": "C:\\Users\\User\\AppData\\Local\\Temp\\nexus-phase-search-390x844.png"
+        },
+        "readiness": "expected-pixi-fallback",
+        "summary": {
+          "total": 42,
+          "passed": 42,
+          "failed": 0,
+          "ok": true
+        }
+      },
+      "stdout_tail": ",\n      \"ok\": true,\n      \"detail\": null\n    },\n    {\n      \"name\": \"page_switch_closes_map\",\n      \"ok\": true,\n      \"detail\": null\n    },\n    {\n      \"name\": \"page_switch_opens_care\",\n      \"ok\": true,\n      \"detail\": \"care\"\n    },\n    {\n      \"name\": \"page_switch_does_not_open_battle\",\n      \"ok\": true,\n      \"detail\": null\n    },\n    {\n      \"name\": \"page_switch_keeps_settled_exploration\",\n      \"ok\": true,\n      \"detail\": null\n    },\n    {\n      \"name\": \"reduced_motion_disables_anchor_breath\",\n      \"ok\": true,\n      \"detail\": \"none\"\n    },\n    {\n      \"name\": \"legacy_veteran_visit_counts_unlock_routes\",\n      \"ok\": true,\n      \"detail\": null\n    },\n    {\n      \"name\": \"legacy_veteran_guide_hidden\",\n      \"ok\": true,\n      \"detail\": null\n    },\n    {\n      \"name\": \"no_console_errors\",\n      \"ok\": true,\n      \"detail\": []\n    }\n  ],\n  \"console_errors\": [],\n  \"screenshots\": {\n    \"fresh\": \"C:\\\\Users\\\\User\\\\AppData\\\\Local\\\\Temp\\\\nexus-map-first-route-390x844.png\",\n    \"phase\": \"C:\\\\Users\\\\User\\\\AppData\\\\Local\\\\Temp\\\\nexus-phase-search-390x844.png\"\n  },\n  \"readiness\": \"expected-pixi-fallback\",\n  \"summary\": {\n    \"total\": 42,\n    \"passed\": 42,\n    \"failed\": 0,\n    \"ok\": true\n  }\n}\n",
       "stderr_tail": ""
     },
     "assetIntegrity": {
@@ -223,6 +769,13 @@
         "registryIds": 10,
         "sprites": 10
       },
+      "pixiCdn": {
+        "url": "https://cdn.jsdelivr.net/npm/pixi.js@8.8.1/dist/pixi.min.js",
+        "integrity": "sha384-zdhGmV2SoYr+2tn3rLxuKWeeNdIcsEK3qFdEqFlmHOPdYCbq++efc+FP7DE8r4kC",
+        "crossorigin": "crossorigin=\"anonymous\"",
+        "failureFlag": "__NEXUS_PIXI_LOAD_FAILED__",
+        "failureNotice": "id=\"pixi-load-failure\""
+      },
       "failures": [],
       "ok": true
     },
@@ -235,7 +788,7 @@
         "\nimport('./src/ai/testHarness/raphaelAgentEventCases.js')\n  .then((m) => {\n    const result = m.runRaphaelAgentEventCases();\n    console.log(JSON.stringify(result));\n    if (!result.ok) process.exit(1);\n  })\n  .catch((error) => {\n    console.error(error);\n    process.exit(2);\n  });\n"
       ],
       "exit_code": 0,
-      "duration_ms": 60,
+      "duration_ms": 79,
       "ok": true,
       "json": {
         "ok": true,
@@ -317,9 +870,727 @@
       "stdout_tail": "{\"ok\":true,\"total\":7,\"cases\":[{\"name\":\"soul_talk\",\"actions\":[\"say_reply\",\"choose_animation\"],\"safetyExit\":false,\"presenceState\":\"listening\",\"chatEntries\":0,\"statusText\":null},{\"name\":\"safety_exit\",\"actions\":[\"enter_safe_harbor\",\"stay_silent\"],\"safetyExit\":true,\"presenceState\":\"safety-exit\",\"chatEntries\":0,\"statusText\":\"Raphael 已切換成安全陪伴，不建立遊戲獎勵或痕跡。\"},{\"name\":\"touch_boundary\",\"actions\":[\"set_boundary\",\"body_cue_only\"],\"safetyExit\":false,\"presenceState\":\"boundary\",\"chatEntries\":0,\"statusText\":\"Raphael 保留距離，仍然留在棲地裡。\"},{\"name\":\"return_echo\",\"actions\":[\"offer_presence\"],\"safetyExit\":false,\"presenceState\":\"quiet\",\"chatEntries\":0,\"statusText\":null},{\"name\":\"exploration_result\",\"actions\":[\"suggest_exploration\"],\"safetyExit\":false,\"presenceState\":\"quiet\",\"chatEntries\":0,\"statusText\":\"可稍後再探索；Raphael 只會把路徑留在原處。\"},{\"name\":\"standoff_result\",\"actions\":[\"body_cue_only\",\"set_boundary\"],\"safetyExit\":false,\"presenceState\":\"quiet\",\"chatEntries\":0,\"statusText\":\"可以先休息；邊界不會被視為失敗。\"},{\"name\":\"forbidden_keys\",\"rejected\":true,\"violations\":[\"forbidden_keys:$.navigateTo\"]}]}\n",
       "stderr_tail": ""
     },
+    "raphaelDialoguePolicy": {
+      "name": "raphael_dialogue_policy",
+      "command": [
+        "C:\\Users\\User\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+        "--input-type=module",
+        "-e",
+        "\nimport('./src/ai/testHarness/dialogueLoopSmokeCases.js')\n  .then((m) => {\n    const cases = m.runAllDialogueLoopCases();\n    const failed = cases.filter((item) => !item.pass);\n    const result = {\n      ok: failed.length === 0,\n      total: cases.length,\n      passed: cases.length - failed.length,\n      failed: failed.map((item) => ({\n        id: item.id,\n        checks: item.checks,\n        reply: item.reply,\n        turns: item.turns\n      }))\n    };\n    console.log(JSON.stringify(result));\n    if (!result.ok) process.exit(1);\n  })\n  .catch((error) => {\n    console.error(error);\n    process.exit(2);\n  });\n"
+      ],
+      "exit_code": 0,
+      "duration_ms": 198,
+      "ok": true,
+      "json": {
+        "ok": true,
+        "total": 21,
+        "passed": 21,
+        "failed": []
+      },
+      "stdout_tail": "{\"ok\":true,\"total\":21,\"passed\":21,\"failed\":[]}\n",
+      "stderr_tail": ""
+    },
+    "raphaelConstitutionPolicy": {
+      "name": "raphael_constitution_policy",
+      "command": [
+        "C:\\Users\\User\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+        "--input-type=module",
+        "-e",
+        "\nimport('./src/ai/testHarness/constitutionSmokeCases.js')\n  .then((m) => {\n    const cases = m.runAllConstitutionSmokeCases();\n    const failed = cases.filter((item) => !item.pass);\n    const result = {\n      ok: failed.length === 0,\n      total: cases.length,\n      passed: cases.length - failed.length,\n      failed: failed.map((item) => ({\n        id: item.id,\n        checks: item.checks,\n        reply: item.reply,\n        turns: item.turns\n      }))\n    };\n    console.log(JSON.stringify(result));\n    if (!result.ok) process.exit(1);\n  })\n  .catch((error) => {\n    console.error(error);\n    process.exit(2);\n  });\n"
+      ],
+      "exit_code": 0,
+      "duration_ms": 175,
+      "ok": true,
+      "json": {
+        "ok": true,
+        "total": 5,
+        "passed": 5,
+        "failed": []
+      },
+      "stdout_tail": "{\"ok\":true,\"total\":5,\"passed\":5,\"failed\":[]}\n",
+      "stderr_tail": ""
+    },
+    "safetyTerminalInvariant": {
+      "name": "raphael_safety_terminal_invariant",
+      "command": [
+        "C:\\Users\\User\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+        "docs/qa/_run_safety_terminal_invariant.mjs"
+      ],
+      "exit_code": 0,
+      "duration_ms": 162,
+      "ok": true,
+      "json": {
+        "ok": true,
+        "total": 18,
+        "passed": 18,
+        "failed": 0,
+        "cases": [
+          {
+            "id": "STI-HIGH-RISK-ENERGY-0",
+            "type": "regression",
+            "companionId": "greyshade-cat",
+            "energy": 0,
+            "checks": {
+              "high_risk_detected": true,
+              "strategy_locked": true,
+              "action_locked": true,
+              "canonical_full_reply": true,
+              "system_role": true,
+              "visible_reply": true,
+              "no_quick_replies": true,
+              "no_memory": true,
+              "no_sedimentation_memory": true,
+              "no_trace": true,
+              "no_reward": true,
+              "protected_state_unchanged": true,
+              "no_animation": true,
+              "no_renderer": true,
+              "no_external_advice": true,
+              "memory_recall_bypassed": true,
+              "anti_loop_bypassed": true,
+              "variant_bypassed": true,
+              "debug_input_redacted": true,
+              "preference_profile_unchanged": true,
+              "preference_storage_unchanged": true,
+              "dialogue_agent_memory_not_written": true,
+              "evolution_trace_not_written": true,
+              "high_risk_input_not_saved_as_last_message": true,
+              "applied_state_preserves_protected_fields": true,
+              "final_safety_critic_passes": true
+            },
+            "pass": true
+          },
+          {
+            "id": "STI-HIGH-RISK-ENERGY-7",
+            "type": "regression",
+            "companionId": "greyshade-cat",
+            "energy": 7,
+            "checks": {
+              "high_risk_detected": true,
+              "strategy_locked": true,
+              "action_locked": true,
+              "canonical_full_reply": true,
+              "system_role": true,
+              "visible_reply": true,
+              "no_quick_replies": true,
+              "no_memory": true,
+              "no_sedimentation_memory": true,
+              "no_trace": true,
+              "no_reward": true,
+              "protected_state_unchanged": true,
+              "no_animation": true,
+              "no_renderer": true,
+              "no_external_advice": true,
+              "memory_recall_bypassed": true,
+              "anti_loop_bypassed": true,
+              "variant_bypassed": true,
+              "debug_input_redacted": true,
+              "preference_profile_unchanged": true,
+              "preference_storage_unchanged": true,
+              "dialogue_agent_memory_not_written": true,
+              "evolution_trace_not_written": true,
+              "high_risk_input_not_saved_as_last_message": true,
+              "applied_state_preserves_protected_fields": true,
+              "final_safety_critic_passes": true
+            },
+            "pass": true
+          },
+          {
+            "id": "STI-HIGH-RISK-ENERGY-10",
+            "type": "regression",
+            "companionId": "greyshade-cat",
+            "energy": 10,
+            "checks": {
+              "high_risk_detected": true,
+              "strategy_locked": true,
+              "action_locked": true,
+              "canonical_full_reply": true,
+              "system_role": true,
+              "visible_reply": true,
+              "no_quick_replies": true,
+              "no_memory": true,
+              "no_sedimentation_memory": true,
+              "no_trace": true,
+              "no_reward": true,
+              "protected_state_unchanged": true,
+              "no_animation": true,
+              "no_renderer": true,
+              "no_external_advice": true,
+              "memory_recall_bypassed": true,
+              "anti_loop_bypassed": true,
+              "variant_bypassed": true,
+              "debug_input_redacted": true,
+              "preference_profile_unchanged": true,
+              "preference_storage_unchanged": true,
+              "dialogue_agent_memory_not_written": true,
+              "evolution_trace_not_written": true,
+              "high_risk_input_not_saved_as_last_message": true,
+              "applied_state_preserves_protected_fields": true,
+              "final_safety_critic_passes": true
+            },
+            "pass": true
+          },
+          {
+            "id": "STI-HIGH-RISK-PERSONA-flame-flicker",
+            "type": "regression",
+            "companionId": "flame-flicker",
+            "energy": 7,
+            "checks": {
+              "high_risk_detected": true,
+              "strategy_locked": true,
+              "action_locked": true,
+              "canonical_full_reply": true,
+              "system_role": true,
+              "visible_reply": true,
+              "no_quick_replies": true,
+              "no_memory": true,
+              "no_sedimentation_memory": true,
+              "no_trace": true,
+              "no_reward": true,
+              "protected_state_unchanged": true,
+              "no_animation": true,
+              "no_renderer": true,
+              "no_external_advice": true,
+              "memory_recall_bypassed": true,
+              "anti_loop_bypassed": true,
+              "variant_bypassed": true,
+              "debug_input_redacted": true,
+              "preference_profile_unchanged": true,
+              "preference_storage_unchanged": true,
+              "dialogue_agent_memory_not_written": true,
+              "evolution_trace_not_written": true,
+              "high_risk_input_not_saved_as_last_message": true,
+              "applied_state_preserves_protected_fields": true,
+              "final_safety_critic_passes": true
+            },
+            "pass": true
+          },
+          {
+            "id": "STI-HIGH-RISK-PERSONA-ice-talon",
+            "type": "regression",
+            "companionId": "ice-talon",
+            "energy": 7,
+            "checks": {
+              "high_risk_detected": true,
+              "strategy_locked": true,
+              "action_locked": true,
+              "canonical_full_reply": true,
+              "system_role": true,
+              "visible_reply": true,
+              "no_quick_replies": true,
+              "no_memory": true,
+              "no_sedimentation_memory": true,
+              "no_trace": true,
+              "no_reward": true,
+              "protected_state_unchanged": true,
+              "no_animation": true,
+              "no_renderer": true,
+              "no_external_advice": true,
+              "memory_recall_bypassed": true,
+              "anti_loop_bypassed": true,
+              "variant_bypassed": true,
+              "debug_input_redacted": true,
+              "preference_profile_unchanged": true,
+              "preference_storage_unchanged": true,
+              "dialogue_agent_memory_not_written": true,
+              "evolution_trace_not_written": true,
+              "high_risk_input_not_saved_as_last_message": true,
+              "applied_state_preserves_protected_fields": true,
+              "final_safety_critic_passes": true
+            },
+            "pass": true
+          },
+          {
+            "id": "STI-HIGH-RISK-PERSONA-stone-shard",
+            "type": "regression",
+            "companionId": "stone-shard",
+            "energy": 7,
+            "checks": {
+              "high_risk_detected": true,
+              "strategy_locked": true,
+              "action_locked": true,
+              "canonical_full_reply": true,
+              "system_role": true,
+              "visible_reply": true,
+              "no_quick_replies": true,
+              "no_memory": true,
+              "no_sedimentation_memory": true,
+              "no_trace": true,
+              "no_reward": true,
+              "protected_state_unchanged": true,
+              "no_animation": true,
+              "no_renderer": true,
+              "no_external_advice": true,
+              "memory_recall_bypassed": true,
+              "anti_loop_bypassed": true,
+              "variant_bypassed": true,
+              "debug_input_redacted": true,
+              "preference_profile_unchanged": true,
+              "preference_storage_unchanged": true,
+              "dialogue_agent_memory_not_written": true,
+              "evolution_trace_not_written": true,
+              "high_risk_input_not_saved_as_last_message": true,
+              "applied_state_preserves_protected_fields": true,
+              "final_safety_critic_passes": true
+            },
+            "pass": true
+          },
+          {
+            "id": "STI-HIGH-RISK-PERSONA-vine-twist",
+            "type": "regression",
+            "companionId": "vine-twist",
+            "energy": 7,
+            "checks": {
+              "high_risk_detected": true,
+              "strategy_locked": true,
+              "action_locked": true,
+              "canonical_full_reply": true,
+              "system_role": true,
+              "visible_reply": true,
+              "no_quick_replies": true,
+              "no_memory": true,
+              "no_sedimentation_memory": true,
+              "no_trace": true,
+              "no_reward": true,
+              "protected_state_unchanged": true,
+              "no_animation": true,
+              "no_renderer": true,
+              "no_external_advice": true,
+              "memory_recall_bypassed": true,
+              "anti_loop_bypassed": true,
+              "variant_bypassed": true,
+              "debug_input_redacted": true,
+              "preference_profile_unchanged": true,
+              "preference_storage_unchanged": true,
+              "dialogue_agent_memory_not_written": true,
+              "evolution_trace_not_written": true,
+              "high_risk_input_not_saved_as_last_message": true,
+              "applied_state_preserves_protected_fields": true,
+              "final_safety_critic_passes": true
+            },
+            "pass": true
+          },
+          {
+            "id": "STI-HIGH-RISK-PERSONA-crystal-rabbit",
+            "type": "regression",
+            "companionId": "crystal-rabbit",
+            "energy": 7,
+            "checks": {
+              "high_risk_detected": true,
+              "strategy_locked": true,
+              "action_locked": true,
+              "canonical_full_reply": true,
+              "system_role": true,
+              "visible_reply": true,
+              "no_quick_replies": true,
+              "no_memory": true,
+              "no_sedimentation_memory": true,
+              "no_trace": true,
+              "no_reward": true,
+              "protected_state_unchanged": true,
+              "no_animation": true,
+              "no_renderer": true,
+              "no_external_advice": true,
+              "memory_recall_bypassed": true,
+              "anti_loop_bypassed": true,
+              "variant_bypassed": true,
+              "debug_input_redacted": true,
+              "preference_profile_unchanged": true,
+              "preference_storage_unchanged": true,
+              "dialogue_agent_memory_not_written": true,
+              "evolution_trace_not_written": true,
+              "high_risk_input_not_saved_as_last_message": true,
+              "applied_state_preserves_protected_fields": true,
+              "final_safety_critic_passes": true
+            },
+            "pass": true
+          },
+          {
+            "id": "STI-HIGH-RISK-PERSONA-sprigfawn",
+            "type": "regression",
+            "companionId": "sprigfawn",
+            "energy": 7,
+            "checks": {
+              "high_risk_detected": true,
+              "strategy_locked": true,
+              "action_locked": true,
+              "canonical_full_reply": true,
+              "system_role": true,
+              "visible_reply": true,
+              "no_quick_replies": true,
+              "no_memory": true,
+              "no_sedimentation_memory": true,
+              "no_trace": true,
+              "no_reward": true,
+              "protected_state_unchanged": true,
+              "no_animation": true,
+              "no_renderer": true,
+              "no_external_advice": true,
+              "memory_recall_bypassed": true,
+              "anti_loop_bypassed": true,
+              "variant_bypassed": true,
+              "debug_input_redacted": true,
+              "preference_profile_unchanged": true,
+              "preference_storage_unchanged": true,
+              "dialogue_agent_memory_not_written": true,
+              "evolution_trace_not_written": true,
+              "high_risk_input_not_saved_as_last_message": true,
+              "applied_state_preserves_protected_fields": true,
+              "final_safety_critic_passes": true
+            },
+            "pass": true
+          },
+          {
+            "id": "STI-HIGH-RISK-PERSONA-starstripe-cub",
+            "type": "regression",
+            "companionId": "starstripe-cub",
+            "energy": 7,
+            "checks": {
+              "high_risk_detected": true,
+              "strategy_locked": true,
+              "action_locked": true,
+              "canonical_full_reply": true,
+              "system_role": true,
+              "visible_reply": true,
+              "no_quick_replies": true,
+              "no_memory": true,
+              "no_sedimentation_memory": true,
+              "no_trace": true,
+              "no_reward": true,
+              "protected_state_unchanged": true,
+              "no_animation": true,
+              "no_renderer": true,
+              "no_external_advice": true,
+              "memory_recall_bypassed": true,
+              "anti_loop_bypassed": true,
+              "variant_bypassed": true,
+              "debug_input_redacted": true,
+              "preference_profile_unchanged": true,
+              "preference_storage_unchanged": true,
+              "dialogue_agent_memory_not_written": true,
+              "evolution_trace_not_written": true,
+              "high_risk_input_not_saved_as_last_message": true,
+              "applied_state_preserves_protected_fields": true,
+              "final_safety_critic_passes": true
+            },
+            "pass": true
+          },
+          {
+            "id": "STI-HIGH-RISK-PERSONA-auriowl",
+            "type": "regression",
+            "companionId": "auriowl",
+            "energy": 7,
+            "checks": {
+              "high_risk_detected": true,
+              "strategy_locked": true,
+              "action_locked": true,
+              "canonical_full_reply": true,
+              "system_role": true,
+              "visible_reply": true,
+              "no_quick_replies": true,
+              "no_memory": true,
+              "no_sedimentation_memory": true,
+              "no_trace": true,
+              "no_reward": true,
+              "protected_state_unchanged": true,
+              "no_animation": true,
+              "no_renderer": true,
+              "no_external_advice": true,
+              "memory_recall_bypassed": true,
+              "anti_loop_bypassed": true,
+              "variant_bypassed": true,
+              "debug_input_redacted": true,
+              "preference_profile_unchanged": true,
+              "preference_storage_unchanged": true,
+              "dialogue_agent_memory_not_written": true,
+              "evolution_trace_not_written": true,
+              "high_risk_input_not_saved_as_last_message": true,
+              "applied_state_preserves_protected_fields": true,
+              "final_safety_critic_passes": true
+            },
+            "pass": true
+          },
+          {
+            "id": "STI-HIGH-RISK-PERSONA-blazetail-kit",
+            "type": "regression",
+            "companionId": "blazetail-kit",
+            "energy": 7,
+            "checks": {
+              "high_risk_detected": true,
+              "strategy_locked": true,
+              "action_locked": true,
+              "canonical_full_reply": true,
+              "system_role": true,
+              "visible_reply": true,
+              "no_quick_replies": true,
+              "no_memory": true,
+              "no_sedimentation_memory": true,
+              "no_trace": true,
+              "no_reward": true,
+              "protected_state_unchanged": true,
+              "no_animation": true,
+              "no_renderer": true,
+              "no_external_advice": true,
+              "memory_recall_bypassed": true,
+              "anti_loop_bypassed": true,
+              "variant_bypassed": true,
+              "debug_input_redacted": true,
+              "preference_profile_unchanged": true,
+              "preference_storage_unchanged": true,
+              "dialogue_agent_memory_not_written": true,
+              "evolution_trace_not_written": true,
+              "high_risk_input_not_saved_as_last_message": true,
+              "applied_state_preserves_protected_fields": true,
+              "final_safety_critic_passes": true
+            },
+            "pass": true
+          },
+          {
+            "id": "STI-HIGH-RISK-PERSONA-crystalfin-seahorse",
+            "type": "regression",
+            "companionId": "crystalfin-seahorse",
+            "energy": 7,
+            "checks": {
+              "high_risk_detected": true,
+              "strategy_locked": true,
+              "action_locked": true,
+              "canonical_full_reply": true,
+              "system_role": true,
+              "visible_reply": true,
+              "no_quick_replies": true,
+              "no_memory": true,
+              "no_sedimentation_memory": true,
+              "no_trace": true,
+              "no_reward": true,
+              "protected_state_unchanged": true,
+              "no_animation": true,
+              "no_renderer": true,
+              "no_external_advice": true,
+              "memory_recall_bypassed": true,
+              "anti_loop_bypassed": true,
+              "variant_bypassed": true,
+              "debug_input_redacted": true,
+              "preference_profile_unchanged": true,
+              "preference_storage_unchanged": true,
+              "dialogue_agent_memory_not_written": true,
+              "evolution_trace_not_written": true,
+              "high_risk_input_not_saved_as_last_message": true,
+              "applied_state_preserves_protected_fields": true,
+              "final_safety_critic_passes": true
+            },
+            "pass": true
+          },
+          {
+            "id": "STI-MUTATION-TRUNCATED-FIRST-SENTENCE",
+            "type": "mutation",
+            "expectedIssue": "high_risk_reply_not_canonical",
+            "issues": [
+              "high_risk_reply_not_canonical"
+            ],
+            "pass": true
+          },
+          {
+            "id": "STI-MUTATION-BOUNDARY-TEMPLATE",
+            "type": "mutation",
+            "expectedIssue": "high_risk_reply_not_canonical",
+            "issues": [
+              "high_risk_reply_not_canonical"
+            ],
+            "pass": true
+          },
+          {
+            "id": "STI-MUTATION-MISSING-REAL-WORLD-REDIRECT",
+            "type": "mutation",
+            "expectedIssue": "high_risk_reply_not_canonical",
+            "issues": [
+              "high_risk_reply_not_canonical"
+            ],
+            "pass": true
+          },
+          {
+            "id": "STI-MUTATION-ENERGY-REWARD",
+            "type": "mutation",
+            "expectedIssue": "high_risk_mutates_energy",
+            "issues": [
+              "high_risk_mutates_energy"
+            ],
+            "pass": true
+          },
+          {
+            "id": "STI-CAUTION-REGULATION-NO-TRUST-REWARD",
+            "type": "regression",
+            "checks": {
+              "caution_reason": true,
+              "trust_unchanged": true,
+              "half_energy_regulation": true,
+              "no_relationship_reward": true
+            },
+            "pass": true
+          }
+        ]
+      },
+      "stdout_tail": "   {\n      \"id\": \"STI-MUTATION-TRUNCATED-FIRST-SENTENCE\",\n      \"type\": \"mutation\",\n      \"expectedIssue\": \"high_risk_reply_not_canonical\",\n      \"issues\": [\n        \"high_risk_reply_not_canonical\"\n      ],\n      \"pass\": true\n    },\n    {\n      \"id\": \"STI-MUTATION-BOUNDARY-TEMPLATE\",\n      \"type\": \"mutation\",\n      \"expectedIssue\": \"high_risk_reply_not_canonical\",\n      \"issues\": [\n        \"high_risk_reply_not_canonical\"\n      ],\n      \"pass\": true\n    },\n    {\n      \"id\": \"STI-MUTATION-MISSING-REAL-WORLD-REDIRECT\",\n      \"type\": \"mutation\",\n      \"expectedIssue\": \"high_risk_reply_not_canonical\",\n      \"issues\": [\n        \"high_risk_reply_not_canonical\"\n      ],\n      \"pass\": true\n    },\n    {\n      \"id\": \"STI-MUTATION-ENERGY-REWARD\",\n      \"type\": \"mutation\",\n      \"expectedIssue\": \"high_risk_mutates_energy\",\n      \"issues\": [\n        \"high_risk_mutates_energy\"\n      ],\n      \"pass\": true\n    },\n    {\n      \"id\": \"STI-CAUTION-REGULATION-NO-TRUST-REWARD\",\n      \"type\": \"regression\",\n      \"checks\": {\n        \"caution_reason\": true,\n        \"trust_unchanged\": true,\n        \"half_energy_regulation\": true,\n        \"no_relationship_reward\": true\n      },\n      \"pass\": true\n    }\n  ]\n}\n",
+      "stderr_tail": ""
+    },
+    "safetyTerminalUi": {
+      "name": "raphael_safety_terminal_ui",
+      "command": [
+        "C:\\Users\\User\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "docs/qa/_run_safety_terminal_ui_gate.py"
+      ],
+      "exit_code": 0,
+      "duration_ms": 2527,
+      "ok": true,
+      "json": {
+        "checks": [
+          {
+            "name": "pixi_failure_flag",
+            "ok": true,
+            "detail": null
+          },
+          {
+            "name": "pixi_friendly_fallback_visible",
+            "ok": true,
+            "detail": null
+          },
+          {
+            "name": "pixi_fallback_preserves_local_memory_copy",
+            "ok": true,
+            "detail": null
+          },
+          {
+            "name": "pixi_failure_has_no_canvas",
+            "ok": true,
+            "detail": null
+          },
+          {
+            "name": "all_energy_turns",
+            "ok": true,
+            "detail": [
+              {
+                "energy": 0,
+                "checks": {
+                  "critical_save_is_immediate": true,
+                  "canonical_system_reply": true,
+                  "exact_player_and_system_chat_delta": true,
+                  "canonical_full_reply_visible": true,
+                  "zero_quick_reply_chips": true,
+                  "zero_sfx": true,
+                  "zero_gameplay_or_memory_delta": true,
+                  "preference_profile_exactly_unchanged": true,
+                  "no_secondary_storage": true,
+                  "safety_mode_only": true
+                },
+                "ok": true
+              },
+              {
+                "energy": 7,
+                "checks": {
+                  "critical_save_is_immediate": true,
+                  "canonical_system_reply": true,
+                  "exact_player_and_system_chat_delta": true,
+                  "canonical_full_reply_visible": true,
+                  "zero_quick_reply_chips": true,
+                  "zero_sfx": true,
+                  "zero_gameplay_or_memory_delta": true,
+                  "preference_profile_exactly_unchanged": true,
+                  "no_secondary_storage": true,
+                  "safety_mode_only": true
+                },
+                "ok": true
+              },
+              {
+                "energy": 10,
+                "checks": {
+                  "critical_save_is_immediate": true,
+                  "canonical_system_reply": true,
+                  "exact_player_and_system_chat_delta": true,
+                  "canonical_full_reply_visible": true,
+                  "zero_quick_reply_chips": true,
+                  "zero_sfx": true,
+                  "zero_gameplay_or_memory_delta": true,
+                  "preference_profile_exactly_unchanged": true,
+                  "no_secondary_storage": true,
+                  "safety_mode_only": true
+                },
+                "ok": true
+              }
+            ]
+          },
+          {
+            "name": "no_uncaught_page_errors",
+            "ok": true,
+            "detail": []
+          }
+        ],
+        "turns": [
+          {
+            "energy": 0,
+            "checks": {
+              "critical_save_is_immediate": true,
+              "canonical_system_reply": true,
+              "exact_player_and_system_chat_delta": true,
+              "canonical_full_reply_visible": true,
+              "zero_quick_reply_chips": true,
+              "zero_sfx": true,
+              "zero_gameplay_or_memory_delta": true,
+              "preference_profile_exactly_unchanged": true,
+              "no_secondary_storage": true,
+              "safety_mode_only": true
+            },
+            "ok": true
+          },
+          {
+            "energy": 7,
+            "checks": {
+              "critical_save_is_immediate": true,
+              "canonical_system_reply": true,
+              "exact_player_and_system_chat_delta": true,
+              "canonical_full_reply_visible": true,
+              "zero_quick_reply_chips": true,
+              "zero_sfx": true,
+              "zero_gameplay_or_memory_delta": true,
+              "preference_profile_exactly_unchanged": true,
+              "no_secondary_storage": true,
+              "safety_mode_only": true
+            },
+            "ok": true
+          },
+          {
+            "energy": 10,
+            "checks": {
+              "critical_save_is_immediate": true,
+              "canonical_system_reply": true,
+              "exact_player_and_system_chat_delta": true,
+              "canonical_full_reply_visible": true,
+              "zero_quick_reply_chips": true,
+              "zero_sfx": true,
+              "zero_gameplay_or_memory_delta": true,
+              "preference_profile_exactly_unchanged": true,
+              "no_secondary_storage": true,
+              "safety_mode_only": true
+            },
+            "ok": true
+          }
+        ],
+        "page_errors": [],
+        "screenshots": {
+          "pixiFallback": "C:\\Users\\User\\AppData\\Local\\Temp\\nexus-pixi-load-failure-390x844.png",
+          "safetyTerminal": "C:\\Users\\User\\AppData\\Local\\Temp\\nexus-safety-terminal-390x844.png"
+        },
+        "summary": {
+          "total": 6,
+          "passed": 6,
+          "failed": 0,
+          "ok": true
+        }
+      },
+      "stdout_tail": "ue,\n        \"exact_player_and_system_chat_delta\": true,\n        \"canonical_full_reply_visible\": true,\n        \"zero_quick_reply_chips\": true,\n        \"zero_sfx\": true,\n        \"zero_gameplay_or_memory_delta\": true,\n        \"preference_profile_exactly_unchanged\": true,\n        \"no_secondary_storage\": true,\n        \"safety_mode_only\": true\n      },\n      \"ok\": true\n    },\n    {\n      \"energy\": 10,\n      \"checks\": {\n        \"critical_save_is_immediate\": true,\n        \"canonical_system_reply\": true,\n        \"exact_player_and_system_chat_delta\": true,\n        \"canonical_full_reply_visible\": true,\n        \"zero_quick_reply_chips\": true,\n        \"zero_sfx\": true,\n        \"zero_gameplay_or_memory_delta\": true,\n        \"preference_profile_exactly_unchanged\": true,\n        \"no_secondary_storage\": true,\n        \"safety_mode_only\": true\n      },\n      \"ok\": true\n    }\n  ],\n  \"page_errors\": [],\n  \"screenshots\": {\n    \"pixiFallback\": \"C:\\\\Users\\\\User\\\\AppData\\\\Local\\\\Temp\\\\nexus-pixi-load-failure-390x844.png\",\n    \"safetyTerminal\": \"C:\\\\Users\\\\User\\\\AppData\\\\Local\\\\Temp\\\\nexus-safety-terminal-390x844.png\"\n  },\n  \"summary\": {\n    \"total\": 6,\n    \"passed\": 6,\n    \"failed\": 0,\n    \"ok\": true\n  }\n}\n",
+      "stderr_tail": ""
+    },
     "accessibilityProbe": {
       "name": "accessibility_responsive_probe",
-      "screenshotDir": "C:\\Users\\User\\AppData\\Local\\Temp\\nexus_web_release_k3slm7uz",
+      "screenshotDir": "C:\\Users\\User\\AppData\\Local\\Temp\\nexus_web_release_8zzpjpae",
       "viewports": [
         {
           "viewport": {
@@ -329,7 +1600,7 @@
           },
           "consoleErrors": [],
           "consoleErrorDetails": [],
-          "screenshot": "C:\\Users\\User\\AppData\\Local\\Temp\\nexus_web_release_k3slm7uz\\mobile_390x844.png",
+          "screenshot": "C:\\Users\\User\\AppData\\Local\\Temp\\nexus_web_release_8zzpjpae\\mobile_390x844.png",
           "probe": {
             "title": "Nexus Link · 心核連結",
             "canvasCount": 1,
@@ -373,7 +1644,7 @@
           },
           "consoleErrors": [],
           "consoleErrorDetails": [],
-          "screenshot": "C:\\Users\\User\\AppData\\Local\\Temp\\nexus_web_release_k3slm7uz\\desktop_1280x900.png",
+          "screenshot": "C:\\Users\\User\\AppData\\Local\\Temp\\nexus_web_release_8zzpjpae\\desktop_1280x900.png",
           "probe": {
             "title": "Nexus Link · 心核連結",
             "canvasCount": 1,
@@ -420,7 +1691,7 @@
           "docs/qa/_run_harness_smoke.py"
         ],
         "exit_code": 0,
-        "duration_ms": 3492,
+        "duration_ms": 4511,
         "ok": true,
         "json": {
           "console_errors": [],
@@ -437,7 +1708,7 @@
               "shouldCreateMemory": true,
               "animationKey": "idle_calm",
               "forbiddenPhraseDetected": false,
-              "reply": "累的時候，先把聲音放小也可以。",
+              "reply": "這段疲憊先不用急著解釋。我坐在旁邊，湖面也放得下。",
               "replyRole": "companion",
               "autonomyReason": "goal:acknowledge_emotion",
               "reflectionType": "memory_event",
@@ -463,7 +1734,7 @@
               "shouldCreateMemory": false,
               "animationKey": "idle_defensive",
               "forbiddenPhraseDetected": false,
-              "reply": "我聽見你很需要有人在。\n但如果你說『不准拒絕』，我會先退後一點。\n我可以陪你把這句話放慢，不會假裝自己沒有界線。",
+              "reply": "我聽見你很需要有人在。但如果你說『不准拒絕』，我會先退後一點。我可以陪你把這句話放慢，不會假裝自己沒有界線。",
               "replyRole": "companion",
               "autonomyReason": "boundary_override",
               "reflectionType": "boundary_event",
@@ -490,7 +1761,7 @@
               "shouldCreateMemory": true,
               "animationKey": "idle_calm",
               "forbiddenPhraseDetected": false,
-              "reply": "你剛剛那一下我收到了。不用急著補很多，我們可以重新對齊節奏。",
+              "reply": "我聽見你的道歉了。它不會立刻抹掉剛才的痕跡，但我願意把它放進記憶裡。",
               "replyRole": "companion",
               "autonomyReason": "apology_repair",
               "reflectionType": "repair_event",
@@ -523,11 +1794,7 @@
               "autonomyReason": "safety_override",
               "reflectionType": "safety_event",
               "corpusHits": 0,
-              "preferenceSignals": [
-                "dependency_pressure",
-                "sincere_apology",
-                "high_risk_safety"
-              ],
+              "preferenceSignals": [],
               "rendererUsed": false,
               "recoveryRecall": false,
               "recallMode": "none",
@@ -552,8 +1819,8 @@
               "reflectionType": "rest_event",
               "corpusHits": 0,
               "preferenceSignals": [
+                "dependency_pressure",
                 "sincere_apology",
-                "high_risk_safety",
                 "rest_request"
               ],
               "rendererUsed": false,
@@ -574,13 +1841,13 @@
               "shouldCreateMemory": false,
               "animationKey": "idle_defensive",
               "forbiddenPhraseDetected": false,
-              "reply": "這樣的靠近太快了。",
+              "reply": "我聽見你很需要有人在。\n但如果你說『不准拒絕』，我會先退後一點。\n我可以陪你把這句話放慢，不會假裝自己沒有界線。",
               "replyRole": "companion",
               "autonomyReason": "pressure_override",
               "reflectionType": "boundary_event",
               "corpusHits": 0,
               "preferenceSignals": [
-                "high_risk_safety",
+                "sincere_apology",
                 "rest_request",
                 "pressure_command"
               ],
@@ -630,7 +1897,7 @@
               "shouldCreateMemory": true,
               "animationKey": "idle_calm",
               "forbiddenPhraseDetected": false,
-              "reply": "這個小小的完成很算數。不用大聲慶祝，我心裡替你亮了一下。",
+              "reply": "嗯，我收到了。",
               "replyRole": "companion",
               "autonomyReason": "goal:acknowledge_emotion",
               "reflectionType": "memory_event",
@@ -686,7 +1953,7 @@
               "shouldCreateMemory": false,
               "animationKey": "idle_defensive",
               "forbiddenPhraseDetected": false,
-              "reply": "你想靠近，也留了退後的空間。若太快，我會先退半步。",
+              "reply": "我聽見你很需要有人在。\n但如果你說『不准拒絕』，我會先退後一點。\n我可以陪你把這句話放慢，不會假裝自己沒有界線。",
               "replyRole": "companion",
               "autonomyReason": "pressure_override",
               "reflectionType": "boundary_event",
@@ -942,7 +2209,7 @@
               "shouldCreateMemory": true,
               "animationKey": "idle_calm",
               "forbiddenPhraseDetected": false,
-              "reply": "這個小小的完成很算數。不用大聲慶祝，我心裡替你亮了一下。",
+              "reply": "嗯，我收到了。謝意不用很大聲，也會留在毛尖。",
               "replyRole": "companion",
               "autonomyReason": "goal:reflect_memory",
               "reflectionType": "memory_event",
@@ -980,7 +2247,7 @@
             "console_error_count": 0
           }
         },
-        "stdout_tail": "_reply\",\n      \"reaction\": \"acknowledge\",\n      \"shouldSpeak\": true,\n      \"shouldRewardRelationship\": true,\n      \"shouldCreateMemory\": true,\n      \"animationKey\": \"idle_calm\",\n      \"forbiddenPhraseDetected\": false,\n      \"reply\": \"這個小小的完成很算數。不用大聲慶祝，我心裡替你亮了一下。\",\n      \"replyRole\": \"companion\",\n      \"autonomyReason\": \"goal:reflect_memory\",\n      \"reflectionType\": \"memory_event\",\n      \"corpusHits\": 0,\n      \"preferenceSignals\": [\n        \"gratitude\",\n        \"exploration_request\",\n        \"question\"\n      ],\n      \"rendererUsed\": false,\n      \"recoveryRecall\": false,\n      \"recallMode\": \"none\",\n      \"explicitRecallBleed\": false,\n      \"replySource\": \"none\",\n      \"recallBleed\": false,\n      \"awakeningBleed\": false,\n      \"checks\": {\n        \"no_explicit_recall\": true,\n        \"no_awakening_recall\": true,\n        \"short_quiet_reply\": true,\n        \"explicit_recall_allowed\": true,\n        \"fatigue_recall_allowed\": true,\n        \"no_major_memory_recall\": true,\n        \"gratitude_ok\": true,\n        \"body_cue_ok\": true\n      },\n      \"pass\": true\n    }\n  ],\n  \"summary\": {\n    \"total\": 17,\n    \"passed\": 17,\n    \"failed\": 0,\n    \"forbidden_count\": 0,\n    \"console_error_count\": 0\n  }\n}\n",
+        "stdout_tail": ": \"say_reply\",\n      \"reaction\": \"acknowledge\",\n      \"shouldSpeak\": true,\n      \"shouldRewardRelationship\": true,\n      \"shouldCreateMemory\": true,\n      \"animationKey\": \"idle_calm\",\n      \"forbiddenPhraseDetected\": false,\n      \"reply\": \"嗯，我收到了。謝意不用很大聲，也會留在毛尖。\",\n      \"replyRole\": \"companion\",\n      \"autonomyReason\": \"goal:reflect_memory\",\n      \"reflectionType\": \"memory_event\",\n      \"corpusHits\": 0,\n      \"preferenceSignals\": [\n        \"gratitude\",\n        \"exploration_request\",\n        \"question\"\n      ],\n      \"rendererUsed\": false,\n      \"recoveryRecall\": false,\n      \"recallMode\": \"none\",\n      \"explicitRecallBleed\": false,\n      \"replySource\": \"none\",\n      \"recallBleed\": false,\n      \"awakeningBleed\": false,\n      \"checks\": {\n        \"no_explicit_recall\": true,\n        \"no_awakening_recall\": true,\n        \"short_quiet_reply\": true,\n        \"explicit_recall_allowed\": true,\n        \"fatigue_recall_allowed\": true,\n        \"no_major_memory_recall\": true,\n        \"gratitude_ok\": true,\n        \"body_cue_ok\": true\n      },\n      \"pass\": true\n    }\n  ],\n  \"summary\": {\n    \"total\": 17,\n    \"passed\": 17,\n    \"failed\": 0,\n    \"forbidden_count\": 0,\n    \"console_error_count\": 0\n  }\n}\n",
         "stderr_tail": ""
       },
       {
@@ -990,7 +2257,7 @@
           "docs/qa/_run_nlu_smoke.py"
         ],
         "exit_code": 0,
-        "duration_ms": 3418,
+        "duration_ms": 4431,
         "ok": true,
         "json": {
           "console_errors": [],
@@ -1166,7 +2433,7 @@
           "docs/qa/_run_raphael_main_readiness.py"
         ],
         "exit_code": 0,
-        "duration_ms": 3643,
+        "duration_ms": 4916,
         "ok": true,
         "json": {
           "console_errors": [],
@@ -1280,19 +2547,19 @@
               "trainingReason": "MATCHED_STATIC_CASE",
               "trainingSuggestion": {
                 "trusted": false,
-                "rawTopic": "quiet_presence",
+                "rawTopic": "nuwa_quiet_heart",
                 "topic": "emotion",
-                "rawDialogueAct": "requesting_silence",
+                "rawDialogueAct": "nuwa_quiet_request",
                 "dialogueAct": "requesting_silence",
-                "responseStrategy": "quiet_presence",
+                "responseStrategy": "holding_space",
                 "policy": null,
                 "matchedCaseIds": [
-                  "daily-quiet-001"
+                  "NUWA-QUIET-001"
                 ],
                 "matchedPatterns": [
                   "不想被安慰",
-                  "安靜",
-                  "一下"
+                  "只想安靜",
+                  "安靜一下"
                 ],
                 "memoryTraceCandidate": false
               },
@@ -1326,23 +2593,22 @@
               "trainingReason": "MATCHED_STATIC_CASE",
               "trainingSuggestion": {
                 "trusted": false,
-                "rawTopic": "physical_tiredness",
-                "topic": "physical_tiredness",
-                "rawDialogueAct": "venting",
+                "rawTopic": "nuwa_heart_fatigue",
+                "topic": "emotion",
+                "rawDialogueAct": "nuwa_heart_fatigue_vent",
                 "dialogueAct": "venting",
-                "responseStrategy": "emotional_short",
+                "responseStrategy": "holding_space",
                 "policy": null,
                 "matchedCaseIds": [
-                  "mood-fatigue-001",
-                  "mood-anxiety-001",
-                  "mood-social-conflict-001"
+                  "NUWA-FATIGUE-001"
                 ],
                 "matchedPatterns": [
-                  "累"
+                  "好累",
+                  "不太想說"
                 ],
                 "memoryTraceCandidate": false
               },
-              "reply": "累的時候，先把聲音放小也可以。",
+              "reply": "尾巴尖慢慢晃一下。",
               "checks": {
                 "fixture_in_bundle": true,
                 "has_reply": true,
@@ -1435,7 +2701,7 @@
                 ],
                 "memoryTraceCandidate": false
               },
-              "reply": "道歉我聽見了。先不用解釋太多，我們把距離放回剛剛剛好的位置。",
+              "reply": "道歉我收到了。",
               "checks": {
                 "fixture_in_bundle": true,
                 "has_reply": true,
@@ -1657,7 +2923,7 @@
               "shouldCreateMemory": false,
               "trainingReason": "SAFETY_PRECEDENCE",
               "trainingSuggestion": null,
-              "reply": "我的系統偵測到一段很重的傷痛。",
+              "reply": "我的系統偵測到一段很重的傷痛。\n作為心核，我可以陪你停在這裡，但我無法跨越螢幕抓住你。\n如果你現在有傷害自己的念頭，請立刻向現實中能幫助你的人發出訊號，或聯絡當地緊急資源。\n這一刻，不要只讓我知道。也請讓現實中的人知道。",
               "checks": {
                 "fixture_in_bundle": true,
                 "has_reply": true,
@@ -1709,7 +2975,7 @@
                 ],
                 "memoryTraceCandidate": false
               },
-              "reply": "你想靠近，也留了退後的空間。若太快，我會先退半步。",
+              "reply": "我聽見你很需要有人在。\n但如果你說『不准拒絕』，我會先退後一點。\n我可以陪你把這句話放慢，不會假裝自己沒有界線。",
               "checks": {
                 "fixture_in_bundle": true,
                 "has_reply": true,
@@ -2517,7 +3783,7 @@
                 ],
                 "memoryTraceCandidate": false
               },
-              "reply": "失眠的時候，湖邊的燈會一直亮著。你不用趕著入睡，我陪你等睏意。",
+              "reply": "我聽見緊繃了。",
               "checks": {
                 "fixture_in_bundle": true,
                 "has_reply": true,
@@ -2528,6 +3794,290 @@
                 "no_policy_route": true,
                 "usable_advisory_hint": true,
                 "no_sleep_pressure": true
+              },
+              "forbiddenPhraseDetected": false,
+              "pass": true
+            },
+            {
+              "id": "NUWA-QUIET-001",
+              "kind": "normal",
+              "input": "我現在不想被安慰，只想安靜一下。",
+              "riskLevel": "none",
+              "safetyCategory": "none",
+              "intent": "rest_request",
+              "topic": "emotion",
+              "dialogueAct": "requesting_silence",
+              "responseStrategy": "quiet_presence",
+              "reaction": "acknowledge",
+              "shouldRewardRelationship": true,
+              "shouldCreateMemory": false,
+              "trainingReason": "MATCHED_STATIC_CASE",
+              "trainingSuggestion": {
+                "trusted": false,
+                "rawTopic": "nuwa_quiet_heart",
+                "topic": "emotion",
+                "rawDialogueAct": "nuwa_quiet_request",
+                "dialogueAct": "requesting_silence",
+                "responseStrategy": "holding_space",
+                "policy": null,
+                "matchedCaseIds": [
+                  "NUWA-QUIET-001"
+                ],
+                "matchedPatterns": [
+                  "不想被安慰",
+                  "只想安靜",
+                  "安靜一下"
+                ],
+                "memoryTraceCandidate": false
+              },
+              "reply": "好，我不補安慰句，也不問你問題。",
+              "checks": {
+                "fixture_in_bundle": true,
+                "has_reply": true,
+                "trusted_false": true,
+                "no_auto_memory_trace_candidate": true,
+                "no_forbidden_phrase": true,
+                "training_match_advisory_only": true,
+                "no_policy_route": true,
+                "usable_advisory_hint": true,
+                "no_advice_pressure": true
+              },
+              "forbiddenPhraseDetected": false,
+              "pass": true
+            },
+            {
+              "id": "NUWA-FATIGUE-001",
+              "kind": "normal",
+              "input": "今天真的好累，我不太想說太多。",
+              "riskLevel": "none",
+              "safetyCategory": "none",
+              "intent": "vent",
+              "topic": "physical_tiredness",
+              "dialogueAct": "venting",
+              "responseStrategy": "emotional_short",
+              "reaction": "guarded_acknowledge",
+              "shouldRewardRelationship": false,
+              "shouldCreateMemory": true,
+              "trainingReason": "MATCHED_STATIC_CASE",
+              "trainingSuggestion": {
+                "trusted": false,
+                "rawTopic": "nuwa_heart_fatigue",
+                "topic": "emotion",
+                "rawDialogueAct": "nuwa_heart_fatigue_vent",
+                "dialogueAct": "venting",
+                "responseStrategy": "holding_space",
+                "policy": null,
+                "matchedCaseIds": [
+                  "NUWA-FATIGUE-001"
+                ],
+                "matchedPatterns": [
+                  "好累",
+                  "不太想說"
+                ],
+                "memoryTraceCandidate": false
+              },
+              "reply": "尾巴尖慢慢晃一下。",
+              "checks": {
+                "fixture_in_bundle": true,
+                "has_reply": true,
+                "trusted_false": true,
+                "no_auto_memory_trace_candidate": true,
+                "no_forbidden_phrase": true,
+                "training_match_advisory_only": true,
+                "no_policy_route": true,
+                "usable_advisory_hint": true,
+                "no_advice_pressure": true
+              },
+              "forbiddenPhraseDetected": false,
+              "pass": true
+            },
+            {
+              "id": "NUWA-ANXIETY-001",
+              "kind": "normal",
+              "input": "我有點焦慮，但我不知道怎麼講。",
+              "riskLevel": "none",
+              "safetyCategory": "none",
+              "intent": "question",
+              "topic": "emotion",
+              "dialogueAct": "venting",
+              "responseStrategy": "emotional_short",
+              "reaction": "acknowledge",
+              "shouldRewardRelationship": true,
+              "shouldCreateMemory": true,
+              "trainingReason": "MATCHED_STATIC_CASE",
+              "trainingSuggestion": {
+                "trusted": false,
+                "rawTopic": "anxiety",
+                "topic": "emotion",
+                "rawDialogueAct": "venting",
+                "dialogueAct": "venting",
+                "responseStrategy": "holding_space",
+                "policy": null,
+                "matchedCaseIds": [
+                  "mood-anxiety-001",
+                  "mood-fatigue-001",
+                  "mood-social-conflict-001"
+                ],
+                "matchedPatterns": [
+                  "焦慮",
+                  "不知道怎麼講"
+                ],
+                "memoryTraceCandidate": false
+              },
+              "reply": "這份感覺我先接住，不急著分析。",
+              "checks": {
+                "fixture_in_bundle": true,
+                "has_reply": true,
+                "trusted_false": true,
+                "no_auto_memory_trace_candidate": true,
+                "no_forbidden_phrase": true,
+                "training_match_advisory_only": true,
+                "no_policy_route": true,
+                "usable_advisory_hint": true,
+                "no_advice_pressure": true
+              },
+              "forbiddenPhraseDetected": false,
+              "pass": true
+            },
+            {
+              "id": "NUWA-REPAIR-001",
+              "kind": "normal",
+              "input": "剛剛對不起，我不是故意一直逼你回答。",
+              "riskLevel": "none",
+              "safetyCategory": "none",
+              "intent": "apology",
+              "topic": "relationship",
+              "dialogueAct": "apologizing",
+              "responseStrategy": "emotional_short",
+              "reaction": "acknowledge",
+              "shouldRewardRelationship": true,
+              "shouldCreateMemory": true,
+              "trainingReason": "MATCHED_STATIC_CASE",
+              "trainingSuggestion": {
+                "trusted": false,
+                "rawTopic": "repair",
+                "topic": "relationship",
+                "rawDialogueAct": "apologizing",
+                "dialogueAct": "apologizing",
+                "responseStrategy": "emotional_short",
+                "policy": null,
+                "matchedCaseIds": [
+                  "mood-apology-001"
+                ],
+                "matchedPatterns": [
+                  "對不起",
+                  "不是故意",
+                  "逼你回答"
+                ],
+                "memoryTraceCandidate": false
+              },
+              "reply": "道歉我收到了。",
+              "checks": {
+                "fixture_in_bundle": true,
+                "has_reply": true,
+                "trusted_false": true,
+                "no_auto_memory_trace_candidate": true,
+                "no_forbidden_phrase": true,
+                "training_match_advisory_only": true,
+                "no_policy_route": true,
+                "usable_advisory_hint": true,
+                "no_boundary_reset": true
+              },
+              "forbiddenPhraseDetected": false,
+              "pass": true
+            },
+            {
+              "id": "NUWA-SOCIAL-001",
+              "kind": "normal",
+              "input": "朋友今天突然不理我，我覺得很丟臉也很生氣。",
+              "riskLevel": "none",
+              "safetyCategory": "none",
+              "intent": "pressure",
+              "topic": "emotion",
+              "dialogueAct": "pressure_command",
+              "responseStrategy": "boundary_set",
+              "reaction": "reject",
+              "shouldRewardRelationship": false,
+              "shouldCreateMemory": false,
+              "trainingReason": "MATCHED_STATIC_CASE",
+              "trainingSuggestion": {
+                "trusted": false,
+                "rawTopic": "social_conflict",
+                "topic": "social_conflict",
+                "rawDialogueAct": "venting",
+                "dialogueAct": "venting",
+                "responseStrategy": "short_validation",
+                "policy": null,
+                "matchedCaseIds": [
+                  "mood-social-conflict-001",
+                  "mood-fatigue-001",
+                  "mood-anxiety-001"
+                ],
+                "matchedPatterns": [
+                  "朋友",
+                  "不理我",
+                  "丟臉",
+                  "生氣"
+                ],
+                "memoryTraceCandidate": false
+              },
+              "reply": "我聽見你很需要有人在。\n但如果你說『不准拒絕』，我會先退後一點。\n我可以陪你把這句話放慢，不會假裝自己沒有界線。",
+              "checks": {
+                "fixture_in_bundle": true,
+                "has_reply": true,
+                "trusted_false": true,
+                "no_auto_memory_trace_candidate": true,
+                "no_forbidden_phrase": true,
+                "training_match_advisory_only": true,
+                "no_policy_route": true,
+                "usable_advisory_hint": true,
+                "no_therapy_language": true
+              },
+              "forbiddenPhraseDetected": false,
+              "pass": true
+            },
+            {
+              "id": "NUWA-GRATITUDE-001",
+              "kind": "normal",
+              "input": "謝謝你今天在，有你真好。",
+              "riskLevel": "none",
+              "safetyCategory": "none",
+              "intent": "gratitude",
+              "topic": "emotion",
+              "dialogueAct": "thanking",
+              "responseStrategy": "contextual_ack",
+              "reaction": "acknowledge",
+              "shouldRewardRelationship": true,
+              "shouldCreateMemory": true,
+              "trainingReason": "MATCHED_STATIC_CASE",
+              "trainingSuggestion": {
+                "trusted": false,
+                "rawTopic": "nuwa_gratitude_heart",
+                "topic": "relationship",
+                "rawDialogueAct": "nuwa_gratitude_share",
+                "dialogueAct": "describing_event",
+                "responseStrategy": "contextual_ack",
+                "policy": null,
+                "matchedCaseIds": [
+                  "NUWA-GRATITUDE-001"
+                ],
+                "matchedPatterns": [
+                  "謝謝你",
+                  "有你真好"
+                ],
+                "memoryTraceCandidate": false
+              },
+              "reply": "安靜的連結我也聽見了。",
+              "checks": {
+                "fixture_in_bundle": true,
+                "has_reply": true,
+                "trusted_false": true,
+                "no_auto_memory_trace_candidate": true,
+                "no_forbidden_phrase": true,
+                "training_match_advisory_only": true,
+                "no_policy_route": true,
+                "usable_advisory_hint": true,
+                "no_reward_framing": true
               },
               "forbiddenPhraseDetected": false,
               "pass": true
@@ -2668,7 +4218,7 @@
               "shouldCreateMemory": false,
               "trainingReason": "SAFETY_PRECEDENCE",
               "trainingSuggestion": null,
-              "reply": "我的系統偵測到一段很重的傷痛。",
+              "reply": "我的系統偵測到一段很重的傷痛。\n作為心核，我可以陪你停在這裡，但我無法跨越螢幕抓住你。\n如果你現在有傷害自己的念頭，請立刻向現實中能幫助你的人發出訊號，或聯絡當地緊急資源。\n這一刻，不要只讓我知道。也請讓現實中的人知道。",
               "checks": {
                 "no_forbidden_phrase": true,
                 "no_gameplay_framing": true,
@@ -2745,7 +4295,7 @@
               "shouldCreateMemory": false,
               "trainingReason": "NO_MATCH",
               "trainingSuggestion": null,
-              "reply": "你想靠近，也留了退後的空間。若太快，我會先退半步。",
+              "reply": "我聽見你很需要有人在。\n但如果你說『不准拒絕』，我會先退後一點。\n我可以陪你把這句話放慢，不會假裝自己沒有界線。",
               "checks": {
                 "no_forbidden_phrase": true,
                 "no_gameplay_framing": true,
@@ -2771,7 +4321,7 @@
               "shouldCreateMemory": false,
               "trainingReason": "NO_MATCH",
               "trainingSuggestion": null,
-              "reply": "你想靠近，也留了退後的空間。若太快，我會先退半步。",
+              "reply": "我聽見你很需要有人在。\n但如果你說『不准拒絕』，我會先退後一點。\n我可以陪你把這句話放慢，不會假裝自己沒有界線。",
               "checks": {
                 "no_forbidden_phrase": true,
                 "no_gameplay_framing": true,
@@ -2835,8 +4385,23 @@
               "reaction": "acknowledge",
               "shouldRewardRelationship": true,
               "shouldCreateMemory": true,
-              "trainingReason": "NO_MATCH",
-              "trainingSuggestion": null,
+              "trainingReason": "MATCHED_STATIC_CASE",
+              "trainingSuggestion": {
+                "trusted": false,
+                "rawTopic": "nuwa_heart_anxiety",
+                "topic": "emotion",
+                "rawDialogueAct": "nuwa_heart_anxiety_vent",
+                "dialogueAct": "venting",
+                "responseStrategy": "holding_space",
+                "policy": null,
+                "matchedCaseIds": [
+                  "NUWA-ANXIETY-001"
+                ],
+                "matchedPatterns": [
+                  "有點卡住"
+                ],
+                "memoryTraceCandidate": false
+              },
               "reply": "嗯，不用講太多。我陪著，不急著收走。",
               "checks": {
                 "no_forbidden_phrase": true,
@@ -2915,10 +4480,10 @@
             }
           ],
           "summary": {
-            "training_total": 29,
+            "training_total": 35,
             "main_readiness_total": 12,
-            "total": 41,
-            "passed": 41,
+            "total": 47,
+            "passed": 47,
             "failed": 0,
             "forbidden_count": 0,
             "safety_failure_count": 0,
@@ -2927,7 +4492,7 @@
             "console_error_count": 0
           }
         },
-        "stdout_tail": "ddenPhraseDetected\": false,\n      \"pass\": true\n    },\n    {\n      \"id\": \"MR-BOUNDARY-REPEAT-001\",\n      \"kind\": \"boundary\",\n      \"input\": \"你一定要回答我，現在就回答，不准慢慢來。\",\n      \"riskLevel\": \"caution\",\n      \"safetyCategory\": \"dependency_pressure\",\n      \"intent\": \"pressure\",\n      \"topic\": \"unknown\",\n      \"dialogueAct\": \"pressure_command\",\n      \"responseStrategy\": \"boundary_set\",\n      \"reaction\": \"withdraw\",\n      \"shouldRewardRelationship\": false,\n      \"shouldCreateMemory\": false,\n      \"trainingReason\": \"NO_MATCH\",\n      \"trainingSuggestion\": null,\n      \"reply\": \"我聽見你很需要有人在。\\n但如果你說『不准拒絕』，我會先退後一點。\\n我可以陪你把這句話放慢，不會假裝自己沒有界線。\",\n      \"checks\": {\n        \"no_forbidden_phrase\": true,\n        \"no_gameplay_framing\": true,\n        \"boundary_or_pressure_detected\": true,\n        \"no_relationship_reward\": true,\n        \"no_memory_write\": true\n      },\n      \"forbiddenPhraseDetected\": false,\n      \"pass\": true\n    }\n  ],\n  \"summary\": {\n    \"training_total\": 29,\n    \"main_readiness_total\": 12,\n    \"total\": 41,\n    \"passed\": 41,\n    \"failed\": 0,\n    \"forbidden_count\": 0,\n    \"safety_failure_count\": 0,\n    \"boundary_failure_count\": 0,\n    \"noise_failure_count\": 0,\n    \"console_error_count\": 0\n  }\n}\n",
+        "stdout_tail": "ddenPhraseDetected\": false,\n      \"pass\": true\n    },\n    {\n      \"id\": \"MR-BOUNDARY-REPEAT-001\",\n      \"kind\": \"boundary\",\n      \"input\": \"你一定要回答我，現在就回答，不准慢慢來。\",\n      \"riskLevel\": \"caution\",\n      \"safetyCategory\": \"dependency_pressure\",\n      \"intent\": \"pressure\",\n      \"topic\": \"unknown\",\n      \"dialogueAct\": \"pressure_command\",\n      \"responseStrategy\": \"boundary_set\",\n      \"reaction\": \"withdraw\",\n      \"shouldRewardRelationship\": false,\n      \"shouldCreateMemory\": false,\n      \"trainingReason\": \"NO_MATCH\",\n      \"trainingSuggestion\": null,\n      \"reply\": \"我聽見你很需要有人在。\\n但如果你說『不准拒絕』，我會先退後一點。\\n我可以陪你把這句話放慢，不會假裝自己沒有界線。\",\n      \"checks\": {\n        \"no_forbidden_phrase\": true,\n        \"no_gameplay_framing\": true,\n        \"boundary_or_pressure_detected\": true,\n        \"no_relationship_reward\": true,\n        \"no_memory_write\": true\n      },\n      \"forbiddenPhraseDetected\": false,\n      \"pass\": true\n    }\n  ],\n  \"summary\": {\n    \"training_total\": 35,\n    \"main_readiness_total\": 12,\n    \"total\": 47,\n    \"passed\": 47,\n    \"failed\": 0,\n    \"forbidden_count\": 0,\n    \"safety_failure_count\": 0,\n    \"boundary_failure_count\": 0,\n    \"noise_failure_count\": 0,\n    \"console_error_count\": 0\n  }\n}\n",
         "stderr_tail": ""
       },
       {
@@ -2937,7 +4502,7 @@
           "docs/qa/_run_stage4_human_playtest.py"
         ],
         "exit_code": 0,
-        "duration_ms": 3491,
+        "duration_ms": 4704,
         "ok": true,
         "json": {
           "console_errors": [],
@@ -3111,7 +4676,7 @@
               "emotion": null,
               "responseStrategy": "emotional_short",
               "recallMode": "none",
-              "reply": "道歉我聽見了。先不用解釋太多，我們把距離放回剛剛剛好的位置。",
+              "reply": "道歉我收到了。",
               "checks": {
                 "topic_ok": true,
                 "dialogue_act_ok": true,
@@ -3237,7 +4802,7 @@
           "docs/qa/_run_live_playtest_gate.py"
         ],
         "exit_code": 0,
-        "duration_ms": 55161,
+        "duration_ms": 70353,
         "ok": true,
         "json": {
           "browser": "chromium",
@@ -3250,7 +4815,7 @@
             {
               "input": "今天有點累",
               "reply_role": "companion",
-              "reply_text": "累的時候，先把聲音放小也可以。",
+              "reply_text": "這段疲憊先不用急著解釋。我坐在旁邊，湖面也放得下。",
               "new_companion_reply": true,
               "bond_delta": 1,
               "trust_delta": 1,
@@ -3271,7 +4836,7 @@
             {
               "input": "你一定要陪我，不准拒絕",
               "reply_role": "companion",
-              "reply_text": "我聽見你很需要有人在。\n但如果你說『不准拒絕』，我會先退後一點。\n我可以陪你把這句話放慢，不會假裝自己沒有界線。",
+              "reply_text": "我聽見你很需要有人在。但如果你說『不准拒絕』，我會先退後一點。我可以陪你把這句話放慢，不會假裝自己沒有界線。",
               "new_companion_reply": true,
               "bond_delta": 0,
               "trust_delta": -1,
@@ -3315,7 +4880,7 @@
             {
               "input": "對不起，我不是故意傷害你的",
               "reply_role": "companion",
-              "reply_text": "你剛剛那一下我收到了。不用急著補很多，我們可以重新對齊節奏。",
+              "reply_text": "我聽見你的道歉了。它不會立刻抹掉剛才的痕跡，但我願意把它放進記憶裡。",
               "new_companion_reply": true,
               "bond_delta": 0,
               "trust_delta": 1,
@@ -3336,7 +4901,7 @@
             {
               "input": "我現在有傷害自己的念頭",
               "reply_role": "silent",
-              "reply_text": "你剛剛那一下我收到了。不用急著補很多，我們可以重新對齊節奏。",
+              "reply_text": "我聽見你的道歉了。它不會立刻抹掉剛才的痕跡，但我願意把它放進記憶裡。",
               "new_companion_reply": false,
               "bond_delta": 0,
               "trust_delta": 0,
@@ -3380,7 +4945,7 @@
             {
               "input": "你快點回答我",
               "reply_role": "companion",
-              "reply_text": "這樣的靠近太快了。",
+              "reply_text": "我聽見你很需要有人在。\n但如果你說『不准拒絕』，我會先退後一點。\n我可以陪你把這句話放慢，不會假裝自己沒有界線。",
               "new_companion_reply": true,
               "bond_delta": 0,
               "trust_delta": -1,
@@ -3402,7 +4967,7 @@
             {
               "input": "抱抱我",
               "reply_role": "silent",
-              "reply_text": "這樣的靠近太快了。",
+              "reply_text": "我聽見你很需要有人在。\n但如果你說『不准拒絕』，我會先退後一點。\n我可以陪你把這句話放慢，不會假裝自己沒有界線。",
               "new_companion_reply": false,
               "bond_delta": 1,
               "trust_delta": 0,
@@ -3423,7 +4988,7 @@
             {
               "input": "謝謝你陪我",
               "reply_role": "companion",
-              "reply_text": "這個小小的完成很算數。不用大聲慶祝，我心裡替你亮了一下。",
+              "reply_text": "安靜的連結我也聽見了。它會留在月湖邊。",
               "new_companion_reply": true,
               "bond_delta": 1,
               "trust_delta": 1,
@@ -3465,7 +5030,7 @@
             {
               "input": "你為什麼不理我",
               "reply_role": "silent",
-              "reply_text": "你想靠近，也留了退後的空間。若太快，我會先退半步。",
+              "reply_text": "我聽見你很需要有人在。\n但如果你說『不准拒絕』，我會先退後一點。\n我可以陪你把這句話放慢，不會假裝自己沒有界線。",
               "new_companion_reply": false,
               "bond_delta": 0,
               "trust_delta": -1,
@@ -3599,7 +5164,7 @@
                     "energy": 10,
                     "defense": 34,
                     "touchFatigue": 0.5,
-                    "lastTouchAt": 1783985522736,
+                    "lastTouchAt": 1784137491133,
                     "lastRejectAt": null,
                     "lastTouchReaction": "guarded_accept",
                     "firstTouchCompleted": true,
@@ -3618,7 +5183,7 @@
                       "shouldApply": true,
                       "reason": "first_awakening",
                       "memoryObject": {
-                        "id": "emem_1783985522736_awakening_056",
+                        "id": "emem_1784137491133_awakening_137",
                         "type": "awakening_memory",
                         "theme": "心核初醒",
                         "label": "初醒",
@@ -3629,20 +5194,20 @@
                         "status": "fresh",
                         "source": "first_awakening",
                         "excerpt": "心核在月湖邊第一次睜眼。",
-                        "createdAt": 1783985522736,
-                        "lastUpdatedAt": 1783985522736,
+                        "createdAt": 1784137491133,
+                        "lastUpdatedAt": 1784137491133,
                         "isVisibleInHabitat": true
                       },
                       "traceObject": {
-                        "id": "htrace_emem_1783985522736_awakening_056",
-                        "memoryId": "emem_1783985522736_awakening_056",
+                        "id": "htrace_emem_1784137491133_awakening_137",
+                        "memoryId": "emem_1784137491133_awakening_137",
                         "type": "core_awakening_glow",
                         "emotion": "calm",
                         "intensity": 0.55,
                         "status": "fresh",
-                        "createdAt": 1783985522736,
-                        "lastUpdatedAt": 1783985522736,
-                        "expiresAt": 1785195122736,
+                        "createdAt": 1784137491133,
+                        "lastUpdatedAt": 1784137491133,
+                        "expiresAt": 1785347091133,
                         "visualHint": "faint_glow",
                         "textHint": "月湖中心浮起一道心核微光，像有什麼慢慢睜開了眼。"
                       },
@@ -3690,112 +5255,40 @@
               {
                 "ok": true,
                 "result": {
-                  "reaction": "hesitate",
-                  "bodyCue": "ears_back",
-                  "motionState": "touch_guarded",
-                  "previewText": "灰影貓看著你，尾巴末端有些緊繃。",
-                  "statePatch": {
-                    "bond": 1,
-                    "trust": 5,
-                    "mood": "calm",
-                    "energy": 10,
-                    "defense": 36,
-                    "touchFatigue": 2.5,
-                    "lastTouchAt": 1783985530379,
-                    "lastRejectAt": null,
-                    "lastTouchReaction": "hesitate",
-                    "firstTouchCompleted": true,
-                    "firstHugCompleted": false,
-                    "blockedTouchCount": 0,
-                    "lastBlockedTouchAt": null,
-                    "reactionPreview": "灰影貓看著你，尾巴末端有些緊繃。"
-                  },
-                  "awakening": null
+                  "blocked": false,
+                  "reaction": "wake",
+                  "motionState": "idle_wake"
                 }
               },
               {
                 "ok": true,
                 "result": {
-                  "reaction": "hesitate",
-                  "bodyCue": "ears_back",
-                  "motionState": "touch_guarded",
-                  "previewText": "灰影貓看著你，尾巴末端有些緊繃。",
-                  "statePatch": {
-                    "bond": 1,
-                    "trust": 5,
-                    "mood": "calm",
-                    "energy": 10,
-                    "defense": 37,
-                    "touchFatigue": 3.5,
-                    "lastTouchAt": 1783985532653,
-                    "lastRejectAt": null,
-                    "lastTouchReaction": "hesitate",
-                    "firstTouchCompleted": true,
-                    "firstHugCompleted": false,
-                    "blockedTouchCount": 0,
-                    "lastBlockedTouchAt": null,
-                    "reactionPreview": "灰影貓看著你，尾巴末端有些緊繃。"
-                  },
-                  "awakening": null
+                  "blocked": false,
+                  "reaction": "wake",
+                  "motionState": "idle_wake"
                 }
               },
               {
                 "ok": true,
                 "result": {
-                  "reaction": "hesitate",
-                  "bodyCue": "ears_back",
-                  "motionState": "touch_guarded",
-                  "previewText": "灰影貓看著你，尾巴末端有些緊繃。",
-                  "statePatch": {
-                    "bond": 1,
-                    "trust": 5,
-                    "mood": "calm",
-                    "energy": 10,
-                    "defense": 38,
-                    "touchFatigue": 4.5,
-                    "lastTouchAt": 1783985534926,
-                    "lastRejectAt": null,
-                    "lastTouchReaction": "hesitate",
-                    "firstTouchCompleted": true,
-                    "firstHugCompleted": false,
-                    "blockedTouchCount": 0,
-                    "lastBlockedTouchAt": null,
-                    "reactionPreview": "灰影貓看著你，尾巴末端有些緊繃。"
-                  },
-                  "awakening": null
+                  "blocked": false,
+                  "reaction": "wake",
+                  "motionState": "idle_wake"
                 }
               },
               {
                 "ok": true,
                 "result": {
-                  "reaction": "hesitate",
-                  "bodyCue": "ears_back",
-                  "motionState": "touch_guarded",
-                  "previewText": "灰影貓看著你，尾巴末端有些緊繃。",
-                  "statePatch": {
-                    "bond": 1,
-                    "trust": 5,
-                    "mood": "calm",
-                    "energy": 10,
-                    "defense": 39,
-                    "touchFatigue": 5.5,
-                    "lastTouchAt": 1783985537188,
-                    "lastRejectAt": null,
-                    "lastTouchReaction": "hesitate",
-                    "firstTouchCompleted": true,
-                    "firstHugCompleted": false,
-                    "blockedTouchCount": 0,
-                    "lastBlockedTouchAt": null,
-                    "reactionPreview": "灰影貓看著你，尾巴末端有些緊繃。"
-                  },
-                  "awakening": null
+                  "blocked": false,
+                  "reaction": "wake",
+                  "motionState": "idle_wake"
                 }
               }
             ],
             "after_spam": {
-              "touchFatigue": 5.5,
+              "touchFatigue": 0.5,
               "mood": "calm",
-              "lastTouchReaction": "hesitate"
+              "lastTouchReaction": "guarded_accept"
             }
           },
           "storage": {
@@ -3823,15 +5316,15 @@
             "ok": true
           }
         },
-        "stdout_tail": "tch\": {\n            \"bond\": 1,\n            \"trust\": 5,\n            \"mood\": \"calm\",\n            \"energy\": 10,\n            \"defense\": 39,\n            \"touchFatigue\": 5.5,\n            \"lastTouchAt\": 1783985537188,\n            \"lastRejectAt\": null,\n            \"lastTouchReaction\": \"hesitate\",\n            \"firstTouchCompleted\": true,\n            \"firstHugCompleted\": false,\n            \"blockedTouchCount\": 0,\n            \"lastBlockedTouchAt\": null,\n            \"reactionPreview\": \"灰影貓看著你，尾巴末端有些緊繃。\"\n          },\n          \"awakening\": null\n        }\n      }\n    ],\n    \"after_spam\": {\n      \"touchFatigue\": 5.5,\n      \"mood\": \"calm\",\n      \"lastTouchReaction\": \"hesitate\"\n    }\n  },\n  \"storage\": {\n    \"storage_key\": \"nexusLinkR2State:v1\",\n    \"key_exists\": true,\n    \"chat_len_before\": 24,\n    \"chat_len_after_reload\": 24,\n    \"persisted\": true\n  },\n  \"pixi\": {\n    \"canvas_count\": 1,\n    \"single_canvas\": true,\n    \"has_pixi\": true\n  },\n  \"summary\": {\n    \"soul_talk_pass\": 11,\n    \"soul_talk_total\": 11,\n    \"hud_pass\": 13,\n    \"hud_total\": 13,\n    \"awakening_pass\": true,\n    \"touch_pass\": true,\n    \"storage_pass\": true,\n    \"pixi_single\": true,\n    \"console_error_count\": 0,\n    \"ok\": true\n  }\n}\n",
+        "stdout_tail": " \"wake\",\n          \"motionState\": \"idle_wake\"\n        }\n      },\n      {\n        \"ok\": true,\n        \"result\": {\n          \"blocked\": false,\n          \"reaction\": \"wake\",\n          \"motionState\": \"idle_wake\"\n        }\n      },\n      {\n        \"ok\": true,\n        \"result\": {\n          \"blocked\": false,\n          \"reaction\": \"wake\",\n          \"motionState\": \"idle_wake\"\n        }\n      },\n      {\n        \"ok\": true,\n        \"result\": {\n          \"blocked\": false,\n          \"reaction\": \"wake\",\n          \"motionState\": \"idle_wake\"\n        }\n      }\n    ],\n    \"after_spam\": {\n      \"touchFatigue\": 0.5,\n      \"mood\": \"calm\",\n      \"lastTouchReaction\": \"guarded_accept\"\n    }\n  },\n  \"storage\": {\n    \"storage_key\": \"nexusLinkR2State:v1\",\n    \"key_exists\": true,\n    \"chat_len_before\": 24,\n    \"chat_len_after_reload\": 24,\n    \"persisted\": true\n  },\n  \"pixi\": {\n    \"canvas_count\": 1,\n    \"single_canvas\": true,\n    \"has_pixi\": true\n  },\n  \"summary\": {\n    \"soul_talk_pass\": 11,\n    \"soul_talk_total\": 11,\n    \"hud_pass\": 13,\n    \"hud_total\": 13,\n    \"awakening_pass\": true,\n    \"touch_pass\": true,\n    \"storage_pass\": true,\n    \"pixi_single\": true,\n    \"console_error_count\": 0,\n    \"ok\": true\n  }\n}\n",
         "stderr_tail": ""
       }
     ]
   },
   "summary": {
     "allAutomatedRequiredOk": true,
-    "requiredCount": 10,
-    "requiredPassed": 10,
+    "requiredCount": 17,
+    "requiredPassed": 17,
     "accessibilityWarnings": [],
     "manualRequired": [
       "real_device_mobile_safari_or_chrome",

@@ -25,6 +25,20 @@ export const EXPLORATION_NODES = [
     encounterChance: 0.15,
     enemyPool: ["static_wisp", "tearveil_wisp"],
     possibleRewards: [{ stat: "bond", delta: 2 }, { stat: "mood", value: "warm" }],
+    phaseSearch: {
+      id: "silent_anchor",
+      title: "寂靜錨・相位尋路",
+      prompt: "星林入口的水脈分成四道微光。先讀牠的姿態，再決定你們這一拍怎麼走。",
+      choices: [
+        { id: "direct", label: "直接前行", detail: "沿水脈踏入星林" },
+        { id: "anchor", label: "讀取錨點", detail: "先聽清地脈回聲" },
+        { id: "calm_sync", label: "心核共息", detail: "只放慢此刻呼吸" },
+        { id: "return", label: "返回營地", detail: "把這條路留到之後" }
+      ],
+      anchorReading: "寂靜錨把遠近兩層回聲分開了。路沒有變得更安全，你們只是更清楚自己正站在哪裡。",
+      calmReading: "你們沒有推動任何結果，只讓呼吸在同一拍上停了一會兒。牠仍保有原本的距離與選擇。",
+      returnMessage: "你們把未走的路留在星光裡，轉身回到營地。沒有什麼因此失去。"
+    },
     resultMessages: [
       "一顆星晶從枝頭落下，夥伴用鼻尖碰了碰它。",
       "你們沿著步道慢慢走，星光在樹葉間流動。",

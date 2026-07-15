@@ -21,6 +21,7 @@ import {
 } from "./engine/returnBehaviorEngine.js";
 import { mapHabitatTracesToVisuals } from "./engine/traceVisualMapper.js";
 import { createRaphaelAgentIntent } from "./ai/raphaelAgentAdapter.js";
+import { replacePreferenceStore } from "./ai/companionPreferenceStore.js";
 import { applyRaphaelAgentReduction, reduceRaphaelAgentIntent } from "./engine/raphaelIntentReducer.js";
 import * as store from "./state/store.js";
 import {
@@ -129,6 +130,14 @@ function measurePerf(name, startMark, endMark) {
   try { performance.measure(name, startMark, endMark); } catch (error) { /* no-op */ }
 }
 
+function showPixiLoadFailure(message = "棲地暫時無法顯示。請檢查網路後重新整理；你的本機記憶仍安全保留。") {
+  const failureNotice = document.querySelector("#pixi-load-failure");
+  if (!failureNotice) return;
+  const detail = failureNotice.querySelector("span");
+  if (detail) detail.textContent = message.replace(/^棲地暫時無法顯示[。]?\s*/, "");
+  failureNotice.hidden = false;
+}
+
 // Animation intent bridge：跨層 EventBus → 解析 intent → 對「目前 active companion」播一次性動畫。
 // 走 interactionController.playAnimation（既有 lock 路徑），播完自動回 mood idle；
 // 缺動畫時 resolver 已先 fallback。UI 不直接碰 PIXI、不新增 ticker。
@@ -202,6 +211,7 @@ async function bootstrap() {
       });
 
   store.replaceState(initialState);
+  replacePreferenceStore(initialState.companionPreferences);
   markPerf("nexus:state-loaded");
   const saveQueue = createSaveQueue(saveCurrentState);
   saveQueue.enqueue(SAVE_LEVEL.CRITICAL);
@@ -209,13 +219,21 @@ async function bootstrap() {
     markInteraction();
     return saveQueue.enqueue(SAVE_LEVEL.INTERACTION);
   };
+  const saveCritical = () => {
+    markInteraction();
+    return saveQueue.enqueue(SAVE_LEVEL.CRITICAL);
+  };
   const saveDebounced = () => saveQueue.enqueue(SAVE_LEVEL.DEBOUNCE);
 
   const hudController = createHudController({ store, statusText });
   // 主畫面回饋 toast：接夥伴觸碰反應（含拒絕）與 Care/Growth/探索的動作狀態。
   const companionFeedbackController = createCompanionFeedbackController();
   companionFeedbackController.bind();
-  const soulTalkController = createSoulTalkController({ store, saveCurrentState: saveInteraction });
+  const soulTalkController = createSoulTalkController({
+    store,
+    saveCurrentState: saveInteraction,
+    saveCriticalState: saveCritical
+  });
   const panelManager = createPanelManager({ onSoulTalkFocus: () => soulTalkController.focusInput() });
   // 夥伴切換鏈（companionSelect 與初遇定情共用）：normalize → registry → HUD/心語 → scene swap。
   async function applyCompanionChange(companionId) {
@@ -322,7 +340,11 @@ async function bootstrap() {
         saveCurrentState: saveInteraction,
         battleController: getBattleController(),
         expeditionController: getExpeditionController(),
-        statusText
+        statusText,
+        returnToHabitat: () => {
+          panelManager.closePanel({ reason: "phase-return" });
+          pageRouter?.navigate("home");
+        }
       });
     }
     return mapController;
@@ -409,6 +431,9 @@ async function bootstrap() {
   settingsController.bind();
   pageRouter.bind();
   actionSheetController.bind();
+  // 穩定的唯讀 readiness signal，供本機/CI 瀏覽器 gate 在操作前確認
+  // 所有 DOM controllers 已完成綁定；不暴露 gameplay state。
+  document.documentElement.dataset.nexusControllersReady = "true";
   markPerf("nexus:controllers-ready");
 
   let raphaelPresenceResetTimer = null;
@@ -514,7 +539,9 @@ async function bootstrap() {
   onboardingController.render();
 
   if (!window.PIXI) {
-    statusText.textContent = "PixiJS 載入失敗，請檢查網路或 CDN。";
+    statusText.setAttribute("role", "alert");
+    statusText.textContent = "棲地暫時無法顯示。請檢查網路後重新整理；你的本機記憶仍安全保留。";
+    showPixiLoadFailure();
     return;
   }
 
@@ -573,6 +600,7 @@ async function bootstrap() {
   } catch (error) {
     console.error(error);
     statusText.textContent = "場景初始化失敗，請重新整理頁面。";
+    showPixiLoadFailure("場景初始化失敗，請重新整理頁面；你的本機記憶仍安全保留。");
   }
 }
 
@@ -731,10 +759,15 @@ async function bootScene(
   syncHabitatTraces();
   store.subscribe(syncHabitatTraces);
 
-  let companion = await createCreatureNode(currentCreature, statusText);
+  const reportCompanionStatus = ({ message }) => {
+    if (message) statusText.textContent = message;
+  };
+  let companionPositionCleanup = null;
+  let companion = await createCreatureNode(currentCreature, { onStatus: reportCompanionStatus });
 
   function attachCompanion(node, creature) {
-    positionCompanion(node, app);
+    companionPositionCleanup?.();
+    companionPositionCleanup = positionCompanion(node, app);
     layers.layerEntity.addChild(node);
     exposeDevCompanion(node);
 
@@ -776,7 +809,7 @@ async function bootScene(
     const previousCompanion = companion;
     interactionController?.dispose?.();
     interactionController = null;
-    const nextCompanion = await createCreatureNode(nextCreature, statusText);
+    const nextCompanion = await createCreatureNode(nextCreature, { onStatus: reportCompanionStatus });
     companion = nextCompanion;
     attachCompanion(nextCompanion, nextCreature);
     if (previousCompanion && previousCompanion !== nextCompanion) {
@@ -791,7 +824,7 @@ async function bootScene(
     const profile = getSceneProfile(normalizedId);
     const switched = await switchEnvironmentHabitat(environmentLayer, layers, app, profile);
     if (!switched) return false;
-    positionCompanion(companion, app);
+    companionPositionCleanup = positionCompanion(companion, app);
     rebaseCompanionMotion(companionMotionController, companion);
     weatherFx.weatherId = "__pending__";
     return true;

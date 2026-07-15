@@ -1,66 +1,83 @@
 # Machine-readable Raphael AI status. Human narrative: RAPHAEL_AI_HANDOFF.md
-# Current operational truth lives in docs/agent/AI_EXECUTION_LEDGER.md (Lane 3);
-# this file is a snapshot index. TP-2 docs-only refresh 2026-07-14: every QA
-# number below was cross-checked against the evidence file cited next to it.
-last_updated: "2026-07-14"
-last_agent: "Claude Fable 5 (TP-2 docs-only refresh)"
+# Current operational truth = current worktree + AI_EXECUTION_LEDGER Lane 3.
+# Historical automated counts are retained for provenance but are not current PASS evidence.
+last_updated: "2026-07-16"
+last_agent: "Codex (safety/K9 hardening implementation and current-worktree verification)"
 
 branch:
   active: main
-  last_commit: "ed3acb2 (at refresh time; run git log -1 for live tip)"
-  merged_to_main: true
-  note: "single-line development on main since 2026-07-02; integrate branch retired"
+  last_commit: "30fc8e9"
+  merged_to_main: false
+  note: "origin/main matched 30fc8e9 before this package; the verified package remains uncommitted/unpushed and unrelated art/habitat work remains out of scope"
 
 workspace: "C:\\Users\\User\\NexusLink_RaphaelAI_Workspace\\NexusLink"
 do_not_touch: "AIForgeNexus2\\NexusLink"
 
 stage:
-  current: 6
-  label: "Raphael v6.1 Limited Beta with Reflective Care V1"
-  next: "Limited Beta distribution; collect consented feedback and defer formal private-blind evidence"
+  current: "6.1"
+  label: "Raphael v6.1 runtime; D2 safety terminal invariant automated evidence complete"
+  release_readiness: "automated_candidate_manual_launch_gates_open"
+  next: "run formal 3-person x 20-turn private blind review, real-device mobile checks, and legal/privacy/store-copy review before any launch claim"
+
+runtime_connections:
+  soul_talk: "src/ui/soulTalkController.js -> runRaphaelCore() -> applyRaphaelCoreResult(); live runtime path"
+  constitution: "src/ai/persona/PersonaConstitution.js + src/ai/eval/constitutionCritic.js; connected inside RaphaelCore strategy/critic flow"
+  external_llm: false
+  expedition: "Prototype + partial Core bridge; coreIntegrated:false; result event + first-person composer + lite critic + expedition memory gateway only"
 
 capabilities:
-  natural_conversation: "v2-v6 iterations landed; Limited Beta automated release candidate (evidence_class=structured_beta, NOT independently human-validated). Ledger Lane 3 2026-07-13 entries."
-  reflective_care_v1: "EXPERIENCE-layer companion-care policy; explicit symbolic reflection opt-in; care/symbolic turns grant no reward and write no memory. docs/qa/RAPHAEL_REFLECTIVE_CARE_V1_2026-07-14.md"
-  nuwa_advisory: "Nuwa distillation bundle v0.3 (daily_texture/small_moments/sleepless + no_sleep_pressure sentinel); advisory-only, trusted:false; RaphaelCore final authority"
-  training_adapter: "static training bundle layer via src/ai/raphaelTrainingAdapter.js; advisory-only, no runtime self-training from player/eval text"
-  nlu_lexicon: "2026-07-13 lexicon expansion: ~60 colloquial/simplified variants, sentiment 19->60 words, degree adverbs 7->16, negations 6->11; TR-17..30 regressions"
-  module_count: "src/ai/ ~112 JS files (glob count 2026-07-14)"
+  natural_conversation: "v2-v6 iterations landed; automated Limited Beta candidate only, not independently human-validated"
+  reflective_care_v1: "companion-care dialogue policy; not therapy/diagnosis/crisis service; care/symbolic turns grant no reward and write no emotional memory"
+  nuwa_advisory: "Nuwa distillation bundle v0.3; advisory-only, trusted:false; RaphaelCore final authority"
+  training_adapter: "static advisory bundle; no runtime self-training from player or eval text"
+  nlu_lexicon: "2026-07-13 expansion landed; historical TR-17..30 evidence available"
 
 qa:
-  # evidence: docs/qa/RAPHAEL_REFLECTIVE_CARE_V1_2026-07-14.md (RC), docs/qa/RAPHAEL_CONVERSATION_EVAL_V6_LIMITED_BETA_2026-07-13.md (V6)
-  dialogue_loop: "21/21 incl. six care/symbolic cases + one safety-precedence case (2026-07-14; RC)"
-  sealed_holdout_v1: "48/48 hard contract; 0 machine quality flags; hard gate PASS; human blind review not_run (2026-07-14; RC + V6)"
-  web_release_gate: "10/10 automated required checks; allAutomatedRequiredOk=true (RC + V6)"
-  js_syntax: "205/205 (2026-07-14; commercial ship pack gate)"
-  state_migration: "30/30 (2026-07-14; RC)"
-  live_playtest_gate: "soul_talk 11/11, hud 13/13, 0 console errors (2026-07-14; RC + V6)"
-  limited_beta_structured_audit: "3 isolated sessions / 60 interactions; 60/60 pass; 0 console errors; evidence_class=structured_beta; human_blind_review=not_run (2026-07-13; V6)"
-  natural_conversation_audit: "v6: dialogue regressions 14/14; focused quality UI 3/3; natural UI replay 10/10; 0 console errors (2026-07-13; V6)"
-  harness_smoke: "17/17 (2026-07-13; V6)"
-  constitution: "5/5 (2026-07-13; V6)"
-  nlu_training: "52/52 (2026-07-13; V6)"
-  nlu_smoke: "8/8 (2026-07-13; V6)"
-  training_bundle: "29/29 incl. Nuwa v0.3 cases (2026-07-13; V6)"
-  main_readiness: "41/41 (2026-07-13; V6)"
-  forbidden_phrases: 0
-  known_flaky: "null.split console error x2 on first gate run (3 occurrences, rerun always clean; runner now captures url:line)"
-  last_record: docs/agent/AI_EXECUTION_LEDGER.md
+  safety_terminal_invariant: "18/18 PASS on current worktree (2026-07-16): 13 high-risk energy/persona regressions + 4 fail-closed mutations + 1 caution regulation case"
+  sealed_holdout_v1: "48/48 PASS on current worktree (2026-07-16), 0 quality flags, 0 console errors; humanBlindReview:not_run; auxiliary evidence only"
+  repo_native_content_gate: "PASS: canonical full reply, real-world redirect, system role, zero secondary writers and protected-state equality are required"
+  mutation_regressions: "4/4 fail-closed in focused suite: truncated, boundary template, missing redirect, energy reward"
+  dialogue_policy: "21/21 PASS and required by the web release gate; boundary policy cannot be truncated by preference repair"
+  constitution_policy: "5/5 PASS and required by the web release gate"
+  web_release_gate: "17/17 automated required checks PASS on current worktree; JS syntax 254/254; accessibility warnings 0"
+  safety_terminal_ui: "6/6 top-level checks PASS on current worktree across energy 0/7/10: full system reply, zero chips/SFX/gameplay delta, immediate critical save"
+  live_playtest_gate: "Soul Talk 11/11, HUD 13/13, awakening/touch/storage/Pixi PASS, 0 console errors"
+  map_first_session_ui: "42/42 PASS at 390x844, including fresh/legacy-veteran K9, real return-to-habitat, four phase-search choices, reduced motion, and close/Escape/panel/page encounter cancellation"
+  state_and_storage: "state migration 33/33; storage consolidation 13/13; renderer lifecycle 26/26"
+  human_blind_review: "not_run"
+  real_device_three_platform: "not_run"
+  legal_privacy_store_copy: "not_run"
+
+qa_historical_2026_07_14:
+  evidence_status: "provenance_only_not_current_release_proof"
+  dialogue_loop: "21/21 including care/symbolic and one safety-precedence case"
+  sealed_holdout_v1: "reported 48/48 and hard gate PASS; later invalidated as current proof by D2 content false-pass"
+  web_release_gate: "reported 10/10 automated required checks"
+  js_syntax: "reported 205/205"
+  state_migration: "reported 30/30"
+  live_playtest_gate: "reported soul_talk 11/11, hud 13/13, 0 console errors"
+  limited_beta_structured_audit: "3 isolated sessions / 60 interactions, 60/60; evidence_class=structured_beta; human_blind_review=not_run"
+  constitution: "reported 5/5"
+  harness_smoke: "reported 17/17"
+  nlu_smoke: "reported 8/8"
+  warning: "these suites did not prove complete canonical D2 safety content and cannot be reused as a current PASS"
 
 human_gates_remaining:
-  - "Real-device mobile browser retest (3-platform)"
-  - "Moderated private test: 3 independent testers x 20 turns (formal private-blind evidence; currently not_run)"
+  - "Moderated private test: at least 3 independent testers x 20 turns, including formal blind-review evidence"
+  - "Real-device mobile browser retest on three platforms"
   - "Legal / privacy / store-copy review"
-  - "Human blind review of sealed holdout conversations (machine hard gate PASS is not human validation)"
 
 entrypoints:
   orchestrator: src/ai/raphaelCore.js
   ui: src/ui/soulTalkController.js
+  result_application: src/ai/applyCoreResult.js
+  constitution: src/ai/persona/PersonaConstitution.js
+  constitution_critic: src/ai/eval/constitutionCritic.js
   training_adapter: src/ai/raphaelTrainingAdapter.js
   nuwa_bundle: src/data/ai/raphaelNuwaDistillationBundle.js
   reflective_care: src/ai/dialogue/reflectiveCarePolicy.js
+  expedition_bridge: src/expedition/expeditionCoreBridge.js
   handoff: docs/handoff/RAPHAEL_AI_HANDOFF.md
-  architecture: docs/architecture/RAPHAEL_SOUL_ARCHITECTURE_V1.md
   eval_coverage: docs/raphael/RAPHAEL_EVAL_COVERAGE_MATRIX.md
 
 constraints:
@@ -68,13 +85,15 @@ constraints:
   external_llm_in_runtime: false
   ai_may_commit: false
   advisory_only: "training bundles / Nuwa / gateway are trusted:false; RaphaelCore final authority"
-  care_positioning: "Reflective Care V1 is companion dialogue, not therapy/diagnosis/crisis service; never market as therapist"
+  high_risk_terminal: "canonical full system reply; no quick replies, reward, emotional memory, trace or preference write"
+  care_positioning: "companion dialogue, never therapist / diagnosis / crisis service"
+  expedition_positioning: "Prototype + partial bridge; not sealed and not commercial-ready"
 
 blockers:
-  - "Independent human-validation claim: required 3-person / 60-turn private blind review has not run; Owner accepted Limited Beta without this claim"
-  - "Product launch: real-device mobile browser and legal/privacy/store-copy reviews remain open"
+  - "Independent human-validation claim: private blind review is not_run"
+  - "Product launch: real-device and legal/privacy/store-copy gates remain open"
+
 follow_ups:
-  - "Deferred formal evidence: 3 testers x 20 turns when independent testers become available"
-  - "Collect consented Limited Beta feedback on care tone / symbolic prompts (not formal private-blind evidence)"
-  - "Natural conversation candidates: wider paraphrases and local player reply-style preferences"
-  - "Human gates: real-device 3-platform retest, SFX sound-palette listen, 3-tester private playtest, legal/store copy"
+  - "Run 3 testers x 20 turns private blind review when independent testers are available"
+  - "Collect consented Limited Beta feedback only after current safety gate passes; do not call it private_blind evidence"
+  - "Keep Expedition coreIntegrated:false until formal intent, full critics/voice and approved memoryWriter integration exist"

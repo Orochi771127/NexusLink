@@ -3,12 +3,18 @@ import { getEmergencyStorageLimits, pruneStateForStorage } from "../engine/stora
 
 export const STORAGE_KEY = "nexusLinkR2State:v1";
 const LEGACY_STORAGE_KEYS = ["nexusLinkPrototypeState", "nexusLinkState"];
+const LEGACY_PREFERENCE_STORAGE_KEY = "nexusLinkCompanionPrefs:v1";
+const LEGACY_AUDIO_STORAGE_KEY = "nexusLinkAudioMuted:v1";
+const pendingLegacyCleanup = new Set();
 
 export function loadState() {
   try {
-    const raw = readFirstAvailableSave();
-    if (!raw) return createDefaultState();
-    return normalizeState({ ...createDefaultState(), ...JSON.parse(raw) });
+    const source = readFirstAvailableSave();
+    const parsed = source?.raw ? JSON.parse(source.raw) : {};
+    if (source?.key && source.key !== STORAGE_KEY) pendingLegacyCleanup.add(source.key);
+    migrateCompanionPreferences(parsed);
+    migrateAudioMuted(parsed);
+    return normalizeState({ ...createDefaultState(), ...parsed });
   } catch (error) {
     console.warn("Failed to load save data", error);
     return createDefaultState();
@@ -22,6 +28,7 @@ export function saveState(state) {
 
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(prunedState));
+    cleanupMigratedLegacyKeys();
     return { ok: true, state: prunedState, emergency: false };
   } catch (error) {
     if (error?.name !== "QuotaExceededError") {
@@ -32,6 +39,7 @@ export function saveState(state) {
     const emergencyState = pruneStateForStorage(prunedState, now, getEmergencyStorageLimits());
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(emergencyState));
+      cleanupMigratedLegacyKeys();
       return { ok: true, state: emergencyState, emergency: true };
     } catch (retryError) {
       console.warn("[saveManager] Emergency save failed:", retryError);
@@ -43,6 +51,9 @@ export function saveState(state) {
 export function clearState() {
   try {
     localStorage.removeItem(STORAGE_KEY);
+    for (const key of [...LEGACY_STORAGE_KEYS, LEGACY_PREFERENCE_STORAGE_KEY, LEGACY_AUDIO_STORAGE_KEY]) {
+      localStorage.removeItem(key);
+    }
   } catch (error) {
     console.warn("Failed to clear NexusLink save", error);
   }
@@ -52,8 +63,8 @@ export function clearState() {
 // 由 settingsController 包成 Blob 讓玩家自行下載。
 export function exportSaveData() {
   try {
-    const raw = readFirstAvailableSave();
-    return raw || JSON.stringify(createDefaultState());
+    const source = readFirstAvailableSave();
+    return source?.raw || JSON.stringify(createDefaultState());
   } catch (error) {
     console.warn("Failed to export NexusLink save", error);
     return null;
@@ -62,12 +73,51 @@ export function exportSaveData() {
 
 function readFirstAvailableSave() {
   const current = localStorage.getItem(STORAGE_KEY);
-  if (current) return current;
+  if (current) return { key: STORAGE_KEY, raw: current };
 
   for (const key of LEGACY_STORAGE_KEYS) {
     const legacy = localStorage.getItem(key);
-    if (legacy) return legacy;
+    if (legacy) return { key, raw: legacy };
   }
 
   return null;
+}
+
+function migrateCompanionPreferences(targetState) {
+  const raw = localStorage.getItem(LEGACY_PREFERENCE_STORAGE_KEY);
+  if (!raw) return;
+  if (targetState.companionPreferences && typeof targetState.companionPreferences === "object") {
+    pendingLegacyCleanup.add(LEGACY_PREFERENCE_STORAGE_KEY);
+    return;
+  }
+  try {
+    const parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed !== "object") return;
+    targetState.companionPreferences = parsed;
+    pendingLegacyCleanup.add(LEGACY_PREFERENCE_STORAGE_KEY);
+  } catch {
+    // 損壞的 legacy preference 不阻擋主存檔；也不刪除，保留人工復原可能。
+  }
+}
+
+function migrateAudioMuted(targetState) {
+  const raw = localStorage.getItem(LEGACY_AUDIO_STORAGE_KEY);
+  if (raw !== "true" && raw !== "false") return;
+  if (typeof targetState.settings?.audioMuted === "boolean") {
+    pendingLegacyCleanup.add(LEGACY_AUDIO_STORAGE_KEY);
+    return;
+  }
+  targetState.settings = { ...(targetState.settings || {}), audioMuted: raw === "true" };
+  pendingLegacyCleanup.add(LEGACY_AUDIO_STORAGE_KEY);
+}
+
+function cleanupMigratedLegacyKeys() {
+  for (const key of pendingLegacyCleanup) {
+    try {
+      localStorage.removeItem(key);
+      pendingLegacyCleanup.delete(key);
+    } catch {
+      // 主存檔已成功；清理失敗留待下次 save 重試。
+    }
+  }
 }

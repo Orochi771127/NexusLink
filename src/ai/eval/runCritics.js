@@ -7,21 +7,32 @@ import { critiqueReply } from "./replyCritic.js";
 import { critiqueGenericReply } from "./genericReplyCritic.js";
 
 export function runCritics(context = {}) {
-  const results = [
-    critiqueConstitution(context),
-    critiqueSafety(context),
-    critiqueBoundary(context),
-    critiquePersona(context),
-    critiqueMemory(context),
-    critiqueReply(context),
-    critiqueGenericReply({
-      reply: context.reply,
-      nlu: context.perception?.nlu,
-      perception: context.perception,
-      state: context.state,
-      previousReply: getPreviousCompanionReply(context.state)
-    })
-  ];
+  const safety = context.perception?.safety || {};
+  const results = safety.isHighRisk
+    ? [critiqueSafety(context)]
+    : [
+        critiqueConstitution(context),
+        critiqueSafety(context),
+        critiqueBoundary(context),
+        critiquePersona(context),
+        critiqueMemory(context),
+        critiqueReply(context)
+      ];
+
+  // Boundary policy replies deliberately foreground the companion's refusal
+  // instead of mirroring the user's coercive wording. Generic grounding is
+  // therefore not a valid quality signal on these turns.
+  if (!safety.isHighRisk && !safety.isBoundaryPressure) {
+    results.push(
+      critiqueGenericReply({
+        reply: context.reply,
+        nlu: context.perception?.nlu,
+        perception: context.perception,
+        state: context.state,
+        previousReply: getPreviousCompanionReply(context.state)
+      })
+    );
+  }
 
   const failed = results.filter((result) => !result.pass);
 

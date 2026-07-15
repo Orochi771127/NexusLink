@@ -37,6 +37,10 @@
         <div class="scene-layer">
           <div id="game-root" aria-label="心核連結棲地場景與夥伴層" data-i18n-aria="aria.gameRoot"></div>
         </div>
+        <div id="pixi-load-failure" class="pixi-load-failure" role="alert" hidden>
+          <strong>棲地暫時無法顯示</strong>
+          <span>請檢查網路後重新整理；你的本機記憶仍安全保留。</span>
+        </div>
         <div class="content-layer" aria-hidden="true">
           <div class="home-view">
             <div class="companion-focal-zone"></div>
@@ -499,7 +503,12 @@
       </section>
     </main>
 
-    <script src="https://cdn.jsdelivr.net/npm/pixi.js@8.8.1/dist/pixi.min.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/pixi.js@8.8.1/dist/pixi.min.js"
+      integrity="sha384-zdhGmV2SoYr+2tn3rLxuKWeeNdIcsEK3qFdEqFlmHOPdYCbq++efc+FP7DE8r4kC"
+      crossorigin="anonymous"
+      onerror="window.__NEXUS_PIXI_LOAD_FAILED__=true;document.getElementById('pixi-load-failure')?.removeAttribute('hidden')"
+    ></script>
     <script type="module" src="./src/app.js"></script>
   </body>
 </html>

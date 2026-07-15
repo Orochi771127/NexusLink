@@ -32,8 +32,9 @@ export function runAutonomyLoop({
   preferenceProfile = {},
   runtime = {}
 } = {}) {
+  const isSafetyTerminal = perception.safety?.isHighRisk === true;
   const companionId = companion?.id || perception.persona?.companionId || "default";
-  const preferenceCooldown = buildPreferenceCooldown(preferenceProfile);
+  const preferenceCooldown = isSafetyTerminal ? {} : buildPreferenceCooldown(preferenceProfile);
 
   const needs = deriveCompanionNeeds({ state, perception, plan });
   const goal = selectActiveGoal(needs, perception, plan);
@@ -80,11 +81,35 @@ export function runAutonomyLoop({
     reply: execution.reply,
     actionPlan: execution.actionPlan,
     memoryDecision: execution.memoryDecision,
+    traceDecision: execution.traceDecision,
+    stateMutation: execution.stateMutation,
     output: {
+      replyRole: execution.replyRole,
       shouldSpeak: execution.shouldSpeak,
       shouldStaySilent: execution.shouldStaySilent
     }
   });
+
+  if (isSafetyTerminal) {
+    const reflection = buildInteractionReflection({
+      perception,
+      actionPlan: execution.actionPlan,
+      execution,
+      stateMutation: execution.stateMutation
+    });
+
+    return {
+      needs,
+      goal,
+      cooldown,
+      actionPlan: execution.actionPlan,
+      execution,
+      reflection,
+      reflectionPasses: [reflection],
+      critique,
+      preferenceProfile
+    };
+  }
 
   if (!critique.pass) {
     execution = applyCriticRepairs(execution, critique, perception, state);
@@ -94,7 +119,10 @@ export function runAutonomyLoop({
       reply: execution.reply,
       actionPlan: execution.actionPlan,
       memoryDecision: execution.memoryDecision,
+      traceDecision: execution.traceDecision,
+      stateMutation: execution.stateMutation,
       output: {
+        replyRole: execution.replyRole,
         shouldSpeak: execution.shouldSpeak,
         shouldStaySilent: execution.shouldStaySilent
       }
@@ -116,7 +144,10 @@ export function runAutonomyLoop({
       reply: execution.reply,
       actionPlan: execution.actionPlan,
       memoryDecision: execution.memoryDecision,
+      traceDecision: execution.traceDecision,
+      stateMutation: execution.stateMutation,
       output: {
+        replyRole: execution.replyRole,
         shouldSpeak: execution.shouldSpeak,
         shouldStaySilent: execution.shouldStaySilent
       }
@@ -139,14 +170,21 @@ export function runAutonomyLoop({
     gateway: perception.gateway
   });
 
-  execution = applyPreferenceRepairs(execution, updatedProfile);
+  // 表達偏好可以改一般陪伴語氣，但不能把 boundary policy 裁成只剩
+  // 「我聽見你需要有人在」，否則玩家看不到夥伴真正說不的內容。
+  if (!perception.safety?.isBoundaryPressure) {
+    execution = applyPreferenceRepairs(execution, updatedProfile);
+  }
   critique = runCritics({
     perception,
     state,
     reply: execution.reply,
     actionPlan: execution.actionPlan,
     memoryDecision: execution.memoryDecision,
+    traceDecision: execution.traceDecision,
+    stateMutation: execution.stateMutation,
     output: {
+      replyRole: execution.replyRole,
       shouldSpeak: execution.shouldSpeak,
       shouldStaySilent: execution.shouldStaySilent
     }
@@ -159,7 +197,10 @@ export function runAutonomyLoop({
       reply: execution.reply,
       actionPlan: execution.actionPlan,
       memoryDecision: execution.memoryDecision,
+      traceDecision: execution.traceDecision,
+      stateMutation: execution.stateMutation,
       output: {
+        replyRole: execution.replyRole,
         shouldSpeak: execution.shouldSpeak,
         shouldStaySilent: execution.shouldStaySilent
       }
@@ -179,7 +220,10 @@ export function runAutonomyLoop({
       reply: execution.reply,
       actionPlan: execution.actionPlan,
       memoryDecision: execution.memoryDecision,
+      traceDecision: execution.traceDecision,
+      stateMutation: execution.stateMutation,
       output: {
+        replyRole: execution.replyRole,
         shouldSpeak: execution.shouldSpeak,
         shouldStaySilent: execution.shouldStaySilent
       }
@@ -207,6 +251,9 @@ export function runAutonomyLoop({
 }
 
 function maybeRenderReply(execution, perception, runtime, preferenceProfile) {
+  if (perception.safety?.isHighRisk) {
+    return { used: false, reason: "safety_terminal" };
+  }
   const settings = runtime?.externalIntelligence || {};
   if (!settings.rendererEnabled || !execution.shouldSpeak || !execution.reply) {
     return { used: false, reason: "renderer_disabled" };
@@ -259,7 +306,11 @@ function applyCriticRepairs(execution, critique, perception, state = {}) {
     shouldSpeak = repair.shouldSpeak;
   }
 
-  if (codes.some((code) => String(code).includes("too_affectionate") || code === "pressure_requires_boundary_action")) {
+  if (codes.some((code) =>
+    String(code).includes("too_affectionate")
+    || code === "pressure_requires_boundary_action"
+    || code === "boundary_reply_missing_refusal"
+  )) {
     reply = buildBoundaryPolicyReply(perception.safety);
     shouldSpeak = true;
   }

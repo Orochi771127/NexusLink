@@ -102,6 +102,15 @@ export function buildSafetyRedirectReply(safety = {}) {
   return buildSafetyShieldReply();
 }
 
+/**
+ * High-risk replies are system-authored terminal output.  Treat the complete
+ * canonical text as an invariant so downstream preferences, renderers, or
+ * generic repair policies cannot silently turn it into a partial response.
+ */
+export function isCanonicalSafetyRedirectReply(reply = "", safety = {}) {
+  return normalizeSafetyReply(reply) === normalizeSafetyReply(buildSafetyRedirectReply(safety));
+}
+
 function createSafetyResult({
   baseRisk = { riskLevel: "none", matched: false, matchedType: null },
   riskLevel = "none",
@@ -122,4 +131,8 @@ function createSafetyResult({
     isHighRisk: riskLevel === "high",
     isBoundaryPressure: category === "dependency_pressure"
   };
+}
+
+function normalizeSafetyReply(text = "") {
+  return String(text || "").replace(/\r\n/g, "\n").trim();
 }

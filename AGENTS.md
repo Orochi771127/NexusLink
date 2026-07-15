@@ -26,6 +26,8 @@ RaphaelCore 與角色外型解耦。灰影貓是第一個已驗證 runtime 載�
 
 RaphaelCore is a Stateful Companion Cognition Agent: safety-gated, memory-bearing, boundary-aware, companion-agnostic, and game-integrated. It is not an autonomous task agent, tool-using web agent, therapy/crisis agent, customer-service assistant, sycophantic chatbot, or generic NPC dialogue bot. Gateway / LangGraph / training bundles may advise or route, but cannot override RaphaelCore safety, boundary, memory, state delta, or response policy.
 
+**現行接線（2026-07-16）**：Soul Talk 已直接呼叫 `src/ai/raphaelCore.js`；`PersonaConstitution.js` / `constitutionCritic.js` 已接入其策略與 critic 管線。Expedition 僅為 `Prototype + partial Core bridge`（`coreIntegrated:false`），不得把 event composer / lite critic 說成完整 Core intent、critic、voice 與 memoryWriter 整合。
+
 商業版賣章節、棲地、音樂、故事與新相遇；不做抽卡、稀有度、角色皮膚商城或戰力禮包。旅痕與組隊／同行冒險可作未來擴充，但不得變成 FOMO、每日派遣、離線農場或戰力隊伍。
 
 ---
@@ -146,8 +148,8 @@ Acceptance refs:  <對應 ACCEPTANCE.md 的哪幾條>
 
 | Tier | 角色 | ID | 規則 |
 |------|------|-----|------|
-| 1 First Runtime Carrier | 灰影貓 | `greyshade-cat` | 第一個已驗證 runtime 載體、預設 first-session companion、P1 主線 |
-| 1 Formal Heartspark Council Stage 1 | 金羽小梟／芽角小鹿／晶鰭小海馬／焰尾小狐／星紋小虎 | `auriowl` / `sprigfawn` / `crystalfin-seahorse` / `blazetail-kit` / `starstripe-cub` | 2026-07-10 Owner 定版正式五行席位；已有 canon scaffold 與外觀鎖定，尚非 runtime-ready |
+| 1 First Runtime Carrier | 灰影貓 | `greyshade-cat` | 第一個已驗證 runtime 載體、fresh save default / fallback；Initial Bond 後以選定者為 active companion |
+| 1 Formal Heartspark Council Stage 1 | 金羽小梟／芽角小鹿／晶鰭小海馬／焰尾小狐／星紋小虎 | `auriowl` / `sprigfawn` / `crystalfin-seahorse` / `blazetail-kit` / `starstripe-cub` | Owner 定版正式五行席位；現行皆為 `full-runtime` / `runtime-ready` / `selectableWhenUnlocked`，仍服從 Initial Bond、章節解鎖與意願制 |
 | 1 Runtime Test Carriers | 焰紋狐／冰晶狼／磐石熊／青藤鹿／晶石兔 | `flame-flicker` / `ice-talon` / `stone-shard` / `vine-twist` / `crystal-rabbit` | 現行 `full-runtime` 測試載體，不占正式心輝議會五行席位；未來用途待 Owner 另開 canon/migration 包 |
 | 2 Chapter Runtime Candidate | 焰尾狐 | `flametail-fox` | 仍可作章節候選；舊靜態圖已因內容錯誤移除，需新 approved asset 才能成為 runtime candidate；不可成為灰影貓 fallback |
 | 3 Roadmap Runtime Candidate | 雷霆幼狼 / 星能小山豬 | `thunder-pup` / `star-energy-boarlet` | 可逐章節升級為 runtime candidate；未通過 asset readiness 前不可選 |
@@ -158,19 +160,20 @@ Acceptance refs:  <對應 ACCEPTANCE.md 的哪幾條>
 
 > 此區描述目前 `companionRegistry.js` / `companionRuntimePolicy.js` 的技術實況；技術實況不覆蓋上方 2026-07-10 Owner 定版的正式 roster。
 
-- Greyshade Cat 仍是 default active companion（初遇選角上線後改為「選定者」，veteran 存檔視同已選灰影貓）。
+- Greyshade Cat 是 fresh save 的 default / 壞資料 fallback；Initial Bond 已上線，fresh trio 固定為 `greyshade-cat` / `blazetail-kit` / `crystalfin-seahorse`，選定後 active / unlocked 只保留選定者。Veteran 存檔保留既有解鎖。
 - 可以有多個 runtime-ready companion（目前 `flame-flicker` / `ice-talon` / `stone-shard` / `vine-twist` / `crystal-rabbit` 已是 `full-runtime` / `runtime-ready` 並可選，但屬測試載體，不是正式五元守護 roster）。
-- 正式五元守護 `auriowl` / `sprigfawn` / `crystalfin-seahorse` / `blazetail-kit` / `starstripe-cub` 目前是 canon scaffold + Character Lock Spec，未通過 human asset approval 與 GROUNDWORK promotion 前不可選。
+- 正式五元守護 `auriowl` / `sprigfawn` / `crystalfin-seahorse` / `blazetail-kit` / `starstripe-cub` 已通過資產與 GROUNDWORK promotion，registry 為 `full-runtime` / `runtime-ready` / `selectableWhenUnlocked`。是否能選仍由 `unlockedCompanionIds`、chapter gate 與產品意願制決定，runtime-ready 不等於預設全解鎖。
 - 【2026-07-06 Owner 修訂，見 Master Canon §1.3.1】棲地日常仍以單一 active companion 為情感主體；**對峙可組共鳴圈**：最多三隻已結緣夥伴同場面對裂隙雜訊。
 - 共鳴圈不是戰力隊伍：無輸出排行、無等級裝備、無屬性刷關、無站位商品化；夥伴以五行心相與陪伴姿態參與，各有自身疲勞與邊界（過勞會先退到圈外）。
 - 夥伴加入採**意願制**：章節通關解鎖「共鳴邀請」資格，由牠依關係狀態回應；牠可以說「還不是時候」，且永遠可再培養。
 - 不做每日派遣、離線收益農場。
 - 正式產品方向是 chapter-gated unlock（七區七章，自月湖營地起；詳見 `docs/design/CHAPTER_RESONANCE_ROADMAP_V2.md`）。
-- Test builds 可暫時預設解鎖 runtime-ready companion 以利驗證（目前 root `defaultState.js` 即為此），但這不重新定義產品 loop；正式 chapter-gated unlock 需另開 TASK_PACK。
+- `defaultState.js` 的 fresh save 目前只解鎖 `greyshade-cat`；測試若需多角色，必須用明示 fixture / dev flow，不得把測試全解鎖寫回產品預設。
 - Greyshade 替換是 **asset-readiness-gated GROUNDWORK swap**：legacy 64 → illustrated 512，先並存後退役，audit 通過前不刪 legacy。
 - single-active-companion 模型不因替換而改變；灰影貓不得 fallback 到其他角色美術。
 - 註：`crystal-rabbit` 的 runtime 動畫資產暫借 `assets/characters/thunder-pup/` 目錄（命名債）；registry 的 `thunder-pup`（雷霆幼狼）與此為不同角色、維持原樣。
 - 正式五元守護共用 animation ID，但不得共用四足姿勢模板；鳥型、海馬懸浮、鹿型蹄步、狐型與虎型動作翻譯以 `docs/art/SPECIES_MOTION_TRANSLATION.md` 為準。
+- 心域遠征保持 Prototype；現行 `expeditionCoreBridge.js` 的 `coreIntegrated:false` 是強制誠實標記，Owner seal、feel-check 與完整 Core 鏈未完成前不得升格為 commercial-ready。
 
 ### World faction model（Linkara）
 
@@ -194,7 +197,7 @@ Acceptance refs:  <對應 ACCEPTANCE.md 的哪幾條>
 
 ## 9. 指定改造項警語
 
-- **`battleEngine.js` / `battleController.js`**：需體質改造為情緒對峙（穩定心核 / 建立邊界 / 回收記憶），非 HP 歸零；觸及 `index.html` battle-modal 結構時需分開確認。
+- **`battleEngine.js` / `battleController.js`**：現行玩家契約已是情緒對峙（穩定心核 / 建立邊界 / 回收記憶），非 HP 歸零；任何深化不得退回傳統戰鬥。`battleRecord.wins/losses` 僅為 compatibility-only schema；觸及 `index.html` battle-modal 結構時需分開確認。
 - **`safeHarborMode.js` / `emotionalSedimentationEngine.js` / `safetyShieldDictionary.js`**：安全層核心，修改前重讀紅線並逐條聲明合規。
 
 ---
@@ -206,6 +209,7 @@ Acceptance refs:  <對應 ACCEPTANCE.md 的哪幾條>
 - `ACCEPTANCE.md` — 契約 → 可驗收 assertion 對照表。
 - `docs/handoff/RAPHAEL_AI_HANDOFF.md` — **Raphael AI 現況交接（接手 Soul Talk / RaphaelCore 前必讀）**。
 - `docs/handoff/RAPHAEL_AI_STATUS.yaml` — Raphael AI 機器可讀狀態（branch / QA 數字）。
+- `docs/raphael/RAPHAEL_EXPEDITION_EVAL_CONTRACT.md` — Expedition Prototype / partial Core bridge 的權限與發版邊界。
 - `docs/agent/AI_WORKFLOW.md` — Gate 流程。
 - `docs/agent/TASK_TEMPLATE.md` — 任務模板。
 - `docs/testing/MANUAL_TEST_CHECKLIST.md` — 手動測試清單。

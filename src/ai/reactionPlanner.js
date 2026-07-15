@@ -20,8 +20,10 @@ export function planSoulTalkReaction({ analysis = {}, intent = {}, semanticSoul 
       statePatch: {
         safeHarborMode: true,
         mood: "safe_harbor",
-        energy: Math.max(state.energy || 0, 1),
-        trust: Math.max(state.trust || 0, 5),
+        energy: Number(state.energy) || 0,
+        bond: Number(state.bond) || 0,
+        trust: Number(state.trust) || 0,
+        defense: Number(state.defense) || 0,
         reactionPreview: "棲地先把這句話從遊戲回應中隔離出來。"
       }
     });

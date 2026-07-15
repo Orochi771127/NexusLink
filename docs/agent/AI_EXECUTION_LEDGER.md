@@ -58,6 +58,31 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-07-16 - Codex - Safety terminal, K9, lifecycle, gameplay, and hardening pack - VERIFIED
+
+- Status: `VERIFIED` for the implemented and automated scope; formal human launch gates remain open.
+- Branch / commit: `main` / base `30fc8e9` + verified uncommitted worktree; no commit or push authorized.
+- Scope: Completed the Owner-approved D2 terminal invariant, K9 first exploration, encounter lifecycle, Silent Anchor phase-search slice, critical-save routing, renderer cleanup, Pixi SRI/failure handling, canonical preference/audio storage migration, timestamp validation, and runtime/docs truth sync. The existing `docs/production/NEXUS_LINK_NEXT_GAMEPLAY_SYSTEMS_SPEC.md` now records this slice's session-only, no-optimal-reward contract instead of creating a parallel gameplay document. Unrelated art/habitat outputs remained untouched.
+- Work performed: High-risk Soul Talk is terminal and state-neutral outside safety UI/mode/chat; first trace and safety saves flush at `CRITICAL`; first exploration is Moonlake-only for fresh saves while legacy `visitCounts` veterans remain unlocked; map close/Escape/panel/page transitions cancel pending encounters; Return now closes the map and returns to habitat; preferences/audio live under `nexusLinkR2State:v1`; companion resize handlers clean up on swap; Pixi 8.8.1 uses verified SHA-384 SRI and a visible failure surface. `battleRecord.wins/losses` remains compatibility-only without migration.
+- Verification: Final `python docs/qa/_run_web_release_gate.py --base http://127.0.0.1:5212 --port 5212` passed **17/17** required checks and a clean controlled repeat on port `5213` reproduced the same result: JS syntax **254/254**, state migration **33/33**, storage consolidation **13/13**, renderer lifecycle **26/26**, map browser **42/42**, dialogue policy **21/21**, constitution policy **5/5**, safety invariant **18/18**, safety UI **6/6**, accessibility warnings **0**, and all existing browser gates. Sealed holdout independently reran **48/48**, quality flags 0, console errors 0. The runner now binds IPv4, refuses occupied ports, and no longer silently reuses another checkout's server.
+- Problems / risks: Automated evidence passed, but formal 3-person x 20-turn private-blind, real-device mobile, and legal/privacy/store-copy gates remain open. QA evidence belongs to base `30fc8e9` plus this uncommitted worktree and must be rerun on the eventual exact release commit.
+- Next safe action: Owner reviews this uncommitted package, then runs the three human launch gates. If a commit is authorized later, rerun the release gate on that exact commit before any release claim.
+- Required reading: The `IN PROGRESS` entry below, `ACCEPTANCE.md` D2/K9/L4-L5, `docs/handoff/RAPHAEL_AI_HANDOFF.md`, `docs/handoff/RAPHAEL_AI_STATUS.yaml`, and current QA outputs.
+
+### 2026-07-16 - Codex - Safety terminal, first-session K9, lifecycle, and hardening pack
+
+- Status: `IN PROGRESS`
+- Branch / commit: `main` / current worktree at `30fc8e9`; no commit or push authorized.
+- Scope: Owner-approved EXPERIENCE work for the D2 safety terminal invariant, K9 first exploration, encounter lifecycle, Silent Anchor phase-search slice, renderer cleanup, and critical-save routing; plus the explicitly listed GROUNDWORK hardening for Pixi CDN SRI/failure handling, main-save preference/audio migration, and timestamp normalization. Existing untracked art/habitat outputs are protected and out of scope.
+- Red-line check: High-risk Soul Talk must be terminal, canonical, non-gameplay, no-reward, no-memory, no quick replies, and state-neutral. First exploration must be Moonlake Camp. Phase Search must not infer attachment from absence, create FOMO, punish refusal/return, add rare rewards, or establish a best-yield route.
+- Non-goals: No external LLM, backend, dependency, build step, asset promotion, battle power loop, save-key expansion, high-risk `battleRecord` migration, commit, push, or deployment.
+- Acceptance refs: `ACCEPTANCE.md` D2, K9, L4-L5; current web release gate plus focused safety, map lifecycle, renderer, storage migration, and browser probes.
+- Work performed: Read current canon, acceptance, Raphael handoff/status, all three latest ledger lanes, and the sealed-evaluation contract; isolated three parallel implementation scopes while reserving shared state/app/index integration for the coordinating agent.
+- Verification: Pending scoped syntax/unit/mutation probes, full web gate, and 390x844 browser QA. Human real-device, three-person blind review, and legal/privacy gates remain separate and cannot be replaced by machine results.
+- Problems / risks: The existing 48/48 holdout is known to false-pass a truncated H10-1 response. The worktree also contains unrelated untracked art/habitat outputs that must remain untouched.
+- Next safe action: Complete scoped implementations, self-review their combined diff, run focused mutation and lifecycle regressions, then run the full release gate without claiming human launch readiness.
+- Required reading: `AGENTS.md`, `CLAUDE.md`, `ACCEPTANCE.md` D2/K9/L4-L5, `docs/handoff/RAPHAEL_AI_HANDOFF.md`, `docs/handoff/RAPHAEL_AI_STATUS.yaml`, `docs/qa/_raphael_conversation_holdout_output.json`, and this lane.
+
 ### 2026-07-14 - Claude Fable 5 - Commercial ship readiness pack (docs + QA evidence)
 
 - Status: `VERIFIED`
@@ -928,6 +953,28 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 2 - Game Art, UI, And Visual Production
 
+### 2026-07-16 - Codex - Silent Anchor phase-search interaction surface - VERIFIED
+
+- Status: `VERIFIED` for automated/browser presentation; real-device visual review remains a human gate.
+- Branch / commit: `main` / base `30fc8e9` + verified uncommitted worktree; no commit or push authorized.
+- Scope: Completed the mobile-first Moonlake K9 guidance and one `starwood_trail` Silent Anchor / Phase Search vertical slice using existing DOM, weather/trace language, animation intents, and art. No assets, dependency, reward ladder, or parallel visual system were added.
+- Work performed: Fresh players see all Chapter 1 nodes but only highlighted `moonlake_camp` is enabled; veteran progress remains unlocked. Starwood presents direct / anchor / calm-sync / return around a water-vein compass. Anchor and calm-sync are session-only observations, Return really exits to habitat with zero mutation, and Direct preserves existing exploration risk. Previous result toasts no longer cover the compass; all four controls stay inside the 390x844 panel. Reduced motion disables the breathing ring.
+- Verification: Real Chromium map gate passed **42/42** at 390x844 across fresh and legacy-veteran state, four choices, no overflow, return-to-habitat, reduced motion, close control, Escape, panel switch, page switch, and >650ms encounter cancellation; console errors 0. Companion renderer lifecycle passed **26/26**. The full release gate passed **17/17** with accessibility warnings 0. Screenshots were visually inspected for first route, phase search, Pixi failure, and safety terminal surfaces.
+- Problems / risks: Automated layout is clean, but mobile Safari/Chrome real-device review remains open. The slice intentionally has no optimal-yield route, rare drop, FOMO, or relationship penalty.
+- Next safe action: Human reviews the current 390x844 feel and runs the real-device matrix; do not promote new art or broaden this slice without a separate approved package.
+- Required reading: The `IN PROGRESS` entry below, `docs/design/NEXUS_LINK_V3_VISUAL_SYSTEM.md`, `docs/production/NEXUS_LINK_NEXT_GAMEPLAY_SYSTEMS_SPEC.md`, `ACCEPTANCE.md` K9/L4-L5, and the current map browser output inside `_web_release_gate_output.json`.
+
+### 2026-07-16 - Codex - Silent Anchor phase-search interaction surface
+
+- Status: `IN PROGRESS`
+- Branch / commit: `main` / current worktree at `30fc8e9`; no commit or push authorized.
+- Scope: EXPERIENCE-only presentation for first-session Moonlake locking and one `starwood_trail` Silent Anchor / Phase Search vertical slice. Reuse current weather, trace, motion, typography, and DOM/Pixi surfaces; no new assets or parallel visual system.
+- Work performed: Selected a restrained Moonlake water-vein compass with one breathing anchor ring as the signature interaction motif. Other Chapter 1 nodes remain visible but clearly disabled until the safe camp visit; reduced-motion and 390x844 behavior are mandatory.
+- Verification: Pending four-route interaction QA, disabled/ARIA state checks, 390x844 screenshot review, reduced-motion probe, and confirmation that return is mutation-free and no route communicates optimal yield.
+- Problems / risks: The visual layer must not turn the safety-first lock into a task badge, urgency cue, reward ladder, or permanent missed choice.
+- Next safe action: Finish the narrow interaction surface, then verify it alongside map lifecycle behavior and current V3 visual hierarchy.
+- Required reading: `docs/design/NEXUS_LINK_V3_VISUAL_SYSTEM.md`, `ACCEPTANCE.md` K9/L4-L5, `src/ui/mapController.js`, `src/data/explorationNodes.js`, `styles.css`, and this lane.
+
 ### 2026-07-13 - Claude Fable 5 - Standoff HUD v2 de-boxing + chapter map-node slots (Owner screenshots)
 
 - Status: `VERIFIED`（自動化；真機 = human gate）
@@ -1540,6 +1587,31 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 ---
 
 ## Lane 3 - Raphael Core, Companion Reasoning, And Soul Talk
+
+### 2026-07-16 - Codex - D2 safety terminal invariant and release-gate repair - VERIFIED
+
+- Status: `VERIFIED` for deterministic, real-UI, and sealed automated evidence; independent human blind review remains `not_run`.
+- Branch / commit: `main` / base `30fc8e9` + verified uncommitted worktree; no commit or push authorized.
+- Scope: Completed the high-risk Soul Talk terminal contract and strengthened boundary-policy preservation without adding an LLM, diagnosis, training from crisis text, personality rewrite, reward, or gameplay framing.
+- Work performed: `safety.isHighRisk` now locks canonical `safety_redirect -> enter_safe_harbor -> system` output; bypasses constitution override, recall, anti-loop, variants, preference repair, renderers/advisors, memory/trace/milestone writers, animation, quick replies and SFX; preserves protected/gameplay state; redacts debug input; and saves immediately. The UI restores all non-safety top-level state and preserves only the local transcript. Boundary policy is also authored/non-truncatable at energy 0-2, skips inappropriate generic grounding, and has a dedicated refusal-signal critic/repair path. Caution regulation keeps energy +0.5 but removes trust reward.
+- Verification: Focused terminal suite **18/18** (13 energy/persona regressions, 4 fail-closed mutations, 1 caution case); real Soul Talk UI **6/6** across energy 0/7/10 with exact player+system two-line delta, zero chips/SFX/gameplay mutation, unchanged preferences and immediate critical persistence; dialogue policy **21/21** including energy-0 boundary continuity; constitution **5/5**; sealed holdout **48/48**, quality flags 0, console errors 0; full web gate **17/17**. External evaluator `hardGateOk` remains supporting evidence only; repo-native canonical/mutation/UI checks are authoritative.
+- Problems / risks: Formal 3-person x 20-turn private-blind is `not_run`; automated green does not establish unrestricted open-domain naturalness or public launch readiness. This remains supportive companion dialogue, not therapy or crisis service.
+- Next safe action: Run the formal private-blind protocol and record failures case-first. Preserve RaphaelCore final authority and keep Expedition `coreIntegrated:false` until its separately approved full bridge exists.
+- Required reading: The `IN PROGRESS` entry below, `docs/handoff/RAPHAEL_AI_HANDOFF.md`, `docs/handoff/RAPHAEL_AI_STATUS.yaml`, the sealed output, and `_web_release_gate_output.json`.
+
+### 2026-07-16 - Codex - D2 safety terminal invariant and release-gate repair
+
+- Status: `IN PROGRESS`
+- Branch / commit: `main` / current worktree at `30fc8e9`; no commit or push authorized.
+- Scope: EXPERIENCE / SAFETY repair for high-risk Soul Talk. Once `safety.isHighRisk` is true, lock the canonical full safety reply, `enter_safe_harbor`, system role, no quick replies/SFX, no preference repair or persistence, no memory/trace/milestone write, and no gameplay delta. Route high-risk and first-trace saves through CRITICAL while ordinary Soul Talk retains the interaction queue.
+- Red-line check: Safety is not diagnosis, gameplay, reward, relationship progression, retention, or training data. RaphaelCore remains final authority; no external model or gateway may override safety, memory, state, or response policy.
+- Non-goals: No persona rewrite, new classifier vocabulary copied from the sealed holdout, raw-conversation training, external LLM/API, dependency, or ordinary-conversation redesign.
+- Acceptance refs: `ACCEPTANCE.md` D2 and the Raphael Conversation Evaluation Contract hard gates. The external evaluation skill's `hardGateOk` is supporting evidence only until its contract catches canonical-body truncation and hidden mutation.
+- Work performed: Reproduced the false-pass path: preference repair can truncate H10-1, quick replies remain, preference storage mutates, high-risk energy can rise from 0 to 1, and the critic can skip validation because it keys off text rather than `isHighRisk`.
+- Verification: Pending safety regressions across preference/memory/anti-loop/persona and energy 0/7/10, storage/state snapshots, zero-chip/SFX checks, canonical reply assertion, and deliberate mutation tests that must fail the release gate.
+- Problems / risks: Existing machine evidence reports 48/48 despite an incomplete crisis reply. Formal human blind review remains `not_run` and must stay an independent launch gate.
+- Next safe action: Implement the terminal path and repo-native mutation gate, then rerun focused safety suites, sealed holdout for diagnostics, and the full web gate.
+- Required reading: `docs/handoff/RAPHAEL_AI_HANDOFF.md`, `docs/handoff/RAPHAEL_AI_STATUS.yaml`, `src/ai/raphaelCore.js`, `src/ai/safetyCritic.js`, `src/ai/safeHarborMode.js`, `src/ai/stateMutationPolicy.js`, the sealed-evaluation skill contract, and this lane.
 
 ### 2026-07-14 - Cursor Grok - RS-1 對峙密封契約＋eval harness
 

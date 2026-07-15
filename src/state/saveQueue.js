@@ -56,12 +56,18 @@ export function createSaveQueue(saveFn) {
     flush();
   }
 
+  function onPageHide() {
+    flush();
+  }
+
   document.addEventListener("visibilitychange", onVisibilityChange);
   window.addEventListener("beforeunload", onBeforeUnload);
+  window.addEventListener("pagehide", onPageHide);
 
   function dispose() {
     document.removeEventListener("visibilitychange", onVisibilityChange);
     window.removeEventListener("beforeunload", onBeforeUnload);
+    window.removeEventListener("pagehide", onPageHide);
 
     if (timerId !== null) {
       clearTimeout(timerId);

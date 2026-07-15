@@ -1,6 +1,7 @@
 /**
  * Level 2 preference memory — session cache + cross-session persistence.
- * Persistence uses PREFERENCE_STORAGE_KEY (not STORAGE_KEY / defaultState).
+ * The active preference store is mirrored into state.companionPreferences by
+ * the Soul Talk controller and persisted through the canonical save manager.
  */
 import {
   commitCompanionPreferenceProfile,

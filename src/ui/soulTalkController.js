@@ -7,6 +7,7 @@ import { isEmotionalHabitatTrace } from "../engine/habitatTraceEngine.js";
 import { applyRaphaelAgentReduction, reduceRaphaelAgentIntent } from "../engine/raphaelIntentReducer.js";
 import { buildEventReflection, composeMemoryReflection } from "../engine/soulTalkComposer.js";
 import { getCompanionById } from "../data/companionRegistry.js";
+import { loadPreferenceStore, replacePreferenceStore } from "../ai/companionPreferenceStore.js";
 import { qs, restoreViewportAfterKeyboard } from "../utils/dom.js";
 import AudioManager from "../audio/audioManager.js";
 
@@ -15,6 +16,12 @@ const DEFAULT_PREVIEW_TEXT = "你可以慢慢說，牠會聽。";
 const FIRST_TRACE_SYSTEM_TEXT = "月湖留下了第一道很淡的光。這不是獎勵，是牠記得你說過的事。";
 const FIRST_TRACE_STATUS_TEXT = "第一道痕跡已安靜留在月湖。";
 const NON_REWARDING_MODES = new Set(["safety_redirect", "withdraw", "reject"]);
+const SAFETY_TERMINAL_MUTABLE_FIELDS = new Set([
+  "safeHarborMode",
+  "mood",
+  "reactionPreview",
+  "chatHistory"
+]);
 // 痕跡回響（First-Session 支柱三）：第一道痕跡有專屬提示（FIRST_TRACE_SYSTEM_TEXT），
 // 但之後每次有意義的傾訴讓新痕跡亮起時原本「完全沒有回饋」——迴圈缺少「有回報感」。
 // 這組輪播句讓每一輪都「看得見牠記住了」。語氣守則：是「記得」的觀察，不是獎勵、不是稱讚、
@@ -26,7 +33,7 @@ const TRACE_ECHO_LINES = Object.freeze([
   "又一道很淡的光留在了岸邊，是你們一起攢的。"
 ]);
 
-export function createSoulTalkController({ store, saveCurrentState }) {
+export function createSoulTalkController({ store, saveCurrentState, saveCriticalState = saveCurrentState }) {
   const chatLog = qs("#chat-log");
   const quickReplyRow = qs("#quick-reply-row");
   const messageInput = qs("#message-input");
@@ -160,17 +167,23 @@ export function createSoulTalkController({ store, saveCurrentState }) {
     setStatusText(`${companionName}正在聽，先把湖面放慢……`);
     scrollAnchorText = message;
     addChat("player", message);
-    // 送出音＝「我說了」的動作回饋，與內容無關（safety 判斷只影響回覆音）。
-    AudioManager.playSfx("soul_send");
 
     let result;
 
     store.updateState((state) => {
+      // 玩家訊息已先寫入 chatHistory；除此之外，高風險回合只允許安全 UI/mode
+      // 與 canonical system reply。先封存完整 top-level state，避免 lifecycle 或
+      // 未來新增的次級 writer 在 safety terminal 路徑留下任何 gameplay/memory delta。
+      const stateBeforeCore = cloneSerializable(state);
       const moodBefore = state.mood;
       const now = Date.now();
       const idSuffix = String(Math.floor(Math.random() * 1000)).padStart(3, "0");
       const traceCountBefore = countVisibleRelationshipTraces(state.habitatTraces);
       const activeCompanion = resolveActiveCompanion(state);
+
+      // 偏好記憶以主 state 為唯一持久來源；Core 仍使用隔離的 session cache，
+      // 回合結束再把 snapshot 放回同一份 save state，避免額外 localStorage key。
+      replacePreferenceStore(state.companionPreferences);
 
       const lifecycleResult = updateMemoryLifecycles(state.emotionalMemories || [], now);
       state.emotionalMemories = lifecycleResult.updatedMemories;
@@ -182,6 +195,7 @@ export function createSoulTalkController({ store, saveCurrentState }) {
         repeated: message === state.lastMessage,
         quickReply: options.quickReply || null
       });
+      state.companionPreferences = loadPreferenceStore();
 
       let awakeningResult = null;
       if (!isRaphaelAwakened(state) && shouldAllowFirstAwakening(coreResult)) {
@@ -198,6 +212,10 @@ export function createSoulTalkController({ store, saveCurrentState }) {
         ? deferOrdinaryMemoryForFirstAwakeningTurn(coreResult)
         : coreResult;
       const applied = applyRaphaelCoreResult(state, coreResultToApply, { companion: activeCompanion, now });
+      if (isSafetyCoreResult(coreResultToApply)) {
+        restoreSafetyTerminalState(state, stateBeforeCore);
+        replacePreferenceStore(state.companionPreferences);
+      }
       const traceCountAfter = countVisibleRelationshipTraces(state.habitatTraces);
       const firstTraceCreated = shouldAnnounceFirstTrace({
         traceCountBefore,
@@ -246,23 +264,19 @@ export function createSoulTalkController({ store, saveCurrentState }) {
       };
     });
 
-    lastQuickReplies = result?.coreResult?.quickReplies || [];
-    saveCurrentState();
+    const safetyTurn = isSafetyCoreResult(result?.coreResult);
+    lastQuickReplies = safetyTurn ? [] : result?.coreResult?.quickReplies || [];
+    if (safetyTurn || result?.firstTraceCreated) saveCriticalState();
+    else saveCurrentState();
     renderChat();
     renderQuickReplies(lastQuickReplies);
-    // 回覆音：safety 回合完全靜音（紅線 7——求助導引不得有任何獎勵化呈現）。
-    {
-      const appliedCore = result?.coreResult || {};
-      const isSafetyTurn =
-        appliedCore.plan?.mode === "safety_redirect" ||
-        appliedCore.safety?.isHighRisk === true ||
-        appliedCore.perception?.safety?.isHighRisk === true;
-      if (!isSafetyTurn) {
-        if (result?.firstTraceCreated || result?.traceEchoed) {
-          AudioManager.playSfx("trace_bloom");
-        } else {
-          AudioManager.playSfx("soul_reply");
-        }
+    // safety 回合連「送出／收到」提示音都不播，避免求助導引被包裝成遊戲回饋。
+    if (!safetyTurn) {
+      AudioManager.playSfx("soul_send");
+      if (result?.firstTraceCreated || result?.traceEchoed) {
+        AudioManager.playSfx("trace_bloom");
+      } else {
+        AudioManager.playSfx("soul_reply");
       }
     }
     if (result?.agentReduction) {
@@ -277,6 +291,23 @@ export function createSoulTalkController({ store, saveCurrentState }) {
     window.clearTimeout(thinkingTimer);
     thinkingTimer = window.setTimeout(() => setSoulTalkState("idle"), 720);
     return result;
+  }
+
+  function cloneSerializable(value) {
+    if (typeof structuredClone === "function") return structuredClone(value);
+    return JSON.parse(JSON.stringify(value));
+  }
+
+  function restoreSafetyTerminalState(state, snapshot) {
+    for (const key of Object.keys(state)) {
+      if (!SAFETY_TERMINAL_MUTABLE_FIELDS.has(key) && !Object.prototype.hasOwnProperty.call(snapshot, key)) {
+        delete state[key];
+      }
+    }
+    for (const [key, value] of Object.entries(snapshot)) {
+      if (SAFETY_TERMINAL_MUTABLE_FIELDS.has(key)) continue;
+      state[key] = cloneSerializable(value);
+    }
   }
 
   function ensureWaveformShell() {
@@ -437,6 +468,14 @@ export function createSoulTalkController({ store, saveCurrentState }) {
     reflectOnMemory,
     setStatusText
   };
+}
+
+function isSafetyCoreResult(coreResult = {}) {
+  return (
+    coreResult.plan?.mode === "safety_redirect" ||
+    coreResult.safety?.isHighRisk === true ||
+    coreResult.perception?.safety?.isHighRisk === true
+  );
 }
 
 function countVisibleRelationshipTraces(traces = []) {

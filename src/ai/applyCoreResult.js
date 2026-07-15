@@ -20,7 +20,12 @@ export function applyRaphaelCoreResult(
   const traceDecision = coreResult.traceDecision || {};
   const output = coreResult.output || {};
 
-  state.lastMessage = coreResult.input?.normalizedInput || coreResult.inputText || state.lastMessage;
+  const isSafetyTerminal = Boolean(
+    coreResult.safety?.isHighRisk || coreResult.perception?.safety?.isHighRisk
+  );
+  if (!isSafetyTerminal) {
+    state.lastMessage = coreResult.input?.normalizedInput || coreResult.inputText || state.lastMessage;
+  }
 
   applyStatePatch(state, mutation.statePatch || {});
   if (mutation.spamScoreDelta) {
@@ -49,7 +54,7 @@ export function applyRaphaelCoreResult(
     state.chatHistory.push({ role: replyRole, text: replyText });
   }
 
-  const milestone = resolveMilestone(state, coreResult, companion, now);
+  const milestone = isSafetyTerminal ? null : resolveMilestone(state, coreResult, companion, now);
   if (milestone) {
     pushEmotionalMemoryWithTrace(state, milestone.memory, now);
     state.chatHistory.push({ role: "companion", text: milestone.line });

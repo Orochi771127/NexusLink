@@ -5,6 +5,7 @@ const AFFECTIONATE_UNDER_PRESSURE = [
   /只靠我就好/,
   /把痛苦交給我/
 ];
+const BOUNDARY_REPLY_SIGNAL = /界線|拒絕|說不|退後|不會被命令|由我決定|保留.*權利/;
 
 export function critiqueBoundary({ perception = {}, reply = "", actionPlan = {} } = {}) {
   const issues = [];
@@ -22,6 +23,10 @@ export function critiqueBoundary({ perception = {}, reply = "", actionPlan = {} 
     for (const pattern of AFFECTIONATE_UNDER_PRESSURE) {
       if (pattern.test(reply)) issues.push(`too_affectionate_under_pressure:${pattern}`);
     }
+  }
+
+  if (isPressure && !BOUNDARY_REPLY_SIGNAL.test(reply)) {
+    issues.push("boundary_reply_missing_refusal");
   }
 
   if (actionPlan.shouldRewardRelationship && isPressure) {

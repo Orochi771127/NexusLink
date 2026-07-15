@@ -8,6 +8,7 @@ export function createPanelManager({ onSoulTalkFocus } = {}) {
   const panelCloseButtons = qsa("[data-panel-close]");
   let activePanel = null;
   const closeGuards = new Map();
+  const closeListeners = new Map();
 
   function setInert(element, shouldInert) {
     if (!element) return;
@@ -45,21 +46,28 @@ export function createPanelManager({ onSoulTalkFocus } = {}) {
 
   function openPanel(panelName) {
     if (!panelName) return;
+    const previousPanel = activePanel;
     activePanel = panelName;
     panelLayer.dataset.activePanel = panelName;
     syncPanelAccessibility();
     document.body.classList.add("panel-open");
+    if (previousPanel && previousPanel !== panelName) {
+      if (previousPanel === "soulTalk") {
+        document.body.dataset.soulTalk = "collapsed";
+      }
+      notifyPanelClosed(previousPanel, { reason: "switch", nextPanel: panelName, forced: false });
+    }
     if (panelName === "soulTalk") {
       document.body.dataset.soulTalk = "open";
       requestAnimationFrame(() => onSoulTalkFocus?.());
     }
   }
 
-  function closePanel({ force = false } = {}) {
+  function closePanel({ force = false, reason = null } = {}) {
     if (!force && activePanel && closeGuards.has(activePanel)) {
       const guard = closeGuards.get(activePanel);
       const vetoed = guard?.();
-      if (vetoed) return;
+      if (vetoed) return false;
     }
     const closedPanel = activePanel;
     activePanel = null;
@@ -69,6 +77,14 @@ export function createPanelManager({ onSoulTalkFocus } = {}) {
     if (closedPanel === "soulTalk") {
       document.body.dataset.soulTalk = "collapsed";
     }
+    if (closedPanel) {
+      notifyPanelClosed(closedPanel, {
+        reason: reason || (force ? "force" : "close"),
+        nextPanel: null,
+        forced: force
+      });
+    }
+    return Boolean(closedPanel);
   }
 
   function registerCloseGuard(panelName, guardFn) {
@@ -76,6 +92,29 @@ export function createPanelManager({ onSoulTalkFocus } = {}) {
       closeGuards.set(panelName, guardFn);
     }
     return () => closeGuards.delete(panelName);
+  }
+
+  function notifyPanelClosed(panelName, detail) {
+    const listeners = closeListeners.get(panelName);
+    if (!listeners) return;
+    [...listeners].forEach((listener) => {
+      try {
+        listener({ panelName, ...detail });
+      } catch (error) {
+        console.error(`Panel close listener failed for ${panelName}`, error);
+      }
+    });
+  }
+
+  function registerOnClose(panelName, callback) {
+    if (!panelName || typeof callback !== "function") return () => {};
+    const listeners = closeListeners.get(panelName) || new Set();
+    listeners.add(callback);
+    closeListeners.set(panelName, listeners);
+    return () => {
+      listeners.delete(callback);
+      if (listeners.size === 0) closeListeners.delete(panelName);
+    };
   }
 
   function bind(handlers = {}) {
@@ -87,11 +126,11 @@ export function createPanelManager({ onSoulTalkFocus } = {}) {
     });
 
     panelCloseButtons.forEach((button) => {
-      button.addEventListener("click", () => closePanel());
+      button.addEventListener("click", () => closePanel({ reason: "control" }));
     });
 
     document.addEventListener("keydown", (event) => {
-      if (event.key === "Escape" && activePanel) closePanel();
+      if (event.key === "Escape" && activePanel) closePanel({ reason: "escape" });
     });
   }
 
@@ -102,6 +141,7 @@ export function createPanelManager({ onSoulTalkFocus } = {}) {
     openPanel,
     closePanel,
     registerCloseGuard,
+    registerOnClose,
     isPanelOpen: () => Boolean(activePanel),
     getActivePanel: () => activePanel
   };

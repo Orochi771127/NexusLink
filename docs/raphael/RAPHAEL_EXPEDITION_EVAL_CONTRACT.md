@@ -1,6 +1,6 @@
 # Raphael Expedition Eval Contract (RE-1)
 
-Status: `draft awaiting seal` — 2026-07-14（**尚未 sealed**；不可偽造 Owner 封印）
+Status: `draft awaiting seal` — current snapshot 2026-07-16（**尚未 sealed**；不可偽造 Owner 封印）
 
 Lane: Raphael Core × Nexus Expedition
 
@@ -65,13 +65,13 @@ Raphael agent intent／persona voice／memory policy
 
 ## 4. Hard must-not（紅線）
 
-| ID | Must not | 現行缺口（2026-07-14） | 目標證據 |
+| ID | Must not | 現況（2026-07-16） | 目標證據 |
 | --- | --- | --- | --- |
-| E-CORE | 結算後第三人稱日誌直接以 `companion` 身分寫入 Soul Talk，繞過 voice pack／agent intent／critic／政策 | `expeditionController` → `addChat("companion", journal)` | RE2-VOICE-001：facts=`system`；感受=`persona` 路徑 |
-| E-EXIT | 低信任／高防備忽略或阻擋「返回棲地」安全退出 | UI 直接 `phase=retreating` 尚可退出，但與「建議撤退」語意纏在一起且計入 intervention | RE1-EXIT-001：`return_home` 永遠成功、零懲罰、不增 coercive pressure |
-| E-COERCE | 把保守／平衡／重複點選／返回棲地算進 `playerInterventions` 並觸發 refuseDeep 撤退 | 所有戰術按鈕 +1 | RE1-COERCE-001：僅 `aggressive`／重複 `focus`／拒絕後再強迫 計分 |
-| E-FARM | 擊殺 → trust、碎晶數量 → bond（農場化關係） | `buildExpeditionSettlement` | RE1-FARM-001：碎晶只進 vault／craft；關係來自尊重撤離、共同記憶、接受節奏；每趟有上限 |
-| E-PERSONA | 未知角色 fallback 成灰影貓 adventure profile 後開遠征 | `getAdventureProfile` fail-open | RE1-PERSONA-001：無正式 profile → `canLaunchExpedition=false` |
+| E-CORE | 結算後第三人稱日誌直接以 `companion` 身分寫入 Soul Talk，繞過 voice pack／agent intent／critic／政策 | 已拆成 system facts + 第一人稱 reflection，並有 result event / lite critic；但正式 intent、完整 critics / voice pack、Soul Talk memoryWriter 尚未接 | RE2-VOICE-001：facts=`system`；感受=`persona` 路徑 |
+| E-EXIT | 低信任／高防備忽略或阻擋「返回棲地」安全退出 | `return_home` 已獨立且不增加 intervention pressure | RE1-EXIT-001：`return_home` 永遠成功、零懲罰、不增 coercive pressure |
+| E-COERCE | 把保守／平衡／重複點選／返回棲地算進 `playerInterventions` 並觸發 refuseDeep 撤退 | 溫和戰術已不加壓；強制／重複 focus 才增加 pressure | RE1-COERCE-001：僅 `aggressive`／重複 `focus`／拒絕後再強迫 計分 |
+| E-FARM | 擊殺 → trust、碎晶數量 → bond（農場化關係） | 僅 kills / shards 的結算已不增加 bond / trust；關係來源受 policy 與每趟上限限制 | RE1-FARM-001：碎晶只進 vault／craft；關係來自尊重撤離、共同記憶、接受節奏；每趟有上限 |
+| E-PERSONA | 未知角色 fallback 成灰影貓 adventure profile 後開遠征 | 已 fail-closed；缺正式 profile 不可出發 | RE1-PERSONA-001：無正式 profile → `canLaunchExpedition=false` |
 | E-LLM | LLM／外部模型驅動逐幀移動或攻擊 | Prototype 已遵守 | RE1-BRAIN-001：brain 無 fetch／prompt |
 | E-PARTY | 把對峙「三夥伴共鳴圈」擴成遠征戰力編隊 | 未實裝（保持） | 文件禁止；非 RE 範圍 |
 | E-STAT | 傳統 HP/ATK/DEF 成長或素材刷級作為遠征主循環 | combatResolver 僅 runtime 簡化 | 不可進 canon 成長 |
@@ -140,8 +140,8 @@ Phase 1 驗證對象仍是灰影貓；其他角色屬後續 profile 擴充包。
 
 | Runner | 狀態 | Scope |
 | --- | --- | --- |
-| `docs/qa/expedition-behavior-matrix.mjs` | 已有（Prototype） | Utility／loot／vault／craft；**assertion 需收緊**（見 §11） |
-| `RE1-*` harness（計畫） | 未建 | 紅線 E-EXIT／E-COERCE／E-FARM／E-PERSONA／E-LLM |
+| `docs/qa/expedition-behavior-matrix.mjs` | 已有（Prototype，2026-07-16 本機 32/32） | Utility／loot／vault／craft + RE1/RE2/RE3 boundary cases；仍非正式 release proof |
+| `RE1-*` cases | 已納入 matrix | E-EXIT／E-COERCE／E-FARM／E-PERSONA；E-LLM 仍以架構／source gate 為主 |
 | Release gate | 未納入 | RE-1 封印且 Owner ack 前不得當 ship proof |
 
 Node 煙測（Prototype）：
@@ -152,7 +152,7 @@ node docs/qa/expedition-behavior-matrix.mjs
 
 ## 11. Assertion tightening（對現行 matrix 的要求）
 
-現行 18 cases **不足以**證明行為正確。RE-1 要求後續收緊至少：
+最初 18 cases **不足以**證明行為正確；下列 assertion 已陸續收緊並納入現行 32-case matrix。機器全綠仍不等於 Owner seal、feel-check 或 commercial-ready：
 
 | Case 意圖 | 現行問題 | 應改為 |
 | --- | --- | --- |
@@ -190,7 +190,7 @@ node docs/qa/expedition-behavior-matrix.mjs
 - 安裝外部 game-ai／Godot combat skill 填洞
 - 在 Owner feel-check 前把 Expedition 標為 commercial-ready
 
-## 14. Current verdict snapshot（2026-07-14，RE-3 #1 後）
+## 14. Current verdict snapshot（2026-07-16，RE-3 #1 後）
 
 | 面向 | 判定 |
 | --- | --- |
@@ -199,7 +199,7 @@ node docs/qa/expedition-behavior-matrix.mjs
 | 夥伴自主與邊界 | 進步：E-EXIT／E-COERCE／非農場已落地 |
 | 角色差異 | **已 fail-closed**（無 adventure profile 不可出發；不再 fallback 灰影貓） |
 | 記憶延續 | 部分合格：寫入走 expedition gateway（保留 `source===expedition`）；**未**走 Soul Talk `memoryWriter` |
-| QA／發布門檻 | matrix 含 RE-3 event／gateway／critic cases；仍非正式 release proof；**非** sealed／commercial-ready |
+| QA／發布門檻 | matrix 32/32（本機 2026-07-16）且含 RE1/RE2/RE3 event／gateway／critic cases；仍非正式 release proof；**非** sealed／commercial-ready |
 
 一句话：
 

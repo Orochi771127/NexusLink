@@ -4,16 +4,17 @@ import { SCENE_LAYOUT } from "../data/sceneLayout.js";
 import { createAnimatedCompanionNode, loadCompanionAnimationPack } from "./spriteSheetAnimationLoader.js";
 import { getActiveSceneProfile } from "../data/sceneProfiles/index.js";
 
-export async function createCreatureNode(creature, statusText, { bootOnly = true } = {}) {
+export async function createCreatureNode(creature, { bootOnly = true, onStatus = null } = {}) {
+  const reportStatus = (kind, message) => onStatus?.({ kind, message, companionId: creature.id });
   if (creature.animationsManifest) {
     const animationPack = await loadCompanionAnimationPack(creature.animationsManifest, { bootOnly });
     const animatedCompanion = createAnimatedCompanionNode(animationPack, creature);
     if (animatedCompanion) {
       // 玩家可見的狀態行不寫技術詞（動畫 key / 載入）——牠只是「在這裡」。
-      statusText.textContent = `${creature.name}在月湖邊安靜待著。`;
+      reportStatus("ready", `${creature.name}在月湖邊安靜待著。`);
       return registerCompanionEditorObject(animatedCompanion);
     }
-    statusText.textContent = `${creature.name}動畫載入失敗，已保留預設動態。`;
+    reportStatus("fallback", `${creature.name}動畫載入失敗，已保留預設動態。`);
   }
 
   if (!creature.image) {
@@ -21,33 +22,50 @@ export async function createCreatureNode(creature, statusText, { bootOnly = true
       // 只有「未定義 placeholder 樣式」才視為異常；registry 內的輪廓佔位是正常設計狀態。
       console.warn("Creature has no fallback image; using generic placeholder.");
     }
-    statusText.textContent = `${creature.name}以輪廓之姿來到棲地（正式造型製作中）。`;
+    reportStatus("placeholder", `${creature.name}以輪廓之姿來到棲地（正式造型製作中）。`);
     return registerCompanionEditorObject(createCreaturePlaceholder(creature));
   }
 
   try {
     const texture = await PIXI.Assets.load(creature.image);
     const spriteCreature = createCreatureSprite(texture, creature);
-    statusText.textContent = `${creature.name}已進入夜間湖畔棲地。`;
+    reportStatus("ready", `${creature.name}已進入夜間湖畔棲地。`);
     return registerCompanionEditorObject(spriteCreature);
   } catch (error) {
     console.warn("Creature image load failed, fallback to placeholder:", error);
-    statusText.textContent = `${creature.name}圖片載入失敗，已改用預設造型。`;
+    reportStatus("fallback", `${creature.name}圖片載入失敗，已改用預設造型。`);
     return registerCompanionEditorObject(createCreaturePlaceholder(creature));
   }
 }
 
 export function positionCompanion(companion, app) {
   applyCompanionResponsiveLayout(companion, app);
-  if (typeof window !== "undefined" && !companion.__responsiveLayoutBound) {
-    companion.__responsiveLayoutBound = true;
-    window.addEventListener("resize", () => {
-      requestAnimationFrame(() => {
-        if (companion.destroyed) return;
-        applyCompanionResponsiveLayout(companion, app);
-      });
-    });
+  if (typeof window === "undefined") return () => {};
+  if (typeof companion.__responsiveLayoutCleanup === "function") {
+    return companion.__responsiveLayoutCleanup;
   }
+
+  let frameId = null;
+  const onResize = () => {
+    if (frameId !== null) window.cancelAnimationFrame(frameId);
+    frameId = window.requestAnimationFrame(() => {
+      frameId = null;
+      if (companion.destroyed) return;
+      applyCompanionResponsiveLayout(companion, app);
+    });
+  };
+  const cleanup = () => {
+    window.removeEventListener("resize", onResize);
+    if (frameId !== null) window.cancelAnimationFrame(frameId);
+    frameId = null;
+    if (companion.__responsiveLayoutCleanup === cleanup) {
+      delete companion.__responsiveLayoutCleanup;
+    }
+  };
+
+  companion.__responsiveLayoutCleanup = cleanup;
+  window.addEventListener("resize", onResize);
+  return cleanup;
 }
 
 export function bindCompanionTap(companion, { isInteractionBlocked, onTouch }) {

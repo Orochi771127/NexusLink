@@ -72,11 +72,13 @@ export function executeAutonomousAction({
     ? mapHabitatTraceIntent(memoryDecision, alignedPlan, perception.analysis)
     : { traceObject: null, traceIntent: null, shouldApplyTrace: false };
 
-  const animationDecision = mapSoulTalkAnimation({
-    plan: { ...alignedPlan, mode: coerced.reaction, animationKey: coerced.animationKey },
-    analysis: perception.analysis,
-    intent: perception.intent
-  });
+  const animationDecision = perception.safety?.isHighRisk
+    ? null
+    : mapSoulTalkAnimation({
+        plan: { ...alignedPlan, mode: coerced.reaction, animationKey: coerced.animationKey },
+        analysis: perception.analysis,
+        intent: perception.intent
+      });
 
   let reply = "";
   let composeMeta = null;
@@ -89,6 +91,11 @@ export function executeAutonomousAction({
     reply = "";
   } else if (coerced.selectedAction === "enter_safe_harbor") {
     reply = buildSafetyRedirectReply(perception.safety);
+    composeMeta = {
+      replySource: "safety",
+      variantId: "safety:canonical",
+      openingPhrase: ""
+    };
     alignedPlan.replyRole = "system";
   } else {
     const composed = composeRaphaelReply({

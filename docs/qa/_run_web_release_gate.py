@@ -19,13 +19,14 @@ import tempfile
 import textwrap
 import time
 from pathlib import Path
+from urllib.parse import urlparse
 
 from playwright.sync_api import sync_playwright
 
 
 ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_PORT = 5173
-DEFAULT_BASE = f"http://localhost:{DEFAULT_PORT}"
+DEFAULT_BASE = f"http://127.0.0.1:{DEFAULT_PORT}"
 OUTPUT_PATH = ROOT / "docs" / "qa" / "_web_release_gate_output.json"
 STORAGE_KEY = "nexusLinkR2State:v1"
 CHROMIUM_QA_ARGS = [
@@ -95,9 +96,11 @@ def wait_for_port(port: int, timeout: float = 10.0) -> bool:
 
 def start_http_server(port: int):
     if port_is_open(port):
-        return None, "reused_existing_server"
+        raise RuntimeError(
+            f"Port {port} is already in use; choose a clean port or pass --no-server only for an explicitly verified server."
+        )
     proc = subprocess.Popen(
-        [sys.executable, "-m", "http.server", str(port)],
+        [sys.executable, "-m", "http.server", str(port), "--bind", "127.0.0.1"],
         cwd=ROOT,
         stdout=subprocess.DEVNULL,
         stderr=subprocess.STDOUT,
@@ -107,6 +110,13 @@ def start_http_server(port: int):
         proc.terminate()
         raise RuntimeError(f"Local HTTP server did not start on port {port}")
     return proc, "started_local_http_server"
+
+
+def is_local_base(base_url: str) -> bool:
+    try:
+        return urlparse(base_url).hostname in {"127.0.0.1", "localhost", "::1"}
+    except ValueError:
+        return False
 
 
 def run_command(name: str, command: list[str], env: dict[str, str] | None = None, timeout: int = 120):
@@ -189,13 +199,62 @@ def run_js_syntax(node: str):
 
 
 def run_state_migration(node: str):
-    result = run_command(
+    state_result = run_command(
         "state_onboarding_migration",
         [node, "docs/qa/state-onboarding-migration-cases.mjs"],
         timeout=30,
     )
+    storage_result = run_command(
+        "storage_consolidation",
+        [node, "docs/qa/storage-consolidation-cases.mjs"],
+        timeout=30,
+    )
+    state_payload = state_result.get("json") or {}
+    storage_payload = storage_result.get("json") or {}
+    return {
+        "name": "state_and_storage_migration",
+        "ok": (
+            state_result["exit_code"] == 0
+            and state_payload.get("failed") == 0
+            and storage_result["exit_code"] == 0
+            and storage_payload.get("failed") == 0
+        ),
+        "state": state_result,
+        "storage": storage_result,
+    }
+
+
+def run_companion_renderer_lifecycle(node: str):
+    result = run_command(
+        "companion_renderer_lifecycle",
+        [node, "docs/qa/companion-renderer-lifecycle-cases.mjs"],
+        timeout=30,
+    )
     payload = result.get("json") or {}
     result["ok"] = result["exit_code"] == 0 and payload.get("failed") == 0
+    return result
+
+
+def run_map_first_session(node: str):
+    result = run_command(
+        "map_first_session",
+        [node, "docs/qa/_run_map_first_session_gate.mjs"],
+        timeout=30,
+    )
+    payload = result.get("json") or {}
+    result["ok"] = result["exit_code"] == 0 and payload.get("passed") is True
+    return result
+
+
+def run_map_first_session_ui(base_url: str):
+    result = run_command(
+        "map_first_session_ui",
+        [sys.executable, "docs/qa/_run_map_first_session_browser_gate.py"],
+        env={"NEXUS_QA_BASE": base_url},
+        timeout=120,
+    )
+    payload = result.get("json") or {}
+    result["ok"] = result["exit_code"] == 0 and payload.get("summary", {}).get("ok") is True
     return result
 
 
@@ -210,6 +269,16 @@ def read_png_size(path: Path):
 def root_path(asset_path: str) -> Path:
     cleaned = asset_path[2:] if asset_path.startswith("./") else asset_path
     return ROOT / cleaned
+
+
+def iter_manifest_paths(value, key_path=""):
+    if isinstance(value, str):
+        yield key_path, value
+        return
+    if isinstance(value, dict):
+        for key, child in value.items():
+            child_path = f"{key_path}.{key}" if key_path else str(key)
+            yield from iter_manifest_paths(child, child_path)
 
 
 def load_asset_manifest(node: str):
@@ -244,10 +313,24 @@ def run_asset_integrity(node: str):
     failures = []
     companion_summaries = []
 
+    index_html = (ROOT / "index.html").read_text(encoding="utf-8")
+    pixi_contract = {
+        "url": "https://cdn.jsdelivr.net/npm/pixi.js@8.8.1/dist/pixi.min.js",
+        "integrity": "sha384-zdhGmV2SoYr+2tn3rLxuKWeeNdIcsEK3qFdEqFlmHOPdYCbq++efc+FP7DE8r4kC",
+        "crossorigin": 'crossorigin="anonymous"',
+        "failureFlag": "__NEXUS_PIXI_LOAD_FAILED__",
+        "failureNotice": 'id="pixi-load-failure"',
+    }
+    for contract_name, expected_text in pixi_contract.items():
+        if expected_text not in index_html:
+            failures.append(f"pixi-cdn-contract:{contract_name}")
+    if index_html.count(pixi_contract["url"]) != 1:
+        failures.append("pixi-cdn-contract:pinned-url-count")
+
     for category_name in ("backgrounds", "platforms", "props", "audio"):
-        for key, path in (manifest.get(category_name) or {}).items():
+        for key, path in iter_manifest_paths(manifest.get(category_name) or {}, category_name):
             if not root_path(path).exists():
-                failures.append(f"missing:{category_name}.{key}:{path}")
+                failures.append(f"missing:{key}:{path}")
 
     # GAP-1 rift silhouettes: every enemyRegistry id must have a manifest entry backed by a
     # real 512x512 PNG, and the manifest must not point at enemies the registry does not know.
@@ -320,6 +403,7 @@ def run_asset_integrity(node: str):
         "name": "asset_integrity",
         "companions": companion_summaries,
         "enemies": {"registryIds": len(enemy_ids), "sprites": len(enemy_sprites)},
+        "pixiCdn": pixi_contract,
         "failures": failures,
         "ok": not failures,
     }
@@ -347,6 +431,66 @@ def run_raphael_agent_cases(node: str):
     )
     payload = result.get("json") or {}
     result["ok"] = result["exit_code"] == 0 and payload.get("ok") is True
+    return result
+
+
+def run_raphael_policy_cases(node: str, name: str, module_path: str, runner_name: str):
+    script = textwrap.dedent(
+        f"""
+        import('{module_path}')
+          .then((m) => {{
+            const cases = m.{runner_name}();
+            const failed = cases.filter((item) => !item.pass);
+            const result = {{
+              ok: failed.length === 0,
+              total: cases.length,
+              passed: cases.length - failed.length,
+              failed: failed.map((item) => ({{
+                id: item.id,
+                checks: item.checks,
+                reply: item.reply,
+                turns: item.turns
+              }}))
+            }};
+            console.log(JSON.stringify(result));
+            if (!result.ok) process.exit(1);
+          }})
+          .catch((error) => {{
+            console.error(error);
+            process.exit(2);
+          }});
+        """
+    )
+    result = run_command(
+        name,
+        [node, "--input-type=module", "-e", script],
+        timeout=30,
+    )
+    payload = result.get("json") or {}
+    result["ok"] = result["exit_code"] == 0 and payload.get("ok") is True
+    return result
+
+
+def run_safety_terminal_invariant(node: str):
+    result = run_command(
+        "raphael_safety_terminal_invariant",
+        [node, "docs/qa/_run_safety_terminal_invariant.mjs"],
+        timeout=30,
+    )
+    payload = result.get("json") or {}
+    result["ok"] = result["exit_code"] == 0 and payload.get("ok") is True
+    return result
+
+
+def run_safety_terminal_ui(base_url: str):
+    result = run_command(
+        "raphael_safety_terminal_ui",
+        [sys.executable, "docs/qa/_run_safety_terminal_ui_gate.py"],
+        env={"NEXUS_QA_BASE": base_url},
+        timeout=120,
+    )
+    payload = result.get("json") or {}
+    result["ok"] = result["exit_code"] == 0 and payload.get("summary", {}).get("ok") is True
     return result
 
 
@@ -559,8 +703,15 @@ def summarize(report):
     required = []
     required.append(report["checks"]["jsSyntax"]["ok"])
     required.append(report["checks"]["stateMigration"]["ok"])
+    required.append(report["checks"]["companionRendererLifecycle"]["ok"])
+    required.append(report["checks"]["mapFirstSession"]["ok"])
+    required.append(report["checks"]["mapFirstSessionUi"]["ok"])
     required.append(report["checks"]["assetIntegrity"]["ok"])
     required.append(report["checks"]["raphaelAgent"]["ok"])
+    required.append(report["checks"]["raphaelDialoguePolicy"]["ok"])
+    required.append(report["checks"]["raphaelConstitutionPolicy"]["ok"])
+    required.append(report["checks"]["safetyTerminalInvariant"]["ok"])
+    required.append(report["checks"]["safetyTerminalUi"]["ok"])
     required.append(report["checks"]["accessibilityProbe"]["ok"])
     required.extend(item["ok"] for item in report["checks"]["browserGates"])
     accessibility_warnings = []
@@ -597,7 +748,7 @@ def main():
 
     server = None
     server_status = "not_started"
-    if not args.no_server and args.base.startswith("http://localhost"):
+    if not args.no_server and is_local_base(args.base):
         server, server_status = start_http_server(args.port)
 
     node = resolve_node()
@@ -613,8 +764,25 @@ def main():
     try:
         report["checks"]["jsSyntax"] = run_js_syntax(node)
         report["checks"]["stateMigration"] = run_state_migration(node)
+        report["checks"]["companionRendererLifecycle"] = run_companion_renderer_lifecycle(node)
+        report["checks"]["mapFirstSession"] = run_map_first_session(node)
+        report["checks"]["mapFirstSessionUi"] = run_map_first_session_ui(report["baseUrl"])
         report["checks"]["assetIntegrity"] = run_asset_integrity(node)
         report["checks"]["raphaelAgent"] = run_raphael_agent_cases(node)
+        report["checks"]["raphaelDialoguePolicy"] = run_raphael_policy_cases(
+            node,
+            "raphael_dialogue_policy",
+            "./src/ai/testHarness/dialogueLoopSmokeCases.js",
+            "runAllDialogueLoopCases",
+        )
+        report["checks"]["raphaelConstitutionPolicy"] = run_raphael_policy_cases(
+            node,
+            "raphael_constitution_policy",
+            "./src/ai/testHarness/constitutionSmokeCases.js",
+            "runAllConstitutionSmokeCases",
+        )
+        report["checks"]["safetyTerminalInvariant"] = run_safety_terminal_invariant(node)
+        report["checks"]["safetyTerminalUi"] = run_safety_terminal_ui(report["baseUrl"])
         report["checks"]["accessibilityProbe"] = run_accessibility_probe(report["baseUrl"])
         report["checks"]["browserGates"] = run_existing_browser_gates(report["baseUrl"])
         report["summary"] = summarize(report)

@@ -134,7 +134,11 @@ export function composeRaphaelReply({
 
   if (BOUNDARY_MODES.has(mode)) {
     if (safety?.category === "dependency_pressure") {
-      return returnComposeResult(buildSafetyRedirectReply(safety), { variantId: "safety:dependency", replySource: "safety" }, args);
+      return returnComposeResult(
+        buildBoundaryPolicyReply(safety),
+        { variantId: safety.boundaryCarryover ? "boundary:carryover" : "safety:dependency", replySource: "safety" },
+        args
+      );
     }
     const boundaryLine = selectResponsePackLine({
       corpus: loadedCorpus,
@@ -475,15 +479,16 @@ function getPreviousCompanionReply(state = {}) {
 function finalizeReply(text, persona, state, options = {}) {
   let reply = String(text || "").trim();
   const isRecovery = options.recoveryRecall || options.replyMode === "reflect";
+  const isAuthoredPolicyReply = options.replySource === "safety";
 
-  if (!isRecovery && (state.energy ?? 10) <= 2 && reply.length > 42) {
+  if (!isRecovery && !isAuthoredPolicyReply && (state.energy ?? 10) <= 2 && reply.length > 42) {
     reply = reply.split(/[。！？]/)[0] + "。";
   }
 
   if (!persona) return reply;
 
-  const styledPersona = isRecovery
-    ? { ...persona, responseBias: { ...persona.responseBias, maxSentences: 3 } }
+  const styledPersona = isRecovery || isAuthoredPolicyReply
+    ? { ...persona, responseBias: { ...persona.responseBias, maxSentences: isAuthoredPolicyReply ? 4 : 3 } }
     : persona;
 
   return applyPersonaStyle(reply, styledPersona);

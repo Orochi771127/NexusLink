@@ -231,6 +231,23 @@ not become final terminology because it breaks outside Moon Lake.
 `Silent Anchor` is a scene object that helps the companion align before or
 during exploration. It turns "anchor" into world interaction, not doctrine.
 
+Current vertical-slice contract (`starwood_trail`, 2026-07-16):
+
+- it becomes available only after the first safe `moonlake_camp` exploration;
+- the player reads companion posture and environmental signals before choosing
+  direct travel, anchor reading, heart-core co-breathing, or returning home;
+- companion suggestions may use current mood, energy, fatigue, and persona, but
+  ignoring a suggestion never costs trust;
+- anchor reading and co-breathing are session-only pacing/observation states;
+  they grant no extra reward, memory, trace, or safer odds;
+- returning home has no gameplay mutation, and direct travel keeps the existing
+  exploration risk;
+- no route is the correct or optimal answer, and no choice is missable.
+
+The effect list below remains future design space, not current runtime behavior.
+Any persistent fatigue, sync, Memory, or trace effect requires a separately
+approved TASK_PACK and must preserve the no-optimal-reward contract above.
+
 Possible objects:
 
 - old lake lamp;

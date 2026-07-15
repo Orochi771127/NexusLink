@@ -37,6 +37,7 @@ export function createSettingsController({ panelManager, restartOnboarding, stor
       bgm: Number(settings.volBgm),
       sfx: Number(settings.volSfx)
     });
+    AudioManager.setMuted?.(Boolean(settings.audioMuted));
     const root = document.documentElement;
     root.dataset.reducedMotionPreference = settings.lowMotion ? "reduced" : "standard";
     root.dataset.textSize = settings.textSize || "medium";
@@ -110,8 +111,8 @@ export function createSettingsController({ panelManager, restartOnboarding, stor
   function handleAction(button) {
     const action = button.dataset.settingsAction;
     if (action === "toggle-audio") {
-      // 靜音維持既有獨立 key（nexusLinkAudioMuted:v1），不併入 settings schema。
       const isMuted = AudioManager.toggleMute();
+      patchSettings({ audioMuted: isMuted });
       // aria-pressed=true 表示「聲音開啟中」
       button.setAttribute("aria-pressed", String(!isMuted));
       return;
@@ -211,7 +212,7 @@ export function createSettingsController({ panelManager, restartOnboarding, stor
 
   function syncAudioToggle() {
     const audioButton = qs('[data-settings-action="toggle-audio"]', panel);
-    audioButton?.setAttribute("aria-pressed", String(!AudioManager.isMuted));
+    audioButton?.setAttribute("aria-pressed", String(!Boolean(getSettings().audioMuted)));
   }
 
   function observePanelState() {

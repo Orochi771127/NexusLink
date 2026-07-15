@@ -4,7 +4,11 @@ import {
   clearSessionPreferenceProfiles,
   getCompanionPreferenceProfile
 } from "../companionPreferenceProfile.js";
-import { getPersistedCompanionProfile } from "../companionPreferenceStore.js";
+import {
+  getPersistedCompanionProfile,
+  loadPreferenceStore,
+  replacePreferenceStore
+} from "../companionPreferenceStore.js";
 
 const GREYSHADE = Object.freeze({
   id: "greyshade-cat",
@@ -29,17 +33,24 @@ const BASE_STATE = Object.freeze({
 export function runCrossSessionPreferenceTest(companion = GREYSHADE) {
   clearAllCompanionPreferences();
 
-  const state = { ...BASE_STATE };
+  const state = {
+    ...BASE_STATE,
+    companionPreferences: { version: 1, updatedAt: 0, companions: {} }
+  };
+  replacePreferenceStore(state.companionPreferences);
   runRaphaelCore("我只是想安靜一下", state, {
     now: Date.now(),
     idSuffix: "xs1",
     companion
   });
+  state.companionPreferences = loadPreferenceStore();
 
   const sessionProfile = getCompanionPreferenceProfile(companion.id);
   const persistedAfterTurn = getPersistedCompanionProfile(companion.id);
 
   clearSessionPreferenceProfiles();
+  // 模擬重新載入頁面：只從 canonical state snapshot 還原，不讀額外 localStorage key。
+  replacePreferenceStore(JSON.parse(JSON.stringify(state.companionPreferences)));
 
   const rehydrated = getCompanionPreferenceProfile(companion.id);
   const persistedAfterHydrate = getPersistedCompanionProfile(companion.id);
@@ -48,6 +59,8 @@ export function runCrossSessionPreferenceTest(companion = GREYSHADE) {
     session_short_bias: sessionProfile.replyLengthBias === "short",
     session_rest_affinity: Boolean(sessionProfile.restAffinity),
     persisted_written: Boolean(persistedAfterTurn),
+    canonical_state_snapshot_written:
+      state.companionPreferences.companions?.[companion.id]?.replyLengthBias === "short",
     persisted_short_bias: persistedAfterTurn?.replyLengthBias === "short",
     rehydrated_short_bias: rehydrated.replyLengthBias === "short",
     rehydrated_rest_affinity: Boolean(rehydrated.restAffinity),

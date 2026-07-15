@@ -36,7 +36,7 @@ export function deriveStateMutation({
       statePatch: {
         safeHarborMode: true,
         mood: "safe_harbor",
-        energy: Math.max(energy, 1),
+        energy,
         bond,
         trust,
         defense,
@@ -136,7 +136,7 @@ export function deriveStateMutation({
         safeHarborMode: true,
         mood: analysis.emotionKey === "fatigue" ? "tired" : "calm",
         bond,
-        trust: clamp(trust + (memories.hasRecentSimilarEmotion ? 0 : 1), 0, 100),
+        trust,
         defense,
         energy: clamp(energy + 0.5, 0, 10),
         reactionPreview: patch.reactionPreview || "牠把這段話放慢，不急著把它變成答案。"

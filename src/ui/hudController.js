@@ -72,7 +72,7 @@ export function createHudController({ store, statusText }) {
     bondEl.textContent = state.bond;
     trustEl.textContent = state.trust;
     moodEl.textContent = getMoodLabel(state.mood);
-    energyEl.textContent = state.energy;
+    energyEl.textContent = formatHalfStep(state.energy);
     foxName.textContent = currentCreature.name;
     // V3 identity card 規則：不顯示等級/戰力；臆牌改為夥伴當下狀態訊號（心情標籤）。
     if (statePill) statePill.textContent = getMoodLabel(state.mood);
@@ -105,6 +105,12 @@ export function createHudController({ store, statusText }) {
       panelManager.openPanel("character");
     }
   };
+}
+
+function formatHalfStep(value) {
+  const numeric = Number(value);
+  if (!Number.isFinite(numeric)) return "0";
+  return Number.isInteger(numeric) ? String(numeric) : numeric.toFixed(1).replace(/\.0$/, "");
 }
 
 const BOUNDARY_LEVELS = [

@@ -1,8 +1,10 @@
 /**
  * Cross-session companion preference persistence.
- * Uses a dedicated localStorage key — does NOT touch STORAGE_KEY / saveManager.
+ * Runtime storage is injected from the canonical Nexus Link save state. The old
+ * key is exported only so saveManager can migrate pre-consolidation installs.
  */
-export const PREFERENCE_STORAGE_KEY = "nexusLinkCompanionPrefs:v1";
+export const LEGACY_PREFERENCE_STORAGE_KEY = "nexusLinkCompanionPrefs:v1";
+export const PREFERENCE_STORAGE_KEY = LEGACY_PREFERENCE_STORAGE_KEY;
 const STORE_VERSION = 1;
 const MAX_LEARNED_SIGNALS = 12;
 
@@ -12,38 +14,28 @@ const EMPTY_STORE = Object.freeze({
   companions: {}
 });
 
-export function loadPreferenceStore() {
-  if (typeof localStorage === "undefined") return cloneStore(EMPTY_STORE);
+let activeStore = cloneStore(EMPTY_STORE);
 
-  try {
-    const raw = localStorage.getItem(PREFERENCE_STORAGE_KEY);
-    if (!raw) return cloneStore(EMPTY_STORE);
-    const parsed = JSON.parse(raw);
-    if (!parsed || typeof parsed !== "object") return cloneStore(EMPTY_STORE);
-    return {
-      version: parsed.version || STORE_VERSION,
-      updatedAt: Number(parsed.updatedAt) || 0,
-      companions: { ...(parsed.companions || {}) }
-    };
-  } catch {
-    return cloneStore(EMPTY_STORE);
-  }
+export function loadPreferenceStore() {
+  return cloneStore(activeStore);
 }
 
 export function savePreferenceStore(store = {}) {
-  if (typeof localStorage === "undefined") return false;
+  activeStore = cloneStore({
+    version: STORE_VERSION,
+    updatedAt: Date.now(),
+    companions: store.companions || {}
+  });
+  return true;
+}
 
-  try {
-    const payload = {
-      version: STORE_VERSION,
-      updatedAt: Date.now(),
-      companions: store.companions || {}
-    };
-    localStorage.setItem(PREFERENCE_STORAGE_KEY, JSON.stringify(payload));
-    return true;
-  } catch {
-    return false;
-  }
+export function replacePreferenceStore(store = {}) {
+  activeStore = cloneStore({
+    version: Number(store.version) || STORE_VERSION,
+    updatedAt: Number(store.updatedAt) || 0,
+    companions: store.companions || {}
+  });
+  return loadPreferenceStore();
 }
 
 export function getPersistedCompanionProfile(companionId = "default") {
@@ -175,9 +167,17 @@ function mergeLearnedSignals(persisted = [], session = []) {
 
 function cloneStore(store) {
   return {
-    version: store.version,
-    updatedAt: store.updatedAt,
-    companions: { ...store.companions }
+    version: Number(store.version) || STORE_VERSION,
+    updatedAt: Number(store.updatedAt) || 0,
+    companions: Object.fromEntries(
+      Object.entries(store.companions || {}).map(([companionId, profile]) => [
+        companionId,
+        {
+          ...(profile || {}),
+          learnedSignals: [...(profile?.learnedSignals || [])]
+        }
+      ])
+    )
   };
 }
 

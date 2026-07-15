@@ -30,6 +30,8 @@ RaphaelCore 與角色外型解耦。RaphaelCore 是共用的心核大腦與人�
 - 所有角色都必須保留拒絕能力；高 bond 不解除邊界。
 - RaphaelCore is a Stateful Companion Cognition Agent: safety-gated, memory-bearing, boundary-aware, companion-agnostic, and game-integrated. It is not an autonomous task agent, web-search/tool agent, therapy/crisis agent, customer-service assistant, sycophantic chatbot, or generic NPC dialogue bot.
 - Gateway / LangGraph / training bundles may advise or route, but cannot override RaphaelCore safety, boundary, memory, state delta, response policy, or companion shell boundaries.
+- **現行接線（2026-07-16）**：`soulTalkController.js` 直接呼叫 `src/ai/raphaelCore.js` 的 `runRaphaelCore()`，再以 `applyRaphaelCoreResult()` 套用合法輸出；`PersonaConstitution.js` 與 `constitutionCritic.js` 已在此管線中生效。這不是外部 LLM。
+- **遠征例外**：Expedition 只有 result event、第一人稱 composer、lite critic 與專用 memory gateway；`coreIntegrated:false`，不可描述為 RaphaelCore 完整整合或商業主玩法。
 
 ---
 
@@ -40,18 +42,20 @@ RaphaelCore 與角色外型解耦。RaphaelCore 是共用的心核大腦與人�
 不是繼續往上加系統，而是讓一個陌生玩家在第一次進入時，能在心裡回答這五件事：
 
 - **我是誰** —— 玩家在這個世界裡的位置。
-- **牠是誰** —— 灰影貓不是寵物，是有自己邊界的夥伴。
+- **牠是誰** —— Initial Bond 選定的夥伴不是寵物，是有自己邊界的生命。
 - **現在要做什麼** —— 當下這一步的方向。
 - **做完後世界有什麼變化** —— 我的行為在棲地留下了什麼。
 - **明天為什麼值得回來** —— 回來的理由是溫柔的牽掛，不是打卡焦慮。
 
 > 凡是不服務「首輪連貫」的功能，本階段一律延後。商業化前，先把「第一次見面」做對。
 
-### 0.5.1 First Session Flow（下一階段產品優先級）
+### 0.5.1 First Session Flow（當前產品優先級）
 
-下一階段的產品主線是 First Session Flow（新玩家首次體驗），九拍序列：
+當前產品主線是 First Session Flow（新玩家首次體驗），十拍序列：
 
-`Boot Splash → Local Player Identity → Prologue → Heart-Core Guidance（心核引導）→ First Touch → First Soul Talk → First Trace → Safe Moonlake Exploration → Return Echo`
+`Boot Splash → Local Player Identity → Prologue → Heart-Core Guidance（心核引導）→ Initial Bond → First Touch → First Soul Talk → First Trace → Safe Moonlake Exploration → Return Echo`
+
+Initial Bond 已接入：fresh save 固定呈現 `greyshade-cat` / `blazetail-kit` / `crystalfin-seahorse` 三選一，選定後只保留選定者；veteran 存檔保留既有解鎖。後續工作是硬化首次安全探索與 D2 安全終端，不是再建一套平行 onboarding。
 
 設計原則（每一拍都要通過）：
 
@@ -153,7 +157,7 @@ RaphaelCore 與角色外型解耦。RaphaelCore 是共用的心核大腦與人�
 - 若要實裝舊設計，必須依該設計重新輸出 clean `512×512` transparent companion frame。
 
 ### Greyshade Cat Replacement Protocol（灰影貓 runtime 替換協定）
-- 灰影貓（`greyshade-cat`）**維持 default active companion**，不因替換而改變主夥伴地位。
+- 灰影貓（`greyshade-cat`）維持 fresh save 的 **default / 壞資料 fallback**；完成 Initial Bond 後，active companion 以玩家選定者為準。美術替換不得暗中改變此選定結果。
 - 新 illustrated `512×512` 動畫資產的目標，是**取代 legacy 64×64 runtime set**；採「先並存、後退役」。
 - **舊 Greyshade runtime 資產在 reference audit 通過前不得刪除**；退役是獨立、gated 的後續步驟，並保留一個 release 供 git revert rollback。
 - 灰影貓**絕不可 fallback 到焰尾狐（Flametail Fox）或任何其他角色美術**；缺動畫時只能走自身 manifest 的 documented fallback chain（見 `animationProfile.js`），不得借用他角資產。
@@ -193,7 +197,7 @@ RaphaelCore 與角色外型解耦。RaphaelCore 是共用的心核大腦與人�
 下列工作**被授權**進行有設計野心的實作、重構與擴充，不需要把每一個檔案的每一行都拆成獨立確認。
 這些檔案就是要被大膽改寫成「有靈魂」的樣子：
 
-- 戰鬥情緒對峙改造：`src/engine/battleEngine.js`、`src/ui/battleController.js`、相關 `styles.css` 區塊、`index.html` 的 `battle-modal` 內容**文案/結構**（結構若動到要回報，見 5.1）
+- 情緒對峙深化：`src/engine/battleEngine.js`、`src/ui/battleController.js`、相關 `styles.css` 區塊、`index.html` 的 `battle-modal` 內容**文案/結構**（結構若動到要回報，見 5.1）。現行玩家契約已是穩定裂隙而非 HP 歸零；`battleRecord.wins/losses` 僅是 compatibility-only schema。
 - Soul Talk 升級：`src/ui/soulTalkController.js`、`src/engine/soulTalkComposer.js`、`src/data/soulTalkResponsePacks.js`
 - 邊界 / 人格系統深化：`src/ui/hudController.js`（boundary view）、`src/engine/companionPersonality.js`、`src/engine/touchReactionEngine.js`、`src/engine/animationProfile.js`
 - 星圖 / 探索內容填充：`src/ui/mapController.js`、`src/data/explorationNodes.js`、`src/engine/explorationEngine.js`
@@ -238,13 +242,13 @@ RaphaelCore 與角色外型解耦。RaphaelCore 是共用的心核大腦與人�
 
 | Tier | 角色 | ID | 規則 |
 |------|------|-----|------|
-| 1 First Runtime Carrier | 灰影貓 | `greyshade-cat` | 第一個已驗證 runtime 載體、預設 first-session companion、完整 spritesheet，P1 主線 |
-| 1 Formal Heartspark Council Stage 1 | 金羽小梟(金)／芽角小鹿(木)／晶鰭小海馬(水)／焰尾小狐(火)／星紋小虎(土) | `auriowl` / `sprigfawn` / `crystalfin-seahorse` / `blazetail-kit` / `starstripe-cub` | 2026-07-10 Owner 定版；canon scaffold + Character Lock Spec，尚非 runtime-ready |
+| 1 First Runtime Carrier | 灰影貓 | `greyshade-cat` | 第一個已驗證 runtime 載體、fresh save default / fallback、完整 spritesheet；Initial Bond 後以選定者為 active companion |
+| 1 Formal Heartspark Council Stage 1 | 金羽小梟(金)／芽角小鹿(木)／晶鰭小海馬(水)／焰尾小狐(火)／星紋小虎(土) | `auriowl` / `sprigfawn` / `crystalfin-seahorse` / `blazetail-kit` / `starstripe-cub` | Owner 定版正式 roster；現行皆為 `full-runtime` / `runtime-ready` / `selectableWhenUnlocked`，但仍服從 Initial Bond、chapter gate 與意願制 |
 | 1 Runtime Test Carriers | 焰紋狐／冰晶狼／磐石熊／青藤鹿／晶石兔 | `flame-flicker` / `ice-talon` / `stone-shard` / `vine-twist` / `crystal-rabbit` | 現行 `full-runtime` 動畫測試載體；不占正式心輝議會五行席位，最終用途待另案 |
 | 2 Chapter Runtime Candidate | 焰尾狐 | `flametail-fox` | 已登錄；舊靜態圖因內容錯誤移除，需新 approved asset 才可作章節解鎖 runtime candidate；不可成為灰影貓 fallback |
-| 3 Roadmap Runtime Candidate | 雷霆幼狼 `thunder-pup` / 星能小山豬 `star-energy-boarlet` | 可逐章節升級為 runtime candidate；未通過 asset readiness 前不可選 |
+| 3 Roadmap Runtime Candidate | 雷霆幼狼／星能小山豬 | `thunder-pup` / `star-energy-boarlet` | 可逐章節升級為 runtime candidate；未通過 asset readiness 前不可選 |
 
-註：正式五元守護的外觀鎖定與物種動作翻譯位於 `docs/art/`。鳥型、海馬型、鹿型不得套用通用四足動作；所有角色仍須先完成 512×512 transparent master、human approval 與 asset readiness gate。多角色版本首版仍維持「同一時間只有一隻 active companion」。
+註：正式五元守護的外觀鎖定、512×512 runtime 資產、human approval 與 asset readiness gate 已完成；物種動作翻譯位於 `docs/art/`。鳥型、海馬型、鹿型不得套用通用四足動作。多角色版本首版仍維持「同一時間只有一隻 active companion」。
 
 註（命名債）：`crystal-rabbit`（晶石兔）的 runtime 動畫資產暫借 `assets/characters/thunder-pup/` 目錄，與 registry 的 `thunder-pup`（雷霆幼狼，Tier 3）為**不同角色**；雷霆幼狼維持原 Tier 3 狀態、未接入此批動畫。
 
@@ -278,9 +282,10 @@ RaphaelCore 與角色外型解耦。RaphaelCore 是共用的心核大腦與人�
 | 邊界/觸碰 | `touchReactionEngine.js` ・ `interactionController.js` ・ `hudController.js`(boundary view) |
 | 情緒沉積 | `emotionalSedimentationEngine.js` ・ `memoryLifecycleEngine.js` ・ `safeHarborMode.js` |
 | 痕跡 | `habitatTraceEngine.js` ・ `traceVisualMapper.js` ・ `habitatTraceRenderer.js` |
-| Soul Talk | `soulTalkController.js` ・ `soulTalkComposer.js` ・ `soulTalkResponsePacks.js` |
-| 戰鬥（待改造）| `battleEngine.js` ・ `battleController.js` ・ `enemyRegistry.js` |
+| Soul Talk / RaphaelCore | `soulTalkController.js` ・ `src/ai/raphaelCore.js` ・ `applyCoreResult.js` ・ `PersonaConstitution.js` ・ `constitutionCritic.js` ・ `soulTalkResponsePacks.js` |
+| 情緒對峙 | `battleEngine.js` ・ `battleController.js` ・ `enemyRegistry.js`（`battleRecord.wins/losses` compatibility-only） |
 | 探索 | `mapController.js` ・ `explorationEngine.js` ・ `explorationNodes.js` |
+| Expedition（Prototype） | `expeditionController.js` ・ `src/expedition/` ・ `RAPHAEL_EXPEDITION_EVAL_CONTRACT.md`（partial Core bridge，`coreIntegrated:false`） |
 | Pixi 核心 | `pixiApp.js`(LOCKED 級) ・ `companionRenderer.js` ・ `spriteSheetAnimationLoader.js` ・ `motionController.js` |
 | 人格 | `companionPersonality.js` ・ `personalityProfile.js` ・ `animationProfile.js` |
 | 資料 | `companionRegistry.js` ・ `evolutionLines.js` ・ `emotionDictionary.js` ・ `safetyShieldDictionary.js` |

@@ -43,6 +43,127 @@ const VIEWBOX_W = MOONLAKE_ROUTE_ART.viewWidth;
 const VIEWBOX_H = MOONLAKE_ROUTE_ART.viewHeight;
 const TOAST_HIDE_MS = 4600;
 const ENCOUNTER_DELAY_MS = 650;
+export const FIRST_EXPLORATION_NODE_ID = "moonlake_camp";
+
+export function hasExistingExplorationProgress(state) {
+  const progress = state?.explorationProgress;
+  if ((Number(progress?.totalExplorations) || 0) > 0) return true;
+  const visitCounts = progress?.visitCounts && typeof progress.visitCounts === "object"
+    ? progress.visitCounts
+    : {};
+  return Object.values(visitCounts).some((count) => (Number(count) || 0) > 0);
+}
+
+export function isFirstExplorationNodeAllowed(state, nodeId) {
+  return hasExistingExplorationProgress(state) || nodeId === FIRST_EXPLORATION_NODE_ID;
+}
+
+export function buildPhaseSearchReading(state, companion, phaseSearch) {
+  const name = companion?.name || "夥伴";
+  const energy = Number(state?.energy) || 0;
+  const fatigue = Number(state?.touchFatigue) || 0;
+  const defense = Number(state?.defense) || 0;
+  const mood = state?.mood || "calm";
+  const temperament = `${companion?.temperament?.zh || ""} ${companion?.temperament?.en || ""}`;
+  const guarded = defense >= 60
+    || fatigue >= 6
+    || ["defensive", "distant", "alert", "sad", "tired"].includes(mood)
+    || state?.lastTouchReaction === "reject";
+  const outward = ["warm", "happy"].includes(mood)
+    || /好奇|活潑|敏銳|curious|lively|alert/i.test(temperament);
+
+  let body;
+  let suggestedChoice;
+  if (energy <= 3) {
+    body = `${name}在水脈外收住腳步，呼吸比林間的光慢半拍；牠沒有往前。`;
+    suggestedChoice = "anchor";
+  } else if (guarded) {
+    body = `${name}把身體微微側向退路，目光仍留在林內；牠想先保有距離。`;
+    suggestedChoice = "anchor";
+  } else if (outward) {
+    body = `${name}的視線追著枝間星光移動，前腳已朝水脈方向落下。`;
+    suggestedChoice = "direct";
+  } else {
+    body = `${name}先望向你，再望回林間，讓下一步安靜地停在你們之間。`;
+    suggestedChoice = "calm_sync";
+  }
+
+  const suggestedLabel = phaseSearch?.choices?.find((choice) => choice.id === suggestedChoice)?.label || "先停一拍";
+  return {
+    body,
+    suggestedChoice,
+    suggestion: `${name}此刻偏向「${suggestedLabel}」，但牠沒有催你。`
+  };
+}
+
+export function resolvePhaseSearchChoice(choiceId, phaseSearch) {
+  if (choiceId === "direct") {
+    return { shouldExplore: true, shouldClose: true, sessionPatch: null, animationIntent: null, message: "" };
+  }
+  if (choiceId === "anchor") {
+    return {
+      shouldExplore: false,
+      shouldClose: false,
+      sessionPatch: { anchorRead: true, settled: false },
+      animationIntent: "soul.acknowledge",
+      message: phaseSearch?.anchorReading || "你們先聽清地脈回聲。"
+    };
+  }
+  if (choiceId === "calm_sync") {
+    return {
+      shouldExplore: false,
+      shouldClose: false,
+      sessionPatch: { anchorRead: false, settled: true },
+      animationIntent: "care.calm_sync",
+      message: phaseSearch?.calmReading || "你們只讓此刻的呼吸慢下來。"
+    };
+  }
+  return {
+    shouldExplore: false,
+    shouldClose: true,
+    sessionPatch: null,
+    animationIntent: null,
+    message: phaseSearch?.returnMessage || "你們把這條路留到之後。"
+  };
+}
+
+export function createEncounterTransition({
+  setTimer = (callback, delay) => window.setTimeout(callback, delay),
+  clearTimer = (timerId) => window.clearTimeout(timerId),
+  isMapActive = () => false,
+  onStart = () => {},
+  onCancel = () => {}
+} = {}) {
+  let timerId = null;
+  let pendingEncounter = null;
+
+  function cancel() {
+    if (timerId === null) return false;
+    clearTimer(timerId);
+    const cancelledEncounter = pendingEncounter;
+    timerId = null;
+    pendingEncounter = null;
+    onCancel(cancelledEncounter);
+    return true;
+  }
+
+  function schedule(encounter, delay = 0) {
+    cancel();
+    pendingEncounter = encounter;
+    timerId = setTimer(() => {
+      const readyEncounter = pendingEncounter;
+      timerId = null;
+      pendingEncounter = null;
+      if (!isMapActive()) {
+        onCancel(readyEncounter);
+        return;
+      }
+      onStart(readyEncounter);
+    }, delay);
+  }
+
+  return { schedule, cancel, isPending: () => timerId !== null };
+}
 
 // 動畫意圖事件（沿用既有 app/Pixi bridge；與 battleController/app 同名常數）。
 const COMPANION_ANIMATION_INTENT_EVENT = "COMPANION_ANIMATION_INTENT";
@@ -71,7 +192,16 @@ function resolveExploreDirectionIntent(state, node) {
   return pickDirectionIntent(target, fromLayout || MAP_CENTER);
 }
 
-export function createMapController({ store, panelManager, soulTalkController, saveCurrentState, battleController, expeditionController, statusText }) {
+export function createMapController({
+  store,
+  panelManager,
+  soulTalkController,
+  saveCurrentState,
+  battleController,
+  expeditionController,
+  statusText,
+  returnToHabitat = null
+}) {
   const mapCanvas = qs("#map-canvas");
   const pathsSvg = qs("#map-paths");
   const nodeLayer = qs("#map-node-layer");
@@ -82,8 +212,37 @@ export function createMapController({ store, panelManager, soulTalkController, s
 
   const nodeButtons = new Map();
   let toastTimer = null;
-  let pendingEncounterTimer = null;
   let inviteBanner = null;
+  let firstRouteGuide = null;
+  let phaseSearchPanel = null;
+  let activePhaseNode = null;
+  let phaseSearchSession = { anchorRead: false, settled: false };
+  let pendingMapCueTimer = null;
+
+  const encounterTransition = createEncounterTransition({
+    isMapActive: () => panelManager.getActivePanel?.() === "map",
+    onStart: (encounter) => {
+      mapCanvas?.classList.remove("is-alert");
+      hideToast();
+      if (encounter) battleController?.startBattle(encounter);
+    },
+    onCancel: () => {
+      mapCanvas?.classList.remove("is-alert");
+    }
+  });
+
+  panelManager.registerOnClose?.("map", handleMapClosed);
+
+  function handleMapClosed() {
+    encounterTransition.cancel();
+    if (pendingMapCueTimer !== null) {
+      window.clearTimeout(pendingMapCueTimer);
+      pendingMapCueTimer = null;
+    }
+    mapCanvas?.classList.remove("is-alert");
+    closePhaseSearch({ restoreFocus: false });
+    hideToast();
+  }
 
   function open() {
     ensureMapArt();
@@ -124,6 +283,136 @@ export function createMapController({ store, panelManager, soulTalkController, s
     });
   }
 
+  function ensureFirstRouteGuide() {
+    if (firstRouteGuide || !mapCanvas?.parentNode) return;
+    firstRouteGuide = document.createElement("p");
+    firstRouteGuide.id = "map-first-route-guide";
+    firstRouteGuide.className = "map-first-route-guide";
+    firstRouteGuide.setAttribute("role", "status");
+    firstRouteGuide.textContent = "先沿水脈回到月湖營地。那裡不會發生遭遇。";
+    mapCanvas.parentNode.insertBefore(firstRouteGuide, mapCanvas);
+  }
+
+  function renderFirstRouteGuide(state) {
+    ensureFirstRouteGuide();
+    if (!firstRouteGuide) return;
+    firstRouteGuide.hidden = hasExistingExplorationProgress(state);
+  }
+
+  function ensurePhaseSearchPanel() {
+    if (phaseSearchPanel || !mapCanvas) return;
+    phaseSearchPanel = document.createElement("section");
+    phaseSearchPanel.className = "phase-search";
+    phaseSearchPanel.hidden = true;
+    phaseSearchPanel.tabIndex = -1;
+    phaseSearchPanel.setAttribute("role", "region");
+    phaseSearchPanel.setAttribute("aria-labelledby", "phase-search-title");
+    phaseSearchPanel.setAttribute("aria-describedby", "phase-search-body phase-search-reading");
+    phaseSearchPanel.innerHTML = `
+      <p class="phase-search-kicker">STARWOOD WATER VEIN</p>
+      <h3 id="phase-search-title"></h3>
+      <p class="phase-search-intro"></p>
+      <p id="phase-search-body" class="phase-search-body"></p>
+      <p id="phase-search-tendency" class="phase-search-tendency"></p>
+      <div class="phase-compass" role="group" aria-label="選擇這一拍的探索方式">
+        <span class="phase-compass-vein" aria-hidden="true"></span>
+        <span class="phase-anchor-ring" aria-hidden="true"><i></i></span>
+        <div class="phase-choice-layer"></div>
+      </div>
+      <p id="phase-search-reading" class="phase-search-reading" aria-live="polite"></p>
+    `;
+    phaseSearchPanel.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-phase-choice]");
+      if (button) handlePhaseSearchChoice(button.dataset.phaseChoice);
+    });
+    mapCanvas.appendChild(phaseSearchPanel);
+  }
+
+  function renderPhaseSearchPanel() {
+    if (!phaseSearchPanel || !activePhaseNode?.phaseSearch) return;
+    const phaseSearch = activePhaseNode.phaseSearch;
+    const state = store.getState();
+    const companion = getCompanionById(state.activeCompanionId);
+    const reading = buildPhaseSearchReading(state, companion, phaseSearch);
+    const choices = Array.isArray(phaseSearch.choices) ? phaseSearch.choices : [];
+    const layer = phaseSearchPanel.querySelector(".phase-choice-layer");
+
+    phaseSearchPanel.querySelector("#phase-search-title").textContent = phaseSearch.title;
+    phaseSearchPanel.querySelector(".phase-search-intro").textContent = phaseSearch.prompt;
+    phaseSearchPanel.querySelector(".phase-search-body").textContent = reading.body;
+    phaseSearchPanel.querySelector(".phase-search-tendency").textContent = reading.suggestion;
+    phaseSearchPanel.querySelector(".phase-search-reading").textContent = phaseSearchSession.anchorRead
+      ? phaseSearch.anchorReading
+      : phaseSearchSession.settled
+        ? phaseSearch.calmReading
+        : "";
+
+    layer.innerHTML = choices.map((choice) => `
+      <button type="button" class="phase-choice phase-choice-${choice.id}" data-phase-choice="${choice.id}">
+        <span>${choice.label}</span>
+        <small>${choice.detail}</small>
+      </button>
+    `).join("");
+    layer.querySelectorAll("[data-phase-choice]").forEach((button) => {
+      const recommended = button.dataset.phaseChoice === reading.suggestedChoice;
+      button.classList.toggle("is-suggested", recommended);
+      if (recommended) {
+        button.setAttribute("aria-describedby", "phase-search-tendency");
+      } else {
+        button.removeAttribute("aria-describedby");
+      }
+    });
+  }
+
+  function openPhaseSearch(node) {
+    ensurePhaseSearchPanel();
+    if (!phaseSearchPanel) return;
+    // 前一次探索的結果卡會佔據行動區；進入相位尋路前先收起，避免在 390×844
+    // 視窗遮住錨點／共息／返營等選項。
+    hideToast();
+    if (toastEl) toastEl.hidden = true;
+    activePhaseNode = node;
+    phaseSearchSession = { anchorRead: false, settled: false };
+    renderPhaseSearchPanel();
+    phaseSearchPanel.hidden = false;
+    mapCanvas?.classList.add("is-phase-searching");
+    requestAnimationFrame(() => {
+      phaseSearchPanel?.querySelector('[data-phase-choice="direct"]')?.focus();
+    });
+  }
+
+  function closePhaseSearch({ restoreFocus = true } = {}) {
+    const previousNodeId = activePhaseNode?.id;
+    if (phaseSearchPanel) phaseSearchPanel.hidden = true;
+    mapCanvas?.classList.remove("is-phase-searching");
+    activePhaseNode = null;
+    phaseSearchSession = { anchorRead: false, settled: false };
+    if (restoreFocus && previousNodeId) nodeButtons.get(previousNodeId)?.focus();
+  }
+
+  function handlePhaseSearchChoice(choiceId) {
+    const node = activePhaseNode;
+    if (!node?.phaseSearch) return;
+    const outcome = resolvePhaseSearchChoice(choiceId, node.phaseSearch);
+
+    if (outcome.shouldExplore) {
+      closePhaseSearch({ restoreFocus: false });
+      exploreNode(node, { skipPhaseSearch: true });
+      return;
+    }
+
+    if (outcome.shouldClose) {
+      closePhaseSearch({ restoreFocus: false });
+      returnToHabitat?.();
+      if (statusText) statusText.textContent = outcome.message;
+      return;
+    }
+
+    phaseSearchSession = { ...phaseSearchSession, ...outcome.sessionPatch };
+    emitMapAnimationIntent(outcome.animationIntent, { nodeId: node.id, phaseChoice: choiceId });
+    renderPhaseSearchPanel();
+  }
+
   // ---- SVG 光路（一次性建構，純標記） ----
   function ensurePaths() {
     if (!pathsSvg || pathsSvg.childNodes.length > 0) return;
@@ -161,6 +450,8 @@ export function createMapController({ store, panelManager, soulTalkController, s
     const visitCounts = state.explorationProgress?.visitCounts || {};
     const currentNodeId = state.explorationProgress?.lastNodeId || null;
     const chapterProgress = state.chapterProgress || { current: 1, completed: [] };
+    const isFirstExploration = !hasExistingExplorationProgress(state);
+    renderFirstRouteGuide(state);
 
     EXPLORATION_NODES.forEach((node) => {
       const layout = NODE_LAYOUT[node.id];
@@ -207,13 +498,25 @@ export function createMapController({ store, panelManager, soulTalkController, s
 
       const visits = visitCounts[node.id] || 0;
       const isCurrent = node.id === currentNodeId;
+      const firstRouteLocked = !isFirstExplorationNodeAllowed(state, node.id);
+      const isFirstSafeNode = isFirstExploration && node.id === FIRST_EXPLORATION_NODE_ID;
       button.classList.remove("tone-safe", "tone-calm", "tone-discovery", "tone-danger");
       button.classList.add(`tone-${layout.tone}`);
       button.classList.toggle("is-visited", visits > 0);
       button.classList.toggle("is-current", isCurrent);
+      button.classList.toggle("is-first-route-locked", firstRouteLocked);
+      button.classList.toggle("is-first-safe", isFirstSafeNode);
+      button.disabled = firstRouteLocked;
+      button.setAttribute("aria-disabled", String(firstRouteLocked));
+      button.title = firstRouteLocked ? "首次探索請先前往月湖營地。" : node.description;
+      if (isFirstSafeNode) {
+        button.setAttribute("aria-describedby", "map-first-route-guide");
+      } else {
+        button.removeAttribute("aria-describedby");
+      }
       button.setAttribute(
         "aria-label",
-        `${node.label.zh}（${node.label.en}）${visits > 0 ? `，到訪 ${visits} 次` : "，尚未到訪"}${isCurrent ? "，最近探索" : ""}。${node.description}`
+        `${node.label.zh}（${node.label.en}）${visits > 0 ? `，到訪 ${visits} 次` : "，尚未到訪"}${isCurrent ? "，最近探索" : ""}${firstRouteLocked ? "，首次探索尚未開放" : ""}${isFirstSafeNode ? "，首次安全探索" : ""}。${node.description}`
       );
 
       const visitsEl = button.querySelector(".map-node-visits");
@@ -263,6 +566,7 @@ export function createMapController({ store, panelManager, soulTalkController, s
   // ---- 結果 toast ----
   function showToast({ title, text, tone = "success", chips = [] }) {
     if (!toastEl) return;
+    toastEl.hidden = false;
     window.clearTimeout(toastTimer);
     toastEl.classList.remove("toast-success", "toast-danger", "toast-calm");
     toastEl.classList.add(`toast-${tone}`);
@@ -314,10 +618,18 @@ export function createMapController({ store, panelManager, soulTalkController, s
   }
 
   // ---- 探索流程（結算邏輯零改動：仍走 resolveExplorationEvent） ----
-  function exploreNode(node) {
-    if (pendingEncounterTimer) return; // 遭遇轉場中，避免連點
+  function exploreNode(node, { skipPhaseSearch = false } = {}) {
+    if (encounterTransition.isPending()) return; // 遭遇轉場中，避免連點
 
     const state = store.getState();
+    if (!isFirstExplorationNodeAllowed(state, node.id)) {
+      showToast({
+        title: "先回到安全的水脈",
+        text: "第一次探索從月湖營地開始。其他路徑會在這一拍完成後自然亮起。",
+        tone: "calm"
+      });
+      return;
+    }
     pingNode(node.id);
 
     // 相遇（CH-5b）：踏入某章區域的第一個節點 = 與該章心核夥伴的初次相遇。
@@ -329,6 +641,11 @@ export function createMapController({ store, panelManager, soulTalkController, s
       const message = "夥伴的能量見底了。先回月湖營地休息，再出發吧。";
       // 只走 toast：系統狀態不再塞進聊天紀錄（私測回報會被誤認成對話回覆）。
       showToast({ title: "心核訊號微弱", text: message, tone: "calm" });
+      return;
+    }
+
+    if (!skipPhaseSearch && node.phaseSearch) {
+      openPhaseSearch(node);
       return;
     }
 
@@ -373,19 +690,19 @@ export function createMapController({ store, panelManager, soulTalkController, s
       // 遭遇回饋：光路短暫染紅，停一拍再進戰鬥，讓玩家讀得到發生了什麼。
       // 遭遇時不播 map 方向 cue——讓 battle cue 獨佔這一拍，避免搶 one-shot lock。
       mapCanvas?.classList.add("is-alert");
-      pendingEncounterTimer = window.setTimeout(() => {
-        pendingEncounterTimer = null;
-        mapCanvas?.classList.remove("is-alert");
-        hideToast();
-        battleController.startBattle(result.encounter);
-      }, prefersReducedMotion() ? 0 : ENCOUNTER_DELAY_MS);
+      encounterTransition.schedule(result.encounter, prefersReducedMotion() ? 0 : ENCOUNTER_DELAY_MS);
     } else {
       // 非遭遇：地圖保持開啟，玩家直接看到 visited / current / 次數變化。
       // 結果已寫入 state/memory/trace 後，夥伴用一個短方向 cue 回應這趟探索（每次成功只一次）。
       const directionIntent = resolveExploreDirectionIntent(state, node);
       if (directionIntent) {
-        window.setTimeout(
-          () => emitMapAnimationIntent(directionIntent, { nodeId: node.id }),
+        pendingMapCueTimer = window.setTimeout(
+          () => {
+            pendingMapCueTimer = null;
+            if (panelManager.getActivePanel?.() === "map") {
+              emitMapAnimationIntent(directionIntent, { nodeId: node.id });
+            }
+          },
           MAP_CUE_DELAY_MS
         );
       }

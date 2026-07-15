@@ -71,9 +71,9 @@
 - **旅痕**（Offline Adventure）——玩家離線或未開遊戲時，夥伴可獨自或與已相遇夥伴短程外出；玩家回來時收到簡短旅途回報、記憶痕跡或棲地變化。旅痕不是登入獎勵、不是派遣刷資源、不是「你錯過了」。
 - **同行／組隊戰鬥**——可作未來章節後期系統，但必須服務角色關係與旅途記憶；不得做輸出排行、屬性刷關、農裝、每日必派遣。
 
-### 1.3 開場定情機制（戰略已定版；施工分兩階段）
+### 1.3 開場定情機制（戰略已定版；兩階段均已落地）
 
-**戰略地位**：此為「賣靈魂」決定的具體落地，**屬已定版的核心方向，非可無限延後的未來構想**。現有 build 的「六隻 full-runtime、預設全解鎖、可隨意 swap」正在稀釋三大賣點，必須修正。
+**戰略地位**：此為「賣靈魂」決定的具體落地，**屬已定版的核心方向**。現行 build 已完成 Initial Bond：fresh save 固定呈現 `greyshade-cat` / `blazetail-kit` / `crystalfin-seahorse` 三選一，選定後只保留該角色為已解鎖夥伴；veteran／舊 test save 保留既有解鎖，不倒退玩家資料。
 
 **目標機制**：
 
@@ -81,10 +81,10 @@
 2. 選一隻共鳴者 → 定情 → 牠成為唯一。其餘為「未選的那條人生」，非「待解鎖收集品」。
 3. 第二隻透過章節劇情「再遇見」，為**另一段獨立深度關係**，非隊伍中的第二戰力，不可隨意切換取代。
 
-**施工順序（不可顛倒）**：
+**已完成的施工順序（歷史順序仍不可反向重做）**：
 
-- **階段一（體驗層，先做）**：初遇／定情 UI。**前置必要條件**——若先改解鎖數而選角 UI 未就緒，將產生「強制只有一隻、又無選擇畫面」的劣化體驗。
-- **階段二（地基層，後做）**：`defaultState.js` 的 `unlockedCompanionIds` 改為僅含選定者。屬地基層改動，須走逐項確認 + 完整 migration（見第三部 §3.4）。
+- **階段一（體驗層，已完成）**：初遇／定情 UI 與三位候選敘事。
+- **階段二（地基層，已完成）**：fresh save 初始僅解鎖安全預設 `greyshade-cat`；Initial Bond 選定後改為僅含選定者，並以 migration 保留 veteran 既有解鎖（見第三部 §3.4）。
 
 ### 1.3.1 章節共鳴圈修訂（2026-07-06 Owner 拍板）
 
@@ -132,7 +132,7 @@
 
 ### 2.4 心核腦人格安全底線
 
-詳見配套文件 `RAPHAEL_CONSTITUTION.md`（人格上位法 v4.0，狀態：DRAFT，尚未接入 runtime）。核心：心核生命「在被尊重中長成牠自己」，不以「成為玩家的鏡像／被完全理解」為目標。高 bond 不解除拒絕能力。
+詳見配套文件 `RAPHAEL_CONSTITUTION.md`（人格上位法 v4.0）。其可執行對映已由 `src/ai/persona/PersonaConstitution.js`、`src/ai/eval/constitutionCritic.js` 接入 `runRaphaelCore()`；文件內仍指向舊 prototype 路徑的段落屬歷史說明，不代表目前尚未接線。核心：心核生命「在被尊重中長成牠自己」，不以「成為玩家的鏡像／被完全理解」為目標。高 bond 不解除拒絕能力。
 
 **RaphaelCore 與角色外型解耦。** RaphaelCore is companion-agnostic. Greyshade Cat is the first validated runtime carrier and first-session focal companion, not RaphaelCore itself and not the permanent canonical center. 新角色應以 persona 旋鈕、語氣種子、邊界門檻、記憶偏好與身體語言呈現差異，不複製多套心核腦。
 
@@ -170,23 +170,21 @@
 
 ### 3.4 開場定情階段二的工程規格（地基層）
 
-**現況（2026-07-10）**：CH-2/CH-3 已使 fresh save 在初遇後只保留選定者；veteran／舊 test save 可保留既有測試載體解鎖。正式五元守護尚未 asset-ready，也尚未進入 `COMPANIONS`。
+**現況（2026-07-16）**：CH-2/CH-3 已使 fresh save 在初遇後只保留選定者；veteran／舊 test save 可保留既有解鎖。正式五元守護五席皆已進入 `COMPANIONS`，標記為 `full-runtime` / `runtime-ready` / `selectableWhenUnlocked`；這只表示資產與 runtime 能力通過，不會繞過 chapter-gated unlock、Initial Bond 選定或共鳴邀請意願制。
 
-**目標修正**：
+**現行工程 contract**：
 
-1. `defaultState.js`：新存檔 `unlockedCompanionIds` 僅含開場選定者。
-2. `normalizeState`：**舊存檔已解鎖六隻者保留其既有解鎖（不倒退既有玩家）**；僅新存檔走定情流程。此為 migration 安全底線。
-3. `companionSelectController.js`：語意由「隨時切換」改為「檢視已締結關係 + 章節解鎖入口」。
+1. `defaultState.js`：Initial Bond 前的安全預設只含 `greyshade-cat`；選定後 `onboardingController` 將 active / unlocked 改為選定者。
+2. `normalizeState`：**舊存檔既有解鎖原樣保留（不倒退既有玩家）**；僅 fresh save 走定情流程。此為 migration 安全底線。
+3. `companionSelectController.js`：只呈現當前已締結／已解鎖且 runtime-eligible 的夥伴；不可把 registry 內所有 runtime-ready 角色當成自由換皮清單。
 
 **風險**：角色 ID 與 `localStorage` / `companionRegistry` / `animationsManifest` / `activeCompanionId` 高度耦合。任何 ID 變更須走嚴格 migration，否則 `activeCompanionId` 變 unknown、存檔損壞。**此任務須以獨立地基層 TASK_PACK 處理，不得併入體驗層連續施工。**
 
 ### 3.5 商業化第一瓶頸：First Session Coherence
 
-**現況更新**：First Session → Return Echo v1 已完成並通過 QA，包含 quiet opening line、first Soul Talk trace、return tiers、非責備短句與 return animation cue。
+**現況更新（2026-07-16）**：First Session → Return Echo v1、`Prologue`、Heart-Core Guidance 與 Initial Bond 均已接入；fresh trio 為灰影貓／焰尾小狐／晶鰭小海馬。商業化主線已從「補齊缺頁」轉為**封死首輪連貫與安全細節**：第一次安全探索必須先落在 `moonlake_camp`，高風險 Soul Talk 必須完整遵守 D2，且自動 gate 不得取代真機與人類驗證。
 
-**仍缺**：`Prologue` / `Heart-core Guidance` / Initial Bond 開場定情 UI。商業化主線第一刀已不再是「從零補 First Session」，而是在 v1 之上補 Initial Bond，並處理六隻全解鎖造成的深度關係稀釋。
-
-下一段體驗目標：第一次進入 → 極短極安靜的環境敘事 → 初遇定情 → 傳達「這裡是給疲憊的人暫時住進來的地方，可以說話，也可以只是待著」→ First Touch → First Soul Talk → First Trace → Return Echo 之承諾。30 秒內讓新用戶理解：我是誰、牠是誰、為何明天值得回來。
+現行首輪目標：第一次進入 → 極短極安靜的環境敘事 → 心核引導 → Initial Bond → First Touch → First Soul Talk → First Trace → Safe Moonlake Exploration → Return Echo。30 秒內讓新用戶理解：我是誰、牠是誰、為何明天值得回來。
 
 ### 3.6 效能與資產載入
 
@@ -298,7 +296,7 @@ Linkara Region 是 Nexus Link 的主舞台。世界地圖以七個區域構成�
 | Tier | 角色 | 規則 |
 |---|---|---|
 | 1 首輪焦點 | 灰影貓 `greyshade-cat` | first validated runtime carrier，Demo / Chapter 1 行銷主體 |
-| 1.5 正式五元守護 | 金羽小梟／芽角小鹿／晶鰭小海馬／焰尾小狐／星紋小虎 | 正式五行 roster；canon scaffold + 外觀鎖定，尚非 runtime-ready |
+| 1.5 正式五元守護 | 金羽小梟／芽角小鹿／晶鰭小海馬／焰尾小狐／星紋小虎 | 正式五行 roster；現行皆為 `full-runtime` / `runtime-ready`，且 `selectableWhenUnlocked`；仍服從 Initial Bond、章節解鎖與意願制，不等於開場全解鎖 |
 | 1.6 技術測試載體 | `flame-flicker` / `ice-talon` / `stone-shard` / `vine-twist` / `crystal-rabbit` | 現行 full-runtime，用於流程與動畫驗證；不占正式五行 roster，未來用途待另案 |
 | 2 Legacy | 焰尾狐 `flametail-fox` | 舊錯圖已移除；需新 approved asset 才可恢復 static candidate，不可升級，不可作 fallback |
 | 3 Roadmap | 雷霆幼狼 / 星能小山豬 等 | 未通過 asset readiness 前不可選；可作未來章節或旅痕內容 |
@@ -313,18 +311,19 @@ GitHub Pages 原型 → 小型私測 → 社群分享（灰影貓截圖 + 關係
 
 ### 6.2 上架前三大必修（按優先序）
 
-1. **First Session Coherence + 開場定情**（§1.3 / §3.4 / §3.5）——解決最大流失點，落實「賣靈魂」。
+1. **First Session Coherence 硬化**（§1.3 / §3.4 / §3.5）——Initial Bond 已落地；優先封死 D2 安全終端、首次安全探索與回歸閉環。
 2. **回歸儀式打磨**（姿態變化 + 痕跡 + 不責備短句的視覺與情感強度）——最強留存武器。
 3. **視覺一致性收斂**（§4.3）——上架質感 blocker。
 
 ### 6.3 明確不做（現階段）
 
-首版不做組隊戰鬥／同行冒險實作、商城直售角色、抽卡、桌面模式、LLM、後端、金流、五階量產、多角色開場全解鎖。組隊與旅痕可作未來章節後期擴充，但必須通過「非 FOMO、非 idle farming、非戰力隊伍」驗收。
+首版不把心域遠征 Prototype 升格為商業主玩法，也不做組隊戰力戰鬥、商城直售角色、抽卡、桌面模式、LLM、後端、金流、五階量產、多角色開場全解鎖。同行、Expedition 與旅痕若要升格，必須先通過「非 FOMO、非 idle farming、非戰力隊伍」驗收與各自 sealed contract。
 
 ### 6.4 配套文件與狀態
 
-- `RAPHAEL_CONSTITUTION.md` —— 心核腦人格上位法 v4.0。狀態：DRAFT，置於 `docs/raphael/`，尚未接入 runtime。
-- `raphaelCore.js` —— 心核腦垂直切片（sandbox prototype）。狀態：尚未 runtime-ready，**不得直接接入 Soul Talk**；接入前須完成 ES Module 化、demo 拆出、可注入 now、safetyShield 前置、habitatCue adapter、companion-target 誤判修正。置於 `docs/raphael/prototype/` 或 `tools/raphael/`，不入 `src/` 主線。
+- `RAPHAEL_CONSTITUTION.md` —— 心核腦人格上位法 v4.0；可執行規則由 `PersonaConstitution.js` / `constitutionCritic.js` 接入 runtime。
+- `src/ai/raphaelCore.js` —— 現行規則式心核 orchestrator，已由 `soulTalkController.js` 呼叫並透過 `applyRaphaelCoreResult()` 寫回合法結果；無外部 LLM／API。
+- `RAPHAEL_EXPEDITION_EVAL_CONTRACT.md` —— 心域遠征仍是 **Prototype + partial Core bridge**（`coreIntegrated:false`）；不是 RaphaelCore 完整整合、不是 sealed、不是 commercial-ready。
 
 ---
 

@@ -51,31 +51,41 @@ export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
   nlu = applyRecentDialogueContext(nlu, dialogueState);
   nlu = applyQuickReplyContext(nlu, runtime.quickReply);
   safety = applyRecentBoundaryContext(safety, nlu, dialogueState, intent);
-  let responseStrategy = selectResponseStrategy(nlu, intent, safety);
-  responseStrategy = resolveQuickReplyStrategy(runtime.quickReply, responseStrategy);
+  const isSafetyTerminal = safety.isHighRisk === true;
+  let responseStrategy = isSafetyTerminal
+    ? { strategy: RESPONSE_STRATEGIES.SAFETY_REDIRECT, reason: "safety_terminal" }
+    : selectResponseStrategy(nlu, intent, safety);
+  if (!isSafetyTerminal) {
+    responseStrategy = resolveQuickReplyStrategy(runtime.quickReply, responseStrategy);
+  }
 
-  const constitutionSignal = evaluateConstitutionSignals(nlu.semanticFrame, nlu);
-  if (constitutionSignal?.override) {
+  const constitutionSignal = isSafetyTerminal ? null : evaluateConstitutionSignals(nlu.semanticFrame, nlu);
+  if (!isSafetyTerminal && constitutionSignal?.override) {
     responseStrategy = {
       strategy: constitutionSignal.override,
       reason: constitutionSignal.reason
     };
   }
   const semanticSoul = deriveSemanticSoulState(state, analysis);
-  const memories = retrieveRelevantMemories(
-    state,
-    analysis,
-    { now: gateway.now, inputText: gateway.normalizedInput },
-    intent
-  );
-  const recoveryContext = buildRecoveryContext(state, memories, analysis, { now: gateway.now });
+  const memories = isSafetyTerminal
+    ? createSafetyTerminalMemoryContext()
+    : retrieveRelevantMemories(
+        state,
+        analysis,
+        { now: gateway.now, inputText: gateway.normalizedInput },
+        intent
+      );
+  const recoveryContext = isSafetyTerminal
+    ? createSafetyTerminalRecoveryContext()
+    : buildRecoveryContext(state, memories, analysis, { now: gateway.now });
 
-  if (memories.recallPolicy?.blockReason === "repeated_fatigue_recall") {
+  if (!isSafetyTerminal && memories.recallPolicy?.blockReason === "repeated_fatigue_recall") {
     responseStrategy = {
       strategy: RESPONSE_STRATEGIES.REPEATED_EMOTION_RECALL,
       reason: "repeated_fatigue_recall"
     };
   } else if (
+    !isSafetyTerminal &&
     memories.shouldRecall &&
     recoveryContext.allowsExplicitReference &&
     !LOW_RECALL_INTENTS.has(intent.intent)
@@ -83,15 +93,17 @@ export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
     responseStrategy = { strategy: RESPONSE_STRATEGIES.MEMORY_REFERENCE, reason: "memory_recall_gate" };
   }
 
-  const antiLoopDecision = evaluateAntiLoop({
-    nlu,
-    responseStrategy,
-    dialogueState,
-    inputText: gateway.normalizedInput,
-    sessionKey: dialogueSessionKey
-  });
+  const antiLoopDecision = isSafetyTerminal
+    ? { shouldBlock: false, forceStrategy: null, reason: "safety_terminal", complaintType: null }
+    : evaluateAntiLoop({
+        nlu,
+        responseStrategy,
+        dialogueState,
+        inputText: gateway.normalizedInput,
+        sessionKey: dialogueSessionKey
+      });
 
-  if (antiLoopDecision.shouldBlock && antiLoopDecision.forceStrategy) {
+  if (!isSafetyTerminal && antiLoopDecision.shouldBlock && antiLoopDecision.forceStrategy) {
     responseStrategy = {
       strategy: antiLoopDecision.forceStrategy,
       reason: antiLoopDecision.reason
@@ -103,36 +115,51 @@ export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
     Math.round(state.energy || 0) +
     Math.round(state.trust || 0);
 
-  const variantSelection = selectReplyVariant({
-    responseStrategy,
-    nlu,
-    dialogueState,
-    corpus,
-    companionId,
-    analysis,
-    intent,
-    plan: { mode: "acknowledge" },
-    state,
-    semanticSoul,
-    recoveryContext,
-    seed: variantSeed
-  });
+  const variantSelection = isSafetyTerminal
+    ? null
+    : selectReplyVariant({
+        responseStrategy,
+        nlu,
+        dialogueState,
+        corpus,
+        companionId,
+        analysis,
+        intent,
+        plan: { mode: "acknowledge" },
+        state,
+        semanticSoul,
+        recoveryContext,
+        seed: variantSeed
+      });
 
-  const preferenceProfile =
-    runtime.companionPreferenceProfile || getCompanionPreferenceProfile(companionId);
-  const persona = applyPreferenceToPersona(resolvePersona(companion, state), preferenceProfile);
+  const preferenceProfile = isSafetyTerminal
+    ? runtime.companionPreferenceProfile || {}
+    : runtime.companionPreferenceProfile || getCompanionPreferenceProfile(companionId);
+  const resolvedPersona = resolvePersona(companion, state);
+  const persona = isSafetyTerminal
+    ? resolvedPersona
+    : applyPreferenceToPersona(resolvedPersona, preferenceProfile);
 
-  const corpusSearch = searchCorpus({
-    emotionKey: analysis.emotionKey,
-    intent: intent.intent,
-    inputText: gateway.normalizedInput,
-    limit: 3
-  });
+  const corpusSearch = isSafetyTerminal
+    ? {
+        emotionHint: null,
+        hits: [],
+        corpusVersion: corpus.version,
+        corpusSource: corpus.source
+      }
+    : searchCorpus({
+        emotionKey: analysis.emotionKey,
+        intent: intent.intent,
+        inputText: gateway.normalizedInput,
+        limit: 3
+      });
 
-  const sedimentationResult = processEmotionInput(gateway.normalizedInput, state, {
-    now: gateway.now,
-    idSuffix: gateway.idSuffix
-  });
+  const sedimentationResult = isSafetyTerminal
+    ? createSafetyTerminalSedimentationResult(safety)
+    : processEmotionInput(gateway.normalizedInput, state, {
+        now: gateway.now,
+        idSuffix: gateway.idSuffix
+      });
 
   const plan = planSoulTalkReaction({ analysis, intent, semanticSoul, safety, state, memories });
 
@@ -178,16 +205,18 @@ export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
   const animationDecision = execution.animationDecision || null;
   const finalReply = execution.reply || "";
 
-  const quickReplies = planQuickReplies({
-    nlu,
-    dialogueState: getDialogueState(dialogueSessionKey),
-    responseStrategy,
-    state,
-    reply: finalReply
-  });
+  const quickReplies = isSafetyTerminal
+    ? []
+    : planQuickReplies({
+        nlu,
+        dialogueState: getDialogueState(dialogueSessionKey),
+        responseStrategy,
+        state,
+        reply: finalReply
+      });
 
   const debugTrace = buildConversationDebugTrace({
-    inputText: gateway.originalInput,
+    inputText: isSafetyTerminal ? "[safety-redacted]" : gateway.originalInput,
     nlu,
     responseStrategy,
     composeMeta: execution.composeMeta || null,
@@ -198,7 +227,9 @@ export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
     reply: finalReply
   });
 
-  logConversationDebugTrace(debugTrace, runtime);
+  if (!isSafetyTerminal) {
+    logConversationDebugTrace(debugTrace, runtime);
+  }
 
   const coreResult = {
     now: gateway.now,
@@ -291,12 +322,19 @@ export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
     forbiddenPhraseDetected: Boolean(execution.forbiddenPhraseDetected || forbiddenCheck.hasForbidden)
   };
 
-  recordDialogueTurn(dialogueSessionKey, coreResult);
-  collectInteractionTrace(coreResult);
+  // High-risk text remains visible in the UI transcript, but it must not enter
+  // Raphael's dialogue-memory or evolution-trace caches.
+  if (!isSafetyTerminal) {
+    recordDialogueTurn(dialogueSessionKey, coreResult);
+    collectInteractionTrace(coreResult);
+  }
   return coreResult;
 }
 
 function resolveExternalAdvice(runtime, perception, coreDecision) {
+  if (perception.safety?.isHighRisk) {
+    return { used: false, reason: "safety_terminal" };
+  }
   const settings = runtime?.externalIntelligence || {};
   if (!settings.advisorEnabled && !settings.externalEnabled) {
     return { used: false, reason: "external_disabled" };
@@ -304,9 +342,58 @@ function resolveExternalAdvice(runtime, perception, coreDecision) {
   return { used: false, reason: "external_enabled_requires_async_gateway", asyncEntry: "askAdvisor" };
 }
 
+function createSafetyTerminalMemoryContext() {
+  return {
+    relevantMemories: [],
+    strongestMemory: null,
+    similarEmotionMemories: [],
+    hasBoundaryMemory: false,
+    hasRecentSimilarEmotion: false,
+    hasRecallableMemory: false,
+    shouldRecall: false,
+    recallMode: "none",
+    recallPolicy: {
+      shouldRecall: false,
+      recallMode: "none",
+      blockReason: "safety_terminal",
+      strongestMemory: null
+    },
+    recallHint: null,
+    allowsExplicitReference: false
+  };
+}
+
+function createSafetyTerminalRecoveryContext() {
+  return {
+    canRecall: false,
+    phase: "none",
+    recallMode: "none",
+    shouldRecall: false,
+    allowsExplicitReference: false,
+    reason: "safety_terminal"
+  };
+}
+
+function createSafetyTerminalSedimentationResult(safety) {
+  return {
+    memoryObject: null,
+    matchedEmotionKey: null,
+    matchedKeywordHits: 0,
+    intensity: 0,
+    emotionalRepetitionScore: 0,
+    recentSimilarEmotionCount: 0,
+    safetyRisk: safety,
+    inputQuality: "safety_terminal",
+    triggerSafeHarbor: true,
+    shouldCreateMemory: false,
+    shouldBypassSpam: true
+  };
+}
+
 /** Future: async external advisor path — RaphaelCore still validates final output. */
 export async function runRaphaelCoreWithExternal(inputText = "", state = {}, runtime = {}) {
   const coreResult = runRaphaelCore(inputText, state, runtime);
+  if (coreResult.safety?.isHighRisk) return coreResult;
   const settings = runtime?.externalIntelligence || {};
   if (!settings.advisorEnabled && !settings.externalEnabled) return coreResult;
 

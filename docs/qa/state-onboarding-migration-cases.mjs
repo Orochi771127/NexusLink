@@ -371,6 +371,50 @@ runCase("dirty resonance data is cleaned by normalize", () => {
   assertEqual(state.resonance.companions.auriowl.declinedCount, 0, "negative declinedCount clamped");
 });
 
+runCase("canonical state owns audio mute and companion preferences", () => {
+  const state = createDefaultState();
+  assertEqual(state.settings.audioMuted, false, "fresh audio mute default");
+  assertEqual(state.companionPreferences.version, 1, "preference store version");
+  assertEqual(Object.keys(state.companionPreferences.companions).length, 0, "fresh preference store empty");
+});
+
+runCase("lastSeenAt accepts only positive finite timestamps", () => {
+  const valid = 1782600000000;
+  assertEqual(normalizeState({ lastSeenAt: valid }).lastSeenAt, valid, "valid lastSeenAt preserved");
+  for (const damaged of [0, -1, Number.NaN, Number.POSITIVE_INFINITY, "bad"]) {
+    const before = Date.now();
+    const migrated = normalizeState({ lastSeenAt: damaged }).lastSeenAt;
+    const after = Date.now();
+    if (!Number.isFinite(migrated) || migrated < before || migrated > after) {
+      throw new Error(`damaged lastSeenAt ${String(damaged)} did not migrate to now: ${migrated}`);
+    }
+  }
+});
+
+runCase("companion preferences normalize inside the main state", () => {
+  const state = normalizeState({
+    companionPreferences: {
+      version: 1,
+      updatedAt: 1782600000000,
+      companions: {
+        "greyshade-cat": {
+          replyLengthBias: "short",
+          boundarySensitivity: 2,
+          interactionPace: -2,
+          learnedSignals: Array.from({ length: 16 }, (_, index) => `signal-${index}`)
+        },
+        "unknown-companion": { replyLengthBias: "short" }
+      }
+    }
+  });
+  const profile = state.companionPreferences.companions["greyshade-cat"];
+  assertEqual(profile.replyLengthBias, "short", "reply length preserved");
+  assertEqual(profile.boundarySensitivity, 1, "boundary sensitivity clamped");
+  assertEqual(profile.interactionPace, -1, "interaction pace clamped");
+  assertEqual(profile.learnedSignals.length, 12, "learned signals rolling limit");
+  assertEqual(state.companionPreferences.companions["unknown-companion"], undefined, "unknown companion dropped");
+});
+
 const failedCases = cases.filter((item) => item.status === "failed");
 console.log(JSON.stringify({ total: cases.length, failed: failedCases.length, cases }, null, 2));
 

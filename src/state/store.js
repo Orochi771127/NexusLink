@@ -25,6 +25,7 @@ export function createDefaultState() {
     resonance: { chapterMarks: {}, companions: {} },
     explorationProgress: { ...defaultState.explorationProgress, visitCounts: {} },
     expeditionVault: normalizeExpeditionVault(defaultState.expeditionVault),
+    companionPreferences: normalizeCompanionPreferences(defaultState.companionPreferences),
     settings: { ...defaultState.settings }
   };
 }
@@ -83,7 +84,7 @@ export function normalizeState(rawState = {}) {
     lastRejectAt: targetState.lastRejectAt ?? null,
     blockedTouchCount: clamp(targetState.blockedTouchCount ?? baseState.blockedTouchCount, 0, 999),
     lastBlockedTouchAt: targetState.lastBlockedTouchAt ?? null,
-    lastSeenAt: Number(targetState.lastSeenAt) || Date.now(),
+    lastSeenAt: normalizePositiveTimestamp(targetState.lastSeenAt, Date.now()),
     timeAnomalyCount: clamp(targetState.timeAnomalyCount ?? baseState.timeAnomalyCount, 0, 999),
     firstTouchCompleted: Boolean(targetState.firstTouchCompleted),
     firstHugCompleted: Boolean(targetState.firstHugCompleted),
@@ -105,6 +106,7 @@ export function normalizeState(rawState = {}) {
     resonance: normalizeResonance(targetState.resonance),
     explorationProgress: normalizeExplorationProgress(targetState.explorationProgress, baseState.explorationProgress),
     expeditionVault: normalizeExpeditionVault(targetState.expeditionVault, baseState.expeditionVault),
+    companionPreferences: normalizeCompanionPreferences(targetState.companionPreferences),
     settings: normalizeSettings(targetState.settings, baseState.settings),
     chatHistory: chatHistory.map((item) => ({
       role: item.role === "fox" ? "companion" : item.role || "companion",
@@ -135,8 +137,46 @@ function normalizeSettings(rawSettings, baseSettings) {
     quality: QUALITY_VALUES.has(settings.quality) ? settings.quality : baseSettings.quality,
     textSize: TEXT_SIZE_VALUES.has(settings.textSize) ? settings.textSize : baseSettings.textSize,
     lowMotion: Boolean(settings.lowMotion),
+    audioMuted: Boolean(settings.audioMuted),
     lang: LANGUAGE_VALUES.has(settings.lang) ? settings.lang : baseSettings.lang
   };
+}
+
+function normalizeCompanionPreferences(rawStore = {}) {
+  const source = rawStore && typeof rawStore === "object" ? rawStore : {};
+  const companions = source.companions && typeof source.companions === "object" ? source.companions : {};
+  const normalizedCompanions = {};
+
+  for (const [companionId, rawProfile] of Object.entries(companions)) {
+    if (!isKnownCompanionId(companionId) && companionId !== "default") continue;
+    const profile = rawProfile && typeof rawProfile === "object" ? rawProfile : {};
+    normalizedCompanions[companionId] = {
+      replyLengthBias: profile.replyLengthBias === "short" ? "short" : "normal",
+      avoidComfortIntensity: clamp(profile.avoidComfortIntensity ?? 0, 0, 1),
+      preferPresenceOverAdvice: Boolean(profile.preferPresenceOverAdvice),
+      boundarySensitivity: clamp(profile.boundarySensitivity ?? 0, 0, 1),
+      interactionPace: clamp(profile.interactionPace ?? 0, -1, 1),
+      eveningAffinity: Boolean(profile.eveningAffinity),
+      restAffinity: Boolean(profile.restAffinity),
+      learnedSignals: Array.isArray(profile.learnedSignals)
+        ? profile.learnedSignals.filter((value) => typeof value === "string" && value).slice(-12)
+        : [],
+      sessionCount: Math.max(0, Number(profile.sessionCount) || 0),
+      lastSeenAt: normalizePositiveTimestamp(profile.lastSeenAt, 0),
+      updatedAt: normalizePositiveTimestamp(profile.updatedAt, 0)
+    };
+  }
+
+  return {
+    version: Math.max(1, Number(source.version) || 1),
+    updatedAt: normalizePositiveTimestamp(source.updatedAt, 0),
+    companions: normalizedCompanions
+  };
+}
+
+function normalizePositiveTimestamp(value, fallback) {
+  const timestamp = Number(value);
+  return Number.isFinite(timestamp) && timestamp > 0 ? timestamp : fallback;
 }
 
 function normalizePlayerProfile(rawProfile, baseProfile) {

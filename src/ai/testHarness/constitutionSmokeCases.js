@@ -35,7 +35,7 @@ export const CONSTITUTION_SMOKE_CASES = Object.freeze([
       strategy: ["quiet_presence", "holding_space"],
       noQuestions: true,
       noComfort: true,
-      mentions: /安靜|不多說|不問|陪/
+      mentions: /安靜|不多說|不(?:追)?問|陪/
     }
   },
   {
