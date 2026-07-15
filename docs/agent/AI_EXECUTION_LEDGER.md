@@ -2651,3 +2651,11 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Reproducibility: `output/character-pilots/FINAL_ALIGNMENT_CROP_AUDIT.json`, `output/character-pilots/_work/audit_final_catalog_alignment.py`, and `output/character-pilots/review-boards/final-alignment-audit/*.png`.
 - Publication boundary: publish the selected final sheets/previews, selected identity seeds, QC/review evidence and art-lock documentation only. Raw generations, alpha-source intermediates, rejected candidates and processor copies remain local provenance and are intentionally excluded from Git history. No file enters `assets/**`, registry, manifest, state/save, canon or runtime in this task.
 - Remaining gate: ThunderPup faction/canon identity resolution and a separate GROUNDWORK promotion authorization are still required before runtime use.
+
+### 2026-07-15 - Codex - Black Iron Hackers Full Catalog Review Package - PUBLISHED TO MAIN
+
+- Lane: `Game Art, UI, And Visual Production`.
+- Status: `PUBLISHED`; final selected animation catalogs and reproducible QA evidence were committed after the strict final audit returned `PASS` with `0` problems.
+- Commit / branch: `a53c3f3` on `main`; this publication-ledger follow-up records the completed push sequence.
+- Published scope: `323` files containing `145` selected RGBA sheets, `145` GIF previews, five approved identity seeds, five full-catalog QC records, final alignment/crop audit evidence, review boards, species/appearance locks and production documentation.
+- Excluded local provenance: raw generations, alpha-source intermediates, rejected candidates and duplicate processor outputs were intentionally kept out of Git history. No `assets/**`, registry, manifest, state/save, canon or runtime promotion was included.
