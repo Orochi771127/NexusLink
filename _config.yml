@@ -1,0 +1,4 @@
+# GitHub Pages publishes the playable runtime, not generation or review staging.
+exclude:
+  - output
+  - assets/reference

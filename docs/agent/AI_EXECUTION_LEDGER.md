@@ -58,6 +58,19 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-07-16 - Codex - Pages payload and release enforcement - IN PROGRESS
+
+- Status: `IN PROGRESS`; Owner explicitly approved both `PAGES-PAYLOAD-EXCLUDE-R1` and `CI-RELEASE-ENFORCEMENT-R1`, including the GROUNDWORK deployment config, direct commit/push needed to bootstrap the first check, and the subsequent GitHub `main` ruleset mutation.
+- Branch / commit: `main` / baseline `e3581b4b1e8a9451a089486fbebc210f1b56308a`; local `HEAD` equals `origin/main` (`0/0`).
+- Scope: Add a root Jekyll exclusion config for non-runtime `output/**` and `assets/reference/**`; add a read-only GitHub Actions `web-release-gate`; publish the bounded package; verify the resulting CI check and reduced Pages deployment; then require that check through an active `main` ruleset.
+- Red-line check: No runtime, safety, Raphael persona/memory, save/schema, gameplay, asset deletion, FOMO, reward, dependency inference, battle, roster, or progression change. Automated checks remain machine evidence only.
+- Non-goals: No `.nojekyll`, `.gitignore` rewrite, `git rm`, runtime asset pruning, Pages source migration, whole-repository artifact upload, permanent bypass, or claim that private-blind, real-device, legal/privacy/store-copy, or public-launch gates are complete.
+- Acceptance refs: Existing Web release gate **17/17**; `ACCEPTANCE.md` D2/K9/L9; Pages artifact target `<850 MB`; public runtime assets remain HTTP 200; excluded staging/reference paths become HTTP 404; `main` rejects deletion/force-push and requires the successful `web-release-gate` check.
+- Verification: Pre-commit repo-native Web gate at `2026-07-16T16:43:38+0800` passed **17/17**, with accessibility warnings 0, runtime changes 0, and protected untracked `output/**` count 886. Temp evidence SHA-256: `2CF2B8A14320DA26D49374C5C7143BC53556431CC58269F5E52BB7D8E82B5F4F`. Staged scope audit, first workflow run, deployed Pages artifact/URL probes, and ruleset inspection remain pending.
+- Problems / risks: The current Pages artifact is **1,741,516,299 bytes** and warns above 1 GB; no repository workflow, protection, or ruleset currently enforces the release gate. The protected 886 untracked `output/**` files must remain untouched.
+- Next safe action: Apply the two-file configuration package plus append-only evidence, verify locally, commit/push the bootstrap change, wait for both CI and Pages, then create the ruleset only after the exact check context is observed.
+- Required reading: `AGENTS.md`, `CLAUDE.md`, `ACCEPTANCE.md`, the latest Lane 1 RC entries, `docs/qa/WEB_RELEASE_EVIDENCE.md`, `docs/qa/_run_web_release_gate.py`, and this lane.
+
 ### 2026-07-16 - Codex - RC closure exact-commit checkpoint - VERIFIED
 
 - Status: `VERIFIED`; the RC Docs/QA closure was committed as `220e2fdbefaa4a2a7ecc2e853f68869bc4560d81`. This status-sync entry records exact-commit results before the authorized direct-main push; public launch remains unapproved.
