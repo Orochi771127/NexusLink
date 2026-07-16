@@ -10,10 +10,12 @@
 
 | 欄位 | 值 |
 |------|-----|
-| `last_updated` | 2026-07-16（RC Launch Readiness Closure；**當前操作真相以 `HEAD c756337` + current Docs/QA worktree + `docs/agent/AI_EXECUTION_LEDGER.md` Lane 3 為準**） |
-| `last_agent` | Codex（RC truth sync + Docs/QA verification） |
+| `last_updated` | 2026-07-16（RC Launch Readiness Closure publication；**當前操作真相以 current `main` HEAD + `docs/agent/AI_EXECUTION_LEDGER.md` Lane 3 為準**） |
+| `last_agent` | Codex（RC publication + exact-commit verification） |
 | `active_branch` | `main`（2026-07-02 起單線開發，integrate 分支已退役） |
-| `last_commit` | `c7563379af9989d852a0df259787e2416590f4f5`；safety/K9/hardening package 已在 `main` / `origin/main`，目前 RC Docs/QA closure 仍未 commit / push |
+| `runtime_baseline` | `c7563379af9989d852a0df259787e2416590f4f5`（safety/K9/hardening runtime） |
+| `rc_closure_commit` | `220e2fdbefaa4a2a7ecc2e853f68869bc4560d81`；乾淨 checkout exact-commit Web **17/17**、sealed holdout **48/48** |
+| `publication` | Direct-main publication authorized；current status-sync commit only updates operational truth and generated QA evidence, with no runtime change |
 | `workspace` | `C:\Users\User\NexusLink_RaphaelAI_Workspace\NexusLink` |
 | `do_not_touch` | `AIForgeNexus2\NexusLink`（舊 checkout，易與本工作區分叉） |
 
@@ -66,7 +68,7 @@ RaphaelCore JS v1 → Soul Architecture v1.5 → NLU v1 → Stage 4 → advisory
 | 5 | Advisory 訓練層 + NLU 詞庫/語料擴充 + 自然對話 v2–v6 + 密封 holdout eval | ✅ `main`（2026-07-05..13，見 ledger Lane 3） |
 | 6 | Limited Beta + Reflective Care V1 runtime | ✅ `main`；舊自動 gate 因 D2 false-pass 已降級為 historical evidence |
 | 6.1 | D2 safety terminal invariant + repo-native content gate | ✅ `main` / `c756337`：focused 18/18、UI 6/6、sealed 48/48、web 17/17 |
-| 7 | RC closure + 同意制 Beta 回饋收集 + 正式 private-blind 人測 + 真機/法務 gate | ⏳ Docs/QA closure 進行中；human gates `not_run`，不得以 automated PASS 取代 |
+| 7 | RC closure + 同意制 Beta 回饋收集 + 正式 private-blind 人測 + 真機/法務 gate | ✅ Docs/QA closure `220e2fd` verified；human gates `not_run`，不得以 automated PASS 取代 |
 
 ---
 

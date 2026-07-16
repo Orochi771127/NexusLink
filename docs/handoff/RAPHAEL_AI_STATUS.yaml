@@ -1,21 +1,23 @@
 # Machine-readable Raphael AI status. Human narrative: RAPHAEL_AI_HANDOFF.md
-# Current operational truth = HEAD c756337 + current Docs/QA worktree + AI_EXECUTION_LEDGER Lane 3.
+# Current operational truth = current main HEAD + AI_EXECUTION_LEDGER Lane 3.
 # Historical automated counts are retained for provenance but are not current PASS evidence.
 last_updated: "2026-07-16"
-last_agent: "Codex (RC truth sync and Docs/QA verification)"
+last_agent: "Codex (RC publication and exact-commit verification)"
 
 branch:
   active: main
-  last_commit: "c7563379af9989d852a0df259787e2416590f4f5"
+  runtime_baseline_commit: "c7563379af9989d852a0df259787e2416590f4f5"
+  rc_closure_commit: "220e2fdbefaa4a2a7ecc2e853f68869bc4560d81"
   merged_to_main: true
-  note: "safety/K9/hardening package is on main and origin/main; current RC Docs/QA closure is uncommitted/unpushed and unrelated output/art work remains out of scope"
+  publication_mode: "owner_authorized_direct_main"
+  note: "RC closure is committed in main history; the current status-sync commit changes no runtime, and unrelated output/art work remains out of scope"
 
 workspace: "C:\\Users\\User\\NexusLink_RaphaelAI_Workspace\\NexusLink"
 do_not_touch: "AIForgeNexus2\\NexusLink"
 
 stage:
   current: "7"
-  label: "RC launch-gate closure; v6.1 runtime fixed at c756337 and human gates remain open"
+  label: "RC launch-gate closure published from verified commit 220e2fd; v6.1 runtime fixed at c756337 and human gates remain open"
   release_readiness: "automated_rc_pass_public_launch_not_approved"
   next: "run formal 3-person x 20-turn private blind review, real-device mobile checks, and legal/privacy/store-copy review before any launch claim"
 
@@ -33,13 +35,14 @@ capabilities:
   nlu_lexicon: "2026-07-13 expansion landed; historical TR-17..30 evidence available"
 
 qa:
+  rc_closure_exact_commit: "220e2fd: web 17/17 PASS from clean tracked tree at 2026-07-16T15:27:55+0800; sealed holdout 48/48 at 2026-07-16T15:27:58+0800"
   safety_terminal_invariant: "18/18 PASS on exact runtime commit c756337 (2026-07-16): 13 high-risk energy/persona regressions + 4 fail-closed mutations + 1 caution regulation case"
-  sealed_holdout_v1: "48/48 PASS on exact runtime commit c756337 (2026-07-16), 0 quality flags, 0 console errors; humanBlindReview:not_run; auxiliary evidence only"
+  sealed_holdout_v1: "48/48 PASS on exact closure commit 220e2fd (runtime baseline c756337), 0 quality flags, 0 console errors; humanBlindReview:not_run; auxiliary evidence only"
   repo_native_content_gate: "PASS: canonical full reply, real-world redirect, system role, zero secondary writers and protected-state equality are required"
   mutation_regressions: "4/4 fail-closed in focused suite: truncated, boundary template, missing redirect, energy reward"
   dialogue_policy: "21/21 PASS and required by the web release gate; boundary policy cannot be truncated by preference repair"
   constitution_policy: "5/5 PASS and required by the web release gate"
-  web_release_gate: "17/17 automated required checks PASS on exact runtime commit c756337; JS syntax 254/254; accessibility warnings 0"
+  web_release_gate: "17/17 automated required checks PASS on exact closure commit 220e2fd from a clean tracked tree; JS syntax 254/254; accessibility warnings 0"
   safety_terminal_ui: "6/6 top-level checks PASS on exact runtime commit c756337 across energy 0/7/10: full system reply, zero chips/SFX/gameplay delta, immediate critical save"
   live_playtest_gate: "Soul Talk 11/11, HUD 13/13, awakening/touch/storage/Pixi PASS, 0 console errors"
   map_first_session_ui: "42/42 PASS at 390x844, including fresh/legacy-veteran K9, real return-to-habitat, four phase-search choices, reduced motion, and close/Escape/panel/page encounter cancellation"

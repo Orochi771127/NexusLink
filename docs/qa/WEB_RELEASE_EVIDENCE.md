@@ -9,9 +9,10 @@ approval, a Steam build approval, or proof of open-domain conversation quality.
 | Field | Current truth |
 | --- | --- |
 | Runtime commit | `c7563379af9989d852a0df259787e2416590f4f5` |
+| RC Docs/QA closure commit | `220e2fdbefaa4a2a7ecc2e853f68869bc4560d81` |
 | Branch | `main` |
-| Local / remote relation | `HEAD == origin/main` at evidence time |
-| Current closure package | Uncommitted tracked Docs/QA-only changes; runtime tree clean; unrelated protected `output/**` remains out of scope |
+| Publication | Owner-authorized direct-main publication; current status-sync commit changes no runtime |
+| Current closure package | Committed tracked Docs/QA-only changes; runtime tree clean; unrelated protected `output/**` remains out of scope |
 | Automated RC gate | `PASS` |
 | GitHub Pages deployment | `DEPLOYED` |
 | Public launch | `NOT APPROVED` |
@@ -21,6 +22,24 @@ The automated result is therefore **`AUTOMATED_RC_PASS`**, not
 `LAUNCH_READY`. Public launch remains blocked by the human gates listed below.
 
 ## Local automated gate
+
+### Exact closure-commit verification
+
+- Commit: `220e2fdbefaa4a2a7ecc2e853f68869bc4560d81`
+- Generated: `2026-07-16T15:27:55+0800`
+- Result: **17/17 required checks passed** from a clean tracked tree;
+  `untrackedOutsideOutput: []`, `protectedOutputUntrackedCount: 886`,
+  `runtimeTreeClean: true`, and `runtimeChanges: []`.
+- Command used the runner's external evidence destination:
+
+```powershell
+python docs/qa/_run_web_release_gate.py --base http://127.0.0.1:5238 --port 5238 --output $env:TEMP\nexuslink-220e2fd-web.json
+```
+
+- Temporary evidence SHA-256:
+  `5B04D0CC8DFF3A8EA2261A3D36001749CF8F184BA21E820FB65E320EB5C595C1`.
+
+### Tracked pre-commit evidence
 
 - Generated: `2026-07-16T15:21:55+0800`
 - Command:
@@ -69,6 +88,11 @@ and the 390x844 viewport path.
 This sealed deterministic holdout is regression evidence. Its `hardGateOk`
 field cannot replace the repo-native D2 mutation/UI gates or the independent
 private-blind review.
+
+Exact closure-commit rerun `220e2fd` generated at
+`2026-07-16T15:27:58+0800`: **48/48**, 0 quality flags, 0 console errors,
+`humanBlindReview: not_run`. Temporary evidence SHA-256:
+`AE5DD7C521AA39A69F204F786932C694CCAB0A4DE2E222EA4744CD301164E2A7`.
 
 ### Independent private-blind review — human evidence
 

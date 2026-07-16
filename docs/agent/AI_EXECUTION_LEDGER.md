@@ -58,6 +58,16 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-07-16 - Codex - RC closure exact-commit checkpoint - VERIFIED
+
+- Status: `VERIFIED`; the RC Docs/QA closure was committed as `220e2fdbefaa4a2a7ecc2e853f68869bc4560d81`. This status-sync entry records exact-commit results before the authorized direct-main push; public launch remains unapproved.
+- Branch / commit: `main` / closure `220e2fd`; runtime baseline remains `c756337`. The current follow-up changes only handoff/status/release evidence, append-only ledger entries, and generated live QA evidence.
+- Scope: No runtime, GROUNDWORK, asset, output, dependency, save/schema, CI/ruleset, or Pages-payload change. The 886 protected `output/**` files remain untracked and excluded.
+- Verification: Clean tracked-tree run at `2026-07-16T15:27:55+0800` passed Web **17/17** with JS **254/254**, migration **33/33**, storage **13/13**, renderer **26/26**, map UI **42/42**, dialogue **21/21**, constitution **5/5**, D2 invariant **18/18**, D2 UI **6/6**, live Soul Talk **11/11**, HUD **13/13**, accessibility warnings 0 and runtime changes 0. Temp evidence SHA-256: `5B04D0CC8DFF3A8EA2261A3D36001749CF8F184BA21E820FB65E320EB5C595C1`.
+- Problems / risks: Human launch gates remain open; the Pages artifact >1 GB and missing release enforcement remain separate approval packages.
+- Next safe action: Commit this operational truth sync, push both commits to `origin/main`, wait for the Pages deployment of the resulting HEAD, then run deployed automation without writing tracked outputs.
+- Required reading: The preceding authorization entry, commit `220e2fd`, exact temp evidence, `WEB_RELEASE_EVIDENCE.md`, and this lane.
+
 ### 2026-07-16 - Codex - RC closure direct-main publication - AUTHORIZED
 
 - Status: `AUTHORIZED`; Owner explicitly instructed Codex to execute the recommended next step, including commit and push to `main`. This entry lands with the bounded RC Docs/QA closure; exact-commit and deployed verification follow before completion is claimed.
@@ -1622,6 +1632,16 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 ---
 
 ## Lane 3 - Raphael Core, Companion Reasoning, And Soul Talk
+
+### 2026-07-16 - Codex - RC Raphael exact-commit checkpoint - VERIFIED
+
+- Status: `VERIFIED` for machine evidence on closure commit `220e2fd`; independent private-blind remains `not_run` and public launch remains unapproved.
+- Branch / commit: `main` / closure `220e2fdbefaa4a2a7ecc2e853f68869bc4560d81`; no Raphael runtime or training change.
+- Scope: Exact-commit evaluation only, preserving RaphaelCore final authority and separating sealed holdout from human private-blind evidence.
+- Verification: Sealed evaluator at `2026-07-16T15:27:58+0800` passed **12 sessions / 48 turns / 48 hard passes / 0 failures / 0 quality flags / 0 console errors**, `humanBlindReview: not_run`. Temp evidence SHA-256: `AE5DD7C521AA39A69F204F786932C694CCAB0A4DE2E222EA4744CD301164E2A7`. The same closure SHA passed the repo-native Web gate **17/17** from a clean tracked tree.
+- Problems / risks: Machine evidence still cannot establish the human naturalness thresholds or substitute for 3 independent testers x 20 scored turns.
+- Next safe action: Publish the closure/status commits, rerun deployed Pages automation, then schedule the consent-safe private-blind protocol without importing raw tester text into runtime or training.
+- Required reading: The preceding authorization entry, the Raphael evaluation contract, commit `220e2fd`, and the temporary exact-commit evidence.
 
 ### 2026-07-16 - Codex - RC Raphael evidence publication - AUTHORIZED
 
