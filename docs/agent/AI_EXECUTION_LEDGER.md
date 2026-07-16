@@ -58,6 +58,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-07-16 - Codex - Pages payload and release enforcement - COMPLETED
+
+- Status: `COMPLETED`; the approved payload reduction, repo-native CI, immutable Node 24 action pins, and active `main` ruleset are implemented. This docs-only finalization is intentionally proceeding through the newly protected PR path; public launch remains unapproved.
+- Branch / commit: `codex/release-enforcement-finalize` based on protected `main` SHA `0539cfa8f4b92f7024d6e3400d4efaade38b4bf1`; ruleset `main-release-protection` ID `19037733` is active at <https://github.com/Orochi771127/NexusLink/rules/19037733>.
+- Scope: Release engineering and truth synchronization only. No runtime, safety, Raphael, gameplay, save/schema, asset, or protected `output/**` change.
+- Work performed: Pages now excludes generation/review staging; `web-release-gate` runs the 17-check repo-native suite on PR/main/manual events with read-only permission and compact evidence; official actions are immutable Node 24 pins; `main` requires PR plus strict `web-release-gate`, has no bypass actor, and rejects deletion/non-fast-forward updates.
+- Verification: Final pre-ruleset SHA `0539cfa` passed `web-release-gate` run `29486173817` / job `87581084031` in **4m0s**, app ID `15368`, conclusion success, annotations 0. Pages run `29486171482` succeeded, loaded `_config.yml`, and produced artifact **788,619,492 bytes**. Ruleset API inspection returned enforcement `active`, bypass count 0, approvals 0, strict status policy true, required context `web-release-gate`, and applicable rule types `deletion`, `non_fast_forward`, `pull_request`, and `required_status_checks` for `main`.
+- Problems / risks: GitHub's platform-owned legacy Pages workflow continues to emit its own Node 20 deprecation warning, which repository code cannot change. Formal moderated first-session, private-blind 3 x 20, real-device D1/D2/D3/D6, legal/privacy/store-copy/material-rights, and explicit public-launch approval remain open.
+- Next safe action: Merge this docs-only finalization only after its PR `web-release-gate` succeeds; all subsequent `main` changes must use an up-to-date PR and preserve the human launch gates as separate evidence.
+- Required reading: `_config.yml`, `.github/workflows/release-gate.yml`, `docs/qa/WEB_RELEASE_EVIDENCE.md`, ruleset `19037733`, runs `29486173817` and `29486171482`, and this lane.
+
 ### 2026-07-16 - Codex - Pages payload and CI bootstrap - VERIFIED
 
 - Status: `VERIFIED` for bootstrap commit `71dcc937f717b4292664576549d0117feef3777c`; public launch remains unapproved and the `main` ruleset is intentionally not activated until the evidence/pin follow-up receives the same successful check.

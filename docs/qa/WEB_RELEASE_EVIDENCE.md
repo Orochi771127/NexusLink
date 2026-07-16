@@ -11,13 +11,14 @@ approval, a Steam build approval, or proof of open-domain conversation quality.
 | Runtime commit | `c7563379af9989d852a0df259787e2416590f4f5` |
 | RC Docs/QA closure commit | `220e2fdbefaa4a2a7ecc2e853f68869bc4560d81` |
 | Release-engineering bootstrap commit | `71dcc937f717b4292664576549d0117feef3777c` |
+| Release-engineering final pin commit | `0539cfa8f4b92f7024d6e3400d4efaade38b4bf1` |
 | Branch | `main` |
-| Publication | Owner-authorized direct-main bootstrap; current evidence/action-pin follow-up changes no runtime |
+| Publication | Owner-authorized bootstrap completed; this truth-sync uses the protected PR path and changes no runtime |
 | Current release-engineering package | Pages payload exclusion plus repo-native CI; unrelated protected `output/**` remains out of scope and on disk |
 | Automated RC gate | `PASS` |
-| GitHub `web-release-gate` | `PASS` on exact bootstrap SHA; final pin/evidence SHA must pass before ruleset activation |
-| Pages payload | `PASS` at `788,617,916 bytes` (`<850 MB` target) |
-| `main` ruleset | `PENDING FINAL ACTIVATION` after the current follow-up receives a successful check |
+| GitHub `web-release-gate` | `PASS` on exact final pin SHA; Actions app `15368`; annotations 0 |
+| Pages payload | `PASS` at `788,619,492 bytes` (`<850 MB` target) |
+| `main` ruleset | `ACTIVE`: `main-release-protection` ID `19037733`, no bypass |
 | GitHub Pages deployment | `DEPLOYED` |
 | Public launch | `NOT APPROVED` |
 | Steam build | `NOT READY / NOT IN THIS PACKAGE` |
@@ -93,8 +94,15 @@ and the 390x844 viewport path.
 
 The initial run exposed a deprecation annotation because the previously
 approved action majors still declared Node 20. The current follow-up pins the
-official Node 24 action releases by immutable commit SHA; that follow-up must
-produce the same successful check before branch enforcement is enabled.
+official Node 24 action releases by immutable commit SHA. Exact final pin commit
+`0539cfa8f4b92f7024d6e3400d4efaade38b4bf1` passed run
+<https://github.com/Orochi771127/NexusLink/actions/runs/29486173817> in **4m0s**
+with check app ID `15368`, conclusion `success`, and 0 annotations.
+
+Ruleset <https://github.com/Orochi771127/NexusLink/rules/19037733> is active for
+`refs/heads/main`. It has no bypass actors, requires an up-to-date
+`web-release-gate`, requires the PR path with 0 approvals for the sole-owner
+repository, and blocks branch deletion plus non-fast-forward updates.
 
 ## Raphael conversation evidence
 
@@ -128,9 +136,9 @@ as the private-blind sample.
 ## Deployed GitHub Pages evidence
 
 - Public URL: <https://orochi771127.github.io/NexusLink/>
-- Deployed release-engineering commit: `71dcc937f717b4292664576549d0117feef3777c`
+- Deployed release-engineering commit: `0539cfa8f4b92f7024d6e3400d4efaade38b4bf1`
 - Runtime code remains frozen at: `c7563379af9989d852a0df259787e2416590f4f5`
-- Pages action: <https://github.com/Orochi771127/NexusLink/actions/runs/29485273828>
+- Pages action: <https://github.com/Orochi771127/NexusLink/actions/runs/29486171482>
 - Generated deployed QA: `2026-07-16T17:04:30+08:00`
 - Temporary deployed evidence SHA-256:
   `B04BF7B9502A2F9044501BA1B734011E2AE01B35AA0BE6C387F5C693E2A35600`
@@ -147,13 +155,12 @@ as the private-blind sample.
 | Console errors | 0 |
 
 The deployment is reachable and its automated probes pass. Jekyll loaded the
-root `_config.yml`; the Pages artifact is **788,617,916 bytes**, down from
+root `_config.yml`; the Pages artifact is **788,619,492 bytes**, down from
 **1,741,516,299 bytes** and below the `<850 MB` target. A representative runtime
 asset and the app root returned HTTP 200; representative `output/**` and
 `assets/reference/**` URLs returned HTTP 404 as intended. This is not yet a
-release approval. The committed CI now produces the required check context,
-while the approved `main` ruleset remains pending until the final action-pin and
-evidence follow-up passes on its exact SHA.
+release approval. The committed CI produces the required check context and the
+approved `main-release-protection` ruleset now enforces it on `main`.
 
 ## Human launch gates still open
 
@@ -184,7 +191,7 @@ relabeled as private-blind, real-device, legal, or public-launch approval.
 - Local automated RC gate: **PASS**.
 - GitHub `web-release-gate` bootstrap: **PASS**.
 - Pages payload target and deployed probes: **PASS**.
-- `main` ruleset: **PENDING FINAL ACTIVATION**.
+- `main` ruleset: **ACTIVE AND API-VERIFIED**.
 - Deployed Pages automated probes: **PASS**.
 - Independent private-blind, moderated first-session, real-device, and
   legal/privacy gates: **OPEN**.
