@@ -58,6 +58,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-07-16 - Codex - Protected main post-merge evidence truth sync - VERIFIED
+
+- Status: `VERIFIED`; Pages payload reduction, repo-native CI, immutable Node 24 action pins, and active protected-`main` enforcement are complete. This remains `AUTOMATED_RC_PASS`, not public-launch approval.
+- Branch / commit: verified `main` / `1ade52b3d17a494431013344ad889112c42d93ac` (`HEAD == origin/main`, divergence `0/0`); this truth record is prepared on docs-only branch `codex/release-evidence-final-sync`.
+- Scope: Post-merge release-engineering evidence synchronization only. No runtime, safety, Raphael, gameplay, state/save, asset, or protected `output/**` change.
+- Work performed: PR #91 was marked ready only after its required check passed, then merged through `main-release-protection`. The evidence record now names the protected merge SHA, post-merge CI/Pages runs, final artifact size, public deployment probes, and the still-open human gates.
+- Verification: PR #91 required run `29486758125` / job `87582973690` passed in **3m52s**. Merge SHA `1ade52b` passed post-merge `web-release-gate` run `29487047298` / job `87583907417` with every step green and 0 annotations. Pages run `29487046694` succeeded and produced artifact **788,630,124 bytes**. Public Pages rerun at `2026-07-16T20:03:48+08:00` passed **17/17** required checks with 0 accessibility warnings, clean runtime provenance, one Pixi canvas, and 0 console errors; temporary evidence SHA-256 `E4D381BA89B144D05888B15EC90EB2F0089FD8CCBFD9F3DA457CBADF98DBD3BA`. Root/runtime probes returned 200; representative `output/**` and `assets/reference/**` probes returned 404; the public evidence page returned 200 and retained `NOT_RUN` human gates.
+- Problems / risks: GitHub's platform-owned legacy Pages workflow still owns its Node 20 deprecation warning. Formal moderated first-session, private-blind 3 x 20, real-device D1/D2/D3/D6, legal/privacy/store-copy/material-rights, and explicit public-launch approval remain open.
+- Next safe action: Run the human launch-evidence package; all future `main` changes must use an up-to-date PR and preserve the exact `web-release-gate` context plus separate human approvals.
+- Required reading: `_config.yml`, `.github/workflows/release-gate.yml`, `docs/qa/WEB_RELEASE_EVIDENCE.md`, PR #91, ruleset `19037733`, runs `29486758125`, `29487047298`, and `29487046694`, and this lane.
+
 ### 2026-07-16 - Codex - Pages payload and release enforcement - COMPLETED
 
 - Status: `COMPLETED`; the approved payload reduction, repo-native CI, immutable Node 24 action pins, and active `main` ruleset are implemented. This docs-only finalization is intentionally proceeding through the newly protected PR path; public launch remains unapproved.
