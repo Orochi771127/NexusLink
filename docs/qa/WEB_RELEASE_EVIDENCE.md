@@ -11,13 +11,14 @@ approval, a Steam build approval, or proof of open-domain conversation quality.
 | Runtime commit | `c7563379af9989d852a0df259787e2416590f4f5` |
 | RC Docs/QA closure commit | `220e2fdbefaa4a2a7ecc2e853f68869bc4560d81` |
 | Release-engineering bootstrap commit | `71dcc937f717b4292664576549d0117feef3777c` |
-| Release-engineering final pin commit | `0539cfa8f4b92f7024d6e3400d4efaade38b4bf1` |
+| Release-engineering Node 24 pin commit | `0539cfa8f4b92f7024d6e3400d4efaade38b4bf1` |
+| Protected release-enforcement merge verified | `1ade52b3d17a494431013344ad889112c42d93ac` (PR #91) |
 | Branch | `main` |
-| Publication | Owner-authorized bootstrap completed; this truth-sync uses the protected PR path and changes no runtime |
+| Publication | Owner-authorized bootstrap completed; PR #91 then proved and used the protected merge path; no runtime changed |
 | Current release-engineering package | Pages payload exclusion plus repo-native CI; unrelated protected `output/**` remains out of scope and on disk |
 | Automated RC gate | `PASS` |
-| GitHub `web-release-gate` | `PASS` on exact final pin SHA; Actions app `15368`; annotations 0 |
-| Pages payload | `PASS` at `788,619,492 bytes` (`<850 MB` target) |
+| GitHub `web-release-gate` | `PASS` on protected merge SHA `1ade52b`; Actions app `15368`; annotations 0 |
+| Pages payload | `PASS` at `788,630,124 bytes` (`<850 MB` target) |
 | `main` ruleset | `ACTIVE`: `main-release-protection` ID `19037733`, no bypass |
 | GitHub Pages deployment | `DEPLOYED` |
 | Public launch | `NOT APPROVED` |
@@ -80,7 +81,7 @@ The map gate includes fresh/veteran K9 behavior, four phase-search choices,
 close/Escape/panel-switch encounter cancellation, persistence, reduced motion,
 and the 390x844 viewport path.
 
-## GitHub release-gate bootstrap evidence
+## GitHub release-gate and protected-merge evidence
 
 - Workflow: `.github/workflows/release-gate.yml`
 - Exact commit: `71dcc937f717b4292664576549d0117feef3777c`
@@ -98,6 +99,13 @@ official Node 24 action releases by immutable commit SHA. Exact final pin commit
 `0539cfa8f4b92f7024d6e3400d4efaade38b4bf1` passed run
 <https://github.com/Orochi771127/NexusLink/actions/runs/29486173817> in **4m0s**
 with check app ID `15368`, conclusion `success`, and 0 annotations.
+
+PR <https://github.com/Orochi771127/NexusLink/pull/91> then exercised the active
+protected path. Its required `web-release-gate` run `29486758125` passed before
+merge. Merge commit `1ade52b3d17a494431013344ad889112c42d93ac` triggered the
+post-merge `main` run
+<https://github.com/Orochi771127/NexusLink/actions/runs/29487047298>; job
+`87583907417` completed successfully with every step green and 0 annotations.
 
 Ruleset <https://github.com/Orochi771127/NexusLink/rules/19037733> is active for
 `refs/heads/main`. It has no bypass actors, requires an up-to-date
@@ -136,12 +144,12 @@ as the private-blind sample.
 ## Deployed GitHub Pages evidence
 
 - Public URL: <https://orochi771127.github.io/NexusLink/>
-- Deployed release-engineering commit: `0539cfa8f4b92f7024d6e3400d4efaade38b4bf1`
+- Verified release-enforcement deployment commit: `1ade52b3d17a494431013344ad889112c42d93ac`
 - Runtime code remains frozen at: `c7563379af9989d852a0df259787e2416590f4f5`
-- Pages action: <https://github.com/Orochi771127/NexusLink/actions/runs/29486171482>
-- Generated deployed QA: `2026-07-16T17:04:30+08:00`
+- Pages action: <https://github.com/Orochi771127/NexusLink/actions/runs/29487046694>
+- Generated deployed QA: `2026-07-16T20:03:48+08:00`
 - Temporary deployed evidence SHA-256:
-  `B04BF7B9502A2F9044501BA1B734011E2AE01B35AA0BE6C387F5C693E2A35600`
+  `E4D381BA89B144D05888B15EC90EB2F0089FD8CCBFD9F3DA457CBADF98DBD3BA`
 
 | Deployed probe | Result |
 | --- | ---: |
@@ -155,7 +163,7 @@ as the private-blind sample.
 | Console errors | 0 |
 
 The deployment is reachable and its automated probes pass. Jekyll loaded the
-root `_config.yml`; the Pages artifact is **788,619,492 bytes**, down from
+root `_config.yml`; the Pages artifact is **788,630,124 bytes**, down from
 **1,741,516,299 bytes** and below the `<850 MB` target. A representative runtime
 asset and the app root returned HTTP 200; representative `output/**` and
 `assets/reference/**` URLs returned HTTP 404 as intended. This is not yet a
@@ -189,7 +197,7 @@ relabeled as private-blind, real-device, legal, or public-launch approval.
 
 - Exact runtime candidate: **frozen at `c756337`**.
 - Local automated RC gate: **PASS**.
-- GitHub `web-release-gate` bootstrap: **PASS**.
+- GitHub protected-merge and post-merge `web-release-gate`: **PASS**.
 - Pages payload target and deployed probes: **PASS**.
 - `main` ruleset: **ACTIVE AND API-VERIFIED**.
 - Deployed Pages automated probes: **PASS**.
