@@ -10,10 +10,10 @@
 
 | 欄位 | 值 |
 |------|-----|
-| `last_updated` | 2026-07-16（safety/K9 hardening 驗證；**當前操作真相以 current worktree + `docs/agent/AI_EXECUTION_LEDGER.md` Lane 3 為準**） |
-| `last_agent` | Codex（runtime implementation + current-worktree verification） |
+| `last_updated` | 2026-07-16（RC Launch Readiness Closure；**當前操作真相以 `HEAD c756337` + current Docs/QA worktree + `docs/agent/AI_EXECUTION_LEDGER.md` Lane 3 為準**） |
+| `last_agent` | Codex（RC truth sync + Docs/QA verification） |
 | `active_branch` | `main`（2026-07-02 起單線開發，integrate 分支已退役） |
-| `last_commit` | `30fc8e9`；本包仍是未 commit / 未 push 的 `main` worktree |
+| `last_commit` | `c7563379af9989d852a0df259787e2416590f4f5`；safety/K9/hardening package 已在 `main` / `origin/main`，目前 RC Docs/QA closure 仍未 commit / push |
 | `workspace` | `C:\Users\User\NexusLink_RaphaelAI_Workspace\NexusLink` |
 | `do_not_touch` | `AIForgeNexus2\NexusLink`（舊 checkout，易與本工作區分叉） |
 
@@ -21,7 +21,7 @@
 
 ## 一句話現況
 
-RaphaelCore JS v1 → Soul Architecture v1.5 → NLU v1 → Stage 4 → advisory training / Nuwa → 自然對話 v2–v6 → Reflective Care V1 已落在 `main`。**現行 runtime 已由 Soul Talk 呼叫 `runRaphaelCore()`，且 Persona Constitution / constitution critic 已接入。** 2026-07-14 的 holdout `48/48` 曾對 D2 截斷正文產生 false-pass；2026-07-16 current worktree 已把 canonical safety body、零次級寫入與 protected-state equality 納入 repo-native gate，並重新通過 focused 18/18、real UI 6/6、sealed 48/48 與 web release 17/17。本包仍未 commit / push。
+RaphaelCore JS v1 → Soul Architecture v1.5 → NLU v1 → Stage 4 → advisory training / Nuwa → 自然對話 v2–v6 → Reflective Care V1 已落在 `main`。**現行 runtime 已由 Soul Talk 呼叫 `runRaphaelCore()`，且 Persona Constitution / constitution critic 已接入。** 2026-07-14 的 holdout `48/48` 曾對 D2 截斷正文產生 false-pass；`c756337` 已把 canonical safety body、零次級寫入與 protected-state equality 納入 repo-native gate，exact-commit automation 重新通過 focused 18/18、real UI 6/6、sealed 48/48 與 web release 17/17。本次 tracked closure 只限 RC Docs/QA、不改 runtime；既有且受保護的未追蹤 `output/**` 仍在 worktree，完全不屬於本包。
 
 **誠實邊界（不可誇大）：**
 
@@ -31,9 +31,9 @@ RaphaelCore JS v1 → Soul Architecture v1.5 → NLU v1 → Stage 4 → advisory
 - Reflective Care V1 是陪伴對話政策，**不是心理治療 / 診斷 / 危機服務**；care/symbolic 回合不給獎勵、不寫記憶。
 - Expedition 只有 result event、第一人稱 composer、lite critic 與專用 memory gateway；`coreIntegrated:false`，現況是 **Prototype + partial Core bridge**。
 
-下一步：執行正式 3 人 × 20 回合 private-blind、真機三平台與法務/隱私/商店文案 gate；自動化綠燈不得替代這三項 human launch evidence。
+下一步：執行正式 3 人 × 20 回合 private-blind、真機／瀏覽器矩陣 D1/D2/D3/D6 與法務/隱私/商店文案 gate；自動化綠燈不得替代這三類 human launch evidence。
 
-> 以下章節（Stage 進度表、模組地圖、QA 數字）為 2026-06-24 的歷史快照，架構描述仍有效；**數字與「下一步」以上方、`RAPHAEL_AI_STATUS.yaml` 與 ledger 為準**。
+> 下方 Stage 4 runner 表保留 2026-06-24 歷史計數；current release claim 只以上方 current 表、`RAPHAEL_AI_STATUS.yaml`、raw QA output 與 ledger 為準。
 
 ---
 
@@ -42,15 +42,15 @@ RaphaelCore JS v1 → Soul Architecture v1.5 → NLU v1 → Stage 4 → advisory
 | 項目 | 狀態 | 證據 |
 |------|------|------|
 | 自然對話 v2–v6 | v6 通過結構化 Beta 稽核（3 sessions / 60 互動 60/60；evidence_class=structured_beta） | `docs/qa/RAPHAEL_CONVERSATION_EVAL_V6_LIMITED_BETA_2026-07-13.md` |
-| 密封 holdout v1.0.0 | **48/48 PASS（2026-07-16 current worktree）**；quality flags 0、console errors 0、human blind review `not_run`。`hardGateOk` 是輔助證據，不單獨代表可發版 | `docs/qa/_raphael_conversation_holdout_output.json` + repo-native D2 gates |
-| D2 safety terminal focused gate | **18/18 PASS（2026-07-16 current worktree）**：13 個 energy/persona regressions、4 個 mutation fail-closed、1 個 caution regulation；完整 canonical reply、零 quick reply／記憶／trace／reward／偏好寫入 | `node docs/qa/_run_safety_terminal_invariant.mjs` |
+| 密封 holdout v1.0.0 | **48/48 PASS（exact runtime commit `c756337`）**；quality flags 0、console errors 0、human blind review `not_run`。`hardGateOk` 是輔助證據，不單獨代表可發版 | `docs/qa/_raphael_conversation_holdout_output.json` + repo-native D2 gates |
+| D2 safety terminal focused gate | **18/18 PASS（exact runtime commit `c756337`）**：13 個 energy/persona regressions、4 個 mutation fail-closed、1 個 caution regulation；完整 canonical reply、零 quick reply／記憶／trace／reward／偏好寫入 | `node docs/qa/_run_safety_terminal_invariant.mjs` |
 | Reflective Care V1 | dialogue loop 21/21（含 6 care/symbolic + 1 safety-precedence）；opt-in、無獎勵、無記憶寫入 | `docs/qa/RAPHAEL_REFLECTIVE_CARE_V1_2026-07-14.md` |
 | Nuwa advisory v0.3 | +daily_texture/small_moments/sleepless、no_sleep_pressure 哨兵；trusted:false | ledger Lane 3 2026-07-13（NLU 訓練批次） |
 | NLU 詞庫擴充 | 情感詞 19→60、程度副詞 7→16、否定詞 6→11、約 60 口語/簡體變體；TR-17..30 | ledger Lane 3 2026-07-13（NLU 訓練批次） |
 | Web release gate | **17/17 automated required PASS**；dialogue 21/21、constitution 5/5 已升為 hard requirements，JS syntax 254/254，accessibility warnings 0 | `docs/qa/_web_release_gate_output.json` |
 | Real Soul Talk safety UI | **6/6 PASS**（energy 0/7/10）：完整 system reply、零 chips/SFX/gameplay delta、preference 不變、critical save 即時完成 | `docs/qa/_run_safety_terminal_ui_gate.py` + web release output |
 
-**尚未關閉的人類 gate：** 真機三平台重測、3 位獨立測試者 × 20 回合 moderated private-blind（含盲審紀錄）、法務/隱私/商店文案審查。
+**尚未關閉的人類 gate：** D1/D2/D3/D6 真機／瀏覽器矩陣、3 位獨立測試者 × 20 回合 private-blind、first-session moderated comprehension test，以及法務/隱私/商店文案審查。
 
 ---
 
@@ -65,8 +65,8 @@ RaphaelCore JS v1 → Soul Architecture v1.5 → NLU v1 → Stage 4 → advisory
 | 4 | Human playtest pack（fatigue recall、touch fatigue daytime、10 human-feel cases） | ✅ `main`（PR #87） |
 | 5 | Advisory 訓練層 + NLU 詞庫/語料擴充 + 自然對話 v2–v6 + 密封 holdout eval | ✅ `main`（2026-07-05..13，見 ledger Lane 3） |
 | 6 | Limited Beta + Reflective Care V1 runtime | ✅ `main`；舊自動 gate 因 D2 false-pass 已降級為 historical evidence |
-| 6.1 | D2 safety terminal invariant + repo-native content gate | ✅ current worktree automated evidence：focused 18/18、UI 6/6、sealed 48/48、web 17/17；本包未 commit / push |
-| 7 | 同意制 Beta 回饋收集 + 正式 private-blind 人測 + 真機/法務 gate | ⏳ human gates `not_run`；不得以 automated PASS 取代 |
+| 6.1 | D2 safety terminal invariant + repo-native content gate | ✅ `main` / `c756337`：focused 18/18、UI 6/6、sealed 48/48、web 17/17 |
+| 7 | RC closure + 同意制 Beta 回饋收集 + 正式 private-blind 人測 + 真機/法務 gate | ⏳ Docs/QA closure 進行中；human gates `not_run`，不得以 automated PASS 取代 |
 
 ---
 
@@ -126,7 +126,7 @@ Player input
 ## 未完成 / 建議下一步（2026-07-16）
 
 1. **正式 private-blind 人測**：3 位獨立測試者 × 20 回合（協定：`docs/qa/RAPHAEL_PRIVATE_BLIND_TEST_V1.md`）；目前 not_run
-2. **真機三平台重測** + 法務/隱私/商店文案審查（product launch gate）
+2. **D1/D2/D3/D6 真機／瀏覽器矩陣** + 法務/隱私/商店文案審查（product launch gate）
 3. 同意制 Limited Beta 回饋收集（care 語氣 / symbolic prompts），**不得**當作 private-blind 證據
 4. 自然對話後續：更廣 paraphrases、本地玩家回覆風格偏好（case-first）；不得讓 preference layer 改寫 safety 或 boundary policy turn
 5. 長線：corpus 擴充、gateway 真實 advisor 接入（仍須 RaphaelCore 最終裁決、trusted:false）
@@ -210,7 +210,7 @@ python docs/qa/_run_stage4_human_playtest.py
 python docs/qa/_run_touch_fatigue_daytime.py
 ```
 
-2026-07-14 的 harness 17/17、NLU smoke 8/8、live Soul Talk 11/11 / HUD 13/13 只屬歷史快照。2026-07-16 current worktree 已通過 focused D2 18/18、real UI 6/6、sealed holdout 48/48（quality flags 0）與完整 web release 17/17。以 `RAPHAEL_AI_STATUS.yaml` 的 current 欄位判定；human blind、真機與法務 gate 仍未完成。
+2026-07-14 的 harness 17/17、NLU smoke 8/8、live Soul Talk 11/11 / HUD 13/13 只屬歷史快照。Exact runtime commit `c756337` 已通過 focused D2 18/18、real UI 6/6、sealed holdout 48/48（quality flags 0）與完整 web release 17/17。以 `RAPHAEL_AI_STATUS.yaml` 的 current 欄位判定；private-blind、D1/D2/D3/D6 與法務 gate 仍未完成。
 
 ---
 

@@ -58,6 +58,41 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-07-16 - Codex - RC closure direct-main publication - AUTHORIZED
+
+- Status: `AUTHORIZED`; Owner explicitly instructed Codex to execute the recommended next step, including commit and push to `main`. This entry lands with the bounded RC Docs/QA closure; exact-commit and deployed verification follow before completion is claimed.
+- Branch / commit: `main` / parent runtime candidate `c7563379af9989d852a0df259787e2416590f4f5`; direct-main publication authorized, no PR requested.
+- Scope: Exactly 15 tracked Docs/QA files already listed by the preceding verified entry. No runtime, GROUNDWORK, asset, output, dependency, save/schema, workflow, branch-protection, or Pages-payload mutation is included. All 886 protected untracked files remain under `output/**` and outside staging.
+- Verification: Final pre-commit gate at `2026-07-16T15:21:55+0800` passed **17/17**, with `stage4_automated_cases` correctly classified as machine evidence, runtime changes 0, non-output untracked files 0, AST **3/3**, JSON parse **4/4**, secret scan 0, and two independent read-only diff audits completed.
+- Problems / risks: Human D1/D2/D3/D6, moderated first-session, Raphael private-blind 3 x 20, legal/privacy/store-copy/material-rights, and explicit public-launch gates remain open. Artifact-size and release-enforcement work require a separate package.
+- Next safe action: Commit the exact allowlist, rerun exact-commit local/holdout evidence without dirtying tracked outputs, synchronize operational truth in a docs-only follow-up commit, push both commits, then wait for and probe the deployed Pages SHA.
+- Required reading: The preceding verified/in-progress entries, `docs/qa/WEB_RELEASE_EVIDENCE.md`, current generated JSON outputs, and this lane.
+
+### 2026-07-16 - Codex - RC freeze and launch-gate closure - VERIFIED
+
+- Status: `VERIFIED` for the bounded Docs/QA package and automated RC evidence; public launch remains `NOT APPROVED`.
+- Branch / commit: `main` / runtime candidate `c7563379af9989d852a0df259787e2416590f4f5`; local `HEAD` equals `origin/main` (`0/0`). This Docs/QA closure remains uncommitted, and no commit or push was authorized.
+- Scope: Synchronized the release evidence, Raphael handoff/status, manual test protocols, private-blind taxonomy, and browser/Pages QA to the landed runtime. Repaired HTTPS map seeding, replaced fixed persistence waits with bounded observation, made the Pages probe traverse Initial Bond and prove canonical save persistence, and added exact Git/runtime provenance plus explicit human blockers to the repo-native release runner. No GROUNDWORK, runtime, asset, output, save/schema, dependency, CI, or deployment mutation was made.
+- Work performed: `WEB_RELEASE_EVIDENCE.md` now identifies `c756337`, distinguishes automated RC pass from launch approval, records deployed Pages evidence, and keeps D1/D2/D3/D6, moderated first-session, private-blind, legal/privacy and Owner approval open. The manual checklist and moderated script now use Initial Bond, the current trio, selected-companion continuity, K9 Moonlake-first exploration, Silent Anchor phase search, `nexusLinkR2State:v1`, illustrated/linear rendering, non-punitive boundaries, and separate human evidence classes.
+- Verification: Exact-candidate local gate at `2026-07-16T14:05:40+0800` passed **17/17** required checks with JS **254/254**, migration **33/33**, storage **13/13**, renderer lifecycle **26/26**, map UI **42/42**, dialogue **21/21**, constitution **5/5**, safety invariant **18/18**, safety UI **6/6**, live Soul Talk **11/11**, HUD **13/13**, accessibility warnings 0, and console blockers 0. Provenance recorded `untrackedOutsideOutput: []`, protected `output/**` count 886, and runtime changes 0. Deployed Pages at `2026-07-16T14:04:34+08:00` passed harness **17/17**, NLU **8/8**, Stage 4 automated **12/12**, safety **18/18**, persisted map **42/42**, exact Initial Bond action sequence/Soul Talk/save persistence, one Pixi canvas, and 0 console errors.
+- Problems / risks: Human real-device D1/D2/D3/D6, 3-participant moderated first-session comprehension, 3 x 20-turn Raphael private-blind, legal/privacy/store-copy/material-rights review, and explicit public-launch approval remain `not_run`/open. The deployed Pages artifact was reported as **1,741,503,156 bytes**, above the platform's 1 GB warning threshold. No committed release workflow, branch protection, or ruleset currently enforces these gates.
+- Next safe action: Preserve `c756337` as the frozen runtime candidate. Owner may separately authorize this Docs/QA closure for commit/push; if so, rerun exact-commit local and deployed probes. In parallel, schedule the human gates. Open payload reduction and CI/ruleset enforcement only as separately approved GROUNDWORK/release-engineering packages.
+- Required reading: The preceding `IN PROGRESS` entry, `docs/qa/WEB_RELEASE_EVIDENCE.md`, `docs/handoff/RAPHAEL_AI_HANDOFF.md`, `docs/handoff/RAPHAEL_AI_STATUS.yaml`, `docs/testing/MANUAL_TEST_CHECKLIST.md`, `docs/testing/PRIVATE_TEST_SCRIPT.md`, current JSON outputs, and this lane.
+
+### 2026-07-16 - Codex - RC freeze and launch-gate closure - IN PROGRESS
+
+- Status: `IN PROGRESS`; Owner approved the first Launch Readiness Closure package after `c756337` landed on `main`.
+- Branch / commit: `main` / exact baseline `c7563379af9989d852a0df259787e2416590f4f5`; local `HEAD` equals `origin/main` (`0/0`). No commit or push authorized.
+- Scope: EXPERIENCE / Docs-and-QA-only truth synchronization for the exact release candidate: refresh handoff/status/release evidence, repair HTTPS-aware Pages/map probes, modernize the manual/private-test scripts, and keep automated, sealed-holdout, private-blind, real-device, and legal evidence explicitly separate. No GROUNDWORK or runtime files are in this package.
+- Red-line check: Machine gates cannot be relabeled as human evidence; private tester text is not persisted without consent; safety remains system-role, canonical, state-neutral, no-reward and no-memory; no FOMO, dependency inference, diagnosis, or crisis-role framing is introduced.
+- Non-goals: No new gameplay, runtime/safety/persona change, asset/output mutation, save/schema change, Pages payload redesign, CI/branch-protection mutation, Steam wrapper, commit, push, or deployment.
+- Acceptance refs: `ACCEPTANCE.md` D2, K9 and L9; `docs/qa/RAPHAEL_PRIVATE_BLIND_TEST_V1.md`; `docs/testing/REAL_DEVICE_REGRESSION_MATRIX.md`.
+- Work performed: Confirmed the exact Git baseline and clean tracked worktree, read the current handoff/status plus Lane 1/Lane 3 latest entries, and re-established the evaluation contract before editing.
+- Verification: Pending syntax checks, exact-commit web gate, sealed holdout, local 390x844 browser gates, and deployed Pages probes. Human private-blind, real-device and legal/store-copy gates remain `not_run` and cannot be closed by this package.
+- Problems / risks: Current docs still describe the package as uncommitted on `30fc8e9`; the manual checklist references a retired storage key and legacy art/first-session assumptions; committed map QA rejects HTTPS seeding; the Pages artifact is over the platform's 1 GB warning threshold and belongs to a separate release-engineering approval package.
+- Next safe action: Apply the bounded Docs/QA repairs, rerun exact evidence, then append a verified entry without making a launch claim.
+- Required reading: `AGENTS.md`, `CLAUDE.md`, `ACCEPTANCE.md` D2/K9/L9, `docs/handoff/RAPHAEL_AI_HANDOFF.md`, `docs/handoff/RAPHAEL_AI_STATUS.yaml`, `docs/qa/WEB_RELEASE_EVIDENCE.md`, `docs/qa/RAPHAEL_PRIVATE_BLIND_TEST_V1.md`, the Raphael conversation evaluation contract, and this lane.
+
 ### 2026-07-16 - Codex - Safety terminal, K9, lifecycle, gameplay, and hardening pack - VERIFIED
 
 - Status: `VERIFIED` for the implemented and automated scope; formal human launch gates remain open.
@@ -1587,6 +1622,41 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 ---
 
 ## Lane 3 - Raphael Core, Companion Reasoning, And Soul Talk
+
+### 2026-07-16 - Codex - RC Raphael evidence publication - AUTHORIZED
+
+- Status: `AUTHORIZED`; publication of the already verified evidence package is approved. This does not grant permission to alter Raphael runtime, training, memory, persona, D2 safety, or human-gate status.
+- Branch / commit: `main` / parent runtime candidate `c7563379af9989d852a0df259787e2416590f4f5`; closure commit and exact-commit verification pending at this point in the append-only history.
+- Scope: Publish the corrected machine-vs-human taxonomy, private-blind protocol, historical holdout quarantine, handoff/status, repo-native QA scripts, and generated machine evidence only.
+- Verification: Pre-commit web gate **17/17**, sealed holdout **48/48** with 0 flags/errors, D2 focused **18/18**, live safety UI **6/6**, and deployed Pages automation already green. `stage4_automated_cases` is no longer mislabeled as human playtest evidence; the 2026-07-14 worksheet now cites historical snapshot `de57e92` instead of the regenerated current JSON.
+- Problems / risks: Independent private-blind remains `not_run`; no automated result is promoted to human evidence or public-launch approval.
+- Next safe action: After committing the closure, rerun the sealed evaluator to a temporary output on the exact closure SHA, then append a completion entry with the observed SHA and retain case-first human follow-up.
+- Required reading: The preceding verified/in-progress entries, the Raphael evaluation contract, `docs/qa/RAPHAEL_PRIVATE_BLIND_TEST_V1.md`, and current holdout output.
+
+### 2026-07-16 - Codex - RC evidence taxonomy and private-blind handoff - VERIFIED
+
+- Status: `VERIFIED` for evidence synchronization and automated Raphael regression; formal independent private-blind remains `not_run`, so Raphael launch readiness is not approved.
+- Branch / commit: `main` / frozen runtime candidate `c7563379af9989d852a0df259787e2416590f4f5`; no Raphael runtime change, commit, or push in this package.
+- Scope: Corrected the launch-evidence taxonomy without changing NLU, persona, constitution, safety body, preference behavior, memory, state mutation, renderer, LLM/gateway, or Expedition behavior. Historical review material is retained as provenance but quarantined from current/private-blind evidence.
+- Work performed: Synchronized the human handoff and machine-readable status to `c756337`; declared sealed holdout and Stage 4 harnesses as machine evidence; marked the historical 2026-07-14 worksheet invalid for launch evidence; and modernized the consent-safe 3-testers x 20-turn protocol with scored-turn and aggregate-reporting rules. High-risk prompts remain excluded from training, preference, gameplay, and reward use.
+- Verification: Sealed holdout regenerated at `2026-07-16T13:42:59+0800`: **12 sessions / 48 turns / 48 hard passes / 0 failures / 0 quality flags / 0 console errors**, with `humanBlindReview: not_run`. Repo-native D2 evidence passed safety terminal invariant **18/18**, live safety UI **6/6**, dialogue policy **21/21**, constitution **5/5**, and full local web gate **17/17**. The deployed Pages safety invariant independently passed **18/18**.
+- Problems / risks: Deterministic checks do not establish open-domain naturalness. No independent participant has yet completed the formal sample, so naturalness >=4.0, grounded continuity >=95%, irrelevant <=3%, template-like <=5%, unnecessary questions <=5%, and false explicit recall 0 have not been demonstrated by human evidence.
+- Next safe action: Run the private-blind protocol with at least three independent testers and at least 20 scored turns each. Report aggregate metrics and case-first failures without storing raw personal conversation text unless separately consented; do not soften D2, memory authority, boundary behavior, or state neutrality to improve feel scores.
+- Required reading: The preceding `IN PROGRESS` entry, `docs/qa/RAPHAEL_PRIVATE_BLIND_TEST_V1.md`, `docs/qa/RAPHAEL_BLIND_REVIEW_SHEET_2026-07-14.md`, `docs/qa/_raphael_conversation_holdout_output.json`, the Raphael evaluation contract, current handoff/status, and this lane.
+
+### 2026-07-16 - Codex - RC evidence taxonomy and private-blind handoff - IN PROGRESS
+
+- Status: `IN PROGRESS`; Docs/QA closure only. RaphaelCore runtime remains frozen at exact `c756337`.
+- Branch / commit: `main` / `c7563379af9989d852a0df259787e2416590f4f5`; no commit or push authorized.
+- Scope: Synchronize Raphael handoff/status and release evidence to the landed D2 terminal contract; prevent historical holdout review sheets or deterministic Stage 4 harnesses from being presented as private-blind human evidence; prepare a consent-safe 3-testers x 20-turn scorecard without storing raw conversations.
+- Red-line check: No crisis prompt becomes training, memory, reward or gameplay; no external evaluator/model gains authority over final safety, boundary, memory, state delta or reply; Raphael remains a Stateful Companion Cognition Agent rather than therapy/crisis service.
+- Non-goals: No NLU vocabulary, response pack, persona, safety body, preference behavior, memory writer, state mutation, LLM/gateway or Expedition integration change.
+- Acceptance refs: `ACCEPTANCE.md` D2/L9 and the Raphael Conversation Evaluation Contract hard gates and private-blind thresholds.
+- Work performed: Confirmed the landed safety package and current evidence split: automated web gate 17/17 and sealed holdout 48/48 are machine evidence; formal private-blind remains `not_run`.
+- Verification: Pending refreshed exact-commit outputs and Pages probes. This task cannot fabricate or self-administer the independent human sample.
+- Problems / risks: `RAPHAEL_BLIND_REVIEW_SHEET_2026-07-14.md` contains a historical unsafe H10 reply and must be clearly quarantined as provenance, not current or private-blind evidence.
+- Next safe action: Repair the evidence documents, rerun machine gates, and leave the human launch gate visibly open for independent testers.
+- Required reading: `docs/handoff/RAPHAEL_AI_HANDOFF.md`, `docs/handoff/RAPHAEL_AI_STATUS.yaml`, `docs/qa/RAPHAEL_PRIVATE_BLIND_TEST_V1.md`, `docs/qa/RAPHAEL_BLIND_REVIEW_SHEET_2026-07-14.md`, the sealed-evaluation contract, and this lane.
 
 ### 2026-07-16 - Codex - D2 safety terminal invariant and release-gate repair - VERIFIED
 

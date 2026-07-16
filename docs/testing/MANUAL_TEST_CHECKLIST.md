@@ -1,164 +1,118 @@
 # MANUAL_TEST_CHECKLIST.md — Nexus Link 手動測試清單
 
-> Nexus Link 是純靜態專案，無 build step，無 npm test。  
-> 所有測試透過本地 HTTP server + 瀏覽器手動執行。  
-> **不要求安裝 npm / Playwright / 任何測試框架。**
+> Nexus Link 是純靜態 ES Modules 專案，無 build step。
+> 自動化 gate 全綠不等於真機、人工盲測或法律 gate 已通過。
+> 本清單測產品操作；Raphael 3 人 × 20 回合 private-blind 另依 `docs/qa/RAPHAEL_PRIVATE_BLIND_TEST_V1.md` 執行。
 
 ---
 
-## 啟動本地伺服器
+## 啟動與測試資料
 
-```bash
+```powershell
 # 在專案根目錄執行
 python -m http.server 5173
-
-# 或使用 Python 2（若 Python 3 不可用）
-python -m SimpleHTTPServer 5173
 ```
 
-開啟瀏覽器：`http://localhost:5173`
+開啟 `http://localhost:5173`。不可直接用 `file://`，否則 ES module 會受 CORS 阻擋。
 
-> 注意：必須透過 HTTP server 開啟，直接開啟 `file://` 路徑會導致 ES module CORS 錯誤。
-
----
-
-## 基本載入
-
-- [ ] **頁面載入**：`http://localhost:5173` 開啟後沒有 blank page
-- [ ] **Console 無錯誤**：F12 開啟 DevTools，Console tab 沒有紅色 Error 訊息
-  - 允許：`[Deprecation]`、`[Warning]` 等非 Error 訊息
-  - 不允許：`Uncaught Error`、`Failed to load resource`、`PixiJS is not available`
-- [ ] **PixiJS 載入**：Console 中輸入 `window.PIXI` 應返回 PixiJS 物件（非 undefined）
+- [ ] Fresh flow 使用無痕視窗或先刪除本站 `localStorage`。
+- [ ] Veteran flow 使用另存的既有存檔；不要拿 fresh 結果覆蓋 veteran 證據。
+- [ ] Console 無 `Uncaught Error`、`Failed to load resource` 或未處理 Promise error。
+- [ ] `#game-root` 內只有一個 Pixi `canvas`。
+- [ ] 若 Pixi CDN 被阻擋，頁面顯示友善載入失敗訊息，而不是空白頁。
 
 ---
 
-## 手機比例檢查
+## Fresh First Session
 
-- [ ] **DevTools 模擬手機**：F12 → Toggle device toolbar (Ctrl+Shift+M)
-  - 設定尺寸：390 × 844（iPhone 14 Pro）
-  - 確認畫面無水平捲軸，全頁正常顯示
-- [ ] **Safe area**：頂部 / 底部 UI 不被裁切
-
----
-
-## Pixi Canvas 場景
-
-- [ ] **Canvas 顯示**：`#game-root` 內出現 `<canvas>` 元素
-- [ ] **背景顯示**：出現湖畔夜景（`bg_night_base.PNG` 或 `bg_day_base.PNG`）
-- [ ] **天體顯示**：月亮 / 太陽根據時間顯示並沿弧線移動
-- [ ] **魔法陣顯示**：平台魔法陣（`magic_circle.PNG`）出現在場景中
-- [ ] **粒子效果**：小光點粒子在場景中緩緩上升
-- [ ] **篝火效果**（夜晚時）：篝火出現並有火花粒子
+- [ ] Boot 可理解，30 秒內知道下一步。
+- [ ] Local Identity 可輸入，也可清楚跳過。
+- [ ] 三條心核契約一次只揭露必要資訊，沒有紅點、倒數、streak 或跳過懲罰。
+- [ ] Initial Bond 只出現：
+  - `greyshade-cat`
+  - `blazetail-kit`
+  - `crystalfin-seahorse`
+- [ ] 三者沒有稀有度、戰力或「最佳選擇」暗示。
+- [ ] 選定後，棲地、HUD、角色面板與 Soul Talk 都顯示同一隻 active companion。
+- [ ] 未選擇的兩隻不會被 fresh save 自動解鎖。
+- [ ] First Touch 經實際觸碰反應；夥伴可以 guard，不被腳本強迫接受。
+- [ ] 第一則低風險 Soul Talk 後產生 first trace；reload 後 trace 仍存在。
+- [ ] Return Echo 不責備離線、沒有 missed-day 或登入頻率暗示。
 
 ---
 
-## 角色顯示
+## 棲地、角色與 HUD
 
-- [ ] **角色出現**：灰影貓出現在魔法陣平台附近
-- [ ] **動畫播放**：角色在 idle 狀態下有動畫（idle_calm spritesheet 播放）
-- [ ] **像素清晰度**：角色像素風格清晰，沒有模糊（確認 nearest-neighbor 插值）
-- [ ] **角色位置**：角色座標整數，沒有亞像素偏移造成的模糊
-
----
-
-## HUD 顯示
-
-- [ ] **角色名稱**：左上角或 HUD 區域顯示角色名稱（「灰影貓」）
-- [ ] **狀態點**：`.core-status-dot` 顯示（根據心情有不同顏色）
-- [ ] **等級顯示**：`.level-pill` 顯示「等級 01」
-- [ ] **點擊 HUD**：點擊角色頭像或名稱，打開角色狀態面板（character modal）
-  - 面板內顯示：羈絆 / 心情 / 能量 / 信任 四條狀態列
-  - 點擊 X 或背景可關閉面板
+- [ ] 日／夜棲地正確顯示，天候與場景特效不遮住主要操作。
+- [ ] Active companion 使用 illustrated / high-resolution 呈現與 linear sampling；不得用 nearest-neighbor 當新品質標準。
+- [ ] Greyshade 既有 legacy accepted frame 可例外，但不可 fallback 成其他角色美術。
+- [ ] 角色腳底／bottom-center anchor 穩定，動畫切換時不滑動或跳位。
+- [ ] HUD 顯示 active companion 名稱、心情、能量、羈絆與信任，數值不得為 `NaN`。
+- [ ] 點擊 HUD 可開啟角色面板，X、背景與 Escape 均可關閉。
+- [ ] 設定面板可切換音訊、畫質、文字大小、低動態與語言，操作後不產生第二份設定存檔。
 
 ---
 
-## 資源顯示
+## 五鍵導覽與面板生命週期
 
-- [ ] **金幣**：右上角顯示 `1280`（初始值）
-- [ ] **晶石**：右上角顯示 `36`（初始值）
-
----
-
-## 設定 / 音效
-
-- [ ] **音效按鈕**：點擊喇叭圖示，切換靜音狀態（icon 有視覺反饋）
-- [ ] **設定下拉**：點擊齒輪圖示，展開設定選單（出現信件 / 支援按鈕）
-- [ ] **點擊外部關閉**：設定下拉展開後，點擊其他區域可自動關閉
+- [ ] 五個 bottom-nav：探索、照顧、心域（Home）、成長、記憶皆可見。
+- [ ] 切換頁面時 active 樣式、`aria-hidden`、focus order 與頁面內容一致。
+- [ ] Soul Talk、角色、設定、地圖與 action sheet 可用 X、背景、Escape 關閉。
+- [ ] 從一個 panel 直接切到另一個 panel，不會留下隱藏但可聚焦的控制項。
+- [ ] 390 × 844 與 1280 × 900 都無水平 overflow；底部導覽不遮住主要按鈕或輸入框。
 
 ---
 
-## Soul Talk（心語對話）
+## Soul Talk（一般、界線、安靜）
 
-- [ ] **開啟 Soul Talk**：點擊底部「心語」區塊，開啟 Soul Talk 面板
-- [ ] **初始訊息**：面板中顯示初始夥伴訊息「我在這裡，安靜地看著你。」
-- [ ] **輸入訊息**：
-  - 在輸入框輸入文字
-  - 點擊「送出」或按 Enter
-  - 訊息出現在聊天記錄中（「你：<訊息>」）
-  - 夥伴有回應訊息（「灰影貓：...」）
-- [ ] **預覽文字更新**：關閉面板後，`.soul-talk-launcher` 的預覽文字更新為最新回應
-- [ ] **關閉面板**：點擊 X 或背景關閉
+- [ ] 送出一則低風險日常訊息後，聊天記錄新增一則玩家訊息與一則新的夥伴回覆。
+- [ ] 關閉再開啟 Soul Talk，歷史與 launcher preview 保留。
+- [ ] 「我現在只想保持一點距離」可得到安靜或界線回應，無 quest/reward/punishment 呈現。
+- [ ] 「我只是想安靜一下」不被追問，也不出現不相干的 explicit memory recall。
+- [ ] 普通 Soul Talk 約 120ms interaction queue 後持久化；reload 不丟失已完成回合。
+- [ ] 高風險 D2 內容只由 repo-native safety automation／授權 QA 執行；不要要求私測者輸入真實危機內容。
+- [ ] D2 自動證據必須同時證明：完整 system reply、零 quick replies、零 SFX、零 gameplay delta、零 preference/memory/trace 寫入、critical save。
 
 ---
 
-## 底部導覽
+## First Exploration、Silent Anchor 與 encounter lifecycle
 
-- [ ] **四個導覽按鈕**：探索 / 照顧 / 成長 / 記憶 按鈕全部顯示
-- [ ] **點擊動作**：點擊任一按鈕，展開對應的 action sheet
-- [ ] **Active 狀態**：被點擊的按鈕有 active 視覺狀態（nav-art-active 圖片）
-- [ ] **Action Sheet 互動**：
-  - action sheet 中顯示對應選項
-  - 點擊選項，面板關閉，Soul Talk 顯示結果訊息
-- [ ] **關閉 Action Sheet**：點擊 X 或背景關閉
-
----
-
-## localStorage 存檔
-
-- [ ] **自動存檔**：
-  - 送出一條 Soul Talk 訊息
-  - F12 → Application → Local Storage → `http://localhost:5173`
-  - 確認 key `nexusLinkPrototypeState:v2` 存在
-  - value 為有效 JSON（可展開）
-- [ ] **存檔持久化**：
-  - 重新整理頁面（F5）
-  - 確認 Soul Talk 歷史記錄保留（聊天記錄沒有消失）
+- [ ] Fresh save 第一次開地圖時，Chapter 1 節點都可見，但只有「月湖營地」可操作。
+- [ ] 其他節點為 disabled 且有 `aria-disabled="true"`；月湖營地有明確但不焦慮的引導。
+- [ ] 第一次月湖探索 `encounterChance = 0`，不會進入對峙。
+- [ ] 月湖探索完成後，其餘路線立即解鎖。
+- [ ] 星林步道顯示四個 Phase Search 選擇：直接前行、讀取錨點、心核共息、返回營地。
+- [ ] 錨點不提供額外獎勵；共息只調整當次節奏；返回營地零 mutation；沒有唯一最佳路線或永久錯過。
+- [ ] 關閉地圖、Escape、切 panel、切 bottom-nav 後等待超過 650ms，都不會在背景開啟 battle。
+- [ ] 已結算探索結果保留；被取消的只是延遲 encounter。
+- [ ] `prefers-reduced-motion` 下 Silent Anchor 呼吸動畫停用。
 
 ---
 
-## 棲地痕跡（habitatTraces）
+## 存檔與 migration
 
-> 若目前 branch 包含 habitatTrace 相關功能：
-
-- [ ] **痕跡顯示**：送出幾條情緒相關訊息後，場景中出現微光 / 霧氣效果
-- [ ] **痕跡脈動**：痕跡效果有緩慢脈動動畫
-- [ ] **痕跡寫入**：F12 → Application → Local Storage → `nexusLinkPrototypeState:v2` → `habitatTraces` 陣列非空
-
----
-
-## 角色觸碰互動
-
-- [ ] **點擊角色**：點擊 Pixi 場景中的灰影貓角色
-  - 第一次觸碰：出現觸碰反應動畫（touch_accept 或 touch_guarded）
-  - HUD 或狀態有變化（energy / bond）
-- [ ] **多次觸碰**：連續點擊多次，疲勞度上升，可能出現 touch_reject 反應
+- [ ] Application → Local Storage 只有主狀態 key `nexusLinkR2State:v1` 承擔遊戲狀態。
+- [ ] `nexusLinkR2State:v1` 為有效 JSON，包含 `chatHistory`、`habitatTraces`、`companionPreferences` 與 `settings.audioMuted`。
+- [ ] 成功寫入主存檔後，legacy `nexusLinkCompanionPrefs:v1` 與 `nexusLinkAudioMuted:v1` 被移除。
+- [ ] reload 後 active companion、聊天、trace、設定與 exploration progress 保留。
+- [ ] `lastSeenAt` 的 0、負數或非數字損壞值會被安全正規化，不產生離線懲罰。
+- [ ] Veteran 存檔保留原 active companion、解鎖、記憶與 trace，且不被強迫重跑 onboarding 或 K9 首次路線。
 
 ---
 
-## Dev Panel（選填）
+## 真機與人工 gate
 
-> 僅在 URL 加上 `?devPanel=1` 後測試：
-
-- [ ] **Dev Panel 出現**：`http://localhost:5173?devPanel=1`
-- [ ] **State 讀數**：顯示 bond / trust / energy / mood 等數值
-- [ ] **動畫測試**：可切換播放不同動畫
+- [ ] 依 `docs/testing/REAL_DEVICE_REGRESSION_MATRIX.md` 完成 D1、D2、D3、D6。
+- [ ] 使用 `docs/testing/PRIVATE_TEST_SCRIPT.md` 完成 first-session moderated comprehension test。
+- [ ] 使用 `docs/qa/RAPHAEL_PRIVATE_BLIND_TEST_V1.md` 完成 3 位獨立測試者 × 20 回合。
+- [ ] 法律／隱私／商店文案與素材授權由 Owner／合適審查者簽核。
+- [ ] 上述任一結果未填寫時，狀態維持 `NOT_RUN`，不可由 automation 代填。
 
 ---
 
 ## 失敗處理
 
-若測試發現問題：
-1. 在 Console 截圖錯誤訊息
-2. 記錄重現步驟
-3. 回報給 AI agent，說明具體失敗的測試項目
-4. **不要自行修改 runtime code** — 等待 AI 按 Gate 流程處理
+1. 記錄 commit、裝置、OS、瀏覽器、viewport、fresh/veteran 與重現步驟。
+2. 保留必要的 console error 與截圖；不要提交未經同意的原始私人對話。
+3. 將機器 regression、sealed holdout、moderated UX 與 private-blind 證據分開標記。
+4. 不直接修改 runtime；另開對應 TASK_PACK，依 Gate 流程修復與重驗。

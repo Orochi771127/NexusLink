@@ -1,9 +1,13 @@
 {
+  "generated_at": "2026-07-16T14:04:34+08:00",
   "base_url": "https://orochi771127.github.io/NexusLink",
   "target": "github_pages",
+  "evidence_class": "deployed_automated_regression",
+  "private_blind": "not_run",
   "runners": [
     {
       "runner": "harness_smoke",
+      "evidence_class": "automated_regression",
       "total": 17,
       "passed": 17,
       "failed": 0,
@@ -12,6 +16,7 @@
     },
     {
       "runner": "nlu_smoke",
+      "evidence_class": "automated_regression",
       "total": 8,
       "passed": 8,
       "failed": 0,
@@ -20,29 +25,356 @@
       "ok": true
     },
     {
-      "runner": "stage4_human_playtest",
-      "total": 10,
-      "passed": 10,
+      "runner": "stage4_automated_cases",
+      "evidence_class": "automated_regression",
+      "total": 12,
+      "passed": 12,
       "failed": 0,
       "forbidden_count": 0,
       "console_errors": [],
       "ok": true
     },
     {
+      "runner": "safety_terminal_invariant",
+      "evidence_class": "automated_regression",
+      "total": 18,
+      "passed": 18,
+      "failed": 0,
+      "console_errors": [],
+      "ok": true
+    },
+    {
+      "runner": "map_first_session_browser",
+      "evidence_class": "deployed_ui_regression",
+      "checks": [
+        {
+          "name": "fresh_nodes_visible",
+          "ok": true,
+          "detail": {
+            "count": 6
+          }
+        },
+        {
+          "name": "only_camp_interactive",
+          "ok": true,
+          "detail": null
+        },
+        {
+          "name": "camp_enabled",
+          "ok": true,
+          "detail": null
+        },
+        {
+          "name": "camp_highlighted",
+          "ok": true,
+          "detail": null
+        },
+        {
+          "name": "locked_nodes_aria_disabled",
+          "ok": true,
+          "detail": null
+        },
+        {
+          "name": "first_route_guide_visible",
+          "ok": true,
+          "detail": null
+        },
+        {
+          "name": "camp_settles_first_exploration",
+          "ok": true,
+          "detail": null
+        },
+        {
+          "name": "routes_unlock_after_camp",
+          "ok": true,
+          "detail": null
+        },
+        {
+          "name": "first_route_guide_hides",
+          "ok": true,
+          "detail": null
+        },
+        {
+          "name": "phase_four_choices",
+          "ok": true,
+          "detail": null
+        },
+        {
+          "name": "phase_hides_previous_result_toast",
+          "ok": true,
+          "detail": {
+            "hidden": true,
+            "visibleClass": false,
+            "opacity": "0"
+          }
+        },
+        {
+          "name": "phase_direct_receives_focus",
+          "ok": true,
+          "detail": null
+        },
+        {
+          "name": "phase_no_horizontal_overflow",
+          "ok": true,
+          "detail": {
+            "scrollWidth": 318,
+            "clientWidth": 318
+          }
+        },
+        {
+          "name": "phase_choices_inside_viewport",
+          "ok": true,
+          "detail": [
+            {
+              "id": "direct",
+              "left": 142,
+              "right": 248,
+              "top": 345.15625,
+              "bottom": 390.15625
+            },
+            {
+              "id": "anchor",
+              "left": 232,
+              "right": 338,
+              "top": 452.8125,
+              "bottom": 497.8125
+            },
+            {
+              "id": "calm_sync",
+              "left": 52,
+              "right": 158,
+              "top": 452.8125,
+              "bottom": 497.8125
+            },
+            {
+              "id": "return",
+              "left": 142,
+              "right": 248,
+              "top": 560.46875,
+              "bottom": 605.46875
+            }
+          ]
+        },
+        {
+          "name": "phase_choices_inside_phase_panel",
+          "ok": true,
+          "detail": {
+            "phase": {
+              "x": 36,
+              "y": 181.59375,
+              "width": 318,
+              "height": 436.875
+            },
+            "choices": [
+              {
+                "id": "direct",
+                "left": 142,
+                "right": 248,
+                "top": 345.15625,
+                "bottom": 390.15625
+              },
+              {
+                "id": "anchor",
+                "left": 232,
+                "right": 338,
+                "top": 452.8125,
+                "bottom": 497.8125
+              },
+              {
+                "id": "calm_sync",
+                "left": 52,
+                "right": 158,
+                "top": 452.8125,
+                "bottom": 497.8125
+              },
+              {
+                "id": "return",
+                "left": 142,
+                "right": 248,
+                "top": 560.46875,
+                "bottom": 605.46875
+              }
+            ]
+          }
+        },
+        {
+          "name": "anchor_zero_persistent_mutation",
+          "ok": true,
+          "detail": null
+        },
+        {
+          "name": "anchor_reading_announced",
+          "ok": true,
+          "detail": null
+        },
+        {
+          "name": "phase_calm_sync_session_only",
+          "ok": true,
+          "detail": null
+        },
+        {
+          "name": "calm_sync_preserves_boundary_copy",
+          "ok": true,
+          "detail": null
+        },
+        {
+          "name": "return_closes_phase",
+          "ok": true,
+          "detail": null
+        },
+        {
+          "name": "return_closes_map",
+          "ok": true,
+          "detail": null
+        },
+        {
+          "name": "return_navigates_home",
+          "ok": true,
+          "detail": null
+        },
+        {
+          "name": "return_zero_mutation",
+          "ok": true,
+          "detail": null
+        },
+        {
+          "name": "direct_uses_existing_exploration",
+          "ok": true,
+          "detail": null
+        },
+        {
+          "name": "direct_records_starwood_visit",
+          "ok": true,
+          "detail": null
+        },
+        {
+          "name": "closed_map_stays_closed",
+          "ok": true,
+          "detail": null
+        },
+        {
+          "name": "closed_map_does_not_open_battle",
+          "ok": true,
+          "detail": null
+        },
+        {
+          "name": "cancelled_encounter_keeps_settled_exploration",
+          "ok": true,
+          "detail": null
+        },
+        {
+          "name": "escape_closes_map",
+          "ok": true,
+          "detail": null
+        },
+        {
+          "name": "escape_does_not_open_battle",
+          "ok": true,
+          "detail": null
+        },
+        {
+          "name": "escape_keeps_settled_exploration",
+          "ok": true,
+          "detail": null
+        },
+        {
+          "name": "panel_switch_opens_soul_talk",
+          "ok": true,
+          "detail": "soulTalk"
+        },
+        {
+          "name": "panel_switch_does_not_open_battle",
+          "ok": true,
+          "detail": {
+            "hidden": true,
+            "ariaHidden": "true"
+          }
+        },
+        {
+          "name": "panel_switch_keeps_settled_exploration",
+          "ok": true,
+          "detail": null
+        },
+        {
+          "name": "page_switch_closes_map",
+          "ok": true,
+          "detail": null
+        },
+        {
+          "name": "page_switch_opens_care",
+          "ok": true,
+          "detail": "care"
+        },
+        {
+          "name": "page_switch_does_not_open_battle",
+          "ok": true,
+          "detail": null
+        },
+        {
+          "name": "page_switch_keeps_settled_exploration",
+          "ok": true,
+          "detail": null
+        },
+        {
+          "name": "reduced_motion_disables_anchor_breath",
+          "ok": true,
+          "detail": "none"
+        },
+        {
+          "name": "legacy_veteran_visit_counts_unlock_routes",
+          "ok": true,
+          "detail": null
+        },
+        {
+          "name": "legacy_veteran_guide_hidden",
+          "ok": true,
+          "detail": null
+        },
+        {
+          "name": "no_console_errors",
+          "ok": true,
+          "detail": []
+        }
+      ],
+      "console_errors": [],
+      "summary": {
+        "total": 42,
+        "passed": 42,
+        "failed": 0,
+        "ok": true
+      },
+      "ok": true
+    },
+    {
       "runner": "live_gate_subset",
+      "evidence_class": "deployed_ui_regression",
       "canvas_count": 1,
       "pixi_single": true,
+      "onboarding": {
+        "started_visible": true,
+        "completed": true,
+        "actions": [
+          "start",
+          "skip-identity",
+          "guidance-next",
+          "bond-choose",
+          "complete"
+        ]
+      },
       "storage_key": "nexusLinkR2State:v1",
-      "soul_talk_round": true,
+      "soul_talk_open": true,
+      "player_turn_visible": true,
       "companion_reply": true,
+      "main_save_persisted": true,
       "console_errors": [],
       "ok": true
     }
   ],
   "summary": {
-    "all_ok": true,
+    "all_automated_ok": true,
     "harness": {
       "runner": "harness_smoke",
+      "evidence_class": "automated_regression",
       "total": 17,
       "passed": 17,
       "failed": 0,
@@ -51,6 +383,7 @@
     },
     "nlu": {
       "runner": "nlu_smoke",
+      "evidence_class": "automated_regression",
       "total": 8,
       "passed": 8,
       "failed": 0,
@@ -59,23 +392,356 @@
       "ok": true
     },
     "stage4": {
-      "runner": "stage4_human_playtest",
-      "total": 10,
-      "passed": 10,
+      "runner": "stage4_automated_cases",
+      "evidence_class": "automated_regression",
+      "total": 12,
+      "passed": 12,
       "failed": 0,
       "forbidden_count": 0,
       "console_errors": [],
       "ok": true
     },
-    "live": {
-      "runner": "live_gate_subset",
-      "canvas_count": 1,
-      "pixi_single": true,
-      "storage_key": "nexusLinkR2State:v1",
-      "soul_talk_round": true,
-      "companion_reply": true,
+    "safety_terminal": {
+      "runner": "safety_terminal_invariant",
+      "evidence_class": "automated_regression",
+      "total": 18,
+      "passed": 18,
+      "failed": 0,
       "console_errors": [],
       "ok": true
+    },
+    "map_first_session": {
+      "runner": "map_first_session_browser",
+      "evidence_class": "deployed_ui_regression",
+      "checks": [
+        {
+          "name": "fresh_nodes_visible",
+          "ok": true,
+          "detail": {
+            "count": 6
+          }
+        },
+        {
+          "name": "only_camp_interactive",
+          "ok": true,
+          "detail": null
+        },
+        {
+          "name": "camp_enabled",
+          "ok": true,
+          "detail": null
+        },
+        {
+          "name": "camp_highlighted",
+          "ok": true,
+          "detail": null
+        },
+        {
+          "name": "locked_nodes_aria_disabled",
+          "ok": true,
+          "detail": null
+        },
+        {
+          "name": "first_route_guide_visible",
+          "ok": true,
+          "detail": null
+        },
+        {
+          "name": "camp_settles_first_exploration",
+          "ok": true,
+          "detail": null
+        },
+        {
+          "name": "routes_unlock_after_camp",
+          "ok": true,
+          "detail": null
+        },
+        {
+          "name": "first_route_guide_hides",
+          "ok": true,
+          "detail": null
+        },
+        {
+          "name": "phase_four_choices",
+          "ok": true,
+          "detail": null
+        },
+        {
+          "name": "phase_hides_previous_result_toast",
+          "ok": true,
+          "detail": {
+            "hidden": true,
+            "visibleClass": false,
+            "opacity": "0"
+          }
+        },
+        {
+          "name": "phase_direct_receives_focus",
+          "ok": true,
+          "detail": null
+        },
+        {
+          "name": "phase_no_horizontal_overflow",
+          "ok": true,
+          "detail": {
+            "scrollWidth": 318,
+            "clientWidth": 318
+          }
+        },
+        {
+          "name": "phase_choices_inside_viewport",
+          "ok": true,
+          "detail": [
+            {
+              "id": "direct",
+              "left": 142,
+              "right": 248,
+              "top": 345.15625,
+              "bottom": 390.15625
+            },
+            {
+              "id": "anchor",
+              "left": 232,
+              "right": 338,
+              "top": 452.8125,
+              "bottom": 497.8125
+            },
+            {
+              "id": "calm_sync",
+              "left": 52,
+              "right": 158,
+              "top": 452.8125,
+              "bottom": 497.8125
+            },
+            {
+              "id": "return",
+              "left": 142,
+              "right": 248,
+              "top": 560.46875,
+              "bottom": 605.46875
+            }
+          ]
+        },
+        {
+          "name": "phase_choices_inside_phase_panel",
+          "ok": true,
+          "detail": {
+            "phase": {
+              "x": 36,
+              "y": 181.59375,
+              "width": 318,
+              "height": 436.875
+            },
+            "choices": [
+              {
+                "id": "direct",
+                "left": 142,
+                "right": 248,
+                "top": 345.15625,
+                "bottom": 390.15625
+              },
+              {
+                "id": "anchor",
+                "left": 232,
+                "right": 338,
+                "top": 452.8125,
+                "bottom": 497.8125
+              },
+              {
+                "id": "calm_sync",
+                "left": 52,
+                "right": 158,
+                "top": 452.8125,
+                "bottom": 497.8125
+              },
+              {
+                "id": "return",
+                "left": 142,
+                "right": 248,
+                "top": 560.46875,
+                "bottom": 605.46875
+              }
+            ]
+          }
+        },
+        {
+          "name": "anchor_zero_persistent_mutation",
+          "ok": true,
+          "detail": null
+        },
+        {
+          "name": "anchor_reading_announced",
+          "ok": true,
+          "detail": null
+        },
+        {
+          "name": "phase_calm_sync_session_only",
+          "ok": true,
+          "detail": null
+        },
+        {
+          "name": "calm_sync_preserves_boundary_copy",
+          "ok": true,
+          "detail": null
+        },
+        {
+          "name": "return_closes_phase",
+          "ok": true,
+          "detail": null
+        },
+        {
+          "name": "return_closes_map",
+          "ok": true,
+          "detail": null
+        },
+        {
+          "name": "return_navigates_home",
+          "ok": true,
+          "detail": null
+        },
+        {
+          "name": "return_zero_mutation",
+          "ok": true,
+          "detail": null
+        },
+        {
+          "name": "direct_uses_existing_exploration",
+          "ok": true,
+          "detail": null
+        },
+        {
+          "name": "direct_records_starwood_visit",
+          "ok": true,
+          "detail": null
+        },
+        {
+          "name": "closed_map_stays_closed",
+          "ok": true,
+          "detail": null
+        },
+        {
+          "name": "closed_map_does_not_open_battle",
+          "ok": true,
+          "detail": null
+        },
+        {
+          "name": "cancelled_encounter_keeps_settled_exploration",
+          "ok": true,
+          "detail": null
+        },
+        {
+          "name": "escape_closes_map",
+          "ok": true,
+          "detail": null
+        },
+        {
+          "name": "escape_does_not_open_battle",
+          "ok": true,
+          "detail": null
+        },
+        {
+          "name": "escape_keeps_settled_exploration",
+          "ok": true,
+          "detail": null
+        },
+        {
+          "name": "panel_switch_opens_soul_talk",
+          "ok": true,
+          "detail": "soulTalk"
+        },
+        {
+          "name": "panel_switch_does_not_open_battle",
+          "ok": true,
+          "detail": {
+            "hidden": true,
+            "ariaHidden": "true"
+          }
+        },
+        {
+          "name": "panel_switch_keeps_settled_exploration",
+          "ok": true,
+          "detail": null
+        },
+        {
+          "name": "page_switch_closes_map",
+          "ok": true,
+          "detail": null
+        },
+        {
+          "name": "page_switch_opens_care",
+          "ok": true,
+          "detail": "care"
+        },
+        {
+          "name": "page_switch_does_not_open_battle",
+          "ok": true,
+          "detail": null
+        },
+        {
+          "name": "page_switch_keeps_settled_exploration",
+          "ok": true,
+          "detail": null
+        },
+        {
+          "name": "reduced_motion_disables_anchor_breath",
+          "ok": true,
+          "detail": "none"
+        },
+        {
+          "name": "legacy_veteran_visit_counts_unlock_routes",
+          "ok": true,
+          "detail": null
+        },
+        {
+          "name": "legacy_veteran_guide_hidden",
+          "ok": true,
+          "detail": null
+        },
+        {
+          "name": "no_console_errors",
+          "ok": true,
+          "detail": []
+        }
+      ],
+      "console_errors": [],
+      "summary": {
+        "total": 42,
+        "passed": 42,
+        "failed": 0,
+        "ok": true
+      },
+      "ok": true
+    },
+    "live": {
+      "runner": "live_gate_subset",
+      "evidence_class": "deployed_ui_regression",
+      "canvas_count": 1,
+      "pixi_single": true,
+      "onboarding": {
+        "started_visible": true,
+        "completed": true,
+        "actions": [
+          "start",
+          "skip-identity",
+          "guidance-next",
+          "bond-choose",
+          "complete"
+        ]
+      },
+      "storage_key": "nexusLinkR2State:v1",
+      "soul_talk_open": true,
+      "player_turn_visible": true,
+      "companion_reply": true,
+      "main_save_persisted": true,
+      "console_errors": [],
+      "ok": true
+    },
+    "human_gates": {
+      "first_session_moderated_product_comprehension_3_testers": "not_run",
+      "private_blind_3x20": "not_run",
+      "real_device_d1_d2_d3_d6": "not_run",
+      "legal_privacy_store_copy": "not_run",
+      "public_launch_approval": "not_granted"
     }
   }
 }

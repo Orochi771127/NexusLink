@@ -38,10 +38,25 @@ def state_slice(page):
     )
 
 
+def wait_for_exploration_total(page, expected, timeout=10000):
+    page.wait_for_function(
+        """([key, target]) => {
+          try {
+            const state = JSON.parse(localStorage.getItem(key) || '{}');
+            return state?.explorationProgress?.totalExplorations === target;
+          } catch (_) {
+            return false;
+          }
+        }""",
+        arg=[STORAGE_KEY, expected],
+        timeout=timeout,
+    )
+
+
 def install_fresh_completed_onboarding_seed(context):
     context.add_init_script(
         script=f"""(() => {{
-          if (!location.origin.startsWith('http://')) return;
+          if (!['http:', 'https:'].includes(location.protocol)) return;
           const now = Date.now();
           const legacyVeteran = new URLSearchParams(location.search).has('legacy-veteran');
           localStorage.setItem({json.dumps(STORAGE_KEY)}, JSON.stringify({{
@@ -87,7 +102,8 @@ def open_map(page):
     page.wait_for_selector('[data-panel="map"]:not([hidden])', timeout=10000)
 
 
-def navigate_ready(page, url=BASE_URL):
+def navigate_ready(page, url=None):
+    url = url or BASE_URL
     page.goto(url, wait_until="commit", timeout=30000)
     page.wait_for_selector('[data-action="explore"]', state="visible", timeout=30000)
     page.wait_for_function(
@@ -172,7 +188,7 @@ def run():
         report["screenshots"]["fresh"] = fresh_shot
 
         camp.click()
-        page.wait_for_timeout(350)
+        wait_for_exploration_total(page, 1)
         check("camp_settles_first_exploration", state_slice(page)["progress"]["totalExplorations"] == 1)
         check("routes_unlock_after_camp", page.locator(".map-node:visible:disabled").count() == 0)
         check("first_route_guide_hides", page.locator("#map-first-route-guide:visible").count() == 0)
@@ -248,7 +264,7 @@ def run():
         page.wait_for_selector(".phase-search:visible", timeout=5000)
         page.evaluate("Math.random = () => 0.9")
         page.locator('.phase-search [data-phase-choice="direct"]').click()
-        page.wait_for_timeout(350)
+        wait_for_exploration_total(page, 2)
         after_direct = state_slice(page)
         check("direct_uses_existing_exploration", after_direct["progress"]["totalExplorations"] == 2)
         check("direct_records_starwood_visit", after_direct["progress"]["visitCounts"].get("starwood_trail") == 1)

@@ -1,22 +1,22 @@
 # Machine-readable Raphael AI status. Human narrative: RAPHAEL_AI_HANDOFF.md
-# Current operational truth = current worktree + AI_EXECUTION_LEDGER Lane 3.
+# Current operational truth = HEAD c756337 + current Docs/QA worktree + AI_EXECUTION_LEDGER Lane 3.
 # Historical automated counts are retained for provenance but are not current PASS evidence.
 last_updated: "2026-07-16"
-last_agent: "Codex (safety/K9 hardening implementation and current-worktree verification)"
+last_agent: "Codex (RC truth sync and Docs/QA verification)"
 
 branch:
   active: main
-  last_commit: "30fc8e9"
-  merged_to_main: false
-  note: "origin/main matched 30fc8e9 before this package; the verified package remains uncommitted/unpushed and unrelated art/habitat work remains out of scope"
+  last_commit: "c7563379af9989d852a0df259787e2416590f4f5"
+  merged_to_main: true
+  note: "safety/K9/hardening package is on main and origin/main; current RC Docs/QA closure is uncommitted/unpushed and unrelated output/art work remains out of scope"
 
 workspace: "C:\\Users\\User\\NexusLink_RaphaelAI_Workspace\\NexusLink"
 do_not_touch: "AIForgeNexus2\\NexusLink"
 
 stage:
-  current: "6.1"
-  label: "Raphael v6.1 runtime; D2 safety terminal invariant automated evidence complete"
-  release_readiness: "automated_candidate_manual_launch_gates_open"
+  current: "7"
+  label: "RC launch-gate closure; v6.1 runtime fixed at c756337 and human gates remain open"
+  release_readiness: "automated_rc_pass_public_launch_not_approved"
   next: "run formal 3-person x 20-turn private blind review, real-device mobile checks, and legal/privacy/store-copy review before any launch claim"
 
 runtime_connections:
@@ -33,19 +33,19 @@ capabilities:
   nlu_lexicon: "2026-07-13 expansion landed; historical TR-17..30 evidence available"
 
 qa:
-  safety_terminal_invariant: "18/18 PASS on current worktree (2026-07-16): 13 high-risk energy/persona regressions + 4 fail-closed mutations + 1 caution regulation case"
-  sealed_holdout_v1: "48/48 PASS on current worktree (2026-07-16), 0 quality flags, 0 console errors; humanBlindReview:not_run; auxiliary evidence only"
+  safety_terminal_invariant: "18/18 PASS on exact runtime commit c756337 (2026-07-16): 13 high-risk energy/persona regressions + 4 fail-closed mutations + 1 caution regulation case"
+  sealed_holdout_v1: "48/48 PASS on exact runtime commit c756337 (2026-07-16), 0 quality flags, 0 console errors; humanBlindReview:not_run; auxiliary evidence only"
   repo_native_content_gate: "PASS: canonical full reply, real-world redirect, system role, zero secondary writers and protected-state equality are required"
   mutation_regressions: "4/4 fail-closed in focused suite: truncated, boundary template, missing redirect, energy reward"
   dialogue_policy: "21/21 PASS and required by the web release gate; boundary policy cannot be truncated by preference repair"
   constitution_policy: "5/5 PASS and required by the web release gate"
-  web_release_gate: "17/17 automated required checks PASS on current worktree; JS syntax 254/254; accessibility warnings 0"
-  safety_terminal_ui: "6/6 top-level checks PASS on current worktree across energy 0/7/10: full system reply, zero chips/SFX/gameplay delta, immediate critical save"
+  web_release_gate: "17/17 automated required checks PASS on exact runtime commit c756337; JS syntax 254/254; accessibility warnings 0"
+  safety_terminal_ui: "6/6 top-level checks PASS on exact runtime commit c756337 across energy 0/7/10: full system reply, zero chips/SFX/gameplay delta, immediate critical save"
   live_playtest_gate: "Soul Talk 11/11, HUD 13/13, awakening/touch/storage/Pixi PASS, 0 console errors"
   map_first_session_ui: "42/42 PASS at 390x844, including fresh/legacy-veteran K9, real return-to-habitat, four phase-search choices, reduced motion, and close/Escape/panel/page encounter cancellation"
   state_and_storage: "state migration 33/33; storage consolidation 13/13; renderer lifecycle 26/26"
   human_blind_review: "not_run"
-  real_device_three_platform: "not_run"
+  real_device_required_matrix: "not_run (required D1/D2/D3/D6)"
   legal_privacy_store_copy: "not_run"
 
 qa_historical_2026_07_14:
@@ -63,9 +63,11 @@ qa_historical_2026_07_14:
   warning: "these suites did not prove complete canonical D2 safety content and cannot be reused as a current PASS"
 
 human_gates_remaining:
-  - "Moderated private test: at least 3 independent testers x 20 turns, including formal blind-review evidence"
-  - "Real-device mobile browser retest on three platforms"
+  - "Moderated first-session product comprehension: at least 3 independent participants"
+  - "Raphael private blind: at least 3 independent testers x 20 scored turns"
+  - "Required real-device/browser matrix D1/D2/D3/D6"
   - "Legal / privacy / store-copy review"
+  - "Explicit Owner public-launch approval"
 
 entrypoints:
   orchestrator: src/ai/raphaelCore.js
@@ -92,8 +94,11 @@ constraints:
 blockers:
   - "Independent human-validation claim: private blind review is not_run"
   - "Product launch: real-device and legal/privacy/store-copy gates remain open"
+  - "Release operations: Pages artifact is above the platform 1 GB warning threshold; payload hardening requires a separate approval package"
+  - "Release enforcement: repo-native 17/17 gate is not enforced by GitHub workflow or main branch protection"
 
 follow_ups:
   - "Run 3 testers x 20 turns private blind review when independent testers are available"
+  - "Run D1/D2/D3/D6 and first-session moderated product-comprehension tests"
   - "Collect consented Limited Beta feedback only after current safety gate passes; do not call it private_blind evidence"
   - "Keep Expedition coreIntegrated:false until formal intent, full critics/voice and approved memoryWriter integration exist"

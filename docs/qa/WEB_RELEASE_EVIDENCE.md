@@ -1,79 +1,139 @@
-# Nexus Link Web Release Evidence
+# Nexus Link Release-Candidate Evidence
 
-This file records the current Package 9 web-demo release evidence. It is not a
-desktop wrapper approval, Steam build approval, legal approval, or public release
-approval.
+This document records evidence for the current web release candidate. Automated
+green gates are necessary but do not constitute human launch approval, legal
+approval, a Steam build approval, or proof of open-domain conversation quality.
 
-## Current release-candidate run
+## Candidate identity and decision
 
-- Date: 2026-06-28 10:56 +0800
-- Branch: `integrate/ui-v2-raphael-main`
-- Baseline before Package 9: `a667853`
+| Field | Current truth |
+| --- | --- |
+| Runtime commit | `c7563379af9989d852a0df259787e2416590f4f5` |
+| Branch | `main` |
+| Local / remote relation | `HEAD == origin/main` at evidence time |
+| Current closure package | Uncommitted tracked Docs/QA-only changes; runtime tree clean; unrelated protected `output/**` remains out of scope |
+| Automated RC gate | `PASS` |
+| GitHub Pages deployment | `DEPLOYED` |
+| Public launch | `NOT APPROVED` |
+| Steam build | `NOT READY / NOT IN THIS PACKAGE` |
+
+The automated result is therefore **`AUTOMATED_RC_PASS`**, not
+`LAUNCH_READY`. Public launch remains blocked by the human gates listed below.
+
+## Local automated gate
+
+- Generated: `2026-07-16T15:21:55+0800`
 - Command:
 
 ```powershell
-python docs/qa/_run_web_release_gate.py
+python docs/qa/_run_web_release_gate.py --base http://127.0.0.1:5237 --port 5237
 ```
 
-- Raw local output: `docs/qa/_web_release_gate_output.json`
-- Result: `PASS` for automated required web gate, with human release gates still required.
+- Raw evidence: `docs/qa/_web_release_gate_output.json`
+- Result: **17/17 required checks passed**, zero accessibility warnings.
+- Provenance recorded by the runner: local `HEAD` and `origin/main` both
+  `c7563379af9989d852a0df259787e2416590f4f5`; tracked Docs/QA files were dirty,
+  `untrackedOutsideOutput: []`, `protectedOutputUntrackedCount: 886`,
+  `runtimeTreeClean: true`, and `runtimeChanges: []`.
 
-## Automated gate summary
+| Gate | Result |
+| --- | ---: |
+| JavaScript syntax | 254/254 |
+| State/onboarding migration | 33/33 |
+| Canonical storage consolidation | 13/13 |
+| Companion renderer lifecycle | 26/26 |
+| First-session map browser gate | 42/42 |
+| Dialogue policy | 21/21 |
+| Constitution policy | 5/5 |
+| D2 safety terminal invariant | 18/18 |
+| D2 live Soul Talk UI | 6/6 |
+| Live Soul Talk gate | 11/11 |
+| Live HUD gate | 13/13 |
+| Asset integrity / restricted agent / remaining browser gates | PASS |
+| Console and accessibility blockers | 0 |
 
-| Gate | Status | Evidence |
-| --- | --- | --- |
-| JS syntax | `PASS` | 168 checked files, 0 failures |
-| Save / onboarding migration | `PASS` | 8 cases, 0 failures |
-| Asset integrity | `PASS` | active manifests present; sheet grids exact; anchors bottom-center; no `>4096` sheet edge failures |
-| Raphael restricted habitat agent | `PASS` | 7 cases, whitelist/forbidden-key checks pass |
-| Raphael core smoke | `PASS` | 17/17 pass, 0 console errors |
-| NLU smoke | `PASS` | 8/8 pass, 0 console errors |
-| Stage 4 human-feel harness | `PASS` | 10/10 pass, 0 console errors |
-| Live UI gate | `PASS` | Soul Talk 10/10; HUD 13/13; awakening/touch/storage/Pixi OK; 0 console errors |
-| Responsive/browser probe | `PASS` | 390x844 and 1280x900 pass: onboarding completes, 1 canvas, 5 nav buttons, Soul Talk input visible, no unlabeled buttons, no focusable controls under `aria-hidden`, no horizontal overflow |
+The map gate includes fresh/veteran K9 behavior, four phase-search choices,
+close/Escape/panel-switch encounter cancellation, persistence, reduced motion,
+and the 390x844 viewport path.
 
-## Active runtime asset evidence
+## Raphael conversation evidence
 
-| Companion | Animations | Unique sheets |
-| --- | ---: | ---: |
-| `greyshade-cat` | 34 | 26 |
-| `flame-flicker` | 29 | 29 |
-| `ice-talon` | 29 | 29 |
-| `stone-shard` | 29 | 29 |
-| `vine-twist` | 29 | 29 |
-| `crystal-rabbit` | 29 | 29 |
+### Sealed holdout — supporting machine evidence
 
-## Accessibility status
+- Generated: `2026-07-16T13:42:59+0800`
+- Raw evidence: `docs/qa/_raphael_conversation_holdout_output.json`
+- Result: 12 sessions, 48 turns, **48/48 hard checks passed**, 0 quality flags,
+  0 console errors.
+- `humanBlindReview`: `not_run`.
 
-The 2026-06-28 10:56 +0800 automated probe found no focusable controls inside
-`aria-hidden` scope in either viewport:
+This sealed deterministic holdout is regression evidence. Its `hardGateOk`
+field cannot replace the repo-native D2 mutation/UI gates or the independent
+private-blind review.
 
-- `mobile_390x844`: 0 focusable hidden entries
-- `desktop_1280x900`: 0 focusable hidden entries
+### Independent private-blind review — human evidence
 
-The previous Package 9 warning was resolved by isolating inactive panels from
-focus order and restoring `aria-hidden` focus checks as a hard automated gate.
+- Protocol: `docs/qa/RAPHAEL_PRIVATE_BLIND_TEST_V1.md`
+- Required sample: at least 3 independent testers x 20 scored turns each.
+- Current status: **`NOT_RUN`**.
 
-## Manual gates still required
+The historical `RAPHAEL_BLIND_REVIEW_SHEET_2026-07-14.md` is provenance only.
+It is explicitly invalidated as current launch evidence and cannot be counted
+as the private-blind sample.
+
+## Deployed GitHub Pages evidence
+
+- Public URL: <https://orochi771127.github.io/NexusLink/>
+- Deployed runtime commit: `c7563379af9989d852a0df259787e2416590f4f5`
+- Pages action: <https://github.com/Orochi771127/NexusLink/actions/runs/29442524898>
+- Generated deployed QA: `2026-07-16T14:04:34+08:00`
+- Raw evidence: `docs/qa/_github_pages_qa_output.json`
+
+| Deployed probe | Result |
+| --- | ---: |
+| Raphael harness smoke | 17/17 |
+| NLU smoke | 8/8 |
+| Stage 4 automated cases | 12/12 |
+| D2 safety terminal invariant | 18/18 |
+| First-session map browser gate | 42/42 |
+| Initial Bond through live Soul Talk and main-save persistence | PASS |
+| Pixi canvas count | 1 |
+| Console errors | 0 |
+
+The deployment is reachable and its automated probes pass. It is not yet a
+release approval. The latest Pages artifact was reported as 1,741,503,156 bytes,
+above the platform's 1 GB warning threshold. Payload reduction is a separate
+GROUNDWORK/release-engineering package. The repository also has no committed
+GitHub Actions release workflow or branch/ruleset enforcement that makes this
+local gate mandatory, so these checks are currently evidence, not enforced CI.
+
+## Human launch gates still open
 
 | Gate | Status | Required evidence |
 | --- | --- | --- |
-| Real mobile device | `PENDING HUMAN` | iPhone Safari/Chrome or Android Chrome pass with no safe-area, nav, or Soul Talk input blocker |
-| Desktop browser pass | `PENDING HUMAN` | Desktop Chrome/Edge/Safari at 1280x800+ with no blocking console/runtime issue |
-| Moderated private test | `PENDING HUMAN` | 3 testers minimum using `docs/testing/PRIVATE_TEST_SCRIPT.md`; at least 2/3 understand memory, boundary, and habitat change; 0/3 read boundary/refusal as punishment |
-| Legal/privacy/store copy | `PENDING HUMAN` | Human approval of privacy, safety wording, and store-facing claims |
+| Real-device D1/D2/D3/D6 matrix | `NOT_RUN` | iPhone Safari, Android Chrome, iPhone LINE webview, and desktop Chrome coverage recorded in `docs/testing/REAL_DEVICE_REGRESSION_MATRIX.md` |
+| Moderated first-session comprehension | `NOT_RUN` | 3 independent participants using `docs/testing/PRIVATE_TEST_SCRIPT.md`; product comprehension and non-punitive boundary findings recorded |
+| Raphael private-blind | `NOT_RUN` | 3 independent testers x 20 scored turns; thresholds in `docs/qa/RAPHAEL_PRIVATE_BLIND_TEST_V1.md` met |
+| Legal, privacy, store copy, and material-rights review | `NOT_RUN` | Human approval of user-facing claims, consent/privacy handling, safety wording, and distributable assets |
+| Public launch approval | `NOT_GRANTED` | Owner reviews all evidence above and explicitly approves release |
+
+## Evidence taxonomy
+
+- `automated_regression`: deterministic code, policy, mutation, and browser checks.
+- `sealed_holdout`: deterministic hidden-case conversation regression; supporting
+  evidence only.
+- `deployed_automated_regression`: probes against the public Pages build.
+- `moderated_product_comprehension`: human first-session UX evidence.
+- `private_blind`: independent human conversation-quality evidence.
+- `real_device` and `legal_review`: human release evidence.
+
+No automated Stage 4 case, sealed holdout, or historical review worksheet may be
+relabeled as private-blind, real-device, legal, or public-launch approval.
 
 ## Release decision
 
-- Automated web release gate: `PASS`.
-- Public web release: `NOT APPROVED YET`.
-- Steam desktop demo / wrapper: `N/A` for Package 9; remains blocked until
-  Package 10 Desktop Wrapper ADR after web demo and private test approval.
-
-## Rollback
-
-Package 9 originally added QA/release documentation and a release runner. The
-2026-06-28 required-fix pass also touches onboarding normalization and panel
-focus management. Revert the required-fix commit to roll back those runtime/QA
-changes, or revert the Package 9 commit to remove the checklist, private-test
-script, evidence record, release runner, and ledger entries.
+- Exact runtime candidate: **frozen at `c756337`**.
+- Local automated RC gate: **PASS**.
+- Deployed Pages automated probes: **PASS**.
+- Independent private-blind, moderated first-session, real-device, and
+  legal/privacy gates: **OPEN**.
+- Public launch: **NOT APPROVED**.

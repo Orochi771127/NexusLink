@@ -42,6 +42,71 @@ def configure_stdio() -> None:
             reconfigure(encoding="utf-8", errors="replace")
 
 
+def repository_provenance() -> dict:
+    """Record the tested HEAD and whether non-QA runtime files are dirty."""
+    try:
+        head = subprocess.run(
+            ["git", "rev-parse", "HEAD"],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+            check=True,
+        ).stdout.strip()
+        origin_main = subprocess.run(
+            ["git", "rev-parse", "origin/main"],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+            check=False,
+        ).stdout.strip() or None
+        status_lines = subprocess.run(
+            ["git", "status", "--short", "--untracked-files=all"],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+            check=True,
+        ).stdout.splitlines()
+        status_records = [
+            (line[:2], line[3:].replace("\\", "/"))
+            for line in status_lines
+            if len(line) > 3
+        ]
+        tracked_changes = [path for code, path in status_records if code != "??"]
+        untracked_changes = [path for code, path in status_records if code == "??"]
+        protected_output_untracked = [
+            path for path in untracked_changes if path.startswith("output/")
+        ]
+        untracked_outside_output = [
+            path for path in untracked_changes if not path.startswith("output/")
+        ]
+        candidate_paths = tracked_changes + untracked_outside_output
+        runtime_prefixes = ("src/", "assets/", "styles/", "tools/", "scripts/")
+        runtime_root_files = {
+            "index.html",
+            "styles.css",
+            "main.js",
+            "style.css",
+            "script.js",
+        }
+        runtime_changes = [
+            path for path in candidate_paths
+            if path in runtime_root_files or path.startswith(runtime_prefixes)
+        ]
+        return {
+            "head": head,
+            "originMain": origin_main,
+            "headMatchesOriginMain": bool(origin_main) and head == origin_main,
+            "trackedDirty": bool(tracked_changes),
+            "trackedChanges": tracked_changes,
+            "untrackedOutsideOutput": untracked_outside_output,
+            "protectedOutputUntrackedCount": len(protected_output_untracked),
+            "runtimeTreeClean": not runtime_changes,
+            "runtimeChanges": runtime_changes,
+        }
+    except (OSError, subprocess.SubprocessError) as error:
+        return {"error": str(error), "runtimeTreeClean": None}
+
+
 def resolve_node() -> str:
     explicit = os.environ.get("NEXUS_NODE")
     candidates = [
@@ -694,7 +759,7 @@ def run_existing_browser_gates(base_url: str):
             env=env,
             timeout=120,
         ),
-        run_command("stage4_human_playtest", [sys.executable, "docs/qa/_run_stage4_human_playtest.py"], env=env, timeout=120),
+        run_command("stage4_automated_cases", [sys.executable, "docs/qa/_run_stage4_human_playtest.py"], env=env, timeout=120),
         run_command("live_playtest_gate", [sys.executable, "docs/qa/_run_live_playtest_gate.py"], env=env, timeout=180),
     ]
 
@@ -723,9 +788,11 @@ def summarize(report):
                 "focusableHiddenCount": len(focusable_hidden),
             })
     manual_required = [
-        "real_device_mobile_safari_or_chrome",
-        "moderated_private_testers",
+        "real_device_browser_matrix_D1_D2_D3_D6",
+        "first_session_moderated_product_comprehension_3_testers",
+        "raphael_private_blind_3_testers_x_20_turns",
         "legal_privacy_store_copy_review",
+        "public_launch_approval",
     ]
     if accessibility_warnings:
         manual_required.append("aria_hidden_focus_management_review")
@@ -744,6 +811,12 @@ def main():
     parser.add_argument("--base", default=DEFAULT_BASE)
     parser.add_argument("--port", type=int, default=DEFAULT_PORT)
     parser.add_argument("--no-server", action="store_true")
+    parser.add_argument(
+        "--output",
+        type=Path,
+        default=OUTPUT_PATH,
+        help="JSON evidence destination (defaults to the tracked release output)",
+    )
     args = parser.parse_args()
 
     server = None
@@ -755,6 +828,7 @@ def main():
     report = {
         "schemaVersion": 1,
         "generatedAt": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
+        "repository": repository_provenance(),
         "baseUrl": args.base.rstrip("/"),
         "server": server_status,
         "node": node,
@@ -794,7 +868,8 @@ def main():
             except subprocess.TimeoutExpired:
                 server.kill()
 
-    OUTPUT_PATH.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps(report, ensure_ascii=False, indent=2))
     if not report["summary"]["allAutomatedRequiredOk"]:
         sys.exit(1)
