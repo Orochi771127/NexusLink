@@ -10,10 +10,14 @@ approval, a Steam build approval, or proof of open-domain conversation quality.
 | --- | --- |
 | Runtime commit | `c7563379af9989d852a0df259787e2416590f4f5` |
 | RC Docs/QA closure commit | `220e2fdbefaa4a2a7ecc2e853f68869bc4560d81` |
+| Release-engineering bootstrap commit | `71dcc937f717b4292664576549d0117feef3777c` |
 | Branch | `main` |
-| Publication | Owner-authorized direct-main publication; current status-sync commit changes no runtime |
-| Current closure package | Committed tracked Docs/QA-only changes; runtime tree clean; unrelated protected `output/**` remains out of scope |
+| Publication | Owner-authorized direct-main bootstrap; current evidence/action-pin follow-up changes no runtime |
+| Current release-engineering package | Pages payload exclusion plus repo-native CI; unrelated protected `output/**` remains out of scope and on disk |
 | Automated RC gate | `PASS` |
+| GitHub `web-release-gate` | `PASS` on exact bootstrap SHA; final pin/evidence SHA must pass before ruleset activation |
+| Pages payload | `PASS` at `788,617,916 bytes` (`<850 MB` target) |
+| `main` ruleset | `PENDING FINAL ACTIVATION` after the current follow-up receives a successful check |
 | GitHub Pages deployment | `DEPLOYED` |
 | Public launch | `NOT APPROVED` |
 | Steam build | `NOT READY / NOT IN THIS PACKAGE` |
@@ -75,6 +79,23 @@ The map gate includes fresh/veteran K9 behavior, four phase-search choices,
 close/Escape/panel-switch encounter cancellation, persistence, reduced motion,
 and the 390x844 viewport path.
 
+## GitHub release-gate bootstrap evidence
+
+- Workflow: `.github/workflows/release-gate.yml`
+- Exact commit: `71dcc937f717b4292664576549d0117feef3777c`
+- Run: <https://github.com/Orochi771127/NexusLink/actions/runs/29485275670>
+- Required check context: `web-release-gate`
+- Result: **PASS** in **3m40s**; the repo-native Web gate step passed and one
+  compact `web-release-gate.json` artifact was uploaded.
+- Runtime contract: read-only repository permission, Python 3.12, Node 24,
+  Playwright 1.60.0, 30-minute timeout, PR/main/manual triggers, no repository
+  artifact upload, and sparse exclusion of the two non-runtime Pages paths.
+
+The initial run exposed a deprecation annotation because the previously
+approved action majors still declared Node 20. The current follow-up pins the
+official Node 24 action releases by immutable commit SHA; that follow-up must
+produce the same successful check before branch enforcement is enabled.
+
 ## Raphael conversation evidence
 
 ### Sealed holdout — supporting machine evidence
@@ -107,10 +128,12 @@ as the private-blind sample.
 ## Deployed GitHub Pages evidence
 
 - Public URL: <https://orochi771127.github.io/NexusLink/>
-- Deployed runtime commit: `c7563379af9989d852a0df259787e2416590f4f5`
-- Pages action: <https://github.com/Orochi771127/NexusLink/actions/runs/29442524898>
-- Generated deployed QA: `2026-07-16T14:04:34+08:00`
-- Raw evidence: `docs/qa/_github_pages_qa_output.json`
+- Deployed release-engineering commit: `71dcc937f717b4292664576549d0117feef3777c`
+- Runtime code remains frozen at: `c7563379af9989d852a0df259787e2416590f4f5`
+- Pages action: <https://github.com/Orochi771127/NexusLink/actions/runs/29485273828>
+- Generated deployed QA: `2026-07-16T17:04:30+08:00`
+- Temporary deployed evidence SHA-256:
+  `B04BF7B9502A2F9044501BA1B734011E2AE01B35AA0BE6C387F5C693E2A35600`
 
 | Deployed probe | Result |
 | --- | ---: |
@@ -123,12 +146,14 @@ as the private-blind sample.
 | Pixi canvas count | 1 |
 | Console errors | 0 |
 
-The deployment is reachable and its automated probes pass. It is not yet a
-release approval. The latest Pages artifact was reported as 1,741,503,156 bytes,
-above the platform's 1 GB warning threshold. Payload reduction is a separate
-GROUNDWORK/release-engineering package. The repository also has no committed
-GitHub Actions release workflow or branch/ruleset enforcement that makes this
-local gate mandatory, so these checks are currently evidence, not enforced CI.
+The deployment is reachable and its automated probes pass. Jekyll loaded the
+root `_config.yml`; the Pages artifact is **788,617,916 bytes**, down from
+**1,741,516,299 bytes** and below the `<850 MB` target. A representative runtime
+asset and the app root returned HTTP 200; representative `output/**` and
+`assets/reference/**` URLs returned HTTP 404 as intended. This is not yet a
+release approval. The committed CI now produces the required check context,
+while the approved `main` ruleset remains pending until the final action-pin and
+evidence follow-up passes on its exact SHA.
 
 ## Human launch gates still open
 
@@ -157,6 +182,9 @@ relabeled as private-blind, real-device, legal, or public-launch approval.
 
 - Exact runtime candidate: **frozen at `c756337`**.
 - Local automated RC gate: **PASS**.
+- GitHub `web-release-gate` bootstrap: **PASS**.
+- Pages payload target and deployed probes: **PASS**.
+- `main` ruleset: **PENDING FINAL ACTIVATION**.
 - Deployed Pages automated probes: **PASS**.
 - Independent private-blind, moderated first-session, real-device, and
   legal/privacy gates: **OPEN**.

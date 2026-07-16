@@ -58,6 +58,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-07-16 - Codex - Pages payload and CI bootstrap - VERIFIED
+
+- Status: `VERIFIED` for bootstrap commit `71dcc937f717b4292664576549d0117feef3777c`; public launch remains unapproved and the `main` ruleset is intentionally not activated until the evidence/pin follow-up receives the same successful check.
+- Branch / commit: `main` / `71dcc937f717b4292664576549d0117feef3777c`; `HEAD` equalled `origin/main` (`0/0`) after the authorized direct-main bootstrap push.
+- Scope: Added root `_config.yml` exclusions for `output/**` and `assets/reference/**`, plus a read-only `.github/workflows/release-gate.yml` that runs the repo-native gate on PRs, `main` pushes, and manual dispatch while uploading only one compact JSON evidence file. No runtime or asset file changed.
+- Work performed: The workflow uses non-cone sparse checkout to omit the same non-runtime directories, Python 3.12, Node 24, pinned Playwright 1.60.0, a 30-minute timeout, concurrency cancellation, and fixed check context `web-release-gate`. After the first run exposed GitHub's Node 20 action-runtime warning, the current follow-up pins official Node 24 action releases by immutable SHA before ruleset activation.
+- Verification: Pre-commit local Web gate **17/17**; GitHub run `29485275670` / job `87578173175` succeeded on exact SHA `71dcc93` in **3m40s** and uploaded compact evidence. Pages run `29485273828` loaded `/github/workspace/./_config.yml`, deployed successfully, and produced artifact **788,617,916 bytes** (down from **1,741,516,299** and below the `<850 MB` target). Public QA at `2026-07-16T17:04:30+08:00` passed harness **17/17**, NLU **8/8**, Stage 4 automated **12/12**, D2 **18/18**, map **42/42**, Initial Bond/Soul Talk/save persistence, one Pixi canvas, and 0 console errors; temp evidence SHA-256 `B04BF7B9502A2F9044501BA1B734011E2AE01B35AA0BE6C387F5C693E2A35600`. Runtime representative URL returned 200; both excluded representative URLs returned 404.
+- Problems / risks: GitHub's dynamic legacy Pages workflow still emits its own Node 20 deprecation warning outside repository control. Formal moderated first-session, private-blind 3 x 20, real-device D1/D2/D3/D6, legal/privacy/store-copy/material-rights, and explicit public-launch gates remain open.
+- Next safe action: Publish the immutable Node 24 action pins and evidence update, require a successful `web-release-gate` on that final `main` SHA, then create and inspect the approved active `main-release-protection` ruleset with no bypass actors.
+- Required reading: The `IN PROGRESS` entry below, `_config.yml`, `.github/workflows/release-gate.yml`, `docs/qa/WEB_RELEASE_EVIDENCE.md`, GitHub runs `29485275670` and `29485273828`, and this lane.
+
 ### 2026-07-16 - Codex - Pages payload and release enforcement - IN PROGRESS
 
 - Status: `IN PROGRESS`; Owner explicitly approved both `PAGES-PAYLOAD-EXCLUDE-R1` and `CI-RELEASE-ENFORCEMENT-R1`, including the GROUNDWORK deployment config, direct commit/push needed to bootstrap the first check, and the subsequent GitHub `main` ruleset mutation.
