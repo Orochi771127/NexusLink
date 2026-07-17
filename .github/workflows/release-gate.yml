@@ -30,6 +30,9 @@ jobs:
             /*
             !/output/
             !/assets/reference/
+            !/assets/characters/greyshade-cat/inbox/
+            !/assets/characters/greyshade-cat/inbox_manual_transparent/
+            !/assets/characters/greyshade-cat/frames/
           sparse-checkout-cone-mode: false
 
       - name: Set up Python 3.12

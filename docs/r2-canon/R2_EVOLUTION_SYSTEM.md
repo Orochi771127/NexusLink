@@ -1,5 +1,9 @@
 # R2_EVOLUTION_SYSTEM.md — Nexus Link R2 進化系統設計
 
+> **狀態：`SUPERSEDED / HISTORICAL REFERENCE ONLY`。** 本文保留 R2 時期的設計歷史，不是現行實作權威。文中的 level、勝場／擊倒、特殊道具、五階、能力雷達與「低 defense 較易進化」均不得用於新 runtime。現行最高方向見 `../strategy/NEXUS_LINK_MASTER_CANON_v3.1.md` §5.5；現行養成行為、三階、證據、安全與 migration 契約見 `../design/COMPANION_GROWTH_CONTRACT_V1.md`。
+>
+> 以下正文不重寫，以便保留歷史 provenance；若與現行文件衝突，一律以現行文件為準。
+
 > 來源：R2 Master Handoff v1.0 第 14 節。
 > 核心原則：進化不應只是等級制，必須保留「關係」與「情緒棲地」特色。
 

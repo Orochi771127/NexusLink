@@ -216,17 +216,17 @@ pulseBonus           = 1 + clamp(dev(power)×0.004, −0.12, 0.18)
 
 里程碑記憶：`emotion=gratitude`、`intensity=0.9`、`symbol=bond_rune`、`place=magic_circle`。一次綻放一階、只增不減（契約一）。五元守護有各自 tone 台詞（`MILESTONE_LINES_BY_TONE`）。
 
-### 5.1 演化線（`src/data/evolutionLines.js`，A5 已填充）
+### 5.1 演化線 compatibility reveal（`src/data/evolutionLines.js`）
 
-六條線各 3 階（幼年→成長→成熟）。**解鎖由羈絆推進、不由勝負**（契約：不打怪 farm）——`codexController` 以 `bondThreshold` 判定（已移除 `unlockWins`）：
+現行 11 條 runtime evolution line 各有 3 段資料。以下 0／25／70 是 `codexController` 目前依**全域 bond** 顯示舊圖鑑內容的 transitional compatibility 參數（已移除 `unlockWins`），不是正式 Companion Growth readiness、per-companion stage 或覺醒契約：
 
 | 階 | bondThreshold | 對齊里程碑 |
 |---|---|---|
-| 幼年期 | 0 | 一開始即見 |
-| 成長期 | 25 | 信任萌芽 |
-| 成熟期 | 70 | 並肩 |
+| compatibility stage 1 | 0 | 一開始即見 |
+| compatibility stage 2 | 25 | 信任萌芽 |
+| compatibility stage 3 | 70 | 並肩 |
 
-> 鎖住階顯示 `unlockHint`（關係/儀式語言，明文不寫「打贏 N 場」）；解鎖階顯示 `lore`。完全體/究極體留待未來章節。
+> 鎖住階目前顯示 `unlockHint`，解鎖階顯示 `lore`。正式 canon 固定為「初醒夥伴 → 共鳴成熟體 → 終局覺醒體」，不新增完全體／究極體五階線；多樣 evidence、夥伴意願、per-companion state、legacy stage floor 與 UI 邊界以 `COMPANION_GROWTH_CONTRACT_V1.md` 為準。任何新成長實作不得只調本表門檻就宣稱完成。
 
 ---
 

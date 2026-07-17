@@ -205,6 +205,8 @@ Initial Bond 已接入：fresh save 固定呈現 `greyshade-cat` / `blazetail-ki
 - 圖鑑 / 夥伴切換 / 行動：`src/ui/codexController.js`、`src/ui/companionSelectController.js`、`src/ui/actionSheetController.js`、`src/engine/actionEffectEngine.js`
 - VFX / 動效 / 玻璃感 polish：`styles.css` 的非地基區塊、`src/pixi/` 的特效（非 `pixiApp.js` 核心 layer）
 
+> **Companion Growth 路由**：任何心核夥伴養成、心相傾向、三階覺醒、Growth UI、Codex stage 或 evolved-form 工作，開工前必讀 `docs/design/COMPANION_GROWTH_CONTRACT_V1.md`。該檔目前是設計／驗收 SSOT，**不是 runtime 已完成證據**；session-only G1 可走 EXPERIENCE，per-companion state／normalize／migration 與正式資產 promotion 仍分別屬 GROUNDWORK。
+
 ### 5.3 體驗層的開工協定（A 檔：保留把關感）
 體驗層雖被授權，但**每個 TASK_PACK 開工前**仍須：
 1. 回報「我要做哪個系統、預期改哪些檔案、預期效果、有沒有碰到 5.1 地基」。
@@ -286,6 +288,7 @@ Initial Bond 已接入：fresh save 固定呈現 `greyshade-cat` / `blazetail-ki
 | 情緒對峙 | `battleEngine.js` ・ `battleController.js` ・ `enemyRegistry.js`（`battleRecord.wins/losses` compatibility-only） |
 | 探索 | `mapController.js` ・ `explorationEngine.js` ・ `explorationNodes.js` |
 | Expedition（Prototype） | `expeditionController.js` ・ `src/expedition/` ・ `RAPHAEL_EXPEDITION_EVAL_CONTRACT.md`（partial Core bridge，`coreIntegrated:false`） |
+| Companion Growth（設計／驗收；runtime 未實作） | `docs/design/COMPANION_GROWTH_CONTRACT_V1.md` ・ `ACCEPTANCE.md` N1–N12 ・ `evolutionLines.js`（compatibility data only） |
 | Pixi 核心 | `pixiApp.js`(LOCKED 級) ・ `companionRenderer.js` ・ `spriteSheetAnimationLoader.js` ・ `motionController.js` |
 | 人格 | `companionPersonality.js` ・ `personalityProfile.js` ・ `animationProfile.js` |
 | 資料 | `companionRegistry.js` ・ `evolutionLines.js` ・ `emotionDictionary.js` ・ `safetyShieldDictionary.js` |

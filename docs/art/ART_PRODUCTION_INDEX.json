@@ -399,8 +399,8 @@
       "id": "GAP-2",
       "title": "Companion evolution Stage-2 / Stage-3 sprites",
       "status": "blocked",
-      "blockedOn": "Owner scope decision (core 12 forms vs full 22; MVP idle_calm loop vs full 29-animation set) AND engineering: visual-evolution switching in companionRenderer is not wired. (RESOLVED 2026-07-13: the 5 formal companions' evolution-line TEXT now exists in EVOLUTION_LINES — canon three-stage names + lore; visual identity for stage-2/3 can be briefed from it.) Do not generate yet.",
-      "designRef": "heartsparkCouncilCanon.js (three-stage names) + evolutionLines.js",
+      "blockedOn": "Owner scope decision (core 12 forms vs full 22; MVP idle_calm loop vs full 29-animation set) AND engineering: per-companion growth state, formal stage willingness and visual-evolution switching are not wired. The 5 formal companions' three-stage TEXT exists, but COMPANION_GROWTH_CONTRACT_V1 G5 requires per-stage asset readiness and human review. Do not generate yet.",
+      "designRef": "docs/design/COMPANION_GROWTH_CONTRACT_V1.md G5 + heartsparkCouncilCanon.js (three-stage names) + evolutionLines.js (compatibility data only)",
       "estimatedCount": {
         "coreMvpIdle": 12,
         "fullSets": 638

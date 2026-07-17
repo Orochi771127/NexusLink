@@ -3080,3 +3080,144 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
   foundation/rollback pack and R2 as the active independent object pack. It does
   not claim the other six regions have completed Moonlake-equivalent prop packs.
 - Branch / commit: local `main`; no commit and no push.
+
+### 2026-07-17 - Codex - Moonlake Emotional Crystal Lifecycle And Pages Payload Exclusion - VERIFIED
+
+- Lane: `Game Engineering And Architecture`.
+- Task names: `TP-CRYSTAL-LIFECYCLE-1`; `PAGES-NONRUNTIME-EXCLUDE-R2`.
+- Runtime result: the existing Moonlake crystal prop now resolves the approved
+  presentation-only lifecycle `glimmer -> seed -> cluster -> attuned ->
+  transformed -> released` from canonical `emotionalMemories`. The resolver is
+  pure and does not write bond, trust, energy, defense, reward, trace, memory or
+  any save field. Pixi loads only the requested local state texture, uses a
+  `200 ms` crossfade, swaps immediately for reduced motion, keeps the latest
+  async request authoritative and restores the prior texture on failure.
+- Integration boundary: crystal sync shares the existing habitat-visual store
+  subscription in `src/app.js`; no new ticker or public teardown contract was
+  added. The six-state renderer is wired, but `released` is not yet reachable
+  from current player UI because memory-release UX remains future scope.
+- Known low risk: a failed state-texture load restores the prior texture and
+  warns once, but that same desired state does not retry again during the
+  current session. A bounded retry policy can be added separately if transient
+  local asset failures appear in field telemetry.
+- Release configuration: Jekyll and the release-gate sparse checkout now
+  exclude only `assets/characters/greyshade-cat/inbox`,
+  `inbox_manual_transparent` and `frames`. Current runtime and animation
+  metadata use `spritesheets/**`, so these exact exclusions remove no runtime
+  dependency and delete no source file.
+- Payload evidence: the three excluded tracked directories contain `264` files
+  and `92,330,304` bytes (`88.05 MiB`). Against the last recorded
+  `788,630,124`-byte Pages artifact this projects `696,299,820` bytes
+  (`664.04 MiB`); this remains a projection until an authorized commit/push
+  produces an actual Pages artifact.
+- Verification: focused crystal lifecycle cases passed `9/9`; final web release
+  gate passed `18/18` required automated checks; JavaScript syntax and
+  `git diff --check` passed. Dedicated Chromium checks at `390x844` confirmed
+  both reduced-motion `glimmer` and animated `transformed` textures returned
+  `200`, used one canvas, showed no Pixi failure surface and emitted zero
+  console/page errors.
+- Workspace safety: the release gate's timestamp-only tracked playtest output
+  was restored after both runs; the existing `886` protected untracked
+  `output/**` files were untouched. Concurrent unrelated viewport-FX work in
+  `src/pixi/habitatLightingFx.js`, `src/pixi/habitatWeatherFx.js` and separate
+  hunks of `src/app.js` was preserved and excluded from this task's ownership.
+- Remaining gates: real-device D1/D2/D3/D6 matrix, three-person first-session
+  comprehension, Raphael `3 x 20` private blind test, legal/privacy/store-copy
+  review, public launch approval and an actual Pages build size measurement.
+- Branch / commit: local `main` at baseline `d2d1d3f`; no commit and no push.
+
+### 2026-07-17 - Codex - Moonlake Crystal State Visual And Payload QA - VERIFIED
+
+- Lane: `Game Art, UI, And Visual Production`.
+- Visual result: the approved six `512x512` transparent Moonlake crystal-state
+  textures are now addressable by runtime without regenerating, resizing or
+  modifying any art. Mobile captures showed the empty-memory glimmer as a quiet
+  small signal and the transformed state as a clearly readable blue crystal
+  cluster without covering the active companion, HUD, Soul Talk control or
+  bottom navigation.
+- Motion/accessibility result: the `200 ms` transition remains subtle; reduced
+  motion performs an immediate texture swap. Initial loading hides the legacy
+  cluster fallback until the correct texture is ready, preventing a false
+  cluster flash.
+- Asset preservation: Pages exclusion applies only at publication packaging;
+  the Greyshade source inbox, manual cutouts and extracted frames remain in the
+  repository and Git history for reference-audited replacement work. No
+  `assets/**`, art metadata, manifest path or approved runtime sheet changed.
+- Scope truth: this completes visual-state wiring and QA, not a full playable
+  release/transform ritual. Player-facing release interaction, additional
+  crystal feedback and any new art require separate approval.
+- Branch / commit: local `main`; no commit and no push.
+
+### 2026-07-17 - Codex - Companion Growth Contract V1 - COMPLETED
+
+- Status: `COMPLETED` for the docs-first product, state, migration and architecture contract; companion growth remains `RUNTIME NOT YET IMPLEMENTED`.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `TP-COMPANION-GROWTH-CONTRACT-1`.
+- Branch / commit: local `main` at baseline `d2d1d3ff0e91f27eef2064b51db66cc55ba42bad`; verified uncommitted worktree, no commit or push authorized.
+- Scope: Docs／EXPERIENCE planning only. No runtime, state, save, localStorage, asset, Pixi, Raphael, safety, standoff or dependency change.
+- Work performed: Added `docs/design/COMPANION_GROWTH_CONTRACT_V1.md` as the active design／acceptance SSOT with an explicit `RUNTIME NOT YET IMPLEMENTED` label. It defines four qualitative tendencies, source-family evidence, deterministic key/compaction rules, equal standoff outcomes, non-missable chapter coverage, companion-initiated three-stage growth, all safety-route exclusions, typed fatigue, full mirror inventory gate, conservative active/inactive veteran migration, pure-engine/controller/DOM/Pixi ownership and the non-power future Resonance Practice boundary. Added `ACCEPTANCE.md` N1-N12 and routed the contract from Master Canon, `CLAUDE.md`, `AGENTS.md`, docs README, Balance Sheet and art GAP-2. Marked the direct R2 evolution document superseded; global-bond 0/25/70 remains transitional compatibility only.
+- Verification: Codebase graph was ready at 13,410 nodes / 17,796 edges and the read-only runtime audit confirmed global relationship fields, bond-only Codex reveal, Growth/Expedition coupling and missing stage asset mapping. Three independent diff reviews initially found hidden defense optimization, unequal standoff progression, safety provenance, cross-stage replay, ambiguous domain/compaction, incomplete migration and routing gaps; all were corrected before closure. Final re-review verdicts passed G0 with no current-doc blocker. The expanded contract consistency probe passed `37/37`; N1-N12 were present; `ART_PRODUCTION_INDEX.json` parsed successfully; targeted `git diff --check` and trailing-whitespace checks passed. Full mirror inventory and willingness enums remain explicit G2/G3 start gates, not hidden assumptions.
+- Problems / risks: Current runtime still lets one global bond reveal stages for every companion; old memories lack reliable `companionId`; Growth still exposes numeric bond and Expedition shard/crafting; formal Stage 2/3 asset mappings do not exist. None of these runtime gaps is fixed by this docs package. Existing unrelated A+B, crystal, habitat FX and protected `output/**` worktree changes were preserved.
+- Next safe action: Open `G1` as a separately approved EXPERIENCE pack: derive session-only qualitative tendencies from already completed local events and render a Growth view model using existing cues, with no persistent field, formal stage write or `app.js` overlap. Then seek separate GROUNDWORK approval for `G2` per-companion schema/migration.
+- Required reading: `docs/design/COMPANION_GROWTH_CONTRACT_V1.md`, `ACCEPTANCE.md` N1-N12, Master Canon §5.5, `docs/design/BALANCE_SHEET.md` §5.1, `src/ui/pageRouter.js`, `src/ui/codexController.js`, `src/engine/actionEffectEngine.js`, `src/data/evolutionLines.js`, `src/state/defaultState.js`, `src/state/store.js`, and this entry.
+
+### 2026-07-17 - Codex - Moonlake Mobile Lighting, Placement And Companion Calibration - COMPLETED
+
+- Status: `COMPLETED` for the approved Moonlake mobile calibration slice.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `TP-HAB-MOONLAKE-R2-MOBILE-CALIBRATION`.
+- Runtime repair: lighting and weather now render in an unscaled full-viewport Pixi container and resize to the actual canvas. They no longer inherit the height-fitted `390x844` safe-zone transform that narrowed overlays on short iPhone viewports and caused a dark center band with bright side strips.
+- Companion calibration: the Moonlake visual-center target moved upward by `42` art-space pixels and uses a scene-profile display multiplier of `0.9`. The renderer preserves an explicit minimum screen-space interaction area, so the smaller visual does not reduce tap or hug usability.
+- Placement calibration: all eight independent R2 props were re-snapped to the authored Moonlake landforms. Runtime slot data and `placements.candidate.json` now agree; the far beacon was moved from open water to the right distant rock shelf after the first visual review rejected its apparent floating position.
+- Verification: JavaScript syntax passed for every changed runtime module. Six Chromium cases passed at `390x844` and `390x664`, including day, night, mist, rain, dev-grid JSON round-trip and a fresh-onboarding `crystalfin-seahorse` case. Both ambient and weather bounds equal the full canvas; eight props load; legacy camp/baked-night requests remain absent; six-region switch round-trip passes; console/page errors remain `0/0`; companion interaction bounds remain at least `103.98x135.30` screen pixels in the shortest case.
+- Shared-worktree boundary: pre-existing emotional-crystal changes in `src/app.js` and all unrelated release, canon, Growth and character-output changes were preserved. No save schema, asset texture, dependency, RaphaelCore, safety, battle or other-region scene data changed in this task.
+- Evidence: `output/habitat/moonlake-layered-r2/runtime-qa-report.json` and six `runtime-qa/*.png` captures.
+- Branch / commit: local `main` at baseline `d2d1d3f`; Owner authorized direct commit and push to `main` after this verification.
+
+### 2026-07-17 - Codex - Moonlake Mobile Composition Re-Review - VERIFIED
+
+- Status: `VERIFIED` after two visual review passes.
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `TP-HAB-MOONLAKE-R2-MOBILE-CALIBRATION`.
+- Composition result: the complete crescent shrine, five tents and two beacons remain uncropped and are grounded on visible island, shore or cliff surfaces. Near tents stay inside the cover-safe viewport, the main beacon sits on its central island, and the far beacon now reads as attached to the right rock shelf rather than suspended over water.
+- Companion result: Greyshade Cat and Crystalfin Seahorse are centered on the plaza, visibly smaller and higher than the reported online build, while remaining clear of the HUD, Soul Talk button and bottom navigation. The visual shrink is presentation-only and does not change animation frames, progression, collision or companion state.
+- Lighting/weather result: day, night, mist and rain now cover the canvas uniformly without the reported central twilight column or brighter side strips. Geometry does not jump across phases; emissive plates and weather remain presentation-only.
+- Known boundary: the existing ambient dialogue bubble can overlap the upper portion of a companion in its active display state; that pre-existing DOM composition is outside this approved Pixi calibration and was not changed here. It does not affect the online screenshot's upper status-text layout.
+- Required reading for follow-up: `src/data/sceneProfiles/moonlakeProfile.js`, `src/data/sceneProfiles/moonlakeObjectPack.js`, `output/habitat/moonlake-layered-r2/runtime-qa-report.json`, and this entry.
+- Branch / commit: local `main`; included in the same authorized Moonlake mobile calibration delivery.
+
+### 2026-07-17 - Codex - Companion Growth Presentation And Asset Boundary - COMPLETED
+
+- Status: `COMPLETED` for the docs-only presentation contract; no Growth UI or evolved-form asset was implemented or promoted.
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `TP-COMPANION-GROWTH-CONTRACT-1`.
+- Branch / commit: local `main` at baseline `d2d1d3ff0e91f27eef2064b51db66cc55ba42bad`; uncommitted, no commit or push.
+- Scope: Defined only the future visual/UI boundary for Companion Growth. No `styles.css`, renderer, registry, manifest, portrait, animation, crystal texture or `assets/**` file changed.
+- Work performed: Locked evidence-before-metrics presentation, qualitative tendency language, neutral accept／modify／rest／decline states, 390x844/reduced-motion expectations and `heart_phase_manifestation` as a temporary existing-cue intent. Formal shape swaps require per-stage approved illustrated assets, species motion translation, mobile GPU budget and human visual review. The Moonlake six-state crystal remains presentation-only memory lifecycle and cannot be relabeled as a growth meter or completed transformation ritual.
+- Verification: The active contract, Master Canon, `CLAUDE.md`, `AGENTS.md`, Balance Sheet, legacy banner, docs index, GAP-2 routing and Acceptance N1-N12 passed the expanded `37/37` consistency probe; the art index remained valid JSON and targeted whitespace/diff checks passed. Final G0 re-review passed. Corrections ensure numeric defense cannot become an optimization target, all four standoff endings are equally valid, queued safety provenance cannot be washed, replayed roots cannot cross stages, and no permanent chapter choice is required for readiness.
+- Problems / risks: The current Growth page still leads with numeric bond/trust/mood/defense and mixes in Expedition crafting; no Stage 2/3 asset mapping exists. A first visual slice must therefore reuse existing posture, trace, weather and animation cues and must not fake a permanent evolved form.
+- Next safe action: In the separately approved G1 EXPERIENCE slice, replace only the Growth page's primary view model/presentation with session-derived qualitative signals and four honest practice outcomes; do not modify or generate assets, persist growth, or promote a formal stage.
+- Required reading: `docs/design/COMPANION_GROWTH_CONTRACT_V1.md` §§3-5, 8.3-8.4 and 9; `docs/design/NEXUS_LINK_V3_VISUAL_SYSTEM.md`; `ACCEPTANCE.md` N2, N5, N8 and N11; `src/ui/pageRouter.js`; and the latest Lane 2 crystal/habitat entries.
+
+### 2026-07-17 - Codex - Companion Growth G1 Session Slice - IN PROGRESS
+
+- Status: `IN PROGRESS`; runtime and deterministic module verification are complete, while publication and browser evidence remain open.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `TP-COMPANION-GROWTH-G1`.
+- Scope: EXPERIENCE-only G1. Added a pure session Heart Phase engine and connected four qualitative practices to the existing Growth page without touching `app.js`, store/default/save schema, localStorage ownership, Pixi, assets, safety writers, standoff or dependencies.
+- Runtime boundary: the controller closure keeps at most four unique tendency ids and one last response per active companion for the current document session. Accept/modify may add a qualitative observation; rest/decline remain successful zero-evidence results. Reload clears the session. No practice calls `actionSheetController.performAction`, store mutation or save APIs.
+- Safety boundary: `safeHarborMode` or `growthSafetyExcluded` makes evaluation fail closed with no result or session write. The Growth surface then shows only the safety-pause card; practice, observation and Expedition Prototype controls are absent. Bond, trust, numeric defense, `lastSeenAt`, login/offline fields and time/randomness are not inputs.
+- Verification so far: deterministic cases passed `12/12`; JavaScript syntax and targeted `git diff --check` passed. Cases cover all four practices/outcomes, immutable inputs, zero evidence for rest/decline, repeated-action dedupe, safety-terminal no-op, A/B session isolation and invariance under bond/trust/defense/offline-only changes.
+- Open gate: the targeted Playwright runner is syntax-valid, but local Chromium launch was denied by the Codex execution-credit limit before any browser assertion ran. Do not record mobile/desktop/reduced-motion screenshots as verified until CI or an authorized browser runtime executes it.
+- Branch / commit: local dirty `main` at baseline `d2d1d3f`; no commit or push yet. Publish only through a clean `codex/companion-growth-g1` branch and protected-main PR, selecting Growth-owned hunks only.
+
+### 2026-07-17 - Codex - Companion Growth G1 UI Presentation - IN PROGRESS
+
+- Status: `IN PROGRESS`; implementation and static review complete, visual browser gate pending.
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `TP-COMPANION-GROWTH-G1`.
+- Presentation result: the primary Growth surface no longer leads with a bond progress bar or raw trust/mood/defense. It presents the active companion's reversible Heart Phase, four native-button practices, a text-labelled accept/modify/rest/decline response and qualitative tendency pills with explicit no-progress/no-loss language.
+- Prototype boundary: Expedition shards/crafting remain available only inside a closed `Prototype · No Heart Phase effect` details surface. They do not feed the session engine or claim readiness, formal stage, best route or evolved form.
+- Accessibility boundary: all outcomes use text in addition to border color; the last response is an `aria-live=polite` status; practice controls remain native buttons; the new surface adds no animation and inherits the existing reduced-motion page transition rule. TC/SC/EN/JP copy is present for the full G1 surface.
+- Open visual gate: execute `docs/qa/_run_companion_growth_g1_browser_gate.mjs` at `390x844` and `1280x900`, keyboard, 200% text and reduced motion; deep-compare store/localStorage before and after all outcomes; capture screenshots and confirm reload reset before changing this lane to `VERIFIED`.
+- Asset boundary: no asset, portrait, animation sheet, renderer, manifest or formal Stage 2/3 mapping changed. This is Heart Phase presentation, not a completed evolved form.

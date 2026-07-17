@@ -2,3 +2,6 @@
 exclude:
   - output
   - assets/reference
+  - assets/characters/greyshade-cat/inbox
+  - assets/characters/greyshade-cat/inbox_manual_transparent
+  - assets/characters/greyshade-cat/frames

@@ -68,11 +68,13 @@ import {
   createHabitatWeatherFx,
   HABITAT_WEATHER_HOOKS,
   onHabitatWeatherChange,
+  resizeHabitatWeatherFx,
   setHabitatWeather,
   updateHabitatWeatherFx
 } from "./pixi/habitatWeatherFx.js";
 import {
   createHabitatLightingFx,
+  resizeHabitatLightingFx,
   updateHabitatLightingFx
 } from "./pixi/habitatLightingFx.js";
 import {
@@ -81,6 +83,7 @@ import {
 } from "./engine/environmentController.js";
 import { bindCompanionTap, createCreatureNode, positionCompanion } from "./pixi/companionRenderer.js";
 import { createHabitatTraceRenderer } from "./pixi/habitatTraceRenderer.js";
+import { createCrystalStateRenderer } from "./pixi/crystalStateRenderer.js";
 import { enableEditorMode, readSceneEditorFlag } from "./tools/sceneEditor.js";
 import {
   createCompanionMotion,
@@ -671,16 +674,36 @@ async function bootScene(
   const initialHabitatId = normalizeHabitatId(store.getState().activeHabitatId);
   const initialProfile = setActiveSceneProfile(initialHabitatId);
   const environmentLayer = await createEnvironmentLayer(layers, app, initialProfile);
+  const crystalStateRenderer = createCrystalStateRenderer(PIXI, {
+    crystal: environmentLayer.crystal,
+    isReducedMotion: () =>
+      Boolean(window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches) ||
+      document.documentElement?.dataset?.reducedMotionPreference === "reduced"
+  });
 
-  const lightingFx = createHabitatLightingFx(PIXI, { width: 390, height: 844 });
-  layers.layerFX.addChild(lightingFx.root);
+  // Full-viewport FX must not inherit the height-fitted 390x844 safe-zone
+  // transform. On short mobile viewports that transform narrows overlays and
+  // leaves untreated bright strips along both sides of the habitat.
+  const viewportFx = new PIXI.Container();
+  viewportFx.name = "habitat_viewport_fx";
+  viewportFx.eventMode = "none";
+  world.addChild(viewportFx);
+
+  const lightingFx = createHabitatLightingFx(PIXI, {
+    width: app.screen.width,
+    height: app.screen.height
+  });
+  viewportFx.addChild(lightingFx.root);
 
   const particles = createParticles();
   layers.layerFX.addChild(particles);
 
   // 天氣 FX（TP-HAB-WEATHER-1）：掛在 layerFX，氛圍 only。
-  const weatherFx = createHabitatWeatherFx(PIXI, { width: 390, height: 844 });
-  layers.layerFX.addChild(weatherFx.root);
+  const weatherFx = createHabitatWeatherFx(PIXI, {
+    width: app.screen.width,
+    height: app.screen.height
+  });
+  viewportFx.addChild(weatherFx.root);
   // setHabitatWeather 會改 active id；ticker 內 updateHabitatWeatherFx 偵測差異後套用視覺。
   onHabitatWeatherChange(() => {
     weatherFx.weatherId = "__pending__";
@@ -744,8 +767,10 @@ async function bootScene(
   // 效能：habitat trace 的 map+sync 從 ticker（每幀）移到「痕跡內容改變時」才跑。
   // ticker 只保留 update(t) 做逐幀動畫。先在 bootScene 同步一次（含 reload 後既有痕跡）。
   let lastHabitatTraceSig = null;
-  function syncHabitatTraces() {
-    const traces = store.getState().habitatTraces || [];
+  function syncHabitatVisuals(state = store.getState()) {
+    crystalStateRenderer.sync(state.emotionalMemories || []);
+
+    const traces = state.habitatTraces || [];
     // 便宜的內容簽章：長度＋每筆 id/status/intensity；只在實際變動時重建 visuals。
     let sig = String(traces.length);
     for (let index = 0; index < traces.length; index += 1) {
@@ -756,8 +781,8 @@ async function bootScene(
     lastHabitatTraceSig = sig;
     habitatTraceRenderer.sync(mapHabitatTracesToVisuals(traces));
   }
-  syncHabitatTraces();
-  store.subscribe(syncHabitatTraces);
+  syncHabitatVisuals();
+  store.subscribe(syncHabitatVisuals);
 
   const reportCompanionStatus = ({ message }) => {
     if (message) statusText.textContent = message;
@@ -900,13 +925,15 @@ async function bootScene(
       companion.__accentFlame.alpha = 0.7 + Math.sin(t * 5) * 0.25;
     }
 
+    resizeHabitatLightingFx(lightingFx, app.screen.width, app.screen.height);
+    resizeHabitatWeatherFx(weatherFx, app.screen.width, app.screen.height);
     updateEnvironmentLayer(environmentLayer, safeTicker);
     updateHabitatLightingFx(lightingFx);
     updateHabitatWeatherFx(weatherFx, safeTicker);
     animateParticles(particles, t, safeTicker);
     updateEnvironmentEffects(activeEnvironmentEffects, safeTicker);
 
-    // trace 的 map+sync 已移到 syncHabitatTraces()（由 store.subscribe 驅動）；逐幀只做動畫更新。
+    // 水晶與 trace 的同步已移到 syncHabitatVisuals()（由 store.subscribe 驅動）；逐幀只做動畫更新。
     habitatTraceRenderer.update(t);
   });
 

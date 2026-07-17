@@ -1,19 +1,18 @@
-import { BOND_MILESTONES } from "../engine/bondMilestoneEngine.js";
-import { canAffordRecipe, listCraftRecipesForUi } from "../expedition/expeditionCraftEngine.js";
 import { getShardType } from "../data/lootTables.js";
+import { getCompanionById } from "../data/companionRegistry.js";
+import {
+  HEART_PHASE_PRACTICES,
+  createCompanionGrowthSession,
+  deriveHeartPhaseSnapshot,
+  evaluateHeartPhasePractice
+} from "../engine/companionGrowthSessionEngine.js";
 import { getTraceDisplayCopy } from "../engine/traceVisualMapper.js";
 import { qs, qsa } from "../utils/dom.js";
 import EventBus from "../utils/eventBus.js";
 import { t, getLanguage, LANGUAGE_CHANGED_EVENT } from "../i18n/i18n.js";
 
 const PAGE_ACTIONS = new Set(["home", "explore", "care", "grow", "memory"]);
-const MOOD_KEYS = new Set(["calm", "warm", "distant", "defensive", "tired", "happy"]);
 const MEMORY_LIMIT = 8;
-
-function moodLabel(mood) {
-  if (MOOD_KEYS.has(mood)) return t(`mood.${mood}`);
-  return mood || t("mood.calm");
-}
 
 export function createPageRouter({
   store,
@@ -37,6 +36,7 @@ export function createPageRouter({
   let activePage = "home";
   let renderedMemoryEntries = [];
   let actionInFlight = false;
+  const growthSessions = new Map();
 
   function bind() {
     if (!pageLayer) return;
@@ -194,78 +194,75 @@ export function createPageRouter({
   function renderGrowth(state) {
     const body = pageBodies.grow;
     if (!body) return;
-    const bond = toNumber(state.bond);
-    const reachedMilestones = getReachedMilestones(state);
-    const nextMilestone = BOND_MILESTONES.find((milestone) => !reachedMilestones.has(milestone.id));
-    const nextProgress = nextMilestone ? Math.min(100, Math.round((bond / nextMilestone.threshold) * 100)) : 100;
-    const vaultShards = state.expeditionVault?.shards || {};
-    const shardStrip = Object.entries(vaultShards)
-      .filter(([, count]) => Number(count) > 0)
-      .map(([shardId, count]) => {
-        const label = getShardType(shardId).label.zh;
-        return `<span><strong>${Number(count)}</strong><em>${escapeHtml(label)}</em></span>`;
-      })
-      .join("");
-    const craftRecipes = listCraftRecipesForUi(state);
-    const craftButtons = craftRecipes.map((recipe) => {
-      const afford = canAffordRecipe(state, recipe.id);
-      return `
-        <button type="button"
-          data-page-action="commit"
-          data-nav-action="grow"
-          data-choice="${recipe.choice}"
-          data-status="${escapeHtml(recipe.status)}"
-          ${afford ? "" : "disabled"}
-          title="${afford ? escapeHtml(recipe.status) : "碎晶還不夠，先完成遠征再回來"}"
-        >
-          <strong>${escapeHtml(recipe.label.zh)}</strong>
-          <em>${escapeHtml(recipe.sub.zh)}</em>
-        </button>
-      `;
-    }).join("");
-
+    const companionId = state.activeCompanionId || "greyshade-cat";
+    const companion = getCompanionById(companionId);
+    const companionName = getCompanionDisplayName(companion);
+    const session = growthSessions.get(companionId) || createCompanionGrowthSession(companionId);
+    const snapshot = deriveHeartPhaseSnapshot(state, session);
+    const practiceButtons = HEART_PHASE_PRACTICES.map((practice) => `
+      <button type="button"
+        data-page-action="growth-practice"
+        data-growth-practice="${practice.id}"
+        data-tendency="${practice.tendencyId}"
+        ${snapshot.safetyPaused ? "disabled aria-disabled=\"true\"" : ""}
+      >
+        <strong>${t(practice.labelKey)}</strong>
+        <em>${t(practice.copyKey)}</em>
+      </button>
+    `).join("");
+    const observedTendencies = snapshot.observedTendencyIds.length
+      ? snapshot.observedTendencyIds.map((tendencyId) => `
+          <span class="growth-tendency-pill" data-growth-tendency="${tendencyId}">
+            ${t(`growth.session.tendency.${tendencyId}`)}
+          </span>
+        `).join("")
+      : `<p class="growth-observation-empty">${t("growth.session.observedEmpty")}</p>`;
+    const lastResult = snapshot.safetyPaused ? null : snapshot.lastResult;
+    const responseMarkup = snapshot.safetyPaused
+      ? `
+        <section class="growth-response growth-response--safety" data-growth-result data-outcome="safety-paused" aria-label="${t("growth.session.safetyLabel")}">
+          <strong>${t("growth.session.safetyLabel")}</strong>
+          <p>${t("growth.session.safetyCopy")}</p>
+        </section>
+      `
+      : lastResult
+        ? `
+          <section class="growth-response growth-response--${lastResult.outcomeId}" data-growth-result data-outcome="${lastResult.outcomeId}">
+            <span>${t(`growth.session.outcome.${lastResult.outcomeId}`)}</span>
+            <strong>${t(lastResult.responseKey)}</strong>
+            ${lastResult.observedTendencyId ? `
+              <small>${t("growth.session.resultTendencyPrefix")}${t(`growth.session.tendency.${lastResult.observedTendencyId}`)}</small>
+            ` : `<small>${t("growth.session.zeroEvidence")}</small>`}
+          </section>
+        `
+        : `
+          <section class="growth-response growth-response--waiting" data-growth-result data-outcome="waiting">
+            <strong>${t("growth.session.waitingTitle")}</strong>
+            <p>${t("growth.session.waitingCopy")}</p>
+          </section>
+        `;
     body.innerHTML = `
-      <div class="page-focus-card">
+      <div class="page-focus-card page-focus-card--growth" data-growth-phase="${snapshot.phaseId}">
         <span class="page-orb" aria-hidden="true">✧</span>
         <div>
-          <p class="page-card-kicker">Relationship Chapter</p>
-          <h3>${nextMilestone ? `${t("growth.nextPrefix")}${escapeHtml(nextMilestone.theme)}` : t("growth.chapterEnd")}</h3>
-          <p>${nextMilestone ? t("growth.nextCopy") : t("growth.endCopy")}</p>
+          <p class="page-card-kicker">${t("growth.session.kicker")}</p>
+          <h3>${escapeHtml(companionName)} · ${t(snapshot.phaseLabelKey)}</h3>
+          <p>${t(snapshot.phaseCopyKey)}</p>
         </div>
       </div>
-      <div class="page-progress-block" aria-label="${t("growth.progressAria")}">
-        <div class="page-progress-line"><span style="width:${nextProgress}%"></span></div>
-        <p>${nextMilestone ? `${t("char.bond")} ${bond} / ${nextMilestone.threshold}` : `${t("char.bond")} ${bond}`}</p>
-      </div>
-      <div class="page-tendency-grid">
-        ${renderTendency(t("char.trust"), toNumber(state.trust))}
-        ${renderTendency(t("char.mood"), moodLabel(state.mood), false)}
-        ${renderTendency(t("char.boundary"), toNumber(state.defense))}
-      </div>
-      ${shardStrip ? `
-        <div class="page-evidence-strip" aria-label="遠征碎晶庫存">
-          ${shardStrip}
+      ${responseMarkup}
+      ${snapshot.safetyPaused ? "" : `
+        <section class="growth-observation" data-growth-observation aria-labelledby="growth-observation-title">
+          <div>
+            <strong id="growth-observation-title">${t("growth.session.observedTitle")}</strong>
+            <small>${t("growth.session.observedNote")}</small>
+          </div>
+          <div class="growth-tendency-strip">${observedTendencies}</div>
+        </section>
+        <div class="page-action-grid page-action-grid--growth-practice" aria-label="${t("growth.session.practiceAria")}">
+          ${practiceButtons}
         </div>
-      ` : ""}
-      ${craftButtons ? `
-        <div class="page-action-grid page-action-grid--craft" aria-label="碎晶共鳴">
-          ${craftButtons}
-        </div>
-      ` : ""}
-      <div class="page-action-grid">
-        <button type="button" data-page-action="commit" data-nav-action="grow" data-choice="trust_reflection" data-status="${t("growth.trustTuneStatus")}">
-          <strong>${t("growth.trustTune")}</strong>
-          <em>${t("growth.trustTuneSub")}</em>
-        </button>
-        <button type="button" data-page-action="open-calm-sync">
-          <strong>${t("growth.emotionBalance")}</strong>
-          <em>${t("growth.balanceSub")}</em>
-        </button>
-        <button type="button" data-page-action="open-codex">
-          <strong>${t("growth.review")}</strong>
-          <em>${t("growth.reviewSub")}</em>
-        </button>
-      </div>
+      `}
     `;
   }
 
@@ -324,6 +321,8 @@ export function createPageRouter({
     if (actionInFlight || button.disabled) return;
     const action = button.dataset.pageAction;
     const wasDisabled = button.disabled;
+    let growthHandled = false;
+    let growthCompleted = false;
     actionInFlight = true;
     button.disabled = true;
     button.setAttribute("aria-busy", "true");
@@ -337,7 +336,35 @@ export function createPageRouter({
       else if (action === "open-codex") await runRequiredAction(openCodex);
       else if (action === "open-soul-talk") await soulTalkController.openSoulTalk(panelManager);
       else if (action === "open-calm-sync") await runRequiredAction(calmSyncController?.start?.bind(calmSyncController));
-      else if (action === "observe-body") {
+      else if (action === "growth-practice") {
+        const state = store.getState();
+        const companionId = state.activeCompanionId || "greyshade-cat";
+        const currentSession = growthSessions.get(companionId) || createCompanionGrowthSession(companionId);
+        const evaluation = evaluateHeartPhasePractice(
+          state,
+          currentSession,
+          button.dataset.growthPractice
+        );
+        growthHandled = true;
+
+        if (evaluation.reason === "safety-paused") {
+          statusText.textContent = t("growth.session.safetyStatus");
+          render();
+        } else if (!evaluation.ok) {
+          const error = new Error("Companion Growth practice is unavailable");
+          error.code = "ACTION_UNAVAILABLE";
+          throw error;
+        } else {
+          const practiceId = evaluation.result.practiceId;
+          growthSessions.set(companionId, evaluation.session);
+          growthCompleted = true;
+          statusText.textContent = t(evaluation.result.responseKey);
+          render();
+          pageBodies.grow
+            ?.querySelector(`[data-growth-practice="${practiceId}"]`)
+            ?.focus({ preventScroll: true });
+        }
+      } else if (action === "observe-body") {
         // 先跑「讀身體語言」效果，再打開角色面板（保留查閱價值）。
         const actionResult = await actionSheetController.performAction(button.dataset.navAction || "care", {
           choice: button.dataset.choice || "observe_body"
@@ -363,9 +390,9 @@ export function createPageRouter({
       } else {
         throw new Error(`Unsupported page action: ${action || "missing"}`);
       }
-      const isCommitLike = action === "commit" || action === "observe-body";
+      const isCommitLike = action === "commit" || action === "observe-body" || growthCompleted;
       setViewState(isCommitLike ? "completed" : "ready");
-      if (!isCommitLike) statusText.textContent = getPageStatus(activePage);
+      if (!isCommitLike && !growthHandled) statusText.textContent = getPageStatus(activePage);
     } catch (error) {
       console.warn("First-session page action unavailable", { action, error });
       setViewState(error?.code === "ACTION_UNAVAILABLE" ? "unavailable" : "recoverable-error");
@@ -428,18 +455,10 @@ function renderMetric(label, value, hint, max = 100) {
   `;
 }
 
-function renderTendency(label, value, numeric = true) {
-  return `
-    <span class="page-tendency">
-      <em>${escapeHtml(label)}</em>
-      <strong>${numeric ? Math.round(Number(value) || 0) : escapeHtml(String(value || ""))}</strong>
-    </span>
-  `;
-}
-
-function getReachedMilestones(state) {
-  const emotionalMemories = Array.isArray(state.emotionalMemories) ? state.emotionalMemories : [];
-  return new Set(emotionalMemories.map((memory) => memory?.id).filter(Boolean));
+function getCompanionDisplayName(companion) {
+  if (!companion) return t("growth.session.companionFallback");
+  if (getLanguage() === "en") return companion.displayName?.en || companion.name;
+  return companion.displayName?.zh || companion.name || t("growth.session.companionFallback");
 }
 
 function collectMemoryEntries(state) {

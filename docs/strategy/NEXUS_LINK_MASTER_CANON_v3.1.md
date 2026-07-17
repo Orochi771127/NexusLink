@@ -288,8 +288,9 @@ Linkara Region 是 Nexus Link 的主舞台。世界地圖以七個區域構成�
 ### 5.5 進化 canon（定版）
 
 - 正式採三階制：初醒夥伴 → 共鳴成熟體 → 終局覺醒體。
-- 現有 `evolutionLines.js` 五階資料為 R2 legacy，標記 prototype，中期遷移三階，不新增五階正式線。
+- 現行 `evolutionLines.js` 的每條角色線已是三段資料形狀；其中殘留的五階 label／R2 名詞，以及 Codex 只依全域 bond 0／25／70 顯示階段的行為，均為 compatibility／prototype，不是正式覺醒 gate，也不得再擴成五階正式線。
 - 進化＝人格偏移與關係回應，非戰力膨脹。
+- 現行養成設計／驗收契約與 migration 邊界以 `docs/design/COMPANION_GROWTH_CONTRACT_V1.md` 為準（runtime 尚未實作）；正式多夥伴成長必須由每隻夥伴自己的多樣經歷、章節條件與意願共同驅動。
 
 ### 5.6 角色 Tier（runtime 邊界）
 

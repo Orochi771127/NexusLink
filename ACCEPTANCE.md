@@ -282,6 +282,8 @@
 - **Greyshade illustrated 替換**：J1–J6 + G1–G7 + H + I 全過。
 - **First Session Flow / Vertical Slice**：K1–K10 + M1–M5 + D6 + B1–B2 + C1–C2 + H + I 全過。
 - **商業章節 / 旅痕 / 未來同行規格**：L1–L9 + D6 + H5 全過。
+- **Companion Growth / 心相養成**：N1–N11 + C1–C2 + D1–D2 + D6 + H1–H5 + I 全過。
+- **Future Resonance Practice / 未來共鳴對練**：N12 目前只驗設計邊界，不是 implementation-ready gate；另開 sealed contract 與 O-series assertions 後才可施工。真正線上 PvP 另需 backend／privacy／anti-cheat 授權包。
 
 任一 D 條（安全紅線）未過 → 整個 TASK_PACK 不通過，無論其他多漂亮。
 
@@ -309,3 +311,59 @@
 - 至少包含 390×844 與 desktop、鍵盤、reduced motion、文字放大、fresh、
   interrupted、skip、mature-save、empty-memory、refusal、return 情境。
 - 詳細判定依 `docs/production/ANTI_AI_SLOP_UX_GATE.md`。
+
+---
+
+## N. Companion Growth / 心相養成契約
+
+**N1 — 成長屬於每一隻夥伴，不是全域戰力**
+- 驗法：準備兩隻已解鎖夥伴 A／B，寫入不同 relationship、growth 與身體狀態，執行 A→B→A、reload 與快速連換。
+- 通過：canonical 狀態依 `companionId` 完全隔離；A 的互動不改 B；切回 A 後還原。未知 id 不建立資料、不解鎖角色。Top-level compatibility mirror 在每個可觀察 state 都與 active companion 一致。
+
+**N2 — 正式三階是人格／姿態回應，不是變強**
+- 驗法：讀 stage gate、Growth UI、Codex、對峙與資產 mapping。
+- 通過：正式只有「初醒夥伴 → 共鳴成熟體 → 終局覺醒體」；沒有 HP／ATK、稀有度、裝備、戰力評分、勝場、擊倒、素材或付費 gate。階段差異首先表現在姿態、語氣、選擇與棲地回應。
+- 未有 approved evolved asset 時，只可顯示心相姿態、aura 與敘事 cue，不可宣稱新形態已 runtime-ready。
+
+**N3 — 高風險安全終端完全排除養成**
+- 驗法：延伸 safety terminal invariant，覆蓋所有 runtime persona 與 energy 0／7／10；深比較完整 relationship／growth／preference／memory／trace／mirror，並加入偷寫 evidence、record、stage offer、mood 或 touchFatigue 的 mutation case。另測 safety event 排入 queue → 清除 UI/mode → delayed flush。
+- 通過：high-risk 回合前後完整 gameplay／companion state 完全相同；無 record creation、readiness、offer、milestone、SFX 或 animation delta，只允許 safety UI/mode。`growthSafetyExcluded` 在 source event 建立時封存，descendant／deferred writer 不能把 true 洗成 false；任一 mutation 必須讓 release gate 轉紅。Non-high-risk safety／caution route 可保留既有 bounded regulation，但仍須零 growth、零 preference／memory／trace、零 reward、零 offer。
+
+**N4 — 養成只接受明確完成且非高風險的當場互動**
+- 驗法：只改 `lastSeenAt`、離線天數、登入／reload／開頁次數，再比較 readiness 與 evidence；另測未完成、夥伴拒絕與 ordinary accepted event。
+- 通過：`growthSafetyExcluded` 涵蓋 high-risk、`safety_redirect`、`enter_safe_harbor`、system-role safety reply 與正在處理該回合的 safety／safe-harbor mode。Growth writer 不讀離線時長、登入／streak／回歸頻率、孤獨或依賴推測；單純開頁、idle 與未完成事件都不形成 evidence；普通 Soul Talk 不複製原始玩家文字進 growth record。
+
+**N5 — 拒絕、休息、返回與延後覺醒皆零懲罰**
+- 驗法：夥伴拒絕、玩家選休息／留白／返回、夥伴說「還不是時候」、玩家延後 stage invitation。
+- 通過：bond、trust、stage、evidence 不扣、不失效，不產生 missed flag、期限或永久 cooldown；之後仍可再提出。單純休息、退出、延後與拒絕本身都是零 evidence；只有帶 immutable origin context 且確實完成的 consent-respecting regulation／repair event 可計一次。既有 energy／fatigue／mood／defense regulation 可正常運作，但不得呈現為玩家失敗。
+
+**N6 — 單一路線與重播不能 farm 出進階**
+- 驗法：同一 normalized action 重複 50 次，再用 alias、reload、相同 event id 與同節點對峙重打嘗試繞過；另跑 detail compaction → stage advance → replay 舊 root → reload。
+- 通過：`domain` 只指 normalized `sourceType` family，不是 tendency。同一 companion + immutable root 只計一次；key 不可只靠時間／session／亂數。Evidence detail 維持在 24 枚內；目前 window 的 `rootsBySourceType`／anchor 與 lifetime `consumedRootKeys` bounded 且持久，compaction 不降低 readiness／stage、不刪 referenced memory／trace，也不能讓舊 root 跨 stage 重用。Writer 為缺少的 family／anchor 預留槽位，不能因先做 24 個非必要事件而 soft-lock。單一 family 永遠不能滿足 readiness；共鳴成熟體至少 3 個、終局覺醒體至少 4 個，且有一枚 context-bound consent／repair anchor；不要求刷滿四 tendency。
+- 四種 standoff 完成結局提供等價的一枚 `standoff` domain；同一 encounter 的 optional repair 不多算 readiness domain。所有有效章節分支提供等價 `chapter` domain，特定不可逆選擇不得成為唯一 gate。
+
+**N7 — Readiness 與 companion willingness 分離**
+- 驗法：分別測 bond=100 但無多樣 evidence、evidence 足夠但 typed overfatigue／active unresolved boundary、相同資料只改 numeric defense、全部條件滿足，以及損壞 gate data。
+- 通過：高 bond 與低 defense 都不會直接提高資格；numeric defense 永遠不是 readiness／willingness gate。缺失／損壞資料 fail closed 為「還不是時候」。玩家不能強制，夥伴可接受、改寫或延後；一次只前進一階，重複提交 idempotent。`deferredAt` 不是 timer；離線／等候不會自動變 willing，新的合法 context／repair 才會重新評估。
+
+**N8 — 成長不衰退、不過期、不製造最佳收益焦慮**
+- 驗法：將時鐘推進 30 天、跨 reload，檢查 Growth／Codex 及所有提示。
+- 通過：stage／coverage 不因缺席、compaction 或 reload 下降；offer 無期限；無紅點、倒數、每日、streak、「還差 N 點」或「錯過進化」。UI 以 lived evidence、姿態與質性傾向優先，不把現行 bond bar、Expedition shard／crafting 當正式 readiness。
+
+**N9 — Active companion mirror 切換原子一致**
+- 驗法：在 store subscriber 記錄 A→B→A 與快速連換 20 次的每一次通知及 reload round-trip。
+- 通過：G2 先鎖定完整 `RELATION_MIRROR_FIELDS`，至少涵蓋 bond／trust／mood／energy／defense、touch fatigue、觸碰／拒絕／blocked／首次觸碰與擁抱／reaction fields。切換以單一 transaction 封存 A、normalize／lazy-init B、切 active、hydrate B、notify/save 一次；不存在混合狀態。Player profile、`lastSeenAt`、安全輸入與 chat 不得被整包鏡射。
+
+**N10 — Legacy migration 不複製一段關係給整個 roster**
+- 驗法：覆蓋無新 schema、active-only、multi-unlock veteran、active 不在 unlocked、未知 active、partial／corrupt、新 schema 已存在與重複 normalize。
+- 通過：只為 resolved active companion 承繼一次 global relationship 與持久 `migration.legacyStageFloor`；其他 known unlocked companion 不複製 bond／trust／evidence，只可取得 display-only `legacyCodexRevealFloor` 以保住已看過的 lore，且不得冒充正式 stage。Inactive relationship 依 safe baseline lazy-init。Migration version／floor／baseline markers 經 normalizer 驗證且 one-shot；舊記憶不逐筆臆測、不補 evidence、不播演出、不給獎勵。仍只寫 `nexusLinkR2State:v1`。
+
+**N11 — 架構、可及性與形態資產邊界清楚**
+- 驗法：讀 pure engine／controller／Growth view model／Pixi ownership；測 390×844、desktop、鍵盤、觸控、reduced motion、文字放大與色覺非單一提示。
+- 通過：純 engine 無 DOM、Pixi、store、localStorage；renderer 不擁有 stage/evidence；save 只存 serializable simulation truth。正式形態 swap 必須通過 512 illustrated asset readiness、species motion、mobile GPU、reduced-motion 與 human visual gate。
+
+**N12 — 未來互相對練是零戰力獎勵的共鳴演練**
+- 驗法：讀 sparring contract、payload schema 與所有 state delta；嘗試退出、重播與不同 stage 對局。
+- 通過：雙方不是攻擊玩家或夥伴，而是以不同 stance 共同穩定中性回聲；第一版限 same-device pass-and-play。若另案核准 ghost code，payload 只含 schema version、known companion id、姿態／選擇與 deterministic seed，不含姓名、chat、memory、安全輸入、自由文字或可執行內容。
+- 無 backend、matchmaking、排行、MMR、賽季、streak、每日、loot、XP、growth evidence 或 relationship reward／penalty；stage 只改變表現與 sidegrade 選擇，不給數值優勢。雙方隨時退出且零懲罰；真正線上 PvP 不在本契約授權內。
+- N12 在專屬 sealed contract 與 O-series assertions 完成前只可判定「規格邊界存在」，不可宣稱 prototype／runtime ready。

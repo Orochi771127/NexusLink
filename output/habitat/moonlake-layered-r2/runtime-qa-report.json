@@ -1,5 +1,5 @@
 {
-  "base": "http://127.0.0.1:5185",
+  "base": "http://127.0.0.1:5182",
   "cases": [
     {
       "name": "day-clear-390x844",
@@ -11,6 +11,7 @@
         "timePhase": "day",
         "weather": "clear"
       },
+      "companionId": "greyshade-cat",
       "result": {
         "placementCount": 8,
         "ids": [
@@ -25,6 +26,37 @@
         ],
         "completeChildSets": true,
         "rootVisible": true,
+        "viewportFxPresent": true,
+        "canvasSize": {
+          "width": 390,
+          "height": 844
+        },
+        "ambientBounds": {
+          "x": 0,
+          "y": 0,
+          "width": 390,
+          "height": 844
+        },
+        "weatherTintBounds": {
+          "x": 0,
+          "y": 0,
+          "width": 390,
+          "height": 844
+        },
+        "companionBounds": {
+          "x": 128.9182344795846,
+          "y": 528.2979379084667,
+          "width": 132.16353104083078,
+          "height": 171.96396248578867
+        },
+        "companionLocalScale": {
+          "x": 0.6524660892616053,
+          "y": 0.6524660892616053
+        },
+        "companionHitAreaScreen": {
+          "width": 132.16353104083078,
+          "height": 171.9639624857887
+        },
         "rootTransform": {
           "x": 195,
           "y": 422,
@@ -47,13 +79,13 @@
         ],
         "shadowAlpha": [
           0.2,
-          0.22,
           0.18,
           0.18,
           0.22,
+          0.22,
+          0.22,
           0.26,
-          0.26,
-          0.22
+          0.26
         ],
         "ambientAlpha": 0,
         "fogAlpha": 0,
@@ -76,81 +108,16 @@
       "screenshot": "runtime-qa\\day-clear-390x844.png"
     },
     {
-      "name": "night-clear-390x844",
-      "viewport": {
-        "width": 390,
-        "height": 844
-      },
-      "params": {
-        "timePhase": "night",
-        "weather": "clear"
-      },
-      "result": {
-        "placementCount": 8,
-        "ids": [
-          "beacon_far",
-          "beacon_main",
-          "crescent_shrine",
-          "tent_far",
-          "tent_mid_left",
-          "tent_mid_right",
-          "tent_near_left",
-          "tent_near_right"
-        ],
-        "completeChildSets": true,
-        "rootVisible": true,
-        "rootTransform": {
-          "x": 195,
-          "y": 422,
-          "scaleX": 0.4395833333333333,
-          "scaleY": 0.4395833333333333
-        },
-        "gridPresent": false,
-        "oldCampPlatePresent": false,
-        "bgNightAlpha": 0,
-        "bgTexturesShared": true,
-        "emissiveAlpha": [
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1
-        ],
-        "shadowAlpha": [
-          0.021599999999999998,
-          0.024,
-          0.0264,
-          0.0264,
-          0.021599999999999998,
-          0.0264,
-          0.0312,
-          0.0312
-        ],
-        "ambientAlpha": 0.38,
-        "fogAlpha": 0,
-        "rainVisible": false,
-        "wetnessAlpha": 0,
-        "rippleVisibleCount": 3,
-        "editorMetadataComplete": true
-      },
-      "consoleErrors": [],
-      "pageErrors": [],
-      "forbiddenLegacyRequests": [],
-      "screenshot": "runtime-qa\\night-clear-390x844.png"
-    },
-    {
-      "name": "day-mist-390x844",
+      "name": "day-clear-seahorse-390x844",
       "viewport": {
         "width": 390,
         "height": 844
       },
       "params": {
         "timePhase": "day",
-        "weather": "mist"
+        "weather": "clear"
       },
+      "companionId": "crystalfin-seahorse",
       "result": {
         "placementCount": 8,
         "ids": [
@@ -165,6 +132,37 @@
         ],
         "completeChildSets": true,
         "rootVisible": true,
+        "viewportFxPresent": true,
+        "canvasSize": {
+          "width": 390,
+          "height": 844
+        },
+        "ambientBounds": {
+          "x": 0,
+          "y": 0,
+          "width": 390,
+          "height": 844
+        },
+        "weatherTintBounds": {
+          "x": 0,
+          "y": 0,
+          "width": 390,
+          "height": 844
+        },
+        "companionBounds": {
+          "x": 128.92584852721504,
+          "y": 528.2717318131395,
+          "width": 132.1483029455699,
+          "height": 171.94414852060822
+        },
+        "companionLocalScale": {
+          "x": 0.6523909110662023,
+          "y": 0.6523909110662023
+        },
+        "companionHitAreaScreen": {
+          "width": 132.14830294556992,
+          "height": 171.94414852060828
+        },
         "rootTransform": {
           "x": 195,
           "y": 422,
@@ -186,17 +184,213 @@
           0
         ],
         "shadowAlpha": [
+          0.18,
+          0.18,
+          0.22,
+          0.22,
+          0.2,
+          0.22,
+          0.26,
+          0.26
+        ],
+        "ambientAlpha": 0,
+        "fogAlpha": 0,
+        "rainVisible": false,
+        "wetnessAlpha": 0,
+        "rippleVisibleCount": 3,
+        "editorMetadataComplete": true
+      },
+      "consoleErrors": [],
+      "pageErrors": [],
+      "forbiddenLegacyRequests": [],
+      "screenshot": "runtime-qa\\day-clear-seahorse-390x844.png"
+    },
+    {
+      "name": "night-clear-390x844",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "params": {
+        "timePhase": "night",
+        "weather": "clear"
+      },
+      "companionId": "greyshade-cat",
+      "result": {
+        "placementCount": 8,
+        "ids": [
+          "beacon_far",
+          "beacon_main",
+          "crescent_shrine",
+          "tent_far",
+          "tent_mid_left",
+          "tent_mid_right",
+          "tent_near_left",
+          "tent_near_right"
+        ],
+        "completeChildSets": true,
+        "rootVisible": true,
+        "viewportFxPresent": true,
+        "canvasSize": {
+          "width": 390,
+          "height": 844
+        },
+        "ambientBounds": {
+          "x": 0,
+          "y": 0,
+          "width": 390,
+          "height": 844
+        },
+        "weatherTintBounds": {
+          "x": 0,
+          "y": 0,
+          "width": 390,
+          "height": 844
+        },
+        "companionBounds": {
+          "x": 128.91125326004612,
+          "y": 528.3219659305656,
+          "width": 132.17749347990775,
+          "height": 171.98212964832385
+        },
+        "companionLocalScale": {
+          "x": 0.652535019154363,
+          "y": 0.652535019154363
+        },
+        "companionHitAreaScreen": {
+          "width": 132.17749347990775,
+          "height": 171.9821296483239
+        },
+        "rootTransform": {
+          "x": 195,
+          "y": 422,
+          "scaleX": 0.4395833333333333,
+          "scaleY": 0.4395833333333333
+        },
+        "gridPresent": false,
+        "oldCampPlatePresent": false,
+        "bgNightAlpha": 0,
+        "bgTexturesShared": true,
+        "emissiveAlpha": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "shadowAlpha": [
+          0.024,
+          0.0264,
+          0.021599999999999998,
+          0.021599999999999998,
+          0.0264,
+          0.0264,
+          0.0312,
+          0.0312
+        ],
+        "ambientAlpha": 0.29,
+        "fogAlpha": 0,
+        "rainVisible": false,
+        "wetnessAlpha": 0,
+        "rippleVisibleCount": 3,
+        "editorMetadataComplete": true
+      },
+      "consoleErrors": [],
+      "pageErrors": [],
+      "forbiddenLegacyRequests": [],
+      "screenshot": "runtime-qa\\night-clear-390x844.png"
+    },
+    {
+      "name": "day-mist-390x844",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "params": {
+        "timePhase": "day",
+        "weather": "mist"
+      },
+      "companionId": "greyshade-cat",
+      "result": {
+        "placementCount": 8,
+        "ids": [
+          "beacon_far",
+          "beacon_main",
+          "crescent_shrine",
+          "tent_far",
+          "tent_mid_left",
+          "tent_mid_right",
+          "tent_near_left",
+          "tent_near_right"
+        ],
+        "completeChildSets": true,
+        "rootVisible": true,
+        "viewportFxPresent": true,
+        "canvasSize": {
+          "width": 390,
+          "height": 844
+        },
+        "ambientBounds": {
+          "x": 0,
+          "y": 0,
+          "width": 390,
+          "height": 844
+        },
+        "weatherTintBounds": {
+          "x": 0,
+          "y": 0,
+          "width": 390,
+          "height": 844
+        },
+        "companionBounds": {
+          "x": 128.9113720725249,
+          "y": 528.3215570007432,
+          "width": 132.1772558549502,
+          "height": 171.98182046371778
+        },
+        "companionLocalScale": {
+          "x": 0.6525338460453701,
+          "y": 0.6525338460453701
+        },
+        "companionHitAreaScreen": {
+          "width": 132.17725585495018,
+          "height": 171.98182046371775
+        },
+        "rootTransform": {
+          "x": 195,
+          "y": 422,
+          "scaleX": 0.4395833333333333,
+          "scaleY": 0.4395833333333333
+        },
+        "gridPresent": false,
+        "oldCampPlatePresent": false,
+        "bgNightAlpha": 0,
+        "bgTexturesShared": true,
+        "emissiveAlpha": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "shadowAlpha": [
+          0.18,
           0.2,
           0.18,
           0.22,
-          0.18,
           0.22,
           0.22,
           0.26,
           0.26
         ],
         "ambientAlpha": 0,
-        "fogAlpha": 0.27985900004528197,
+        "fogAlpha": 0.27946030461814825,
         "rainVisible": false,
         "wetnessAlpha": 0,
         "rippleVisibleCount": 3,
@@ -217,6 +411,7 @@
         "timePhase": "night",
         "weather": "rain"
       },
+      "companionId": "greyshade-cat",
       "result": {
         "placementCount": 8,
         "ids": [
@@ -231,6 +426,37 @@
         ],
         "completeChildSets": true,
         "rootVisible": true,
+        "viewportFxPresent": true,
+        "canvasSize": {
+          "width": 390,
+          "height": 664
+        },
+        "ambientBounds": {
+          "x": 0,
+          "y": 0,
+          "width": 390,
+          "height": 664
+        },
+        "weatherTintBounds": {
+          "x": 0,
+          "y": 0,
+          "width": 390,
+          "height": 664
+        },
+        "companionBounds": {
+          "x": 143.01055305095048,
+          "y": 421.13813670938407,
+          "width": 103.97889389809905,
+          "height": 135.29165321772803
+        },
+        "companionLocalScale": {
+          "x": 0.6524779988585533,
+          "y": 0.6524779988585533
+        },
+        "companionHitAreaScreen": {
+          "width": 103.97889389809905,
+          "height": 135.291653217728
+        },
         "rootTransform": {
           "x": 195,
           "y": 332,
@@ -252,17 +478,17 @@
           1
         ],
         "shadowAlpha": [
+          0.021599999999999998,
+          0.021599999999999998,
+          0.0264,
+          0.0264,
           0.024,
-          0.021599999999999998,
-          0.021599999999999998,
-          0.0264,
-          0.0264,
           0.0264,
           0.0312,
           0.0312
         ],
-        "ambientAlpha": 0.38,
-        "fogAlpha": 0.17973236826223013,
+        "ambientAlpha": 0.29,
+        "fogAlpha": 0.17993379450619235,
         "rainVisible": true,
         "wetnessAlpha": 0.1,
         "rippleVisibleCount": 8,
@@ -285,6 +511,7 @@
         "timePhase": "day",
         "weather": "clear"
       },
+      "companionId": "greyshade-cat",
       "result": {
         "placementCount": 8,
         "ids": [
@@ -299,6 +526,37 @@
         ],
         "completeChildSets": true,
         "rootVisible": true,
+        "viewportFxPresent": true,
+        "canvasSize": {
+          "width": 390,
+          "height": 844
+        },
+        "ambientBounds": {
+          "x": 0,
+          "y": 0,
+          "width": 390,
+          "height": 844
+        },
+        "weatherTintBounds": {
+          "x": 0,
+          "y": 0,
+          "width": 390,
+          "height": 844
+        },
+        "companionBounds": {
+          "x": 129.37056,
+          "y": 526.74112,
+          "width": 131.25887999999998,
+          "height": 170.78688
+        },
+        "companionLocalScale": {
+          "x": 0.648,
+          "y": 0.648
+        },
+        "companionHitAreaScreen": {
+          "width": 131.25888,
+          "height": 170.78688
+        },
         "rootTransform": {
           "x": 195,
           "y": 422,
@@ -320,12 +578,12 @@
           0
         ],
         "shadowAlpha": [
-          0.18,
           0.2,
-          0.22,
           0.18,
           0.22,
           0.22,
+          0.22,
+          0.18,
           0.26,
           0.26
         ],
