@@ -3221,3 +3221,27 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Accessibility boundary: all outcomes use text in addition to border color; the last response is an `aria-live=polite` status; practice controls remain native buttons; the new surface adds no animation and inherits the existing reduced-motion page transition rule. TC/SC/EN/JP copy is present for the full G1 surface.
 - Open visual gate: execute `docs/qa/_run_companion_growth_g1_browser_gate.mjs` at `390x844` and `1280x900`, keyboard, 200% text and reduced motion; deep-compare store/localStorage before and after all outcomes; capture screenshots and confirm reload reset before changing this lane to `VERIFIED`.
 - Asset boundary: no asset, portrait, animation sheet, renderer, manifest or formal Stage 2/3 mapping changed. This is Heart Phase presentation, not a completed evolved form.
+
+### 2026-07-17 - Cursor - Companion Growth G1 browser gate closure - VERIFIED
+
+- Status: `VERIFIED` for the G1 browser-evidence package and the two contract gaps found by the gate; not a public-launch claim and not G2 migration.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `TP-COMPANION-GROWTH-G1`.
+- Branch / commit: feature branch `fix/companion-growth-g1-browser-gate` based on protected `main` `c805ff7`; exact commit recorded at publication.
+- Scope: EXPERIENCE-only repair in `src/ui/pageRouter.js` plus this append-only ledger sync. No store/default/save schema, localStorage key, Pixi, assets, RaphaelCore, safety writers, standoff or dependency change.
+- Work performed: First local Chromium run of `_run_companion_growth_g1_browser_gate.py` failed `5/38` — missing `aria-live="polite"` on Heart Phase result sections, and the Expedition Prototype `<details data-growth-prototype>` surface was never rendered. Added polite live regions to waiting／outcome／safety responses; restored a default-closed Prototype details block that hosts shard inventory and craft buttons with the existing `Prototype · No Heart Phase effect` copy. Heart Phase practices still write only to the in-memory session map.
+- Verification: deterministic session cases `12/12`; browser gate `38/38` with 0 console errors after the repair; screenshots written to `%TEMP%\nexus-growth-g1-accepted-390x844.png` and `%TEMP%\nexus-growth-g1-desktop-1280x900.png`. The intentional Pixi CDN abort still shows the habitat failure surface and is expected for this DOM-focused gate.
+- Problems / risks: Craft actions inside the Prototype details still use the existing `commit`／craft path and may mutate save when opened and used; that is outside the Heart Phase session contract and remains Prototype-only. Formal Stage 2/3 assets, G2 per-companion persistence and human launch gates remain open.
+- Next safe action: Merge this PR after `web-release-gate` succeeds; treat G2 schema/migration as a separate GROUNDWORK package.
+- Required reading: `src/ui/pageRouter.js`, `docs/qa/_run_companion_growth_g1_browser_gate.py`, `docs/design/COMPANION_GROWTH_CONTRACT_V1.md`, and this entry.
+
+### 2026-07-17 - Cursor - Companion Growth G1 UI accessibility and Prototype surface - VERIFIED
+
+- Status: `VERIFIED` for presentation／a11y／Prototype secondary placement after browser evidence.
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `TP-COMPANION-GROWTH-G1`.
+- Branch / commit: same publication as the Lane 1 closure entry above.
+- Presentation result: Growth result cards now expose `aria-live="polite"` so outcome text is not color-only. Expedition shards／crafting sit under a closed `details[data-growth-prototype]` summary so the primary Growth surface stays Heart Phase practices and qualitative tendencies.
+- Verification: browser gate `38/38` covered mobile `390x844`, desktop `1280x900`, keyboard Enter, Escape home, reduced-motion `0s` page transition, 200% text without horizontal overflow, no FOMO primary copy, no growth progress bar, reload session clear, and store／localStorage invariance across accept／modify／decline／rest.
+- Asset boundary: no asset, portrait, animation sheet, renderer, manifest or Stage 2/3 mapping changed.
+- Next safe action: After merge, any visual polish to the Prototype summary remains optional and must not promote crafting into the primary Growth loop.

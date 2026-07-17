@@ -1,5 +1,6 @@
 import { getShardType } from "../data/lootTables.js";
 import { getCompanionById } from "../data/companionRegistry.js";
+import { canAffordRecipe, listCraftRecipesForUi } from "../expedition/expeditionCraftEngine.js";
 import {
   HEART_PHASE_PRACTICES,
   createCompanionGrowthSession,
@@ -218,16 +219,17 @@ export function createPageRouter({
         `).join("")
       : `<p class="growth-observation-empty">${t("growth.session.observedEmpty")}</p>`;
     const lastResult = snapshot.safetyPaused ? null : snapshot.lastResult;
+    // aria-live=polite：心相結果變更時，螢幕閱讀器可朗讀，不只靠顏色區分。
     const responseMarkup = snapshot.safetyPaused
       ? `
-        <section class="growth-response growth-response--safety" data-growth-result data-outcome="safety-paused" aria-label="${t("growth.session.safetyLabel")}">
+        <section class="growth-response growth-response--safety" data-growth-result data-outcome="safety-paused" aria-live="polite" aria-label="${t("growth.session.safetyLabel")}">
           <strong>${t("growth.session.safetyLabel")}</strong>
           <p>${t("growth.session.safetyCopy")}</p>
         </section>
       `
       : lastResult
         ? `
-          <section class="growth-response growth-response--${lastResult.outcomeId}" data-growth-result data-outcome="${lastResult.outcomeId}">
+          <section class="growth-response growth-response--${lastResult.outcomeId}" data-growth-result data-outcome="${lastResult.outcomeId}" aria-live="polite">
             <span>${t(`growth.session.outcome.${lastResult.outcomeId}`)}</span>
             <strong>${t(lastResult.responseKey)}</strong>
             ${lastResult.observedTendencyId ? `
@@ -236,11 +238,13 @@ export function createPageRouter({
           </section>
         `
         : `
-          <section class="growth-response growth-response--waiting" data-growth-result data-outcome="waiting">
+          <section class="growth-response growth-response--waiting" data-growth-result data-outcome="waiting" aria-live="polite">
             <strong>${t("growth.session.waitingTitle")}</strong>
             <p>${t("growth.session.waitingCopy")}</p>
           </section>
         `;
+    // Expedition 碎晶／製作只放在預設關閉的 Prototype details，不得當成長主循環。
+    const prototypeMarkup = renderGrowthPrototype(state);
     body.innerHTML = `
       <div class="page-focus-card page-focus-card--growth" data-growth-phase="${snapshot.phaseId}">
         <span class="page-orb" aria-hidden="true">✧</span>
@@ -263,6 +267,7 @@ export function createPageRouter({
           ${practiceButtons}
         </div>
       `}
+      ${prototypeMarkup}
     `;
   }
 
@@ -459,6 +464,60 @@ function getCompanionDisplayName(companion) {
   if (!companion) return t("growth.session.companionFallback");
   if (getLanguage() === "en") return companion.displayName?.en || companion.name;
   return companion.displayName?.zh || companion.name || t("growth.session.companionFallback");
+}
+
+function pickLocalizedText(dict, fallback = "") {
+  if (!dict || typeof dict !== "object") return fallback;
+  if (getLanguage() === "en") return dict.en || dict.zh || fallback;
+  return dict.zh || dict.en || fallback;
+}
+
+function renderGrowthPrototype(state) {
+  const vaultShards = state.expeditionVault?.shards || {};
+  const shardStrip = Object.entries(vaultShards)
+    .filter(([, count]) => Number(count) > 0)
+    .map(([shardId, count]) => {
+      const label = pickLocalizedText(getShardType(shardId).label, shardId);
+      return `<span><strong>${Number(count)}</strong><em>${escapeHtml(label)}</em></span>`;
+    })
+    .join("");
+  const craftRecipes = listCraftRecipesForUi(state);
+  const craftButtons = craftRecipes.map((recipe) => {
+    const afford = canAffordRecipe(state, recipe.id);
+    const label = pickLocalizedText(recipe.label, recipe.id);
+    const sub = pickLocalizedText(recipe.sub, "");
+    return `
+      <button type="button"
+        data-page-action="commit"
+        data-nav-action="grow"
+        data-choice="${escapeHtml(recipe.choice)}"
+        data-status="${escapeHtml(recipe.status || "")}"
+        ${afford ? "" : "disabled"}
+        title="${afford ? escapeHtml(recipe.status || "") : t("growth.session.prototype.locked")}"
+      >
+        <strong>${escapeHtml(label)}</strong>
+        <em>${escapeHtml(sub)}</em>
+      </button>
+    `;
+  }).join("");
+
+  return `
+    <details class="growth-prototype" data-growth-prototype>
+      <summary>
+        <strong>${t("growth.session.prototype.title")}</strong>
+        <span>${t("growth.session.prototype.badge")}</span>
+      </summary>
+      <p>${t("growth.session.prototype.copy")}</p>
+      <div class="page-evidence-strip" aria-label="${t("growth.session.prototype.shardsAria")}">
+        ${shardStrip || `<span><em>${t("growth.session.prototype.locked")}</em></span>`}
+      </div>
+      ${craftButtons ? `
+        <div class="page-action-grid page-action-grid--craft" aria-label="${t("growth.session.prototype.craftAria")}">
+          ${craftButtons}
+        </div>
+      ` : ""}
+    </details>
+  `;
 }
 
 function collectMemoryEntries(state) {
