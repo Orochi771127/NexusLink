@@ -2,9 +2,9 @@ import EnvironmentController from "../engine/environmentController.js";
 
 const PHASES = Object.freeze({
   day: Object.freeze({ color: 0xffffff, alpha: 0 }),
-  dawn: Object.freeze({ color: 0xffcda8, alpha: 0.11 }),
-  dusk: Object.freeze({ color: 0x8e729b, alpha: 0.2 }),
-  night: Object.freeze({ color: 0x31466d, alpha: 0.38 })
+  dawn: Object.freeze({ color: 0xffcda8, alpha: 0.09 }),
+  dusk: Object.freeze({ color: 0x8e729b, alpha: 0.15 }),
+  night: Object.freeze({ color: 0x3d5277, alpha: 0.29 })
 });
 
 export function createHabitatLightingFx(PIXI, options = {}) {
@@ -16,7 +16,6 @@ export function createHabitatLightingFx(PIXI, options = {}) {
 
   const ambient = new PIXI.Graphics();
   ambient.name = "habitat_phase_ambient";
-  ambient.rect(0, 0, width, height).fill({ color: 0xffffff, alpha: 1 });
   ambient.blendMode = PIXI.BLEND_MODES?.MULTIPLY ?? "multiply";
   root.addChild(ambient);
 
@@ -30,9 +29,28 @@ export function createHabitatLightingFx(PIXI, options = {}) {
   moonGlow.blendMode = PIXI.BLEND_MODES?.SCREEN ?? "screen";
   root.addChild(moonGlow);
 
-  const state = { root, ambient, sunGlow, moonGlow, width, height };
+  const state = { root, ambient, sunGlow, moonGlow, width: 0, height: 0 };
+  resizeHabitatLightingFx(state, width, height);
   updateHabitatLightingFx(state);
   return state;
+}
+
+export function resizeHabitatLightingFx(state, width, height) {
+  if (!state) return false;
+  const nextWidth = Math.max(1, Math.round(Number(width) || 0));
+  const nextHeight = Math.max(1, Math.round(Number(height) || 0));
+  if (state.width === nextWidth && state.height === nextHeight) return false;
+
+  state.width = nextWidth;
+  state.height = nextHeight;
+  state.ambient.clear().rect(0, 0, nextWidth, nextHeight)
+    .fill({ color: 0xffffff, alpha: 1 });
+  state.sunGlow.width = nextWidth * 0.9;
+  state.sunGlow.height = nextWidth * 0.9;
+  state.moonGlow.width = nextWidth * 0.72;
+  state.moonGlow.height = nextWidth * 0.72;
+  updateHabitatLightingFx(state);
+  return true;
 }
 
 export function updateHabitatLightingFx(state) {

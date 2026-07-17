@@ -136,6 +136,42 @@ export function createHabitatWeatherFx(PIXI, options = {}) {
   return state;
 }
 
+export function resizeHabitatWeatherFx(state, width, height) {
+  if (!state) return false;
+  const nextWidth = Math.max(1, Math.round(Number(width) || 0));
+  const nextHeight = Math.max(1, Math.round(Number(height) || 0));
+  if (state.width === nextWidth && state.height === nextHeight) return false;
+
+  const previousWidth = Math.max(1, state.width);
+  const previousHeight = Math.max(1, state.height);
+  const scaleX = nextWidth / previousWidth;
+  const scaleY = nextHeight / previousHeight;
+
+  state.width = nextWidth;
+  state.height = nextHeight;
+  state.tint.clear().rect(0, 0, nextWidth, nextHeight)
+    .fill({ color: 0xffffff, alpha: 1 });
+  state.fog.clear()
+    .ellipse(nextWidth * 0.5, nextHeight * 0.48, nextWidth * 0.42, nextHeight * 0.12)
+    .fill({ color: 0xa8c0d8, alpha: 0.55 })
+    .ellipse(nextWidth * 0.45, nextHeight * 0.42, nextWidth * 0.28, nextHeight * 0.08)
+    .fill({ color: 0xb8d0e8, alpha: 0.35 });
+  state.wetness.clear().rect(0, nextHeight * 0.42, nextWidth, nextHeight * 0.34)
+    .fill({ color: 0x79a8cb, alpha: 1 });
+
+  state.ripples.forEach((ripple, index) => {
+    ripple.x = nextWidth * (0.25 + ((index * 0.137) % 0.5));
+    ripple.y = nextHeight * (0.43 + ((index * 0.071) % 0.14));
+  });
+  state.drops.forEach((drop) => {
+    drop.x *= scaleX;
+    drop.y *= scaleY;
+  });
+
+  applyWeatherVisuals(state, state.weatherId);
+  return true;
+}
+
 function applyWeatherVisuals(state, weatherId) {
   const preset = resolvePreset(weatherId);
   const reduced = readReducedMotion();

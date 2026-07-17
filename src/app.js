@@ -68,11 +68,13 @@ import {
   createHabitatWeatherFx,
   HABITAT_WEATHER_HOOKS,
   onHabitatWeatherChange,
+  resizeHabitatWeatherFx,
   setHabitatWeather,
   updateHabitatWeatherFx
 } from "./pixi/habitatWeatherFx.js";
 import {
   createHabitatLightingFx,
+  resizeHabitatLightingFx,
   updateHabitatLightingFx
 } from "./pixi/habitatLightingFx.js";
 import {
@@ -672,15 +674,29 @@ async function bootScene(
   const initialProfile = setActiveSceneProfile(initialHabitatId);
   const environmentLayer = await createEnvironmentLayer(layers, app, initialProfile);
 
-  const lightingFx = createHabitatLightingFx(PIXI, { width: 390, height: 844 });
-  layers.layerFX.addChild(lightingFx.root);
+  // Full-viewport FX must not inherit the height-fitted 390x844 safe-zone
+  // transform. On short mobile viewports that transform narrows overlays and
+  // leaves untreated bright strips along both sides of the habitat.
+  const viewportFx = new PIXI.Container();
+  viewportFx.name = "habitat_viewport_fx";
+  viewportFx.eventMode = "none";
+  world.addChild(viewportFx);
+
+  const lightingFx = createHabitatLightingFx(PIXI, {
+    width: app.screen.width,
+    height: app.screen.height
+  });
+  viewportFx.addChild(lightingFx.root);
 
   const particles = createParticles();
   layers.layerFX.addChild(particles);
 
   // 天氣 FX（TP-HAB-WEATHER-1）：掛在 layerFX，氛圍 only。
-  const weatherFx = createHabitatWeatherFx(PIXI, { width: 390, height: 844 });
-  layers.layerFX.addChild(weatherFx.root);
+  const weatherFx = createHabitatWeatherFx(PIXI, {
+    width: app.screen.width,
+    height: app.screen.height
+  });
+  viewportFx.addChild(weatherFx.root);
   // setHabitatWeather 會改 active id；ticker 內 updateHabitatWeatherFx 偵測差異後套用視覺。
   onHabitatWeatherChange(() => {
     weatherFx.weatherId = "__pending__";
@@ -900,6 +916,8 @@ async function bootScene(
       companion.__accentFlame.alpha = 0.7 + Math.sin(t * 5) * 0.25;
     }
 
+    resizeHabitatLightingFx(lightingFx, app.screen.width, app.screen.height);
+    resizeHabitatWeatherFx(weatherFx, app.screen.width, app.screen.height);
     updateEnvironmentLayer(environmentLayer, safeTicker);
     updateHabitatLightingFx(lightingFx);
     updateHabitatWeatherFx(weatherFx, safeTicker);

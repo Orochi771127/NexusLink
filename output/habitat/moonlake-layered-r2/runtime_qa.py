@@ -10,14 +10,15 @@ ROOT = Path(__file__).resolve().parent
 BASE = sys.argv[1] if len(sys.argv) > 1 else "http://127.0.0.1:5179"
 SCREENSHOTS = ROOT / "runtime-qa"
 SCREENSHOTS.mkdir(exist_ok=True)
+PIXI_FALLBACK = ROOT / "runtime-qa-cache" / "pixi.min.js"
 
 
-def complete_onboarding(page):
+def complete_onboarding(page, companion_id="greyshade-cat"):
     steps = [
         '[data-onboarding-action="start"]',
         '[data-onboarding-action="skip-identity"]',
         '[data-onboarding-action="guidance-next"]',
-        '[data-onboarding-action="bond-choose"][data-bond-id="greyshade-cat"]',
+        f'[data-onboarding-action="bond-choose"][data-bond-id="{companion_id}"]',
         '[data-onboarding-action="complete"]',
     ]
     for selector in steps:
@@ -36,6 +37,8 @@ def inspect_runtime(page):
         () => {
           const placements = (window.__NEXUS_SCENE_EDITOR_OBJECTS || [])
             .filter((object) => object.__sceneEditor?.placement);
+          const companion = (window.__NEXUS_SCENE_EDITOR_OBJECTS || [])
+            .find((object) => object.__sceneEditor?.id === 'companion') || null;
           const root = placements[0]?.parent || null;
           const find = (node, name) => {
             if (!node) return null;
@@ -48,6 +51,8 @@ def inspect_runtime(page):
           };
           const world = root?.parent || null;
           const ambient = find(world, 'habitat_phase_ambient');
+          const weatherTint = find(world, 'weather_tint');
+          const viewportFx = find(world, 'habitat_viewport_fx');
           const fog = find(world, 'weather_fog');
           const rain = find(world, 'weather_rain');
           const wetness = find(world, 'weather_wetness');
@@ -55,6 +60,19 @@ def inspect_runtime(page):
           const bgNight = find(world, 'bg_night');
           const bgDay = find(world, 'bg_day');
           const grid = find(root, 'moonlake_dev_placement_grid');
+          const canvasRect = document.querySelector('#game-root canvas')?.getBoundingClientRect();
+          const toBounds = (node) => {
+            if (!node?.getBounds) return null;
+            const bounds = node.getBounds();
+            return { x: bounds.x, y: bounds.y, width: bounds.width, height: bounds.height };
+          };
+          const companionScaleX = companion?.worldTransform
+            ? Math.hypot(companion.worldTransform.a, companion.worldTransform.b)
+            : 0;
+          const companionScaleY = companion?.worldTransform
+            ? Math.hypot(companion.worldTransform.c, companion.worldTransform.d)
+            : 0;
+          const hitArea = companion?.hitArea;
           return {
             placementCount: placements.length,
             ids: placements.map((object) => object.__sceneEditor.id).sort(),
@@ -67,6 +85,16 @@ def inspect_runtime(page):
                 && names.has(`${id}_emissive`);
             }),
             rootVisible: root?.visible ?? null,
+            viewportFxPresent: Boolean(viewportFx),
+            canvasSize: canvasRect ? { width: canvasRect.width, height: canvasRect.height } : null,
+            ambientBounds: toBounds(ambient),
+            weatherTintBounds: toBounds(weatherTint),
+            companionBounds: toBounds(companion),
+            companionLocalScale: companion ? { x: companion.scale.x, y: companion.scale.y } : null,
+            companionHitAreaScreen: hitArea ? {
+              width: hitArea.width * companionScaleX,
+              height: hitArea.height * companionScaleY
+            } : null,
             rootTransform: root ? {
               x: root.x,
               y: root.y,
@@ -104,9 +132,23 @@ def assert_common(result, expect_grid=False):
     assert result["bgTexturesShared"], result
     assert result["rootVisible"], result
     assert result["rootTransform"]["scaleX"] == result["rootTransform"]["scaleY"], result
+    assert result["viewportFxPresent"], result
+    assert result["companionBounds"], result
+    assert result["companionLocalScale"], result
+    assert result["companionLocalScale"]["x"] <= 0.66, result
+    assert result["companionHitAreaScreen"], result
+    assert result["companionHitAreaScreen"]["width"] >= 83, result
+    assert result["companionHitAreaScreen"]["height"] >= 103, result
+    for key in ("ambientBounds", "weatherTintBounds"):
+        bounds = result[key]
+        canvas = result["canvasSize"]
+        assert bounds and canvas, result
+        assert abs(bounds["x"]) <= 1 and abs(bounds["y"]) <= 1, result
+        assert abs(bounds["width"] - canvas["width"]) <= 1, result
+        assert abs(bounds["height"] - canvas["height"]) <= 1, result
 
 
-def run_case(browser, name, viewport, params, onboarding=True):
+def run_case(browser, name, viewport, params, onboarding=True, companion_id="greyshade-cat"):
     context = browser.new_context(viewport=viewport, device_scale_factor=1)
     page = context.new_page()
     console_errors = []
@@ -115,11 +157,16 @@ def run_case(browser, name, viewport, params, onboarding=True):
     page.on("console", lambda msg: console_errors.append(msg.text) if msg.type == "error" else None)
     page.on("pageerror", lambda error: page_errors.append(str(error)))
     page.on("request", lambda request: requests.append(request.url))
+    if PIXI_FALLBACK.exists():
+        page.route(
+            "https://cdn.jsdelivr.net/npm/pixi.js@8.8.1/dist/pixi.min.js",
+            lambda route: route.fulfill(path=str(PIXI_FALLBACK), content_type="application/javascript"),
+        )
     page.goto(f"{BASE}/?{urlencode(params)}", wait_until="domcontentloaded", timeout=30000)
     if onboarding:
         page.evaluate("() => localStorage.clear()")
         page.reload(wait_until="domcontentloaded", timeout=30000)
-        complete_onboarding(page)
+        complete_onboarding(page, companion_id)
     page.wait_for_function("() => Boolean(window.__NEXUS_HABITAT)", timeout=20000)
     page.wait_for_timeout(1200)
     result = inspect_runtime(page)
@@ -180,6 +227,7 @@ def run_case(browser, name, viewport, params, onboarding=True):
         "name": name,
         "viewport": viewport,
         "params": params,
+        "companionId": companion_id,
         "result": result,
         "consoleErrors": console_errors,
         "pageErrors": page_errors,
@@ -191,6 +239,7 @@ def run_case(browser, name, viewport, params, onboarding=True):
 def main():
     cases = [
         ("day-clear-390x844", {"width": 390, "height": 844}, {"timePhase": "day", "weather": "clear"}),
+        ("day-clear-seahorse-390x844", {"width": 390, "height": 844}, {"timePhase": "day", "weather": "clear"}, True, "crystalfin-seahorse"),
         ("night-clear-390x844", {"width": 390, "height": 844}, {"timePhase": "night", "weather": "clear"}),
         ("day-mist-390x844", {"width": 390, "height": 844}, {"timePhase": "day", "weather": "mist"}),
         ("night-rain-390x664", {"width": 390, "height": 664}, {"timePhase": "night", "weather": "rain"}),

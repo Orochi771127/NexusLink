@@ -22,7 +22,7 @@
     {
       "id": "moonlake-crescent-shrine",
       "cell": { "column": 3, "row": 7 },
-      "offsetPx": { "x": 20, "y": -60 },
+      "offsetPx": { "x": 35, "y": -70 },
       "depthBand": "far",
       "renderLayer": "farStructures",
       "allowedKinds": ["shrine"],
@@ -36,8 +36,8 @@
     },
     {
       "id": "moonlake-far-beacon",
-      "cell": { "column": 7, "row": 5 },
-      "offsetPx": { "x": 29, "y": -8 },
+      "cell": { "column": 9, "row": 5 },
+      "offsetPx": { "x": -5, "y": -18 },
       "depthBand": "far",
       "renderLayer": "farStructures",
       "allowedKinds": ["beacon"],
@@ -51,7 +51,7 @@
     {
       "id": "moonlake-far-tent",
       "cell": { "column": 8, "row": 7 },
-      "offsetPx": { "x": 1, "y": -40 },
+      "offsetPx": { "x": 25, "y": -70 },
       "depthBand": "far",
       "renderLayer": "farStructures",
       "allowedKinds": ["tent"],
@@ -65,7 +65,7 @@
     {
       "id": "moonlake-main-beacon",
       "cell": { "column": 5, "row": 7 },
-      "offsetPx": { "x": 34, "y": 5 },
+      "offsetPx": { "x": 25, "y": -30 },
       "depthBand": "mid",
       "renderLayer": "midStructures",
       "allowedKinds": ["beacon"],
@@ -80,7 +80,7 @@
     {
       "id": "moonlake-mid-left-tent",
       "cell": { "column": 3, "row": 9 },
-      "offsetPx": { "x": 32, "y": -27 },
+      "offsetPx": { "x": -5, "y": -57 },
       "depthBand": "mid",
       "renderLayer": "midStructures",
       "allowedKinds": ["tent"],
@@ -93,8 +93,8 @@
     },
     {
       "id": "moonlake-mid-right-tent",
-      "cell": { "column": 8, "row": 9 },
-      "offsetPx": { "x": -39, "y": -27 },
+      "cell": { "column": 7, "row": 8 },
+      "offsetPx": { "x": 15, "y": 39 },
       "depthBand": "mid",
       "renderLayer": "midStructures",
       "allowedKinds": ["tent"],
@@ -108,7 +108,7 @@
     {
       "id": "moonlake-near-left-tent",
       "cell": { "column": 2, "row": 12 },
-      "offsetPx": { "x": -36, "y": 30 },
+      "offsetPx": { "x": -35, "y": 20 },
       "depthBand": "near",
       "renderLayer": "nearStructures",
       "allowedKinds": ["tent"],
@@ -121,8 +121,8 @@
     },
     {
       "id": "moonlake-near-right-tent",
-      "cell": { "column": 10, "row": 12 },
-      "offsetPx": { "x": 3, "y": 17 },
+      "cell": { "column": 9, "row": 12 },
+      "offsetPx": { "x": 45, "y": 10 },
       "depthBand": "near",
       "renderLayer": "nearStructures",
       "allowedKinds": ["tent"],
@@ -144,5 +144,5 @@
     { "assetId": "tent_near_left", "slotId": "moonlake-near-left-tent", "scale": 0.52, "state": "default", "visibleAnchor": { "x": 0.474609, "y": 0.888672 }, "light": { "color": "#ffb95e", "radius": 130, "intensity": 0.42, "offsetPx": { "x": 38, "y": -58 } } },
     { "assetId": "tent_near_right", "slotId": "moonlake-near-right-tent", "scale": 0.52, "state": "default", "visibleAnchor": { "x": 0.501953, "y": 0.84375 }, "light": { "color": "#ffb95e", "radius": 130, "intensity": 0.42, "offsetPx": { "x": -38, "y": -58 } } }
   ],
-  "status": "verified-staging-awaiting-groundwork-promotion"
+  "status": "verified-runtime-mobile-calibration"
 }

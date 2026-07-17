@@ -112,6 +112,8 @@ function applyCompanionResponsiveLayout(companion, app) {
     app?.screen?.height ?? SCENE_LAYOUT.referenceHeight
   );
   const profile = getActiveSceneProfile();
+  const displayScale = clampCompanionDisplayScale(profile?.companion?.displayScale);
+  companion.scale.set(companion.scale.x * displayScale, companion.scale.y * displayScale);
   const anchor = profile?.companion?.anchor;
   const referenceWidth = Number(profile?.safeZone?.referenceWidth) || SCENE_LAYOUT.referenceWidth;
   const referenceHeight = Number(profile?.safeZone?.referenceHeight) || SCENE_LAYOUT.referenceHeight;
@@ -123,11 +125,38 @@ function applyCompanionResponsiveLayout(companion, app) {
     const visualCenter = getCompanionVisualCenter(companion);
     companion.x = Math.round(targetX - visualCenter.x * companion.scale.x);
     companion.y = Math.round(targetY - visualCenter.y * companion.scale.y);
-    return;
+  } else {
+    companion.x = Math.round(targetX);
+    companion.y = Math.round(targetY);
   }
+  applyMinimumCompanionHitArea(companion, app, profile);
+}
 
-  companion.x = Math.round(targetX);
-  companion.y = Math.round(targetY);
+function applyMinimumCompanionHitArea(companion, app, profile) {
+  const bounds = companion.getLocalBounds?.();
+  if (!bounds || !Number.isFinite(bounds.width) || !Number.isFinite(bounds.height)) return;
+
+  const referenceWidth = Number(profile?.safeZone?.referenceWidth) || SCENE_LAYOUT.referenceWidth;
+  const referenceHeight = Number(profile?.safeZone?.referenceHeight) || SCENE_LAYOUT.referenceHeight;
+  const screenWidth = Number(app?.screen?.width) || referenceWidth;
+  const screenHeight = Number(app?.screen?.height) || referenceHeight;
+  const safeScale = Math.max(0.01, Math.min(screenWidth / referenceWidth, screenHeight / referenceHeight));
+  const localScaleX = Math.max(0.01, Math.abs(Number(companion.scale?.x) || 1));
+  const localScaleY = Math.max(0.01, Math.abs(Number(companion.scale?.y) || 1));
+  const minimum = profile?.companion?.minimumHitArea || { width: 84, height: 104 };
+  const minimumLocalWidth = (Number(minimum.width) || 84) / (safeScale * localScaleX);
+  const minimumLocalHeight = (Number(minimum.height) || 104) / (safeScale * localScaleY);
+  const width = Math.max(bounds.width, minimumLocalWidth);
+  const height = Math.max(bounds.height, minimumLocalHeight);
+  const centerX = bounds.x + bounds.width / 2;
+  const centerY = bounds.y + bounds.height / 2;
+  companion.hitArea = new PIXI.Rectangle(centerX - width / 2, centerY - height / 2, width, height);
+}
+
+function clampCompanionDisplayScale(value) {
+  const scale = Number(value);
+  if (!Number.isFinite(scale)) return 1;
+  return Math.max(0.7, Math.min(1.15, scale));
 }
 
 function resolveCompanionTarget(profile, app, anchor, referenceWidth, referenceHeight) {

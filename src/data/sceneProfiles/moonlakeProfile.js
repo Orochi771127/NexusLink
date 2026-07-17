@@ -9,7 +9,7 @@ import { moonlakeObjectPack } from "./moonlakeObjectPack.js";
 
 export const moonlakeProfile = Object.freeze({
   id: "moonlake",
-  version: 3,
+  version: 4,
   label: "Moonlake / 月湖棲地",
 
   artSize: Object.freeze({ width: 1080, height: 1920 }),
@@ -59,9 +59,11 @@ export const moonlakeProfile = Object.freeze({
   // sprite asset's bottom-center frame anchor while aligning its visual center here.
   companion: Object.freeze({
     alignment: "visual-center",
-    backgroundPoint: Object.freeze({ x: 540, y: 1390 }),
-    anchor: Object.freeze({ x: 0.5, y: 1390 / 1920 }),
-    reservedRect: Object.freeze({ x: 0.38, y: 1390 / 1920 - 0.135, w: 0.24, h: 0.27 })
+    backgroundPoint: Object.freeze({ x: 540, y: 1348 }),
+    anchor: Object.freeze({ x: 0.5, y: 1348 / 1920 }),
+    displayScale: 0.9,
+    minimumHitArea: Object.freeze({ width: 84, height: 104 }),
+    reservedRect: Object.freeze({ x: 0.38, y: 1348 / 1920 - 0.135, w: 0.24, h: 0.27 })
   }),
 
   ui: Object.freeze({

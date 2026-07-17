@@ -3080,3 +3080,28 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
   foundation/rollback pack and R2 as the active independent object pack. It does
   not claim the other six regions have completed Moonlake-equivalent prop packs.
 - Branch / commit: local `main`; no commit and no push.
+
+### 2026-07-17 - Codex - Moonlake Mobile Lighting, Placement And Companion Calibration - COMPLETED
+
+- Status: `COMPLETED` for the approved Moonlake mobile calibration slice.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `TP-HAB-MOONLAKE-R2-MOBILE-CALIBRATION`.
+- Runtime repair: lighting and weather now render in an unscaled full-viewport Pixi container and resize to the actual canvas. They no longer inherit the height-fitted `390x844` safe-zone transform that narrowed overlays on short iPhone viewports and caused a dark center band with bright side strips.
+- Companion calibration: the Moonlake visual-center target moved upward by `42` art-space pixels and uses a scene-profile display multiplier of `0.9`. The renderer preserves an explicit minimum screen-space interaction area, so the smaller visual does not reduce tap or hug usability.
+- Placement calibration: all eight independent R2 props were re-snapped to the authored Moonlake landforms. Runtime slot data and `placements.candidate.json` now agree; the far beacon was moved from open water to the right distant rock shelf after the first visual review rejected its apparent floating position.
+- Verification: JavaScript syntax passed for every changed runtime module. Six Chromium cases passed at `390x844` and `390x664`, including day, night, mist, rain, dev-grid JSON round-trip and a fresh-onboarding `crystalfin-seahorse` case. Both ambient and weather bounds equal the full canvas; eight props load; legacy camp/baked-night requests remain absent; six-region switch round-trip passes; console/page errors remain `0/0`; companion interaction bounds remain at least `103.98x135.30` screen pixels in the shortest case.
+- Shared-worktree boundary: pre-existing emotional-crystal changes in `src/app.js` and all unrelated release, canon, Growth and character-output changes were preserved. No save schema, asset texture, dependency, RaphaelCore, safety, battle or other-region scene data changed in this task.
+- Evidence: `output/habitat/moonlake-layered-r2/runtime-qa-report.json` and six `runtime-qa/*.png` captures.
+- Branch / commit: local `main` at baseline `d2d1d3f`; Owner authorized direct commit and push to `main` after this verification.
+
+### 2026-07-17 - Codex - Moonlake Mobile Composition Re-Review - VERIFIED
+
+- Status: `VERIFIED` after two visual review passes.
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `TP-HAB-MOONLAKE-R2-MOBILE-CALIBRATION`.
+- Composition result: the complete crescent shrine, five tents and two beacons remain uncropped and are grounded on visible island, shore or cliff surfaces. Near tents stay inside the cover-safe viewport, the main beacon sits on its central island, and the far beacon now reads as attached to the right rock shelf rather than suspended over water.
+- Companion result: Greyshade Cat and Crystalfin Seahorse are centered on the plaza, visibly smaller and higher than the reported online build, while remaining clear of the HUD, Soul Talk button and bottom navigation. The visual shrink is presentation-only and does not change animation frames, progression, collision or companion state.
+- Lighting/weather result: day, night, mist and rain now cover the canvas uniformly without the reported central twilight column or brighter side strips. Geometry does not jump across phases; emissive plates and weather remain presentation-only.
+- Known boundary: the existing ambient dialogue bubble can overlap the upper portion of a companion in its active display state; that pre-existing DOM composition is outside this approved Pixi calibration and was not changed here. It does not affect the online screenshot's upper status-text layout.
+- Required reading for follow-up: `src/data/sceneProfiles/moonlakeProfile.js`, `src/data/sceneProfiles/moonlakeObjectPack.js`, `output/habitat/moonlake-layered-r2/runtime-qa-report.json`, and this entry.
+- Branch / commit: local `main`; included in the same authorized Moonlake mobile calibration delivery.
