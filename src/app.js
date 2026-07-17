@@ -83,6 +83,7 @@ import {
 } from "./engine/environmentController.js";
 import { bindCompanionTap, createCreatureNode, positionCompanion } from "./pixi/companionRenderer.js";
 import { createHabitatTraceRenderer } from "./pixi/habitatTraceRenderer.js";
+import { createCrystalStateRenderer } from "./pixi/crystalStateRenderer.js";
 import { enableEditorMode, readSceneEditorFlag } from "./tools/sceneEditor.js";
 import {
   createCompanionMotion,
@@ -673,6 +674,12 @@ async function bootScene(
   const initialHabitatId = normalizeHabitatId(store.getState().activeHabitatId);
   const initialProfile = setActiveSceneProfile(initialHabitatId);
   const environmentLayer = await createEnvironmentLayer(layers, app, initialProfile);
+  const crystalStateRenderer = createCrystalStateRenderer(PIXI, {
+    crystal: environmentLayer.crystal,
+    isReducedMotion: () =>
+      Boolean(window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches) ||
+      document.documentElement?.dataset?.reducedMotionPreference === "reduced"
+  });
 
   // Full-viewport FX must not inherit the height-fitted 390x844 safe-zone
   // transform. On short mobile viewports that transform narrows overlays and
@@ -760,8 +767,10 @@ async function bootScene(
   // 效能：habitat trace 的 map+sync 從 ticker（每幀）移到「痕跡內容改變時」才跑。
   // ticker 只保留 update(t) 做逐幀動畫。先在 bootScene 同步一次（含 reload 後既有痕跡）。
   let lastHabitatTraceSig = null;
-  function syncHabitatTraces() {
-    const traces = store.getState().habitatTraces || [];
+  function syncHabitatVisuals(state = store.getState()) {
+    crystalStateRenderer.sync(state.emotionalMemories || []);
+
+    const traces = state.habitatTraces || [];
     // 便宜的內容簽章：長度＋每筆 id/status/intensity；只在實際變動時重建 visuals。
     let sig = String(traces.length);
     for (let index = 0; index < traces.length; index += 1) {
@@ -772,8 +781,8 @@ async function bootScene(
     lastHabitatTraceSig = sig;
     habitatTraceRenderer.sync(mapHabitatTracesToVisuals(traces));
   }
-  syncHabitatTraces();
-  store.subscribe(syncHabitatTraces);
+  syncHabitatVisuals();
+  store.subscribe(syncHabitatVisuals);
 
   const reportCompanionStatus = ({ message }) => {
     if (message) statusText.textContent = message;
@@ -924,7 +933,7 @@ async function bootScene(
     animateParticles(particles, t, safeTicker);
     updateEnvironmentEffects(activeEnvironmentEffects, safeTicker);
 
-    // trace 的 map+sync 已移到 syncHabitatTraces()（由 store.subscribe 驅動）；逐幀只做動畫更新。
+    // 水晶與 trace 的同步已移到 syncHabitatVisuals()（由 store.subscribe 驅動）；逐幀只做動畫更新。
     habitatTraceRenderer.update(t);
   });
 

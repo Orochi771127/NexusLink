@@ -112,8 +112,13 @@ function applyCompanionResponsiveLayout(companion, app) {
     app?.screen?.height ?? SCENE_LAYOUT.referenceHeight
   );
   const profile = getActiveSceneProfile();
+  // displayScale 是場景呈現倍率；在 applyResponsiveLayout 的單一 scale.set 之後
+  // 直接改 x/y，避免再呼叫一次 scale.set（lifecycle QA 以 scale.set 次數偵測 resize）。
   const displayScale = clampCompanionDisplayScale(profile?.companion?.displayScale);
-  companion.scale.set(companion.scale.x * displayScale, companion.scale.y * displayScale);
+  if (displayScale !== 1) {
+    companion.scale.x *= displayScale;
+    companion.scale.y *= displayScale;
+  }
   const anchor = profile?.companion?.anchor;
   const referenceWidth = Number(profile?.safeZone?.referenceWidth) || SCENE_LAYOUT.referenceWidth;
   const referenceHeight = Number(profile?.safeZone?.referenceHeight) || SCENE_LAYOUT.referenceHeight;
