@@ -708,6 +708,9 @@ def complete_onboarding_for_probe(page):
     if not root.count() or root.evaluate("node => node.hidden"):
         return {"startedVisible": False, "completed": True, "actions": []}
 
+    supports_first_resonance = (
+        root.get_attribute("data-first-resonance-supported") == "true"
+    )
     actions = [
         ("start", '[data-onboarding-action="start"]', "identity"),
         ("skip-identity", '[data-onboarding-action="skip-identity"]', "guidance"),
@@ -745,6 +748,54 @@ def complete_onboarding_for_probe(page):
                 arg=expected_step,
                 timeout=5000,
             )
+            if action == "bond-choose":
+                page.wait_for_function(
+                    """
+                    (supportsFirstResonance) => {
+                      const skip = document.querySelector('[data-first-resonance-action="skip"]');
+                      const layer = document.querySelector('.first-resonance-layer');
+                      const complete = document.querySelector('[data-onboarding-action="complete"]');
+                      const skipVisible = Boolean(
+                        skip
+                        && !skip.closest('[hidden]')
+                        && skip.getClientRects().length
+                      );
+                      if (supportsFirstResonance) {
+                        return Boolean(skip) && (
+                          skipVisible
+                          || ['completed', 'dismissed'].includes(layer?.dataset.viewState)
+                        );
+                      }
+                      return Boolean(complete && !complete.disabled);
+                    }
+                    """,
+                    arg=supports_first_resonance,
+                    timeout=10000,
+                )
+                skipped_resonance = page.evaluate(
+                    """
+                    () => {
+                      const skip = document.querySelector('[data-first-resonance-action="skip"]');
+                      if (!skip || skip.closest('[hidden]') || !skip.getClientRects().length) {
+                        return false;
+                      }
+                      skip.click();
+                      return true;
+                    }
+                    """
+                )
+                if skipped_resonance:
+                    completed_actions.append("first-resonance-skip")
+                    page.wait_for_function(
+                        """
+                        () => {
+                          const layer = document.querySelector('.first-resonance-layer');
+                          const complete = document.querySelector('[data-onboarding-action="complete"]');
+                          return Boolean((!layer || layer.hidden) && complete && !complete.disabled);
+                        }
+                        """,
+                        timeout=5000,
+                    )
         else:
             page.wait_for_function(
                 "() => document.querySelector('#onboarding-root')?.hidden === true",

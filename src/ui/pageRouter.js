@@ -7,6 +7,8 @@ import {
   deriveHeartPhaseSnapshot,
   evaluateHeartPhasePractice
 } from "../engine/companionGrowthSessionEngine.js";
+import { resolveCrystalVisualState } from "../engine/crystalVisualState.js";
+import { getCrystalReleaseEligibility } from "../engine/crystalWeavingEngine.js";
 import { getTraceDisplayCopy } from "../engine/traceVisualMapper.js";
 import { qs, qsa } from "../utils/dom.js";
 import EventBus from "../utils/eventBus.js";
@@ -22,6 +24,7 @@ export function createPageRouter({
   actionSheetController,
   statusText,
   calmSyncController,
+  crystalWeavingController,
   openMap,
   openCodex,
   openAtlas
@@ -36,6 +39,8 @@ export function createPageRouter({
   };
   let activePage = "home";
   let renderedMemoryEntries = [];
+  let pendingCrystalReleaseId = null;
+  let crystalActionStatus = "";
   let actionInFlight = false;
   const growthSessions = new Map();
 
@@ -48,10 +53,17 @@ export function createPageRouter({
         navigate("home");
       }
     });
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState !== "hidden" || !pendingCrystalReleaseId) return;
+      pendingCrystalReleaseId = null;
+      crystalActionStatus = "";
+      render();
+    });
     // 語言切換時重畫目前分頁：t() 字串已 baked 進 innerHTML，靜態 DOM 掃描掃不到。
     // render() 在 home 會自行 early-return，背景分頁（如切語言時開著的 Explore）則就地以新語言重畫。
     // statusText 只在 navigate() 寫入，語言切換時需就地以新語言重設（覆寫暫態行動回饋屬預期）。
     EventBus.on(LANGUAGE_CHANGED_EVENT, () => {
+      crystalActionStatus = "";
       statusText.textContent = getPageStatus(activePage);
       render();
     });
@@ -60,6 +72,8 @@ export function createPageRouter({
 
   function navigate(action = "home") {
     if (!PAGE_ACTIONS.has(action)) return;
+    pendingCrystalReleaseId = null;
+    crystalActionStatus = "";
 
     // 再按一次目前分頁 → 收合回 home（toggle 開關）。
     if (action !== "home" && action === activePage) {
@@ -277,15 +291,37 @@ export function createPageRouter({
     renderedMemoryEntries = collectMemoryEntries(state);
     const emotionalCount = Array.isArray(state.emotionalMemories) ? state.emotionalMemories.length : 0;
     const canEcho = emotionalCount >= 3;
+    const crystalState = resolveCrystalVisualState(state.emotionalMemories);
+    const observableMemory = (Array.isArray(state.emotionalMemories) ? state.emotionalMemories : [])
+      .filter((memory) => memory
+        && memory.isVisibleInHabitat !== false
+        && memory.status !== "released"
+        && memory.status !== "archived")
+      .sort((left, right) =>
+        (Number(right.lastUpdatedAt) || Number(right.createdAt) || 0)
+        - (Number(left.lastUpdatedAt) || Number(left.createdAt) || 0)
+      )[0] || null;
+    const releaseCount = (Array.isArray(state.emotionalMemories) ? state.emotionalMemories : [])
+      .filter((memory) => {
+        const eligibility = getCrystalReleaseEligibility(state, memory);
+        return Boolean(eligibility?.allowed ?? eligibility?.eligible ?? eligibility?.ok);
+      })
+      .length;
 
     body.innerHTML = `
+      ${renderCrystalWeavingCard(
+        crystalState,
+        releaseCount,
+        observableMemory?.id || null,
+        crystalActionStatus
+      )}
       <div class="page-evidence-strip" aria-label="${t("memory.evidenceAria")}">
         <span><strong>${Array.isArray(state.memories) ? state.memories.length : 0}</strong><em>${t("memory.evInteractions")}</em></span>
         <span><strong>${emotionalCount}</strong><em>${t("memory.evEmotional")}</em></span>
         <span><strong>${Array.isArray(state.habitatTraces) ? state.habitatTraces.length : 0}</strong><em>${t("memory.evTraces")}</em></span>
       </div>
       <div class="page-memory-list" aria-label="${t("memory.listAria")}">
-        ${renderMemoryEntries(renderedMemoryEntries)}
+        ${renderMemoryEntries(renderedMemoryEntries, pendingCrystalReleaseId)}
       </div>
       <div class="page-action-grid">
         ${canEcho ? `
@@ -326,13 +362,20 @@ export function createPageRouter({
     if (actionInFlight || button.disabled) return;
     const action = button.dataset.pageAction;
     const wasDisabled = button.disabled;
+    const isCrystalAction = [
+      "observe-crystal",
+      "prepare-crystal-release",
+      "cancel-crystal-release",
+      "confirm-crystal-release"
+    ].includes(action);
     let growthHandled = false;
     let growthCompleted = false;
+    let crystalHandled = false;
     actionInFlight = true;
     button.disabled = true;
     button.setAttribute("aria-busy", "true");
     setViewState("busy");
-    statusText.textContent = t("page.status.busy");
+    if (!isCrystalAction) statusText.textContent = t("page.status.busy");
 
     try {
       if (action === "open-map") await runRequiredAction(openMap);
@@ -341,6 +384,63 @@ export function createPageRouter({
       else if (action === "open-codex") await runRequiredAction(openCodex);
       else if (action === "open-soul-talk") await soulTalkController.openSoulTalk(panelManager);
       else if (action === "open-calm-sync") await runRequiredAction(calmSyncController?.start?.bind(calmSyncController));
+      else if (action === "observe-crystal") {
+        crystalHandled = true;
+        const result = crystalWeavingController?.observe?.(button.dataset.memoryId || null);
+        if (result?.outcomeKind !== "crystal_observed") {
+          const error = new Error("Crystal observation is unavailable");
+          error.code = "ACTION_UNAVAILABLE";
+          throw error;
+        }
+        setCrystalActionStatus(result.message || t("memory.crystalObserveStatus"));
+      } else if (action === "prepare-crystal-release") {
+        crystalHandled = true;
+        const memoryId = button.dataset.memoryId;
+        const entry = renderedMemoryEntries.find((item) => item.source?.id === memoryId);
+        if (!entry?.canRelease) {
+          const error = new Error("Crystal release is unavailable");
+          error.code = "ACTION_UNAVAILABLE";
+          throw error;
+        }
+        pendingCrystalReleaseId = memoryId;
+        setCrystalActionStatus(t("memory.crystalReleasePrompt"));
+        render();
+        pageBodies.memory
+          ?.querySelector(`[data-page-action="confirm-crystal-release"][data-memory-id="${escapeSelector(memoryId)}"]`)
+          ?.focus({ preventScroll: true });
+      } else if (action === "cancel-crystal-release") {
+        crystalHandled = true;
+        const memoryId = pendingCrystalReleaseId;
+        pendingCrystalReleaseId = null;
+        setCrystalActionStatus(t("memory.crystalReleaseKept"));
+        render();
+        if (memoryId) {
+          pageBodies.memory
+            ?.querySelector(`[data-page-action="prepare-crystal-release"][data-memory-id="${escapeSelector(memoryId)}"]`)
+            ?.focus({ preventScroll: true });
+        }
+      } else if (action === "confirm-crystal-release") {
+        crystalHandled = true;
+        const memoryId = button.dataset.memoryId;
+        if (!memoryId || memoryId !== pendingCrystalReleaseId) {
+          const error = new Error("Crystal release confirmation is stale");
+          error.code = "ACTION_UNAVAILABLE";
+          throw error;
+        }
+        const result = await crystalWeavingController?.release?.(memoryId);
+        pendingCrystalReleaseId = null;
+        if (result?.outcomeKind !== "crystal_released") {
+          const error = new Error("Crystal release did not complete");
+          error.code = result?.outcomeKind === "crystal_release_save_failed"
+            ? "SAVE_FAILED"
+            : "ACTION_UNAVAILABLE";
+          error.userMessage = result?.message || "";
+          throw error;
+        }
+        setCrystalActionStatus(result.message || t("memory.crystalReleaseStatus"));
+        render();
+        focusCrystalCompletionTarget();
+      }
       else if (action === "growth-practice") {
         const state = store.getState();
         const companionId = state.activeCompanionId || "greyshade-cat";
@@ -395,15 +495,34 @@ export function createPageRouter({
       } else {
         throw new Error(`Unsupported page action: ${action || "missing"}`);
       }
-      const isCommitLike = action === "commit" || action === "observe-body" || growthCompleted;
+      const isCommitLike = action === "commit"
+        || action === "observe-body"
+        || action === "observe-crystal"
+        || action === "confirm-crystal-release"
+        || growthCompleted;
       setViewState(isCommitLike ? "completed" : "ready");
-      if (!isCommitLike && !growthHandled) statusText.textContent = getPageStatus(activePage);
+      if (crystalHandled) {
+        statusText.textContent = getPageStatus(activePage);
+      } else if (!isCommitLike && !growthHandled) {
+        statusText.textContent = getPageStatus(activePage);
+      }
     } catch (error) {
       console.warn("First-session page action unavailable", { action, error });
       setViewState(error?.code === "ACTION_UNAVAILABLE" ? "unavailable" : "recoverable-error");
-      statusText.textContent = error?.code === "ACTION_UNAVAILABLE"
-        ? t("page.status.unavailable")
-        : t("page.status.recoverableError");
+      const errorMessage = error?.userMessage || (
+        error?.code === "ACTION_UNAVAILABLE"
+          ? t("page.status.unavailable")
+          : t("page.status.recoverableError")
+      );
+      if (crystalHandled) {
+        pendingCrystalReleaseId = null;
+        setCrystalActionStatus(errorMessage);
+        render();
+        focusCrystalCompletionTarget(button.dataset.memoryId || null);
+        statusText.textContent = getPageStatus(activePage);
+      } else {
+        statusText.textContent = errorMessage;
+      }
     } finally {
       actionInFlight = false;
       button.disabled = wasDisabled;
@@ -413,6 +532,29 @@ export function createPageRouter({
 
   function setViewState(state) {
     pageLayer?.setAttribute("data-view-state", state);
+  }
+
+  function setCrystalActionStatus(message = "") {
+    crystalActionStatus = String(message || "");
+    const status = pageBodies.memory?.querySelector("[data-crystal-weaving-status]");
+    if (!status) return;
+    status.textContent = crystalActionStatus;
+    status.hidden = !crystalActionStatus;
+  }
+
+  function focusCrystalCompletionTarget(preferredMemoryId = null) {
+    const preferred = preferredMemoryId
+      ? pageBodies.memory?.querySelector(
+        `[data-page-action="prepare-crystal-release"][data-memory-id="${escapeSelector(preferredMemoryId)}"]`
+      )
+      : null;
+    const target = preferred || pageBodies.memory?.querySelector(
+      '[data-page-action="prepare-crystal-release"], '
+      + '[data-page-action="observe-crystal"]:not([disabled]), '
+      + '[data-memory-open], '
+      + '[data-page-action="open-soul-talk"]'
+    );
+    target?.focus({ preventScroll: true });
   }
 
   function openMemoryReflection(index) {
@@ -521,14 +663,19 @@ function renderGrowthPrototype(state) {
 }
 
 function collectMemoryEntries(state) {
-  const emotional = (Array.isArray(state.emotionalMemories) ? state.emotionalMemories : []).map((memory) => ({
-    kind: "emotional",
-    source: memory,
-    title: memory.theme || memory.label || t("memory.fallbackEmotionalTitle"),
-    copy: memory.excerpt || memory.label || t("memory.fallbackEmotionalCopy"),
-    createdAt: Number(memory.lastUpdatedAt) || Number(memory.createdAt) || 0,
-    meta: [memory.status, memory.emotion].filter(Boolean).join(" · ")
-  }));
+  const emotional = (Array.isArray(state.emotionalMemories) ? state.emotionalMemories : []).map((memory) => {
+    const releaseEligibility = getCrystalReleaseEligibility(state, memory);
+    return {
+      kind: "emotional",
+      source: memory,
+      title: memory.theme || memory.label || t("memory.fallbackEmotionalTitle"),
+      copy: memory.excerpt || memory.label || t("memory.fallbackEmotionalCopy"),
+      createdAt: Number(memory.lastUpdatedAt) || Number(memory.createdAt) || 0,
+      meta: [getMemoryStatusLabel(memory.status), memory.emotion].filter(Boolean).join(" · "),
+      canRelease: Boolean(releaseEligibility?.allowed ?? releaseEligibility?.eligible ?? releaseEligibility?.ok),
+      releaseReason: releaseEligibility?.reason || ""
+    };
+  });
 
   const simple = (Array.isArray(state.memories) ? state.memories : []).map((memory) => ({
     kind: "memory",
@@ -552,12 +699,28 @@ function collectMemoryEntries(state) {
     };
   });
 
-  return [...emotional, ...simple, ...traces]
-    .sort((left, right) => right.createdAt - left.createdAt)
-    .slice(0, MEMORY_LIMIT);
+  const sorted = [...emotional, ...simple, ...traces]
+    .sort((left, right) => right.createdAt - left.createdAt);
+  const limited = sorted.slice(0, MEMORY_LIMIT);
+  const latestReleasable = emotional
+    .filter((entry) => entry.canRelease)
+    .sort((left, right) => right.createdAt - left.createdAt)[0];
+
+  if (
+    latestReleasable
+    && !limited.some((entry) =>
+      entry.kind === "emotional"
+      && entry.source?.id === latestReleasable.source?.id)
+  ) {
+    if (limited.length >= MEMORY_LIMIT) limited[limited.length - 1] = latestReleasable;
+    else limited.push(latestReleasable);
+    limited.sort((left, right) => right.createdAt - left.createdAt);
+  }
+
+  return limited;
 }
 
-function renderMemoryEntries(entries) {
+function renderMemoryEntries(entries, pendingReleaseId = null) {
   if (!entries.length) {
     return `
       <article class="page-empty-memory">
@@ -569,21 +732,85 @@ function renderMemoryEntries(entries) {
 
   return entries.map((entry, index) => {
     const isReflectable = entry.kind === "emotional";
-    const tag = isReflectable ? "button" : "article";
-    const attrs = isReflectable
-      ? `type="button" data-memory-open="${index}" aria-label="${t("memory.reviewAria")} ${escapeHtml(entry.title)}"`
-      : "";
+    const memoryId = entry.source?.id || "";
+    const isPendingRelease = Boolean(memoryId && pendingReleaseId === memoryId);
     return `
-      <${tag} class="page-memory-row page-memory-row--${entry.kind}" ${attrs}>
+      <article class="page-memory-row page-memory-row--${entry.kind}">
         <span class="page-memory-glyph" aria-hidden="true">${entry.kind === "trace" ? "◇" : "✦"}</span>
         <span class="page-memory-copy">
           <strong>${escapeHtml(entry.title)}</strong>
           <em>${escapeHtml(trimText(entry.copy, 92))}</em>
           <small>${escapeHtml(formatDate(entry.createdAt))}${entry.meta ? ` · ${escapeHtml(entry.meta)}` : ""}</small>
+          ${isReflectable ? `
+            <span class="page-memory-actions">
+              <button type="button" data-memory-open="${index}" aria-label="${t("memory.reviewAria")} ${escapeHtml(entry.title)}">
+                ${t("memory.review")}
+              </button>
+              ${entry.canRelease && !isPendingRelease ? `
+                <button type="button" data-page-action="prepare-crystal-release" data-memory-id="${escapeHtml(memoryId)}">
+                  ${t("memory.crystalRelease")}
+                </button>
+              ` : ""}
+              ${entry.canRelease && isPendingRelease ? `
+                <span class="page-memory-release-confirm" role="group" aria-label="${t("memory.crystalReleaseConfirmAria")}">
+                  <small>${t("memory.crystalReleaseConfirmCopy")}</small>
+                  <button type="button" data-page-action="confirm-crystal-release" data-memory-id="${escapeHtml(memoryId)}">
+                    ${t("memory.crystalReleaseConfirm")}
+                  </button>
+                  <button type="button" data-page-action="cancel-crystal-release" data-memory-id="${escapeHtml(memoryId)}">
+                    ${t("memory.crystalReleaseKeep")}
+                  </button>
+                </span>
+              ` : ""}
+            </span>
+          ` : ""}
         </span>
-      </${tag}>
+      </article>
     `;
   }).join("");
+}
+
+function renderCrystalWeavingCard(
+  crystalState,
+  releaseCount,
+  observableMemoryId = null,
+  actionStatus = ""
+) {
+  const stateKey = `memory.crystalState.${crystalState}`;
+  return `
+    <section class="crystal-weaving-card" data-crystal-state="${escapeHtml(crystalState)}" aria-labelledby="crystal-weaving-title">
+      <span class="crystal-weaving-core" aria-hidden="true">✦</span>
+      <div class="crystal-weaving-copy">
+        <p>${t("memory.crystalKicker")}</p>
+        <h3 id="crystal-weaving-title">${t(`${stateKey}.title`)}</h3>
+        <p>${t(`${stateKey}.copy`)}</p>
+        <small>${releaseCount > 0
+          ? t("memory.crystalReleaseReady").replace("{count}", String(releaseCount))
+          : t("memory.crystalNoRelease")}</small>
+      </div>
+      <button type="button" data-page-action="observe-crystal"
+        ${observableMemoryId ? `data-memory-id="${escapeHtml(observableMemoryId)}"` : "disabled aria-disabled=\"true\""}>
+        <strong>${t("memory.crystalObserve")}</strong>
+        <em>${t("memory.crystalObserveSub")}</em>
+      </button>
+      <p class="crystal-weaving-status" data-crystal-weaving-status role="status" aria-live="polite"
+        ${actionStatus ? "" : "hidden"}>${escapeHtml(actionStatus)}</p>
+    </section>
+    <p class="page-soft-note">${t("memory.crystalNoDaily")}</p>
+  `;
+}
+
+function getMemoryStatusLabel(status) {
+  const key = `memory.status.${status || "fresh"}`;
+  const translated = t(key);
+  return translated === key ? String(status || "") : translated;
+}
+
+function escapeSelector(value) {
+  if (typeof CSS !== "undefined" && typeof CSS.escape === "function") {
+    return CSS.escape(String(value));
+  }
+  return String(value).replace(/["\\]/g, "\\$&");
 }
 
 function trimText(text, limit) {

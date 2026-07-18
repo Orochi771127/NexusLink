@@ -206,23 +206,32 @@ function runExplorationCase(now) {
 }
 
 function runStandoffCase(now) {
-  const intent = createRaphaelAgentIntent({
-    eventType: "standoff_result",
-    event: {
-      result: "boundary",
-      battleAt: now
-    },
-    state: BASE_STATE,
-    companion: BASE_COMPANION,
-    now,
-    options: {
-      suppressSpeech: true,
-      animationAlreadyApplied: true
-    }
-  });
+  let inspected = null;
+  for (const [index, result] of ["retreat", "retreated", "boundary"].entries()) {
+    const intent = createRaphaelAgentIntent({
+      eventType: "standoff_result",
+      event: {
+        result,
+        battleAt: now + index
+      },
+      state: BASE_STATE,
+      companion: BASE_COMPANION,
+      now: now + index,
+      options: {
+        suppressSpeech: true,
+        animationAlreadyApplied: true
+      }
+    });
 
-  assertCase(intent.actions.includes("set_boundary"), "standoff: boundary result must stay boundary-scoped");
-  return inspectCase("standoff_result", intent);
+    assertCase(intent.actions.includes("set_boundary"), `standoff: ${result} must stay boundary-scoped`);
+    assertCase(intent.boundary?.mode === "soft_boundary", `standoff: ${result} must expose a soft boundary`);
+    assertCase(intent.memory?.allowed === false, `standoff: ${result} must not write adapter memory`);
+    assertCase(intent.trace?.allowed === false, `standoff: ${result} must not write adapter trace`);
+    const current = inspectCase(`standoff_result:${result}`, intent);
+    assertCase(current.presenceState === "boundary", `standoff: ${result} must reduce to boundary presence`);
+    if (result === "boundary") inspected = current;
+  }
+  return { ...inspected, name: "standoff_result" };
 }
 
 function runForbiddenKeyCase(now) {

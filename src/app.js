@@ -40,9 +40,11 @@ import { createFirstLoopController } from "./ui/firstLoopController.js";
 import { createInteractionHintController } from "./ui/interactionHintController.js";
 import { createGentleInvitationController } from "./ui/gentleInvitationController.js";
 import { createCompanionInitiativeController } from "./ui/companionInitiativeController.js";
+import { createHabitatMomentController } from "./ui/habitatMomentController.js";
 import { createAudioCueController } from "./ui/audioCueController.js";
 import { createActionSheetController } from "./ui/actionSheetController.js";
 import { createCalmSyncController } from "./ui/calmSyncController.js";
+import { createCrystalWeavingController } from "./ui/crystalWeavingController.js";
 import { createPageRouter } from "./ui/pageRouter.js";
 import { createSettingsController } from "./ui/settingsController.js";
 import { createCompanionSelectController } from "./ui/companionSelectController.js";
@@ -226,6 +228,10 @@ async function bootstrap() {
     markInteraction();
     return saveQueue.enqueue(SAVE_LEVEL.CRITICAL);
   };
+  const saveCriticalSnapshot = (candidateState) => {
+    markInteraction();
+    return saveCurrentState(candidateState);
+  };
   const saveDebounced = () => saveQueue.enqueue(SAVE_LEVEL.DEBOUNCE);
 
   const hudController = createHudController({ store, statusText });
@@ -247,6 +253,31 @@ async function bootstrap() {
     soulTalkController.setCreature(nextCompanion);
     hudController.renderHUD();
     await sceneApi?.swapCompanion(nextCompanion);
+  }
+
+  function applyQualitativeSliceOutcome(result = {}) {
+    if (result.message) statusText.textContent = result.message;
+
+    const environmentEvent = result.encounter?.environmentEvent;
+    if (environmentEvent) {
+      EventBus.emit(ENVIRONMENT_INTERACTION_EVENT, environmentEvent);
+    }
+
+    const animationIntent = result.animationIntent || result.encounter?.animationIntent;
+    if (animationIntent) {
+      EventBus.emit(COMPANION_ANIMATION_INTENT_EVENT, {
+        intent: animationIntent,
+        source: "habitat-moment"
+      });
+    }
+
+    if (result.raphaelEvent?.type) {
+      emitRestrictedRaphaelAgentEvent(
+        result.raphaelEvent.type,
+        result.raphaelEvent.event || result.raphaelEvent.payload || {},
+        { animationAlreadyApplied: Boolean(animationIntent) }
+      );
+    }
   }
 
   const onboardingController = createOnboardingController({
@@ -273,10 +304,16 @@ async function bootstrap() {
     isPanelOpen: () => panelManager.isPanelOpen(),
     isOnboardingActive: () => onboardingController?.isActive?.()
   });
+  const habitatMomentController = createHabitatMomentController({
+    store,
+    isPanelOpen: () => panelManager.isPanelOpen(),
+    onOutcome: applyQualitativeSliceOutcome
+  });
   // 主動微時刻（TP-7）：牠偶爾真的先動——狀態驅動、冷卻防打擾、不寫 chatHistory。
   const companionInitiativeController = createCompanionInitiativeController({
     store,
-    isPanelOpen: () => panelManager.isPanelOpen()
+    isPanelOpen: () => panelManager.isPanelOpen(),
+    onMomentAvailable: (momentDef) => habitatMomentController.offer(momentDef)
   });
   // 音訊提示（TP-6）：觸碰回饋與主動微時刻的極輕合成音（監聽既有事件）。
   const audioCueController = createAudioCueController();
@@ -303,6 +340,11 @@ async function bootstrap() {
     saveCurrentState: saveInteraction,
     statusText,
     goHome: () => pageRouter?.navigate("home")
+  });
+  const crystalWeavingController = createCrystalWeavingController({
+    store,
+    saveCandidateState: saveCriticalSnapshot,
+    onOutcome: applyQualitativeSliceOutcome
   });
 
   function getBattleController() {
@@ -412,6 +454,7 @@ async function bootstrap() {
     actionSheetController,
     statusText,
     calmSyncController,
+    crystalWeavingController,
     openMap: () => getMapController().open(),
     openCodex: () => getCodexController().open(),
     openAtlas: () => getAtlasController().open()
@@ -429,6 +472,7 @@ async function bootstrap() {
   firstLoopController.bind();
   interactionHintController.bind();
   gentleInvitationController.bind();
+  habitatMomentController.bind();
   companionInitiativeController.bind();
   audioCueController.bind();
   settingsController.bind();
@@ -1038,8 +1082,8 @@ function installRaphaelPreviewHarnessIfRequested() {
   });
 }
 
-function saveCurrentState() {
-  const result = saveState(store.getState());
+function saveCurrentState(state = store.getState()) {
+  const result = saveState(state);
   lastSaveStatus = {
     ok: Boolean(result.ok),
     emergency: Boolean(result.emergency),

@@ -596,3 +596,248 @@ html[data-ui="v2"] .first-loop-hint-wrap[data-view-state="recoverable-error"] {
 @media (prefers-reduced-motion: reduce) {
   html[data-ui="v2"] .bond-card-glow { animation: none; opacity: 0.7; }
 }
+
+/* =========================================================================
+   初響儀式（TP-A）：Initial Bond 已落盤後的 session-only 呈現。
+   單一視覺記憶點是「心核脈衝」；不新增資產、不顯示進度或稀有度。
+   ========================================================================= */
+html[data-ui="v2"] .first-resonance-layer {
+  --resonance-hue: 200;
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  display: grid;
+  place-items: center;
+  padding: calc(var(--top-safe) + 20px) 18px calc(var(--bottom-safe) + 20px);
+  overflow: hidden;
+  color: var(--v3-moon-100);
+  isolation: isolate;
+}
+
+html[data-ui="v2"] .first-resonance-layer[hidden] {
+  display: none;
+}
+
+html[data-ui="v2"] .first-resonance-veil {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background:
+    radial-gradient(circle at 50% 43%, hsla(var(--resonance-hue), 76%, 66%, 0.2), transparent 34%),
+    linear-gradient(180deg, rgba(2, 7, 17, 0.94), rgba(5, 10, 24, 0.98));
+  backdrop-filter: blur(18px);
+}
+
+html[data-ui="v2"] .first-resonance-stage {
+  display: grid;
+  justify-items: center;
+  gap: 14px;
+  width: min(100%, 520px);
+  text-align: center;
+}
+
+html[data-ui="v2"] .first-resonance-kicker {
+  margin: 0;
+  color: hsla(var(--resonance-hue), 82%, 80%, 0.92);
+  font-size: 0.7rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+
+html[data-ui="v2"] .first-resonance-stage h2 {
+  max-width: 18ch;
+  margin: 0;
+  color: var(--v3-moon-100);
+  font-family: var(--v3-font-serif);
+  font-size: clamp(1.45rem, 6vw, 2.2rem);
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: 0.06em;
+}
+
+html[data-ui="v2"] .first-resonance-visual {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: min(68vw, 250px);
+  aspect-ratio: 1;
+  margin: 4px 0;
+}
+
+html[data-ui="v2"] .first-resonance-ring,
+html[data-ui="v2"] .first-resonance-core {
+  position: absolute;
+  inset: 50%;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+html[data-ui="v2"] .first-resonance-pulse {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+html[data-ui="v2"] .first-resonance-ring--outer {
+  width: 92%;
+  height: 92%;
+  border: 1px solid hsla(var(--resonance-hue), 82%, 76%, 0.34);
+  box-shadow: 0 0 44px hsla(var(--resonance-hue), 76%, 58%, 0.18);
+  animation: first-resonance-breathe 4.8s ease-in-out infinite;
+}
+
+html[data-ui="v2"] .first-resonance-ring--inner {
+  width: 62%;
+  height: 62%;
+  border: 1px solid hsla(var(--resonance-hue), 84%, 82%, 0.54);
+  animation: first-resonance-breathe 4.8s 1.2s ease-in-out infinite reverse;
+}
+
+html[data-ui="v2"] .first-resonance-core {
+  width: 26%;
+  height: 26%;
+  background:
+    radial-gradient(circle, rgba(246, 251, 255, 0.98) 0 10%, hsla(var(--resonance-hue), 88%, 78%, 0.86) 32%, hsla(var(--resonance-hue), 78%, 54%, 0.18) 68%, transparent 72%);
+  filter: drop-shadow(0 0 22px hsla(var(--resonance-hue), 82%, 70%, 0.62));
+  animation: first-resonance-core 3.2s ease-in-out infinite;
+}
+
+html[data-ui="v2"] .first-resonance-portrait-frame {
+  position: relative;
+  z-index: 1;
+  width: 124px;
+  height: 124px;
+  border: 1px solid hsla(var(--resonance-hue), 80%, 82%, 0.45);
+  border-radius: 42% 42% 48% 48%;
+  overflow: hidden;
+  background: rgba(5, 11, 25, 0.78);
+  box-shadow: 0 0 34px hsla(var(--resonance-hue), 74%, 62%, 0.28);
+  transition: transform 2.2s ease, opacity 1.4s ease;
+}
+
+html[data-ui="v2"] .first-resonance-portrait,
+html[data-ui="v2"] .first-resonance-portrait-fallback {
+  width: 100%;
+  height: 100%;
+}
+
+html[data-ui="v2"] .first-resonance-portrait {
+  display: block;
+  object-fit: cover;
+}
+
+html[data-ui="v2"] .first-resonance-portrait[hidden] {
+  display: none;
+}
+
+html[data-ui="v2"] .first-resonance-portrait-fallback {
+  display: grid;
+  place-items: center;
+  color: hsla(var(--resonance-hue), 88%, 84%, 0.92);
+  font-family: var(--v3-font-serif);
+  font-size: 2.5rem;
+  background: radial-gradient(circle, hsla(var(--resonance-hue), 66%, 52%, 0.28), transparent 68%);
+}
+
+html[data-ui="v2"] .first-resonance-portrait-fallback[hidden] {
+  display: none;
+}
+
+html[data-ui="v2"] .first-resonance-layer[data-response="distance"][data-phase="responding"] .first-resonance-portrait-frame {
+  transform: translateX(18px) scale(0.94);
+  opacity: 0.84;
+}
+
+html[data-ui="v2"] .first-resonance-layer[data-response="approach"][data-phase="responding"] .first-resonance-portrait-frame {
+  transform: scale(1.08);
+}
+
+html[data-ui="v2"] .first-resonance-layer[data-response="hesitate"][data-phase="responding"] .first-resonance-portrait-frame {
+  transform: translateY(5px) scale(0.98);
+  opacity: 0.9;
+}
+
+html[data-ui="v2"] .first-resonance-name {
+  color: hsla(var(--resonance-hue), 86%, 84%, 0.96);
+  font-family: var(--v3-font-serif);
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+}
+
+html[data-ui="v2"] .first-resonance-phase {
+  min-height: 3.1em;
+  max-width: 36ch;
+  margin: 0;
+  color: var(--v3-moon-200);
+  font-size: 0.9rem;
+  line-height: 1.65;
+}
+
+html[data-ui="v2"] .first-resonance-skip {
+  min-height: 44px;
+  padding: 0 18px;
+  border: 1px solid hsla(var(--resonance-hue), 60%, 76%, 0.28);
+  border-radius: 999px;
+  color: rgba(226, 239, 255, 0.8);
+  background: rgba(255, 255, 255, 0.055);
+  font: inherit;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+}
+
+html[data-ui="v2"] .first-resonance-skip:focus-visible {
+  outline: 2px solid var(--v3-cyan-300);
+  outline-offset: 3px;
+}
+
+@keyframes first-resonance-breathe {
+  0%, 100% { opacity: 0.36; transform: translate(-50%, -50%) scale(0.84); }
+  50% { opacity: 0.9; transform: translate(-50%, -50%) scale(1.04); }
+}
+
+@keyframes first-resonance-core {
+  0%, 100% { transform: translate(-50%, -50%) scale(0.78); opacity: 0.68; }
+  50% { transform: translate(-50%, -50%) scale(1.12); opacity: 1; }
+}
+
+@media (max-height: 690px) {
+  html[data-ui="v2"] .first-resonance-stage {
+    gap: 9px;
+  }
+
+  html[data-ui="v2"] .first-resonance-visual {
+    width: min(39vh, 190px);
+    margin: 0;
+  }
+
+  html[data-ui="v2"] .first-resonance-portrait-frame {
+    width: 96px;
+    height: 96px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-ui="v2"] .first-resonance-ring,
+  html[data-ui="v2"] .first-resonance-core {
+    animation: none;
+  }
+
+  html[data-ui="v2"] .first-resonance-portrait-frame {
+    transition: none;
+  }
+}
+
+html[data-ui="v2"] .first-resonance-layer.is-reduced-motion .first-resonance-ring,
+html[data-ui="v2"] .first-resonance-layer.is-reduced-motion .first-resonance-core,
+html[data-reduced-motion-preference="reduced"][data-ui="v2"] .first-resonance-ring,
+html[data-reduced-motion-preference="reduced"][data-ui="v2"] .first-resonance-core {
+  animation: none;
+}
+
+html[data-ui="v2"] .first-resonance-layer.is-reduced-motion .first-resonance-portrait-frame,
+html[data-reduced-motion-preference="reduced"][data-ui="v2"] .first-resonance-portrait-frame {
+  transition: none;
+}

@@ -437,6 +437,125 @@ html[data-ui="v2"] .page-memory-list {
   padding-right: 2px;
 }
 
+html[data-ui="v2"] .crystal-weaving-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: 54px minmax(0, 1fr);
+  gap: 10px 13px;
+  align-items: start;
+  padding: 15px;
+  border: 1px solid rgba(124, 231, 255, 0.28);
+  border-radius: 22px;
+  background:
+    radial-gradient(circle at 12% 10%, rgba(124, 231, 255, 0.16), transparent 38%),
+    linear-gradient(150deg, rgba(10, 27, 53, 0.76), rgba(7, 16, 35, 0.68));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 0 28px rgba(82, 210, 255, 0.08);
+}
+
+html[data-ui="v2"] .crystal-weaving-core {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border: 1px solid rgba(124, 231, 255, 0.46);
+  border-radius: 50%;
+  color: var(--v3-gold-200, #f7dfaa);
+  background:
+    radial-gradient(circle, rgba(247, 223, 170, 0.56) 0 8%, rgba(124, 231, 255, 0.2) 14% 38%, transparent 42%),
+    rgba(7, 18, 38, 0.58);
+  box-shadow: 0 0 24px rgba(124, 231, 255, 0.28);
+  animation: crystal-weaving-pulse 3.2s ease-in-out infinite;
+}
+
+html[data-ui="v2"] .crystal-weaving-copy {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+html[data-ui="v2"] .crystal-weaving-copy p,
+html[data-ui="v2"] .crystal-weaving-copy h3,
+html[data-ui="v2"] .crystal-weaving-copy small {
+  margin: 0;
+}
+
+html[data-ui="v2"] .crystal-weaving-copy > p:first-child {
+  color: var(--v3-cyan-300, #7ce7ff);
+  font-size: 0.68rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+html[data-ui="v2"] .crystal-weaving-copy h3 {
+  color: var(--v3-moon-100, #f7f2e7);
+  font-family: var(--v3-font-serif, serif);
+  font-size: 1.06rem;
+  letter-spacing: 0.06em;
+}
+
+html[data-ui="v2"] .crystal-weaving-copy > p:not(:first-child) {
+  color: rgba(233, 239, 250, 0.76);
+  font-size: 0.8rem;
+  line-height: 1.55;
+}
+
+html[data-ui="v2"] .crystal-weaving-copy small {
+  color: rgba(185, 201, 230, 0.72);
+  font-size: 0.7rem;
+  line-height: 1.45;
+}
+
+html[data-ui="v2"] .crystal-weaving-card > button {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 2px;
+  width: 100%;
+  min-height: 46px;
+  padding: 9px 12px;
+  border: 1px solid rgba(247, 223, 170, 0.22);
+  border-radius: 14px;
+  color: var(--v3-moon-100, #f7f2e7);
+  background: rgba(255, 255, 255, 0.04);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+html[data-ui="v2"] .crystal-weaving-card > button em {
+  color: rgba(185, 201, 230, 0.72);
+  font-size: 0.72rem;
+  font-style: normal;
+}
+
+html[data-ui="v2"] .crystal-weaving-card > button:hover,
+html[data-ui="v2"] .crystal-weaving-card > button:focus-visible {
+  border-color: rgba(124, 231, 255, 0.52);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(124, 231, 255, 0.11);
+}
+
+html[data-ui="v2"] .crystal-weaving-card > button:disabled {
+  cursor: default;
+  opacity: 0.48;
+}
+
+html[data-ui="v2"] .crystal-weaving-status {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 9px 11px;
+  border-left: 2px solid rgba(124, 231, 255, 0.48);
+  border-radius: 0 12px 12px 0;
+  color: rgba(233, 239, 250, 0.86);
+  background: rgba(124, 231, 255, 0.06);
+  font-size: 0.76rem;
+  line-height: 1.55;
+}
+
+html[data-ui="v2"] .crystal-weaving-status[hidden] {
+  display: none;
+}
+
 html[data-ui="v2"] .page-memory-row {
   grid-template-columns: 34px minmax(0, 1fr);
   align-items: start;
@@ -472,6 +591,58 @@ html[data-ui="v2"] .page-empty-memory strong {
 html[data-ui="v2"] .page-memory-copy small {
   color: rgba(185, 201, 230, 0.7);
   font-size: 0.68rem;
+}
+
+html[data-ui="v2"] .page-memory-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 7px;
+}
+
+html[data-ui="v2"] .page-memory-actions > button,
+html[data-ui="v2"] .page-memory-release-confirm button {
+  min-height: 36px;
+  padding: 6px 10px;
+  border: 1px solid rgba(124, 231, 255, 0.22);
+  border-radius: 999px;
+  color: rgba(241, 247, 255, 0.9);
+  background: rgba(124, 231, 255, 0.06);
+  font: inherit;
+  font-size: 0.72rem;
+  cursor: pointer;
+}
+
+html[data-ui="v2"] .page-memory-actions > button:hover,
+html[data-ui="v2"] .page-memory-actions > button:focus-visible,
+html[data-ui="v2"] .page-memory-release-confirm button:hover,
+html[data-ui="v2"] .page-memory-release-confirm button:focus-visible {
+  border-color: rgba(247, 223, 170, 0.5);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(124, 231, 255, 0.1);
+}
+
+html[data-ui="v2"] .page-memory-release-confirm {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, max-content));
+  gap: 7px;
+  width: 100%;
+  padding: 9px;
+  border-left: 2px solid rgba(247, 223, 170, 0.42);
+  border-radius: 0 12px 12px 0;
+  background: rgba(247, 223, 170, 0.05);
+}
+
+html[data-ui="v2"] .page-memory-release-confirm > small {
+  grid-column: 1 / -1;
+  color: rgba(233, 239, 250, 0.78);
+  font-size: 0.72rem;
+  line-height: 1.5;
+}
+
+@keyframes crystal-weaving-pulse {
+  0%, 100% { opacity: 0.74; transform: scale(0.96); }
+  50% { opacity: 1; transform: scale(1.04); }
 }
 
 html[data-ui="v2"] .page-empty-memory {
@@ -706,6 +877,20 @@ html[data-ui="v2"] .calm-sync-leave:focus-visible {
   html[data-ui="v2"] .page-memory-row {
     padding: 10px 11px;
   }
+
+  html[data-ui="v2"] .crystal-weaving-card {
+    grid-template-columns: 44px minmax(0, 1fr);
+    padding: 12px;
+  }
+
+  html[data-ui="v2"] .crystal-weaving-core {
+    width: 40px;
+    height: 40px;
+  }
+
+  html[data-ui="v2"] .page-memory-release-confirm {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -714,10 +899,16 @@ html[data-ui="v2"] .calm-sync-leave:focus-visible {
   }
 
   html[data-ui="v2"] .calm-sync-ring,
-  html[data-ui="v2"] .calm-sync-ring-wrap.is-synced::after {
+  html[data-ui="v2"] .calm-sync-ring-wrap.is-synced::after,
+  html[data-ui="v2"] .crystal-weaving-core {
     animation: none;
     transition: none;
   }
+}
+
+html[data-reduced-motion-preference="reduced"][data-ui="v2"] .crystal-weaving-core {
+  animation: none;
+  transition: none;
 }
 
 body.panel-open .page-layer .page-view.is-active {
