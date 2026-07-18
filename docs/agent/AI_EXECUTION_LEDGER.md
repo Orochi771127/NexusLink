@@ -3617,3 +3617,62 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
   trace, milestone, evidence, offer, animation or gameplay reward. RaphaelCore
   personality, canonical crisis wording, external LLM policy and caution
   regulation were not expanded.
+
+### 2026-07-18 - Codex - Companion Growth G2 Per-Companion State - COMPLETED
+
+- Status: `COMPLETED` and published to `main` through PR #98. Candidate commit
+  `6ff0fdd34fef6257fbc819e5f1faf64ee5b046f6` merged as
+  `b166e93cfd7928e1c97e2aef02d8554a0cd6ec42`.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `TP-COMPANION-GROWTH-G2`.
+- Publication proof: the strict required PR `web-release-gate` passed in
+  4m27s, the post-merge `main` gate passed in 4m14s, and GitHub Pages deployed
+  the exact merge SHA successfully. Repository ruleset
+  `main-release-protection` requires PR plus the strict status check.
+- Runtime truth: versioned per-companion relationship／growth state, exact
+  14-field active mirror, idempotent legacy migration, atomic A→B→A switching,
+  established-companion offline recovery, stale-touch cancellation, delayed
+  standoff／Expedition owner guards and latest-request sprite swap protection
+  are live. Archive-only `relationship:null` records remain uninitialized.
+- Exact release evidence: web **23/23**, JS syntax **269/269**, G2 state
+  **23/23**, renderer lifecycle **29/29**, session owner **9/9**, migration
+  **33/33**, storage **13/13**, Expedition **32/32**, accessibility warnings
+  **0**.
+- Next safe action: open a separate G3 TASK_PACK for companion-tagged evidence,
+  coverage／compaction, readiness and willingness. G3, formal stage offers,
+  permanent form assets and competitive sparring are not part of this release.
+
+### 2026-07-18 - Codex - Companion Growth G2 Codex Isolation - COMPLETED
+
+- Status: `COMPLETED` in published merge `b166e93`; this is G2 state and
+  truthful presentation only.
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `TP-COMPANION-GROWTH-G2`.
+- Result: each runtime Codex card reads its own canonical formal stage or a
+  validated, explicitly labelled legacy archive reveal. First activation uses
+  that companion's fresh relationship baseline and retains compatibility
+  provenance; another companion's bond cannot reveal it.
+- Browser proof: required Growth matrix **75/75** covers mobile／desktop,
+  `390x844`, reduced motion, real Codex archive activation and normal-Pixi H10.
+  Inspected captures showed the three stage rows, archive disclaimer, complete
+  safety reply and zero quick-reply chips.
+- Asset boundary: no evolved-form bitmap, sprite sheet, portrait, manifest,
+  Pixi renderer or new art asset was added. A successful Pages deploy does not
+  convert G2 into a completed multi-form visual system.
+
+### 2026-07-18 - Codex - G2 Safety Relationship Seal - COMPLETED
+
+- Status: `COMPLETED` in published merge `b166e93`; external evaluator
+  `hardGateOk` remains auxiliary-only.
+- Lane: `Raphael Core, Companion Reasoning, And Soul Talk`.
+- Task name: `TP-COMPANION-GROWTH-G2` (safety compatibility closure).
+- Safety proof: required invariant **21/21**, dedicated UI **7/7** and normal
+  Pixi H10 inside Growth browser **75/75** all passed on the clean publication
+  path, followed by the successful exact-main gate.
+- Terminal invariant: high risk allows only canonical player＋system chat,
+  safety UI／mode and save timestamp. All 14 relationship fields, canonical
+  companion records, growth, preference, memory, trace, milestone, SFX,
+  animation and gameplay resources remain unchanged; save level is critical.
+- Remaining launch gates: private blind 3 testers × 20 turns, real-device
+  D1／D2／D3／D6, moderated first-session comprehension, legal／privacy／store
+  copy and explicit Owner launch approval remain `not_run`／open.
