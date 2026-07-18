@@ -280,7 +280,7 @@ Initial Bond 已接入：fresh save 固定呈現 `greyshade-cat` / `blazetail-ki
 | 類別 | 檔案 |
 |------|------|
 | 入口 | `index.html` ・ `src/app.js` |
-| State | `store.js` ・ `saveManager.js`（key=`nexusLinkR2State:v1`）・ `saveQueue.js` ・ `defaultState.js` |
+| State | `store.js` ・ `saveManager.js`（key=`nexusLinkR2State:v1`）・ `saveQueue.js` ・ `defaultState.js` ・ `companionStateSchema.js`（G2 canonical per-companion relationship／growth） |
 | 邊界/觸碰 | `touchReactionEngine.js` ・ `interactionController.js` ・ `hudController.js`(boundary view) |
 | 情緒沉積 | `emotionalSedimentationEngine.js` ・ `memoryLifecycleEngine.js` ・ `safeHarborMode.js` |
 | 痕跡 | `habitatTraceEngine.js` ・ `traceVisualMapper.js` ・ `habitatTraceRenderer.js` |
@@ -288,7 +288,7 @@ Initial Bond 已接入：fresh save 固定呈現 `greyshade-cat` / `blazetail-ki
 | 情緒對峙 | `battleEngine.js` ・ `battleController.js` ・ `enemyRegistry.js`（`battleRecord.wins/losses` compatibility-only） |
 | 探索 | `mapController.js` ・ `explorationEngine.js` ・ `explorationNodes.js` |
 | Expedition（Prototype） | `expeditionController.js` ・ `src/expedition/` ・ `RAPHAEL_EXPEDITION_EVAL_CONTRACT.md`（partial Core bridge，`coreIntegrated:false`） |
-| Companion Growth（G1 session-only 已接入；G2+ 未實作） | `companionGrowthSessionEngine.js` ・ `pageRouter.js` ・ `docs/design/COMPANION_GROWTH_CONTRACT_V1.md` ・ `ACCEPTANCE.md` N1–N12 ・ `evolutionLines.js`（compatibility data only） |
+| Companion Growth（G1 session-only + G2 per-companion state 已接入；G3+ 未實作） | `companionGrowthSessionEngine.js` ・ `companionStateSchema.js` ・ `pageRouter.js` ・ `codexController.js` ・ `docs/design/COMPANION_GROWTH_CONTRACT_V1.md` ・ `ACCEPTANCE.md` N1–N12 ・ `evolutionLines.js`（compatibility data only） |
 | Pixi 核心 | `pixiApp.js`(LOCKED 級) ・ `companionRenderer.js` ・ `spriteSheetAnimationLoader.js` ・ `motionController.js` |
 | 人格 | `companionPersonality.js` ・ `personalityProfile.js` ・ `animationProfile.js` |
 | 資料 | `companionRegistry.js` ・ `evolutionLines.js` ・ `emotionDictionary.js` ・ `safetyShieldDictionary.js` |

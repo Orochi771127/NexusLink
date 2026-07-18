@@ -71,7 +71,7 @@ python -m http.server 5173
 - [ ] 「我只是想安靜一下」不被追問，也不出現不相干的 explicit memory recall。
 - [ ] 普通 Soul Talk 約 120ms interaction queue 後持久化；reload 不丟失已完成回合。
 - [ ] 高風險 D2 內容只由 repo-native safety automation／授權 QA 執行；不要要求私測者輸入真實危機內容。
-- [ ] D2 自動證據必須同時證明：完整 system reply、零 quick replies、零 SFX、零 gameplay delta、零 preference/memory/trace 寫入、critical save。
+- [ ] D2 自動證據必須同時證明：完整 system reply、零 quick replies、零 SFX、完整 relationship/growth mirror 不變、零 preference/memory/trace 寫入、critical save。
 
 ---
 
@@ -91,11 +91,22 @@ python -m http.server 5173
 
 ## 存檔與 migration
 
+### Companion Growth G2
+
+- [ ] 以兩隻已解鎖夥伴 A／B 測 A→B→A：羈絆、信任、心情、能量、防備、觸碰疲勞、拒絕／首次觸碰／擁抱與反應文字各自還原，不互相覆蓋。
+- [ ] 連續快速切換 20 次，HUD、角色名稱與關係欄位每次都只顯示同一隻 active companion，沒有 A 名稱配 B 數值的中間畫面。
+- [ ] 第一次切到只有舊圖鑑記錄、尚無關係的 inactive companion 時，使用安全 baseline；不得繼承上一隻夥伴的 bond／trust／touch history。
+- [ ] Codex 檢視 inactive companion 時，不受 active companion 的 bond 影響；舊存檔 display-only 階段有明確 archive 說明，不冒充目前已完成正式覺醒。
+- [ ] 在觸碰喚醒動畫、對峙延遲回合或遠征途中，以授權 QA/dev flow 強制切換 active companion；舊 session 必須中止且不把 relationship、memory、chapter、vault 或反思寫到新夥伴。
+- [ ] 缺少 `growthSafetyExcluded:false` 的 evidence、非整數 migration version、錯 companion baseline key 與損壞 floor 都會 fail closed，不被 normalizer 洗成合法成長紀錄。
+- [ ] Growth 頁仍沒有 XP bar、倒數、紅點、每日、素材 crafting 或「最佳收益」提示；G3 evidence／readiness 尚未上線。
+
 - [ ] Application → Local Storage 只有主狀態 key `nexusLinkR2State:v1` 承擔遊戲狀態。
-- [ ] `nexusLinkR2State:v1` 為有效 JSON，包含 `chatHistory`、`habitatTraces`、`companionPreferences` 與 `settings.audioMuted`。
+- [ ] `nexusLinkR2State:v1` 為有效 JSON，包含 `companionStates.version=1`、`chatHistory`、`habitatTraces`、`companionPreferences` 與 `settings.audioMuted`。
 - [ ] 成功寫入主存檔後，legacy `nexusLinkCompanionPrefs:v1` 與 `nexusLinkAudioMuted:v1` 被移除。
 - [ ] reload 後 active companion、聊天、trace、設定與 exploration progress 保留。
 - [ ] `lastSeenAt` 的 0、負數或非數字損壞值會被安全正規化，不產生離線懲罰。
+- [ ] 兩隻已有 relationship 的夥伴在離線後都獲得相同的 bounded energy／touch-fatigue 恢復；reload 後切到原本 inactive 的夥伴仍保留恢復結果，且 bond／stage／evidence 不變。
 - [ ] Veteran 存檔保留原 active companion、解鎖、記憶與 trace，且不被強迫重跑 onboarding 或 K9 首次路線。
 
 ---

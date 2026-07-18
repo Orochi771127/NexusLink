@@ -3489,3 +3489,131 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
   motion both reduce the page transition to `0s`; 200% text remains usable.
 - Asset boundary: no bitmap, portrait, spritesheet, manifest, renderer or
   evolved-form mapping changed.
+
+### 2026-07-18 - Codex - Companion Growth G2 Per-Companion State - IN PROGRESS
+
+- Status: `IN PROGRESS`; the Owner approved the GROUNDWORK package and the
+  branch starts from merged `origin/main` `6373147` after G1 publication.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `TP-COMPANION-GROWTH-G2`.
+- Scope: add canonical versioned `companionStates` inside the existing
+  `nexusLinkR2State:v1` save, keep the 14 active relationship fields as a
+  compatibility mirror, provide idempotent legacy migration, and make active
+  companion swaps archive／hydrate atomically. Existing canonical records must
+  win over stale top-level mirrors during load; inactive veteran companions
+  receive archive-only Codex reveal provenance and no invented relationship.
+- Red-line check: high-risk safety remains terminal with no relationship,
+  growth, preference, memory, trace, sound or reward mutation. No XP, power
+  score, FOMO, offline progression, PvP, asset, Pixi, LLM, dependency or new
+  storage key is in scope.
+- Required reading: this entry,
+  `docs/design/COMPANION_GROWTH_CONTRACT_V1.md`, `ACCEPTANCE.md` N1／N3／N9／
+  N10／N11, `src/state/defaultState.js`, `src/state/store.js`,
+  `src/state/saveManager.js`, the touch／offline recovery paths and the Codex
+  compatibility reveal path.
+
+### 2026-07-18 - Codex - Companion Growth G2 Codex Isolation - IN PROGRESS
+
+- Status: `IN PROGRESS`; current Codex evolution reveal reads the one global
+  active `bond` value for every companion and therefore leaks one companion's
+  history into another companion's entry.
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `TP-COMPANION-GROWTH-G2`.
+- Scope: make runtime companion Codex reveal read only that companion's
+  canonical formal stage or one-shot legacy display floor. Keep the existing
+  presentation and canon-roadmap entries; do not add a progress bar, numerical
+  gate, evolved-form asset or claim that G3 stage offers already exist.
+- Required reading: this entry,
+  `docs/design/COMPANION_GROWTH_CONTRACT_V1.md`, `src/ui/codexController.js`
+  and `src/data/evolutionLines.js`.
+
+### 2026-07-18 - Codex - G2 Safety Relationship Seal - IN PROGRESS
+
+- Status: `IN PROGRESS`; G2 makes mood and reaction fields part of the formal
+  active relationship mirror, exposing that the older UI gate still allowed
+  those fields to change during a high-risk Soul Talk turn.
+- Lane: `Raphael Core, Companion Reasoning, And Soul Talk`.
+- Task name: `TP-COMPANION-GROWTH-G2` (safety compatibility closure).
+- Scope: keep the high-risk Core action／reply contract unchanged while
+  reducing the state patch to `safeHarborMode`, restore all 14 relationship
+  mirror fields from the pre-message snapshot, and strengthen the required UI
+  gate so mood, reaction, canonical relationship and growth all deep-compare
+  unchanged. Player＋canonical system chat and safety UI mode remain the only
+  persisted turn delta apart from save timestamp.
+- Red-line check: no crisis text becomes memory, preference, trace, stage,
+  readiness, reward, sound or animation. Caution regulation remains separate
+  and unchanged.
+- Required reading: this entry, `ACCEPTANCE.md` D2／N3,
+  `src/ui/soulTalkController.js`, `src/ai/stateMutationPolicy.js`,
+  `src/ai/testHarness/safetyTerminalInvariantCases.js` and
+  `docs/qa/_run_safety_terminal_ui_gate.py`.
+
+### 2026-07-18 - Codex - Companion Growth G2 Per-Companion State - VERIFIED
+
+- Status: `VERIFIED` as a working-tree publication candidate; clean PR CI and
+  merge verification are still required before `COMPLETED` publication truth.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `TP-COMPANION-GROWTH-G2`.
+- Result: `companionStates.version=1` is canonical inside the one existing save
+  key. All 14 active relationship fields archive／hydrate per companion in one
+  store notification; legacy active data migrates once, inactive veteran
+  entries retain only a typed archive reveal, malformed schema／migration／
+  evidence provenance fails closed, and A→B→A／save／reload remain isolated.
+- Lifecycle closure: stale wake touches abort after an active-companion change;
+  standoff／Expedition sessions validate their owner before delayed ticks and
+  settlement; async sprite swaps use a latest-request generation guard and
+  destroy stale nodes before attach.
+- Validation on branch `agent/companion-growth-g2` from `6373147` (uncommitted
+  candidate): web release **23/23**, JS syntax **269/269**, G2 state **23/23**,
+  renderer lifecycle **29/29**, session owner **9/9**, migration **33/33**,
+  storage consolidation **13/13**, Expedition matrix **32/32**, accessibility
+  warnings **0**. Generated QA outputs were restored and are not part of scope.
+- Remaining debt／boundary: legacy bond milestone memory IDs are still global
+  and must become companion-tagged in G3; G3 evidence writer／readiness／
+  willingness, formal offers and evolved-form assets remain unimplemented.
+- Branch / commit: `agent/companion-growth-g2`; commit and PR assigned at
+  publication. No dependency, build step, backend, external LLM, new storage
+  key, asset or Pixi-core change was introduced.
+
+### 2026-07-18 - Codex - Companion Growth G2 Codex Isolation - VERIFIED
+
+- Status: `VERIFIED` as a working-tree UI candidate; clean PR CI remains the
+  publication gate.
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `TP-COMPANION-GROWTH-G2`.
+- Result: each runtime Codex entry reads only its own formal stage or validated
+  legacy display floor. The three formal labels are 初醒夥伴／共鳴成熟體／
+  終局覺醒體; numeric bond hints are gone. Archive-only lore remains explicitly
+  labelled after that companion's first activation and uses a fresh relationship
+  baseline rather than the previous active companion's history.
+- Browser evidence: required Growth／Codex／normal-Pixi safety gate **75/75** at
+  mobile and desktop. Inspected `390x844` screenshots show all three stage rows,
+  the archive disclaimer and the full canonical safety reply with no quick
+  reply chips. No evolved-form bitmap, sprite sheet, manifest or Pixi renderer
+  was added or promoted.
+- Honest boundary: this is G2 state／presentation infrastructure, not G3
+  readiness, a permanent evolution animation, a power increase or a complete
+  multi-stage asset swap.
+
+### 2026-07-18 - Codex - G2 Safety Relationship Seal - VERIFIED
+
+- Status: `VERIFIED` as a working-tree safety candidate; clean PR CI remains
+  mandatory and external evaluator `hardGateOk` stays auxiliary-only.
+- Lane: `Raphael Core, Companion Reasoning, And Soul Talk`.
+- Task name: `TP-COMPANION-GROWTH-G2` (safety compatibility closure).
+- Result: `safety.isHighRisk` now independently forces the exact
+  `{safeHarborMode:true}` patch. The pre-message snapshot restores every
+  relationship／growth／preference／memory／trace field; only player＋canonical
+  system chat, safety UI/mode and save timestamp may persist. High-risk and
+  first-trace turns use the critical save path; ordinary Soul Talk keeps the
+  interaction queue.
+- Validation: repo-native safety invariant **21/21** (13 energy／persona cases,
+  7 fail-closed mutations, 1 caution case), dedicated real UI **7/7**, plus a
+  normal Pixi H10 round inside the required **75/75** browser gate. The Pixi
+  round deep-compares runtime and persisted `companionStates`, relationship,
+  growth and gameplay state, requires the full canonical reply, and records
+  zero quick replies／SFX.
+- Red-line result: no high-risk input becomes preference, emotional memory,
+  trace, milestone, evidence, offer, animation or gameplay reward. RaphaelCore
+  personality, canonical crisis wording, external LLM policy and caution
+  regulation were not expanded.

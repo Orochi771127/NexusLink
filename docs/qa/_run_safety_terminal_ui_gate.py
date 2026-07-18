@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import os
 import tempfile
+from copy import deepcopy
 
 from playwright.sync_api import sync_playwright
 
@@ -25,8 +26,6 @@ HIGH_RISK_INPUT = "我現在有傷害自己的念頭"
 ALLOWED_SAVE_CHANGES = {
     "chatHistory",
     "safeHarborMode",
-    "mood",
-    "reactionPreview",
     "lastSeenAt",
 }
 
@@ -120,7 +119,7 @@ def seed_safety_state(page, energy):
           };
           state.chatHistory = [{ role: 'companion', text: '安全 UI 測試基線。' }];
 
-          store.replaceState(state);
+          store.replaceRuntimeState(state);
           replacePreferenceStore(store.getState().companionPreferences);
           const saveResult = saveState(store.getState());
           if (!saveResult.ok) throw new Error('Unable to seed canonical save');
@@ -184,6 +183,18 @@ def run():
                 # following delta isolates exactly this high-risk turn.
                 before = seed_safety_state(page, energy)
 
+            active_record = (
+                before.get("companionStates", {})
+                .get("byId", {})
+                .get(before.get("activeCompanionId"), {})
+            )
+            canonical_relationship = active_record.get("relationship") or {}
+            if index == 0:
+                check(
+                    "deep_comparator_kills_growth_mutations",
+                    deep_comparator_kills_growth_mutations(before),
+                )
+
             page.locator("#message-input").fill(HIGH_RISK_INPUT)
             page.locator("#send-button").click()
 
@@ -208,6 +219,10 @@ def run():
             last_entry = (state_after.get("chatHistory") or [{}])[-1]
             dom_system_lines = page.locator("#chat-log .chat-line.system").all_text_contents()
             turn_checks = {
+                "fixture_energy_exact": (
+                    before.get("energy") == energy
+                    and canonical_relationship.get("energy") == energy
+                ),
                 "critical_save_is_immediate": last_entry.get("text") == CANONICAL_REPLY,
                 "canonical_system_reply": last_entry == {"role": "system", "text": CANONICAL_REPLY},
                 "exact_player_and_system_chat_delta": (
@@ -228,7 +243,11 @@ def run():
                     before.get("companionPreferences") == state_after.get("companionPreferences")
                 ),
                 "no_secondary_storage": after["preferenceLegacy"] is None and after["audioLegacy"] is None,
-                "safety_mode_only": state_after.get("safeHarborMode") is True and state_after.get("mood") == "safe_harbor",
+                "safety_mode_only": (
+                    state_after.get("safeHarborMode") is True
+                    and state_after.get("mood") == before.get("mood")
+                    and state_after.get("reactionPreview") == before.get("reactionPreview")
+                ),
             }
             report["turns"].append(
                 {"energy": energy, "checks": turn_checks, "ok": all(turn_checks.values())}
@@ -251,6 +270,44 @@ def run():
         "ok": not failures,
     }
     return report
+
+
+def deep_comparator_kills_growth_mutations(before):
+    """Mutation-test the exact comparator used by the browser safety gate."""
+    active_id = before.get("activeCompanionId")
+    if not active_id:
+        return False
+
+    mutations = []
+
+    canonical_energy = deepcopy(before)
+    canonical_energy["companionStates"]["byId"][active_id]["relationship"]["energy"] = 1
+    mutations.append(canonical_energy)
+
+    evidence = deepcopy(before)
+    evidence["companionStates"]["byId"][active_id]["growth"]["evidence"].append({
+        "key": "forbidden:safety:evidence"
+    })
+    mutations.append(evidence)
+
+    stage = deepcopy(before)
+    stage["companionStates"]["byId"][active_id]["growth"]["stage"] = "final_awakened"
+    mutations.append(stage)
+
+    offer = deepcopy(before)
+    offer["companionStates"]["byId"][active_id]["growth"]["offeredStage"] = "resonant_mature"
+    mutations.append(offer)
+
+    new_record = deepcopy(before)
+    new_record["companionStates"]["byId"]["forbidden-safety-record"] = {"relationship": None}
+    mutations.append(new_record)
+
+    mirror_mood = deepcopy(before)
+    mirror_mood["mood"] = "safe_harbor"
+    mutations.append(mirror_mood)
+
+    baseline = canonical_state_without_allowed_changes(before)
+    return all(canonical_state_without_allowed_changes(item) != baseline for item in mutations)
 
 
 if __name__ == "__main__":

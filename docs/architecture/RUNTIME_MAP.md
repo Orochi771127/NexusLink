@@ -1,6 +1,6 @@
 # RUNTIME_MAP.md — Nexus Link Runtime 架構地圖
 
-> Status: 2026-07-16 current-worktree truth sync。
+> Status: 2026-07-18 current-worktree truth sync。
 > 本檔是定位地圖，不是產品 canon，也不取代 current `HEAD`、實際 worktree、測試或
 > `docs/agent/AI_EXECUTION_LEDGER.md`。標為「歷史」的段落不得用來推導新實作。
 
@@ -76,11 +76,12 @@ Authoritative sources：
 
 | 群組 | Current fields |
 |---|---|
-| Relationship / body | `bond`, `trust`, `mood`, `energy`, `defense`, `touchFatigue`, touch/reject timestamps and counters |
-| Conversation | `lastMessage`, `chatHistory`, `reactionPreview`, `lastTouchReaction` |
+| Per-companion canonical | `companionStates.version` + `byId[companionId].relationship/growth`; each companion owns its own relationship, stage shell and migration provenance |
+| Active relationship mirror | The exact 14 `RELATION_MIRROR_FIELDS`: bond／trust／mood／energy／defense／touch fatigue, touch/reject/blocked timestamps and counters, first touch/hug, reaction preview/last reaction |
+| Conversation | `lastMessage`, `chatHistory` |
 | Memory / habitat trace | `memories`, `memorySchemaVersion`, `emotionalMemories`, `habitatTraces`, `lastEmotionTag`, `habitatRepairFactor` |
 | Safety / time | `safeHarborMode`, `lastSeenAt`, `timeAnomalyCount` |
-| First session | `playerProfile`, `onboarding`, `firstSessionOpeningSeenAt`, `firstTouchCompleted`, `firstHugCompleted` |
+| First session | `playerProfile`, `onboarding`, `firstSessionOpeningSeenAt`; first touch/hug remain in the active relationship mirror |
 | World / roster | `activeHabitatId`, `activeCompanionId`, `unlockedCompanionIds` |
 | Progress | `battleRecord`, `chapterProgress`, `resonance`, `explorationProgress` |
 | Expedition prototype | `expeditionVault` |
@@ -91,12 +92,15 @@ Notes：
 - `battleRecord.wins/losses/retreats` 是 legacy compatibility-only schema；新設計只消費 canonical standoff outcome，不得把欄位名解讀為傳統 RPG 勝負。
 - `settings` 包含音量、品質、文字、low-motion、語言與 audio mute。
 - `companionPreferences` 是跨回合語氣偏好；safety turn 不得更新或套用它覆寫 canonical safety response。
+- `companionStates.byId` 是 G2 持久真相；頂層 14 欄只相容目前 active companion。切換以一個 store transaction 封存 A、lazy-init／hydrate B、reset transient spam、notify 一次。Inactive veteran 只可有 display-only Codex floor，不得複製 active relationship。
+- Boot offline recovery 只對已有 relationship 的每隻夥伴套用相同的 bounded energy／touch-fatigue 調節，再 hydrate active mirror；archive-only 紀錄不會因此建立關係，且此路徑不寫 stage／evidence／bond。
 
 ### State modules
 
 - `src/state/defaultState.js` — fresh state shape。
+- `src/state/companionStateSchema.js` — G2 schema、14-field inventory、legacy migration、Codex presentation 與 mirror archive／hydrate pure helpers。
 - `src/state/store.js` — `getState` / `setState` / `replaceState` / `updateState` /
-  `subscribe` / `normalizeState`。
+  `replaceRuntimeState` / `subscribe` / `normalizeState`。Persisted `replaceState` 以 canonical 為準；boot recovery 才用 `replaceRuntimeState` 封存已 hydrate 的 runtime mirror。
 - `src/state/saveManager.js` — 主存檔 `nexusLinkR2State:v1`、legacy migration、quota pruning。
 - `src/state/saveQueue.js` — `CRITICAL` / `INTERACTION` / `DEBOUNCE` save levels。
 
@@ -132,7 +136,7 @@ Current authority：
 - `src/ai/nlu/` + `src/ai/dialogue/` — deterministic NLU、context、anti-loop、quick replies。
 - `src/data/ai/` — voice/corpus/training/Nuwa bundles；advisory-only，不能凌駕 Core。
 
-Safety invariant：高風險輸入必須終止於完整 system safety response、零 quick reply、零關係／資源增益、零 emotional memory／trace／preference write。自動 holdout 分數不能取代正文 contract 或 human gate。
+Safety invariant：高風險輸入必須終止於完整 system safety response、零 quick reply、完整 relationship／growth／資源不變、零 emotional memory／trace／preference write；只允許 canonical chat、safety UI/mode 與 save timestamp。自動 holdout 分數不能取代正文 contract 或 human gate。
 
 ---
 
@@ -149,6 +153,7 @@ Safety invariant：高風險輸入必須終止於完整 system safety response�
 | Chapter / resonance | `chapterRegistry.js`（data）, `battleController.js`（UI progression）, `resonanceInviteEngine.js`, `resonanceCircleEngine.js` |
 | Habitat / time | `environmentController.js`, `environmentHeartbeat.js`, `recoveryEngine.js` |
 | Initiative | `src/ai/autonomy/initiativeCooldown.js` + `src/ui/companionInitiativeController.js` |
+| Companion Growth | `companionGrowthSessionEngine.js`（G1 session-only）+ `companionStateSchema.js`（G2 persistent foundation）；G3 evidence/readiness/willingness 尚未接入 |
 
 ---
 

@@ -1,7 +1,7 @@
 // 圖鑑演化線。A5 已填充：每條線三階（幼年→成長→成熟）。
-// 契約：演化**不靠打怪**（見 CLAUDE.md）——解鎖條件是羈絆（bond）+ 痕跡 + 儀式，
-// 由 codexController 以 `bondThreshold` 判定（不再用 unlockWins）。unlockHint 為關係語言，
-// 明文不寫「打贏 N 場」。更高階（完全體/究極體）留待未來章節，故此處三階為 demo 完整弧。
+// G2 起，codexController 只讀 companionStates 內該夥伴自己的正式 stage
+//（或一次性的舊存檔 display floor），不再用全域 bondThreshold 解鎖。
+// bondThreshold 暫留 compatibility data，不能作 runtime stage authority。
 export const STAGE_LABELS = [
   { zh: "幼年期", en: "BABY" },
   { zh: "成長期", en: "CHILD" },
@@ -13,8 +13,8 @@ export const STAGE_LABELS = [
 // 關係門檻對齊既有羈絆里程碑：25「信任萌芽」、70「並肩」。
 const CHILD_BOND = 25;
 const ADULT_BOND = 70;
-const CHILD_HINT = "當你們的羈絆長到「信任萌芽」（羈絆約 25），且湖邊已留下夠多情緒痕跡時，這一階會自己亮起——不靠勝負，靠你怎麼對待牠。";
-const ADULT_HINT = "當羈絆深到「並肩」（羈絆約 70），並一起走過一段靜心儀式後，牠會走向這個形態。";
+const CHILD_HINT = "當牠在照顧、探索與邊界中留下足夠多不同的真實痕跡，且牠自己願意時，這一階才會亮起——不靠勝負，也不靠刷數值。";
+const ADULT_HINT = "當你們一起走過多種經歷，並在牠願意的時刻完成覺醒邀請，牠才會走向這個形態；沒有倒數，也不會永久錯過。";
 
 function line(complete, stages) {
   return { complete, stages };

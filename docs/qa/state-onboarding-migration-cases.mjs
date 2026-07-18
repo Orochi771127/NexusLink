@@ -1,6 +1,7 @@
 import { createDefaultState, normalizeState } from "../../src/state/store.js";
 import { getCompanionRuntimeEligibility } from "../../src/data/companionRuntimePolicy.js";
 import { evaluateActionEffect } from "../../src/engine/actionEffectEngine.js";
+import { advanceChapterProgress } from "../../src/data/chapterRegistry.js";
 
 const RUNTIME_READY_LEGACY_UNLOCKS = [
   "greyshade-cat",
@@ -109,7 +110,7 @@ runCase("damaged save values normalize to safe defaults", () => {
   assertEqual(state.playerProfile.displayName, "", "damaged profile fallback");
   assertEqual(state.onboarding.completed, false, "damaged onboarding fallback");
   assertEqual(state.bond, 0, "damaged bond clamp");
-  assertEqual(state.energy, 0, "damaged energy clamp");
+  assertEqual(state.energy, 10, "damaged energy uses relationship safe baseline");
 });
 
 runCase("CH-3 initial bond: chosen-only unlock survives normalization (no greyshade backfill)", () => {
@@ -186,8 +187,7 @@ runCase("CH-4 damaged chapterProgress values clamp and clean", () => {
   assertArrayEqual(state.chapterProgress.completed, [2, 3], "chapter completed cleaned");
 });
 
-runCase("CH-4 advanceChapterProgress moves current forward and records completion", async () => {
-  const { advanceChapterProgress } = await import("../../src/data/chapterRegistry.js");
+runCase("CH-4 advanceChapterProgress moves current forward and records completion", () => {
   const step1 = advanceChapterProgress({ current: 1, completed: [] }, 1);
   assertEqual(step1.current, 2, "advance to chapter 2");
   assertArrayEqual(step1.completed, [1], "chapter 1 recorded");

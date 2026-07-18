@@ -1,3 +1,5 @@
+import { createDefaultCompanionStates } from "./companionStateSchema.js";
+
 const defaultState = {
   bond: 0,
   trust: 5,
@@ -75,6 +77,10 @@ const defaultState = {
   unlockedCompanionIds: [
     "greyshade-cat",
   ],
+  // G2 canonical per-companion relationship and growth truth. The existing
+  // top-level relationship fields remain an active-companion compatibility
+  // mirror; this object stays inside nexusLinkR2State:v1.
+  companionStates: createDefaultCompanionStates("greyshade-cat"),
   battleRecord: {
     wins: 0,
     losses: 0,

@@ -215,7 +215,9 @@ async function bootstrap() {
         lastEmotionTag: returnBehavior?.dominantEmotion || initialState.lastEmotionTag
       });
 
-  store.replaceState(initialState);
+  // Offline recovery updates every established canonical relationship, then
+  // hydrates active; seal the return-behavior mirror before boot publish.
+  store.replaceRuntimeState(initialState);
   replacePreferenceStore(initialState.companionPreferences);
   markPerf("nexus:state-loaded");
   const saveQueue = createSaveQueue(saveCurrentState);
@@ -832,6 +834,7 @@ async function bootScene(
     if (message) statusText.textContent = message;
   };
   let companionPositionCleanup = null;
+  let companionSwapVersion = 0;
   let companion = await createCreatureNode(currentCreature, { onStatus: reportCompanionStatus });
 
   function attachCompanion(node, creature) {
@@ -841,7 +844,7 @@ async function bootScene(
     exposeDevCompanion(node);
 
     companionMotionController = createCompanionMotion(node, store.getState().mood);
-    interactionController = createInteractionController({
+    const nodeInteractionController = createInteractionController({
       companion: node,
       creature,
       store,
@@ -852,11 +855,12 @@ async function bootScene(
         devPanelController?.renderReadout();
       }
     });
+    interactionController = nodeInteractionController;
     bindCompanionTap(node, {
       isInteractionBlocked: () => panelManager.isPanelOpen() || onboardingController?.isActive?.(),
       onTouch: (touchType) => {
         markInteraction(); // 觸碰會喚醒睡眠中的夥伴
-        return Promise.resolve(interactionController.handleTouch(touchType)).then((touchResult) => {
+        return Promise.resolve(nodeInteractionController.handleTouch(touchType)).then((touchResult) => {
           raphaelAgentEventBridge?.("touch", {
             touchType,
             touchResult
@@ -875,10 +879,22 @@ async function bootScene(
   });
 
   async function swapCompanion(nextCreature) {
+    const swapVersion = ++companionSwapVersion;
     const previousCompanion = companion;
     interactionController?.dispose?.();
     interactionController = null;
-    const nextCompanion = await createCreatureNode(nextCreature, { onStatus: reportCompanionStatus });
+    const nextCompanion = await createCreatureNode(nextCreature, {
+      onStatus: (payload) => {
+        if (swapVersion === companionSwapVersion) reportCompanionStatus(payload);
+      }
+    });
+    if (
+      swapVersion !== companionSwapVersion
+      || store.getState().activeCompanionId !== nextCreature.id
+    ) {
+      nextCompanion.destroy({ children: true });
+      return false;
+    }
     companion = nextCompanion;
     attachCompanion(nextCompanion, nextCreature);
     if (previousCompanion && previousCompanion !== nextCompanion) {
@@ -886,6 +902,7 @@ async function bootScene(
       previousCompanion.destroy({ children: true });
     }
     statusText.textContent = `${nextCreature.name}來到了你身邊。`;
+    return true;
   }
 
   async function switchHabitat(habitatId) {

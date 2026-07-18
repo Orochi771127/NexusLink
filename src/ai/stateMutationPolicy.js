@@ -30,17 +30,15 @@ export function deriveStateMutation({
   let spamScoreDelta = 0;
   let reason = "default_acknowledge";
 
-  if (plan.mode === SOUL_TALK_REACTIONS.SAFETY_REDIRECT || safety?.action === "safety_redirect") {
+  if (
+    safety?.isHighRisk
+    || plan.mode === SOUL_TALK_REACTIONS.SAFETY_REDIRECT
+    || safety?.action === "safety_redirect"
+  ) {
     reason = "high_risk_safety";
     return finalize({
       statePatch: {
-        safeHarborMode: true,
-        mood: "safe_harbor",
-        energy,
-        bond,
-        trust,
-        defense,
-        reactionPreview: patch.reactionPreview || "棲地先把這句話從遊戲回應中隔離出來。"
+        safeHarborMode: true
       },
       shouldRewardRelationship: false,
       shouldTriggerMilestone: false,

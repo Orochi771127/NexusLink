@@ -527,6 +527,8 @@ def simulate_old_save(page):
     page.evaluate(f"""() => {{
         const s = JSON.parse(localStorage.getItem('{STORAGE_KEY}') || '{{}}');
         s.firstTouchCompleted = true;
+        const activeRelationship = s.companionStates?.byId?.[s.activeCompanionId]?.relationship;
+        if (activeRelationship) activeRelationship.firstTouchCompleted = true;
         s.emotionalMemories = s.emotionalMemories || [];
         if (!s.emotionalMemories.some(m => m.source === 'first_awakening')) {{
             s.emotionalMemories.push({{

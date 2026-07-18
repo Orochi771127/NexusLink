@@ -311,6 +311,41 @@ def run_companion_growth_session(node: str):
     return result
 
 
+def run_companion_growth_state(node: str):
+    result = run_command(
+        "companion_growth_state",
+        [node, "docs/qa/companion-growth-state-cases.mjs"],
+        timeout=45,
+    )
+    payload = result.get("json") or {}
+    result["ok"] = result["exit_code"] == 0 and payload.get("failed") == 0
+    return result
+
+
+def run_session_owner_guard(node: str):
+    result = run_command(
+        "session_owner_guard",
+        [node, "docs/qa/session-owner-guard-cases.mjs"],
+        timeout=30,
+    )
+    result["ok"] = (
+        result["exit_code"] == 0
+        and "SESSION_OWNER_GUARD_SUMMARY 9/9" in result.get("stdout_tail", "")
+    )
+    return result
+
+
+def run_onboarding_codex_regression(node: str):
+    result = run_command(
+        "onboarding_codex_regression",
+        [node, "docs/qa/onboarding-codex-regression-cases.mjs"],
+        timeout=30,
+    )
+    payload = result.get("json") or {}
+    result["ok"] = result["exit_code"] == 0 and payload.get("failed") == 0
+    return result
+
+
 def run_companion_growth_browser(base_url: str):
     result = run_command(
         "companion_growth_browser",
@@ -858,6 +893,9 @@ def summarize(report):
     required.append(report["checks"]["stateMigration"]["ok"])
     required.append(report["checks"]["companionRendererLifecycle"]["ok"])
     required.append(report["checks"]["companionGrowthSession"]["ok"])
+    required.append(report["checks"]["companionGrowthState"]["ok"])
+    required.append(report["checks"]["sessionOwnerGuard"]["ok"])
+    required.append(report["checks"]["onboardingCodexRegression"]["ok"])
     required.append(report["checks"]["companionGrowthUi"]["ok"])
     required.append(report["checks"]["crystalLifecycle"]["ok"])
     required.append(report["checks"]["mapFirstSession"]["ok"])
@@ -931,6 +969,9 @@ def main():
         report["checks"]["stateMigration"] = run_state_migration(node)
         report["checks"]["companionRendererLifecycle"] = run_companion_renderer_lifecycle(node)
         report["checks"]["companionGrowthSession"] = run_companion_growth_session(node)
+        report["checks"]["companionGrowthState"] = run_companion_growth_state(node)
+        report["checks"]["sessionOwnerGuard"] = run_session_owner_guard(node)
+        report["checks"]["onboardingCodexRegression"] = run_onboarding_codex_regression(node)
         report["checks"]["companionGrowthUi"] = run_companion_growth_browser(report["baseUrl"])
         report["checks"]["crystalLifecycle"] = run_crystal_lifecycle(node)
         report["checks"]["mapFirstSession"] = run_map_first_session(node)

@@ -1,3 +1,6 @@
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+
 const resizeListeners = new Set();
 const frames = new Map();
 let nextFrameId = 1;
@@ -21,6 +24,8 @@ globalThis.window = {
 
 const { positionCompanion } = await import("../../src/pixi/companionRenderer.js");
 const checks = [];
+const repoRoot = fileURLToPath(new URL("../../", import.meta.url));
+const appSource = readFileSync(`${repoRoot}/src/app.js`, "utf8");
 const app = { screen: { width: 390, height: 844 } };
 const retired = [];
 let active = null;
@@ -51,6 +56,24 @@ check(
 activeCleanup();
 check("cleanup removes the final resize listener", resizeListeners.size === 0);
 check("cleanup cancels pending animation frames", frames.size === 0);
+
+const swapStart = appSource.indexOf("async function swapCompanion");
+const swapEnd = appSource.indexOf("async function switchHabitat", swapStart);
+const swapBody = appSource.slice(swapStart, swapEnd);
+check(
+  "async companion swap has a latest-request generation guard",
+  swapBody.includes("const swapVersion = ++companionSwapVersion")
+    && swapBody.indexOf("swapVersion !== companionSwapVersion") < swapBody.indexOf("attachCompanion")
+);
+check(
+  "stale async companion nodes are destroyed before attach",
+  swapBody.indexOf("nextCompanion.destroy") >= 0
+    && swapBody.indexOf("nextCompanion.destroy") < swapBody.indexOf("attachCompanion")
+);
+check(
+  "tap binding captures its own interaction controller",
+  appSource.includes("nodeInteractionController.handleTouch(touchType)")
+);
 
 const failed = checks.filter((item) => !item.pass);
 console.log(JSON.stringify({ total: checks.length, failed: failed.length, checks }, null, 2));

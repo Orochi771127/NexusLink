@@ -66,17 +66,24 @@ export class InteractionController {
     this.saveCurrentState = saveCurrentState;
     this.statusText = statusText;
     this.onStateChange = onStateChange;
+    this.companionId = creature?.id || this.store.getState()?.activeCompanionId || null;
+    this.disposed = false;
     this.isAnimating = false;
     this.spamScore = 0;
-    this.store.setState({ spamScore: this.spamScore });
+    // Active-companion switches already reset spam in their one store
+    // transaction. Avoid a second notification/save-equivalent write.
+    if ((this.store.getState()?.spamScore || 0) !== 0) {
+      this.store.setState({ spamScore: this.spamScore });
+    }
     this.decayTimer = window.setInterval(() => this.decaySpamScore(), SPAM_DECAY_MS);
 
     companion.__interactionController = this;
   }
 
   async handleTouch(touchType = "touch") {
+    if (!this.isSessionCurrent()) return { blocked: true, reason: "companion_changed" };
     if (this.isAnimating) return { blocked: true, reason: "animation_locked" };
-    const currentState = this.store.getState();
+    let currentState = this.store.getState();
 
     const now = Date.now();
     if (currentState.lastRejectAt && now - currentState.lastRejectAt < REJECT_TOUCH_COOLDOWN_MS) {
@@ -85,6 +92,7 @@ export class InteractionController {
 
     // 尊重拒絕的正向沉積：上次被拒絕後，玩家給了足夠空間才回來。
     this.applyRespectBonusIfEarned(now);
+    currentState = this.store.getState();
 
     const currentAnimation = this.getCurrentAnimationName();
     const wakingFromSleep = currentAnimation === "sleep";
@@ -93,6 +101,8 @@ export class InteractionController {
       // emit 在動畫 await 之前，確保 300ms 內出現。
       this.emitReactionFeedback("牠睜開眼睛，慢慢醒了過來。", "accept");
       await this.playAnimation("idle_wake");
+      if (!this.isSessionCurrent()) return { blocked: true, reason: "companion_changed" };
+      currentState = this.store.getState();
       if (currentState.firstTouchCompleted) {
         return { blocked: false, reaction: "wake", motionState: "idle_wake" };
       }
@@ -114,6 +124,7 @@ export class InteractionController {
     let motionState = this.chooseTouchAnimation(interactionResult, touchType);
     let awakeningResult = null;
 
+    if (!this.isSessionCurrent()) return { blocked: true, reason: "companion_changed" };
     this.store.updateState((draft) => {
       Object.assign(draft, interactionResult.statePatch);
       draft.spamScore = this.spamScore;
@@ -158,7 +169,7 @@ export class InteractionController {
         if (shouldLock) {
           this.isAnimating = false;
           resolve();
-          queueMicrotask(() => this.playAnimation(idleAnimation));
+          if (this.isSessionCurrent()) queueMicrotask(() => this.playAnimation(idleAnimation));
           return;
         }
         resolve();
@@ -172,6 +183,10 @@ export class InteractionController {
       const loadAnimation = animationController.loadAnimation?.(definition.id) || Promise.resolve();
       loadAnimation
         .then(() => {
+          if (!this.isSessionCurrent()) {
+            release();
+            return;
+          }
           const played = animationController.play(definition.id, {
             mood: this.store.getState().mood,
             loop: shouldLock ? false : undefined
@@ -217,7 +232,11 @@ export class InteractionController {
   }
 
   dispose() {
+    this.disposed = true;
     window.clearInterval(this.decayTimer);
+    if (this.companion?.__interactionController === this) {
+      this.companion.__interactionController = null;
+    }
   }
 
   chooseTouchAnimation(interactionResult, touchType) {
@@ -226,6 +245,7 @@ export class InteractionController {
   }
 
   async handleSpamBurst() {
+    if (!this.isSessionCurrent()) return { blocked: true, reason: "companion_changed" };
     this.setSpamScore(0);
     const currentState = this.store.getState();
     // 依夥伴 profile 解析憤怒動畫：灰影貓→special_angry，五元守護→idle_angry。
@@ -252,6 +272,7 @@ export class InteractionController {
   }
 
   handleBlockedTouch(now = Date.now()) {
+    if (!this.isSessionCurrent()) return { blocked: true, reason: "companion_changed" };
     const result = evaluateBlockedTouch(this.store.getState(), now, this.creature?.name);
     const statePatch = result.statePatch;
 
@@ -274,6 +295,7 @@ export class InteractionController {
   }
 
   applyRespectBonusIfEarned(now = Date.now()) {
+    if (!this.isSessionCurrent()) return;
     const bonus = evaluateRespectBonus(this.store.getState(), now);
     if (!bonus.granted) return;
 
@@ -291,6 +313,7 @@ export class InteractionController {
 
 
   decaySpamScore() {
+    if (!this.isSessionCurrent()) return;
     if (this.isAnimating) return;
     if (this.spamScore <= 0) return;
     this.setSpamScore(this.spamScore - 1);
@@ -298,7 +321,17 @@ export class InteractionController {
 
   setSpamScore(value) {
     this.spamScore = Math.max(0, value);
+    if (!this.isSessionCurrent()) return;
     this.store.setState({ spamScore: this.spamScore });
+  }
+
+  isSessionCurrent() {
+    return Boolean(
+      !this.disposed
+      && this.companionId
+      && this.store.getState()?.activeCompanionId === this.companionId
+      && (!this.companion?.__interactionController || this.companion.__interactionController === this)
+    );
   }
 
   setStatusText(text) {
