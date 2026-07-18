@@ -288,7 +288,7 @@ Initial Bond 已接入：fresh save 固定呈現 `greyshade-cat` / `blazetail-ki
 | 情緒對峙 | `battleEngine.js` ・ `battleController.js` ・ `enemyRegistry.js`（`battleRecord.wins/losses` compatibility-only） |
 | 探索 | `mapController.js` ・ `explorationEngine.js` ・ `explorationNodes.js` |
 | Expedition（Prototype） | `expeditionController.js` ・ `src/expedition/` ・ `RAPHAEL_EXPEDITION_EVAL_CONTRACT.md`（partial Core bridge，`coreIntegrated:false`） |
-| Companion Growth（設計／驗收；runtime 未實作） | `docs/design/COMPANION_GROWTH_CONTRACT_V1.md` ・ `ACCEPTANCE.md` N1–N12 ・ `evolutionLines.js`（compatibility data only） |
+| Companion Growth（G1 session-only 已接入；G2+ 未實作） | `companionGrowthSessionEngine.js` ・ `pageRouter.js` ・ `docs/design/COMPANION_GROWTH_CONTRACT_V1.md` ・ `ACCEPTANCE.md` N1–N12 ・ `evolutionLines.js`（compatibility data only） |
 | Pixi 核心 | `pixiApp.js`(LOCKED 級) ・ `companionRenderer.js` ・ `spriteSheetAnimationLoader.js` ・ `motionController.js` |
 | 人格 | `companionPersonality.js` ・ `personalityProfile.js` ・ `animationProfile.js` |
 | 資料 | `companionRegistry.js` ・ `evolutionLines.js` ・ `emotionDictionary.js` ・ `safetyShieldDictionary.js` |

@@ -1,6 +1,5 @@
 import { getShardType } from "../data/lootTables.js";
 import { getCompanionById } from "../data/companionRegistry.js";
-import { canAffordRecipe, listCraftRecipesForUi } from "../expedition/expeditionCraftEngine.js";
 import {
   HEART_PHASE_PRACTICES,
   createCompanionGrowthSession,
@@ -214,12 +213,26 @@ export function createPageRouter({
     const companionName = getCompanionDisplayName(companion);
     const session = growthSessions.get(companionId) || createCompanionGrowthSession(companionId);
     const snapshot = deriveHeartPhaseSnapshot(state, session);
+
+    // Safety is terminal and is not a Heart Phase. While safe harbor is active,
+    // the Growth body exposes no practice, observation, crafting, or phase cue.
+    if (snapshot.safetyPaused) {
+      body.innerHTML = `
+        <section class="growth-response growth-response--safety"
+          data-growth-result data-outcome="safety-paused"
+          aria-label="${t("growth.session.safetyLabel")}">
+          <strong>${t("growth.session.safetyLabel")}</strong>
+          <p>${t("growth.session.safetyCopy")}</p>
+        </section>
+      `;
+      return;
+    }
+
     const practiceButtons = HEART_PHASE_PRACTICES.map((practice) => `
       <button type="button"
         data-page-action="growth-practice"
         data-growth-practice="${practice.id}"
         data-tendency="${practice.tendencyId}"
-        ${snapshot.safetyPaused ? "disabled aria-disabled=\"true\"" : ""}
       >
         <strong>${t(practice.labelKey)}</strong>
         <em>${t(practice.copyKey)}</em>
@@ -232,33 +245,25 @@ export function createPageRouter({
           </span>
         `).join("")
       : `<p class="growth-observation-empty">${t("growth.session.observedEmpty")}</p>`;
-    const lastResult = snapshot.safetyPaused ? null : snapshot.lastResult;
-    // aria-live=polite：心相結果變更時，螢幕閱讀器可朗讀，不只靠顏色區分。
-    const responseMarkup = snapshot.safetyPaused
+    const lastResult = snapshot.lastResult;
+    // The persistent #status-text owns polite announcements. Result cards stay
+    // visible and text-labelled without creating a second live-region echo.
+    const responseMarkup = lastResult
       ? `
-        <section class="growth-response growth-response--safety" data-growth-result data-outcome="safety-paused" aria-live="polite" aria-label="${t("growth.session.safetyLabel")}">
-          <strong>${t("growth.session.safetyLabel")}</strong>
-          <p>${t("growth.session.safetyCopy")}</p>
+        <section class="growth-response growth-response--${lastResult.outcomeId}" data-growth-result data-outcome="${lastResult.outcomeId}">
+          <span>${t(`growth.session.outcome.${lastResult.outcomeId}`)}</span>
+          <strong>${t(lastResult.responseKey)}</strong>
+          ${lastResult.observedTendencyId ? `
+            <small>${t("growth.session.resultTendencyPrefix")}${t(`growth.session.tendency.${lastResult.observedTendencyId}`)}</small>
+          ` : `<small>${t("growth.session.zeroEvidence")}</small>`}
         </section>
       `
-      : lastResult
-        ? `
-          <section class="growth-response growth-response--${lastResult.outcomeId}" data-growth-result data-outcome="${lastResult.outcomeId}" aria-live="polite">
-            <span>${t(`growth.session.outcome.${lastResult.outcomeId}`)}</span>
-            <strong>${t(lastResult.responseKey)}</strong>
-            ${lastResult.observedTendencyId ? `
-              <small>${t("growth.session.resultTendencyPrefix")}${t(`growth.session.tendency.${lastResult.observedTendencyId}`)}</small>
-            ` : `<small>${t("growth.session.zeroEvidence")}</small>`}
-          </section>
-        `
-        : `
-          <section class="growth-response growth-response--waiting" data-growth-result data-outcome="waiting" aria-live="polite">
-            <strong>${t("growth.session.waitingTitle")}</strong>
-            <p>${t("growth.session.waitingCopy")}</p>
-          </section>
-        `;
-    // Expedition 碎晶／製作只放在預設關閉的 Prototype details，不得當成長主循環。
-    const prototypeMarkup = renderGrowthPrototype(state);
+      : `
+        <section class="growth-response growth-response--waiting" data-growth-result data-outcome="waiting">
+          <strong>${t("growth.session.waitingTitle")}</strong>
+          <p>${t("growth.session.waitingCopy")}</p>
+        </section>
+      `;
     body.innerHTML = `
       <div class="page-focus-card page-focus-card--growth" data-growth-phase="${snapshot.phaseId}">
         <span class="page-orb" aria-hidden="true">✧</span>
@@ -269,19 +274,16 @@ export function createPageRouter({
         </div>
       </div>
       ${responseMarkup}
-      ${snapshot.safetyPaused ? "" : `
-        <section class="growth-observation" data-growth-observation aria-labelledby="growth-observation-title">
-          <div>
-            <strong id="growth-observation-title">${t("growth.session.observedTitle")}</strong>
-            <small>${t("growth.session.observedNote")}</small>
-          </div>
-          <div class="growth-tendency-strip">${observedTendencies}</div>
-        </section>
-        <div class="page-action-grid page-action-grid--growth-practice" aria-label="${t("growth.session.practiceAria")}">
-          ${practiceButtons}
+      <section class="growth-observation" data-growth-observation aria-labelledby="growth-observation-title">
+        <div>
+          <strong id="growth-observation-title">${t("growth.session.observedTitle")}</strong>
+          <small>${t("growth.session.observedNote")}</small>
         </div>
-      `}
-      ${prototypeMarkup}
+        <div class="growth-tendency-strip">${observedTendencies}</div>
+      </section>
+      <div class="page-action-grid page-action-grid--growth-practice" aria-label="${t("growth.session.practiceAria")}">
+        ${practiceButtons}
+      </div>
     `;
   }
 
@@ -482,6 +484,17 @@ export function createPageRouter({
         await panelManager.openPanel("character");
         render();
       } else if (action === "commit") {
+        if (activePage === "grow") {
+          const currentState = store.getState();
+          const companionId = currentState.activeCompanionId || "greyshade-cat";
+          const currentSession = growthSessions.get(companionId)
+            || createCompanionGrowthSession(companionId);
+          if (deriveHeartPhaseSnapshot(currentState, currentSession).safetyPaused) {
+            const error = new Error("Growth actions are unavailable during safe harbor");
+            error.code = "ACTION_UNAVAILABLE";
+            throw error;
+          }
+        }
         const actionResult = await actionSheetController.performAction(button.dataset.navAction, {
           choice: button.dataset.choice,
           status: button.dataset.status
@@ -606,60 +619,6 @@ function getCompanionDisplayName(companion) {
   if (!companion) return t("growth.session.companionFallback");
   if (getLanguage() === "en") return companion.displayName?.en || companion.name;
   return companion.displayName?.zh || companion.name || t("growth.session.companionFallback");
-}
-
-function pickLocalizedText(dict, fallback = "") {
-  if (!dict || typeof dict !== "object") return fallback;
-  if (getLanguage() === "en") return dict.en || dict.zh || fallback;
-  return dict.zh || dict.en || fallback;
-}
-
-function renderGrowthPrototype(state) {
-  const vaultShards = state.expeditionVault?.shards || {};
-  const shardStrip = Object.entries(vaultShards)
-    .filter(([, count]) => Number(count) > 0)
-    .map(([shardId, count]) => {
-      const label = pickLocalizedText(getShardType(shardId).label, shardId);
-      return `<span><strong>${Number(count)}</strong><em>${escapeHtml(label)}</em></span>`;
-    })
-    .join("");
-  const craftRecipes = listCraftRecipesForUi(state);
-  const craftButtons = craftRecipes.map((recipe) => {
-    const afford = canAffordRecipe(state, recipe.id);
-    const label = pickLocalizedText(recipe.label, recipe.id);
-    const sub = pickLocalizedText(recipe.sub, "");
-    return `
-      <button type="button"
-        data-page-action="commit"
-        data-nav-action="grow"
-        data-choice="${escapeHtml(recipe.choice)}"
-        data-status="${escapeHtml(recipe.status || "")}"
-        ${afford ? "" : "disabled"}
-        title="${afford ? escapeHtml(recipe.status || "") : t("growth.session.prototype.locked")}"
-      >
-        <strong>${escapeHtml(label)}</strong>
-        <em>${escapeHtml(sub)}</em>
-      </button>
-    `;
-  }).join("");
-
-  return `
-    <details class="growth-prototype" data-growth-prototype>
-      <summary>
-        <strong>${t("growth.session.prototype.title")}</strong>
-        <span>${t("growth.session.prototype.badge")}</span>
-      </summary>
-      <p>${t("growth.session.prototype.copy")}</p>
-      <div class="page-evidence-strip" aria-label="${t("growth.session.prototype.shardsAria")}">
-        ${shardStrip || `<span><em>${t("growth.session.prototype.locked")}</em></span>`}
-      </div>
-      ${craftButtons ? `
-        <div class="page-action-grid page-action-grid--craft" aria-label="${t("growth.session.prototype.craftAria")}">
-          ${craftButtons}
-        </div>
-      ` : ""}
-    </details>
-  `;
 }
 
 function collectMemoryEntries(state) {

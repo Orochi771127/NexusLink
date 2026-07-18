@@ -1,11 +1,11 @@
 # COMPANION_GROWTH_CONTRACT_V1.md
 # 心核夥伴養成與覺醒契約 v1
 
-> **狀態**：`ACTIVE DESIGN CONTRACT / RUNTIME NOT YET IMPLEMENTED`
+> **狀態**：`ACTIVE DESIGN CONTRACT / G1 SESSION-ONLY RUNTIME IMPLEMENTED / G2+ NOT YET IMPLEMENTED`
 >
-> **Owner direction**：2026-07-17 已核准先完成此 docs-first 契約；任何持久欄位、migration、正式形態資產或 runtime 接線仍須另開對應 TASK_PACK。涉及 `defaultState.js`、`store.js`、`saveManager.js`、`assets/**` 或 `pixiApp.js` 時，必須重新取得 GROUNDWORK 逐項確認。
+> **Owner direction**：2026-07-17 已核准此契約與 G1 session-only 切片；G1 現已接入 Growth 頁。任何持久欄位、migration、正式形態資產或 G2+ runtime 接線仍須另開對應 TASK_PACK。涉及 `defaultState.js`、`store.js`、`saveManager.js`、`assets/**` 或 `pixiApp.js` 時，仍須依 GROUNDWORK 核准範圍施工。
 >
-> **權威關係**：本文件服從 `NEXUS_LINK_MASTER_CANON_v3.1.md`，是 Companion Growth／心核夥伴養成的現行**設計與驗收 SSOT（runtime 尚未實作）**。`docs/r2-canon/R2_EVOLUTION_SYSTEM.md` 的等級、勝場、道具、五階與能力雷達只保留為歷史參考，不得作新實作依據。
+> **權威關係**：本文件服從 `NEXUS_LINK_MASTER_CANON_v3.1.md`，是 Companion Growth／心核夥伴養成的現行**設計與驗收 SSOT**。目前只有 G1 當頁、可逆、session-only 的質性心相觀察；per-companion 持久關係／成長、migration、正式階段與形態 swap 仍未實作。`docs/r2-canon/R2_EVOLUTION_SYSTEM.md` 的等級、勝場、道具、五階與能力雷達只保留為歷史參考，不得作新實作依據。
 >
 > **不涵蓋**：`src/ai/evolution/**` 是 Raphael 自我評估／patch 管線，不是夥伴養成；本契約不改 RaphaelCore、安全回覆、人格或記憶權限。
 
@@ -37,7 +37,7 @@
 | `codexController` 只用全域 `state.bond >= 0/25/70` 顯示階段 | 只是 compatibility reveal，不是夥伴主動覺醒 |
 | `bond/trust/mood/energy/defense/touchFatigue` 仍是全域欄位 | 正式多夥伴養成 blocker；尚無 per-companion relationship truth |
 | 舊 memory / milestone 多數沒有 `companionId` | 不可把舊歷史複製給整個 roster，也不可臆測逐筆歸屬 |
-| Growth 頁顯示 bond 數字、遠征碎晶與 crafting | transitional；Expedition 仍是 Prototype，不得成為商業養成主循環 |
+| Growth 頁已有 G1 session-only Heart Phase 與四種質性練習 | 已接入但不持久；遠征碎晶／crafting 不掛在 Growth，Expedition 仍是獨立 Prototype，不得成為商業養成主循環 |
 | registry 只有單一角色 portrait／animation manifest | 尚無正式 Stage 2／3 形態資產對照；不可假裝已換形 |
 | `growthHint` 只有 action effect 寫入，無 consumer／normalizer | 非正式狀態，不可據此宣稱養成已完成 |
 
@@ -348,8 +348,8 @@ Pixi 只消費 `heart_phase_manifestation`、姿態與環境 cue，不讀寫 sta
 
 | Phase | Layer | 內容 | 最低 gate／退出條件 |
 |---|---|---|---|
-| G0 | Docs | 本契約、Acceptance、legacy 與 agent/art 路由 | 文件一致；runtime truth 與 `RUNTIME NOT YET IMPLEMENTED` 明確；review findings 已封口 |
-| G1 | EXPERIENCE | 只從本 session 合法事件衍生 qualitative tendency；Growth view model 原型，不新增持久 schema | N2／N4／N5／N8／N11 的 presentation subset + M1–M5 + H + I；4 種 practice、390×844、reduced motion |
+| G0 | Docs | 本契約、Acceptance、legacy 與 agent/art 路由 | 文件一致；G1 已接入與 G2+ 未實作的 runtime truth 明確；review findings 已封口 |
+| G1 | EXPERIENCE | **已實作**：只從本 session 合法事件衍生 qualitative tendency；Growth view model，不新增持久 schema | N2／N3／N4／N5／N8／N11 的 presentation subset + M1–M5 + H + I；4 種 practice、390×844、reduced motion |
 | G2 | GROUNDWORK | `companionStates`／full mirror inventory／normalize／migration／single-key save；active mirror 原子切換 | N1／N3／N9／N10／N11 + H + I；11-companion ring、veteran、corrupt、idempotent 全過 |
 | G3 | EXPERIENCE | 正式 key factory、evidence writer、coverage／compaction、readiness／willingness、Growth UI | N1–N11 + safety／alias／repeat-50／compaction mutation tests 全過 |
 | G4 | EXPERIENCE | 夥伴主動 stage offer、可延後的覺醒儀式、heart-phase 表現 | N2／N3／N5／N7／N8／N11 + H + I；無強制、無 FOMO、無獎勵、可再提出 |
