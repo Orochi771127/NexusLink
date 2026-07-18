@@ -5,6 +5,14 @@ import { normalizeRuntimeCompanionId, normalizeUnlockedCompanionIds } from "../d
 import { isKnownCompanionId } from "../data/companionRegistry.js";
 import { EXPLORATION_NODE_IDS } from "../data/explorationNodes.js";
 import { normalizeHabitatId } from "../data/habitatRegistry.js";
+import {
+  archiveRelationshipMirror,
+  createDefaultCompanionStates,
+  getCompanionRelationship,
+  normalizeCompanionStates,
+  rawStateHasRelationshipMirror,
+  RELATION_MIRROR_FIELDS
+} from "./companionStateSchema.js";
 
 let state = createDefaultState();
 const listeners = new Set();
@@ -20,6 +28,7 @@ export function createDefaultState() {
     playerProfile: { ...defaultState.playerProfile },
     onboarding: { ...defaultState.onboarding, firstLoop: { ...defaultState.onboarding.firstLoop } },
     unlockedCompanionIds: [...defaultState.unlockedCompanionIds],
+    companionStates: createDefaultCompanionStates(defaultState.activeCompanionId),
     battleRecord: { ...defaultState.battleRecord },
     chapterProgress: { current: defaultState.chapterProgress.current, completed: [...defaultState.chapterProgress.completed] },
     resonance: { chapterMarks: {}, companions: {} },
@@ -35,61 +44,99 @@ export function getState() {
 }
 
 export function setState(partial) {
-  state = normalizeState({ ...state, ...partial });
+  const candidate = prepareRuntimeMutation(state, { ...state, ...partial });
+  state = normalizeState(candidate);
   notify();
   return state;
 }
 
 export function replaceState(nextState) {
+  // Persisted/full replacement is canonical-authoritative. This is used by
+  // rollback paths and prevents a stale compatibility mirror from overwriting
+  // an existing companionStates record.
   state = normalizeState(nextState);
   notify();
   return state;
 }
 
+export function replaceRuntimeState(nextState) {
+  // Boot recovery and return behavior deliberately mutate a hydrated runtime
+  // mirror. Seal that full runtime snapshot before canonical normalization.
+  const candidate = nextState && typeof nextState === "object" ? nextState : {};
+  state = normalizeState(archiveRelationshipMirror(candidate, candidate.activeCompanionId));
+  notify();
+  return state;
+}
+
 export function updateState(mutator) {
+  const previousState = state;
   const draft = normalizeState({ ...state, chatHistory: state.chatHistory.map((item) => ({ ...item })) });
   const result = mutator(draft);
-  state = normalizeState(result || draft);
+  state = normalizeState(prepareRuntimeMutation(previousState, result || draft));
   notify();
   return state;
 }
 
 export function normalizeState(rawState = {}) {
+  const sourceState = rawState && typeof rawState === "object" ? rawState : {};
   const baseState = createDefaultState();
-  const targetState = { ...baseState, ...rawState };
+  const targetState = { ...baseState, ...sourceState };
   const chatHistory = Array.isArray(targetState.chatHistory) ? targetState.chatHistory : baseState.chatHistory;
   const memories = Array.isArray(targetState.memories) ? targetState.memories : baseState.memories;
   const habitatTraces = Array.isArray(targetState.habitatTraces) ? targetState.habitatTraces : baseState.habitatTraces;
   const emotionalMemories = Array.isArray(targetState.emotionalMemories)
     ? targetState.emotionalMemories
     : baseState.emotionalMemories;
-  const unlockedCompanionIds = normalizeUnlockedCompanionIds(targetState.unlockedCompanionIds, {
+  const initialUnlockedCompanionIds = normalizeUnlockedCompanionIds(targetState.unlockedCompanionIds, {
     activeCompanionId: targetState.activeCompanionId,
     preserveActiveCompanion: true
   });
+  const initialRuntimeState = { ...targetState, unlockedCompanionIds: initialUnlockedCompanionIds };
+  const initialActiveCompanionId = normalizeRuntimeCompanionId(targetState.activeCompanionId, initialRuntimeState);
+  const unlockedCompanionIds = normalizeUnlockedCompanionIds(initialUnlockedCompanionIds, {
+    activeCompanionId: initialActiveCompanionId,
+    preserveActiveCompanion: true
+  });
   const runtimeState = { ...targetState, unlockedCompanionIds };
+  const activeCompanionId = normalizeRuntimeCompanionId(initialActiveCompanionId, runtimeState);
+  const companionStates = normalizeCompanionStates(sourceState.companionStates, {
+    activeCompanionId,
+    unlockedCompanionIds,
+    legacyState: targetState,
+    legacyRelationshipPresent: rawStateHasRelationshipMirror(sourceState),
+    canonicalFieldPresent: Object.prototype.hasOwnProperty.call(sourceState, "companionStates")
+  });
+  const activeRelationship = getCompanionRelationship(companionStates, activeCompanionId)
+    || getCompanionRelationship(createDefaultCompanionStates(activeCompanionId), activeCompanionId);
+  const relationshipTargetState = {
+    ...targetState,
+    ...activeRelationship,
+    activeCompanionId,
+    unlockedCompanionIds,
+    companionStates
+  };
   const playerProfile = normalizePlayerProfile(targetState.playerProfile, baseState.playerProfile);
-  const onboarding = normalizeOnboarding(targetState.onboarding, baseState.onboarding, targetState);
+  const onboarding = normalizeOnboarding(targetState.onboarding, baseState.onboarding, relationshipTargetState);
 
   return {
-    ...targetState,
-    bond: clamp(targetState.bond, 0, 100),
-    trust: clamp(targetState.trust, 0, 100),
-    mood: targetState.mood || baseState.mood,
-    energy: clamp(targetState.energy, 0, 10),
+    ...relationshipTargetState,
+    bond: clamp(relationshipTargetState.bond, 0, 100),
+    trust: clamp(relationshipTargetState.trust, 0, 100),
+    mood: relationshipTargetState.mood || baseState.mood,
+    energy: clamp(relationshipTargetState.energy, 0, 10),
     spamScore: clamp(targetState.spamScore, 0, 999),
-    defense: clamp(targetState.defense ?? baseState.defense, 0, 100),
-    touchFatigue: clamp(targetState.touchFatigue ?? baseState.touchFatigue, 0, 10),
-    lastTouchAt: targetState.lastTouchAt ?? null,
-    lastRejectAt: targetState.lastRejectAt ?? null,
-    blockedTouchCount: clamp(targetState.blockedTouchCount ?? baseState.blockedTouchCount, 0, 999),
-    lastBlockedTouchAt: targetState.lastBlockedTouchAt ?? null,
+    defense: clamp(relationshipTargetState.defense ?? baseState.defense, 0, 100),
+    touchFatigue: clamp(relationshipTargetState.touchFatigue ?? baseState.touchFatigue, 0, 10),
+    lastTouchAt: relationshipTargetState.lastTouchAt ?? null,
+    lastRejectAt: relationshipTargetState.lastRejectAt ?? null,
+    blockedTouchCount: clamp(relationshipTargetState.blockedTouchCount ?? baseState.blockedTouchCount, 0, 999),
+    lastBlockedTouchAt: relationshipTargetState.lastBlockedTouchAt ?? null,
     lastSeenAt: normalizePositiveTimestamp(targetState.lastSeenAt, Date.now()),
     timeAnomalyCount: clamp(targetState.timeAnomalyCount ?? baseState.timeAnomalyCount, 0, 999),
-    firstTouchCompleted: Boolean(targetState.firstTouchCompleted),
-    firstHugCompleted: Boolean(targetState.firstHugCompleted),
-    reactionPreview: targetState.reactionPreview || "",
-    lastTouchReaction: targetState.lastTouchReaction || "",
+    firstTouchCompleted: Boolean(relationshipTargetState.firstTouchCompleted),
+    firstHugCompleted: Boolean(relationshipTargetState.firstHugCompleted),
+    reactionPreview: relationshipTargetState.reactionPreview || "",
+    lastTouchReaction: relationshipTargetState.lastTouchReaction || "",
     lastMessage: targetState.lastMessage || "",
     memorySchemaVersion: Number(targetState.memorySchemaVersion) || 1,
     safeHarborMode: Boolean(targetState.safeHarborMode),
@@ -100,7 +147,8 @@ export function normalizeState(rawState = {}) {
     playerProfile,
     onboarding,
     unlockedCompanionIds,
-    activeCompanionId: normalizeRuntimeCompanionId(targetState.activeCompanionId, runtimeState),
+    activeCompanionId,
+    companionStates,
     battleRecord: normalizeBattleRecord(targetState.battleRecord, baseState.battleRecord),
     chapterProgress: normalizeChapterProgress(targetState.chapterProgress),
     resonance: normalizeResonance(targetState.resonance),
@@ -116,6 +164,28 @@ export function normalizeState(rawState = {}) {
     habitatTraces: habitatTraces.map((item) => sanitizeTrace(item)).filter(Boolean),
     emotionalMemories: emotionalMemories.map((item) => sanitizeEmotionalMemory(item)).filter(Boolean)
   };
+}
+
+function prepareRuntimeMutation(previousState, candidateState) {
+  const candidate = candidateState && typeof candidateState === "object" ? candidateState : previousState;
+  const previousActiveId = previousState?.activeCompanionId;
+  const activeChanged = Boolean(
+    previousActiveId
+    && candidate.activeCompanionId
+    && candidate.activeCompanionId !== previousActiveId
+  );
+  // A switch transaction always seals A from the pre-mutation snapshot. Any
+  // simultaneous top-level relationship fields belong to neither B nor the
+  // switch command and are deliberately ignored; B hydrates from canonical.
+  // Non-relationship edits (including canonical growth edits) remain intact.
+  const archiveSource = activeChanged
+    ? RELATION_MIRROR_FIELDS.reduce(
+        (snapshot, field) => ({ ...snapshot, [field]: previousState?.[field] }),
+        { ...candidate }
+      )
+    : candidate;
+  const prepared = archiveRelationshipMirror(archiveSource, previousActiveId);
+  return activeChanged ? { ...prepared, spamScore: 0 } : prepared;
 }
 
 const BATTLE_RESULTS = new Set(["win", "lose", "retreat"]);

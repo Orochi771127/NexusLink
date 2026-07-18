@@ -54,6 +54,12 @@ def run():
             base.firstTouchCompleted = true;
             base.mood = 'calm';
             base.spamScore = 0;
+            const relationship = base.companionStates?.byId?.[base.activeCompanionId]?.relationship;
+            if (relationship) {{
+                relationship.touchFatigue = 0;
+                relationship.firstTouchCompleted = true;
+                relationship.mood = 'calm';
+            }}
             localStorage.setItem(key, JSON.stringify(base));
 
             if (ic) {{

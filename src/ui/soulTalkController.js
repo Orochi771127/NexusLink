@@ -18,8 +18,6 @@ const FIRST_TRACE_STATUS_TEXT = "第一道痕跡已安靜留在月湖。";
 const NON_REWARDING_MODES = new Set(["safety_redirect", "withdraw", "reject"]);
 const SAFETY_TERMINAL_MUTABLE_FIELDS = new Set([
   "safeHarborMode",
-  "mood",
-  "reactionPreview",
   "chatHistory"
 ]);
 // 痕跡回響（First-Session 支柱三）：第一道痕跡有專屬提示（FIRST_TRACE_SYSTEM_TEXT），
@@ -163,10 +161,14 @@ export function createSoulTalkController({ store, saveCurrentState, saveCritical
   function handlePlayerMessage(message, options = {}) {
     const companion = resolveActiveCompanion();
     const companionName = companion?.name || "夥伴";
+    // Capture the complete pre-turn relationship before adding the player chat
+    // line. If Core classifies this as high-risk, every relationship field is
+    // restored from here while chat + safety UI mode remain allowed.
+    const stateBeforeMessage = cloneSerializable(store.getState());
     setSoulTalkState("thinking");
     setStatusText(`${companionName}正在聽，先把湖面放慢……`);
     scrollAnchorText = message;
-    addChat("player", message);
+    addChat("player", message, { preserveReactionPreview: true });
 
     let result;
 
@@ -174,7 +176,6 @@ export function createSoulTalkController({ store, saveCurrentState, saveCritical
       // 玩家訊息已先寫入 chatHistory；除此之外，高風險回合只允許安全 UI/mode
       // 與 canonical system reply。先封存完整 top-level state，避免 lifecycle 或
       // 未來新增的次級 writer 在 safety terminal 路徑留下任何 gameplay/memory delta。
-      const stateBeforeCore = cloneSerializable(state);
       const moodBefore = state.mood;
       const now = Date.now();
       const idSuffix = String(Math.floor(Math.random() * 1000)).padStart(3, "0");
@@ -213,7 +214,7 @@ export function createSoulTalkController({ store, saveCurrentState, saveCritical
         : coreResult;
       const applied = applyRaphaelCoreResult(state, coreResultToApply, { companion: activeCompanion, now });
       if (isSafetyCoreResult(coreResultToApply)) {
-        restoreSafetyTerminalState(state, stateBeforeCore);
+        restoreSafetyTerminalState(state, stateBeforeMessage);
         replacePreferenceStore(state.companionPreferences);
       }
       const traceCountAfter = countVisibleRelationshipTraces(state.habitatTraces);
@@ -359,9 +360,9 @@ export function createSoulTalkController({ store, saveCurrentState, saveCritical
     statusText.textContent = text || DEFAULT_STATUS_TEXT;
   }
 
-  function addChat(role, text) {
+  function addChat(role, text, { preserveReactionPreview = false } = {}) {
     store.updateState((state) => {
-      state.reactionPreview = "";
+      if (!preserveReactionPreview) state.reactionPreview = "";
       appendChatLine(state, role, text);
     });
   }

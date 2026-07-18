@@ -1,13 +1,13 @@
 # COMPANION_GROWTH_CONTRACT_V1.md
 # 心核夥伴養成與覺醒契約 v1
 
-> **狀態**：`ACTIVE DESIGN CONTRACT / G1 SESSION-ONLY RUNTIME IMPLEMENTED / G2+ NOT YET IMPLEMENTED`
+> **狀態**：`ACTIVE DESIGN CONTRACT / G1 + G2 RUNTIME IMPLEMENTED / G3+ NOT YET IMPLEMENTED`
 >
-> **Owner direction**：2026-07-17 已核准此契約與 G1 session-only 切片；G1 現已接入 Growth 頁。任何持久欄位、migration、正式形態資產或 G2+ runtime 接線仍須另開對應 TASK_PACK。涉及 `defaultState.js`、`store.js`、`saveManager.js`、`assets/**` 或 `pixiApp.js` 時，仍須依 GROUNDWORK 核准範圍施工。
+> **Owner direction**：2026-07-17 已核准此契約與 G1 session-only 切片；2026-07-18 Owner 再核准 G2 GROUNDWORK，現已接入 per-companion 持久狀態、migration 與 active mirror 原子切換。G3 evidence writer／readiness／willingness、正式覺醒邀請與形態資產仍須另開對應 TASK_PACK。涉及 `assets/**` 或 `pixiApp.js` 時，仍須依 GROUNDWORK 核准範圍施工。
 >
-> **權威關係**：本文件服從 `NEXUS_LINK_MASTER_CANON_v3.1.md`，是 Companion Growth／心核夥伴養成的現行**設計與驗收 SSOT**。目前只有 G1 當頁、可逆、session-only 的質性心相觀察；per-companion 持久關係／成長、migration、正式階段與形態 swap 仍未實作。`docs/r2-canon/R2_EVOLUTION_SYSTEM.md` 的等級、勝場、道具、五階與能力雷達只保留為歷史參考，不得作新實作依據。
+> **權威關係**：本文件服從 `NEXUS_LINK_MASTER_CANON_v3.1.md`，是 Companion Growth／心核夥伴養成的現行**設計與驗收 SSOT**。G1 提供當頁、可逆、session-only 的質性心相觀察；G2 提供 per-companion relationship／growth truth、migration 與 Codex 隔離。正式 evidence 累積、readiness／willingness、覺醒邀請與形態 swap 仍未實作。`docs/r2-canon/R2_EVOLUTION_SYSTEM.md` 的等級、勝場、道具、五階與能力雷達只保留為歷史參考，不得作新實作依據。
 >
-> **不涵蓋**：`src/ai/evolution/**` 是 Raphael 自我評估／patch 管線，不是夥伴養成；本契約不改 RaphaelCore、安全回覆、人格或記憶權限。
+> **不涵蓋**：`src/ai/evolution/**` 是 Raphael 自我評估／patch 管線，不是夥伴養成；G2 只把既有高風險 terminal state 收緊為完整 relationship 零變化，不改 RaphaelCore canonical reply、人格或記憶權限。
 
 ---
 
@@ -27,15 +27,15 @@
 
 ---
 
-## 2. 2026-07-17 runtime 真相
+## 2. 2026-07-18 runtime 真相
 
 本契約不把 transitional UI 誤稱為已完成的養成系統。
 
 | 現況 | 判定 |
 |---|---|
-| `evolutionLines.js` 的每條角色線已有 3 個 stage | 可保留三段資料形狀；正式階名與 gate 仍須遷移 |
-| `codexController` 只用全域 `state.bond >= 0/25/70` 顯示階段 | 只是 compatibility reveal，不是夥伴主動覺醒 |
-| `bond/trust/mood/energy/defense/touchFatigue` 仍是全域欄位 | 正式多夥伴養成 blocker；尚無 per-companion relationship truth |
+| `evolutionLines.js` 的每條角色線已有 3 個 stage | 三段資料形狀保留；`bondThreshold` 只剩 compatibility data，正式 gate 尚待 G3 |
+| `codexController` 讀指定 companion 的 formal stage／legacy display floor | 已隔離；inactive archive 有明示，top-level bond 不會解鎖另一隻夥伴 |
+| `companionStates.byId` 保存 relationship／growth；14 個頂層欄位是 active mirror | G2 已接入；A→B→A 原子封存／hydrate，未知 id fail closed，仍只用主存檔 key |
 | 舊 memory / milestone 多數沒有 `companionId` | 不可把舊歷史複製給整個 roster，也不可臆測逐筆歸屬 |
 | Growth 頁已有 G1 session-only Heart Phase 與四種質性練習 | 已接入但不持久；遠征碎晶／crafting 不掛在 Growth，Expedition 仍是獨立 Prototype，不得成為商業養成主循環 |
 | registry 只有單一角色 portrait／animation manifest | 尚無正式 Stage 2／3 形態資產對照；不可假裝已換形 |
@@ -283,14 +283,15 @@ G2 必須先鎖定完整 `RELATION_MIRROR_FIELDS` 並以 migration test 證明�
 1. 先用現行規則 resolve 合法 `activeCompanionId` 與 unlocked roster。
 2. 只把全域 `RELATION_MIRROR_FIELDS` 歸給 resolved active companion；不可複製給所有 unlocked companion。
 3. Legacy active companion 依舊圖鑑 0／25／70 結果設定一次 `growth.migration.legacyStageFloor`，再令 `growth.stage = max(initial_awakened, legacyStageFloor)`；不播覺醒演出、不補 evidence、不給獎勵。
-4. 為避免 veteran 已看過的 Codex lore 消失，其他**已知且已解鎖** companion 只可取得 display-only `legacyCodexRevealFloor`。它不設定 relationship、growth stage、evidence、readiness、willingness 或形態資產；UI 必須標成 archive／compatibility reveal，不冒充正式覺醒。
+4. 為避免 veteran 已看過的 Codex lore 消失，其他**已知且已解鎖** companion 只可取得 display-only `legacyCodexRevealFloor` 與不含玩家文字的 `legacy:v1:<companionId>:codex-archive` provenance key。它不設定 relationship、growth stage、evidence、readiness、willingness 或形態資產；UI 必須標成 archive／compatibility reveal，且首次啟用後仍保留該說明，不冒充正式覺醒。
 5. Inactive companion 首次合法切入時，以 normalizer 核准的 fresh／persona baseline lazy-init relationship；不能承接 active companion 數值。切換 transaction 固定為：封存 A mirror → normalize／lazy-init B → 設 active B → hydrate B mirror → 單次 notify/save。
 6. 舊 memory／milestone 沒有 `companionId` 時，不逐筆臆測、不轉成 GrowthEvidence；只可保存不含玩家文字的 `legacyBaselineKey` provenance。未來新增的 growth-linked memory／trace 必須帶合法 `companionId`。
-7. `migration.appliedVersion`、兩種 floor 與 baseline key 都是經 normalizer enum／type 驗證的持久 one-shot marker。重複 normalize 不得重新推導、重播、重建或重複 evidence。
+7. `migration.appliedVersion`、兩種 floor 與 baseline key 都是經 normalizer enum／strict type／companion-key correlation 驗證的持久 one-shot marker。版本不是整數 current version、key 不屬於該 companion，或 archive／relationship marker 與 floor 不相符時一律 fail closed；重複 normalize 不得重新推導、重播、重建或重複 evidence。
 8. 過渡期 top-level 欄位只能作 active companion compatibility mirror；所有步驟在同一 transaction 完成，不能讓 observer 看見混合狀態。
 9. 新 schema 已存在時 canonical record 優先，不得被 stale mirror 覆寫；stage、已取得 coverage 與 display reveal 不因 compaction、時間或 reload 倒退。
 10. 未知 companion id 不建立資料、不解鎖角色；損壞／缺失資料 fail closed 並回到安全預設。
 11. 仍使用單一 `nexusLinkR2State:v1`；不得新增 localStorage key。
+12. Boot offline recovery 對每隻已有 relationship 的 companion 套用同一 bounded energy／touch-fatigue 調節後才 hydrate active mirror；archive-only `relationship:null` 不得因此初始化，且此路徑不寫 bond、stage 或 evidence。
 
 ---
 
@@ -348,14 +349,14 @@ Pixi 只消費 `heart_phase_manifestation`、姿態與環境 cue，不讀寫 sta
 
 | Phase | Layer | 內容 | 最低 gate／退出條件 |
 |---|---|---|---|
-| G0 | Docs | 本契約、Acceptance、legacy 與 agent/art 路由 | 文件一致；G1 已接入與 G2+ 未實作的 runtime truth 明確；review findings 已封口 |
+| G0 | Docs | 本契約、Acceptance、legacy 與 agent/art 路由 | 文件一致；G1／G2 已接入與 G3+ 未實作的 runtime truth 明確；review findings 已封口 |
 | G1 | EXPERIENCE | **已實作**：只從本 session 合法事件衍生 qualitative tendency；Growth view model，不新增持久 schema | N2／N3／N4／N5／N8／N11 的 presentation subset + M1–M5 + H + I；4 種 practice、390×844、reduced motion |
-| G2 | GROUNDWORK | `companionStates`／full mirror inventory／normalize／migration／single-key save；active mirror 原子切換 | N1／N3／N9／N10／N11 + H + I；11-companion ring、veteran、corrupt、idempotent 全過 |
+| G2 | GROUNDWORK | **已實作**：`companionStates`／full mirror inventory／normalize／migration／single-key save；active mirror 原子切換 | N1／N3／N9／N10／N11 + H + I；11-companion ring、veteran、corrupt、idempotent 全過 |
 | G3 | EXPERIENCE | 正式 key factory、evidence writer、coverage／compaction、readiness／willingness、Growth UI | N1–N11 + safety／alias／repeat-50／compaction mutation tests 全過 |
 | G4 | EXPERIENCE | 夥伴主動 stage offer、可延後的覺醒儀式、heart-phase 表現 | N2／N3／N5／N7／N8／N11 + H + I；無強制、無 FOMO、無獎勵、可再提出 |
 | G5 | GROUNDWORK + ART | 一隻 companion 的完整 Stage 2 視覺資產與 renderer switch | N2／N11 + G1–G7 + H + I；512 asset readiness、mobile memory、真機與 human art gate |
 
-G1 不得偷偷建立 localStorage 欄位；G2 未完成前，不得宣稱正式多夥伴養成已上線。
+G1 不得偷偷建立 localStorage 欄位；G2 只完成每隻夥伴的狀態地基，不得把它宣稱為 G3 evidence／readiness 或完整正式覺醒玩法已上線。
 
 表中的 subset 只是各 phase 的最低退出 gate，不取代回歸責任；任何 merge／runtime-complete 宣告仍須重跑 N1–N11、相關既有 Acceptance、web gate 與 human/mobile gate。
 

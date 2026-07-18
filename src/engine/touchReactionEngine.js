@@ -26,7 +26,9 @@ export function getUniversalTouchReaction(targetState, personality) {
 }
 
 export function evaluateTouchReaction(targetState, personality, touchType = "touch", now = Date.now(), companionName = "牠") {
-  const nextState = normalizeState(applyTouchRecovery(targetState, now));
+  // Canonical per-companion state must hydrate the active mirror first;
+  // otherwise normalization would erase the recovery patch as a stale mirror.
+  const nextState = applyTouchRecovery(normalizeState(targetState), now);
   const fatigueRules = personality.fatigueRules;
   const fatigueIncrease =
     touchType === "hug" ? fatigueRules.hugIncrease : fatigueRules.touchIncrease;

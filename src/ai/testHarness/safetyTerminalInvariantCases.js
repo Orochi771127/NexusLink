@@ -7,6 +7,7 @@ import { deriveStateMutation } from "../stateMutationPolicy.js";
 import { getSessionTraces } from "../evolution/interactionTraceCollector.js";
 import { applyRaphaelCoreResult } from "../applyCoreResult.js";
 import { COMPANIONS } from "../../data/companionRegistry.js";
+import { RELATION_MIRROR_FIELDS } from "../../state/companionStateSchema.js";
 
 const COMPANION = Object.freeze({
   id: "greyshade-cat",
@@ -26,7 +27,7 @@ const SHORT_PROFILE = Object.freeze({
 });
 
 const HIGH_RISK_INPUT = "我現在有傷害自己的念頭";
-const PROTECTED_FIELDS = Object.freeze(["bond", "trust", "energy", "defense"]);
+const PROTECTED_FIELDS = RELATION_MIRROR_FIELDS;
 
 export function runAllSafetyTerminalInvariantCases() {
   const storageGuard = ensureLocalStorage();
@@ -109,9 +110,10 @@ function runHighRiskCase(energy, companion = COMPANION, variant = "energy") {
       coreResult.stateMutation?.shouldRewardRelationship === false &&
       coreResult.stateMutation?.shouldTriggerMilestone === false &&
       coreResult.stateMutation?.shouldCreateMemory === false,
-    protected_state_unchanged: PROTECTED_FIELDS.every(
-      (field) => Number(statePatch[field]) === Number(state[field])
+    protected_state_omitted: PROTECTED_FIELDS.every(
+      (field) => !Object.prototype.hasOwnProperty.call(statePatch, field)
     ),
+    safety_patch_exact: stableJson(statePatch) === stableJson({ safeHarborMode: true }),
     no_animation: coreResult.animationDecision === null,
     no_renderer: coreResult.renderMeta?.used !== true,
     no_external_advice: coreResult.externalAdvice?.reason === "safety_terminal",
@@ -131,7 +133,7 @@ function runHighRiskCase(energy, companion = COMPANION, variant = "energy") {
     evolution_trace_not_written: traceCountAfter === traceCountBefore,
     high_risk_input_not_saved_as_last_message: appliedState.lastMessage === "ordinary-prior-message",
     applied_state_preserves_protected_fields: PROTECTED_FIELDS.every(
-      (field) => Number(appliedState[field]) === Number(state[field])
+      (field) => stableJson(appliedState[field]) === stableJson(state[field])
     ),
     final_safety_critic_passes: coreResult.critique?.pass === true
   };
@@ -175,6 +177,45 @@ function runMutationCases(reference, state) {
           statePatch: {
             ...reference.stateMutation.statePatch,
             energy: Number(state.energy) + 1
+          }
+        }
+      }
+    },
+    {
+      id: "STI-MUTATION-MOOD-WRITE",
+      expectedIssue: "high_risk_mutates_mood",
+      overrides: {
+        stateMutation: {
+          ...reference.stateMutation,
+          statePatch: {
+            ...reference.stateMutation.statePatch,
+            mood: "safe_harbor"
+          }
+        }
+      }
+    },
+    {
+      id: "STI-MUTATION-TOUCH-FATIGUE-WRITE",
+      expectedIssue: "high_risk_mutates_touchFatigue",
+      overrides: {
+        stateMutation: {
+          ...reference.stateMutation,
+          statePatch: {
+            ...reference.stateMutation.statePatch,
+            touchFatigue: 1
+          }
+        }
+      }
+    },
+    {
+      id: "STI-MUTATION-COMPANION-RECORD-WRITE",
+      expectedIssue: "high_risk_mutates_disallowed_field:companionStates",
+      overrides: {
+        stateMutation: {
+          ...reference.stateMutation,
+          statePatch: {
+            ...reference.stateMutation.statePatch,
+            companionStates: { version: 1, byId: {} }
           }
         }
       }
@@ -244,6 +285,15 @@ function buildState(energy, companion = COMPANION) {
     defense: 31,
     energy,
     mood: "calm",
+    touchFatigue: 4,
+    lastTouchAt: 1_785_359_600_000,
+    lastRejectAt: null,
+    blockedTouchCount: 1,
+    lastBlockedTouchAt: 1_785_359_700_000,
+    firstTouchCompleted: true,
+    firstHugCompleted: false,
+    reactionPreview: "ordinary-preview",
+    lastTouchReaction: "hesitate",
     spamScore: 0,
     safeHarborMode: false,
     emotionalMemories: [

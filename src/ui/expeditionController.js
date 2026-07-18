@@ -36,6 +36,7 @@ import {
 import { prepareExpeditionCoreSettlement } from "../expedition/expeditionCoreBridge.js";
 import { buildExpeditionResultEvent } from "../expedition/expeditionResultEvent.js";
 import { heartOnCoerciveIntervention, heartOnGentleTactic } from "../expedition/sessionHeart.js";
+import { isSessionOwnerCurrent } from "../engine/sessionOwnerGuard.js";
 
 const TACTIC_LABELS = Object.freeze({
   conservative: "保守",
@@ -66,6 +67,22 @@ export function createExpeditionController({
   let camera = null;
   let overlayEl = null;
   let mapLaunchContainer = null;
+
+  function abortExpeditionForOwnerMismatch() {
+    const bridge = getSceneBridge?.();
+    teardownScene(bridge);
+    active = false;
+    session = null;
+    engine = null;
+    document.body.classList.remove("expedition-active");
+    if (statusText) statusText.textContent = "夥伴已切換，這次遠征沒有結算。";
+  }
+
+  function guardCurrentSessionOwner(state = store.getState()) {
+    if (session && isSessionOwnerCurrent(session, state)) return true;
+    if (session) abortExpeditionForOwnerMismatch();
+    return false;
+  }
 
   function pickFocusEnemy(currentSession) {
     const living = getLivingEnemies(currentSession);
@@ -269,6 +286,7 @@ export function createExpeditionController({
     if (!active || !session) return;
 
     const stateBefore = store.getState();
+    if (!guardCurrentSessionOwner(stateBefore)) return false;
     const settlement = buildExpeditionSettlement(
       session,
       { retreated: retreated || Boolean(session.playerRetreatRequested) },
@@ -335,6 +353,7 @@ export function createExpeditionController({
       statusText.textContent = `${extractNote}${summary.message}${shardSummary ? `（庫存 ${shardSummary}）` : ""}`;
     }
     saveCurrentState?.();
+    return true;
   }
 
   function teardownScene(bridge) {
@@ -396,6 +415,7 @@ export function createExpeditionController({
 
   function update(ticker) {
     if (!active || !engine || !session || !sceneRoot || !camera) return;
+    if (!guardCurrentSessionOwner()) return;
 
     const bridge = getSceneBridge?.();
     const view = bridge?.getViewSize?.();

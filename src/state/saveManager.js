@@ -14,7 +14,10 @@ export function loadState() {
     if (source?.key && source.key !== STORAGE_KEY) pendingLegacyCleanup.add(source.key);
     migrateCompanionPreferences(parsed);
     migrateAudioMuted(parsed);
-    return normalizeState({ ...createDefaultState(), ...parsed });
+    // Pass the parsed object directly. Merging defaults here would fabricate a
+    // canonical companionStates bundle before normalizeState can detect and
+    // migrate a legacy one-global-relationship save.
+    return normalizeState(parsed);
   } catch (error) {
     console.warn("Failed to load save data", error);
     return createDefaultState();

@@ -10,6 +10,10 @@ import {
   getHeartsparkCouncilCanonCharacterById
 } from "../data/heartsparkCouncilCanon.js";
 import { getEvolutionLine } from "../data/evolutionLines.js";
+import {
+  COMPANION_GROWTH_STAGES,
+  getCompanionCodexGrowthPresentation
+} from "../state/companionStateSchema.js";
 
 // 雷達六軸（依 R2_CODEX_UI_REFERENCE：力量／防禦／速度／智慧／情感／治癒）。
 const RADAR_AXES = [
@@ -36,6 +40,12 @@ const CANON_STAGE_LABELS = [
   { zh: "第一階", en: "Stage 1" },
   { zh: "第二階", en: "Stage 2" },
   { zh: "第三階", en: "Stage 3" }
+];
+
+const FORMAL_GROWTH_STAGE_LABELS = [
+  { zh: "初醒夥伴", en: "INITIAL AWAKENED" },
+  { zh: "共鳴成熟體", en: "RESONANT MATURE" },
+  { zh: "終局覺醒體", en: "FINAL AWAKENED" }
 ];
 
 export function getCodexEntries() {
@@ -107,8 +117,10 @@ export function createCodexController({ store, panelManager }) {
     if (!bodyEl) return;
     const companion = getCompanionById(companionId);
     const state = store.getState();
-    // 演化由「關係」推進，不由勝負（契約：不打怪 farm）。
-    const bond = state.bond || 0;
+    // G2: each Codex entry reads only its own canonical stage. A migrated
+    // inactive record may retain a display-only floor, but never borrows the
+    // currently active companion's bond or relationship.
+    const codexGrowth = getCompanionCodexGrowthPresentation(state.companionStates, companionId);
     const elementLabel = ELEMENT_LABELS[companion.element];
     const accent = ELEMENT_ACCENTS[companion.element] || ELEMENT_ACCENTS.neutral;
 
@@ -160,7 +172,13 @@ export function createCodexController({ store, panelManager }) {
 
     const evolutionSection = document.createElement("section");
     evolutionSection.innerHTML = `<h4 class="codex-section-title">進化線 ・ Evolution Line</h4>`;
-    evolutionSection.appendChild(buildEvolutionStrip(companion, bond));
+    evolutionSection.appendChild(buildEvolutionStrip(companion, codexGrowth.revealStage));
+    if (codexGrowth.isLegacyArchive) {
+      const archiveNote = document.createElement("p");
+      archiveNote.className = "codex-lore";
+      archiveNote.textContent = "舊存檔保留的圖鑑記錄；這不代表牠已建立目前的關係或完成正式覺醒。";
+      evolutionSection.appendChild(archiveNote);
+    }
     detail.appendChild(evolutionSection);
 
     const lore = document.createElement("p");
@@ -250,7 +268,7 @@ export function createCodexController({ store, panelManager }) {
     bodyEl.appendChild(detail);
   }
 
-  function buildEvolutionStrip(companion, bond) {
+  function buildEvolutionStrip(companion, revealStage) {
     const strip = document.createElement("div");
     strip.className = "codex-evolution-strip";
     const line = getEvolutionLine(companion.evolutionLineId);
@@ -260,15 +278,17 @@ export function createCodexController({ store, panelManager }) {
       return strip;
     }
 
+    const revealRank = Math.max(0, COMPANION_GROWTH_STAGES.indexOf(revealStage));
     line.stages.forEach((stage, index) => {
-      const isUnlocked = bond >= (stage.bondThreshold || 0);
+      const isUnlocked = index <= revealRank;
+      const formalStage = FORMAL_GROWTH_STAGE_LABELS[index] || FORMAL_GROWTH_STAGE_LABELS[0];
       const chip = document.createElement("div");
       chip.className = `codex-stage-chip${isUnlocked ? "" : " is-locked"}`;
       chip.innerHTML = `
         <span class="codex-stage-index">${index + 1}</span>
         <span class="codex-stage-copy">
           <strong class="codex-stage-name">${isUnlocked ? stage.name.zh : "？？？"}</strong>
-          <span class="codex-stage-label">${stage.stage.zh} ・ ${stage.stage.en}${isUnlocked ? ` ・ ${stage.name.en}` : ""}</span>
+          <span class="codex-stage-label">${formalStage.zh} ・ ${formalStage.en}${isUnlocked ? ` ・ ${stage.name.en}` : ""}</span>
           <p class="codex-stage-lore">${isUnlocked ? stage.lore : stage.unlockHint}</p>
         </span>
       `;

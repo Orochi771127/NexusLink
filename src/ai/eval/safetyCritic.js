@@ -1,13 +1,9 @@
 import { detectForbiddenPhrases } from "../forbiddenPhrases.js";
 import { isCanonicalSafetyRedirectReply } from "../safetyShield.js";
+import { RELATION_MIRROR_FIELDS } from "../../state/companionStateSchema.js";
 
-const PROTECTED_STATE_FIELDS = Object.freeze(["bond", "trust", "energy", "defense"]);
-const ALLOWED_SAFETY_PATCH_FIELDS = new Set([
-  "safeHarborMode",
-  "mood",
-  "reactionPreview",
-  ...PROTECTED_STATE_FIELDS
-]);
+const PROTECTED_STATE_FIELDS = new Set(RELATION_MIRROR_FIELDS);
+const ALLOWED_SAFETY_PATCH_FIELDS = new Set(["safeHarborMode"]);
 
 export function critiqueSafety({
   perception = {},
@@ -55,14 +51,14 @@ export function critiqueSafety({
 
     const patch = stateMutation.statePatch || {};
     for (const field of Object.keys(patch)) {
-      if (!ALLOWED_SAFETY_PATCH_FIELDS.has(field)) {
+      if (PROTECTED_STATE_FIELDS.has(field)) {
+        issues.push(`high_risk_mutates_${field}`);
+      } else if (!ALLOWED_SAFETY_PATCH_FIELDS.has(field)) {
         issues.push(`high_risk_mutates_disallowed_field:${field}`);
       }
     }
-    for (const field of PROTECTED_STATE_FIELDS) {
-      if (!sameNumericValue(patch[field], state[field])) {
-        issues.push(`high_risk_mutates_${field}`);
-      }
+    if (patch.safeHarborMode !== true) {
+      issues.push("high_risk_requires_safe_harbor_mode");
     }
     if (Number(stateMutation.spamScoreDelta) !== 0) {
       issues.push("high_risk_mutates_spam_score");
@@ -80,10 +76,4 @@ export function critiqueSafety({
     issues,
     repairHint: issues.length ? "Use enter_safe_harbor system reply; block ordinary memory." : ""
   };
-}
-
-function sameNumericValue(left, right) {
-  const normalizedLeft = Number(left);
-  const normalizedRight = Number(right) || 0;
-  return Number.isFinite(normalizedLeft) && normalizedLeft === normalizedRight;
 }

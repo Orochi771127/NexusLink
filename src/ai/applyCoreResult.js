@@ -40,11 +40,13 @@ export function applyRaphaelCoreResult(
     );
   }
 
-  state.habitatRepairFactor = calculateHabitatRepairFactor(state.emotionalMemories);
-  state.reactionPreview =
-    mutation.statePatch?.reactionPreview ||
-    plan.statePatch?.reactionPreview ||
-    "";
+  if (!isSafetyTerminal) {
+    state.habitatRepairFactor = calculateHabitatRepairFactor(state.emotionalMemories);
+    state.reactionPreview =
+      mutation.statePatch?.reactionPreview ||
+      plan.statePatch?.reactionPreview ||
+      "";
+  }
 
   const shouldSpeak = output.shouldSpeak !== false;
   const replyRole = output.replyRole || coreResult.replyRole || plan.replyRole || "companion";

@@ -18,6 +18,7 @@ import {
   SHARD_GOAL
 } from "../engine/battleEngine.js";
 import { buildEventReflection } from "../engine/soulTalkComposer.js";
+import { isSessionOwnerCurrent } from "../engine/sessionOwnerGuard.js";
 import { deriveResonanceCircle, MAX_MEMBER_BREATH } from "../engine/resonanceCircleEngine.js";
 import {
   CHAPTER_TRIAL_OUTCOMES,
@@ -233,6 +234,27 @@ export function createBattleController({ store, panelManager, soulTalkController
   let prevStability = null;
   let prevShards = null;
 
+  function abortStandoffForOwnerMismatch({ closePanel = true } = {}) {
+    window.clearTimeout(noiseTurnTimer);
+    noiseTurnTimer = null;
+    removeCloseGuard?.();
+    removeCloseGuard = null;
+    session = null;
+    lastOutcome = null;
+    document.body.classList.remove("standoff-active");
+    if (telegraphEl) telegraphEl.hidden = true;
+    if (circleStripEl) circleStripEl.hidden = true;
+    if (finishButton) finishButton.hidden = true;
+    if (statusText) statusText.textContent = "夥伴已切換，這次對峙沒有結算。";
+    if (closePanel) panelManager.closePanel({ force: true });
+  }
+
+  function guardCurrentSessionOwner(options) {
+    if (session && isSessionOwnerCurrent(session, store.getState())) return true;
+    if (session) abortStandoffForOwnerMismatch(options);
+    return false;
+  }
+
   // UI 不直接碰 Pixi：所有動畫回饋只透過 EventBus 發送 intent，由 app/Pixi bridge 接。
   function emitBattleAnimationIntent(intent, meta = {}) {
     if (!intent) return;
@@ -249,6 +271,7 @@ export function createBattleController({ store, panelManager, soulTalkController
       button?.addEventListener("click", () => handleAction(actionId));
     });
     finishButton?.addEventListener("click", () => {
+      if (!guardCurrentSessionOwner()) return;
       // 回棲地：先發出「被看見的後果」動畫意圖，再關閉 modal。
       // lazy load + modal 淡出（180ms）的時間差，剛好讓動畫落在夥伴可見後播放。
       emitBattleAnimationIntent(OUTCOME_RETURN_INTENT[lastOutcome], { source: "standoff" });
@@ -304,6 +327,7 @@ export function createBattleController({ store, panelManager, soulTalkController
 
     removeCloseGuard?.();
     removeCloseGuard = panelManager.registerCloseGuard("battle", () => {
+      if (!guardCurrentSessionOwner({ closePanel: false })) return true;
       // Escape／backdrop 不會無聲離開：轉成「先撤退」結算（被尊重的離開）。
       if (session && session.turn !== "ended") {
         endStandoff("retreated");
@@ -321,6 +345,7 @@ export function createBattleController({ store, panelManager, soulTalkController
 
   function handleAction(actionId) {
     if (!session || session.turn !== "player") return;
+    if (!guardCurrentSessionOwner()) return;
 
     if (actionId === "retreat") {
       // 撤退不是失敗：下行柔音 + 回身 cue，再走「被尊重的離開」結算。
@@ -347,6 +372,7 @@ export function createBattleController({ store, panelManager, soulTalkController
     window.clearTimeout(noiseTurnTimer);
     noiseTurnTimer = window.setTimeout(() => {
       if (!session || session.turn !== "noise") return;
+      if (!guardCurrentSessionOwner()) return;
       const stabilityBefore = session.stability.current;
       session = applyNoiseTurn(session);
       render();
@@ -363,6 +389,7 @@ export function createBattleController({ store, panelManager, soulTalkController
 
   function endStandoff(outcome) {
     if (!session) return;
+    if (!guardCurrentSessionOwner()) return;
     lastOutcome = outcome;
     window.clearTimeout(noiseTurnTimer);
     session = { ...session, turn: "ended", log: [...session.log] };
