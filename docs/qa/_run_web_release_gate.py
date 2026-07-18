@@ -300,6 +300,32 @@ def run_companion_renderer_lifecycle(node: str):
     return result
 
 
+def run_companion_growth_session(node: str):
+    result = run_command(
+        "companion_growth_session",
+        [node, "docs/qa/companion-growth-session-cases.mjs"],
+        timeout=30,
+    )
+    payload = result.get("json") or {}
+    result["ok"] = result["exit_code"] == 0 and payload.get("failed") == 0
+    return result
+
+
+def run_companion_growth_browser(base_url: str):
+    result = run_command(
+        "companion_growth_browser",
+        [sys.executable, "docs/qa/_run_companion_growth_g1_browser_gate.py"],
+        env={"NEXUS_QA_BASE": base_url},
+        timeout=240,
+    )
+    payload = result.get("json") or {}
+    result["ok"] = (
+        result["exit_code"] == 0
+        and payload.get("summary", {}).get("ok") is True
+    )
+    return result
+
+
 def run_crystal_lifecycle(node: str):
     result = run_command(
         "crystal_lifecycle",
@@ -831,6 +857,8 @@ def summarize(report):
     required.append(report["checks"]["jsSyntax"]["ok"])
     required.append(report["checks"]["stateMigration"]["ok"])
     required.append(report["checks"]["companionRendererLifecycle"]["ok"])
+    required.append(report["checks"]["companionGrowthSession"]["ok"])
+    required.append(report["checks"]["companionGrowthUi"]["ok"])
     required.append(report["checks"]["crystalLifecycle"]["ok"])
     required.append(report["checks"]["mapFirstSession"]["ok"])
     required.append(report["checks"]["mapFirstSessionUi"]["ok"])
@@ -902,6 +930,8 @@ def main():
         report["checks"]["jsSyntax"] = run_js_syntax(node)
         report["checks"]["stateMigration"] = run_state_migration(node)
         report["checks"]["companionRendererLifecycle"] = run_companion_renderer_lifecycle(node)
+        report["checks"]["companionGrowthSession"] = run_companion_growth_session(node)
+        report["checks"]["companionGrowthUi"] = run_companion_growth_browser(report["baseUrl"])
         report["checks"]["crystalLifecycle"] = run_crystal_lifecycle(node)
         report["checks"]["mapFirstSession"] = run_map_first_session(node)
         report["checks"]["mapFirstSessionUi"] = run_map_first_session_ui(report["baseUrl"])

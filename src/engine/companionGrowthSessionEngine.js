@@ -88,7 +88,10 @@ export function deriveHeartPhaseSnapshot(state = {}, session = null) {
     phaseId,
     phaseLabelKey: `growth.session.phase.${phaseId}.label`,
     phaseCopyKey: `growth.session.phase.${phaseId}.copy`,
-    safetyPaused: phaseId === "safety_pause",
+    // safeHarborMode is canonical persisted UI/mode state. Immutable
+    // growthSafetyExcluded provenance belongs to source events and the future
+    // G3 writer; it must not become a hidden top-level save field in G1.
+    safetyPaused: state.safeHarborMode === true,
     observedTendencyIds: normalizedSession.observedTendencyIds,
     lastResult: normalizedSession.lastResult
   };
@@ -141,10 +144,6 @@ export function evaluateHeartPhasePractice(state = {}, session = null, practiceI
 }
 
 function derivePhaseId(state) {
-  if (state.safeHarborMode === true || state.growthSafetyExcluded === true) {
-    return "safety_pause";
-  }
-
   const energy = finiteNumber(state.energy, 10);
   const touchFatigue = finiteNumber(state.touchFatigue, 0);
   if (energy <= 2 || touchFatigue >= 7) return "resting";

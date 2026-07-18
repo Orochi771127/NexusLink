@@ -115,19 +115,26 @@ runCase("safety pause is terminal and preserves the session for every practice",
     "attunement"
   ).session;
 
-  for (const safetyState of [
-    { ...BASE_STATE, safeHarborMode: true },
-    { ...BASE_STATE, growthSafetyExcluded: true }
-  ]) {
-    const before = JSON.parse(JSON.stringify(session));
-    for (const practice of HEART_PHASE_PRACTICES) {
-      const evaluation = evaluateHeartPhasePractice(safetyState, session, practice.id);
-      assert.equal(evaluation.ok, false);
-      assert.equal(evaluation.reason, "safety-paused");
-      assert.equal(evaluation.result, null);
-      assert.deepEqual(evaluation.session, before);
-    }
+  const safetyState = { ...BASE_STATE, safeHarborMode: true };
+  const before = JSON.parse(JSON.stringify(session));
+  for (const practice of HEART_PHASE_PRACTICES) {
+    const evaluation = evaluateHeartPhasePractice(safetyState, session, practice.id);
+    assert.equal(evaluation.ok, false);
+    assert.equal(evaluation.reason, "safety-paused");
+    assert.equal(evaluation.result, null);
+    assert.deepEqual(evaluation.session, before);
   }
+});
+
+runCase("event provenance is not accepted as an ad-hoc top-level safety field", () => {
+  const state = { ...BASE_STATE, growthSafetyExcluded: true };
+  const snapshot = deriveHeartPhaseSnapshot(
+    state,
+    createCompanionGrowthSession(state.activeCompanionId)
+  );
+
+  assert.equal(snapshot.safetyPaused, false);
+  assert.notEqual(snapshot.phaseId, "safety_pause");
 });
 
 runCase("bond trust defense and offline fields cannot influence a practice", () => {

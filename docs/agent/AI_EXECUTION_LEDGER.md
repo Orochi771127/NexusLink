@@ -3399,3 +3399,93 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
   and Moonlake assets cover eight slots; at most ten new bitmap candidates
   should proceed to review. Any `assets/**` promotion remains a separate
   human-approved GROUNDWORK task.
+
+### 2026-07-18 - Codex - Companion Growth G1 Safety And Release-Gate Hardening - IN PROGRESS
+
+- Status: `IN PROGRESS`; current `main` G1 is merged, but the safety-paused
+  Growth view still exposes the mutating Expedition crafting Prototype and the
+  repo-native release gate does not execute either Growth gate.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `TP-COMPANION-GROWTH-G1-HARDENING`.
+- Scope: EXPERIENCE／QA closure only. Remove the crafting surface from Growth,
+  keep safety terminal and non-rewarding, align G1 with event-provenance
+  ownership, and make deterministic plus browser Growth gates required by the
+  web release gate. No save schema, migration, asset, Pixi, RaphaelCore or
+  Expedition engine promotion is in scope.
+- Branch / baseline: `agent/companion-growth-g1-hardening` from protected
+  `origin/main` `b8df185`; publication must use a PR and strict
+  `web-release-gate`.
+- Required reading: `docs/design/COMPANION_GROWTH_CONTRACT_V1.md`,
+  `ACCEPTANCE.md` N2／N3／N4／N5／N8／N11, `src/ui/pageRouter.js`,
+  `src/engine/companionGrowthSessionEngine.js`, and
+  `docs/qa/_run_web_release_gate.py`.
+
+### 2026-07-18 - Codex - Companion Growth G1 Truthful Safety Presentation - IN PROGRESS
+
+- Status: `IN PROGRESS`; the current Growth safety view and Prototype copy do
+  not match runtime mutation truth, and the in-game reduced-motion setting is
+  not covered for the page transition.
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `TP-COMPANION-GROWTH-G1-HARDENING`.
+- Scope: make the safety-paused Growth body safety-only, retain native-button
+  keyboard focus, remove duplicate live-region announcements, update
+  session-only copy, and verify mobile／desktop／200% text／reduced motion with
+  normal Pixi screenshots. No new asset or formal evolved-form claim.
+- Required reading: `docs/design/COMPANION_GROWTH_CONTRACT_V1.md`,
+  `docs/design/NEXUS_LINK_V3_VISUAL_SYSTEM.md`, `ACCEPTANCE.md` N3／N8／N11,
+  `src/ui/pageRouter.js`, `src/i18n/strings.js`, and
+  `styles/page-content.css`.
+
+### 2026-07-18 - Codex - Companion Growth G1 Safety And Release-Gate Hardening - VERIFIED
+
+- Status: `VERIFIED` for the local publication candidate; this closes the G1
+  automated safety／release false-green but is not a human launch approval or
+  G2 persistence claim.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `TP-COMPANION-GROWTH-G1-HARDENING`.
+- Runtime result: Growth no longer mounts Expedition shards／crafting. Safe
+  harbor renders only the safety-pause body, and a stale injected commit is
+  rejected before the mutation path. G1 reads canonical `safeHarborMode`;
+  immutable `growthSafetyExcluded` remains source-event provenance for the
+  future writer and is not introduced as a top-level save field.
+- Gate result: the repo-native web gate now requires both the deterministic
+  Growth module and the Growth browser matrix. Session cases passed `13/13`;
+  the browser gate passed `60/60` with zero console errors; the full web
+  release gate passed `20/20` required checks with zero accessibility
+  warnings. The existing video-inspired gameplay cases also passed `11/11`.
+- Browser evidence: mouse, Enter, Space, Tab order, focus restoration, Escape,
+  safety zero-mutation／zero-storage-write, reload reset, OS and in-game
+  reduced motion, 200% text, `390x844` and `1280x900` all passed. Separate
+  normal-Pixi contexts proved one `#game-root canvas`, hidden failure UI and
+  produced inspected mobile／desktop screenshots.
+- Scope: no `defaultState`, store normalization, `saveManager`, localStorage
+  key, asset, Pixi core, RaphaelCore, safety writer or Expedition engine was
+  changed. The redundant Node browser runner was removed; Python is the one
+  repo-native browser gate.
+- Branch / baseline: `agent/companion-growth-g1-hardening` from
+  `origin/main` `b8df185`; commit／PR assigned at publication.
+- Remaining manual gates: real-device browser matrix, three-player first-loop
+  comprehension, Raphael private blind test, legal／privacy／store-copy review
+  and explicit public-launch approval remain open.
+
+### 2026-07-18 - Codex - Companion Growth G1 Truthful Safety Presentation - VERIFIED
+
+- Status: `VERIFIED` for the G1 UI publication candidate; no formal Stage 2／3
+  visual or asset was promoted.
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `TP-COMPANION-GROWTH-G1-HARDENING`.
+- Presentation result: the safety view contains no Heart Phase cue, practice,
+  observation, progress, shard or crafting affordance. Ordinary outcomes keep
+  text labels and use the persistent global polite status region without a
+  duplicate result live region. The same native practice button regains focus
+  after each render.
+- Copy truth: session observations now explicitly fade with the current
+  moment without reducing the relationship. Dead `No Heart Phase effect`
+  Prototype strings and styles were removed because the underlying recipes
+  actually change current mood／energy／relationship state.
+- Visual evidence: inspected normal-Pixi screenshots at `390x844` and
+  `1280x900` show the Growth hierarchy, all four practices, bottom navigation
+  and Moonlake habitat without horizontal overflow. OS and in-game reduced
+  motion both reduce the page transition to `0s`; 200% text remains usable.
+- Asset boundary: no bitmap, portrait, spritesheet, manifest, renderer or
+  evolved-form mapping changed.

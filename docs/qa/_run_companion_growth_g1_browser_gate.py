@@ -1,5 +1,6 @@
 import json
 import os
+import sys
 import tempfile
 
 from playwright.sync_api import sync_playwright
@@ -8,6 +9,9 @@ from playwright.sync_api import sync_playwright
 BASE_URL = os.environ.get("NEXUS_QA_BASE", os.environ.get("NEXUS_BASE_URL", "http://127.0.0.1:5197"))
 STORAGE_KEY = "nexusLinkR2State:v1"
 PIXI_CDN_URL = "https://cdn.jsdelivr.net/npm/pixi.js@8.8.1/dist/pixi.min.js"
+
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 
 def install_seed(context):
@@ -66,7 +70,7 @@ def attach_error_capture(page, errors):
     page.on("pageerror", lambda error: errors.append(str(error)))
 
 
-def wait_ready(page, reload=False):
+def wait_ready(page, reload=False, expect_pixi_failure=True):
     if reload:
         page.reload(wait_until="commit", timeout=30000)
     else:
@@ -76,7 +80,14 @@ def wait_ready(page, reload=False):
         "() => document.documentElement.dataset.nexusControllersReady === 'true'",
         timeout=30000,
     )
-    page.wait_for_selector("#pixi-load-failure:visible", timeout=10000)
+    if expect_pixi_failure:
+        page.wait_for_selector("#pixi-load-failure:visible", timeout=10000)
+    else:
+        page.wait_for_selector("#game-root canvas", state="visible", timeout=30000)
+        page.wait_for_function(
+            "() => document.querySelector('#pixi-load-failure')?.hidden !== false",
+            timeout=10000,
+        )
 
 
 def open_growth(page):
@@ -96,7 +107,6 @@ def set_fixture(page, patch):
             mood: 'calm',
             lastTouchReaction: '',
             safeHarborMode: false,
-            growthSafetyExcluded: false,
             lastSeenAt: Date.now()
           }, patch);
           localStorage.setItem(key, JSON.stringify(state));
@@ -154,7 +164,16 @@ def run():
             }
             report["outcomes"].append(outcome)
             check(f"{name}_outcome", result.count() == 1 and bool(result_text), outcome)
-            check(f"{name}_aria_live", result.get_attribute("aria-live") == "polite")
+            check(
+                f"{name}_focus_retained",
+                page.evaluate("document.activeElement?.dataset?.growthPractice") == practice_id,
+            )
+            check(f"{name}_result_not_duplicate_live_region", result.get_attribute("aria-live") is None)
+            check(
+                f"{name}_global_live_region",
+                page.locator("#status-text").get_attribute("aria-live") == "polite"
+                and bool(page.locator("#status-text").inner_text().strip()),
+            )
             check(f"{name}_store_unchanged", after["state"] == before["state"])
             check(f"{name}_main_save_unchanged", after["raw"] == before["raw"])
             check(f"{name}_storage_keys_unchanged", after["keys"] == before["keys"])
@@ -168,6 +187,51 @@ def run():
         run_outcome("modified", {"mood": "distant"}, "attunement", "modify")
         run_outcome("declined", {"lastTouchReaction": "reject"}, "pathfinding", "decline")
         run_outcome("rested", {"energy": 1, "touchFatigue": 8}, "steadfastness", "rest")
+
+        set_fixture(
+            page,
+            {
+                "safeHarborMode": True,
+                "expeditionVault": {"shards": {"forest_shard": 99}},
+            },
+        )
+        wait_ready(page, reload=True)
+        open_growth(page)
+        safety_before = snapshot(page)
+        page.evaluate("window.__growthStorageWrites = []")
+        check(
+            "safety_view_is_terminal",
+            page.locator('[data-growth-result][data-outcome="safety-paused"]').count() == 1
+            and page.locator("[data-growth-practice]").count() == 0
+            and page.locator("[data-growth-observation]").count() == 0
+            and page.locator(".page-focus-card--growth").count() == 0
+            and page.locator("[data-growth-prototype]").count() == 0,
+        )
+        page.evaluate(
+            """() => {
+              const stale = document.createElement('button');
+              stale.type = 'button';
+              stale.dataset.pageAction = 'commit';
+              stale.dataset.navAction = 'grow';
+              stale.dataset.choice = 'shard_resonance';
+              stale.dataset.testStaleGrowthCommit = 'true';
+              stale.textContent = 'stale growth commit';
+              document.querySelector('#growth-page-body')?.append(stale);
+            }"""
+        )
+        page.locator('[data-test-stale-growth-commit="true"]').click()
+        page.wait_for_function(
+            "() => document.querySelector('#page-layer')?.dataset.viewState === 'unavailable'",
+            timeout=5000,
+        )
+        safety_after = snapshot(page)
+        safety_writes = page.evaluate("window.__growthStorageWrites || []")
+        check("safety_stale_action_store_unchanged", safety_after["state"] == safety_before["state"])
+        check("safety_stale_action_main_save_unchanged", safety_after["raw"] == safety_before["raw"])
+        check("safety_stale_action_storage_keys_unchanged", safety_after["keys"] == safety_before["keys"])
+        check("safety_stale_action_zero_storage_writes", safety_writes == [], safety_writes)
+
+        set_fixture(page, {"safeHarborMode": False})
 
         wait_ready(page, reload=True)
         open_growth(page)
@@ -188,15 +252,11 @@ def run():
         check("mobile_touch_targets", all(height >= 44 for height in button_heights), button_heights)
         check("no_growth_progress_bar", page.locator('#growth-page-body .page-progress-block').count() == 0)
         check(
-            "prototype_secondary_and_closed",
-            page.locator("[data-growth-prototype]").count() == 1
-            and page.locator("[data-growth-prototype]").get_attribute("open") is None,
+            "growth_has_no_expedition_crafting_surface",
+            page.locator("[data-growth-prototype]").count() == 0
+            and page.locator('#growth-page-body [data-page-action="commit"]').count() == 0,
         )
-        primary_text = page.locator("#growth-page-body").evaluate(
-            """el => Array.from(el.children)
-              .filter(child => !child.matches('[data-growth-prototype]'))
-              .map(child => child.innerText).join(' ')"""
-        )
+        primary_text = page.locator("#growth-page-body").inner_text()
         forbidden_primary = ["XP", "等級", "等级", "每日", "倒數", "倒数", "還差", "还差", "+1", "勝場", "胜场"]
         check(
             "primary_growth_has_no_fomo_or_power_copy",
@@ -204,10 +264,36 @@ def run():
             primary_text,
         )
 
-        page.locator('[data-growth-practice="boundary_respect"]').focus()
+        page.locator('[data-growth-practice="attunement"]').focus()
+        page.keyboard.press("Tab")
+        check(
+            "keyboard_tab_follows_practice_order",
+            page.evaluate("document.activeElement?.dataset?.growthPractice") == "boundary_respect",
+        )
         page.keyboard.press("Enter")
         page.wait_for_selector('[data-growth-result][data-outcome="accept"]', timeout=5000)
         check("keyboard_enter_activates_practice", page.locator('[data-growth-result][data-outcome="accept"]').count() == 1)
+        check(
+            "keyboard_enter_retains_focus",
+            page.evaluate("document.activeElement?.dataset?.growthPractice") == "boundary_respect",
+        )
+
+        keyboard_before = snapshot(page)
+        page.evaluate("window.__growthStorageWrites = []")
+        page.locator('[data-growth-practice="pathfinding"]').focus()
+        page.keyboard.press("Space")
+        page.wait_for_selector('[data-growth-result][data-outcome="accept"]', timeout=5000)
+        keyboard_after = snapshot(page)
+        check(
+            "keyboard_space_activates_and_retains_focus",
+            page.evaluate("document.activeElement?.dataset?.growthPractice") == "pathfinding",
+        )
+        check("keyboard_space_store_unchanged", keyboard_after["state"] == keyboard_before["state"])
+        check("keyboard_space_main_save_unchanged", keyboard_after["raw"] == keyboard_before["raw"])
+        check(
+            "keyboard_space_zero_storage_writes",
+            page.evaluate("window.__growthStorageWrites || []") == [],
+        )
         page.keyboard.press("Escape")
         check("escape_returns_home", page.locator("#page-layer").get_attribute("data-active-page") == "home")
 
@@ -215,6 +301,16 @@ def run():
         open_growth(page)
         transition_duration = growth_page.evaluate("el => getComputedStyle(el).transitionDuration")
         check("reduced_motion_disables_page_transition", transition_duration == "0s", transition_duration)
+
+        page.emulate_media(reduced_motion="no-preference")
+        page.evaluate("document.documentElement.dataset.reducedMotionPreference = 'reduced'")
+        transition_duration = growth_page.evaluate("el => getComputedStyle(el).transitionDuration")
+        check(
+            "in_game_reduced_motion_disables_page_transition",
+            transition_duration == "0s",
+            transition_duration,
+        )
+        page.evaluate("delete document.documentElement.dataset.reducedMotionPreference")
 
         page.evaluate("document.documentElement.style.fontSize = '200%'")
         growth_page.locator('[data-growth-practice="steadfastness"]').scroll_into_view_if_needed()
@@ -242,6 +338,29 @@ def run():
         desktop.screenshot(path=desktop_shot, full_page=True)
         report["screenshots"]["desktop"] = desktop_shot
         desktop_context.close()
+
+        for name, viewport in (
+            ("mobile", {"width": 390, "height": 844}),
+            ("desktop", {"width": 1280, "height": 900}),
+        ):
+            pixi_context = browser.new_context(viewport=viewport)
+            install_seed(pixi_context)
+            pixi_page = pixi_context.new_page()
+            attach_error_capture(pixi_page, report["console_errors"])
+            wait_ready(pixi_page, expect_pixi_failure=False)
+            open_growth(pixi_page)
+            check(
+                f"normal_pixi_{name}_runtime_visible",
+                pixi_page.locator("#game-root canvas").count() == 1
+                and pixi_page.locator("#pixi-load-failure:visible").count() == 0,
+            )
+            pixi_shot = os.path.join(
+                tempfile.gettempdir(),
+                f"nexus-growth-g1-normal-pixi-{name}-{viewport['width']}x{viewport['height']}.png",
+            )
+            pixi_page.screenshot(path=pixi_shot, full_page=True)
+            report["screenshots"][f"normal_pixi_{name}"] = pixi_shot
+            pixi_context.close()
 
         check("no_console_errors", report["console_errors"] == [], report["console_errors"])
         context.close()

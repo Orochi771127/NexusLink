@@ -124,8 +124,7 @@ html[data-ui="v2"] .page-evidence-strip,
 html[data-ui="v2"] .page-memory-row,
 html[data-ui="v2"] .page-empty-memory,
 html[data-ui="v2"] .growth-response,
-html[data-ui="v2"] .growth-observation,
-html[data-ui="v2"] .growth-prototype {
+html[data-ui="v2"] .growth-observation {
   border: 1px solid rgba(185, 201, 230, 0.18);
   border-radius: 20px;
   background: rgba(7, 18, 38, 0.42);
@@ -330,8 +329,7 @@ html[data-ui="v2"] .growth-response {
 
 html[data-ui="v2"] .growth-response > span,
 html[data-ui="v2"] .growth-response > small,
-html[data-ui="v2"] .growth-observation small,
-html[data-ui="v2"] .growth-prototype small {
+html[data-ui="v2"] .growth-observation small {
   color: rgba(233, 223, 207, 0.7);
   font-size: 0.72rem;
 }
@@ -342,15 +340,13 @@ html[data-ui="v2"] .growth-response > span {
 }
 
 html[data-ui="v2"] .growth-response > strong,
-html[data-ui="v2"] .growth-observation strong,
-html[data-ui="v2"] .growth-prototype summary span {
+html[data-ui="v2"] .growth-observation strong {
   color: var(--v3-moon-100, #f7f2e7);
   font-family: var(--v3-font-serif, serif);
 }
 
 html[data-ui="v2"] .growth-response > p,
-html[data-ui="v2"] .growth-observation p,
-html[data-ui="v2"] .growth-prototype > p {
+html[data-ui="v2"] .growth-observation p {
   margin: 0;
   color: rgba(247, 242, 231, 0.76);
   font-size: 0.8rem;
@@ -405,28 +401,6 @@ html[data-ui="v2"] .page-action-grid--growth-practice button {
 html[data-ui="v2"] .page-action-grid--growth-practice button[data-tendency="boundary_respect"],
 html[data-ui="v2"] .page-action-grid--growth-practice button[data-tendency="steadfastness"] {
   border-left-color: rgba(247, 223, 170, 0.5);
-}
-
-html[data-ui="v2"] .growth-prototype {
-  padding: 10px 12px;
-}
-
-html[data-ui="v2"] .growth-prototype summary {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 4px 10px;
-  align-items: center;
-  cursor: pointer;
-}
-
-html[data-ui="v2"] .growth-prototype summary::marker {
-  color: var(--v3-cyan-300, #7ce7ff);
-}
-
-html[data-ui="v2"] .growth-prototype > p,
-html[data-ui="v2"] .growth-prototype .page-evidence-strip,
-html[data-ui="v2"] .growth-prototype .page-action-grid {
-  margin-top: 10px;
 }
 
 html[data-ui="v2"] .page-memory-list {
@@ -908,6 +882,10 @@ html[data-ui="v2"] .calm-sync-leave:focus-visible {
 
 html[data-reduced-motion-preference="reduced"][data-ui="v2"] .crystal-weaving-core {
   animation: none;
+  transition: none;
+}
+
+html[data-reduced-motion-preference="reduced"][data-ui="v2"] .page-view {
   transition: none;
 }
 
