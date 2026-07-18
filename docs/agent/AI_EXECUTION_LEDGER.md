@@ -3360,3 +3360,42 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
   `src/ai/raphaelAgentAdapter.js`,
   `src/ai/testHarness/raphaelAgentEventCases.js` and the latest Standoff lane
   entries.
+
+### 2026-07-18 - Codex - Video-Inspired Gameplay Main Publication Closure - READY
+
+- Status: `READY` for the explicitly authorized direct `origin/main`
+  publication. Remote CI, Pages deployment and deployed-live verification must
+  still be checked after this ledger-sync commit is pushed.
+- Lanes: `Game Engineering And Architecture`; `Game Art, UI, And Visual
+  Production`; `Raphael Core, Companion Reasoning, And Soul Talk`.
+- Feature commit: `2734a27` (`feat: add video-inspired companion gameplay
+  slice`) on `codex/video-inspired-gameplay-v1`.
+- Pre-push review repairs: independent review blocked the first publication
+  attempt because Crystal Weaving used full trace synchronization and therefore
+  refreshed unrelated emotional traces. The release engine now removes only
+  traces linked by the target `memoryId` or legacy `htrace_<memoryId>` id; a
+  second transformed memory and its full emotional trace are deep-compared in
+  regression evidence. Review also found that deployed Pages QA still expected
+  the five-step legacy onboarding list; it now requires the six-step sequence
+  including `first-resonance-skip`.
+- Final local evidence: focused gameplay cases passed `11/11`; the local
+  deployed-live helper traversed all six onboarding actions, persisted a Soul
+  Talk round and reported zero console errors; TC/SC/EN/JP each passed `387`
+  i18n keys; Raphael restricted event cases passed `7/7`; JavaScript syntax,
+  Python AST and `git diff --check` passed. The post-repair full web release
+  gate passed `18/18` required checks with zero accessibility warnings and no
+  failed check.
+- Scope proof: exactly `18` intended files entered the feature commit. No
+  `assets/**`, `tools/**`, `scripts/**`, `index.html`, `defaultState`,
+  `saveManager`, store normalization or `pixiApp` change was staged. Generated
+  QA outputs and `__pycache__` were restored or removed before commit.
+- Remote proof before publication: local feature parent, `origin/main` and
+  live `refs/heads/main` were all `3f9f856`, with `0/0` divergence. The
+  authorized publication operation is a fast-forward push of this two-commit
+  delivery to `main`; no PR is required by the Owner instruction.
+- Art next step: do not batch-generate the original 18-slot estimate. First run
+  the real-device and three-player comprehension gates, then open `TP-E0` as a
+  staging-only heart-core carrier pilot under `output/**`. Current CSS, Pixi
+  and Moonlake assets cover eight slots; at most ten new bitmap candidates
+  should proceed to review. Any `assets/**` promotion remains a separate
+  human-approved GROUNDWORK task.
