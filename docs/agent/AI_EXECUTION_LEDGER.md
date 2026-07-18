@@ -3245,3 +3245,157 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Verification: browser gate `38/38` covered mobile `390x844`, desktop `1280x900`, keyboard Enter, Escape home, reduced-motion `0s` page transition, 200% text without horizontal overflow, no FOMO primary copy, no growth progress bar, reload session clear, and store／localStorage invariance across accept／modify／decline／rest.
 - Asset boundary: no asset, portrait, animation sheet, renderer, manifest or Stage 2/3 mapping changed.
 - Next safe action: After merge, any visual polish to the Prototype summary remains optional and must not promote crafting into the primary Growth loop.
+
+### 2026-07-18 - Codex - Video-Inspired Gameplay Vertical Slice - VERIFIED
+
+- Status: `VERIFIED` for the approved local EXPERIENCE slice; no commit, push,
+  publication or GROUNDWORK promotion was authorized.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `TP-VIDEO-INSPIRED-GAMEPLAY-V1` (`TP-A` through `TP-D`).
+- Branch / baseline: clean worktree
+  `C:\Users\User\NexusLink_RaphaelAI_Workspace\NexusLink-video-inspired-gameplay-v1`
+  on `codex/video-inspired-gameplay-v1`, based on `3f9f856`; the original
+  worktree and its Expedition/art changes were not modified.
+- Runtime result: Initial Bond now persists the chosen companion and `meet`
+  step before a skippable, interruption-safe First Resonance presentation.
+  Living Habitat Moments V2 adds one ephemeral session at a time for
+  `FIRESIDE_SETTLE`, `QUIET_APPROACH` and `MOON_GAZE`, with respond, wait and
+  leave as terminal qualitative choices. Crystal Weaving adds player-readable
+  observe and two-step release actions for existing transformed memories.
+- Architecture: habitat and crystal decisions live in pure ES modules and use
+  the bounded ten-field slice outcome. Habitat cancellation, hidden-page
+  offers and safety rechecks create no state write. Crystal release retains
+  the memory record, removes only its linked trace, and saves the full
+  candidate state before publishing it to the store; a missing or failed save
+  fails closed with no transient runtime mutation.
+- Standoff boundary: existing `battleEngine`, `battleController`,
+  `resonanceInviteEngine` and Resonance Circle remain authoritative. Retreat,
+  retreated and boundary endings map to the existing restricted boundary
+  adapter without HP, loot, equipment, ranking or punitive failure.
+- Groundwork boundary: no save schema, `defaultState`, store normalization,
+  `saveManager`, `pixiApp`, `index.html`, dependency or `assets/**` change.
+  Expedition remains untouched and is not used as a verified dependency.
+- Verification: video-inspired deterministic cases passed `11/11`; i18n
+  parity passed `387` keys in TC/SC/EN/JP; JavaScript and Python syntax,
+  `git diff --check`, initiative `21/21`, Raphael adapter `7/7`, standoff
+  `8/8`, Resonance Circle `18/18`, invite `12/12`, crystal lifecycle `9/9`,
+  safety terminal `18/18`, onboarding `4/4`, migration `33/33`, storage
+  `13/13` and renderer lifecycle `26/26` passed. The final local web release
+  gate passed all `18/18` required automated checks with no accessibility
+  warning.
+- Remaining human gates: real-device D1/D2/D3/D6, three independent
+  first-session comprehension sessions, legal/privacy/store-copy review and
+  public launch approval.
+- Required reading for follow-up: this entry, `NEXUS_LINK_MASTER_CANON_v3.1.md`,
+  `CLAUDE.md`, `ACCEPTANCE.md`, `src/engine/habitatMomentEngine.js`,
+  `src/engine/crystalWeavingEngine.js`, `src/ui/firstResonanceController.js`,
+  `src/ui/habitatMomentController.js` and
+  `src/ui/crystalWeavingController.js`.
+
+### 2026-07-18 - Codex - Video-Inspired Ritual And Habitat Presentation - VERIFIED
+
+- Status: `VERIFIED` for the UI and interaction layer; `TP-E` Art Promotion
+  remains a separate unstarted GROUNDWORK package.
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `TP-VIDEO-INSPIRED-GAMEPLAY-V1`.
+- Presentation result: the slice uses one restrained visual memory point,
+  the heart-core pulse, across a full-screen First Resonance ritual, an
+  ignorable habitat invitation and a page-integrated crystal interaction.
+  It avoids a mode lobby, stacked tutorial popups, reward counters and
+  equipment comparison surfaces.
+- Reuse result: existing companion portraits, Moonlake presentation,
+  environment FX and six-state crystal art are reused. No panorama, companion
+  animation, raster asset, manifest entry or `assets/**` file was generated,
+  edited or promoted.
+- Accessibility and lifecycle: First Resonance supports skip, Escape,
+  reduced-motion and interrupted-page completion. Habitat modal background
+  isolation, visible-control focus trapping and origin-focus restoration cover
+  both choice and resolved states. Crystal observe/release status is localized,
+  focus returns to a relevant control after success or failure, and stale
+  confirmation clears on page or visibility changes.
+- Browser evidence: Chromium checks at `390x844` and `1280x900` covered TC/EN,
+  200% text, keyboard, touch-sized controls, application and OS reduced motion,
+  no horizontal overflow, modal inertness, old eligible-memory reachability,
+  save-failure rollback and zero console/page errors.
+- Art boundary: the planned 18 required visuals and optional 8 polish visuals
+  were not generated. If `TP-E` is opened, use output staging and human visual
+  approval before any separate asset/manifest/Pixi promotion.
+- Branch / commit: `codex/video-inspired-gameplay-v1`; uncommitted, no push.
+- Required reading for follow-up: this entry,
+  `docs/design/NEXUS_LINK_V3_VISUAL_SYSTEM.md`,
+  `src/ui/firstResonanceController.js`,
+  `src/ui/habitatMomentController.js`, `src/ui/pageRouter.js`,
+  `styles/ui-v3-onboarding.css` and `styles/page-content.css`.
+
+### 2026-07-18 - Codex - Standoff Boundary Event Mapping - VERIFIED
+
+- Status: `VERIFIED` for restricted event mapping only; this is not a
+  RaphaelCore dialogue-strategy change or Expedition promotion.
+- Lane: `Raphael Core, Companion Reasoning, And Soul Talk`.
+- Task name: `TP-VIDEO-INSPIRED-GAMEPLAY-V1` (`TP-C` boundary audit).
+- Core result: existing Standoff outcomes `retreat`, `retreated` and
+  `boundary` now consistently produce the restricted `set_boundary` action
+  and soft boundary state patch. All three remain non-rewarding, create no
+  memory or trace, and keep restricted bridge speech suppressed.
+- Authority boundary: deterministic Standoff copy remains owned by the
+  existing controller and RaphaelCore remains final authority. No persona,
+  intent, critic, memoryWriter, safety dictionary, Soul Talk response policy
+  or post-encounter generated dialogue was added.
+- Safety truth: retreat and boundary setting are valid non-punitive endings;
+  safety-terminal outcomes cannot gain relationship, crystal, trace, memory
+  or gameplay feedback. Repair remains reachable through the established
+  Standoff engine.
+- Verification: Raphael adapter cases passed `7/7`, Standoff cases `8/8`,
+  safety-terminal invariant `18/18`, and the final web release gate passed
+  `18/18`. A Raphael `3 people x 20 turns` private blind evaluation was not
+  triggered because no dialogue-generation policy changed; it remains a
+  launch gate and becomes mandatory if a future pack adds Raphael post-event
+  responses.
+- Expedition truth: no Expedition file or state was changed. It remains
+  Prototype plus partial Core bridge with `coreIntegrated:false`.
+- Branch / commit: `codex/video-inspired-gameplay-v1`; uncommitted, no push.
+- Required reading for follow-up: this entry,
+  `docs/handoff/RAPHAEL_AI_HANDOFF.md`,
+  `docs/raphael/RAPHAEL_EXPEDITION_EVAL_CONTRACT.md`,
+  `src/ai/raphaelAgentAdapter.js`,
+  `src/ai/testHarness/raphaelAgentEventCases.js` and the latest Standoff lane
+  entries.
+
+### 2026-07-18 - Codex - Video-Inspired Gameplay Main Publication Closure - READY
+
+- Status: `READY` for the explicitly authorized direct `origin/main`
+  publication. Remote CI, Pages deployment and deployed-live verification must
+  still be checked after this ledger-sync commit is pushed.
+- Lanes: `Game Engineering And Architecture`; `Game Art, UI, And Visual
+  Production`; `Raphael Core, Companion Reasoning, And Soul Talk`.
+- Feature commit: `2734a27` (`feat: add video-inspired companion gameplay
+  slice`) on `codex/video-inspired-gameplay-v1`.
+- Pre-push review repairs: independent review blocked the first publication
+  attempt because Crystal Weaving used full trace synchronization and therefore
+  refreshed unrelated emotional traces. The release engine now removes only
+  traces linked by the target `memoryId` or legacy `htrace_<memoryId>` id; a
+  second transformed memory and its full emotional trace are deep-compared in
+  regression evidence. Review also found that deployed Pages QA still expected
+  the five-step legacy onboarding list; it now requires the six-step sequence
+  including `first-resonance-skip`.
+- Final local evidence: focused gameplay cases passed `11/11`; the local
+  deployed-live helper traversed all six onboarding actions, persisted a Soul
+  Talk round and reported zero console errors; TC/SC/EN/JP each passed `387`
+  i18n keys; Raphael restricted event cases passed `7/7`; JavaScript syntax,
+  Python AST and `git diff --check` passed. The post-repair full web release
+  gate passed `18/18` required checks with zero accessibility warnings and no
+  failed check.
+- Scope proof: exactly `18` intended files entered the feature commit. No
+  `assets/**`, `tools/**`, `scripts/**`, `index.html`, `defaultState`,
+  `saveManager`, store normalization or `pixiApp` change was staged. Generated
+  QA outputs and `__pycache__` were restored or removed before commit.
+- Remote proof before publication: local feature parent, `origin/main` and
+  live `refs/heads/main` were all `3f9f856`, with `0/0` divergence. The
+  authorized publication operation is a fast-forward push of this two-commit
+  delivery to `main`; no PR is required by the Owner instruction.
+- Art next step: do not batch-generate the original 18-slot estimate. First run
+  the real-device and three-player comprehension gates, then open `TP-E0` as a
+  staging-only heart-core carrier pilot under `output/**`. Current CSS, Pixi
+  and Moonlake assets cover eight slots; at most ten new bitmap candidates
+  should proceed to review. Any `assets/**` promotion remains a separate
+  human-approved GROUNDWORK task.

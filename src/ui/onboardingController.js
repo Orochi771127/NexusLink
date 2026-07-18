@@ -3,6 +3,7 @@ import { getCompanionById } from "../data/companionRegistry.js";
 import { isVeteranSave } from "../state/store.js";
 import EventBus from "../utils/eventBus.js";
 import { LANGUAGE_CHANGED_EVENT, t } from "../i18n/i18n.js";
+import { createFirstResonanceController } from "./firstResonanceController.js";
 
 const STEP_ORDER = ["start", "identity", "guidance", "bond", "meet"];
 const FINAL_GREETING = "我在這裡。你可以慢慢靠近，也可以先只是看著月湖。";
@@ -32,6 +33,7 @@ export const INITIAL_BOND_CHOICES = Object.freeze([
 export function createOnboardingController({ store, saveCurrentState, onBondChosen } = {}) {
   const root = qs("#onboarding-root");
   const shell = root?.querySelector(".onboarding-shell");
+  const firstResonance = createFirstResonanceController({ root });
   let steps = root ? qsa(".onboarding-step", root) : [];
   const nameInput = qs("#player-display-name");
   let activeStep = "start";
@@ -91,6 +93,7 @@ export function createOnboardingController({ store, saveCurrentState, onBondChos
   }
 
   function restart() {
+    firstResonance.cancel();
     const state = store.getState();
     const now = Date.now();
     store.setState({
@@ -184,16 +187,22 @@ export function createOnboardingController({ store, saveCurrentState, onBondChos
       : [companionId];
     store.setState({
       activeCompanionId: companionId,
-      unlockedCompanionIds: nextUnlocked
+      unlockedCompanionIds: nextUnlocked,
+      onboarding: {
+        ...state.onboarding,
+        status: "meet"
+      }
     });
+    // Presentation state is deliberately ephemeral. Persist the recoverable
+    // destination first so reload/pagehide during the flourish resumes at meet.
     persist();
+    render();
     try {
       await onBondChosen?.(companionId);
     } catch (error) {
       console.warn("initial bond swap failed; companion will load on next boot", error);
     }
-    setOnboardingStep("meet");
-    render();
+    await firstResonance.play(companionId);
   }
 
   function saveIdentity(skipIdentity) {

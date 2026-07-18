@@ -58,7 +58,11 @@ body.companion-initiative-active .gentle-invitation,
 body.first-loop-reveal-active .companion-initiative-line { opacity: 0 !important; }
 `;
 
-export function createCompanionInitiativeController({ store, isPanelOpen } = {}) {
+export function createCompanionInitiativeController({
+  store,
+  isPanelOpen,
+  onMomentAvailable
+} = {}) {
   let el = null;
   let intervalId = null;
   let hideTimerId = null;
@@ -99,7 +103,9 @@ export function createCompanionInitiativeController({ store, isPanelOpen } = {})
       body.contains("first-loop-active") ||
       body.contains("first-loop-reveal-active") ||
       body.contains("page-open") ||
-      body.contains("st-focus")
+      body.contains("st-focus") ||
+      body.contains("habitat-moment-active") ||
+      body.contains("habitat-moment-offered")
     ) {
       return false;
     }
@@ -157,6 +163,12 @@ export function createCompanionInitiativeController({ store, isPanelOpen } = {})
       source: "companion-initiative"
     });
     showLine(momentDef);
+    try {
+      onMomentAvailable?.(momentDef);
+    } catch (error) {
+      // 微時刻的可操作層是加值呈現；失敗不得中斷既有夥伴主動行為。
+      console.warn("Habitat moment invitation was unavailable", error);
+    }
     return momentDef;
   }
 

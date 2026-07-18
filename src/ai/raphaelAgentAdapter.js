@@ -102,7 +102,7 @@ function deriveEventActions(eventType, event = {}, coreResult = {}) {
     actions.push("suggest_exploration");
   } else if (eventType === "standoff_result") {
     actions.push("body_cue_only");
-    if (event?.result === "retreat" || event?.result === "boundary") {
+    if (["retreat", "retreated", "boundary"].includes(event?.result)) {
       actions.push("set_boundary");
     }
   }
@@ -167,8 +167,14 @@ function buildAnimation({ eventType, event, coreResult, safety, options }) {
 function buildBoundary({ eventType, event, coreResult, safety }) {
   const coreAction = getCoreAction(coreResult);
   const touchBoundary = eventType === "touch" && deriveTouchActions(event).includes("set_boundary");
+  const standoffBoundary = eventType === "standoff_result"
+    && ["retreat", "retreated", "boundary"].includes(event?.result);
 
-  if (!touchBoundary && !["set_boundary", "soft_refuse", "lower_interaction_intensity"].includes(coreAction)) {
+  if (
+    !touchBoundary
+    && !standoffBoundary
+    && !["set_boundary", "soft_refuse", "lower_interaction_intensity"].includes(coreAction)
+  ) {
     return null;
   }
 

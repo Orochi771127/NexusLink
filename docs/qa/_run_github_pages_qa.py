@@ -18,6 +18,7 @@ EXPECTED_ONBOARDING_ACTIONS = [
     "skip-identity",
     "guidance-next",
     "bond-choose",
+    "first-resonance-skip",
     "complete",
 ]
 
@@ -49,6 +50,9 @@ def _complete_onboarding(page):
             "failed_action": "onboarding_hidden_on_fresh_context",
         }
 
+    supports_first_resonance = (
+        root.get_attribute("data-first-resonance-supported") == "true"
+    )
     actions = [
         ("start", '[data-onboarding-action="start"]', "identity"),
         ("skip-identity", '[data-onboarding-action="skip-identity"]', "guidance"),
@@ -74,6 +78,44 @@ def _complete_onboarding(page):
                 arg=expected_step,
                 timeout=10000,
             )
+            if action == "bond-choose":
+                page.wait_for_function(
+                    """
+                    (supportsFirstResonance) => {
+                      const skip = document.querySelector('[data-first-resonance-action="skip"]');
+                      const layer = document.querySelector('.first-resonance-layer');
+                      const complete = document.querySelector('[data-onboarding-action="complete"]');
+                      const skipVisible = Boolean(
+                        skip
+                        && !skip.closest('[hidden]')
+                        && skip.getClientRects().length
+                      );
+                      if (supportsFirstResonance) {
+                        return Boolean(skip) && (
+                          skipVisible
+                          || ['completed', 'dismissed'].includes(layer?.dataset.viewState)
+                        );
+                      }
+                      return Boolean(complete && !complete.disabled);
+                    }
+                    """,
+                    arg=supports_first_resonance,
+                    timeout=10000,
+                )
+                skip = page.locator('[data-first-resonance-action="skip"]').first
+                if skip.count() and skip.is_visible():
+                    skip.click(timeout=5000)
+                    completed_actions.append("first-resonance-skip")
+                    page.wait_for_function(
+                        """
+                        () => {
+                          const layer = document.querySelector('.first-resonance-layer');
+                          const complete = document.querySelector('[data-onboarding-action="complete"]');
+                          return Boolean((!layer || layer.hidden) && complete && !complete.disabled);
+                        }
+                        """,
+                        timeout=5000,
+                    )
         else:
             page.wait_for_function(
                 "() => document.querySelector('#onboarding-root')?.hidden === true",

@@ -85,6 +85,90 @@ export const STRINGS = {
     en: "This step was not saved. You are still here and can try again; leaving now carries no penalty.",
     jp: "この一歩はまだ保存されていない。ここにいるまま、もう一度試せる。いったん離れても不利益はない。"
   },
+  "fr.kicker": { tc: "初響", sc: "初响", en: "First Resonance", jp: "はじめの共鳴" },
+  "fr.title": {
+    tc: "兩道心核光，第一次試著聽見彼此。",
+    sc: "两道心核光，第一次试着听见彼此。",
+    en: "Two heart-core lights try to hear each other for the first time.",
+    jp: "二つの心核の光が、初めて互いの声を聴こうとする。"
+  },
+  "fr.phaseListening": {
+    tc: "你先靠近。牠沒有被要求立刻回應。",
+    sc: "你先靠近。牠没有被要求立刻回应。",
+    en: "You draw near first. It is not asked to answer at once.",
+    jp: "あなたが先に近づく。すぐ応えることは求められていない。"
+  },
+  "fr.responseDistance": {
+    tc: "牠留在月光外緣，安靜看著你。這也是回應。",
+    sc: "牠留在月光外缘，安静看着你。这也是回应。",
+    en: "It stays at the moonlight's edge and quietly watches. This, too, is an answer.",
+    jp: "月明かりの縁に留まり、静かに見つめる。それもひとつの応え。"
+  },
+  "fr.responseApproach": {
+    tc: "牠按自己的步調，向你的光靠近了一點。",
+    sc: "牠按自己的步调，向你的光靠近了一点。",
+    en: "At its own pace, it moves a little closer to your light.",
+    jp: "自分の歩調で、あなたの光へ少しだけ近づく。"
+  },
+  "fr.responseHesitate": {
+    tc: "牠的光停了一會兒，才輕輕回響。遲疑也被允許。",
+    sc: "牠的光停了一会儿，才轻轻回响。迟疑也被允许。",
+    en: "Its light pauses before softly answering. Hesitation is welcome here.",
+    jp: "光はしばらく留まり、そっと響き返す。ためらいも許されている。"
+  },
+  "fr.phaseSettled": {
+    tc: "這不是擁有的印記，只是一句：我們可以從這裡開始。",
+    sc: "这不是拥有的印记，只是一句：我们可以从这里开始。",
+    en: "This is not a mark of ownership—only: we can begin here.",
+    jp: "これは所有の印ではない。ただ、ここから始められるということ。"
+  },
+  "fr.skip": { tc: "略過演出", sc: "略过演出", en: "Skip presentation", jp: "演出をスキップ" },
+  "fr.fallbackName": { tc: "這道心核光", sc: "这道心核光", en: "This heart-core light", jp: "この心核の光" },
+
+  // ---- Living Habitat Moments V2 ----
+  "hm.offer": { tc: "回應這個時刻", sc: "回应这个时刻", en: "Respond to this moment", jp: "このひとときに応える" },
+  "hm.kicker": { tc: "棲地微時刻", sc: "栖地微时刻", en: "Habitat moment", jp: "棲み処のひととき" },
+  "hm.close": { tc: "先不回應", sc: "先不回应", en: "Leave it unanswered", jp: "今は応えない" },
+  "hm.quiet.title": { tc: "安靜靠近", sc: "安静靠近", en: "A quiet approach", jp: "静かな歩み寄り" },
+  "hm.quiet.copy": {
+    tc: "牠先靠近了一點。你可以回應、一起等，或讓這個邀請自然散去。",
+    sc: "牠先靠近了一点。你可以回应、一起等，或让这个邀请自然散去。",
+    en: "It comes a little closer first. You may respond, wait together, or let the invitation pass.",
+    jp: "相棒が先に少し近づいた。応える、一緒に待つ、そのまま過ぎさせる、どれでもいい。"
+  },
+  "hm.moon.title": { tc: "共同看月", sc: "共同看月", en: "Watching the moon", jp: "一緒に月を見る" },
+  "hm.moon.copy": {
+    tc: "牠望向湖上的月光，沒有要求你把沉默填滿。",
+    sc: "牠望向湖上的月光，没有要求你把沉默填满。",
+    en: "It watches the moonlight on the lake without asking you to fill the silence.",
+    jp: "湖面の月明かりを見つめている。沈黙を埋める必要はない。"
+  },
+  "hm.crystal.title": { tc: "心晶微光", sc: "心晶微光", en: "A crystal glimmer", jp: "心晶の微光" },
+  "hm.crystal.copy": {
+    tc: "牠在火光旁休息，遠處的心晶只亮了一下。這不是任務。",
+    sc: "牠在火光旁休息，远处的心晶只亮了一下。这不是任务。",
+    en: "It rests beside the fire while a distant heart crystal glimmers once. This is not a task.",
+    jp: "火のそばで休む相棒の向こうで、心晶が一度だけ光る。これは任務ではない。"
+  },
+  "hm.choice.respond": { tc: "回應", sc: "回应", en: "Respond", jp: "応える" },
+  "hm.choice.respondSub": { tc: "給一個很輕的回應，不替牠決定距離。", sc: "给一个很轻的回应，不替牠决定距离。", en: "Offer a small response without choosing its distance.", jp: "距離を決めず、そっと応える。" },
+  "hm.choice.wait": { tc: "一起等一會兒", sc: "一起等一会儿", en: "Wait together", jp: "一緒に少し待つ" },
+  "hm.choice.waitSub": { tc: "不催促，也不把等待變成進度。", sc: "不催促，也不把等待变成进度。", en: "Do not hurry it or turn waiting into progress.", jp: "急かさず、待つことを進捗にしない。" },
+  "hm.choice.leave": { tc: "安靜離開", sc: "安静离开", en: "Leave quietly", jp: "静かに離れる" },
+  "hm.choice.leaveSub": { tc: "離開也是完整選擇，不會失去任何東西。", sc: "离开也是完整选择，不会失去任何东西。", en: "Leaving is a complete choice. Nothing is lost.", jp: "離れることも完全な選択。失うものはない。" },
+  "hm.resultFallback": { tc: "這個時刻安靜地結束了。", sc: "这个时刻安静地结束了。", en: "The moment ends quietly.", jp: "ひとときは静かに終わった。" },
+  "hm.result.quiet_approach.respond": { tc: "你回了一個很輕的動作；牠停在自己選的距離。", sc: "你回了一个很轻的动作；牠停在自己选择的距离。", en: "You answer with a small gesture; it stays at a distance of its choosing.", jp: "そっと仕草を返す。相手は自分で選んだ距離に留まる。" },
+  "hm.result.quiet_approach.wait": { tc: "你沒有催促。牠把這段安靜留在你們之間。", sc: "你没有催促。牠把这段安静留在你们之间。", en: "You do not hurry it. The quiet remains between you.", jp: "急かさずにいる。静けさがふたりの間に残る。" },
+  "hm.result.quiet_approach.leave": { tc: "你先離開。這個邀請沒有變成欠下的事。", sc: "你先离开。这个邀请没有变成欠下的事。", en: "You leave first. The invitation does not become a debt.", jp: "先に離れる。この誘いが借りになることはない。" },
+  "hm.result.fireside_settle.respond": { tc: "你在火光外側坐下，沒有要求牠靠近。", sc: "你在火光外侧坐下，没有要求牠靠近。", en: "You sit at the edge of the firelight without asking it to come closer.", jp: "火の光の外側に座り、近づくことを求めない。" },
+  "hm.result.fireside_settle.wait": { tc: "你讓火光自己呼吸；牠照自己的節奏休息。", sc: "你让火光自己呼吸；牠照自己的节奏休息。", en: "You let the firelight breathe; it rests at its own pace.", jp: "火の光をそのまま揺らがせ、相手は自分の歩調で休む。" },
+  "hm.result.fireside_settle.leave": { tc: "你把空間留給牠。離開也是完整的回應。", sc: "你把空间留给牠。离开也是完整的回应。", en: "You leave it space. Leaving is a complete response too.", jp: "相手のために空間を残す。離れることも完全な応えだ。" },
+  "hm.result.moon_gaze.respond": { tc: "你也抬頭看月亮；沒有誰需要把沉默填滿。", sc: "你也抬头看月亮；没有谁需要把沉默填满。", en: "You look up at the moon too; neither of you has to fill the silence.", jp: "あなたも月を見上げる。沈黙を埋める必要はない。" },
+  "hm.result.moon_gaze.wait": { tc: "你安靜等著。牠仍能決定要停留多久。", sc: "你安静等着。牠仍能决定要停留多久。", en: "You wait quietly. It still decides how long to stay.", jp: "静かに待つ。どれだけ留まるかは相手が決められる。" },
+  "hm.result.moon_gaze.leave": { tc: "你讓牠獨自看完月色。這不是錯過。", sc: "你让牠独自看完月色。这不是错过。", en: "You let it finish watching the moon alone. Nothing was missed.", jp: "相手がひとりで月を見終える時間を残す。これは見逃しではない。" },
+  "hm.result.invalid": { tc: "這個片刻已經散去。", sc: "这个片刻已经散去。", en: "The moment has already drifted away.", jp: "そのひとときは、もう静かに去った。" },
+  "hm.result.safetyPause": { tc: "此刻先留白；不需要完成任何互動。", sc: "此刻先留白；不需要完成任何互动。", en: "Leave this moment open. Nothing needs to be completed.", jp: "いまは余白のままでいい。何かを完了する必要はない。" },
+  "hm.result.expired": { tc: "這個片刻已經自然結束。", sc: "这个片刻已经自然结束。", en: "The moment has ended on its own.", jp: "そのひとときは自然に終わった。" },
 
   // ---- Page headers ----
   "page.explore.title": { tc: "探索", sc: "探索", en: "Explore", jp: "探索" },
@@ -391,6 +475,54 @@ export const STRINGS = {
   "memory.fallbackInteractionCopy": { tc: "這是一段已保存的互動。", sc: "这是一段已保存的互动。", en: "A saved moment between you.", jp: "保存されたひとときのやり取り。" },
   "memory.intensityFmt": { tc: "（強度 {pct}%）", sc: "（强度 {pct}%）", en: " (intensity {pct}%)", jp: "（強さ {pct}%）" },
   "memory.reviewAria": { tc: "回看", sc: "回看", en: "Revisit", jp: "見返す" },
+  "memory.review": { tc: "回望", sc: "回望", en: "Revisit", jp: "見返す" },
+  "memory.crystalKicker": { tc: "心晶織痕", sc: "心晶织痕", en: "Crystal weaving", jp: "心晶の織痕" },
+  "memory.crystalObserve": { tc: "觀察微光", sc: "观察微光", en: "Observe the glow", jp: "微光を観察する" },
+  "memory.crystalObserveSub": { tc: "只看它此刻的樣子，不改變記錄。", sc: "只看它此刻的样子，不改变记录。", en: "See it as it is without changing the record.", jp: "記録を変えず、いまの姿を見る。" },
+  "memory.crystalObserveStatus": { tc: "你只是看著心晶的光。", sc: "你只是看着心晶的光。", en: "You simply watch the crystal's light.", jp: "ただ心晶の光を見つめる。" },
+  "memory.crystalNoDaily": {
+    tc: "心晶會隨共同經歷自然沉澱；不需要每日回來，也沒有錯過懲罰。",
+    sc: "心晶会随共同经历自然沉淀；不需要每日回来，也没有错过惩罚。",
+    en: "Heart crystals settle through shared experience. There is no daily return or penalty for absence.",
+    jp: "心晶は共に過ごした経験から自然に沈殿する。毎日戻る必要も、欠席の罰もない。"
+  },
+  "memory.crystalRelease": { tc: "一起放下", sc: "一起放下", en: "Let it go together", jp: "一緒に手放す" },
+  "memory.crystalReleasePrompt": { tc: "再確認一次：記錄會保留，光只是不再停在棲地。", sc: "再确认一次：记录会保留，光只是不再停在栖地。", en: "Confirm once more: the record stays; only its light leaves the habitat.", jp: "もう一度確認。記録は残り、光だけが棲み処を離れる。" },
+  "memory.crystalReleaseConfirmAria": { tc: "確認是否一起放下這枚心晶", sc: "确认是否一起放下这枚心晶", en: "Confirm whether to let this crystal go", jp: "この心晶を手放すか確認" },
+  "memory.crystalReleaseConfirmCopy": { tc: "這不會刪除共同經歷，也不會改變關係數值。", sc: "这不会删除共同经历，也不会改变关系数值。", en: "This does not erase the shared experience or change relationship values.", jp: "共に過ごした経験は消えず、関係の値も変わらない。" },
+  "memory.crystalReleaseConfirm": { tc: "確認放下", sc: "确认放下", en: "Let it go", jp: "手放す" },
+  "memory.crystalReleaseKeep": { tc: "先留著", sc: "先留着", en: "Keep it for now", jp: "今は残す" },
+  "memory.crystalReleaseKept": { tc: "心晶仍留在原處。", sc: "心晶仍留在原处。", en: "The crystal remains where it was.", jp: "心晶はそのまま残っている。" },
+  "memory.crystalReleaseStatus": { tc: "光離開棲地，共同經歷仍完整保留。", sc: "光离开栖地，共同经历仍完整保留。", en: "The light leaves the habitat; the shared experience remains.", jp: "光は棲み処を離れ、共に過ごした経験は残る。" },
+  "memory.crystalReleaseReady": { tc: "有 {count} 枚完成沉澱的心晶可以一起放下。", sc: "有 {count} 枚完成沉淀的心晶可以一起放下。", en: "{count} settled crystal(s) can be let go together.", jp: "沈殿を終えた心晶が {count} 個、手放せる。" },
+  "memory.crystalNoRelease": { tc: "目前沒有適合放下的完成心晶；觀察就足夠。", sc: "目前没有适合放下的完成心晶；观察就足够。", en: "No completed crystal is ready to leave. Observation is enough.", jp: "いま手放せる心晶はない。観察するだけで十分。" },
+  "memory.crystalResult.safetyPause": { tc: "現在不需要整理任何心晶；先把空間留給夥伴。", sc: "现在不需要整理任何心晶；先把空间留给伙伴。", en: "No crystal needs tending now. Leave the space with your companion.", jp: "いま心晶を整える必要はない。まず相手のために空間を残そう。" },
+  "memory.crystalResult.observeUnavailable": { tc: "這枚心晶目前沒有可觀察的光。", sc: "这枚心晶目前没有可观察的光。", en: "This crystal has no visible light to observe right now.", jp: "この心晶には、いま観察できる光がない。" },
+  "memory.crystalResult.protected": { tc: "這段記憶仍承載關係、邊界或修復，不能由整理動作移走。", sc: "这段记忆仍承载关系、边界或修复，不能由整理动作移走。", en: "This memory still carries relationship, boundary, or repair work and cannot be moved by tidying.", jp: "この記憶には関係、境界、修復が残っているため、整理で移すことはできない。" },
+  "memory.crystalResult.alreadyReleased": { tc: "這枚心晶的光已經離開棲地；記錄仍然保留。", sc: "这枚心晶的光已经离开栖地；记录仍然保留。", en: "This crystal's light has left the habitat; its record remains.", jp: "この心晶の光は棲み処を離れたが、記録は残っている。" },
+  "memory.crystalResult.notVisible": { tc: "這枚心晶目前不在棲地中。", sc: "这枚心晶目前不在栖地中。", en: "This crystal is not present in the habitat.", jp: "この心晶はいま棲み処にない。" },
+  "memory.crystalResult.notTransformed": { tc: "這段經歷仍在沉澱，現在只適合觀察。", sc: "这段经历仍在沉淀，现在只适合观察。", en: "This experience is still settling; observation is enough for now.", jp: "この経験はまだ沈殿の途中。いまは観察するだけでいい。" },
+  "memory.crystalResult.notFound": { tc: "找不到可放下的心晶。", sc: "找不到可放下的心晶。", en: "No crystal ready to be let go was found.", jp: "手放せる心晶が見つからない。" },
+  "memory.crystalResult.busy": { tc: "心晶仍在整理中；這次不會重複寫入。", sc: "心晶仍在整理中；这次不会重复写入。", en: "The crystal is still being tended; this action will not be written twice.", jp: "心晶を整えている途中。この操作は重複して記録されない。" },
+  "memory.crystalResult.saveFailed": { tc: "心晶狀態沒有成功保存；原本的共同經歷仍保持不變。", sc: "心晶状态没有成功保存；原本的共同经历仍保持不变。", en: "The crystal state could not be saved; the shared experience remains unchanged.", jp: "心晶の状態を保存できなかった。共に過ごした経験は変わらず残っている。" },
+  "memory.crystalResult.failed": { tc: "心晶整理暫時無法完成；原本的狀態沒有改變。", sc: "心晶整理暂时无法完成；原本的状态没有改变。", en: "Crystal tending could not finish; the previous state was left unchanged.", jp: "心晶の整理を完了できなかった。元の状態は変わっていない。" },
+  "memory.status.fresh": { tc: "初凝", sc: "初凝", en: "Fresh", jp: "初凝" },
+  "memory.status.settled": { tc: "沉定", sc: "沉定", en: "Settled", jp: "沈定" },
+  "memory.status.transformed": { tc: "轉化完成", sc: "转化完成", en: "Transformed", jp: "変容済み" },
+  "memory.status.archived": { tc: "收藏", sc: "收藏", en: "Archived", jp: "保管" },
+  "memory.status.released": { tc: "已釋放", sc: "已释放", en: "Released", jp: "解放済み" },
+  "memory.crystalState.glimmer.title": { tc: "湖畔微光", sc: "湖畔微光", en: "Lakeside glimmer", jp: "湖畔の微光" },
+  "memory.crystalState.glimmer.copy": { tc: "還沒有心晶需要整理。留白也是棲地的一部分。", sc: "还没有心晶需要整理。留白也是栖地的一部分。", en: "There is no crystal to tend. Empty space belongs here too.", jp: "整える心晶はまだない。余白も棲み処の一部。" },
+  "memory.crystalState.seed.title": { tc: "初凝心晶", sc: "初凝心晶", en: "A forming crystal", jp: "初凝の心晶" },
+  "memory.crystalState.seed.copy": { tc: "一段共同經歷剛開始凝光，現在只需要被看見。", sc: "一段共同经历刚开始凝光，现在只需要被看见。", en: "A shared experience has begun to gather light. It only needs to be seen.", jp: "共に過ごした経験が光を集め始めた。いまは見守るだけでいい。" },
+  "memory.crystalState.cluster.title": { tc: "共鳴晶簇", sc: "共鸣晶簇", en: "Resonant cluster", jp: "共鳴の晶簇" },
+  "memory.crystalState.cluster.copy": { tc: "幾段經歷在棲地裡並存，沒有哪一段需要被比較。", sc: "几段经历在栖地里并存，没有哪一段需要被比较。", en: "Several experiences coexist here; none needs to be ranked.", jp: "いくつもの経験が共にある。比べる必要はない。" },
+  "memory.crystalState.attuned.title": { tc: "沉定共振", sc: "沉定共振", en: "Settled resonance", jp: "沈定した共鳴" },
+  "memory.crystalState.attuned.copy": { tc: "心晶正依自己的時間沉澱，不需要加速。", sc: "心晶正依自己的时间沉淀，不需要加速。", en: "The crystal is settling in its own time. It needs no acceleration.", jp: "心晶は自分の時間で沈殿している。急がせなくていい。" },
+  "memory.crystalState.transformed.title": { tc: "轉化之光", sc: "转化之光", en: "Transformed light", jp: "変容の光" },
+  "memory.crystalState.transformed.copy": { tc: "有些經歷已完成沉澱；你們可以保留，也可以一起放下它的棲地光。", sc: "有些经历已完成沉淀；你们可以保留，也可以一起放下它的栖地光。", en: "Some experiences have settled. Keep them, or let their habitat light go together.", jp: "沈殿を終えた経験がある。残すことも、棲み処の光を一緒に手放すこともできる。" },
+  "memory.crystalState.released.title": { tc: "釋放殘光", sc: "释放余光", en: "Released afterglow", jp: "解放の残光" },
+  "memory.crystalState.released.copy": { tc: "光已離開棲地，但記錄沒有被刪除。", sc: "光已离开栖地，但记录没有被删除。", en: "The light has left the habitat, but the record was not erased.", jp: "光は棲み処を離れたが、記録は消えていない。" },
 
   // ---- Time ----
   "time.unmarked": { tc: "未標記時間", sc: "未标记时间", en: "No timestamp", jp: "時刻の記録なし" },
