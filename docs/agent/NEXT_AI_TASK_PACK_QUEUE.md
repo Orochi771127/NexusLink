@@ -28,7 +28,8 @@ TP-8 已由 Owner 決策為選項 A（初遇選角），併入新的 **CH-1..CH-
 2. **TP-7** (companion-initiated micro-moments — biggest differentiation) — ✅ shipped
 3. **TP-2** (status/handoff refresh)
 4. **TP-8** (Initial Bond decision — folded into CH packs)
-5. TP-3 (eval pack), TP-4 (i18n fill), TP-5 (cursor rules) as capacity allows.
+5. ~~TP-3~~ / ~~TP-4~~ done; TP-5 (cursor rules) + **TP-WQ1** wording-quality
+   as capacity allows (TP-WQ1 lands this cycle).
 Rationale and evidence: `docs/agent/PRODUCT_QUALITY_FUN_FACTOR_AUDIT.md`.
 
 Standing constraints for every pack below: no commit/push without explicit
@@ -210,29 +211,26 @@ for the record.
   without evidence marked NOT VERIFIED.
 - **Human gate:** review-only (docs), plus commit approval.
 
-## TP-3 — Eval-only pack: Nuwa fixture extension + eval-shape alignment
+## TP-3 — Eval-only pack: Nuwa fixture extension + eval-shape alignment — ✅ DONE 2026-07-10
 
-- **Goal:** the next eval-only step already named in the ledger's Nuwa
-  entry: add sleep / morning / commuting / quiet-return fixtures to the Nuwa
-  advisory cases, plus persona-differentiation and apology-repair eval cases
-  identified as gaps in `docs/raphael/RAPHAEL_EVAL_COVERAGE_MATRIX.md`; add
-  a short doc section reconciling the Cursor rule's preferred eval-case JSON
-  shape with the implemented boolean-check shape (align the doc, don't
-  rewrite 14 harnesses).
-- **Recommended model:** **Codex** (narrow, fixture-driven, pattern follows
-  existing files). Fable 5 only if a design question emerges (e.g. how to
-  test persona differentiation without a second runtime persona).
-- **Allowed files:** `src/ai/testHarness/raphaelTrainingBundleCases.js`,
-  `src/data/ai/raphaelNuwaDistillationBundle.js` (fixtures only), a new
-  harness file under `src/ai/testHarness/` if persona/repair cases need one
-  `[NEW]`, `docs/raphael/RAPHAEL_EVAL_COVERAGE_MATRIX.md` (update),
-  `docs/agent/AI_EXECUTION_LEDGER.md`.
-- **Forbidden files:** `src/ai/raphaelCore.js`, `safetyShield.js`,
-  `memoryWriter.js`, `stateMutationPolicy.js`, all GROUNDWORK, all UI.
-- **Verification plan:** `node --check` on touched JS (bundled codex node);
-  run training-bundle + main-readiness + smoke runners; `git diff --check`.
-- **Human gate:** approval to start (depends on TP-1 outcome — these files
-  are currently dirty); review of new fixture wording.
+Completed earlier: Nuwa rhythm fixtures + `personaBoundaryEvalCases.js`.
+Preferred wording-shape (`expectedTone` / `mustInclude` / `mustAvoid`) was
+the residual gap — closed by **TP-WQ1** below (2026-07-20), not by redoing
+TP-3 fixtures.
+
+## TP-WQ1 — Wording-quality harness v1 + Daily Presence de-meta — ✅ DONE 2026-07-20
+
+- **Goal:** close coverage-matrix §3.6 — implement preferred eval case shape
+  and remove the most bot-like meta fallbacks in daily grounded lines.
+- **Allowed files:** `src/ai/eval/wordingQualityAssert.js` `[NEW]`,
+  `src/ai/testHarness/wordingQualityEvalCases.js` `[NEW]`,
+  `docs/qa/_run_wording_quality.py` `[NEW]`, `src/ai/nlu/nluReplyBuilder.js`
+  (de-meta only), `src/ai/raphaelCore.js` (smoke install wire only),
+  `src/ai/testHarness/dialogueLoopSmokeCases.js` (meta ban sync), coverage
+  matrix / queue / ledger.
+- **Forbidden:** holdout wording → packs; save/schema; safetyShield; LLM API.
+- **Verification:** `_run_wording_quality.py` 8/8; dialogue-loop + stage4
+  regression; `git diff --check`.
 
 ## TP-4 — i18n fill: sc/jp for the 53 EN keys — ✅ DONE 2026-07-06 / 查證 2026-07-14
 

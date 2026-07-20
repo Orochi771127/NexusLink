@@ -63,24 +63,22 @@ critic-unit eval (acceptable; they fail loudly inside harness runs).
    no eval asserts the Constitution §6 maturity-arc property (30-day
    respected-boundary cat ≠ over-protected cat). Likely needs a scripted
    multi-session harness; expensive — design first.
-6. **Wording-quality assertions.** The Cursor rule's preferred case shape
-   (`expectedTone`, `mustInclude`, `mustAvoid`) was never implemented;
-   current checks are structural/policy booleans plus forbidden-phrase
-   scans. This is the main reason "harness pass ≠ human feel" — the gap the
-   human playtest gate currently absorbs.
+6. **Wording-quality assertions.** ~~never implemented~~ →
+   **CLOSED 2026-07-20 (TP-WQ1)**: `wordingQualityAssert.js` +
+   `wordingQualityEvalCases.js` (8 cases) implement preferred case shape
+   (`expectedTone` / `mustInclude` / `mustAvoid`) plus always-on meta-language
+   ban. Runner: `docs/qa/_run_wording_quality.py`. Human playtest / private
+   blind still absorb residual naturalness judgement.
 7. **Companion autonomy / initiative (player-visible).** ~~Partial coverage~~
    → **RA-1 SEALED 2026-07-14**: contract
    `docs/raphael/RAPHAEL_AUTONOMY_EVAL_CONTRACT.md`; harness
    `raphaelAutonomyEvalCases.js` (+ extended `companionInitiativeCases.js`)
    asserts absence-invariance, safety quiet, session cap／boot／interval
-   constants, no reward fields. **Still open:** Owner feel-check; Codex skill
-   `raphael-autonomy-eval` (RA-3); Nuwa heuristics (RA-2).
+   constants, no reward fields. ~~RA-2 / RA-3~~ → **DONE 2026-07-20**.
+   **Still open:** Owner habitat feel-check.
 8. **Standoff / rift combat quality.** ~~no sealed Raphael-lane eval~~ →
-   **RS-1 SEALED 2026-07-14**: contract
-   `docs/raphael/RAPHAEL_STANDOFF_EVAL_CONTRACT.md`; harness
-   `raphaelStandoffEvalCases.js` **8/8** asserts four endings, retreat
-   affirmed, telegraph readability, no HP／DPS language, fatigue／shard
-   caps. **Still open:** Owner success-definition ack; RS-2 advisory;
+   **RS-1 SEALED 2026-07-14**; ~~RS-2~~ → **DONE 2026-07-20**.
+   **Still open:** Owner success-definition ack;
    `raphael-standoff-eval` skill (RS-3). Do not install generic combat skills.
 
 ## 4. Duplicate / low-value evals
@@ -98,18 +96,12 @@ critic-unit eval (acceptable; they fail loudly inside harness runs).
 
 ## 5. Recommended next eval-only task
 
-~~TP-3~~ → **DONE 2026-07-10**: Nuwa v0.2 rhythm fixtures shipped
-(NUWA-SLEEP/MORNING/COMMUTE/RETURN-001; sleep farewell carries a
-`no_retention_pull` anti-dependency sentinel — the companion must never
-say「再陪我一下」); §3.1/§3.2 gaps closed via
-`personaBoundaryEvalCases.js` (installed in the raphaelSmoke harness
-chain; run via `__PERSONA_BOUNDARY_EVAL__.runAll()`). Training bundle now
-21/21, main readiness 33/33. Remaining open gaps: fission red lines
-(blocked on content), multilingual depth, long-horizon tone drift,
-wording-quality assertions (human playtest absorbs these for now).
+~~TP-3~~ → **DONE 2026-07-10**: Nuwa v0.2 rhythm fixtures +
+`personaBoundaryEvalCases.js`. ~~TP-WQ1 / §3.6 wording-quality~~ →
+**DONE 2026-07-20**: preferred case shape + de-meta grounded lines.
+Remaining open gaps: fission red lines (blocked on content), multilingual
+depth, long-horizon tone drift, private-blind human review.
 
-**2026-07-14 training-ops update:** ~~RA-1~~ → **DONE 2026-07-14** (sealed
-contract + autonomy eval harness **25/25**). ~~RS-1~~ → **DONE 2026-07-14**
-(standoff contract + harness **8/8**). Next: **RA-2** after Owner
-initiative feel-check, or **RS-2** after Owner standoff success-definition
-ack. Do not substitute external game-AI／combat skills for these gaps.
+**2026-07-20 training-ops update:** ~~RA-1 / RA-2 / RA-3 / RS-1 / RS-2~~ →
+**DONE**. Next capacity: **RS-3** (`raphael-standoff-eval` skill) or
+Owner private-blind. Do not substitute external game-AI／combat skills.

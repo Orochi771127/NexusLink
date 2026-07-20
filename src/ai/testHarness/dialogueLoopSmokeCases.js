@@ -529,7 +529,8 @@ function runMultiTurnBoundaryResolutionCase(testCase) {
 }
 
 function hasMachineMetaLanguage(reply = "") {
-  return /我有接到|今天的一個片段|我先不替它分類|你可以照原本的方式|我想確認一下：你現在最想先處理的是.+這塊嗎/.test(
+  // Keep in sync with wordingQualityAssert.META_LANGUAGE_BAN (TP-WQ1).
+  return /我有接到|原來事情是這樣|今天的一個片段|我先不替它分類|你可以照原本的方式|我想確認一下：你現在最想先處理的是.+這塊嗎/.test(
     String(reply || "")
   );
 }
