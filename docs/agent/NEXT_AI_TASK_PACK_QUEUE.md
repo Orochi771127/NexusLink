@@ -124,7 +124,14 @@ before RS-2. Original pack text kept below.
   `docs/agent/PRODUCT_QUALITY_FUN_FACTOR_AUDIT.md` (standoff section),
   `src/engine/battleEngine.js`.
 
-## RA-3 — Install `raphael-autonomy-eval` skill (planned)
+## RA-3 — Install `raphael-autonomy-eval` skill — ✅ DONE 2026-07-20
+
+Completed: skill installed at `%USERPROFILE%\.codex\skills\raphael-autonomy-eval\`
+(`SKILL.md`, `agents/openai.yaml`, `references/evaluation-contract.md`,
+`scripts/run_eval.py`). Local run: **30/30** + Nuwa advisory `trusted:false`
+(`hardGateOk=true`). No `src/**` runtime change. Original pack text kept below.
+
+### (archived) RA-3 — Install `raphael-autonomy-eval` skill (planned)
 
 - **Goal:** mirror `raphael-conversation-eval` for initiative／autonomy gates.
   Skill lives under `%USERPROFILE%\.codex\skills\raphael-autonomy-eval\`.
