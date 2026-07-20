@@ -18,9 +18,10 @@ TP-8 已由 Owner 決策為選項 A（初遇選角），併入新的 **CH-1..CH-
 1. ~~**RA-1**~~ — autonomy sealed-case contract + harness shape — ✅ 2026-07-14
 2. ~~**RS-1**~~ — standoff eval contract (emotion／retreat ≠ DPS) — ✅ 2026-07-14
 3. ~~**RA-2**~~ — Nuwa-style autonomy heuristics (`trusted:false`) — ✅ 2026-07-20（Owner 批 feel-check／豁免後）
-4. **RS-2** — light standoff intent advisory — after Owner standoff ack
-5. **RA-3** / **RS-3** as capacity allows (eval skills)
-6. Chapter packs (CH-2…) and remaining TP-* as product capacity allows
+4. ~~**RA-3**~~ — install `raphael-autonomy-eval` skill — ✅ 2026-07-20
+5. **RS-2** — light standoff intent advisory — after Owner standoff ack
+6. **RS-3** as capacity allows (eval skill)
+7. Chapter packs (CH-2…) and remaining TP-* as product capacity allows
 
 **Legacy recommended order after TP-1B (player-impact-first, kept for history):**
 1. **TP-6** (audio reality — biggest perceived-quality jump, bounded)
@@ -123,7 +124,14 @@ before RS-2. Original pack text kept below.
   `docs/agent/PRODUCT_QUALITY_FUN_FACTOR_AUDIT.md` (standoff section),
   `src/engine/battleEngine.js`.
 
-## RA-3 — Install `raphael-autonomy-eval` skill (planned)
+## RA-3 — Install `raphael-autonomy-eval` skill — ✅ DONE 2026-07-20
+
+Completed: skill installed at `%USERPROFILE%\.codex\skills\raphael-autonomy-eval\`
+(`SKILL.md`, `agents/openai.yaml`, `references/evaluation-contract.md`,
+`scripts/run_eval.py`). Local run: **30/30** + Nuwa advisory `trusted:false`
+(`hardGateOk=true`). No `src/**` runtime change. Original pack text kept below.
+
+### (archived) RA-3 — Install `raphael-autonomy-eval` skill (planned)
 
 - **Goal:** mirror `raphael-conversation-eval` for initiative／autonomy gates.
   Skill lives under `%USERPROFILE%\.codex\skills\raphael-autonomy-eval\`.
