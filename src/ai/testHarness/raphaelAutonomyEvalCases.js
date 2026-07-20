@@ -77,7 +77,8 @@ export const RAPHAEL_AUTONOMY_EVAL_EXTRAS = Object.freeze([
       const version = String(RAPHAEL_NUWA_DISTILLATION_BUNDLE.version || "");
       const autonomy = RAPHAEL_NUWA_DISTILLATION_BUNDLE.autonomyHeuristics;
       return (
-        /v0\.7(\.|$)/.test(version) &&
+        // v0.7 起含 autonomyHeuristics；後續 RS-2 可升到 v0.8+，仍須保留該節。
+        /v0\.(?:[7-9]|\d{2,})(\.|$)/.test(version) &&
         autonomy?.trusted === false &&
         RAPHAEL_NUWA_DISTILLATION_BUNDLE.runtimePolicy?.trusted === false
       );

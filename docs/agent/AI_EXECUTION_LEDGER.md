@@ -1679,6 +1679,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 3 - Raphael Core, Companion Reasoning, And Soul Talk
 
+### 2026-07-20 - Cursor Grok - RS-2 Nuwa 對峙意圖啟發式（advisory-only）
+
+- Status: `VERIFIED` (machine); Owner authorized sequential next-step after RA-2
+- Branch / commit: lands with this commit (PR path into `main`)
+- Scope: RS-2。Nuwa `standoffHeuristics` + gated adapter + standoff harness。**battleEngine 數值／safety／memory／save 零觸碰**；不安裝外部戰鬥 skill。
+- Work performed: (1) Nuwa bundle → **v0.8.0**：三個對峙 mental models + `standoffHeuristics`（surge／gather／lull 反應、撤退肯定、antiPatterns）。(2) `getNuwaStandoffAdvisory()`：`trusted:false`，`mayWriteCombatStats`／`mayOverrideTelegraph`／`mayPunishRetreat` 皆 false。(3) standoff eval 加 `RS2-NUWA-001..003`、`RS2-ALIGN-001`；autonomy v0.7+ 版本哨兵相容 v0.8。(4) 更新 contract／queue／playbook。
+- Verification: `node --check` PASS；`runAllRaphaelAutonomyEvalCases` **30/30**；`runAllRaphaelStandoffEvalCases` **12/12**。
+- Problems / risks: (a) advisory 尚未被 battleController 消費（刻意）；(b) Owner「穩住裂隙≠DPS」feel-check 仍建議人工覆核；(c) 進 main 仍走 PR + web-release-gate。
+- Next safe action: **RS-3**（`raphael-standoff-eval` skill）或 initiative 台詞 copy pack。
+- Required reading: `src/data/ai/raphaelNuwaDistillationBundle.js#standoffHeuristics`, `src/ai/raphaelTrainingAdapter.js#getNuwaStandoffAdvisory`, `src/ai/testHarness/raphaelStandoffEvalCases.js`, and this lane.
+
 ### 2026-07-20 - Cursor Grok - RA-3 安裝 raphael-autonomy-eval skill
 
 - Status: `VERIFIED` (local skill + harness); no runtime `src/**` change
@@ -1686,8 +1697,8 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Scope: RA-3 skill-only。鏡像 `raphael-conversation-eval` 的自主評測 skill。**零 safety／memory／save／battle／Nuwa 台詞改動**。
 - Work performed: (1) 安裝 `%USERPROFILE%\.codex\skills\raphael-autonomy-eval\`（`SKILL.md`／`agents/openai.yaml`／`references/evaluation-contract.md`／`scripts/run_eval.py`）。(2) 本地跑 skill：`hardGateOk=true`，cases **30/30**，Nuwa advisory `trusted:false`。(3) queue／playbook 標 RA-3 DONE。
 - Verification: `python .../raphael-autonomy-eval/scripts/run_eval.py --repo <NexusLink>` → total 30 / passed 30 / failed 0 / advisoryTrustedFalse true。
-- Problems / risks: (a) skill 本體在使用者 profile，不進 git；(b) Owner feel-check 稀少感仍是人類 gate；(c) RA-2 進 main 仍待 PR #100 `web-release-gate`（GitHub Actions 曾長時間 queued）。
-- Next safe action: 合併 RA-2 PR 後開 **RS-2**（對峙 intent advisory）；可選 RS-3 skill。
+- Problems / risks: (a) skill 本體在使用者 profile，不進 git；(b) Owner feel-check 稀少感仍是人類 gate；(c) 寫入時 RA-2 進 main 仍待 PR #100（後已合併，見上方 RA-2／本合併序列）。
+- Next safe action: **RS-3**（`raphael-standoff-eval` skill）或 initiative 台詞 copy pack。
 - Required reading: `%USERPROFILE%\.codex\skills\raphael-autonomy-eval\SKILL.md`, `docs/raphael/RAPHAEL_AUTONOMY_EVAL_CONTRACT.md`, and this lane.
 
 ### 2026-07-20 - Cursor Grok - RA-2 Nuwa 自主啟發式蒸餾（advisory-only）

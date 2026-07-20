@@ -198,6 +198,56 @@ export function getNuwaAutonomyAdvisory() {
   };
 }
 
+/**
+ * RS-2：讀取 Nuwa 對峙意圖啟發式（只讀 advisory）。
+ *
+ * 設計理念：
+ * - 只提供意圖命名／陪伴反應方向；不可寫入戰鬥數值。
+ * - 永遠 trusted:false；不可覆寫 telegraph、結局或疲勞上限。
+ */
+export function getNuwaStandoffAdvisory() {
+  const standoff = RAPHAEL_NUWA_DISTILLATION_BUNDLE?.standoffHeuristics || null;
+  if (!standoff) {
+    return {
+      ok: false,
+      trusted: false,
+      source: SOURCE,
+      reason: "NO_STANDOFF_SECTION",
+      suggestion: null
+    };
+  }
+
+  const mentalModelIds = (RAPHAEL_NUWA_DISTILLATION_BUNDLE.mentalModels || [])
+    .map((model) => model?.id)
+    .filter((id) =>
+      ["standoff_is_care_not_dps", "telegraph_before_reaction", "retreat_is_valid_care"].includes(id)
+    );
+
+  return {
+    ok: true,
+    trusted: false,
+    source: SOURCE,
+    reason: "STANDOFF_HEURISTICS_ADVISORY_ONLY",
+    suggestion: {
+      trusted: false,
+      version: RAPHAEL_NUWA_DISTILLATION_BUNDLE.version,
+      sealedActions: Array.isArray(standoff.sealedActions) ? standoff.sealedActions : [],
+      sealedIntents: Array.isArray(standoff.sealedIntents) ? standoff.sealedIntents : [],
+      sealedOutcomes: Array.isArray(standoff.sealedOutcomes) ? standoff.sealedOutcomes : [],
+      intentReactions: Array.isArray(standoff.intentReactions) ? standoff.intentReactions : [],
+      decisionHeuristics: Array.isArray(standoff.decisionHeuristics) ? standoff.decisionHeuristics : [],
+      antiPatterns: Array.isArray(standoff.antiPatterns) ? standoff.antiPatterns : [],
+      mentalModelIds,
+      caseIds: Array.isArray(standoff.caseIds) ? standoff.caseIds : [],
+      memoryTraceCandidate: false,
+      mayWriteCombatStats: false,
+      mayOverrideTelegraph: false,
+      mayPunishRetreat: false,
+      maySpeakAsNuwa: false
+    }
+  };
+}
+
 function emptyResult(reason, match = null, ok = true, policy = null) {
   return {
     ok,
