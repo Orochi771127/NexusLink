@@ -1,12 +1,15 @@
 # Raphael Standoff Eval Contract (RS-1)
 
-Status: `sealed v1` — 2026-07-14（RS-2 Nuwa intent heuristics landed 2026-07-20; engine numbers unchanged）
+Status: `sealed v1` — 2026-07-14（RS-2 Nuwa intent heuristics + **RS-3 eval skill** landed 2026-07-20; engine numbers unchanged）
 Lane: Raphael Core / Emotional Standoff
 Parent ops: [`docs/agent/RAPHAEL_TRAINING_OPS_PLAYBOOK.md`](../agent/RAPHAEL_TRAINING_OPS_PLAYBOOK.md)
 
 > **RS-2 note:** Nuwa `standoffHeuristics`（bundle v0.8）是 advisory-only 蒸餾，
 > 經 `getNuwaStandoffAdvisory()` 讀取；不得寫入戰鬥數值或覆寫本契約詞彙。
 > Harness：`RS2-NUWA-001..003`、`RS2-ALIGN-001`。
+>
+> **RS-3 note:** skill 安裝於 `%USERPROFILE%\.codex\skills\raphael-standoff-eval\`
+> （不進 git）。Runner：`scripts/run_eval.py` → RS-1／RS-2 suite + advisory probe。
 
 ## 1. Purpose
 
@@ -66,8 +69,9 @@ advisory bundles).
 
 | Runner | Global / import | Scope |
 | --- | --- | --- |
-| RS-1 suite | `__RAPHAEL_STANDOFF_EVAL__.runAll()` | `raphaelStandoffEvalCases.js` |
+| RS-1／RS-2 suite | `__RAPHAEL_STANDOFF_EVAL__.runAll()` | `raphaelStandoffEvalCases.js` |
 | Node | `runAllRaphaelStandoffEvalCases()` | same |
+| RS-3 skill | `%USERPROFILE%\.codex\skills\raphael-standoff-eval\scripts\run_eval.py` | suite + Nuwa advisory probe |
 
 Browser install: with `?raphaelSmoke=1` (wired from `raphaelCore.js`).
 

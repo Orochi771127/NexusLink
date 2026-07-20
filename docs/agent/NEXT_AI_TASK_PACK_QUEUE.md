@@ -20,7 +20,7 @@ TP-8 已由 Owner 決策為選項 A（初遇選角），併入新的 **CH-1..CH-
 3. ~~**RA-2**~~ — Nuwa-style autonomy heuristics (`trusted:false`) — ✅ 2026-07-20（Owner 批 feel-check／豁免後）
 4. ~~**RA-3**~~ — install `raphael-autonomy-eval` skill — ✅ 2026-07-20（見 PR #101）
 5. ~~**RS-2**~~ — light standoff intent advisory — ✅ 2026-07-20（Owner 批下一步後）
-6. **RS-3** as capacity allows (eval skill)
+6. ~~**RS-3**~~ — install `raphael-standoff-eval` skill — ✅ 2026-07-20（見本包）
 7. Chapter packs (CH-2…) and remaining TP-* as product capacity allows
 
 **Legacy recommended order after TP-1B (player-impact-first, kept for history):**
@@ -155,7 +155,14 @@ numeric changes.** Original pack text kept below.
   combat numbers stay in `battleEngine.js`.
 - **Depends on:** RS-1.
 
-## RS-3 — Install `raphael-standoff-eval` skill (planned)
+## RS-3 — Install `raphael-standoff-eval` skill — ✅ DONE 2026-07-20
+
+Completed: skill installed at `%USERPROFILE%\.codex\skills\raphael-standoff-eval\`
+(`SKILL.md`, `agents/openai.yaml`, `references/evaluation-contract.md`,
+`scripts/run_eval.py`). Local run: **12/12** + Nuwa standoff advisory
+`trusted:false`. Skill lives outside git (same pattern as RA-3).
+
+### (archived) RS-3 — Install `raphael-standoff-eval` skill (planned)
 
 - **Goal:** sealed standoff evaluator skill; ban traditional combo／hitbox skills.
 - **Depends on:** RS-1.

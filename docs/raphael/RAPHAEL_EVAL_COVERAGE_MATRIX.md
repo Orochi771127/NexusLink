@@ -78,8 +78,8 @@ critic-unit eval (acceptable; they fail loudly inside harness runs).
    **Still open:** Owner habitat feel-check.
 8. **Standoff / rift combat quality.** ~~no sealed Raphael-lane eval~~ →
    **RS-1 SEALED 2026-07-14**; ~~RS-2~~ → **DONE 2026-07-20**.
-   **Still open:** Owner success-definition ack;
-   `raphael-standoff-eval` skill (RS-3). Do not install generic combat skills.
+   **Still open:** Owner success-definition ack（「stabilize ≠ DPS」）；
+   DOM telegraph feel（skill 已覆蓋純函數契約）. Do not install generic combat skills.
 
 ## 4. Duplicate / low-value evals
 
@@ -102,6 +102,6 @@ critic-unit eval (acceptable; they fail loudly inside harness runs).
 Remaining open gaps: fission red lines (blocked on content), multilingual
 depth, long-horizon tone drift, private-blind human review.
 
-**2026-07-20 training-ops update:** ~~RA-1 / RA-2 / RA-3 / RS-1 / RS-2~~ →
-**DONE**. Next capacity: **RS-3** (`raphael-standoff-eval` skill) or
-Owner private-blind. Do not substitute external game-AI／combat skills.
+**2026-07-20 training-ops update:** ~~RA-1 / RA-2 / RA-3 / RS-1 / RS-2 / RS-3~~ →
+**DONE**. Next capacity: Owner private-blind / 「stabilize ≠ DPS」feel-check,
+or multilingual depth. Do not substitute external game-AI／combat skills.
