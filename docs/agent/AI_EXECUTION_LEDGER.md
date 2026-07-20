@@ -1679,6 +1679,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 3 - Raphael Core, Companion Reasoning, And Soul Talk
 
+### 2026-07-20 - Cursor Grok - Initiative copy pack v1（微時刻台詞更像生命）
+
+- Status: `VERIFIED` (machine); Owner authorized step 3 copy pack
+- Branch / commit: lands with this commit (PR path into `main`)
+- Scope: EXPERIENCE copy-only。只改 `gentleInvitationEngine.js` 的 `MOMENT_DEFS.lines`＋harness 哨兵。**cooldown／safety／memory／save／battleEngine 數值零觸碰**。
+- Work performed: (1) `quiet_approach`／`fireside_settle`／`moon_gaze` 各擴成 3 句輪替；去「有你才睡得安」依賴味，改成自己休息／可忽略靠近／敢於無聊望月。(2) harness `INIT-COPY-001`／`INIT-COPY-002`：禁永遠／孤獨／FOMO，火邊不得依賴句。
+- Verification: `node --check`；`runAllCompanionInitiativeCases` 與 `runAllRaphaelAutonomyEvalCases` 綠燈（見本步 shell）。
+- Problems / risks: (a) 真機 feel-check（稀少感＋台詞溫度）仍是人類 gate；(b) i18n 尚未為 initiative 行做多語——目前仍是繁中主線。
+- Next safe action: Owner 棲地 feel-check；可選 RS-3 skill 或 initiative i18n。
+- Required reading: `src/engine/gentleInvitationEngine.js#MOMENT_DEFS`, `src/ai/testHarness/companionInitiativeCases.js`, and this lane.
+
 ### 2026-07-20 - Cursor Grok - RS-2 Nuwa 對峙意圖啟發式（advisory-only）
 
 - Status: `VERIFIED` (machine); Owner authorized sequential next-step after RA-2

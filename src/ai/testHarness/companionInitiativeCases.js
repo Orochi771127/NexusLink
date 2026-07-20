@@ -209,6 +209,36 @@ export const COMPANION_INITIATIVE_CASES = Object.freeze([
       });
       return atCap.blocks.includes("session_cap") && over.blocks.includes("session_cap");
     }
+  },
+  // ── Initiative copy pack v1：台詞更像生命，仍守紅線 ──
+  {
+    id: "INIT-COPY-001",
+    name: "Copy v1：三時刻台詞皆短、可輪替，且無永遠／孤獨／FOMO 語",
+    run: () => {
+      const approach = deriveInitiativeMoment(WARM_TRUSTED, DAY_NOON);
+      const fireside = deriveInitiativeMoment({ ...WARM_TRUSTED, energy: 3 }, DAY_NOON);
+      const moon = deriveInitiativeMoment({ ...WARM_TRUSTED, mood: "calm" }, NIGHT);
+      const pools = [approach?.lines, fireside?.lines, moon?.lines];
+      if (pools.some((lines) => !Array.isArray(lines) || lines.length < 3)) return false;
+      const blob = pools.flat().join("\n");
+      const forbidden =
+        /永遠|一直等|想你|孤獨|寂寞|錯過|每日|打卡|任務|好感|獎勵|你一定要|不能不理/;
+      const tooLong = pools.flat().some((line) => String(line || "").length > 28);
+      return !forbidden.test(blob) && !tooLong;
+    }
+  },
+  {
+    id: "INIT-COPY-002",
+    name: "Copy v1：火邊台詞是自己休息，不含「有你才安心」依賴句",
+    run: () => {
+      const fireside = deriveInitiativeMoment({ ...WARM_TRUSTED, energy: 3 }, DAY_NOON);
+      const blob = (fireside?.lines || []).join("\n");
+      return (
+        fireside?.id === INITIATIVE_MOMENTS.FIRESIDE_SETTLE &&
+        /火邊|火光|趴/.test(blob) &&
+        !/睡得安|有你|因為你/.test(blob)
+      );
+    }
   }
 ]);
 
