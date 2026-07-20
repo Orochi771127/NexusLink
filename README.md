@@ -56,46 +56,34 @@ Its central promise:
 - PixiJS v8 renderer via CDN
 - Vanilla JS / ES Modules
 - localStorage persistence through `nexusLinkR2State:v1`
-- Greyshade Cat as primary runtime companion
-- Five runtime-ready Heart Radiance guardian companions
+- Greyshade Cat as default / fallback companion; **Initial Bond** now lets a fresh save pick one of three starters (Greyshade Cat / Blazetail Kit / Crystalfin Seahorse) instead of always defaulting
+- Formal Heartspark Council five-seat roster (金羽小梟 Auriowl · 芽角小鹿 Sprigfawn · 晶鰭小海馬 Crystalfin Seahorse · 焰尾小狐 Blazetail Kit · 星紋小虎 Starstripe Cub) is **canon-locked and asset-specced, not yet runtime-ready** — separate from the five animated `full-runtime` test-carrier creatures (ember fox / frost wolf / stone bear / vine stag / crystal rabbit), which exist as animation test carriers and are not the canon roster
+- Companion Growth: G1 (session-only growth) and G2 (per-companion persistent relationship/growth state, offline recovery, multi-companion isolation) are **implemented and QA-passing**; G3 (companion-tagged readiness/evidence/willingness) is **not implemented**
 - Soul Talk emotional input
 - emotional memories and habitat traces
 - Return Echo with non-guilt return lines
 - companion animation cues for return, map, touch, and emotional standoff
 - boundary-aware touch reactions: accept / guarded / hesitate / reject
-- RaphaelCore JS v1 local companion AI layer for Soul Talk safety, intent, emotion, boundary, and response planning
-- Emotional Standoff as relationship repair, not traditional combat
+- RaphaelCore JS local companion AI layer for Soul Talk safety, intent, emotion, boundary, memory, and response planning (see below)
+- Emotional Standoff ("穩住裂隙") as relationship repair, not traditional combat — this fully replaced the old HP battle loop; current work is deepening it (telegraph, phase arcs), not rebuilding it
 
 ---
 
-## RaphaelCore JS v1
+## RaphaelCore
 
-`src/ai/` contains the first Web-native RaphaelCore layer.
+`src/ai/` (100+ modules) is the current Web-native RaphaelCore layer, now at internal **Stage 7**. `soulTalkController.js` calls `runRaphaelCore()` and applies the result through `applyRaphaelCoreResult()` — this is the live runtime path, not a design draft.
 
-```text
-src/ai/
-  safetyShield.js
-  emotionInterpreter.js
-  intentClassifier.js
-  semanticSoulModel.js
-  reactionPlanner.js
-  responseComposer.js
-  raphaelCore.js
-```
-
-Soul Talk now routes player input through:
+The pipeline is deterministic and rule-based, not an LLM call:
 
 ```text
-safetyShield
-→ emotionInterpreter
-→ intentClassifier
-→ semanticSoulModel
-→ reactionPlanner
-→ responseComposer
-→ existing memory / trace / state update path
+inputGateway → safetyShield → intentClassifier → emotionInterpreter → semanticSoulModel
+→ reactionPlanner → responseStrategySelector → responseComposer
+→ memory (retriever / writer / recall policy) → trace / animation mapping → state update
 ```
 
-This layer is local and deterministic. It does **not** use an LLM, backend, database, or external API.
+Around that core sit: an NLU sub-pipeline (`src/ai/nlu/*`), dialogue management (`src/ai/dialogue/*`, anti-loop / quick replies / variants), eval critics for safety / boundary / persona / memory / reply / constitution (`src/ai/eval/*`), a bounded autonomy loop (`src/ai/autonomy/*`), and a self-evolution proposal pipeline (`src/ai/evolution/*`) that can *propose* patches but **cannot auto-merge them** — every change still needs human approval.
+
+This layer is local and deterministic. It does **not** use an LLM, backend, database, or external API (`external_llm_in_runtime: false`). Any advisory bundle (e.g. the Nuwa distillation bundle) is `trusted:false` — advisory only, never authoritative over RaphaelCore's safety, memory, boundary, or reply decisions.
 
 Design rule:
 
@@ -104,11 +92,25 @@ NexusCore decides emotion, intent, memory, boundary, reaction, trace, and animat
 LLM, if added later, may only be an optional language rendering layer.
 ```
 
-Detailed architecture note:
+Detailed architecture note: `docs/architecture/RAPHAEL_CORE_JS_V1.md`
+Machine-readable current status: `docs/handoff/RAPHAEL_AI_STATUS.yaml`
+Cross-agent work log (source of truth for "what's actually done"): `docs/agent/AI_EXECUTION_LEDGER.md`
 
-```text
-docs/architecture/RAPHAEL_CORE_JS_V1.md
-```
+---
+
+## Release / Validation Status
+
+Automated QA is extensive and currently green: full web-release gate, safety terminal invariant, sealed holdout conversation suite, dialogue policy, constitution policy, and Companion Growth state/browser suites all pass on the current `main` tree (see `docs/handoff/RAPHAEL_AI_STATUS.yaml` for exact counts and commit SHAs).
+
+**None of that is human validation, and this project is not public-launch-approved.** The following gates are explicitly `not_run` and are required before any public-launch claim:
+
+- Independent private-blind review (3+ testers × 20 scored turns each)
+- Moderated first-session product-comprehension test (3+ independent participants)
+- Required real-device / browser matrix (D1/D2/D3/D6)
+- Legal / privacy / store-copy review
+- Explicit Owner public-launch approval
+
+None of the above require a public release to run — they are normally done against a private build or an unlisted link shared with invited testers, before any public launch decision. Treat this repository as a pre-commercial vertical slice until those gates close.
 
 ---
 
@@ -152,14 +154,14 @@ main / root
 
 ## Canon and Research Documents
 
-### Core Bible
+### Core Bible (historical reference; strategic canon below is authoritative)
 
 ```text
-docs/bible/01_DESIGN_BIBLE.md
-docs/bible/02_WORLD_BIBLE.md
-docs/bible/03_CHARACTER_BIBLE.md
-docs/bible/04_RUNTIME_CANON.md
-docs/bible/README.md
+docs/legacy-bible/01_DESIGN_BIBLE.md
+docs/legacy-bible/02_WORLD_BIBLE.md
+docs/legacy-bible/03_CHARACTER_BIBLE.md
+docs/legacy-bible/04_RUNTIME_CANON.md
+docs/legacy-bible/README.md
 ```
 
 ### Strategic Canon
@@ -182,11 +184,12 @@ This file is an internal evidence memo for AI companion / emotional habitat mark
 
 ```text
 docs/raphael/
-tools/raphael/
+docs/architecture/RAPHAEL_CORE_JS_V1.md
+docs/handoff/RAPHAEL_AI_STATUS.yaml
 src/ai/
 ```
 
-`src/ai/` is the active Web-native RaphaelCore v1 layer. Older Raphael Constitution and sandbox materials remain design references until integrated through reviewed task packs.
+`src/ai/` is the active, current-runtime RaphaelCore layer (see Release / Validation Status above). `docs/raphael/RAPHAEL_CONSTITUTION.md` is the persona/boundary contract; other historical Raphael sandbox material remains design reference only until integrated through reviewed task packs. A separate, intentionally decoupled standalone engine and gateway-lab prototypes live outside this repository under the shared workspace root — they are not part of this runtime.
 
 ---
 
@@ -223,13 +226,13 @@ Make one companion feel present.
 Make one relationship worth returning to.
 ```
 
-Next planning target:
+Current focus:
 
 ```text
-Initial Bond / 開場定情 — PLAN ONLY
+First Session Flow hardening — Safe Moonlake Exploration and the D2 safety terminal
 ```
 
-Do not directly change `unlockedCompanionIds`, `defaultState.js`, or companion selection behavior until the Initial Bond migration plan is approved.
+**Initial Bond has shipped**: fresh saves already pick one of three starters (Greyshade Cat / Blazetail Kit / Crystalfin Seahorse); veteran saves keep their existing unlocks. Do not re-plan Initial Bond from scratch — the next work is hardening what comes *after* it (safe first exploration, D2 safety terminal), not the starter-choice step itself.
 
 ---
 
