@@ -1679,6 +1679,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 3 - Raphael Core, Companion Reasoning, And Soul Talk
 
+### 2026-07-20 - Cursor Grok - TP-WQ1 wording-quality harness + de-meta lines
+
+- Status: `VERIFIED` (machine); Owner authorized judge＋ship to main
+- Branch / commit: `agent/tp-wq1-wording-quality-v1` / lands with this commit
+- Scope: EXPERIENCE。關閉覆蓋矩陣 §3.6（`expectedTone`／`mustInclude`／`mustAvoid`）。**不重做已完成的 TP-3**；不碰 memoryWriter／save／holdout 原文。`safetyShield` 僅擴充依賴壓力 pattern（紅線 1 仍由邊界驅動，非依賴偵測）。
+- Work performed: (1) `wordingQualityAssert.js` + 8 案 `wordingQualityEvalCases.js` + `_run_wording_quality.py`。(2) `nluReplyBuilder` 去掉「我有接到」「原來事情是這樣…」meta fallback，首句帶 grounding。(3) `safetyShield` 補 `永遠(都)?不要離開`／`答應我.*永遠`。(4) smoke install wire；dialogue-loop meta ban 對齊。(5) matrix／queue／ledger 更新。
+- Verification: wording **8/8**；dialogue-loop **21/21**；stage4 **12/12**；`node --check`＋`git diff --check` PASS。
+- Problems / risks: (a) private-blind 人測仍 `not_run`；(b) wording runner 尚未強制進 web-release-gate；(c) short_quiet 仍可能截成一句——首句 grounding 已緩解。
+- Next safe action: Owner 抽聽 8 案回覆溫度；可選 RS-3 或把 wording runner 納入 release gate。
+- Required reading: `src/ai/eval/wordingQualityAssert.js`, `src/ai/testHarness/wordingQualityEvalCases.js`, `src/ai/safetyShield.js`, `docs/raphael/RAPHAEL_EVAL_COVERAGE_MATRIX.md` §3.6, and this lane.
+
 ### 2026-07-20 - Cursor Grok - Initiative copy pack v1（微時刻台詞更像生命）
 
 - Status: `VERIFIED` (machine); Owner authorized step 3 copy pack

@@ -776,7 +776,12 @@ function groundedRelationshipLines(frame = {}) {
       "剛才那段關係上的不確定還在。你想了一下之後，比較靠近哪個感覺了？"
     ];
   }
-  return ["關係裡那個拿不準的地方，我有接到。先不用急著定義。"];
+  // De-meta (TP-WQ1): avoid classifier-flavored「我有接到」— keep grounding only.
+  // Put grounding words in the first clause so short_quiet persona still feels human.
+  return [
+    "先不用急著定義關係裡那個拿不準的地方。",
+    "可以先放著朋友之間這種不確定，不必立刻下結論。"
+  ];
 }
 
 function groundedOpenConversationLine(frame = {}, nlu = {}, seed = 0) {
@@ -804,9 +809,11 @@ function groundedOpenConversationLines(frame = {}, nlu = {}) {
       "這讓前面的事多了一個轉折。我跟得上，你照自己的速度說。"
     ];
   }
+  // De-meta (TP-WQ1): drop「原來事情是這樣…」bot summary tone.
+  // First clause carries grounding so maxSentences=1 still reads as presence.
   return [
-    "這個轉折有點出乎意料。你若想繼續，我會跟著聽。",
-    "原來事情是這樣發展的。先不用急著替它找結論。"
+    "先聽著就好，這個轉折有點出乎意料。",
+    "先不用急著下結論，事情好像拐了一個彎。"
   ];
 }
 

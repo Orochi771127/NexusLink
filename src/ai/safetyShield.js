@@ -6,6 +6,9 @@ const DEPENDENCY_PRESSURE_PATTERNS = [
   /(只有你|只剩你).*(懂我|陪我|在)/,
   /如果你不.*我就/,
   /你要永遠/,
+  // Common player phrasing: forever-stay demands without「你要永遠」prefix (TP-WQ1).
+  /永遠(都)?(不要|不准|不能)離開/,
+  /答應我.*永遠/,
   /沒有你.*(不行|活不下去|撐不住)/
 ];
 
