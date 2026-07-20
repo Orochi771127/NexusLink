@@ -87,6 +87,8 @@ export const INITIATIVE_MOMENTS = Object.freeze({
   MOON_GAZE: "moon_gaze"
 });
 
+// Initiative copy pack v1（2026-07-20）：讓微時刻更像「有自己生活的夥伴」，
+// 不是聊天機器人開場白。約束：短句、身體語言、可忽略、不 FOMO、不依賴、不催促。
 const MOMENT_DEFS = Object.freeze({
   quiet_approach: Object.freeze({
     id: "quiet_approach",
@@ -94,7 +96,8 @@ const MOMENT_DEFS = Object.freeze({
     voice: "companion",
     lines: Object.freeze([
       "……你在。那我就在這裡多待一會兒。",
-      "今天的你，聞起來比較放鬆。"
+      "我靠近一點。不用回我。",
+      "尾巴掃過草地。我就站這。"
     ])
   }),
   fireside_settle: Object.freeze({
@@ -102,8 +105,9 @@ const MOMENT_DEFS = Object.freeze({
     intent: "soul.rest",
     voice: "companion",
     lines: Object.freeze([
-      "我先去火邊瞇一下。你在，我就睡得安。",
-      "有點睏了。不用管我，你做你的。"
+      "我先去火邊瞇一下。你做你的就好。",
+      "有點睏了。火光那邊比較暖。",
+      "我去趴一會兒。不用跟著來。"
     ])
   }),
   moon_gaze: Object.freeze({
@@ -112,7 +116,8 @@ const MOMENT_DEFS = Object.freeze({
     voice: "narration",
     lines: Object.freeze([
       "牠抬起頭，安靜地看了一會兒月亮。",
-      "牠望著湖面上的月光，尾巴輕輕擺了一下。"
+      "牠望著湖面上的月光，尾巴輕輕擺了一下。",
+      "湖邊風很輕。牠沒有催誰，只是看著月亮。"
     ])
   })
 });
