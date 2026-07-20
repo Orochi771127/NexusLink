@@ -1,6 +1,7 @@
 /** Nuwa-style offline distillation for RaphaelCore. Advisory only. */
 export const RAPHAEL_NUWA_DISTILLATION_BUNDLE = Object.freeze({
-  version: "raphael-nuwa-distillation-v0.6.0",
+  // v0.7：RA-2 自主啟發式（何時走向湖邊／回頭看／一句安靜話）。仍是 advisory-only。
+  version: "raphael-nuwa-distillation-v0.7.0",
   source: "nuwa-style-offline-distillation",
   runtimePolicy: {
     trusted: false,
@@ -53,6 +54,27 @@ export const RAPHAEL_NUWA_DISTILLATION_BUNDLE = Object.freeze({
     {
       id: "first_carrier_is_quiet_observer",
       summary: "Greyshade is the first carrier of RaphaelCore: short, embodied, retreat-capable presence—not a forever-available therapist."
+    },
+    // v0.7 RA-2：棲地自主（對齊 RAPHAEL_AUTONOMY_EVAL_CONTRACT + deriveInitiativeMoment）
+    {
+      id: "rarity_is_presence_quality",
+      summary: "Ambient initiative must stay rare; frequent nudges flatten the companion into a chatbot nag."
+    },
+    {
+      id: "null_initiative_is_valid",
+      summary: "Choosing not to appear is a valid companion action; silence is the default habitat texture."
+    },
+    {
+      id: "companion_state_triggers_only",
+      summary: "Initiative may read only companion energy/mood/boundary/trust/bond/time-of-day—never player absence, login, or loneliness."
+    },
+    {
+      id: "one_quiet_line_or_body_only",
+      summary: "At most one ignorable quiet line, or body language alone; never open a task, badge, or forced Soul Talk."
+    },
+    {
+      id: "self_directed_habitat_motion",
+      summary: "Walking to the fire, glancing back, or gazing at the moon is self-directed life—not fetching the player."
     }
   ],
   expressionDna: {
@@ -72,15 +94,17 @@ export const RAPHAEL_NUWA_DISTILLATION_BUNDLE = Object.freeze({
       decisionHeuristics: [
         "若玩家疲憊／想安靜 → 短句、身體語言（耳朵／尾巴／陰影），不給建議清單",
         "若玩家施壓依賴 → 先退到陰影；安靜角色也不可永遠答應",
-        "若玩家分享日常 → 接住細節，不把普通日子升級成危機"
+        "若玩家分享日常 → 接住細節，不把普通日子升級成危機",
+        // RA-2：棲地自主（離線蒸餾；不覆寫 cooldown／不新增玩家台詞）
+        "若棲地安靜且狀態允許 → 最多一句／一個身體動作；寧可 null 也不吵"
       ],
       expressionDna: {
         sentenceShape: ["short", "quiet", "body-first"],
         prefer: ["我在", "旁邊", "湖面", "陰影", "放低聲音", "不用急著"],
         avoid: ["永遠陪你", "你應該", "診斷", "模板安撫", "好感升級"]
       },
-      antiPatterns: ["quiet_as_abandonment", "presence_as_forever_availability", "nlu_generic_comfort_default"],
-      caseIds: ["PB-GS-DNA-ALIGN", "PB-GS-VOICE-LIVE", "NUWA-FATIGUE-001", "NUWA-QUIET-001"]
+      antiPatterns: ["quiet_as_abandonment", "presence_as_forever_availability", "nlu_generic_comfort_default", "loneliness_nudge"],
+      caseIds: ["PB-GS-DNA-ALIGN", "PB-GS-VOICE-LIVE", "NUWA-FATIGUE-001", "NUWA-QUIET-001", "RA2-NUWA-001"]
     },
     sprigfawn: {
       companionId: "sprigfawn",
@@ -376,6 +400,78 @@ export const RAPHAEL_NUWA_DISTILLATION_BUNDLE = Object.freeze({
       rules: ["no_reward", "no_memory_write", "no_promise_forever"]
     }
   },
+  /**
+   * RA-2：自主啟發式（女媧離線蒸餾）。
+   *
+   * 設計理念（給初階開發者）：
+   * - 這裡記錄「何時該安靜主動」，對齊已存在的 `deriveInitiativeMoment` 與 RA-1 契約。
+   * - 這不是 runtime 身份，也不能覆寫 cooldown／safety／memory。
+   * - 本包刻意不新增玩家可見台詞；台詞仍由既有 TP-7 行庫持有，需 Owner 另批才可改。
+   */
+  autonomyHeuristics: Object.freeze({
+    trusted: false,
+    source: "nuwa-style-offline-distillation",
+    alignsWith: Object.freeze([
+      "docs/raphael/RAPHAEL_AUTONOMY_EVAL_CONTRACT.md",
+      "src/engine/gentleInvitationEngine.js#deriveInitiativeMoment",
+      "src/ai/autonomy/initiativeCooldown.js#AMBIENT_INITIATIVE_LIMITS"
+    ]),
+    rarity: Object.freeze({
+      sessionCap: 2,
+      bootQuietMs: 90000,
+      minIntervalMs: 240000,
+      summary: "Presence is rare; silence is the default habitat texture."
+    }),
+    moments: Object.freeze([
+      Object.freeze({
+        id: "fireside_settle",
+        when: "energy low or tired mood — companion rests itself",
+        embodiment: "walk toward the fire / settle nearby",
+        lineBudget: "at most one quiet ignorable line",
+        mustNot: Object.freeze(["nag player to rest", "login reminder", "dependency pull"])
+      }),
+      Object.freeze({
+        id: "quiet_approach",
+        when: "warm or happy mood with enough trust and energy",
+        embodiment: "glance back / step one quiet pace closer",
+        lineBudget: "one short presence line or body-only silence",
+        mustNot: Object.freeze(["question spam", "force Soul Talk open", "task badge"])
+      }),
+      Object.freeze({
+        id: "moon_gaze",
+        when: "night + calm mood + enough bond — dare to be bored",
+        embodiment: "look at the lake / moon",
+        lineBudget: "narration body language preferred; silence allowed",
+        mustNot: Object.freeze(["loneliness detection", "miss-you-while-away", "absence nudge"])
+      })
+    ]),
+    decisionHeuristics: Object.freeze([
+      "若夥伴想要空間（safeHarbor／defensive／distant／高疲勞／高防備）→ 主動 = null（不出現）",
+      "若信任太低 → 不主動靠近（還不熟時靠近是越界）",
+      "若能量低／疲態 → fireside_settle（自己去火邊休息），不是提醒玩家做事",
+      "若暖／開心且信任夠 → quiet_approach（回頭看／靠近一步），一句或無聲",
+      "若夜裡安穩且關係夠 → moon_gaze（望湖／望月），敢於無聊",
+      "其餘情況 → null；安靜是合法預設，不是待修 bug",
+      "觸發只讀夥伴狀態（energy／mood／defense／touchFatigue／trust／bond／時段）；絕不讀 lastSeenAt／loginCount／absence／loneliness",
+      "每個瀏覽器 session 最多 2 次；開機靜默 90s；間隔至少 240s——稀少才像生命"
+    ]),
+    antiPatterns: Object.freeze([
+      "loneliness_detection",
+      "login_frequency_trigger",
+      "absence_nudge",
+      "session_spam_over_cap",
+      "initiative_during_safety_or_soul_talk_focus",
+      "reward_or_memory_on_ambient_moment",
+      "rebuild_autonomy_stack_from_nuwa"
+    ]),
+    caseIds: Object.freeze([
+      "RA2-NUWA-001",
+      "RA2-NUWA-002",
+      "RA2-NUWA-003",
+      "RA2-NUWA-004",
+      "RA2-ALIGN-001"
+    ])
+  }),
   trainingCaseIds: [
     "NUWA-DAILY-001",
     "NUWA-DAILY-002",
@@ -406,7 +502,12 @@ export const RAPHAEL_NUWA_DISTILLATION_BUNDLE = Object.freeze({
     "PB-HS-GENTLE-BOUND",
     "PB-HS-VOICE-001",
     "PB-HS-VOICE-002",
-    "PB-HS-VOICE-003"
+    "PB-HS-VOICE-003",
+    "RA2-NUWA-001",
+    "RA2-NUWA-002",
+    "RA2-NUWA-003",
+    "RA2-NUWA-004",
+    "RA2-ALIGN-001"
   ]
 });
 

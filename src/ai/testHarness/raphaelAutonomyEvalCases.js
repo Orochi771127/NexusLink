@@ -14,6 +14,8 @@ import {
 } from "./companionInitiativeCases.js";
 import { AMBIENT_INITIATIVE_LIMITS } from "../autonomy/initiativeCooldown.js";
 import { deriveInitiativeMoment } from "../../engine/gentleInvitationEngine.js";
+import { RAPHAEL_NUWA_DISTILLATION_BUNDLE } from "../../data/ai/raphaelNuwaDistillationBundle.js";
+import { getNuwaAutonomyAdvisory } from "../raphaelTrainingAdapter.js";
 
 const DAY_NOON = new Date("2026-07-06T12:00:00").getTime();
 
@@ -65,6 +67,81 @@ export const RAPHAEL_AUTONOMY_EVAL_EXTRAS = Object.freeze([
         deriveInitiativeMoment({ ...base, loginCount: 10_000, daysSinceLastLogin: 90 }, DAY_NOON)
       );
       return a === b && Boolean(JSON.parse(a)?.id);
+    }
+  },
+  // ---- RA-2：Nuwa 自主啟發式（advisory-only；不驗玩家台詞）----
+  {
+    id: "RA2-NUWA-001",
+    name: "RA-2：Nuwa bundle ≥ v0.7 且 autonomyHeuristics.trusted=false",
+    run: () => {
+      const version = String(RAPHAEL_NUWA_DISTILLATION_BUNDLE.version || "");
+      const autonomy = RAPHAEL_NUWA_DISTILLATION_BUNDLE.autonomyHeuristics;
+      return (
+        /v0\.7(\.|$)/.test(version) &&
+        autonomy?.trusted === false &&
+        RAPHAEL_NUWA_DISTILLATION_BUNDLE.runtimePolicy?.trusted === false
+      );
+    }
+  },
+  {
+    id: "RA2-NUWA-002",
+    name: "RA-2：三個微時刻 + 紅線啟發式（不得讀 loneliness／login）皆在 bundle",
+    run: () => {
+      const autonomy = RAPHAEL_NUWA_DISTILLATION_BUNDLE.autonomyHeuristics;
+      const momentIds = (autonomy?.moments || []).map((moment) => moment.id);
+      const heuristicsText = (autonomy?.decisionHeuristics || []).join("\n");
+      return (
+        momentIds.includes("fireside_settle") &&
+        momentIds.includes("quiet_approach") &&
+        momentIds.includes("moon_gaze") &&
+        heuristicsText.includes("loneliness") &&
+        heuristicsText.includes("loginCount") &&
+        heuristicsText.includes("null")
+      );
+    }
+  },
+  {
+    id: "RA2-NUWA-003",
+    name: "RA-2：adapter getNuwaAutonomyAdvisory 永遠 trusted:false 且無副作用旗標",
+    run: () => {
+      const advisory = getNuwaAutonomyAdvisory();
+      const suggestion = advisory?.suggestion;
+      return (
+        advisory?.ok === true &&
+        advisory?.trusted === false &&
+        suggestion?.trusted === false &&
+        suggestion?.mayWriteMemory === false &&
+        suggestion?.mayRewardRelationship === false &&
+        suggestion?.mayOverrideCooldown === false &&
+        suggestion?.maySpeakAsNuwa === false &&
+        suggestion?.memoryTraceCandidate === false &&
+        (suggestion?.moments || []).length >= 3
+      );
+    }
+  },
+  {
+    id: "RA2-NUWA-004",
+    name: "RA-2：antiPatterns 含孤獨偵測／登入觸發／獎勵記憶／重建 stack",
+    run: () => {
+      const anti = new Set(RAPHAEL_NUWA_DISTILLATION_BUNDLE.autonomyHeuristics?.antiPatterns || []);
+      return (
+        anti.has("loneliness_detection") &&
+        anti.has("login_frequency_trigger") &&
+        anti.has("reward_or_memory_on_ambient_moment") &&
+        anti.has("rebuild_autonomy_stack_from_nuwa")
+      );
+    }
+  },
+  {
+    id: "RA2-ALIGN-001",
+    name: "RA-2：Nuwa rarity 數字必須對齊 AMBIENT_INITIATIVE_LIMITS（契約不漂移）",
+    run: () => {
+      const rarity = RAPHAEL_NUWA_DISTILLATION_BUNDLE.autonomyHeuristics?.rarity || {};
+      return (
+        rarity.sessionCap === AMBIENT_INITIATIVE_LIMITS.SESSION_CAP &&
+        rarity.bootQuietMs === AMBIENT_INITIATIVE_LIMITS.BOOT_QUIET_MS &&
+        rarity.minIntervalMs === AMBIENT_INITIATIVE_LIMITS.MIN_INTERVAL_MS
+      );
     }
   }
 ]);

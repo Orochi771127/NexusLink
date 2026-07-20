@@ -1679,6 +1679,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 3 - Raphael Core, Companion Reasoning, And Soul Talk
 
+### 2026-07-20 - Cursor Grok - RA-2 Nuwa 自主啟發式蒸餾（advisory-only）
+
+- Status: `VERIFIED` (machine); **無新玩家可見 initiative 台詞**（仍需另批才可改 TP-7 行庫）
+- Branch / commit: `main` / lands with this commit (Owner authorized COMMIT+PUSH)
+- Scope: RA-2。Nuwa bundle mental models + `autonomyHeuristics` + gated adapter 讀取 + autonomy harness 哨兵。**safetyShield／memoryWriter／save schema／battleEngine／外部 LLM 零觸碰**；不重建 autonomy stack；不安裝名人人格進 `companionPersonas`。
+- Work performed: (1) Nuwa bundle → **v0.7.0**：五個自主 mental models + `autonomyHeuristics`（三微時刻／稀少常數／決策啟發式／antiPatterns）。(2) `getNuwaAutonomyAdvisory()`：`trusted:false`，`mayWriteMemory`／`mayRewardRelationship`／`mayOverrideCooldown`／`maySpeakAsNuwa` 皆 false。(3) autonomy eval 加 `RA2-NUWA-001..004`、`RA2-ALIGN-001`。(4) 更新 distillation spec／queue／playbook／autonomy contract 註記。(5) 灰影 persona 加一條「寧可 null 也不吵」啟發式（離線記錄，非新台詞）。
+- Verification: `node --check` ×3 PASS；`runAllRaphaelAutonomyEvalCases` **30/30**（含 5 個 RA-2 案）；adapter probe：日常訓練建議與自主 advisory 皆 `trusted:false`、無記憶／獎勵副作用旗標。
+- Problems / risks: (a) 玩家可見台词仍是 TP-7 既有句，本包刻意不改——若 Owner 要「更像生命」的新台詞需另開 copy pack。(b) `getNuwaAutonomyAdvisory` 尚未被 runtime initiative controller 消費（刻意：advisory ≠ 覆寫 cooldown）。(c) private-blind 人測仍 `not_run`。
+- Next safe action: Owner feel-check 棲地稀少感後可批 **RA-3**（`raphael-autonomy-eval` skill）或 **RS-2**（對峙 intent advisory）；若要改 initiative 台詞另開包。
+- Required reading: `src/data/ai/raphaelNuwaDistillationBundle.js`, `src/ai/raphaelTrainingAdapter.js#getNuwaAutonomyAdvisory`, `src/ai/testHarness/raphaelAutonomyEvalCases.js`, `docs/raphael/RAPHAEL_AUTONOMY_EVAL_CONTRACT.md`, and this lane.
+
 ### 2026-07-16 - Codex - RC Raphael exact-commit checkpoint - VERIFIED
 
 - Status: `VERIFIED` for machine evidence on closure commit `220e2fd`; independent private-blind remains `not_run` and public launch remains unapproved.

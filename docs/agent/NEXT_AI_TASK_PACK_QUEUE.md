@@ -17,7 +17,7 @@ TP-8 已由 Owner 決策為選項 A（初遇選角），併入新的 **CH-1..CH-
 **Recommended order (Raphael training lane, after voice-pack wiring):**
 1. ~~**RA-1**~~ — autonomy sealed-case contract + harness shape — ✅ 2026-07-14
 2. ~~**RS-1**~~ — standoff eval contract (emotion／retreat ≠ DPS) — ✅ 2026-07-14
-3. **RA-2** — Nuwa-style autonomy heuristics (`trusted:false`) — after Owner initiative feel-check
+3. ~~**RA-2**~~ — Nuwa-style autonomy heuristics (`trusted:false`) — ✅ 2026-07-20（Owner 批 feel-check／豁免後）
 4. **RS-2** — light standoff intent advisory — after Owner standoff ack
 5. **RA-3** / **RS-3** as capacity allows (eval skills)
 6. Chapter packs (CH-2…) and remaining TP-* as product capacity allows
@@ -67,7 +67,15 @@ kept below for the record.
   `src/ui/companionInitiativeController.js`,
   `src/ai/autonomy/initiativeCooldown.js`.
 
-## RA-2 — Nuwa-style autonomy heuristics (advisory only)
+## RA-2 — Nuwa-style autonomy heuristics (advisory only) — ✅ DONE 2026-07-20
+
+Completed: Nuwa bundle **v0.7.0** adds `autonomyHeuristics` + five autonomy
+mental models; `getNuwaAutonomyAdvisory()` exposes gated `trusted:false` read
+path; autonomy eval suite gains RA2-NUWA-001..004 + RA2-ALIGN-001. **No new
+player-facing initiative lines** in this pack (TP-7 lines unchanged). Original
+pack text kept below.
+
+### (archived) RA-2 — Nuwa-style autonomy heuristics (advisory only)
 
 - **Goal:** distill “when to walk to the lake / glance back / one quiet line”
   into mental models + decision heuristics in the Nuwa advisory bundle
