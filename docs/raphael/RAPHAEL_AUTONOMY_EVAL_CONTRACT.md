@@ -1,8 +1,12 @@
 # Raphael Autonomy Eval Contract (RA-1)
 
-Status: `sealed v1` — 2026-07-14  
-Lane: Raphael Core / Companion Presence  
+Status: `sealed v1` — 2026-07-14（RA-2 Nuwa heuristics landed 2026-07-20; contract constants unchanged）
+Lane: Raphael Core / Companion Presence
 Parent ops: [`docs/agent/RAPHAEL_TRAINING_OPS_PLAYBOOK.md`](../agent/RAPHAEL_TRAINING_OPS_PLAYBOOK.md)
+
+> **RA-2 note:** Nuwa `autonomyHeuristics`（bundle v0.7）是 advisory-only 蒸餾，
+> 經 `getNuwaAutonomyAdvisory()` 讀取；不得覆寫本契約的 rarity／紅線。
+> Harness：`RA2-NUWA-001..004`、`RA2-ALIGN-001`。
 
 ## 1. Purpose
 

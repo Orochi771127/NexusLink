@@ -143,6 +143,61 @@ export function canUseTrainingResponseStrategy(strategy) {
   return ADVISORY_STRATEGY_ALLOWLIST.has(strategy);
 }
 
+/**
+ * RA-2：讀取 Nuwa 自主啟發式（只讀 advisory）。
+ *
+ * 設計理念：
+ * - 給 autonomy／eval／未來訓練器一個 gated 入口，與 Soul Talk NLU 提示分開。
+ * - 永遠 trusted:false；不可寫記憶、不可給好感、不可覆寫 cooldown。
+ * - 不產生玩家台詞；台詞仍由既有 initiative runtime 持有。
+ */
+export function getNuwaAutonomyAdvisory() {
+  const autonomy = RAPHAEL_NUWA_DISTILLATION_BUNDLE?.autonomyHeuristics || null;
+  if (!autonomy) {
+    return {
+      ok: false,
+      trusted: false,
+      source: SOURCE,
+      reason: "NO_AUTONOMY_SECTION",
+      suggestion: null
+    };
+  }
+
+  const mentalModelIds = (RAPHAEL_NUWA_DISTILLATION_BUNDLE.mentalModels || [])
+    .map((model) => model?.id)
+    .filter((id) =>
+      [
+        "rarity_is_presence_quality",
+        "null_initiative_is_valid",
+        "companion_state_triggers_only",
+        "one_quiet_line_or_body_only",
+        "self_directed_habitat_motion"
+      ].includes(id)
+    );
+
+  return {
+    ok: true,
+    trusted: false,
+    source: SOURCE,
+    reason: "AUTONOMY_HEURISTICS_ADVISORY_ONLY",
+    suggestion: {
+      trusted: false,
+      version: RAPHAEL_NUWA_DISTILLATION_BUNDLE.version,
+      rarity: autonomy.rarity || null,
+      moments: Array.isArray(autonomy.moments) ? autonomy.moments : [],
+      decisionHeuristics: Array.isArray(autonomy.decisionHeuristics) ? autonomy.decisionHeuristics : [],
+      antiPatterns: Array.isArray(autonomy.antiPatterns) ? autonomy.antiPatterns : [],
+      mentalModelIds,
+      caseIds: Array.isArray(autonomy.caseIds) ? autonomy.caseIds : [],
+      memoryTraceCandidate: false,
+      mayWriteMemory: false,
+      mayRewardRelationship: false,
+      mayOverrideCooldown: false,
+      maySpeakAsNuwa: false
+    }
+  };
+}
+
 function emptyResult(reason, match = null, ok = true, policy = null) {
   return {
     ok,

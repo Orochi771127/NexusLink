@@ -113,6 +113,14 @@ carrier's quiet-observer Expression DNA. Emotional voice packs live in
 loneliness / recovery packs are kept). Emotional Soul Talk strategies prefer
 these packs the same way as the Heartspark five.
 
+**v0.7 RA-2 autonomy note:** `autonomyHeuristics` distills when the companion
+may walk to the fire, glance back, or gaze at the moon. It is advisory-only
+(`trusted:false`), read via `getNuwaAutonomyAdvisory()`, and must stay aligned
+with `RAPHAEL_AUTONOMY_EVAL_CONTRACT` + `AMBIENT_INITIATIVE_LIMITS`. It must not
+rebuild the autonomy stack, speak as Nuwa to the player, write memory, grant
+rewards, or override cooldown. Player-facing initiative lines remain owned by
+the existing TP-7 runtime until a separate Owner-approved copy pack.
+
 ## Runtime Contract
 
 All Nuwa-generated data must enter runtime through the advisory adapter path.
