@@ -1679,6 +1679,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 3 - Raphael Core, Companion Reasoning, And Soul Talk
 
+### 2026-07-20 - Cursor Grok - RA-3 安裝 raphael-autonomy-eval skill
+
+- Status: `VERIFIED` (local skill + harness); no runtime `src/**` change
+- Branch / commit: lands with this commit (Owner authorized sequential COMMIT+PUSH via PR)
+- Scope: RA-3 skill-only。鏡像 `raphael-conversation-eval` 的自主評測 skill。**零 safety／memory／save／battle／Nuwa 台詞改動**。
+- Work performed: (1) 安裝 `%USERPROFILE%\.codex\skills\raphael-autonomy-eval\`（`SKILL.md`／`agents/openai.yaml`／`references/evaluation-contract.md`／`scripts/run_eval.py`）。(2) 本地跑 skill：`hardGateOk=true`，cases **30/30**，Nuwa advisory `trusted:false`。(3) queue／playbook 標 RA-3 DONE。
+- Verification: `python .../raphael-autonomy-eval/scripts/run_eval.py --repo <NexusLink>` → total 30 / passed 30 / failed 0 / advisoryTrustedFalse true。
+- Problems / risks: (a) skill 本體在使用者 profile，不進 git；(b) Owner feel-check 稀少感仍是人類 gate；(c) RA-2 進 main 仍待 PR #100 `web-release-gate`（GitHub Actions 曾長時間 queued）。
+- Next safe action: 合併 RA-2 PR 後開 **RS-2**（對峙 intent advisory）；可選 RS-3 skill。
+- Required reading: `%USERPROFILE%\.codex\skills\raphael-autonomy-eval\SKILL.md`, `docs/raphael/RAPHAEL_AUTONOMY_EVAL_CONTRACT.md`, and this lane.
+
 ### 2026-07-20 - Cursor Grok - RA-2 Nuwa 自主啟發式蒸餾（advisory-only）
 
 - Status: `VERIFIED` (machine); **無新玩家可見 initiative 台詞**（仍需另批才可改 TP-7 行庫）

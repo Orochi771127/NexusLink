@@ -94,7 +94,7 @@ differentiation gap; TP-7 already wired player-visible initiative.
 | Skill | Status | Purpose |
 | --- | --- | --- |
 | `raphael-conversation-eval` | Installed (`~/.codex/skills/`) | Soul Talk holdout / safety / quality |
-| `raphael-autonomy-eval` | **Planned (RA-3)** | Initiative frequency, red-line silence, no loneliness detection |
+| `raphael-autonomy-eval` | **Installed (RA-3, 2026-07-20)** | Initiative frequency, red-line silence, no loneliness detection |
 | `raphael-standoff-eval` | **Planned (RS-3)** | Telegraph, four endings, fatigue withdraw |
 
 Do **not** `npx skills add` combat or celebrity persona skills into this repo
@@ -150,7 +150,7 @@ RaphaelCore remains final authority; advisory stays `trusted:false`.
 | --- | --- | --- | --- |
 | **RA-1** | Autonomy sealed-case contract + harness shape | docs + `companionInitiativeCases.js` | loneliness／login triggers | ✅ 2026-07-14 |
 | **RA-2** | Nuwa-style autonomy heuristics advisory | Nuwa bundle mental models / heuristics only | `safetyShield`, `memoryWriter` | ✅ 2026-07-20（無新玩家台詞） |
-| **RA-3** | Install `raphael-autonomy-eval` skill | `~/.codex/skills/raphael-autonomy-eval/**` | deepening lines before skill gates pass | planned |
+| **RA-3** | Install `raphael-autonomy-eval` skill | `~/.codex/skills/raphael-autonomy-eval/**` | deepening lines before skill gates pass | ✅ 2026-07-20 |
 | **RS-1** | Standoff success = emotion／retreat, not DPS | docs + eval contract | traditional combat skills | ✅ 2026-07-14 |
 | **RS-2** | Light standoff intent advisory | advisory bundle; numbers stay in `battleEngine.js` | advisory writing combat stats | pending Owner ack |
 | **RS-3** | Install `raphael-standoff-eval` skill | skill dir only until approved | combo／hitbox skill imports | planned |
