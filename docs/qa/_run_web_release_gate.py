@@ -883,6 +883,9 @@ def run_existing_browser_gates(base_url: str):
             timeout=120,
         ),
         run_command("stage4_automated_cases", [sys.executable, "docs/qa/_run_stage4_human_playtest.py"], env=env, timeout=120),
+        # TP-WQ1 follow-up: preferred wording shape (expectedTone / mustInclude / mustAvoid)
+        # must stay green on every main PR — not only when someone remembers to run it.
+        run_command("wording_quality", [sys.executable, "docs/qa/_run_wording_quality.py"], env=env, timeout=120),
         run_command("live_playtest_gate", [sys.executable, "docs/qa/_run_live_playtest_gate.py"], env=env, timeout=180),
     ]
 

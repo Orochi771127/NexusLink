@@ -21,7 +21,9 @@ TP-8 已由 Owner 決策為選項 A（初遇選角），併入新的 **CH-1..CH-
 4. ~~**RA-3**~~ — install `raphael-autonomy-eval` skill — ✅ 2026-07-20（見 PR #101）
 5. ~~**RS-2**~~ — light standoff intent advisory — ✅ 2026-07-20（Owner 批下一步後）
 6. ~~**RS-3**~~ — install `raphael-standoff-eval` skill — ✅ 2026-07-20（見本包）
-7. Chapter packs (CH-2…) and remaining TP-* as product capacity allows
+7. ~~**TP-WQ-GATE**~~ — wire wording-quality into `web-release-gate` — ✅ 2026-07-20
+8. Chapter packs (CH-2…) and remaining TP-* as product capacity allows；
+   Owner private-blind / feel-check 仍為人類 gate
 
 **Legacy recommended order after TP-1B (player-impact-first, kept for history):**
 1. **TP-6** (audio reality — biggest perceived-quality jump, bounded)
@@ -224,6 +226,17 @@ Completed earlier: Nuwa rhythm fixtures + `personaBoundaryEvalCases.js`.
 Preferred wording-shape (`expectedTone` / `mustInclude` / `mustAvoid`) was
 the residual gap — closed by **TP-WQ1** below (2026-07-20), not by redoing
 TP-3 fixtures.
+
+## TP-WQ-GATE — Wire wording-quality into web-release-gate — ✅ DONE 2026-07-20
+
+- **Goal:** TP-WQ1 runner must not be optional — every PR to `main` runs
+  `docs/qa/_run_wording_quality.py` inside `run_existing_browser_gates`.
+- **Allowed files:** `docs/qa/_run_web_release_gate.py`, queue / ledger /
+  coverage matrix notes.
+- **Forbidden:** runtime Soul Talk packs, holdout wording, battleEngine,
+  GROUNDWORK.
+- **Verification:** wording runner 8/8 standalone; release-gate includes
+  `wording_quality` browser step; `git diff --check`.
 
 ## TP-WQ1 — Wording-quality harness v1 + Daily Presence de-meta — ✅ DONE 2026-07-20
 
