@@ -67,8 +67,10 @@ critic-unit eval (acceptable; they fail loudly inside harness runs).
    **CLOSED 2026-07-20 (TP-WQ1)**: `wordingQualityAssert.js` +
    `wordingQualityEvalCases.js` (8 cases) implement preferred case shape
    (`expectedTone` / `mustInclude` / `mustAvoid`) plus always-on meta-language
-   ban. Runner: `docs/qa/_run_wording_quality.py`. Human playtest / private
-   blind still absorb residual naturalness judgement.
+   ban. Runner: `docs/qa/_run_wording_quality.py` — **also wired into
+   `web-release-gate` browserGates as `wording_quality` (TP-WQ-GATE,
+   2026-07-20)**. Human playtest / private blind still absorb residual
+   naturalness judgement.
 7. **Companion autonomy / initiative (player-visible).** ~~Partial coverage~~
    → **RA-1 SEALED 2026-07-14**: contract
    `docs/raphael/RAPHAEL_AUTONOMY_EVAL_CONTRACT.md`; harness

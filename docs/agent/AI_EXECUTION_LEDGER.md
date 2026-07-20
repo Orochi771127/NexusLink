@@ -1679,6 +1679,20 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 3 - Raphael Core, Companion Reasoning, And Soul Talk
 
+### 2026-07-20 - Cursor Grok - TP-WQ-GATE wording-quality 接入 web-release-gate
+
+- Status: `VERIFIED` (machine); Owner authorized continue＋ship to main
+- Branch / commit: `agent/tp-wq-gate-wire-v1` / lands with this commit
+- Scope: QA gate wiring only。把 TP-WQ1 的 `_run_wording_quality.py` 納入
+  `run_existing_browser_gates`，使每次 PR／main 的 `web-release-gate` 必跑措辭契約。
+  **零 runtime Soul Talk／safety／battle／save 改動**。
+- Work performed: (1) `_run_web_release_gate.py` +`wording_quality` step。(2) queue／matrix／ledger 標 TP-WQ-GATE DONE。
+- Verification: standalone wording 8/8；`git diff --check`；本 PR 的 required
+  `web-release-gate` 必須含並通過 `wording_quality`。
+- Problems / risks: (a) gate 多約 1–2 分鐘 Playwright；(b) private-blind 仍 `not_run`。
+- Next safe action: Owner feel-check／private-blind；或 CH／產品包。
+- Required reading: `docs/qa/_run_web_release_gate.py#run_existing_browser_gates`, `docs/qa/_run_wording_quality.py`, and this lane.
+
 ### 2026-07-20 - Cursor Grok - RS-3 安裝 raphael-standoff-eval skill
 
 - Status: `VERIFIED` (local skill + harness); no runtime `src/**` change
