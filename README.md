@@ -1,245 +1,208 @@
 # Nexus Link / 心核連結
 
-> 這不是電子寵物，這是你的夥伴。  
-> An emotional habitat game about a companion who remembers, keeps boundaries, and changes through shared experience.
+> **這不是電子寵物，這是你的夥伴。**  
+> A mobile-first emotional habitat game about memory, boundaries, and a relationship that changes through shared experience.
+
+[開啟 GitHub Pages 預覽](https://orochi771127.github.io/NexusLink/)
+
+> [!IMPORTANT]
+> Nexus Link 目前是**商業化前垂直切片（pre-commercial vertical slice）**。自動化驗證已建立，但獨立真人測試、必要實機矩陣、隱私與法務審查尚未完成，因此目前不代表正式公開發行版本。
 
 ---
 
-## Current Status
+## 專案簡介
 
-**Nexus Link** is a Web-first pre-commercial vertical slice built around one core loop:
+**Nexus Link／心核連結**是一款以 Web 為優先、針對手機直式體驗設計的敘事情緒棲地遊戲。
+
+玩家會與一位具有記憶、情緒、身體語言與個體邊界的「心核夥伴」建立關係。牠會記得你如何靠近、如何離開，以及你如何回來；你的互動會透過對話、動作、棲地痕跡與關係狀態留下後果。
+
+玩家可以影響夥伴，但不能支配牠。高羈絆不會取消牠拒絕、沉默或保持距離的能力。
 
 ```text
-First Session Opening
-→ First Soul Talk
-→ First Trace / Habitat Trace
-→ Return Echo
-→ Boundary-aware companion reactions
+初次進入
+→ 建立本機身分
+→ 心核引導
+→ 初遇定情
+→ 第一次觸碰與心語
+→ 留下棲地痕跡
+→ 探索月湖
+→ 離開後再次返回
+→ 看見關係留下的回聲
 ```
 
-The active runtime is the **root White Lab**:
+---
+
+## 核心體驗
+
+| 系統 | 玩家體驗 |
+|---|---|
+| **Initial Bond／初遇定情** | 新玩家從灰影貓、焰尾小狐、晶鰭小海馬中選擇一位初始夥伴。選擇代表一段關係的開始，不是角色收集選單。 |
+| **Soul Talk／心語** | 玩家輸入自己的感受，夥伴依意圖、情緒、記憶、人格與邊界給出回應。 |
+| **Boundary-aware Interaction／邊界互動** | 觸碰可能得到接受、保留接受、猶豫或拒絕；重複越界會改變夥伴的反應。 |
+| **Habitat Traces／棲地痕跡** | 情緒與共同經歷會在月湖棲地留下可見痕跡，而不是只存在於聊天紀錄。 |
+| **Return Echo／回歸回聲** | 玩家離開後再次回來，夥伴會依離開時間與先前經歷給出不帶罪惡感的回應。 |
+| **Relationship Growth／關係成長** | 每位夥伴擁有獨立的持久關係與成長狀態，不共享同一份羈絆數值。 |
+| **Emotional Standoff／穩住裂隙** | 衝突被設計成關係修復與情緒調節，而不是傳統 HP 歸零戰鬥。 |
+
+遠征（Expedition）目前仍屬實驗性原型，只完成部分心核橋接，不代表正式商業主玩法。
+
+---
+
+## RaphaelCore：本地心核認知層
+
+目前的心語系統由 **RaphaelCore** 驅動。它是本地、可測試、規則式的夥伴認知管線，不會在執行時呼叫外部大型語言模型。
 
 ```text
-/
-  index.html
-  styles.css
-  src/
-  assets/
+玩家輸入
+→ 安全檢查
+→ 意圖與情緒理解
+→ 人格、記憶與邊界判斷
+→ 回應與動作規劃
+→ 評估與合法狀態更新
+→ 對話、動畫與棲地痕跡
 ```
 
-`/r2/` is legacy reference only and is not the current development entry.
+RaphaelCore 負責：
+
+- 安全與高風險輸入處理
+- 意圖與情緒辨識
+- 夥伴人格與拒絕邏輯
+- 記憶召回與寫入政策
+- 回應策略、動作與動畫提示
+- 關係狀態與棲地痕跡更新
+
+目前執行環境**沒有外部 LLM、後端、資料庫或雲端 API**。未來即使加入語言模型，也只能作為可選的文字表達層，不能覆寫 RaphaelCore 的安全、記憶、人格或邊界決策。
 
 ---
 
-## Product Identity
+## 現行版本包含
 
-Nexus Link is a **narrative emotional habitat game**.
+- Mobile-first Web 介面
+- 月湖棲地與動態光影、天候效果
+- Explore／探索、Care／照顧、Growth／成長、Memory／記憶四個主要頁面
+- 多位具動畫資產的心核夥伴
+- 初遇定情三選一流程
+- 觸碰、疲勞、拒絕與關係修復
+- 心語對話、情緒記憶與棲地痕跡
+- 離線恢復與回歸回聲
+- 每位夥伴獨立的持久關係狀態
+- 世界圖鑑、棲地切換與章節／共鳴系統基礎
+- 實驗性遠征原型
 
-It is not:
-
-- a digital pet
-- a gacha / character collection game
-- a pure AI chatbot
-- an AI girlfriend product
-- a traditional RPG combat game
-- a FOMO / streak / login reward system
-
-Its central promise:
-
-> A heart-core companion remembers how you approached, how you left, and how you returned — but it never belongs to you.
-
----
-
-## Current Runtime Highlights
-
-- Mobile-first Web prototype
-- PixiJS v8 renderer via CDN
-- Vanilla JS / ES Modules
-- localStorage persistence through `nexusLinkR2State:v1`
-- Greyshade Cat as default / fallback companion; **Initial Bond** now lets a fresh save pick one of three starters (Greyshade Cat / Blazetail Kit / Crystalfin Seahorse) instead of always defaulting
-- Formal Heartspark Council five-seat roster (金羽小梟 Auriowl · 芽角小鹿 Sprigfawn · 晶鰭小海馬 Crystalfin Seahorse · 焰尾小狐 Blazetail Kit · 星紋小虎 Starstripe Cub) is **canon-locked and asset-specced, not yet runtime-ready** — separate from the five animated `full-runtime` test-carrier creatures (ember fox / frost wolf / stone bear / vine stag / crystal rabbit), which exist as animation test carriers and are not the canon roster
-- Companion Growth: G1 (session-only growth) and G2 (per-companion persistent relationship/growth state, offline recovery, multi-companion isolation) are **implemented and QA-passing**; G3 (companion-tagged readiness/evidence/willingness) is **not implemented**
-- Soul Talk emotional input
-- emotional memories and habitat traces
-- Return Echo with non-guilt return lines
-- companion animation cues for return, map, touch, and emotional standoff
-- boundary-aware touch reactions: accept / guarded / hesitate / reject
-- RaphaelCore JS local companion AI layer for Soul Talk safety, intent, emotion, boundary, memory, and response planning (see below)
-- Emotional Standoff ("穩住裂隙") as relationship repair, not traditional combat — this fully replaced the old HP battle loop; current work is deepening it (telegraph, phase arcs), not rebuilding it
+目前開發重點不是繼續堆疊功能，而是讓第一次進入、第一次相遇、第一次探索與第一次返回形成完整且安全的體驗。
 
 ---
 
-## RaphaelCore
+## 技術架構
 
-`src/ai/` (100+ modules) is the current Web-native RaphaelCore layer, now at internal **Stage 7**. `soulTalkController.js` calls `runRaphaelCore()` and applies the result through `applyRaphaelCoreResult()` — this is the live runtime path, not a design draft.
+| 層級 | 技術 |
+|---|---|
+| 介面 | HTML、CSS、Vanilla JavaScript、ES Modules |
+| 遊戲渲染 | PixiJS 8.8.1（CDN） |
+| 狀態與存檔 | localStorage，主鍵 `nexusLinkR2State:v1` |
+| 夥伴認知 | RaphaelCore，本地 deterministic pipeline |
+| 部署 | GitHub Pages |
+| 建置流程 | 無 npm、無 bundler、無 build step |
+| 後端 | 目前沒有 |
 
-The pipeline is deterministic and rule-based, not an LLM call:
+### Runtime 分層
 
 ```text
-inputGateway → safetyShield → intentClassifier → emotionInterpreter → semanticSoulModel
-→ reactionPlanner → responseStrategySelector → responseComposer
-→ memory (retriever / writer / recall policy) → trace / animation mapping → state update
+index.html
+└─ src/app.js
+   ├─ src/state/       狀態、存檔與 migration
+   ├─ src/engine/      遊戲規則與狀態推導
+   ├─ src/ai/          RaphaelCore 與對話政策
+   ├─ src/pixi/        場景、角色、動畫與特效
+   ├─ src/ui/          DOM controller 與玩家輸入
+   ├─ src/data/        角色、棲地、章節與內容資料
+   ├─ src/expedition/  遠征實驗性原型
+   ├─ src/audio/       BGM 與音效
+   ├─ src/i18n/        多語系
+   └─ src/utils/       EventBus、DOM、時間與通用工具
 ```
 
-Around that core sit: an NLU sub-pipeline (`src/ai/nlu/*`), dialogue management (`src/ai/dialogue/*`, anti-loop / quick replies / variants), eval critics for safety / boundary / persona / memory / reply / constitution (`src/ai/eval/*`), a bounded autonomy loop (`src/ai/autonomy/*`), and a self-evolution proposal pipeline (`src/ai/evolution/*`) that can *propose* patches but **cannot auto-merge them** — every change still needs human approval.
-
-This layer is local and deterministic. It does **not** use an LLM, backend, database, or external API (`external_llm_in_runtime: false`). Any advisory bundle (e.g. the Nuwa distillation bundle) is `trusted:false` — advisory only, never authoritative over RaphaelCore's safety, memory, boundary, or reply decisions.
-
-Design rule:
-
-```text
-NexusCore decides emotion, intent, memory, boundary, reaction, trace, and animation.
-LLM, if added later, may only be an optional language rendering layer.
-```
-
-Detailed architecture note: `docs/architecture/RAPHAEL_CORE_JS_V1.md`
-Machine-readable current status: `docs/handoff/RAPHAEL_AI_STATUS.yaml`
-Cross-agent work log (source of truth for "what's actually done"): `docs/agent/AI_EXECUTION_LEDGER.md`
+分層原則：規則層不直接操作 DOM 或 Pixi；渲染層不直接寫入存檔；所有持久狀態由 state/store 路徑管理。
 
 ---
 
-## Release / Validation Status
+## 在本機執行
 
-Automated QA is extensive and currently green: full web-release gate, safety terminal invariant, sealed holdout conversation suite, dialogue policy, constitution policy, and Companion Growth state/browser suites all pass on the current `main` tree (see `docs/handoff/RAPHAEL_AI_STATUS.yaml` for exact counts and commit SHAs).
-
-**None of that is human validation, and this project is not public-launch-approved.** The following gates are explicitly `not_run` and are required before any public-launch claim:
-
-- Independent private-blind review (3+ testers × 20 scored turns each)
-- Moderated first-session product-comprehension test (3+ independent participants)
-- Required real-device / browser matrix (D1/D2/D3/D6)
-- Legal / privacy / store-copy review
-- Explicit Owner public-launch approval
-
-None of the above require a public release to run — they are normally done against a private build or an unlisted link shared with invited testers, before any public launch decision. Treat this repository as a pre-commercial vertical slice until those gates close.
-
----
-
-## Run Locally
-
-Use any static file server.
+本專案不需要安裝 npm 套件。使用任一靜態檔案伺服器即可。
 
 ```bash
 python3 -m http.server 5173
 ```
 
-Then open:
-
-```text
-http://localhost:5173
-```
-
-If your system uses `python` instead of `python3`:
+若系統使用 `python` 指令：
 
 ```bash
 python -m http.server 5173
 ```
 
----
-
-## GitHub Pages
-
-Expected Pages URL:
+開啟：
 
 ```text
-https://orochi771127.github.io/NexusLink/
+http://localhost:5173
 ```
 
-Deployment is from:
-
-```text
-main / root
-```
+直接以 `file://` 開啟可能因 ES Modules 與瀏覽器安全限制而失敗，因此建議使用本機 HTTP server。
 
 ---
 
-## Canon and Research Documents
+## 產品原則
 
-### Core Bible (historical reference; strategic canon below is authoritative)
+Nexus Link 的設計受三條情感契約約束：
 
-```text
-docs/legacy-bible/01_DESIGN_BIBLE.md
-docs/legacy-bible/02_WORLD_BIBLE.md
-docs/legacy-bible/03_CHARACTER_BIBLE.md
-docs/legacy-bible/04_RUNTIME_CANON.md
-docs/legacy-bible/README.md
-```
+1. **牠會記得你，但牠不屬於你。**
+2. **牠會靠近你，但不會吞掉你。**
+3. **你能影響牠，但不能支配牠。**
 
-### Strategic Canon
+因此，本專案不以以下機制作為核心：
 
-```text
-docs/strategy/NEXUS_LINK_MASTER_CANON_v3.1.md
-```
-
-The strategic canon defines why the project exists, what it sells, and what it must never become. It does **not** replace `CLAUDE.md`, `AGENTS.md`, or `ACCEPTANCE.md`.
-
-### Market Evidence
-
-```text
-docs/research/MARKET_EVIDENCE_AI_COMPANION.md
-```
-
-This file is an internal evidence memo for AI companion / emotional habitat market assumptions. It is not external pitch material until source URLs are verified.
-
-### Raphael / Heart-core Brain
-
-```text
-docs/raphael/
-docs/architecture/RAPHAEL_CORE_JS_V1.md
-docs/handoff/RAPHAEL_AI_STATUS.yaml
-src/ai/
-```
-
-`src/ai/` is the active, current-runtime RaphaelCore layer (see Release / Validation Status above). `docs/raphael/RAPHAEL_CONSTITUTION.md` is the persona/boundary contract; other historical Raphael sandbox material remains design reference only until integrated through reviewed task packs. A separate, intentionally decoupled standalone engine and gateway-lab prototypes live outside this repository under the shared workspace root — they are not part of this runtime.
+- 抽卡、稀有度與角色換皮商城
+- 連續登入、紅點、倒數與 FOMO 壓力
+- 無條件服從或永遠迎合玩家的 AI
+- 把角色當作可任意替換的戰力單位
+- 把心語包裝成心理治療、診斷或危機服務
+- 傳統刷裝、輸出排行與 HP 歸零式主循環
 
 ---
 
-## Development Constraints
+## 開發狀態與限制
 
-Allowed stack:
+- 專案目前仍是商業化前垂直切片。
+- 自動化 release gate、狀態 migration、對話政策、邊界、安全與瀏覽器流程已有測試覆蓋。
+- 獨立真人盲測、必要手機／瀏覽器實機矩陣、隱私與法務審查仍待完成。
+- 玩家資料目前保存在單一裝置的 localStorage，沒有帳號、雲端同步或跨裝置備份。
+- RaphaelCore 目前是規則式本地系統，不是生成式雲端 AI。
+- 媒體與部署體積仍需要在商業發行前持續最佳化。
 
-- HTML
-- CSS
-- Vanilla JavaScript / ES Modules
-- PixiJS v8 via CDN
-- localStorage
-- GitHub Pages
-
-Do not add without explicit approval:
-
-- React / Vue / Svelte
-- TypeScript
-- npm dependencies
-- build step
-- backend / database / API
-- LLM API
-- second Pixi app
-- new ticker
-- gacha / streak / daily reward / red dot systems
+最新的機器可讀狀態與驗證結果請以 [`docs/handoff/RAPHAEL_AI_STATUS.yaml`](docs/handoff/RAPHAEL_AI_STATUS.yaml) 為準，不在 README 固定複製容易過期的測試數字。
 
 ---
 
-## Current Development Focus
+## 重要文件
 
-```text
-Make one habitat feel alive.
-Make one companion feel present.
-Make one relationship worth returning to.
-```
+| 文件 | 用途 |
+|---|---|
+| [`docs/strategy/NEXUS_LINK_MASTER_CANON_v3.1.md`](docs/strategy/NEXUS_LINK_MASTER_CANON_v3.1.md) | 產品定位、商業方向與不可違反的核心原則 |
+| [`CLAUDE.md`](CLAUDE.md) | AI 協作與施工憲法 |
+| [`AGENTS.md`](AGENTS.md) | 多代理協作規範 |
+| [`ACCEPTANCE.md`](ACCEPTANCE.md) | 功能與體驗驗收標準 |
+| [`docs/architecture/RUNTIME_MAP.md`](docs/architecture/RUNTIME_MAP.md) | 現行 Runtime 架構地圖 |
+| [`docs/architecture/RAPHAEL_CORE_JS_V1.md`](docs/architecture/RAPHAEL_CORE_JS_V1.md) | RaphaelCore 架構與資料流 |
+| [`docs/handoff/RAPHAEL_AI_STATUS.yaml`](docs/handoff/RAPHAEL_AI_STATUS.yaml) | 現行能力、測試與尚未完成的 launch gates |
+| [`docs/agent/AI_EXECUTION_LEDGER.md`](docs/agent/AI_EXECUTION_LEDGER.md) | 跨代理實際完成工作紀錄 |
 
-Current focus:
-
-```text
-First Session Flow hardening — Safe Moonlake Exploration and the D2 safety terminal
-```
-
-**Initial Bond has shipped**: fresh saves already pick one of three starters (Greyshade Cat / Blazetail Kit / Crystalfin Seahorse); veteran saves keep their existing unlocks. Do not re-plan Initial Bond from scratch — the next work is hardening what comes *after* it (safe first exploration, D2 safety terminal), not the starter-choice step itself.
+歷史設計 Bible 已移至 `docs/legacy-bible/`，只作歷史參考；現行實作應以目前程式碼、Master Canon、施工憲法與驗收文件為準。
 
 ---
 
-## Acceptance Question
+## 開發判斷標準
 
-Every feature must answer:
+每一項功能都必須回答：
 
-> Does this make the companion feel more clearly bounded, remembered, and changed by shared experience?
+> **它是否讓夥伴更像一個具有記憶、邊界與自身意志的生命？**
 
-If not, it should not expand the root runtime.
+若答案是否定的，就不應擴張現行核心 Runtime。
