@@ -1679,6 +1679,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 3 - Raphael Core, Companion Reasoning, And Soul Talk
 
+### 2026-07-20 - Cursor Grok - RS-3 安裝 raphael-standoff-eval skill
+
+- Status: `VERIFIED` (local skill + harness); no runtime `src/**` change
+- Branch / commit: `agent/rs3-standoff-eval-skill` / lands with this commit
+- Scope: RS-3 skill-only。鏡像 `raphael-autonomy-eval`。**零 battleEngine 數值／safety／memory／save 改動**；不安裝 combo／hitbox skill。
+- Work performed: (1) 安裝 `%USERPROFILE%\.codex\skills\raphael-standoff-eval\`（`SKILL.md`／`agents/openai.yaml`／`references/evaluation-contract.md`／`scripts/run_eval.py`）。(2) 本地跑 skill：hardGateOk + cases 全過 + advisory `trusted:false`。(3) queue／playbook／standoff contract／coverage matrix 標 RS-3 DONE。
+- Verification: `python .../raphael-standoff-eval/scripts/run_eval.py --repo <NexusLink>`（見本步 shell）。
+- Problems / risks: (a) skill 本體在使用者 profile，不進 git；(b) Owner「stabilize ≠ DPS」feel-check 仍開；(c) DOM telegraph 演出未自動化。
+- Next safe action: Owner 對峙 feel-check；或 private-blind／多語深度。
+- Required reading: `%USERPROFILE%\.codex\skills\raphael-standoff-eval\SKILL.md`, `docs/raphael/RAPHAEL_STANDOFF_EVAL_CONTRACT.md`, and this lane.
+
 ### 2026-07-20 - Cursor Grok - TP-WQ1 wording-quality harness + de-meta lines
 
 - Status: `VERIFIED` (machine); Owner authorized judge＋ship to main

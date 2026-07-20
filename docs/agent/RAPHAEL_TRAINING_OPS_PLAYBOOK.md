@@ -81,7 +81,7 @@ differentiation gap; TP-7 already wired player-visible initiative.
 | --- | --- | --- |
 | Soul Talk tone / heart | Existing Nuwa bundle + `raphael-conversation-eval` | Nuwa as runtime identity |
 | Autonomy train / eval | New `raphael-autonomy-eval` (planned RA-3); Nuwa-style heuristics `trusted:false` | Generic agent-autonomy-kit |
-| Standoff train / eval | New `raphael-standoff-eval` (planned RS-3); intent heuristics advisory-only | Godot combat skill, AAA combat-design, generic game-ai-behavior |
+| Standoff train / eval | `raphael-standoff-eval` (RS-3 installed); intent heuristics advisory-only | Godot combat skill, AAA combat-design, generic game-ai-behavior |
 | Product scope cut | Jobs lens (read-only) | Taste arguments to skip safety / a11y |
 | Engineering reliability | Karpathy lens (demo ≠ ship) | Vibe coding as release proof |
 | Copy final pass | NexusLink copywriting guide + anti-vibe-writing | Celebrity first-person in player copy |
@@ -95,7 +95,7 @@ differentiation gap; TP-7 already wired player-visible initiative.
 | --- | --- | --- |
 | `raphael-conversation-eval` | Installed (`~/.codex/skills/`) | Soul Talk holdout / safety / quality |
 | `raphael-autonomy-eval` | **Installed (RA-3, 2026-07-20)** | Initiative frequency, red-line silence, no loneliness detection |
-| `raphael-standoff-eval` | **Planned (RS-3)** | Telegraph, four endings, fatigue withdraw |
+| `raphael-standoff-eval` | **Installed (RS-3, 2026-07-20)** | Telegraph, four endings, fatigue withdraw, Nuwa advisory `trusted:false` |
 
 Do **not** `npx skills add` combat or celebrity persona skills into this repo
 without explicit Owner approval and a source audit.
@@ -153,7 +153,7 @@ RaphaelCore remains final authority; advisory stays `trusted:false`.
 | **RA-3** | Install `raphael-autonomy-eval` skill | `~/.codex/skills/raphael-autonomy-eval/**` | deepening lines before skill gates pass | ✅ 2026-07-20 |
 | **RS-1** | Standoff success = emotion／retreat, not DPS | docs + eval contract | traditional combat skills | ✅ 2026-07-14 |
 | **RS-2** | Light standoff intent advisory | advisory bundle; numbers stay in `battleEngine.js` | advisory writing combat stats | ✅ 2026-07-20 |
-| **RS-3** | Install `raphael-standoff-eval` skill | skill dir only until approved | combo／hitbox skill imports | planned |
+| **RS-3** | Install `raphael-standoff-eval` skill | skill dir only until approved | combo／hitbox skill imports | **DONE 2026-07-20** |
 
 Autonomy contract: [`RAPHAEL_AUTONOMY_EVAL_CONTRACT.md`](../raphael/RAPHAEL_AUTONOMY_EVAL_CONTRACT.md) — `__RAPHAEL_AUTONOMY_EVAL__.runAll()`.  
 Standoff contract: [`RAPHAEL_STANDOFF_EVAL_CONTRACT.md`](../raphael/RAPHAEL_STANDOFF_EVAL_CONTRACT.md) — `__RAPHAEL_STANDOFF_EVAL__.runAll()`.
