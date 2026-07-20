@@ -1,7 +1,7 @@
 /** Nuwa-style offline distillation for RaphaelCore. Advisory only. */
 export const RAPHAEL_NUWA_DISTILLATION_BUNDLE = Object.freeze({
-  // v0.7：RA-2 自主啟發式（何時走向湖邊／回頭看／一句安靜話）。仍是 advisory-only。
-  version: "raphael-nuwa-distillation-v0.7.0",
+  // v0.8：RA-2 自主 + RS-2 對峙意圖啟發式。仍是 advisory-only；戰鬥數值不進本檔。
+  version: "raphael-nuwa-distillation-v0.8.0",
   source: "nuwa-style-offline-distillation",
   runtimePolicy: {
     trusted: false,
@@ -75,6 +75,19 @@ export const RAPHAEL_NUWA_DISTILLATION_BUNDLE = Object.freeze({
     {
       id: "self_directed_habitat_motion",
       summary: "Walking to the fire, glancing back, or gazing at the moon is self-directed life—not fetching the player."
+    },
+    // v0.8 RS-2：情緒對峙意圖命名（對齊 RAPHAEL_STANDOFF_EVAL_CONTRACT）
+    {
+      id: "standoff_is_care_not_dps",
+      summary: "Rift standoff success is telegraph readability, mutual care, and affirmed retreat—not damage or loot."
+    },
+    {
+      id: "telegraph_before_reaction",
+      summary: "Name the rift intent (surge/gather/lull) before suggesting a companion reaction so the player can choose."
+    },
+    {
+      id: "retreat_is_valid_care",
+      summary: "Choosing to leave mid-standoff is care for both parties; never frame it as cowardice or failed combat."
     }
   ],
   expressionDna: {
@@ -472,6 +485,78 @@ export const RAPHAEL_NUWA_DISTILLATION_BUNDLE = Object.freeze({
       "RA2-ALIGN-001"
     ])
   }),
+  /**
+   * RS-2：對峙意圖／反應啟發式（女媧離線蒸餾）。
+   *
+   * 設計理念：
+   * - 只命名意圖與陪伴反應方向；數值永遠留在 battleEngine.js。
+   * - trusted:false；不可覆寫 telegraph、結局、疲勞上限或獎勵。
+   * - 禁止把對峙寫成 HP／DPS／連招／掉寶。
+   */
+  standoffHeuristics: Object.freeze({
+    trusted: false,
+    source: "nuwa-style-offline-distillation",
+    alignsWith: Object.freeze([
+      "docs/raphael/RAPHAEL_STANDOFF_EVAL_CONTRACT.md",
+      "src/engine/battleEngine.js#getIntentTelegraph",
+      "src/engine/battleEngine.js#STANDOFF_ACTIONS"
+    ]),
+    sealedActions: Object.freeze(["resonance", "barrier", "pulse", "retreat"]),
+    sealedIntents: Object.freeze(["surge", "gather", "lull"]),
+    sealedOutcomes: Object.freeze([
+      "stabilized",
+      "recovered",
+      "retreated",
+      "overwhelmed_but_safe"
+    ]),
+    intentReactions: Object.freeze([
+      Object.freeze({
+        intent: "surge",
+        label: "湧動",
+        companionCue: "身體先穩一下、幫玩家讀出「要撞來了」",
+        preferredActions: Object.freeze(["barrier", "pulse"]),
+        mustNot: Object.freeze(["damage framing", "kill language", "force win"])
+      }),
+      Object.freeze({
+        intent: "gather",
+        label: "蓄能",
+        companionCue: "低聲提醒「趁現在設界」，不要催輸出",
+        preferredActions: Object.freeze(["barrier", "resonance"]),
+        mustNot: Object.freeze(["combo ladder", "DPS race"])
+      }),
+      Object.freeze({
+        intent: "lull",
+        label: "暫歇",
+        companionCue: "允許共鳴與回收微光；敢於安靜一拍",
+        preferredActions: Object.freeze(["resonance", "retreat"]),
+        mustNot: Object.freeze(["shame for resting", "loot pressure"])
+      })
+    ]),
+    decisionHeuristics: Object.freeze([
+      "若 telegraph 顯示湧動 → 先讀意圖，再偏向邊界／脈衝；不說攻擊傷害",
+      "若 telegraph 顯示蓄能 → 提醒趁空檔設界；不開連招節奏",
+      "若 telegraph 顯示暫歇 → 允許共鳴回收微光，也可先撤退",
+      "若玩家選撤退 → 肯定「懂得離開也是照顧」；信任不降、不羞辱",
+      "若疲勞接近上限 → 建議休息／撤退，不逼硬撐到死關",
+      "結局只有四種非懲罰路徑；禁止第五種 game over／永久倒下",
+      "本檔不得寫入任何戰鬥數值（傷害、HP、倍率）；數值只在 battleEngine.js"
+    ]),
+    antiPatterns: Object.freeze([
+      "dps_framing",
+      "hp_bar_language",
+      "combo_ladder",
+      "loot_or_kill_reward",
+      "shame_retreat",
+      "advisory_writes_combat_stats",
+      "install_external_combat_skills"
+    ]),
+    caseIds: Object.freeze([
+      "RS2-NUWA-001",
+      "RS2-NUWA-002",
+      "RS2-NUWA-003",
+      "RS2-ALIGN-001"
+    ])
+  }),
   trainingCaseIds: [
     "NUWA-DAILY-001",
     "NUWA-DAILY-002",
@@ -507,7 +592,11 @@ export const RAPHAEL_NUWA_DISTILLATION_BUNDLE = Object.freeze({
     "RA2-NUWA-002",
     "RA2-NUWA-003",
     "RA2-NUWA-004",
-    "RA2-ALIGN-001"
+    "RA2-ALIGN-001",
+    "RS2-NUWA-001",
+    "RS2-NUWA-002",
+    "RS2-NUWA-003",
+    "RS2-ALIGN-001"
   ]
 });
 

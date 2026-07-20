@@ -121,6 +121,13 @@ rebuild the autonomy stack, speak as Nuwa to the player, write memory, grant
 rewards, or override cooldown. Player-facing initiative lines remain owned by
 the existing TP-7 runtime until a separate Owner-approved copy pack.
 
+**v0.8 RS-2 standoff note:** `standoffHeuristics` names surge/gather/lull intent
+reactions and retreat-as-care language. It is advisory-only
+(`trusted:false`), read via `getNuwaStandoffAdvisory()`, and must stay aligned
+with `RAPHAEL_STANDOFF_EVAL_CONTRACT` + `STANDOFF_ACTIONS`. It must never write
+combat stats, override telegraph, shame retreat, or install external combat
+skills.
+
 ## Runtime Contract
 
 All Nuwa-generated data must enter runtime through the advisory adapter path.

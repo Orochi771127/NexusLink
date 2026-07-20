@@ -152,7 +152,7 @@ RaphaelCore remains final authority; advisory stays `trusted:false`.
 | **RA-2** | Nuwa-style autonomy heuristics advisory | Nuwa bundle mental models / heuristics only | `safetyShield`, `memoryWriter` | ✅ 2026-07-20（無新玩家台詞） |
 | **RA-3** | Install `raphael-autonomy-eval` skill | `~/.codex/skills/raphael-autonomy-eval/**` | deepening lines before skill gates pass | planned |
 | **RS-1** | Standoff success = emotion／retreat, not DPS | docs + eval contract | traditional combat skills | ✅ 2026-07-14 |
-| **RS-2** | Light standoff intent advisory | advisory bundle; numbers stay in `battleEngine.js` | advisory writing combat stats | pending Owner ack |
+| **RS-2** | Light standoff intent advisory | advisory bundle; numbers stay in `battleEngine.js` | advisory writing combat stats | ✅ 2026-07-20 |
 | **RS-3** | Install `raphael-standoff-eval` skill | skill dir only until approved | combo／hitbox skill imports | planned |
 
 Autonomy contract: [`RAPHAEL_AUTONOMY_EVAL_CONTRACT.md`](../raphael/RAPHAEL_AUTONOMY_EVAL_CONTRACT.md) — `__RAPHAEL_AUTONOMY_EVAL__.runAll()`.  

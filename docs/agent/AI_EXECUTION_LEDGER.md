@@ -1679,6 +1679,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 3 - Raphael Core, Companion Reasoning, And Soul Talk
 
+### 2026-07-20 - Cursor Grok - RS-2 Nuwa 對峙意圖啟發式（advisory-only）
+
+- Status: `VERIFIED` (machine); Owner authorized sequential next-step after RA-2
+- Branch / commit: lands with this commit (PR path into `main`)
+- Scope: RS-2。Nuwa `standoffHeuristics` + gated adapter + standoff harness。**battleEngine 數值／safety／memory／save 零觸碰**；不安裝外部戰鬥 skill。
+- Work performed: (1) Nuwa bundle → **v0.8.0**：三個對峙 mental models + `standoffHeuristics`（surge／gather／lull 反應、撤退肯定、antiPatterns）。(2) `getNuwaStandoffAdvisory()`：`trusted:false`，`mayWriteCombatStats`／`mayOverrideTelegraph`／`mayPunishRetreat` 皆 false。(3) standoff eval 加 `RS2-NUWA-001..003`、`RS2-ALIGN-001`；autonomy v0.7+ 版本哨兵相容 v0.8。(4) 更新 contract／queue／playbook。
+- Verification: `node --check` PASS；`runAllRaphaelAutonomyEvalCases` **30/30**；`runAllRaphaelStandoffEvalCases` **12/12**。
+- Problems / risks: (a) advisory 尚未被 battleController 消費（刻意）；(b) Owner「穩住裂隙≠DPS」feel-check 仍建議人工覆核；(c) 進 main 仍走 PR + web-release-gate。
+- Next safe action: **RS-3**（`raphael-standoff-eval` skill）或 initiative 台詞 copy pack。
+- Required reading: `src/data/ai/raphaelNuwaDistillationBundle.js#standoffHeuristics`, `src/ai/raphaelTrainingAdapter.js#getNuwaStandoffAdvisory`, `src/ai/testHarness/raphaelStandoffEvalCases.js`, and this lane.
+
 ### 2026-07-20 - Cursor Grok - RA-2 Nuwa 自主啟發式蒸餾（advisory-only）
 
 - Status: `VERIFIED` (machine); **無新玩家可見 initiative 台詞**（仍需另批才可改 TP-7 行庫）

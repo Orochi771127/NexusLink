@@ -17,6 +17,8 @@ import {
   settleStandoff,
   summarizeStandoffOutcome
 } from "../../engine/battleEngine.js";
+import { RAPHAEL_NUWA_DISTILLATION_BUNDLE } from "../../data/ai/raphaelNuwaDistillationBundle.js";
+import { getNuwaStandoffAdvisory } from "../raphaelTrainingAdapter.js";
 
 const FOUR_OUTCOMES = Object.freeze([
   "stabilized",
@@ -128,6 +130,72 @@ export const RAPHAEL_STANDOFF_EVAL_CASES = Object.freeze([
     run: () => {
       const r = settleStandoff(null);
       return r.settled === true && r.outcome === "retreated";
+    }
+  },
+  // ---- RS-2：Nuwa 對峙意圖啟發式（advisory-only；不寫戰鬥數值）----
+  {
+    id: "RS2-NUWA-001",
+    name: "RS-2：Nuwa standoffHeuristics.trusted=false 且三意圖齊備",
+    run: () => {
+      const standoff = RAPHAEL_NUWA_DISTILLATION_BUNDLE.standoffHeuristics;
+      const intents = (standoff?.intentReactions || []).map((item) => item.intent);
+      return (
+        standoff?.trusted === false &&
+        intents.includes("surge") &&
+        intents.includes("gather") &&
+        intents.includes("lull") &&
+        RAPHAEL_NUWA_DISTILLATION_BUNDLE.runtimePolicy?.trusted === false
+      );
+    }
+  },
+  {
+    id: "RS2-NUWA-002",
+    name: "RS-2：adapter getNuwaStandoffAdvisory 無副作用且不可寫戰鬥數值",
+    run: () => {
+      const advisory = getNuwaStandoffAdvisory();
+      const suggestion = advisory?.suggestion;
+      return (
+        advisory?.ok === true &&
+        advisory?.trusted === false &&
+        suggestion?.trusted === false &&
+        suggestion?.mayWriteCombatStats === false &&
+        suggestion?.mayOverrideTelegraph === false &&
+        suggestion?.mayPunishRetreat === false &&
+        suggestion?.maySpeakAsNuwa === false &&
+        (suggestion?.sealedActions || []).length === 4
+      );
+    }
+  },
+  {
+    id: "RS2-NUWA-003",
+    name: "RS-2：antiPatterns 含 DPS／HP／懲罰撤退／advisory 寫數值",
+    run: () => {
+      const anti = new Set(RAPHAEL_NUWA_DISTILLATION_BUNDLE.standoffHeuristics?.antiPatterns || []);
+      return (
+        anti.has("dps_framing") &&
+        anti.has("hp_bar_language") &&
+        anti.has("shame_retreat") &&
+        anti.has("advisory_writes_combat_stats")
+      );
+    }
+  },
+  {
+    id: "RS2-ALIGN-001",
+    name: "RS-2：密封行動／意圖／結局必須對齊 battleEngine 詞彙（不漂移）",
+    run: () => {
+      const standoff = RAPHAEL_NUWA_DISTILLATION_BUNDLE.standoffHeuristics || {};
+      const actionsOk =
+        Array.isArray(standoff.sealedActions) &&
+        standoff.sealedActions.length === STANDOFF_ACTIONS.length &&
+        standoff.sealedActions.every((action) => STANDOFF_ACTIONS.includes(action));
+      const intentsOk = ["surge", "gather", "lull"].every((intent) =>
+        (standoff.sealedIntents || []).includes(intent)
+      );
+      const outcomesOk = FOUR_OUTCOMES.every((outcome) =>
+        (standoff.sealedOutcomes || []).includes(outcome)
+      );
+      const heuristicsText = (standoff.decisionHeuristics || []).join("\n");
+      return actionsOk && intentsOk && outcomesOk && heuristicsText.includes("battleEngine.js");
     }
   }
 ]);

@@ -1,8 +1,12 @@
 # Raphael Standoff Eval Contract (RS-1)
 
-Status: `sealed v1` — 2026-07-14  
-Lane: Raphael Core / Emotional Standoff  
+Status: `sealed v1` — 2026-07-14（RS-2 Nuwa intent heuristics landed 2026-07-20; engine numbers unchanged）
+Lane: Raphael Core / Emotional Standoff
 Parent ops: [`docs/agent/RAPHAEL_TRAINING_OPS_PLAYBOOK.md`](../agent/RAPHAEL_TRAINING_OPS_PLAYBOOK.md)
+
+> **RS-2 note:** Nuwa `standoffHeuristics`（bundle v0.8）是 advisory-only 蒸餾，
+> 經 `getNuwaStandoffAdvisory()` 讀取；不得寫入戰鬥數值或覆寫本契約詞彙。
+> Harness：`RS2-NUWA-001..003`、`RS2-ALIGN-001`。
 
 ## 1. Purpose
 

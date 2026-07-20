@@ -18,9 +18,10 @@ TP-8 已由 Owner 決策為選項 A（初遇選角），併入新的 **CH-1..CH-
 1. ~~**RA-1**~~ — autonomy sealed-case contract + harness shape — ✅ 2026-07-14
 2. ~~**RS-1**~~ — standoff eval contract (emotion／retreat ≠ DPS) — ✅ 2026-07-14
 3. ~~**RA-2**~~ — Nuwa-style autonomy heuristics (`trusted:false`) — ✅ 2026-07-20（Owner 批 feel-check／豁免後）
-4. **RS-2** — light standoff intent advisory — after Owner standoff ack
-5. **RA-3** / **RS-3** as capacity allows (eval skills)
-6. Chapter packs (CH-2…) and remaining TP-* as product capacity allows
+4. ~~**RA-3**~~ — install `raphael-autonomy-eval` skill — ✅ 2026-07-20（見 PR #101）
+5. ~~**RS-2**~~ — light standoff intent advisory — ✅ 2026-07-20（Owner 批下一步後）
+6. **RS-3** as capacity allows (eval skill)
+7. Chapter packs (CH-2…) and remaining TP-* as product capacity allows
 
 **Legacy recommended order after TP-1B (player-impact-first, kept for history):**
 1. **TP-6** (audio reality — biggest perceived-quality jump, bounded)
@@ -133,7 +134,14 @@ before RS-2. Original pack text kept below.
 - **Human gate:** REQUIRED before `npx skills` or skill scaffold lands.
 - **Depends on:** RA-1.
 
-## RS-2 — Light standoff intent advisory (planned)
+## RS-2 — Light standoff intent advisory — ✅ DONE 2026-07-20
+
+Completed: Nuwa bundle **v0.8.0** adds `standoffHeuristics` + three standoff
+mental models; `getNuwaStandoffAdvisory()` exposes gated `trusted:false` read
+path; standoff eval gains RS2-NUWA-001..003 + RS2-ALIGN-001. **No battleEngine
+numeric changes.** Original pack text kept below.
+
+### (archived) RS-2 — Light standoff intent advisory (planned)
 
 - **Goal:** intent naming／companion reaction heuristics as advisory only;
   combat numbers stay in `battleEngine.js`.
