@@ -1,11 +1,11 @@
 # COMPANION_GROWTH_CONTRACT_V1.md
 # 心核夥伴養成與覺醒契約 v1
 
-> **狀態**：`ACTIVE DESIGN CONTRACT / G1 + G2 RUNTIME IMPLEMENTED / G3+ NOT YET IMPLEMENTED`
+> **狀態**：`ACTIVE DESIGN CONTRACT / G1 + G2 + G3 EVIDENCE FOUNDATION IMPLEMENTED / G4+ NOT YET IMPLEMENTED`
 >
-> **Owner direction**：2026-07-17 已核准此契約與 G1 session-only 切片；2026-07-18 Owner 再核准 G2 GROUNDWORK，現已接入 per-companion 持久狀態、migration 與 active mirror 原子切換。G3 evidence writer／readiness／willingness、正式覺醒邀請與形態資產仍須另開對應 TASK_PACK。涉及 `assets/**` 或 `pixiApp.js` 時，仍須依 GROUNDWORK 核准範圍施工。
+> **Owner direction**：2026-07-17 已核准此契約與 G1 session-only 切片；2026-07-18 核准 G2 GROUNDWORK；2026-07-22 核准 G3 EXPERIENCE。現已接入 per-companion 持久狀態、正式 key factory、bounded evidence／coverage、readiness／willingness 與質性 Growth UI。現行 live source owner 只有 exploration 與 emotional standoff，因此正式三-family + consent-anchor readiness 在產品流程仍不可達；G4 覺醒邀請／stage advance 與 G5 形態資產尚未實作。涉及 `assets/**` 或 `pixiApp.js` 時，仍須依 GROUNDWORK 核准範圍施工。
 >
-> **權威關係**：本文件服從 `NEXUS_LINK_MASTER_CANON_v3.1.md`，是 Companion Growth／心核夥伴養成的現行**設計與驗收 SSOT**。G1 提供當頁、可逆、session-only 的質性心相觀察；G2 提供 per-companion relationship／growth truth、migration 與 Codex 隔離。正式 evidence 累積、readiness／willingness、覺醒邀請與形態 swap 仍未實作。`docs/r2-canon/R2_EVOLUTION_SYSTEM.md` 的等級、勝場、道具、五階與能力雷達只保留為歷史參考，不得作新實作依據。
+> **權威關係**：本文件服從 `NEXUS_LINK_MASTER_CANON_v3.1.md`，是 Companion Growth／心核夥伴養成的現行**設計與驗收 SSOT**。G1 提供當頁、可逆、session-only 的質性心相觀察；G2 提供 per-companion relationship／growth truth、migration 與 Codex 隔離；G3 提供正式 evidence foundation、readiness／willingness 評估與質性痕跡呈現。G3 不會自動升階，也不等於正式覺醒玩法已完成。`docs/r2-canon/R2_EVOLUTION_SYSTEM.md` 的等級、勝場、道具、五階與能力雷達只保留為歷史參考，不得作新實作依據。
 >
 > **不涵蓋**：`src/ai/evolution/**` 是 Raphael 自我評估／patch 管線，不是夥伴養成；G2 只把既有高風險 terminal state 收緊為完整 relationship 零變化，不改 RaphaelCore canonical reply、人格或記憶權限。
 
@@ -33,7 +33,7 @@
 
 | 現況 | 判定 |
 |---|---|
-| `evolutionLines.js` 的每條角色線已有 3 個 stage | 三段資料形狀保留；`bondThreshold` 只剩 compatibility data，正式 gate 尚待 G3 |
+| `evolutionLines.js` 的每條角色線已有 3 個 stage | 三段資料形狀保留；`bondThreshold` 只剩 compatibility data。G3 readiness gate 已存在，但 live 流程尚缺第三 source family／consent anchor，且 G4 stage offer／advance 未接入 |
 | `codexController` 讀指定 companion 的 formal stage／legacy display floor | 已隔離；inactive archive 有明示，top-level bond 不會解鎖另一隻夥伴 |
 | `companionStates.byId` 保存 relationship／growth；14 個頂層欄位是 active mirror | G2 已接入；A→B→A 原子封存／hydrate，未知 id fail closed，仍只用主存檔 key |
 | 舊 memory / milestone 多數沒有 `companionId` | 不可把舊歷史複製給整個 roster，也不可臆測逐筆歸屬 |
@@ -118,7 +118,7 @@ Readiness 至少需要：
 - 所有資料可驗證且屬於目前 companion；缺失或損壞時 fail closed 為「還不是時候」。
 - 不要求某一章節分支、某一對峙結局或被夥伴拒絕；Care + Exploration + Reflection + Chapter 本身就是不靠對峙／誘發拒絕的可達組合。
 
-Willingness 另外檢查（實際 enum／profile threshold 必須在 G3 先定版並接受 mutation test）：
+Willingness 另外檢查（G3 已固定 typed enum／profile gate 並納入 mutation test）：
 
 - `growthSafetyExcluded` 為 false，且夥伴沒有 typed overfatigue 或尚未被尊重／修復的 active boundary context。
 - **Numeric `defense` 永遠不是 readiness／willingness 門檻。** Defense 只影響當下姿態與語氣，不得讓玩家因壓低防衛而更容易覺醒。
@@ -349,14 +349,14 @@ Pixi 只消費 `heart_phase_manifestation`、姿態與環境 cue，不讀寫 sta
 
 | Phase | Layer | 內容 | 最低 gate／退出條件 |
 |---|---|---|---|
-| G0 | Docs | 本契約、Acceptance、legacy 與 agent/art 路由 | 文件一致；G1／G2 已接入與 G3+ 未實作的 runtime truth 明確；review findings 已封口 |
+| G0 | Docs | 本契約、Acceptance、legacy 與 agent/art 路由 | 文件一致；G1／G2／G3 Evidence Foundation 已接入，G4+ 未實作的 runtime truth 明確；review findings 已封口 |
 | G1 | EXPERIENCE | **已實作**：只從本 session 合法事件衍生 qualitative tendency；Growth view model，不新增持久 schema | N2／N3／N4／N5／N8／N11 的 presentation subset + M1–M5 + H + I；4 種 practice、390×844、reduced motion |
 | G2 | GROUNDWORK | **已實作**：`companionStates`／full mirror inventory／normalize／migration／single-key save；active mirror 原子切換 | N1／N3／N9／N10／N11 + H + I；11-companion ring、veteran、corrupt、idempotent 全過 |
-| G3 | EXPERIENCE | 正式 key factory、evidence writer、coverage／compaction、readiness／willingness、Growth UI | N1–N11 + safety／alias／repeat-50／compaction mutation tests 全過 |
+| G3 | EXPERIENCE | 正式 key factory、evidence writer、coverage／compaction、readiness／willingness、Growth UI | ✅ Evidence Foundation 已接入；N1–N11 + safety／alias／repeat-50／compaction／source-owner browser tests 全過。Live readiness 尚不可達，不包含 G4 stage offer／advance |
 | G4 | EXPERIENCE | 夥伴主動 stage offer、可延後的覺醒儀式、heart-phase 表現 | N2／N3／N5／N7／N8／N11 + H + I；無強制、無 FOMO、無獎勵、可再提出 |
 | G5 | GROUNDWORK + ART | 一隻 companion 的完整 Stage 2 視覺資產與 renderer switch | N2／N11 + G1–G7 + H + I；512 asset readiness、mobile memory、真機與 human art gate |
 
-G1 不得偷偷建立 localStorage 欄位；G2 只完成每隻夥伴的狀態地基，不得把它宣稱為 G3 evidence／readiness 或完整正式覺醒玩法已上線。
+G1 不得偷偷建立 localStorage 欄位；G2 只完成每隻夥伴的狀態地基；G3 只完成 evidence/readiness/willingness foundation，不得把它宣稱為完整正式覺醒玩法已上線。
 
 表中的 subset 只是各 phase 的最低退出 gate，不取代回歸責任；任何 merge／runtime-complete 宣告仍須重跑 N1–N11、相關既有 Acceptance、web gate 與 human/mobile gate。
 

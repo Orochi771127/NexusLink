@@ -151,6 +151,242 @@ def snapshot(page):
     )
 
 
+def seed_g3_growth_fixture(
+    page,
+    scenario,
+    *,
+    defense=35,
+    age_days=0,
+    include_second_companion=False,
+):
+    """Seed only schema-valid G3 state through the production writer.
+
+    The deliberately distinctive context ids are canaries: the Growth page may
+    render fixed qualitative copy, but it must never expose these source ids or
+    their timestamps to the player.
+    """
+    return page.evaluate(
+        """async ([storageKey, scenario, defense, ageDays, includeSecondCompanion]) => {
+          const store = await import('./src/state/store.js');
+          const { saveState } = await import('./src/state/saveManager.js');
+          const {
+            createDefaultGrowthState,
+            createDefaultRelationshipState
+          } = await import('./src/state/companionStateSchema.js');
+          const {
+            createCompletedGrowthEvent,
+            writeCompanionGrowthEvidence
+          } = await import('./src/engine/companionGrowthEngine.js');
+
+          const now = Date.now();
+          const ageOffset = Math.max(0, Number(ageDays) || 0) * 24 * 60 * 60 * 1000;
+          const eventBase = now - ageOffset - 4000;
+          const companionId = 'greyshade-cat';
+          const stage = scenario === 'complete' ? 'final_awakened' : 'initial_awakened';
+          const sourceSpecs = scenario === 'forming' || scenario === 'complete'
+            ? []
+            : [
+              {
+                sourceType: 'care',
+                tendency: 'attunement',
+                context: {
+                  chapterNo: 2,
+                  originEventId: 'qa_secret_care_origin',
+                  practiceId: 'attunement'
+                }
+              },
+              {
+                sourceType: 'exploration',
+                tendency: 'pathfinding',
+                context: {
+                  chapterNo: 2,
+                  nodeId: 'qa_secret_starwood_node',
+                  choiceId: 'read_anchor'
+                }
+              },
+              {
+                sourceType: 'boundary',
+                tendency: 'boundary_respect',
+                context: { originKey: 'boundary:qa_secret_consent_origin' },
+                consentKind: 'boundary_respected'
+              }
+            ];
+          if (scenario === 'duplicate_source') {
+            sourceSpecs.push({
+              sourceType: 'exploration',
+              tendency: 'pathfinding',
+              context: {
+                chapterNo: 2,
+                nodeId: 'qa_secret_misttide_node',
+                choiceId: 'direct'
+              }
+            });
+          }
+          const safetyProvenance = {
+            isHighRisk: false,
+            strategyId: null,
+            actionId: null,
+            systemRoleSafetyReply: false,
+            safetyModeActive: false,
+            safeHarborModeActive: false
+          };
+
+          let growth = createDefaultGrowthState({
+            now: eventBase - 1000,
+            stage,
+            companionId
+          });
+          for (let index = 0; index < sourceSpecs.length; index += 1) {
+            const created = createCompletedGrowthEvent({
+              ...sourceSpecs[index],
+              completed: true,
+              completionStatus: 'completed',
+              companionId,
+              chapterNo: 2,
+              createdAt: eventBase + index,
+              safetyProvenance
+            });
+            if (!created.ok) throw new Error(`Unable to create G3 fixture: ${created.reason}`);
+            const written = writeCompanionGrowthEvidence({
+              growth,
+              companionId,
+              event: created.event
+            });
+            if (!written.result.accepted) {
+              throw new Error(`Unable to write G3 fixture: ${written.result.reason}`);
+            }
+            growth = written.growth;
+          }
+
+          const state = JSON.parse(JSON.stringify(store.getState()));
+          state.activeCompanionId = companionId;
+          state.unlockedCompanionIds = includeSecondCompanion
+            ? [companionId, 'blazetail-kit']
+            : [companionId];
+          state.chapterProgress = { current: 2, completed: [1] };
+          state.safeHarborMode = false;
+          state.lastSeenAt = now - ageOffset;
+          state.defense = Number(defense);
+          state.touchFatigue = scenario === 'resting' ? 8 : 1;
+          state.lastTouchReaction = scenario === 'repairing' ? 'reject' : 'accept';
+          const record = state.companionStates.byId[companionId];
+          record.growth = growth;
+          record.relationship = {
+            ...record.relationship,
+            defense: Number(defense),
+            touchFatigue: state.touchFatigue,
+            lastTouchReaction: state.lastTouchReaction
+          };
+          if (includeSecondCompanion) {
+            state.companionStates.byId['blazetail-kit'] = {
+              relationship: createDefaultRelationshipState({
+                energy: 6,
+                defense: 12,
+                touchFatigue: 1,
+                lastTouchReaction: 'accept'
+              }),
+              growth: createDefaultGrowthState({
+                now: eventBase - 1000,
+                companionId: 'blazetail-kit'
+              })
+            };
+          }
+
+          store.replaceState(state);
+          const saveResult = saveState(store.getState());
+          if (!saveResult.ok) throw new Error('Unable to persist G3 fixture');
+          const persisted = JSON.parse(localStorage.getItem(storageKey) || '{}');
+          return {
+            growth: persisted.companionStates?.byId?.[companionId]?.growth || null,
+            rawCanaries: [
+              'qa_secret_care_origin',
+              'qa_secret_starwood_node',
+              'qa_secret_consent_origin',
+              String(eventBase),
+              String(eventBase + 1),
+              String(eventBase + 2)
+            ]
+          };
+        }""",
+        [STORAGE_KEY, scenario, defense, age_days, include_second_companion],
+    )
+
+
+def growth_snapshot(page, companion_id="greyshade-cat"):
+    return page.evaluate(
+        """async ([storageKey, companionId]) => {
+          const store = await import('./src/state/store.js');
+          const runtime = store.getState();
+          const persisted = JSON.parse(localStorage.getItem(storageKey) || '{}');
+          return {
+            runtime: JSON.parse(JSON.stringify(
+              runtime.companionStates?.byId?.[companionId]?.growth || null
+            )),
+            persisted: persisted.companionStates?.byId?.[companionId]?.growth || null
+          };
+        }""",
+        [STORAGE_KEY, companion_id],
+    )
+
+
+def switch_active_companion(page, companion_id):
+    page.evaluate(
+        """async ([storageKey, companionId]) => {
+          const store = await import('./src/state/store.js');
+          const { saveState } = await import('./src/state/saveManager.js');
+          store.setState({ activeCompanionId: companionId });
+          const result = saveState(store.getState());
+          if (!result.ok) throw new Error(`Unable to switch Growth fixture to ${companionId}`);
+          if (!localStorage.getItem(storageKey)) throw new Error('Growth fixture save disappeared');
+        }""",
+        [STORAGE_KEY, companion_id],
+    )
+
+
+def continuity_dom(page):
+    return page.evaluate(
+        """() => {
+          const readiness = document.querySelector('[data-growth-readiness]');
+          const stage = document.querySelector('[data-growth-formal-stage]');
+          const evidence = document.querySelector('[data-growth-lived-evidence]');
+          return {
+            readiness: readiness?.dataset.growthReadiness || null,
+            willingness: readiness?.dataset.growthWillingness || null,
+            signalText: readiness?.textContent?.replace(/\\s+/g, ' ').trim() || '',
+            stage: stage?.dataset.growthFormalStage || null,
+            livedEvidenceCount: evidence?.querySelectorAll('.growth-lived-evidence-row').length || 0,
+            text: evidence?.textContent?.replace(/\\s+/g, ' ').trim() || ''
+          };
+        }"""
+    )
+
+
+def lived_evidence_whitelist(page):
+    return page.evaluate(
+        """async () => {
+          const { t } = await import('./src/i18n/i18n.js');
+          const rows = [...document.querySelectorAll('.growth-lived-evidence-row')];
+          const expectedTendencyBySource = Object.freeze({
+            care: 'attunement',
+            exploration: 'pathfinding',
+            boundary: 'boundary_respect'
+          });
+          const normalize = (value) => String(value || '').replace(/\\s+/g, ' ').trim();
+          const actual = rows.map((row) => normalize(row.textContent));
+          const expected = rows.map((row) => {
+            const source = row.dataset.growthEvidenceSource;
+            const tendency = expectedTendencyBySource[source];
+            return normalize([
+              t(`growth.persisted.source.${source}.label`),
+              `${t('growth.persisted.evidenceTendencyPrefix')}${t(`growth.session.tendency.${tendency}`)}`,
+              t(`growth.persisted.source.${source}.copy`)
+            ].join(' '));
+          });
+          return { actual, expected };
+        }"""
+    )
+
+
 def without_safety_allowed_changes(state):
     return {
         key: value
@@ -403,6 +639,9 @@ def run():
             and page.locator("[data-growth-practice]").count() == 0
             and page.locator("[data-growth-observation]").count() == 0
             and page.locator(".page-focus-card--growth").count() == 0
+            and page.locator("[data-growth-formal-stage]").count() == 0
+            and page.locator("[data-growth-readiness]").count() == 0
+            and page.locator("[data-growth-lived-evidence]").count() == 0
             and page.locator("[data-growth-prototype]").count() == 0,
         )
         page.evaluate(
@@ -519,6 +758,238 @@ def run():
         )
         page.evaluate("document.documentElement.style.fontSize = ''")
 
+        # G3 continuity is persistent, but presentation remains qualitative.
+        # Opening Growth must stay read-only: only completed source owners write.
+        seed_g3_growth_fixture(page, "forming")
+        wait_ready(page, reload=True)
+        forming_before = growth_snapshot(page)
+        page.evaluate("window.__growthStorageWrites = []")
+        open_growth(page)
+        forming_dom = continuity_dom(page)
+        forming_after = growth_snapshot(page)
+        check(
+            "g3_forming_signal",
+            forming_dom["stage"] == "initial_awakened"
+            and forming_dom["readiness"] == "forming"
+            and forming_dom["livedEvidenceCount"] == 0,
+            forming_dom,
+        )
+        check("g3_open_page_zero_growth_write", forming_after == forming_before)
+        check(
+            "g3_open_page_zero_storage_write",
+            page.evaluate("window.__growthStorageWrites || []") == [],
+            page.evaluate("window.__growthStorageWrites || []"),
+        )
+        check(
+            "g3_lived_evidence_section_named",
+            page.locator('[data-growth-lived-evidence][aria-labelledby="growth-lived-evidence-title"]').count() == 1
+            and page.locator("#growth-lived-evidence-title").count() == 1,
+        )
+
+        fixture = seed_g3_growth_fixture(page, "possible_open")
+        wait_ready(page, reload=True)
+        open_growth(page)
+        open_dom = continuity_dom(page)
+        open_growth_before_reload = growth_snapshot(page)
+        check(
+            "g3_possible_open_signal",
+            open_dom["stage"] == "initial_awakened"
+            and open_dom["readiness"] == "possible"
+            and open_dom["willingness"] == "willing"
+            and open_dom["livedEvidenceCount"] == 3,
+            open_dom,
+        )
+        whitelist = lived_evidence_whitelist(page)
+        check(
+            "g3_lived_evidence_whitelist_only",
+            whitelist["actual"] == whitelist["expected"] and len(whitelist["actual"]) == 3,
+            whitelist,
+        )
+        growth_text = page.locator("#growth-page-body").inner_text()
+        check(
+            "g3_never_exposes_raw_source_or_timestamp",
+            not any(canary in growth_text for canary in fixture["rawCanaries"]),
+            {"canaries": fixture["rawCanaries"], "text": growth_text},
+        )
+        forbidden_counts = [
+            "3/3", "3 / 3", "24/24", "24 / 24", "第 1 筆", "第1筆",
+            "evidence count", "source count", "threshold"
+        ]
+        check(
+            "g3_never_exposes_count_or_threshold",
+            not any(term.lower() in growth_text.lower() for term in forbidden_counts),
+            growth_text,
+        )
+        lived_shot = os.path.join(
+            tempfile.gettempdir(), "nexus-growth-g3-lived-evidence-390x844.png"
+        )
+        page.locator("[data-growth-lived-evidence]").scroll_into_view_if_needed()
+        page.screenshot(path=lived_shot, full_page=False)
+        report["screenshots"]["g3_lived_evidence_mobile"] = lived_shot
+
+        wait_ready(page, reload=True)
+        open_growth(page)
+        open_growth_after_reload = growth_snapshot(page)
+        check(
+            "g3_legal_evidence_reload_stable",
+            open_growth_after_reload == open_growth_before_reload
+            and open_growth_after_reload["runtime"] == open_growth_after_reload["persisted"],
+            {
+                "before": open_growth_before_reload,
+                "after": open_growth_after_reload,
+            },
+        )
+        check(
+            "g3_reload_preserves_possible_open",
+            continuity_dom(page)["readiness"] == "possible"
+            and continuity_dom(page)["willingness"] == "willing",
+            continuity_dom(page),
+        )
+
+        seed_g3_growth_fixture(page, "duplicate_source")
+        wait_ready(page, reload=True)
+        open_growth(page)
+        duplicate_sources = page.locator(
+            ".growth-lived-evidence-row"
+        ).evaluate_all("rows => rows.map(row => row.dataset.growthEvidenceSource)")
+        check(
+            "g3_duplicate_source_tendency_is_folded",
+            duplicate_sources.count("exploration") == 1
+            and len(duplicate_sources) == len(set(duplicate_sources)) == 3,
+            duplicate_sources,
+        )
+
+        seed_g3_growth_fixture(page, "resting")
+        wait_ready(page, reload=True)
+        open_growth(page)
+        resting_dom = continuity_dom(page)
+        check(
+            "g3_possible_resting_signal",
+            resting_dom["readiness"] == "possible"
+            and resting_dom["willingness"] == "not_yet"
+            and "休息" in resting_dom["signalText"],
+            resting_dom,
+        )
+        resting_shot = os.path.join(
+            tempfile.gettempdir(), "nexus-growth-g3-ready-resting-390x844.png"
+        )
+        page.locator("[data-growth-lived-evidence]").scroll_into_view_if_needed()
+        page.screenshot(path=resting_shot, full_page=False)
+        report["screenshots"]["g3_ready_resting_mobile"] = resting_shot
+
+        seed_g3_growth_fixture(page, "repairing")
+        wait_ready(page, reload=True)
+        open_growth(page)
+        repairing_dom = continuity_dom(page)
+        check(
+            "g3_possible_repairing_signal",
+            repairing_dom["readiness"] == "possible"
+            and repairing_dom["willingness"] == "not_yet"
+            and "界線" in repairing_dom["signalText"],
+            repairing_dom,
+        )
+
+        seed_g3_growth_fixture(page, "complete")
+        wait_ready(page, reload=True)
+        open_growth(page)
+        complete_dom = continuity_dom(page)
+        check(
+            "g3_complete_signal",
+            complete_dom["stage"] == "final_awakened"
+            and complete_dom["readiness"] == "complete"
+            and complete_dom["willingness"] == "not_evaluated",
+            complete_dom,
+        )
+
+        seed_g3_growth_fixture(page, "possible_open", defense=0)
+        wait_ready(page, reload=True)
+        open_growth(page)
+        defense_zero = continuity_dom(page)
+        seed_g3_growth_fixture(page, "possible_open", defense=100)
+        wait_ready(page, reload=True)
+        open_growth(page)
+        defense_hundred = continuity_dom(page)
+        check(
+            "g3_defense_invariant",
+            {
+                "readiness": defense_zero["readiness"],
+                "willingness": defense_zero["willingness"],
+                "signalText": defense_zero["signalText"],
+            }
+            == {
+                "readiness": defense_hundred["readiness"],
+                "willingness": defense_hundred["willingness"],
+                "signalText": defense_hundred["signalText"],
+            },
+            {"defense0": defense_zero, "defense100": defense_hundred},
+        )
+
+        seed_g3_growth_fixture(page, "possible_open", age_days=30)
+        old_growth_before = growth_snapshot(page)
+        wait_ready(page, reload=True)
+        open_growth(page)
+        old_growth_after = growth_snapshot(page)
+        check(
+            "g3_thirty_day_no_decay",
+            old_growth_after == old_growth_before
+            and continuity_dom(page)["readiness"] == "possible",
+            {"before": old_growth_before, "after": old_growth_after, "dom": continuity_dom(page)},
+        )
+
+        seed_g3_growth_fixture(page, "possible_open", include_second_companion=True)
+        a_before_switch = growth_snapshot(page, "greyshade-cat")
+        switch_active_companion(page, "blazetail-kit")
+        wait_ready(page, reload=True)
+        open_growth(page)
+        b_dom = continuity_dom(page)
+        b_growth = growth_snapshot(page, "blazetail-kit")
+        a_while_b_active = growth_snapshot(page, "greyshade-cat")
+        check(
+            "g3_companion_b_starts_isolated",
+            b_dom["readiness"] == "forming"
+            and b_dom["livedEvidenceCount"] == 0
+            and b_growth["runtime"] == b_growth["persisted"],
+            {"dom": b_dom, "growth": b_growth},
+        )
+        check(
+            "g3_companion_a_survives_b_activation",
+            a_while_b_active == a_before_switch,
+            {"before": a_before_switch, "whileB": a_while_b_active},
+        )
+        switch_active_companion(page, "greyshade-cat")
+        wait_ready(page, reload=True)
+        open_growth(page)
+        check(
+            "g3_companion_a_view_restored",
+            continuity_dom(page)["readiness"] == "possible"
+            and continuity_dom(page)["livedEvidenceCount"] == 3,
+            continuity_dom(page),
+        )
+
+        # G3 remains safe at the same mobile, zoom, keyboard and motion settings
+        # exercised above. Re-check the new persistent surface specifically.
+        page.locator("[data-growth-lived-evidence]").focus()
+        check(
+            "g3_mobile_no_horizontal_overflow",
+            growth_page.evaluate("el => el.scrollWidth <= el.clientWidth + 1"),
+            growth_page.evaluate("el => ({scrollWidth: el.scrollWidth, clientWidth: el.clientWidth})"),
+        )
+        page.emulate_media(reduced_motion="reduce")
+        check(
+            "g3_reduced_motion_keeps_content_visible",
+            page.locator("[data-growth-lived-evidence]").is_visible()
+            and page.locator("[data-growth-readiness]").is_visible(),
+        )
+        page.emulate_media(reduced_motion="no-preference")
+        page.evaluate("document.documentElement.style.fontSize = '200%'")
+        page.locator("[data-growth-lived-evidence]").scroll_into_view_if_needed()
+        check(
+            "g3_text_200_percent_no_horizontal_overflow",
+            growth_page.evaluate("el => el.scrollWidth <= el.clientWidth + 1"),
+            growth_page.evaluate("el => ({scrollWidth: el.scrollWidth, clientWidth: el.clientWidth})"),
+        )
+        page.evaluate("document.documentElement.style.fontSize = ''")
+
         desktop_context = browser.new_context(viewport={"width": 1280, "height": 900})
         install_seed(desktop_context)
         desktop = desktop_context.new_page()
@@ -554,6 +1025,27 @@ def run():
             )
 
             if name == "mobile":
+                # Capture the G3 surface once with the normal Pixi habitat, so
+                # visual QA is not limited to the intentional CDN-failure mode.
+                seed_g3_growth_fixture(pixi_page, "possible_open")
+                wait_ready(pixi_page, reload=True, expect_pixi_failure=False)
+                open_growth(pixi_page)
+                normal_growth_dom = continuity_dom(pixi_page)
+                check(
+                    "normal_pixi_g3_growth_visible",
+                    normal_growth_dom["readiness"] == "possible"
+                    and normal_growth_dom["willingness"] == "willing"
+                    and normal_growth_dom["livedEvidenceCount"] == 3,
+                    normal_growth_dom,
+                )
+                normal_growth_shot = os.path.join(
+                    tempfile.gettempdir(),
+                    "nexus-growth-g3-normal-pixi-390x844.png",
+                )
+                pixi_page.locator("[data-growth-lived-evidence]").scroll_into_view_if_needed()
+                pixi_page.screenshot(path=normal_growth_shot, full_page=False)
+                report["screenshots"]["normal_pixi_g3_growth_mobile"] = normal_growth_shot
+
                 # Safety must remain terminal in the production-like Pixi path,
                 # not only in the dedicated CDN-failure fixture.
                 pixi_page.locator('[data-panel-trigger="soulTalk"]').evaluate(

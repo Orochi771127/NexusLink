@@ -199,7 +199,7 @@ Acceptance refs:  <對應 ACCEPTANCE.md 的哪幾條>
 
 - **`battleEngine.js` / `battleController.js`**：現行玩家契約已是情緒對峙（穩定心核 / 建立邊界 / 回收記憶），非 HP 歸零；任何深化不得退回傳統戰鬥。`battleRecord.wins/losses` 僅為 compatibility-only schema；觸及 `index.html` battle-modal 結構時需分開確認。
 - **`safeHarborMode.js` / `emotionalSedimentationEngine.js` / `safetyShieldDictionary.js`**：安全層核心，修改前重讀紅線並逐條聲明合規。
-- **Companion Growth / evolution / Growth UI / Codex stage**：開工前必讀 `docs/design/COMPANION_GROWTH_CONTRACT_V1.md`。該檔是現行設計／驗收 SSOT；G1 session-only 質性 Heart Phase 與 G2 per-companion 持久狀態／migration／active mirror 原子切換已接入。G3 evidence／readiness／willingness、正式覺醒邀請與形態 swap 尚未實作。不得把 bond、R2 五階、Expedition crafting 或 `src/ai/evolution/**` 誤稱為正式養成 gate；`evolutionLines.js` 的 bondThreshold 只剩 compatibility data。正式形態資產仍須另取 GROUNDWORK 核准。
+- **Companion Growth / evolution / Growth UI / Codex stage**：開工前必讀 `docs/design/COMPANION_GROWTH_CONTRACT_V1.md`。該檔是現行設計／驗收 SSOT；G1 session-only Heart Phase、G2 per-companion state／migration／active mirror 與 G3 evidence／readiness／willingness foundation 已接入。Live runtime 目前只有 exploration／standoff 兩個 source family，尚不可達正式 readiness；G4 覺醒邀請／stage advance 與形態 swap 未實作。不得把 bond、R2 五階、Expedition crafting 或 `src/ai/evolution/**` 誤稱為正式養成 gate；`evolutionLines.js` 的 bondThreshold 只剩 compatibility data。正式形態資產仍須另取 GROUNDWORK 核准。
 
 ---
 
@@ -208,7 +208,7 @@ Acceptance refs:  <對應 ACCEPTANCE.md 的哪幾條>
 - `NEXUS_LINK_MASTER_CANON_v3.1.md` — 最高戰略上位法（最高 canon）。
 - `CLAUDE.md` — 協作入口與執行規範（先讀，但服從 Master Canon v3.1）。
 - `ACCEPTANCE.md` — 契約 → 可驗收 assertion 對照表。
-- `docs/design/COMPANION_GROWTH_CONTRACT_V1.md` — 心核夥伴養成、三階覺醒、證據、安全、migration 與未來對練的設計／驗收 SSOT（G1 session-only 與 G2 per-companion state 已接入；G3+ 尚未實作）。
+- `docs/design/COMPANION_GROWTH_CONTRACT_V1.md` — 心核夥伴養成、三階覺醒、證據、安全、migration 與未來對練的設計／驗收 SSOT（G1／G2／G3 Evidence Foundation 已接入；G4+ 尚未實作）。
 - `docs/handoff/RAPHAEL_AI_HANDOFF.md` — **Raphael AI 現況交接（接手 Soul Talk / RaphaelCore 前必讀）**。
 - `docs/handoff/RAPHAEL_AI_STATUS.yaml` — Raphael AI 機器可讀狀態（branch / QA 數字）。
 - `docs/raphael/RAPHAEL_EXPEDITION_EVAL_CONTRACT.md` — Expedition Prototype / partial Core bridge 的權限與發版邊界。

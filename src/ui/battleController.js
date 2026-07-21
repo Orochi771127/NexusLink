@@ -72,7 +72,14 @@ const RIFT_EMOTION_TINT = Object.freeze({
  * 心核對峙 controller。
  * 介面維持 createBattleController / startBattle，app.js 與 mapController wiring 不變。
  */
-export function createBattleController({ store, panelManager, soulTalkController, saveCurrentState, statusText }) {
+export function createBattleController({
+  store,
+  panelManager,
+  soulTalkController,
+  saveCurrentState,
+  statusText,
+  companionGrowthController
+}) {
   const nodeLabelEl = qs("#battle-node-label");
   const noiseNameEl = qs("#standoff-noise-name");
   const noiseTextEl = qs("#standoff-noise-text");
@@ -395,7 +402,8 @@ export function createBattleController({ store, panelManager, soulTalkController
     session = { ...session, turn: "ended", log: [...session.log] };
 
     const now = Date.now();
-    const summary = summarizeStandoffOutcome(outcome, session, store.getState(), now);
+    const stateBeforeSettlement = store.getState();
+    const summary = summarizeStandoffOutcome(outcome, session, stateBeforeSettlement, now);
     const copy = getOutcomeCopy(outcome);
     session.log.push({ kind: "system", text: `【${copy.title}】${summary.message}` });
 
@@ -440,6 +448,30 @@ export function createBattleController({ store, panelManager, soulTalkController
         const nodeChapterNo = getChapterForNode(session.nodeId);
         const mark = draft.resonance?.chapterMarks?.[nodeChapterNo];
         if (mark) mark.overwhelmedCount = (Number(mark.overwhelmedCount) || 0) + 1;
+      }
+      if (getExplorationNodeById(session.nodeId)) {
+        companionGrowthController?.writeIntoDraft?.(draft, {
+          companionId: session.companionId,
+          sourceType: "standoff",
+          tendency: getStandoffGrowthTendency(outcome),
+          context: {
+            chapterNo: getChapterForNode(session.nodeId),
+            nodeId: session.nodeId,
+            outcomeFamily: outcome
+          },
+          createdAt: now,
+          completed: true,
+          completionStatus: "completed",
+          safetyProvenance: {
+            isHighRisk: false,
+            strategyId: null,
+            actionId: null,
+            systemRoleSafetyReply: false,
+            safetyModeActive: false,
+            safeHarborModeActive: session.growthSafetyExcluded === true
+              || stateBeforeSettlement.safeHarborMode === true
+          }
+        });
       }
     });
     // 閉環：回棲地後，夥伴用自己的聲音記得這件事（companion 角色，非 system）。
@@ -536,6 +568,12 @@ export function createBattleController({ store, panelManager, soulTalkController
   }
 
   return { bind, startBattle };
+}
+
+function getStandoffGrowthTendency(outcome) {
+  if (outcome === "stabilized") return "attunement";
+  if (outcome === "recovered") return "steadfastness";
+  return "boundary_respect";
 }
 
 function injectTelegraphStyles() {

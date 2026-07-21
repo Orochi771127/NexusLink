@@ -199,6 +199,7 @@ export function createMapController({
   saveCurrentState,
   battleController,
   expeditionController,
+  companionGrowthController,
   statusText,
   returnToHabitat = null
 }) {
@@ -396,8 +397,9 @@ export function createMapController({
     const outcome = resolvePhaseSearchChoice(choiceId, node.phaseSearch);
 
     if (outcome.shouldExplore) {
+      const completedChoiceId = phaseSearchSession.anchorRead ? "anchor_read" : "direct";
       closePhaseSearch({ restoreFocus: false });
-      exploreNode(node, { skipPhaseSearch: true });
+      exploreNode(node, { skipPhaseSearch: true, growthChoiceId: completedChoiceId });
       return;
     }
 
@@ -618,7 +620,7 @@ export function createMapController({
   }
 
   // ---- 探索流程（結算邏輯零改動：仍走 resolveExplorationEvent） ----
-  function exploreNode(node, { skipPhaseSearch = false } = {}) {
+  function exploreNode(node, { skipPhaseSearch = false, growthChoiceId = "direct" } = {}) {
     if (encounterTransition.isPending()) return; // 遭遇轉場中，避免連點
 
     const state = store.getState();
@@ -649,17 +651,40 @@ export function createMapController({
       return;
     }
 
-    const result = resolveExplorationEvent(state, node, { now: Date.now() });
+    const now = Date.now();
+    const result = resolveExplorationEvent(state, node, { now });
+    const companionId = state.activeCompanionId || "greyshade-cat";
+    const chapterNo = getChapterForNode(node.id);
+    const isRegisteredNode = EXPLORATION_NODES.some((candidate) => candidate.id === node.id);
 
     store.updateState((draft) => {
       Object.assign(draft, result.statePatch);
       if (result.memoryObject) {
         draft.emotionalMemories.push(result.memoryObject);
         draft.lastEmotionTag = result.memoryObject.emotion;
-        const trace = createHabitatTraceFromMemory(result.memoryObject, Date.now());
+        const trace = createHabitatTraceFromMemory(result.memoryObject, now);
         if (trace) {
           draft.habitatTraces = pruneHabitatTraces(upsertHabitatTrace(draft.habitatTraces || [], trace));
         }
+      }
+      if (isRegisteredNode && node.eventType !== "rest") {
+        companionGrowthController?.writeIntoDraft?.(draft, {
+          companionId,
+          sourceType: "exploration",
+          tendency: "pathfinding",
+          context: { chapterNo, nodeId: node.id, choiceId: growthChoiceId },
+          createdAt: now,
+          completed: true,
+          completionStatus: "completed",
+          safetyProvenance: {
+            isHighRisk: false,
+            strategyId: null,
+            actionId: null,
+            systemRoleSafetyReply: false,
+            safetyModeActive: false,
+            safeHarborModeActive: state.safeHarborMode === true
+          }
+        });
       }
     });
 
@@ -667,7 +692,7 @@ export function createMapController({
     // 閉環：首次到訪且無遭遇時，夥伴用自己的聲音記得這趟探索——這是對話，留在聊天室。
     const isFirstVisit = !(state.explorationProgress?.visitCounts?.[node.id] > 0);
     if (!result.encounter && isFirstVisit) {
-      const reflection = buildEventReflection(store.getState(), Date.now(), { allowExploration: true });
+      const reflection = buildEventReflection(store.getState(), now, { allowExploration: true });
       if (reflection) soulTalkController.addChat("companion", reflection);
     }
     soulTalkController.renderChat();

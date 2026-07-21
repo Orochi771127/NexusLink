@@ -322,6 +322,36 @@ def run_companion_growth_state(node: str):
     return result
 
 
+def run_companion_growth_g3_engine(node: str):
+    result = run_command(
+        "companion_growth_g3_engine",
+        [node, "docs/qa/companion-growth-g3-engine-cases.mjs"],
+        timeout=45,
+    )
+    result["ok"] = result["exit_code"] == 0
+    return result
+
+
+def run_companion_growth_g3_runtime(node: str):
+    result = run_command(
+        "companion_growth_g3_runtime",
+        [node, "docs/qa/companion-growth-g3-runtime-cases.mjs"],
+        timeout=45,
+    )
+    result["ok"] = result["exit_code"] == 0
+    return result
+
+
+def run_i18n_completeness(node: str):
+    result = run_command(
+        "i18n_completeness",
+        [node, "docs/qa/verify_i18n_strings.mjs"],
+        timeout=30,
+    )
+    result["ok"] = result["exit_code"] == 0
+    return result
+
+
 def run_session_owner_guard(node: str):
     result = run_command(
         "session_owner_guard",
@@ -897,6 +927,9 @@ def summarize(report):
     required.append(report["checks"]["companionRendererLifecycle"]["ok"])
     required.append(report["checks"]["companionGrowthSession"]["ok"])
     required.append(report["checks"]["companionGrowthState"]["ok"])
+    required.append(report["checks"]["companionGrowthG3Engine"]["ok"])
+    required.append(report["checks"]["companionGrowthG3Runtime"]["ok"])
+    required.append(report["checks"]["i18nCompleteness"]["ok"])
     required.append(report["checks"]["sessionOwnerGuard"]["ok"])
     required.append(report["checks"]["onboardingCodexRegression"]["ok"])
     required.append(report["checks"]["companionGrowthUi"]["ok"])
@@ -973,6 +1006,9 @@ def main():
         report["checks"]["companionRendererLifecycle"] = run_companion_renderer_lifecycle(node)
         report["checks"]["companionGrowthSession"] = run_companion_growth_session(node)
         report["checks"]["companionGrowthState"] = run_companion_growth_state(node)
+        report["checks"]["companionGrowthG3Engine"] = run_companion_growth_g3_engine(node)
+        report["checks"]["companionGrowthG3Runtime"] = run_companion_growth_g3_runtime(node)
+        report["checks"]["i18nCompleteness"] = run_i18n_completeness(node)
         report["checks"]["sessionOwnerGuard"] = run_session_owner_guard(node)
         report["checks"]["onboardingCodexRegression"] = run_onboarding_codex_regression(node)
         report["checks"]["companionGrowthUi"] = run_companion_growth_browser(report["baseUrl"])

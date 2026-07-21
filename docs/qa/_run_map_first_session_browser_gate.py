@@ -22,6 +22,7 @@ def state_slice(page):
     return page.evaluate(
         """(key) => {
             const state = JSON.parse(localStorage.getItem(key) || '{}');
+            const companionId = state.activeCompanionId || 'greyshade-cat';
             return {
               bond: state.bond,
               trust: state.trust,
@@ -31,7 +32,8 @@ def state_slice(page):
               touchFatigue: state.touchFatigue,
               progress: state.explorationProgress,
               memoryCount: Array.isArray(state.emotionalMemories) ? state.emotionalMemories.length : 0,
-              traceCount: Array.isArray(state.habitatTraces) ? state.habitatTraces.length : 0
+              traceCount: Array.isArray(state.habitatTraces) ? state.habitatTraces.length : 0,
+              growth: state.companionStates?.byId?.[companionId]?.growth || null
             };
         }""",
         STORAGE_KEY,
@@ -189,7 +191,15 @@ def run():
 
         camp.click()
         wait_for_exploration_total(page, 1)
-        check("camp_settles_first_exploration", state_slice(page)["progress"]["totalExplorations"] == 1)
+        after_camp = state_slice(page)
+        check("camp_settles_first_exploration", after_camp["progress"]["totalExplorations"] == 1)
+        check(
+            "camp_rest_creates_no_growth_evidence",
+            after_camp["growth"] is not None
+            and after_camp["growth"]["evidence"] == []
+            and after_camp["growth"]["coverage"]["rootsBySourceType"]["exploration"] == [],
+            after_camp["growth"],
+        )
         check("routes_unlock_after_camp", page.locator(".map-node:visible:disabled").count() == 0)
         check("first_route_guide_hides", page.locator("#map-first-route-guide:visible").count() == 0)
 
@@ -268,6 +278,17 @@ def run():
         after_direct = state_slice(page)
         check("direct_uses_existing_exploration", after_direct["progress"]["totalExplorations"] == 2)
         check("direct_records_starwood_visit", after_direct["progress"]["visitCounts"].get("starwood_trail") == 1)
+        direct_growth_rows = [
+            row for row in after_direct["growth"]["evidence"]
+            if row.get("rootContextKey") == "exploration:1:starwood_trail"
+        ]
+        check(
+            "direct_records_one_safe_starwood_growth_root",
+            len(direct_growth_rows) == 1
+            and direct_growth_rows[0].get("sourceType") == "exploration"
+            and direct_growth_rows[0].get("growthSafetyExcluded") is False,
+            direct_growth_rows,
+        )
 
         before_rift = state_slice(page)
         page.locator(".map-node", has_text="裂隙觀測點").click()
@@ -340,6 +361,32 @@ def run():
             "page_switch_keeps_settled_exploration",
             after_page_switch["progress"]["totalExplorations"]
             == before_page_switch["progress"]["totalExplorations"] + 1,
+        )
+
+        # Let one real encounter complete, then retreat. The controller must
+        # settle exactly one non-ranked standoff root inside the same save
+        # transaction; prior cancelled encounters must not fabricate one.
+        open_map(page)
+        page.locator(".map-node", has_text="裂隙觀測點").click()
+        page.wait_for_selector('[data-panel="battle"]:not([hidden])', timeout=5000)
+        page.locator("#standoff-act-retreat").click()
+        page.wait_for_selector("#battle-finish:visible", timeout=5000)
+        after_retreat = state_slice(page)
+        standoff_rows = [
+            row for row in after_retreat["growth"]["evidence"]
+            if row.get("rootContextKey") == "standoff:1:rift_observatory"
+        ]
+        check(
+            "retreat_records_one_equal_rank_standoff_growth_root",
+            len(standoff_rows) == 1
+            and standoff_rows[0].get("key") == "standoff:1:rift_observatory:retreated"
+            and standoff_rows[0].get("growthSafetyExcluded") is False,
+            standoff_rows,
+        )
+        page.locator("#battle-finish").click()
+        page.wait_for_function(
+            "() => document.querySelector('.panel-layer')?.dataset.activePanel === 'none'",
+            timeout=5000,
         )
 
         page.emulate_media(reduced_motion="reduce")
