@@ -1044,6 +1044,28 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 2 - Game Art, UI, And Visual Production
 
+### 2026-07-21 - Claude - 新玩家實測 #6 底部導覽延遲顯示 - 已確認非缺陷／設計如此
+
+- Status: `已確認非缺陷／設計如此`；無 runtime 改動。
+- Branch / commit: docs-only `agent/docs-playtest-2026-07-20-ledger-closure` / based on `main` `684ae2f`；本條只寫台帳，不改程式。
+- Scope: 關閉 `docs/qa/NEW_PLAYER_PLAYTEST_2026-07-20.md` 項目 #6 的缺陷嫌疑。對照既有 first-loop 設計語意，確認「剛進棲地時底部導覽不立刻全開」是首輪閉環刻意行為。
+- Work performed: 讀 `docs/qa/NEW_PLAYER_PLAYTEST_2026-07-10.md` 第 19 行與 `src/ui/firstLoopController.js` 註解（`done` → 寫入 `onboarding.firstLoop.completedAt` 後淡出並揭示其餘 nav）。確認 nav gating 在 touch／talk／trace 階段刻意保留，送出第一句 Soul Talk（或完成／跳過閉環）後才揭示，避免把 first-session 做成任務欄或 FOMO 導覽壓力。
+- Verification: 靜態對照 playtest 報告與 controller 註解／stage 推導邏輯；無程式變更，故不重跑 runtime gate。
+- Problems / risks: 新玩家可能短暫困惑「進棲地後看不到探索入口」；這是設計取捨，不是 bug。若未來要改成「進棲地就給極輕引導」，需另開 EXPERIENCE 包並對照紅線 6／K6，不得用紅點或倒數。
+- Next safe action: 無需修復。後續真人實測若仍覺得導航過晚，再開獨立 first-session 可讀性包討論，不要把本條當缺陷重開。
+- Required reading: `docs/qa/NEW_PLAYER_PLAYTEST_2026-07-20.md` #6、`docs/qa/NEW_PLAYER_PLAYTEST_2026-07-10.md`、`src/ui/firstLoopController.js`、本條。
+
+### 2026-07-21 - Claude - 新玩家實測 #5 心語面板提示疊字 - VERIFIED
+
+- Status: `VERIFIED`；已合併至 protected `main`。
+- Branch / commit: merge `684ae2f`（PR #110）；runtime fix commit `bde98a0`。
+- Scope: 修復 playtest 項目 #5——心語面板剛打開瞬間，首輪單行提示「想說話時，點開心語。」殘留並蓋住對話紀錄。Files: `src/ui/firstLoopController.js`、`src/app.js`；並落地 `docs/qa/NEW_PLAYER_PLAYTEST_2026-07-20.md`。
+- Work performed: (1) Claude 先補 `isPanelOpen()` 條件，面板開啟時隱藏 first-loop hint。(2) Cursor 補上與 `gentleInvitationController` 相同的時機：`scheduleRender()` + capture-phase `click`／`focusin`／`focusout` 監聽，因開面板是純 UI 事件、不觸發 `store.subscribe`，只改條件不夠。(3) `dispose()` 未加——既有 controller 本無 teardown，不算回歸。
+- Verification: PR #110 `web-release-gate` SUCCESS；`node --check` on changed JS；與 `origin/main` 合併狀態 `MERGEABLE`／`CLEAN`，behind 0。
+- Problems / risks: 真機重現仍是 human gate；若未來做熱重載，需補 `dispose()` 清監聽器。
+- Next safe action: 無 runtime 後續。本文件包只補台帳；真人可用清空存檔走 first-loop talk 階段複驗。
+- Required reading: PR #110、`src/ui/firstLoopController.js`、`src/ui/gentleInvitationController.js`（慣例對照）、`docs/qa/NEW_PLAYER_PLAYTEST_2026-07-20.md` #5、本條。
+
 ### 2026-07-16 - Codex - Silent Anchor phase-search interaction surface - VERIFIED
 
 - Status: `VERIFIED` for automated/browser presentation; real-device visual review remains a human gate.
@@ -1678,6 +1700,28 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 ---
 
 ## Lane 3 - Raphael Core, Companion Reasoning, And Soul Talk
+
+### 2026-07-21 - Claude - 新玩家實測 #4 quick-reply 延遲 - 已排查／查無缺陷
+
+- Status: `已排查／查無缺陷`；無 runtime 改動，不建議改程式。
+- Branch / commit: docs-only `agent/docs-playtest-2026-07-20-ledger-closure` / based on `main` `684ae2f`；本條只寫台帳。
+- Scope: 關閉 `docs/qa/NEW_PLAYER_PLAYTEST_2026-07-20.md` 項目 #4 的缺陷嫌疑——實測觀察 quick-reply chip 點擊後回覆約 8–10 秒，相對手動輸入約 3 秒內。
+- Work performed: 追查 `src/ui/soulTalkController.js` 的 `handleQuickReply()` → `handlePlayerMessage()`。確認 quick-reply 與手動送出走同一同步函式、同一執行路徑；`store.updateState()` 內部同步跑完 `runRaphaelCore()` 後立刻 `renderChat()`。路徑上沒有造成兩者系統性差異的 `setTimeout` 或人工延遲；唯一相關 `setTimeout` 是回覆顯示後才啟動、延遲 720ms 收掉「正在聽」狀態，不影響回覆出現時間。
+- Verification: 靜態呼叫鏈閱讀；既有 NLU／dialogue／wording gates 未被本調查觸發修改。結論：查無可歸責的程式碼缺陷；實測延遲較可能是瀏覽器自動化工具量測假象。
+- Problems / risks: 若真人在真實裝置上仍穩定重現 8–10 秒差，需用 DevTools Performance／Network 重測後再開調查包；在此之前不要為「修延遲」動 Soul Talk 路徑。
+- Next safe action: 無需修程式。可選 human real-device 量測；不要把本條當 bug 重開。
+- Required reading: `docs/qa/NEW_PLAYER_PLAYTEST_2026-07-20.md` #4、`src/ui/soulTalkController.js`（`handleQuickReply`／`handlePlayerMessage`）、本條。
+
+### 2026-07-21 - Claude - 新玩家實測 #1–#3 Soul Talk 身份／依附 fallback + 除錯 quick-reply - VERIFIED
+
+- Status: `VERIFIED`；已合併至 protected `main`。
+- Branch / commit: merge `ebec0b0`（PR #108）；runtime fix commit `aec3039`。
+- Scope: 修復 playtest 項目 #1–#3——「你是誰？」與「你會不會離開我？」撞成同一罐頭回覆；重複提問後 quick-reply 混入除錯／技術支援語彙。Files: `src/ai/dialogue/conversationAnswerPolicy.js`、`src/ai/dialogue/antiLoopPolicy.js`。
+- Work performed: (1) 在 generic question fallback 之前新增 identity 與 attachment／boundary-testing 兩支專用 pattern，各給角色內回覆；依附回覆刻意避免「我永遠不會離開你」式依賴保證。(2) `antiLoopPolicy.js` 將 `ANSWER_OR_CLARIFY` 重複時的 `STRATEGY_ALTERNATIVES` 從 `PRACTICAL_CLARIFICATION` 改指 `HOLDING_SPACE`，避免 `quickReplyPlanner` 走進除錯／HUD chip 池。
+- Verification: `_run_nlu_smoke.py` **8/8**、`_run_dialogue_loop.py` **21/21**、`_run_wording_quality.py` **8/8**；手動確認兩題回覆分離，且 repeat-strategy 落到 `HOLDING_SPACE`。
+- Problems / risks: private-blind／真機語感仍是 human gate；其他 fallback bucket 若仍過粗，需另開 NLU 精細化包，不要回退本修。
+- Next safe action: 無 runtime 後續於本條。台帳同時記錄同報告 #4／#5／#6 的關閉狀態（見 Lane 2／本 lane 相鄰條目）。
+- Required reading: PR #108、`src/ai/dialogue/conversationAnswerPolicy.js`、`src/ai/dialogue/antiLoopPolicy.js`、`docs/qa/NEW_PLAYER_PLAYTEST_2026-07-20.md` #1–#3、本條。
 
 ### 2026-07-20 - Cursor Grok - TP-WQ-GATE wording-quality 接入 web-release-gate
 
