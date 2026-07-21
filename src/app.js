@@ -298,7 +298,9 @@ async function bootstrap() {
     store,
     saveCurrentState: () => saveQueue.enqueue(SAVE_LEVEL.CRITICAL),
     // 揭示句淡出後才讓柔性邀請接手同一訊息欄位，避免兩句同屏疊字。
-    onRevealEnd: () => gentleInvitationController.render()
+    onRevealEnd: () => gentleInvitationController.render(),
+    // 面板開啟時（如心語）暫時隱藏首輪單行提示，避免疊在面板內容上方。
+    isPanelOpen: () => panelManager.isPanelOpen()
   });
   // 互動可讀性提示（支柱一）：貓身上的輕觸光暈，firstTouch 前指引新玩家「牠可以被碰」。
   const interactionHintController = createInteractionHintController({

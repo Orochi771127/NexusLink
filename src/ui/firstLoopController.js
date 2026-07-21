@@ -15,7 +15,7 @@ import { qsa } from "../utils/dom.js";
 const REVEAL_LINGER_MS = 2600;
 const NAV_GATED_SELECTOR = ".bottom-nav .bottom-nav__item:not(.bottom-nav__item--core)";
 
-export function createFirstLoopController({ store, saveCurrentState, onRevealEnd } = {}) {
+export function createFirstLoopController({ store, saveCurrentState, onRevealEnd, isPanelOpen } = {}) {
   let wrapEl = null;
   let hintEl = null;
   let skipEl = null;
@@ -41,8 +41,17 @@ export function createFirstLoopController({ store, saveCurrentState, onRevealEnd
     document.body.appendChild(wrapEl);
   }
 
+  function scheduleRender() {
+    // 開面板／聚焦是 UI 事件，不會觸發 store.subscribe；下一幀重算才能即時藏提示球。
+    window.requestAnimationFrame(render);
+  }
+
   function bind() {
     EventBus.on(LANGUAGE_CHANGED_EVENT, () => render());
+    // 與 gentleInvitationController 同模式：點擊開面板當下就要藏提示，不能等下次 state 變更。
+    document.addEventListener("click", scheduleRender, true);
+    document.addEventListener("focusin", scheduleRender, true);
+    document.addEventListener("focusout", scheduleRender, true);
     render();
   }
 
@@ -92,7 +101,15 @@ export function createFirstLoopController({ store, saveCurrentState, onRevealEnd
     skipEl.textContent = t("fl.skip");
     skipEl.hidden = false;
     delete wrapEl.dataset.viewState;
-    wrapEl.classList.add("is-visible");
+    // 心核／心語等面板開啟時，這顆單行提示球不該疊在面板內容上方（真人回報：
+    // 心語面板剛打開的瞬間，「想說話時，點開心語。」還留在畫面上，蓋住對話紀錄）。
+    // stage 判定與 nav gating 都只讀 store 狀態，不受這裡的顯示/隱藏影響；
+    // 面板關閉、迴圈仍在進行時，下一次 render() 會自然把提示球顯示回來。
+    if (typeof isPanelOpen === "function" && isPanelOpen()) {
+      wrapEl.classList.remove("is-visible");
+    } else {
+      wrapEl.classList.add("is-visible");
+    }
   }
 
   function clearRevealState({ notify = false } = {}) {
