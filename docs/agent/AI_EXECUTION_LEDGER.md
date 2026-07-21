@@ -3767,3 +3767,116 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Remaining launch gates: private blind 3 testers × 20 turns, real-device
   D1／D2／D3／D6, moderated first-session comprehension, legal／privacy／store
   copy and explicit Owner launch approval remain `not_run`／open.
+
+### 2026-07-18 - Codex - Companion Growth G3 Evidence And Readiness - IN PROGRESS
+
+- Status: `IN PROGRESS`; Owner instructed Codex to continue directly after the
+  published G2 foundation. Work branch `agent/companion-growth-g3` starts from
+  exact `origin/main` `c35c9e8`.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `TP-COMPANION-GROWTH-G3`.
+- Scope: add a pure deterministic key factory／evidence writer, bounded
+  per-target coverage and compaction, companion-specific readiness and typed
+  willingness. Connect only explicit completed domain events and the existing
+  Growth page; use the existing one-key G2 state without changing
+  `defaultState`, store normalization or saveManager.
+- Red-line check: high-risk and immutable `growthSafetyExcluded` events always
+  short-circuit before any record creation. Offline/login/reload time, bond,
+  numeric defense, refusal, rest, exit and waiting never create evidence or
+  willingness. No XP, power, loot, rarity, daily, FOMO or penalty is added.
+- Non-goals: G4 stage invitation／acceptance／advance, G5 form assets／renderer
+  swap, Resonance Practice／PvP, external LLM, dependency or build step.
+- Required reading: this entry,
+  `docs/design/COMPANION_GROWTH_CONTRACT_V1.md`, `ACCEPTANCE.md` N1–N11,
+  `src/state/companionStateSchema.js`, existing completed event owners and the
+  G1 Growth session／page path.
+
+### 2026-07-18 - Codex - Companion Growth G3 Lived-Evidence UI - IN PROGRESS
+
+- Status: `IN PROGRESS`; G1 shows session-only tendencies while G3 must add a
+  truthful persisted lived-evidence view without an XP bar or exact threshold.
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `TP-COMPANION-GROWTH-G3`.
+- Scope: extend the existing DOM Growth surface to consume a pure view model
+  for the active companion's qualitative stage, recent lived evidence,
+  tendency language and readiness／willingness cues. Preserve keyboard, touch,
+  `390x844`, text zoom and reduced-motion behavior.
+- Asset boundary: no portrait, sprite sheet, manifestation bitmap, Pixi
+  mapping, tint-as-evolution or Stage 2／3 asset claim is authorized.
+
+### 2026-07-18 - Codex - Companion Growth G3 Safety Provenance - IN PROGRESS
+
+- Status: `IN PROGRESS`; safety remains terminal while G3 introduces the first
+  persistent evidence writer.
+- Lane: `Raphael Core, Companion Reasoning, And Soul Talk`.
+- Task name: `TP-COMPANION-GROWTH-G3` (safety provenance closure).
+- Scope: seal `growthSafetyExcluded` at source creation, reject delayed／alias
+  attempts to wash it false, and extend required mutation gates for evidence,
+  readiness, offer and record creation. Ordinary Soul Talk is not automatically
+  evidence and raw player text is never copied into Growth state.
+- Red-line check: canonical safety reply／role／critical save stay unchanged;
+  no high-risk memory, trace, preference, growth, SFX or gameplay reward.
+
+### 2026-07-22 - Codex - Companion Growth G3 Evidence Foundation - VERIFIED
+
+- Status: `VERIFIED`; branch `agent/companion-growth-g3`, runtime commit
+  `b3cfe310c12d68cab6ae62a52810bea91a5e9be5`, rebased on exact
+  `origin/main` `e86bf6e` without conflict.
+- Lane: `Game Engineering And Architecture`.
+- Work performed: added the seven-family deterministic key factory, immutable
+  safety provenance, completed-event validation, root/key replay protection,
+  24-detail/24-window-root/48-consumed-root bounds, deterministic compaction,
+  current-growth-bound readiness and typed willingness. Exploration and all
+  four non-ranked emotional-standoff endings now write through their existing
+  state/save transaction; camp rest, return, safety and incomplete provenance
+  write nothing.
+- Review closure: stale A-to-B/fabricated readiness is rejected; deferred
+  willingness requires a new validated completed event, not time or a typed
+  label; repeated source+tendency rows fold into one qualitative presentation.
+- Verification: G3 engine `16/16`; G3 runtime `10/10`; G1 session `13/13`;
+  four-language i18n `408/408`; source-owner Map browser `45/45`; clean rebased
+  required web gate `27/27`, JS syntax `275/275`, accessibility warnings `0`.
+- Runtime truth / next safe action: live runtime intentionally has only two
+  evidence owners, exploration and standoff. Formal three-family + consent
+  anchor readiness is not reachable. G4 must first seal a real third source
+  owner and consent anchor before companion-initiated offer／atomic stage
+  advance; do not synthesize readiness from bond, defense, time or fixtures.
+
+### 2026-07-22 - Codex - Companion Growth G3 Lived-Evidence UI - VERIFIED
+
+- Status: `VERIFIED`; branch `agent/companion-growth-g3`, runtime commit
+  `b3cfe310c12d68cab6ae62a52810bea91a5e9be5`.
+- Lane: `Game Art, UI, And Visual Production`.
+- Work performed: the existing Growth page now shows the active companion's
+  formal stage, a qualitative relationship signal and at most three distinct
+  lived-evidence summaries. It never exposes raw source ids, timestamps,
+  counts, thresholds, XP, rarity, reward or a checklist; G1 practices remain
+  session-only and zero-write.
+- Verification: Growth browser `98/98` across normal Pixi and CDN-failure
+  fallback, `390x844`, desktop, keyboard, reduced motion and 200% text. Normal
+  Pixi lived-evidence screenshot:
+  `%TEMP%\nexus-growth-g3-normal-pixi-390x844.png`; visual review confirmed
+  evidence rows remain legible above the bottom navigation.
+- Asset boundary: no `assets/**`, `pixiApp.js`, form swap, tint-as-evolution or
+  Stage 2／3 art claim was introduced. G5 still requires separate GROUNDWORK
+  approval and human art readiness.
+
+### 2026-07-22 - Codex - Companion Growth G3 Safety Provenance - VERIFIED
+
+- Status: `VERIFIED`; branch `agent/companion-growth-g3`, runtime commit
+  `b3cfe310c12d68cab6ae62a52810bea91a5e9be5`.
+- Lane: `Raphael Core, Companion Reasoning, And Soul Talk`.
+- Work performed: Growth source events seal explicit high-risk, safety-role,
+  strategy/action, safety-mode and safe-harbor facts at creation. Missing facts
+  fail closed; descendants inherit exclusion; delayed clearing cannot wash an
+  excluded event into evidence. Safety UI remains terminal and exposes no
+  Growth stage, evidence, practice or result surface.
+- Verification: delayed safety, missing provenance, same-root repair,
+  readiness mismatch and deferral mutation cases pass; normal-Pixi H10 inside
+  Growth browser still requires the full canonical system reply, zero quick
+  replies/SFX and deep-equal relationship/growth state. Required web gate is
+  `27/27` on the clean rebased candidate.
+- Remaining launch gates: private blind 3 testers × 20 turns, real-device
+  D1／D2／D3／D6, moderated first-session comprehension, legal／privacy／store
+  copy and explicit Owner launch approval remain `not_run`／open. Automated
+  green is not public-launch approval.

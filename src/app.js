@@ -45,6 +45,7 @@ import { createAudioCueController } from "./ui/audioCueController.js";
 import { createActionSheetController } from "./ui/actionSheetController.js";
 import { createCalmSyncController } from "./ui/calmSyncController.js";
 import { createCrystalWeavingController } from "./ui/crystalWeavingController.js";
+import { createCompanionGrowthController } from "./ui/companionGrowthController.js";
 import { createPageRouter } from "./ui/pageRouter.js";
 import { createSettingsController } from "./ui/settingsController.js";
 import { createCompanionSelectController } from "./ui/companionSelectController.js";
@@ -350,6 +351,7 @@ async function bootstrap() {
     saveCandidateState: saveCriticalSnapshot,
     onOutcome: applyQualitativeSliceOutcome
   });
+  const companionGrowthController = createCompanionGrowthController();
 
   function getBattleController() {
     if (!battleController) {
@@ -358,7 +360,8 @@ async function bootstrap() {
         panelManager,
         soulTalkController,
         saveCurrentState,
-        statusText
+        statusText,
+        companionGrowthController
       });
       battleController.bind();
     }
@@ -389,6 +392,7 @@ async function bootstrap() {
         saveCurrentState: saveInteraction,
         battleController: getBattleController(),
         expeditionController: getExpeditionController(),
+        companionGrowthController,
         statusText,
         returnToHabitat: () => {
           panelManager.closePanel({ reason: "phase-return" });
@@ -459,6 +463,7 @@ async function bootstrap() {
     statusText,
     calmSyncController,
     crystalWeavingController,
+    companionGrowthController,
     openMap: () => getMapController().open(),
     openCodex: () => getCodexController().open(),
     openAtlas: () => getAtlasController().open()

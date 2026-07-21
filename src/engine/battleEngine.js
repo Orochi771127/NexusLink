@@ -211,6 +211,9 @@ export function createStandoffSession({ companion, enemyId, nodeId, state, now =
   const session = {
     nodeId: nodeId || null,
     companionId: companion?.id || "greyshade-cat",
+    // Immutable source provenance for downstream Growth writers. A standoff
+    // opened while safe harbor is active can never be washed into evidence.
+    growthSafetyExcluded: state?.safeHarborMode === true,
     companionName: companion?.name || "夥伴",
     emblem: companion?.emotionalEmblem?.zh || "憶・幽影",
     resonancePower,

@@ -24,6 +24,7 @@ export function createPageRouter({
   statusText,
   calmSyncController,
   crystalWeavingController,
+  companionGrowthController,
   openMap,
   openCodex,
   openAtlas
@@ -213,10 +214,37 @@ export function createPageRouter({
     const companionName = getCompanionDisplayName(companion);
     const session = growthSessions.get(companionId) || createCompanionGrowthSession(companionId);
     const snapshot = deriveHeartPhaseSnapshot(state, session);
+    const growthViewModel = companionGrowthController?.getViewModel?.(state, snapshot) || {
+      companionId,
+      safetyPaused: snapshot.safetyPaused,
+      phase: {
+        id: snapshot.phaseId,
+        labelKey: snapshot.phaseLabelKey,
+        copyKey: snapshot.phaseCopyKey
+      },
+      formalStage: {
+        id: "initial_awakened",
+        labelKey: "growth.persisted.stage.initial_awakened"
+      },
+      relationshipSignal: {
+        readinessId: "forming",
+        willingnessId: "not_evaluated",
+        copyKey: "growth.persisted.signal.forming"
+      },
+      livedEvidence: {
+        rows: [],
+        empty: true,
+        emptyCopyKey: "growth.persisted.evidenceEmpty"
+      },
+      currentMoment: {
+        observedTendencyIds: snapshot.observedTendencyIds,
+        lastResult: snapshot.lastResult
+      }
+    };
 
     // Safety is terminal and is not a Heart Phase. While safe harbor is active,
     // the Growth body exposes no practice, observation, crafting, or phase cue.
-    if (snapshot.safetyPaused) {
+    if (growthViewModel.safetyPaused) {
       body.innerHTML = `
         <section class="growth-response growth-response--safety"
           data-growth-result data-outcome="safety-paused"
@@ -238,14 +266,18 @@ export function createPageRouter({
         <em>${t(practice.copyKey)}</em>
       </button>
     `).join("");
-    const observedTendencies = snapshot.observedTendencyIds.length
-      ? snapshot.observedTendencyIds.map((tendencyId) => `
+    const currentMoment = growthViewModel.currentMoment || snapshot;
+    const observedTendencyIds = Array.isArray(currentMoment.observedTendencyIds)
+      ? currentMoment.observedTendencyIds
+      : [];
+    const observedTendencies = observedTendencyIds.length
+      ? observedTendencyIds.map((tendencyId) => `
           <span class="growth-tendency-pill" data-growth-tendency="${tendencyId}">
             ${t(`growth.session.tendency.${tendencyId}`)}
           </span>
         `).join("")
       : `<p class="growth-observation-empty">${t("growth.session.observedEmpty")}</p>`;
-    const lastResult = snapshot.lastResult;
+    const lastResult = currentMoment.lastResult;
     // The persistent #status-text owns polite announcements. Result cards stay
     // visible and text-labelled without creating a second live-region echo.
     const responseMarkup = lastResult
@@ -264,13 +296,49 @@ export function createPageRouter({
           <p>${t("growth.session.waitingCopy")}</p>
         </section>
       `;
+    const phase = growthViewModel.phase || {
+      id: snapshot.phaseId,
+      labelKey: snapshot.phaseLabelKey,
+      copyKey: snapshot.phaseCopyKey
+    };
+    const formalStage = growthViewModel.formalStage;
+    const relationshipSignal = growthViewModel.relationshipSignal;
+    const evidenceRows = Array.isArray(growthViewModel.livedEvidence?.rows)
+      ? growthViewModel.livedEvidence.rows
+      : [];
+    const livedEvidenceMarkup = evidenceRows.length
+      ? `
+        <ul class="growth-lived-evidence-list">
+          ${evidenceRows.map((row) => `
+            <li class="growth-lived-evidence-row" data-growth-evidence-source="${escapeHtml(row.sourceType)}">
+              <div>
+                <strong>${t(row.sourceLabelKey)}</strong>
+                <span>${t("growth.persisted.evidenceTendencyPrefix")}${t(row.tendencyLabelKey)}</span>
+              </div>
+              <p>${t(row.sourceCopyKey)}</p>
+            </li>
+          `).join("")}
+        </ul>
+      `
+      : `<p class="growth-lived-evidence-empty">${t(growthViewModel.livedEvidence?.emptyCopyKey || "growth.persisted.evidenceEmpty")}</p>`;
     body.innerHTML = `
-      <div class="page-focus-card page-focus-card--growth" data-growth-phase="${snapshot.phaseId}">
+      <div class="page-focus-card page-focus-card--growth" data-growth-phase="${escapeHtml(phase.id)}">
         <span class="page-orb" aria-hidden="true">✧</span>
         <div>
           <p class="page-card-kicker">${t("growth.session.kicker")}</p>
-          <h3>${escapeHtml(companionName)} · ${t(snapshot.phaseLabelKey)}</h3>
-          <p>${t(snapshot.phaseCopyKey)}</p>
+          <h3>${escapeHtml(companionName)} · ${t(phase.labelKey)}</h3>
+          <p>${t(phase.copyKey)}</p>
+          <dl class="growth-continuity-cues">
+            <div data-growth-formal-stage="${escapeHtml(formalStage.id)}">
+              <dt>${t("growth.persisted.stageLabel")}</dt>
+              <dd>${t(formalStage.labelKey)}</dd>
+            </div>
+            <div data-growth-readiness="${escapeHtml(relationshipSignal.readinessId)}"
+              data-growth-willingness="${escapeHtml(relationshipSignal.willingnessId)}">
+              <dt>${t("growth.persisted.signalLabel")}</dt>
+              <dd>${t(relationshipSignal.copyKey)}</dd>
+            </div>
+          </dl>
         </div>
       </div>
       ${responseMarkup}
@@ -284,6 +352,14 @@ export function createPageRouter({
       <div class="page-action-grid page-action-grid--growth-practice" aria-label="${t("growth.session.practiceAria")}">
         ${practiceButtons}
       </div>
+      <section class="growth-lived-evidence" data-growth-lived-evidence
+        aria-labelledby="growth-lived-evidence-title">
+        <header>
+          <strong id="growth-lived-evidence-title">${t("growth.persisted.evidenceTitle")}</strong>
+          <small>${t("growth.persisted.evidenceNote")}</small>
+        </header>
+        ${livedEvidenceMarkup}
+      </section>
     `;
   }
 
