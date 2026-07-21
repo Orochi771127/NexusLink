@@ -1,4 +1,4 @@
-import { PersonaConstitution, getForcedResponseStrategy } from "../persona/PersonaConstitution.js";
+import { PersonaConstitution, getForcedResponseStrategy, matchesForeverPromise } from "../persona/PersonaConstitution.js";
 import { NUANCE_FLAGS } from "../nlu/nuanceDetector.js";
 import { DIALOGUE_ACTS } from "../nlu/dialogueActClassifier.js";
 import { buildStrategyReply } from "../nlu/nluReplyBuilder.js";
@@ -25,7 +25,7 @@ export function critiqueConstitution({ perception = {}, reply = "", actionPlan =
     return { pass: true, critic: "constitution", issues: [], repairHint: "", forcedStrategy: null };
   }
 
-  if (rules.neverPromiseForever && patterns.foreverPromise.test(text)) {
+  if (rules.neverPromiseForever && matchesForeverPromise(text)) {
     issues.push("never_promise_forever");
   }
 
