@@ -10,10 +10,10 @@
 
 | 欄位 | 值 |
 |------|-----|
-| `last_updated` | 2026-07-18（Companion Growth G2 publication；**當前操作真相以 current `main` HEAD + `docs/agent/AI_EXECUTION_LEDGER.md` Lane 3 為準**） |
-| `last_agent` | Codex（G2 publication + exact-main status sync） |
+| `last_updated` | 2026-07-22（Companion Growth G3 Evidence Foundation；**當前操作真相以 current `main` HEAD + `docs/agent/AI_EXECUTION_LEDGER.md` Lane 3 為準**） |
+| `last_agent` | Codex（G3 evidence foundation publication） |
 | `active_branch` | `main`（2026-07-02 起單線開發，integrate 分支已退役） |
-| `runtime_baseline` | `b166e93cfd7928e1c97e2aef02d8554a0cd6ec42`（PR #98；Companion Growth G2 + safety/state closure） |
+| `runtime_baseline` | `b3cfe310c12d68cab6ae62a52810bea91a5e9be5`（Companion Growth G3 runtime candidate；rebased on `e86bf6e`） |
 | `rc_closure_commit` | `220e2fdbefaa4a2a7ecc2e853f68869bc4560d81`；乾淨 checkout exact-commit Web **17/17**、sealed holdout **48/48** |
 | `publication` | PR #98 candidate `6ff0fdd` 通過 strict required `web-release-gate` 後合併；本 status-sync 只更新操作真相，不改 runtime |
 | `workspace` | `C:\Users\User\NexusLink_RaphaelAI_Workspace\NexusLink` |
@@ -23,7 +23,7 @@
 
 ## 一句話現況
 
-RaphaelCore JS v1 → Soul Architecture v1.5 → NLU v1 → Stage 4 → advisory training / Nuwa → 自然對話 v2–v6 → Reflective Care V1 已落在 `main`。**現行 runtime 已由 Soul Talk 呼叫 `runRaphaelCore()`，且 Persona Constitution / constitution critic 已接入。** PR #98 進一步把 D2 terminal invariant 擴到完整 per-companion relationship／growth state，並發佈 Companion Growth G2：每隻夥伴自己的 canonical 關係狀態、Codex 隔離、離線恢復與延遲 session owner guard。Clean candidate `6ff0fdd` 通過 required web release **23/23**、Safety **21/21**、Growth browser **75/75** 後合併為 `b166e93`。
+RaphaelCore JS v1 → Soul Architecture v1.5 → NLU v1 → Stage 4 → advisory training / Nuwa → 自然對話 v2–v6 → Reflective Care V1 已落在 `main`。**現行 runtime 已由 Soul Talk 呼叫 `runRaphaelCore()`，且 Persona Constitution / constitution critic 已接入。** PR #98 發佈 Companion Growth G2 的 per-companion truth；G3 runtime candidate `b3cfe31` 再接入 deterministic key、bounded evidence／coverage、readiness／willingness 與質性 Growth UI，並在 rebase 最新 main 後通過 clean required web release **27/27**、Growth browser **98/98**、Map browser **45/45**。
 
 **誠實邊界（不可誇大）：**
 
@@ -32,9 +32,9 @@ RaphaelCore JS v1 → Soul Architecture v1.5 → NLU v1 → Stage 4 → advisory
 - 訓練層（training bundle / Nuwa / gateway）全部 **advisory-only、trusted:false**；runtime **無外部 LLM / API / 後端**，也不會自動從玩家或 eval 文字自我訓練。
 - Reflective Care V1 是陪伴對話政策，**不是心理治療 / 診斷 / 危機服務**；care/symbolic 回合不給獎勵、不寫記憶。
 - Expedition 只有 result event、第一人稱 composer、lite critic 與專用 memory gateway；`coreIntegrated:false`，現況是 **Prototype + partial Core bridge**。
-- G2 是持久狀態與安全地基，**不是** G3 evidence／readiness／willingness、正式覺醒邀請、永久形態 swap 或戰力成長已完成。
+- G3 Evidence Foundation 已接入 deterministic key、bounded evidence／coverage、readiness／willingness 與質性 Growth UI；live source owner 目前只有 exploration／standoff，正式 readiness 仍不可達。**這不是** G4 正式覺醒邀請／stage advance、永久形態 swap 或戰力成長已完成。
 
-工程下一步是另開 G3 TASK_PACK，接 companion-tagged evidence writer、coverage／compaction、readiness 與 willingness；不得由 bond、離線或登入資料推導。Launch 下一步仍是正式 3 人 × 20 回合 private-blind、真機／瀏覽器矩陣 D1/D2/D3/D6 與法務/隱私/商店文案 gate；自動化綠燈不得替代 human launch evidence。
+工程下一步是 G4 companion-initiated stage offer／可延後儀式／atomic stage advance；不得把目前兩個 live source family 虛構成 readiness，也不得由 bond、離線或登入資料推導。Launch 下一步仍是正式 3 人 × 20 回合 private-blind、真機／瀏覽器矩陣 D1/D2/D3/D6 與法務/隱私/商店文案 gate；自動化綠燈不得替代 human launch evidence。
 
 > 下方 Stage 4 runner 表保留 2026-06-24 歷史計數；current release claim 只以上方 current 表、`RAPHAEL_AI_STATUS.yaml`、raw QA output 與 ledger 為準。
 
@@ -50,9 +50,10 @@ RaphaelCore JS v1 → Soul Architecture v1.5 → NLU v1 → Stage 4 → advisory
 | Reflective Care V1 | dialogue loop 21/21（含 6 care/symbolic + 1 safety-precedence）；opt-in、無獎勵、無記憶寫入 | `docs/qa/RAPHAEL_REFLECTIVE_CARE_V1_2026-07-14.md` |
 | Nuwa advisory v0.3 | +daily_texture/small_moments/sleepless、no_sleep_pressure 哨兵；trusted:false | ledger Lane 3 2026-07-13（NLU 訓練批次） |
 | NLU 詞庫擴充 | 情感詞 19→60、程度副詞 7→16、否定詞 6→11、約 60 口語/簡體變體；TR-17..30 | ledger Lane 3 2026-07-13（NLU 訓練批次） |
-| Web release gate | **23/23 automated required PASS**（PR #98 clean candidate `6ff0fdd` 與 exact-main `b166e93`）; JS syntax 269/269，accessibility warnings 0 | GitHub required check + `docs/qa/_run_web_release_gate.py` |
+| Web release gate | **27/27 automated required PASS**（clean rebased G3 candidate `b3cfe31`）；JS syntax 275/275，accessibility warnings 0 | GitHub required check + `docs/qa/_run_web_release_gate.py` |
 | Real Soul Talk safety UI | **7/7 PASS**：完整 system reply、零 chips/SFX/relationship/growth delta、preference 不變、critical save 即時完成 | `docs/qa/_run_safety_terminal_ui_gate.py` + web release output |
 | Companion Growth G2 | State 23/23、browser 75/75、renderer 29/29、session owner 9/9；A→B→A／save／reload／offline recovery 隔離 | `docs/qa/companion-growth-state-cases.mjs` + required browser gate |
+| Companion Growth G3 | Engine 16/16、runtime 10/10、Growth browser 98/98、Map browser 45/45、四語系 408/408；clean rebased web gate 27/27 | `companionGrowthEngine.js` + source-owner browser assertions + required web gate |
 
 **尚未關閉的人類 gate：** D1/D2/D3/D6 真機／瀏覽器矩陣、3 位獨立測試者 × 20 回合 private-blind、first-session moderated comprehension test，以及法務/隱私/商店文案審查。
 
@@ -71,7 +72,7 @@ RaphaelCore JS v1 → Soul Architecture v1.5 → NLU v1 → Stage 4 → advisory
 | 6 | Limited Beta + Reflective Care V1 runtime | ✅ `main`；舊自動 gate 因 D2 false-pass 已降級為 historical evidence |
 | 6.1 | D2 safety terminal invariant + repo-native content gate | ✅ `main` / `c756337`：focused 18/18、UI 6/6、sealed 48/48、web 17/17 |
 | 7 | RC closure + 同意制 Beta 回饋收集 + 正式 private-blind 人測 + 真機/法務 gate | ✅ Docs/QA closure `220e2fd` verified；human gates `not_run`，不得以 automated PASS 取代 |
-| Growth G2 | Per-companion relationship/growth truth + Codex／session／safety isolation | ✅ `main` / `b166e93`；G3 evidence/readiness/willingness 尚未實作 |
+| Growth G3 | G1 session observation + G2 per-companion truth + G3 evidence/readiness/willingness foundation | ✅ runtime candidate `b3cfe31`；live readiness 不可達，G4 offer／advance 未實作 |
 
 ---
 
@@ -135,7 +136,7 @@ Player input
 3. 同意制 Limited Beta 回饋收集（care 語氣 / symbolic prompts），**不得**當作 private-blind 證據
 4. 自然對話後續：更廣 paraphrases、本地玩家回覆風格偏好（case-first）；不得讓 preference layer 改寫 safety 或 boundary policy turn
 5. 長線：corpus 擴充、gateway 真實 advisor 接入（仍須 RaphaelCore 最終裁決、trusted:false）
-6. **Companion Growth G3**：companion-tagged evidence、coverage／compaction、readiness／willingness；不得讀 bond-only、離線天數、登入頻率或 high-risk turn
+6. **Companion Growth G4**：夥伴主動 stage offer、可延後儀式與 atomic stage advance；先封 source-owner／consent-anchor contract，不得讀 bond-only、離線天數、登入頻率或 high-risk turn
 
 ---
 
@@ -217,7 +218,7 @@ python docs/qa/_run_stage4_human_playtest.py
 python docs/qa/_run_touch_fatigue_daytime.py
 ```
 
-2026-07-14 的 harness 17/17、NLU smoke 8/8、live Soul Talk 11/11 / HUD 13/13 只屬歷史快照。Published G2 tree `b166e93` 對應的 clean PR candidate 已通過 focused D2 21/21、real UI 7/7、Growth browser 75/75 與完整 web release 23/23。以 `RAPHAEL_AI_STATUS.yaml` 的 current 欄位判定；private-blind、D1/D2/D3/D6 與法務 gate 仍未完成。
+2026-07-14 的 harness 17/17、NLU smoke 8/8、live Soul Talk 11/11 / HUD 13/13 只屬歷史快照。Current G3 candidate `b3cfe31` 已通過 focused D2、Growth engine/runtime、real UI/source-owner 與完整 web release 27/27；以 `RAPHAEL_AI_STATUS.yaml` 的 current 欄位判定。Private-blind、D1/D2/D3/D6 與法務 gate 仍未完成。
 
 ---
 
