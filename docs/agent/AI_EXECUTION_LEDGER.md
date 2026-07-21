@@ -1679,6 +1679,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 3 - Raphael Core, Companion Reasoning, And Soul Talk
 
+### 2026-07-21 - Cursor Grok - Fix forever-promise false positive on attachment refusal
+
+- Status: `VERIFIED` (machine); Owner authorized narrow TASK_PACK → PR → main
+- Branch / commit: `agent/fix-forever-promise-false-positive` / lands with this commit
+- Scope: EXPERIENCE／safety critic 精準度。修「拒絕永遠」回覆被 `never_promise_forever` 誤殺、改寫成 `boundary_set` 固定句。不改 save／battle／safetyShield 關鍵字清單（紅線 7 求助路徑不動）。
+- Work performed: (1) `matchesForeverPromise()`：否定／拒絕永遠語境豁免；affirmative-only pattern。(2) `constitutionCritic`／`personaCritic` 改走 helper。(3) constitution smoke +PC-6／PC-7 防回歸。
+- Verification: constitution smoke 全過；`runRaphaelCore("你會不會離開我？")` 保留依附拒絕句、非 boundary 模板；`git diff --check`。
+- Problems / risks: affirmative forever 漏網需靠 pattern 維護；真人 feel-check 仍建議抽聽一次。
+- Next safe action: Owner 正式站抽測「你會不會離開我？」；可選 private-blind。
+- Required reading: `src/ai/persona/PersonaConstitution.js#matchesForeverPromise`, `src/ai/testHarness/constitutionSmokeCases.js` PC-6／PC-7, and this lane.
+
 ### 2026-07-20 - Cursor Grok - TP-WQ-GATE wording-quality 接入 web-release-gate
 
 - Status: `VERIFIED` (machine); Owner authorized continue＋ship to main

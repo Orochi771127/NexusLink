@@ -1,3 +1,5 @@
+import { matchesForeverPromise } from "../persona/PersonaConstitution.js";
+
 const GREYSHADE_DEMAND_TOUCH = [/來摸摸/, /摸我的頭/, /快來抱/];
 
 export function critiquePersona({ perception = {}, reply = "", actionPlan = {} } = {}) {
@@ -14,7 +16,7 @@ export function critiquePersona({ perception = {}, reply = "", actionPlan = {} }
     }
   }
 
-  if (persona.boundaries?.noForeverPromise && /永遠|一輩子|一直陪/.test(reply)) {
+  if (persona.boundaries?.noForeverPromise && matchesForeverPromise(reply)) {
     issues.push("persona_forever_promise");
   }
 
