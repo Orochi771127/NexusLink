@@ -1,7 +1,10 @@
 import { INITIAL_BOND_CHOICES } from "../../src/ui/onboardingController.js";
 import { getCodexEntries } from "../../src/ui/codexController.js";
 import { getCompanionById } from "../../src/data/companionRegistry.js";
+import { getCompanionRuntimeEligibility } from "../../src/data/companionRuntimePolicy.js";
 import { getEvolutionLine } from "../../src/data/evolutionLines.js";
+import { hasAdventureProfile } from "../../src/data/companionAdventureProfiles.js";
+import { canLaunchExpedition } from "../../src/expedition/expeditionConfig.js";
 import { normalizeState } from "../../src/state/store.js";
 import { getCompanionCodexGrowthPresentation } from "../../src/state/companionStateSchema.js";
 
@@ -9,6 +12,13 @@ const EXPECTED_INITIAL_BOND_IDS = [
   "greyshade-cat",
   "blazetail-kit",
   "crystalfin-seahorse"
+];
+const IRONFLOW_IDS = [
+  "thunder-pup",
+  "wavecub",
+  "starflame-phoenix",
+  "star-foal",
+  "goldenspark-wyrm"
 ];
 
 const failures = [];
@@ -32,6 +42,35 @@ const duplicateIds = codexEntries
 
 if (duplicateIds.length) {
   failures.push(`duplicate codex ids: ${[...new Set(duplicateIds)].join(", ")}`);
+}
+
+const codexIds = new Set(codexEntries.map((entry) => entry.id));
+const freshState = normalizeState({});
+for (const companionId of IRONFLOW_IDS) {
+  const companion = getCompanionById(companionId);
+  if (!codexIds.has(companionId)) failures.push(`${companionId}: missing Stage 1 Codex entry`);
+  if (companion?.runtimeStatus !== "full-runtime") failures.push(`${companionId}: not full-runtime`);
+  const eligibility = getCompanionRuntimeEligibility(companionId, freshState);
+  if (eligibility.canSelect || eligibility.isUnlocked) {
+    failures.push(`${companionId}: fresh save must keep Ironflow companion locked`);
+  }
+}
+
+const ironflowHasNoAdventureProfile = IRONFLOW_IDS.every(
+  (companionId) => !hasAdventureProfile(companionId)
+);
+if (!ironflowHasNoAdventureProfile) {
+  failures.push("Ironflow Stage 1 companions must not gain Expedition adventure profiles in this slice");
+}
+
+const ironflowExpeditionFailClosed = IRONFLOW_IDS.every((companionId) => !canLaunchExpedition({
+  activeCompanionId: companionId,
+  unlockedCompanionIds: ["greyshade-cat", companionId],
+  chapterProgress: { current: 2, completed: [1] },
+  energy: 10
+}));
+if (!ironflowExpeditionFailClosed) {
+  failures.push("Ironflow Stage 1 companions must remain fail-closed for Expedition after explicit unlock");
 }
 
 const migrated = normalizeState({
@@ -73,13 +112,18 @@ if (numericLegacyHints.length) {
 }
 
 console.log(JSON.stringify({
-  total: 8,
+  total: 13,
   failed: failures.length,
   cases: {
     initialBondIds: actualIds,
     portraitsReady: actualIds.every((id) => Boolean(getCompanionById(id)?.image)),
     fullRuntime: actualIds.every((id) => getCompanionById(id)?.runtimeStatus === "full-runtime"),
     codexUniqueCount: codexEntries.length,
+    ironflowStage1Visible: IRONFLOW_IDS.every((id) => codexIds.has(id)),
+    ironflowFullRuntime: IRONFLOW_IDS.every((id) => getCompanionById(id)?.runtimeStatus === "full-runtime"),
+    ironflowFreshLocked: IRONFLOW_IDS.every((id) => !getCompanionRuntimeEligibility(id, freshState).canSelect),
+    ironflowHasNoAdventureProfile,
+    ironflowExpeditionFailClosed,
     activeFormalStage: activeGrowth,
     inactiveArchiveStage: archiveGrowth,
     unrelatedBondIsolation: unseenGrowth,

@@ -1,8 +1,8 @@
 # 美術資產缺口稽核（Art Asset Gap Audit）
 
-> 日期：2026-07-12 ・ 最後棲地現況更新：2026-07-14 ・ 稽核者：Claude Fable 5 ・ 對象 commit：`6e50ab6`（五幼獸資產升級後）+ CH-5b working tree；月湖現況另見 `docs/art/ART_PRODUCTION_INDEX.json` → `habitats[HAB-MOONLAKE-V3]`
+> 日期：2026-07-12 ・ 最後棲地現況更新：2026-07-14 ・ 夥伴 runtime 現況補正：2026-07-22 ・ 稽核者：Claude Fable 5 ・ 原始稽核對象 commit：`6e50ab6`（五幼獸資產升級後）+ CH-5b working tree；月湖現況另見 `docs/art/ART_PRODUCTION_INDEX.json` → `habitats[HAB-MOONLAKE-V3]`
 > 目的：盤點「缺哪些、缺多少美術圖」，並寫清楚**每一項要怎麼生成才能 drop-in 使用**，供 Owner 指派 Codex 產圖。
-> 一句話結論：**目前 runtime 沒有任何「壞掉／缺圖」的硬缺口**——11 隻夥伴的 Stage-1 動畫全到齊；月湖可玩棲地已升至 `MoonlakeVivarium_v3`（含 v5 增量層）。以下缺口都是**路線圖／畫質升級**性質（設計文件已規劃、尚未接線），可依優先序分批生成。
+> 一句話結論：**目前 runtime 沒有任何「壞掉／缺圖」的硬缺口**——registry 內 16 隻夥伴的 Stage-1 動畫 manifest 都已就緒；灰影貓有 34 個 animation entries，其餘 15 隻各有 29 個。月湖可玩棲地已升至 `MoonlakeVivarium_v3`（含 v5 增量層）。以下缺口都是**路線圖／畫質升級**性質（設計文件已規劃、尚未接線），可依優先序分批生成。
 
 ---
 
@@ -10,9 +10,9 @@
 
 | 類別 | 現況 | 位置 |
 | --- | --- | --- |
-| 夥伴 Stage-1 動畫 | **11 隻 × 29 動作 512×512 全到齊** | `assets/characters/{id}/spritesheets/**` + `metadata/animations.json` |
+| 夥伴 Stage-1 動畫 | **16 隻 runtime 夥伴皆有正式 manifest**；灰影貓 34 entries，其餘 15 隻各 29 個 512×512 frame 動作 | `assets/characters/{id}/**` + `metadata/animations.json` |
 | — 灰影貓 | 373 png（含 legacy 64px + 立繪 + icon + qc）| `assets/characters/greyshade-cat/` |
-| — 正式五幼獸 + 5 測試載體 | 各 29 png | 同上 |
+| — 正式心輝五席 + 正式黑鐵五席 + 5 測試載體 | 各 29 張八幀 sheet；每席另有自己的 portrait／metadata | 同上 |
 | 月湖可玩棲地 | **MoonlakeVivarium_v3 runtime 已接線（本機）**：日/夜 full-bleed 背景 + 魔法陣平台 + lantern/arch/campfire/crystal；**新增** `camp_structures` + `foreground_occlusion` 增量層。日/月 celestial 仍沿用 LakeNightCamp_v2。 | `assets/backgrounds|platforms|props|layers/MoonlakeVivarium_v3/`；索引見 `ART_PRODUCTION_INDEX.json` → `habitats[HAB-MOONLAKE-V3]` |
 | — 月湖仍缺（非硬缺口） | sky/mountains/lake/ground **分層視差板仍 baked 在 day/night**；天氣／晨昏＝程式 FX，**不需專用美術板**；`assets/layers/` 與層接線**可能尚未 commit**（本機已存在並已接線） | 見 INDEX `habitats[].gaps` |
 | 七區世界地圖遠景 | 7 張區域 JPG（atlas 遠景底圖）+ 世界圖 | `assets/backgrounds/linkara/regions/*.jpg` |
@@ -109,7 +109,7 @@ Codex 產出的夥伴／進化型態 sheet 若要「不改程式即可用」，�
 
 ## 4. 自我審查（Self-review）
 
-- ✅ **「缺圖是否會 crash」**：不會。5 幼獸未列入 `ASSET_MANIFEST.characters`（僅 6 測試載體在 `RUNTIME_COMPANION_ASSET_KEYS`），但夥伴渲染走 `companionRegistry.animationsManifest`，5 幼獸 sheet 於 `6e50ab6` 已實測可載入（0 console error）。故「未入 manifest」是**QA 覆蓋缺口**（gate 的 asset-integrity 沒驗到這 145 張），**非美術缺口**。→ 建議另開小工程任務：把 5 幼獸補進 `ASSET_MANIFEST` 與 `RUNTIME_COMPANION_ASSET_KEYS`，讓 gate 也守這 145 張（低風險，sheet 已存在）。**本輪不改程式，僅記錄。**
+- ✅ **「缺圖是否會 crash」**：不會。`ASSET_MANIFEST.characters` 與 `RUNTIME_COMPANION_ASSET_KEYS` 現在涵蓋全部 16 隻 runtime 夥伴；正式心輝五席與正式黑鐵五席各自的 145 張 sheet 都已納入 repo-native asset-integrity gate。角色渲染仍以 `companionRegistry.animationsManifest` 指向各自 metadata，不借用其他角色資產；先前「只有 6 keys／五幼獸未入 manifest」的 QA 覆蓋缺口已關閉。
 - ✅ **敵人清單交叉核對**：`enemyRegistry.js` 恰 10 敵，emotion 標籤 5 類各 2，與 GAP-1 表一致；章節 rift 節點 enemyPool 已在 CH-5b 按情緒配對。
 - ✅ **規格來源三方一致**：`ILLUSTRATED_COMPANION_RUNTIME_POLICY`（512/anchor/maxEdge/grid-exact）＝ `CLAUDE.md §4` ＝ 實測 sprigfawn manifest；`defeated←faint` 對映經 CH-5b 對峙結算路徑實證消費。
 - ✅ **不重複計數**：Stage-1（已完成）未計入缺口；atlas 遠景 JPG（已存在）不與 GAP-3 近景背景混算。

@@ -114,6 +114,29 @@ export const EVOLUTION_LINES = {
       "鰭紋長成了海龍的輪廓，替更深的水守著更多的記憶。你交給牠的，連漩渦都帶不走。", CHILD_BOND, CHILD_HINT),
     stage(2, "蒼海龍靈", "Azure Sea Dragon Spirit",
       "牠身後展開一片蒼海憶域——所有被好好記住的事，都在那裡發著微光。牠說：這片海，有一半是你陪牠沉澱的。", ADULT_BOND, ADULT_HINT)
+  ]),
+
+  // 黑鐵駭客五席目前只封印 Stage 1。後續形態仍待 Owner canon 與正式 G4 offer／advance，
+  // 因此保留 incomplete line，不用舊 bondThreshold 或虛構名稱冒充正式覺醒。
+  "thunder-pup-line": line(false, [
+    stage(0, "雷霆幼狼", "ThunderPup",
+      "牠伏低身體讀取苔徑裡的細微脈衝，在確認訊號之前不催任何人前進。", 0, "後續形態尚未封印。")
+  ]),
+  "wavecub-line": line(false, [
+    stage(0, "浪花幼獅", "WaveCub",
+      "牠沿著資料潮汐試探新的水路，邀請同行，也尊重留在岸上的選擇。", 0, "後續形態尚未封印。")
+  ]),
+  "starflame-phoenix-line": line(false, [
+    stage(0, "星焰鳳凰", "Starflame Phoenix",
+      "牠仍用地面步伐探索，以短促星焰替僵住的節奏照出另一個轉向。", 0, "後續形態尚未封印。")
+  ]),
+  "star-foal-line": line(false, [
+    stage(0, "幼星駒", "Star Foal",
+      "牠讓蹄下的星軌成為可停靠的支點，陪同伴站穩，也容許休息。", 0, "後續形態尚未封印。")
+  ]),
+  "goldenspark-wyrm-line": line(false, [
+    stage(0, "金光幼龍", "Goldenspark Wyrm",
+      "牠用齒輪尾節逐層解析裂縫；精準是照顧的方式，不是對誰的評分。", 0, "後續形態尚未封印。")
   ])
 };
 

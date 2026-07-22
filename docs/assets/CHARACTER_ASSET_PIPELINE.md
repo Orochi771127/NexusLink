@@ -310,11 +310,12 @@ P1 開發主線以灰影貓與第一棲地為主，不擴張多角色系統。
 
 ---
 
-### Tier 3 — Roadmap Companion Candidates（尚未接入 runtime）
+### Tier 3 — Roadmap Companion Candidate（尚未接入 runtime）
+
+`thunder-pup` 已於 2026-07-22 經 Owner canon 與 GROUNDWORK 核准，升格為黑鐵駭客／Ironflow Hackers 正式木席；其 portrait、29 張八幀 sheet 與 metadata 位於 `assets/characters/thunder-pup/`。黑鐵五席的現行資產權威見 `docs/art/BLACK_IRON_HACKERS_STAGE1_CHARACTER_ASSET_INDEX.md`，不得再把 ThunderPup 解讀為無資產的 Tier 3 candidate。
 
 | Character ID | 名稱 | 狀態 | 說明 |
 |-------------|------|------|------|
-| `thunder-pup` | 雷霆幼狼 | 📋 roadmap candidate | 尚未接入 runtime，無任何 assets，不可加入 creatures.json |
 | `star-energy-boarlet` | 星能小山豬 | 📋 roadmap candidate | 尚未接入 runtime，無任何 assets，不可加入 creatures.json |
 
-Roadmap candidates 不是 runtime creature。不可因此啟動多角色隊伍系統或任何 asset pipeline，需正式任務授權才可推進。
+本節目前只保留 `star-energy-boarlet`。Roadmap candidate 不是 runtime creature；不可因此啟動多角色隊伍系統或任何 asset pipeline，需正式任務授權才可推進。

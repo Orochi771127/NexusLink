@@ -1,41 +1,40 @@
-# Black Iron Hackers Stage 1 Character Asset Index
+# Ironflow Hackers Stage 1 Character Asset Index
 
-Status: **Owner-confirmed visual lock and review-production roster; formal canon integration pending.** The Owner supplied and confirmed the 2026-07-14 five-character sheet, then approved the same seed → species pilot → full-catalog workflow used for the formal Heartspark Council batch. Nothing in this index grants runtime readiness.
+Status: **Owner-confirmed canon and GROUNDWORK runtime promotion (2026-07-22).** The Owner supplied and confirmed the 2026-07-14 five-character sheet, approved the seed → species pilot → full-catalog workflow, then explicitly authorized all five 黑鐵駭客 / Ironflow Hackers seats to enter the game. Each selected catalog is now mapped as a distinct `full-runtime` / `runtime-ready` / `selectableWhenUnlocked` companion. Runtime readiness does not auto-unlock a character and is not launch approval. The filename retains the older `BLACK_IRON_HACKERS` production label for stable links; player-facing English follows Master Canon.
 
 ## Visual roster
 
-| Element | Character | ID | Species-motion family | Lock spec | Review-production state |
+| Element | Character | ID | Species-motion family | Lock spec | Runtime promotion state |
 |---|---|---|---|---|---|
-| Wood | ThunderPup / 雷霆幼狼 | `thunder-pup` | canine signal tracker | `character-locks/thunder-pup.lock.md` | appearance locked; existing Tier 3 identity reused |
-| Water | WaveCub / 浪花幼獅 | `wavecub` | feline current scout | `character-locks/wavecub.lock.md` | appearance locked |
-| Fire | Starflame Phoenix / 星焰鳳凰 | `starflame-phoenix` | grounded avian firebird | `character-locks/starflame-phoenix.lock.md` | appearance locked; sustained-flight authority not granted |
-| Earth | Star Foal / 幼星駒 | `star-foal` | equine stabilizer | `character-locks/star-foal.lock.md` | appearance locked |
-| Metal | Goldenspark Wyrm / 金光幼龍 | `goldenspark-wyrm` | saurian gear-tail analyst | `character-locks/goldenspark-wyrm.lock.md` | appearance locked |
+| Wood | ThunderPup / 雷霆幼狼 | `thunder-pup` | canine signal tracker | `character-locks/thunder-pup.lock.md` | promoted; existing identity becomes the formal Wood seat |
+| Water | WaveCub / 浪花幼獅 | `wavecub` | feline current scout | `character-locks/wavecub.lock.md` | promoted as the formal Water seat |
+| Fire | Starflame Phoenix / 星焰鳳凰 | `starflame-phoenix` | grounded avian firebird | `character-locks/starflame-phoenix.lock.md` | promoted; Stage 1 remains grounded with no sustained flight |
+| Earth | Star Foal / 幼星駒 | `star-foal` | equine stabilizer | `character-locks/star-foal.lock.md` | promoted as the formal Earth seat |
+| Metal | Goldenspark Wyrm / 金光幼龍 | `goldenspark-wyrm` | saurian gear-tail analyst | `character-locks/goldenspark-wyrm.lock.md` | promoted as the formal Metal seat |
 
 ## Owner decisions recorded for this production task
 
 1. The supplied sheet is the appearance-lock source for all five characters.
-2. The existing Tier 3 `thunder-pup` identity is reused for the Wood seat shown on the sheet. Do not create a second homonymous character or a replacement ID for review production.
-3. Formal canon/faction integration is deferred. The current Master Canon remains authoritative until a separate canon task updates it.
+2. The existing `thunder-pup` identity is reused for the Wood seat shown on the sheet. Do not create a second homonymous character or replacement ID; this promotion removes ThunderPup from the Tier 3 roadmap-candidate row.
+3. Formal canon/faction integration is approved. The public English faction label remains the Master Canon name `Ironflow Hackers`; Chinese remains `黑鐵駭客`.
 4. All five characters receive the shared 29 action IDs.
 5. Every action uses eight frames. Raw generation uses a `2×4` body grid; processed cells are `512×512` and the delivery sheet is `2048×1024`.
 6. `sleep` remains the action ID but depicts an already-deep-asleep loop in all eight frames. Waking belongs only to `idle_wake`.
-7. Generated work stays under `output/**` until separate human review and later GROUNDWORK promotion approval.
+7. Selected portrait and 29 selected action sheets per character may enter `assets/characters/<id>/` under this approved GROUNDWORK package. GIF previews, rejected candidates and production provenance remain review material under `output/**`; they are not runtime-loaded.
 
-## Resolved and remaining identity debt
+## Resolved identity and visibility boundaries
 
 ### ThunderPup
 
-- `docs/strategy/NEXUS_LINK_MASTER_CANON_v3.1.md` currently lists 雷霆幼狼 as a Tier 3 Roadmap candidate but does not assign it to the formal Heartspark Council five-seat roster.
+- `docs/strategy/NEXUS_LINK_MASTER_CANON_v3.1.md` now assigns 雷霆幼狼 to the formal Ironflow Hackers Wood seat and removes it from the Tier 3 roadmap-candidate row.
 - `docs/r2-canon/R2_FACTION_BIBLE.md` retains an older reference-era Heartspark representative list containing ThunderPup. That lower-level historical assignment does not override the 2026-07-10 formal Heartspark roster in Master Canon.
-- Current filesystem verification found no `assets/characters/thunder-pup/` root, and current `src/data/companionRegistry.js` has no `thunder-pup` registry entry. The old directory-collision warning survives in coordination docs but is not a present filesystem/runtime collision.
-- `src/engine/companionPersonality.js` still contains a dormant `thunderPup` archetype. Its warm/playful baseline may need a later persona/canon review if this visual identity is promoted; it is outside this art-production task.
+- `assets/characters/thunder-pup/` is now ThunderPup's own runtime root. `crystal-rabbit` owns `assets/characters/crystal-rabbit/`; the historical directory-collision warning is resolved and must not be reintroduced.
+- The five new registry records remain initially locked. The Codex should list the complete Stage 1 roster and present these five in a clearly marked unmet／locked state, but the companion selector and active-companion path still require a legal unlock／encounter state; Codex visibility creates no relationship or eligibility. Fresh default and Initial Bond remain unchanged.
 
 ### English faction label
 
-- The supplied sheet and older R2 references say `BLACK IRON HACKERS`.
-- Master Canon currently gives 黑鐵駭客 the English name `Ironflow Hackers`.
-- Generated body sheets contain no text, so review production can proceed without silently changing the strategic canon. A later canon task must choose the public English label.
+- The supplied sheet and older R2 references say `BLACK IRON HACKERS`; this remains source-reference wording only.
+- Master Canon's public English name `Ironflow Hackers` is authoritative. Generated body sheets contain no text, so no raster needs correction.
 
 ### Soft naming echoes
 
@@ -63,18 +62,23 @@ Stage 1 may remain younger and softer than adult faction representatives. Do not
 
 The footer explicitly describes the source as `Pixel Art (64×64 Grid)`. It is reference-only and must be translated into illustrated / painterly / high-detail `512×512` transparent production frames. The labeled front/side/back images are isometric/three-quarter views, not orthographic turnarounds.
 
-## Gate order
+## Completed promotion gates and remaining product gates
 
-1. Owner reference set confirmed and fingerprinted.
-2. Five Character Lock Specs written and corrected against the original-resolution sheet.
-3. Five-family motion translation approved in `BLACK_IRON_HACKERS_STAGE1_SPECIES_MOTION_TRANSLATION.md`.
-4. Generate and human-review one transparent identity seed per character.
-5. Generate and human-review one eight-frame pilot per motion family.
-6. Produce each character vertically through P1, P2, and P3 until all 29 eight-frame actions pass local QC.
-7. Build a five-character comparison board and cross-catalog QC report.
-8. Human approves or rejects individual review sheets.
-9. Open separate canon and GROUNDWORK asset-readiness/runtime migration tasks if promotion is desired.
+1. Owner reference set confirmed and fingerprinted — complete.
+2. Five Character Lock Specs corrected against the original-resolution sheet — complete.
+3. Five-family motion translation approved in `BLACK_IRON_HACKERS_STAGE1_SPECIES_MOTION_TRANSLATION.md` — complete.
+4. Transparent identity seeds and one eight-frame species pilot per character reviewed — complete.
+5. P1／P2／P3 catalogs completed; all 29 eight-frame actions per character pass local mechanical and visual QC — complete.
+6. Owner approved canon and GROUNDWORK runtime promotion — complete for this package.
+7. Registry／manifest／persona／Codex visibility and repo-native regression gates — required before merge and recorded by the implementing task, not by this art index alone.
+8. Real-device, moderated first-session, private-blind, legal／privacy／store-copy and explicit Owner launch approval — remain separate launch gates.
 
-## Non-promotion boundary
+## Compatibility fields and Expedition boundary
 
-No file in this package grants runtime readiness. Do not write generated PNGs into `assets/**`, register companions, change manifests, alter save/state, or update public canon as a side effect of review production.
+- The five registry records carry the existing `radar` shape because the current Codex renders that compatibility surface and emotional Standoff reads its `emotion` axis when deriving stability／resonance. These values are not Companion Growth XP, readiness, a permanent-stage gate, rarity, a combat class or a PvP ranking.
+- None of the five has an entry in `companionAdventureProfiles.js`. Expedition therefore fails closed in both `canLaunchExpedition()` and `createExpeditionSession()` even if a QA／veteran state explicitly unlocks one of them; this promotion does not open the prototype HP／ATK／loot path for the five seats.
+- Adding any future adventure profile requires its own Owner-approved Expedition／Core contract and cannot be inferred from registry `radar`, faction, runtime readiness or Codex visibility.
+
+## Runtime promotion boundary
+
+This package authorizes the selected five catalogs and portraits to be promoted into distinct runtime roots and registered as initially locked companions. It does **not** authorize a new save schema, fresh-save auto-unlock, Initial Bond roster changes, PvP, G4 stage advance, evolved forms, new power-stat progression／combat-class use, loot, rewards, dependency／backend work or a launch-ready claim. Persona differences remain downstream of the D2 safety terminal.

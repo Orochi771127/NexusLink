@@ -10,6 +10,7 @@ import {
   getHeartsparkCouncilCanonCharacterById
 } from "../data/heartsparkCouncilCanon.js";
 import { getEvolutionLine } from "../data/evolutionLines.js";
+import { getCompanionRuntimeEligibility } from "../data/companionRuntimePolicy.js";
 import {
   COMPANION_GROWTH_STAGES,
   getCompanionCodexGrowthPresentation
@@ -85,6 +86,7 @@ export function createCodexController({ store, panelManager }) {
   function renderList() {
     if (!bodyEl) return;
     bodyEl.innerHTML = "";
+    const state = store.getState();
 
     const list = document.createElement("div");
     list.className = "codex-list";
@@ -94,7 +96,14 @@ export function createCodexController({ store, panelManager }) {
       row.type = "button";
       row.className = "codex-row";
       const elementLabel = entry.elementName;
-      const rowMeta = entry.kind === "canon" ? "Canon roadmap" : entry.name.en;
+      const eligibility = entry.kind === "runtime"
+        ? getCompanionRuntimeEligibility(entry.companion, state)
+        : null;
+      const rowMeta = entry.kind === "canon"
+        ? "Canon roadmap"
+        : eligibility?.isUnlocked
+          ? entry.name.en
+          : `${entry.name.en} ・ 未相遇`;
       row.innerHTML = `
         <span class="companion-card-badge element-${entry.element}" aria-hidden="true">${elementLabel?.zh || ""}</span>
         <span class="companion-card-main">
@@ -121,6 +130,7 @@ export function createCodexController({ store, panelManager }) {
     // inactive record may retain a display-only floor, but never borrows the
     // currently active companion's bond or relationship.
     const codexGrowth = getCompanionCodexGrowthPresentation(state.companionStates, companionId);
+    const eligibility = getCompanionRuntimeEligibility(companion, state);
     const elementLabel = ELEMENT_LABELS[companion.element];
     const accent = ELEMENT_ACCENTS[companion.element] || ELEMENT_ACCENTS.neutral;
 
@@ -153,6 +163,7 @@ export function createCodexController({ store, panelManager }) {
       ["戰鬥定位 ROLE", `${companion.battleRole.zh} ・ ${companion.battleRole.en}`],
       ["性情 TEMPERAMENT", companion.temperament.zh],
       ["棲地親和 HABITAT", companion.habitatAffinity.zh],
+      ["結緣狀態 BOND STATUS", eligibility.isUnlocked ? "已結緣" : "未相遇／鎖定"],
       ["素材狀態 RUNTIME", RUNTIME_STATUS_LABELS[companion.runtimeStatus] || companion.runtimeStatus]
     ].map(([label, value]) => `
       <div class="codex-tag">

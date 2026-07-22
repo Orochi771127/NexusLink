@@ -1,12 +1,12 @@
 # Character Lock Spec — 幼星駒 / Star Foal
 
-> Source: Owner-supplied reference sheet "侵核者設定圖鑑" (2026-07-14), row 4 of 5 (front/side/back). Provisional Black Iron Hackers Earth seat — see `../BLACK_IRON_HACKERS_STAGE1_CHARACTER_ASSET_INDEX.md` for roster-level conflict log, including a naming/motif echo against Heartspark Council's Earth seat (`starstripe-cub`), before treating this as final.
+> Source: Owner-supplied reference sheet "侵核者設定圖鑑" (2026-07-14), row 4 of 5 (front/side/back). Formal Ironflow Hackers Earth seat; Owner authorized canon and GROUNDWORK runtime promotion on 2026-07-22.
 
 ## Identity
 
 - character_id: `star-foal`
 - display_name: 幼星駒 / Star Foal
-- faction: 黑鐵駭客 (Owner-confirmed visual roster; formal canon integration pending)
+- faction: 黑鐵駭客 / Ironflow Hackers (formal Earth seat)
 - role: 土席；穩定環境場域，防禦與支援友方系統
 - element: Earth
 - species: juvenile horse/pony foal; **equine**, not a generic four-leg mammal template — see Species-Motion note
@@ -63,7 +63,7 @@ Per the user's explicit instruction, this character must not share a motion fami
 
 - no adult horse proportions or realistic tack/saddle/bridle
 - no cervid antlers or deer-style bounding gait
-- no full metal horseshoes/leg armor (accent sheen only, pending Owner confirmation of roster-wide "how mechanical" direction)
+- no full metal horseshoes or leg armor; the approved Stage 1 Ironflow Hackers read uses accent sheen only. Any heavier mechanical redesign requires a separate Owner art／canon gate.
 - no white background, floor shadow, stone pedestal ring, magic-circle platform, UI, text, scene, or codex frame baked into runtime output
 - no chunky pixel art in generated masters; the source explicitly says `Pixel Art (64×64 Grid)` and remains identity/reference material only
 
@@ -73,7 +73,7 @@ Per the user's explicit instruction, this character must not share a motion fami
 - 512x512 transparent PNG master frames; linear sampling + mipmaps
 - bottom-center anchor at four-hoof baseline; frameHeight scaling
 - sheet edge <=4096 and exactly divisible grid
-- this lock spec authorizes generation *planning* only — no image generation, asset writes, or registry changes without a separate approval-gated task per `docs/assets/CHARACTER_ASSET_PIPELINE.md`
+- selected 29-action catalog and portrait are approved for this GROUNDWORK runtime promotion; future generation or replacement still requires a separate gate per `docs/assets/CHARACTER_ASSET_PIPELINE.md`
 
 ## Reference
 
@@ -86,5 +86,5 @@ Per the user's explicit instruction, this character must not share a motion fami
 ## Approval Status
 
 - reference_set_status: Owner-confirmed and fingerprinted 2026-07-14
-- lock_spec_status: prepared-for-owner-review
-- approved_for_actions: review-staging image generation under `output/**`; not runtime promotion; formal canon integration remains pending
+- lock_spec_status: approved formal Ironflow Hackers Earth-seat lock
+- approved_for_actions: selected portrait + 29 eight-frame actions approved for `assets/**` runtime promotion 2026-07-22; future regeneration not implied

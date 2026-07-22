@@ -3,6 +3,7 @@ import { getStrategyVariantLines, buildStrategyVariantMeta } from "../nlu/nluRep
 import { listResponsePackVariants } from "../corpus/responsePackSelector.js";
 import { RESPONSE_STRATEGIES } from "../responseStrategySelector.js";
 import { HEARTSPARK_COUNCIL_COMPANION_IDS } from "../../data/ai/heartsparkCouncilVoicePacks.js";
+import { IRONFLOW_HACKER_COMPANION_IDS } from "../../data/ai/ironflowHackerVoicePacks.js";
 import { GREYSHADE_COMPANION_ID } from "../../data/ai/greyshadeVoicePacks.js";
 
 // 情緒陪伴類策略：用字面字串（避免循環依賴時 RESPONSE_STRATEGIES 尚未就緒）。
@@ -16,9 +17,13 @@ const COMPANION_VOICE_STRATEGIES = Object.freeze(
   ])
 );
 
-// 心輝五席 + 灰影貓（Nuwa 蒸餾 voice）：情緒策略下優先用物種定稿句。
+// 正式角色聲線 + 灰影貓：情緒策略下優先用角色定稿句。
 const COMPANION_VOICE_PACK_IDS = Object.freeze(
-  new Set([...HEARTSPARK_COUNCIL_COMPANION_IDS, GREYSHADE_COMPANION_ID])
+  new Set([
+    ...HEARTSPARK_COUNCIL_COMPANION_IDS,
+    ...IRONFLOW_HACKER_COMPANION_IDS,
+    GREYSHADE_COMPANION_ID
+  ])
 );
 
 export function selectReplyVariant({
@@ -62,7 +67,7 @@ export function selectReplyVariant({
     recoveryContext
   });
 
-  // 心輝五席＋灰影貓：情緒策略下把 Nuwa voice pack 併入候選並提高分數，讓玩家「聽得出是誰」。
+  // 正式角色＋灰影貓：情緒策略下把 voice pack 併入候選並提高分數，讓玩家「聽得出是誰」。
   // 實用／問答策略仍走 NLU（holdout／能力題不改）。
   const preferCompanionVoice =
     COMPANION_VOICE_PACK_IDS.has(companionId) &&

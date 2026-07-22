@@ -456,11 +456,17 @@ def load_asset_manifest(node: str):
           RUNTIME_COMPANION_ASSET_KEYS,
           ILLUSTRATED_COMPANION_RUNTIME_POLICY
         } from './src/data/assetManifest.js';
+        import {
+          PROFILE_FALLBACK_ANIMATION_NAMES,
+          REQUIRED_RUNTIME_ANIMATION_NAMES
+        } from './src/pixi/spriteSheetAnimationLoader.js';
         import { ENEMIES } from './src/data/enemyRegistry.js';
         console.log(JSON.stringify({
           manifest: ASSET_MANIFEST,
           runtimeKeys: RUNTIME_COMPANION_ASSET_KEYS,
           policy: ILLUSTRATED_COMPANION_RUNTIME_POLICY,
+          profileFallbackAnimationNames: PROFILE_FALLBACK_ANIMATION_NAMES,
+          requiredRuntimeAnimationNames: REQUIRED_RUNTIME_ANIMATION_NAMES,
           enemyIds: Object.keys(ENEMIES)
         }));
         """
@@ -476,6 +482,8 @@ def run_asset_integrity(node: str):
     manifest = manifest_bundle["manifest"]
     runtime_keys = manifest_bundle["runtimeKeys"]
     policy = manifest_bundle["policy"]
+    required_animation_names = set(manifest_bundle.get("requiredRuntimeAnimationNames") or [])
+    profile_fallback_names = set(manifest_bundle.get("profileFallbackAnimationNames") or [])
     max_edge = int(policy.get("maxSheetEdge") or 4096)
     failures = []
     companion_summaries = []
@@ -531,6 +539,17 @@ def run_asset_integrity(node: str):
             failures.append(f"missing-runtime-manifest:{asset['id']}:{asset['runtimeManifest']}")
             continue
         data = json.loads(manifest_path.read_text(encoding="utf-8"))
+        approval_status = str(asset.get("approvalStatus") or "")
+        enforces_formal_catalog = (
+            approval_status.startswith("formal-")
+            or approval_status.startswith("primary-runtime-")
+        )
+        if enforces_formal_catalog:
+            for animation_id in sorted(required_animation_names - set(data)):
+                failures.append(f"missing-required-animation:{asset['id']}:{animation_id}")
+        if approval_status.startswith("formal-"):
+            for animation_id in sorted(set(data) - required_animation_names):
+                failures.append(f"unexpected-formal-animation:{asset['id']}:{animation_id}")
         unique_sheets = {}
         for animation_id, entry in data.items():
             sheet_path = root_path(entry["sheet"])
@@ -558,6 +577,8 @@ def run_asset_integrity(node: str):
             "id": asset["id"],
             "animations": len(data),
             "uniqueSheets": len(unique_sheets),
+            "requiredAnimations": len(required_animation_names) if enforces_formal_catalog else None,
+            "profileFallbacksAbsent": len(profile_fallback_names - set(data)),
             "manifest": asset["runtimeManifest"],
         })
 
@@ -940,6 +961,7 @@ def summarize(report):
     required.append(report["checks"]["raphaelAgent"]["ok"])
     required.append(report["checks"]["raphaelDialoguePolicy"]["ok"])
     required.append(report["checks"]["raphaelConstitutionPolicy"]["ok"])
+    required.append(report["checks"]["raphaelPersonaBoundary"]["ok"])
     required.append(report["checks"]["safetyTerminalInvariant"]["ok"])
     required.append(report["checks"]["safetyTerminalUi"]["ok"])
     required.append(report["checks"]["accessibilityProbe"]["ok"])
@@ -1028,6 +1050,12 @@ def main():
             "raphael_constitution_policy",
             "./src/ai/testHarness/constitutionSmokeCases.js",
             "runAllConstitutionSmokeCases",
+        )
+        report["checks"]["raphaelPersonaBoundary"] = run_raphael_policy_cases(
+            node,
+            "raphael_persona_boundary",
+            "./src/ai/testHarness/personaBoundaryEvalCases.js",
+            "runAllPersonaBoundaryCases",
         )
         report["checks"]["safetyTerminalInvariant"] = run_safety_terminal_invariant(node)
         report["checks"]["safetyTerminalUi"] = run_safety_terminal_ui(report["baseUrl"])

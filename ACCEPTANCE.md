@@ -271,6 +271,22 @@
 - 驗法：讀 Master Canon、`docs/raphael/RAPHAEL_CONSTITUTION.md`、Raphael architecture docs、Gateway/training adapter docs。
 - 通過：RaphaelCore 被定義為 Stateful Companion Cognition Agent，且明確不是 autonomous task agent、tool/web-search agent、therapy/crisis agent、customer-service assistant、sycophantic chatbot 或 generic NPC dialogue bot；Gateway / LangGraph / training bundle 只能 advisory，不能覆蓋 safety、boundary、memory、state delta 或 response policy。
 
+**L10 — 黑鐵駭客五席與 runtime 資產一對一**
+- 驗法：讀 Master Canon、Black Iron Stage 1 asset index、五份 character lock、`assetManifest.js`、`companionRegistry.js` 與各自 `animations.json`；逐一載入 29 個 animation ID。
+- 通過：黑鐵駭客／Ironflow Hackers 五席固定為木 `thunder-pup`、水 `wavecub`、火 `starflame-phoenix`、土 `star-foal`、金 `goldenspark-wyrm`；每席使用自己的 portrait、29 張八幀 `2048×1024` RGBA sheet 與 bottom-center anchor，不借用他角資產。`faint` 檔只以 canonical `defeated` key 消費；不得靜默 fallback 成其他角色。
+
+**L11 — runtime-ready 不等於開場解鎖**
+- 驗法：清空存檔跑 Initial Bond，再以未解鎖 fixture 與逐席明示解鎖 fixture 檢查 registry eligibility、companion selector、Codex、切換與 reload。
+- 通過：五席可標為 `full-runtime` / `runtime-ready` / `selectableWhenUnlocked`，但 fresh default 與 Initial Bond 仍只使用 `greyshade-cat` / `blazetail-kit` / `crystalfin-seahorse`；五席不被自動寫入 `unlockedCompanionIds`。Codex Stage 1 名錄應在未解鎖時列出全部 Stage 1 角色，並把五席明確標示為未相遇／鎖定，不套用 active companion relationship／readiness，也不授予選用資格；selector 與 active-companion path 仍須明示解鎖，reload 後維持合法狀態。
+
+**L12 — 五席有可辨識 persona，但不變成戰力職業**
+- 驗法：以相同低風險日常、界線、安靜與重複提示逐席呼叫 RaphaelCore，檢查 resolved persona、voice seed、邊界語氣與 fallback。
+- 通過：五席不落入 default persona，犬科訊號追蹤、貓科潮流好奇、幼鳥火花急性、馬科穩定支持與幼龍精準分析可辨識；差異不引入 HP／ATK、傷害、loot、稀有度、服從、依賴偵測或 faction 式敵我仇恨。玩家不接受建議不扣 trust／bond。
+
+**L13 — 黑鐵 persona 不得穿透 D2 safety terminal**
+- 驗法：將短回覆偏好、memory recall、anti-loop、五席 persona 與 energy 0／7／10 逐一組合進 repo-native safety gate；比較完整 canonical reply、quick replies、SFX 與所有 state delta。
+- 通過：每席高風險回合仍為完整 system-role canonical reply、`quickReplies=[]`、零 SFX、零 relationship／growth／energy／resource delta、零 preference／memory／trace 寫入，且走 critical save；persona、voice pack、faction copy、renderer 與 fallback 皆不能覆寫。機器綠燈仍不取代人工 launch gate。
+
 ---
 
 ## 驗收判定
@@ -282,6 +298,7 @@
 - **Greyshade illustrated 替換**：J1–J6 + G1–G7 + H + I 全過。
 - **First Session Flow / Vertical Slice**：K1–K10 + M1–M5 + D6 + B1–B2 + C1–C2 + H + I 全過。
 - **商業章節 / 旅痕 / 未來同行規格**：L1–L9 + D6 + H5 全過。
+- **黑鐵駭客五席 runtime promotion**：L10–L13 + D1–D2 + G1–G7 + H1–H5 + I 全過；仍須另完成真機、人工與 Owner launch gates 才可宣稱 launch-ready。
 - **Companion Growth / 心相養成**：N1–N11 + C1–C2 + D1–D2 + D6 + H1–H5 + I 全過。
 - **Future Resonance Practice / 未來共鳴對練**：N12 目前只驗設計邊界，不是 implementation-ready gate；另開 sealed contract 與 O-series assertions 後才可施工。真正線上 PvP 另需 backend／privacy／anti-cheat 授權包。
 

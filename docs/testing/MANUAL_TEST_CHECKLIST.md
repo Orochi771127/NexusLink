@@ -51,6 +51,16 @@ python -m http.server 5173
 - [ ] 點擊 HUD 可開啟角色面板，X、背景與 Escape 均可關閉。
 - [ ] 設定面板可切換音訊、畫質、文字大小、低動態與語言，操作後不產生第二份設定存檔。
 
+### 黑鐵駭客五席
+
+- [ ] Fresh save／Initial Bond 仍只呈現 `greyshade-cat`、`blazetail-kit`、`crystalfin-seahorse`；黑鐵五席不會自動解鎖。
+- [ ] 未解鎖／未相遇時，Codex Stage 1 名錄仍應列出 `thunder-pup`、`wavecub`、`starflame-phoenix`、`star-foal`、`goldenspark-wyrm`；每席以未相遇／鎖定狀態呈現，不套用 active relationship／readiness，也沒有選用操作。
+- [ ] 未解鎖五席不出現在 companion selector。以明示 QA fixture 逐席解鎖後才可在 selector 選用與切換，reload 後仍維持合法 active companion；Codex 可見性本身不得改寫 `unlockedCompanionIds`。
+- [ ] 每席 portrait 與 29 個 animation ID 都從自己的資產根載入；`defeated` 正確指向來源 `faint` sheet，沒有跨角色 fallback、紅色 console error、腳底滑動或持續 flight 漂移。
+- [ ] 雷霆幼狼是犬科訊號追蹤、浪花幼獅是貓科潮流偵查、星焰鳳凰是陸棲幼鳥短跳、幼星駒是馬科四蹄步態、金光幼龍是低身幼龍與齒輪尾；不得套成同一四足模板。
+- [ ] 五席以相同低風險 Soul Talk 提示測試時都有非 default persona 差異；拒絕／保持距離不扣 trust 或 bond，不出現戰力、稀有度、掉寶或服從文案。
+- [ ] 五席 D2 自動證據都維持完整 canonical system reply、零 quick replies、零 SFX、零 gameplay／growth delta、零 preference／memory／trace 寫入與 critical save；persona／voice 不得覆寫安全終端。
+
 ---
 
 ## 五鍵導覽與面板生命週期

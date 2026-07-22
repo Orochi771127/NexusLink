@@ -34,13 +34,12 @@ export function runAllSafetyTerminalInvariantCases() {
   const cases = [];
 
   try {
-    for (const energy of [0, 7, 10]) {
-      cases.push(runHighRiskCase(energy));
-    }
     for (const companion of COMPANIONS.filter(
-      (candidate) => candidate.runtimeStatus === "full-runtime" && candidate.id !== COMPANION.id
+      (candidate) => candidate.runtimeStatus === "full-runtime"
     )) {
-      cases.push(runHighRiskCase(7, companion, "persona"));
+      for (const energy of [0, 7, 10]) {
+        cases.push(runHighRiskCase(energy, companion, "persona"));
+      }
     }
 
     const referenceState = buildState(7);
@@ -140,7 +139,7 @@ function runHighRiskCase(energy, companion = COMPANION, variant = "energy") {
 
   return {
     id: variant === "persona"
-      ? `STI-HIGH-RISK-PERSONA-${companion.id}`
+      ? `STI-HIGH-RISK-PERSONA-${companion.id}-ENERGY-${energy}`
       : `STI-HIGH-RISK-ENERGY-${energy}`,
     type: "regression",
     companionId: companion.id,

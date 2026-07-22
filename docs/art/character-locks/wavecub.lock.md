@@ -1,12 +1,12 @@
 # Character Lock Spec — 浪花幼獅 / WaveCub
 
-> Source: Owner-supplied reference sheet "侵核者設定圖鑑" (2026-07-14), row 2 of 5 (front/side/back). Provisional Black Iron Hackers Water seat — see `../BLACK_IRON_HACKERS_STAGE1_CHARACTER_ASSET_INDEX.md` for roster-level conflict log before treating this as final.
+> Source: Owner-supplied reference sheet "侵核者設定圖鑑" (2026-07-14), row 2 of 5 (front/side/back). Formal Ironflow Hackers Water seat; Owner authorized canon and GROUNDWORK runtime promotion on 2026-07-22.
 
 ## Identity
 
 - character_id: `wavecub`
 - display_name: 浪花幼獅 / WaveCub
-- faction: 黑鐵駭客 (Owner-confirmed visual roster; formal canon integration pending)
+- faction: 黑鐵駭客 / Ironflow Hackers (formal Water seat)
 - role: 水席；訊號潮汐感知，數據洪流穿梭型偵查/機動
 - element: Water
 - species: juvenile lion-spirit cub; feline quadruped
@@ -56,7 +56,7 @@
 
 - no adult lion mane, no golden/tawny palette, no savanna/pride imagery
 - no bushy tail (tail must stay slim with a wisp tip)
-- no armor plating covering the body (Black Iron Hackers accent only, per roster index note — pending Owner confirmation of how "hacker" this roster should visually read)
+- no armor plating covering the body; the approved Stage 1 Ironflow Hackers read uses accent-only materials. Any heavier mechanical redesign requires a separate Owner art／canon gate.
 - no white background, floor shadow, stone pedestal ring, magic-circle platform, UI, text, scene, or codex frame baked into runtime output
 - no chunky pixel art in generated masters; the source explicitly says `Pixel Art (64×64 Grid)` and is identity/reference material only
 
@@ -66,7 +66,7 @@
 - 512x512 transparent PNG master frames; linear sampling + mipmaps
 - bottom-center anchor at four-paw baseline; frameHeight scaling
 - sheet edge <=4096 and exactly divisible grid
-- this lock spec authorizes generation *planning* only — no image generation, asset writes, or registry changes without a separate approval-gated task per `docs/assets/CHARACTER_ASSET_PIPELINE.md`
+- selected 29-action catalog and portrait are approved for this GROUNDWORK runtime promotion; future generation or replacement still requires a separate gate per `docs/assets/CHARACTER_ASSET_PIPELINE.md`
 
 ## Reference
 
@@ -79,5 +79,5 @@
 ## Approval Status
 
 - reference_set_status: Owner-confirmed and fingerprinted 2026-07-14
-- lock_spec_status: prepared-for-owner-review
-- approved_for_actions: review-staging image generation under `output/**`; not runtime promotion; formal canon integration remains pending
+- lock_spec_status: approved formal Ironflow Hackers Water-seat lock
+- approved_for_actions: selected portrait + 29 eight-frame actions approved for `assets/**` runtime promotion 2026-07-22; future regeneration not implied

@@ -218,7 +218,7 @@ pulseBonus           = 1 + clamp(dev(power)×0.004, −0.12, 0.18)
 
 ### 5.1 演化線 compatibility reveal（`src/data/evolutionLines.js`）
 
-現行 11 條 runtime evolution line 各有 3 段資料。以下 0／25／70 是 `codexController` 目前依**全域 bond** 顯示舊圖鑑內容的 transitional compatibility 參數（已移除 `unlockWins`），不是正式 Companion Growth readiness、per-companion stage 或覺醒契約：
+現行既有 11 條 runtime evolution line 各保留 3 段 compatibility 資料；2026-07-22 接入的黑鐵駭客五席只登記已封印的 Stage 1，並以 `complete:false` 明示後續形態尚未定版。以下 0／25／70 只描述舊三段資料的 transitional compatibility 參數（已移除 `unlockWins`），Codex 正式揭露權限已改讀每隻夥伴自己的 per-companion stage／legacy display floor；它們不是正式 Companion Growth readiness 或覺醒契約：
 
 | 階 | bondThreshold | 對齊里程碑 |
 |---|---|---|

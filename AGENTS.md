@@ -150,9 +150,10 @@ Acceptance refs:  <對應 ACCEPTANCE.md 的哪幾條>
 |------|------|-----|------|
 | 1 First Runtime Carrier | 灰影貓 | `greyshade-cat` | 第一個已驗證 runtime 載體、fresh save default / fallback；Initial Bond 後以選定者為 active companion |
 | 1 Formal Heartspark Council Stage 1 | 金羽小梟／芽角小鹿／晶鰭小海馬／焰尾小狐／星紋小虎 | `auriowl` / `sprigfawn` / `crystalfin-seahorse` / `blazetail-kit` / `starstripe-cub` | Owner 定版正式五行席位；現行皆為 `full-runtime` / `runtime-ready` / `selectableWhenUnlocked`，仍服從 Initial Bond、章節解鎖與意願制 |
+| 1 Formal Ironflow Hackers Stage 1 | 雷霆幼狼／浪花幼獅／星焰鳳凰／幼星駒／金光幼龍 | `thunder-pup` / `wavecub` / `starflame-phoenix` / `star-foal` / `goldenspark-wyrm` | 黑鐵駭客正式五行席位；現行皆為 `full-runtime` / `runtime-ready` / `selectableWhenUnlocked`，但初始鎖定、不自動解鎖、不加入 Initial Bond |
 | 1 Runtime Test Carriers | 焰紋狐／冰晶狼／磐石熊／青藤鹿／晶石兔 | `flame-flicker` / `ice-talon` / `stone-shard` / `vine-twist` / `crystal-rabbit` | 現行 `full-runtime` 測試載體，不占正式心輝議會五行席位；未來用途待 Owner 另開 canon/migration 包 |
 | 2 Chapter Runtime Candidate | 焰尾狐 | `flametail-fox` | 仍可作章節候選；舊靜態圖已因內容錯誤移除，需新 approved asset 才能成為 runtime candidate；不可成為灰影貓 fallback |
-| 3 Roadmap Runtime Candidate | 雷霆幼狼 / 星能小山豬 | `thunder-pup` / `star-energy-boarlet` | 可逐章節升級為 runtime candidate；未通過 asset readiness 前不可選 |
+| 3 Roadmap Runtime Candidate | 星能小山豬 | `star-energy-boarlet` | 可逐章節升級為 runtime candidate；未通過 asset readiness 前不可選 |
 
 圖鑑中的水晶海馬 / 青葉麋鹿為既有 placeholder 展示資料；可列為 future runtime candidate，但必須先完成正式 companion spec、512×512 transparent master asset、human approval 與 asset readiness gate。多角色版本首版仍維持「同一時間只有一隻 active companion」。未來可做同行／組隊內容，但必須是章節後期、非戰力導向、非普通收集 RPG。
 
@@ -163,6 +164,7 @@ Acceptance refs:  <對應 ACCEPTANCE.md 的哪幾條>
 - Greyshade Cat 是 fresh save 的 default / 壞資料 fallback；Initial Bond 已上線，fresh trio 固定為 `greyshade-cat` / `blazetail-kit` / `crystalfin-seahorse`，選定後 active / unlocked 只保留選定者。Veteran 存檔保留既有解鎖。
 - 可以有多個 runtime-ready companion（目前 `flame-flicker` / `ice-talon` / `stone-shard` / `vine-twist` / `crystal-rabbit` 已是 `full-runtime` / `runtime-ready` 並可選，但屬測試載體，不是正式五元守護 roster）。
 - 正式五元守護 `auriowl` / `sprigfawn` / `crystalfin-seahorse` / `blazetail-kit` / `starstripe-cub` 已通過資產與 GROUNDWORK promotion，registry 為 `full-runtime` / `runtime-ready` / `selectableWhenUnlocked`。是否能選仍由 `unlockedCompanionIds`、chapter gate 與產品意願制決定，runtime-ready 不等於預設全解鎖。
+- 黑鐵駭客（Ironflow Hackers）正式五席 `thunder-pup` / `wavecub` / `starflame-phoenix` / `star-foal` / `goldenspark-wyrm` 已通過各自的資產與 GROUNDWORK promotion，registry 同為 `full-runtime` / `runtime-ready` / `selectableWhenUnlocked`。五席初始保持鎖定；Codex Stage 1 名錄應預先列出全部 Stage 1 角色並標示未相遇／鎖定，但 companion selector／active companion 仍須先合法解鎖，且不得改寫 Initial Bond 三席。Codex 可見不建立 relationship、readiness 或選用資格。
 - 【2026-07-06 Owner 修訂，見 Master Canon §1.3.1】棲地日常仍以單一 active companion 為情感主體；**對峙可組共鳴圈**：最多三隻已結緣夥伴同場面對裂隙雜訊。
 - 共鳴圈不是戰力隊伍：無輸出排行、無等級裝備、無屬性刷關、無站位商品化；夥伴以五行心相與陪伴姿態參與，各有自身疲勞與邊界（過勞會先退到圈外）。
 - 夥伴加入採**意願制**：章節通關解鎖「共鳴邀請」資格，由牠依關係狀態回應；牠可以說「還不是時候」，且永遠可再培養。
@@ -171,8 +173,9 @@ Acceptance refs:  <對應 ACCEPTANCE.md 的哪幾條>
 - `defaultState.js` 的 fresh save 目前只解鎖 `greyshade-cat`；測試若需多角色，必須用明示 fixture / dev flow，不得把測試全解鎖寫回產品預設。
 - Greyshade 替換是 **asset-readiness-gated GROUNDWORK swap**：legacy 64 → illustrated 512，先並存後退役，audit 通過前不刪 legacy。
 - single-active-companion 模型不因替換而改變；灰影貓不得 fallback 到其他角色美術。
-- 註：`crystal-rabbit` 的 runtime 動畫資產暫借 `assets/characters/thunder-pup/` 目錄（命名債）；registry 的 `thunder-pup`（雷霆幼狼）與此為不同角色、維持原樣。
+- `crystal-rabbit` 已使用自己的 `assets/characters/crystal-rabbit/` runtime root；過去借用 `thunder-pup` 目錄的命名債已解除。
 - 正式五元守護共用 animation ID，但不得共用四足姿勢模板；鳥型、海馬懸浮、鹿型蹄步、狐型與虎型動作翻譯以 `docs/art/SPECIES_MOTION_TRANSLATION.md` 為準。
+- 黑鐵駭客五席共用 animation ID，但犬科、貓科、陸棲幼鳥、馬科與陸棲幼龍各自服從 `docs/art/BLACK_IRON_HACKERS_STAGE1_SPECIES_MOTION_TRANSLATION.md`；persona 只調整角色表達，D2 safety terminal 永遠先於 faction／persona。
 - 心域遠征保持 Prototype；現行 `expeditionCoreBridge.js` 的 `coreIntegrated:false` 是強制誠實標記，Owner seal、feel-check 與完整 Core 鏈未完成前不得升格為 commercial-ready。
 
 ### World faction model（Linkara）
@@ -180,6 +183,7 @@ Acceptance refs:  <對應 ACCEPTANCE.md 的哪幾條>
 - Linkara 世界地圖固定七區：東南熔爐丘陵區、中央輝耀核心區、北部翠綠平原區、南港、月湖營地、秘境山脈核心、西南潮汐邊疆區。
 - 三勢力固定為心輝議會、黑鐵駭客、混頓裂隙；玩家口語可見「混沌裂隙」，正式 canon 用「混頓裂隙」。
 - 三勢力各有金、木、水、火、土五個角色席位；副屬性只能作風格，不取代五行席位。
+- 黑鐵駭客正式英文名為 `Ironflow Hackers`；五席固定為木 `thunder-pup`、水 `wavecub`、火 `starflame-phoenix`、土 `star-foal`、金 `goldenspark-wyrm`。
 - 灰影貓與星能小山豬是中立心核生命，不屬於三勢力，也不占五行 roster。
 
 ---
