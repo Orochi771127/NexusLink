@@ -1,6 +1,7 @@
 import { runRaphaelCore } from "../raphaelCore.js";
 import { detectForbiddenPhrases } from "../forbiddenPhrases.js";
 import { clearSessionPreferenceProfiles } from "../companionPreferenceProfile.js";
+import { clearDialogueState } from "../dialogue/dialogueStateTracker.js";
 import { RESPONSE_STRATEGIES } from "../responseStrategySelector.js";
 
 const GREYSHADE = Object.freeze({
@@ -186,6 +187,10 @@ function resolveMemories(preset, now) {
 
 export function runStage4PlaytestCase(testCase) {
   const now = Date.now();
+  // 每個案例獨立 session，避免 recentTurns 污染後續「還記得…」題。
+  clearSessionPreferenceProfiles();
+  clearDialogueState(`s4-${testCase.id}`);
+  clearDialogueState("default");
   const state = {
     ...BASE_STATE,
     ...(testCase.state || {}),
@@ -198,7 +203,8 @@ export function runStage4PlaytestCase(testCase) {
     now,
     idSuffix: "s4",
     companion: GREYSHADE,
-    repeated: false
+    repeated: false,
+    sessionKey: `s4-${testCase.id}`
   });
 
   const reply = coreResult.reply || coreResult.output?.reply || "";
