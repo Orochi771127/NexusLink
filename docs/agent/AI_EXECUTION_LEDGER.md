@@ -4345,24 +4345,28 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Lane: `Game Art, UI, And Visual Production`.
 - Required reading: `styles/ui-v3-onboarding.css` `.first-loop-hint*`.
 
-### 2026-07-22 - Cursor - Soul Talk Diversity + Short-Term Recall - IN PROGRESS
+### 2026-07-22 - Cursor - Soul Talk Diversity + Short-Term Recall - VERIFIED
 
-- Status: `IN PROGRESS`; Owner authorized auto-continue after #122.
+- Status: `VERIFIED` on `main` / `b0980ea` (PR #123).
 - Lane: `Raphael Core, Companion Reasoning, And Soul Talk`.
-- Task name: `TP-SOUL-TALK-DIVERSITY-SHORT-MEMORY`.
-- Scope: dialogue policy + session tracker + NLU memory builder only.
-  No GROUNDWORK / save schema / Pixi / index.html.
-- Root cause: (1) soft-assent／uncertainty pools had 2 lines each;
-  (2)「記得」hard-deny ignored `recentTurns`; (3) boundary carryover
-  hijacked daily recall after Q15-style turns.
+- Required reading: `docs/qa/soul-talk-diversity-short-memory-cases.mjs`,
+  `src/ai/dialogue/conversationAnswerPolicy.js`,
+  `src/ai/dialogue/dialogueStateTracker.js`.
+
+### 2026-07-22 - Cursor - Caution Help-Exit + A9-A11 Reverify - IN PROGRESS
+
+- Status: `IN PROGRESS`; Owner authorized auto-continue after #123.
+- Lane: `Raphael Core` + First-Session verification.
+- Task name: `TP-CAUTION-HELP-EXIT-AND-A9-A11`.
+- Scope: caution safe_harbor copy + actionPlanner guard; docs playtest update.
+  No GROUNDWORK / save schema.
+- Root cause (Q26): caution `/消失/` entered safe_harbor but QUESTION override
+  produced weak NLU filler without real-world help exit.
 - Work performed:
-  - Expand soft-assent／uncertainty pools + `pickAvoidingOpenings`.
-  - `applyRecentDialogueContext` session recall from `recentTurns`;
-    skip boundary carryover on daily recall inputs.
-  - `MEMORY_REFERENCE` / policy ground `recalledDetail`.
-  - Regression: `docs/qa/soul-talk-diversity-short-memory-cases.mjs`.
-- Verification: diversity+memory cases PASS; dialogueLoop OK;
-  dependency-invitation 4/4 PASS; wording quality pending CI.
+  - `buildCautionHarborReply` + `shouldUseCautionHelpExit` (exclude leave-ask).
+  - `responseComposer` locks caution help-exit; `actionPlanner` blocks QUESTION override.
+  - Regression: `docs/qa/caution-safe-harbor-help-exit-cases.mjs`.
+  - A9–A11 re-verified on URL **without** `?devReset=1`.
 - Next safe action: protected PR → `web-release-gate` → merge `main`.
 
 ### 2026-07-22 - Cursor - First-Loop Hint Clear Face - SUPERSEDED
