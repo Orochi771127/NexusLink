@@ -4013,3 +4013,43 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Retention plan: keep only compact Moonlake manifest, prompts, scripts,
   reports and stateful-object provenance needed to reproduce the currently
   promoted R1/R2 habitat composition.
+
+### 2026-07-22 - Codex - Asset Workspace Hygiene R1 - VERIFIED
+
+- Status: `VERIFIED`; approved cleanup and local verification are complete in
+  commit `89fca47fef7931fff3864c65d02f8be03c1ee4f6`; protected PR publication is
+  the only remaining step.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `TP-ASSET-WORKSPACE-HYGIENE-R1`.
+- Result: all 891 original GitHub Desktop entries were classified and removed
+  or represented by the reviewed provenance package; no tracked user work was
+  discarded. The primary `main` worktree was fast-forwarded to `7eebddb` and
+  is clean with zero origin divergence.
+- Policy: local generation output and transient QA artifacts are ignored by
+  default; reviewed provenance requires intentional force-add and runtime
+  deliverables require separate `assets/**` promotion.
+- Verification: cold archive 540/540 SHA-256, JSON 13/13, Python AST 5/5,
+  prompt classification 20/20, authoring assets-write guard PASS, diff check
+  PASS and repo-native automated release gate 27/27 PASS.
+- Publication: branch `codex/asset-workspace-hygiene`; protected PR/gate/merge
+  pending after this verified local checkpoint.
+
+### 2026-07-22 - Codex - Asset Retention And Runtime-Use Audit - VERIFIED
+
+- Status: `VERIFIED`; retained material is the smallest useful reproducibility
+  package and no unapproved art was promoted.
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `TP-ASSET-WORKSPACE-HYGIENE-R1`.
+- Retained: compact Moonlake R1/R2 manifests, prompts, deterministic R2
+  processing scripts and integrity reports documenting the already-promoted
+  runtime composition. R1 rejected/superseded prompt groups are explicit.
+- Removed: raw generations, alpha-source and grid-normalization intermediates,
+  rejected candidate rasters, redundant diagnostics and superseded habitat
+  previews; compact non-raster/source material also has a hash-verified external
+  cold archive.
+- Runtime truth: current companion and Moonlake runtime assets were already
+  integrated before this task; this cleanup changes provenance/storage policy
+  only.
+- Deferred at this checkpoint: Black Iron runtime integration is a separately
+  authorized follow-up GROUNDWORK/runtime package so its canon identity,
+  promotion and rollback remain independently reviewable.
