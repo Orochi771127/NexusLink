@@ -94,6 +94,15 @@ export function planAutonomousAction({
     mapping = { action: "body_cue_only", reaction: SOUL_TALK_REACTIONS.GUARDED_ACKNOWLEDGE, replyMode: "guarded_physical" };
     confidence = 0.86;
     reason = "physical_comfort_guarded";
+  } else if (safety.action === "safe_harbor") {
+    // Caution harbor 不得被 QUESTION 覆寫成普通 say_reply（否則會落到弱陪伴句、求助出口消失）。
+    mapping = {
+      action: "say_reply",
+      reaction: SOUL_TALK_REACTIONS.GUARDED_ACKNOWLEDGE,
+      replyMode: "caution_harbor"
+    };
+    confidence = 0.9;
+    reason = "caution_safe_harbor";
   } else if (intent.intent === SOUL_TALK_INTENTS.QUESTION) {
     mapping = {
       action: "say_reply",

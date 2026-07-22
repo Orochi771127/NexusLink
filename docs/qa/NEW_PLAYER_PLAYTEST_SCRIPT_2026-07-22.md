@@ -17,9 +17,9 @@
 | A6 | First Touch | 輕觸夥伴有動畫＋主畫面浮字回饋 | PASS（浮字「牠睜開眼睛，慢慢醒了過來。」） |
 | A7 | First Soul Talk | 可開啟心語、送出第一句、有回覆 | PASS |
 | A8 | First Trace | 對話後棲地留下痕跡／微光 | PASS（對話後 traces=8、memories=8） |
-| A9 | Explore（月湖） | 可開探索、無任務壓迫語氣 | NOT VERIFIED（reload 前導覽批次因 `?devReset=1` 重整被中斷） |
-| A10 | Care / Growth / Memory | 四 nav 可開、內容可讀、無戰力／HP 語言 | NOT VERIFIED（同上） |
-| A11 | Reload 保留 | 重整後 onboarding 不重跑、痕跡仍在 | INVALID THIS RUN：URL 仍帶 `?devReset=1`，重整會刻意清空；非產品回歸證據 |
+| A9 | Explore（月湖） | 可開探索、無任務壓迫語氣 | PASS（無 `devReset`）：地圖文案「不是任務清單，也沒有要趕著抵達的地方」 |
+| A10 | Care / Growth / Memory | 四 nav 可開、內容可讀、無戰力／HP 語言 | PASS（無 `devReset`）：照顧「選擇一個安靜的行動」；無 HP／戰力用語 |
+| A11 | Reload 保留 | 重整後 onboarding 不重跑、痕跡仍在 | PASS（`http://127.0.0.1:8770/`）：reload 後 onboardingCompleted 仍 true、traces/probe 保留、onboarding UI 未重跑 |
 
 ## B. Raphael / Soul Talk 生活化提問清單（先記再測）
 
@@ -117,13 +117,14 @@
 - **不夠如流**：高頻模板句曾過多；本包已擴 soft-assent／uncertainty 池並避開近輪開頭（見 PR diversity）。
 - **記憶弱**：B4 加班／咖啡曾被邊界 carryover + memory hard-deny；本包改為 session `recentTurns` recall 接地。
 - **安全**：Q15／Q27 邊界好；Q26 有 safeHarbor 但求助出口不夠明顯；**Q28 已於 #121 修復**。
-- **體驗層**：first-loop hint 已於 #122 去藥丸；下一優先改為 A9–A11（無 `devReset`）與 Q26 求助出口。
+- **體驗層**：first-loop hint 已於 #122 去藥丸；A9–A11 已用不帶 `devReset` 重驗 PASS；Q26 caution 求助出口本包修復。
 
 ## E. 建議下一包（給 Owner 決策）
 
 1. ~~Soul Talk：降低模板重複、加強短程記憶引用、修 Q28~~（已做）。
 2. ~~First-loop touch hint~~（#122）。
-3. 重跑 A9–A11：用**不帶** `devReset` 的 URL 驗證導覽與 reload 持久化；Q26 求助出口文案。
+3. ~~重跑 A9–A11 / Q26 求助出口~~（本包）。
+4. 之後可選：energy=0 時回覆更扁的體感、回覆多樣性持續觀察。
 
 ## F. 本輪不做
 

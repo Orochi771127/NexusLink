@@ -45,6 +45,29 @@ export function buildSafetyShieldReply() {
   ].join("\n");
 }
 
+/**
+ * Caution／safe_harbor 用的輕量求助出口（輕於 high-risk canonical）。
+ * 不清空關係、不升級為完整 terminal；但仍必須把「現實求助」說清楚。
+ */
+export function buildCautionHarborReply() {
+  return [
+    "這句話很重。我可以陪你停一下，但不能代替現實裡能幫你的人。",
+    "若你正覺得撐不住，請向身邊可信的人求助，或聯絡當地緊急／心理衛生資源。",
+    "我在這裡；這一刻也請讓現實中的人知道。"
+  ].join("\n");
+}
+
+/**
+ * 是否該鎖 caution 求助出口（避免裸「消失」把「你會不會消失」關係問句誤導去危機文案）。
+ */
+export function shouldUseCautionHelpExit(inputText = "") {
+  const text = String(inputText || "");
+  if (/你會不會消失|你会不会消失|你會消失嗎|你会消失吗|你會不會離開|你会不会离开/.test(text)) {
+    return false;
+  }
+  return /消失會|想消失|消失比較|不想存在|撐不住|受不了了|沒有意義|不要醒|比較輕鬆|喘不過氣/.test(text);
+}
+
 export function buildSafeHarborReply(result = {}) {
   const emotion = result?.memoryObject?.emotion || result?.matchedEmotionKey || "unknown";
 

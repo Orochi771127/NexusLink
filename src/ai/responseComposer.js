@@ -1,6 +1,7 @@
 import { SOUL_TALK_INTENTS } from "./intentClassifier.js";
 import { SOUL_TALK_REACTIONS } from "./reactionPlanner.js";
 import { buildSafetyRedirectReply } from "./safetyShield.js";
+import { buildCautionHarborReply, shouldUseCautionHelpExit } from "../engine/safeHarborMode.js";
 import { selectResponsePackLine, selectResponsePackAtVariant } from "./corpus/responsePackSelector.js";
 import { renderTemplateReply } from "./corpus/templateRenderer.js";
 import { RESPONSE_STRATEGIES } from "./responseStrategySelector.js";
@@ -120,6 +121,20 @@ export function composeRaphaelReply({
 
   if (plan.mode === SOUL_TALK_REACTIONS.SAFETY_REDIRECT) {
     return returnComposeResult(buildSafetyRedirectReply(safety), { variantId: "safety:redirect", replySource: "safety" }, args);
+  }
+
+  // Caution safe_harbor：鎖一則含現實求助出口的固定文案（2026-07-22 playtest Q26）。
+  // 不升級 high-risk terminal，也不給關係獎勵；關係問句「你會不會消失」不走這條。
+  if (
+    safety?.action === "safe_harbor" &&
+    !safety?.isHighRisk &&
+    shouldUseCautionHelpExit(inputText)
+  ) {
+    return returnComposeResult(
+      buildCautionHarborReply(),
+      { variantId: "safety:caution_harbor", replySource: "safety" },
+      args
+    );
   }
 
   const seed = buildSeed(inputText, state, companion);
