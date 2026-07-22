@@ -291,20 +291,29 @@ html[data-ui="v2"] {
   --ambient-msg-bottom: calc(var(--bottom-safe, 0px) + var(--nav-block-h, 104px) + 128px);
 }
 
+/* 首輪提示：與 .companion-feedback 同語彙——無藥丸底框、左半側靠右對齊朝向角色。
+   touch 階段抬到 --touch-affordance-y 上方，避免蓋住身體／臉；talk／trace 留在 ambient 底線。 */
 html[data-ui="v2"] .first-loop-hint-wrap {
   position: fixed;
-  left: 50%;
+  left: 12px;
+  right: calc(50% + 14px);
   bottom: var(--ambient-msg-bottom);
-  transform: translateX(-50%);
+  transform: none;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-end;
   gap: 6px;
-  max-width: min(82vw, 420px);
+  max-width: none;
   opacity: 0;
   pointer-events: none;
   z-index: calc(var(--z-nav, 30) + 2);
   transition: opacity 400ms ease;
+}
+
+html[data-ui="v2"] body[data-first-loop-stage="touch"] .first-loop-hint-wrap {
+  bottom: auto;
+  top: var(--touch-affordance-y, 60%);
+  transform: translateY(calc(-100% - 28px));
 }
 
 html[data-ui="v2"] .first-loop-hint-wrap.is-visible {
@@ -314,14 +323,18 @@ html[data-ui="v2"] .first-loop-hint-wrap.is-visible {
 
 html[data-ui="v2"] .first-loop-hint {
   margin: 0;
-  padding: 8px 16px;
-  border: 1px solid rgba(138, 217, 255, 0.22);
-  border-radius: 999px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
   color: #dff3ff;
-  background: rgba(10, 16, 32, 0.78);
+  background: transparent;
   font-size: 13px;
   line-height: 1.45;
-  text-align: center;
+  text-align: right;
+  text-shadow:
+    0 1px 2px rgba(2, 6, 16, 0.98),
+    0 0 8px rgba(2, 6, 16, 0.84),
+    0 0 18px rgba(2, 6, 16, 0.72);
   white-space: normal;
   word-break: keep-all;
 }

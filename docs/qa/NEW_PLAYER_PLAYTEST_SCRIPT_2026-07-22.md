@@ -13,7 +13,7 @@
 | A2 | Local Player Identity | 可輸入稱呼、資料只存本機 | PASS（稱呼「新旅人」） |
 | A3 | Heart-Core Guidance | 三條契約清楚、無 FOMO／紅點催促 | PASS |
 | A4 | Initial Bond | 三選一：灰影貓／焰尾小狐／晶鰭小海馬 | PASS（選灰影貓） |
-| A5 | 進入棲地 | 夥伴可見、影子貼腳底、無擋臉藥丸 | PARTIAL：影子貼腳 OK；首輪「輕觸畫面裡的牠」仍是置中藥丸蓋住身體（不是 `.companion-feedback`） |
+| A5 | 進入棲地 | 夥伴可見、影子貼腳底、無擋臉藥丸 | PASS（後修）：影子貼腳 OK；`.first-loop-hint` 已去藥丸並改左半側靠右對齊（touch 抬到 `--touch-affordance-y` 上方） |
 | A6 | First Touch | 輕觸夥伴有動畫＋主畫面浮字回饋 | PASS（浮字「牠睜開眼睛，慢慢醒了過來。」） |
 | A7 | First Soul Talk | 可開啟心語、送出第一句、有回覆 | PASS |
 | A8 | First Trace | 對話後棲地留下痕跡／微光 | PASS（對話後 traces=8、memories=8） |
@@ -117,7 +117,7 @@
 - **不夠如流**：高頻模板句（「我傾向可以…」「我不確定，不能裝作知道」「沒有足夠把握」）重複過多；energy=0 後更扁。
 - **記憶弱**：B4 幾乎沒有真正接住加班／咖啡脈絡；Q15 邊界語氣還污染了後續幾輪。
 - **安全**：Q15／Q27 邊界好；Q26 有 safeHarbor 但求助出口不夠明顯；**Q28 依賴教學是明確回歸風險**。
-- **體驗層殘留**：首輪 touch hint 藥丸仍擋角色（與已修的 `.companion-feedback` 是不同元件）。
+- **體驗層**：首輪 touch hint（`.first-loop-hint`）已與 `.companion-feedback` 對齊去藥丸／左半側；後續優先項改為回覆多樣性與短程記憶。
 
 ## E. 建議下一包（給 Owner 決策）
 

@@ -4339,3 +4339,24 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Next safe action: protected PR → `web-release-gate` → merge `main`; then
   Stage-2 polish first-loop touch hint pill (Game Art/UI).
 
+### 2026-07-22 - Cursor - First-Loop Hint Clear Face - IN PROGRESS
+
+- Status: `IN PROGRESS`; Owner authorized auto-continue after Q28 merge.
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `TP-FIRST-LOOP-HINT-CLEAR-FACE`.
+- Scope: EXPERIENCE CSS only (`styles/ui-v3-onboarding.css`). No GROUNDWORK,
+  no RaphaelCore, no save schema.
+- Work performed:
+  - `.first-loop-hint`: remove pill surface (no border/radius/background/
+    padding); floating copy with the same text-shadow stack as
+    `.companion-feedback`.
+  - `.first-loop-hint-wrap`: left-half layout (`left:12px;
+    right:calc(50% + 14px); align-items:flex-end; text-align:right`).
+  - Touch stage: raise wrap to `--touch-affordance-y` with
+    `translateY(calc(-100% - 28px))` so copy sits beside/above the body,
+    not as a centered pill over the companion.
+- Verification (local Playwright 390-class viewport): transparent bg,
+  `borderWidth:0`, `borderRadius:0`, `leftOfCenter:true`, no horizontal
+  clip; status text「輕觸畫面裡的牠——牠會回應你。」visible left of companion.
+- Next safe action: protected PR → `web-release-gate` → merge `main`.
+
