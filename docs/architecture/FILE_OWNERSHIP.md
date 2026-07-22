@@ -140,7 +140,7 @@ src/ui/devPanelController.js      （Dev panel，低 production 風險）
 
 | 檔案 | 等級 | 原因 |
 |------|------|------|
-| `data/creatures.json` | 🟡 MEDIUM | 目前包含 greyshade-cat（Active Runtime）和 flametail-fox（Legacy/Fallback）。新增角色需正式任務授權，roadmap candidates（ThunderPup / Star-Energy Boarlet）不可擅自加入 |
+| `data/creatures.json` | 🟡 MEDIUM | 現行只保留 greyshade-cat 相容資料。焰尾狐由 canonical `blazetail-kit` runtime registry 承載；`flametail-fox` 只作 state migration alias，不得重新加入此檔或建立第二個角色。新增 roadmap candidate 仍需正式任務授權 |
 | `src/data/emotionDictionary.js` | 🟡 MEDIUM | 影響情緒分析結果 |
 | `src/data/safetyShieldDictionary.js` | 🟡 MEDIUM | 影響安全防護邏輯 |
 | `src/data/sceneLayout.js` | 🟡 MEDIUM | 影響場景物件座標 |

@@ -57,7 +57,7 @@ Its central promise:
 - Vanilla JS / ES Modules
 - localStorage persistence through `nexusLinkR2State:v1`
 - Greyshade Cat as default / fallback companion; **Initial Bond** now lets a fresh save pick one of three starters (Greyshade Cat / Blazetail Kit / Crystalfin Seahorse) instead of always defaulting
-- Formal Heartspark Council five-seat roster (金羽小梟 Auriowl · 芽角小鹿 Sprigfawn · 晶鰭小海馬 Crystalfin Seahorse · 焰尾小狐 Blazetail Kit · 星紋小虎 Starstripe Cub) is **canon-locked and asset-specced, not yet runtime-ready** — separate from the five animated `full-runtime` test-carrier creatures (ember fox / frost wolf / stone bear / vine stag / crystal rabbit), which exist as animation test carriers and are not the canon roster
+- Formal Heartspark Council five-seat roster (金羽小梟 Auriowl · 芽角小鹿 Sprigfawn · 晶鰭小海馬 Crystalfin Seahorse · 焰尾狐 Blazetail Kit, whose Stage 1 form is 焰尾小狐 · 星紋小虎 Starstripe Cub) is `full-runtime` / `runtime-ready`; it remains separate from the five animated test carriers (ember fox / frost wolf / stone bear / vine stag / crystal rabbit), which are not the canon roster
 - Companion Growth: G1 (session-only growth) and G2 (per-companion persistent relationship/growth state, offline recovery, multi-companion isolation) are **implemented and QA-passing**; G3 (companion-tagged readiness/evidence/willingness) is **not implemented**
 - Soul Talk emotional input
 - emotional memories and habitat traces

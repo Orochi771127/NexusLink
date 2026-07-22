@@ -287,6 +287,10 @@
 - 驗法：將短回覆偏好、memory recall、anti-loop、五席 persona 與 energy 0／7／10 逐一組合進 repo-native safety gate；比較完整 canonical reply、quick replies、SFX 與所有 state delta。
 - 通過：每席高風險回合仍為完整 system-role canonical reply、`quickReplies=[]`、零 SFX、零 relationship／growth／energy／resource delta、零 preference／memory／trace 寫入，且走 critical save；persona、voice pack、faction copy、renderer 與 fallback 皆不能覆寫。機器綠燈仍不取代人工 launch gate。
 
+**L14 — 焰尾狐身份與 legacy alias 只能收斂成一份真相**
+- 驗法：載入只含 `flametail-fox` 的 active／unlock／`companionStates.byId`／Growth evidence／preference／resonance 舊存檔；再載入新舊 ID 同時存在的衝突 fixture，normalize 兩次並檢查 Codex。
+- 通過：焰尾狐 canonical runtime ID 固定為 `blazetail-kit`，「焰尾小狐」只作 Stage 1 幼態名。舊 ID `flametail-fox` 單向遷移後完全消失；alias-only 資料保留在 canonical owner，canonical relationship／growth 不被舊資料覆寫，偏好與 resonance bounded 合併且不重複累加。Codex／selector／registry 只出現一隻焰尾狐，Initial Bond、解鎖、29 張動畫、Safety 與 Growth 規則不變。
+
 ---
 
 ## 驗收判定

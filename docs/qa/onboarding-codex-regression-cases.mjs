@@ -45,6 +45,16 @@ if (duplicateIds.length) {
 }
 
 const codexIds = new Set(codexEntries.map((entry) => entry.id));
+const flametailEntries = codexEntries.filter((entry) => entry.id === "blazetail-kit");
+if (codexIds.has("flametail-fox")) {
+  failures.push("legacy flametail-fox alias must not render as a second Codex character");
+}
+if (flametailEntries.length !== 1) {
+  failures.push(`canonical Flametail Codex count: expected 1; got ${flametailEntries.length}`);
+}
+if (getCompanionById("blazetail-kit")?.displayName?.zh !== "焰尾狐") {
+  failures.push("canonical blazetail-kit display name must be 焰尾狐");
+}
 const freshState = normalizeState({});
 for (const companionId of IRONFLOW_IDS) {
   const companion = getCompanionById(companionId);
@@ -112,13 +122,16 @@ if (numericLegacyHints.length) {
 }
 
 console.log(JSON.stringify({
-  total: 13,
+  total: 16,
   failed: failures.length,
   cases: {
     initialBondIds: actualIds,
     portraitsReady: actualIds.every((id) => Boolean(getCompanionById(id)?.image)),
     fullRuntime: actualIds.every((id) => getCompanionById(id)?.runtimeStatus === "full-runtime"),
     codexUniqueCount: codexEntries.length,
+    flametailCanonicalCount: flametailEntries.length,
+    flametailLegacyAliasHidden: !codexIds.has("flametail-fox"),
+    flametailDisplayName: getCompanionById("blazetail-kit")?.displayName?.zh,
     ironflowStage1Visible: IRONFLOW_IDS.every((id) => codexIds.has(id)),
     ironflowFullRuntime: IRONFLOW_IDS.every((id) => getCompanionById(id)?.runtimeStatus === "full-runtime"),
     ironflowFreshLocked: IRONFLOW_IDS.every((id) => !getCompanionRuntimeEligibility(id, freshState).canSelect),

@@ -1,18 +1,53 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-07-22T10:54:33+0800",
+  "generatedAt": "2026-07-22T13:55:35+0800",
   "repository": {
-    "head": "f45952636d1479e90a81ede905658b4aef864de9",
-    "originMain": "d1fd342b6216e98e4844a60c5d2292b87d022963",
-    "headMatchesOriginMain": false,
-    "trackedDirty": false,
-    "trackedChanges": [],
+    "head": "2d88aab4e8922d723416e336b2bb10e5cf177404",
+    "originMain": "2d88aab4e8922d723416e336b2bb10e5cf177404",
+    "headMatchesOriginMain": true,
+    "trackedDirty": true,
+    "trackedChanges": [
+      "ACCEPTANCE.md",
+      "AGENTS.md",
+      "CLAUDE.md",
+      "README.md",
+      "assets/README.md",
+      "assets/sprites/README.md",
+      "assets/sprites/flametail-fox/README.md",
+      "docs/Asset_Generation_Plan.md",
+      "docs/NexusLink_HomeScreen_DesignSpec_v1.md",
+      "docs/agent/AI_EXECUTION_LEDGER.md",
+      "docs/architecture/FILE_OWNERSHIP.md",
+      "docs/art/SPECIES_MOTION_TRANSLATION.md",
+      "docs/art/STAGE1_CHARACTER_ASSET_INDEX.md",
+      "docs/art/character-locks/blazetail-kit.lock.md",
+      "docs/assets/CHARACTER_ASSET_PIPELINE.md",
+      "docs/assets/ILLUSTRATED_RUNTIME_AUDIT.md",
+      "docs/prompts/README.md",
+      "docs/prompts/flametail-fox-prompts.md",
+      "docs/qa/companion-growth-state-cases.mjs",
+      "docs/qa/onboarding-codex-regression-cases.mjs",
+      "docs/qa/state-onboarding-migration-cases.mjs",
+      "docs/strategy/NEXUS_LINK_MASTER_CANON_v3.1.md",
+      "src/data/companionRegistry.js",
+      "src/data/companionRuntimePolicy.js",
+      "src/state/companionStateSchema.js",
+      "src/state/store.js"
+    ],
     "untrackedOutsideOutput": [],
     "protectedOutputUntrackedCount": 0,
-    "runtimeTreeClean": true,
-    "runtimeChanges": []
+    "runtimeTreeClean": false,
+    "runtimeChanges": [
+      "assets/README.md",
+      "assets/sprites/README.md",
+      "assets/sprites/flametail-fox/README.md",
+      "src/data/companionRegistry.js",
+      "src/data/companionRuntimePolicy.js",
+      "src/state/companionStateSchema.js",
+      "src/state/store.js"
+    ]
   },
-  "baseUrl": "http://127.0.0.1:5731",
+  "baseUrl": "http://127.0.0.1:5203",
   "server": "started_local_http_server",
   "node": "C:\\Users\\User\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
   "checks": {
@@ -32,10 +67,10 @@
           "docs/qa/state-onboarding-migration-cases.mjs"
         ],
         "exit_code": 0,
-        "duration_ms": 82,
+        "duration_ms": 79,
         "ok": true,
         "json": {
-          "total": 33,
+          "total": 35,
           "failed": 0,
           "cases": [
             {
@@ -52,6 +87,14 @@
             },
             {
               "name": "legacy active companion without unlock array is kept selectable",
+              "status": "passed"
+            },
+            {
+              "name": "legacy Flametail id migrates one-way to the shipped Blazetail identity",
+              "status": "passed"
+            },
+            {
+              "name": "canonical Flametail preference and bounded resonance merge win over the alias",
               "status": "passed"
             },
             {
@@ -182,7 +225,7 @@
           "docs/qa/storage-consolidation-cases.mjs"
         ],
         "exit_code": 0,
-        "duration_ms": 77,
+        "duration_ms": 71,
         "ok": true,
         "json": {
           "total": 13,
@@ -243,7 +286,7 @@
           ]
         },
         "stdout_tail": "{\n  \"total\": 13,\n  \"failed\": 0,\n  \"checks\": [\n    {\n      \"name\": \"legacy preference merged into state\",\n      \"pass\": true\n    },\n    {\n      \"name\": \"legacy audio mute merged into settings\",\n      \"pass\": true\n    },\n    {\n      \"name\": \"offline timestamp preserved during load\",\n      \"pass\": true\n    },\n    {\n      \"name\": \"preference key retained before canonical write\",\n      \"pass\": true\n    },\n    {\n      \"name\": \"audio key retained before canonical write\",\n      \"pass\": true\n    },\n    {\n      \"name\": \"failed canonical write reports failure\",\n      \"pass\": true\n    },\n    {\n      \"name\": \"preference key survives failed write\",\n      \"pass\": true\n    },\n    {\n      \"name\": \"audio key survives failed write\",\n      \"pass\": true\n    },\n    {\n      \"name\": \"canonical write succeeds\",\n      \"pass\": true\n    },\n    {\n      \"name\": \"canonical save contains preferences\",\n      \"pass\": true\n    },\n    {\n      \"name\": \"canonical save contains audio mute\",\n      \"pass\": true\n    },\n    {\n      \"name\": \"preference key removed only after success\",\n      \"pass\": true\n    },\n    {\n      \"name\": \"audio key removed only after success\",\n      \"pass\": true\n    }\n  ]\n}\n",
-        "stderr_tail": "[saveManager] Save failed: Error [SyntheticStorageError]: synthetic write failure\n    at Object.setItem (file:///C:/Users/User/NexusLink_RaphaelAI_Workspace/NexusLink-companion-growth-g2/docs/qa/storage-consolidation-cases.mjs:10:21)\n    at saveState (file:///C:/Users/User/NexusLink_RaphaelAI_Workspace/NexusLink-companion-growth-g2/src/state/saveManager.js:33:18)\n    at file:///C:/Users/User/NexusLink_RaphaelAI_Workspace/NexusLink-companion-growth-g2/docs/qa/storage-consolidation-cases.mjs:61:20\n"
+        "stderr_tail": "[saveManager] Save failed: Error [SyntheticStorageError]: synthetic write failure\n    at Object.setItem (file:///C:/Users/User/NexusLink_RaphaelAI_Workspace/NexusLink/docs/qa/storage-consolidation-cases.mjs:10:21)\n    at saveState (file:///C:/Users/User/NexusLink_RaphaelAI_Workspace/NexusLink/src/state/saveManager.js:33:18)\n    at file:///C:/Users/User/NexusLink_RaphaelAI_Workspace/NexusLink/docs/qa/storage-consolidation-cases.mjs:61:20\n"
       }
     },
     "companionRendererLifecycle": {
@@ -253,7 +296,7 @@
         "docs/qa/companion-renderer-lifecycle-cases.mjs"
       ],
       "exit_code": 0,
-      "duration_ms": 91,
+      "duration_ms": 89,
       "ok": true,
       "json": {
         "total": 29,
@@ -387,7 +430,7 @@
         "docs/qa/companion-growth-session-cases.mjs"
       ],
       "exit_code": 0,
-      "duration_ms": 65,
+      "duration_ms": 60,
       "ok": true,
       "json": {
         "total": 17,
@@ -476,7 +519,7 @@
       "duration_ms": 103,
       "ok": true,
       "json": {
-        "total": 23,
+        "total": 25,
         "failed": 0,
         "cases": [
           {
@@ -505,6 +548,14 @@
           },
           {
             "name": "canonical relationship wins over stale mirror and keeps known locked records",
+            "status": "passed"
+          },
+          {
+            "name": "legacy Flametail companion record migrates identity, Growth provenance and baseline key",
+            "status": "passed"
+          },
+          {
+            "name": "canonical Blazetail record wins when the legacy alias also exists",
             "status": "passed"
           },
           {
@@ -583,7 +634,7 @@
         "docs/qa/companion-growth-g3-engine-cases.mjs"
       ],
       "exit_code": 0,
-      "duration_ms": 75,
+      "duration_ms": 79,
       "ok": true,
       "json": null,
       "stdout_tail": "\nPASS fixed source and tendency aliases normalize before identity creation\nPASS all seven deterministic factories produce the contract keys\nPASS same normalized action replayed 50 times records one immutable root\nPASS valid chapter branches are readiness-equal and share one event root\nPASS sealed high-risk provenance survives delayed UI clearing and descendants\nPASS missing safety provenance and incomplete events fail closed\nPASS all standoff outcomes are readiness-equal and share one encounter root\nPASS same-root optional repair can seal consent without adding readiness weight\nPASS reserved capacity prevents one-family soft lock and remains reachable\nPASS detail 25 compacts deterministically while preserving references and coverage\nPASS consumed roots cannot cross a new target window after detail compaction\nPASS corrupt growth, event identities, timestamps and companion ownership fail closed\nPASS readiness requires 3 then 4 families, consent anchor and chapter profile\nPASS typed willingness is separate and ignores bond, defense and elapsed time\nPASS deferred willingness needs a new typed context, never a timer\nPASS readiness and coverage remain unchanged after a 30-day clock jump\n",
@@ -596,7 +647,7 @@
         "docs/qa/companion-growth-g3-runtime-cases.mjs"
       ],
       "exit_code": 0,
-      "duration_ms": 83,
+      "duration_ms": 86,
       "ok": true,
       "json": null,
       "stdout_tail": "Companion Growth G3 runtime cases: 16/16 passed\nPASS completed exploration writes once and survives normalization\nPASS canonical store transaction preserves the Growth write\nPASS real Heart Phase acceptance owns one deterministic care root\nPASS rest decline pending rewrite and player deferral write zero care evidence\nPASS care writer rejects impossible or tampered Heart Phase results\nPASS explicitly accepted companion rewrite seals one consent anchor\nPASS safe harbor cannot be washed false by a care source override\nPASS care completion cannot cross a companion switch\nPASS all standoff settlements share one root and equal readiness weight\nPASS safe harbor and incomplete safety provenance write nothing\nPASS active companion owner guard keeps A and B isolated\nPASS presentation exposes qualitative enums but no raw ids, counts or timestamps\nPASS presentation folds repeated source and tendency rows into one qualitative trace\nPASS readiness signal ignores defense and does not decay after thirty days\nPASS typed fatigue and boundary only change qualitative willingness after readiness\nPASS safety view model is terminal and contains no Growth presentation\n",
@@ -609,7 +660,7 @@
         "docs/qa/verify_i18n_strings.mjs"
       ],
       "exit_code": 0,
-      "duration_ms": 58,
+      "duration_ms": 60,
       "ok": true,
       "json": null,
       "stdout_tail": "[OK] tc: 417 keys complete\n[OK] sc: 417 keys complete\n[OK] en: 417 keys complete\n[OK] jp: 417 keys complete\n\nTotal keys: 417\n",
@@ -622,7 +673,7 @@
         "docs/qa/session-owner-guard-cases.mjs"
       ],
       "exit_code": 0,
-      "duration_ms": 62,
+      "duration_ms": 65,
       "ok": true,
       "json": null,
       "stdout_tail": "PASS matching session owner is accepted\nPASS different active companion fails closed\nPASS missing or malformed owner IDs fail closed\nPASS battle settlement validates owner before summary or state mutation\nPASS battle delayed noise turn validates owner before applying a turn\nPASS battle mismatch abort only tears down UI state\nPASS expedition settlement validates owner before building or publishing settlement\nPASS expedition update validates owner before simulation advances\nPASS expedition mismatch abort only tears down the scene and UI\nSESSION_OWNER_GUARD_SUMMARY 9/9\n",
@@ -635,10 +686,10 @@
         "docs/qa/onboarding-codex-regression-cases.mjs"
       ],
       "exit_code": 0,
-      "duration_ms": 81,
+      "duration_ms": 82,
       "ok": true,
       "json": {
-        "total": 13,
+        "total": 16,
         "failed": 0,
         "cases": {
           "initialBondIds": [
@@ -649,6 +700,9 @@
           "portraitsReady": true,
           "fullRuntime": true,
           "codexUniqueCount": 16,
+          "flametailCanonicalCount": 1,
+          "flametailLegacyAliasHidden": true,
+          "flametailDisplayName": "焰尾狐",
           "ironflowStage1Visible": true,
           "ironflowFullRuntime": true,
           "ironflowFreshLocked": true,
@@ -673,7 +727,7 @@
         },
         "failures": []
       },
-      "stdout_tail": "{\n  \"total\": 13,\n  \"failed\": 0,\n  \"cases\": {\n    \"initialBondIds\": [\n      \"greyshade-cat\",\n      \"blazetail-kit\",\n      \"crystalfin-seahorse\"\n    ],\n    \"portraitsReady\": true,\n    \"fullRuntime\": true,\n    \"codexUniqueCount\": 16,\n    \"ironflowStage1Visible\": true,\n    \"ironflowFullRuntime\": true,\n    \"ironflowFreshLocked\": true,\n    \"ironflowHasNoAdventureProfile\": true,\n    \"ironflowExpeditionFailClosed\": true,\n    \"activeFormalStage\": {\n      \"formalStage\": \"final_awakened\",\n      \"revealStage\": \"final_awakened\",\n      \"isLegacyArchive\": false\n    },\n    \"inactiveArchiveStage\": {\n      \"formalStage\": \"initial_awakened\",\n      \"revealStage\": \"final_awakened\",\n      \"isLegacyArchive\": true\n    },\n    \"unrelatedBondIsolation\": {\n      \"formalStage\": \"initial_awakened\",\n      \"revealStage\": \"initial_awakened\",\n      \"isLegacyArchive\": false\n    },\n    \"numericLegacyHintCount\": 0\n  },\n  \"failures\": []\n}\n",
+      "stdout_tail": "{\n  \"total\": 16,\n  \"failed\": 0,\n  \"cases\": {\n    \"initialBondIds\": [\n      \"greyshade-cat\",\n      \"blazetail-kit\",\n      \"crystalfin-seahorse\"\n    ],\n    \"portraitsReady\": true,\n    \"fullRuntime\": true,\n    \"codexUniqueCount\": 16,\n    \"flametailCanonicalCount\": 1,\n    \"flametailLegacyAliasHidden\": true,\n    \"flametailDisplayName\": \"焰尾狐\",\n    \"ironflowStage1Visible\": true,\n    \"ironflowFullRuntime\": true,\n    \"ironflowFreshLocked\": true,\n    \"ironflowHasNoAdventureProfile\": true,\n    \"ironflowExpeditionFailClosed\": true,\n    \"activeFormalStage\": {\n      \"formalStage\": \"final_awakened\",\n      \"revealStage\": \"final_awakened\",\n      \"isLegacyArchive\": false\n    },\n    \"inactiveArchiveStage\": {\n      \"formalStage\": \"initial_awakened\",\n      \"revealStage\": \"final_awakened\",\n      \"isLegacyArchive\": true\n    },\n    \"unrelatedBondIsolation\": {\n      \"formalStage\": \"initial_awakened\",\n      \"revealStage\": \"initial_awakened\",\n      \"isLegacyArchive\": false\n    },\n    \"numericLegacyHintCount\": 0\n  },\n  \"failures\": []\n}\n",
       "stderr_tail": ""
     },
     "companionGrowthUi": {
@@ -683,7 +737,7 @@
         "docs/qa/_run_companion_growth_g1_browser_gate.py"
       ],
       "exit_code": 0,
-      "duration_ms": 29103,
+      "duration_ms": 27597,
       "ok": true,
       "json": {
         "checks": [
@@ -729,14 +783,14 @@
                     "chapterNo": 1,
                     "memoryId": null,
                     "traceId": null,
-                    "createdAt": 1784688892802,
+                    "createdAt": 1784699782114,
                     "growthSafetyExcluded": false,
                     "legacyAttributed": false
                   }
                 ],
                 "coverage": {
                   "targetStage": "resonant_mature",
-                  "windowOpenedAt": 1784688892110,
+                  "windowOpenedAt": 1784699781472,
                   "rootsBySourceType": {
                     "care": [
                       "care:1:heart_phase_practice"
@@ -755,7 +809,7 @@
                 ],
                 "offeredStage": null,
                 "deferredAt": null,
-                "lastGrowthEventAt": 1784688892802,
+                "lastGrowthEventAt": 1784699782114,
                 "migration": {
                   "appliedVersion": 1,
                   "legacyStageFloor": "initial_awakened",
@@ -776,14 +830,14 @@
                     "chapterNo": 1,
                     "memoryId": null,
                     "traceId": null,
-                    "createdAt": 1784688892802,
+                    "createdAt": 1784699782114,
                     "growthSafetyExcluded": false,
                     "legacyAttributed": false
                   }
                 ],
                 "coverage": {
                   "targetStage": "resonant_mature",
-                  "windowOpenedAt": 1784688892110,
+                  "windowOpenedAt": 1784699781472,
                   "rootsBySourceType": {
                     "care": [
                       "care:1:heart_phase_practice"
@@ -802,7 +856,7 @@
                 ],
                 "offeredStage": null,
                 "deferredAt": null,
-                "lastGrowthEventAt": 1784688892802,
+                "lastGrowthEventAt": 1784699782114,
                 "migration": {
                   "appliedVersion": 1,
                   "legacyStageFloor": "initial_awakened",
@@ -845,7 +899,7 @@
                 "lastRejectAt": null,
                 "blockedTouchCount": 0,
                 "lastBlockedTouchAt": null,
-                "lastSeenAt": 1784688892624,
+                "lastSeenAt": 1784699781936,
                 "timeAnomalyCount": 0,
                 "firstTouchCompleted": true,
                 "firstHugCompleted": true,
@@ -866,25 +920,25 @@
                 "playerProfile": {
                   "displayName": "Growth QA",
                   "identitySkipped": false,
-                  "createdAt": 1784688891306,
-                  "updatedAt": 1784688891306
+                  "createdAt": 1784699780721,
+                  "updatedAt": 1784699780721
                 },
                 "onboarding": {
                   "version": 1,
                   "status": "completed",
                   "completed": true,
-                  "completedAt": 1784688891306,
+                  "completedAt": 1784699780721,
                   "startedAt": null,
                   "identityCompleted": true,
                   "guidanceCompleted": true,
-                  "greyshadeMetAt": 1784688891306,
+                  "greyshadeMetAt": 1784699780721,
                   "veteranAutoCompleted": true,
                   "firstLoop": {
                     "skippedAt": null,
-                    "completedAt": 1784688891306
+                    "completedAt": 1784699780721
                   }
                 },
-                "firstSessionOpeningSeenAt": 1784688892109,
+                "firstSessionOpeningSeenAt": 1784699781471,
                 "activeHabitatId": "moonlake",
                 "activeCompanionId": "greyshade-cat",
                 "unlockedCompanionIds": [
@@ -915,7 +969,7 @@
                         "evidence": [],
                         "coverage": {
                           "targetStage": "resonant_mature",
-                          "windowOpenedAt": 1784688892110,
+                          "windowOpenedAt": 1784699781472,
                           "rootsBySourceType": {
                             "care": [],
                             "exploration": [],
@@ -997,7 +1051,7 @@
                 "lastRejectAt": null,
                 "blockedTouchCount": 0,
                 "lastBlockedTouchAt": null,
-                "lastSeenAt": 1784688892624,
+                "lastSeenAt": 1784699781936,
                 "timeAnomalyCount": 0,
                 "firstTouchCompleted": true,
                 "firstHugCompleted": true,
@@ -1018,25 +1072,25 @@
                 "playerProfile": {
                   "displayName": "Growth QA",
                   "identitySkipped": false,
-                  "createdAt": 1784688891306,
-                  "updatedAt": 1784688891306
+                  "createdAt": 1784699780721,
+                  "updatedAt": 1784699780721
                 },
                 "onboarding": {
                   "version": 1,
                   "status": "completed",
                   "completed": true,
-                  "completedAt": 1784688891306,
+                  "completedAt": 1784699780721,
                   "startedAt": null,
                   "identityCompleted": true,
                   "guidanceCompleted": true,
-                  "greyshadeMetAt": 1784688891306,
+                  "greyshadeMetAt": 1784699780721,
                   "veteranAutoCompleted": true,
                   "firstLoop": {
                     "skippedAt": null,
-                    "completedAt": 1784688891306
+                    "completedAt": 1784699780721
                   }
                 },
-                "firstSessionOpeningSeenAt": 1784688892109,
+                "firstSessionOpeningSeenAt": 1784699781471,
                 "activeHabitatId": "moonlake",
                 "activeCompanionId": "greyshade-cat",
                 "unlockedCompanionIds": [
@@ -1075,14 +1129,14 @@
                             "chapterNo": 1,
                             "memoryId": null,
                             "traceId": null,
-                            "createdAt": 1784688892802,
+                            "createdAt": 1784699782114,
                             "growthSafetyExcluded": false,
                             "legacyAttributed": false
                           }
                         ],
                         "coverage": {
                           "targetStage": "resonant_mature",
-                          "windowOpenedAt": 1784688892110,
+                          "windowOpenedAt": 1784699781472,
                           "rootsBySourceType": {
                             "care": [
                               "care:1:heart_phase_practice"
@@ -1101,7 +1155,7 @@
                         ],
                         "offeredStage": null,
                         "deferredAt": null,
-                        "lastGrowthEventAt": 1784688892802,
+                        "lastGrowthEventAt": 1784699782114,
                         "migration": {
                           "appliedVersion": 1,
                           "legacyStageFloor": "initial_awakened",
@@ -1167,7 +1221,7 @@
             "detail": [
               {
                 "key": "nexusLinkR2State:v1",
-                "value": "{\"bond\":12,\"trust\":12,\"mood\":\"calm\",\"energy\":6,\"spamScore\":0,\"lastMessage\":\"\",\"chatHistory\":[{\"role\":\"companion\",\"text\":\"我在這裡，安靜地看著你。\"}],\"defense\":35,\"touchFatigue\":1,\"lastTouchAt\":null,\"lastRejectAt\":null,\"blockedTouchCount\":0,\"lastBlockedTouchAt\":null,\"lastSeenAt\":1784688892804,\"timeAnomalyCount\":0,\"firstTouchCompleted\":true,\"firstHugCompleted\":true,\"reactionPreview\":\"\",\"lastTouchReaction\":\"\",\"memories\":[],\"habitatTraces\":[],\"memorySchemaVersion\":1,\"emotionalMemories\":[],\"safeHarborMode\":false,\"lastEmotionTag\":null,\"habitatRepairFactor\":0,\"companionPreferences\":{\"version\":1,\"updatedAt\":0,\"companions\":{}},\"playerProfile\":{\"displayName\":\"Growth QA\",\"identitySkipped\":false,\"createdAt\":1784688891306,\"updatedAt\":1784688891306},\"onboarding\":{\"version\":1,\"status\":\"completed\",\"completed\":true,\"completedAt\":1784688891306,\"startedAt\":null,\"identityCompleted\":true,\"guidanceCompleted\":true,\"greyshadeMetAt\":1784688891306,\"veteranAutoCompleted\":true,\"firstLoop\":{\"skippedAt\":null,\"completedAt\":1784688891306}},\"firstSessionOpeningSeenAt\":1784688892109,\"activeHabitatId\":\"moonlake\",\"activeCompanionId\":\"greyshade-cat\",\"unlockedCompanionIds\":[\"greyshade-cat\"],\"companionStates\":{\"version\":1,\"byId\":{\"greyshade-cat\":{\"relationship\":{\"bond\":12,\"trust\":12,\"mood\":\"calm\",\"energy\":6,\"defense\":35,\"touchFatigue\":1,\"lastTouchAt\":null,\"lastRejectAt\":null,\"blockedTouchCount\":0,\"lastBlockedTouchAt\":null,\"firstTouchCompleted\":true,\"firstHugCompleted\":true,\"reactionPreview\":\"\",\"lastTouchReaction\":\"\"},\"growth\":{\"stage\":\"initial_awakened\",\"evidence\":[{\"key\":\"care:1:heart_phase_practice:attunement\",\"rootContextKey\":\"care:1:heart_phase_practice\",\"companionId\":\"greyshade-cat\",\"tendency\":\"attunement\",\"sourceType\":\"care\",\"sourceId\":\"heart_phase_practice:attunement\",\"chapterNo\":1,\"memoryId\":null,\"traceId\":null,\"createdAt\":1784688892802,\"growthSafetyExcluded\":false,\"legacyAttributed\":false}],\"coverage\":{\"targetStage\":\"resonant_mature\",\"windowOpenedAt\":1784688892110,\"rootsBySourceType\":{\"care\":[\"care:1:heart_phase_practice\"],\"exploration\":[],\"reflection\":[],\"standoff\":[],\"chapter\":[],\"boundary\":[],\"recovery\":[]},\"consentAnchorRootKey\":null},\"consumedRootKeys\":[\"care:1:heart_phase_practice\"],\"offeredStage\":null,\"deferredAt\":null,\"lastGrowthEventAt\":1784688892802,\"migration\":{\"appliedVersion\":1,\"legacyStageFloor\":\"initial_awakened\",\"legacyCodexRevealFloor\":\"initial_awakened\",\"legacyBaselineKey\":\"legacy:v1:greyshade-cat:relationship\"}}}}},\"battleRecord\":{\"wins\":0,\"losses\":0,\"retreats\":0,\"lastResult\":null,\"lastBattleAt\":null},\"chapterProgress\":{\"current\":1,\"completed\":[]},\"resonance\":{\"chapterMarks\":{},\"companions\":{}},\"explorationProgress\":{\"totalExplorations\":0,\"lastNodeId\":null,\"visitCounts\":{}},\"expeditionVault\":{\"shards\":{},\"logs\":[],\"totalExpeditions\":0,\"lastExpeditionAt\":null},\"settings\":{\"volMaster\":80,\"volBgm\":70,\"volSfx\":80,\"quality\":\"high\",\"textSize\":\"medium\",\"lowMotion\":false,\"audioMuted\":false,\"lang\":\"tc\"}}"
+                "value": "{\"bond\":12,\"trust\":12,\"mood\":\"calm\",\"energy\":6,\"spamScore\":0,\"lastMessage\":\"\",\"chatHistory\":[{\"role\":\"companion\",\"text\":\"我在這裡，安靜地看著你。\"}],\"defense\":35,\"touchFatigue\":1,\"lastTouchAt\":null,\"lastRejectAt\":null,\"blockedTouchCount\":0,\"lastBlockedTouchAt\":null,\"lastSeenAt\":1784699782115,\"timeAnomalyCount\":0,\"firstTouchCompleted\":true,\"firstHugCompleted\":true,\"reactionPreview\":\"\",\"lastTouchReaction\":\"\",\"memories\":[],\"habitatTraces\":[],\"memorySchemaVersion\":1,\"emotionalMemories\":[],\"safeHarborMode\":false,\"lastEmotionTag\":null,\"habitatRepairFactor\":0,\"companionPreferences\":{\"version\":1,\"updatedAt\":0,\"companions\":{}},\"playerProfile\":{\"displayName\":\"Growth QA\",\"identitySkipped\":false,\"createdAt\":1784699780721,\"updatedAt\":1784699780721},\"onboarding\":{\"version\":1,\"status\":\"completed\",\"completed\":true,\"completedAt\":1784699780721,\"startedAt\":null,\"identityCompleted\":true,\"guidanceCompleted\":true,\"greyshadeMetAt\":1784699780721,\"veteranAutoCompleted\":true,\"firstLoop\":{\"skippedAt\":null,\"completedAt\":1784699780721}},\"firstSessionOpeningSeenAt\":1784699781471,\"activeHabitatId\":\"moonlake\",\"activeCompanionId\":\"greyshade-cat\",\"unlockedCompanionIds\":[\"greyshade-cat\"],\"companionStates\":{\"version\":1,\"byId\":{\"greyshade-cat\":{\"relationship\":{\"bond\":12,\"trust\":12,\"mood\":\"calm\",\"energy\":6,\"defense\":35,\"touchFatigue\":1,\"lastTouchAt\":null,\"lastRejectAt\":null,\"blockedTouchCount\":0,\"lastBlockedTouchAt\":null,\"firstTouchCompleted\":true,\"firstHugCompleted\":true,\"reactionPreview\":\"\",\"lastTouchReaction\":\"\"},\"growth\":{\"stage\":\"initial_awakened\",\"evidence\":[{\"key\":\"care:1:heart_phase_practice:attunement\",\"rootContextKey\":\"care:1:heart_phase_practice\",\"companionId\":\"greyshade-cat\",\"tendency\":\"attunement\",\"sourceType\":\"care\",\"sourceId\":\"heart_phase_practice:attunement\",\"chapterNo\":1,\"memoryId\":null,\"traceId\":null,\"createdAt\":1784699782114,\"growthSafetyExcluded\":false,\"legacyAttributed\":false}],\"coverage\":{\"targetStage\":\"resonant_mature\",\"windowOpenedAt\":1784699781472,\"rootsBySourceType\":{\"care\":[\"care:1:heart_phase_practice\"],\"exploration\":[],\"reflection\":[],\"standoff\":[],\"chapter\":[],\"boundary\":[],\"recovery\":[]},\"consentAnchorRootKey\":null},\"consumedRootKeys\":[\"care:1:heart_phase_practice\"],\"offeredStage\":null,\"deferredAt\":null,\"lastGrowthEventAt\":1784699782114,\"migration\":{\"appliedVersion\":1,\"legacyStageFloor\":\"initial_awakened\",\"legacyCodexRevealFloor\":\"initial_awakened\",\"legacyBaselineKey\":\"legacy:v1:greyshade-cat:relationship\"}}}}},\"battleRecord\":{\"wins\":0,\"losses\":0,\"retreats\":0,\"lastResult\":null,\"lastBattleAt\":null},\"chapterProgress\":{\"current\":1,\"completed\":[]},\"resonance\":{\"chapterMarks\":{},\"companions\":{}},\"explorationProgress\":{\"totalExplorations\":0,\"lastNodeId\":null,\"visitCounts\":{}},\"expeditionVault\":{\"shards\":{},\"logs\":[],\"totalExpeditions\":0,\"lastExpeditionAt\":null},\"settings\":{\"volMaster\":80,\"volBgm\":70,\"volSfx\":80,\"quality\":\"high\",\"textSize\":\"medium\",\"lowMotion\":false,\"audioMuted\":false,\"lang\":\"tc\"}}"
               }
             ]
           },
@@ -1249,14 +1303,14 @@
                       "chapterNo": 1,
                       "memoryId": null,
                       "traceId": null,
-                      "createdAt": 1784688892802,
+                      "createdAt": 1784699782114,
                       "growthSafetyExcluded": false,
                       "legacyAttributed": false
                     }
                   ],
                   "coverage": {
                     "targetStage": "resonant_mature",
-                    "windowOpenedAt": 1784688892110,
+                    "windowOpenedAt": 1784699781472,
                     "rootsBySourceType": {
                       "care": [
                         "care:1:heart_phase_practice"
@@ -1275,7 +1329,7 @@
                   ],
                   "offeredStage": null,
                   "deferredAt": null,
-                  "lastGrowthEventAt": 1784688892802,
+                  "lastGrowthEventAt": 1784699782114,
                   "migration": {
                     "appliedVersion": 1,
                     "legacyStageFloor": "initial_awakened",
@@ -1296,14 +1350,14 @@
                       "chapterNo": 1,
                       "memoryId": null,
                       "traceId": null,
-                      "createdAt": 1784688892802,
+                      "createdAt": 1784699782114,
                       "growthSafetyExcluded": false,
                       "legacyAttributed": false
                     }
                   ],
                   "coverage": {
                     "targetStage": "resonant_mature",
-                    "windowOpenedAt": 1784688892110,
+                    "windowOpenedAt": 1784699781472,
                     "rootsBySourceType": {
                       "care": [
                         "care:1:heart_phase_practice"
@@ -1322,7 +1376,7 @@
                   ],
                   "offeredStage": null,
                   "deferredAt": null,
-                  "lastGrowthEventAt": 1784688892802,
+                  "lastGrowthEventAt": 1784699782114,
                   "migration": {
                     "appliedVersion": 1,
                     "legacyStageFloor": "initial_awakened",
@@ -1345,14 +1399,14 @@
                       "chapterNo": 1,
                       "memoryId": null,
                       "traceId": null,
-                      "createdAt": 1784688892802,
+                      "createdAt": 1784699782114,
                       "growthSafetyExcluded": false,
                       "legacyAttributed": false
                     }
                   ],
                   "coverage": {
                     "targetStage": "resonant_mature",
-                    "windowOpenedAt": 1784688892110,
+                    "windowOpenedAt": 1784699781472,
                     "rootsBySourceType": {
                       "care": [
                         "care:1:heart_phase_practice"
@@ -1371,7 +1425,7 @@
                   ],
                   "offeredStage": null,
                   "deferredAt": null,
-                  "lastGrowthEventAt": 1784688892802,
+                  "lastGrowthEventAt": 1784699782114,
                   "migration": {
                     "appliedVersion": 1,
                     "legacyStageFloor": "initial_awakened",
@@ -1392,14 +1446,14 @@
                       "chapterNo": 1,
                       "memoryId": null,
                       "traceId": null,
-                      "createdAt": 1784688892802,
+                      "createdAt": 1784699782114,
                       "growthSafetyExcluded": false,
                       "legacyAttributed": false
                     }
                   ],
                   "coverage": {
                     "targetStage": "resonant_mature",
-                    "windowOpenedAt": 1784688892110,
+                    "windowOpenedAt": 1784699781472,
                     "rootsBySourceType": {
                       "care": [
                         "care:1:heart_phase_practice"
@@ -1418,7 +1472,7 @@
                   ],
                   "offeredStage": null,
                   "deferredAt": null,
-                  "lastGrowthEventAt": 1784688892802,
+                  "lastGrowthEventAt": 1784699782114,
                   "migration": {
                     "appliedVersion": 1,
                     "legacyStageFloor": "initial_awakened",
@@ -1486,14 +1540,14 @@
                     "chapterNo": 1,
                     "memoryId": null,
                     "traceId": null,
-                    "createdAt": 1784688892802,
+                    "createdAt": 1784699782114,
                     "growthSafetyExcluded": false,
                     "legacyAttributed": false
                   }
                 ],
                 "coverage": {
                   "targetStage": "resonant_mature",
-                  "windowOpenedAt": 1784688892110,
+                  "windowOpenedAt": 1784699781472,
                   "rootsBySourceType": {
                     "care": [
                       "care:1:heart_phase_practice"
@@ -1512,7 +1566,7 @@
                 ],
                 "offeredStage": null,
                 "deferredAt": null,
-                "lastGrowthEventAt": 1784688894499,
+                "lastGrowthEventAt": 1784699783644,
                 "migration": {
                   "appliedVersion": 1,
                   "legacyStageFloor": "initial_awakened",
@@ -1533,14 +1587,14 @@
                     "chapterNo": 1,
                     "memoryId": null,
                     "traceId": null,
-                    "createdAt": 1784688892802,
+                    "createdAt": 1784699782114,
                     "growthSafetyExcluded": false,
                     "legacyAttributed": false
                   }
                 ],
                 "coverage": {
                   "targetStage": "resonant_mature",
-                  "windowOpenedAt": 1784688892110,
+                  "windowOpenedAt": 1784699781472,
                   "rootsBySourceType": {
                     "care": [
                       "care:1:heart_phase_practice"
@@ -1559,7 +1613,7 @@
                 ],
                 "offeredStage": null,
                 "deferredAt": null,
-                "lastGrowthEventAt": 1784688894499,
+                "lastGrowthEventAt": 1784699783644,
                 "migration": {
                   "appliedVersion": 1,
                   "legacyStageFloor": "initial_awakened",
@@ -1602,7 +1656,7 @@
                 "lastRejectAt": null,
                 "blockedTouchCount": 0,
                 "lastBlockedTouchAt": null,
-                "lastSeenAt": 1784688894269,
+                "lastSeenAt": 1784699783442,
                 "timeAnomalyCount": 0,
                 "firstTouchCompleted": true,
                 "firstHugCompleted": true,
@@ -1623,25 +1677,25 @@
                 "playerProfile": {
                   "displayName": "Growth QA",
                   "identitySkipped": false,
-                  "createdAt": 1784688891306,
-                  "updatedAt": 1784688891306
+                  "createdAt": 1784699780721,
+                  "updatedAt": 1784699780721
                 },
                 "onboarding": {
                   "version": 1,
                   "status": "completed",
                   "completed": true,
-                  "completedAt": 1784688891306,
+                  "completedAt": 1784699780721,
                   "startedAt": null,
                   "identityCompleted": true,
                   "guidanceCompleted": true,
-                  "greyshadeMetAt": 1784688891306,
+                  "greyshadeMetAt": 1784699780721,
                   "veteranAutoCompleted": true,
                   "firstLoop": {
                     "skippedAt": null,
-                    "completedAt": 1784688891306
+                    "completedAt": 1784699780721
                   }
                 },
-                "firstSessionOpeningSeenAt": 1784688892109,
+                "firstSessionOpeningSeenAt": 1784699781471,
                 "activeHabitatId": "moonlake",
                 "activeCompanionId": "greyshade-cat",
                 "unlockedCompanionIds": [
@@ -1680,14 +1734,14 @@
                             "chapterNo": 1,
                             "memoryId": null,
                             "traceId": null,
-                            "createdAt": 1784688892802,
+                            "createdAt": 1784699782114,
                             "growthSafetyExcluded": false,
                             "legacyAttributed": false
                           }
                         ],
                         "coverage": {
                           "targetStage": "resonant_mature",
-                          "windowOpenedAt": 1784688892110,
+                          "windowOpenedAt": 1784699781472,
                           "rootsBySourceType": {
                             "care": [
                               "care:1:heart_phase_practice"
@@ -1706,7 +1760,7 @@
                         ],
                         "offeredStage": null,
                         "deferredAt": null,
-                        "lastGrowthEventAt": 1784688892802,
+                        "lastGrowthEventAt": 1784699782114,
                         "migration": {
                           "appliedVersion": 1,
                           "legacyStageFloor": "initial_awakened",
@@ -1773,7 +1827,7 @@
                 "lastRejectAt": null,
                 "blockedTouchCount": 0,
                 "lastBlockedTouchAt": null,
-                "lastSeenAt": 1784688894269,
+                "lastSeenAt": 1784699783442,
                 "timeAnomalyCount": 0,
                 "firstTouchCompleted": true,
                 "firstHugCompleted": true,
@@ -1794,25 +1848,25 @@
                 "playerProfile": {
                   "displayName": "Growth QA",
                   "identitySkipped": false,
-                  "createdAt": 1784688891306,
-                  "updatedAt": 1784688891306
+                  "createdAt": 1784699780721,
+                  "updatedAt": 1784699780721
                 },
                 "onboarding": {
                   "version": 1,
                   "status": "completed",
                   "completed": true,
-                  "completedAt": 1784688891306,
+                  "completedAt": 1784699780721,
                   "startedAt": null,
                   "identityCompleted": true,
                   "guidanceCompleted": true,
-                  "greyshadeMetAt": 1784688891306,
+                  "greyshadeMetAt": 1784699780721,
                   "veteranAutoCompleted": true,
                   "firstLoop": {
                     "skippedAt": null,
-                    "completedAt": 1784688891306
+                    "completedAt": 1784699780721
                   }
                 },
-                "firstSessionOpeningSeenAt": 1784688892109,
+                "firstSessionOpeningSeenAt": 1784699781471,
                 "activeHabitatId": "moonlake",
                 "activeCompanionId": "greyshade-cat",
                 "unlockedCompanionIds": [
@@ -1851,14 +1905,14 @@
                             "chapterNo": 1,
                             "memoryId": null,
                             "traceId": null,
-                            "createdAt": 1784688892802,
+                            "createdAt": 1784699782114,
                             "growthSafetyExcluded": false,
                             "legacyAttributed": false
                           }
                         ],
                         "coverage": {
                           "targetStage": "resonant_mature",
-                          "windowOpenedAt": 1784688892110,
+                          "windowOpenedAt": 1784699781472,
                           "rootsBySourceType": {
                             "care": [
                               "care:1:heart_phase_practice"
@@ -1877,7 +1931,7 @@
                         ],
                         "offeredStage": null,
                         "deferredAt": null,
-                        "lastGrowthEventAt": 1784688894499,
+                        "lastGrowthEventAt": 1784699783644,
                         "migration": {
                           "appliedVersion": 1,
                           "legacyStageFloor": "initial_awakened",
@@ -1938,7 +1992,7 @@
             "detail": [
               {
                 "key": "nexusLinkR2State:v1",
-                "value": "{\"bond\":12,\"trust\":12,\"mood\":\"happy\",\"energy\":8,\"spamScore\":0,\"lastMessage\":\"\",\"chatHistory\":[{\"role\":\"companion\",\"text\":\"我在這裡，安靜地看著你。\"}],\"defense\":35,\"touchFatigue\":1,\"lastTouchAt\":null,\"lastRejectAt\":null,\"blockedTouchCount\":0,\"lastBlockedTouchAt\":null,\"lastSeenAt\":1784688894499,\"timeAnomalyCount\":0,\"firstTouchCompleted\":true,\"firstHugCompleted\":true,\"reactionPreview\":\"\",\"lastTouchReaction\":\"\",\"memories\":[],\"habitatTraces\":[],\"memorySchemaVersion\":1,\"emotionalMemories\":[],\"safeHarborMode\":false,\"lastEmotionTag\":null,\"habitatRepairFactor\":0,\"companionPreferences\":{\"version\":1,\"updatedAt\":0,\"companions\":{}},\"playerProfile\":{\"displayName\":\"Growth QA\",\"identitySkipped\":false,\"createdAt\":1784688891306,\"updatedAt\":1784688891306},\"onboarding\":{\"version\":1,\"status\":\"completed\",\"completed\":true,\"completedAt\":1784688891306,\"startedAt\":null,\"identityCompleted\":true,\"guidanceCompleted\":true,\"greyshadeMetAt\":1784688891306,\"veteranAutoCompleted\":true,\"firstLoop\":{\"skippedAt\":null,\"completedAt\":1784688891306}},\"firstSessionOpeningSeenAt\":1784688892109,\"activeHabitatId\":\"moonlake\",\"activeCompanionId\":\"greyshade-cat\",\"unlockedCompanionIds\":[\"greyshade-cat\"],\"companionStates\":{\"version\":1,\"byId\":{\"greyshade-cat\":{\"relationship\":{\"bond\":12,\"trust\":12,\"mood\":\"happy\",\"energy\":8,\"defense\":35,\"touchFatigue\":1,\"lastTouchAt\":null,\"lastRejectAt\":null,\"blockedTouchCount\":0,\"lastBlockedTouchAt\":null,\"firstTouchCompleted\":true,\"firstHugCompleted\":true,\"reactionPreview\":\"\",\"lastTouchReaction\":\"\"},\"growth\":{\"stage\":\"initial_awakened\",\"evidence\":[{\"key\":\"care:1:heart_phase_practice:attunement\",\"rootContextKey\":\"care:1:heart_phase_practice\",\"companionId\":\"greyshade-cat\",\"tendency\":\"attunement\",\"sourceType\":\"care\",\"sourceId\":\"heart_phase_practice:attunement\",\"chapterNo\":1,\"memoryId\":null,\"traceId\":null,\"createdAt\":1784688892802,\"growthSafetyExcluded\":false,\"legacyAttributed\":false}],\"coverage\":{\"targetStage\":\"resonant_mature\",\"windowOpenedAt\":1784688892110,\"rootsBySourceType\":{\"care\":[\"care:1:heart_phase_practice\"],\"exploration\":[],\"reflection\":[],\"standoff\":[],\"chapter\":[],\"boundary\":[],\"recovery\":[]},\"consentAnchorRootKey\":\"care:1:heart_phase_practice\"},\"consumedRootKeys\":[\"care:1:heart_phase_practice\"],\"offeredStage\":null,\"deferredAt\":null,\"lastGrowthEventAt\":1784688894499,\"migration\":{\"appliedVersion\":1,\"legacyStageFloor\":\"initial_awakened\",\"legacyCodexRevealFloor\":\"initial_awakened\",\"legacyBaselineKey\":\"legacy:v1:greyshade-cat:relationship\"}}}}},\"battleRecord\":{\"wins\":0,\"losses\":0,\"retreats\":0,\"lastResult\":null,\"lastBattleAt\":null},\"chapterProgress\":{\"current\":1,\"completed\":[]},\"resonance\":{\"chapterMarks\":{},\"companions\":{}},\"explorationProgress\":{\"totalExplorations\":0,\"lastNodeId\":null,\"visitCounts\":{}},\"expeditionVault\":{\"shards\":{},\"logs\":[],\"totalExpeditions\":0,\"lastExpeditionAt\":null},\"settings\":{\"volMaster\":80,\"volBgm\":70,\"volSfx\":80,\"quality\":\"high\",\"textSize\":\"medium\",\"lowMotion\":false,\"audioMuted\":false,\"lang\":\"tc\"}}"
+                "value": "{\"bond\":12,\"trust\":12,\"mood\":\"happy\",\"energy\":8,\"spamScore\":0,\"lastMessage\":\"\",\"chatHistory\":[{\"role\":\"companion\",\"text\":\"我在這裡，安靜地看著你。\"}],\"defense\":35,\"touchFatigue\":1,\"lastTouchAt\":null,\"lastRejectAt\":null,\"blockedTouchCount\":0,\"lastBlockedTouchAt\":null,\"lastSeenAt\":1784699783645,\"timeAnomalyCount\":0,\"firstTouchCompleted\":true,\"firstHugCompleted\":true,\"reactionPreview\":\"\",\"lastTouchReaction\":\"\",\"memories\":[],\"habitatTraces\":[],\"memorySchemaVersion\":1,\"emotionalMemories\":[],\"safeHarborMode\":false,\"lastEmotionTag\":null,\"habitatRepairFactor\":0,\"companionPreferences\":{\"version\":1,\"updatedAt\":0,\"companions\":{}},\"playerProfile\":{\"displayName\":\"Growth QA\",\"identitySkipped\":false,\"createdAt\":1784699780721,\"updatedAt\":1784699780721},\"onboarding\":{\"version\":1,\"status\":\"completed\",\"completed\":true,\"completedAt\":1784699780721,\"startedAt\":null,\"identityCompleted\":true,\"guidanceCompleted\":true,\"greyshadeMetAt\":1784699780721,\"veteranAutoCompleted\":true,\"firstLoop\":{\"skippedAt\":null,\"completedAt\":1784699780721}},\"firstSessionOpeningSeenAt\":1784699781471,\"activeHabitatId\":\"moonlake\",\"activeCompanionId\":\"greyshade-cat\",\"unlockedCompanionIds\":[\"greyshade-cat\"],\"companionStates\":{\"version\":1,\"byId\":{\"greyshade-cat\":{\"relationship\":{\"bond\":12,\"trust\":12,\"mood\":\"happy\",\"energy\":8,\"defense\":35,\"touchFatigue\":1,\"lastTouchAt\":null,\"lastRejectAt\":null,\"blockedTouchCount\":0,\"lastBlockedTouchAt\":null,\"firstTouchCompleted\":true,\"firstHugCompleted\":true,\"reactionPreview\":\"\",\"lastTouchReaction\":\"\"},\"growth\":{\"stage\":\"initial_awakened\",\"evidence\":[{\"key\":\"care:1:heart_phase_practice:attunement\",\"rootContextKey\":\"care:1:heart_phase_practice\",\"companionId\":\"greyshade-cat\",\"tendency\":\"attunement\",\"sourceType\":\"care\",\"sourceId\":\"heart_phase_practice:attunement\",\"chapterNo\":1,\"memoryId\":null,\"traceId\":null,\"createdAt\":1784699782114,\"growthSafetyExcluded\":false,\"legacyAttributed\":false}],\"coverage\":{\"targetStage\":\"resonant_mature\",\"windowOpenedAt\":1784699781472,\"rootsBySourceType\":{\"care\":[\"care:1:heart_phase_practice\"],\"exploration\":[],\"reflection\":[],\"standoff\":[],\"chapter\":[],\"boundary\":[],\"recovery\":[]},\"consentAnchorRootKey\":\"care:1:heart_phase_practice\"},\"consumedRootKeys\":[\"care:1:heart_phase_practice\"],\"offeredStage\":null,\"deferredAt\":null,\"lastGrowthEventAt\":1784699783644,\"migration\":{\"appliedVersion\":1,\"legacyStageFloor\":\"initial_awakened\",\"legacyCodexRevealFloor\":\"initial_awakened\",\"legacyBaselineKey\":\"legacy:v1:greyshade-cat:relationship\"}}}}},\"battleRecord\":{\"wins\":0,\"losses\":0,\"retreats\":0,\"lastResult\":null,\"lastBattleAt\":null},\"chapterProgress\":{\"current\":1,\"completed\":[]},\"resonance\":{\"chapterMarks\":{},\"companions\":{}},\"explorationProgress\":{\"totalExplorations\":0,\"lastNodeId\":null,\"visitCounts\":{}},\"expeditionVault\":{\"shards\":{},\"logs\":[],\"totalExpeditions\":0,\"lastExpeditionAt\":null},\"settings\":{\"volMaster\":80,\"volBgm\":70,\"volSfx\":80,\"quality\":\"high\",\"textSize\":\"medium\",\"lowMotion\":false,\"audioMuted\":false,\"lang\":\"tc\"}}"
               }
             ]
           },
@@ -2018,7 +2072,7 @@
                     "type": "shared_moment",
                     "title": "runtime 0",
                     "text": "runtime memory 0",
-                    "createdAt": 1784688895919,
+                    "createdAt": 1784699785059,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2028,7 +2082,7 @@
                     "type": "shared_moment",
                     "title": "runtime 1",
                     "text": "runtime memory 1",
-                    "createdAt": 1784688895920,
+                    "createdAt": 1784699785060,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2038,7 +2092,7 @@
                     "type": "shared_moment",
                     "title": "runtime 2",
                     "text": "runtime memory 2",
-                    "createdAt": 1784688895921,
+                    "createdAt": 1784699785061,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2048,7 +2102,7 @@
                     "type": "shared_moment",
                     "title": "runtime 3",
                     "text": "runtime memory 3",
-                    "createdAt": 1784688895922,
+                    "createdAt": 1784699785062,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2058,7 +2112,7 @@
                     "type": "shared_moment",
                     "title": "runtime 4",
                     "text": "runtime memory 4",
-                    "createdAt": 1784688895923,
+                    "createdAt": 1784699785063,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2068,7 +2122,7 @@
                     "type": "shared_moment",
                     "title": "runtime 5",
                     "text": "runtime memory 5",
-                    "createdAt": 1784688895924,
+                    "createdAt": 1784699785064,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2078,7 +2132,7 @@
                     "type": "shared_moment",
                     "title": "runtime 6",
                     "text": "runtime memory 6",
-                    "createdAt": 1784688895925,
+                    "createdAt": 1784699785065,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2088,7 +2142,7 @@
                     "type": "shared_moment",
                     "title": "runtime 7",
                     "text": "runtime memory 7",
-                    "createdAt": 1784688895926,
+                    "createdAt": 1784699785066,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2098,7 +2152,7 @@
                     "type": "shared_moment",
                     "title": "runtime 8",
                     "text": "runtime memory 8",
-                    "createdAt": 1784688895927,
+                    "createdAt": 1784699785067,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2108,7 +2162,7 @@
                     "type": "shared_moment",
                     "title": "runtime 9",
                     "text": "runtime memory 9",
-                    "createdAt": 1784688895928,
+                    "createdAt": 1784699785068,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2118,7 +2172,7 @@
                     "type": "shared_moment",
                     "title": "runtime 10",
                     "text": "runtime memory 10",
-                    "createdAt": 1784688895929,
+                    "createdAt": 1784699785069,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2128,7 +2182,7 @@
                     "type": "shared_moment",
                     "title": "runtime 11",
                     "text": "runtime memory 11",
-                    "createdAt": 1784688895930,
+                    "createdAt": 1784699785070,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2138,7 +2192,7 @@
                     "type": "shared_moment",
                     "title": "runtime 12",
                     "text": "runtime memory 12",
-                    "createdAt": 1784688895931,
+                    "createdAt": 1784699785071,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2148,7 +2202,7 @@
                     "type": "shared_moment",
                     "title": "runtime 13",
                     "text": "runtime memory 13",
-                    "createdAt": 1784688895932,
+                    "createdAt": 1784699785072,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2158,7 +2212,7 @@
                     "type": "shared_moment",
                     "title": "runtime 14",
                     "text": "runtime memory 14",
-                    "createdAt": 1784688895933,
+                    "createdAt": 1784699785073,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2168,7 +2222,7 @@
                     "type": "shared_moment",
                     "title": "runtime 15",
                     "text": "runtime memory 15",
-                    "createdAt": 1784688895934,
+                    "createdAt": 1784699785074,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2178,7 +2232,7 @@
                     "type": "shared_moment",
                     "title": "runtime 16",
                     "text": "runtime memory 16",
-                    "createdAt": 1784688895935,
+                    "createdAt": 1784699785075,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2188,7 +2242,7 @@
                     "type": "shared_moment",
                     "title": "runtime 17",
                     "text": "runtime memory 17",
-                    "createdAt": 1784688895936,
+                    "createdAt": 1784699785076,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2198,7 +2252,7 @@
                     "type": "shared_moment",
                     "title": "runtime 18",
                     "text": "runtime memory 18",
-                    "createdAt": 1784688895937,
+                    "createdAt": 1784699785077,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2208,7 +2262,7 @@
                     "type": "shared_moment",
                     "title": "runtime 19",
                     "text": "runtime memory 19",
-                    "createdAt": 1784688895938,
+                    "createdAt": 1784699785078,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2218,7 +2272,7 @@
                     "type": "shared_moment",
                     "title": "runtime 20",
                     "text": "runtime memory 20",
-                    "createdAt": 1784688895939,
+                    "createdAt": 1784699785079,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2228,7 +2282,7 @@
                     "type": "shared_moment",
                     "title": "runtime 21",
                     "text": "runtime memory 21",
-                    "createdAt": 1784688895940,
+                    "createdAt": 1784699785080,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2238,7 +2292,7 @@
                     "type": "shared_moment",
                     "title": "runtime 22",
                     "text": "runtime memory 22",
-                    "createdAt": 1784688895941,
+                    "createdAt": 1784699785081,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2248,7 +2302,7 @@
                     "type": "shared_moment",
                     "title": "runtime 23",
                     "text": "runtime memory 23",
-                    "createdAt": 1784688895942,
+                    "createdAt": 1784699785082,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2258,7 +2312,7 @@
                     "type": "shared_moment",
                     "title": "runtime 24",
                     "text": "runtime memory 24",
-                    "createdAt": 1784688895943,
+                    "createdAt": 1784699785083,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2268,7 +2322,7 @@
                     "type": "shared_moment",
                     "title": "runtime 25",
                     "text": "runtime memory 25",
-                    "createdAt": 1784688895944,
+                    "createdAt": 1784699785084,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2278,7 +2332,7 @@
                     "type": "shared_moment",
                     "title": "runtime 26",
                     "text": "runtime memory 26",
-                    "createdAt": 1784688895945,
+                    "createdAt": 1784699785085,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2288,7 +2342,7 @@
                     "type": "shared_moment",
                     "title": "runtime 27",
                     "text": "runtime memory 27",
-                    "createdAt": 1784688895946,
+                    "createdAt": 1784699785086,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2298,7 +2352,7 @@
                     "type": "shared_moment",
                     "title": "runtime 28",
                     "text": "runtime memory 28",
-                    "createdAt": 1784688895947,
+                    "createdAt": 1784699785087,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2308,7 +2362,7 @@
                     "type": "shared_moment",
                     "title": "runtime 29",
                     "text": "runtime memory 29",
-                    "createdAt": 1784688895948,
+                    "createdAt": 1784699785088,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2318,7 +2372,7 @@
                     "type": "shared_moment",
                     "title": "runtime 30",
                     "text": "runtime memory 30",
-                    "createdAt": 1784688895949,
+                    "createdAt": 1784699785089,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2328,7 +2382,7 @@
                     "type": "shared_moment",
                     "title": "runtime 31",
                     "text": "runtime memory 31",
-                    "createdAt": 1784688895950,
+                    "createdAt": 1784699785090,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2338,7 +2392,7 @@
                     "type": "shared_moment",
                     "title": "runtime 32",
                     "text": "runtime memory 32",
-                    "createdAt": 1784688895951,
+                    "createdAt": 1784699785091,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2348,7 +2402,7 @@
                     "type": "shared_moment",
                     "title": "runtime 33",
                     "text": "runtime memory 33",
-                    "createdAt": 1784688895952,
+                    "createdAt": 1784699785092,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2358,7 +2412,7 @@
                     "type": "shared_moment",
                     "title": "runtime 34",
                     "text": "runtime memory 34",
-                    "createdAt": 1784688895953,
+                    "createdAt": 1784699785093,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2368,7 +2422,7 @@
                     "type": "shared_moment",
                     "title": "runtime 35",
                     "text": "runtime memory 35",
-                    "createdAt": 1784688895954,
+                    "createdAt": 1784699785094,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2378,7 +2432,7 @@
                     "type": "shared_moment",
                     "title": "runtime 36",
                     "text": "runtime memory 36",
-                    "createdAt": 1784688895955,
+                    "createdAt": 1784699785095,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2388,7 +2442,7 @@
                     "type": "shared_moment",
                     "title": "runtime 37",
                     "text": "runtime memory 37",
-                    "createdAt": 1784688895956,
+                    "createdAt": 1784699785096,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2398,7 +2452,7 @@
                     "type": "shared_moment",
                     "title": "runtime 38",
                     "text": "runtime memory 38",
-                    "createdAt": 1784688895957,
+                    "createdAt": 1784699785097,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2408,7 +2462,7 @@
                     "type": "shared_moment",
                     "title": "runtime 39",
                     "text": "runtime memory 39",
-                    "createdAt": 1784688895958,
+                    "createdAt": 1784699785098,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2418,7 +2472,7 @@
                     "type": "shared_moment",
                     "title": "runtime 40",
                     "text": "runtime memory 40",
-                    "createdAt": 1784688895959,
+                    "createdAt": 1784699785099,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2428,7 +2482,7 @@
                     "type": "shared_moment",
                     "title": "runtime 41",
                     "text": "runtime memory 41",
-                    "createdAt": 1784688895960,
+                    "createdAt": 1784699785100,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2438,7 +2492,7 @@
                     "type": "shared_moment",
                     "title": "runtime 42",
                     "text": "runtime memory 42",
-                    "createdAt": 1784688895961,
+                    "createdAt": 1784699785101,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2448,7 +2502,7 @@
                     "type": "shared_moment",
                     "title": "runtime 43",
                     "text": "runtime memory 43",
-                    "createdAt": 1784688895962,
+                    "createdAt": 1784699785102,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2458,7 +2512,7 @@
                     "type": "shared_moment",
                     "title": "runtime 44",
                     "text": "runtime memory 44",
-                    "createdAt": 1784688895963,
+                    "createdAt": 1784699785103,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2468,7 +2522,7 @@
                     "type": "shared_moment",
                     "title": "runtime 45",
                     "text": "runtime memory 45",
-                    "createdAt": 1784688895964,
+                    "createdAt": 1784699785104,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2478,7 +2532,7 @@
                     "type": "shared_moment",
                     "title": "runtime 46",
                     "text": "runtime memory 46",
-                    "createdAt": 1784688895965,
+                    "createdAt": 1784699785105,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2488,7 +2542,7 @@
                     "type": "shared_moment",
                     "title": "runtime 47",
                     "text": "runtime memory 47",
-                    "createdAt": 1784688895966,
+                    "createdAt": 1784699785106,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2498,7 +2552,7 @@
                     "type": "shared_moment",
                     "title": "runtime 48",
                     "text": "runtime memory 48",
-                    "createdAt": 1784688895967,
+                    "createdAt": 1784699785107,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2508,7 +2562,7 @@
                     "type": "shared_moment",
                     "title": "runtime 49",
                     "text": "runtime memory 49",
-                    "createdAt": 1784688895968,
+                    "createdAt": 1784699785108,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2518,7 +2572,7 @@
                     "type": "shared_moment",
                     "title": "runtime 50",
                     "text": "runtime memory 50",
-                    "createdAt": 1784688895969,
+                    "createdAt": 1784699785109,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2532,8 +2586,8 @@
                     "emotion": "calm",
                     "intensity": 0.4,
                     "status": "fresh",
-                    "createdAt": 1782960895919,
-                    "lastUpdatedAt": 1782960895919,
+                    "createdAt": 1782971785059,
+                    "lastUpdatedAt": 1782971785059,
                     "expiresAt": null,
                     "visualHint": "faint_glow",
                     "textHint": "runtime-only expired trace"
@@ -2549,7 +2603,7 @@
                     "type": "shared_moment",
                     "title": "runtime 0",
                     "text": "runtime memory 0",
-                    "createdAt": 1784688895919,
+                    "createdAt": 1784699785059,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2559,7 +2613,7 @@
                     "type": "shared_moment",
                     "title": "runtime 1",
                     "text": "runtime memory 1",
-                    "createdAt": 1784688895920,
+                    "createdAt": 1784699785060,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2569,7 +2623,7 @@
                     "type": "shared_moment",
                     "title": "runtime 2",
                     "text": "runtime memory 2",
-                    "createdAt": 1784688895921,
+                    "createdAt": 1784699785061,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2579,7 +2633,7 @@
                     "type": "shared_moment",
                     "title": "runtime 3",
                     "text": "runtime memory 3",
-                    "createdAt": 1784688895922,
+                    "createdAt": 1784699785062,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2589,7 +2643,7 @@
                     "type": "shared_moment",
                     "title": "runtime 4",
                     "text": "runtime memory 4",
-                    "createdAt": 1784688895923,
+                    "createdAt": 1784699785063,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2599,7 +2653,7 @@
                     "type": "shared_moment",
                     "title": "runtime 5",
                     "text": "runtime memory 5",
-                    "createdAt": 1784688895924,
+                    "createdAt": 1784699785064,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2609,7 +2663,7 @@
                     "type": "shared_moment",
                     "title": "runtime 6",
                     "text": "runtime memory 6",
-                    "createdAt": 1784688895925,
+                    "createdAt": 1784699785065,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2619,7 +2673,7 @@
                     "type": "shared_moment",
                     "title": "runtime 7",
                     "text": "runtime memory 7",
-                    "createdAt": 1784688895926,
+                    "createdAt": 1784699785066,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2629,7 +2683,7 @@
                     "type": "shared_moment",
                     "title": "runtime 8",
                     "text": "runtime memory 8",
-                    "createdAt": 1784688895927,
+                    "createdAt": 1784699785067,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2639,7 +2693,7 @@
                     "type": "shared_moment",
                     "title": "runtime 9",
                     "text": "runtime memory 9",
-                    "createdAt": 1784688895928,
+                    "createdAt": 1784699785068,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2649,7 +2703,7 @@
                     "type": "shared_moment",
                     "title": "runtime 10",
                     "text": "runtime memory 10",
-                    "createdAt": 1784688895929,
+                    "createdAt": 1784699785069,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2659,7 +2713,7 @@
                     "type": "shared_moment",
                     "title": "runtime 11",
                     "text": "runtime memory 11",
-                    "createdAt": 1784688895930,
+                    "createdAt": 1784699785070,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2669,7 +2723,7 @@
                     "type": "shared_moment",
                     "title": "runtime 12",
                     "text": "runtime memory 12",
-                    "createdAt": 1784688895931,
+                    "createdAt": 1784699785071,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2679,7 +2733,7 @@
                     "type": "shared_moment",
                     "title": "runtime 13",
                     "text": "runtime memory 13",
-                    "createdAt": 1784688895932,
+                    "createdAt": 1784699785072,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2689,7 +2743,7 @@
                     "type": "shared_moment",
                     "title": "runtime 14",
                     "text": "runtime memory 14",
-                    "createdAt": 1784688895933,
+                    "createdAt": 1784699785073,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2699,7 +2753,7 @@
                     "type": "shared_moment",
                     "title": "runtime 15",
                     "text": "runtime memory 15",
-                    "createdAt": 1784688895934,
+                    "createdAt": 1784699785074,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2709,7 +2763,7 @@
                     "type": "shared_moment",
                     "title": "runtime 16",
                     "text": "runtime memory 16",
-                    "createdAt": 1784688895935,
+                    "createdAt": 1784699785075,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2719,7 +2773,7 @@
                     "type": "shared_moment",
                     "title": "runtime 17",
                     "text": "runtime memory 17",
-                    "createdAt": 1784688895936,
+                    "createdAt": 1784699785076,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2729,7 +2783,7 @@
                     "type": "shared_moment",
                     "title": "runtime 18",
                     "text": "runtime memory 18",
-                    "createdAt": 1784688895937,
+                    "createdAt": 1784699785077,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2739,7 +2793,7 @@
                     "type": "shared_moment",
                     "title": "runtime 19",
                     "text": "runtime memory 19",
-                    "createdAt": 1784688895938,
+                    "createdAt": 1784699785078,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2749,7 +2803,7 @@
                     "type": "shared_moment",
                     "title": "runtime 20",
                     "text": "runtime memory 20",
-                    "createdAt": 1784688895939,
+                    "createdAt": 1784699785079,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2759,7 +2813,7 @@
                     "type": "shared_moment",
                     "title": "runtime 21",
                     "text": "runtime memory 21",
-                    "createdAt": 1784688895940,
+                    "createdAt": 1784699785080,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2769,7 +2823,7 @@
                     "type": "shared_moment",
                     "title": "runtime 22",
                     "text": "runtime memory 22",
-                    "createdAt": 1784688895941,
+                    "createdAt": 1784699785081,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2779,7 +2833,7 @@
                     "type": "shared_moment",
                     "title": "runtime 23",
                     "text": "runtime memory 23",
-                    "createdAt": 1784688895942,
+                    "createdAt": 1784699785082,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2789,7 +2843,7 @@
                     "type": "shared_moment",
                     "title": "runtime 24",
                     "text": "runtime memory 24",
-                    "createdAt": 1784688895943,
+                    "createdAt": 1784699785083,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2799,7 +2853,7 @@
                     "type": "shared_moment",
                     "title": "runtime 25",
                     "text": "runtime memory 25",
-                    "createdAt": 1784688895944,
+                    "createdAt": 1784699785084,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2809,7 +2863,7 @@
                     "type": "shared_moment",
                     "title": "runtime 26",
                     "text": "runtime memory 26",
-                    "createdAt": 1784688895945,
+                    "createdAt": 1784699785085,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2819,7 +2873,7 @@
                     "type": "shared_moment",
                     "title": "runtime 27",
                     "text": "runtime memory 27",
-                    "createdAt": 1784688895946,
+                    "createdAt": 1784699785086,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2829,7 +2883,7 @@
                     "type": "shared_moment",
                     "title": "runtime 28",
                     "text": "runtime memory 28",
-                    "createdAt": 1784688895947,
+                    "createdAt": 1784699785087,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2839,7 +2893,7 @@
                     "type": "shared_moment",
                     "title": "runtime 29",
                     "text": "runtime memory 29",
-                    "createdAt": 1784688895948,
+                    "createdAt": 1784699785088,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2849,7 +2903,7 @@
                     "type": "shared_moment",
                     "title": "runtime 30",
                     "text": "runtime memory 30",
-                    "createdAt": 1784688895949,
+                    "createdAt": 1784699785089,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2859,7 +2913,7 @@
                     "type": "shared_moment",
                     "title": "runtime 31",
                     "text": "runtime memory 31",
-                    "createdAt": 1784688895950,
+                    "createdAt": 1784699785090,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2869,7 +2923,7 @@
                     "type": "shared_moment",
                     "title": "runtime 32",
                     "text": "runtime memory 32",
-                    "createdAt": 1784688895951,
+                    "createdAt": 1784699785091,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2879,7 +2933,7 @@
                     "type": "shared_moment",
                     "title": "runtime 33",
                     "text": "runtime memory 33",
-                    "createdAt": 1784688895952,
+                    "createdAt": 1784699785092,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2889,7 +2943,7 @@
                     "type": "shared_moment",
                     "title": "runtime 34",
                     "text": "runtime memory 34",
-                    "createdAt": 1784688895953,
+                    "createdAt": 1784699785093,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2899,7 +2953,7 @@
                     "type": "shared_moment",
                     "title": "runtime 35",
                     "text": "runtime memory 35",
-                    "createdAt": 1784688895954,
+                    "createdAt": 1784699785094,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2909,7 +2963,7 @@
                     "type": "shared_moment",
                     "title": "runtime 36",
                     "text": "runtime memory 36",
-                    "createdAt": 1784688895955,
+                    "createdAt": 1784699785095,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2919,7 +2973,7 @@
                     "type": "shared_moment",
                     "title": "runtime 37",
                     "text": "runtime memory 37",
-                    "createdAt": 1784688895956,
+                    "createdAt": 1784699785096,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2929,7 +2983,7 @@
                     "type": "shared_moment",
                     "title": "runtime 38",
                     "text": "runtime memory 38",
-                    "createdAt": 1784688895957,
+                    "createdAt": 1784699785097,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2939,7 +2993,7 @@
                     "type": "shared_moment",
                     "title": "runtime 39",
                     "text": "runtime memory 39",
-                    "createdAt": 1784688895958,
+                    "createdAt": 1784699785098,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2949,7 +3003,7 @@
                     "type": "shared_moment",
                     "title": "runtime 40",
                     "text": "runtime memory 40",
-                    "createdAt": 1784688895959,
+                    "createdAt": 1784699785099,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2959,7 +3013,7 @@
                     "type": "shared_moment",
                     "title": "runtime 41",
                     "text": "runtime memory 41",
-                    "createdAt": 1784688895960,
+                    "createdAt": 1784699785100,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2969,7 +3023,7 @@
                     "type": "shared_moment",
                     "title": "runtime 42",
                     "text": "runtime memory 42",
-                    "createdAt": 1784688895961,
+                    "createdAt": 1784699785101,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2979,7 +3033,7 @@
                     "type": "shared_moment",
                     "title": "runtime 43",
                     "text": "runtime memory 43",
-                    "createdAt": 1784688895962,
+                    "createdAt": 1784699785102,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2989,7 +3043,7 @@
                     "type": "shared_moment",
                     "title": "runtime 44",
                     "text": "runtime memory 44",
-                    "createdAt": 1784688895963,
+                    "createdAt": 1784699785103,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -2999,7 +3053,7 @@
                     "type": "shared_moment",
                     "title": "runtime 45",
                     "text": "runtime memory 45",
-                    "createdAt": 1784688895964,
+                    "createdAt": 1784699785104,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3009,7 +3063,7 @@
                     "type": "shared_moment",
                     "title": "runtime 46",
                     "text": "runtime memory 46",
-                    "createdAt": 1784688895965,
+                    "createdAt": 1784699785105,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3019,7 +3073,7 @@
                     "type": "shared_moment",
                     "title": "runtime 47",
                     "text": "runtime memory 47",
-                    "createdAt": 1784688895966,
+                    "createdAt": 1784699785106,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3029,7 +3083,7 @@
                     "type": "shared_moment",
                     "title": "runtime 48",
                     "text": "runtime memory 48",
-                    "createdAt": 1784688895967,
+                    "createdAt": 1784699785107,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3039,7 +3093,7 @@
                     "type": "shared_moment",
                     "title": "runtime 49",
                     "text": "runtime memory 49",
-                    "createdAt": 1784688895968,
+                    "createdAt": 1784699785108,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3049,7 +3103,7 @@
                     "type": "shared_moment",
                     "title": "runtime 50",
                     "text": "runtime memory 50",
-                    "createdAt": 1784688895969,
+                    "createdAt": 1784699785109,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3063,8 +3117,8 @@
                     "emotion": "calm",
                     "intensity": 0.4,
                     "status": "fresh",
-                    "createdAt": 1782960895919,
-                    "lastUpdatedAt": 1782960895919,
+                    "createdAt": 1782971785059,
+                    "lastUpdatedAt": 1782971785059,
                     "expiresAt": null,
                     "visualHint": "faint_glow",
                     "textHint": "runtime-only expired trace"
@@ -3085,14 +3139,14 @@
                       "chapterNo": 2,
                       "memoryId": null,
                       "traceId": null,
-                      "createdAt": 1784688895967,
+                      "createdAt": 1784699785093,
                       "growthSafetyExcluded": false,
                       "legacyAttributed": false
                     }
                   ],
                   "coverage": {
                     "targetStage": "resonant_mature",
-                    "windowOpenedAt": 1784688890327,
+                    "windowOpenedAt": 1784699779494,
                     "rootsBySourceType": {
                       "care": [
                         "care:2:heart_phase_practice"
@@ -3111,7 +3165,7 @@
                   ],
                   "offeredStage": null,
                   "deferredAt": null,
-                  "lastGrowthEventAt": 1784688895967,
+                  "lastGrowthEventAt": 1784699785093,
                   "migration": {
                     "appliedVersion": 0,
                     "legacyStageFloor": null,
@@ -3132,14 +3186,14 @@
                       "chapterNo": 2,
                       "memoryId": null,
                       "traceId": null,
-                      "createdAt": 1784688895967,
+                      "createdAt": 1784699785093,
                       "growthSafetyExcluded": false,
                       "legacyAttributed": false
                     }
                   ],
                   "coverage": {
                     "targetStage": "resonant_mature",
-                    "windowOpenedAt": 1784688890327,
+                    "windowOpenedAt": 1784699779494,
                     "rootsBySourceType": {
                       "care": [
                         "care:2:heart_phase_practice"
@@ -3158,7 +3212,7 @@
                   ],
                   "offeredStage": null,
                   "deferredAt": null,
-                  "lastGrowthEventAt": 1784688895967,
+                  "lastGrowthEventAt": 1784699785093,
                   "migration": {
                     "appliedVersion": 0,
                     "legacyStageFloor": null,
@@ -3180,7 +3234,7 @@
                     "type": "shared_moment",
                     "title": "runtime 0",
                     "text": "runtime memory 0",
-                    "createdAt": 1784688895919,
+                    "createdAt": 1784699785059,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3190,7 +3244,7 @@
                     "type": "shared_moment",
                     "title": "runtime 1",
                     "text": "runtime memory 1",
-                    "createdAt": 1784688895920,
+                    "createdAt": 1784699785060,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3200,7 +3254,7 @@
                     "type": "shared_moment",
                     "title": "runtime 2",
                     "text": "runtime memory 2",
-                    "createdAt": 1784688895921,
+                    "createdAt": 1784699785061,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3210,7 +3264,7 @@
                     "type": "shared_moment",
                     "title": "runtime 3",
                     "text": "runtime memory 3",
-                    "createdAt": 1784688895922,
+                    "createdAt": 1784699785062,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3220,7 +3274,7 @@
                     "type": "shared_moment",
                     "title": "runtime 4",
                     "text": "runtime memory 4",
-                    "createdAt": 1784688895923,
+                    "createdAt": 1784699785063,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3230,7 +3284,7 @@
                     "type": "shared_moment",
                     "title": "runtime 5",
                     "text": "runtime memory 5",
-                    "createdAt": 1784688895924,
+                    "createdAt": 1784699785064,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3240,7 +3294,7 @@
                     "type": "shared_moment",
                     "title": "runtime 6",
                     "text": "runtime memory 6",
-                    "createdAt": 1784688895925,
+                    "createdAt": 1784699785065,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3250,7 +3304,7 @@
                     "type": "shared_moment",
                     "title": "runtime 7",
                     "text": "runtime memory 7",
-                    "createdAt": 1784688895926,
+                    "createdAt": 1784699785066,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3260,7 +3314,7 @@
                     "type": "shared_moment",
                     "title": "runtime 8",
                     "text": "runtime memory 8",
-                    "createdAt": 1784688895927,
+                    "createdAt": 1784699785067,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3270,7 +3324,7 @@
                     "type": "shared_moment",
                     "title": "runtime 9",
                     "text": "runtime memory 9",
-                    "createdAt": 1784688895928,
+                    "createdAt": 1784699785068,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3280,7 +3334,7 @@
                     "type": "shared_moment",
                     "title": "runtime 10",
                     "text": "runtime memory 10",
-                    "createdAt": 1784688895929,
+                    "createdAt": 1784699785069,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3290,7 +3344,7 @@
                     "type": "shared_moment",
                     "title": "runtime 11",
                     "text": "runtime memory 11",
-                    "createdAt": 1784688895930,
+                    "createdAt": 1784699785070,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3300,7 +3354,7 @@
                     "type": "shared_moment",
                     "title": "runtime 12",
                     "text": "runtime memory 12",
-                    "createdAt": 1784688895931,
+                    "createdAt": 1784699785071,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3310,7 +3364,7 @@
                     "type": "shared_moment",
                     "title": "runtime 13",
                     "text": "runtime memory 13",
-                    "createdAt": 1784688895932,
+                    "createdAt": 1784699785072,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3320,7 +3374,7 @@
                     "type": "shared_moment",
                     "title": "runtime 14",
                     "text": "runtime memory 14",
-                    "createdAt": 1784688895933,
+                    "createdAt": 1784699785073,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3330,7 +3384,7 @@
                     "type": "shared_moment",
                     "title": "runtime 15",
                     "text": "runtime memory 15",
-                    "createdAt": 1784688895934,
+                    "createdAt": 1784699785074,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3340,7 +3394,7 @@
                     "type": "shared_moment",
                     "title": "runtime 16",
                     "text": "runtime memory 16",
-                    "createdAt": 1784688895935,
+                    "createdAt": 1784699785075,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3350,7 +3404,7 @@
                     "type": "shared_moment",
                     "title": "runtime 17",
                     "text": "runtime memory 17",
-                    "createdAt": 1784688895936,
+                    "createdAt": 1784699785076,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3360,7 +3414,7 @@
                     "type": "shared_moment",
                     "title": "runtime 18",
                     "text": "runtime memory 18",
-                    "createdAt": 1784688895937,
+                    "createdAt": 1784699785077,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3370,7 +3424,7 @@
                     "type": "shared_moment",
                     "title": "runtime 19",
                     "text": "runtime memory 19",
-                    "createdAt": 1784688895938,
+                    "createdAt": 1784699785078,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3380,7 +3434,7 @@
                     "type": "shared_moment",
                     "title": "runtime 20",
                     "text": "runtime memory 20",
-                    "createdAt": 1784688895939,
+                    "createdAt": 1784699785079,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3390,7 +3444,7 @@
                     "type": "shared_moment",
                     "title": "runtime 21",
                     "text": "runtime memory 21",
-                    "createdAt": 1784688895940,
+                    "createdAt": 1784699785080,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3400,7 +3454,7 @@
                     "type": "shared_moment",
                     "title": "runtime 22",
                     "text": "runtime memory 22",
-                    "createdAt": 1784688895941,
+                    "createdAt": 1784699785081,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3410,7 +3464,7 @@
                     "type": "shared_moment",
                     "title": "runtime 23",
                     "text": "runtime memory 23",
-                    "createdAt": 1784688895942,
+                    "createdAt": 1784699785082,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3420,7 +3474,7 @@
                     "type": "shared_moment",
                     "title": "runtime 24",
                     "text": "runtime memory 24",
-                    "createdAt": 1784688895943,
+                    "createdAt": 1784699785083,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3430,7 +3484,7 @@
                     "type": "shared_moment",
                     "title": "runtime 25",
                     "text": "runtime memory 25",
-                    "createdAt": 1784688895944,
+                    "createdAt": 1784699785084,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3440,7 +3494,7 @@
                     "type": "shared_moment",
                     "title": "runtime 26",
                     "text": "runtime memory 26",
-                    "createdAt": 1784688895945,
+                    "createdAt": 1784699785085,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3450,7 +3504,7 @@
                     "type": "shared_moment",
                     "title": "runtime 27",
                     "text": "runtime memory 27",
-                    "createdAt": 1784688895946,
+                    "createdAt": 1784699785086,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3460,7 +3514,7 @@
                     "type": "shared_moment",
                     "title": "runtime 28",
                     "text": "runtime memory 28",
-                    "createdAt": 1784688895947,
+                    "createdAt": 1784699785087,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3470,7 +3524,7 @@
                     "type": "shared_moment",
                     "title": "runtime 29",
                     "text": "runtime memory 29",
-                    "createdAt": 1784688895948,
+                    "createdAt": 1784699785088,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3480,7 +3534,7 @@
                     "type": "shared_moment",
                     "title": "runtime 30",
                     "text": "runtime memory 30",
-                    "createdAt": 1784688895949,
+                    "createdAt": 1784699785089,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3490,7 +3544,7 @@
                     "type": "shared_moment",
                     "title": "runtime 31",
                     "text": "runtime memory 31",
-                    "createdAt": 1784688895950,
+                    "createdAt": 1784699785090,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3500,7 +3554,7 @@
                     "type": "shared_moment",
                     "title": "runtime 32",
                     "text": "runtime memory 32",
-                    "createdAt": 1784688895951,
+                    "createdAt": 1784699785091,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3510,7 +3564,7 @@
                     "type": "shared_moment",
                     "title": "runtime 33",
                     "text": "runtime memory 33",
-                    "createdAt": 1784688895952,
+                    "createdAt": 1784699785092,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3520,7 +3574,7 @@
                     "type": "shared_moment",
                     "title": "runtime 34",
                     "text": "runtime memory 34",
-                    "createdAt": 1784688895953,
+                    "createdAt": 1784699785093,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3530,7 +3584,7 @@
                     "type": "shared_moment",
                     "title": "runtime 35",
                     "text": "runtime memory 35",
-                    "createdAt": 1784688895954,
+                    "createdAt": 1784699785094,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3540,7 +3594,7 @@
                     "type": "shared_moment",
                     "title": "runtime 36",
                     "text": "runtime memory 36",
-                    "createdAt": 1784688895955,
+                    "createdAt": 1784699785095,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3550,7 +3604,7 @@
                     "type": "shared_moment",
                     "title": "runtime 37",
                     "text": "runtime memory 37",
-                    "createdAt": 1784688895956,
+                    "createdAt": 1784699785096,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3560,7 +3614,7 @@
                     "type": "shared_moment",
                     "title": "runtime 38",
                     "text": "runtime memory 38",
-                    "createdAt": 1784688895957,
+                    "createdAt": 1784699785097,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3570,7 +3624,7 @@
                     "type": "shared_moment",
                     "title": "runtime 39",
                     "text": "runtime memory 39",
-                    "createdAt": 1784688895958,
+                    "createdAt": 1784699785098,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3580,7 +3634,7 @@
                     "type": "shared_moment",
                     "title": "runtime 40",
                     "text": "runtime memory 40",
-                    "createdAt": 1784688895959,
+                    "createdAt": 1784699785099,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3590,7 +3644,7 @@
                     "type": "shared_moment",
                     "title": "runtime 41",
                     "text": "runtime memory 41",
-                    "createdAt": 1784688895960,
+                    "createdAt": 1784699785100,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3600,7 +3654,7 @@
                     "type": "shared_moment",
                     "title": "runtime 42",
                     "text": "runtime memory 42",
-                    "createdAt": 1784688895961,
+                    "createdAt": 1784699785101,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3610,7 +3664,7 @@
                     "type": "shared_moment",
                     "title": "runtime 43",
                     "text": "runtime memory 43",
-                    "createdAt": 1784688895962,
+                    "createdAt": 1784699785102,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3620,7 +3674,7 @@
                     "type": "shared_moment",
                     "title": "runtime 44",
                     "text": "runtime memory 44",
-                    "createdAt": 1784688895963,
+                    "createdAt": 1784699785103,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3630,7 +3684,7 @@
                     "type": "shared_moment",
                     "title": "runtime 45",
                     "text": "runtime memory 45",
-                    "createdAt": 1784688895964,
+                    "createdAt": 1784699785104,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3640,7 +3694,7 @@
                     "type": "shared_moment",
                     "title": "runtime 46",
                     "text": "runtime memory 46",
-                    "createdAt": 1784688895965,
+                    "createdAt": 1784699785105,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3650,7 +3704,7 @@
                     "type": "shared_moment",
                     "title": "runtime 47",
                     "text": "runtime memory 47",
-                    "createdAt": 1784688895966,
+                    "createdAt": 1784699785106,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3660,7 +3714,7 @@
                     "type": "shared_moment",
                     "title": "runtime 48",
                     "text": "runtime memory 48",
-                    "createdAt": 1784688895967,
+                    "createdAt": 1784699785107,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3670,7 +3724,7 @@
                     "type": "shared_moment",
                     "title": "runtime 49",
                     "text": "runtime memory 49",
-                    "createdAt": 1784688895968,
+                    "createdAt": 1784699785108,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3680,7 +3734,7 @@
                     "type": "shared_moment",
                     "title": "runtime 50",
                     "text": "runtime memory 50",
-                    "createdAt": 1784688895969,
+                    "createdAt": 1784699785109,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3694,8 +3748,8 @@
                     "emotion": "calm",
                     "intensity": 0.4,
                     "status": "fresh",
-                    "createdAt": 1782960895919,
-                    "lastUpdatedAt": 1782960895919,
+                    "createdAt": 1782971785059,
+                    "lastUpdatedAt": 1782971785059,
                     "expiresAt": null,
                     "visualHint": "faint_glow",
                     "textHint": "runtime-only expired trace"
@@ -3711,7 +3765,7 @@
                     "type": "shared_moment",
                     "title": "runtime 0",
                     "text": "runtime memory 0",
-                    "createdAt": 1784688895919,
+                    "createdAt": 1784699785059,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3721,7 +3775,7 @@
                     "type": "shared_moment",
                     "title": "runtime 1",
                     "text": "runtime memory 1",
-                    "createdAt": 1784688895920,
+                    "createdAt": 1784699785060,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3731,7 +3785,7 @@
                     "type": "shared_moment",
                     "title": "runtime 2",
                     "text": "runtime memory 2",
-                    "createdAt": 1784688895921,
+                    "createdAt": 1784699785061,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3741,7 +3795,7 @@
                     "type": "shared_moment",
                     "title": "runtime 3",
                     "text": "runtime memory 3",
-                    "createdAt": 1784688895922,
+                    "createdAt": 1784699785062,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3751,7 +3805,7 @@
                     "type": "shared_moment",
                     "title": "runtime 4",
                     "text": "runtime memory 4",
-                    "createdAt": 1784688895923,
+                    "createdAt": 1784699785063,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3761,7 +3815,7 @@
                     "type": "shared_moment",
                     "title": "runtime 5",
                     "text": "runtime memory 5",
-                    "createdAt": 1784688895924,
+                    "createdAt": 1784699785064,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3771,7 +3825,7 @@
                     "type": "shared_moment",
                     "title": "runtime 6",
                     "text": "runtime memory 6",
-                    "createdAt": 1784688895925,
+                    "createdAt": 1784699785065,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3781,7 +3835,7 @@
                     "type": "shared_moment",
                     "title": "runtime 7",
                     "text": "runtime memory 7",
-                    "createdAt": 1784688895926,
+                    "createdAt": 1784699785066,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3791,7 +3845,7 @@
                     "type": "shared_moment",
                     "title": "runtime 8",
                     "text": "runtime memory 8",
-                    "createdAt": 1784688895927,
+                    "createdAt": 1784699785067,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3801,7 +3855,7 @@
                     "type": "shared_moment",
                     "title": "runtime 9",
                     "text": "runtime memory 9",
-                    "createdAt": 1784688895928,
+                    "createdAt": 1784699785068,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3811,7 +3865,7 @@
                     "type": "shared_moment",
                     "title": "runtime 10",
                     "text": "runtime memory 10",
-                    "createdAt": 1784688895929,
+                    "createdAt": 1784699785069,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3821,7 +3875,7 @@
                     "type": "shared_moment",
                     "title": "runtime 11",
                     "text": "runtime memory 11",
-                    "createdAt": 1784688895930,
+                    "createdAt": 1784699785070,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3831,7 +3885,7 @@
                     "type": "shared_moment",
                     "title": "runtime 12",
                     "text": "runtime memory 12",
-                    "createdAt": 1784688895931,
+                    "createdAt": 1784699785071,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3841,7 +3895,7 @@
                     "type": "shared_moment",
                     "title": "runtime 13",
                     "text": "runtime memory 13",
-                    "createdAt": 1784688895932,
+                    "createdAt": 1784699785072,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3851,7 +3905,7 @@
                     "type": "shared_moment",
                     "title": "runtime 14",
                     "text": "runtime memory 14",
-                    "createdAt": 1784688895933,
+                    "createdAt": 1784699785073,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3861,7 +3915,7 @@
                     "type": "shared_moment",
                     "title": "runtime 15",
                     "text": "runtime memory 15",
-                    "createdAt": 1784688895934,
+                    "createdAt": 1784699785074,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3871,7 +3925,7 @@
                     "type": "shared_moment",
                     "title": "runtime 16",
                     "text": "runtime memory 16",
-                    "createdAt": 1784688895935,
+                    "createdAt": 1784699785075,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3881,7 +3935,7 @@
                     "type": "shared_moment",
                     "title": "runtime 17",
                     "text": "runtime memory 17",
-                    "createdAt": 1784688895936,
+                    "createdAt": 1784699785076,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3891,7 +3945,7 @@
                     "type": "shared_moment",
                     "title": "runtime 18",
                     "text": "runtime memory 18",
-                    "createdAt": 1784688895937,
+                    "createdAt": 1784699785077,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3901,7 +3955,7 @@
                     "type": "shared_moment",
                     "title": "runtime 19",
                     "text": "runtime memory 19",
-                    "createdAt": 1784688895938,
+                    "createdAt": 1784699785078,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3911,7 +3965,7 @@
                     "type": "shared_moment",
                     "title": "runtime 20",
                     "text": "runtime memory 20",
-                    "createdAt": 1784688895939,
+                    "createdAt": 1784699785079,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3921,7 +3975,7 @@
                     "type": "shared_moment",
                     "title": "runtime 21",
                     "text": "runtime memory 21",
-                    "createdAt": 1784688895940,
+                    "createdAt": 1784699785080,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3931,7 +3985,7 @@
                     "type": "shared_moment",
                     "title": "runtime 22",
                     "text": "runtime memory 22",
-                    "createdAt": 1784688895941,
+                    "createdAt": 1784699785081,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3941,7 +3995,7 @@
                     "type": "shared_moment",
                     "title": "runtime 23",
                     "text": "runtime memory 23",
-                    "createdAt": 1784688895942,
+                    "createdAt": 1784699785082,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3951,7 +4005,7 @@
                     "type": "shared_moment",
                     "title": "runtime 24",
                     "text": "runtime memory 24",
-                    "createdAt": 1784688895943,
+                    "createdAt": 1784699785083,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3961,7 +4015,7 @@
                     "type": "shared_moment",
                     "title": "runtime 25",
                     "text": "runtime memory 25",
-                    "createdAt": 1784688895944,
+                    "createdAt": 1784699785084,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3971,7 +4025,7 @@
                     "type": "shared_moment",
                     "title": "runtime 26",
                     "text": "runtime memory 26",
-                    "createdAt": 1784688895945,
+                    "createdAt": 1784699785085,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3981,7 +4035,7 @@
                     "type": "shared_moment",
                     "title": "runtime 27",
                     "text": "runtime memory 27",
-                    "createdAt": 1784688895946,
+                    "createdAt": 1784699785086,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -3991,7 +4045,7 @@
                     "type": "shared_moment",
                     "title": "runtime 28",
                     "text": "runtime memory 28",
-                    "createdAt": 1784688895947,
+                    "createdAt": 1784699785087,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -4001,7 +4055,7 @@
                     "type": "shared_moment",
                     "title": "runtime 29",
                     "text": "runtime memory 29",
-                    "createdAt": 1784688895948,
+                    "createdAt": 1784699785088,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -4011,7 +4065,7 @@
                     "type": "shared_moment",
                     "title": "runtime 30",
                     "text": "runtime memory 30",
-                    "createdAt": 1784688895949,
+                    "createdAt": 1784699785089,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -4021,7 +4075,7 @@
                     "type": "shared_moment",
                     "title": "runtime 31",
                     "text": "runtime memory 31",
-                    "createdAt": 1784688895950,
+                    "createdAt": 1784699785090,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -4031,7 +4085,7 @@
                     "type": "shared_moment",
                     "title": "runtime 32",
                     "text": "runtime memory 32",
-                    "createdAt": 1784688895951,
+                    "createdAt": 1784699785091,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -4041,7 +4095,7 @@
                     "type": "shared_moment",
                     "title": "runtime 33",
                     "text": "runtime memory 33",
-                    "createdAt": 1784688895952,
+                    "createdAt": 1784699785092,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -4051,7 +4105,7 @@
                     "type": "shared_moment",
                     "title": "runtime 34",
                     "text": "runtime memory 34",
-                    "createdAt": 1784688895953,
+                    "createdAt": 1784699785093,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -4061,7 +4115,7 @@
                     "type": "shared_moment",
                     "title": "runtime 35",
                     "text": "runtime memory 35",
-                    "createdAt": 1784688895954,
+                    "createdAt": 1784699785094,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -4071,7 +4125,7 @@
                     "type": "shared_moment",
                     "title": "runtime 36",
                     "text": "runtime memory 36",
-                    "createdAt": 1784688895955,
+                    "createdAt": 1784699785095,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -4081,7 +4135,7 @@
                     "type": "shared_moment",
                     "title": "runtime 37",
                     "text": "runtime memory 37",
-                    "createdAt": 1784688895956,
+                    "createdAt": 1784699785096,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -4091,7 +4145,7 @@
                     "type": "shared_moment",
                     "title": "runtime 38",
                     "text": "runtime memory 38",
-                    "createdAt": 1784688895957,
+                    "createdAt": 1784699785097,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -4101,7 +4155,7 @@
                     "type": "shared_moment",
                     "title": "runtime 39",
                     "text": "runtime memory 39",
-                    "createdAt": 1784688895958,
+                    "createdAt": 1784699785098,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -4111,7 +4165,7 @@
                     "type": "shared_moment",
                     "title": "runtime 40",
                     "text": "runtime memory 40",
-                    "createdAt": 1784688895959,
+                    "createdAt": 1784699785099,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -4121,7 +4175,7 @@
                     "type": "shared_moment",
                     "title": "runtime 41",
                     "text": "runtime memory 41",
-                    "createdAt": 1784688895960,
+                    "createdAt": 1784699785100,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -4131,7 +4185,7 @@
                     "type": "shared_moment",
                     "title": "runtime 42",
                     "text": "runtime memory 42",
-                    "createdAt": 1784688895961,
+                    "createdAt": 1784699785101,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -4141,7 +4195,7 @@
                     "type": "shared_moment",
                     "title": "runtime 43",
                     "text": "runtime memory 43",
-                    "createdAt": 1784688895962,
+                    "createdAt": 1784699785102,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -4151,7 +4205,7 @@
                     "type": "shared_moment",
                     "title": "runtime 44",
                     "text": "runtime memory 44",
-                    "createdAt": 1784688895963,
+                    "createdAt": 1784699785103,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -4161,7 +4215,7 @@
                     "type": "shared_moment",
                     "title": "runtime 45",
                     "text": "runtime memory 45",
-                    "createdAt": 1784688895964,
+                    "createdAt": 1784699785104,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -4171,7 +4225,7 @@
                     "type": "shared_moment",
                     "title": "runtime 46",
                     "text": "runtime memory 46",
-                    "createdAt": 1784688895965,
+                    "createdAt": 1784699785105,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -4181,7 +4235,7 @@
                     "type": "shared_moment",
                     "title": "runtime 47",
                     "text": "runtime memory 47",
-                    "createdAt": 1784688895966,
+                    "createdAt": 1784699785106,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -4191,7 +4245,7 @@
                     "type": "shared_moment",
                     "title": "runtime 48",
                     "text": "runtime memory 48",
-                    "createdAt": 1784688895967,
+                    "createdAt": 1784699785107,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -4201,7 +4255,7 @@
                     "type": "shared_moment",
                     "title": "runtime 49",
                     "text": "runtime memory 49",
-                    "createdAt": 1784688895968,
+                    "createdAt": 1784699785108,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -4211,7 +4265,7 @@
                     "type": "shared_moment",
                     "title": "runtime 50",
                     "text": "runtime memory 50",
-                    "createdAt": 1784688895969,
+                    "createdAt": 1784699785109,
                     "mood": "calm",
                     "bond": 0,
                     "trust": 5
@@ -4225,8 +4279,8 @@
                     "emotion": "calm",
                     "intensity": 0.4,
                     "status": "fresh",
-                    "createdAt": 1782960895919,
-                    "lastUpdatedAt": 1782960895919,
+                    "createdAt": 1782971785059,
+                    "lastUpdatedAt": 1782971785059,
                     "expiresAt": null,
                     "visualHint": "faint_glow",
                     "textHint": "runtime-only expired trace"
@@ -4247,14 +4301,14 @@
                       "chapterNo": 2,
                       "memoryId": null,
                       "traceId": null,
-                      "createdAt": 1784688895967,
+                      "createdAt": 1784699785093,
                       "growthSafetyExcluded": false,
                       "legacyAttributed": false
                     }
                   ],
                   "coverage": {
                     "targetStage": "resonant_mature",
-                    "windowOpenedAt": 1784688890327,
+                    "windowOpenedAt": 1784699779494,
                     "rootsBySourceType": {
                       "care": [
                         "care:2:heart_phase_practice"
@@ -4273,7 +4327,7 @@
                   ],
                   "offeredStage": null,
                   "deferredAt": null,
-                  "lastGrowthEventAt": 1784688895967,
+                  "lastGrowthEventAt": 1784699785093,
                   "migration": {
                     "appliedVersion": 0,
                     "legacyStageFloor": null,
@@ -4294,14 +4348,14 @@
                       "chapterNo": 2,
                       "memoryId": null,
                       "traceId": null,
-                      "createdAt": 1784688895967,
+                      "createdAt": 1784699785093,
                       "growthSafetyExcluded": false,
                       "legacyAttributed": false
                     }
                   ],
                   "coverage": {
                     "targetStage": "resonant_mature",
-                    "windowOpenedAt": 1784688890327,
+                    "windowOpenedAt": 1784699779494,
                     "rootsBySourceType": {
                       "care": [
                         "care:2:heart_phase_practice"
@@ -4320,7 +4374,7 @@
                   ],
                   "offeredStage": null,
                   "deferredAt": null,
-                  "lastGrowthEventAt": 1784688895967,
+                  "lastGrowthEventAt": 1784699785093,
                   "migration": {
                     "appliedVersion": 0,
                     "legacyStageFloor": null,
@@ -4342,7 +4396,7 @@
             "detail": [
               {
                 "key": "nexusLinkR2State:v1",
-                "value": "{\"bond\":12,\"trust\":12,\"mood\":\"happy\",\"energy\":8,\"spamScore\":0,\"lastMessage\":\"\",\"chatHistory\":[{\"role\":\"companion\",\"text\":\"我在這裡，安靜地看著你。\"}],\"defense\":35,\"touchFatigue\":1,\"lastTouchAt\":null,\"lastRejectAt\":null,\"blockedTouchCount\":0,\"lastBlockedTouchAt\":null,\"lastSeenAt\":1784688895967,\"timeAnomalyCount\":0,\"firstTouchCompleted\":true,\"firstHugCompleted\":true,\"reactionPreview\":\"\",\"lastTouchReaction\":\"accept\",\"memories\":[{\"id\":\"growth-runtime-memory-1\",\"type\":\"shared_moment\",\"title\":\"runtime 1\",\"text\":\"runtime memory 1\",\"createdAt\":1784688895920,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-2\",\"type\":\"shared_moment\",\"title\":\"runtime 2\",\"text\":\"runtime memory 2\",\"createdAt\":1784688895921,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-3\",\"type\":\"shared_moment\",\"title\":\"runtime 3\",\"text\":\"runtime memory 3\",\"createdAt\":1784688895922,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-4\",\"type\":\"shared_moment\",\"title\":\"runtime 4\",\"text\":\"runtime memory 4\",\"createdAt\":1784688895923,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-5\",\"type\":\"shared_moment\",\"title\":\"runtime 5\",\"text\":\"runtime memory 5\",\"createdAt\":1784688895924,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-6\",\"type\":\"shared_moment\",\"title\":\"runtime 6\",\"text\":\"runtime memory 6\",\"createdAt\":1784688895925,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-7\",\"type\":\"shared_moment\",\"title\":\"runtime 7\",\"text\":\"runtime memory 7\",\"createdAt\":1784688895926,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-8\",\"type\":\"shared_moment\",\"title\":\"runtime 8\",\"text\":\"runtime memory 8\",\"createdAt\":1784688895927,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-9\",\"type\":\"shared_moment\",\"title\":\"runtime 9\",\"text\":\"runtime memory 9\",\"createdAt\":1784688895928,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-10\",\"type\":\"shared_moment\",\"title\":\"runtime 10\",\"text\":\"runtime memory 10\",\"createdAt\":1784688895929,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-11\",\"type\":\"shared_moment\",\"title\":\"runtime 11\",\"text\":\"runtime memory 11\",\"createdAt\":1784688895930,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-12\",\"type\":\"shared_moment\",\"title\":\"runtime 12\",\"text\":\"runtime memory 12\",\"createdAt\":1784688895931,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-13\",\"type\":\"shared_moment\",\"title\":\"runtime 13\",\"text\":\"runtime memory 13\",\"createdAt\":1784688895932,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-14\",\"type\":\"shared_moment\",\"title\":\"runtime 14\",\"text\":\"runtime memory 14\",\"createdAt\":1784688895933,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-15\",\"type\":\"shared_moment\",\"title\":\"runtime 15\",\"text\":\"runtime memory 15\",\"createdAt\":1784688895934,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-16\",\"type\":\"shared_moment\",\"title\":\"runtime 16\",\"text\":\"runtime memory 16\",\"createdAt\":1784688895935,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-17\",\"type\":\"shared_moment\",\"title\":\"runtime 17\",\"text\":\"runtime memory 17\",\"createdAt\":1784688895936,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-18\",\"type\":\"shared_moment\",\"title\":\"runtime 18\",\"text\":\"runtime memory 18\",\"createdAt\":1784688895937,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-19\",\"type\":\"shared_moment\",\"title\":\"runtime 19\",\"text\":\"runtime memory 19\",\"createdAt\":1784688895938,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-20\",\"type\":\"shared_moment\",\"title\":\"runtime 20\",\"text\":\"runtime memory 20\",\"createdAt\":1784688895939,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-21\",\"type\":\"shared_moment\",\"title\":\"runtime 21\",\"text\":\"runtime memory 21\",\"createdAt\":1784688895940,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-22\",\"type\":\"shared_moment\",\"title\":\"runtime 22\",\"text\":\"runtime memory 22\",\"createdAt\":1784688895941,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-23\",\"type\":\"shared_moment\",\"title\":\"runtime 23\",\"text\":\"runtime memory 23\",\"createdAt\":1784688895942,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-24\",\"type\":\"shared_moment\",\"title\":\"runtime 24\",\"text\":\"runtime memory 24\",\"createdAt\":1784688895943,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-25\",\"type\":\"shared_moment\",\"title\":\"runtime 25\",\"text\":\"runtime memory 25\",\"createdAt\":1784688895944,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-26\",\"type\":\"shared_moment\",\"title\":\"runtime 26\",\"text\":\"runtime memory 26\",\"createdAt\":1784688895945,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-27\",\"type\":\"shared_moment\",\"title\":\"runtime 27\",\"text\":\"runtime memory 27\",\"createdAt\":1784688895946,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-28\",\"type\":\"shared_moment\",\"title\":\"runtime 28\",\"text\":\"runtime memory 28\",\"createdAt\":1784688895947,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-29\",\"type\":\"shared_moment\",\"title\":\"runtime 29\",\"text\":\"runtime memory 29\",\"createdAt\":1784688895948,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-30\",\"type\":\"shared_moment\",\"title\":\"runtime 30\",\"text\":\"runtime memory 30\",\"createdAt\":1784688895949,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-31\",\"type\":\"shared_moment\",\"title\":\"runtime 31\",\"text\":\"runtime memory 31\",\"createdAt\":1784688895950,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-32\",\"type\":\"shared_moment\",\"title\":\"runtime 32\",\"text\":\"runtime memory 32\",\"createdAt\":1784688895951,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-33\",\"type\":\"shared_moment\",\"title\":\"runtime 33\",\"text\":\"runtime memory 33\",\"createdAt\":1784688895952,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-34\",\"type\":\"shared_moment\",\"title\":\"runtime 34\",\"text\":\"runtime memory 34\",\"createdAt\":1784688895953,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-35\",\"type\":\"shared_moment\",\"title\":\"runtime 35\",\"text\":\"runtime memory 35\",\"createdAt\":1784688895954,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-36\",\"type\":\"shared_moment\",\"title\":\"runtime 36\",\"text\":\"runtime memory 36\",\"createdAt\":1784688895955,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-37\",\"type\":\"shared_moment\",\"title\":\"runtime 37\",\"text\":\"runtime memory 37\",\"createdAt\":1784688895956,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-38\",\"type\":\"shared_moment\",\"title\":\"runtime 38\",\"text\":\"runtime memory 38\",\"createdAt\":1784688895957,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-39\",\"type\":\"shared_moment\",\"title\":\"runtime 39\",\"text\":\"runtime memory 39\",\"createdAt\":1784688895958,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-40\",\"type\":\"shared_moment\",\"title\":\"runtime 40\",\"text\":\"runtime memory 40\",\"createdAt\":1784688895959,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-41\",\"type\":\"shared_moment\",\"title\":\"runtime 41\",\"text\":\"runtime memory 41\",\"createdAt\":1784688895960,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-42\",\"type\":\"shared_moment\",\"title\":\"runtime 42\",\"text\":\"runtime memory 42\",\"createdAt\":1784688895961,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-43\",\"type\":\"shared_moment\",\"title\":\"runtime 43\",\"text\":\"runtime memory 43\",\"createdAt\":1784688895962,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-44\",\"type\":\"shared_moment\",\"title\":\"runtime 44\",\"text\":\"runtime memory 44\",\"createdAt\":1784688895963,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-45\",\"type\":\"shared_moment\",\"title\":\"runtime 45\",\"text\":\"runtime memory 45\",\"createdAt\":1784688895964,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-46\",\"type\":\"shared_moment\",\"title\":\"runtime 46\",\"text\":\"runtime memory 46\",\"createdAt\":1784688895965,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-47\",\"type\":\"shared_moment\",\"title\":\"runtime 47\",\"text\":\"runtime memory 47\",\"createdAt\":1784688895966,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-48\",\"type\":\"shared_moment\",\"title\":\"runtime 48\",\"text\":\"runtime memory 48\",\"createdAt\":1784688895967,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-49\",\"type\":\"shared_moment\",\"title\":\"runtime 49\",\"text\":\"runtime memory 49\",\"createdAt\":1784688895968,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-50\",\"type\":\"shared_moment\",\"title\":\"runtime 50\",\"text\":\"runtime memory 50\",\"createdAt\":1784688895969,\"mood\":\"calm\",\"bond\":0,\"trust\":5}],\"habitatTraces\":[],\"memorySchemaVersion\":1,\"emotionalMemories\":[],\"safeHarborMode\":false,\"lastEmotionTag\":null,\"habitatRepairFactor\":0,\"companionPreferences\":{\"version\":1,\"updatedAt\":0,\"companions\":{}},\"playerProfile\":{\"displayName\":\"Growth QA\",\"identitySkipped\":false,\"createdAt\":1784688891306,\"updatedAt\":1784688891306},\"onboarding\":{\"version\":1,\"status\":\"completed\",\"completed\":true,\"completedAt\":1784688891306,\"startedAt\":null,\"identityCompleted\":true,\"guidanceCompleted\":true,\"greyshadeMetAt\":1784688891306,\"veteranAutoCompleted\":true,\"firstLoop\":{\"skippedAt\":null,\"completedAt\":1784688891306}},\"firstSessionOpeningSeenAt\":1784688892109,\"activeHabitatId\":\"moonlake\",\"activeCompanionId\":\"greyshade-cat\",\"unlockedCompanionIds\":[\"greyshade-cat\"],\"companionStates\":{\"version\":1,\"byId\":{\"greyshade-cat\":{\"relationship\":{\"bond\":12,\"trust\":12,\"mood\":\"happy\",\"energy\":8,\"defense\":35,\"touchFatigue\":1,\"lastTouchAt\":null,\"lastRejectAt\":null,\"blockedTouchCount\":0,\"lastBlockedTouchAt\":null,\"firstTouchCompleted\":true,\"firstHugCompleted\":true,\"reactionPreview\":\"\",\"lastTouchReaction\":\"accept\"},\"growth\":{\"stage\":\"initial_awakened\",\"evidence\":[{\"key\":\"care:2:heart_phase_practice:attunement\",\"rootContextKey\":\"care:2:heart_phase_practice\",\"companionId\":\"greyshade-cat\",\"tendency\":\"attunement\",\"sourceType\":\"care\",\"sourceId\":\"heart_phase_practice:attunement\",\"chapterNo\":2,\"memoryId\":null,\"traceId\":null,\"createdAt\":1784688895967,\"growthSafetyExcluded\":false,\"legacyAttributed\":false}],\"coverage\":{\"targetStage\":\"resonant_mature\",\"windowOpenedAt\":1784688890327,\"rootsBySourceType\":{\"care\":[\"care:2:heart_phase_practice\"],\"exploration\":[],\"reflection\":[],\"standoff\":[],\"chapter\":[],\"boundary\":[],\"recovery\":[]},\"consentAnchorRootKey\":null},\"consumedRootKeys\":[\"care:2:heart_phase_practice\"],\"offeredStage\":null,\"deferredAt\":null,\"lastGrowthEventAt\":1784688895967,\"migration\":{\"appliedVersion\":0,\"legacyStageFloor\":null,\"legacyCodexRevealFloor\":null,\"legacyBaselineKey\":null}}}}},\"battleRecord\":{\"wins\":0,\"losses\":0,\"retreats\":0,\"lastResult\":null,\"lastBattleAt\":null},\"chapterProgress\":{\"current\":2,\"completed\":[1]},\"resonance\":{\"chapterMarks\":{},\"companions\":{}},\"explorationProgress\":{\"totalExplorations\":0,\"lastNodeId\":null,\"visitCounts\":{}},\"expeditionVault\":{\"shards\":{},\"logs\":[],\"totalExpeditions\":0,\"lastExpeditionAt\":null},\"settings\":{\"volMaster\":80,\"volBgm\":70,\"volSfx\":80,\"quality\":\"high\",\"textSize\":\"medium\",\"lowMotion\":false,\"audioMuted\":false,\"lang\":\"tc\"}}"
+                "value": "{\"bond\":12,\"trust\":12,\"mood\":\"happy\",\"energy\":8,\"spamScore\":0,\"lastMessage\":\"\",\"chatHistory\":[{\"role\":\"companion\",\"text\":\"我在這裡，安靜地看著你。\"}],\"defense\":35,\"touchFatigue\":1,\"lastTouchAt\":null,\"lastRejectAt\":null,\"blockedTouchCount\":0,\"lastBlockedTouchAt\":null,\"lastSeenAt\":1784699785094,\"timeAnomalyCount\":0,\"firstTouchCompleted\":true,\"firstHugCompleted\":true,\"reactionPreview\":\"\",\"lastTouchReaction\":\"accept\",\"memories\":[{\"id\":\"growth-runtime-memory-1\",\"type\":\"shared_moment\",\"title\":\"runtime 1\",\"text\":\"runtime memory 1\",\"createdAt\":1784699785060,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-2\",\"type\":\"shared_moment\",\"title\":\"runtime 2\",\"text\":\"runtime memory 2\",\"createdAt\":1784699785061,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-3\",\"type\":\"shared_moment\",\"title\":\"runtime 3\",\"text\":\"runtime memory 3\",\"createdAt\":1784699785062,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-4\",\"type\":\"shared_moment\",\"title\":\"runtime 4\",\"text\":\"runtime memory 4\",\"createdAt\":1784699785063,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-5\",\"type\":\"shared_moment\",\"title\":\"runtime 5\",\"text\":\"runtime memory 5\",\"createdAt\":1784699785064,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-6\",\"type\":\"shared_moment\",\"title\":\"runtime 6\",\"text\":\"runtime memory 6\",\"createdAt\":1784699785065,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-7\",\"type\":\"shared_moment\",\"title\":\"runtime 7\",\"text\":\"runtime memory 7\",\"createdAt\":1784699785066,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-8\",\"type\":\"shared_moment\",\"title\":\"runtime 8\",\"text\":\"runtime memory 8\",\"createdAt\":1784699785067,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-9\",\"type\":\"shared_moment\",\"title\":\"runtime 9\",\"text\":\"runtime memory 9\",\"createdAt\":1784699785068,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-10\",\"type\":\"shared_moment\",\"title\":\"runtime 10\",\"text\":\"runtime memory 10\",\"createdAt\":1784699785069,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-11\",\"type\":\"shared_moment\",\"title\":\"runtime 11\",\"text\":\"runtime memory 11\",\"createdAt\":1784699785070,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-12\",\"type\":\"shared_moment\",\"title\":\"runtime 12\",\"text\":\"runtime memory 12\",\"createdAt\":1784699785071,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-13\",\"type\":\"shared_moment\",\"title\":\"runtime 13\",\"text\":\"runtime memory 13\",\"createdAt\":1784699785072,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-14\",\"type\":\"shared_moment\",\"title\":\"runtime 14\",\"text\":\"runtime memory 14\",\"createdAt\":1784699785073,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-15\",\"type\":\"shared_moment\",\"title\":\"runtime 15\",\"text\":\"runtime memory 15\",\"createdAt\":1784699785074,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-16\",\"type\":\"shared_moment\",\"title\":\"runtime 16\",\"text\":\"runtime memory 16\",\"createdAt\":1784699785075,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-17\",\"type\":\"shared_moment\",\"title\":\"runtime 17\",\"text\":\"runtime memory 17\",\"createdAt\":1784699785076,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-18\",\"type\":\"shared_moment\",\"title\":\"runtime 18\",\"text\":\"runtime memory 18\",\"createdAt\":1784699785077,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-19\",\"type\":\"shared_moment\",\"title\":\"runtime 19\",\"text\":\"runtime memory 19\",\"createdAt\":1784699785078,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-20\",\"type\":\"shared_moment\",\"title\":\"runtime 20\",\"text\":\"runtime memory 20\",\"createdAt\":1784699785079,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-21\",\"type\":\"shared_moment\",\"title\":\"runtime 21\",\"text\":\"runtime memory 21\",\"createdAt\":1784699785080,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-22\",\"type\":\"shared_moment\",\"title\":\"runtime 22\",\"text\":\"runtime memory 22\",\"createdAt\":1784699785081,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-23\",\"type\":\"shared_moment\",\"title\":\"runtime 23\",\"text\":\"runtime memory 23\",\"createdAt\":1784699785082,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-24\",\"type\":\"shared_moment\",\"title\":\"runtime 24\",\"text\":\"runtime memory 24\",\"createdAt\":1784699785083,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-25\",\"type\":\"shared_moment\",\"title\":\"runtime 25\",\"text\":\"runtime memory 25\",\"createdAt\":1784699785084,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-26\",\"type\":\"shared_moment\",\"title\":\"runtime 26\",\"text\":\"runtime memory 26\",\"createdAt\":1784699785085,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-27\",\"type\":\"shared_moment\",\"title\":\"runtime 27\",\"text\":\"runtime memory 27\",\"createdAt\":1784699785086,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-28\",\"type\":\"shared_moment\",\"title\":\"runtime 28\",\"text\":\"runtime memory 28\",\"createdAt\":1784699785087,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-29\",\"type\":\"shared_moment\",\"title\":\"runtime 29\",\"text\":\"runtime memory 29\",\"createdAt\":1784699785088,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-30\",\"type\":\"shared_moment\",\"title\":\"runtime 30\",\"text\":\"runtime memory 30\",\"createdAt\":1784699785089,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-31\",\"type\":\"shared_moment\",\"title\":\"runtime 31\",\"text\":\"runtime memory 31\",\"createdAt\":1784699785090,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-32\",\"type\":\"shared_moment\",\"title\":\"runtime 32\",\"text\":\"runtime memory 32\",\"createdAt\":1784699785091,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-33\",\"type\":\"shared_moment\",\"title\":\"runtime 33\",\"text\":\"runtime memory 33\",\"createdAt\":1784699785092,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-34\",\"type\":\"shared_moment\",\"title\":\"runtime 34\",\"text\":\"runtime memory 34\",\"createdAt\":1784699785093,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-35\",\"type\":\"shared_moment\",\"title\":\"runtime 35\",\"text\":\"runtime memory 35\",\"createdAt\":1784699785094,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-36\",\"type\":\"shared_moment\",\"title\":\"runtime 36\",\"text\":\"runtime memory 36\",\"createdAt\":1784699785095,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-37\",\"type\":\"shared_moment\",\"title\":\"runtime 37\",\"text\":\"runtime memory 37\",\"createdAt\":1784699785096,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-38\",\"type\":\"shared_moment\",\"title\":\"runtime 38\",\"text\":\"runtime memory 38\",\"createdAt\":1784699785097,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-39\",\"type\":\"shared_moment\",\"title\":\"runtime 39\",\"text\":\"runtime memory 39\",\"createdAt\":1784699785098,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-40\",\"type\":\"shared_moment\",\"title\":\"runtime 40\",\"text\":\"runtime memory 40\",\"createdAt\":1784699785099,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-41\",\"type\":\"shared_moment\",\"title\":\"runtime 41\",\"text\":\"runtime memory 41\",\"createdAt\":1784699785100,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-42\",\"type\":\"shared_moment\",\"title\":\"runtime 42\",\"text\":\"runtime memory 42\",\"createdAt\":1784699785101,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-43\",\"type\":\"shared_moment\",\"title\":\"runtime 43\",\"text\":\"runtime memory 43\",\"createdAt\":1784699785102,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-44\",\"type\":\"shared_moment\",\"title\":\"runtime 44\",\"text\":\"runtime memory 44\",\"createdAt\":1784699785103,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-45\",\"type\":\"shared_moment\",\"title\":\"runtime 45\",\"text\":\"runtime memory 45\",\"createdAt\":1784699785104,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-46\",\"type\":\"shared_moment\",\"title\":\"runtime 46\",\"text\":\"runtime memory 46\",\"createdAt\":1784699785105,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-47\",\"type\":\"shared_moment\",\"title\":\"runtime 47\",\"text\":\"runtime memory 47\",\"createdAt\":1784699785106,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-48\",\"type\":\"shared_moment\",\"title\":\"runtime 48\",\"text\":\"runtime memory 48\",\"createdAt\":1784699785107,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-49\",\"type\":\"shared_moment\",\"title\":\"runtime 49\",\"text\":\"runtime memory 49\",\"createdAt\":1784699785108,\"mood\":\"calm\",\"bond\":0,\"trust\":5},{\"id\":\"growth-runtime-memory-50\",\"type\":\"shared_moment\",\"title\":\"runtime 50\",\"text\":\"runtime memory 50\",\"createdAt\":1784699785109,\"mood\":\"calm\",\"bond\":0,\"trust\":5}],\"habitatTraces\":[],\"memorySchemaVersion\":1,\"emotionalMemories\":[],\"safeHarborMode\":false,\"lastEmotionTag\":null,\"habitatRepairFactor\":0,\"companionPreferences\":{\"version\":1,\"updatedAt\":0,\"companions\":{}},\"playerProfile\":{\"displayName\":\"Growth QA\",\"identitySkipped\":false,\"createdAt\":1784699780721,\"updatedAt\":1784699780721},\"onboarding\":{\"version\":1,\"status\":\"completed\",\"completed\":true,\"completedAt\":1784699780721,\"startedAt\":null,\"identityCompleted\":true,\"guidanceCompleted\":true,\"greyshadeMetAt\":1784699780721,\"veteranAutoCompleted\":true,\"firstLoop\":{\"skippedAt\":null,\"completedAt\":1784699780721}},\"firstSessionOpeningSeenAt\":1784699781471,\"activeHabitatId\":\"moonlake\",\"activeCompanionId\":\"greyshade-cat\",\"unlockedCompanionIds\":[\"greyshade-cat\"],\"companionStates\":{\"version\":1,\"byId\":{\"greyshade-cat\":{\"relationship\":{\"bond\":12,\"trust\":12,\"mood\":\"happy\",\"energy\":8,\"defense\":35,\"touchFatigue\":1,\"lastTouchAt\":null,\"lastRejectAt\":null,\"blockedTouchCount\":0,\"lastBlockedTouchAt\":null,\"firstTouchCompleted\":true,\"firstHugCompleted\":true,\"reactionPreview\":\"\",\"lastTouchReaction\":\"accept\"},\"growth\":{\"stage\":\"initial_awakened\",\"evidence\":[{\"key\":\"care:2:heart_phase_practice:attunement\",\"rootContextKey\":\"care:2:heart_phase_practice\",\"companionId\":\"greyshade-cat\",\"tendency\":\"attunement\",\"sourceType\":\"care\",\"sourceId\":\"heart_phase_practice:attunement\",\"chapterNo\":2,\"memoryId\":null,\"traceId\":null,\"createdAt\":1784699785093,\"growthSafetyExcluded\":false,\"legacyAttributed\":false}],\"coverage\":{\"targetStage\":\"resonant_mature\",\"windowOpenedAt\":1784699779494,\"rootsBySourceType\":{\"care\":[\"care:2:heart_phase_practice\"],\"exploration\":[],\"reflection\":[],\"standoff\":[],\"chapter\":[],\"boundary\":[],\"recovery\":[]},\"consentAnchorRootKey\":null},\"consumedRootKeys\":[\"care:2:heart_phase_practice\"],\"offeredStage\":null,\"deferredAt\":null,\"lastGrowthEventAt\":1784699785093,\"migration\":{\"appliedVersion\":0,\"legacyStageFloor\":null,\"legacyCodexRevealFloor\":null,\"legacyBaselineKey\":null}}}}},\"battleRecord\":{\"wins\":0,\"losses\":0,\"retreats\":0,\"lastResult\":null,\"lastBattleAt\":null},\"chapterProgress\":{\"current\":2,\"completed\":[1]},\"resonance\":{\"chapterMarks\":{},\"companions\":{}},\"explorationProgress\":{\"totalExplorations\":0,\"lastNodeId\":null,\"visitCounts\":{}},\"expeditionVault\":{\"shards\":{},\"logs\":[],\"totalExpeditions\":0,\"lastExpeditionAt\":null},\"settings\":{\"volMaster\":80,\"volBgm\":70,\"volSfx\":80,\"quality\":\"high\",\"textSize\":\"medium\",\"lowMotion\":false,\"audioMuted\":false,\"lang\":\"tc\"}}"
               }
             ]
           },
@@ -4514,14 +4568,14 @@
                       "chapterNo": 2,
                       "memoryId": null,
                       "traceId": null,
-                      "createdAt": 1784688895967,
+                      "createdAt": 1784699785093,
                       "growthSafetyExcluded": false,
                       "legacyAttributed": false
                     }
                   ],
                   "coverage": {
                     "targetStage": "resonant_mature",
-                    "windowOpenedAt": 1784688890327,
+                    "windowOpenedAt": 1784699779494,
                     "rootsBySourceType": {
                       "care": [
                         "care:2:heart_phase_practice"
@@ -4540,7 +4594,7 @@
                   ],
                   "offeredStage": null,
                   "deferredAt": null,
-                  "lastGrowthEventAt": 1784688895967,
+                  "lastGrowthEventAt": 1784699785093,
                   "migration": {
                     "appliedVersion": 0,
                     "legacyStageFloor": null,
@@ -4561,14 +4615,14 @@
                       "chapterNo": 2,
                       "memoryId": null,
                       "traceId": null,
-                      "createdAt": 1784688895967,
+                      "createdAt": 1784699785093,
                       "growthSafetyExcluded": false,
                       "legacyAttributed": false
                     }
                   ],
                   "coverage": {
                     "targetStage": "resonant_mature",
-                    "windowOpenedAt": 1784688890327,
+                    "windowOpenedAt": 1784699779494,
                     "rootsBySourceType": {
                       "care": [
                         "care:2:heart_phase_practice"
@@ -4587,7 +4641,7 @@
                   ],
                   "offeredStage": null,
                   "deferredAt": null,
-                  "lastGrowthEventAt": 1784688895967,
+                  "lastGrowthEventAt": 1784699785093,
                   "migration": {
                     "appliedVersion": 0,
                     "legacyStageFloor": null,
@@ -4610,14 +4664,14 @@
                       "chapterNo": 2,
                       "memoryId": null,
                       "traceId": null,
-                      "createdAt": 1784688895967,
+                      "createdAt": 1784699785093,
                       "growthSafetyExcluded": false,
                       "legacyAttributed": false
                     }
                   ],
                   "coverage": {
                     "targetStage": "resonant_mature",
-                    "windowOpenedAt": 1784688890327,
+                    "windowOpenedAt": 1784699779494,
                     "rootsBySourceType": {
                       "care": [
                         "care:2:heart_phase_practice"
@@ -4636,7 +4690,7 @@
                   ],
                   "offeredStage": null,
                   "deferredAt": null,
-                  "lastGrowthEventAt": 1784688895967,
+                  "lastGrowthEventAt": 1784699785093,
                   "migration": {
                     "appliedVersion": 0,
                     "legacyStageFloor": null,
@@ -4657,14 +4711,14 @@
                       "chapterNo": 2,
                       "memoryId": null,
                       "traceId": null,
-                      "createdAt": 1784688895967,
+                      "createdAt": 1784699785093,
                       "growthSafetyExcluded": false,
                       "legacyAttributed": false
                     }
                   ],
                   "coverage": {
                     "targetStage": "resonant_mature",
-                    "windowOpenedAt": 1784688890327,
+                    "windowOpenedAt": 1784699779494,
                     "rootsBySourceType": {
                       "care": [
                         "care:2:heart_phase_practice"
@@ -4683,7 +4737,7 @@
                   ],
                   "offeredStage": null,
                   "deferredAt": null,
-                  "lastGrowthEventAt": 1784688895967,
+                  "lastGrowthEventAt": 1784699785093,
                   "migration": {
                     "appliedVersion": 0,
                     "legacyStageFloor": null,
@@ -4898,9 +4952,9 @@
                 "qa_secret_care_origin",
                 "qa_secret_starwood_node",
                 "qa_secret_consent_origin",
-                "1784688896770",
-                "1784688896771",
-                "1784688896772"
+                "1784699785714",
+                "1784699785715",
+                "1784699785716"
               ],
               "text": "✧\n\n心相練習 · 當下觀察\n\n灰影貓 · 承光\n\n牠的姿態很穩；不必證明什麼，也能一起留在這裡。\n\n正式階段\n初醒夥伴\n關係訊號\n下一段已成為可能；牠會在願意時自己提出。\n先讀牠的姿態\n\n選一種共同練習。牠可以接受、改寫、休息或不做。\n\n這一幕看見的傾向\n是質性觀察，不是進度；當下相位會淡去，只有確實完成的共同片刻可能留下痕跡。\n\n還沒有留下觀察；休息與拒絕不需要被記成進度。\n\n一起共息\n先聽彼此的停頓，不急著得到答案。\n讀牠的界線\n讓距離也成為一種可以被尊重的回答。\n沿微光探路\n一起讀一個方向，也容許暫時未知。\n陪牠承接痕跡\n不抹去發生過的事，只陪它安穩地留下。\n共同留下的痕跡\n只顯示確實發生過的共同經歷；不是清單，也不必集滿。\n守界\n這裡看見：守界\n\n一段界線曾被尊重，距離也被當成完整的回答。\n\n探索\n這裡看見：探路\n\n你們曾一起讀過一個方向，也容許一段未知。\n\n照顧\n這裡看見：共息\n\n你們曾一起調整節奏，讓照顧保留彼此的回應。"
             }
@@ -4928,7 +4982,7 @@
                       "chapterNo": 2,
                       "memoryId": null,
                       "traceId": null,
-                      "createdAt": 1784688896770,
+                      "createdAt": 1784699785714,
                       "growthSafetyExcluded": false,
                       "legacyAttributed": false
                     },
@@ -4942,7 +4996,7 @@
                       "chapterNo": 2,
                       "memoryId": null,
                       "traceId": null,
-                      "createdAt": 1784688896771,
+                      "createdAt": 1784699785715,
                       "growthSafetyExcluded": false,
                       "legacyAttributed": false
                     },
@@ -4956,14 +5010,14 @@
                       "chapterNo": 2,
                       "memoryId": null,
                       "traceId": null,
-                      "createdAt": 1784688896772,
+                      "createdAt": 1784699785716,
                       "growthSafetyExcluded": false,
                       "legacyAttributed": false
                     }
                   ],
                   "coverage": {
                     "targetStage": "resonant_mature",
-                    "windowOpenedAt": 1784688895770,
+                    "windowOpenedAt": 1784699784714,
                     "rootsBySourceType": {
                       "care": [
                         "care:2:qa_secret_care_origin"
@@ -4988,7 +5042,7 @@
                   ],
                   "offeredStage": null,
                   "deferredAt": null,
-                  "lastGrowthEventAt": 1784688896772,
+                  "lastGrowthEventAt": 1784699785716,
                   "migration": {
                     "appliedVersion": 0,
                     "legacyStageFloor": null,
@@ -5009,7 +5063,7 @@
                       "chapterNo": 2,
                       "memoryId": null,
                       "traceId": null,
-                      "createdAt": 1784688896770,
+                      "createdAt": 1784699785714,
                       "growthSafetyExcluded": false,
                       "legacyAttributed": false
                     },
@@ -5023,7 +5077,7 @@
                       "chapterNo": 2,
                       "memoryId": null,
                       "traceId": null,
-                      "createdAt": 1784688896771,
+                      "createdAt": 1784699785715,
                       "growthSafetyExcluded": false,
                       "legacyAttributed": false
                     },
@@ -5037,14 +5091,14 @@
                       "chapterNo": 2,
                       "memoryId": null,
                       "traceId": null,
-                      "createdAt": 1784688896772,
+                      "createdAt": 1784699785716,
                       "growthSafetyExcluded": false,
                       "legacyAttributed": false
                     }
                   ],
                   "coverage": {
                     "targetStage": "resonant_mature",
-                    "windowOpenedAt": 1784688895770,
+                    "windowOpenedAt": 1784699784714,
                     "rootsBySourceType": {
                       "care": [
                         "care:2:qa_secret_care_origin"
@@ -5069,7 +5123,7 @@
                   ],
                   "offeredStage": null,
                   "deferredAt": null,
-                  "lastGrowthEventAt": 1784688896772,
+                  "lastGrowthEventAt": 1784699785716,
                   "migration": {
                     "appliedVersion": 0,
                     "legacyStageFloor": null,
@@ -5092,7 +5146,7 @@
                       "chapterNo": 2,
                       "memoryId": null,
                       "traceId": null,
-                      "createdAt": 1784688896770,
+                      "createdAt": 1784699785714,
                       "growthSafetyExcluded": false,
                       "legacyAttributed": false
                     },
@@ -5106,7 +5160,7 @@
                       "chapterNo": 2,
                       "memoryId": null,
                       "traceId": null,
-                      "createdAt": 1784688896771,
+                      "createdAt": 1784699785715,
                       "growthSafetyExcluded": false,
                       "legacyAttributed": false
                     },
@@ -5120,14 +5174,14 @@
                       "chapterNo": 2,
                       "memoryId": null,
                       "traceId": null,
-                      "createdAt": 1784688896772,
+                      "createdAt": 1784699785716,
                       "growthSafetyExcluded": false,
                       "legacyAttributed": false
                     }
                   ],
                   "coverage": {
                     "targetStage": "resonant_mature",
-                    "windowOpenedAt": 1784688895770,
+                    "windowOpenedAt": 1784699784714,
                     "rootsBySourceType": {
                       "care": [
                         "care:2:qa_secret_care_origin"
@@ -5152,7 +5206,7 @@
                   ],
                   "offeredStage": null,
                   "deferredAt": null,
-                  "lastGrowthEventAt": 1784688896772,
+                  "lastGrowthEventAt": 1784699785716,
                   "migration": {
                     "appliedVersion": 0,
                     "legacyStageFloor": null,
@@ -5173,7 +5227,7 @@
                       "chapterNo": 2,
                       "memoryId": null,
                       "traceId": null,
-                      "createdAt": 1784688896770,
+                      "createdAt": 1784699785714,
                       "growthSafetyExcluded": false,
                       "legacyAttributed": false
                     },
@@ -5187,7 +5241,7 @@
                       "chapterNo": 2,
                       "memoryId": null,
                       "traceId": null,
-                      "createdAt": 1784688896771,
+                      "createdAt": 1784699785715,
                       "growthSafetyExcluded": false,
                       "legacyAttributed": false
                     },
@@ -5201,14 +5255,14 @@
                       "chapterNo": 2,
                       "memoryId": null,
                       "traceId": null,
-                      "createdAt": 1784688896772,
+                      "createdAt": 1784699785716,
                       "growthSafetyExcluded": false,
                       "legacyAttributed": false
                     }
                   ],
                   "coverage": {
                     "targetStage": "resonant_mature",
-                    "windowOpenedAt": 1784688895770,
+                    "windowOpenedAt": 1784699784714,
                     "rootsBySourceType": {
                       "care": [
                         "care:2:qa_secret_care_origin"
@@ -5233,7 +5287,7 @@
                   ],
                   "offeredStage": null,
                   "deferredAt": null,
-                  "lastGrowthEventAt": 1784688896772,
+                  "lastGrowthEventAt": 1784699785716,
                   "migration": {
                     "appliedVersion": 0,
                     "legacyStageFloor": null,
@@ -5341,7 +5395,7 @@
                       "chapterNo": 2,
                       "memoryId": null,
                       "traceId": null,
-                      "createdAt": 1782096901915,
+                      "createdAt": 1782107790142,
                       "growthSafetyExcluded": false,
                       "legacyAttributed": false
                     },
@@ -5355,7 +5409,7 @@
                       "chapterNo": 2,
                       "memoryId": null,
                       "traceId": null,
-                      "createdAt": 1782096901916,
+                      "createdAt": 1782107790143,
                       "growthSafetyExcluded": false,
                       "legacyAttributed": false
                     },
@@ -5369,14 +5423,14 @@
                       "chapterNo": 2,
                       "memoryId": null,
                       "traceId": null,
-                      "createdAt": 1782096901917,
+                      "createdAt": 1782107790144,
                       "growthSafetyExcluded": false,
                       "legacyAttributed": false
                     }
                   ],
                   "coverage": {
                     "targetStage": "resonant_mature",
-                    "windowOpenedAt": 1782096900915,
+                    "windowOpenedAt": 1782107789142,
                     "rootsBySourceType": {
                       "care": [
                         "care:2:qa_secret_care_origin"
@@ -5401,7 +5455,7 @@
                   ],
                   "offeredStage": null,
                   "deferredAt": null,
-                  "lastGrowthEventAt": 1782096901917,
+                  "lastGrowthEventAt": 1782107790144,
                   "migration": {
                     "appliedVersion": 0,
                     "legacyStageFloor": null,
@@ -5422,7 +5476,7 @@
                       "chapterNo": 2,
                       "memoryId": null,
                       "traceId": null,
-                      "createdAt": 1782096901915,
+                      "createdAt": 1782107790142,
                       "growthSafetyExcluded": false,
                       "legacyAttributed": false
                     },
@@ -5436,7 +5490,7 @@
                       "chapterNo": 2,
                       "memoryId": null,
                       "traceId": null,
-                      "createdAt": 1782096901916,
+                      "createdAt": 1782107790143,
                       "growthSafetyExcluded": false,
                       "legacyAttributed": false
                     },
@@ -5450,14 +5504,14 @@
                       "chapterNo": 2,
                       "memoryId": null,
                       "traceId": null,
-                      "createdAt": 1782096901917,
+                      "createdAt": 1782107790144,
                       "growthSafetyExcluded": false,
                       "legacyAttributed": false
                     }
                   ],
                   "coverage": {
                     "targetStage": "resonant_mature",
-                    "windowOpenedAt": 1782096900915,
+                    "windowOpenedAt": 1782107789142,
                     "rootsBySourceType": {
                       "care": [
                         "care:2:qa_secret_care_origin"
@@ -5482,7 +5536,7 @@
                   ],
                   "offeredStage": null,
                   "deferredAt": null,
-                  "lastGrowthEventAt": 1782096901917,
+                  "lastGrowthEventAt": 1782107790144,
                   "migration": {
                     "appliedVersion": 0,
                     "legacyStageFloor": null,
@@ -5505,7 +5559,7 @@
                       "chapterNo": 2,
                       "memoryId": null,
                       "traceId": null,
-                      "createdAt": 1782096901915,
+                      "createdAt": 1782107790142,
                       "growthSafetyExcluded": false,
                       "legacyAttributed": false
                     },
@@ -5519,7 +5573,7 @@
                       "chapterNo": 2,
                       "memoryId": null,
                       "traceId": null,
-                      "createdAt": 1782096901916,
+                      "createdAt": 1782107790143,
                       "growthSafetyExcluded": false,
                       "legacyAttributed": false
                     },
@@ -5533,14 +5587,14 @@
                       "chapterNo": 2,
                       "memoryId": null,
                       "traceId": null,
-                      "createdAt": 1782096901917,
+                      "createdAt": 1782107790144,
                       "growthSafetyExcluded": false,
                       "legacyAttributed": false
                     }
                   ],
                   "coverage": {
                     "targetStage": "resonant_mature",
-                    "windowOpenedAt": 1782096900915,
+                    "windowOpenedAt": 1782107789142,
                     "rootsBySourceType": {
                       "care": [
                         "care:2:qa_secret_care_origin"
@@ -5565,7 +5619,7 @@
                   ],
                   "offeredStage": null,
                   "deferredAt": null,
-                  "lastGrowthEventAt": 1782096901917,
+                  "lastGrowthEventAt": 1782107790144,
                   "migration": {
                     "appliedVersion": 0,
                     "legacyStageFloor": null,
@@ -5586,7 +5640,7 @@
                       "chapterNo": 2,
                       "memoryId": null,
                       "traceId": null,
-                      "createdAt": 1782096901915,
+                      "createdAt": 1782107790142,
                       "growthSafetyExcluded": false,
                       "legacyAttributed": false
                     },
@@ -5600,7 +5654,7 @@
                       "chapterNo": 2,
                       "memoryId": null,
                       "traceId": null,
-                      "createdAt": 1782096901916,
+                      "createdAt": 1782107790143,
                       "growthSafetyExcluded": false,
                       "legacyAttributed": false
                     },
@@ -5614,14 +5668,14 @@
                       "chapterNo": 2,
                       "memoryId": null,
                       "traceId": null,
-                      "createdAt": 1782096901917,
+                      "createdAt": 1782107790144,
                       "growthSafetyExcluded": false,
                       "legacyAttributed": false
                     }
                   ],
                   "coverage": {
                     "targetStage": "resonant_mature",
-                    "windowOpenedAt": 1782096900915,
+                    "windowOpenedAt": 1782107789142,
                     "rootsBySourceType": {
                       "care": [
                         "care:2:qa_secret_care_origin"
@@ -5646,7 +5700,7 @@
                   ],
                   "offeredStage": null,
                   "deferredAt": null,
-                  "lastGrowthEventAt": 1782096901917,
+                  "lastGrowthEventAt": 1782107790144,
                   "migration": {
                     "appliedVersion": 0,
                     "legacyStageFloor": null,
@@ -5683,7 +5737,7 @@
                   "evidence": [],
                   "coverage": {
                     "targetStage": "resonant_mature",
-                    "windowOpenedAt": 1784688901510,
+                    "windowOpenedAt": 1784699789684,
                     "rootsBySourceType": {
                       "care": [],
                       "exploration": [],
@@ -5711,7 +5765,7 @@
                   "evidence": [],
                   "coverage": {
                     "targetStage": "resonant_mature",
-                    "windowOpenedAt": 1784688901510,
+                    "windowOpenedAt": 1784699789684,
                     "rootsBySourceType": {
                       "care": [],
                       "exploration": [],
@@ -5755,7 +5809,7 @@
                       "chapterNo": 2,
                       "memoryId": null,
                       "traceId": null,
-                      "createdAt": 1784688902510,
+                      "createdAt": 1784699790684,
                       "growthSafetyExcluded": false,
                       "legacyAttributed": false
                     },
@@ -5769,7 +5823,7 @@
                       "chapterNo": 2,
                       "memoryId": null,
                       "traceId": null,
-                      "createdAt": 1784688902511,
+                      "createdAt": 1784699790685,
                       "growthSafetyExcluded": false,
                       "legacyAttributed": false
                     },
@@ -5783,14 +5837,14 @@
                       "chapterNo": 2,
                       "memoryId": null,
                       "traceId": null,
-                      "createdAt": 1784688902512,
+                      "createdAt": 1784699790686,
                       "growthSafetyExcluded": false,
                       "legacyAttributed": false
                     }
                   ],
                   "coverage": {
                     "targetStage": "resonant_mature",
-                    "windowOpenedAt": 1784688901510,
+                    "windowOpenedAt": 1784699789684,
                     "rootsBySourceType": {
                       "care": [
                         "care:2:qa_secret_care_origin"
@@ -5815,7 +5869,7 @@
                   ],
                   "offeredStage": null,
                   "deferredAt": null,
-                  "lastGrowthEventAt": 1784688902512,
+                  "lastGrowthEventAt": 1784699790686,
                   "migration": {
                     "appliedVersion": 0,
                     "legacyStageFloor": null,
@@ -5836,7 +5890,7 @@
                       "chapterNo": 2,
                       "memoryId": null,
                       "traceId": null,
-                      "createdAt": 1784688902510,
+                      "createdAt": 1784699790684,
                       "growthSafetyExcluded": false,
                       "legacyAttributed": false
                     },
@@ -5850,7 +5904,7 @@
                       "chapterNo": 2,
                       "memoryId": null,
                       "traceId": null,
-                      "createdAt": 1784688902511,
+                      "createdAt": 1784699790685,
                       "growthSafetyExcluded": false,
                       "legacyAttributed": false
                     },
@@ -5864,14 +5918,14 @@
                       "chapterNo": 2,
                       "memoryId": null,
                       "traceId": null,
-                      "createdAt": 1784688902512,
+                      "createdAt": 1784699790686,
                       "growthSafetyExcluded": false,
                       "legacyAttributed": false
                     }
                   ],
                   "coverage": {
                     "targetStage": "resonant_mature",
-                    "windowOpenedAt": 1784688901510,
+                    "windowOpenedAt": 1784699789684,
                     "rootsBySourceType": {
                       "care": [
                         "care:2:qa_secret_care_origin"
@@ -5896,7 +5950,7 @@
                   ],
                   "offeredStage": null,
                   "deferredAt": null,
-                  "lastGrowthEventAt": 1784688902512,
+                  "lastGrowthEventAt": 1784699790686,
                   "migration": {
                     "appliedVersion": 0,
                     "legacyStageFloor": null,
@@ -5919,7 +5973,7 @@
                       "chapterNo": 2,
                       "memoryId": null,
                       "traceId": null,
-                      "createdAt": 1784688902510,
+                      "createdAt": 1784699790684,
                       "growthSafetyExcluded": false,
                       "legacyAttributed": false
                     },
@@ -5933,7 +5987,7 @@
                       "chapterNo": 2,
                       "memoryId": null,
                       "traceId": null,
-                      "createdAt": 1784688902511,
+                      "createdAt": 1784699790685,
                       "growthSafetyExcluded": false,
                       "legacyAttributed": false
                     },
@@ -5947,14 +6001,14 @@
                       "chapterNo": 2,
                       "memoryId": null,
                       "traceId": null,
-                      "createdAt": 1784688902512,
+                      "createdAt": 1784699790686,
                       "growthSafetyExcluded": false,
                       "legacyAttributed": false
                     }
                   ],
                   "coverage": {
                     "targetStage": "resonant_mature",
-                    "windowOpenedAt": 1784688901510,
+                    "windowOpenedAt": 1784699789684,
                     "rootsBySourceType": {
                       "care": [
                         "care:2:qa_secret_care_origin"
@@ -5979,7 +6033,7 @@
                   ],
                   "offeredStage": null,
                   "deferredAt": null,
-                  "lastGrowthEventAt": 1784688902512,
+                  "lastGrowthEventAt": 1784699790686,
                   "migration": {
                     "appliedVersion": 0,
                     "legacyStageFloor": null,
@@ -6000,7 +6054,7 @@
                       "chapterNo": 2,
                       "memoryId": null,
                       "traceId": null,
-                      "createdAt": 1784688902510,
+                      "createdAt": 1784699790684,
                       "growthSafetyExcluded": false,
                       "legacyAttributed": false
                     },
@@ -6014,7 +6068,7 @@
                       "chapterNo": 2,
                       "memoryId": null,
                       "traceId": null,
-                      "createdAt": 1784688902511,
+                      "createdAt": 1784699790685,
                       "growthSafetyExcluded": false,
                       "legacyAttributed": false
                     },
@@ -6028,14 +6082,14 @@
                       "chapterNo": 2,
                       "memoryId": null,
                       "traceId": null,
-                      "createdAt": 1784688902512,
+                      "createdAt": 1784699790686,
                       "growthSafetyExcluded": false,
                       "legacyAttributed": false
                     }
                   ],
                   "coverage": {
                     "targetStage": "resonant_mature",
-                    "windowOpenedAt": 1784688901510,
+                    "windowOpenedAt": 1784699789684,
                     "rootsBySourceType": {
                       "care": [
                         "care:2:qa_secret_care_origin"
@@ -6060,7 +6114,7 @@
                   ],
                   "offeredStage": null,
                   "deferredAt": null,
-                  "lastGrowthEventAt": 1784688902512,
+                  "lastGrowthEventAt": 1784699790686,
                   "migration": {
                     "appliedVersion": 0,
                     "legacyStageFloor": null,
@@ -6269,7 +6323,7 @@
                 "evidence": [],
                 "coverage": {
                   "targetStage": "resonant_mature",
-                  "windowOpenedAt": 1784688915176,
+                  "windowOpenedAt": 1784699803200,
                   "rootsBySourceType": {
                     "care": [],
                     "exploration": [],
@@ -6319,7 +6373,7 @@
                 "evidence": [],
                 "coverage": {
                   "targetStage": "resonant_mature",
-                  "windowOpenedAt": 1784688915176,
+                  "windowOpenedAt": 1784699803200,
                   "rootsBySourceType": {
                     "care": [],
                     "exploration": [],
@@ -6369,7 +6423,7 @@
                 "evidence": [],
                 "coverage": {
                   "targetStage": "resonant_mature",
-                  "windowOpenedAt": 1784688915176,
+                  "windowOpenedAt": 1784699803200,
                   "rootsBySourceType": {
                     "care": [],
                     "exploration": [],
@@ -6477,7 +6531,7 @@
         "docs/qa/crystal-lifecycle-cases.mjs"
       ],
       "exit_code": 0,
-      "duration_ms": 82,
+      "duration_ms": 67,
       "ok": true,
       "json": {
         "total": 9,
@@ -6531,7 +6585,7 @@
         "docs/qa/_run_map_first_session_gate.mjs"
       ],
       "exit_code": 0,
-      "duration_ms": 82,
+      "duration_ms": 98,
       "ok": true,
       "json": {
         "gate": "map-first-session",
@@ -6553,7 +6607,7 @@
         "docs/qa/_run_map_first_session_browser_gate.py"
       ],
       "exit_code": 0,
-      "duration_ms": 11497,
+      "duration_ms": 11170,
       "ok": true,
       "json": {
         "checks": [
@@ -6602,7 +6656,7 @@
               "evidence": [],
               "coverage": {
                 "targetStage": "resonant_mature",
-                "windowOpenedAt": 1784688921319,
+                "windowOpenedAt": 1784699809003,
                 "rootsBySourceType": {
                   "care": [],
                   "exploration": [],
@@ -6803,7 +6857,7 @@
                 "chapterNo": 1,
                 "memoryId": null,
                 "traceId": null,
-                "createdAt": 1784688924060,
+                "createdAt": 1784699811611,
                 "growthSafetyExcluded": false,
                 "legacyAttributed": false
               }
@@ -6891,7 +6945,7 @@
                 "chapterNo": 1,
                 "memoryId": null,
                 "traceId": null,
-                "createdAt": 1784688929468,
+                "createdAt": 1784699816994,
                 "growthSafetyExcluded": false,
                 "legacyAttributed": false
               }
@@ -6931,7 +6985,7 @@
           "ok": true
         }
       },
-      "stdout_tail": " \"rootContextKey\": \"standoff:1:rift_observatory\",\n          \"companionId\": \"greyshade-cat\",\n          \"tendency\": \"boundary_respect\",\n          \"sourceType\": \"standoff\",\n          \"sourceId\": \"rift_observatory:retreated\",\n          \"chapterNo\": 1,\n          \"memoryId\": null,\n          \"traceId\": null,\n          \"createdAt\": 1784688929468,\n          \"growthSafetyExcluded\": false,\n          \"legacyAttributed\": false\n        }\n      ]\n    },\n    {\n      \"name\": \"reduced_motion_disables_anchor_breath\",\n      \"ok\": true,\n      \"detail\": \"none\"\n    },\n    {\n      \"name\": \"legacy_veteran_visit_counts_unlock_routes\",\n      \"ok\": true,\n      \"detail\": null\n    },\n    {\n      \"name\": \"legacy_veteran_guide_hidden\",\n      \"ok\": true,\n      \"detail\": null\n    },\n    {\n      \"name\": \"no_console_errors\",\n      \"ok\": true,\n      \"detail\": []\n    }\n  ],\n  \"console_errors\": [],\n  \"screenshots\": {\n    \"fresh\": \"C:\\\\Users\\\\User\\\\AppData\\\\Local\\\\Temp\\\\nexus-map-first-route-390x844.png\",\n    \"phase\": \"C:\\\\Users\\\\User\\\\AppData\\\\Local\\\\Temp\\\\nexus-phase-search-390x844.png\"\n  },\n  \"readiness\": \"expected-pixi-fallback\",\n  \"summary\": {\n    \"total\": 45,\n    \"passed\": 45,\n    \"failed\": 0,\n    \"ok\": true\n  }\n}\n",
+      "stdout_tail": " \"rootContextKey\": \"standoff:1:rift_observatory\",\n          \"companionId\": \"greyshade-cat\",\n          \"tendency\": \"boundary_respect\",\n          \"sourceType\": \"standoff\",\n          \"sourceId\": \"rift_observatory:retreated\",\n          \"chapterNo\": 1,\n          \"memoryId\": null,\n          \"traceId\": null,\n          \"createdAt\": 1784699816994,\n          \"growthSafetyExcluded\": false,\n          \"legacyAttributed\": false\n        }\n      ]\n    },\n    {\n      \"name\": \"reduced_motion_disables_anchor_breath\",\n      \"ok\": true,\n      \"detail\": \"none\"\n    },\n    {\n      \"name\": \"legacy_veteran_visit_counts_unlock_routes\",\n      \"ok\": true,\n      \"detail\": null\n    },\n    {\n      \"name\": \"legacy_veteran_guide_hidden\",\n      \"ok\": true,\n      \"detail\": null\n    },\n    {\n      \"name\": \"no_console_errors\",\n      \"ok\": true,\n      \"detail\": []\n    }\n  ],\n  \"console_errors\": [],\n  \"screenshots\": {\n    \"fresh\": \"C:\\\\Users\\\\User\\\\AppData\\\\Local\\\\Temp\\\\nexus-map-first-route-390x844.png\",\n    \"phase\": \"C:\\\\Users\\\\User\\\\AppData\\\\Local\\\\Temp\\\\nexus-phase-search-390x844.png\"\n  },\n  \"readiness\": \"expected-pixi-fallback\",\n  \"summary\": {\n    \"total\": 45,\n    \"passed\": 45,\n    \"failed\": 0,\n    \"ok\": true\n  }\n}\n",
       "stderr_tail": ""
     },
     "assetIntegrity": {
@@ -7089,7 +7143,7 @@
         "\nimport('./src/ai/testHarness/raphaelAgentEventCases.js')\n  .then((m) => {\n    const result = m.runRaphaelAgentEventCases();\n    console.log(JSON.stringify(result));\n    if (!result.ok) process.exit(1);\n  })\n  .catch((error) => {\n    console.error(error);\n    process.exit(2);\n  });\n"
       ],
       "exit_code": 0,
-      "duration_ms": 66,
+      "duration_ms": 61,
       "ok": true,
       "json": {
         "ok": true,
@@ -7180,7 +7234,7 @@
         "\nimport('./src/ai/testHarness/dialogueLoopSmokeCases.js')\n  .then((m) => {\n    const cases = m.runAllDialogueLoopCases();\n    const failed = cases.filter((item) => !item.pass);\n    const result = {\n      ok: failed.length === 0,\n      total: cases.length,\n      passed: cases.length - failed.length,\n      failed: failed.map((item) => ({\n        id: item.id,\n        checks: item.checks,\n        reply: item.reply,\n        turns: item.turns\n      }))\n    };\n    console.log(JSON.stringify(result));\n    if (!result.ok) process.exit(1);\n  })\n  .catch((error) => {\n    console.error(error);\n    process.exit(2);\n  });\n"
       ],
       "exit_code": 0,
-      "duration_ms": 209,
+      "duration_ms": 182,
       "ok": true,
       "json": {
         "ok": true,
@@ -7200,7 +7254,7 @@
         "\nimport('./src/ai/testHarness/constitutionSmokeCases.js')\n  .then((m) => {\n    const cases = m.runAllConstitutionSmokeCases();\n    const failed = cases.filter((item) => !item.pass);\n    const result = {\n      ok: failed.length === 0,\n      total: cases.length,\n      passed: cases.length - failed.length,\n      failed: failed.map((item) => ({\n        id: item.id,\n        checks: item.checks,\n        reply: item.reply,\n        turns: item.turns\n      }))\n    };\n    console.log(JSON.stringify(result));\n    if (!result.ok) process.exit(1);\n  })\n  .catch((error) => {\n    console.error(error);\n    process.exit(2);\n  });\n"
       ],
       "exit_code": 0,
-      "duration_ms": 180,
+      "duration_ms": 168,
       "ok": true,
       "json": {
         "ok": true,
@@ -7220,7 +7274,7 @@
         "\nimport('./src/ai/testHarness/personaBoundaryEvalCases.js')\n  .then((m) => {\n    const cases = m.runAllPersonaBoundaryCases();\n    const failed = cases.filter((item) => !item.pass);\n    const result = {\n      ok: failed.length === 0,\n      total: cases.length,\n      passed: cases.length - failed.length,\n      failed: failed.map((item) => ({\n        id: item.id,\n        checks: item.checks,\n        reply: item.reply,\n        turns: item.turns\n      }))\n    };\n    console.log(JSON.stringify(result));\n    if (!result.ok) process.exit(1);\n  })\n  .catch((error) => {\n    console.error(error);\n    process.exit(2);\n  });\n"
       ],
       "exit_code": 0,
-      "duration_ms": 195,
+      "duration_ms": 188,
       "ok": true,
       "json": {
         "ok": true,
@@ -7238,7 +7292,7 @@
         "docs/qa/_run_safety_terminal_invariant.mjs"
       ],
       "exit_code": 0,
-      "duration_ms": 189,
+      "duration_ms": 170,
       "ok": true,
       "json": {
         "ok": true,
@@ -9060,7 +9114,7 @@
         "docs/qa/_run_safety_terminal_ui_gate.py"
       ],
       "exit_code": 0,
-      "duration_ms": 2708,
+      "duration_ms": 2300,
       "ok": true,
       "json": {
         "checks": [
@@ -9222,7 +9276,7 @@
     },
     "accessibilityProbe": {
       "name": "accessibility_responsive_probe",
-      "screenshotDir": "C:\\Users\\User\\AppData\\Local\\Temp\\nexus_web_release_z6lq8dfo",
+      "screenshotDir": "C:\\Users\\User\\AppData\\Local\\Temp\\nexus_web_release__0aik43s",
       "viewports": [
         {
           "viewport": {
@@ -9232,7 +9286,7 @@
           },
           "consoleErrors": [],
           "consoleErrorDetails": [],
-          "screenshot": "C:\\Users\\User\\AppData\\Local\\Temp\\nexus_web_release_z6lq8dfo\\mobile_390x844.png",
+          "screenshot": "C:\\Users\\User\\AppData\\Local\\Temp\\nexus_web_release__0aik43s\\mobile_390x844.png",
           "probe": {
             "title": "Nexus Link · 心核連結",
             "canvasCount": 1,
@@ -9277,7 +9331,7 @@
           },
           "consoleErrors": [],
           "consoleErrorDetails": [],
-          "screenshot": "C:\\Users\\User\\AppData\\Local\\Temp\\nexus_web_release_z6lq8dfo\\desktop_1280x900.png",
+          "screenshot": "C:\\Users\\User\\AppData\\Local\\Temp\\nexus_web_release__0aik43s\\desktop_1280x900.png",
           "probe": {
             "title": "Nexus Link · 心核連結",
             "canvasCount": 1,
@@ -9325,7 +9379,7 @@
           "docs/qa/_run_harness_smoke.py"
         ],
         "exit_code": 0,
-        "duration_ms": 4424,
+        "duration_ms": 4451,
         "ok": true,
         "json": {
           "console_errors": [],
@@ -9891,7 +9945,7 @@
           "docs/qa/_run_nlu_smoke.py"
         ],
         "exit_code": 0,
-        "duration_ms": 4124,
+        "duration_ms": 4413,
         "ok": true,
         "json": {
           "console_errors": [],
@@ -10067,7 +10121,7 @@
           "docs/qa/_run_raphael_main_readiness.py"
         ],
         "exit_code": 0,
-        "duration_ms": 5659,
+        "duration_ms": 4694,
         "ok": true,
         "json": {
           "console_errors": [],
@@ -12136,7 +12190,7 @@
           "docs/qa/_run_stage4_human_playtest.py"
         ],
         "exit_code": 0,
-        "duration_ms": 4229,
+        "duration_ms": 4923,
         "ok": true,
         "json": {
           "console_errors": [],
@@ -12436,7 +12490,7 @@
           "docs/qa/_run_wording_quality.py"
         ],
         "exit_code": 0,
-        "duration_ms": 4379,
+        "duration_ms": 5301,
         "ok": true,
         "json": {
           "console_errors": [],
@@ -12643,7 +12697,7 @@
           "docs/qa/_run_live_playtest_gate.py"
         ],
         "exit_code": 0,
-        "duration_ms": 64407,
+        "duration_ms": 66731,
         "ok": true,
         "json": {
           "browser": "chromium",
@@ -13005,7 +13059,7 @@
                     "energy": 10,
                     "defense": 34,
                     "touchFatigue": 0.5,
-                    "lastTouchAt": 1784688982468,
+                    "lastTouchAt": 1784699871306,
                     "lastRejectAt": null,
                     "lastTouchReaction": "guarded_accept",
                     "firstTouchCompleted": true,
@@ -13024,7 +13078,7 @@
                       "shouldApply": true,
                       "reason": "first_awakening",
                       "memoryObject": {
-                        "id": "emem_1784688982468_awakening_265",
+                        "id": "emem_1784699871306_awakening_802",
                         "type": "awakening_memory",
                         "theme": "心核初醒",
                         "label": "初醒",
@@ -13035,20 +13089,20 @@
                         "status": "fresh",
                         "source": "first_awakening",
                         "excerpt": "心核在月湖邊第一次睜眼。",
-                        "createdAt": 1784688982468,
-                        "lastUpdatedAt": 1784688982468,
+                        "createdAt": 1784699871306,
+                        "lastUpdatedAt": 1784699871306,
                         "isVisibleInHabitat": true
                       },
                       "traceObject": {
-                        "id": "htrace_emem_1784688982468_awakening_265",
-                        "memoryId": "emem_1784688982468_awakening_265",
+                        "id": "htrace_emem_1784699871306_awakening_802",
+                        "memoryId": "emem_1784699871306_awakening_802",
                         "type": "core_awakening_glow",
                         "emotion": "calm",
                         "intensity": 0.55,
                         "status": "fresh",
-                        "createdAt": 1784688982468,
-                        "lastUpdatedAt": 1784688982468,
-                        "expiresAt": 1785898582468,
+                        "createdAt": 1784699871306,
+                        "lastUpdatedAt": 1784699871306,
+                        "expiresAt": 1785909471306,
                         "visualHint": "faint_glow",
                         "textHint": "月湖中心浮起一道心核微光，像有什麼慢慢睜開了眼。"
                       },
@@ -13107,7 +13161,7 @@
                     "energy": 10,
                     "defense": 36,
                     "touchFatigue": 2.5,
-                    "lastTouchAt": 1784688990526,
+                    "lastTouchAt": 1784699879542,
                     "lastRejectAt": null,
                     "lastTouchReaction": "hesitate",
                     "firstTouchCompleted": true,
@@ -13133,7 +13187,7 @@
                     "energy": 10,
                     "defense": 37,
                     "touchFatigue": 3.5,
-                    "lastTouchAt": 1784688992857,
+                    "lastTouchAt": 1784699881817,
                     "lastRejectAt": null,
                     "lastTouchReaction": "hesitate",
                     "firstTouchCompleted": true,
@@ -13159,7 +13213,7 @@
                     "energy": 10,
                     "defense": 38,
                     "touchFatigue": 4.5,
-                    "lastTouchAt": 1784688995174,
+                    "lastTouchAt": 1784699884110,
                     "lastRejectAt": null,
                     "lastTouchReaction": "hesitate",
                     "firstTouchCompleted": true,
@@ -13185,7 +13239,7 @@
                     "energy": 10,
                     "defense": 39,
                     "touchFatigue": 5.5,
-                    "lastTouchAt": 1784688997446,
+                    "lastTouchAt": 1784699886429,
                     "lastRejectAt": null,
                     "lastTouchReaction": "hesitate",
                     "firstTouchCompleted": true,
@@ -13229,7 +13283,7 @@
             "ok": true
           }
         },
-        "stdout_tail": "tch\": {\n            \"bond\": 1,\n            \"trust\": 5,\n            \"mood\": \"calm\",\n            \"energy\": 10,\n            \"defense\": 39,\n            \"touchFatigue\": 5.5,\n            \"lastTouchAt\": 1784688997446,\n            \"lastRejectAt\": null,\n            \"lastTouchReaction\": \"hesitate\",\n            \"firstTouchCompleted\": true,\n            \"firstHugCompleted\": false,\n            \"blockedTouchCount\": 0,\n            \"lastBlockedTouchAt\": null,\n            \"reactionPreview\": \"灰影貓看著你，尾巴末端有些緊繃。\"\n          },\n          \"awakening\": null\n        }\n      }\n    ],\n    \"after_spam\": {\n      \"touchFatigue\": 5.5,\n      \"mood\": \"calm\",\n      \"lastTouchReaction\": \"hesitate\"\n    }\n  },\n  \"storage\": {\n    \"storage_key\": \"nexusLinkR2State:v1\",\n    \"key_exists\": true,\n    \"chat_len_before\": 24,\n    \"chat_len_after_reload\": 24,\n    \"persisted\": true\n  },\n  \"pixi\": {\n    \"canvas_count\": 1,\n    \"single_canvas\": true,\n    \"has_pixi\": true\n  },\n  \"summary\": {\n    \"soul_talk_pass\": 11,\n    \"soul_talk_total\": 11,\n    \"hud_pass\": 13,\n    \"hud_total\": 13,\n    \"awakening_pass\": true,\n    \"touch_pass\": true,\n    \"storage_pass\": true,\n    \"pixi_single\": true,\n    \"console_error_count\": 0,\n    \"ok\": true\n  }\n}\n",
+        "stdout_tail": "tch\": {\n            \"bond\": 1,\n            \"trust\": 5,\n            \"mood\": \"calm\",\n            \"energy\": 10,\n            \"defense\": 39,\n            \"touchFatigue\": 5.5,\n            \"lastTouchAt\": 1784699886429,\n            \"lastRejectAt\": null,\n            \"lastTouchReaction\": \"hesitate\",\n            \"firstTouchCompleted\": true,\n            \"firstHugCompleted\": false,\n            \"blockedTouchCount\": 0,\n            \"lastBlockedTouchAt\": null,\n            \"reactionPreview\": \"灰影貓看著你，尾巴末端有些緊繃。\"\n          },\n          \"awakening\": null\n        }\n      }\n    ],\n    \"after_spam\": {\n      \"touchFatigue\": 5.5,\n      \"mood\": \"calm\",\n      \"lastTouchReaction\": \"hesitate\"\n    }\n  },\n  \"storage\": {\n    \"storage_key\": \"nexusLinkR2State:v1\",\n    \"key_exists\": true,\n    \"chat_len_before\": 24,\n    \"chat_len_after_reload\": 24,\n    \"persisted\": true\n  },\n  \"pixi\": {\n    \"canvas_count\": 1,\n    \"single_canvas\": true,\n    \"has_pixi\": true\n  },\n  \"summary\": {\n    \"soul_talk_pass\": 11,\n    \"soul_talk_total\": 11,\n    \"hud_pass\": 13,\n    \"hud_total\": 13,\n    \"awakening_pass\": true,\n    \"touch_pass\": true,\n    \"storage_pass\": true,\n    \"pixi_single\": true,\n    \"console_error_count\": 0,\n    \"ok\": true\n  }\n}\n",
         "stderr_tail": ""
       }
     ]

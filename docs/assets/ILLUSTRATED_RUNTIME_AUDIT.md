@@ -24,12 +24,12 @@
 | `stone-shard` | `assets/characters/stone-shard/metadata/animations.json` | full-runtime | Active illustrated guardian manifest; protected runtime-ready root. |
 | `vine-twist` | `assets/characters/vine-twist/metadata/animations.json` | full-runtime | Active illustrated guardian manifest; protected runtime-ready root. |
 | `crystal-rabbit` | `assets/characters/crystal-rabbit/metadata/animations.json` | full-runtime | Active illustrated guardian manifest; protected runtime-ready root. |
-| `flametail-fox` | no approved root static image | placeholder / replacement needed | Previous root static PNG was removed after human review because the content was incorrect; not part of the animated illustrated manifest gate. |
+| `blazetail-kit` | `assets/characters/blazetail-kit/metadata/animations.json` | full-runtime | Canonical runtime identity for 焰尾狐; Stage 1 form name is 焰尾小狐. The old `flametail-fox` id is a one-way save alias, not another asset root. |
 
-Placeholders and future candidates such as `crystal-seahorse`, `verdant-stag`,
-`thunder-pup`, and `star-energy-boarlet` are not active animated runtime
-entries in this audit. They require separate companion specs, transparent
-masters, human approval, and asset readiness gates before runtime promotion.
+Formal Heartspark and Ironflow companions promoted after the original Package 7
+snapshot are governed by their current Stage 1 asset indexes. The remaining
+named roadmap candidate `star-energy-boarlet` still requires a separate spec,
+transparent master, human approval and asset-readiness gate.
 
 ## Runtime policy locked by Package 7
 

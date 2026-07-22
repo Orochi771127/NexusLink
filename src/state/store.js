@@ -1,7 +1,11 @@
 import defaultState from "./defaultState.js";
 import { sanitizeEmotionalMemory, sanitizeMemory, sanitizeTrace } from "../engine/storageGuard.js";
 import { clamp } from "../utils/clamp.js";
-import { normalizeRuntimeCompanionId, normalizeUnlockedCompanionIds } from "../data/companionRuntimePolicy.js";
+import {
+  normalizeRuntimeCompanionId,
+  normalizeUnlockedCompanionIds,
+  resolveCanonicalCompanionId
+} from "../data/companionRuntimePolicy.js";
 import { isKnownCompanionId } from "../data/companionRegistry.js";
 import { EXPLORATION_NODE_IDS } from "../data/explorationNodes.js";
 import { normalizeHabitatId } from "../data/habitatRegistry.js";
@@ -217,30 +221,61 @@ function normalizeCompanionPreferences(rawStore = {}) {
   const companions = source.companions && typeof source.companions === "object" ? source.companions : {};
   const normalizedCompanions = {};
 
-  for (const [companionId, rawProfile] of Object.entries(companions)) {
-    if (!isKnownCompanionId(companionId) && companionId !== "default") continue;
-    const profile = rawProfile && typeof rawProfile === "object" ? rawProfile : {};
-    normalizedCompanions[companionId] = {
-      replyLengthBias: profile.replyLengthBias === "short" ? "short" : "normal",
-      avoidComfortIntensity: clamp(profile.avoidComfortIntensity ?? 0, 0, 1),
-      preferPresenceOverAdvice: Boolean(profile.preferPresenceOverAdvice),
-      boundarySensitivity: clamp(profile.boundarySensitivity ?? 0, 0, 1),
-      interactionPace: clamp(profile.interactionPace ?? 0, -1, 1),
-      eveningAffinity: Boolean(profile.eveningAffinity),
-      restAffinity: Boolean(profile.restAffinity),
-      learnedSignals: Array.isArray(profile.learnedSignals)
-        ? profile.learnedSignals.filter((value) => typeof value === "string" && value).slice(-12)
-        : [],
-      sessionCount: Math.max(0, Number(profile.sessionCount) || 0),
-      lastSeenAt: normalizePositiveTimestamp(profile.lastSeenAt, 0),
-      updatedAt: normalizePositiveTimestamp(profile.updatedAt, 0)
-    };
+  const entries = Object.entries(companions);
+  // Alias-only data is retained, but a canonical profile is applied last and
+  // owns scalar preferences. Rolling signals and counters merge without double
+  // counting or exceeding their existing bounds.
+  for (const canonicalPass of [false, true]) {
+    for (const [sourceCompanionId, rawProfile] of entries) {
+      const companionId = sourceCompanionId === "default"
+        ? "default"
+        : resolveCanonicalCompanionId(sourceCompanionId);
+      const isCanonicalSource = sourceCompanionId === companionId;
+      if (isCanonicalSource !== canonicalPass) continue;
+      if (!isKnownCompanionId(companionId) && companionId !== "default") continue;
+      const profile = normalizeCompanionPreferenceProfile(rawProfile);
+      normalizedCompanions[companionId] = normalizedCompanions[companionId]
+        ? mergeCompanionPreferenceProfiles(normalizedCompanions[companionId], profile)
+        : profile;
+    }
   }
 
   return {
     version: Math.max(1, Number(source.version) || 1),
     updatedAt: normalizePositiveTimestamp(source.updatedAt, 0),
     companions: normalizedCompanions
+  };
+}
+
+function normalizeCompanionPreferenceProfile(rawProfile) {
+  const profile = rawProfile && typeof rawProfile === "object" ? rawProfile : {};
+  return {
+    replyLengthBias: profile.replyLengthBias === "short" ? "short" : "normal",
+    avoidComfortIntensity: clamp(profile.avoidComfortIntensity ?? 0, 0, 1),
+    preferPresenceOverAdvice: Boolean(profile.preferPresenceOverAdvice),
+    boundarySensitivity: clamp(profile.boundarySensitivity ?? 0, 0, 1),
+    interactionPace: clamp(profile.interactionPace ?? 0, -1, 1),
+    eveningAffinity: Boolean(profile.eveningAffinity),
+    restAffinity: Boolean(profile.restAffinity),
+    learnedSignals: Array.isArray(profile.learnedSignals)
+      ? profile.learnedSignals.filter((value) => typeof value === "string" && value).slice(-12)
+      : [],
+    sessionCount: Math.max(0, Number(profile.sessionCount) || 0),
+    lastSeenAt: normalizePositiveTimestamp(profile.lastSeenAt, 0),
+    updatedAt: normalizePositiveTimestamp(profile.updatedAt, 0)
+  };
+}
+
+function mergeCompanionPreferenceProfiles(legacyProfile, canonicalProfile) {
+  return {
+    ...canonicalProfile,
+    learnedSignals: [...new Set([
+      ...legacyProfile.learnedSignals,
+      ...canonicalProfile.learnedSignals
+    ])].slice(-12),
+    sessionCount: Math.max(legacyProfile.sessionCount, canonicalProfile.sessionCount),
+    lastSeenAt: Math.max(legacyProfile.lastSeenAt, canonicalProfile.lastSeenAt),
+    updatedAt: Math.max(legacyProfile.updatedAt, canonicalProfile.updatedAt)
   };
 }
 
@@ -380,19 +415,48 @@ function normalizeResonance(rawResonance) {
   });
   const rawCompanions = resonance.companions && typeof resonance.companions === "object" ? resonance.companions : {};
   const companions = {};
-  Object.keys(rawCompanions).forEach((companionId) => {
-    if (!isKnownCompanionId(companionId)) return;
-    const entry = rawCompanions[companionId] && typeof rawCompanions[companionId] === "object"
-      ? rawCompanions[companionId]
-      : {};
-    companions[companionId] = {
-      metAt: Number(entry.metAt) || null,
-      lastAskAt: Number(entry.lastAskAt) || null,
-      declinedCount: clamp(Number(entry.declinedCount) || 0, 0, 999),
-      joinedAt: Number(entry.joinedAt) || null
-    };
-  });
+  const companionEntries = Object.entries(rawCompanions);
+  for (const canonicalPass of [false, true]) {
+    for (const [sourceCompanionId, rawEntry] of companionEntries) {
+      const companionId = resolveCanonicalCompanionId(sourceCompanionId);
+      if ((sourceCompanionId === companionId) !== canonicalPass) continue;
+      if (!isKnownCompanionId(companionId)) continue;
+      const entry = normalizeResonanceCompanion(rawEntry);
+      companions[companionId] = companions[companionId]
+        ? mergeResonanceCompanions(companions[companionId], entry)
+        : entry;
+    }
+  }
   return { chapterMarks, companions };
+}
+
+function normalizeResonanceCompanion(rawEntry) {
+  const entry = rawEntry && typeof rawEntry === "object" ? rawEntry : {};
+  return {
+    metAt: normalizePositiveTimestamp(entry.metAt, null),
+    lastAskAt: normalizePositiveTimestamp(entry.lastAskAt, null),
+    declinedCount: clamp(Number(entry.declinedCount) || 0, 0, 999),
+    joinedAt: normalizePositiveTimestamp(entry.joinedAt, null)
+  };
+}
+
+function mergeResonanceCompanions(legacyEntry, canonicalEntry) {
+  return {
+    metAt: earliestTimestamp(legacyEntry.metAt, canonicalEntry.metAt),
+    lastAskAt: latestTimestamp(legacyEntry.lastAskAt, canonicalEntry.lastAskAt),
+    declinedCount: Math.max(legacyEntry.declinedCount, canonicalEntry.declinedCount),
+    joinedAt: earliestTimestamp(legacyEntry.joinedAt, canonicalEntry.joinedAt)
+  };
+}
+
+function earliestTimestamp(left, right) {
+  if (!left) return right || null;
+  if (!right) return left;
+  return Math.min(left, right);
+}
+
+function latestTimestamp(left, right) {
+  return Math.max(left || 0, right || 0) || null;
 }
 
 function normalizeBattleRecord(rawRecord, baseRecord) {

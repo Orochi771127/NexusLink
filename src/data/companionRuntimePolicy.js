@@ -2,6 +2,19 @@ import { COMPANIONS, DEFAULT_COMPANION_ID, getCompanionById, isKnownCompanionId 
 
 export const DEFAULT_ACTIVE_COMPANION_ID = DEFAULT_COMPANION_ID;
 
+// Owner canon: 焰尾狐 is one character. `flametail-fox` was the pre-runtime
+// identity used by older saves; all live state resolves one-way to the shipped
+// Stage-1 carrier `blazetail-kit`. Keep aliases out of COMPANIONS so Codex and
+// selectors can never render a duplicate character.
+export const LEGACY_COMPANION_ID_ALIASES = Object.freeze({
+  "flametail-fox": "blazetail-kit"
+});
+
+export function resolveCanonicalCompanionId(companionId) {
+  const normalizedId = typeof companionId === "string" ? companionId.trim() : "";
+  return LEGACY_COMPANION_ID_ALIASES[normalizedId] || normalizedId;
+}
+
 const RUNTIME_READY_ASSET_STATES = new Set(["runtime-ready", "static-ready"]);
 
 export function normalizeUnlockedCompanionIds(rawUnlockedIds = [], options = {}) {
@@ -11,14 +24,16 @@ export function normalizeUnlockedCompanionIds(rawUnlockedIds = [], options = {})
   // veteran 既有存檔的解鎖清單（多隻/含灰影）原樣保留，不沒收。
   const unlocked = new Set();
 
-  source.forEach((companionId) => {
+  source.forEach((rawCompanionId) => {
+    const companionId = resolveCanonicalCompanionId(rawCompanionId);
     if (isKnownCompanionId(companionId)) {
       unlocked.add(companionId);
     }
   });
 
-  if (options.preserveActiveCompanion && isKnownCompanionId(options.activeCompanionId)) {
-    unlocked.add(options.activeCompanionId);
+  const activeCompanionId = resolveCanonicalCompanionId(options.activeCompanionId);
+  if (options.preserveActiveCompanion && isKnownCompanionId(activeCompanionId)) {
+    unlocked.add(activeCompanionId);
   }
 
   // 兜底：解鎖集不可為空（缺欄位/壞資料且 active 也不可用）→ 回到預設夥伴。
@@ -34,9 +49,12 @@ export function isCompanionAssetReady(companion) {
 }
 
 export function getCompanionRuntimeEligibility(companionOrId, state = {}) {
+  const resolvedCompanionId = typeof companionOrId === "string"
+    ? resolveCanonicalCompanionId(companionOrId)
+    : null;
   const companion = typeof companionOrId === "string"
-    ? isKnownCompanionId(companionOrId)
-      ? getCompanionById(companionOrId)
+    ? isKnownCompanionId(resolvedCompanionId)
+      ? getCompanionById(resolvedCompanionId)
       : null
     : companionOrId;
   const companionId = companion?.id;
@@ -71,7 +89,8 @@ export function isRuntimeEligibleCompanion(companionId, state = {}) {
 }
 
 export function normalizeRuntimeCompanionId(companionId, state = {}) {
-  if (isRuntimeEligibleCompanion(companionId, state)) return companionId;
+  const canonicalId = resolveCanonicalCompanionId(companionId);
+  if (isRuntimeEligibleCompanion(canonicalId, state)) return canonicalId;
   return DEFAULT_ACTIVE_COMPANION_ID;
 }
 

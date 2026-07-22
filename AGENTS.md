@@ -149,13 +149,14 @@ Acceptance refs:  <對應 ACCEPTANCE.md 的哪幾條>
 | Tier | 角色 | ID | 規則 |
 |------|------|-----|------|
 | 1 First Runtime Carrier | 灰影貓 | `greyshade-cat` | 第一個已驗證 runtime 載體、fresh save default / fallback；Initial Bond 後以選定者為 active companion |
-| 1 Formal Heartspark Council Stage 1 | 金羽小梟／芽角小鹿／晶鰭小海馬／焰尾小狐／星紋小虎 | `auriowl` / `sprigfawn` / `crystalfin-seahorse` / `blazetail-kit` / `starstripe-cub` | Owner 定版正式五行席位；現行皆為 `full-runtime` / `runtime-ready` / `selectableWhenUnlocked`，仍服從 Initial Bond、章節解鎖與意願制 |
+| 1 Formal Heartspark Council Stage 1 | 金羽小梟／芽角小鹿／晶鰭小海馬／焰尾狐（幼態：焰尾小狐）／星紋小虎 | `auriowl` / `sprigfawn` / `crystalfin-seahorse` / `blazetail-kit` / `starstripe-cub` | Owner 定版正式五行席位；現行皆為 `full-runtime` / `runtime-ready` / `selectableWhenUnlocked`，仍服從 Initial Bond、章節解鎖與意願制 |
 | 1 Formal Ironflow Hackers Stage 1 | 雷霆幼狼／浪花幼獅／星焰鳳凰／幼星駒／金光幼龍 | `thunder-pup` / `wavecub` / `starflame-phoenix` / `star-foal` / `goldenspark-wyrm` | 黑鐵駭客正式五行席位；現行皆為 `full-runtime` / `runtime-ready` / `selectableWhenUnlocked`，但初始鎖定、不自動解鎖、不加入 Initial Bond |
 | 1 Runtime Test Carriers | 焰紋狐／冰晶狼／磐石熊／青藤鹿／晶石兔 | `flame-flicker` / `ice-talon` / `stone-shard` / `vine-twist` / `crystal-rabbit` | 現行 `full-runtime` 測試載體，不占正式心輝議會五行席位；未來用途待 Owner 另開 canon/migration 包 |
-| 2 Chapter Runtime Candidate | 焰尾狐 | `flametail-fox` | 仍可作章節候選；舊靜態圖已因內容錯誤移除，需新 approved asset 才能成為 runtime candidate；不可成為灰影貓 fallback |
 | 3 Roadmap Runtime Candidate | 星能小山豬 | `star-energy-boarlet` | 可逐章節升級為 runtime candidate；未通過 asset readiness 前不可選 |
 
 圖鑑中的水晶海馬 / 青葉麋鹿為既有 placeholder 展示資料；可列為 future runtime candidate，但必須先完成正式 companion spec、512×512 transparent master asset、human approval 與 asset readiness gate。多角色版本首版仍維持「同一時間只有一隻 active companion」。未來可做同行／組隊內容，但必須是章節後期、非戰力導向、非普通收集 RPG。
+
+焰尾狐的 canonical runtime ID 為 `blazetail-kit`；「焰尾小狐」是 Stage 1 幼態名。舊 ID `flametail-fox` 僅可由 state normalizer 單向遷移，不得加入 registry、Codex、selector、第二份 companion state 或新的資產生成佇列。
 
 ### Runtime model（與現況同步）
 

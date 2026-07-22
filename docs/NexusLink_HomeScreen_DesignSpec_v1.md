@@ -336,7 +336,7 @@ Codex 後續改版時，必須遵守：
 - 不新增 package.json
 - 保留 PixiJS
 - 保留 data/creatures.json
-- 不保留錯誤的 root `assets/flametail-fox.png`；需新 approved asset 才能重新接入
+- 不恢復錯誤的 root `assets/flametail-fox.png`；焰尾狐已由 canonical `blazetail-kit` portrait 與動畫包接入，`flametail-fox` 只作舊存檔單向 alias
 - 保留 localStorage
 - 保留 Bond / Trust / Mood / Energy / SpamScore
 - 保留 currentCreature.name / currentCreature.image 資料驅動邏輯

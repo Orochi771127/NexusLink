@@ -300,13 +300,13 @@ P1 開發主線以灰影貓與第一棲地為主，不擴張多角色系統。
 
 ---
 
-### Tier 2 — Registered Legacy / Fallback Creature
+### Legacy ID alias — no separate asset production
 
 | Character ID | 名稱 | 狀態 | 說明 |
 |-------------|------|------|------|
-| `flametail-fox` | 焰尾狐 | ⚠️ fallback image only | `data/creatures.json` 已登錄，只有靜態圖，無 spritesheet |
+| `flametail-fox` → `blazetail-kit` | 焰尾狐（Stage 1 幼態：焰尾小狐） | ✅ existing full-runtime art | 使用 `assets/characters/blazetail-kit/` 的 portrait、29 張 sheet 與 metadata；舊 ID 只作存檔遷移 |
 
-焰尾狐為 **legacy/fallback registered creature**。未獲 human 明確指示，不可啟動完整 asset pipeline，不可視為下一個優先角色。
+不得為 `flametail-fox` 另開生成批次、靜態 fallback 或第二個資產根。焰尾狐已由 `blazetail-kit` 完整承載；「焰尾小狐」是牠的 Stage 1 幼態名。
 
 ---
 

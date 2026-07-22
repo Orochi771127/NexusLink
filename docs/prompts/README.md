@@ -12,6 +12,8 @@ lake-camp-prompts.md
 ui-fx-prompts.md
 ```
 
+`flametail-fox-prompts.md` is retained as a historical prompt record only. Do not use it to generate a second character or asset root: 焰尾狐 is canonical runtime ID `blazetail-kit`, 焰尾小狐 is its Stage 1 form, and the approved illustrated runtime package already exists.
+
 Keep prompts aligned with the current product direction:
 
 - AI companion emotional habitat
