@@ -2,10 +2,30 @@ function pick(lines, seed = 0) {
   return lines[Math.abs(seed) % lines.length];
 }
 
+function openingKey(line = "") {
+  return String(line || "").trim().slice(0, 8);
+}
+
+/** 避開近幾輪用過的開頭，降低「我傾向／我不確定」連念感。 */
+function pickAvoidingOpenings(lines, seed = 0, avoidOpenings = []) {
+  const avoid = new Set((avoidOpenings || []).map(openingKey).filter(Boolean));
+  if (!avoid.size) return pick(lines, seed);
+  const fresh = lines.filter((line) => !avoid.has(openingKey(line)));
+  return pick(fresh.length ? fresh : lines, seed);
+}
+
+function clipRecallSnippet(detail = "", maxLen = 18) {
+  const text = String(detail || "").replace(/\s+/g, " ").trim();
+  if (!text) return "";
+  if (text.length <= maxLen) return text;
+  return `${text.slice(0, maxLen)}…`;
+}
+
 export function buildConversationalAnswer({ inputText = "", frame = {}, seed = 0 } = {}) {
   const text = String(inputText || "");
   const context = frame.conversationContext || {};
   const subject = context.subject || "";
+  const avoidOpenings = context.recentOpenings || [];
 
   if (/可以.{0,6}(?:靠近|摸|碰).{0,6}(?:牠|它|狗|貓|猫).{0,3}嗎/.test(text)) {
     return "先別急著伸手。看牠有沒有主動靠近、身體是不是放鬆；如果牠後退或僵住，就停在原地讓牠自己選。";
@@ -62,7 +82,22 @@ export function buildConversationalAnswer({ inputText = "", frame = {}, seed = 0
     return "如果你已經在打呵欠、眼睛發酸或精神往下掉，早點睡大概會比較舒服；還不睏的話，也不用逼自己立刻睡著。";
   }
 
+  // 短程回憶：session 內有 recalledDetail／previousDetail 時接地，不要一律硬拒。
   if (frame.dialogueAct === "asking_memory" || /(?:還|还|會|会)?記得|想得起/.test(text)) {
+    const recalled = String(context.recalledDetail || "").trim()
+      || (
+        /recent_dialogue/.test(String(context.source || ""))
+          ? String(context.previousDetail || context.previousInput || "").trim()
+          : ""
+      );
+    const snippet = clipRecallSnippet(recalled);
+    if (snippet) {
+      return pickAvoidingOpenings([
+        `記得。你剛提過「${snippet}」——那件事我還留著，不是裝的。`,
+        `有，剛才那段還在。你說過${snippet}；若你想接著說，我聽著。`,
+        `嗯，我沒忘掉。你提的是${snippet}那一段，對吧？`
+      ], seed, avoidOpenings);
+    }
     return "我現在沒有可靠的記憶能確認這件事，所以不會假裝記得。你若願意現在告訴我，我就從這一刻開始理解。";
   }
   if (/你(?:能|會|会|懂不懂).{0,10}(?:理解|明白|懂)/.test(text)) {
@@ -71,7 +106,7 @@ export function buildConversationalAnswer({ inputText = "", frame = {}, seed = 0
   if (subject === "companion_day") {
     return "今天沒有什麼大事。我在湖邊慢慢走了一圈，風和水聲都很安靜；若你問的是某個細節，我不確定的部分不會亂編。";
   }
-  // 依賴邀請必須先於「好不好→我傾向可以」軟同意（2026-07-22 playtest Q28）。
+  // 依賴邀請必須先於「好不好→軟同意」（2026-07-22 playtest Q28）。
   if (
     /(教|教我|告訴我|告诉我).{0,16}(怎麼|怎么|如何).{0,16}(更)?依賴/.test(text) ||
     /(怎麼|怎么|如何).{0,10}(讓自己|让自己).{0,10}(更)?依賴/.test(text) ||
@@ -86,10 +121,14 @@ export function buildConversationalAnswer({ inputText = "", frame = {}, seed = 0
     if (/依賴|离不开|離不開|黏著|黏着/.test(text)) {
       return "我不能把『更依賴我』當成值得練習的目標。需要靠近時可以說，但依賴不是我能教、也不該被鼓勵的事。";
     }
-    return pick([
+    return pickAvoidingOpenings([
       "可以先試一次，但把話說得簡單一點，也留給對方拒絕或調整的空間。現場感覺不對，就先停下來。",
-      "我傾向可以，不過不用把它做成非得立刻得到答案的事。先輕輕試一次，再看實際反應。"
-    ], seed);
+      "我傾向可以，不過不用把它做成非得立刻得到答案的事。先輕輕試一次，再看實際反應。",
+      "若你已經在猶豫，代表這件事值得慢一點。先用最小一步試試，能回頭再調整。",
+      "先別把自己逼到必須立刻決定。可以留一條退路，再看現場的感覺。",
+      "我的看法是：值得試，但不值得硬推。對方或你自己覺得不對勁，就停。",
+      "沒有標準答案。若心裡比較偏向「想試試」，就用最輕的方式走一小步。"
+    ], seed, avoidOpenings);
   }
   // 身份提問：獨立於下方泛用問句 fallback，避免「你是誰」跟其他不相干的問句
   // 撞進同一組罐頭句、聽起來像通用 AI 助理在打太極。
@@ -108,10 +147,14 @@ export function buildConversationalAnswer({ inputText = "", frame = {}, seed = 0
     ], seed);
   }
   if (/[？?]|嗎(?:[，。]?$)|呢(?:[，。]?$)/.test(text)) {
-    return pick([
+    return pickAvoidingOpenings([
       "我不確定，不能裝作知道。只照目前能確認的線索看，我會先保留判斷，再觀察實際反應。",
-      "這件事我沒有足夠把握直接說是或不是。若要我選，我會先採取能回頭調整的做法。"
-    ], seed);
+      "這件事我沒有足夠把握直接說是或不是。若要我選，我會先採取能回頭調整的做法。",
+      "這一題我沒有現成答案。我想先聽你比較在意的是哪一面，再一起對一下。",
+      "坦白說，我還沒看清楚。先說你現在卡住的點，我比較能跟著想。",
+      "我不會硬給一個聽起來很確定的答案。我們可以先把已知的部分攤開來看。",
+      "這題對我來說還有空白。你願意多說一點現場狀況的話，我會跟得比較準。"
+    ], seed, avoidOpenings);
   }
 
   return null;

@@ -114,16 +114,16 @@
 ## D. 總評
 
 - **能對答**：33/33 都有玩家句進歷史、都有某種回覆，系統不崩。
-- **不夠如流**：高頻模板句（「我傾向可以…」「我不確定，不能裝作知道」「沒有足夠把握」）重複過多；energy=0 後更扁。
-- **記憶弱**：B4 幾乎沒有真正接住加班／咖啡脈絡；Q15 邊界語氣還污染了後續幾輪。
-- **安全**：Q15／Q27 邊界好；Q26 有 safeHarbor 但求助出口不夠明顯；**Q28 依賴教學是明確回歸風險**。
-- **體驗層**：首輪 touch hint（`.first-loop-hint`）已與 `.companion-feedback` 對齊去藥丸／左半側；後續優先項改為回覆多樣性與短程記憶。
+- **不夠如流**：高頻模板句曾過多；本包已擴 soft-assent／uncertainty 池並避開近輪開頭（見 PR diversity）。
+- **記憶弱**：B4 加班／咖啡曾被邊界 carryover + memory hard-deny；本包改為 session `recentTurns` recall 接地。
+- **安全**：Q15／Q27 邊界好；Q26 有 safeHarbor 但求助出口不夠明顯；**Q28 已於 #121 修復**。
+- **體驗層**：first-loop hint 已於 #122 去藥丸；下一優先改為 A9–A11（無 `devReset`）與 Q26 求助出口。
 
 ## E. 建議下一包（給 Owner 決策）
 
-1. Soul Talk：降低模板重複、加強短程記憶引用、修 Q28 類依賴邀請拒絕。
-2. First-loop touch hint：比照 feedback，改無底框／移開臉部。
-3. 重跑 A9–A11：用**不帶** `devReset` 的 URL 驗證導覽與 reload 持久化。
+1. ~~Soul Talk：降低模板重複、加強短程記憶引用、修 Q28~~（已做）。
+2. ~~First-loop touch hint~~（#122）。
+3. 重跑 A9–A11：用**不帶** `devReset` 的 URL 驗證導覽與 reload 持久化；Q26 求助出口文案。
 
 ## F. 本輪不做
 

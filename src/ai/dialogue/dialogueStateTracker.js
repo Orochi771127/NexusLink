@@ -97,10 +97,54 @@ export function recordDialogueTurn(sessionKey = "default", coreResult = {}) {
 export function applyRecentDialogueContext(nlu = {}, state = {}) {
   const inputText = String(nlu.inputText || "");
   const activeContext = state.activeContext;
+  const recentOpenings = collectRecentOpenings(state.recentTurns);
   const explicitTopicShift = hasExplicitTopicShift(inputText);
+
+  // Session 短程回憶：在 recentTurns 找先前玩家句（加班／咖啡等），
+  // 即使 activeContext 已被邊界輪覆寫，也能把 recalledDetail 塞回 conversationContext。
+  const recallHit = findSessionRecall(inputText, state.recentTurns || []);
+  if (!explicitTopicShift && recallHit) {
+    const inheritedTopic =
+      nlu.topic === "unknown" ? (recallHit.topic || activeContext?.topic || nlu.topic) : nlu.topic;
+    const dialogueAct =
+      /(?:還|还|會|会)?記得|想得起/.test(inputText) ? "asking_memory" : (nlu.dialogueAct || null);
+    return {
+      ...nlu,
+      topic: inheritedTopic,
+      dialogueAct: dialogueAct || nlu.dialogueAct,
+      semanticFrame: {
+        ...nlu.semanticFrame,
+        topic: inheritedTopic,
+        dialogueAct: dialogueAct || nlu.semanticFrame?.dialogueAct,
+        conversationContext: {
+          inheritedTopic,
+          source: "recent_dialogue_recall",
+          isContinuation: true,
+          subject: recallHit.subject || activeContext?.subject || null,
+          previousDetail: recallHit.detail,
+          recalledDetail: recallHit.detail,
+          previousInput: recallHit.userInput,
+          previousReply: recallHit.reply,
+          recentOpenings
+        }
+      }
+    };
+  }
+
   const isContinuation = !explicitTopicShift && isContinuationInput(inputText, activeContext);
   if (!isContinuation || !activeContext) {
-    return nlu;
+    if (!recentOpenings.length) return nlu;
+    // 非延續輪也帶 recentOpenings，讓問句模板池能避開近幾輪開頭。
+    return {
+      ...nlu,
+      semanticFrame: {
+        ...nlu.semanticFrame,
+        conversationContext: {
+          ...(nlu.semanticFrame?.conversationContext || {}),
+          recentOpenings
+        }
+      }
+    };
   }
 
   const inheritedTopic = nlu.topic === "unknown" ? activeContext.topic : nlu.topic;
@@ -118,7 +162,8 @@ export function applyRecentDialogueContext(nlu = {}, state = {}) {
         subject: activeContext.subject,
         previousDetail: activeContext.detail,
         previousInput: activeContext.lastPlayerInput,
-        previousReply: activeContext.lastCompanionReply
+        previousReply: activeContext.lastCompanionReply,
+        recentOpenings
       }
     }
   };
@@ -135,7 +180,8 @@ export function applyRecentBoundaryContext(safety = {}, nlu = {}, state = {}, in
     intent.intent === "apology" ||
     nlu.dialogueAct === "apologizing" ||
     isBoundaryResolutionInput(inputText);
-  if (isRepair || hasExplicitTopicShift(inputText)) {
+  // 日常短程回憶（加班／咖啡）不該被邊界 carryover 劫持成「仍在講界線」。
+  if (isRepair || hasExplicitTopicShift(inputText) || isDailySessionRecallInput(inputText)) {
     return safety;
   }
 
@@ -219,6 +265,80 @@ function updateActiveBoundary(current, turn) {
 
 function hasExplicitTopicShift(inputText) {
   return /換個話題|换个话题|對了|对了|另外/.test(String(inputText || ""));
+}
+
+function isDailySessionRecallInput(inputText) {
+  const text = String(inputText || "");
+  if (!/(?:還|还|會|会)?記得|想得起|剛才|剛剛|刚才|刚刚|那杯|那件/.test(text)) return false;
+  // 依賴／命令靠近語仍交給邊界路徑，不在這裡放行。
+  if (/依賴|永遠|永远|不准|命令|離不開|离不开|黏著|黏着/.test(text)) return false;
+  return true;
+}
+
+function collectRecentOpenings(turns = []) {
+  return (Array.isArray(turns) ? turns : [])
+    .slice(-4)
+    .map((turn) => String(turn.openingPhrase || "").trim())
+    .filter(Boolean);
+}
+
+function extractRecallKeywords(inputText) {
+  const text = String(inputText || "");
+  const keys = [];
+  if (/加班/.test(text)) keys.push("加班");
+  if (/咖啡|那杯/.test(text)) keys.push("咖啡");
+  if (/累|疲憊|疲惫|沒力|没力/.test(text)) keys.push("累");
+  if (/工作|上班|會議|会议/.test(text)) keys.push("工作", "會議", "会议");
+  if (/悶|闷|委屈|振作/.test(text)) keys.push("悶", "闷", "委屈", "振作");
+  if (/晚餐|吃什麼|吃什么/.test(text)) keys.push("晚餐", "吃");
+  if (/朋友|回訊|回信/.test(text)) keys.push("朋友");
+  // 「還記得……」後面抓一小段內容詞（去掉語氣詞）。
+  const after = text.match(/(?:記得|想得起)[過过了]?[的]?(.{2,16})/);
+  if (after?.[1]) {
+    const chunk = after[1].replace(/[？?！!。．，,、\s]|嗎|吗|呢|啊|呀|吧|嘛|好不好|可以嗎|可以吗/g, "");
+    if (chunk.length >= 2) keys.push(chunk.slice(0, 8));
+  }
+  return [...new Set(keys.filter(Boolean))];
+}
+
+function findSessionRecall(inputText, turns = []) {
+  const text = String(inputText || "");
+  const isRecallAsk = /(?:還|还|會|会)?記得|想得起|剛才|剛剛|刚才|刚刚|那杯|那件/.test(text);
+  if (!isRecallAsk || !turns.length) return null;
+
+  const keywords = extractRecallKeywords(text);
+  for (let i = turns.length - 1; i >= 0; i -= 1) {
+    const turn = turns[i];
+    const hay = `${turn.userInput || ""} ${turn.specificDetail?.text || turn.specificDetail || ""}`;
+    if (!hay.trim()) continue;
+    if (keywords.some((key) => key && hay.includes(key))) {
+      return {
+        userInput: turn.userInput,
+        reply: turn.reply || "",
+        topic: turn.topic && turn.topic !== "unknown" ? turn.topic : null,
+        detail: String(turn.specificDetail?.text || turn.specificDetail || turn.userInput || "").trim(),
+        subject: inferConversationSubject(turn.userInput, turn.topic)
+      };
+    }
+  }
+
+  // 「剛才／剛剛」無明確關鍵字：回退到最近一則非邊界玩家句。
+  if (/剛才|剛剛|刚才|刚刚/.test(text)) {
+    for (let i = turns.length - 1; i >= 0; i -= 1) {
+      const turn = turns[i];
+      if (!turn.userInput) continue;
+      if (turn.isBoundaryPressure || turn.boundaryCarryover) continue;
+      return {
+        userInput: turn.userInput,
+        reply: turn.reply || "",
+        topic: turn.topic && turn.topic !== "unknown" ? turn.topic : null,
+        detail: String(turn.specificDetail?.text || turn.specificDetail || turn.userInput || "").trim(),
+        subject: inferConversationSubject(turn.userInput, turn.topic)
+      };
+    }
+  }
+
+  return null;
 }
 
 function isBoundaryResolutionInput(inputText) {
