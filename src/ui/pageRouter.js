@@ -4,7 +4,8 @@ import {
   HEART_PHASE_PRACTICES,
   createCompanionGrowthSession,
   deriveHeartPhaseSnapshot,
-  evaluateHeartPhasePractice
+  evaluateHeartPhasePractice,
+  resolveHeartPhaseRewrite
 } from "../engine/companionGrowthSessionEngine.js";
 import { resolveCrystalVisualState } from "../engine/crystalVisualState.js";
 import { getCrystalReleaseEligibility } from "../engine/crystalWeavingEngine.js";
@@ -15,6 +16,7 @@ import { t, getLanguage, LANGUAGE_CHANGED_EVENT } from "../i18n/i18n.js";
 
 const PAGE_ACTIONS = new Set(["home", "explore", "care", "grow", "memory"]);
 const MEMORY_LIMIT = 8;
+const IDEMPOTENT_CARE_WRITE_REASONS = new Set(["duplicate_key", "duplicate_root"]);
 
 export function createPageRouter({
   store,
@@ -25,6 +27,7 @@ export function createPageRouter({
   calmSyncController,
   crystalWeavingController,
   companionGrowthController,
+  saveCandidateState,
   openMap,
   openCodex,
   openAtlas
@@ -105,8 +108,12 @@ export function createPageRouter({
   }
 
   function render() {
-    if (!pageLayer || activePage === "home") return;
     const state = store.getState();
+    // Safety is global, not page-local. Invalidate every session before the
+    // home-page early return so a rewrite cannot survive a Soul Talk safety
+    // transition merely because Growth was not the active page.
+    if (state.safeHarborMode === true) growthSessions.clear();
+    if (!pageLayer || activePage === "home") return;
     if (activePage === "explore") renderExplore(state);
     if (activePage === "care") renderCare(state);
     if (activePage === "grow") renderGrowth(state);
@@ -244,7 +251,10 @@ export function createPageRouter({
 
     // Safety is terminal and is not a Heart Phase. While safe harbor is active,
     // the Growth body exposes no practice, observation, crafting, or phase cue.
+    // Crossing this boundary also invalidates any pre-safety rewrite proposal;
+    // it must never revive after safe harbor later closes in the same app run.
     if (growthViewModel.safetyPaused) {
+      growthSessions.delete(companionId);
       body.innerHTML = `
         <section class="growth-response growth-response--safety"
           data-growth-result data-outcome="safety-paused"
@@ -278,6 +288,27 @@ export function createPageRouter({
         `).join("")
       : `<p class="growth-observation-empty">${t("growth.session.observedEmpty")}</p>`;
     const lastResult = currentMoment.lastResult;
+    const rewritePending = lastResult?.outcomeId === "modify"
+      && lastResult?.completionStatus === "awaiting_rewrite";
+    const resultEvidenceKey = lastResult?.completionStatus === "completed"
+      ? "growth.session.evidenceRecorded"
+      : lastResult?.completionStatus === "awaiting_rewrite"
+        ? "growth.session.rewritePendingNote"
+        : "growth.session.zeroEvidence";
+    const rewriteActionsMarkup = rewritePending
+      ? `
+        <div class="growth-rewrite-actions" role="group" aria-label="${t("growth.session.rewriteActionsAria")}">
+          <button type="button" data-page-action="growth-rewrite-accept">
+            <strong>${t("growth.session.rewriteAccept.label")}</strong>
+            <span>${t("growth.session.rewriteAccept.copy")}</span>
+          </button>
+          <button type="button" data-page-action="growth-rewrite-defer">
+            <strong>${t("growth.session.rewriteDefer.label")}</strong>
+            <span>${t("growth.session.rewriteDefer.copy")}</span>
+          </button>
+        </div>
+      `
+      : "";
     // The persistent #status-text owns polite announcements. Result cards stay
     // visible and text-labelled without creating a second live-region echo.
     const responseMarkup = lastResult
@@ -285,9 +316,12 @@ export function createPageRouter({
         <section class="growth-response growth-response--${lastResult.outcomeId}" data-growth-result data-outcome="${lastResult.outcomeId}">
           <span>${t(`growth.session.outcome.${lastResult.outcomeId}`)}</span>
           <strong>${t(lastResult.responseKey)}</strong>
+          ${lastResult.resolutionResponseKey ? `<p>${t(lastResult.resolutionResponseKey)}</p>` : ""}
           ${lastResult.observedTendencyId ? `
             <small>${t("growth.session.resultTendencyPrefix")}${t(`growth.session.tendency.${lastResult.observedTendencyId}`)}</small>
-          ` : `<small>${t("growth.session.zeroEvidence")}</small>`}
+          ` : ""}
+          <small>${t(resultEvidenceKey)}</small>
+          ${rewriteActionsMarkup}
         </section>
       `
       : `
@@ -436,6 +470,42 @@ export function createPageRouter({
     openMemoryReflection(Number(memoryButton.dataset.memoryOpen));
   }
 
+  async function recordCompletedCarePractice(companionId, result) {
+    if (typeof companionGrowthController?.writeCarePracticeIntoDraft !== "function") {
+      return { accepted: false, changed: false, reason: "care_source_owner_unavailable" };
+    }
+    if (typeof saveCandidateState !== "function") {
+      return { accepted: false, changed: false, reason: "care_save_unavailable" };
+    }
+
+    const candidateState = cloneState(store.getState());
+    const writeResult = companionGrowthController.writeCarePracticeIntoDraft(candidateState, {
+      companionId,
+      result,
+      createdAt: Date.now()
+    });
+    if (!writeResult?.changed) return writeResult;
+
+    const saveResult = await saveCandidateState(candidateState);
+    if (saveResult?.ok !== true) {
+      return { accepted: false, changed: false, reason: "care_save_failed" };
+    }
+
+    // Persisted data may be pruned to storage limits; publishing that payload
+    // back into runtime would silently discard unrelated live memories/traces.
+    store.replaceState(candidateState);
+    return writeResult;
+  }
+
+  function assertCareWriteCompleted(writeResult) {
+    if (writeResult?.accepted || IDEMPOTENT_CARE_WRITE_REASONS.has(writeResult?.reason)) return;
+    const error = new Error(`Companion Growth care evidence rejected: ${writeResult?.reason || "unknown"}`);
+    error.code = writeResult?.reason === "care_save_failed"
+      ? "SAVE_FAILED"
+      : "ACTION_UNAVAILABLE";
+    throw error;
+  }
+
   async function handlePageAction(button) {
     if (actionInFlight || button.disabled) return;
     const action = button.dataset.pageAction;
@@ -539,12 +609,44 @@ export function createPageRouter({
           throw error;
         } else {
           const practiceId = evaluation.result.practiceId;
+          if (evaluation.result.completionStatus === "completed") {
+            assertCareWriteCompleted(await recordCompletedCarePractice(companionId, evaluation.result));
+          }
           growthSessions.set(companionId, evaluation.session);
-          growthCompleted = true;
+          growthCompleted = evaluation.result.completionStatus !== "awaiting_rewrite";
           statusText.textContent = t(evaluation.result.responseKey);
           render();
+          const focusTarget = evaluation.result.completionStatus === "awaiting_rewrite"
+            ? pageBodies.grow?.querySelector('[data-page-action="growth-rewrite-accept"]')
+            : pageBodies.grow?.querySelector(`[data-growth-practice="${practiceId}"]`);
+          focusTarget?.focus({ preventScroll: true });
+        }
+      } else if (action === "growth-rewrite-accept" || action === "growth-rewrite-defer") {
+        const state = store.getState();
+        const companionId = state.activeCompanionId || "greyshade-cat";
+        const currentSession = growthSessions.get(companionId)
+          || createCompanionGrowthSession(companionId);
+        const decision = action === "growth-rewrite-accept" ? "accept" : "defer";
+        const resolution = resolveHeartPhaseRewrite(state, currentSession, decision);
+        growthHandled = true;
+
+        if (resolution.reason === "safety-paused") {
+          statusText.textContent = t("growth.session.safetyStatus");
+          render();
+        } else if (!resolution.ok) {
+          const error = new Error("Companion Growth rewrite is unavailable");
+          error.code = "ACTION_UNAVAILABLE";
+          throw error;
+        } else {
+          if (decision === "accept") {
+            assertCareWriteCompleted(await recordCompletedCarePractice(companionId, resolution.result));
+          }
+          growthSessions.set(companionId, resolution.session);
+          growthCompleted = true;
+          statusText.textContent = t(resolution.result.resolutionResponseKey);
+          render();
           pageBodies.grow
-            ?.querySelector(`[data-growth-practice="${practiceId}"]`)
+            ?.querySelector(`[data-growth-practice="${resolution.result.practiceId}"]`)
             ?.focus({ preventScroll: true });
         }
       } else if (action === "observe-body") {
@@ -865,6 +967,11 @@ function formatDate(value) {
 
 function toNumber(value) {
   return Number.isFinite(Number(value)) ? Number(value) : 0;
+}
+
+function cloneState(value) {
+  if (typeof structuredClone === "function") return structuredClone(value);
+  return JSON.parse(JSON.stringify(value));
 }
 
 function escapeHtml(value) {

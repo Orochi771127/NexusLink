@@ -38,6 +38,13 @@ export const HEART_PHASE_PRACTICES = Object.freeze([
   })
 ]);
 
+export const HEART_PHASE_COMPLETION = Object.freeze({
+  COMPLETED: "completed",
+  AWAITING_REWRITE: "awaiting_rewrite",
+  ZERO_EVIDENCE: "zero_evidence",
+  DEFERRED: "deferred"
+});
+
 const TENDENCY_IDS = new Set(HEART_PHASE_TENDENCIES);
 const PRACTICE_IDS = new Set(HEART_PHASE_PRACTICES.map((practice) => practice.id));
 const GUARDED_REACTIONS = new Set(["reject", "blocked", "spam_angry"]);
@@ -71,7 +78,7 @@ const OUTCOME_MATRIX = Object.freeze({
 
 export function createCompanionGrowthSession(companionId) {
   return {
-    version: 1,
+    version: 2,
     companionId: normalizeCompanionId(companionId),
     observedTendencyIds: [],
     lastResult: null
@@ -122,10 +129,15 @@ export function evaluateHeartPhasePractice(state = {}, session = null, practiceI
 
   const rule = OUTCOME_MATRIX[snapshot.phaseId]?.[practiceId] || declined();
   const result = {
+    companionId: snapshot.companionId,
     practiceId,
+    phaseId: snapshot.phaseId,
     outcomeId: rule.outcomeId,
     observedTendencyId: rule.observedTendencyId,
-    responseKey: rule.responseKey
+    responseKey: rule.responseKey,
+    completionStatus: getInitialCompletionStatus(rule.outcomeId),
+    rewriteDecision: null,
+    resolutionResponseKey: null
   };
   const observedTendencyIds = rule.observedTendencyId
     ? appendUnique(normalizedSession.observedTendencyIds, rule.observedTendencyId)
@@ -141,6 +153,91 @@ export function evaluateHeartPhasePractice(state = {}, session = null, practiceI
     },
     result
   };
+}
+
+/**
+ * Resolve a companion-authored practice rewrite without turning the first
+ * proposal into implicit consent. Accepting completes the care moment;
+ * deferring is an equally valid zero-write ending. This stays session-only.
+ */
+export function resolveHeartPhaseRewrite(state = {}, session = null, decision = "") {
+  const snapshot = deriveHeartPhaseSnapshot(state, session);
+  const normalizedSession = normalizeSession(session, snapshot.companionId);
+
+  if (snapshot.safetyPaused) {
+    return {
+      ok: false,
+      reason: "safety-paused",
+      session: normalizedSession,
+      result: null
+    };
+  }
+  if (!["accept", "defer"].includes(decision)) {
+    return {
+      ok: false,
+      reason: "unknown-rewrite-decision",
+      session: normalizedSession,
+      result: null
+    };
+  }
+
+  const pending = normalizedSession.lastResult;
+  if (
+    pending?.outcomeId !== "modify"
+    || pending.completionStatus !== HEART_PHASE_COMPLETION.AWAITING_REWRITE
+    || pending.rewriteDecision !== null
+  ) {
+    return {
+      ok: false,
+      reason: "no-pending-rewrite",
+      session: normalizedSession,
+      result: null
+    };
+  }
+
+  const accepted = decision === "accept";
+  const result = {
+    ...pending,
+    completionStatus: accepted
+      ? HEART_PHASE_COMPLETION.COMPLETED
+      : HEART_PHASE_COMPLETION.DEFERRED,
+    rewriteDecision: decision,
+    resolutionResponseKey: accepted
+      ? "growth.session.response.rewriteAccepted"
+      : "growth.session.response.rewriteDeferred"
+  };
+  return {
+    ok: true,
+    reason: null,
+    session: {
+      ...normalizedSession,
+      lastResult: result
+    },
+    result
+  };
+}
+
+/**
+ * Authenticate a Heart Phase result against the same deterministic matrix that
+ * produced it. Source owners call this before persistence so a hand-crafted or
+ * stale shape cannot turn a rest/decline into completed Growth evidence.
+ */
+export function isCanonicalHeartPhaseResult(result, companionId = "") {
+  const ownerId = typeof companionId === "string" ? companionId.trim() : "";
+  const expected = result && OUTCOME_MATRIX[result.phaseId]?.[result.practiceId];
+  return Boolean(
+    ownerId
+    && result
+    && result.companionId === ownerId
+    && expected
+    && result.outcomeId === expected.outcomeId
+    && result.observedTendencyId === expected.observedTendencyId
+    && result.responseKey === expected.responseKey
+    && Object.values(HEART_PHASE_COMPLETION).includes(result.completionStatus)
+    && [null, "accept", "defer"].includes(result.rewriteDecision)
+    && (result.resolutionResponseKey === null || typeof result.resolutionResponseKey === "string")
+    && isCompletionConsistent(result)
+  );
 }
 
 function derivePhaseId(state) {
@@ -165,24 +262,45 @@ function normalizeSession(session, companionId) {
   const observedTendencyIds = Array.isArray(session.observedTendencyIds)
     ? [...new Set(session.observedTendencyIds.filter((id) => TENDENCY_IDS.has(id)))]
     : [];
-  const lastResult = isValidResult(session.lastResult) ? { ...session.lastResult } : null;
+  const lastResult = isCanonicalHeartPhaseResult(session.lastResult, companionId)
+    ? { ...session.lastResult }
+    : null;
 
   return {
-    version: 1,
+    version: 2,
     companionId,
     observedTendencyIds,
     lastResult
   };
 }
 
-function isValidResult(result) {
-  return Boolean(
-    result
-    && PRACTICE_IDS.has(result.practiceId)
-    && ["accept", "modify", "rest", "decline"].includes(result.outcomeId)
-    && (result.observedTendencyId === null || TENDENCY_IDS.has(result.observedTendencyId))
-    && typeof result.responseKey === "string"
-  );
+function getInitialCompletionStatus(outcomeId) {
+  if (outcomeId === "accept") return HEART_PHASE_COMPLETION.COMPLETED;
+  if (outcomeId === "modify") return HEART_PHASE_COMPLETION.AWAITING_REWRITE;
+  return HEART_PHASE_COMPLETION.ZERO_EVIDENCE;
+}
+
+function isCompletionConsistent(result) {
+  if (result.outcomeId === "accept") {
+    return result.completionStatus === HEART_PHASE_COMPLETION.COMPLETED
+      && result.rewriteDecision === null
+      && result.resolutionResponseKey === null;
+  }
+  if (result.outcomeId === "modify") {
+    if (result.completionStatus === HEART_PHASE_COMPLETION.AWAITING_REWRITE) {
+      return result.rewriteDecision === null && result.resolutionResponseKey === null;
+    }
+    if (result.completionStatus === HEART_PHASE_COMPLETION.COMPLETED) {
+      return result.rewriteDecision === "accept"
+        && result.resolutionResponseKey === "growth.session.response.rewriteAccepted";
+    }
+    return result.completionStatus === HEART_PHASE_COMPLETION.DEFERRED
+      && result.rewriteDecision === "defer"
+      && result.resolutionResponseKey === "growth.session.response.rewriteDeferred";
+  }
+  return result.completionStatus === HEART_PHASE_COMPLETION.ZERO_EVIDENCE
+    && result.rewriteDecision === null
+    && result.resolutionResponseKey === null;
 }
 
 function accepted(tendencyId) {

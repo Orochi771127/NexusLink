@@ -5,6 +5,11 @@ import {
   sealGrowthSafetyProvenance,
   writeCompanionGrowthEvidence
 } from "../engine/companionGrowthEngine.js";
+import {
+  HEART_PHASE_COMPLETION,
+  HEART_PHASE_PRACTICES,
+  isCanonicalHeartPhaseResult
+} from "../engine/companionGrowthSessionEngine.js";
 
 const GROWTH_PROFILE = Object.freeze({
   minimumChapterByStage: Object.freeze({
@@ -32,6 +37,9 @@ const TENDENCY_PRESENTATION = new Set([
 const GUARDED_REACTIONS = new Set(["reject", "blocked", "spam_angry"]);
 const COMPANION_INTENTS = new Set(["accept", "rewrite", "defer"]);
 const CHAPTER_RHYTHMS = new Set(["open", "hold"]);
+const HEART_PHASE_IDS = new Set(["resting", "guarded", "curious", "steady"]);
+const CARE_PRACTICE_IDS = new Set(HEART_PHASE_PRACTICES.map((practice) => practice.id));
+const CARE_ORIGIN_EVENT_ID = "heart_phase_practice";
 
 /**
  * Thin state-owner bridge for Companion Growth G3.
@@ -109,19 +117,57 @@ export function createCompanionGrowthController() {
     });
   }
 
-  return Object.freeze({ writeIntoDraft, getViewModel });
+  /**
+   * Fixed source-owner adapter for completed Heart Phase care practices.
+   * Rest, decline and pending/deferred rewrites are deliberately rejected
+   * before event creation. A rewrite needs the player's explicit acceptance.
+   */
+  function writeCarePracticeIntoDraft(draft, {
+    companionId,
+    result,
+    createdAt = Date.now(),
+    safetyOverrides = {}
+  } = {}) {
+    const validation = validateCompletedCareResult(result, companionId);
+    if (!validation.ok) return rejectedWrite(validation.reason);
+
+    const rewritten = result.outcomeId === "modify";
+    return writeIntoDraft(draft, {
+      companionId,
+      completed: true,
+      completionStatus: "completed",
+      sourceType: "care",
+      tendency: result.observedTendencyId,
+      context: {
+        chapterNo: normalizeChapterNo(draft?.chapterProgress?.current),
+        originEventId: CARE_ORIGIN_EVENT_ID,
+        // A completed rewrite is a distinct deterministic detail under the
+        // same care root, so a prior accepted practice cannot block its anchor.
+        practiceId: rewritten ? `${result.practiceId}_rewrite` : result.practiceId
+      },
+      createdAt,
+      consentKind: rewritten ? "respected_rewrite" : null,
+      safetyProvenance: createGrowthSafetyFacts(draft, safetyOverrides)
+    });
+  }
+
+  return Object.freeze({ writeIntoDraft, writeCarePracticeIntoDraft, getViewModel });
 }
 
 export function createGrowthSafetyFacts(state = {}, overrides = {}) {
-  return Object.freeze({
+  const facts = {
     isHighRisk: false,
     strategyId: null,
     actionId: null,
     systemRoleSafetyReply: false,
     safetyModeActive: false,
-    safeHarborModeActive: state?.safeHarborMode === true,
     ...overrides
-  });
+  };
+  // A caller may add stricter origin facts, but it cannot wash an active
+  // safe-harbor state false while completing a delayed source event.
+  facts.safeHarborModeActive = state?.safeHarborMode === true
+    || overrides?.safeHarborModeActive === true;
+  return Object.freeze(facts);
 }
 
 function buildWillingnessContext(state = {}, currentMoment = null) {
@@ -237,6 +283,34 @@ function rejectedWrite(reason) {
     key: null,
     rootContextKey: null
   });
+}
+
+function validateCompletedCareResult(result, companionId) {
+  if (!result || typeof result !== "object") {
+    return { ok: false, reason: "invalid_care_result" };
+  }
+  if (result.companionId !== companionId) {
+    return { ok: false, reason: "care_companion_mismatch" };
+  }
+  if (!isCanonicalHeartPhaseResult(result, companionId)) {
+    return { ok: false, reason: "noncanonical_care_result" };
+  }
+  if (!CARE_PRACTICE_IDS.has(result.practiceId) || !HEART_PHASE_IDS.has(result.phaseId)) {
+    return { ok: false, reason: "invalid_care_context" };
+  }
+  if (!TENDENCY_PRESENTATION.has(result.observedTendencyId)) {
+    return { ok: false, reason: "invalid_care_tendency" };
+  }
+  if (result.completionStatus !== HEART_PHASE_COMPLETION.COMPLETED) {
+    return { ok: false, reason: "care_event_not_completed" };
+  }
+  if (result.outcomeId === "accept" && result.rewriteDecision === null) {
+    return { ok: true, reason: "care_completed" };
+  }
+  if (result.outcomeId === "modify" && result.rewriteDecision === "accept") {
+    return { ok: true, reason: "care_rewrite_completed" };
+  }
+  return { ok: false, reason: "care_outcome_not_evidence" };
 }
 
 function normalizeStage(value) {

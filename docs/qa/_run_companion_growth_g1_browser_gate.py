@@ -395,6 +395,15 @@ def without_safety_allowed_changes(state):
     }
 
 
+def without_active_growth(state):
+    clone = json.loads(json.dumps(state or {}))
+    companion_id = clone.get("activeCompanionId") or "greyshade-cat"
+    record = clone.get("companionStates", {}).get("byId", {}).get(companion_id)
+    if isinstance(record, dict):
+        record.pop("growth", None)
+    return clone
+
+
 def seed_normal_pixi_safety_state(page):
     return page.evaluate(
         """async (storageKey) => {
@@ -578,16 +587,28 @@ def run():
         attach_error_capture(page, report["console_errors"])
         wait_ready(page)
 
-        def run_outcome(name, fixture, practice_id, expected_outcome):
+        def run_outcome(name, fixture, practice_id, expected_outcome, *, expect_care_write=False):
             set_fixture(page, fixture)
             wait_ready(page, reload=True)
             open_growth(page)
             before = snapshot(page)
+            growth_before = growth_snapshot(page)
             page.evaluate("window.__growthStorageWrites = []")
             page.locator(f'[data-growth-practice="{practice_id}"]').click()
             result = page.locator(f'[data-growth-result][data-outcome="{expected_outcome}"]')
             result.wait_for(state="visible", timeout=5000)
+            if expect_care_write:
+                page.wait_for_function(
+                    """([key]) => {
+                      const persisted = JSON.parse(localStorage.getItem(key) || '{}');
+                      const growth = persisted.companionStates?.byId?.['greyshade-cat']?.growth;
+                      return growth?.coverage?.rootsBySourceType?.care?.length === 1;
+                    }""",
+                    arg=[STORAGE_KEY],
+                    timeout=5000,
+                )
             after = snapshot(page)
+            growth_after = growth_snapshot(page)
             writes = page.evaluate("window.__growthStorageWrites || []")
             result_text = result.inner_text().strip()
             outcome = {
@@ -600,7 +621,12 @@ def run():
             check(f"{name}_outcome", result.count() == 1 and bool(result_text), outcome)
             check(
                 f"{name}_focus_retained",
-                page.evaluate("document.activeElement?.dataset?.growthPractice") == practice_id,
+                (
+                    page.evaluate("document.activeElement?.dataset?.pageAction")
+                    == "growth-rewrite-accept"
+                )
+                if expected_outcome == "modify"
+                else page.evaluate("document.activeElement?.dataset?.growthPractice") == practice_id,
             )
             check(f"{name}_result_not_duplicate_live_region", result.get_attribute("aria-live") is None)
             check(
@@ -608,19 +634,547 @@ def run():
                 page.locator("#status-text").get_attribute("aria-live") == "polite"
                 and bool(page.locator("#status-text").inner_text().strip()),
             )
-            check(f"{name}_store_unchanged", after["state"] == before["state"])
-            check(f"{name}_main_save_unchanged", after["raw"] == before["raw"])
+            if expect_care_write:
+                care_roots = growth_after["runtime"]["coverage"]["rootsBySourceType"]["care"]
+                evidence = growth_after["runtime"]["evidence"]
+                check(
+                    f"{name}_care_source_owner",
+                    care_roots == ["care:1:heart_phase_practice"]
+                    and any(
+                        row.get("key") == "care:1:heart_phase_practice:attunement"
+                        and row.get("sourceType") == "care"
+                        and row.get("growthSafetyExcluded") is False
+                        for row in evidence
+                    ),
+                    growth_after,
+                )
+                check(f"{name}_growth_changed_once", growth_after["runtime"] != growth_before["runtime"])
+                check(f"{name}_runtime_persisted_equal", growth_after["runtime"] == growth_after["persisted"])
+                check(
+                    f"{name}_runtime_only_growth_changed",
+                    without_active_growth(after["state"]) == without_active_growth(before["state"]),
+                    {"before": before["state"], "after": after["state"]},
+                )
+                check(f"{name}_main_save_changed", after["raw"] != before["raw"])
+                check(
+                    f"{name}_stage_and_offer_unchanged",
+                    growth_after["runtime"]["stage"] == growth_before["runtime"]["stage"]
+                    and growth_after["runtime"]["offeredStage"] == growth_before["runtime"]["offeredStage"],
+                )
+                check(
+                    f"{name}_only_main_storage_key_written",
+                    bool(writes) and all(item.get("key") == STORAGE_KEY for item in writes),
+                    writes,
+                )
+            else:
+                check(f"{name}_store_unchanged", after["state"] == before["state"])
+                check(f"{name}_main_save_unchanged", after["raw"] == before["raw"])
+                check(f"{name}_zero_storage_writes", writes == [], writes)
             check(f"{name}_storage_keys_unchanged", after["keys"] == before["keys"])
-            check(f"{name}_zero_storage_writes", writes == [], writes)
 
-        run_outcome("accepted", {}, "attunement", "accept")
+        run_outcome("accepted", {}, "attunement", "accept", expect_care_write=True)
         accepted_shot = os.path.join(tempfile.gettempdir(), "nexus-growth-g1-accepted-390x844.png")
         page.screenshot(path=accepted_shot, full_page=True)
         report["screenshots"]["accepted_mobile"] = accepted_shot
 
         run_outcome("modified", {"mood": "distant"}, "attunement", "modify")
+        rewrite_defer_before = snapshot(page)
+        rewrite_defer_growth_before = growth_snapshot(page)
+        page.evaluate("window.__growthStorageWrites = []")
+        page.locator('[data-page-action="growth-rewrite-defer"]').click()
+        page.wait_for_function(
+            "() => !document.querySelector('[data-page-action=\"growth-rewrite-defer\"]')",
+            timeout=5000,
+        )
+        rewrite_defer_after = snapshot(page)
+        rewrite_defer_growth_after = growth_snapshot(page)
+        check(
+            "rewrite_defer_returns_focus_to_practice",
+            page.evaluate("document.activeElement?.dataset?.growthPractice") == "attunement",
+        )
+        check(
+            "rewrite_defer_shows_resolution_without_actions",
+            page.locator('[data-growth-result][data-outcome="modify"] p').count() == 1
+            and bool(page.locator('[data-growth-result][data-outcome="modify"] p').inner_text().strip())
+            and page.locator('[data-page-action^="growth-rewrite-"]').count() == 0,
+        )
+        check(
+            "rewrite_defer_zero_growth_write",
+            rewrite_defer_growth_after == rewrite_defer_growth_before,
+            {"before": rewrite_defer_growth_before, "after": rewrite_defer_growth_after},
+        )
+        check("rewrite_defer_store_unchanged", rewrite_defer_after["state"] == rewrite_defer_before["state"])
+        check("rewrite_defer_main_save_unchanged", rewrite_defer_after["raw"] == rewrite_defer_before["raw"])
+        check(
+            "rewrite_defer_zero_storage_writes",
+            page.evaluate("window.__growthStorageWrites || []") == [],
+            page.evaluate("window.__growthStorageWrites || []"),
+        )
+
+        # A companion-authored rewrite is not evidence until the player accepts
+        # it explicitly. The earlier ordinary care root remains one root; the
+        # accepted rewrite may only seal consent on that existing root.
+        set_fixture(page, {"mood": "happy", "energy": 8, "touchFatigue": 1})
+        wait_ready(page, reload=True)
+        open_growth(page)
+        rewrite_before = snapshot(page)
+        rewrite_growth_before = growth_snapshot(page)
+        page.evaluate("window.__growthStorageWrites = []")
+        page.locator('[data-growth-practice="steadfastness"]').click()
+        page.wait_for_selector('[data-growth-result][data-outcome="modify"]', timeout=5000)
+        rewrite_pending = snapshot(page)
+        rewrite_pending_growth = growth_snapshot(page)
+        check(
+            "rewrite_proposal_needs_second_acceptance",
+            page.locator('[data-page-action="growth-rewrite-accept"]').count() == 1
+            and page.locator('[data-page-action="growth-rewrite-defer"]').count() == 1
+            and page.evaluate("document.activeElement?.dataset?.pageAction") == "growth-rewrite-accept",
+        )
+        check("rewrite_proposal_store_unchanged", rewrite_pending["state"] == rewrite_before["state"])
+        check("rewrite_proposal_main_save_unchanged", rewrite_pending["raw"] == rewrite_before["raw"])
+        check("rewrite_proposal_growth_unchanged", rewrite_pending_growth == rewrite_growth_before)
+        check(
+            "rewrite_proposal_zero_storage_writes",
+            page.evaluate("window.__growthStorageWrites || []") == [],
+            page.evaluate("window.__growthStorageWrites || []"),
+        )
+
+        page.locator('[data-page-action="growth-rewrite-accept"]').click()
+        page.wait_for_function(
+            """([key]) => {
+              const persisted = JSON.parse(localStorage.getItem(key) || '{}');
+              return persisted.companionStates?.byId?.['greyshade-cat']?.growth
+                ?.coverage?.consentAnchorRootKey === 'care:1:heart_phase_practice';
+            }""",
+            arg=[STORAGE_KEY],
+            timeout=5000,
+        )
+        rewrite_accepted = snapshot(page)
+        rewrite_accepted_growth = growth_snapshot(page)
+        rewrite_accepted_runtime = rewrite_accepted_growth["runtime"]
+        check(
+            "rewrite_accept_seals_existing_care_root",
+            rewrite_accepted_runtime["coverage"]["rootsBySourceType"]["care"]
+            == ["care:1:heart_phase_practice"]
+            and rewrite_accepted_runtime["coverage"]["consentAnchorRootKey"]
+            == "care:1:heart_phase_practice"
+            and len(rewrite_accepted_runtime["evidence"]) == 1,
+            rewrite_accepted_growth,
+        )
+        check(
+            "rewrite_accept_runtime_persisted_equal",
+            rewrite_accepted_growth["runtime"] == rewrite_accepted_growth["persisted"],
+        )
+        check("rewrite_accept_main_save_changed", rewrite_accepted["raw"] != rewrite_pending["raw"])
+        check(
+            "rewrite_accept_runtime_only_growth_changed",
+            without_active_growth(rewrite_accepted["state"])
+            == without_active_growth(rewrite_pending["state"]),
+            {"before": rewrite_pending["state"], "after": rewrite_accepted["state"]},
+        )
+        check(
+            "rewrite_accept_stage_and_offer_unchanged",
+            rewrite_accepted_runtime["stage"] == rewrite_growth_before["runtime"]["stage"]
+            and rewrite_accepted_runtime["offeredStage"]
+            == rewrite_growth_before["runtime"]["offeredStage"],
+        )
+        check(
+            "rewrite_accept_only_main_storage_key_written",
+            bool(page.evaluate("window.__growthStorageWrites || []"))
+            and all(
+                item.get("key") == STORAGE_KEY
+                for item in page.evaluate("window.__growthStorageWrites || []")
+            ),
+            page.evaluate("window.__growthStorageWrites || []"),
+        )
+
+        # Replaying the same accepted rewrite cannot farm another root, detail,
+        # consent anchor, or localStorage write.
+        replay_before = snapshot(page)
+        replay_growth_before = growth_snapshot(page)
+        page.evaluate("window.__growthStorageWrites = []")
+        page.locator('[data-growth-practice="steadfastness"]').click()
+        page.locator('[data-page-action="growth-rewrite-accept"]').click()
+        page.wait_for_function(
+            "() => !document.querySelector('[data-page-action=\"growth-rewrite-accept\"]')",
+            timeout=5000,
+        )
+        replay_after = snapshot(page)
+        replay_growth_after = growth_snapshot(page)
+        check("rewrite_replay_store_unchanged", replay_after["state"] == replay_before["state"])
+        check("rewrite_replay_main_save_unchanged", replay_after["raw"] == replay_before["raw"])
+        check("rewrite_replay_growth_unchanged", replay_growth_after == replay_growth_before)
+        check(
+            "rewrite_replay_zero_storage_writes",
+            page.evaluate("window.__growthStorageWrites || []") == [],
+            page.evaluate("window.__growthStorageWrites || []"),
+        )
+
+        wait_ready(page, reload=True)
+        open_growth(page)
+        reload_replay_before = snapshot(page)
+        reload_replay_growth_before = growth_snapshot(page)
+        page.evaluate("window.__growthStorageWrites = []")
+        page.locator('[data-growth-practice="steadfastness"]').click()
+        page.wait_for_selector('[data-page-action="growth-rewrite-accept"]', timeout=5000)
+        page.locator('[data-page-action="growth-rewrite-accept"]').click()
+        page.wait_for_function(
+            "() => !document.querySelector('[data-page-action=\"growth-rewrite-accept\"]')",
+            timeout=5000,
+        )
+        reload_replay_after = snapshot(page)
+        reload_replay_growth_after = growth_snapshot(page)
+        check(
+            "rewrite_reload_replay_store_unchanged",
+            reload_replay_after["state"] == reload_replay_before["state"],
+        )
+        check(
+            "rewrite_reload_replay_main_save_unchanged",
+            reload_replay_after["raw"] == reload_replay_before["raw"],
+        )
+        check(
+            "rewrite_reload_replay_growth_unchanged",
+            reload_replay_growth_after == reload_replay_growth_before,
+        )
+        check(
+            "rewrite_reload_replay_zero_storage_writes",
+            page.evaluate("window.__growthStorageWrites || []") == [],
+            page.evaluate("window.__growthStorageWrites || []"),
+        )
+
+        # A completed care moment is candidate-first: if the critical save
+        # fails, runtime and UI must stay at the pre-action truth.
+        seed_g3_growth_fixture(page, "forming")
+        wait_ready(page, reload=True)
+        open_growth(page)
+        save_failure_before = snapshot(page)
+        save_failure_growth_before = growth_snapshot(page)
+        page.evaluate(
+            """(storageKey) => {
+              window.__growthSetItemBeforeFailure = Storage.prototype.setItem;
+              window.__growthStorageWrites = [];
+              Storage.prototype.setItem = function(key, value) {
+                if (String(key) === storageKey) {
+                  const error = new Error('synthetic Growth save failure');
+                  error.name = 'SyntheticSaveError';
+                  throw error;
+                }
+                return window.__growthSetItemBeforeFailure.call(this, key, value);
+              };
+            }""",
+            STORAGE_KEY,
+        )
+        page.locator('[data-growth-practice="attunement"]').click()
+        page.wait_for_function(
+            "() => document.querySelector('#page-layer')?.dataset.viewState === 'recoverable-error'",
+            timeout=5000,
+        )
+        save_failure_after = snapshot(page)
+        save_failure_growth_after = growth_snapshot(page)
+        page.evaluate(
+            """() => {
+              if (window.__growthSetItemBeforeFailure) {
+                Storage.prototype.setItem = window.__growthSetItemBeforeFailure;
+                delete window.__growthSetItemBeforeFailure;
+              }
+            }"""
+        )
+        check(
+            "care_save_failure_keeps_waiting_ui",
+            page.locator('[data-growth-result][data-outcome="waiting"]').count() == 1
+            and page.locator('[data-growth-result][data-outcome="accept"]').count() == 0,
+        )
+        check(
+            "care_save_failure_store_unchanged",
+            save_failure_after["state"] == save_failure_before["state"],
+        )
+        check(
+            "care_save_failure_main_save_unchanged",
+            save_failure_after["raw"] == save_failure_before["raw"],
+        )
+        check(
+            "care_save_failure_growth_unchanged",
+            save_failure_growth_after == save_failure_growth_before,
+        )
+        check(
+            "care_save_failure_zero_storage_writes",
+            page.evaluate("window.__growthStorageWrites || []") == [],
+            page.evaluate("window.__growthStorageWrites || []"),
+        )
+
+        # Storage pruning is allowed for the persisted payload, but completing
+        # Care must not feed that pruned payload back into unrelated live state.
+        prune_before = page.evaluate(
+            """async (storageKey) => {
+              const store = await import('./src/state/store.js');
+              const { saveState } = await import('./src/state/saveManager.js');
+              const now = Date.now();
+              store.updateState((draft) => {
+                draft.memories = Array.from({ length: 51 }, (_, index) => ({
+                  id: `growth-runtime-memory-${index}`,
+                  type: 'shared_moment',
+                  title: `runtime ${index}`,
+                  text: `runtime memory ${index}`,
+                  createdAt: now + index,
+                  mood: 'calm',
+                  bond: 0,
+                  trust: 5
+                }));
+                draft.habitatTraces = [{
+                  id: 'growth-runtime-expired-trace',
+                  memoryId: null,
+                  type: 'ambient',
+                  emotion: 'calm',
+                  intensity: 0.4,
+                  status: 'fresh',
+                  createdAt: now - (20 * 24 * 60 * 60 * 1000),
+                  lastUpdatedAt: now - (20 * 24 * 60 * 60 * 1000),
+                  expiresAt: null,
+                  visualHint: 'faint_glow',
+                  textHint: 'runtime-only expired trace'
+                }];
+              });
+              const baselineSave = saveState(store.getState());
+              if (!baselineSave.ok) throw new Error('Unable to seed prune-separation fixture');
+              const runtime = store.getState();
+              const persisted = JSON.parse(localStorage.getItem(storageKey) || '{}');
+              return {
+                runtimeMemories: JSON.parse(JSON.stringify(runtime.memories)),
+                runtimeTraces: JSON.parse(JSON.stringify(runtime.habitatTraces)),
+                persistedMemoryCount: persisted.memories?.length || 0,
+                persistedTraceCount: persisted.habitatTraces?.length || 0
+              };
+            }""",
+            STORAGE_KEY,
+        )
+        page.evaluate("window.__growthStorageWrites = []")
+        page.locator('[data-growth-practice="attunement"]').click()
+        page.wait_for_function(
+            """(key) => {
+              const persisted = JSON.parse(localStorage.getItem(key) || '{}');
+              return persisted.companionStates?.byId?.['greyshade-cat']?.growth
+                ?.coverage?.rootsBySourceType?.care?.length === 1;
+            }""",
+            arg=STORAGE_KEY,
+            timeout=5000,
+        )
+        prune_after = page.evaluate(
+            """async (storageKey) => {
+              const store = await import('./src/state/store.js');
+              const runtime = store.getState();
+              const persisted = JSON.parse(localStorage.getItem(storageKey) || '{}');
+              return {
+                runtimeMemories: JSON.parse(JSON.stringify(runtime.memories)),
+                runtimeTraces: JSON.parse(JSON.stringify(runtime.habitatTraces)),
+                persistedMemoryCount: persisted.memories?.length || 0,
+                persistedTraceCount: persisted.habitatTraces?.length || 0,
+                runtimeGrowth: JSON.parse(JSON.stringify(
+                  runtime.companionStates?.byId?.['greyshade-cat']?.growth || null
+                )),
+                persistedGrowth: persisted.companionStates?.byId?.['greyshade-cat']?.growth || null
+              };
+            }""",
+            STORAGE_KEY,
+        )
+        check(
+            "care_publish_preserves_unpruned_runtime_memories",
+            len(prune_before["runtimeMemories"]) == 51
+            and prune_after["runtimeMemories"] == prune_before["runtimeMemories"],
+            {"before": prune_before, "after": prune_after},
+        )
+        check(
+            "care_publish_preserves_runtime_trace_while_storage_prunes",
+            prune_after["runtimeTraces"] == prune_before["runtimeTraces"]
+            and prune_after["persistedMemoryCount"] == 50
+            and prune_after["persistedTraceCount"] == 0,
+            {"before": prune_before, "after": prune_after},
+        )
+        check(
+            "care_publish_growth_matches_persisted_candidate",
+            prune_after["runtimeGrowth"] == prune_after["persistedGrowth"],
+        )
+        check(
+            "care_publish_only_main_storage_key_written",
+            bool(page.evaluate("window.__growthStorageWrites || []"))
+            and all(
+                item.get("key") == STORAGE_KEY
+                for item in page.evaluate("window.__growthStorageWrites || []")
+            ),
+            page.evaluate("window.__growthStorageWrites || []"),
+        )
+
         run_outcome("declined", {"lastTouchReaction": "reject"}, "pathfinding", "decline")
         run_outcome("rested", {"energy": 1, "touchFatigue": 8}, "steadfastness", "rest")
+
+        # A rewrite proposal that was legal a moment ago becomes terminal when
+        # safe harbor starts. Even an injected stale action must write nothing.
+        set_fixture(page, {"mood": "happy", "energy": 8, "touchFatigue": 1})
+        wait_ready(page, reload=True)
+        open_growth(page)
+        page.locator('[data-growth-practice="steadfastness"]').click()
+        page.wait_for_selector('[data-page-action="growth-rewrite-accept"]', timeout=5000)
+        page.evaluate(
+            """async (storageKey) => {
+              const store = await import('./src/state/store.js');
+              const { saveState } = await import('./src/state/saveManager.js');
+              store.updateState((draft) => { draft.safeHarborMode = true; });
+              const saved = saveState(store.getState());
+              if (!saved.ok || !localStorage.getItem(storageKey)) {
+                throw new Error('Unable to persist stale-rewrite safety fixture');
+              }
+            }""",
+            STORAGE_KEY,
+        )
+        page.wait_for_selector('[data-growth-result][data-outcome="safety-paused"]', timeout=5000)
+        stale_rewrite_before = snapshot(page)
+        stale_rewrite_growth_before = growth_snapshot(page)
+        page.evaluate("window.__growthStorageWrites = []")
+        page.evaluate(
+            """() => {
+              const stale = document.createElement('button');
+              stale.type = 'button';
+              stale.dataset.pageAction = 'growth-rewrite-accept';
+              stale.dataset.testStaleRewriteAccept = 'true';
+              stale.textContent = 'stale rewrite accept';
+              document.querySelector('#growth-page-body')?.append(stale);
+            }"""
+        )
+        page.locator('[data-test-stale-rewrite-accept="true"]').click()
+        page.wait_for_selector('[data-growth-result][data-outcome="safety-paused"]', timeout=5000)
+        stale_rewrite_after = snapshot(page)
+        stale_rewrite_growth_after = growth_snapshot(page)
+        check(
+            "safety_stale_rewrite_remains_terminal",
+            page.locator('[data-growth-result][data-outcome="safety-paused"]').count() == 1
+            and page.locator('[data-growth-practice]').count() == 0
+            and page.locator('[data-page-action^="growth-rewrite-"]').count() == 0,
+        )
+        check(
+            "safety_stale_rewrite_store_unchanged",
+            stale_rewrite_after["state"] == stale_rewrite_before["state"],
+        )
+        check(
+            "safety_stale_rewrite_main_save_unchanged",
+            stale_rewrite_after["raw"] == stale_rewrite_before["raw"],
+        )
+        check(
+            "safety_stale_rewrite_growth_unchanged",
+            stale_rewrite_growth_after == stale_rewrite_growth_before,
+        )
+        check(
+            "safety_stale_rewrite_zero_storage_writes",
+            page.evaluate("window.__growthStorageWrites || []") == [],
+            page.evaluate("window.__growthStorageWrites || []"),
+        )
+
+        # Closing safe harbor in the same app run must not revive the proposal
+        # that existed before safety became terminal.
+        page.evaluate(
+            """async (storageKey) => {
+              const store = await import('./src/state/store.js');
+              const { saveState } = await import('./src/state/saveManager.js');
+              store.updateState((draft) => { draft.safeHarborMode = false; });
+              const saved = saveState(store.getState());
+              if (!saved.ok || !localStorage.getItem(storageKey)) {
+                throw new Error('Unable to close stale-rewrite safety fixture');
+              }
+            }""",
+            STORAGE_KEY,
+        )
+        page.wait_for_selector('[data-growth-result][data-outcome="waiting"]', timeout=5000)
+        safety_exit_before = snapshot(page)
+        safety_exit_growth_before = growth_snapshot(page)
+        page.evaluate("window.__growthStorageWrites = []")
+        page.evaluate(
+            """() => {
+              const stale = document.createElement('button');
+              stale.type = 'button';
+              stale.dataset.pageAction = 'growth-rewrite-accept';
+              stale.dataset.testPostSafetyRewriteAccept = 'true';
+              stale.textContent = 'post-safety stale rewrite accept';
+              document.querySelector('#growth-page-body')?.append(stale);
+            }"""
+        )
+        page.locator('[data-test-post-safety-rewrite-accept="true"]').click()
+        page.wait_for_function(
+            "() => document.querySelector('#page-layer')?.dataset.viewState === 'unavailable'",
+            timeout=5000,
+        )
+        safety_exit_after = snapshot(page)
+        safety_exit_growth_after = growth_snapshot(page)
+        check(
+            "safety_exit_does_not_revive_pending_rewrite",
+            page.locator('[data-growth-result][data-outcome="waiting"]').count() == 1
+            and page.locator('.growth-rewrite-actions').count() == 0,
+        )
+        check(
+            "safety_exit_stale_action_store_unchanged",
+            safety_exit_after["state"] == safety_exit_before["state"],
+        )
+        check(
+            "safety_exit_stale_action_main_save_unchanged",
+            safety_exit_after["raw"] == safety_exit_before["raw"],
+        )
+        check(
+            "safety_exit_stale_action_growth_unchanged",
+            safety_exit_growth_after == safety_exit_growth_before,
+        )
+        check(
+            "safety_exit_stale_action_zero_storage_writes",
+            page.evaluate("window.__growthStorageWrites || []") == [],
+            page.evaluate("window.__growthStorageWrites || []"),
+        )
+
+        # Safety is global even while Growth is closed. A rewrite proposed on
+        # Growth cannot hide on Home, survive a Soul Talk safety transition,
+        # and return after safe harbor closes.
+        set_fixture(page, {"mood": "happy", "energy": 8, "touchFatigue": 1})
+        wait_ready(page, reload=True)
+        open_growth(page)
+        page.locator('[data-growth-practice="steadfastness"]').click()
+        page.wait_for_selector('[data-page-action="growth-rewrite-accept"]', timeout=5000)
+        page.keyboard.press("Escape")
+        check(
+            "offpage_safety_fixture_returns_home",
+            page.locator("#page-layer").get_attribute("data-active-page") == "home",
+        )
+        offpage_growth_before = growth_snapshot(page)
+        page.evaluate(
+            """async (storageKey) => {
+              const store = await import('./src/state/store.js');
+              const { saveState } = await import('./src/state/saveManager.js');
+              store.updateState((draft) => { draft.safeHarborMode = true; });
+              const entered = saveState(store.getState());
+              store.updateState((draft) => { draft.safeHarborMode = false; });
+              const exited = saveState(store.getState());
+              if (!entered.ok || !exited.ok || !localStorage.getItem(storageKey)) {
+                throw new Error('Unable to run off-page safety transition');
+              }
+            }""",
+            STORAGE_KEY,
+        )
+        page.evaluate("window.__growthStorageWrites = []")
+        open_growth(page)
+        offpage_growth_after = growth_snapshot(page)
+        check(
+            "offpage_safety_exit_does_not_revive_pending_rewrite",
+            page.locator('[data-growth-result][data-outcome="waiting"]').count() == 1
+            and page.locator('.growth-rewrite-actions').count() == 0,
+        )
+        check(
+            "offpage_safety_transition_growth_unchanged",
+            offpage_growth_after == offpage_growth_before,
+            {"before": offpage_growth_before, "after": offpage_growth_after},
+        )
+        check(
+            "offpage_safety_return_keeps_focus",
+            page.evaluate("document.activeElement !== document.body"),
+        )
+        check(
+            "offpage_safety_return_zero_storage_writes",
+            page.evaluate("window.__growthStorageWrites || []") == [],
+            page.evaluate("window.__growthStorageWrites || []"),
+        )
 
         set_fixture(
             page,
@@ -1045,6 +1599,41 @@ def run():
                 pixi_page.locator("[data-growth-lived-evidence]").scroll_into_view_if_needed()
                 pixi_page.screenshot(path=normal_growth_shot, full_page=False)
                 report["screenshots"]["normal_pixi_g3_growth_mobile"] = normal_growth_shot
+
+                set_fixture(
+                    pixi_page,
+                    {"mood": "happy", "energy": 8, "touchFatigue": 1},
+                )
+                wait_ready(pixi_page, reload=True, expect_pixi_failure=False)
+                open_growth(pixi_page)
+                pixi_page.locator('[data-growth-practice="steadfastness"]').click()
+                pixi_page.wait_for_selector(
+                    '[data-growth-result][data-outcome="modify"]', timeout=5000
+                )
+                rewrite_group = pixi_page.locator('.growth-rewrite-actions[role="group"]')
+                rewrite_heights = rewrite_group.locator("button").evaluate_all(
+                    "els => els.map(el => Math.round(el.getBoundingClientRect().height))"
+                )
+                check(
+                    "normal_pixi_g31_rewrite_choices_visible",
+                    rewrite_group.count() == 1
+                    and rewrite_group.locator("button").count() == 2
+                    and all(height >= 44 for height in rewrite_heights),
+                    rewrite_heights,
+                )
+                check(
+                    "normal_pixi_g31_rewrite_no_horizontal_overflow",
+                    pixi_page.locator('[data-page="grow"]').evaluate(
+                        "el => el.scrollWidth <= el.clientWidth + 1"
+                    ),
+                )
+                rewrite_shot = os.path.join(
+                    tempfile.gettempdir(),
+                    "nexus-growth-g31-rewrite-normal-pixi-390x844.png",
+                )
+                rewrite_group.scroll_into_view_if_needed()
+                pixi_page.screenshot(path=rewrite_shot, full_page=False)
+                report["screenshots"]["normal_pixi_g31_rewrite_mobile"] = rewrite_shot
 
                 # Safety must remain terminal in the production-like Pixi path,
                 # not only in the dedicated CDN-failure fixture.
