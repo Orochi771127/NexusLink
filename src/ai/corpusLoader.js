@@ -1,11 +1,12 @@
 import { RAPHAEL_CORPUS_BUNDLE } from "../data/ai/raphaelCorpusBundle.js";
 import { HEARTSPARK_COUNCIL_VOICE_PACKS } from "../data/ai/heartsparkCouncilVoicePacks.js";
+import { IRONFLOW_HACKER_VOICE_PACKS } from "../data/ai/ironflowHackerVoicePacks.js";
 import { GREYSHADE_VOICE_PACKS } from "../data/ai/greyshadeVoicePacks.js";
 
 /**
  * Local static corpus loader.
  * Primary: exported bundle from aiforge-raphael-corpus.
- * Overlay: Heartspark five + Nuwa greyshade voice packs (hand-authored).
+ * Overlay: Heartspark five + Ironflow five + Nuwa greyshade voice packs (hand-authored).
  * Fallback: minimal internal pack if bundle import fails.
  */
 const FALLBACK_CORPUS = Object.freeze({
@@ -44,9 +45,10 @@ export function clearRaphaelCorpusCache() {
 
 function normalizeCorpus(raw = {}) {
   if (!raw.sentences?.length && !raw.responsePacks) return FALLBACK_CORPUS;
-  // 先合五席，再合灰影 Nuwa packs（同 id 覆寫 corpus 舊句，其餘保留）。
+  // 先合兩組正式五席，再合灰影 Nuwa packs（同 id 覆寫 corpus 舊句，其餘保留）。
   const withHeartspark = mergeResponsePacks(raw.responsePacks || {}, HEARTSPARK_COUNCIL_VOICE_PACKS);
-  const withGreyshade = mergeResponsePacks(withHeartspark, GREYSHADE_VOICE_PACKS);
+  const withIronflow = mergeResponsePacks(withHeartspark, IRONFLOW_HACKER_VOICE_PACKS);
+  const withGreyshade = mergeResponsePacks(withIronflow, GREYSHADE_VOICE_PACKS);
   return {
     version: raw.version || "1.0.0",
     source: raw.source || "unknown",

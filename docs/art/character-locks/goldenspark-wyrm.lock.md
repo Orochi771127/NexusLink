@@ -1,12 +1,12 @@
 # Character Lock Spec — 金光幼龍 / Goldenspark Wyrm
 
-> Source: Owner-supplied reference sheet "侵核者設定圖鑑" (2026-07-14), row 5 of 5 (front/side/back). Provisional Black Iron Hackers Metal seat — see `../BLACK_IRON_HACKERS_STAGE1_CHARACTER_ASSET_INDEX.md` for roster-level conflict log before treating this as final. Of the five characters on this sheet, this one carries the established Black Iron Hackers material language (metal plating, gear motif) most strongly — see index note.
+> Source: Owner-supplied reference sheet "侵核者設定圖鑑" (2026-07-14), row 5 of 5 (front/side/back). Formal Ironflow Hackers Metal seat; Owner authorized canon and GROUNDWORK runtime promotion on 2026-07-22. Of the five characters on this sheet, this one carries the established Black Iron Hackers material language (metal plating, gear motif) most strongly.
 
 ## Identity
 
 - character_id: `goldenspark-wyrm`
 - display_name: 金光幼龍 / Goldenspark Wyrm
-- faction: 黑鐵駭客 (Owner-confirmed visual roster; formal canon integration pending)
+- faction: 黑鐵駭客 / Ironflow Hackers (formal Metal seat)
 - role: 金席；偵測與破解結構弱點
 - element: Metal
 - species: juvenile dragon/wyrm whelp; **saurian quadruped**, not a mammal template — see Species-Motion note
@@ -73,7 +73,7 @@ Per the user's explicit instruction, this is a dragon and must not share a motio
 - 512x512 transparent PNG master frames; linear sampling + mipmaps
 - bottom-center anchor at four-leg baseline; frameHeight scaling
 - sheet edge <=4096 and exactly divisible grid
-- this lock spec authorizes generation *planning* only — no image generation, asset writes, or registry changes without a separate approval-gated task per `docs/assets/CHARACTER_ASSET_PIPELINE.md`
+- selected 29-action catalog and portrait are approved for this GROUNDWORK runtime promotion; future generation or replacement still requires a separate gate per `docs/assets/CHARACTER_ASSET_PIPELINE.md`
 
 ## Reference
 
@@ -86,5 +86,5 @@ Per the user's explicit instruction, this is a dragon and must not share a motio
 ## Approval Status
 
 - reference_set_status: Owner-confirmed and fingerprinted 2026-07-14
-- lock_spec_status: approved for review production; chest/core motif resolved from the supplied front/back views
-- approved_for_actions: review-staging image generation under `output/**`; not runtime promotion; formal canon integration remains pending
+- lock_spec_status: approved formal Ironflow Hackers Metal-seat lock; chest/core motif resolved from the supplied front/back views
+- approved_for_actions: selected portrait + 29 eight-frame actions approved for `assets/**` runtime promotion 2026-07-22; future regeneration not implied

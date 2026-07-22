@@ -1,6 +1,6 @@
 # Starflame Phoenix Full 8-Frame Catalog QC
 
-Status: `VERIFIED` in review staging. Human promotion approval remains pending.
+Status: `VERIFIED`; Owner approved the selected catalog for GROUNDWORK runtime promotion on 2026-07-22.
 
 ## Scope
 
@@ -9,8 +9,8 @@ Status: `VERIFIED` in review staging. Human promotion approval remains pending.
 - Frames per action: exactly 8
 - Selected sheet: `2048x1024` RGBA PNG, `4x2` grid, `512x512` per frame
 - Preview: eight-frame looping GIF per action
-- Location: `output/character-pilots/starflame-phoenix/<action>/`
-- Promotion boundary: no file has entered `assets/**` or runtime.
+- Runtime sheet location: `assets/characters/starflame-phoenix/<action>/`; runtime portrait: `assets/characters/starflame-phoenix/portrait/`
+- Review boundary: GIF previews, rejected candidates and provenance remain under `output/**`; only selected runtime PNGs are promoted.
 
 ## Selected action set
 
@@ -37,7 +37,7 @@ P3:
 - All selected PNG files are `2048x1024` in RGBA mode and contain transparent pixels.
 - All selected GIF previews contain exactly eight frames.
 - Selected processor runs pass strict cell-edge rejection after bottom-center/shared-scale normalization.
-- Raw generations, rejected candidates, alpha sources, normalization reports, processor metadata, selected sheets, and previews remain together as review provenance.
+- Raw generations, rejected candidates, alpha sources, normalization reports, processor metadata and previews remain as review provenance; selected PNGs move by tracked rename into the runtime root, preserving their reviewed bytes.
 
 ## Species, visual, and semantic verification
 
@@ -62,6 +62,6 @@ P3:
 
 The staging-only helper `output/character-pilots/_work/normalize_global_2x4.py` identifies the eight globally separated foreground figures, sorts them by row and horizontal position, applies one shared scale, and places each talon datum bottom-center into exact `512x512` cells. The regular `generate2dsprite.py` processor then runs again with strict edge rejection. This changes layout and anchor only; it does not redraw poses or identity.
 
-## Remaining gate
+## Promotion result and remaining gates
 
-Starflame Phoenix is mechanically and visually ready for Owner review as a complete staging catalog. It is not approved for `assets/**`, registry, or runtime promotion by this QC record.
+Starflame Phoenix's selected portrait and complete grounded Stage 1 catalog are approved for `assets/**` promotion. Registry／manifest／persona／browser regression and all human launch gates remain owned by the integrating TASK_PACK; this QC record alone does not declare launch readiness.

@@ -8,6 +8,22 @@ export const GREYSHADE_CAT_ANIMATION_NAMES = ANIMATION_NAMES;
 export const GREYSHADE_CAT_CORE_ANIMATION_NAMES = CORE_ANIMATION_NAMES;
 export const ILLUSTRATED_SHEET_MAX_EDGE = ILLUSTRATED_COMPANION_RUNTIME_POLICY.maxSheetEdge;
 
+// These five semantic intents are allowed to resolve through the explicit
+// animation-profile fallback chain. Every other registry action is part of
+// the full-runtime asset contract and must have its own metadata entry.
+export const PROFILE_FALLBACK_ANIMATION_NAMES = Object.freeze([
+  "front_walk",
+  "back_walk",
+  "special_wake",
+  "special_left_walk",
+  "special_wash"
+]);
+export const REQUIRED_RUNTIME_ANIMATION_NAMES = Object.freeze(
+  GREYSHADE_CAT_ANIMATION_NAMES.filter(
+    (name) => !PROFILE_FALLBACK_ANIMATION_NAMES.includes(name)
+  )
+);
+
 // Keep first paint focused on the companion's visible idle state; interaction
 // animations continue to lazy-load through the existing controller.
 export const BOOT_ANIMATION_NAMES = Object.freeze(["idle_calm", "sleep"]);
@@ -41,10 +57,15 @@ export async function loadCompanionAnimationPack(animationsPath, { bootOnly = fa
     status.metadataLoaded = true;
     const animations = new Map();
 
+    const requiredRuntimeAnimations = new Set(REQUIRED_RUNTIME_ANIMATION_NAMES);
     GREYSHADE_CAT_ANIMATION_NAMES.forEach((name) => {
       if (!isValidAnimationDefinition(metadata[name])) {
         status.missing.push(name);
-        status.errors.push(`${name}: missing or invalid metadata`);
+        // Only the five declared profile aliases may be absent. A missing
+        // battle, interaction, daily or core action invalidates full-runtime.
+        if (requiredRuntimeAnimations.has(name)) {
+          status.errors.push(`${name}: missing or invalid metadata`);
+        }
       }
     });
 

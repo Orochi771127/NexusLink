@@ -20,6 +20,20 @@ CANONICAL_SAFETY_REPLY = "\n".join(
 HIGH_RISK_INPUT = "我現在有傷害自己的念頭"
 SAFETY_ALLOWED_SAVE_CHANGES = {"chatHistory", "safeHarborMode", "lastSeenAt"}
 LEGACY_ARCHIVE_COPY = "舊存檔保留的圖鑑記錄；這不代表牠已建立目前的關係或完成正式覺醒。"
+IRONFLOW_IDS = (
+    "thunder-pup",
+    "wavecub",
+    "starflame-phoenix",
+    "star-foal",
+    "goldenspark-wyrm",
+)
+IRONFLOW_ENGLISH_NAMES = (
+    "ThunderPup",
+    "WaveCub",
+    "Starflame Phoenix",
+    "Star Foal",
+    "Goldenspark Wyrm",
+)
 
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -1579,6 +1593,84 @@ def run():
             )
 
             if name == "mobile":
+                # Ironflow Stage 1 is visible in the Codex from a fresh save,
+                # but remains absent from the selector until an explicit
+                # unlock survives a full reload.
+                pixi_page.locator('[data-panel-trigger="codex"]').evaluate(
+                    "element => element.click()"
+                )
+                pixi_page.wait_for_selector('[data-panel="codex"]:not([hidden])', timeout=10000)
+                codex_rows = pixi_page.locator("#codex-body .codex-row")
+                locked_ironflow_rows = {
+                    english_name: codex_rows.filter(has_text=english_name).all_text_contents()
+                    for english_name in IRONFLOW_ENGLISH_NAMES
+                }
+                check(
+                    "ironflow_fresh_codex_lists_all_stage1_characters",
+                    codex_rows.count() == 16
+                    and all(
+                        len(rows) == 1 and "未相遇" in rows[0]
+                        for rows in locked_ironflow_rows.values()
+                    ),
+                    locked_ironflow_rows,
+                )
+                pixi_page.locator('[data-panel="codex"] [data-panel-close]').click()
+
+                pixi_page.locator('[data-panel-trigger="companionSelect"]').evaluate(
+                    "element => element.click()"
+                )
+                pixi_page.wait_for_selector(
+                    '[data-panel="companionSelect"]:not([hidden])', timeout=10000
+                )
+                fresh_selector_cards = pixi_page.locator(
+                    "#companion-select-list .companion-card"
+                ).all_text_contents()
+                check(
+                    "ironflow_fresh_selector_remains_unlock_gated",
+                    len(fresh_selector_cards) == 1
+                    and not any(
+                        english_name in "\n".join(fresh_selector_cards)
+                        for english_name in IRONFLOW_ENGLISH_NAMES
+                    ),
+                    fresh_selector_cards,
+                )
+                pixi_page.locator(
+                    '[data-panel="companionSelect"] [data-panel-close]'
+                ).click()
+
+                pixi_page.evaluate(
+                    """([storageKey, ironflowIds]) => {
+                      const state = JSON.parse(localStorage.getItem(storageKey) || '{}');
+                      state.unlockedCompanionIds = ['greyshade-cat', ...ironflowIds];
+                      localStorage.setItem(storageKey, JSON.stringify(state));
+                    }""",
+                    [STORAGE_KEY, list(IRONFLOW_IDS)],
+                )
+                wait_ready(pixi_page, reload=True, expect_pixi_failure=False)
+                pixi_page.locator('[data-panel-trigger="companionSelect"]').evaluate(
+                    "element => element.click()"
+                )
+                pixi_page.wait_for_selector(
+                    '[data-panel="companionSelect"]:not([hidden])', timeout=10000
+                )
+                unlocked_selector_cards = pixi_page.locator(
+                    "#companion-select-list .companion-card"
+                ).all_text_contents()
+                unlocked_selector_text = "\n".join(unlocked_selector_cards)
+                check(
+                    "ironflow_explicit_unlock_survives_reload_in_selector",
+                    len(unlocked_selector_cards) == 6
+                    and all(
+                        english_name in unlocked_selector_text
+                        for english_name in IRONFLOW_ENGLISH_NAMES
+                    ),
+                    unlocked_selector_cards,
+                )
+
+                pixi_page.evaluate("key => localStorage.removeItem(key)", STORAGE_KEY)
+                wait_ready(pixi_page, reload=True, expect_pixi_failure=False)
+                open_growth(pixi_page)
+
                 # Capture the G3 surface once with the normal Pixi habitat, so
                 # visual QA is not limited to the intentional CDN-failure mode.
                 seed_g3_growth_fixture(pixi_page, "possible_open")

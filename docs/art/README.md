@@ -14,11 +14,22 @@ Reading order:
 
 The five Owner-supplied reference images dated 2026-07-10 define the formal Heartspark Council Stage 1 roster. They are identity references only. Their white backgrounds, shadows, and presentation framing must not enter runtime assets.
 
-No file in this directory grants runtime readiness. Image generation, asset writes, registry changes, and runtime promotion require later approval-gated tasks.
+Art documentation alone does not grant runtime readiness. Image generation,
+asset writes, registry changes and runtime promotion require an explicit
+approval-gated task; after promotion, current runtime truth lives in
+`src/data/assetManifest.js` and `src/data/companionRegistry.js`.
 
-## Black Iron Hackers Stage 1 (visual lock confirmed; canon integration pending)
+## Ironflow Hackers Stage 1 (canon and runtime promotion approved)
 
-`BLACK_IRON_HACKERS_STAGE1_CHARACTER_ASSET_INDEX.md` tracks the Owner-supplied 2026-07-14 five-character visual lock for the Wood/Water/Fire/Earth/Metal seats. The review-production task uses the existing Tier 3 `thunder-pup` identity for the Wood seat and keeps all generated work under `output/**`; formal faction/canon integration remains a separate task. Read the index's resolved-decision and remaining-debt sections before promotion.
+`BLACK_IRON_HACKERS_STAGE1_CHARACTER_ASSET_INDEX.md` tracks the
+Owner-supplied 2026-07-14 five-character visual lock for the
+Wood/Water/Fire/Earth/Metal seats. On 2026-07-22 the Owner approved the five
+selected 29-action catalogs and portraits for canon plus GROUNDWORK runtime
+promotion. Public English uses `Ironflow Hackers`; the historical filename is
+kept for stable links. Selected runtime PNGs live under each character's own
+`assets/characters/<id>/` root, while GIFs, rejected candidates and production
+provenance remain under `output/**`. Runtime-ready does not auto-unlock a
+companion or alter Initial Bond.
 
 ## Production / habitat index
 

@@ -1,12 +1,12 @@
 # Character Lock Spec — 星焰鳳凰 / Starflame Phoenix
 
-> Source: Owner-supplied reference sheet "侵核者設定圖鑑" (2026-07-14), row 3 of 5 (front/side/back). Provisional Black Iron Hackers Fire seat — see `../BLACK_IRON_HACKERS_STAGE1_CHARACTER_ASSET_INDEX.md` for roster-level conflict log, including a naming echo against Heartspark Council's Fire seat evolution name, before treating this as final.
+> Source: Owner-supplied reference sheet "侵核者設定圖鑑" (2026-07-14), row 3 of 5 (front/side/back). Formal Ironflow Hackers Fire seat; Owner authorized canon and GROUNDWORK runtime promotion on 2026-07-22.
 
 ## Identity
 
 - character_id: `starflame-phoenix`
 - display_name: 星焰鳳凰 / Starflame Phoenix
-- faction: 黑鐵駭客 (Owner-confirmed visual roster; formal canon integration pending)
+- faction: 黑鐵駭客 / Ironflow Hackers (formal Fire seat)
 - role: 火席；干擾與灼燒敵方程序
 - element: Fire
 - species: juvenile phoenix; **avian**, not a quadruped — see Species-Motion note below
@@ -17,7 +17,7 @@
 This is a bird. Per `CLAUDE.md` §7 footnote and the existing `auriowl` (owl) precedent in the Heartspark Council roster, **bird-type companions must not be given generic four-leg mammal locomotion.** Concretely for this character:
 - No four-leg walk cycle. Ground movement (if any at Stage 1) should be a hip-forward waddle/hop on two legs.
 - Signature motion is wing/tail flame combustion, not paw-based attack or defend poses.
-- Whether Stage 1 is ground-bound (chick, flightless) or already capable of short flutter-flight is an open Owner decision — the reference shows it standing, not airborne, which suggests flightless chick, but this needs explicit confirmation before an action list is drafted (it changes the entire movement/battle animation family).
+- Stage 1 is grounded: locomotion uses two-leg hops／steps and may use brief balance flutters, but no sustained flight or airborne idle. The selected 29-action catalog is the approved motion authority for this stage.
 
 ## Core Silhouette
 
@@ -71,9 +71,9 @@ This is a bird. Per `CLAUDE.md` §7 footnote and the existing `auriowl` (owl) pr
 
 - illustrated / painterly / high-detail, matching root Companion 美術規格 in `CLAUDE.md` §4
 - 512x512 transparent PNG master frames; linear sampling + mipmaps
-- anchor: bottom-center at the feet/balance point, not a flight-hover datum, until the flightless-vs-flutter question above is resolved
+- anchor: bottom-center at the feet/balance point, never a flight-hover datum at Stage 1
 - sheet edge <=4096 and exactly divisible grid
-- this lock spec authorizes generation *planning* only — no image generation, asset writes, or registry changes without a separate approval-gated task per `docs/assets/CHARACTER_ASSET_PIPELINE.md`
+- selected 29-action catalog and portrait are approved for this GROUNDWORK runtime promotion; future generation or replacement still requires a separate gate per `docs/assets/CHARACTER_ASSET_PIPELINE.md`
 
 ## Reference
 
@@ -86,5 +86,5 @@ This is a bird. Per `CLAUDE.md` §7 footnote and the existing `auriowl` (owl) pr
 ## Approval Status
 
 - reference_set_status: Owner-confirmed and fingerprinted 2026-07-14
-- lock_spec_status: prepared-for-owner-review — species-motion question (flightless vs. flutter) is a blocking open item, not just a QC note
-- approved_for_actions: review-staging image generation under `output/**`; not runtime promotion; formal canon integration remains pending
+- lock_spec_status: approved formal Ironflow Hackers Fire-seat lock; grounded Stage 1 motion resolved
+- approved_for_actions: selected portrait + 29 eight-frame actions approved for `assets/**` runtime promotion 2026-07-22; future regeneration not implied

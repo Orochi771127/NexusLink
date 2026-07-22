@@ -1,12 +1,12 @@
 # Character Lock Spec — 雷霆幼狼 / ThunderPup
 
-> Source: Owner-confirmed reference sheet "侵核者設定圖鑑" (2026-07-14), row 1 of 5. This review-production lock uses the existing Tier 3 identity `thunder-pup` for the Black Iron Wood seat; formal canon integration remains a separate task.
+> Source: Owner-confirmed reference sheet "侵核者設定圖鑑" (2026-07-14), row 1 of 5. The existing `thunder-pup` identity is now the formal Ironflow Hackers Wood seat; Owner authorized canon and GROUNDWORK runtime promotion on 2026-07-22.
 
 ## Identity
 
 - character_id: `thunder-pup`
 - display_name: 雷霆幼狼 / ThunderPup
-- faction: 黑鐵駭客 (Owner-confirmed visual roster; formal canon integration pending)
+- faction: 黑鐵駭客 / Ironflow Hackers (formal Wood seat)
 - role: 木席；感知細微電流、追蹤數據波動、潛伏並狙擊敵方訊號
 - element: Wood, with lightning/shadow as secondary technical motifs
 - species: juvenile wolf pup; canine quadruped
@@ -69,7 +69,7 @@
 - bottom-center anchor at four-paw baseline; frameHeight scaling
 - all approved review actions use eight frames in a 2×4 grid; sheet = 2048×1024 after processing
 - sheet edge <=4096 and exactly divisible grid
-- review production only under `output/**`; no runtime promotion without a later GROUNDWORK gate
+- selected 29-action catalog and portrait are approved for this GROUNDWORK runtime promotion; future replacements still require a new asset gate
 
 ## Reference
 
@@ -82,5 +82,5 @@
 ## Approval Status
 
 - reference_set_status: Owner-confirmed and fingerprinted 2026-07-14
-- lock_spec_status: approved for review production
-- approved_for_actions: review-staging image generation under `output/**`; not runtime promotion; formal canon integration remains pending
+- lock_spec_status: approved formal Ironflow Hackers Wood-seat lock
+- approved_for_actions: selected portrait + 29 eight-frame actions approved for `assets/**` runtime promotion 2026-07-22; future regeneration not implied

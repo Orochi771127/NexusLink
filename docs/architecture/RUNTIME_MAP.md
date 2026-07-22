@@ -1,6 +1,6 @@
 # RUNTIME_MAP.md — Nexus Link Runtime 架構地圖
 
-> Status: 2026-07-18 current-worktree truth sync。
+> Status: 2026-07-22 current-worktree truth sync。
 > 本檔是定位地圖，不是產品 canon，也不取代 current `HEAD`、實際 worktree、測試或
 > `docs/agent/AI_EXECUTION_LEDGER.md`。標為「歷史」的段落不得用來推導新實作。
 
@@ -57,6 +57,15 @@ Boot → Identity → Prologue → Heart-Core Guidance → Initial Bond
   `selectableWhenUnlocked` 與 `unlockedCompanionIds` 共同裁決可否選取。
 - 正式五元守護五席目前皆為 `full-runtime` / `runtime-ready` /
   `selectableWhenUnlocked`；這不會繞過 Initial Bond、chapter-gated unlock 或共鳴邀請意願制。
+- 黑鐵駭客／Ironflow Hackers 五席 `thunder-pup` / `wavecub` /
+  `starflame-phoenix` / `star-foal` / `goldenspark-wyrm` 也已是
+  `full-runtime` / `runtime-ready` / `selectableWhenUnlocked`。Fresh save
+  不自動解鎖；Codex 預列全部 Stage 1 並標示未相遇／鎖定，但 selector
+  與 active-companion path 仍只接受 `unlockedCompanionIds` 內的合法角色。
+- `companionRegistry.tier` 目前只有 `primary` / `legacy` / `roadmap` /
+  `placeholder` 四種粗粒度 compatibility 值；正式心輝／黑鐵 Stage 1 記錄使用
+  `roadmap` 不代表 canon 上仍是 Tier 3。正式 roster 身分以 Master Canon、faction
+  與本節 runtime truth 為準，不得用該舊 enum 將已核准角色降級。
 - 棲地日常同時只有一位 active companion；對峙共鳴圈不是一般戰力隊伍。
 
 Authoritative sources：
@@ -163,7 +172,7 @@ Safety invariant：高風險輸入必須終止於完整 system safety response�
 
 - `pixiApp.js` — Pixi application、safe-zone / background-cover projection、scene layers、habitat switch assembly。GROUNDWORK。
 - `companionRenderer.js` — companion node、scene-profile placement、visual-center target projection、tap binding。
-- `spriteSheetAnimationLoader.js` — per-companion `animations.json`、linear sampling / mipmap policy、animation switching。
+- `spriteSheetAnimationLoader.js` — per-companion `animations.json`、linear sampling / mipmap policy、animation switching；正式 catalog 必須提供 29 個 runtime action，另有 5 個明示 profile fallback 語意 key 可不重複資產。
 - `motionController.js` — idle / walk / emotion / touch motion state and scene rebase。
 - `platformRenderer.js` — platform helper。
 - `chromaKeyTexture.js` — bounded texture preprocessing helper。
@@ -194,7 +203,7 @@ runtime lighting/weather。其他六區仍可保留 approved baked day/night fal
 - First session：`onboardingController.js`, `firstLoopController.js`, `gentleInvitationController.js`, `interactionHintController.js`。
 - Companion：`companionSelectController.js`, `companionFeedbackController.js`, `companionInitiativeController.js`。
 - Play：`mapController.js`, `battleController.js`, `calmSyncController.js`, `actionSheetController.js`。
-- Content surfaces：`soulTalkController.js`, `atlasController.js`, `codexController.js`。
+- Content surfaces：`soulTalkController.js`, `atlasController.js`, `codexController.js`；Codex 列出全部 Stage 1 registry 角色，未相遇可見性不授予 unlock／relationship／readiness。
 - Prototype / dev：`expeditionController.js`, `devPanelController.js`。
 
 Panel lifecycle 由 `panelManager` 統一處理；延遲行為（例如 encounter timer）必須在 close / panel switch 時取消，不能在隱藏面板後啟動 gameplay。

@@ -268,6 +268,20 @@ Linkara Region 是 Nexus Link 的主舞台。世界地圖以七個區域構成�
 
 `flame-flicker`、`ice-talon`、`stone-shard`、`vine-twist`、`crystal-rabbit` 雖在目前 build 已有完整動畫並可作 active companion，但其正式身分改列為**現行測試 runtime 載體**，不占心輝議會正式五行席位。不得因技術上 `full-runtime` 就把測試身分寫回產品 canon。其未來用途（測試專用、改編為其他角色／勢力、或退役）須另由 Owner 拍板並走 canon + migration TASK_PACK；在此之前保留資產與 ID，不刪、不改名、不暗自合併。
 
+### 5.2.1 黑鐵駭客 Stage 1 五席（2026-07-22 Owner 定版）
+
+黑鐵駭客的正式英文勢力名維持 **Ironflow Hackers**。Stage 1 五席沿用 Owner 確認的幼體設計；「為了保護而控制」是其敘事張力，不是把牠們寫成普通反派、戰力寵物或服從工具。
+
+| 五行席位 | 正式 Stage 1 角色 | 角色 ID | 物種動作族 |
+|---|---|---|---|
+| 木 | 雷霆幼狼 / ThunderPup | `thunder-pup` | 犬科訊號追蹤 |
+| 水 | 浪花幼獅 / WaveCub | `wavecub` | 貓科潮流偵查 |
+| 火 | 星焰鳳凰 / Starflame Phoenix | `starflame-phoenix` | 陸棲幼鳥／短跳步 |
+| 土 | 幼星駒 / Star Foal | `star-foal` | 馬科穩定步態 |
+| 金 | 金光幼龍 / Goldenspark Wyrm | `goldenspark-wyrm` | 陸棲幼龍／齒輪尾 |
+
+五席現行皆為 `full-runtime` / `runtime-ready` / `selectableWhenUnlocked`，但**不因接入 runtime 而自動結緣或解鎖**。Fresh save default 與 Initial Bond 三席仍固定為 `greyshade-cat` / `blazetail-kit` / `crystalfin-seahorse`。Codex 的 Stage 1 名錄**應預先列出全部 Stage 1 角色**，五席在未相遇時標示未相遇／鎖定；companion selector 與 active companion 則必須先有合法解鎖。Codex 可見性本身不建立關係、不揭露 inactive relationship／readiness，也不授予選用資格。每席可有自己的 persona、語氣與身體語言，但 D2 safety terminal 永遠先於 faction／persona 生效，角色差異不得覆寫 canonical system reply、零 reward 與零 memory／preference mutation 契約。
+
 ### 5.3 五元守護外觀與動作鎖定
 
 - 共用 29 個 `animation_id` 只代表語意，不代表共用四足姿勢。
@@ -299,8 +313,9 @@ Linkara Region 是 Nexus Link 的主舞台。世界地圖以七個區域構成�
 | 1 首輪焦點 | 灰影貓 `greyshade-cat` | first validated runtime carrier，Demo / Chapter 1 行銷主體 |
 | 1.5 正式五元守護 | 金羽小梟／芽角小鹿／晶鰭小海馬／焰尾小狐／星紋小虎 | 正式五行 roster；現行皆為 `full-runtime` / `runtime-ready`，且 `selectableWhenUnlocked`；仍服從 Initial Bond、章節解鎖與意願制，不等於開場全解鎖 |
 | 1.6 技術測試載體 | `flame-flicker` / `ice-talon` / `stone-shard` / `vine-twist` / `crystal-rabbit` | 現行 full-runtime，用於流程與動畫驗證；不占正式五行 roster，未來用途待另案 |
+| 1.7 黑鐵駭客 Stage 1 五席 | 雷霆幼狼／浪花幼獅／星焰鳳凰／幼星駒／金光幼龍 | 正式 Ironflow Hackers 五行 roster；現行皆為 `full-runtime` / `runtime-ready` / `selectableWhenUnlocked`，初始鎖定且不加入 Initial Bond |
 | 2 Legacy | 焰尾狐 `flametail-fox` | 舊錯圖已移除；需新 approved asset 才可恢復 static candidate，不可升級，不可作 fallback |
-| 3 Roadmap | 雷霆幼狼 / 星能小山豬 等 | 未通過 asset readiness 前不可選；可作未來章節或旅痕內容 |
+| 3 Roadmap | 星能小山豬等 | 未通過 asset readiness 前不可選；可作未來章節或旅痕內容 |
 
 ---
 

@@ -351,7 +351,7 @@ await runCase("combined companion switch ignores top-level relationship patch an
   assertRelationshipBaseline(switched, "B ignores combined mirror patch");
 });
 
-await runCase("all 11 companions survive a relationship isolation ring", () => {
+await runCase("all registered companions survive a relationship isolation ring", () => {
   resetStore(store.normalizeState({
     activeCompanionId: ALL_COMPANION_IDS[0],
     unlockedCompanionIds: ALL_COMPANION_IDS,

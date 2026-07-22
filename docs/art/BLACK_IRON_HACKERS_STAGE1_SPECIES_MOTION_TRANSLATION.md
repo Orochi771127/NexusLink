@@ -1,6 +1,6 @@
-# Black Iron Hackers Stage 1 Species Motion Translation
+# Ironflow Hackers Stage 1 Species Motion Translation
 
-The shared 29 animation IDs are semantic intents, not shared poses. This Owner-confirmed visual roster uses five distinct anatomy families and an all-eight-frame review-production override.
+The shared 29 animation IDs are semantic intents, not shared poses. This Owner-confirmed Ironflow Hackers roster uses five distinct anatomy families and an all-eight-frame production contract. Owner authorized the selected catalogs for GROUNDWORK runtime promotion on 2026-07-22.
 
 ## Production override
 
@@ -16,7 +16,7 @@ The shared 29 animation IDs are semantic intents, not shared poses. This Owner-c
 |---|---|---|---|---|
 | Canine signal tracker | ThunderPup | four paws / bottom-center | shoulder-led wolf-pup gait, ear/nose tracking, crystal-ridge pressure, tail-bolt balance | happy-dog panting, feline pounce, adult war-wolf heaviness |
 | Feline current scout | WaveCub | four paws / bottom-center | soft shoulder roll, ripple weight shift, dart/pounce restraint, slim wisp-tail steering | canine bounce, adult lion dominance, tiger guard template |
-| Grounded avian firebird | Starflame Phoenix | talons / bottom-center | two-leg hop/waddle, head bob, wing mantle, flame-plume fan and settle | four-leg gait, mammal sit, sustained flight before later approval |
+| Grounded avian firebird | Starflame Phoenix | talons / bottom-center | two-leg hop/waddle, head bob, wing mantle, flame-plume fan and settle | four-leg gait, mammal sit, sustained flight at Stage 1 |
 | Equine stabilizer | Star Foal | four hooves / bottom-center | hoof cadence, neck arc, ear rotation, mane/crest and star-tail timing | paw gait, cervid bound, feline crouch, saddle/tack |
 | Saurian gear-tail analyst | Goldenspark Wyrm | four feet / bottom-center | low deliberate steps, hip/tail counterbalance, rigid dorsal ridge, gear-tail spin | mammal cub bounce, wing flight, fire-dragon aggression |
 
@@ -59,4 +59,4 @@ The shared 29 animation IDs are semantic intents, not shared poses. This Owner-c
 - Keep complete tails, wings, crests, ears, paws/hooves/talons, dorsal ridges, and gear tips inside each cell.
 - Maintain shared scale and stable species datum; frameHeight, not opaque-pixel bounds, governs later runtime scale.
 - Reject generic quadruped template leakage, invented weapons, detached effects, text, platforms, or action semantics that punish refusal.
-- Review staging does not grant runtime readiness or canon integration.
+- The selected portrait and 29-action catalogs are approved for the 2026-07-22 runtime promotion package. Future regeneration, Stage 2／3 motion or sustained-flight authority still requires a separate art and GROUNDWORK gate.

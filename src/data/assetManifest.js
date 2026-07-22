@@ -57,7 +57,14 @@ export const RUNTIME_COMPANION_ASSET_KEYS = Object.freeze([
   "starstripeCub",
   "auriowl",
   "blazetailKit",
-  "crystalfinSeahorse"
+  "crystalfinSeahorse",
+  // 黑鐵駭客五席（2026-07-22 Owner 核准 runtime 升格；145 sheets）。
+  // 與正式心輝五席相同，release gate 必須逐 sheet 驗證網格、尺寸與 anchor。
+  "thunderPup",
+  "wavecub",
+  "starflamePhoenix",
+  "starFoal",
+  "goldensparkWyrm"
 ]);
 
 export const MOONLAKE_VIVARIUM_V3 = Object.freeze({
@@ -273,6 +280,36 @@ export const ASSET_MANIFEST = Object.freeze({
       sourceRoot: "./assets/characters/crystalfin-seahorse",
       animations: "./assets/characters/crystalfin-seahorse/metadata/animations.json",
       approvalStatus: "formal-heartspark-council-runtime"
+    }),
+    thunderPup: createIllustratedCompanionAsset({
+      id: "thunder-pup",
+      sourceRoot: "./assets/characters/thunder-pup",
+      animations: "./assets/characters/thunder-pup/metadata/animations.json",
+      approvalStatus: "formal-ironflow-hackers-runtime"
+    }),
+    wavecub: createIllustratedCompanionAsset({
+      id: "wavecub",
+      sourceRoot: "./assets/characters/wavecub",
+      animations: "./assets/characters/wavecub/metadata/animations.json",
+      approvalStatus: "formal-ironflow-hackers-runtime"
+    }),
+    starflamePhoenix: createIllustratedCompanionAsset({
+      id: "starflame-phoenix",
+      sourceRoot: "./assets/characters/starflame-phoenix",
+      animations: "./assets/characters/starflame-phoenix/metadata/animations.json",
+      approvalStatus: "formal-ironflow-hackers-runtime"
+    }),
+    starFoal: createIllustratedCompanionAsset({
+      id: "star-foal",
+      sourceRoot: "./assets/characters/star-foal",
+      animations: "./assets/characters/star-foal/metadata/animations.json",
+      approvalStatus: "formal-ironflow-hackers-runtime"
+    }),
+    goldensparkWyrm: createIllustratedCompanionAsset({
+      id: "goldenspark-wyrm",
+      sourceRoot: "./assets/characters/goldenspark-wyrm",
+      animations: "./assets/characters/goldenspark-wyrm/metadata/animations.json",
+      approvalStatus: "formal-ironflow-hackers-runtime"
     }),
   })
 });
