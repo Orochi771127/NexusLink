@@ -1,0 +1,9 @@
+Use case: precise-object-edit
+Asset type: Nexus Link Moonlake foundation-only day layer, review staging
+Primary request: Using the visible hybrid daytime Moonlake master as the exact geometry and camera reference, create a clean foundation-only version of the same scene.
+Preserve exactly: portrait framing, camera, horizon, far mountain silhouettes, waterfall locations, lake shape and shoreline, island landforms, central rune plaza geometry, axial dock/approach, atmospheric depth bands, lighting direction and clay/resin material scale.
+Remove completely: all tents and camp pavilions, crystal beacon towers, blue crystal clusters, banners, lantern posts, shrine markers, camp props, decorative dock posts, tall foreground plants and any stateful or independently controlled object.
+Allowed foundation contents: sky and clouds with no celestial bodies; hazed far cliffs and waterfalls; lake water; bare islands with low ground cover and a few non-stateful miniature trees; shoreline terrain; circular rune plaza surface; stable axial wooden dock floor; low ground flowers and stones that will never move.
+Composition safety: keep top 12% and bottom 20% visually quiet. Keep normalized companion rect x .38, y .45, w .24, h .27 open, low-contrast and free of tall objects. Plaza and interaction plane remain sharp; far cliffs/waterfalls progressively soften and desaturate.
+Style: same premium handcrafted clay-and-resin miniature diorama, matte-to-satin surfaces, rounded readable forms, restrained cyan/gold floor inlay only.
+Constraints: no sun, moon, stars, characters, animals, companion, UI, text, labels, watermark, weather, traces, glow particles, portals or floating objects. Do not crop, zoom, rotate or redesign the terrain.

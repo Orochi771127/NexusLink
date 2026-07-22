@@ -1,0 +1,6 @@
+Use case: background-extraction
+Asset type: full-canvas Moonlake ground/platform plate source, daytime
+Primary request: From the visible foundation-only Moonlake, isolate stable solid land surfaces at the exact same positions.
+Include only bare island landforms with stone rims and low permanent ground cover, shoreline ground, circular rune plaza surface, and stable axial wooden dock floor. A few fixed low miniature trees may remain on distant islands; no tall foreground blockers.
+Exclude sky, clouds, mountains, waterfalls, lake water, tents, towers, crystal clusters, banners, lantern posts, foreground occluders, characters, UI, text, celestial bodies, weather and traces.
+Background: perfectly flat #FF00FF magenta. Preserve full 9:16 scene registration and the companion-safe open plaza; do not crop, zoom or recenter.

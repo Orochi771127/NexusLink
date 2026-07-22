@@ -1,0 +1,7 @@
+Use case: background-extraction
+Asset type: full-canvas aligned Moonlake structural plate source, daytime, review staging
+Primary request: Using the visible dressed master and foundation-only base as exact visual context, isolate only the removable architectural structures from the dressed master at their same full-canvas positions and scale.
+Include only: blue-and-ivory camp pavilions/tents and their attached wooden decks; tall crystal beacon towers on islands; small architectural railings that belong to those structures. Preserve the dressed master's positions, perspective and clay/resin material style.
+Exclude: sky, clouds, mountains, waterfalls, lake, islands, ground, plaza, axial dock floor, trees, flowers, loose crystal clusters, banners, lantern posts, foreground plants, characters, UI, text, shadows cast onto the ground, weather, traces and celestial bodies.
+Background: perfectly flat solid #FF00FF magenta across the entire 9:16 canvas, no gradients, texture, lighting variation, floor plane or reflection. Do not use magenta in any object.
+Alignment: keep objects separated and fully inside canvas; do not recenter them into a catalog. Maintain exact scene-space placement so this plate can overlay the foundation.

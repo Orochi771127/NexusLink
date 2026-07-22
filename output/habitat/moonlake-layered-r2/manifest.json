@@ -9,9 +9,15 @@
   "canvas": { "width": 1080, "height": 1920 },
   "safePreview": { "width": 390, "height": 844 },
   "activeSceneProfile": "src/data/sceneProfiles/moonlakeProfile.js",
+  "retention": {
+    "policy": "prompts_processing_code_and_integrity_reports_only",
+    "historicalRasterPathsRetained": false,
+    "promotedAssetRoot": "assets/props/MoonlakeDiorama_r2",
+    "note": "Staging references, raw generations and runtime-candidate duplicates were removed after verified promotion."
+  },
   "referenceRoles": {
-    "references/bg_day_base_reference.png": "approved day foundation and future geometry master",
-    "references/bg_night_base_reference.png": "approved night foundation and current dressed-reference edit target"
+    "assets/backgrounds/MoonlakeDiorama_r1/bg_day_base.png": "promoted day foundation and active geometry master",
+    "assets/backgrounds/MoonlakeDiorama_r1/bg_night_base.png": "promoted baked-night fallback only"
   },
   "placementGridPlan": {
     "columns": 12,
@@ -29,7 +35,7 @@
   "environmentRendering": {
     "target": "dynamic_2d_lighting_plus_weather_fx",
     "sharedAcrossHabitatsAfterMoonlakeQa": true,
-    "neutralTerrainMaster": "references/bg_day_base_reference.png",
+    "neutralTerrainMaster": "assets/backgrounds/MoonlakeDiorama_r1/bg_day_base.png",
     "bakedNightPolicy": "rollback-and-low-quality-fallback",
     "timePhases": ["day", "dusk", "night", "dawn"],
     "weatherPresets": ["clear", "rain", "mist", "quiet_after_talk", "rift_pressure", "after_repair"],
@@ -41,12 +47,14 @@
       "id": "corrected_dressed_reference_night_v1",
       "path": "concepts/raw/corrected_dressed_reference_night_v1_REJECTED.png",
       "state": "rejected",
+      "artifactRetained": false,
       "reason": "7/8 objects and foundation geometry drift"
     },
     {
       "id": "corrected_dressed_reference_night_v2",
       "path": "concepts/raw/corrected_dressed_reference_night_v2.png",
       "state": "accepted-staging-reference-only",
+      "artifactRetained": false,
       "reason": "8/8 complete objects, safe plaza/UI corridors, original foundation retained for runtime composition"
     }
   ],
@@ -54,26 +62,26 @@
     "requiredBaseCount": 8,
     "acceptedBaseCount": 8,
     "acceptedBasePaths": [
-      "props/runtime-candidate/tent_near_left_base.png",
-      "props/runtime-candidate/tent_near_right_base.png",
-      "props/runtime-candidate/tent_mid_left_base.png",
-      "props/runtime-candidate/tent_mid_right_base.png",
-      "props/runtime-candidate/tent_far_base.png",
-      "props/runtime-candidate/beacon_main_base.png",
-      "props/runtime-candidate/beacon_far_base.png",
-      "props/runtime-candidate/crescent_shrine_base.png"
+      "assets/props/MoonlakeDiorama_r2/tent_near_left_base.png",
+      "assets/props/MoonlakeDiorama_r2/tent_near_right_base.png",
+      "assets/props/MoonlakeDiorama_r2/tent_mid_left_base.png",
+      "assets/props/MoonlakeDiorama_r2/tent_mid_right_base.png",
+      "assets/props/MoonlakeDiorama_r2/tent_far_base.png",
+      "assets/props/MoonlakeDiorama_r2/beacon_main_base.png",
+      "assets/props/MoonlakeDiorama_r2/beacon_far_base.png",
+      "assets/props/MoonlakeDiorama_r2/crescent_shrine_base.png"
     ],
     "alphaPipeline": "imagegen-white-background -> solid-magenta diagnostic composite -> deterministic border-connected chroma cleanup -> premultiplied 512 RGBA normalization",
     "emissiveCount": 8,
     "emissivePaths": [
-      "props/runtime-candidate/tent_near_left_emissive.png",
-      "props/runtime-candidate/tent_near_right_emissive.png",
-      "props/runtime-candidate/tent_mid_left_emissive.png",
-      "props/runtime-candidate/tent_mid_right_emissive.png",
-      "props/runtime-candidate/tent_far_emissive.png",
-      "props/runtime-candidate/beacon_main_emissive.png",
-      "props/runtime-candidate/beacon_far_emissive.png",
-      "props/runtime-candidate/crescent_shrine_emissive.png"
+      "assets/props/MoonlakeDiorama_r2/tent_near_left_emissive.png",
+      "assets/props/MoonlakeDiorama_r2/tent_near_right_emissive.png",
+      "assets/props/MoonlakeDiorama_r2/tent_mid_left_emissive.png",
+      "assets/props/MoonlakeDiorama_r2/tent_mid_right_emissive.png",
+      "assets/props/MoonlakeDiorama_r2/tent_far_emissive.png",
+      "assets/props/MoonlakeDiorama_r2/beacon_main_emissive.png",
+      "assets/props/MoonlakeDiorama_r2/beacon_far_emissive.png",
+      "assets/props/MoonlakeDiorama_r2/crescent_shrine_emissive.png"
     ],
     "secondBatchStatus": "resolved-and-verified",
     "secondBatchRejectedPaths": [
@@ -82,6 +90,7 @@
       "props/runtime-candidate/rejected/beacon_far_base_v2_REJECTED_STREAKS.png",
       "props/runtime-candidate/rejected/crescent_shrine_base_v2_REJECTED_STREAKS.png"
     ],
+    "secondBatchRejectedArtifactsRetained": false,
     "resolvedBlocker": "Adobe cutout streaks were bypassed with the Owner-approved deterministic local chroma cleanup. All sixteen base/emissive PNGs now pass exact-size, RGBA, transparent-corner, zero-edge-touch and zero-hidden-RGB checks."
   },
   "compositeQa": {
@@ -113,7 +122,7 @@
     "status": "passed",
     "report": "runtime-qa-report.json",
     "viewports": ["390x844", "390x664"],
-    "cases": ["day-clear", "night-clear", "day-mist", "night-rain", "dev-grid"],
+    "cases": ["day-clear", "day-clear-seahorse", "night-clear", "day-mist", "night-rain", "dev-grid"],
     "sixRegionRoundTrip": true,
     "editorImportExportRoundTrip": true,
     "consoleErrors": 0,

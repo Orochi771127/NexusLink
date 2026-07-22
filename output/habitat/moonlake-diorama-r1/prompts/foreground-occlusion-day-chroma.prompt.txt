@@ -1,0 +1,7 @@
+Use case: background-extraction
+Asset type: full-canvas aligned Moonlake foreground occlusion plate source, daytime, review staging
+Primary request: Create only sparse edge foreground elements matching the visible hybrid Moonlake master, aligned to the exact same 9:16 camera.
+Include only: low clay/resin foliage, flowers, rounded stones and subtle dock-edge details confined to extreme lower-left and lower-right edges below approximately normalized y .73. Keep the central companion corridor completely empty.
+Exclude: all background scenery, sky, mountains, lake, plaza, central dock surface, tents, towers, banners, crystals, characters, companion, UI, text, weather, traces and celestial bodies.
+Background: perfectly flat solid #FF00FF magenta, uniform with no gradients, shadows, texture, floor plane or reflection. No magenta inside objects.
+Safety: nothing may enter normalized companion rect x .38, y .45, w .24, h .27. No element may cover the face/body area; edge softness is restrained and only extreme corners may be mildly out of focus.

@@ -1,0 +1,6 @@
+Use case: background-extraction
+Asset type: full-canvas Moonlake lake-water plate with production bleed, daytime
+Primary request: Using the visible foundation-only Moonlake as exact composition context, create only the continuous lake-water plane in its scene-space position, but intentionally extend water beneath every island rim, cliff base, shoreline edge and dock by generous overlap so the later ground/mountain plates completely cover the overdraw and no seams appear.
+Water runs from the distant horizon channel to behind the near plaza/dock threshold. Use the same clear turquoise-to-blue clay/resin water, depth-dependent reflection and stable small ripples.
+Exclude all solid land pixels, but allow water to continue invisibly beneath their future positions. Exclude sky, mountains, cliffs, waterfalls, islands as visible land, shore, trees, plaza, dock, structures, props, characters, UI, text, celestial bodies, mist, weather and traces.
+Background outside the deliberately oversized water plane: perfectly flat #FF00FF magenta. Full 9:16 registration; do not crop or recenter.

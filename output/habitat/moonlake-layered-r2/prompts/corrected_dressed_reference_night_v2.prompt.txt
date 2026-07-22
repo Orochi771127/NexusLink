@@ -1,0 +1,32 @@
+EDIT IMAGE 1 ONLY. Preserve Image 1 as the exact approved Moonlake terrain,
+camera, shoreline, islands, bridge, plaza, vegetation, framing and proportions.
+Do not repaint, redesign, resize or move any terrain pixel. Image 2 is a rejected
+concept and may be used ONLY for the 3D miniature clay-resin material language,
+tent/beacon/crescent object design and rough depth scaling. Ignore Image 2's
+terrain, islands, bridge, plaza and foliage completely.
+
+Create a corrected night dressed-reference concept by adding exactly eight
+complete, grounded structures to Image 1:
+
+1. near-left blue-white camp tent on the existing near-left shore/island;
+2. near-right blue-white camp tent on the existing near-right shore/island;
+3. mid-left small blue-white camp tent on an existing mid-left island;
+4. mid-right small blue-white camp tent on an existing mid-right island;
+5. one clearly visible tiny far blue-white camp tent on an existing far island;
+6. one tall main cyan beacon tower on the central/mid island;
+7. one smaller far cyan beacon tower on a far island;
+8. one COMPLETE crescent-moon shrine with a deliberate pedestal/base on its own
+   island. The crescent and pedestal must be wholly visible and must not look
+   cropped, broken or half-submerged.
+
+Every object must be fully contained inside the canvas, physically contact an
+existing land surface, and use consistent three-quarter orthographic 3D
+miniature / hand-sculpted clay-resin styling. Scale must decrease by depth.
+Keep the central companion plaza, compass center, approach bridge, portrait-safe
+character space, top HUD corridor and bottom navigation corridor empty. No
+character, UI, text, grid, sun, moon, weather, fog overlay or extra objects.
+
+This is a placement/style reference only, not a final runtime layer. The hard
+acceptance condition is that Image 1's approved foundation geometry remains
+recognizably identical while all five tents, both beacons and the complete
+crescent shrine are present.

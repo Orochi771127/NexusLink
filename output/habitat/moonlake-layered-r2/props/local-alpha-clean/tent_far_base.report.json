@@ -1,0 +1,42 @@
+{
+  "input": "output\\habitat\\moonlake-layered-r2\\props\\raw\\tent_far_base_v1_magenta.jpg",
+  "output": "output\\habitat\\moonlake-layered-r2\\props\\local-alpha-clean\\tent_far_base.png",
+  "sourceSize": [
+    1254,
+    1254
+  ],
+  "outputSize": [
+    512,
+    512
+  ],
+  "alphaBounds": {
+    "minX": 40,
+    "minY": 37,
+    "maxX": 471,
+    "maxY": 488
+  },
+  "margins": {
+    "left": 40,
+    "top": 37,
+    "right": 40,
+    "bottom": 23
+  },
+  "edgeTouchAlphaGt8": 0,
+  "cornerAlpha": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "magentaResidueAlphaGt8DistanceLt115": 0,
+  "visibleAnchor": {
+    "x": 0.499023,
+    "y": 0.953125
+  },
+  "chroma": {
+    "lowDistance": 90.0,
+    "highDistance": 165.0,
+    "connectivity": "outer-border-and-enclosed-core-magenta-pockets",
+    "resize": "premultiplied-lanczos"
+  }
+}

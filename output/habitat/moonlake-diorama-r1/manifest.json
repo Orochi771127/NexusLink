@@ -1,0 +1,143 @@
+{
+  "schemaVersion": 2,
+  "task": "TP-HAB-ART-PILOT-1",
+  "region": "moonlake",
+  "mode": "archival_provenance_subset",
+  "status": "promoted_runtime_foundation_with_r2_object_overlay",
+  "targetSize": { "width": 1080, "height": 1920 },
+  "safePreview": { "width": 390, "height": 844 },
+  "retention": {
+    "policy": "prompts_manifest_and_stateful_plan_only",
+    "largeRasterSourcesVersioned": false,
+    "promotedRuntimeAssetRoots": [
+      "assets/backgrounds/MoonlakeDiorama_r1",
+      "assets/layers/MoonlakeDiorama_r1",
+      "assets/props/MoonlakeDiorama_r1"
+    ],
+    "activeObjectOverlay": "assets/props/MoonlakeDiorama_r2",
+    "note": "Candidate raster paths below are historical provenance. Their large local staging files are intentionally excluded from Git."
+  },
+  "promptClassification": {
+    "productionProvenance": [
+      "bg-day-foundation-only.prompt.txt",
+      "bg-night-foundation-only.prompt.txt",
+      "camp-structures-day-chroma.prompt.txt",
+      "camp-structures-night-chroma.prompt.txt",
+      "candidate-a2-canon-clay-resin.prompt.txt",
+      "candidate-b2-canon-clay-resin.prompt.txt",
+      "candidate-c2-canon-storybook.prompt.txt",
+      "emotional-crystal-lifecycle-2x3-chroma.prompt.txt",
+      "foreground-occlusion-day-chroma.prompt.txt",
+      "hybrid-day-dressed-master.prompt.txt",
+      "moonlake-lantern-post-chroma.prompt.txt"
+    ],
+    "supersededWrongSceneReference": [
+      "candidate-a-clay-resin.prompt.txt",
+      "candidate-b-clay-resin.prompt.txt",
+      "candidate-c-storybook-2-5d.prompt.txt"
+    ],
+    "supersededReason": "The first candidate set did not preserve canonical Moonlake geography.",
+    "rejectedExperiments": [
+      "sky-atmosphere-day-backplate.prompt.txt",
+      "sky-atmosphere-day-chroma.prompt.txt",
+      "mountains-far-day-chroma.prompt.txt",
+      "lake-water-day-chroma.prompt.txt",
+      "lake-water-day-overdraw-chroma.prompt.txt",
+      "shore-ground-platform-day-chroma.prompt.txt"
+    ],
+    "rejectedReason": "Micro-plate experiments opened shoreline seams and were never promoted."
+  },
+  "sceneProfileData": "src/data/sceneProfiles/moonlakeProfile.js",
+  "sceneProfileSpec": "docs/architecture/HABITAT_SCENE_PROFILE_SPEC.md",
+  "statefulObjectPlan": "STATEFUL_OBJECT_PLAN.md",
+  "authoringDefault": "ai_layered_png_plus_pixi_fx",
+  "optionalOfflineAuthoring": ["blender_orthographic", "unity_umodeler_orthographic"],
+  "forbiddenRuntime": ["unity_webgl", "threejs", "replacement_scene_engine"],
+  "companionReservedRect": {
+    "source": "src/data/sceneProfiles/moonlakeProfile.js",
+    "copiedValue": false
+  },
+  "uiForbidden": [
+    { "id": "hud_top", "x": 0, "y": 0, "w": 1, "h": 0.12 },
+    { "id": "dock_bottom", "x": 0, "y": 0.8, "w": 1, "h": 0.2 }
+  ],
+  "references": [
+    {
+      "path": "assets/backgrounds/linkara/regions/ethereal_moon_lakefront.jpg",
+      "role": "canonical-scene-geography-reference",
+      "retained": true,
+      "readOnly": true
+    },
+    {
+      "role": "historical-owner-safe-zone-and-style-references",
+      "retained": false,
+      "note": "External review inputs were intentionally not copied into the repository."
+    }
+  ],
+  "candidates": [
+    {
+      "id": "candidate-a",
+      "style": "clay_resin_3d_miniature",
+      "prompt": "prompts/candidate-a-clay-resin.prompt.txt",
+      "raw": "concepts/raw/candidate-a-clay-resin-raw.png",
+      "normalized": "concepts/normalized/candidate-a-clay-resin.png",
+      "mobilePreview": "previews/candidate-a-mobile.png",
+      "state": "superseded_wrong_scene_reference"
+    },
+    {
+      "id": "candidate-b",
+      "style": "clay_resin_3d_miniature",
+      "prompt": "prompts/candidate-b-clay-resin.prompt.txt",
+      "raw": "concepts/raw/candidate-b-clay-resin-raw.png",
+      "normalized": "concepts/normalized/candidate-b-clay-resin.png",
+      "mobilePreview": "previews/candidate-b-mobile.png",
+      "state": "superseded_wrong_scene_reference"
+    },
+    {
+      "id": "candidate-c",
+      "style": "premium_2_5d_storybook",
+      "prompt": "prompts/candidate-c-storybook-2-5d.prompt.txt",
+      "raw": "concepts/raw/candidate-c-storybook-2-5d-raw.png",
+      "normalized": "concepts/normalized/candidate-c-storybook-2-5d.png",
+      "mobilePreview": "previews/candidate-c-mobile.png",
+      "state": "superseded_wrong_scene_reference"
+    },
+    {
+      "id": "candidate-a2",
+      "style": "clay_resin_3d_miniature",
+      "prompt": "prompts/candidate-a2-canon-clay-resin.prompt.txt",
+      "raw": "concepts/raw/candidate-a2-canon-clay-resin-raw.png",
+      "normalized": "concepts/normalized/candidate-a2-canon-clay-resin.png",
+      "mobilePreview": "previews/candidate-a2-mobile.png",
+      "state": "historical_hybrid_direction_input"
+    },
+    {
+      "id": "candidate-b2",
+      "style": "clay_resin_3d_miniature",
+      "prompt": "prompts/candidate-b2-canon-clay-resin.prompt.txt",
+      "raw": "concepts/raw/candidate-b2-canon-clay-resin-raw.png",
+      "normalized": "concepts/normalized/candidate-b2-canon-clay-resin.png",
+      "mobilePreview": "previews/candidate-b2-mobile.png",
+      "state": "historical_hybrid_direction_input"
+    },
+    {
+      "id": "candidate-c2",
+      "style": "premium_2_5d_storybook",
+      "prompt": "prompts/candidate-c2-canon-storybook.prompt.txt",
+      "raw": "concepts/raw/candidate-c2-canon-storybook-raw.png",
+      "normalized": "concepts/normalized/candidate-c2-canon-storybook.png",
+      "mobilePreview": "previews/candidate-c2-mobile.png",
+      "state": "historical_hybrid_direction_input"
+    }
+  ],
+  "candidateRasterArtifactsRetained": false,
+  "humanApproved": true,
+  "referenceAuditPassed": true,
+  "runtimeIntegrated": true,
+  "runtimeTruth": {
+    "foundation": "R1 day geometry master with dynamic relighting",
+    "bakedNight": "fallback_only",
+    "legacyCampPlates": "rollback_only",
+    "liveIndependentObjects": "R2 eight-object base-plus-emissive pack"
+  }
+}

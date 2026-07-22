@@ -1,0 +1,172 @@
+{
+  "plates": [
+    {
+      "path": "props\\runtime-candidate\\tent_near_left_emissive.png",
+      "size": [
+        512,
+        512
+      ],
+      "boundsAlphaGt2": [
+        293,
+        273,
+        391,
+        395
+      ],
+      "edgeTouchAlphaGt2": 0,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "nonzeroPixels": 11031
+    },
+    {
+      "path": "props\\runtime-candidate\\tent_near_right_emissive.png",
+      "size": [
+        512,
+        512
+      ],
+      "boundsAlphaGt2": [
+        127,
+        278,
+        221,
+        396
+      ],
+      "edgeTouchAlphaGt2": 0,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "nonzeroPixels": 10173
+    },
+    {
+      "path": "props\\runtime-candidate\\tent_mid_left_emissive.png",
+      "size": [
+        512,
+        512
+      ],
+      "boundsAlphaGt2": [
+        262,
+        282,
+        414,
+        386
+      ],
+      "edgeTouchAlphaGt2": 0,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "nonzeroPixels": 9200
+    },
+    {
+      "path": "props\\runtime-candidate\\tent_mid_right_emissive.png",
+      "size": [
+        512,
+        512
+      ],
+      "boundsAlphaGt2": [
+        94,
+        285,
+        217,
+        389
+      ],
+      "edgeTouchAlphaGt2": 0,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "nonzeroPixels": 9200
+    },
+    {
+      "path": "props\\runtime-candidate\\tent_far_emissive.png",
+      "size": [
+        512,
+        512
+      ],
+      "boundsAlphaGt2": [
+        216,
+        296,
+        296,
+        404
+      ],
+      "edgeTouchAlphaGt2": 0,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "nonzeroPixels": 8095
+    },
+    {
+      "path": "props\\runtime-candidate\\crescent_shrine_emissive.png",
+      "size": [
+        512,
+        512
+      ],
+      "boundsAlphaGt2": [
+        232,
+        103,
+        278,
+        171
+      ],
+      "edgeTouchAlphaGt2": 0,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "nonzeroPixels": 2909
+    },
+    {
+      "path": "props\\runtime-candidate\\beacon_main_emissive.png",
+      "size": [
+        512,
+        512
+      ],
+      "boundsAlphaGt2": [
+        130,
+        32,
+        389,
+        464
+      ],
+      "edgeTouchAlphaGt2": 0,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "nonzeroPixels": 20830
+    },
+    {
+      "path": "props\\runtime-candidate\\beacon_far_emissive.png",
+      "size": [
+        512,
+        512
+      ],
+      "boundsAlphaGt2": [
+        213,
+        30,
+        296,
+        247
+      ],
+      "edgeTouchAlphaGt2": 0,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "nonzeroPixels": 11599
+    }
+  ]
+}

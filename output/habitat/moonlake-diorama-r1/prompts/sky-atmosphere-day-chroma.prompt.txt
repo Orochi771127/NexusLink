@@ -1,0 +1,5 @@
+Use case: background-extraction
+Asset type: full-canvas Moonlake sky atmosphere plate source, daytime
+Primary request: From the visible foundation-only Moonlake, isolate only the blue daytime sky, pale atmospheric gradient and soft clouds at the exact same horizon/camera.
+Include only sky atmosphere and clouds. Do not include sun, moon, stars, mountains, cliffs, waterfalls, trees, lake, islands, shore, plaza, dock, structures, props, characters, UI, text, traces or weather particles.
+Background outside the sky shape: perfectly flat #FF00FF magenta with no gradient or texture. Maintain the full 9:16 canvas and exact scene-space registration; do not recenter, zoom or redesign.

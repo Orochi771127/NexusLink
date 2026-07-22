@@ -8,14 +8,16 @@ branch:
   active: main
   runtime_baseline_commit: "13bbd19568f28439cfb2f862ed9257017eb7b246"
   growth_g31_candidate_commit: "13bbd19568f28439cfb2f862ed9257017eb7b246"
+  growth_g31_pr_head_commit: "d39a6198d27256c4d61801b789dfe50619276b8c"
+  growth_g31_merge_commit: "7eebddb7b97bf51840132ea5dafd33bdab0362f8"
   growth_g3_candidate_commit: "b3cfe310c12d68cab6ae62a52810bea91a5e9be5"
   growth_g2_candidate_commit: "6ff0fdd34fef6257fbc819e5f1faf64ee5b046f6"
   growth_g2_merge_commit: "b166e93cfd7928e1c97e2aef02d8554a0cd6ec42"
   rc_closure_commit: "220e2fdbefaa4a2a7ecc2e853f68869bc4560d81"
   prior_g3_baseline_merged_to_main: true
-  growth_g31_publication_state: "pr_114_pending_strict_required_gate_and_merge"
+  growth_g31_publication_state: "merged_to_main_via_pr_114"
   publication_mode: "protected_pull_request_with_strict_required_gate"
-  note: "G3.1 runtime 13bbd19 and docs e2477bc passed the clean exact-HEAD 27/27 gate; protected publication is PR #114"
+  note: "G3.1 runtime 13bbd19 was published through PR #114; strict required web-release-gate passed on final PR head d39a619 and main merge is 7eebddb"
 
 workspace: "C:\\Users\\User\\NexusLink_RaphaelAI_Workspace\\NexusLink"
 do_not_touch: "AIForgeNexus2\\NexusLink"
@@ -50,7 +52,7 @@ qa:
   mutation_regressions: "7/7 fail-closed in focused suite, including truncation, boundary template, missing redirect and relationship/growth mutation attempts"
   dialogue_policy: "21/21 PASS and required by the web release gate; boundary policy cannot be truncated by preference repair"
   constitution_policy: "5/5 PASS and required by the web release gate"
-  web_release_gate: "27/27 automated required checks PASS on clean exact G3.1 docs HEAD e2477bc; JS syntax 275/275; accessibility warnings 0; final PR #114 head is rechecked by the strict required gate"
+  web_release_gate: "27/27 automated required checks PASS on clean exact G3.1 docs HEAD e2477bc; strict required web-release-gate SUCCESS on final PR head d39a619; merged to main as 7eebddb; JS syntax 275/275; accessibility warnings 0"
   safety_terminal_ui: "7/7 PASS in the required G2 gate: full system reply, zero chips/SFX/relationship/growth delta, immediate critical save"
   companion_growth_state: "23/23; 14-field per-companion mirror, idempotent migration, A/B isolation, all established-companion offline recovery and reload"
   companion_growth_g3_engine: "16/16 deterministic key, safety provenance, alias, replay-50, compaction, stale-readiness and typed-deferral assertions"

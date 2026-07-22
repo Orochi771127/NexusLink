@@ -1,0 +1,6 @@
+Use case: background-extraction
+Asset type: full-canvas Moonlake lake water plate source, daytime
+Primary request: From the visible foundation-only Moonlake, isolate only the continuous lake-water plane in its exact scene-space shape and position.
+Include clear turquoise-to-blue miniature resin water, subtle depth-dependent reflection and stable small ripple texture. Preserve the open central water corridor.
+Exclude sky, mountains, cliffs, waterfalls, islands, shore, trees, plaza, dock, structures, crystals, lanterns, mist, weather, traces, characters, UI, text and celestial bodies.
+Background: perfectly flat #FF00FF magenta, no gradients, texture, floor or cast shadows. Full 9:16 registration; do not crop or recenter.

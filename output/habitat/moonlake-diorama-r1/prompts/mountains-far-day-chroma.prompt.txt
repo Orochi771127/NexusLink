@@ -1,0 +1,6 @@
+Use case: background-extraction
+Asset type: full-canvas Moonlake far mountains plate source, daytime
+Primary request: From the visible foundation-only Moonlake, isolate only the enclosing cliff amphitheater, distant mountain silhouettes, fixed evergreen cover and waterfalls at the exact same positions.
+Depth lock: far silhouettes are pale, low-contrast, slightly desaturated and soft-edged; nearer cliff faces are clearer but remain behind the lake/islands. Preserve waterfall locations and depth ordering.
+Exclude sky/clouds, lake water, islands, shore, plaza, dock, tents, towers, crystals, banners, foreground plants, characters, UI, text, celestial bodies, weather and traces.
+Background: perfectly flat #FF00FF magenta, no gradients, texture, floor or reflections. Full 9:16 scene registration; do not make a centered asset catalog.

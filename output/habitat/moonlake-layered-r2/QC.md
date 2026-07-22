@@ -27,7 +27,8 @@
 
 - Owner authorization: automatic stage-by-stage execution and self-review granted on 2026-07-15.
 - Reference audit: v2 passed for staging reference use; v1 remains rejected provenance.
-- Runtime integration: not started.
+- Historical Gate-A snapshot: runtime integration had not started at this point;
+  Gate C below records the completed integration.
 
 ## Gate B - Separate Props, Emissive Plates And Composite QA - PASSED
 
@@ -59,7 +60,7 @@
 - Formal URLs create no placement grid. The grid exists only with
   `devSceneEditor=1&showPlacementGrid=1`; dev JSON export/import round-trip
   passed for all eight slot objects.
-- Five browser cases passed with zero console/page errors. The six other region
+- Six browser cases passed with zero console/page errors. The six other region
   IDs switched successfully with Moonlake objects hidden, then returned to
   Moonlake with the object pack restored and registered.
 - Visual review confirmed a complete crescent shrine, grounded near/mid/far

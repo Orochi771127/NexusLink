@@ -1,0 +1,34 @@
+Use case: stylized-concept
+Asset type: Nexus Link Moonlake layered-production dressed reference; planning checkpoint only, not a runtime background
+Input image: Image 1 is the exact approved Moonlake night foundation and edit target.
+
+Primary request:
+Use the visible Image 1 immediately above as the exact visual reference. Add exactly eight complete, naturally grounded, independently readable clay-resin structures to the existing empty islands and side camp pads. This is an in-world dressed reference for later one-by-one transparent prop generation.
+
+Preserve exactly:
+- the portrait camera, framing, crop, horizon, mountains, waterfalls, lake shape, every island shoreline, trees, bridge, foreground dock, circular rune plaza, lighting direction, and 1080x1920 composition
+- the clear central companion interaction corridor and the entire circular plaza
+- the progressive atmospheric haze and softened far depth already present in the foundation
+
+Add exactly these eight objects:
+1. one complete near-left blue Moonlake camp tent, fully inside the visible portrait crop, grounded on the left camp pad
+2. one complete near-right blue Moonlake camp tent, fully inside the visible portrait crop, grounded on the right camp pad
+3. one smaller mid-left camp tent grounded on an authored island
+4. one smaller mid-right camp tent grounded on an authored island
+5. one small far camp tent grounded on a far island
+6. one tall central cyan crystal beacon tower grounded on the central midground island
+7. one smaller far cyan crystal beacon tower grounded on a far island
+8. one clearly intentional complete crescent-moon shrine sculpture with a visible stone socket/base, grounded on the upper-left midground island; it must read as a whole crescent sculpture, never as a cropped moon or half object
+
+Style and materials:
+project-native premium 3D clay-and-resin miniature habitat diorama; handcrafted rounded forms; cohesive tabletop model kit; fixed elevated three-quarter camera; matte-to-satin blue cloth, carved dark stone, quiet cyan crystal, pale-gold trim, warm amber tent interiors; restrained Cyber-Taoist runes; believable contact shadows; mobile-first silhouettes.
+
+Placement constraints:
+- keep all opaque parts outside the central companion corridor and off the circular plaza
+- keep the two near tents inset from the left and right canvas edges so their full roofs, walls, posts, and bases remain visible after a tall-phone cover crop
+- every solid structure must sit on existing land or an island; nothing may float on open water
+- far objects must be smaller, lower contrast, lower saturation, softer-edged, and less detailed than midground objects
+- preserve an unobstructed axial route from the bottom dock through the plaza and bridge toward the lake
+
+Avoid:
+no companion or character, no UI, no labels, no text, no grid, no circles or annotations, no sun or celestial moon, no extra structures beyond the eight listed, no new islands, no shoreline changes, no crop, no zoom, no rotation, no geometry repaint, no flat anime, no photoreal landscape collage, no glossy plastic, no floating props, no clipped tents, no object touching the frame, no excessive bloom.

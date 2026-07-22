@@ -13,9 +13,9 @@
 | `last_updated` | 2026-07-22（Companion Growth G3.1 consented care source；**當前操作真相以 current `main` HEAD + `docs/agent/AI_EXECUTION_LEDGER.md` 為準**） |
 | `last_agent` | Codex（G3.1 care source publication） |
 | `active_branch` | `main`（2026-07-02 起單線開發，integrate 分支已退役） |
-| `runtime_baseline` | `13bbd19568f28439cfb2f862ed9257017eb7b246`（Companion Growth G3.1 runtime candidate） |
+| `runtime_baseline` | `13bbd19568f28439cfb2f862ed9257017eb7b246`（已發布 Companion Growth G3.1 runtime component；main merge `7eebddb`） |
 | `rc_closure_commit` | `220e2fdbefaa4a2a7ecc2e853f68869bc4560d81`；乾淨 checkout exact-commit Web **17/17**、sealed holdout **48/48** |
-| `publication` | PR #114（`codex/companion-growth-g4a-source-anchor` → `main`）；clean exact `e2477bc` 已本機 27/27，最終 PR HEAD 仍須 strict required `web-release-gate` |
+| `publication` | PR #114 已於 2026-07-22 通過 final PR HEAD `d39a619` 的 strict required `web-release-gate`，並合併至 `main`；merge commit `7eebddb7b97bf51840132ea5dafd33bdab0362f8` |
 | `workspace` | `C:\Users\User\NexusLink_RaphaelAI_Workspace\NexusLink` |
 | `do_not_touch` | `AIForgeNexus2\NexusLink`（舊 checkout，易與本工作區分叉） |
 
@@ -23,7 +23,7 @@
 
 ## 一句話現況
 
-RaphaelCore JS v1 → Soul Architecture v1.5 → NLU v1 → Stage 4 → advisory training / Nuwa → 自然對話 v2–v6 → Reflective Care V1 已落在 `main`。**現行 runtime 已由 Soul Talk 呼叫 `runRaphaelCore()`，且 Persona Constitution / constitution critic 已接入。** PR #113 發佈 Companion Growth G3 evidence foundation；PR #114 的 G3.1 runtime `13bbd19` 再讓 Heart Phase completion 成為 consent-respecting care source，並在 clean exact `e2477bc` 通過 web release **27/27**、Growth browser **153/153**、Map browser **45/45**。
+RaphaelCore JS v1 → Soul Architecture v1.5 → NLU v1 → Stage 4 → advisory training / Nuwa → 自然對話 v2–v6 → Reflective Care V1 已落在 `main`。**現行 runtime 已由 Soul Talk 呼叫 `runRaphaelCore()`，且 Persona Constitution / constitution critic 已接入。** PR #113 發佈 Companion Growth G3 evidence foundation；PR #114 的 G3.1 runtime `13bbd19` 再讓 Heart Phase completion 成為 consent-respecting care source，並在 clean exact `e2477bc` 通過 web release **27/27**、Growth browser **153/153**、Map browser **45/45**；final PR HEAD `d39a619` 的 required gate 成功後，已合併為 `main` commit `7eebddb`。
 
 **誠實邊界（不可誇大）：**
 
@@ -50,7 +50,7 @@ RaphaelCore JS v1 → Soul Architecture v1.5 → NLU v1 → Stage 4 → advisory
 | Reflective Care V1 | dialogue loop 21/21（含 6 care/symbolic + 1 safety-precedence）；opt-in、無獎勵、無記憶寫入 | `docs/qa/RAPHAEL_REFLECTIVE_CARE_V1_2026-07-14.md` |
 | Nuwa advisory v0.3 | +daily_texture/small_moments/sleepless、no_sleep_pressure 哨兵；trusted:false | ledger Lane 3 2026-07-13（NLU 訓練批次） |
 | NLU 詞庫擴充 | 情感詞 19→60、程度副詞 7→16、否定詞 6→11、約 60 口語/簡體變體；TR-17..30 | ledger Lane 3 2026-07-13（NLU 訓練批次） |
-| Web release gate | **27/27 automated required PASS**（clean exact G3.1 docs HEAD `e2477bc`）；JS syntax 275/275，accessibility warnings 0 | GitHub required check + `docs/qa/_run_web_release_gate.py` |
+| Web release gate | **27/27 automated required PASS**（clean exact G3.1 docs HEAD `e2477bc`）；final PR HEAD `d39a619` strict required check SUCCESS，merged as `7eebddb`；JS syntax 275/275，accessibility warnings 0 | GitHub required check + `docs/qa/_run_web_release_gate.py` |
 | Real Soul Talk safety UI | **7/7 PASS**：完整 system reply、零 chips/SFX/relationship/growth delta、preference 不變、critical save 即時完成 | `docs/qa/_run_safety_terminal_ui_gate.py` + web release output |
 | Companion Growth G2 | State 23/23、browser 75/75、renderer 29/29、session owner 9/9；A→B→A／save／reload／offline recovery 隔離 | `docs/qa/companion-growth-state-cases.mjs` + required browser gate |
 | Companion Growth G3.1 | Engine 16/16、runtime 16/16、session 17/17、Growth browser 153/153、Map browser 45/45、四語系 417/417；clean exact web gate 27/27 | `companionGrowthSessionEngine.js` + `companionGrowthController.js` + real UI／source-owner mutations |
@@ -72,7 +72,7 @@ RaphaelCore JS v1 → Soul Architecture v1.5 → NLU v1 → Stage 4 → advisory
 | 6 | Limited Beta + Reflective Care V1 runtime | ✅ `main`；舊自動 gate 因 D2 false-pass 已降級為 historical evidence |
 | 6.1 | D2 safety terminal invariant + repo-native content gate | ✅ `main` / `c756337`：focused 18/18、UI 6/6、sealed 48/48、web 17/17 |
 | 7 | RC closure + 同意制 Beta 回饋收集 + 正式 private-blind 人測 + 真機/法務 gate | ✅ Docs/QA closure `220e2fd` verified；human gates `not_run`，不得以 automated PASS 取代 |
-| Growth G3.1 | G1 session observation + G2 per-companion truth + G3 foundation + consented care source | ✅ runtime `13bbd19`；non-standoff readiness 與 G4 offer／advance 未實作 |
+| Growth G3.1 | G1 session observation + G2 per-companion truth + G3 foundation + consented care source | ✅ runtime `13bbd19`；PR #114 merged as `7eebddb`；non-standoff readiness 與 G4 offer／advance 未實作 |
 
 ---
 
@@ -219,7 +219,7 @@ python docs/qa/_run_stage4_human_playtest.py
 python docs/qa/_run_touch_fatigue_daytime.py
 ```
 
-2026-07-14 的 harness 17/17、NLU smoke 8/8、live Soul Talk 11/11 / HUD 13/13 只屬歷史快照。Current G3.1 candidate runtime `13bbd19`／docs `e2477bc` 已通過 focused D2、Growth engine/runtime/session、real UI/source-owner 與 clean exact web release 27/27；以 `RAPHAEL_AI_STATUS.yaml` 的 current 欄位判定。Private-blind、D1/D2/D3/D6 與法務 gate 仍未完成。
+2026-07-14 的 harness 17/17、NLU smoke 8/8、live Soul Talk 11/11 / HUD 13/13 只屬歷史快照。Published G3.1 runtime `13bbd19`／docs `e2477bc` 已通過 focused D2、Growth engine/runtime/session、real UI/source-owner 與 clean exact web release 27/27；PR #114 final HEAD `d39a619` 的 required gate 成功並合併為 `7eebddb`。以 `RAPHAEL_AI_STATUS.yaml` 的 current 欄位判定。Private-blind、D1/D2/D3/D6 與法務 gate 仍未完成。
 
 ---
 
