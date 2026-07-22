@@ -2,25 +2,27 @@
 # Current operational truth = current main HEAD + AI_EXECUTION_LEDGER Lane 3.
 # Historical automated counts are retained for provenance but are not current PASS evidence.
 last_updated: "2026-07-22"
-last_agent: "Codex (Companion Growth G3 evidence foundation publication)"
+last_agent: "Codex (Companion Growth G3.1 consented care source publication)"
 
 branch:
   active: main
-  runtime_baseline_commit: "b3cfe310c12d68cab6ae62a52810bea91a5e9be5"
+  runtime_baseline_commit: "13bbd19568f28439cfb2f862ed9257017eb7b246"
+  growth_g31_candidate_commit: "13bbd19568f28439cfb2f862ed9257017eb7b246"
   growth_g3_candidate_commit: "b3cfe310c12d68cab6ae62a52810bea91a5e9be5"
   growth_g2_candidate_commit: "6ff0fdd34fef6257fbc819e5f1faf64ee5b046f6"
   growth_g2_merge_commit: "b166e93cfd7928e1c97e2aef02d8554a0cd6ec42"
   rc_closure_commit: "220e2fdbefaa4a2a7ecc2e853f68869bc4560d81"
-  merged_to_main: true
+  prior_g3_baseline_merged_to_main: true
+  growth_g31_publication_state: "pr_114_pending_strict_required_gate_and_merge"
   publication_mode: "protected_pull_request_with_strict_required_gate"
-  note: "G3 runtime candidate b3cfe31 rebased onto e86bf6e and passed the clean repo-native 27/27 gate; publication uses the protected PR path"
+  note: "G3.1 runtime 13bbd19 and docs e2477bc passed the clean exact-HEAD 27/27 gate; protected publication is PR #114"
 
 workspace: "C:\\Users\\User\\NexusLink_RaphaelAI_Workspace\\NexusLink"
 do_not_touch: "AIForgeNexus2\\NexusLink"
 
 stage:
   current: "7"
-  label: "Raphael Stage 7 plus Companion Growth G3 evidence foundation; human launch gates remain open"
+  label: "Raphael Stage 7 plus Companion Growth G3.1 consented care source; human launch gates remain open"
   release_readiness: "automated_rc_pass_public_launch_not_approved"
   next: "run formal 3-person x 20-turn private blind review, real-device mobile checks, and legal/privacy/store-copy review before any launch claim"
 
@@ -37,7 +39,8 @@ capabilities:
   training_adapter: "static advisory bundle; no runtime self-training from player or eval text"
   nlu_lexicon: "2026-07-13 expansion landed; historical TR-17..30 evidence available"
   companion_growth_g2: "per-companion relationship/growth truth, isolated Codex presentation and session-owner guards are published"
-  companion_growth_g3: "deterministic keys, bounded evidence/coverage, readiness/willingness evaluation and qualitative Growth UI are implemented; live source owners are exploration and standoff only, so formal readiness is not yet reachable and G4 offer/stage advance is absent"
+  companion_growth_g3: "deterministic keys, bounded evidence/coverage, readiness/willingness evaluation and qualitative Growth UI are implemented"
+  companion_growth_g31: "Heart Phase completion is a candidate-first critical-save care source; explicit accepted rewrite may seal consent anchor; live owners are exploration/standoff/care, but non-standoff readiness and G4 offer/stage advance remain absent"
 
 qa:
   rc_closure_exact_commit: "220e2fd: web 17/17 PASS from clean tracked tree at 2026-07-16T15:27:55+0800; sealed holdout 48/48 at 2026-07-16T15:27:58+0800"
@@ -47,15 +50,15 @@ qa:
   mutation_regressions: "7/7 fail-closed in focused suite, including truncation, boundary template, missing redirect and relationship/growth mutation attempts"
   dialogue_policy: "21/21 PASS and required by the web release gate; boundary policy cannot be truncated by preference repair"
   constitution_policy: "5/5 PASS and required by the web release gate"
-  web_release_gate: "27/27 automated required checks PASS on clean rebased G3 candidate b3cfe31; JS syntax 275/275; accessibility warnings 0"
+  web_release_gate: "27/27 automated required checks PASS on clean exact G3.1 docs HEAD e2477bc; JS syntax 275/275; accessibility warnings 0; final PR #114 head is rechecked by the strict required gate"
   safety_terminal_ui: "7/7 PASS in the required G2 gate: full system reply, zero chips/SFX/relationship/growth delta, immediate critical save"
   companion_growth_state: "23/23; 14-field per-companion mirror, idempotent migration, A/B isolation, all established-companion offline recovery and reload"
   companion_growth_g3_engine: "16/16 deterministic key, safety provenance, alias, replay-50, compaction, stale-readiness and typed-deferral assertions"
-  companion_growth_g3_runtime: "10/10 source write, normalization, A/B isolation, qualitative presentation, boundary/fatigue and safety-terminal assertions"
-  companion_growth_browser: "98/98 at mobile and desktop, including normal Pixi G3, H10, persisted evidence reload, no raw ids/counts, 200% text and reduced motion"
+  companion_growth_g3_runtime: "16/16 including care source, canonical result validation, A/B result binding, consent anchor, replay and safety exclusion"
+  companion_growth_browser: "153/153 at mobile and desktop, including critical-save failure rollback, pruning separation, foreground/off-page safety invalidation, reload dedupe, normal Pixi G3.1, H10, 200% text and reduced motion"
   live_playtest_gate: "Soul Talk 11/11, HUD 13/13, awakening/touch/storage/Pixi PASS, 0 console errors"
   map_first_session_ui: "45/45 PASS at 390x844, including fresh/legacy-veteran K9, rest zero-evidence, real exploration evidence, equal-rank retreat standoff evidence, phase search, reduced motion and encounter cancellation"
-  i18n_growth: "tc/sc/en/jp 408/408 keys complete"
+  i18n_growth: "tc/sc/en/jp 417/417 keys complete"
   state_and_storage: "state migration 33/33; storage consolidation 13/13; renderer lifecycle 29/29; session owner guard 9/9; Expedition matrix 32/32"
   release_enforcement: "active repository ruleset main-release-protection requires PR and strict web-release-gate; classic branch-protection endpoint is not used"
   human_blind_review: "not_run"
@@ -115,4 +118,5 @@ follow_ups:
   - "Run D1/D2/D3/D6 and first-session moderated product-comprehension tests"
   - "Collect consented Limited Beta feedback only after current safety gate passes; do not call it private_blind evidence"
   - "Keep Expedition coreIntegrated:false until formal intent, full critics/voice and approved memoryWriter integration exist"
-  - "Open G4 only for companion-initiated stage offer, deferrable ritual and atomic stage advance; do not add a third live evidence family or consent anchor without its source-owner contract"
+  - "Implement G3.2 Reflection/Echo Sorting plus an independent chapter life-event source before G4, with immutable provenance and no legacy-memory attribution guess"
+  - "Open G4 only after a non-standoff readiness path is proven; then add companion-initiated stage offer, deferrable ritual and atomic stage advance"
