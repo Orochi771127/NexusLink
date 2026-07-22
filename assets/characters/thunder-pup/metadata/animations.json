@@ -1,0 +1,466 @@
+{
+  "idle_calm": {
+    "id": "idle_calm",
+    "category": "emotion",
+    "sheet": "./assets/characters/thunder-pup/idle_calm/thunder-pup_idle_calm_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 3,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "idle_happy": {
+    "id": "idle_happy",
+    "category": "emotion",
+    "sheet": "./assets/characters/thunder-pup/idle_happy/thunder-pup_idle_happy_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 3,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "idle_angry": {
+    "id": "idle_angry",
+    "category": "emotion",
+    "sheet": "./assets/characters/thunder-pup/idle_angry/thunder-pup_idle_angry_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 3,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "idle_sad": {
+    "id": "idle_sad",
+    "category": "emotion",
+    "sheet": "./assets/characters/thunder-pup/idle_sad/thunder-pup_idle_sad_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 2.25,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "idle_defensive": {
+    "id": "idle_defensive",
+    "category": "emotion",
+    "sheet": "./assets/characters/thunder-pup/idle_defensive/thunder-pup_idle_defensive_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 4,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "blink": {
+    "id": "blink",
+    "category": "emotion",
+    "sheet": "./assets/characters/thunder-pup/blink/thunder-pup_blink_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 2.25,
+    "loop": false,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "right_walk": {
+    "id": "right_walk",
+    "category": "movement",
+    "sheet": "./assets/characters/thunder-pup/right_walk/thunder-pup_right_walk_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 5,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "left_walk": {
+    "id": "left_walk",
+    "category": "movement",
+    "sheet": "./assets/characters/thunder-pup/left_walk/thunder-pup_left_walk_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 5,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "touch_accept": {
+    "id": "touch_accept",
+    "category": "touch",
+    "sheet": "./assets/characters/thunder-pup/touch_accept/thunder-pup_touch_accept_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 4.5,
+    "loop": false,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "touch_guarded": {
+    "id": "touch_guarded",
+    "category": "touch",
+    "sheet": "./assets/characters/thunder-pup/touch_guarded/thunder-pup_touch_guarded_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 4.5,
+    "loop": false,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "touch_reject": {
+    "id": "touch_reject",
+    "category": "touch",
+    "sheet": "./assets/characters/thunder-pup/touch_reject/thunder-pup_touch_reject_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 4.5,
+    "loop": false,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "idle_sick": {
+    "id": "idle_sick",
+    "category": "emotion",
+    "sheet": "./assets/characters/thunder-pup/idle_sick/thunder-pup_idle_sick_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 3,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "idle_distant": {
+    "id": "idle_distant",
+    "category": "emotion",
+    "sheet": "./assets/characters/thunder-pup/idle_distant/thunder-pup_idle_distant_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 3,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "idle_enjoy": {
+    "id": "idle_enjoy",
+    "category": "emotion",
+    "sheet": "./assets/characters/thunder-pup/idle_enjoy/thunder-pup_idle_enjoy_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 3,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "sit": {
+    "id": "sit",
+    "category": "daily",
+    "sheet": "./assets/characters/thunder-pup/sit/thunder-pup_sit_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 3,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "sleep": {
+    "id": "sleep",
+    "category": "daily",
+    "sheet": "./assets/characters/thunder-pup/sleep/thunder-pup_sleep_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 3,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "idle_wake": {
+    "id": "idle_wake",
+    "category": "emotion",
+    "sheet": "./assets/characters/thunder-pup/idle_wake/thunder-pup_idle_wake_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 6,
+    "loop": false,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "special_angry": {
+    "id": "special_angry",
+    "category": "emotion",
+    "sheet": "./assets/characters/thunder-pup/special_angry/thunder-pup_special_angry_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 3,
+    "loop": false,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "special_sad": {
+    "id": "special_sad",
+    "category": "emotion",
+    "sheet": "./assets/characters/thunder-pup/special_sad/thunder-pup_special_sad_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 4.5,
+    "loop": false,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "hug": {
+    "id": "hug",
+    "category": "touch",
+    "sheet": "./assets/characters/thunder-pup/hug/thunder-pup_hug_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 4.5,
+    "loop": false,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "idle_dance": {
+    "id": "idle_dance",
+    "category": "daily",
+    "sheet": "./assets/characters/thunder-pup/idle_dance/thunder-pup_idle_dance_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 5,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "idle_wash": {
+    "id": "idle_wash",
+    "category": "daily",
+    "sheet": "./assets/characters/thunder-pup/idle_wash/thunder-pup_idle_wash_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 4,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "special_dance": {
+    "id": "special_dance",
+    "category": "daily",
+    "sheet": "./assets/characters/thunder-pup/special_dance/thunder-pup_special_dance_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 5,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "attack_basic": {
+    "id": "attack_basic",
+    "category": "battle",
+    "sheet": "./assets/characters/thunder-pup/attack_basic/thunder-pup_attack_basic_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 6,
+    "loop": false,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "skill_cast": {
+    "id": "skill_cast",
+    "category": "battle",
+    "sheet": "./assets/characters/thunder-pup/skill_cast/thunder-pup_skill_cast_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 8,
+    "loop": false,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "defend": {
+    "id": "defend",
+    "category": "battle",
+    "sheet": "./assets/characters/thunder-pup/defend/thunder-pup_defend_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 4.5,
+    "loop": false,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "hit": {
+    "id": "hit",
+    "category": "battle",
+    "sheet": "./assets/characters/thunder-pup/hit/thunder-pup_hit_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 4,
+    "loop": false,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "defeated": {
+    "id": "defeated",
+    "category": "battle",
+    "sheet": "./assets/characters/thunder-pup/defeated/thunder-pup_faint_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 3,
+    "loop": false,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "victory": {
+    "id": "victory",
+    "category": "battle",
+    "sheet": "./assets/characters/thunder-pup/victory/thunder-pup_victory_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 3,
+    "loop": false,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  }
+}

@@ -1,0 +1,466 @@
+{
+  "idle_calm": {
+    "id": "idle_calm",
+    "category": "emotion",
+    "sheet": "./assets/characters/goldenspark-wyrm/idle_calm/goldenspark-wyrm_idle_calm_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 3,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "idle_happy": {
+    "id": "idle_happy",
+    "category": "emotion",
+    "sheet": "./assets/characters/goldenspark-wyrm/idle_happy/goldenspark-wyrm_idle_happy_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 3,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "idle_angry": {
+    "id": "idle_angry",
+    "category": "emotion",
+    "sheet": "./assets/characters/goldenspark-wyrm/idle_angry/goldenspark-wyrm_idle_angry_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 3,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "idle_sad": {
+    "id": "idle_sad",
+    "category": "emotion",
+    "sheet": "./assets/characters/goldenspark-wyrm/idle_sad/goldenspark-wyrm_idle_sad_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 2.25,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "idle_defensive": {
+    "id": "idle_defensive",
+    "category": "emotion",
+    "sheet": "./assets/characters/goldenspark-wyrm/idle_defensive/goldenspark-wyrm_idle_defensive_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 4,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "blink": {
+    "id": "blink",
+    "category": "emotion",
+    "sheet": "./assets/characters/goldenspark-wyrm/blink/goldenspark-wyrm_blink_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 2.25,
+    "loop": false,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "right_walk": {
+    "id": "right_walk",
+    "category": "movement",
+    "sheet": "./assets/characters/goldenspark-wyrm/right_walk/goldenspark-wyrm_right_walk_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 5,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "left_walk": {
+    "id": "left_walk",
+    "category": "movement",
+    "sheet": "./assets/characters/goldenspark-wyrm/left_walk/goldenspark-wyrm_left_walk_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 5,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "touch_accept": {
+    "id": "touch_accept",
+    "category": "touch",
+    "sheet": "./assets/characters/goldenspark-wyrm/touch_accept/goldenspark-wyrm_touch_accept_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 4.5,
+    "loop": false,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "touch_guarded": {
+    "id": "touch_guarded",
+    "category": "touch",
+    "sheet": "./assets/characters/goldenspark-wyrm/touch_guarded/goldenspark-wyrm_touch_guarded_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 4.5,
+    "loop": false,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "touch_reject": {
+    "id": "touch_reject",
+    "category": "touch",
+    "sheet": "./assets/characters/goldenspark-wyrm/touch_reject/goldenspark-wyrm_touch_reject_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 4.5,
+    "loop": false,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "idle_sick": {
+    "id": "idle_sick",
+    "category": "emotion",
+    "sheet": "./assets/characters/goldenspark-wyrm/idle_sick/goldenspark-wyrm_idle_sick_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 3,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "idle_distant": {
+    "id": "idle_distant",
+    "category": "emotion",
+    "sheet": "./assets/characters/goldenspark-wyrm/idle_distant/goldenspark-wyrm_idle_distant_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 3,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "idle_enjoy": {
+    "id": "idle_enjoy",
+    "category": "emotion",
+    "sheet": "./assets/characters/goldenspark-wyrm/idle_enjoy/goldenspark-wyrm_idle_enjoy_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 3,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "sit": {
+    "id": "sit",
+    "category": "daily",
+    "sheet": "./assets/characters/goldenspark-wyrm/sit/goldenspark-wyrm_sit_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 3,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "sleep": {
+    "id": "sleep",
+    "category": "daily",
+    "sheet": "./assets/characters/goldenspark-wyrm/sleep/goldenspark-wyrm_sleep_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 3,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "idle_wake": {
+    "id": "idle_wake",
+    "category": "emotion",
+    "sheet": "./assets/characters/goldenspark-wyrm/idle_wake/goldenspark-wyrm_idle_wake_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 6,
+    "loop": false,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "special_angry": {
+    "id": "special_angry",
+    "category": "emotion",
+    "sheet": "./assets/characters/goldenspark-wyrm/special_angry/goldenspark-wyrm_special_angry_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 3,
+    "loop": false,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "special_sad": {
+    "id": "special_sad",
+    "category": "emotion",
+    "sheet": "./assets/characters/goldenspark-wyrm/special_sad/goldenspark-wyrm_special_sad_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 4.5,
+    "loop": false,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "hug": {
+    "id": "hug",
+    "category": "touch",
+    "sheet": "./assets/characters/goldenspark-wyrm/hug/goldenspark-wyrm_hug_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 4.5,
+    "loop": false,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "idle_dance": {
+    "id": "idle_dance",
+    "category": "daily",
+    "sheet": "./assets/characters/goldenspark-wyrm/idle_dance/goldenspark-wyrm_idle_dance_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 5,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "idle_wash": {
+    "id": "idle_wash",
+    "category": "daily",
+    "sheet": "./assets/characters/goldenspark-wyrm/idle_wash/goldenspark-wyrm_idle_wash_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 4,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "special_dance": {
+    "id": "special_dance",
+    "category": "daily",
+    "sheet": "./assets/characters/goldenspark-wyrm/special_dance/goldenspark-wyrm_special_dance_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 5,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "attack_basic": {
+    "id": "attack_basic",
+    "category": "battle",
+    "sheet": "./assets/characters/goldenspark-wyrm/attack_basic/goldenspark-wyrm_attack_basic_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 6,
+    "loop": false,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "skill_cast": {
+    "id": "skill_cast",
+    "category": "battle",
+    "sheet": "./assets/characters/goldenspark-wyrm/skill_cast/goldenspark-wyrm_skill_cast_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 8,
+    "loop": false,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "defend": {
+    "id": "defend",
+    "category": "battle",
+    "sheet": "./assets/characters/goldenspark-wyrm/defend/goldenspark-wyrm_defend_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 4.5,
+    "loop": false,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "hit": {
+    "id": "hit",
+    "category": "battle",
+    "sheet": "./assets/characters/goldenspark-wyrm/hit/goldenspark-wyrm_hit_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 4,
+    "loop": false,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "defeated": {
+    "id": "defeated",
+    "category": "battle",
+    "sheet": "./assets/characters/goldenspark-wyrm/defeated/goldenspark-wyrm_faint_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 3,
+    "loop": false,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "victory": {
+    "id": "victory",
+    "category": "battle",
+    "sheet": "./assets/characters/goldenspark-wyrm/victory/goldenspark-wyrm_victory_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 3,
+    "loop": false,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  }
+}

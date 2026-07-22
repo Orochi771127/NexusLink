@@ -1,0 +1,466 @@
+{
+  "idle_calm": {
+    "id": "idle_calm",
+    "category": "emotion",
+    "sheet": "./assets/characters/starflame-phoenix/idle_calm/starflame-phoenix_idle_calm_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 3,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "idle_happy": {
+    "id": "idle_happy",
+    "category": "emotion",
+    "sheet": "./assets/characters/starflame-phoenix/idle_happy/starflame-phoenix_idle_happy_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 3,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "idle_angry": {
+    "id": "idle_angry",
+    "category": "emotion",
+    "sheet": "./assets/characters/starflame-phoenix/idle_angry/starflame-phoenix_idle_angry_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 3,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "idle_sad": {
+    "id": "idle_sad",
+    "category": "emotion",
+    "sheet": "./assets/characters/starflame-phoenix/idle_sad/starflame-phoenix_idle_sad_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 2.25,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "idle_defensive": {
+    "id": "idle_defensive",
+    "category": "emotion",
+    "sheet": "./assets/characters/starflame-phoenix/idle_defensive/starflame-phoenix_idle_defensive_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 4,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "blink": {
+    "id": "blink",
+    "category": "emotion",
+    "sheet": "./assets/characters/starflame-phoenix/blink/starflame-phoenix_blink_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 2.25,
+    "loop": false,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "right_walk": {
+    "id": "right_walk",
+    "category": "movement",
+    "sheet": "./assets/characters/starflame-phoenix/right_walk/starflame-phoenix_right_walk_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 5,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "left_walk": {
+    "id": "left_walk",
+    "category": "movement",
+    "sheet": "./assets/characters/starflame-phoenix/left_walk/starflame-phoenix_left_walk_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 5,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "touch_accept": {
+    "id": "touch_accept",
+    "category": "touch",
+    "sheet": "./assets/characters/starflame-phoenix/touch_accept/starflame-phoenix_touch_accept_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 4.5,
+    "loop": false,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "touch_guarded": {
+    "id": "touch_guarded",
+    "category": "touch",
+    "sheet": "./assets/characters/starflame-phoenix/touch_guarded/starflame-phoenix_touch_guarded_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 4.5,
+    "loop": false,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "touch_reject": {
+    "id": "touch_reject",
+    "category": "touch",
+    "sheet": "./assets/characters/starflame-phoenix/touch_reject/starflame-phoenix_touch_reject_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 4.5,
+    "loop": false,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "idle_sick": {
+    "id": "idle_sick",
+    "category": "emotion",
+    "sheet": "./assets/characters/starflame-phoenix/idle_sick/starflame-phoenix_idle_sick_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 3,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "idle_distant": {
+    "id": "idle_distant",
+    "category": "emotion",
+    "sheet": "./assets/characters/starflame-phoenix/idle_distant/starflame-phoenix_idle_distant_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 3,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "idle_enjoy": {
+    "id": "idle_enjoy",
+    "category": "emotion",
+    "sheet": "./assets/characters/starflame-phoenix/idle_enjoy/starflame-phoenix_idle_enjoy_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 3,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "sit": {
+    "id": "sit",
+    "category": "daily",
+    "sheet": "./assets/characters/starflame-phoenix/sit/starflame-phoenix_sit_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 3,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "sleep": {
+    "id": "sleep",
+    "category": "daily",
+    "sheet": "./assets/characters/starflame-phoenix/sleep/starflame-phoenix_sleep_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 3,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "idle_wake": {
+    "id": "idle_wake",
+    "category": "emotion",
+    "sheet": "./assets/characters/starflame-phoenix/idle_wake/starflame-phoenix_idle_wake_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 6,
+    "loop": false,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "special_angry": {
+    "id": "special_angry",
+    "category": "emotion",
+    "sheet": "./assets/characters/starflame-phoenix/special_angry/starflame-phoenix_special_angry_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 3,
+    "loop": false,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "special_sad": {
+    "id": "special_sad",
+    "category": "emotion",
+    "sheet": "./assets/characters/starflame-phoenix/special_sad/starflame-phoenix_special_sad_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 4.5,
+    "loop": false,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "hug": {
+    "id": "hug",
+    "category": "touch",
+    "sheet": "./assets/characters/starflame-phoenix/hug/starflame-phoenix_hug_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 4.5,
+    "loop": false,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "idle_dance": {
+    "id": "idle_dance",
+    "category": "daily",
+    "sheet": "./assets/characters/starflame-phoenix/idle_dance/starflame-phoenix_idle_dance_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 5,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "idle_wash": {
+    "id": "idle_wash",
+    "category": "daily",
+    "sheet": "./assets/characters/starflame-phoenix/idle_wash/starflame-phoenix_idle_wash_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 4,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "special_dance": {
+    "id": "special_dance",
+    "category": "daily",
+    "sheet": "./assets/characters/starflame-phoenix/special_dance/starflame-phoenix_special_dance_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 5,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "attack_basic": {
+    "id": "attack_basic",
+    "category": "battle",
+    "sheet": "./assets/characters/starflame-phoenix/attack_basic/starflame-phoenix_attack_basic_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 6,
+    "loop": false,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "skill_cast": {
+    "id": "skill_cast",
+    "category": "battle",
+    "sheet": "./assets/characters/starflame-phoenix/skill_cast/starflame-phoenix_skill_cast_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 8,
+    "loop": false,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "defend": {
+    "id": "defend",
+    "category": "battle",
+    "sheet": "./assets/characters/starflame-phoenix/defend/starflame-phoenix_defend_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 4.5,
+    "loop": false,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "hit": {
+    "id": "hit",
+    "category": "battle",
+    "sheet": "./assets/characters/starflame-phoenix/hit/starflame-phoenix_hit_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 4,
+    "loop": false,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "defeated": {
+    "id": "defeated",
+    "category": "battle",
+    "sheet": "./assets/characters/starflame-phoenix/defeated/starflame-phoenix_faint_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 3,
+    "loop": false,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "victory": {
+    "id": "victory",
+    "category": "battle",
+    "sheet": "./assets/characters/starflame-phoenix/victory/starflame-phoenix_victory_v1_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 3,
+    "loop": false,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  }
+}
