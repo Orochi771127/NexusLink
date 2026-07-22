@@ -13,6 +13,11 @@ import {
   createCompanionGrowthController,
   createGrowthSafetyFacts
 } from "../../src/ui/companionGrowthController.js";
+import {
+  createCompanionGrowthSession,
+  evaluateHeartPhasePractice,
+  resolveHeartPhaseRewrite
+} from "../../src/engine/companionGrowthSessionEngine.js";
 
 const controller = createCompanionGrowthController();
 const cases = [];
@@ -55,6 +60,232 @@ await runCase("canonical store transaction preserves the Growth write", () => {
   const growth = getState().companionStates.byId["greyshade-cat"].growth;
   assertEqual(growth.evidence.length, 1, "transaction evidence survives");
   assertEqual(growth.coverage.rootsBySourceType.exploration.length, 1, "transaction coverage survives");
+});
+
+await runCase("real Heart Phase acceptance owns one deterministic care root", () => {
+  const state = freshState();
+  const evaluation = evaluateHeartPhasePractice(
+    state,
+    createCompanionGrowthSession("greyshade-cat"),
+    "attunement"
+  );
+  const first = controller.writeCarePracticeIntoDraft(state, {
+    companionId: "greyshade-cat",
+    result: evaluation.result,
+    createdAt: nowAfter(state, 1)
+  });
+  assertEqual(first.accepted, true, "care accepted");
+  assertEqual(first.rootContextKey, "care:2:heart_phase_practice", "fixed care root");
+  const growth = state.companionStates.byId["greyshade-cat"].growth;
+  assertEqual(growth.coverage.rootsBySourceType.care.length, 1, "one care family root");
+  assertEqual(growth.evidence[0].key, "care:2:heart_phase_practice:attunement", "care detail key");
+  assertEqual(growth.stage, "initial_awakened", "source owner never advances stage");
+  assertEqual(growth.offeredStage, null, "source owner never creates offer");
+
+  const replay = controller.writeCarePracticeIntoDraft(state, {
+    companionId: "greyshade-cat",
+    result: evaluation.result,
+    createdAt: nowAfter(state, 2)
+  });
+  assertEqual(replay.reason, "duplicate_key", "same practice replay deduped");
+  assertEqual(growth.evidence.length, 1, "replay does not farm detail");
+});
+
+await runCase("rest decline pending rewrite and player deferral write zero care evidence", () => {
+  const scenarios = [
+    evaluateHeartPhasePractice(
+      { ...freshState(), energy: 1, touchFatigue: 8 },
+      createCompanionGrowthSession("greyshade-cat"),
+      "steadfastness"
+    ).result,
+    evaluateHeartPhasePractice(
+      { ...freshState(), mood: "distant" },
+      createCompanionGrowthSession("greyshade-cat"),
+      "pathfinding"
+    ).result
+  ];
+  const guardedState = { ...freshState(), mood: "distant" };
+  const pending = evaluateHeartPhasePractice(
+    guardedState,
+    createCompanionGrowthSession("greyshade-cat"),
+    "attunement"
+  );
+  scenarios.push(pending.result);
+  scenarios.push(resolveHeartPhaseRewrite(guardedState, pending.session, "defer").result);
+
+  for (const result of scenarios) {
+    const state = freshState();
+    const before = structuredClone(state.companionStates.byId["greyshade-cat"].growth);
+    const writeResult = controller.writeCarePracticeIntoDraft(state, {
+      companionId: "greyshade-cat",
+      result,
+      createdAt: nowAfter(state, 1)
+    });
+    assertEqual(writeResult.changed, false, `${result.outcomeId}/${result.completionStatus} unchanged`);
+    assertDeepEqual(
+      state.companionStates.byId["greyshade-cat"].growth,
+      before,
+      `${result.outcomeId}/${result.completionStatus} zero growth`
+    );
+  }
+});
+
+await runCase("care writer rejects impossible or tampered Heart Phase results", () => {
+  const restingState = { ...freshState(), energy: 1, touchFatigue: 8 };
+  const resting = evaluateHeartPhasePractice(
+    restingState,
+    createCompanionGrowthSession("greyshade-cat"),
+    "steadfastness"
+  ).result;
+  const steadyState = freshState();
+  const steady = evaluateHeartPhasePractice(
+    steadyState,
+    createCompanionGrowthSession("greyshade-cat"),
+    "attunement"
+  ).result;
+  const tampered = [
+    {
+      ...resting,
+      outcomeId: "accept",
+      observedTendencyId: "steadfastness",
+      responseKey: "growth.session.response.accept.steadfastness",
+      completionStatus: "completed"
+    },
+    {
+      ...steady,
+      outcomeId: "modify",
+      observedTendencyId: "boundary_respect",
+      responseKey: "growth.session.response.modify.boundary",
+      completionStatus: "completed",
+      rewriteDecision: "accept",
+      resolutionResponseKey: "growth.session.response.rewriteAccepted"
+    },
+    {
+      ...steady,
+      observedTendencyId: "pathfinding",
+      responseKey: "growth.session.response.accept.pathfinding"
+    }
+  ];
+
+  for (const result of tampered) {
+    const state = freshState();
+    const before = structuredClone(state.companionStates.byId["greyshade-cat"].growth);
+    const writeResult = controller.writeCarePracticeIntoDraft(state, {
+      companionId: "greyshade-cat",
+      result,
+      createdAt: nowAfter(state, 1)
+    });
+    assertEqual(writeResult.reason, "noncanonical_care_result", "tampered result rejected");
+    assertDeepEqual(
+      state.companionStates.byId["greyshade-cat"].growth,
+      before,
+      "tampered result writes zero growth"
+    );
+  }
+});
+
+await runCase("explicitly accepted companion rewrite seals one consent anchor", () => {
+  const state = freshState();
+  state.energy = 8;
+  state.mood = "happy";
+  const pending = evaluateHeartPhasePractice(
+    state,
+    createCompanionGrowthSession("greyshade-cat"),
+    "steadfastness"
+  );
+  const before = structuredClone(state.companionStates.byId["greyshade-cat"].growth);
+  const incomplete = controller.writeCarePracticeIntoDraft(state, {
+    companionId: "greyshade-cat",
+    result: pending.result,
+    createdAt: nowAfter(state, 1)
+  });
+  assertEqual(incomplete.changed, false, "rewrite proposal alone writes nothing");
+  assertDeepEqual(state.companionStates.byId["greyshade-cat"].growth, before, "proposal zero growth");
+
+  const accepted = resolveHeartPhaseRewrite(state, pending.session, "accept");
+  const written = controller.writeCarePracticeIntoDraft(state, {
+    companionId: "greyshade-cat",
+    result: accepted.result,
+    createdAt: nowAfter(state, 2)
+  });
+  const growth = state.companionStates.byId["greyshade-cat"].growth;
+  assertEqual(written.accepted, true, "accepted rewrite writes");
+  assertEqual(written.anchorAccepted, true, "accepted rewrite seals anchor");
+  assertEqual(growth.coverage.consentAnchorRootKey, "care:2:heart_phase_practice", "care anchor root");
+  assertEqual(growth.evidence[0].key, "care:2:heart_phase_practice:steadfastness_rewrite", "rewrite detail distinct");
+});
+
+await runCase("safe harbor cannot be washed false by a care source override", () => {
+  const state = freshState();
+  const evaluation = evaluateHeartPhasePractice(
+    state,
+    createCompanionGrowthSession("greyshade-cat"),
+    "attunement"
+  );
+  state.safeHarborMode = true;
+  const before = structuredClone(state.companionStates.byId["greyshade-cat"].growth);
+  const result = controller.writeCarePracticeIntoDraft(state, {
+    companionId: "greyshade-cat",
+    result: evaluation.result,
+    createdAt: nowAfter(state, 1),
+    safetyOverrides: { safeHarborModeActive: false }
+  });
+  assertEqual(result.reason, "safety_excluded", "safe harbor exclusion wins");
+  assertDeepEqual(state.companionStates.byId["greyshade-cat"].growth, before, "safe harbor zero growth");
+  assertEqual(
+    createGrowthSafetyFacts(state, { safeHarborModeActive: false }).safeHarborModeActive,
+    true,
+    "origin facts cannot wash active safe harbor"
+  );
+});
+
+await runCase("care completion cannot cross a companion switch", () => {
+  const state = freshState();
+  state.unlockedCompanionIds = ["greyshade-cat", "blazetail-kit"];
+  state.companionStates.byId["blazetail-kit"] = {
+    relationship: createDefaultRelationshipState(),
+    growth: createDefaultGrowthState({ companionId: "blazetail-kit" })
+  };
+  const aResult = evaluateHeartPhasePractice(
+    state,
+    createCompanionGrowthSession("greyshade-cat"),
+    "attunement"
+  ).result;
+  const aBefore = structuredClone(state.companionStates.byId["greyshade-cat"].growth);
+  const bBefore = structuredClone(state.companionStates.byId["blazetail-kit"].growth);
+
+  state.activeCompanionId = "blazetail-kit";
+  const staleA = controller.writeCarePracticeIntoDraft(state, {
+    companionId: "greyshade-cat",
+    result: aResult,
+    createdAt: nowAfter(state, 1)
+  });
+  assertEqual(staleA.reason, "active_companion_mismatch", "stale A completion rejected");
+  assertDeepEqual(state.companionStates.byId["greyshade-cat"].growth, aBefore, "A unchanged");
+  assertDeepEqual(state.companionStates.byId["blazetail-kit"].growth, bBefore, "B unchanged by A");
+
+  const reboundA = controller.writeCarePracticeIntoDraft(state, {
+    companionId: "blazetail-kit",
+    result: aResult,
+    createdAt: nowAfter(state, 2)
+  });
+  assertEqual(reboundA.reason, "care_companion_mismatch", "A result cannot be rebound to B");
+  assertDeepEqual(state.companionStates.byId["greyshade-cat"].growth, aBefore, "A remains unchanged");
+  assertDeepEqual(state.companionStates.byId["blazetail-kit"].growth, bBefore, "B rejects rebound A");
+
+  const bResult = evaluateHeartPhasePractice(
+    state,
+    createCompanionGrowthSession("blazetail-kit"),
+    "attunement"
+  ).result;
+  const acceptedB = controller.writeCarePracticeIntoDraft(state, {
+    companionId: "blazetail-kit",
+    result: bResult,
+    createdAt: nowAfter(state, 3)
+  });
+  assertEqual(acceptedB.accepted, true, "active B care accepted");
+  assertEqual(state.companionStates.byId["greyshade-cat"].growth.evidence.length, 0, "A still empty");
+  assertEqual(state.companionStates.byId["blazetail-kit"].growth.evidence.length, 1, "B owns care");
 });
 
 await runCase("all standoff settlements share one root and equal readiness weight", () => {

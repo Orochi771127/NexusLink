@@ -205,7 +205,7 @@ Initial Bond 已接入：fresh save 固定呈現 `greyshade-cat` / `blazetail-ki
 - 圖鑑 / 夥伴切換 / 行動：`src/ui/codexController.js`、`src/ui/companionSelectController.js`、`src/ui/actionSheetController.js`、`src/engine/actionEffectEngine.js`
 - VFX / 動效 / 玻璃感 polish：`styles.css` 的非地基區塊、`src/pixi/` 的特效（非 `pixiApp.js` 核心 layer）
 
-> **Companion Growth 路由**：任何心核夥伴養成、心相傾向、三階覺醒、Growth UI、Codex stage 或 evolved-form 工作，開工前必讀 `docs/design/COMPANION_GROWTH_CONTRACT_V1.md`。該檔是設計／驗收 SSOT；G1 session-only、G2 per-companion state/migration 與 G3 evidence/readiness/willingness foundation 已接入，但 live runtime 仍只有 exploration/standoff 兩個 source family，G4 stage offer/advance 與 G5 正式資產未完成。不得把 G3 foundation 說成完整覺醒玩法。
+> **Companion Growth 路由**：任何心核夥伴養成、心相傾向、三階覺醒、Growth UI、Codex stage 或 evolved-form 工作，開工前必讀 `docs/design/COMPANION_GROWTH_CONTRACT_V1.md`。該檔是設計／驗收 SSOT；G1／G2／G3 foundation 與 G3.1 Heart Phase care source 已接入，live source family 為 exploration／standoff／care。明示接受的 companion rewrite 可封存 consent anchor，但不依賴 standoff 的 readiness 路徑、G4 stage offer/advance 與 G5 正式資產仍未完成。不得把 G3／G3.1 說成完整覺醒玩法。
 
 ### 5.3 體驗層的開工協定（A 檔：保留把關感）
 體驗層雖被授權，但**每個 TASK_PACK 開工前**仍須：
@@ -288,7 +288,7 @@ Initial Bond 已接入：fresh save 固定呈現 `greyshade-cat` / `blazetail-ki
 | 情緒對峙 | `battleEngine.js` ・ `battleController.js` ・ `enemyRegistry.js`（`battleRecord.wins/losses` compatibility-only） |
 | 探索 | `mapController.js` ・ `explorationEngine.js` ・ `explorationNodes.js` |
 | Expedition（Prototype） | `expeditionController.js` ・ `src/expedition/` ・ `RAPHAEL_EXPEDITION_EVAL_CONTRACT.md`（partial Core bridge，`coreIntegrated:false`） |
-| Companion Growth（G1 + G2 + G3 Evidence Foundation 已接入；G4+ 未實作） | `companionGrowthSessionEngine.js` ・ `companionGrowthEngine.js` ・ `companionGrowthController.js` ・ `companionStateSchema.js` ・ `pageRouter.js` ・ `codexController.js` ・ `docs/design/COMPANION_GROWTH_CONTRACT_V1.md` ・ `ACCEPTANCE.md` N1–N12 ・ `evolutionLines.js`（compatibility data only） |
+| Companion Growth（G1 + G2 + G3 + G3.1 Care Source 已接入；G4+ 未實作） | `companionGrowthSessionEngine.js` ・ `companionGrowthEngine.js` ・ `companionGrowthController.js` ・ `companionStateSchema.js` ・ `pageRouter.js` ・ `codexController.js` ・ `docs/design/COMPANION_GROWTH_CONTRACT_V1.md` ・ `ACCEPTANCE.md` N1–N12 ・ `evolutionLines.js`（compatibility data only） |
 | Pixi 核心 | `pixiApp.js`(LOCKED 級) ・ `companionRenderer.js` ・ `spriteSheetAnimationLoader.js` ・ `motionController.js` |
 | 人格 | `companionPersonality.js` ・ `personalityProfile.js` ・ `animationProfile.js` |
 | 資料 | `companionRegistry.js` ・ `evolutionLines.js` ・ `emotionDictionary.js` ・ `safetyShieldDictionary.js` |

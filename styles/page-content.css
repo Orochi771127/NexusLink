@@ -358,6 +358,62 @@ html[data-ui="v2"] .growth-response--modify {
   border-left-color: rgba(169, 152, 255, 0.7);
 }
 
+html[data-ui="v2"] .growth-rewrite-actions {
+  position: relative;
+  display: grid;
+  gap: 7px;
+  margin-top: 5px;
+  padding-left: 14px;
+}
+
+/* A single moon-thread connects both replies to the companion's rewrite. */
+html[data-ui="v2"] .growth-rewrite-actions::before {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  left: 3px;
+  width: 1px;
+  background: linear-gradient(
+    to bottom,
+    rgba(169, 152, 255, 0.7),
+    rgba(124, 231, 255, 0.22)
+  );
+  content: "";
+}
+
+html[data-ui="v2"] .growth-rewrite-actions button {
+  display: grid;
+  gap: 3px;
+  min-height: 48px;
+  padding: 9px 11px;
+  border: 1px solid rgba(169, 152, 255, 0.26);
+  border-radius: 12px;
+  color: var(--v3-moon-100, #f7f2e7);
+  background: rgba(20, 24, 55, 0.5);
+  text-align: left;
+}
+
+html[data-ui="v2"] .growth-rewrite-actions button:last-child {
+  border-color: rgba(247, 223, 170, 0.2);
+  background: rgba(7, 18, 38, 0.32);
+}
+
+html[data-ui="v2"] .growth-rewrite-actions button strong {
+  font-family: var(--v3-font-serif, serif);
+  font-size: 0.82rem;
+}
+
+html[data-ui="v2"] .growth-rewrite-actions button span {
+  color: rgba(233, 223, 207, 0.7);
+  font-size: 0.72rem;
+  line-height: 1.45;
+}
+
+html[data-ui="v2"] .growth-rewrite-actions button:focus-visible {
+  outline: 2px solid var(--v3-cyan-300, #7ce7ff);
+  outline-offset: 2px;
+}
+
 html[data-ui="v2"] .growth-response--rest,
 html[data-ui="v2"] .growth-response--decline,
 html[data-ui="v2"] .growth-response--safety {

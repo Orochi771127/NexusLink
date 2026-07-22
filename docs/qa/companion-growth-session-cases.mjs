@@ -2,9 +2,11 @@ import assert from "node:assert/strict";
 import {
   HEART_PHASE_PRACTICES,
   HEART_PHASE_TENDENCIES,
+  HEART_PHASE_COMPLETION,
   createCompanionGrowthSession,
   deriveHeartPhaseSnapshot,
-  evaluateHeartPhasePractice
+  evaluateHeartPhasePractice,
+  resolveHeartPhaseRewrite
 } from "../../src/engine/companionGrowthSessionEngine.js";
 
 const cases = [];
@@ -34,6 +36,7 @@ runCase("steady practice is accepted without mutating state or session input", (
 
   assert.equal(evaluation.ok, true);
   assert.equal(evaluation.result.outcomeId, "accept");
+  assert.equal(evaluation.result.completionStatus, HEART_PHASE_COMPLETION.COMPLETED);
   assert.equal(evaluation.result.observedTendencyId, "attunement");
   assert.deepEqual(evaluation.session.observedTendencyIds, ["attunement"]);
   assert.equal(JSON.stringify(state), stateBefore);
@@ -49,6 +52,7 @@ runCase("guarded companion rewrites closeness into boundary respect", () => {
   );
 
   assert.equal(evaluation.result.outcomeId, "modify");
+  assert.equal(evaluation.result.completionStatus, HEART_PHASE_COMPLETION.AWAITING_REWRITE);
   assert.equal(evaluation.result.observedTendencyId, "boundary_respect");
   assert.deepEqual(evaluation.session.observedTendencyIds, ["boundary_respect"]);
 });
@@ -91,6 +95,72 @@ runCase("curious companion may rewrite staying into pathfinding", () => {
 
   assert.equal(evaluation.result.outcomeId, "modify");
   assert.equal(evaluation.result.observedTendencyId, "pathfinding");
+});
+
+runCase("companion rewrite needs an explicit second acceptance", () => {
+  const state = { ...BASE_STATE, energy: 8, mood: "happy" };
+  const proposed = evaluateHeartPhasePractice(
+    state,
+    createCompanionGrowthSession(state.activeCompanionId),
+    "steadfastness"
+  );
+  const before = JSON.stringify(proposed.session);
+  const resolved = resolveHeartPhaseRewrite(state, proposed.session, "accept");
+
+  assert.equal(resolved.ok, true);
+  assert.equal(resolved.result.completionStatus, HEART_PHASE_COMPLETION.COMPLETED);
+  assert.equal(resolved.result.rewriteDecision, "accept");
+  assert.equal(resolved.result.resolutionResponseKey, "growth.session.response.rewriteAccepted");
+  assert.equal(JSON.stringify(proposed.session), before, "pending session input stays immutable");
+});
+
+runCase("deferring a rewrite is a completed interaction with zero evidence status", () => {
+  const state = { ...BASE_STATE, mood: "distant" };
+  const proposed = evaluateHeartPhasePractice(
+    state,
+    createCompanionGrowthSession(state.activeCompanionId),
+    "attunement"
+  );
+  const resolved = resolveHeartPhaseRewrite(state, proposed.session, "defer");
+
+  assert.equal(resolved.ok, true);
+  assert.equal(resolved.result.completionStatus, HEART_PHASE_COMPLETION.DEFERRED);
+  assert.equal(resolved.result.rewriteDecision, "defer");
+  assertForbiddenFields(resolved, ["evidence", "stage", "offer", "reward", "statePatch"]);
+});
+
+runCase("rewrite resolution fails closed without a pending companion rewrite", () => {
+  const accepted = evaluateHeartPhasePractice(
+    BASE_STATE,
+    createCompanionGrowthSession(BASE_STATE.activeCompanionId),
+    "attunement"
+  );
+  const resolution = resolveHeartPhaseRewrite(BASE_STATE, accepted.session, "accept");
+
+  assert.equal(resolution.ok, false);
+  assert.equal(resolution.reason, "no-pending-rewrite");
+  assert.equal(resolution.result, null);
+  assert.deepEqual(resolution.session, accepted.session);
+});
+
+runCase("safe harbor cannot resolve a queued rewrite after it was proposed", () => {
+  const state = { ...BASE_STATE, mood: "distant" };
+  const proposed = evaluateHeartPhasePractice(
+    state,
+    createCompanionGrowthSession(state.activeCompanionId),
+    "attunement"
+  );
+  const before = JSON.parse(JSON.stringify(proposed.session));
+  const resolution = resolveHeartPhaseRewrite(
+    { ...state, safeHarborMode: true },
+    proposed.session,
+    "accept"
+  );
+
+  assert.equal(resolution.ok, false);
+  assert.equal(resolution.reason, "safety-paused");
+  assert.equal(resolution.result, null);
+  assert.deepEqual(resolution.session, before);
 });
 
 runCase("repeat practice never creates numeric accumulation or duplicate tendency", () => {

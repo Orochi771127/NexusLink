@@ -464,6 +464,7 @@ async function bootstrap() {
     calmSyncController,
     crystalWeavingController,
     companionGrowthController,
+    saveCandidateState: saveCriticalSnapshot,
     openMap: () => getMapController().open(),
     openCodex: () => getCodexController().open(),
     openAtlas: () => getAtlasController().open()

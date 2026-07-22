@@ -3880,3 +3880,98 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
   D1／D2／D3／D6, moderated first-session comprehension, legal／privacy／store
   copy and explicit Owner launch approval remain `not_run`／open. Automated
   green is not public-launch approval.
+
+### 2026-07-22 - Codex - Companion Growth G3.1 Live Care Evidence - IN PROGRESS
+
+- Status: `IN PROGRESS`; branch
+  `codex/companion-growth-g4a-source-anchor` starts from exact published
+  `origin/main` `9b1b778` (PR #113).
+- Lane: `Game Engineering And Architecture`.
+- Task name: `TP-COMPANION-GROWTH-G3.1-CARE-CONSENT`.
+- Scope: make the existing Growth Heart Phase practice a real `care` source
+  owner. Accepted practices may write one deterministic chapter + phase root;
+  a companion rewrite remains incomplete until the player explicitly accepts
+  the revised rhythm, at which point the same root may seal a
+  `respected_rewrite` consent anchor. Replays and aliases remain deduped by the
+  G3 writer.
+- Red-line check: safety／safe-harbor short-circuits before session resolution
+  or evidence creation. Rest, decline, exit, replacement of a pending rewrite
+  and player deferral are zero evidence and zero relationship mutation. This
+  path does not read bond, numeric defense, offline time, login frequency or
+  free player text and adds no reward, XP, power, loot, deadline or FOMO.
+- Non-goals: Reflection／Chapter source owners, a non-standoff readiness route,
+  G4 stage offer／advance, G5 form assets, memory schema, PvP, dependency,
+  backend, external LLM or build-step changes.
+- Required reading: this entry,
+  `docs/design/COMPANION_GROWTH_CONTRACT_V1.md`, `ACCEPTANCE.md` N1–N11,
+  current G3 source-owner tests and the existing Growth session／page path.
+
+### 2026-07-22 - Codex - Companion Growth G3.1 Consent UI - IN PROGRESS
+
+- Status: `IN PROGRESS`; same branch and task pack as the engineering entry.
+- Lane: `Game Art, UI, And Visual Production`.
+- Scope: keep the four qualitative Heart Phase practices, but show a compact
+  explicit choice when the companion rewrites one: follow its revised rhythm
+  or stop here without consequence. The response and lived-evidence areas must
+  remain readable at `390x844`, keyboard, reduced motion and 200% text.
+- Asset boundary: no `assets/**`, Pixi, portrait, sprite, aura-as-form or
+  evolved-shape claim. The UI may show only text-labelled qualitative traces;
+  it must not expose raw keys, counts, thresholds or a progress checklist.
+
+### 2026-07-22 - Codex - Companion Growth G3.1 Live Care Evidence - VERIFIED
+
+- Status: `VERIFIED`; branch `codex/companion-growth-g4a-source-anchor`,
+  runtime commit `13bbd19568f28439cfb2f862ed9257017eb7b246`.
+- Lane: `Game Engineering And Architecture`.
+- Work performed: completed Heart Phase acceptance now owns one deterministic
+  `care:<chapter>:heart_phase_practice` root. Companion-authored rewrites stay
+  pending until a second explicit player acceptance and may then seal a
+  `respected_rewrite` consent anchor on that root. Canonical matrix validation,
+  result `companionId`, active-owner checks and reload-safe dedupe reject
+  fabricated, rebound or replayed results.
+- Persistence: Care uses candidate-first critical save. Runtime publishes only
+  after `{ok:true}`; missing/failed save remains visible as unavailable or
+  recoverable error with zero Growth mutation. Storage-pruned payloads are not
+  fed back into live memory／trace state.
+- Verification: session `17/17`, Growth runtime `16/16`, Growth browser
+  `153/153`, i18n `417/417` per language, JS syntax `275/275`, full repo-native
+  web release gate `27/27`, accessibility warnings `0`, console errors `0`.
+- Review findings closed: foreground and off-page safety invalidation,
+  cross-companion result rebinding, impossible phase/outcome mutation, failed
+  save false-success and storage-pruning backflow all have regressions.
+- Next safe work: G3.2 Reflection／Echo Sorting plus an independent chapter
+  life-event source. G4 offer／advance remains closed until a non-standoff
+  readiness path exists; G5 assets and PvP remain out of scope.
+
+### 2026-07-22 - Codex - Companion Growth G3.1 Consent UI - VERIFIED
+
+- Status: `VERIFIED`; same branch／runtime commit and task pack as the
+  engineering entry.
+- Lane: `Game Art, UI, And Visual Production`.
+- Work performed: a companion rewrite renders two explicit responses in a
+  labelled group: follow the revised rhythm, or stop today with no consequence.
+  Completion／pending／zero-evidence copy remains qualitative and exposes no
+  raw key, count, threshold, reward or checklist.
+- Verification: normal-Pixi `390x844` visual check, two 48px targets, keyboard
+  focus handoff, reduced motion, 200% text, desktop and no-horizontal-overflow
+  paths are covered by the `153/153` Growth browser gate. Screenshot:
+  `%TEMP%\nexus-growth-g31-rewrite-normal-pixi-390x844.png`.
+- Asset boundary: no `assets/**`, `pixiApp.js`, portrait, sprite, tint-as-form,
+  evolved-shape or new dependency was added.
+
+### 2026-07-22 - Codex - Companion Growth G3.1 Safety Boundary - VERIFIED
+
+- Status: `VERIFIED`; same branch／runtime commit and task pack.
+- Lane: `Raphael Core, Companion Reasoning, And Soul Talk`.
+- Safety result: safe harbor globally invalidates all pending Growth sessions
+  before page-local rendering, including Growth → Home → Soul Talk safety
+  transitions. Exiting safety in the same app run cannot revive or accept a
+  pre-safety rewrite. Active safe harbor cannot be washed false by an adapter
+  override; safety remains zero evidence, zero relationship/reward mutation.
+- Verification: same-page and off-page stale-action browser mutations pass;
+  normal-Pixi H10 continues to require the complete canonical system reply,
+  zero quick replies/SFX and deep-equal relationship／growth state inside the
+  required `27/27` release gate.
+- Human launch gates remain open: D1／D2／D3／D6 real devices, moderated
+  first-session comprehension, Raphael private blind 3 × 20, legal／privacy／
+  store-copy review and explicit Owner public-launch approval.
