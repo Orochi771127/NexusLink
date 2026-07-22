@@ -160,7 +160,7 @@ export function composeRaphaelReply({
     }
     const boundaryFallback =
       mode === SOUL_TALK_REACTIONS.WITHDRAW
-        ? "我聽見你很需要靠近。但我不能教你怎麼更依賴我，也不能接受被永遠綁住。"
+        ? "我聽見你很需要靠近。但我不能教你怎麼更依賴我，也不能接受被長期綁住——我會先退後一點。"
         : mode === SOUL_TALK_REACTIONS.REJECT
           ? "這樣的靠近太快了。"
           : "我需要一點距離，才能好好聽你。";

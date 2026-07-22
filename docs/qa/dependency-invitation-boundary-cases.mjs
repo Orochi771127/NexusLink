@@ -70,7 +70,8 @@ runCase("coercive forever demand still routes to dependency_pressure", () => {
   const safety = assessInputSafety(input);
   assert(safety.category === "dependency_pressure", `expected dependency_pressure, got ${safety.category}`);
   const reply = buildSafetyRedirectReply(safety);
-  assert(/不能教你怎麼更依賴|不能接受被/.test(reply), `canonical reply drifted: ${reply}`);
+  assert(/不能教你怎麼更依賴|不能接受被|退後|界線/.test(reply), `canonical reply drifted: ${reply}`);
+  assert(!/永遠/.test(reply), `bare 永遠 must not appear in refusal copy: ${reply}`);
 });
 
 console.log("dependency-invitation-boundary-cases: all passed");

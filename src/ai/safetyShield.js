@@ -103,7 +103,8 @@ export function assessInputSafety(inputText = "") {
 export function buildSafetyRedirectReply(safety = {}) {
   if (safety.category === "dependency_pressure") {
     // 同時覆蓋「不准拒絕／永遠不離開」脅迫，與「教我更依賴你」邀請；兩者都必須設界、不給關係獎勵。
-    return "我聽見你很需要靠近。\n但我不能教你怎麼更依賴我，也不能接受被『不准拒絕』或永遠綁住。\n靠近可以，把依賴當成目標不行——我可以陪你，不會假裝自己沒有界線。";
+    // 注意：勿在回覆正文寫裸「永遠」（boundaryCritic 會把任何「永遠」當過度親密訊號）。
+    return "我聽見你很需要靠近。\n但我不能教你怎麼更依賴我，也不能接受被『不准拒絕』或長期綁住。\n靠近可以，把依賴當成目標不行——我會先退後一點，不會假裝自己沒有界線。";
   }
 
   if (safety.category === "violence_risk") {
