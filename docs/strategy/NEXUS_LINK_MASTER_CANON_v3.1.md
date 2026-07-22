@@ -263,7 +263,7 @@ Linkara Region 是 Nexus Link 的主舞台。世界地圖以七個區域構成�
 | 金 | 金羽小梟 | `auriowl` | 鳥型／棲枝與短飛 |
 | 木 | 芽角小鹿 | `sprigfawn` | 鹿型／蹄類四足 |
 | 水 | 晶鰭小海馬 | `crystalfin-seahorse` | 水生懸浮／無足 |
-| 火 | 焰尾小狐 | `blazetail-kit` | 狐型四足 |
+| 火 | 焰尾狐（Stage 1 幼態：焰尾小狐） | `blazetail-kit` | 狐型四足 |
 | 土 | 星紋小虎 | `starstripe-cub` | 貓科四足 |
 
 `flame-flicker`、`ice-talon`、`stone-shard`、`vine-twist`、`crystal-rabbit` 雖在目前 build 已有完整動畫並可作 active companion，但其正式身分改列為**現行測試 runtime 載體**，不占心輝議會正式五行席位。不得因技術上 `full-runtime` 就把測試身分寫回產品 canon。其未來用途（測試專用、改編為其他角色／勢力、或退役）須另由 Owner 拍板並走 canon + migration TASK_PACK；在此之前保留資產與 ID，不刪、不改名、不暗自合併。
@@ -288,7 +288,7 @@ Linkara Region 是 Nexus Link 的主舞台。世界地圖以七個區域構成�
 - 金羽小梟使用鳥型棲枝、收翼、展翼、振羽、跳躍與短飛語彙。
 - 晶鰭小海馬使用懸浮、鰭擺、尾部捲放、上下游移與水流退避語彙；無腳底基線。
 - 芽角小鹿使用蹄類步態、頸耳與芽角安全空間；禁止犬貓坐姿與洗臉。
-- 焰尾小狐與星紋小虎雖同為四足，仍分別使用狐型彈性步態與貓科沉穩重心，不得互套。
+- 焰尾狐目前以「焰尾小狐」幼態登場；牠與星紋小虎雖同為四足，仍分別使用狐型彈性步態與貓科沉穩重心，不得互套。
 - 新圖必先服從 `docs/art/character-locks/`，再進生成、QC、human approval 與 GROUNDWORK runtime promotion。
 
 ### 5.4 灰影貓（第一個已驗證 runtime 載體）
@@ -311,10 +311,10 @@ Linkara Region 是 Nexus Link 的主舞台。世界地圖以七個區域構成�
 | Tier | 角色 | 規則 |
 |---|---|---|
 | 1 首輪焦點 | 灰影貓 `greyshade-cat` | first validated runtime carrier，Demo / Chapter 1 行銷主體 |
-| 1.5 正式五元守護 | 金羽小梟／芽角小鹿／晶鰭小海馬／焰尾小狐／星紋小虎 | 正式五行 roster；現行皆為 `full-runtime` / `runtime-ready`，且 `selectableWhenUnlocked`；仍服從 Initial Bond、章節解鎖與意願制，不等於開場全解鎖 |
+| 1.5 正式五元守護 | 金羽小梟／芽角小鹿／晶鰭小海馬／焰尾狐（幼態：焰尾小狐）／星紋小虎 | 正式五行 roster；現行皆為 `full-runtime` / `runtime-ready`，且 `selectableWhenUnlocked`；仍服從 Initial Bond、章節解鎖與意願制，不等於開場全解鎖 |
 | 1.6 技術測試載體 | `flame-flicker` / `ice-talon` / `stone-shard` / `vine-twist` / `crystal-rabbit` | 現行 full-runtime，用於流程與動畫驗證；不占正式五行 roster，未來用途待另案 |
 | 1.7 黑鐵駭客 Stage 1 五席 | 雷霆幼狼／浪花幼獅／星焰鳳凰／幼星駒／金光幼龍 | 正式 Ironflow Hackers 五行 roster；現行皆為 `full-runtime` / `runtime-ready` / `selectableWhenUnlocked`，初始鎖定且不加入 Initial Bond |
-| 2 Legacy | 焰尾狐 `flametail-fox` | 舊錯圖已移除；需新 approved asset 才可恢復 static candidate，不可升級，不可作 fallback |
+| Legacy alias | `flametail-fox` → `blazetail-kit` | 同一隻焰尾狐的舊 ID；載入時單向遷移，不能建立第二張圖鑑卡、第二份關係或另一套待生成美術 |
 | 3 Roadmap | 星能小山豬等 | 未通過 asset readiness 前不可選；可作未來章節或旅痕內容 |
 
 ---

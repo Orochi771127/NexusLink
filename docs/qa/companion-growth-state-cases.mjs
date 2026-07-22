@@ -171,6 +171,83 @@ await runCase("canonical relationship wins over stale mirror and keeps known loc
   assertEqual(normalized.companionStates.byId["unknown-id"], undefined, "unknown canonical record removed");
 });
 
+await runCase("legacy Flametail companion record migrates identity, Growth provenance and baseline key", () => {
+  const seed = store.normalizeState({
+    activeCompanionId: "blazetail-kit",
+    unlockedCompanionIds: ["blazetail-kit"],
+    bond: 33,
+    trust: 21
+  });
+  const legacyRecord = structuredClone(seed.companionStates.byId["blazetail-kit"]);
+  legacyRecord.growth.evidence = [{
+    key: "care:1:legacy-flametail:stillness",
+    rootContextKey: "care:1:legacy-flametail",
+    companionId: "flametail-fox",
+    tendency: "attunement",
+    sourceType: "care",
+    sourceId: "legacy-flametail:stillness",
+    chapterNo: 1,
+    memoryId: null,
+    traceId: null,
+    createdAt: 1784700000000,
+    growthSafetyExcluded: false,
+    legacyAttributed: true
+  }];
+  legacyRecord.growth.migration.legacyBaselineKey = "legacy:v1:flametail-fox:relationship";
+
+  const once = store.normalizeState({
+    ...seed,
+    activeCompanionId: "flametail-fox",
+    unlockedCompanionIds: ["flametail-fox"],
+    companionStates: {
+      version: 1,
+      byId: { "flametail-fox": legacyRecord }
+    }
+  });
+  const twice = store.normalizeState(once);
+  const record = once.companionStates.byId["blazetail-kit"];
+
+  assertEqual(once.activeCompanionId, "blazetail-kit", "legacy active owner canonicalized");
+  assertEqual(once.companionStates.byId["flametail-fox"], undefined, "legacy companion record removed");
+  assertEqual(record.relationship.bond, 33, "legacy relationship retained");
+  assertEqual(record.growth.evidence.length, 1, "legacy evidence retained");
+  assertEqual(record.growth.evidence[0].companionId, "blazetail-kit", "evidence owner canonicalized");
+  assertEqual(
+    record.growth.migration.legacyBaselineKey,
+    "legacy:v1:blazetail-kit:relationship",
+    "legacy baseline key canonicalized"
+  );
+  assertEqual(JSON.stringify(twice.companionStates), JSON.stringify(once.companionStates), "record migration idempotent");
+});
+
+await runCase("canonical Blazetail record wins when the legacy alias also exists", () => {
+  const canonicalState = store.normalizeState({
+    activeCompanionId: "blazetail-kit",
+    unlockedCompanionIds: ["blazetail-kit"],
+    bond: 28,
+    trust: 19
+  });
+  const canonicalRecord = structuredClone(canonicalState.companionStates.byId["blazetail-kit"]);
+  const legacyRecord = structuredClone(canonicalRecord);
+  legacyRecord.relationship.bond = 99;
+  legacyRecord.relationship.trust = 99;
+
+  const normalized = store.normalizeState({
+    ...canonicalState,
+    companionStates: {
+      version: 1,
+      byId: {
+        "flametail-fox": legacyRecord,
+        "blazetail-kit": canonicalRecord
+      }
+    }
+  });
+
+  assertEqual(normalized.companionStates.byId["blazetail-kit"].relationship.bond, 28, "canonical bond wins");
+  assertEqual(normalized.companionStates.byId["blazetail-kit"].relationship.trust, 19, "canonical trust wins");
+  assertEqual(normalized.companionStates.byId["flametail-fox"], undefined, "duplicate alias removed");
+});
+
 await runCase("present malformed canonical field fails closed instead of legacy attribution", () => {
   for (const companionStates of [
     null,

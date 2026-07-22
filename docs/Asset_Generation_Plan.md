@@ -10,14 +10,12 @@ The current product direction is an AI emotional habitat: one URL, one lake camp
 
 These are the first assets required to make the current prototype feel less like a placeholder and more like an emotional habitat.
 
-### `assets/flametail-fox.png`
+### `assets/flametail-fox.png` — superseded; do not generate
 
-- Purpose: replacement Flametail Fox companion image; previous root file was removed after human review because the content was incorrect
-- Size: 512x512 px recommended
-- Frame count: 1
-- Background type: transparent PNG
-- PixiJS usage: only after a new approved transparent PNG exists; until then runtime must use placeholder graphics
-- Status: replacement needed / not current runtime-ready
+- Canonical identity: 焰尾狐 uses runtime ID `blazetail-kit`; 焰尾小狐 is its Stage 1 form name.
+- Current art: approved portrait plus 29 animation sheets already live under `assets/characters/blazetail-kit/`.
+- Legacy rule: `flametail-fox` is a one-way save alias only. Do not recreate this root file or open a second generation queue.
+- Status: superseded by the shipped `blazetail-kit` illustrated runtime package.
 
 ### `assets/backgrounds/lake-camp-night.png`
 
@@ -79,41 +77,13 @@ These are the first assets required to make the current prototype feel less like
 
 These assets add emotional state variation after the static companion image is confirmed working.
 
-### `assets/sprites/flametail-fox/idle.png`
+### Flametail companion animation package — completed
 
-- Purpose: default companion idle animation
-- Size: 128x128 px per frame
-- Frame count: 4 frames, horizontal sheet
-- Background type: transparent PNG
-- PixiJS usage: future `AnimatedSprite`
-- Status: planned
-
-### `assets/sprites/flametail-fox/happy.png`
-
-- Purpose: positive reaction animation
-- Size: 128x128 px per frame
-- Frame count: 4 frames, horizontal sheet
-- Background type: transparent PNG
-- PixiJS usage: triggered by caring, touch, or warm messages
-- Status: planned
-
-### `assets/sprites/flametail-fox/tired.png`
-
-- Purpose: low-energy state animation
-- Size: 128x128 px per frame
-- Frame count: 4 frames, horizontal sheet
-- Background type: transparent PNG
-- PixiJS usage: triggered when Energy is low
-- Status: planned
-
-### `assets/sprites/flametail-fox/defensive.png`
-
-- Purpose: boundary reaction animation
-- Size: 128x128 px per frame
-- Frame count: 4 frames, horizontal sheet
-- Background type: transparent PNG
-- PixiJS usage: triggered by repeated input, high SpamScore, or low Trust
-- Status: planned
+- Canonical character: 焰尾狐; Stage 1 form: 焰尾小狐; runtime ID: `blazetail-kit`.
+- Runtime root: `assets/characters/blazetail-kit/`.
+- Coverage: approved portrait plus 29 illustrated animation sheets, including idle, positive reaction, fatigue and boundary/body-language states.
+- Status: shipped and runtime-connected.
+- Legacy rule: do not generate `assets/sprites/flametail-fox/*`; `flametail-fox` is a save migration alias only.
 
 ### `assets/fx/emotional-particles.png`
 
@@ -137,4 +107,4 @@ These assets add emotional state variation after the static companion image is c
 
 ## Implementation Rule
 
-Do not expand into large asset batches before generating a new human-approved Flametail Fox replacement and confirming that the current runtime can load and display it successfully on GitHub Pages.
+Do not reopen a Flametail Fox replacement batch: the approved `blazetail-kit` illustrated package is already runtime-connected. Any future form upgrade must extend that canonical package and pass the normal human approval and asset-readiness gate.

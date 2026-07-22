@@ -11,10 +11,11 @@ Use this folder for:
 - visual effects
 - audio assets
 
-Current flametail asset status:
+Current Flametail Fox asset status:
 
 ```text
-assets/flametail-fox.png is intentionally absent
+canonical runtime root: assets/characters/blazetail-kit/
+legacy alias only: flametail-fox -> blazetail-kit
 ```
 
-The previous root `assets/flametail-fox.png` was removed after human review because the image content was incorrect. Until a new approved Flametail Fox asset is generated, the runtime must use the PixiJS Graphics placeholder instead of a stale file path.
+焰尾狐 is the character identity; 焰尾小狐 is its Stage 1 form name. The approved portrait and 29 illustrated animation sheets already live under `assets/characters/blazetail-kit/`. The removed root `assets/flametail-fox.png` must not be recreated: `flametail-fox` is a one-way save alias, not a second character or asset-production target.

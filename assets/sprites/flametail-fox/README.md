@@ -1,22 +1,15 @@
-# Flametail Fox Sprite Assets
+# Flametail Fox Legacy Sprite Path
 
-This folder stores sprite sheets for the Flametail Fox companion.
+This empty directory is retained only as a historical tombstone. Do not add
+sprites here.
 
-Planned files:
+焰尾狐 is the canonical character identity, 焰尾小狐 is its Stage 1 form, and
+its runtime ID is `blazetail-kit`. The approved portrait, 29 illustrated
+animation sheets and metadata live under:
 
 ```text
-idle.png
-happy.png
-tired.png
-defensive.png
-walk.png
-react.png
+assets/characters/blazetail-kit/
 ```
 
-Recommended sprite sheet format:
-
-- transparent PNG
-- consistent frame size
-- horizontal frame layout
-- feet or body anchor aligned across frames
-- readable at mobile scale
+`flametail-fox` is a one-way save alias only. It must not become another
+character, Codex card, relationship record or asset-production root.

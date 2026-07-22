@@ -6,7 +6,7 @@ The shared 29 animation IDs are semantic intents, not identical poses. Each form
 
 | Family | Character | Locomotion datum | Core acting language | Never do |
 |---|---|---|---|---|
-| Vulpine quadruped | 焰尾小狐 | four paws / bottom-center | springy steps, tail-led arcs, ear and shoulder anticipation | generic wolf heaviness, permanent flame smear, dog-like panting |
+| Vulpine quadruped | 焰尾狐（Stage 1 幼態：焰尾小狐） | four paws / bottom-center | springy steps, tail-led arcs, ear and shoulder anticipation | generic wolf heaviness, permanent flame smear, dog-like panting |
 | Feline quadruped | 星紋小虎 | four paws / bottom-center | grounded weight shifts, shoulder-led steps, tail balance, deliberate paw placement | fox bounce, bear lumber, submissive pet obedience |
 | Cervid hoofed | 芽角小鹿 | four hooves / bottom-center | light hoof steps, neck and ear phrasing, cautious lateral retreat, antler clearance | canine sit, paw grooming, feline pounce, antler rubber-bending |
 | Avian | 金羽小梟 | talons when grounded; controlled return datum in flight | head turns, feather compression, wing mantle, hop, short low flight | four-leg walk, mammal hug, wing-arms with fingers, continuous hovering by default |

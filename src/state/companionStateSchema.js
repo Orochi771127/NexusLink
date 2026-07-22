@@ -1,4 +1,5 @@
 import { DEFAULT_COMPANION_ID, isKnownCompanionId } from "../data/companionRegistry.js";
+import { resolveCanonicalCompanionId } from "../data/companionRuntimePolicy.js";
 import { clamp } from "../utils/clamp.js";
 
 export const COMPANION_STATE_SCHEMA_VERSION = 1;
@@ -87,8 +88,9 @@ export function createDefaultCompanionStates(
   activeCompanionId = DEFAULT_COMPANION_ID,
   now = Date.now()
 ) {
-  const companionId = isKnownCompanionId(activeCompanionId)
-    ? activeCompanionId
+  const canonicalId = resolveCanonicalCompanionId(activeCompanionId);
+  const companionId = isKnownCompanionId(canonicalId)
+    ? canonicalId
     : DEFAULT_COMPANION_ID;
   return {
     version: COMPANION_STATE_SCHEMA_VERSION,
@@ -123,15 +125,29 @@ export function normalizeCompanionStates(rawBundle, {
   now = Date.now()
 } = {}) {
   const normalizedNow = normalizeRequiredTimestamp(now, Date.now());
-  const activeId = isKnownCompanionId(activeCompanionId)
-    ? activeCompanionId
+  const canonicalActiveId = resolveCanonicalCompanionId(activeCompanionId);
+  const activeId = isKnownCompanionId(canonicalActiveId)
+    ? canonicalActiveId
     : DEFAULT_COMPANION_ID;
 
   if (hasCanonicalCompanionStates(rawBundle)) {
     const byId = {};
+    // Canonical records always win when both the shipped id and a legacy alias
+    // exist. This prevents stale `flametail-fox` data from overwriting a newer
+    // `blazetail-kit` relationship or Growth record.
     for (const [companionId, rawRecord] of Object.entries(rawBundle.byId)) {
       if (!isKnownCompanionId(companionId)) continue;
       byId[companionId] = normalizeCompanionRecord(rawRecord, companionId, normalizedNow);
+    }
+    for (const [sourceCompanionId, rawRecord] of Object.entries(rawBundle.byId)) {
+      const companionId = resolveCanonicalCompanionId(sourceCompanionId);
+      if (companionId === sourceCompanionId || !isKnownCompanionId(companionId) || byId[companionId]) continue;
+      byId[companionId] = normalizeCompanionRecord(
+        rawRecord,
+        companionId,
+        normalizedNow,
+        sourceCompanionId
+      );
     }
 
     if (!byId[activeId]) {
@@ -198,10 +214,11 @@ export function normalizeCompanionStates(rawBundle, {
 }
 
 export function getCompanionRelationship(companionStates, companionId) {
-  if (!hasCanonicalCompanionStates(companionStates) || !isKnownCompanionId(companionId)) {
+  const canonicalId = resolveCanonicalCompanionId(companionId);
+  if (!hasCanonicalCompanionStates(companionStates) || !isKnownCompanionId(canonicalId)) {
     return null;
   }
-  const relationship = companionStates.byId?.[companionId]?.relationship;
+  const relationship = companionStates.byId?.[canonicalId]?.relationship;
   return relationship && typeof relationship === "object"
     ? createDefaultRelationshipState(relationship)
     : null;
@@ -212,16 +229,17 @@ export function getCompanionRelationship(companionStates, companionId) {
  * companion record while preserving growth data. This function is pure.
  */
 export function archiveRelationshipMirror(targetState, companionId = targetState?.activeCompanionId) {
-  if (!targetState || !isKnownCompanionId(companionId)) return targetState;
+  const canonicalId = resolveCanonicalCompanionId(companionId);
+  if (!targetState || !isKnownCompanionId(canonicalId)) return targetState;
   if (!hasCanonicalCompanionStates(targetState.companionStates)) return targetState;
 
-  const existing = targetState.companionStates.byId?.[companionId];
+  const existing = targetState.companionStates.byId?.[canonicalId];
   const record = existing
-    ? normalizeCompanionRecord(existing, companionId, Date.now())
-    : createCompanionRecord({ companionId, relationship: {}, now: Date.now() });
+    ? normalizeCompanionRecord(existing, canonicalId, Date.now())
+    : createCompanionRecord({ companionId: canonicalId, relationship: {}, now: Date.now() });
   const byId = {
     ...targetState.companionStates.byId,
-    [companionId]: {
+    [canonicalId]: {
       ...record,
       relationship: createDefaultRelationshipState(targetState)
     }
@@ -247,14 +265,15 @@ export function getCompanionCodexRevealStage(companionStates, companionId) {
 }
 
 export function getCompanionCodexGrowthPresentation(companionStates, companionId) {
-  if (!hasCanonicalCompanionStates(companionStates) || !isKnownCompanionId(companionId)) {
+  const canonicalId = resolveCanonicalCompanionId(companionId);
+  if (!hasCanonicalCompanionStates(companionStates) || !isKnownCompanionId(canonicalId)) {
     return {
       formalStage: "initial_awakened",
       revealStage: "initial_awakened",
       isLegacyArchive: false
     };
   }
-  const record = companionStates.byId?.[companionId];
+  const record = companionStates.byId?.[canonicalId];
   if (!record || typeof record !== "object") {
     return {
       formalStage: "initial_awakened",
@@ -302,20 +321,20 @@ function createCompanionRecord({
   };
 }
 
-function normalizeCompanionRecord(rawRecord, companionId, now) {
+function normalizeCompanionRecord(rawRecord, companionId, now, sourceCompanionId = companionId) {
   const record = rawRecord && typeof rawRecord === "object" ? rawRecord : {};
   const relationship = record.relationship === null
     ? null
     : createDefaultRelationshipState(record.relationship);
   return {
     relationship,
-    growth: normalizeGrowth(record.growth, companionId, now)
+    growth: normalizeGrowth(record.growth, companionId, now, sourceCompanionId)
   };
 }
 
-function normalizeGrowth(rawGrowth, companionId, now) {
+function normalizeGrowth(rawGrowth, companionId, now, sourceCompanionId = companionId) {
   const growth = rawGrowth && typeof rawGrowth === "object" ? rawGrowth : {};
-  const migration = normalizeMigration(growth.migration, { companionId });
+  const migration = normalizeMigration(growth.migration, { companionId, sourceCompanionId });
   const stage = maxStage(normalizeStage(growth.stage), migration.legacyStageFloor);
   const rawEvidence = Array.isArray(growth.evidence) ? growth.evidence : [];
   const evidence = dedupeEvidence(rawEvidence
@@ -340,7 +359,7 @@ function normalizeEvidence(rawEvidence, companionId) {
   // Growth evidence is opt-in provenance. Missing, stringified, or truthy
   // safety markers fail closed instead of being laundered into explicit false.
   if (!evidence || evidence.growthSafetyExcluded !== false) return null;
-  if (evidence.companionId !== companionId) return null;
+  if (resolveCanonicalCompanionId(evidence.companionId) !== companionId) return null;
   if (!SOURCE_TYPE_SET.has(evidence.sourceType)) return null;
   const key = normalizeText(evidence.key, "", 180);
   const rootContextKey = normalizeText(evidence.rootContextKey, "", 180);
@@ -393,7 +412,7 @@ function normalizeCoverage(rawCoverage, stage, now) {
   };
 }
 
-function normalizeMigration(rawMigration, { companionId = null } = {}) {
+function normalizeMigration(rawMigration, { companionId = null, sourceCompanionId = companionId } = {}) {
   const migration = rawMigration && typeof rawMigration === "object" ? rawMigration : {};
   const appliedVersion = migration.appliedVersion;
   const validVersion = typeof appliedVersion === "number"
@@ -402,8 +421,12 @@ function normalizeMigration(rawMigration, { companionId = null } = {}) {
   const baselineKey = normalizeOptionalText(migration.legacyBaselineKey, 180);
   const relationshipKey = companionId ? `legacy:v1:${companionId}:relationship` : null;
   const archiveKey = companionId ? `legacy:v1:${companionId}:codex-archive` : null;
-  const isRelationshipMarker = validVersion && baselineKey === relationshipKey;
-  const isArchiveMarker = validVersion && baselineKey === archiveKey;
+  const sourceRelationshipKey = sourceCompanionId ? `legacy:v1:${sourceCompanionId}:relationship` : null;
+  const sourceArchiveKey = sourceCompanionId ? `legacy:v1:${sourceCompanionId}:codex-archive` : null;
+  const isRelationshipMarker = validVersion
+    && (baselineKey === relationshipKey || baselineKey === sourceRelationshipKey);
+  const isArchiveMarker = validVersion
+    && (baselineKey === archiveKey || baselineKey === sourceArchiveKey);
 
   if (!isRelationshipMarker && !isArchiveMarker) {
     return {
@@ -420,7 +443,7 @@ function normalizeMigration(rawMigration, { companionId = null } = {}) {
       ? normalizeOptionalStage(migration.legacyStageFloor)
       : null,
     legacyCodexRevealFloor: normalizeOptionalStage(migration.legacyCodexRevealFloor),
-    legacyBaselineKey: baselineKey
+    legacyBaselineKey: isRelationshipMarker ? relationshipKey : archiveKey
   };
 }
 
@@ -454,7 +477,9 @@ function normalizeOptionalStage(value) {
 
 function uniqueKnownIds(values) {
   if (!Array.isArray(values)) return [];
-  return [...new Set(values.filter((companionId) => isKnownCompanionId(companionId)))];
+  return [...new Set(values
+    .map((companionId) => resolveCanonicalCompanionId(companionId))
+    .filter((companionId) => isKnownCompanionId(companionId)))];
 }
 
 function normalizeStringList(values, limit) {

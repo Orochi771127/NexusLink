@@ -1,11 +1,13 @@
-# Character Lock Spec — 焰尾小狐 / Blazetail Kit
+# Character Lock Spec — 焰尾狐（Stage 1：焰尾小狐） / Blazetail Kit
 
 > Owner reference Photo 1 is the identity authority. This lock covers the Stage 1 form only.
 
 ## Identity
 
 - character_id: `blazetail-kit`
-- display_name: 焰尾小狐 / Blazetail Kit
+- display_name: 焰尾狐 / Blazetail Kit
+- stage_1_form_name: 焰尾小狐
+- legacy_id_alias: `flametail-fox`（只作存檔遷移；不是第二隻角色或第二套美術）
 - faction: 心輝議會
 - role: 火席；陪伴、溫度、勇氣與鼓舞
 - element: Fire

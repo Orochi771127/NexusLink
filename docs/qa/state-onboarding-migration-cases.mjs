@@ -61,6 +61,104 @@ runCase("legacy active companion without unlock array is kept selectable", () =>
   assertEqual(eligibility.canSelect, true, "active-only legacy selectability");
 });
 
+runCase("legacy Flametail id migrates one-way to the shipped Blazetail identity", () => {
+  const once = normalizeState({
+    activeCompanionId: "flametail-fox",
+    unlockedCompanionIds: ["flametail-fox"],
+    bond: 31,
+    companionPreferences: {
+      version: 1,
+      companions: {
+        "flametail-fox": {
+          replyLengthBias: "short",
+          learnedSignals: ["legacy-fire-signal"],
+          sessionCount: 3,
+          updatedAt: 1784700000000
+        }
+      }
+    },
+    resonance: {
+      companions: {
+        "flametail-fox": {
+          metAt: 1784600000000,
+          lastAskAt: 1784700000000,
+          declinedCount: 2,
+          joinedAt: 1784800000000
+        }
+      }
+    }
+  });
+  const twice = normalizeState(once);
+  const eligibility = getCompanionRuntimeEligibility("flametail-fox", once);
+
+  assertEqual(once.activeCompanionId, "blazetail-kit", "legacy active id canonicalized");
+  assertArrayEqual(once.unlockedCompanionIds, ["blazetail-kit"], "legacy unlock canonicalized");
+  assertEqual(eligibility.companion?.id, "blazetail-kit", "legacy eligibility resolves canonical companion");
+  assertEqual(eligibility.canSelect, true, "legacy identity remains selectable");
+  assertEqual(once.companionPreferences.companions["flametail-fox"], undefined, "legacy preference key removed");
+  assertEqual(
+    once.companionPreferences.companions["blazetail-kit"].learnedSignals[0],
+    "legacy-fire-signal",
+    "legacy preference retained"
+  );
+  assertEqual(once.resonance.companions["flametail-fox"], undefined, "legacy resonance key removed");
+  assertEqual(once.resonance.companions["blazetail-kit"].declinedCount, 2, "legacy resonance retained");
+  assertEqual(JSON.stringify(twice), JSON.stringify(once), "legacy migration idempotent");
+});
+
+runCase("canonical Flametail preference and bounded resonance merge win over the alias", () => {
+  const state = normalizeState({
+    activeCompanionId: "blazetail-kit",
+    unlockedCompanionIds: ["flametail-fox", "blazetail-kit"],
+    companionPreferences: {
+      companions: {
+        "flametail-fox": {
+          replyLengthBias: "short",
+          avoidComfortIntensity: 0.8,
+          learnedSignals: ["legacy-signal"],
+          sessionCount: 9,
+          updatedAt: 1784700000000
+        },
+        "blazetail-kit": {
+          replyLengthBias: "normal",
+          avoidComfortIntensity: 0.2,
+          learnedSignals: ["canonical-signal"],
+          sessionCount: 4,
+          updatedAt: 1784800000000
+        }
+      }
+    },
+    resonance: {
+      companions: {
+        "flametail-fox": {
+          metAt: 1784600000000,
+          lastAskAt: 1784700000000,
+          declinedCount: 7,
+          joinedAt: 1784900000000
+        },
+        "blazetail-kit": {
+          metAt: 1784650000000,
+          lastAskAt: 1784800000000,
+          declinedCount: 2,
+          joinedAt: 1784850000000
+        }
+      }
+    }
+  });
+  const profile = state.companionPreferences.companions["blazetail-kit"];
+  const resonance = state.resonance.companions["blazetail-kit"];
+
+  assertArrayEqual(state.unlockedCompanionIds, ["blazetail-kit"], "duplicate identity unlock deduped");
+  assertEqual(profile.replyLengthBias, "normal", "canonical preference scalar wins");
+  assertEqual(profile.avoidComfortIntensity, 0.2, "canonical preference intensity wins");
+  assertArrayEqual(profile.learnedSignals, ["legacy-signal", "canonical-signal"], "signals merge once");
+  assertEqual(profile.sessionCount, 9, "session count uses bounded max");
+  assertEqual(resonance.metAt, 1784600000000, "earliest meeting retained");
+  assertEqual(resonance.lastAskAt, 1784800000000, "latest ask retained");
+  assertEqual(resonance.declinedCount, 7, "decline count uses bounded max");
+  assertEqual(resonance.joinedAt, 1784850000000, "earliest join retained");
+});
+
 runCase("partial player profile and onboarding deep-merge safely", () => {
   const state = normalizeState({
     playerProfile: {

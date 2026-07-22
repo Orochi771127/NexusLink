@@ -245,13 +245,14 @@ Initial Bond 已接入：fresh save 固定呈現 `greyshade-cat` / `blazetail-ki
 | Tier | 角色 | ID | 規則 |
 |------|------|-----|------|
 | 1 First Runtime Carrier | 灰影貓 | `greyshade-cat` | 第一個已驗證 runtime 載體、fresh save default / fallback、完整 spritesheet；Initial Bond 後以選定者為 active companion |
-| 1 Formal Heartspark Council Stage 1 | 金羽小梟(金)／芽角小鹿(木)／晶鰭小海馬(水)／焰尾小狐(火)／星紋小虎(土) | `auriowl` / `sprigfawn` / `crystalfin-seahorse` / `blazetail-kit` / `starstripe-cub` | Owner 定版正式 roster；現行皆為 `full-runtime` / `runtime-ready` / `selectableWhenUnlocked`，但仍服從 Initial Bond、chapter gate 與意願制 |
+| 1 Formal Heartspark Council Stage 1 | 金羽小梟(金)／芽角小鹿(木)／晶鰭小海馬(水)／焰尾狐（幼態：焰尾小狐，火）／星紋小虎(土) | `auriowl` / `sprigfawn` / `crystalfin-seahorse` / `blazetail-kit` / `starstripe-cub` | Owner 定版正式 roster；現行皆為 `full-runtime` / `runtime-ready` / `selectableWhenUnlocked`，但仍服從 Initial Bond、chapter gate 與意願制 |
 | 1 Formal Ironflow Hackers Stage 1 | 雷霆幼狼(木)／浪花幼獅(水)／星焰鳳凰(火)／幼星駒(土)／金光幼龍(金) | `thunder-pup` / `wavecub` / `starflame-phoenix` / `star-foal` / `goldenspark-wyrm` | 黑鐵駭客正式五席；現行皆為 `full-runtime` / `runtime-ready` / `selectableWhenUnlocked`，但初始鎖定、不自動解鎖、不加入 Initial Bond |
 | 1 Runtime Test Carriers | 焰紋狐／冰晶狼／磐石熊／青藤鹿／晶石兔 | `flame-flicker` / `ice-talon` / `stone-shard` / `vine-twist` / `crystal-rabbit` | 現行 `full-runtime` 動畫測試載體；不占正式心輝議會五行席位，最終用途待另案 |
-| 2 Chapter Runtime Candidate | 焰尾狐 | `flametail-fox` | 已登錄；舊靜態圖因內容錯誤移除，需新 approved asset 才可作章節解鎖 runtime candidate；不可成為灰影貓 fallback |
 | 3 Roadmap Runtime Candidate | 星能小山豬 | `star-energy-boarlet` | 可逐章節升級為 runtime candidate；未通過 asset readiness 前不可選 |
 
 註：正式五元守護的外觀鎖定、512×512 runtime 資產、human approval 與 asset readiness gate 已完成；物種動作翻譯位於 `docs/art/`。鳥型、海馬型、鹿型不得套用通用四足動作。多角色版本首版仍維持「同一時間只有一隻 active companion」。
+
+註：焰尾狐的 canonical runtime ID 為 `blazetail-kit`；「焰尾小狐」是牠的 Stage 1 幼態名。舊 ID `flametail-fox` 只作單向存檔 alias，不能成為第二隻角色、第二份關係或另一套資產需求。
 
 註：`crystal-rabbit` 已使用自己的 `assets/characters/crystal-rabbit/` runtime root；過去借用 `thunder-pup` 目錄的命名債已解除。黑鐵駭客五席使用各自獨立資產根與 persona；Codex Stage 1 名錄應預先列出全部 Stage 1 角色並標示未相遇／鎖定，但 companion selector／active companion 仍須先合法解鎖。Codex 可見不建立 relationship 或選用資格。Fresh Initial Bond 仍只呈現 `greyshade-cat` / `blazetail-kit` / `crystalfin-seahorse`。
 

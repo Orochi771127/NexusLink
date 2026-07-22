@@ -4132,3 +4132,88 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
   x 20 turns, moderated first-session comprehension, real-device D1／D2／D3／D6,
   legal／privacy／store-copy review and explicit Owner launch approval remain
   open. This publication is not a `launch-ready` claim.
+
+### 2026-07-22 - Codex - Flametail Identity Canonicalization - IN PROGRESS
+
+- Status: `IN PROGRESS`; Owner approved the GROUNDWORK package in chat.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `TP-FLAMETAIL-IDENTITY-CANONICALIZATION-R1`.
+- Objective: make 焰尾狐 one identity with Stage-1 form name 焰尾小狐,
+  canonical runtime id `blazetail-kit`, and one-way legacy alias
+  `flametail-fox`. Migrate legacy active／unlocked／per-companion state,
+  preferences and resonance data without duplicating ownership or relationship
+  truth.
+- Groundwork boundary: `src/state/store.js`, companion state normalization and
+  the documentation-only `assets/sprites/README.md` path are explicitly
+  approved. No raster, asset manifest, save key, schema version, auto-unlock,
+  battle, safety or Growth-readiness rule may change.
+- Publication boundary: implement and verify locally only; no commit or push is
+  authorized by this approval.
+
+### 2026-07-22 - Codex - Flametail Art Identity Cleanup - IN PROGRESS
+
+- Status: `IN PROGRESS`; same Owner-approved task pack.
+- Lane: `Game Art, UI, And Visual Production`.
+- Objective: remove the false production gap that treated `flametail-fox` as a
+  second character. Existing `blazetail-kit` portrait and 29-sheet catalog are
+  the sole Stage-1 runtime art set for 焰尾狐／焰尾小狐.
+- Asset boundary: no image generation, deletion, copy, rename or byte change.
+  Current art and pipeline documents may be corrected; historical reference
+  material remains historical rather than becoming a second production queue.
+
+### 2026-07-22 - Codex - Flametail Persona Identity Cleanup - IN PROGRESS
+
+- Status: `IN PROGRESS`; same Owner-approved task pack.
+- Lane: `Raphael Core, Companion Reasoning, And Soul Talk`.
+- Objective: ensure legacy id migration resolves to the existing
+  `blaze_kit`／`blazetail-kit` persona and preference profile, never a duplicate
+  voice or companion memory owner.
+- Safety boundary: D2 terminal safety, canonical system reply, zero reward,
+  zero preference／memory mutation and all existing persona behavior remain
+  unchanged.
+
+### 2026-07-22 - Codex - Flametail Identity Canonicalization - VERIFIED
+
+- Status: `VERIFIED`; local implementation and QA are complete. No commit or
+  push was performed because this package authorized local work only.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `TP-FLAMETAIL-IDENTITY-CANONICALIZATION-R1`.
+- Runtime result: 焰尾狐 has one canonical runtime identity,
+  `blazetail-kit`; 焰尾小狐 is its Stage-1 form name. `flametail-fox` resolves
+  one-way during normalization and is never registered as a second companion.
+- Migration result: legacy active／unlock／relationship／Growth evidence／
+  migration provenance／preference／resonance ownership moves to the canonical
+  id. Canonical records win conflicts; bounded list／counter data merges once;
+  repeated normalization is idempotent.
+- Verification: JS syntax PASS; state migration `35/35`; Growth state `25/25`;
+  onboarding／Codex `16/16`; repo-native web release gate `28/28`; full-tree JS
+  syntax `276/276`; accessibility warnings `0`; console errors `0`.
+- Gate note: when the default port is occupied, the runner requires both
+  `--port <port>` and matching `--base http://127.0.0.1:<port>/`; setting only
+  `--port` leaves browser probes pointed at the default base URL.
+
+### 2026-07-22 - Codex - Flametail Art Identity Cleanup - VERIFIED
+
+- Status: `VERIFIED`; no raster, metadata catalog or image byte changed.
+- Lane: `Game Art, UI, And Visual Production`.
+- Runtime art truth: the existing `assets/characters/blazetail-kit/` package is
+  the sole 焰尾狐 Stage-1 art set: one approved portrait plus 29 illustrated
+  runtime sheets. The empty legacy sprite path is retained only as a tombstone
+  and explicitly forbids new files.
+- Documentation result: current asset index, pipeline, audit, generation plan,
+  prompt routing and root README no longer describe a missing second Flametail
+  asset. The old pixel prompt remains only as a marked historical record.
+- Non-result: no new form, awakening art, asset batch, copy, move, deletion or
+  fallback behavior was introduced.
+
+### 2026-07-22 - Codex - Flametail Persona Identity Cleanup - VERIFIED
+
+- Status: `VERIFIED`; identity migration reuses the existing
+  `blazetail-kit`／`blaze_kit` persona and canonical preference owner.
+- Lane: `Raphael Core, Companion Reasoning, And Soul Talk`.
+- Safety result: no RaphaelCore, safety dictionary, renderer or mutation-policy
+  code changed. The full release gate preserved D2 terminal behavior, complete
+  canonical safety replies and zero safety reward／memory／preference writes.
+- Honest limit: automated checks are green, but this identity cleanup does not
+  replace the existing real-device, moderated first-session, private blind,
+  legal／privacy and explicit Owner launch gates.

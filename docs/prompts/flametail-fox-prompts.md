@@ -1,6 +1,8 @@
 # Flametail Fox Prompt Templates
 
-Use these prompts to generate the first companion assets for Nexus Link.
+> **Historical / do not generate.** 焰尾狐 is canonical runtime ID `blazetail-kit`; 焰尾小狐 is its Stage 1 form name. Its approved portrait and 29 illustrated animation sheets already exist under `assets/characters/blazetail-kit/`. `flametail-fox` is a one-way save alias only, so these legacy pixel prompts must not create another registry entry or asset root.
+
+The content below is retained only to preserve production history.
 
 ---
 
