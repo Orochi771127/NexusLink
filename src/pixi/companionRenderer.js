@@ -303,8 +303,10 @@ function createCreatureSprite(texture, creature) {
   applyStaticCompanionTexturePolicy(texture);
   const companion = new PIXI.Container();
 
+  // 同 spriteSheetAnimationLoader.js 的修正：sprite anchor 是 bottom-center，
+  // container 原點 y=0 即腳底基準線，影子應貼齊腳底而非遠離。
   const shadow = new PIXI.Graphics();
-  shadow.ellipse(0, 54, 58, 14).fill({ color: 0x000000, alpha: 0.25 });
+  shadow.ellipse(0, 6, 58, 14).fill({ color: 0x000000, alpha: 0.25 });
   companion.addChild(shadow);
 
   const sprite = new PIXI.Sprite(texture);
