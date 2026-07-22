@@ -4053,3 +4053,82 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Deferred at this checkpoint: Black Iron runtime integration is a separately
   authorized follow-up GROUNDWORK/runtime package so its canon identity,
   promotion and rollback remain independently reviewable.
+
+### 2026-07-22 - Codex - Asset Workspace Hygiene R1 Publication - COMPLETED
+
+- Status: `COMPLETED`; PR #115 passed the strict required
+  `web-release-gate` and merged to `main` as
+  `d1fd342b6216e98e4844a60c5d2292b87d022963`.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `TP-ASSET-WORKSPACE-HYGIENE-R1` (publication closure).
+- Commits: cleanup `89fca47fef7931fff3864c65d02f8be03c1ee4f6`;
+  final PR head `fac05a3ec0a761c9b294f91b003c8ec8feae68bb`.
+- Result: the primary `main` worktree was fast-forwarded cleanly with zero
+  origin divergence before the separately authorized Ironflow package began.
+
+### 2026-07-22 - Codex - Ironflow Stage 1 Runtime Integration - COMPLETED
+
+- Status: `COMPLETED`; protected PR #116 passed the strict required
+  `web-release-gate` in 4m46s and merged to `main` as
+  `209baaf871d91e188baf56e9e0e5b999c56bccac`.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `TP-IRONFLOW-STAGE1-RUNTIME`.
+- Commits: asset promotion `de2f438b176d7d82dad98ab2983c08d3536b6965`;
+  runtime／docs `f45952636d1479e90a81ede905658b4aef864de9`;
+  exact QA evidence `8efb3913eb3a3a680ede8bbca6f0d433d638334c`.
+- Runtime result: `thunder-pup`, `wavecub`, `starflame-phoenix`, `star-foal`
+  and `goldenspark-wyrm` are `full-runtime`, `runtime-ready` and
+  `selectableWhenUnlocked`. Codex lists all 16 registry characters; fresh
+  saves label the five as unencountered and the selector still shows only the
+  chosen／unlocked companions. Initial Bond remains the existing three choices.
+- Boundary result: all five have incomplete Stage-1-only evolution lines, no
+  chapter auto-unlock and no adventure profile. Even an explicit unlock stays
+  fail-closed for Expedition. No G4, PvP, loot, power progression, save schema,
+  backend, build step or external LLM was added.
+- Verification: clean repo-native web gate `28/28`; JS syntax `276/276`;
+  onboarding／Codex／Expedition isolation `13/13`; Growth state `23/23`;
+  renderer lifecycle `29/29`; Growth browser `156/156`; accessibility warnings
+  `0`; console errors `0`.
+- Next safe action: stop at this published checkpoint. A future encounter／
+  willingness unlock package must be separately approved and must not turn
+  runtime readiness into automatic ownership.
+
+### 2026-07-22 - Codex - Ironflow Stage 1 Asset Promotion - COMPLETED
+
+- Status: `COMPLETED`; same PR #116 and merge as the engineering entry.
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `TP-IRONFLOW-STAGE1-RUNTIME` (asset and Codex surface).
+- Assets: promoted by `git mv` rather than duplicate copy: 145 illustrated
+  animation sheets, five 512x512 transparent portraits and five 29-action
+  metadata catalogs under independent `assets/characters/<id>/` roots.
+- Audit: 1,160 frames across 145 RGBA 2048x1024 sheets; every sheet is 2x4,
+  eight frames, bottom-center anchor `0.5/1`, maximum edge 2048 and no cropped
+  opaque edge. Formal asset-integrity requires exactly the 29 direct actions;
+  only five declared semantic profile aliases may fall back.
+- UI result: fresh Codex at 390x844 shows all five with `未相遇`; fresh selector
+  remains one companion, while an explicit five-character unlock survives
+  reload and shows six selectable cards. No new evolved form art or duplicate
+  asset payload was introduced.
+- Verification: formal manifest integrity PASS for all five, normal Pixi
+  metadata/idle/touch loading PASS, Growth browser `156/156`, no console or
+  page errors, and independent asset review found no Critical／High finding.
+
+### 2026-07-22 - Codex - Ironflow Persona And Safety Boundary - COMPLETED
+
+- Status: `COMPLETED`; same PR #116 and merge as the engineering entry.
+- Lane: `Raphael Core, Companion Reasoning, And Soul Talk`.
+- Task name: `TP-IRONFLOW-STAGE1-RUNTIME` (persona／voice／D2 closure).
+- Work performed: added five companion-specific persona profiles and 35 local
+  voice packs／75 authored lines. Emotional companion strategies may prefer
+  those packs; practical questions continue through the existing NLU path.
+  Safety remains terminal before renderer, recall, anti-loop, variants or
+  preference repair and cannot be character-styled away.
+- Verification: persona／boundary `27/27`; D2 safety terminal `56/56`, covering
+  every one of the 16 full-runtime personas at energy `0／7／10`, seven
+  fail-closed mutations and caution regulation. Required assertions include
+  the complete canonical system reply, zero quick replies／SFX／reward／memory／
+  trace／preference write and deep-equal gameplay／relationship／growth state.
+- Honest limit: automated release checks are green, but private blind 3 testers
+  x 20 turns, moderated first-session comprehension, real-device D1／D2／D3／D6,
+  legal／privacy／store-copy review and explicit Owner launch approval remain
+  open. This publication is not a `launch-ready` claim.

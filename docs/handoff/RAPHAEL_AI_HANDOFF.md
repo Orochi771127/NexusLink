@@ -10,12 +10,12 @@
 
 | 欄位 | 值 |
 |------|-----|
-| `last_updated` | 2026-07-22（Companion Growth G3.1 consented care source；**當前操作真相以 current `main` HEAD + `docs/agent/AI_EXECUTION_LEDGER.md` 為準**） |
-| `last_agent` | Codex（G3.1 care source publication） |
+| `last_updated` | 2026-07-22（Ironflow Hackers Stage 1 runtime publication；**當前操作真相以 current `main` HEAD + `docs/agent/AI_EXECUTION_LEDGER.md` 為準**） |
+| `last_agent` | Codex（Ironflow Stage 1 runtime publication） |
 | `active_branch` | `main`（2026-07-02 起單線開發，integrate 分支已退役） |
-| `runtime_baseline` | `13bbd19568f28439cfb2f862ed9257017eb7b246`（已發布 Companion Growth G3.1 runtime component；main merge `7eebddb`） |
+| `runtime_baseline` | `209baaf871d91e188baf56e9e0e5b999c56bccac`（PR #116 已發布 Ironflow Stage 1 runtime；asset `de2f438`、runtime `f459526`、evidence `8efb391`） |
 | `rc_closure_commit` | `220e2fdbefaa4a2a7ecc2e853f68869bc4560d81`；乾淨 checkout exact-commit Web **17/17**、sealed holdout **48/48** |
-| `publication` | PR #114 已於 2026-07-22 通過 final PR HEAD `d39a619` 的 strict required `web-release-gate`，並合併至 `main`；merge commit `7eebddb7b97bf51840132ea5dafd33bdab0362f8` |
+| `publication` | PR #116 已於 2026-07-22 通過 final PR HEAD `8efb391` 的 strict required `web-release-gate`，並合併至 `main`；merge commit `209baaf871d91e188baf56e9e0e5b999c56bccac` |
 | `workspace` | `C:\Users\User\NexusLink_RaphaelAI_Workspace\NexusLink` |
 | `do_not_touch` | `AIForgeNexus2\NexusLink`（舊 checkout，易與本工作區分叉） |
 
@@ -24,6 +24,8 @@
 ## 一句話現況
 
 RaphaelCore JS v1 → Soul Architecture v1.5 → NLU v1 → Stage 4 → advisory training / Nuwa → 自然對話 v2–v6 → Reflective Care V1 已落在 `main`。**現行 runtime 已由 Soul Talk 呼叫 `runRaphaelCore()`，且 Persona Constitution / constitution critic 已接入。** PR #113 發佈 Companion Growth G3 evidence foundation；PR #114 的 G3.1 runtime `13bbd19` 再讓 Heart Phase completion 成為 consent-respecting care source，並在 clean exact `e2477bc` 通過 web release **27/27**、Growth browser **153/153**、Map browser **45/45**；final PR HEAD `d39a619` 的 required gate 成功後，已合併為 `main` commit `7eebddb`。
+
+PR #116 另已把黑鐵駭客五席 `thunder-pup / wavecub / starflame-phoenix / star-foal / goldenspark-wyrm` 發布為 `full-runtime`：圖鑑從 fresh save 預列全部 16 席並將未結緣者標成「未相遇」，selector 仍嚴格依 `unlockedCompanionIds`；Initial Bond 三選一未改、五席不自動解鎖。五席有各自本地 voice pack／persona 與正式 29-action illustrated catalog，但沒有 adventure profile，所以 Expedition 仍 fail-closed。Final PR HEAD `8efb391` 的 strict required gate 通過後，已合併為 `main` commit `209baaf`。
 
 **誠實邊界（不可誇大）：**
 
@@ -46,14 +48,15 @@ RaphaelCore JS v1 → Soul Architecture v1.5 → NLU v1 → Stage 4 → advisory
 |------|------|------|
 | 自然對話 v2–v6 | v6 通過結構化 Beta 稽核（3 sessions / 60 互動 60/60；evidence_class=structured_beta） | `docs/qa/RAPHAEL_CONVERSATION_EVAL_V6_LIMITED_BETA_2026-07-13.md` |
 | 密封 holdout v1.0.0 | **48/48 PASS（exact runtime commit `c756337`）**；quality flags 0、console errors 0、human blind review `not_run`。`hardGateOk` 是輔助證據，不單獨代表可發版 | `docs/qa/_raphael_conversation_holdout_output.json` + repo-native D2 gates |
-| D2 safety terminal focused gate | **21/21 PASS（G2 required gate）**：13 個 energy/persona regressions、7 個 mutation fail-closed、1 個 caution regulation；完整 canonical reply、零 quick reply／relationship／growth／記憶／trace／reward／偏好寫入 | `node docs/qa/_run_safety_terminal_invariant.mjs` |
+| D2 safety terminal focused gate | **56/56 PASS（current required gate）**：16 個 full-runtime persona × energy 0／7／10、7 個 mutation fail-closed、1 個 caution regulation；完整 canonical reply、零 quick reply／relationship／growth／記憶／trace／reward／偏好寫入 | `node docs/qa/_run_safety_terminal_invariant.mjs` |
 | Reflective Care V1 | dialogue loop 21/21（含 6 care/symbolic + 1 safety-precedence）；opt-in、無獎勵、無記憶寫入 | `docs/qa/RAPHAEL_REFLECTIVE_CARE_V1_2026-07-14.md` |
 | Nuwa advisory v0.3 | +daily_texture/small_moments/sleepless、no_sleep_pressure 哨兵；trusted:false | ledger Lane 3 2026-07-13（NLU 訓練批次） |
 | NLU 詞庫擴充 | 情感詞 19→60、程度副詞 7→16、否定詞 6→11、約 60 口語/簡體變體；TR-17..30 | ledger Lane 3 2026-07-13（NLU 訓練批次） |
-| Web release gate | **27/27 automated required PASS**（clean exact G3.1 docs HEAD `e2477bc`）；final PR HEAD `d39a619` strict required check SUCCESS，merged as `7eebddb`；JS syntax 275/275，accessibility warnings 0 | GitHub required check + `docs/qa/_run_web_release_gate.py` |
+| Web release gate | **28/28 automated required PASS**（clean exact Ironflow runtime HEAD `f459526`）；final PR HEAD `8efb391` strict required check SUCCESS，merged as `209baaf`；JS syntax 276/276，accessibility warnings 0 | GitHub required check + `docs/qa/_run_web_release_gate.py` |
 | Real Soul Talk safety UI | **7/7 PASS**：完整 system reply、零 chips/SFX/relationship/growth delta、preference 不變、critical save 即時完成 | `docs/qa/_run_safety_terminal_ui_gate.py` + web release output |
 | Companion Growth G2 | State 23/23、browser 75/75、renderer 29/29、session owner 9/9；A→B→A／save／reload／offline recovery 隔離 | `docs/qa/companion-growth-state-cases.mjs` + required browser gate |
-| Companion Growth G3.1 | Engine 16/16、runtime 16/16、session 17/17、Growth browser 153/153、Map browser 45/45、四語系 417/417；clean exact web gate 27/27 | `companionGrowthSessionEngine.js` + `companionGrowthController.js` + real UI／source-owner mutations |
+| Companion Growth G3.1 | Engine 16/16、runtime 16/16、session 17/17、Growth browser 156/156（含 Ironflow Codex／selector reload）、Map browser 45/45、四語系 417/417；clean exact web gate 28/28 | `companionGrowthSessionEngine.js` + `companionGrowthController.js` + real UI／source-owner mutations |
+| Ironflow Stage 1 runtime | **Published**：五席 145 sheets + 5 portraits + 5 manifests；Codex／fresh lock／Expedition fail-closed 13/13、persona 27/27、Safety 56/56；Initial Bond 不變 | PR #116 + `docs/qa/_web_release_gate_output.json` |
 
 **尚未關閉的人類 gate：** D1/D2/D3/D6 真機／瀏覽器矩陣、3 位獨立測試者 × 20 回合 private-blind、first-session moderated comprehension test，以及法務/隱私/商店文案審查。
 
@@ -73,6 +76,7 @@ RaphaelCore JS v1 → Soul Architecture v1.5 → NLU v1 → Stage 4 → advisory
 | 6.1 | D2 safety terminal invariant + repo-native content gate | ✅ `main` / `c756337`：focused 18/18、UI 6/6、sealed 48/48、web 17/17 |
 | 7 | RC closure + 同意制 Beta 回饋收集 + 正式 private-blind 人測 + 真機/法務 gate | ✅ Docs/QA closure `220e2fd` verified；human gates `not_run`，不得以 automated PASS 取代 |
 | Growth G3.1 | G1 session observation + G2 per-companion truth + G3 foundation + consented care source | ✅ runtime `13bbd19`；PR #114 merged as `7eebddb`；non-standoff readiness 與 G4 offer／advance 未實作 |
+| Ironflow Stage 1 | 黑鐵駭客五席 runtime assets、Codex 預列、unlock-gated selector、persona／voice | ✅ asset `de2f438` + runtime `f459526`；PR #116 merged as `209baaf`；相遇章節／自動解鎖、Expedition、G4 與 PvP 均未實作 |
 
 ---
 
@@ -175,7 +179,7 @@ Player input
 
 | 風險 | 嚴重度 | 說明 |
 |------|--------|------|
-| D2 safety false-pass 回歸 | 中 | 舊 evaluator 曾接受截斷正文；current repo-native 21/21、real-UI 7/7 與 normal-Pixi H10 已封住 canonical body 及 relationship/growth mutation，但外部 `hardGateOk` 仍不可單獨作發版證據 |
+| D2 safety false-pass 回歸 | 中 | 舊 evaluator 曾接受截斷正文；current repo-native 56/56、real-UI 7/7 與 normal-Pixi H10 已封住 canonical body 及 relationship/growth mutation，但外部 `hardGateOk` 仍不可單獨作發版證據 |
 | 人類驗證缺口 | **高** | private-blind 人測 not_run；自動化 gate 全綠 ≠ 獨立人類驗證，對外宣稱受限於 Limited Beta 標籤 |
 | Care 定位漂移 | 中 | Reflective Care V1 不得被行銷/描述為治療、諮商、診斷或危機服務 |
 | NLU rule-based 覆蓋率 | 低 | 未覆蓋說法會落到 clarifying/grounded fallback；後續 case-first 擴充 |
@@ -219,7 +223,7 @@ python docs/qa/_run_stage4_human_playtest.py
 python docs/qa/_run_touch_fatigue_daytime.py
 ```
 
-2026-07-14 的 harness 17/17、NLU smoke 8/8、live Soul Talk 11/11 / HUD 13/13 只屬歷史快照。Published G3.1 runtime `13bbd19`／docs `e2477bc` 已通過 focused D2、Growth engine/runtime/session、real UI/source-owner 與 clean exact web release 27/27；PR #114 final HEAD `d39a619` 的 required gate 成功並合併為 `7eebddb`。以 `RAPHAEL_AI_STATUS.yaml` 的 current 欄位判定。Private-blind、D1/D2/D3/D6 與法務 gate 仍未完成。
+2026-07-14 的 harness 17/17、NLU smoke 8/8、live Soul Talk 11/11 / HUD 13/13 只屬歷史快照。Current published runtime baseline 是 PR #116 merge `209baaf`：exact runtime `f459526` 通過 D2 56/56、persona 27/27、Codex／Expedition isolation 13/13、Growth browser 156/156 與 clean web release 28/28；final PR HEAD `8efb391` 的 required gate 成功。以 `RAPHAEL_AI_STATUS.yaml` 的 current 欄位判定。Private-blind、D1/D2/D3/D6 與法務 gate 仍未完成。
 
 ---
 
