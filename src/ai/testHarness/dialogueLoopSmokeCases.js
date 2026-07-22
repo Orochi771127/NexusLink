@@ -178,7 +178,7 @@ export const DIALOGUE_LOOP_CASES = Object.freeze([
       dialogueAct: "asking_question",
       noMetaLanguage: true,
       noInputEcho: true,
-      mentions: /可以|傾向|不確定|把握/
+      mentions: /可以|傾向|不確定|把握|先|試|停|看法/
     }
   },
   {

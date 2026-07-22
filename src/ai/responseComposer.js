@@ -309,12 +309,16 @@ export function composeRaphaelReply({
       strategy: RESPONSE_STRATEGIES.ANSWER_OR_CLARIFY,
       nlu,
       semanticFrame: nlu?.semanticFrame,
-      seed
+      seed,
+      variantIndex: variantSelection?.variantIndex
     });
     if (questionReply) {
       return returnComposeResult(
         questionReply,
-        { variantId: `strategy:${RESPONSE_STRATEGIES.ANSWER_OR_CLARIFY}`, replySource: "nlu_builder" },
+        composeMetaFromSelection(variantSelection, questionReply, {
+          variantId: variantSelection?.variantId || `strategy:${RESPONSE_STRATEGIES.ANSWER_OR_CLARIFY}`,
+          replySource: "nlu_builder"
+        }),
         args
       );
     }

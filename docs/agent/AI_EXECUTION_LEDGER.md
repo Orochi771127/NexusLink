@@ -4339,24 +4339,34 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Next safe action: protected PR → `web-release-gate` → merge `main`; then
   Stage-2 polish first-loop touch hint pill (Game Art/UI).
 
-### 2026-07-22 - Cursor - First-Loop Hint Clear Face - IN PROGRESS
+### 2026-07-22 - Cursor - First-Loop Hint Clear Face - VERIFIED
 
-- Status: `IN PROGRESS`; Owner authorized auto-continue after Q28 merge.
+- Status: `VERIFIED` on `main` / `74dfa03` (PR #122).
 - Lane: `Game Art, UI, And Visual Production`.
-- Task name: `TP-FIRST-LOOP-HINT-CLEAR-FACE`.
-- Scope: EXPERIENCE CSS only (`styles/ui-v3-onboarding.css`). No GROUNDWORK,
-  no RaphaelCore, no save schema.
+- Required reading: `styles/ui-v3-onboarding.css` `.first-loop-hint*`.
+
+### 2026-07-22 - Cursor - Soul Talk Diversity + Short-Term Recall - IN PROGRESS
+
+- Status: `IN PROGRESS`; Owner authorized auto-continue after #122.
+- Lane: `Raphael Core, Companion Reasoning, And Soul Talk`.
+- Task name: `TP-SOUL-TALK-DIVERSITY-SHORT-MEMORY`.
+- Scope: dialogue policy + session tracker + NLU memory builder only.
+  No GROUNDWORK / save schema / Pixi / index.html.
+- Root cause: (1) soft-assent／uncertainty pools had 2 lines each;
+  (2)「記得」hard-deny ignored `recentTurns`; (3) boundary carryover
+  hijacked daily recall after Q15-style turns.
 - Work performed:
-  - `.first-loop-hint`: remove pill surface (no border/radius/background/
-    padding); floating copy with the same text-shadow stack as
-    `.companion-feedback`.
-  - `.first-loop-hint-wrap`: left-half layout (`left:12px;
-    right:calc(50% + 14px); align-items:flex-end; text-align:right`).
-  - Touch stage: raise wrap to `--touch-affordance-y` with
-    `translateY(calc(-100% - 28px))` so copy sits beside/above the body,
-    not as a centered pill over the companion.
-- Verification (local Playwright 390-class viewport): transparent bg,
-  `borderWidth:0`, `borderRadius:0`, `leftOfCenter:true`, no horizontal
-  clip; status text「輕觸畫面裡的牠——牠會回應你。」visible left of companion.
+  - Expand soft-assent／uncertainty pools + `pickAvoidingOpenings`.
+  - `applyRecentDialogueContext` session recall from `recentTurns`;
+    skip boundary carryover on daily recall inputs.
+  - `MEMORY_REFERENCE` / policy ground `recalledDetail`.
+  - Regression: `docs/qa/soul-talk-diversity-short-memory-cases.mjs`.
+- Verification: diversity+memory cases PASS; dialogueLoop OK;
+  dependency-invitation 4/4 PASS; wording quality pending CI.
 - Next safe action: protected PR → `web-release-gate` → merge `main`.
+
+### 2026-07-22 - Cursor - First-Loop Hint Clear Face - SUPERSEDED
+
+- Status: `SUPERSEDED` by the VERIFIED entry above (`main` / `74dfa03`, PR #122).
+- Kept for chronology only; do not treat as open work.
 

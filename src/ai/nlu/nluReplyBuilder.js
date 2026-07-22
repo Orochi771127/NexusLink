@@ -316,6 +316,23 @@ export function buildStrategyReply({
       return pick(["嗯，我在。", "聽見你了。", "我在，不用急著說重點。"], seed);
     },
     [RESPONSE_STRATEGIES.MEMORY_REFERENCE]: () => {
+      // Session 短程回憶優先：有 recalledDetail 時走 policy 接地句，避免回落到「沒有可靠記憶」。
+      const sessionRecall = buildConversationalAnswer({
+        inputText: nlu.inputText,
+        frame: {
+          ...frame,
+          dialogueAct: frame.dialogueAct || nlu.dialogueAct || "asking_memory"
+        },
+        seed
+      });
+      if (
+        sessionRecall &&
+        /recent_dialogue/.test(String(frame.conversationContext?.source || "")) &&
+        (frame.conversationContext?.recalledDetail || frame.conversationContext?.previousDetail)
+      ) {
+        return sessionRecall;
+      }
+
       const awakeningRecall =
         topic === "awakening" ||
         (topic === "memory" && /初醒|醒來|心核/.test(entityRef)) ||
@@ -348,6 +365,10 @@ export function buildStrategyReply({
           ],
           seed
         );
+      }
+      // 仍有 session recall 但 source 標記不同時，也允許 grounded memory answer。
+      if (sessionRecall && /記得|留著|沒忘掉|剛才那段還在/.test(sessionRecall)) {
+        return sessionRecall;
       }
       return null;
     }
@@ -640,6 +661,15 @@ function resolveVariantLines(strategy, nlu, frame, recoveryContext, prefillConte
       if (/安安/.test(said)) return ["嗯，我在。", "安安，聽見你了。", "我在，不用急著說重點。"];
       return ["嗯，我在。", "聽見你了。", "我在，不用急著說重點。"];
     case RESPONSE_STRATEGIES.MEMORY_REFERENCE: {
+      const recalled = frame.conversationContext?.recalledDetail || frame.conversationContext?.previousDetail;
+      if (recalled && /recent_dialogue/.test(String(frame.conversationContext?.source || ""))) {
+        const grounded = buildConversationalAnswer({
+          inputText: said,
+          frame: { ...frame, dialogueAct: act || "asking_memory" },
+          seed: said.length
+        });
+        if (grounded) return [grounded];
+      }
       const awakeningRecall =
         topic === "awakening" ||
         (topic === "memory" && /初醒|醒來|心核/.test(entityRef)) ||
