@@ -318,7 +318,7 @@
 
 **N1 — 成長屬於每一隻夥伴，不是全域戰力**
 - 驗法：準備兩隻已解鎖夥伴 A／B，寫入不同 relationship、growth 與身體狀態，執行 A→B→A、reload 與快速連換。
-- 通過：canonical 狀態依 `companionId` 完全隔離；A 的互動不改 B；切回 A 後還原。未知 id 不建立資料、不解鎖角色。Top-level compatibility mirror 在每個可觀察 state 都與 active companion 一致。
+- 通過：canonical 狀態依 `companionId` 完全隔離；A 的互動不改 B；切回 A 後還原。未完成的 A session/result 不可重新綁定給 B。未知 id 不建立資料、不解鎖角色。Top-level compatibility mirror 在每個可觀察 state 都與 active companion 一致。
 
 **N2 — 正式三階是人格／姿態回應，不是變強**
 - 驗法：讀 stage gate、Growth UI、Codex、對峙與資產 mapping。
@@ -327,11 +327,11 @@
 
 **N3 — 高風險安全終端完全排除養成**
 - 驗法：延伸 safety terminal invariant，覆蓋所有 runtime persona 與 energy 0／7／10；深比較完整 relationship／growth／preference／memory／trace／mirror，並加入偷寫 evidence、record、stage offer、mood 或 touchFatigue 的 mutation case。另測 safety event 排入 queue → 清除 UI/mode → delayed flush。
-- 通過：high-risk 回合前後完整 gameplay／companion state 完全相同；無 record creation、readiness、offer、milestone、SFX 或 animation delta，只允許 safety UI/mode。`growthSafetyExcluded` 在 source event 建立時封存，descendant／deferred writer 不能把 true 洗成 false；任一 mutation 必須讓 release gate 轉紅。Non-high-risk safety／caution route 可保留既有 bounded regulation，但仍須零 growth、零 preference／memory／trace、零 reward、零 offer。
+- 通過：high-risk 回合前後完整 gameplay／companion state 完全相同；無 record creation、readiness、offer、milestone、SFX 或 animation delta，只允許 safety UI/mode。`growthSafetyExcluded` 在 source event 建立時封存，descendant／deferred writer 不能把 true 洗成 false；任一 mutation 必須讓 release gate 轉紅。Safe harbor 一開始就終止所有 pending Growth session，即使當時停在 Home／Soul Talk；之後退出 safety 也不能復活舊改寫。Non-high-risk safety／caution route 可保留既有 bounded regulation，但仍須零 growth、零 preference／memory／trace、零 reward、零 offer。
 
 **N4 — 養成只接受明確完成且非高風險的當場互動**
 - 驗法：只改 `lastSeenAt`、離線天數、登入／reload／開頁次數，再比較 readiness 與 evidence；另測未完成、夥伴拒絕與 ordinary accepted event。
-- 通過：`growthSafetyExcluded` 涵蓋 high-risk、`safety_redirect`、`enter_safe_harbor`、system-role safety reply 與正在處理該回合的 safety／safe-harbor mode。Growth writer 不讀離線時長、登入／streak／回歸頻率、孤獨或依賴推測；單純開頁、idle 與未完成事件都不形成 evidence；普通 Soul Talk 不複製原始玩家文字進 growth record。
+- 通過：`growthSafetyExcluded` 涵蓋 high-risk、`safety_redirect`、`enter_safe_harbor`、system-role safety reply 與正在處理該回合的 safety／safe-harbor mode。Growth writer 不讀離線時長、登入／streak／回歸頻率、孤獨或依賴推測；單純開頁、idle 與未完成事件都不形成 evidence；普通 Soul Talk 不複製原始玩家文字進 growth record。來源結果必須符合 canonical phase／practice／outcome matrix；完成事件採 candidate-first critical save，只有存檔成功才發布 runtime mutation，失敗時 UI 不得宣稱已留下痕跡。
 
 **N5 — 拒絕、休息、返回與延後覺醒皆零懲罰**
 - 驗法：夥伴拒絕、玩家選休息／留白／返回、夥伴說「還不是時候」、玩家延後 stage invitation。

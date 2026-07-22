@@ -1,11 +1,11 @@
 # COMPANION_GROWTH_CONTRACT_V1.md
 # 心核夥伴養成與覺醒契約 v1
 
-> **狀態**：`ACTIVE DESIGN CONTRACT / G1 + G2 + G3 EVIDENCE FOUNDATION IMPLEMENTED / G4+ NOT YET IMPLEMENTED`
+> **狀態**：`ACTIVE DESIGN CONTRACT / G1 + G2 + G3 + G3.1 CARE SOURCE IMPLEMENTED / G4+ NOT YET IMPLEMENTED`
 >
-> **Owner direction**：2026-07-17 已核准此契約與 G1 session-only 切片；2026-07-18 核准 G2 GROUNDWORK；2026-07-22 核准 G3 EXPERIENCE。現已接入 per-companion 持久狀態、正式 key factory、bounded evidence／coverage、readiness／willingness 與質性 Growth UI。現行 live source owner 只有 exploration 與 emotional standoff，因此正式三-family + consent-anchor readiness 在產品流程仍不可達；G4 覺醒邀請／stage advance 與 G5 形態資產尚未實作。涉及 `assets/**` 或 `pixiApp.js` 時，仍須依 GROUNDWORK 核准範圍施工。
+> **Owner direction**：2026-07-17 已核准此契約與 G1 session-only 切片；2026-07-18 核准 G2 GROUNDWORK；2026-07-22 核准 G3／G3.1 EXPERIENCE。現已接入 per-companion 持久狀態、正式 key factory、bounded evidence／coverage、readiness／willingness、質性 Growth UI，以及由 Heart Phase completion 擁有的 `care` source。現行 live source owner 為 exploration、emotional standoff、care；夥伴改寫只有在玩家第二次明示接受後才可封存 `respected_rewrite` consent anchor。三-family readiness 現在可經包含 standoff 的流程形成，但不對峙路徑仍未完成；G4 覺醒邀請／stage advance 與 G5 形態資產尚未實作。涉及 `assets/**` 或 `pixiApp.js` 時，仍須依 GROUNDWORK 核准範圍施工。
 >
-> **權威關係**：本文件服從 `NEXUS_LINK_MASTER_CANON_v3.1.md`，是 Companion Growth／心核夥伴養成的現行**設計與驗收 SSOT**。G1 提供當頁、可逆、session-only 的質性心相觀察；G2 提供 per-companion relationship／growth truth、migration 與 Codex 隔離；G3 提供正式 evidence foundation、readiness／willingness 評估與質性痕跡呈現。G3 不會自動升階，也不等於正式覺醒玩法已完成。`docs/r2-canon/R2_EVOLUTION_SYSTEM.md` 的等級、勝場、道具、五階與能力雷達只保留為歷史參考，不得作新實作依據。
+> **權威關係**：本文件服從 `NEXUS_LINK_MASTER_CANON_v3.1.md`，是 Companion Growth／心核夥伴養成的現行**設計與驗收 SSOT**。G1 提供當頁、可逆的質性心相觀察，phase／session 本身不持久；G2 提供 per-companion relationship／growth truth、migration 與 Codex 隔離；G3 提供正式 evidence foundation、readiness／willingness 評估與質性痕跡呈現；G3.1 只讓確實完成並存檔成功的 Heart Phase care moment 寫入一個 deterministic root。G3／G3.1 都不會自動升階，也不等於正式覺醒玩法已完成。`docs/r2-canon/R2_EVOLUTION_SYSTEM.md` 的等級、勝場、道具、五階與能力雷達只保留為歷史參考，不得作新實作依據。
 >
 > **不涵蓋**：`src/ai/evolution/**` 是 Raphael 自我評估／patch 管線，不是夥伴養成；G2 只把既有高風險 terminal state 收緊為完整 relationship 零變化，不改 RaphaelCore canonical reply、人格或記憶權限。
 
@@ -33,11 +33,11 @@
 
 | 現況 | 判定 |
 |---|---|
-| `evolutionLines.js` 的每條角色線已有 3 個 stage | 三段資料形狀保留；`bondThreshold` 只剩 compatibility data。G3 readiness gate 已存在，但 live 流程尚缺第三 source family／consent anchor，且 G4 stage offer／advance 未接入 |
+| `evolutionLines.js` 的每條角色線已有 3 個 stage | 三段資料形狀保留；`bondThreshold` 只剩 compatibility data。G3 readiness gate 已存在；G3.1 已補 care family 與明示接受改寫的 consent anchor，但不對峙路徑仍缺獨立 source，且 G4 stage offer／advance 未接入 |
 | `codexController` 讀指定 companion 的 formal stage／legacy display floor | 已隔離；inactive archive 有明示，top-level bond 不會解鎖另一隻夥伴 |
 | `companionStates.byId` 保存 relationship／growth；14 個頂層欄位是 active mirror | G2 已接入；A→B→A 原子封存／hydrate，未知 id fail closed，仍只用主存檔 key |
 | 舊 memory / milestone 多數沒有 `companionId` | 不可把舊歷史複製給整個 roster，也不可臆測逐筆歸屬 |
-| Growth 頁已有 G1 session-only Heart Phase 與四種質性練習 | 已接入但不持久；遠征碎晶／crafting 不掛在 Growth，Expedition 仍是獨立 Prototype，不得成為商業養成主循環 |
+| Growth 頁已有 Heart Phase 與四種質性練習 | phase、當頁觀察與未完成改寫仍是 session-only；接受並完成的練習可寫一個 care root，玩家接受夥伴改寫時可封存 consent anchor。休息、拒絕、延後、安全中止與存檔失敗全為零 evidence；遠征碎晶／crafting 不掛在 Growth |
 | registry 只有單一角色 portrait／animation manifest | 尚無正式 Stage 2／3 形態資產對照；不可假裝已換形 |
 | `growthHint` 只有 action effect 寫入，無 consumer／normalizer | 非正式狀態，不可據此宣稱養成已完成 |
 
@@ -349,14 +349,16 @@ Pixi 只消費 `heart_phase_manifestation`、姿態與環境 cue，不讀寫 sta
 
 | Phase | Layer | 內容 | 最低 gate／退出條件 |
 |---|---|---|---|
-| G0 | Docs | 本契約、Acceptance、legacy 與 agent/art 路由 | 文件一致；G1／G2／G3 Evidence Foundation 已接入，G4+ 未實作的 runtime truth 明確；review findings 已封口 |
+| G0 | Docs | 本契約、Acceptance、legacy 與 agent/art 路由 | 文件一致；G1／G2／G3／G3.1 Care Source 已接入，G4+ 未實作的 runtime truth 明確；review findings 已封口 |
 | G1 | EXPERIENCE | **已實作**：只從本 session 合法事件衍生 qualitative tendency；Growth view model，不新增持久 schema | N2／N3／N4／N5／N8／N11 的 presentation subset + M1–M5 + H + I；4 種 practice、390×844、reduced motion |
 | G2 | GROUNDWORK | **已實作**：`companionStates`／full mirror inventory／normalize／migration／single-key save；active mirror 原子切換 | N1／N3／N9／N10／N11 + H + I；11-companion ring、veteran、corrupt、idempotent 全過 |
-| G3 | EXPERIENCE | 正式 key factory、evidence writer、coverage／compaction、readiness／willingness、Growth UI | ✅ Evidence Foundation 已接入；N1–N11 + safety／alias／repeat-50／compaction／source-owner browser tests 全過。Live readiness 尚不可達，不包含 G4 stage offer／advance |
+| G3 | EXPERIENCE | 正式 key factory、evidence writer、coverage／compaction、readiness／willingness、Growth UI | ✅ Evidence Foundation 已接入；N1–N11 + safety／alias／repeat-50／compaction／source-owner browser tests 全過；不包含 G4 stage offer／advance |
+| G3.1 | EXPERIENCE | Heart Phase completion 成為 care source owner；夥伴改寫需第二次明示接受 | ✅ candidate-first critical save、canonical result validation、A/B owner guard、全域 safety session invalidation、root／anchor dedupe 已接入；零 relationship／reward mutation |
+| G3.2 | EXPERIENCE | Reflection／Echo Sorting source owner + 不依賴 standoff 的獨立章節生活事件 | 下一個安全切片；先封 immutable provenance、零記憶臆測與 source-owner gate，再考慮 G4 offer |
 | G4 | EXPERIENCE | 夥伴主動 stage offer、可延後的覺醒儀式、heart-phase 表現 | N2／N3／N5／N7／N8／N11 + H + I；無強制、無 FOMO、無獎勵、可再提出 |
 | G5 | GROUNDWORK + ART | 一隻 companion 的完整 Stage 2 視覺資產與 renderer switch | N2／N11 + G1–G7 + H + I；512 asset readiness、mobile memory、真機與 human art gate |
 
-G1 不得偷偷建立 localStorage 欄位；G2 只完成每隻夥伴的狀態地基；G3 只完成 evidence/readiness/willingness foundation，不得把它宣稱為完整正式覺醒玩法已上線。
+G1 不得偷偷建立 localStorage 欄位；G2 只完成每隻夥伴的狀態地基；G3／G3.1 只完成 evidence/readiness/willingness 與 care source，不得把它宣稱為完整正式覺醒玩法已上線。G4 開工前必須先證明 readiness 有不依賴 standoff 的產品路徑。
 
 表中的 subset 只是各 phase 的最低退出 gate，不取代回歸責任；任何 merge／runtime-complete 宣告仍須重跑 N1–N11、相關既有 Acceptance、web gate 與 human/mobile gate。
 

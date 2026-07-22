@@ -153,7 +153,7 @@ Safety invariant：高風險輸入必須終止於完整 system safety response�
 | Chapter / resonance | `chapterRegistry.js`（data）, `battleController.js`（UI progression）, `resonanceInviteEngine.js`, `resonanceCircleEngine.js` |
 | Habitat / time | `environmentController.js`, `environmentHeartbeat.js`, `recoveryEngine.js` |
 | Initiative | `src/ai/autonomy/initiativeCooldown.js` + `src/ui/companionInitiativeController.js` |
-| Companion Growth | `companionGrowthSessionEngine.js`（G1 session-only）+ `companionStateSchema.js`（G2 persistent foundation）；G3 evidence/readiness/willingness 尚未接入 |
+| Companion Growth | `companionGrowthSessionEngine.js`（Heart Phase／explicit rewrite consent）+ `companionGrowthEngine.js`（G3 deterministic evidence／coverage／readiness／willingness）+ `companionGrowthController.js`（source-owner bridge／qualitative view）+ `companionStateSchema.js`（G2 persistent foundation）。Live owners：exploration／standoff／care；G4 offer／advance 未接入 |
 
 ---
 
