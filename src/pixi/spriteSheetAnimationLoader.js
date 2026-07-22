@@ -121,8 +121,11 @@ export function createAnimatedCompanionNode(animationPack, creature) {
 
   const companion = new PIXI.Container();
 
+  // 真人回報：影子跟角色底部有明顯落差，看起來像懸空。
+  // Sprite anchor 固定 bottom-center（見上方 anchor 驗證），container 原點 y=0 已是腳底基準線；
+  // 影子應貼齊腳底、只留極小接地位移，不應遠離 y=0。
   const shadow = new PIXI.Graphics();
-  shadow.ellipse(0, 48, 54, 13).fill({ color: 0x000000, alpha: 0.28 });
+  shadow.ellipse(0, 6, 54, 13).fill({ color: 0x000000, alpha: 0.28 });
   companion.addChild(shadow);
 
   const animatedSprite = new PIXI.AnimatedSprite(idleDefinition.textures);

@@ -4245,3 +4245,63 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Verification: remote required gate PASS; local `main` was fast-forwarded to
   the merge commit with zero origin divergence and a clean worktree before
   this docs-only closure entry.
+
+### 2026-07-22 - Codex - Video-Inspired Gameplay And Art Context - RECORDED
+
+- Status: `RECORDED`; Owner asked to write the conversation-window context into
+  the codebase so future agents do not rerun the same analysis and generation.
+- Lane: `Game Art, UI, And Visual Production`.
+- Handoff file:
+  `docs/agent/VIDEO_INSPIRED_GAMEPLAY_AND_ART_HANDOFF_2026-07-22.md`.
+- Recorded truth: gameplay slice exists in sibling worktree
+  `NexusLink-video-inspired-gameplay-v1`; art pilot exists in sibling worktree
+  `NexusLink-video-inspired-art-pilot-r1`. The current `main` checkout did not
+  receive generated art files in this step.
+- Art status preserved: required R1 set is `18/18` generated in output-only
+  staging, with TP-E1 mechanical QC `17/17` pass, optional polish `0/8`, human
+  approval pending, reference audit pending, asset promotion false, and runtime
+  integration false.
+- Safety boundary: this entry is documentation-only. No `assets/**`, runtime,
+  state, save, Pixi, RaphaelCore, tool, script, commit, or push change was
+  performed.
+
+### 2026-07-22 - Cursor - Companion Shadow And Touch Feedback Visual Fix - VERIFIED
+
+- Status: `VERIFIED`; Owner authorized review → screenshot QA → commit →
+  protected PR → merge to `main` after `web-release-gate`.
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `TP-COMPANION-SHADOW-FEEDBACK-VISUAL-FIX`.
+- Scope: EXPERIENCE / VFX-UI only. No GROUNDWORK (`index.html`, save, Pixi
+  core layers, assets, tools, scripts), no RaphaelCore / Soul Talk logic.
+- Diagnosis (Claude, prior session): (1) animated + static companion shadows
+  were drawn at `y=48~54` below the container origin even though sprite
+  anchors are enforced bottom-center, so the oval looked suspended under the
+  feet; (2) `.companion-feedback` used a solid centered pill over the stage
+  bottom and covered the companion face.
+- Work performed:
+  - `src/pixi/spriteSheetAnimationLoader.js` / `src/pixi/companionRenderer.js`:
+    shadow ellipse `y` → `6` for animated + static sprite paths. Hand-drawn
+    placeholder silhouette shadow left at `y=48` (no prior float complaint;
+    different body geometry).
+  - `styles.css` `.companion-feedback`: remove pill surface; restyle as
+    borderless floating copy with the same text-shadow stack as
+    `.gentle-invitation` / `.touch-affordance`. Anchor to
+    `--touch-affordance-y` and expand into the left half of the viewport.
+  - Cursor visual QA patch: Claude's first CSS used `left:50%` +
+    `translate(calc(-100% - 12px), …)`, which clipped ~12px off the left edge
+    at 390×844. Replaced with `left:12px; right:calc(50% + 14px);
+    text-align:right; transform:translateY(…)` so long lines stay on-screen
+    while remaining left-of-companion and clear of the face.
+- Verification:
+  - `node --check` on both changed JS files PASS; `git diff --check` clean.
+  - Local `python -m http.server 8765`; Chromium mobile 390×844 with seeded
+    veteran save (`greyshade-cat`, onboarding completed).
+  - Shadow screenshot: oval sits at the paw baseline; no 48~54px float gap;
+    `y=6` accepted without further numeric tweak.
+  - Feedback screenshot + DOM metrics after CSS patch: transparent background,
+    `borderWidth:0`, `clippedLeft/Right:false`, `leftOfCenter:true`,
+    rect roughly `x:12 y:461 w:169`, text clear of the face.
+- Problems / risks: real device Safari/Chrome feel remains human-only; placeholder
+  silhouette path still uses the old shadow offset if that fallback ever appears.
+- Next safe action: open protected PR, wait for required `web-release-gate`,
+  then merge to `main` under Owner authorization.

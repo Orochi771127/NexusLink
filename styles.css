@@ -1378,23 +1378,34 @@ canvas {
 }
 
 /* 夥伴觸碰回饋 / 棲地狀態 toast（companionFeedbackController 動態建立）。
-   位置：bottom-nav 上方置中，靠近夥伴所在的舞台下緣。拒絕語氣用中性月灰——
-   牠說「不」是邊界，不是錯誤，不得用紅色/danger 樣式。 */
+   真人回報：原本置中的實心底框藥丸會直接擋住夥伴本體。改為跟 .touch-affordance /
+   .gentle-invitation 一致的「純文字浮字」——無底色、無邊框，靠 text-shadow 保持可讀，
+   位置從夥伴錨點（--touch-affordance-y，未設定時回退 60%）往左上浮出，不再擋臉。
+   視覺驗證補丁：若用 left:50% + translate(-100% - 12px)，390 寬手機會長句左緣被裁；
+   改為右緣錨在畫面中線左側、左緣保留 12px 安全距，文字在左半側靠右對齊朝向角色。
+   拒絕語氣用中性月灰——牠說「不」是邊界，不是錯誤，不得用紅色/danger 樣式。 */
 .companion-feedback {
   position: fixed;
-  left: 50%;
-  bottom: calc(var(--bottom-safe, 0px) + var(--nav-block-h, 104px) + 72px);
-  transform: translate(-50%, 8px);
-  max-width: min(78vw, 420px);
+  left: 12px;
+  right: calc(50% + 14px);
+  top: var(--touch-affordance-y, 60%);
+  bottom: auto;
+  width: auto;
+  max-width: none;
+  transform: translateY(calc(-100% + 4px));
   margin: 0;
-  padding: 8px 16px;
-  border: 1px solid rgba(138, 217, 255, 0.3);
-  border-radius: 999px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
   color: #dff3ff;
-  background: rgba(10, 16, 32, 0.84);
+  background: transparent;
   font-size: 13px;
   line-height: 1.45;
-  text-align: center;
+  text-align: right;
+  text-shadow:
+    0 1px 2px rgba(2, 6, 16, 0.98),
+    0 0 8px rgba(2, 6, 16, 0.84),
+    0 0 18px rgba(2, 6, 16, 0.72);
   opacity: 0;
   pointer-events: none;
   z-index: calc(var(--z-panel, 70) + 4);
@@ -1403,23 +1414,21 @@ canvas {
 
 .companion-feedback.is-visible {
   opacity: 1;
-  transform: translate(-50%, 0);
+  transform: translateY(calc(-100% - 8px));
 }
 
 .companion-feedback[data-tone="guarded"],
 .companion-feedback[data-tone="refusal"] {
-  border-color: rgba(190, 205, 225, 0.26);
   color: rgba(216, 226, 240, 0.94);
 }
 
 .companion-feedback[data-tone="calm"] {
-  border-color: rgba(138, 217, 255, 0.2);
   color: rgba(223, 243, 255, 0.9);
 }
 
 @media (prefers-reduced-motion: reduce) {
   .companion-feedback {
-    transform: translate(-50%, 0);
+    transform: translateY(calc(-100% - 8px));
     transition: opacity 200ms ease;
   }
 }
