@@ -4217,3 +4217,15 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Honest limit: automated checks are green, but this identity cleanup does not
   replace the existing real-device, moderated first-session, private blind,
   legal／privacy and explicit Owner launch gates.
+
+### 2026-07-22 - Codex - Flametail Identity Publication - IN PROGRESS
+
+- Status: `IN PROGRESS`; Owner subsequently authorized commit and push.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `TP-FLAMETAIL-IDENTITY-CANONICALIZATION-R1` (publication).
+- Initial commit: `76e59c6f660c8f9da9eadfde9b3d3e6790ed59df`.
+- Direct `main` push was correctly rejected by repository protection: changes
+  require a pull request and the required `web-release-gate`.
+- Publication path: branch `codex/flametail-identity-canonicalization`, PR #118
+  targeting `main`; merge and final local／remote synchronization remain
+  pending the required check.
