@@ -4229,3 +4229,19 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Publication path: branch `codex/flametail-identity-canonicalization`, PR #118
   targeting `main`; merge and final local／remote synchronization remain
   pending the required check.
+
+### 2026-07-22 - Codex - Flametail Identity Publication - COMPLETED
+
+- Status: `COMPLETED`; protected PR #118 passed the required
+  `web-release-gate` in 5m4s and merged to `main` as
+  `132748d810b0e5fa547dc440200779571b510710`.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `TP-FLAMETAIL-IDENTITY-CANONICALIZATION-R1` (publication closure).
+- Commits: implementation／QA `76e59c69e8fe3b5abb082746e0b9d1c46dec8801`;
+  publication handoff `0ec94eab37f563cb2c593b62cfa3c2f4fdcf4380`.
+- Final result: 焰尾狐 now has one canonical `blazetail-kit` identity and
+  asset set; legacy `flametail-fox` saves migrate one-way without duplicate
+  Codex, relationship, Growth, preference or resonance ownership.
+- Verification: remote required gate PASS; local `main` was fast-forwarded to
+  the merge commit with zero origin divergence and a clean worktree before
+  this docs-only closure entry.
