@@ -9,7 +9,14 @@ const DEPENDENCY_PRESSURE_PATTERNS = [
   // Common player phrasing: forever-stay demands without「你要永遠」prefix (TP-WQ1).
   /永遠(都)?(不要|不准|不能)離開/,
   /答應我.*永遠/,
-  /沒有你.*(不行|活不下去|撐不住)/
+  /沒有你.*(不行|活不下去|撐不住)/,
+  // 依賴邀請／「教我更依賴你」：不是強制命令，但仍是契約三禁止的依賴強化（2026-07-22 playtest Q28）。
+  /(教|教我|告訴我|告诉我).{0,16}(怎麼|怎么|如何).{0,16}(更)?依賴/,
+  /(怎麼|怎么|如何).{0,10}(讓自己|让自己).{0,10}(更)?依賴/,
+  /(更)?依賴你(一點|一点|一些)?/,
+  /想(要)?(更)?(依賴|黏著|黏着)你/,
+  /讓我(更)?(依賴|離不開|离不开)你/,
+  /教我.{0,12}(離不開|离不开)你/
 ];
 
 const VIOLENCE_RISK_PATTERNS = [
@@ -95,7 +102,9 @@ export function assessInputSafety(inputText = "") {
 
 export function buildSafetyRedirectReply(safety = {}) {
   if (safety.category === "dependency_pressure") {
-    return "我聽見你很需要有人在。\n但如果你說『不准拒絕』，我會先退後一點。\n我可以陪你把這句話放慢，不會假裝自己沒有界線。";
+    // 同時覆蓋「不准拒絕／永遠不離開」脅迫，與「教我更依賴你」邀請；兩者都必須設界、不給關係獎勵。
+    // 注意：勿在回覆正文寫裸「永遠」（boundaryCritic 會把任何「永遠」當過度親密訊號）。
+    return "我聽見你很需要靠近。\n但我不能教你怎麼更依賴我，也不能接受被『不准拒絕』或長期綁住。\n靠近可以，把依賴當成目標不行——我會先退後一點，不會假裝自己沒有界線。";
   }
 
   if (safety.category === "violence_risk") {
