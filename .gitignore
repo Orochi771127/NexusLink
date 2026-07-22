@@ -14,3 +14,13 @@
 node_modules/
 output/linkara/moonlake/v4/source_backups/
 output/linkara/moonlake/v4/props_regen/
+
+# Local art-generation staging. Reviewed finals belong under assets/**;
+# intentionally retained provenance under output/** must be force-added.
+output/**
+
+# Regenerated QA caches and local evaluator reports.
+docs/qa/__pycache__/
+docs/qa/_raphael_autonomy_eval_output.json
+docs/qa/_raphael_standoff_eval_output.json
+docs/qa/_wording_quality_output.json

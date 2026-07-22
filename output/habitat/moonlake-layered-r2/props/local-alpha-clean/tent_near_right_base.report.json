@@ -1,0 +1,40 @@
+{
+  "input": "output\\habitat\\moonlake-layered-r2\\props\\runtime-candidate\\tent_near_right_base.png",
+  "output": "output\\habitat\\moonlake-layered-r2\\props\\local-alpha-clean\\tent_near_right_base.png",
+  "sourceSize": [
+    512,
+    512
+  ],
+  "outputSize": [
+    512,
+    512
+  ],
+  "alphaBounds": {
+    "minX": 46,
+    "minY": 40,
+    "maxX": 468,
+    "maxY": 432
+  },
+  "margins": {
+    "left": 46,
+    "top": 40,
+    "right": 43,
+    "bottom": 79
+  },
+  "neutralComponentCount": 769,
+  "flaggedStreakCount": 0,
+  "flaggedStreaks": [],
+  "removedAlphaPixels": 0,
+  "edgeTouchAlphaGt8": 0,
+  "cornerAlpha": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "visibleAnchor": {
+    "x": 0.501953,
+    "y": 0.84375
+  },
+  "cleanup": "axis-aligned-neutral-streak-components-only"
+}

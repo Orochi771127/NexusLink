@@ -1,0 +1,10 @@
+Use case: stylized-concept
+Asset type: Nexus Link Moonlake layered-habitat dressed composition master, review staging only
+Primary request: Create one definitive daytime Moonlake habitat composition by combining B2's clear rune plaza and companion-safe negative space, A2's handcrafted clay-and-cast-resin miniature material language, and C2's cinematic distance and atmospheric haze.
+Input images: B2 is the primary geometry/camera reference; A2 is the material reference; C2 is the depth/haze reference; ethereal_moon_lakefront is the canonical geography and landmark reference.
+Scene identity: a broad enchanted lake basin enclosed by forested waterfall cliffs, multiple small islands, restrained blue crystal beacon towers, blue-and-ivory shoreline camp pavilions, a central circular rune plaza and one clear axial dock/approach.
+Composition/framing: portrait 9:16, fixed elevated three-quarter orthographic-like miniature camera. Preserve B2's large readable lower-middle rune plaza and open central companion corridor. Keep top 12 percent and bottom 20 percent visually quiet. Nothing tall or opaque may occupy normalized rect x .38, y .45, w .24, h .27.
+Depth: strong depth-banded atmospheric perspective. Far cliffs, remote waterfalls and distant towers are paler, lower contrast, slightly desaturated, softer edged and lower detail. Midground islands remain recognizable. The plaza and companion interaction plane are crisp. Do not apply uniform blur.
+Style/material: premium handcrafted 3D clay-and-resin miniature diorama, rounded sculpted forms, matte-to-satin resin, subtle micro-roughness, cohesive model-kit scale, believable contact shadows, restrained cyan and pale-gold Cyber-Taoist accents.
+Layer planning: this is a dressed visual master only. Keep sun, moon, stars, weather, characters, companion, UI, text, labels and emotional traces absent. Keep placeable stateful crystals sparse so they can be produced separately later.
+Avoid: photoreal landscape collage, flat anime painting, chunky pixels, glossy toy plastic, excessive bloom, dense foreground blockers, portal dominance, arbitrary fantasy castle, clutter over the plaza, text, UI, watermark.

@@ -1,0 +1,7 @@
+Use case: stylized-concept
+Asset type: single transparent-ready Moonlake placeable prop
+Primary request: Create one low Moonlake care-lantern post matching the visible hybrid habitat.
+Style: handcrafted 3D clay-and-resin miniature, rounded dark wood post, restrained pale-gold fittings, small cyan glass light with soft readable core, matte-to-satin surfaces and crisp mobile silhouette.
+View: front-facing 3/4 top-down habitat prop, bottom-center anchor, full object visible and centered with generous margin. Designed for plaza/dock edge slots and short enough not to cover the companion.
+Background: perfectly flat solid #FF00FF magenta, uniform with no shadows, gradients, texture, floor plane or reflection. No magenta in the object.
+Constraints: no cast shadow, scenery, pedestal, text, UI, labels, watermark, character, companion or particle effects.

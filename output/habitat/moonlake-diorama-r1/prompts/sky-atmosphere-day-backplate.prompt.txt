@@ -1,0 +1,5 @@
+Use case: stylized-concept
+Asset type: full-canvas Moonlake sky atmosphere backplate, daytime
+Primary request: Create a clean full 9:16 opaque sky-atmosphere backplate matching the visible Moonlake foundation's daytime color and haze.
+Render only a pale blue miniature-diorama sky gradient with soft clouds in the upper portion and a progressively paler atmospheric tone toward the horizon. Continue the pale atmosphere across the entire canvas beneath where later mountain/water/ground layers will cover it, so no transparent seams can appear.
+No sun, moon, stars, mountains, cliffs, waterfalls, trees, lake, land, plaza, dock, structures, props, characters, UI, text, traces or weather particles. No magenta and no transparency required. Preserve the 9:16 camera/horizon feeling; this is the bottom-most backplate.

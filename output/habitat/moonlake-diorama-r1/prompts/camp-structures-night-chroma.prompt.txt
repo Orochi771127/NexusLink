@@ -1,0 +1,5 @@
+Use case: lighting-weather
+Asset type: full-canvas aligned Moonlake structural plate source, night
+Primary request: Relight the visible daytime structure-only chroma plate into night while preserving every structure's exact position, scale, silhouette, perspective and full-canvas registration.
+Keep the flat magenta background untouched and uniform. Change only object illumination: cool moon-blue fabric shadows, restrained warm amber interior tent light, controlled cyan crystal-tower emission, pale-gold metal accents and readable clay/resin surface form. Avoid bloom halos that expand object silhouettes.
+Do not add, remove, move or redesign any tent, tower, deck or railing. Do not add ground shadows, scenery, sky, lake, islands, plaza, dock, props, characters, UI, text, weather, traces or celestial bodies.

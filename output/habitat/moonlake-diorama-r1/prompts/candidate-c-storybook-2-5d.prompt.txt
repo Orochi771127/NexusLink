@@ -1,0 +1,11 @@
+Use case: stylized-concept
+Asset type: Nexus Link Moonlake premium 2.5D storybook habitat direction candidate, review staging only
+Input images: use the three supplied reference photos only for their unified miniature staging, elevated camera, readable focal plane, and layered depth. Do not copy characters, logos, symbols, or branded environments.
+Primary request: Design an original daytime Moonlake emotional habitat as a premium 2.5D storybook diorama: softer and more cinematic than the clay/resin candidates while still reading as a constructed miniature world with real depth and coherent physical materials.
+Scene/backdrop: a quiet moonlake inlet with stylized layered cliffs, translucent calm water, a crescent shoreline, a low Cyber-Tao pavilion nested into one side, carved rune stones and two restrained lanterns, and a wide empty companion platform formed from the shore itself. Architecture supports the habitat rather than floating in front of it. No tent, no well, no oversized portal.
+Style/medium: project-native premium 2.5D storybook habitat diorama, cozy fantasy, soft stylized forms, believable stone/wood/foliage/water material response, cinematic layered depth, controlled cyan and warm-gold magical glow, mobile-first readability.
+Composition/framing: strict portrait 9:16 corresponding to 1080x1920; fixed elevated three-quarter camera; foreground edge framing, sharp companion platform in the center-lower middle, calm lake midground, softened cliffs and sky background. Keep x 38%-62%, y 45%-72% free of opaque landmarks; keep top 12% and bottom 20% free of critical landmarks.
+Lighting/mood: luminous calm daytime after light mist, soft volumetric atmosphere in the distance, warm reflected care light near the pavilion, restrained bloom, interaction plane crisp.
+Color palette: moon blue, lake cyan, desaturated jade, pale stone, carved dark wood, soft violet shadow, warm amber and pale gold.
+Constraints: background environment only; no character, companion, creature, person, UI, text, logo, watermark, sun or moon disc, stars, weather particles, memory traces, or floating disconnected props.
+Avoid: photoreal scenery, flat anime painting, chunky pixel art, over-smoothed gradients, noisy AI texture, one-note blue, plastic toy shine, pasted cutouts, excessive magenta, clutter around the companion platform.

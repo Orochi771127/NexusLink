@@ -1,0 +1,7 @@
+Use case: lighting-weather
+Asset type: Nexus Link Moonlake foundation-only night layer, review staging
+Primary request: Relight the visible foundation-only daytime Moonlake into night while preserving exact geometry and composition.
+Invariants: same camera, crop, horizon, mountain/waterfall silhouettes, island shapes and positions, lake edge, central rune plaza, axial dock, pathway, vegetation placement and all perspective lines. Do not add, remove, move, resize or redesign objects.
+Night changes only: deep navy-to-moon-blue sky atmosphere with no celestial disc; cooler violet-blue shadows; restrained cyan reflected lake light; subtle warm residual light on the plaza stone; slightly denser cool atmospheric haze in far depth; controlled pale-gold rune inlay emission. Keep surface form readable and avoid crushing blacks.
+Safety: top 12% and bottom 20% remain quiet; companion reserved rect stays sharp and unobstructed.
+Constraints: no sun, moon, stars, characters, animals, companion, UI, text, labels, watermark, weather particles, traces, tents, towers, crystals, banners, lanterns, portals, or new props. This is the night counterpart of the foundation only.

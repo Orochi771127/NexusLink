@@ -1,0 +1,9 @@
+Use case: stylized-concept
+Asset type: 2-row by 3-column emotional crystal lifecycle sheet, review staging
+Primary request: Create six sequential states of one consistent Moonlake emotional crystal identity in an exact 2x3 equal-cell sheet.
+Cell order left-to-right, top row then bottom row: glimmer, seed, cluster, attuned, transformed, released.
+Identity: handcrafted translucent blue-cyan resin crystal with a small pale-gold Taoist-inspired base motif; coherent silhouette family and gradual growth, never rarity-tier loot.
+State meanings: glimmer is a tiny non-solid light hint; seed is a small grounded shard; cluster is a modest multi-shard growth; attuned adds restrained local cyan/gold inner pattern; transformed is a larger but still slot-safe landmark cluster; released is a quiet empty socket with one fading blue fragment, not damage or punishment.
+View: consistent front-facing 3/4 top-down prop camera, bottom-center anchor, equal scale reference, every state fully inside its cell with generous padding. No cell borders, labels, numbers or captions.
+Background: perfectly flat #FF00FF magenta across every cell, no gradients, texture, shadows, floor plane or reflections. No magenta inside objects.
+Constraints: no characters, UI, text, icons, reward framing, treasure chest language, explosive glow, weather or scenery.
