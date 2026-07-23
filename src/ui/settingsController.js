@@ -1,6 +1,7 @@
 import AudioManager from "../audio/audioManager.js";
 import { qs, qsa } from "../utils/dom.js";
 import { clearState, exportSaveData } from "../state/saveManager.js";
+import { exportTranscriptData } from "../ai/dialogue/soulTalkTranscriptJournal.js";
 import { applyLanguage } from "../i18n/i18n.js";
 
 // data-settings-range key → state.settings 欄位
@@ -133,6 +134,10 @@ export function createSettingsController({ panelManager, restartOnboarding, stor
       exportSave();
       return;
     }
+    if (action === "export-transcript") {
+      exportTranscript();
+      return;
+    }
     if (action === "delete-save") {
       deleteSave();
     }
@@ -154,6 +159,25 @@ export function createSettingsController({ panelManager, restartOnboarding, stor
       URL.revokeObjectURL(url);
     } catch (error) {
       console.warn("Export save failed", error);
+    }
+  }
+
+  // 匯出心語對話 journal：結構化問／答＋學習桶，供 Owner 離線複查（不上傳、不自動訓練）。
+  function exportTranscript() {
+    const data = exportTranscriptData();
+    if (!data) return;
+    try {
+      const blob = new Blob([data], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `nexuslink-soul-talk-transcript-${new Date().toISOString().slice(0, 10)}.json`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.warn("Export transcript failed", error);
     }
   }
 

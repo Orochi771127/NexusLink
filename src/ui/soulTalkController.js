@@ -8,6 +8,7 @@ import { applyRaphaelAgentReduction, reduceRaphaelAgentIntent } from "../engine/
 import { buildEventReflection, composeMemoryReflection } from "../engine/soulTalkComposer.js";
 import { getCompanionById } from "../data/companionRegistry.js";
 import { loadPreferenceStore, replacePreferenceStore } from "../ai/companionPreferenceStore.js";
+import { appendTranscriptTurn } from "../ai/dialogue/soulTalkTranscriptJournal.js";
 import { qs, restoreViewportAfterKeyboard } from "../utils/dom.js";
 import AudioManager from "../audio/audioManager.js";
 
@@ -266,6 +267,8 @@ export function createSoulTalkController({ store, saveCurrentState, saveCritical
     });
 
     const safetyTurn = isSafetyCoreResult(result?.coreResult);
+    // 本機 transcript：每回合記一筆問／答與學習桶（安全回合也記，但桶會標 safety_eval_only）。
+    recordSoulTalkTranscript(message, result, companion);
     lastQuickReplies = safetyTurn ? [] : result?.coreResult?.quickReplies || [];
     if (safetyTurn || result?.firstTraceCreated) saveCriticalState();
     else saveCurrentState();
@@ -297,6 +300,32 @@ export function createSoulTalkController({ store, saveCurrentState, saveCritical
   function cloneSerializable(value) {
     if (typeof structuredClone === "function") return structuredClone(value);
     return JSON.parse(JSON.stringify(value));
+  }
+
+  function recordSoulTalkTranscript(playerText, turnResult, companion) {
+    try {
+      const core = turnResult?.coreResult || {};
+      const safety = core.safety || core.perception?.safety || {};
+      const strategy = core.responseStrategy?.strategy || core.responseStrategy || null;
+      appendTranscriptTurn({
+        now: Number(core.now) || Date.now(),
+        companionId: companion?.id || store.getState()?.activeCompanionId || null,
+        playerText,
+        replyText: core.reply || core.output?.reply || "",
+        replyRole: core.replyRole || (safetyTurnRole(safety) ? "system" : "companion"),
+        safety,
+        topic: core.nlu?.topic || null,
+        dialogueAct: core.nlu?.dialogueAct || null,
+        responseStrategy: strategy,
+        replySource: core.composeMeta?.replySource || null
+      });
+    } catch (error) {
+      console.warn("[soulTalk] transcript journal append failed", error);
+    }
+  }
+
+  function safetyTurnRole(safety = {}) {
+    return safety?.isHighRisk === true || safety?.action === "safe_harbor";
   }
 
   function restoreSafetyTerminalState(state, snapshot) {

@@ -4369,6 +4369,21 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
   - A9–A11 re-verified on URL **without** `?devReset=1`.
 - Next safe action: protected PR → `web-release-gate` → merge `main`.
 
+### 2026-07-23 - Cursor - Soul Talk Transcript Journal - IN PROGRESS
+
+- Status: `IN PROGRESS`; Owner asked to find local corpus then implement Package 1.
+- Lane: `Raphael Core, Companion Reasoning, And Soul Talk`.
+- Task name: `TP-SOUL-TALK-TRANSCRIPT-JOURNAL`.
+- Found local corpus: `aiforge-raphael-corpus/` (authored packs), runtime
+  `src/data/ai/*Bundle.js`, holdout/eval JSON under `docs/qa/` — leave authored
+  sources alone; add **player transcript journal** separately.
+- Work performed:
+  - `soulTalkTranscriptJournal.js`: localStorage ring (120), learn buckets
+    (`style_candidate` / `safety_eval_only` / `skip`), export with no-auto-train policy.
+  - Wire append on Soul Talk turns; Settings「匯出心語對話」; clear on delete-save.
+  - Docs: Training Ops §8.5 corpus vs journal.
+- Next safe action: protected PR → `web-release-gate` → merge `main`.
+
 ### 2026-07-22 - Cursor - First-Loop Hint Clear Face - SUPERSEDED
 
 - Status: `SUPERSEDED` by the VERIFIED entry above (`main` / `74dfa03`, PR #122).

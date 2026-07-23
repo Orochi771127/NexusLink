@@ -296,6 +296,18 @@ export const STRINGS = {
   },
   "set.restart": { tc: "重新播放引導", sc: "重新播放引导", en: "Replay guidance", jp: "案内を再生" },
   "set.export": { tc: "匯出存檔", sc: "导出存档", en: "Export save", jp: "セーブを書き出す" },
+  "set.exportTranscript": {
+    tc: "匯出心語對話",
+    sc: "导出心语对话",
+    en: "Export Soul Talk log",
+    jp: "心の声ログを書き出す"
+  },
+  "set.exportTranscriptNote": {
+    tc: "只存在這台裝置。匯出給你自己複查回覆品質；不會上傳，也不會自動訓練。",
+    sc: "只存在这台装置。导出给你自己复查回复质量；不会上传，也不会自动训练。",
+    en: "Stays on this device. Export for your own reply review — no upload, no auto-training.",
+    jp: "この端末のみ。返答の見直し用に書き出します（アップロード／自動学習なし）。"
+  },
   "set.delete": { tc: "刪除存檔", sc: "删除存档", en: "Delete save", jp: "セーブを削除" },
   "set.deleteNote": {
     tc: "刪除後會清空這台裝置上的記憶與痕跡，回到最開始的開場與輸入名字流程，無法復原。",
