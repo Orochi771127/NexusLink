@@ -160,9 +160,27 @@ Standoff contract: [`RAPHAEL_STANDOFF_EVAL_CONTRACT.md`](../raphael/RAPHAEL_STAN
 
 Full pack text lives in [`NEXT_AI_TASK_PACK_QUEUE.md`](./NEXT_AI_TASK_PACK_QUEUE.md).
 
+## 8.5 Soul Talk transcript journal vs authored corpus
+
+本地其實已有兩類「語料」，**不要混用**：
+
+| 來源 | 路徑／位置 | 用途 |
+| --- | --- | --- |
+| Authored corpus | workspace `aiforge-raphael-corpus/`；runtime `src/data/ai/*Bundle.js`、voice packs | 手寫回覆庫／概念句；可經 PR 改進 |
+| Eval／holdout | `docs/qa/raphael-conversation-holdout-v1.json`、training cases | 密封評測；**禁止**抄進 classifier／packs |
+| Player transcript journal | localStorage `nexusLinkSoulTalkTranscript:v1`；設定「匯出心語對話」 | 真實問／答觀察；離線複查燃料 |
+
+Journal 規則（runtime 硬契約）：
+
+- `style_candidate`：日常回合，可當改進候選（仍需人工核准才改 policy／corpus）
+- `safety_eval_only`：依賴／危險／求助回合 → **只測不學**，禁止當風格訓練
+- 匯出 JSON 明確標記 `autoFineTune/autoCorpusMerge/autoSafetyOverride: false`
+- 刪除存檔會一併清空 journal
+
 ## 9. Explicit non-goals
 
 - Installing external game-AI or combat skills “just in case”
 - Distilling PG／Jobs／Musk／Karpathy into companion Expression DNA
 - Mixing Moonlake habitat dirty assets into Raphael training commits
 - Treating harness green as human blind-review (still `not_run` until Owner runs it)
+- Runtime auto fine-tune / auto corpus merge / auto safety override from player chats
