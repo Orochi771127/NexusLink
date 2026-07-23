@@ -4369,19 +4369,24 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
   - A9–A11 re-verified on URL **without** `?devReset=1`.
 - Next safe action: protected PR → `web-release-gate` → merge `main`.
 
-### 2026-07-23 - Cursor - Soul Talk Transcript Journal - IN PROGRESS
+### 2026-07-23 - Cursor - Soul Talk Transcript Journal - VERIFIED
 
-- Status: `IN PROGRESS`; Owner asked to find local corpus then implement Package 1.
+- Status: `VERIFIED` on `main` (`373ffbb`, PR #125).
 - Lane: `Raphael Core, Companion Reasoning, And Soul Talk`.
 - Task name: `TP-SOUL-TALK-TRANSCRIPT-JOURNAL`.
-- Found local corpus: `aiforge-raphael-corpus/` (authored packs), runtime
-  `src/data/ai/*Bundle.js`, holdout/eval JSON under `docs/qa/` — leave authored
-  sources alone; add **player transcript journal** separately.
-- Work performed:
-  - `soulTalkTranscriptJournal.js`: localStorage ring (120), learn buckets
-    (`style_candidate` / `safety_eval_only` / `skip`), export with no-auto-train policy.
-  - Wire append on Soul Talk turns; Settings「匯出心語對話」; clear on delete-save.
-  - Docs: Training Ops §8.5 corpus vs journal.
+
+### 2026-07-23 - Cursor - Raphael Core Live Drill Auto-Think - IN PROGRESS
+
+- Status: `IN PROGRESS`; Owner: no JSON export required — Cursor converses & patches.
+- Lane: `Raphael Core, Companion Reasoning, And Soul Talk`.
+- Task name: `TP-RAPHAEL-CORE-LIVE-DRILL-AUTO-THINK`.
+- Drill weaknesses fixed:
+  - Rest permission / session-close no longer soft-assent.
+  - Lake daily-life grounded; anxious greeting expanded.
+  - Coffee recall not overridden by sticky fatigue topic.
+  - One-line「形容我們」no longer emotion meta ack.
+- Harness: `docs/qa/raphael-live-conversation-drill.mjs`,
+  `docs/qa/raphael-core-auto-think-cases.mjs`.
 - Next safe action: protected PR → `web-release-gate` → merge `main`.
 
 ### 2026-07-22 - Cursor - First-Loop Hint Clear Face - SUPERSEDED

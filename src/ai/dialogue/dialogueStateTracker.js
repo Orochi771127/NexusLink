@@ -104,8 +104,12 @@ export function applyRecentDialogueContext(nlu = {}, state = {}) {
   // 即使 activeContext 已被邊界輪覆寫，也能把 recalledDetail 塞回 conversationContext。
   const recallHit = findSessionRecall(inputText, state.recentTurns || []);
   if (!explicitTopicShift && recallHit) {
+    // 命中短程回憶時，不要用 activeContext.topic 蓋過「咖啡／加班」等具體線索。
+    // 否則「還記得那杯咖啡」會被上一輪疲勞 topic 帶去 fatigue 模板。
     const inheritedTopic =
-      nlu.topic === "unknown" ? (recallHit.topic || activeContext?.topic || nlu.topic) : nlu.topic;
+      nlu.topic !== "unknown"
+        ? nlu.topic
+        : (recallHit.topic && recallHit.topic !== "unknown" ? recallHit.topic : nlu.topic);
     const dialogueAct =
       /(?:還|还|會|会)?記得|想得起/.test(inputText) ? "asking_memory" : (nlu.dialogueAct || null);
     return {
@@ -371,7 +375,9 @@ function inferConversationSubject(inputText, topic, previousSubject = "") {
   if (/會議|会议|主管|投影機|投影仪/.test(text)) return "meeting_mishap";
   if (/襪子|袜子|穿反/.test(text)) return "clothing_mishap";
   if (/晚餐|吃什麼|吃什么|太油/.test(text)) return "dinner_choice";
-  if (/湖邊|湖边|你今天.*做什麼|你今天.*做什么/.test(text)) return "companion_day";
+  if (/湖邊|湖边|你今天.*做什麼|你今天.*做什么|平常.*湖|都在幹嘛|都在干嘛|會覺得無聊|会觉得无聊/.test(text)) {
+    return "companion_day";
+  }
   if (topic === "relationship" || topic === "social_conflict") return previousSubject || "relationship";
   return previousSubject || topic || "daily_event";
 }
