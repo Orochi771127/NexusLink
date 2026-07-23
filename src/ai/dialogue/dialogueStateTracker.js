@@ -268,7 +268,13 @@ function updateActiveBoundary(current, turn) {
 }
 
 function hasExplicitTopicShift(inputText) {
-  return /換個話題|换个话题|對了|对了|另外/.test(String(inputText || ""));
+  const text = String(inputText || "");
+  if (/換個話題|换个话题|對了|对了|另外/.test(text)) return true;
+  // 家務／身體日常不應被上班壓力 topic 延續帶跑（「可是」常被誤判成 continuation）。
+  if (/洗澡|洗完澡|剛起床|刚起床|塞車|塞车|下雨|鞋子|衣服洗|房間|房间|肚子餓|肚子饿|飯糰|饭团|熱茶|热茶|無聊|无聊/.test(text)) {
+    return true;
+  }
+  return false;
 }
 
 function isDailySessionRecallInput(inputText) {
@@ -377,6 +383,12 @@ function inferConversationSubject(inputText, topic, previousSubject = "") {
   if (/晚餐|吃什麼|吃什么|太油/.test(text)) return "dinner_choice";
   if (/湖邊|湖边|你今天.*做什麼|你今天.*做什么|平常.*湖|都在幹嘛|都在干嘛|會覺得無聊|会觉得无聊/.test(text)) {
     return "companion_day";
+  }
+  if (/洗澡|洗完澡|剛起床|刚起床|衣服洗|房間.*亂|房间.*乱|下雨|鞋子/.test(text)) {
+    return "daily_chore";
+  }
+  if (/肚子餓|肚子饿|飯糰|饭团|吃太飽|吃太饱|熱茶|热茶|早餐|午餐|晚餐/.test(text)) {
+    return "meal_moment";
   }
   if (topic === "relationship" || topic === "social_conflict") return previousSubject || "relationship";
   return previousSubject || topic || "daily_event";

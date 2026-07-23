@@ -90,12 +90,25 @@ export function buildStrategyReply({
     earlyAnswer &&
     (
       (nlu.dialogueAct === "asking_question" && /(?:嗎|吗)[？?]?$/.test(String(nlu.inputText || "").trim())) ||
-      /一句話形容|唱走音|平常.{0,10}湖邊|湖边.{0,10}幹嘛|喘一口氣|不想振作|到這裡可以了嗎|到这里可以了吗/.test(
+      /一句話形容|唱走音|平常.{0,10}湖邊|湖边.{0,10}幹嘛|喘一口氣|不想振作|到這裡可以了嗎|到这里可以了吗|肚子餓|肚子饿|不知道想吃|你今天過得怎麼樣|熱茶|热茶|一起喝|好無聊|陪我瞎聊|午安|晚上好/.test(
         String(nlu.inputText || "")
       )
     )
   ) {
     return earlyAnswer;
+  }
+  const earlyReaction = buildConversationalReaction({
+    inputText: nlu.inputText,
+    frame: earlyFrame,
+    seed
+  });
+  if (
+    earlyReaction &&
+    /洗澡|洗完澡|飯糰|饭团|吃太飽|吃太饱|剛起床|刚起床|塞車|塞车|下雨|鞋子|衣服洗|房間|房间|沒什麼特別|没什么特别|就這樣過完|就这样过完/.test(
+      String(nlu.inputText || "")
+    )
+  ) {
+    return earlyReaction;
   }
 
   if (Number.isFinite(variantIndex)) {
@@ -134,9 +147,19 @@ export function buildStrategyReply({
   const inputText = String(nlu.inputText || "");
   const answerWorthyDirectAsk =
     (nlu.dialogueAct === "asking_question" && /(?:嗎|吗)[？?]?$/.test(inputText.trim())) ||
-    /一句話形容|唱走音|平常.{0,10}湖邊|湖边.{0,10}幹嘛|喘一口氣|不想振作|到這裡可以了嗎|到这里可以了吗/.test(inputText);
+    /一句話形容|唱走音|平常.{0,10}湖邊|湖边.{0,10}幹嘛|喘一口氣|不想振作|到這裡可以了嗎|到这里可以了吗|肚子餓|肚子饿|不知道想吃|你今天過得怎麼樣|熱茶|热茶|一起喝|好無聊|陪我瞎聊|午安|晚上好/.test(
+      inputText
+    );
   if (conversationalAnswer && answerWorthyDirectAsk) {
     return conversationalAnswer;
+  }
+  // 日常描述（洗澡／塞車／瑣事）優先用 grounded reaction，避免 clarifying 空罐頭。
+  const dailyLifeReactionCue =
+    /洗澡|洗完澡|飯糰|饭团|吃太飽|吃太饱|剛起床|刚起床|塞車|塞车|下雨|鞋子|衣服洗|房間|房间|沒什麼特別|没什么特别|就這樣過完|就这样过完/.test(
+      inputText
+    );
+  if (conversationalReaction && dailyLifeReactionCue) {
+    return conversationalReaction;
   }
 
   const builders = {
@@ -325,8 +348,20 @@ export function buildStrategyReply({
       if (/你好嗎|你好不好|最近好嗎|還好嗎/.test(said)) {
         return pick(["我還好，你呢？", "嗯，我在。你呢，還好嗎？", "聽見你了。你最近怎麼樣？"], seed);
       }
-      if (/^(早安|午安|早呀)/.test(said)) {
+      if (/^(早安|早呀|早上好)/.test(said) || /^早安[，,]/.test(said)) {
         return pick(["早安。今天可以慢慢開始。", "早。湖面剛亮，不用急。", "早安，我在。先伸個懶腰再說。"], seed);
+      }
+      if (/午安/.test(said)) {
+        return pick(
+          ["午安。湖面這會兒比較亮，我在。", "午安呀。你若剛好歇一下，我也跟著慢一點。", "午安。中午這段不用急著很有用，先待著就好。"],
+          seed
+        );
+      }
+      if (/晚上好/.test(said)) {
+        return pick(
+          ["晚上好。天色暗下來了，我還在湖邊。", "晚上好。今天若走得很遠，現在可以慢慢靠岸。", "晚上好。燈先留一點，不用急著把一天收完。"],
+          seed
+        );
       }
       if (/安安/.test(said)) return pick(["嗯，我在。", "安安，聽見你了。", "我在，不用急著說重點。"], seed);
       return pick(["嗯，我在。", "聽見你了。", "我在，不用急著說重點。"], seed);
@@ -685,8 +720,22 @@ function resolveVariantLines(strategy, nlu, frame, recoveryContext, prefillConte
       if (/你好嗎|你好不好|最近好嗎|還好嗎/.test(said)) {
         return ["我還好，你呢？", "嗯，我在。你呢，還好嗎？", "聽見你了。你最近怎麼樣？"];
       }
-      if (/^(早安|午安|早呀)/.test(said)) {
+      if (/^(早安|早呀|早上好)/.test(said) || /^早安[，,]/.test(said)) {
         return ["早安。今天可以慢慢開始。", "早。湖面剛亮，不用急。", "早安，我在。先伸個懶腰再說。"];
+      }
+      if (/午安/.test(said)) {
+        return [
+          "午安。湖面這會兒比較亮，我在。",
+          "午安呀。你若剛好歇一下，我也跟著慢一點。",
+          "午安。中午這段不用急著很有用，先待著就好。"
+        ];
+      }
+      if (/晚上好/.test(said)) {
+        return [
+          "晚上好。天色暗下來了，我還在湖邊。",
+          "晚上好。今天若走得很遠，現在可以慢慢靠岸。",
+          "晚上好。燈先留一點，不用急著把一天收完。"
+        ];
       }
       if (/安安/.test(said)) return ["嗯，我在。", "安安，聽見你了。", "我在，不用急著說重點。"];
       return ["嗯，我在。", "聽見你了。", "我在，不用急著說重點。"];
