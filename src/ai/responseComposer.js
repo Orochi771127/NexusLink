@@ -14,6 +14,10 @@ import { replyReferencesDetail } from "./nlu/explicitReference.js";
 import { buildPrefillGroundingPlan, downgradePrefillGroundingPlan } from "./dialogue/prefillGrounding.js";
 import { getReferenceText, hasValidPrefill } from "./dialogue/quickReplyContext.js";
 import { buildBoundaryPolicyReply } from "./dialogue/boundaryReplyPolicy.js";
+import {
+  buildConversationalAnswer,
+  buildConversationalReaction
+} from "./dialogue/conversationAnswerPolicy.js";
 
 const BOUNDARY_MODES = new Set([
   SOUL_TALK_REACTIONS.WITHDRAW,
@@ -217,6 +221,31 @@ export function composeRaphaelReply({
         args
       );
     }
+  }
+
+  // 具體日常（吃飯／洗澡／瑣事）優先於寂寞等通用 voice pack，避免飯糰空無被「不像擁抱」蓋掉。
+  const dailyFrame = nlu?.semanticFrame || {};
+  const dailySeed = buildSeed(inputText, state, companion);
+  const concreteDaily =
+    buildConversationalReaction({ inputText, frame: dailyFrame, seed: dailySeed }) ||
+    (
+      /午安|晚上好|肚子餓|肚子饿|不知道想吃|你今天過得怎麼樣|熱茶|热茶|一起喝|好無聊|陪我瞎聊|晚餐|午餐|早餐/.test(
+        String(inputText || "")
+      )
+        ? buildConversationalAnswer({ inputText, frame: dailyFrame, seed: dailySeed })
+        : null
+    );
+  if (
+    concreteDaily &&
+    /洗澡|洗完澡|飯糰|饭团|便利商店|吃太飽|吃太饱|剛起床|刚起床|塞車|塞车|下雨|鞋子|衣服洗|房間|房间|沒什麼特別|没什么特别|就這樣過完|午安|晚上好|肚子餓|肚子饿|熱茶|热茶|一起喝|好無聊|陪我瞎聊|晚餐.*想法|想吃點熱/.test(
+      String(inputText || "")
+    )
+  ) {
+    return returnComposeResult(
+      concreteDaily,
+      { variantId: "daily:grounded", replySource: "nlu_builder", variationReason: "daily_life_grounding" },
+      args
+    );
   }
 
   // 心輝五席等：variant 已選 response_pack 時，先落 pack，避免通用 NLU 句蓋掉物種語氣。

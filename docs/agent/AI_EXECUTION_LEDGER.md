@@ -4375,18 +4375,20 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Lane: `Raphael Core, Companion Reasoning, And Soul Talk`.
 - Task name: `TP-SOUL-TALK-TRANSCRIPT-JOURNAL`.
 
-### 2026-07-23 - Cursor - Raphael Core Live Drill Auto-Think - IN PROGRESS
+### 2026-07-23 - Cursor - Raphael Core Live Drill Auto-Think - VERIFIED
 
-- Status: `IN PROGRESS`; Owner: no JSON export required — Cursor converses & patches.
+- Status: `VERIFIED` on `main` (`3c1d640`, PR #126).
 - Lane: `Raphael Core, Companion Reasoning, And Soul Talk`.
 - Task name: `TP-RAPHAEL-CORE-LIVE-DRILL-AUTO-THINK`.
-- Drill weaknesses fixed:
-  - Rest permission / session-close no longer soft-assent.
-  - Lake daily-life grounded; anxious greeting expanded.
-  - Coffee recall not overridden by sticky fatigue topic.
-  - One-line「形容我們」no longer emotion meta ack.
-- Harness: `docs/qa/raphael-live-conversation-drill.mjs`,
-  `docs/qa/raphael-core-auto-think-cases.mjs`.
+
+### 2026-07-24 - Cursor - Raphael Daily-Life Conversation - IN PROGRESS
+
+- Status: `IN PROGRESS`; greetings / meals / bath / chores / light chat.
+- Lane: `Raphael Core, Companion Reasoning, And Soul Talk`.
+- Task name: `TP-RAPHAEL-DAILY-LIFE-CONVERSATION`.
+- Work: separate 午安/晚上好; meal/bath/chore reactions; daily grounded
+  before loneliness voice pack; topic-shift for domestic cues.
+- Harness: `docs/qa/raphael-daily-life-conversation-*.mjs`.
 - Next safe action: protected PR → `web-release-gate` → merge `main`.
 
 ### 2026-07-22 - Cursor - First-Loop Hint Clear Face - SUPERSEDED
