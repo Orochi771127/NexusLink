@@ -88,8 +88,12 @@ export function buildStrategyReply({
   });
   if (
     earlyAnswer &&
-    nlu.dialogueAct === "asking_question" &&
-    /(?:嗎|吗)[？?]?$/.test(String(nlu.inputText || "").trim())
+    (
+      (nlu.dialogueAct === "asking_question" && /(?:嗎|吗)[？?]?$/.test(String(nlu.inputText || "").trim())) ||
+      /一句話形容|唱走音|平常.{0,10}湖邊|湖边.{0,10}幹嘛|喘一口氣|不想振作|到這裡可以了嗎|到这里可以了吗/.test(
+        String(nlu.inputText || "")
+      )
+    )
   ) {
     return earlyAnswer;
   }
@@ -126,11 +130,12 @@ export function buildStrategyReply({
   // A concrete answer policy must win over a carried acknowledgement on an
   // ordinary direct question. Safety and boundary modes are resolved by the
   // composer before this builder is reached.
-  if (
-    conversationalAnswer &&
-    nlu.dialogueAct === "asking_question" &&
-    /(?:嗎|吗)[？?]?$/.test(String(nlu.inputText || "").trim())
-  ) {
+  // Also cover mis-tagged acts (e.g.「用一句話形容…」被標成 describing_event)。
+  const inputText = String(nlu.inputText || "");
+  const answerWorthyDirectAsk =
+    (nlu.dialogueAct === "asking_question" && /(?:嗎|吗)[？?]?$/.test(inputText.trim())) ||
+    /一句話形容|唱走音|平常.{0,10}湖邊|湖边.{0,10}幹嘛|喘一口氣|不想振作|到這裡可以了嗎|到这里可以了吗/.test(inputText);
+  if (conversationalAnswer && answerWorthyDirectAsk) {
     return conversationalAnswer;
   }
 
@@ -306,6 +311,17 @@ export function buildStrategyReply({
           seed
         );
       }
+      // 剛到／緊張：多留一點在場感，避免只回「嗯，我在。」顯得冷。
+      if (/緊張|不安|剛到|刚到|月湖|慢慢跟我說|慢慢跟我说|說說話|说说话/.test(said)) {
+        return pick(
+          [
+            "嗯，我在。月湖這邊很安靜，你可以慢慢說，不必一次講完。",
+            "我在。你剛到的話，先把呼吸放慢就好；我想聽，不催。",
+            "聽見了。這裡不趕時間——你緊張也沒關係，我陪著。"
+          ],
+          seed
+        );
+      }
       if (/你好嗎|你好不好|最近好嗎|還好嗎/.test(said)) {
         return pick(["我還好，你呢？", "嗯，我在。你呢，還好嗎？", "聽見你了。你最近怎麼樣？"], seed);
       }
@@ -333,13 +349,20 @@ export function buildStrategyReply({
       }
 
       const dialogueAct = frame.dialogueAct || nlu.dialogueAct || "";
+      const askText = String(nlu.inputText || "");
+      // 玩家點名咖啡／日常細節時，不可被「上一輪疲勞 topic」搶成疲勞模板。
+      const specificNonFatigueCue = /咖啡|那杯|襪子|袜子|晚餐|會議|会议|湖邊|湖边|走音|唱歌/.test(askText);
+      const fatigueCueInAsk = /累|疲憊|疲惫|沒力|没力|加班/.test(askText);
       const fatigueRecall =
-        recoveryContext?.memoryEmotion === "fatigue" ||
-        recoveryContext?.memoryTheme === "疲憊" ||
-        topic === "physical_tiredness" ||
-        (topic === "memory" && /累|疲憊/.test(entityRef)) ||
-        (dialogueAct === "asking_memory" && /累|疲憊|沒力/.test(topicLabel(topic) + entityRef)) ||
-        (dialogueAct === "asking_memory" && /累|疲憊|沒力/.test(String(nlu.inputText || "")));
+        !specificNonFatigueCue &&
+        (
+          recoveryContext?.memoryEmotion === "fatigue" ||
+          recoveryContext?.memoryTheme === "疲憊" ||
+          (topic === "physical_tiredness" && (fatigueCueInAsk || dialogueAct !== "asking_memory")) ||
+          (topic === "memory" && /累|疲憊/.test(entityRef)) ||
+          (dialogueAct === "asking_memory" && fatigueCueInAsk) ||
+          (dialogueAct === "asking_memory" && /累|疲憊|沒力/.test(topicLabel(topic) + entityRef) && fatigueCueInAsk)
+        );
 
       if (fatigueRecall && !awakeningRecall) {
         return pick(
@@ -651,6 +674,13 @@ function resolveVariantLines(strategy, nlu, frame, recoveryContext, prefillConte
       }
       if (/吃飯沒|吃了嗎|吃飯了嗎/.test(said)) {
         return ["還沒呢，但你先顧好自己比較重要。", "你呢？有沒有好好吃？", "我這邊沒關係，倒是你——有吃飯嗎？"];
+      }
+      if (/緊張|不安|剛到|刚到|月湖|慢慢跟我說|慢慢跟我说|說說話|说说话/.test(said)) {
+        return [
+          "嗯，我在。月湖這邊很安靜，你可以慢慢說，不必一次講完。",
+          "我在。你剛到的話，先把呼吸放慢就好；我想聽，不催。",
+          "聽見了。這裡不趕時間——你緊張也沒關係，我陪著。"
+        ];
       }
       if (/你好嗎|你好不好|最近好嗎|還好嗎/.test(said)) {
         return ["我還好，你呢？", "嗯，我在。你呢，還好嗎？", "聽見你了。你最近怎麼樣？"];
