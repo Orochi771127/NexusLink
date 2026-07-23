@@ -4,7 +4,8 @@ import { hasValidPrefill } from "../dialogue/quickReplyContext.js";
 import {
   buildConversationalAnswer,
   buildConversationalReaction,
-  buildVentingReply
+  buildVentingReply,
+  matchesEverydayChatGrounding
 } from "../dialogue/conversationAnswerPolicy.js";
 import {
   buildReflectiveCareReply,
@@ -90,7 +91,7 @@ export function buildStrategyReply({
     earlyAnswer &&
     (
       (nlu.dialogueAct === "asking_question" && /(?:嗎|吗)[？?]?$/.test(String(nlu.inputText || "").trim())) ||
-      /一句話形容|唱走音|平常.{0,10}湖邊|湖边.{0,10}幹嘛|喘一口氣|不想振作|到這裡可以了嗎|到这里可以了吗|肚子餓|肚子饿|不知道想吃|你今天過得怎麼樣|熱茶|热茶|一起喝|好無聊|陪我瞎聊|午安|晚上好/.test(
+      /一句話形容|唱走音|平常.{0,10}湖邊|湖边.{0,10}幹嘛|喘一口氣|不想振作|到這裡可以了嗎|到这里可以了吗|肚子餓|肚子饿|不知道想吃|你今天過得怎麼樣|熱茶|热茶|一起喝|好無聊|陪我瞎聊|午安|晚上好|好聽的歌|該出門|出門還是在家/.test(
         String(nlu.inputText || "")
       )
     )
@@ -102,12 +103,7 @@ export function buildStrategyReply({
     frame: earlyFrame,
     seed
   });
-  if (
-    earlyReaction &&
-    /洗澡|洗完澡|飯糰|饭团|吃太飽|吃太饱|剛起床|刚起床|塞車|塞车|下雨|鞋子|衣服洗|房間|房间|沒什麼特別|没什么特别|就這樣過完|就这样过完/.test(
-      String(nlu.inputText || "")
-    )
-  ) {
+  if (earlyReaction && matchesEverydayChatGrounding(nlu.inputText)) {
     return earlyReaction;
   }
 
@@ -147,18 +143,14 @@ export function buildStrategyReply({
   const inputText = String(nlu.inputText || "");
   const answerWorthyDirectAsk =
     (nlu.dialogueAct === "asking_question" && /(?:嗎|吗)[？?]?$/.test(inputText.trim())) ||
-    /一句話形容|唱走音|平常.{0,10}湖邊|湖边.{0,10}幹嘛|喘一口氣|不想振作|到這裡可以了嗎|到这里可以了吗|肚子餓|肚子饿|不知道想吃|你今天過得怎麼樣|熱茶|热茶|一起喝|好無聊|陪我瞎聊|午安|晚上好/.test(
+    /一句話形容|唱走音|平常.{0,10}湖邊|湖边.{0,10}幹嘛|喘一口氣|不想振作|到這裡可以了嗎|到这里可以了吗|肚子餓|肚子饿|不知道想吃|你今天過得怎麼樣|熱茶|热茶|一起喝|好無聊|陪我瞎聊|午安|晚上好|好聽的歌|該出門|出門還是在家/.test(
       inputText
     );
   if (conversationalAnswer && answerWorthyDirectAsk) {
     return conversationalAnswer;
   }
-  // 日常描述（洗澡／塞車／瑣事）優先用 grounded reaction，避免 clarifying 空罐頭。
-  const dailyLifeReactionCue =
-    /洗澡|洗完澡|飯糰|饭团|吃太飽|吃太饱|剛起床|刚起床|塞車|塞车|下雨|鞋子|衣服洗|房間|房间|沒什麼特別|没什么特别|就這樣過完|就这样过完/.test(
-      inputText
-    );
-  if (conversationalReaction && dailyLifeReactionCue) {
+  // 一般人常聊主題優先用 grounded reaction，避免 clarifying／寂寞 pack 空罐頭。
+  if (conversationalReaction && matchesEverydayChatGrounding(inputText)) {
     return conversationalReaction;
   }
 
