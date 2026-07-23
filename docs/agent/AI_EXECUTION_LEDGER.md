@@ -4381,14 +4381,21 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Lane: `Raphael Core, Companion Reasoning, And Soul Talk`.
 - Task name: `TP-RAPHAEL-CORE-LIVE-DRILL-AUTO-THINK`.
 
-### 2026-07-24 - Cursor - Raphael Daily-Life Conversation - IN PROGRESS
+### 2026-07-24 - Cursor - Raphael Daily-Life Conversation - VERIFIED
 
-- Status: `IN PROGRESS`; greetings / meals / bath / chores / light chat.
+- Status: `VERIFIED` on `main` (`d086a9b`, PR #127).
 - Lane: `Raphael Core, Companion Reasoning, And Soul Talk`.
 - Task name: `TP-RAPHAEL-DAILY-LIFE-CONVERSATION`.
-- Work: separate 午安/晚上好; meal/bath/chore reactions; daily grounded
-  before loneliness voice pack; topic-shift for domestic cues.
-- Harness: `docs/qa/raphael-daily-life-conversation-*.mjs`.
+
+### 2026-07-24 - Cursor - Raphael Everyday Chat Topics v2 - IN PROGRESS
+
+- Status: `IN PROGRESS`; expand ordinary-people chat themes.
+- Lane: `Raphael Core, Companion Reasoning, And Soul Talk`.
+- Task name: `TP-RAPHAEL-EVERYDAY-CHAT-TOPICS-V2`.
+- Themes: weather, weekend, media/music/games, pets/plants, sleep,
+  errands, body, travel itch, cooking/snack, light work, social soft.
+- Harness: `docs/qa/raphael-everyday-chat-topics-*.mjs`,
+  `docs/qa/RAPHAEL_EVERYDAY_CHAT_TOPICS.md`.
 - Next safe action: protected PR → `web-release-gate` → merge `main`.
 
 ### 2026-07-22 - Cursor - First-Loop Hint Clear Face - SUPERSEDED

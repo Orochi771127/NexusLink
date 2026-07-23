@@ -271,7 +271,11 @@ function hasExplicitTopicShift(inputText) {
   const text = String(inputText || "");
   if (/換個話題|换个话题|對了|对了|另外/.test(text)) return true;
   // 家務／身體日常不應被上班壓力 topic 延續帶跑（「可是」常被誤判成 continuation）。
-  if (/洗澡|洗完澡|剛起床|刚起床|塞車|塞车|下雨|鞋子|衣服洗|房間|房间|肚子餓|肚子饿|飯糰|饭团|熱茶|热茶|無聊|无聊/.test(text)) {
+  if (
+    /洗澡|洗完澡|剛起床|刚起床|塞車|塞车|下雨|鞋子|衣服洗|房間|房间|肚子餓|肚子饿|飯糰|饭团|熱茶|热茶|無聊|无聊|週末|周末|假日|追劇|打遊戲|盆栽|睡不著|鬧鐘|包裹|超市|電量|海邊|宵夜|約聚餐|同事聊天|好熱|好冷|忘了帶傘/.test(
+      text
+    )
+  ) {
     return true;
   }
   return false;
