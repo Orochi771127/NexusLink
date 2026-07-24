@@ -4405,16 +4405,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Lane: `Raphael Core, Companion Reasoning, And Soul Talk`.
 - Task name: `TP-RAPHAEL-VENT-WORK-RELATIONSHIP-LIFE`.
 
-### 2026-07-24 - Cursor - Raphael Proactive Care Guide - IN PROGRESS
+### 2026-07-24 - Cursor - Raphael Proactive Care Guide - VERIFIED
 
-- Status: `IN PROGRESS` on `feat/raphael-proactive-care-guide` (PR #131).
+- Status: `VERIFIED` on `main` (`cd5d02e`, PR #131).
 - Lane: `Raphael Core, Companion Reasoning, And Soul Talk`.
 - Task name: `TP-RAPHAEL-PROACTIVE-CARE-GUIDE`.
-- Gate fail (run `30070495955`): `dialogue_loop_smoke` DL-20 quick-reply labels;
-  `persona_boundary` VOICE-LIVE (care weave mutated `response_pack` lines).
-- Fix: skip weave on `response_pack`/`template`; align DL-20 labels to care guide.
-- Local re-verify: care-guide + DL + PB + vent/everyday/daily/auto-think PASS.
-- Next safe action: push fix → re-run `web-release-gate` → merge `main`.
+- Design: thin opens → proactive care door; NLU vent may soft-invite;
+  quiet / safety / dependency / `response_pack` skip weave.
+- Gate: first run failed (DL-20 labels + VOICE-LIVE); fix `75dd88b` then
+  `web-release-gate` PASS → merge.
+- MCP: codebase-memory reindex + ADR updated.
+- Next safe action: none for this pack; continue everyday/care polish only if Owner asks.
 
 ### 2026-07-22 - Cursor - First-Loop Hint Clear Face - SUPERSEDED
 
