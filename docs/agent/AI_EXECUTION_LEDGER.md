@@ -4387,15 +4387,22 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Lane: `Raphael Core, Companion Reasoning, And Soul Talk`.
 - Task name: `TP-RAPHAEL-DAILY-LIFE-CONVERSATION`.
 
-### 2026-07-24 - Cursor - Raphael Everyday Chat Topics v2 - IN PROGRESS
+### 2026-07-24 - Cursor - Raphael Everyday Chat Topics v2 - VERIFIED
 
-- Status: `IN PROGRESS`; expand ordinary-people chat themes.
+- Status: `VERIFIED` on `main` (`e903e2c`, PR #128).
 - Lane: `Raphael Core, Companion Reasoning, And Soul Talk`.
 - Task name: `TP-RAPHAEL-EVERYDAY-CHAT-TOPICS-V2`.
-- Themes: weather, weekend, media/music/games, pets/plants, sleep,
-  errands, body, travel itch, cooking/snack, light work, social soft.
-- Harness: `docs/qa/raphael-everyday-chat-topics-*.mjs`,
-  `docs/qa/RAPHAEL_EVERYDAY_CHAT_TOPICS.md`.
+
+### 2026-07-24 - Cursor - Raphael Everyday Chat Topics v3 Backlog - IN PROGRESS
+
+- Status: `IN PROGRESS`; train remaining catalog themes in order.
+- Lane: `Raphael Core, Companion Reasoning, And Soul Talk`.
+- Task name: `TP-RAPHAEL-EVERYDAY-CHAT-TOPICS-V3`.
+- Themes: grooming, health-anxiety, transit, housing noise, fandom,
+  cooking fail/delivery, family afterglow, money-feel, weather-app miss,
+  ordinary-day variants. No finance advice / no false medical reassure.
+- Harness: `docs/qa/raphael-everyday-chat-topics-v3-*.mjs`.
+- Self-review: v3+v2 drills flagged=0; prior regression suites green.
 - Next safe action: protected PR → `web-release-gate` → merge `main`.
 
 ### 2026-07-22 - Cursor - First-Loop Hint Clear Face - SUPERSEDED
