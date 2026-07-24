@@ -16,7 +16,7 @@ Chapter resonance invite (`evaluateResonanceInvite`) and meet/reask snapshots in
 1. **Authority rule:** Any judgment about how companion X feels toward the player MUST read `companionStates.byId[X].relationship` (via `resolveRelationshipForCompanion`).
 2. **Phase 1 (shipped with this ADR):** Fix invite evaluation + chapter-mark snapshots only. No `STORAGE_KEY` change. No `COMPANION_STATE_SCHEMA_VERSION` bump yet.
 3. **Dual-read legacy:** If there is no canonical `companionStates` bag, or the target is the active companion with a byId miss, fall back to the top-level mirror (keeps pre-G2 fixtures and active UI writers working). If the target ≠ active and byId is missing, use **baseline defaults** — never steal the active companion’s bond/trust.
-4. **Top-level mirror:** Remains for the foreseeable future as active UI/gameplay compatibility. Deprecation is a later Owner decision (Phase 3).
+4. **Top-level mirror:** **Kept** as active UI/gameplay compatibility (Owner decision 2026-07-24). Full deprecation deferred; see `docs/strategy/PACK2_PHASE3_MIRROR_DECISION.md`.
 
 ## Field ownership
 

@@ -14,7 +14,7 @@
 |---|---|---|
 | 0 | BGM Asset Audit and Integration | **Authorized now** |
 | 1 | First Session Motivation Repair | **Implemented (await playtest VERIFIED)** |
-| 2 | Multi-Companion Relationship State Authority | **Phase 1 shipped** (invite/snapshot readers); Phases 2–3 plan remain |
+| 2 | Multi-Companion Relationship State Authority | **Phase 1–2 shipped**; Phase 3 = **keep mirror** (see `PACK2_PHASE3_MIRROR_DECISION.md`) |
 | 3 | Memory Single Truth Projection | **Phase 1 shipped** (projection + recall gate); no schema merge |
 | 4 | Dynamic Chapter Encounter Resolver | **Phase 1 shipped** (resolver + fallback + invite resolvedId) |
 | 5 | Terminology and UI Language Alignment | **Phase 1 shipped** (player-facing glossary + scan) |
