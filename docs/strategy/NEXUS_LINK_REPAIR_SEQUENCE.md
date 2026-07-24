@@ -15,7 +15,7 @@
 | 0 | BGM Asset Audit and Integration | **Authorized now** |
 | 1 | First Session Motivation Repair | **Implemented (await playtest VERIFIED)** |
 | 2 | Multi-Companion Relationship State Authority | **Phase 1 shipped** (invite/snapshot readers); Phases 2–3 plan remain |
-| 3 | Memory Single Truth Projection | Plan only |
+| 3 | Memory Single Truth Projection | **Phase 1 shipped** (projection + recall gate); no schema merge |
 | 4 | Dynamic Chapter Encounter Resolver | Plan only |
 | 5 | Terminology and UI Language Alignment | Docs / UI text plan |
 
@@ -154,7 +154,7 @@ See also: `docs/architecture/ADR-002-MULTI_COMPANION_RELATIONSHIP_AUTHORITY.md`,
 
 ---
 
-## TASK PACK 3 — Memory Single Truth Projection（Plan only）
+## TASK PACK 3 — Memory Single Truth Projection（Phase 1 shipped）
 
 ### Objective
 
@@ -190,6 +190,14 @@ No RAG, no transcript-as-runtime-memory, no automatic fine-tune.
 ### Required human decisions
 
 - Which anchors become player-visible vs tone-only.
+
+### Shipped (2026-07-24)
+
+- `src/ui/memoryProjection.js` + Memory page evidence strip includes anchors.
+- Visible anchors = non-empty, non-risky detail; soft + concrete recall gated.
+- Released emotional memories remain as archive rows (`claimable: false`).
+- ADR: `docs/architecture/ADR-003-MEMORY_SINGLE_TRUTH_PROJECTION.md`
+- Harness: `docs/qa/memory-projection-cases.mjs`
 
 ---
 

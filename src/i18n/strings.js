@@ -213,6 +213,7 @@ export const STRINGS = {
   "memory.evInteractions": { tc: "互動記憶", sc: "互动记忆", en: "Interaction memories", jp: "やり取りの記憶" },
   "memory.evEmotional": { tc: "情緒記憶", sc: "情绪记忆", en: "Emotional memories", jp: "感情の記憶" },
   "memory.evTraces": { tc: "棲地痕跡", sc: "栖地痕迹", en: "Habitat traces", jp: "棲み処の痕跡" },
+  "memory.evAnchors": { tc: "關係錨點", sc: "关系锚点", en: "Relationship anchors", jp: "関係の錨" },
   "memory.echo": { tc: "回聽最近共鳴", sc: "回听最近共鸣", en: "Echo recent resonance", jp: "最近の共鳴を聴き返す" },
   "memory.openSoul": { tc: "開啟心語", sc: "打开心语", en: "Open Soul Talk", jp: "心の声を開く" },
 
@@ -519,6 +520,9 @@ export const STRINGS = {
   "memory.fallbackEmotionalCopy": { tc: "牠把這段感受留在棲地裡。", sc: "牠把这段感受留在栖地里。", en: "It left this feeling in the habitat.", jp: "その気持ちは棲み処に残された。" },
   "memory.fallbackInteractionTitle": { tc: "互動記憶", sc: "互动记忆", en: "Interaction memory", jp: "やり取りの記憶" },
   "memory.fallbackInteractionCopy": { tc: "這是一段已保存的互動。", sc: "这是一段已保存的互动。", en: "A saved moment between you.", jp: "保存されたひとときのやり取り。" },
+  "memory.fallbackAnchorTitle": { tc: "關係錨點", sc: "关系锚点", en: "Relationship anchor", jp: "関係の錨" },
+  "memory.fallbackTraceTitle": { tc: "棲地痕跡", sc: "栖地痕迹", en: "Habitat trace", jp: "棲み処の痕跡" },
+  "memory.archiveMeta": { tc: "已釋放・仍留在關係檔案", sc: "已释放・仍留在关系档案", en: "Released · kept in the relationship record", jp: "手放した・関係の記録に残る" },
   "memory.intensityFmt": { tc: "（強度 {pct}%）", sc: "（强度 {pct}%）", en: " (intensity {pct}%)", jp: "（強さ {pct}%）" },
   "memory.reviewAria": { tc: "回看", sc: "回看", en: "Revisit", jp: "見返す" },
   "memory.review": { tc: "回望", sc: "回望", en: "Revisit", jp: "見返す" },
