@@ -19,8 +19,8 @@
 | 4 | Dynamic Chapter Encounter Resolver | **Phase 1 shipped** (resolver + fallback + invite resolvedId) |
 | 5 | Terminology and UI Language Alignment | **Phase 1 shipped** (player-facing glossary + scan) |
 | A | Qualitative Bond Presentation | **Phase 1 shipped** (UI stages; engines keep numbers) |
-| B | Non-confrontation Growth Route | **Authorized next** |
-| C | Initiative Budget | Authorized after B |
+| B | Non-confrontation Growth Route | **Phase 1 shipped** (chapter life-event + shared trial engine) |
+| C | Initiative Budget | **Authorized next** |
 | D | Expedition Loot Semantics | Authorized after C |
 
 ---
@@ -322,3 +322,22 @@ Show relationship as stages / light-marks, not grind scores, while engines keep 
 ### Non-goals
 
 No schema bump; no milestone threshold rewrite; no deleting bars.
+
+---
+
+## TASK PACK B — Non-confrontation Chapter Growth（Phase 1 shipped）
+
+### Objective
+
+Offer a calm chapter-clear path (life-event explore) equal in authority to standoff stabilized/recovered, writing `chapter` growth evidence.
+
+### Shipped (2026-07-25)
+
+- Engine: `src/engine/chapterTrialEngine.js`
+- Map life-event advance + chapter evidence; battle uses shared anti-farm helpers
+- Doc: `docs/strategy/PACK_NONCONFRONTATION_CHAPTER_GROWTH.md`
+- Harness: `docs/qa/nonconfrontation-chapter-growth-cases.mjs`
+
+### Non-goals
+
+No Echo Sorting / G4; no family-count change; no schema bump.
