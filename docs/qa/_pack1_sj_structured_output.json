@@ -1,0 +1,78 @@
+{
+  "gate": "pack1-sj-structured",
+  "base_url": "http://127.0.0.1:5197",
+  "checks": [
+    {
+      "name": "first_loop_hint_visible",
+      "ok": true,
+      "detail": "輕觸畫面裡的牠——牠會回應你。"
+    },
+    {
+      "name": "first_loop_stage_touch",
+      "ok": true,
+      "detail": "touch"
+    },
+    {
+      "name": "resonance_thread_surface",
+      "ok": true,
+      "detail": {
+        "title": "灰影仍在觀察你",
+        "body": "先讓牠知道你今天的靠近方式。",
+        "why": "為什麼： 第一次觸碰會成為往後邊界感的起點。",
+        "consequence": "可能留下： 牠會記住你有沒有強迫距離。"
+      }
+    },
+    {
+      "name": "care_page_opens",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "memory_page_opens",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "map_opens",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "no_fomo_pressure_copy_in_surfaces",
+      "ok": true,
+      "detail": null
+    }
+  ],
+  "sj_proxy_answers": {
+    "q1_diff_from_virtual_pet": "夥伴有邊界與首輪閉環（觸碰→心語→痕跡），不是單向餵養；首輪提示：輕觸畫面裡的牠——牠會回應你。",
+    "q2_knows_next_step": "是 — 首輪提示在進入棲地後即可見（stage=touch）：輕觸畫面裡的牠——牠會回應你。",
+    "q3_named_visible_change": "可命名：首輪完成／跳過後 nav 揭示、記憶證據條、地圖探索結果；記憶證據：0\n互動記憶\n0\n情緒記憶\n0\n棲地痕跡\n0\n關係錨點",
+    "q4_why_return": "共鳴線索後果／探索回程預告等非 FOMO 期待；thread=可能留下： 牠會記住你有沒有強迫距離。",
+    "q5_felt_pressured": "否 — 首輪可跳過、無線上倒數／登入懲罰文案；結構化掃描通過。"
+  },
+  "surfaces": {
+    "first_loop": {
+      "hint": "輕觸畫面裡的牠——牠會回應你。",
+      "skip": "先自己逛",
+      "stage": "touch",
+      "body_class": "first-loop-active v3-home-ready"
+    },
+    "resonance_thread": {
+      "visible": true,
+      "title": "灰影仍在觀察你",
+      "body": "先讓牠知道你今天的靠近方式。",
+      "why": "為什麼： 第一次觸碰會成為往後邊界感的起點。",
+      "consequence": "可能留下： 牠會記住你有沒有強迫距離。"
+    },
+    "care": {
+      "body_snippet": "邊界\n35\n牠是否需要更多空間\n信任\n5\n牠是否願意靠近\n精力\n10\n目前活動餘裕\n\n這裡不交換、不討好。陪伴牠，也讓牠選擇距離。\n\n輕聲安撫\n尊重牠此刻的邊界。\n一起休息\n依牠的精力，一起把節奏放慢。\n心核共息\n和牠一起把節奏放慢。\n讀身體語言\n讀懂耳朵、肩線與距離。"
+    },
+    "memory": {
+      "evidence_strip": "0\n互動記憶\n0\n情緒記憶\n0\n棲地痕跡\n0\n關係錨點"
+    },
+    "map_open": true
+  },
+  "console_errors": [],
+  "passed": true,
+  "screenshot": "C:\\Users\\User\\AppData\\Local\\Temp\\nexus-pack1-sj-structured.png"
+}

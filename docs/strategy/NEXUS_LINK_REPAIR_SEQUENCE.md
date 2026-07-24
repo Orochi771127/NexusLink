@@ -13,7 +13,7 @@
 | Order | Pack | Mode |
 |---|---|---|
 | 0 | BGM Asset Audit and Integration | **Authorized now** |
-| 1 | First Session Motivation Repair | **Implemented (await playtest VERIFIED)** |
+| 1 | First Session Motivation Repair | **Implemented + VERIFIED_STRUCTURED** (human 5-stranger cohort still pre-launch) |
 | 2 | Multi-Companion Relationship State Authority | **Phase 1–2 shipped**; Phase 3 = **keep mirror** (see `PACK2_PHASE3_MIRROR_DECISION.md`) |
 | 3 | Memory Single Truth Projection | **Phase 1 shipped** (projection + recall gate); no schema merge |
 | 4 | Dynamic Chapter Encounter Resolver | **Phase 1 shipped** (resolver + fallback + invite resolvedId) |
@@ -98,6 +98,11 @@ No currency, daily tasks, red dots, new companions, battle-content expansion, ab
 ### Acceptance criteria
 
 From `FIRST_SESSION_MOTIVATION_REVIEW.md` §J (5 new players, four questions).
+
+### Shipped acceptance (2026-07-25)
+
+- `VERIFIED_STRUCTURED`: harness + map browser gate + moderated walkthrough — `docs/qa/PACK1_SJ_ACCEPTANCE_EVIDENCE.md`
+- Human 5-stranger cohort: score sheet `docs/qa/PACK1_SJ_HUMAN_SCORESHEET.md` (pre-launch; not blocking Pack 1 repair close)
 
 ### Rollback strategy
 
