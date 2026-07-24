@@ -7,6 +7,8 @@
 //   - 只讀關係狀態：這一章的 bond/trust 增量、邊界尊重（連拍被拒次數）、章內對峙
 //     是否把牠推到 overwhelmed。**絕不**讀 lastSeenAt / 上線頻率 / 離線時長 / 孤獨
 //     或依賴推斷（紅線 1）——這些欄位即使在 state 上，本檔也不得引用。
+//   - Pack 2：bond/trust/blocked 必須取「該章目標 companionId」權威，不得用 active mirror
+//     讓 Companion A 的羈絆解鎖 Companion B。
 //   - 拒絕＝rolling window：被拒後重新快照（見 mapController），「還不是時候」永遠
 //     可再培養後再問，絕不永久鎖死（紅線 2 精神）。
 //   - 不顯示數字、不做進度條、不做「差幾點」提示、不做倒數（紅線 6）。
@@ -15,6 +17,7 @@
 
 import { getChapterByNumber } from "../data/chapterRegistry.js";
 import { getChapterNarrative } from "../data/chapterNarrative.js";
+import { resolveRelationshipForCompanion } from "../state/companionStateSchema.js";
 
 // 願意閾值（集中常數，方便調參）。這一章的關係增量要夠、邊界沒被連拍過量踐踏、
 // 章內對峙沒把牠推到勉強撐住。
@@ -60,7 +63,8 @@ export function listAskableChapters(state = {}) {
 }
 
 /**
- * 判定牠這一章願不願意同行。純讀關係增量（現值 − 相遇時快照）。
+ * 判定牠這一章願不願意同行。
+ * Pack 2 Phase 1：bond/trust/blocked 一律取「該章目標 companionId」的關係權威。
  * @returns {{ companionId: string, willing: boolean, cause: string|null, line: string }|null}
  */
 export function evaluateResonanceInvite(state = {}, chapterNo) {
@@ -68,9 +72,10 @@ export function evaluateResonanceInvite(state = {}, chapterNo) {
   if (!companionId) return null;
 
   const mark = state?.resonance?.chapterMarks?.[chapterNo] || {};
-  const bondNow = num(state?.bond, 0);
-  const trustNow = num(state?.trust, 0);
-  const blockedNow = num(state?.blockedTouchCount, 0);
+  const rel = resolveRelationshipForCompanion(state, companionId);
+  const bondNow = num(rel.bond, 0);
+  const trustNow = num(rel.trust, 0);
+  const blockedNow = num(rel.blockedTouchCount, 0);
 
   // 缺快照時以現值兜底 → 增量為 0（保守：只會判「還不是時候」，絕不誤判為願意）。
   const bondDelta = bondNow - num(mark.bondAtStart, bondNow);

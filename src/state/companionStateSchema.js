@@ -225,6 +225,65 @@ export function getCompanionRelationship(companionStates, companionId) {
 }
 
 /**
+ * Pack 2 Phase 1 — invite / chapter authority helper.
+ * Prefer byId[companionId].relationship. Never borrow another companion's
+ * top-level mirror when the target record is missing.
+ *
+ * Dual-read (legacy):
+ * - No canonical companionStates bag → use top-level mirror (pre-G2 / test fixtures).
+ * - Target === activeCompanionId and byId miss → use top-level mirror.
+ * - Target ≠ active and byId miss → baseline defaults (not active's bond/trust).
+ */
+export function resolveRelationshipForCompanion(state = {}, companionId = "") {
+  const fromById = getCompanionRelationship(state?.companionStates, companionId);
+  if (fromById) return fromById;
+
+  const canonicalId = resolveCanonicalCompanionId(companionId);
+  const activeId = resolveCanonicalCompanionId(state?.activeCompanionId);
+  const canUseMirror =
+    !hasCanonicalCompanionStates(state?.companionStates)
+    || !isKnownCompanionId(canonicalId)
+    || canonicalId === activeId;
+
+  if (canUseMirror) {
+    return createDefaultRelationshipState({
+      bond: state?.bond,
+      trust: state?.trust,
+      mood: state?.mood,
+      energy: state?.energy,
+      defense: state?.defense,
+      touchFatigue: state?.touchFatigue,
+      lastTouchAt: state?.lastTouchAt,
+      lastRejectAt: state?.lastRejectAt,
+      blockedTouchCount: state?.blockedTouchCount,
+      lastBlockedTouchAt: state?.lastBlockedTouchAt,
+      firstTouchCompleted: state?.firstTouchCompleted,
+      firstHugCompleted: state?.firstHugCompleted,
+      reactionPreview: state?.reactionPreview,
+      lastTouchReaction: state?.lastTouchReaction
+    });
+  }
+
+  return createDefaultRelationshipState();
+}
+
+/**
+ * Chapter-mark snapshot fields for resonance invite affinity deltas.
+ * Always sourced from the *target* companion relationship authority.
+ */
+export function buildRelationshipChapterMarkSnapshot(state = {}, companionId = "", now = Date.now()) {
+  const rel = resolveRelationshipForCompanion(state, companionId);
+  return {
+    bondAtStart: Number(rel.bond) || 0,
+    trustAtStart: Number(rel.trust) || 0,
+    blockedTouchAtStart: Number(rel.blockedTouchCount) || 0,
+    overwhelmedCount: 0,
+    enteredAt: now,
+    reaskedAt: null
+  };
+}
+
+/**
  * Store-runtime helper: seal the top-level active mirror into a canonical
  * companion record while preserving growth data. This function is pure.
  */

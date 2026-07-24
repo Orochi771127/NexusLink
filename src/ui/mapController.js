@@ -16,6 +16,7 @@ import {
   evaluateResonanceInvite,
   listAskableChapters
 } from "../engine/resonanceInviteEngine.js";
+import { buildRelationshipChapterMarkSnapshot } from "../state/companionStateSchema.js";
 import EventBus from "../utils/eventBus.js";
 import { MOONLAKE_NODE_LAYOUT, MOONLAKE_ROUTE_ART } from "../data/mapArtLayout.js";
 import {
@@ -788,16 +789,10 @@ export function createMapController({
     store.updateState((draft) => {
       const companions = draft.resonance.companions;
       companions[companionId] = { ...(companions[companionId] || {}), metAt: now };
-      // 關係快照：共鳴邀請以「相遇後的增量」判定意願——缺則於相遇當下建立基線。
+      // 關係快照：必須取「相遇對象」的關係權威，不可用 active mirror（Pack 2）。
       if (!draft.resonance.chapterMarks[chapterNo]) {
-        draft.resonance.chapterMarks[chapterNo] = {
-          bondAtStart: Number(draft.bond) || 0,
-          trustAtStart: Number(draft.trust) || 0,
-          blockedTouchAtStart: Number(draft.blockedTouchCount) || 0,
-          overwhelmedCount: 0,
-          enteredAt: now,
-          reaskedAt: null
-        };
+        const snap = buildRelationshipChapterMarkSnapshot(draft, companionId, now);
+        draft.resonance.chapterMarks[chapterNo] = snap;
       }
     });
 
@@ -888,11 +883,9 @@ export function createMapController({
           declinedCount: (Number(entry.declinedCount) || 0) + 1
         };
         const prev = draft.resonance.chapterMarks[chapterNo] || {};
+        const snap = buildRelationshipChapterMarkSnapshot(draft, result.companionId, now);
         draft.resonance.chapterMarks[chapterNo] = {
-          bondAtStart: Number(draft.bond) || 0,
-          trustAtStart: Number(draft.trust) || 0,
-          blockedTouchAtStart: Number(draft.blockedTouchCount) || 0,
-          overwhelmedCount: 0,
+          ...snap,
           enteredAt: Number(prev.enteredAt) || now,
           reaskedAt: now
         };
