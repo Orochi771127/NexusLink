@@ -262,7 +262,7 @@ export const DIALOGUE_LOOP_CASES = Object.freeze([
     expect: {
       strategy: "reflective_care",
       mentions: /被聽見|小步|說完|看清楚/,
-      quickReplyLabels: [/說完/, /小步驟/, /安靜/],
+      quickReplyLabels: [/感覺/, /最沉/, /先這樣/],
       noDiagnosis: true,
       noReward: true,
       noMemory: true

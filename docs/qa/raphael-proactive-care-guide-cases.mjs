@@ -63,6 +63,18 @@ runCase("policy: weave is soft and refuseable", () => {
   assert((woven.match(/[？?]/g) || []).length <= 1, `question budget: ${woven}`);
 });
 
+runCase("policy: response_pack skips weave", () => {
+  assert(
+    !shouldOfferCareGuide({
+      inputText: "今天真的好累",
+      reply: "灰影定稿句",
+      replySource: "response_pack",
+      nlu: { dialogueAct: "venting" }
+    }),
+    "response_pack skip"
+  );
+});
+
 runCase("policy: safety and quiet skip guide", () => {
   assert(
     !shouldOfferCareGuide({

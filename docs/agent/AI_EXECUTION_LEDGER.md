@@ -4405,21 +4405,16 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Lane: `Raphael Core, Companion Reasoning, And Soul Talk`.
 - Task name: `TP-RAPHAEL-VENT-WORK-RELATIONSHIP-LIFE`.
 
-### 2026-07-24 - Cursor - Raphael Proactive Care Guide - VERIFIED
+### 2026-07-24 - Cursor - Raphael Proactive Care Guide - IN PROGRESS
 
-- Status: `VERIFIED` on branch `feat/raphael-proactive-care-guide` (pre-merge);
-  all listed harnesses PASS; awaiting protected PR → `web-release-gate` → `main`.
+- Status: `IN PROGRESS` on `feat/raphael-proactive-care-guide` (PR #131).
 - Lane: `Raphael Core, Companion Reasoning, And Soul Talk`.
 - Task name: `TP-RAPHAEL-PROACTIVE-CARE-GUIDE`.
-- Design: thin opens (嗨／在嗎／還好) → proactive care door; vent turns may
-  get soft「若你想…」invite; quiet / safety / dependency skip guide.
-- Work performed:
-  - `src/ai/dialogue/careGuidePolicy.js`
-  - `responseComposer` / `actionExecutor` / `autonomyLoop` preserve `care_guide`
-  - Quick replies + catalog + cases/drill
-- Verification: care-guide / vent / everyday v1+v3 / daily-life / auto-think PASS.
-- MCP: codebase-memory reindex + ADR updated for this decision.
-- Next safe action: commit → PR → gate → merge `main`.
+- Gate fail (run `30070495955`): `dialogue_loop_smoke` DL-20 quick-reply labels;
+  `persona_boundary` VOICE-LIVE (care weave mutated `response_pack` lines).
+- Fix: skip weave on `response_pack`/`template`; align DL-20 labels to care guide.
+- Local re-verify: care-guide + DL + PB + vent/everyday/daily/auto-think PASS.
+- Next safe action: push fix → re-run `web-release-gate` → merge `main`.
 
 ### 2026-07-22 - Cursor - First-Loop Hint Clear Face - SUPERSEDED
 

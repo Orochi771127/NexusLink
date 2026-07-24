@@ -59,6 +59,10 @@ export function shouldOfferCareGuide({
   replySource = ""
 } = {}) {
   if (replySource === "safety") return false;
+  // 物種手寫 voice pack／template 定稿不可加尾巴，否則 persona boundary live 會失真。
+  if (replySource === "response_pack" || replySource === "template" || replySource === "care_guide") {
+    return false;
+  }
   if (safety?.isHighRisk || safety?.isBoundaryPressure || safety?.action === "boundary_redirect") {
     return false;
   }
