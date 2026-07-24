@@ -19,6 +19,7 @@ import {
   buildConversationalReaction,
   matchesEverydayChatGrounding
 } from "./dialogue/conversationAnswerPolicy.js";
+import { applyCareGuideToReply } from "./dialogue/careGuidePolicy.js";
 
 const BOUNDARY_MODES = new Set([
   SOUL_TALK_REACTIONS.WITHDRAW,
@@ -48,22 +49,68 @@ function applyPersonaStyle(text, persona = {}) {
 }
 
 function returnComposeResult(text, meta, guardArgs) {
+  const nlu = guardArgs.nlu || guardArgs.composeOpts?.nlu || null;
+  const inputText = nlu?.inputText || guardArgs.composeOpts?.inputText || "";
+  const seed =
+    String(text || "").length +
+    Math.round(guardArgs.state?.trust || 0) +
+    String(inputText).length;
+
+  // 薄開場先換成主動關心整句；標記 care_guide 以免 critic 覆寫手寫引導。
+  const careOpen = applyCareGuideToReply(text, {
+    inputText,
+    reply: text,
+    nlu,
+    responseStrategy: guardArgs.composeOpts?.responseStrategy,
+    safety: guardArgs.composeOpts?.safety,
+    replySource: meta.replySource || null,
+    seed,
+    previousReply: guardArgs.previousReply || "",
+    openOnly: true
+  });
+  const usedCareOpen = Boolean(careOpen && careOpen !== text);
+  const baseText = usedCareOpen ? careOpen : text;
+  const replySource = usedCareOpen
+    ? "care_guide"
+    : meta.replySource || guardArgs.composeOpts?.replySource || null;
+
   const nextArgs = {
     ...guardArgs,
     composeOpts: {
       ...(guardArgs.composeOpts || {}),
-      // 讓 finalize 知道這句是物種 voice pack／safety，勿用通用 NLU 覆寫。
-      replySource: meta.replySource || guardArgs.composeOpts?.replySource || null
+      // 讓 finalize 知道這句是物種 voice pack／safety／關心引導，勿用通用 NLU 覆寫。
+      replySource
     }
   };
-  const reply = finalizeAndGuardReply(text, nextArgs);
+  let reply = finalizeAndGuardReply(baseText, nextArgs);
+
+  // 傾訴／情緒句：在定稿後再織「輕輕引導」，避免被 critic／repair 洗掉。
+  let careGuided = usedCareOpen;
+  if (!usedCareOpen) {
+    const guided = applyCareGuideToReply(reply, {
+      inputText,
+      reply,
+      nlu,
+      responseStrategy: guardArgs.composeOpts?.responseStrategy,
+      safety: guardArgs.composeOpts?.safety,
+      replySource: meta.replySource || null,
+      seed,
+      weaveOnly: true
+    });
+    if (guided !== reply) {
+      reply = finalizeReply(guided, nextArgs.persona, nextArgs.state, nextArgs.composeOpts);
+      careGuided = true;
+      nextArgs.composeOpts.replySource = nextArgs.composeOpts.replySource || "care_guide";
+    }
+  }
+
   const prefillMeta = nextArgs.composeOpts?.prefillMeta || {};
   return {
     reply,
     variantId: meta.variantId || null,
-    replySource: meta.replySource || "unknown",
+    replySource: nextArgs.composeOpts.replySource || meta.replySource || "unknown",
     openingPhrase: meta.openingPhrase || extractOpeningPhrase(reply),
-    variationReason: meta.variationReason || null,
+    variationReason: meta.variationReason || (careGuided ? "care_guide" : null),
     usedPrefillDetail: prefillMeta.usedPrefillDetail || null,
     groundedByPrefill: Boolean(prefillMeta.groundedByPrefill)
   };
@@ -119,7 +166,9 @@ export function composeRaphaelReply({
     nlu,
     responseStrategy,
     recoveryContext,
-    safety
+    safety,
+    // 主動關心引導需要原始輸入；nlu.inputText 不一定有填。
+    inputText
   };
 
   const args = guardArgs(persona, state, composeOpts, nlu);
@@ -390,8 +439,10 @@ export function finalizeAndGuardReply(text, { persona, state, composeOpts, nlu, 
     previousReply
   });
 
-  // 物種 voice pack／safety／boundary pack 是手寫語料，critic 失敗時不可用灰影 NLU 覆寫。
-  const preserveAuthoredReply = ["response_pack", "safety", "template"].includes(composeOpts?.replySource);
+  // 物種 voice pack／safety／boundary pack／主動關心引導是手寫語料，critic 失敗時不可用灰影 NLU 覆寫。
+  const preserveAuthoredReply = ["response_pack", "safety", "template", "care_guide"].includes(
+    composeOpts?.replySource
+  );
 
   if (!critique.pass && !preserveAuthoredReply) {
     reply = composeOpts.safety?.isBoundaryPressure
@@ -525,7 +576,8 @@ function getPreviousCompanionReply(state = {}) {
 function finalizeReply(text, persona, state, options = {}) {
   let reply = String(text || "").trim();
   const isRecovery = options.recoveryRecall || options.replyMode === "reflect";
-  const isAuthoredPolicyReply = options.replySource === "safety";
+  const isAuthoredPolicyReply =
+    options.replySource === "safety" || options.replySource === "care_guide";
 
   if (!isRecovery && !isAuthoredPolicyReply && (state.energy ?? 10) <= 2 && reply.length > 42) {
     reply = reply.split(/[。！？]/)[0] + "。";

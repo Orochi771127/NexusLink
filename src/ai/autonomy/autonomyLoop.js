@@ -277,8 +277,8 @@ function applyCriticRepairs(execution, critique, perception, state = {}) {
     return execution;
   }
 
-  // 物種 voice pack／safety／template 為作者定稿；generic critic 不得改成灰影 NLU。
-  const preserveAuthoredReply = ["response_pack", "safety", "template"].includes(
+  // 物種 voice pack／safety／template／主動關心引導為作者定稿；generic critic 不得改成灰影 NLU。
+  const preserveAuthoredReply = ["response_pack", "safety", "template", "care_guide"].includes(
     execution.composeMeta?.replySource || perception.composeMeta?.replySource
   );
 

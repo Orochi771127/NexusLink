@@ -4399,14 +4399,22 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Lane: `Raphael Core, Companion Reasoning, And Soul Talk`.
 - Task name: `TP-RAPHAEL-EVERYDAY-CHAT-TOPICS-V3`.
 
-### 2026-07-24 - Cursor - Raphael Vent Work/Relationship/Life - IN PROGRESS
+### 2026-07-24 - Cursor - Raphael Vent Work/Relationship/Life - VERIFIED
 
-- Status: `IN PROGRESS`; workplace / romance / life worry venting.
+- Status: `VERIFIED` on `main` (`3dd0bb3`, PR #130).
 - Lane: `Raphael Core, Companion Reasoning, And Soul Talk`.
 - Task name: `TP-RAPHAEL-VENT-WORK-RELATIONSHIP-LIFE`.
-- Hold space without over-directive quit/breakup; no dependency soft-assent.
-- Harness: `docs/qa/raphael-vent-work-relationship-life-*.mjs`.
-- Next safe action: protected PR → `web-release-gate` → merge `main`.
+
+### 2026-07-24 - Cursor - Raphael Proactive Care Guide - IN PROGRESS
+
+- Status: `IN PROGRESS` on `feat/raphael-proactive-care-guide` (PR #131).
+- Lane: `Raphael Core, Companion Reasoning, And Soul Talk`.
+- Task name: `TP-RAPHAEL-PROACTIVE-CARE-GUIDE`.
+- Gate fail (run `30070495955`): `dialogue_loop_smoke` DL-20 quick-reply labels;
+  `persona_boundary` VOICE-LIVE (care weave mutated `response_pack` lines).
+- Fix: skip weave on `response_pack`/`template`; align DL-20 labels to care guide.
+- Local re-verify: care-guide + DL + PB + vent/everyday/daily/auto-think PASS.
+- Next safe action: push fix → re-run `web-release-gate` → merge `main`.
 
 ### 2026-07-22 - Cursor - First-Loop Hint Clear Face - SUPERSEDED
 

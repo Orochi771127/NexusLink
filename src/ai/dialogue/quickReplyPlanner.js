@@ -2,6 +2,7 @@ import { NUANCE_FLAGS } from "../nlu/nuanceDetector.js";
 import { DIALOGUE_ACTS } from "../nlu/dialogueActClassifier.js";
 import { RESPONSE_STRATEGIES } from "../responseStrategySelector.js";
 import { detectPlayerComplaint } from "./antiLoopPolicy.js";
+import { CARE_GUIDE_QUICK_REPLIES } from "./careGuidePolicy.js";
 
 export const QUICK_REPLY_ACTION_TYPES = Object.freeze({
   CLARIFY: "clarify",
@@ -97,10 +98,12 @@ function buildReflectiveCareQuickReplies(strategy) {
     ];
   }
 
+  // 對齊主動關心引導：低門檻延續／點名最沉／允許停在這裡（可拒絕）。
+  const [shareFeeling, nameHeaviest, stopHere] = CARE_GUIDE_QUICK_REPLIES;
   return [
     createQuickReply({
-      label: "先把話說完",
-      intent: "care_continue",
+      label: shareFeeling.label,
+      intent: shareFeeling.intent,
       actionType: QUICK_REPLY_ACTION_TYPES.CONTINUE,
       topic: "emotion",
       dialogueAct: "describing_event",
@@ -108,17 +111,17 @@ function buildReflectiveCareQuickReplies(strategy) {
       priority: 3
     }),
     createQuickReply({
-      label: "找一個小步驟",
-      intent: "care_small_step",
+      label: nameHeaviest.label,
+      intent: nameHeaviest.intent,
       actionType: QUICK_REPLY_ACTION_TYPES.CLARIFY,
       topic: "emotion",
-      dialogueAct: "asking_for_help",
+      dialogueAct: "describing_event",
       responseStrategyHint: RESPONSE_STRATEGIES.REFLECTIVE_CARE,
       priority: 2
     }),
     createQuickReply({
-      label: "先安靜一下",
-      intent: "care_quiet",
+      label: stopHere.label,
+      intent: stopHere.intent,
       actionType: QUICK_REPLY_ACTION_TYPES.QUIET,
       topic: "emotion",
       dialogueAct: "requesting_silence",
