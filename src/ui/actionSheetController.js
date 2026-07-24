@@ -3,6 +3,7 @@ import { BOND_MILESTONES } from "../engine/bondMilestoneEngine.js";
 import { getMemoryAccentColor, getMemoryGlyph } from "../engine/traceVisualMapper.js";
 import EventBus from "../utils/eventBus.js";
 import { qs, qsa } from "../utils/dom.js";
+import { formatUpcomingMilestoneCopy } from "./bondPresentation.js";
 
 const MEMORY_HALL_LIMIT = 20;
 const MEMORY_HALL_STATUSES = new Set(["fresh", "settled", "transformed"]);
@@ -174,7 +175,6 @@ export function createActionSheetController({
     if (existing) existing.remove();
     if (action !== "grow" || !actionSheetActions) return;
 
-    const bond = Number(state.bond || 0);
     const memoriesById = new Map(
       (Array.isArray(state.emotionalMemories) ? state.emotionalMemories : []).map((memory) => [memory?.id, memory])
     );
@@ -202,10 +202,11 @@ export function createActionSheetController({
       if (reached) {
         desc = memory.excerpt || milestone.line;
       } else if (!nextHinted) {
+        // 質性呈現：下一道光痕只給主題與陪伴語感，不暴露 threshold／目前分數。
         nextHinted = true;
-        desc = `羈絆達 ${milestone.threshold} 時亮起（目前 ${bond}）`;
+        desc = formatUpcomingMilestoneCopy(milestone.theme, "zh");
       } else {
-        desc = `羈絆達 ${milestone.threshold} 時亮起`;
+        desc = "還未亮起——陪伴會自己走到那裡。";
       }
 
       const mark = document.createElement("span");

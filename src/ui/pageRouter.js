@@ -18,6 +18,7 @@ import {
 import { qs, qsa } from "../utils/dom.js";
 import EventBus from "../utils/eventBus.js";
 import { t, getLanguage, LANGUAGE_CHANGED_EVENT } from "../i18n/i18n.js";
+import { getTrustStagePresentation } from "./bondPresentation.js";
 
 const PAGE_ACTIONS = new Set(["home", "explore", "care", "grow", "memory"]);
 const MEMORY_LIMIT = MEMORY_PROJECTION_LIMIT;
@@ -190,10 +191,11 @@ export function createPageRouter({
       ? t("care.keepDistanceStatus")
       : t("care.softComfortStatus");
 
+    const trustStage = getTrustStagePresentation(trust, getLanguage());
     body.innerHTML = `
       <div class="page-meter-card">
         ${renderMetric(t("care.boundary"), defense, t("care.hintBoundary"))}
-        ${renderMetric(t("care.trust"), trust, t("care.hintTrust"))}
+        ${renderQualitativeMetric(t("care.trust"), trustStage.label, trustStage.barPercent, t("care.hintTrust"))}
         ${renderMetric(t("care.energy"), energy, t("care.hintEnergy"), 10)}
       </div>
       <p class="page-soft-note">${t("care.softNote")}</p>
@@ -794,6 +796,18 @@ function renderMetric(label, value, hint, max = 100) {
   return `
     <div class="page-meter" style="--value:${percent}%">
       <div class="page-meter-head"><strong>${escapeHtml(label)}</strong><span>${displayValue}</span></div>
+      <div class="page-meter-line"><span></span></div>
+      <em>${escapeHtml(hint)}</em>
+    </div>
+  `;
+}
+
+/** 關係類指標：右側顯示階段名，不顯示刷分數字。 */
+function renderQualitativeMetric(label, stageLabel, barPercent, hint) {
+  const percent = Math.max(0, Math.min(100, Math.round(Number(barPercent) || 0)));
+  return `
+    <div class="page-meter" style="--value:${percent}%">
+      <div class="page-meter-head"><strong>${escapeHtml(label)}</strong><span>${escapeHtml(stageLabel)}</span></div>
       <div class="page-meter-line"><span></span></div>
       <em>${escapeHtml(hint)}</em>
     </div>

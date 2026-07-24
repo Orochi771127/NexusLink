@@ -51,9 +51,8 @@ export function buildExpeditionSystemFacts(session, settlement = {}) {
     facts.push(`驅散雜訊 ${kills} 次（不作為好感來源）。`);
   }
   if ((settlement.bondGain || 0) > 0 || (settlement.trustGain || 0) > 0) {
-    facts.push(
-      `關係微幅變化：羈絆 +${settlement.bondGain || 0}、信任 +${settlement.trustGain || 0}（來自共同發現，非刷怪）。`
-    );
+    // 質性羈絆：結算語不暴露 +N，避免被讀成刷怪好感。
+    facts.push("這趟同行讓關係更深了一點（來自共同發現，非刷怪）。");
   }
 
   if (!facts.length) {

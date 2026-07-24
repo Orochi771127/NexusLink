@@ -58,6 +58,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-07-25 - Cursor Grok - Pack A qualitative bond presentation - IN PROGRESS / COMPLETED
+
+- Status: `COMPLETED` for Phase 1 UI presentation (engines keep numeric bond/trust).
+- Branch / commit: `feat/pack-qualitative-bond-presentation` → PR into protected `main`.
+- Scope: Player-facing bond/trust stages; no STORAGE_KEY / companion schema bump.
+- Work performed: `bondPresentation.js`; HUD / care / chronicle / map chips / expedition settlement voice; strategy doc + harness; repair sequence Pack A row.
+- Verification: `node docs/qa/qualitative-bond-presentation-cases.mjs`.
+- Problems / risks: Stage labels longer than digits — CSS allows wrap on bond/trust rows; energy/boundary remain numeric by design.
+- Next safe action: Pack B non-confrontation growth route (chapter life-event evidence + advance), then initiative budget, then loot semantics.
+- Required reading: `docs/strategy/PACK_QUALITATIVE_BOND_PRESENTATION.md`, `src/ui/bondPresentation.js`, this entry.
+
 ### 2026-07-25 - Cursor Grok - Pack 2.5 mirror misuse guardrails - COMPLETED
 
 - Status: `COMPLETED` for static/runtime guardrails + judgment alias. No schema bump / writer migration.

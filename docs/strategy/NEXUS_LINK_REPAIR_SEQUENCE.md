@@ -18,6 +18,10 @@
 | 3 | Memory Single Truth Projection | **Phase 1 shipped** (projection + recall gate); no schema merge |
 | 4 | Dynamic Chapter Encounter Resolver | **Phase 1 shipped** (resolver + fallback + invite resolvedId) |
 | 5 | Terminology and UI Language Alignment | **Phase 1 shipped** (player-facing glossary + scan) |
+| A | Qualitative Bond Presentation | **Phase 1 shipped** (UI stages; engines keep numbers) |
+| B | Non-confrontation Growth Route | **Authorized next** |
+| C | Initiative Budget | Authorized after B |
+| D | Expedition Loot Semantics | Authorized after C |
 
 ---
 
@@ -299,3 +303,22 @@ Do not weaken safety hard gates while rewriting copy.
 - Player-facing: companion `battleRole`／描述、圖鑑雷達「安撫」、heartspark role 摘要
 - Master Canon 標題用語 **deferred**（需策略核准）
 - Harness: `docs/qa/terminology-ui-language-cases.mjs`
+
+---
+
+## TASK PACK A — Qualitative Bond Presentation（Phase 1 shipped）
+
+### Objective
+
+Show relationship as stages / light-marks, not grind scores, while engines keep numeric `bond` / `trust`.
+
+### Shipped (2026-07-25)
+
+- Helper: `src/ui/bondPresentation.js`
+- HUD / care / chronicle / explore chips / expedition settlement facts
+- Doc: `docs/strategy/PACK_QUALITATIVE_BOND_PRESENTATION.md`
+- Harness: `docs/qa/qualitative-bond-presentation-cases.mjs`
+
+### Non-goals
+
+No schema bump; no milestone threshold rewrite; no deleting bars.

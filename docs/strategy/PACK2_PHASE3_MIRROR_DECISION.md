@@ -50,7 +50,7 @@ Repair Sequence Task Packs 0–5 Phase 1 are **shipped on `main`**. Suggested ne
 
 1. **Human:** Pack 1 §J five-player playtest → mark VERIFIED or open copy fixes.
 2. **Optional engineering:** ~~Pack 2.5 mirror misuse guardrails~~ → **shipped**.
-3. **Product backlog (from tension review, not yet packed):** initiative budget, expedition loot semantics, qualitative bond presentation, non-confrontation growth routes — each needs its own Task Pack + Owner approval before coding.
+3. **Product backlog (from tension review):** Pack A qualitative bond → Pack B non-confrontation growth → Pack C initiative budget → Pack D expedition loot semantics (Owner-authorized 2026-07-25 sequence).
 
 ## Codebase memory note
 

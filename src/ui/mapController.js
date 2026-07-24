@@ -27,7 +27,8 @@ import {
   buildStandoffDeferMessage,
   canEnterUnguidedStandoff
 } from "../engine/resonanceThreadEngine.js";
-import { t } from "../i18n/i18n.js";
+import { t, getLanguage } from "../i18n/i18n.js";
+import { formatAffinityDeltaChip } from "./bondPresentation.js";
 
 const NODE_LAYOUT = MOONLAKE_NODE_LAYOUT;
 
@@ -619,6 +620,7 @@ export function createMapController({
   function buildResultChips(stateBefore, result) {
     const chips = [];
     const patch = result.statePatch || {};
+    const lang = getLanguage();
     const deltas = [
       { key: "energy", label: "能量", kind: "success", hud: "#energy-value" },
       { key: "bond", label: "羈絆", kind: "bond", hud: "#bond-value" },
@@ -629,7 +631,12 @@ export function createMapController({
       if (typeof patch[key] !== "number") return;
       const delta = patch[key] - (stateBefore[key] || 0);
       if (delta === 0) return;
-      chips.push({ kind: delta > 0 ? kind : "danger", label: `${label} ${delta > 0 ? "+" : ""}${delta}` });
+      // 羈絆／信任改質性短語；能量仍保留數值（資源，非關係刷分）。
+      const affinityLabel = formatAffinityDeltaChip(key, delta, lang);
+      chips.push({
+        kind: delta > 0 ? kind : "danger",
+        label: affinityLabel || `${label} ${delta > 0 ? "+" : ""}${delta}`
+      });
       if (delta > 0) pulseHudValue(hud);
     });
 

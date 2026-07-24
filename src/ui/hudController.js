@@ -1,9 +1,13 @@
 import { qs, qsa } from "../utils/dom.js";
 import { clampPercent } from "../utils/clamp.js";
-import { t, LANGUAGE_CHANGED_EVENT } from "../i18n/i18n.js";
+import { t, getLanguage, LANGUAGE_CHANGED_EVENT } from "../i18n/i18n.js";
 import EventBus from "../utils/eventBus.js";
 import { getAmbientBodyCue } from "../engine/touchReactionEngine.js";
 import { getBodyCueProfile } from "../engine/animationProfile.js";
+import {
+  getBondStagePresentation,
+  getTrustStagePresentation
+} from "./bondPresentation.js";
 
 const DEFAULT_STATUS_TEXT = "心語 / 靈魂聖域";
 
@@ -69,8 +73,14 @@ export function createHudController({ store, statusText }) {
     const state = store.getState();
     if (!currentCreature) return;
 
-    bondEl.textContent = state.bond;
-    trustEl.textContent = state.trust;
+    // 質性羈絆：HUD 顯示階段名，不顯示刷分數字；bar 仍反映引擎分數供氛圍感。
+    const lang = getLanguage();
+    const bondStage = getBondStagePresentation(state.bond, lang);
+    const trustStage = getTrustStagePresentation(state.trust, lang);
+    bondEl.textContent = bondStage.label;
+    trustEl.textContent = trustStage.label;
+    bondEl.title = bondStage.note || "";
+    trustEl.title = trustStage.label;
     moodEl.textContent = getMoodLabel(state.mood);
     energyEl.textContent = formatHalfStep(state.energy);
     foxName.textContent = currentCreature.name;
@@ -80,8 +90,8 @@ export function createHudController({ store, statusText }) {
       statusText.textContent = `${currentCreature.name} 正在第一棲地安靜待命。`;
     }
 
-    bondFill.style.width = `${clampPercent(state.bond, 100)}%`;
-    trustFill.style.width = `${clampPercent(state.trust, 100)}%`;
+    bondFill.style.width = `${clampPercent(bondStage.barPercent, 100)}%`;
+    trustFill.style.width = `${clampPercent(trustStage.barPercent, 100)}%`;
     energyFill.style.width = `${clampPercent(state.energy, 10)}%`;
     moodFill.style.width = `${moodPercent(state.mood)}%`;
 
