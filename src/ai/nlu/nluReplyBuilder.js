@@ -754,13 +754,26 @@ function resolveVariantLines(strategy, nlu, frame, recoveryContext, prefillConte
         ];
       }
       const recalled = frame.conversationContext?.recalledDetail || frame.conversationContext?.previousDetail;
-      if (recalled && /recent_dialogue/.test(String(frame.conversationContext?.source || ""))) {
+      if (
+        recalled &&
+        /recent_dialogue|companion_anchor|emotional_memory/.test(
+          String(frame.conversationContext?.source || "")
+        )
+      ) {
         const grounded = buildConversationalAnswer({
           inputText: said,
           frame: { ...frame, dialogueAct: act || "asking_memory" },
           seed: said.length
         });
         if (grounded) return [grounded];
+      }
+      // 情緒 excerpt 輕提：recovery 有 theme／emotion 時給溫柔短答。
+      if (recoveryContext?.memoryTheme || recoveryContext?.memoryEmotion) {
+        const theme = recoveryContext.memoryTheme || "那段情緒";
+        return [
+          `記得。你提過「${theme}」那段——我還留著。`,
+          `有，${theme}那一段我沒忘掉；若你想再說一點，我聽著。`
+        ];
       }
       return [];
     }

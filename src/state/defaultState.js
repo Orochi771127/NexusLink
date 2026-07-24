@@ -29,8 +29,10 @@ const defaultState = {
   habitatTraces: [],
 
   // Phase 1.1 Emotional Sedimentation
-  memorySchemaVersion: 1,
+  memorySchemaVersion: 2,
   emotionalMemories: [],
+  // 跨場生活錨點（偏好／近期事件／稱呼）；與情緒痕跡雙軌，上限見 companionAnchorPolicy。
+  companionAnchors: [],
   safeHarborMode: false,
   lastEmotionTag: null,
   habitatRepairFactor: 0,

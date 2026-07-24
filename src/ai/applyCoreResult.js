@@ -6,6 +6,7 @@ import {
 import { buildMilestoneMemory, findNewBondMilestone, getMilestoneLine } from "../engine/bondMilestoneEngine.js";
 import { shouldBlockMilestone } from "./stateMutationPolicy.js";
 import { dispatchRaphaelAnimationCue } from "./raphaelAnimationBridge.js";
+import { mergeCompanionAnchors } from "./dialogue/companionAnchorPolicy.js";
 
 const NON_REWARDING_MODES = new Set(["safety_redirect", "withdraw", "reject"]);
 
@@ -17,6 +18,7 @@ export function applyRaphaelCoreResult(
   const plan = coreResult.plan || {};
   const mutation = coreResult.stateMutation || {};
   const memoryDecision = coreResult.memoryDecision || {};
+  const anchorDecision = coreResult.anchorDecision || {};
   const traceDecision = coreResult.traceDecision || {};
   const output = coreResult.output || {};
 
@@ -37,6 +39,14 @@ export function applyRaphaelCoreResult(
   } else if (traceDecision.shouldApplyTrace && traceDecision.traceObject) {
     state.habitatTraces = pruneHabitatTraces(
       upsertHabitatTrace(state.habitatTraces || [], traceDecision.traceObject)
+    );
+  }
+
+  if (!isSafetyTerminal && anchorDecision.shouldWrite && Array.isArray(anchorDecision.anchors)) {
+    state.companionAnchors = mergeCompanionAnchors(
+      state.companionAnchors || [],
+      anchorDecision.anchors,
+      now
     );
   }
 

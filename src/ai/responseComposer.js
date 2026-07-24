@@ -20,6 +20,8 @@ import {
   matchesEverydayChatGrounding
 } from "./dialogue/conversationAnswerPolicy.js";
 import { applyCareGuideToReply } from "./dialogue/careGuidePolicy.js";
+import { retrieveSoftAnchorAllusion } from "./dialogue/companionAnchorPolicy.js";
+import { getDialogueState } from "./dialogue/dialogueStateTracker.js";
 
 const BOUNDARY_MODES = new Set([
   SOUL_TALK_REACTIONS.WITHDRAW,
@@ -104,13 +106,45 @@ function returnComposeResult(text, meta, guardArgs) {
     }
   }
 
+  // 跨場錨點輕提：平常相關話題最多織一句；不問「還記得」、不改 voice pack／safety。
+  let softAnchored = false;
+  if (
+    !usedCareOpen &&
+    !["safety", "response_pack", "template"].includes(String(replySource || meta.replySource || "")) &&
+    !guardArgs.composeOpts?.safety?.isHighRisk &&
+    !guardArgs.composeOpts?.safety?.isBoundaryPressure &&
+    nlu?.dialogueAct !== "asking_memory" &&
+    !/還記得|想得起/.test(inputText)
+  ) {
+    const sessionKey =
+      guardArgs.state?.activeCompanionId || guardArgs.composeOpts?.companionId || "default";
+    const dialogueState = getDialogueState(sessionKey);
+    const soft = retrieveSoftAnchorAllusion(inputText, guardArgs.state?.companionAnchors || [], {
+      skipKey: dialogueState.lastSoftAnchorKey
+    });
+    if (soft?.weaveLine && !String(reply).includes(soft.softLabel || soft.key)) {
+      const base = String(reply || "").trim().replace(/[。.!！]+$/, "");
+      reply = finalizeReply(
+        `${base}——${soft.weaveLine}`,
+        nextArgs.persona,
+        nextArgs.state,
+        nextArgs.composeOpts
+      );
+      dialogueState.lastSoftAnchorKey = soft.key;
+      softAnchored = true;
+    }
+  }
+
   const prefillMeta = nextArgs.composeOpts?.prefillMeta || {};
   return {
     reply,
     variantId: meta.variantId || null,
     replySource: nextArgs.composeOpts.replySource || meta.replySource || "unknown",
     openingPhrase: meta.openingPhrase || extractOpeningPhrase(reply),
-    variationReason: meta.variationReason || (careGuided ? "care_guide" : null),
+    variationReason:
+      meta.variationReason ||
+      (careGuided ? "care_guide" : null) ||
+      (softAnchored ? "soft_anchor" : null),
     usedPrefillDetail: prefillMeta.usedPrefillDetail || null,
     groundedByPrefill: Boolean(prefillMeta.groundedByPrefill)
   };

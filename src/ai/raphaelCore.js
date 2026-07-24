@@ -48,7 +48,10 @@ export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
   const dialogueSessionKey = companionId;
   const dialogueState = getDialogueState(dialogueSessionKey);
   let nlu = runNluPipeline(gateway.normalizedInput, analysis, intent, safety);
-  nlu = applyRecentDialogueContext(nlu, dialogueState);
+  nlu = applyRecentDialogueContext(nlu, dialogueState, {
+    companionAnchors: state.companionAnchors || [],
+    emotionalMemories: state.emotionalMemories || []
+  });
   nlu = applyQuickReplyContext(nlu, runtime.quickReply);
   safety = applyRecentBoundaryContext(safety, nlu, dialogueState, intent);
   const isSafetyTerminal = safety.isHighRisk === true;
@@ -298,6 +301,7 @@ export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
 
     stateMutation: execution.stateMutation,
     memoryDecision: execution.memoryDecision,
+    anchorDecision: execution.anchorDecision || { shouldWrite: false, anchors: [], reason: "missing" },
     traceDecision: execution.traceDecision,
     animationDecision,
     reflection,
