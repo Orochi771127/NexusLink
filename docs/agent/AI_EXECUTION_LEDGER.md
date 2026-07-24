@@ -58,6 +58,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-07-24 - Cursor Grok - Pack 4 Dynamic Chapter Encounter Resolver Phase 1 - COMPLETED
+
+- Status: `COMPLETED` for resolver + fallback + invite resolvedId + Pack 2 Phase 2 byId baseline on meet. No STORAGE_KEY bump.
+- Branch / commit: `feat/pack4-chapter-encounter-resolver` → PR into protected `main`.
+- Scope: Idempotent chapter meet resolution; never re-meet known companions; fallback echo event; invite uses resolved companion.
+- Work performed: `chapterEncounterResolver.js`; `mapController` meet path; `getChapterCompanionId(state)`; `ensureCompanionRelationshipInDraft`; ADR-004; harness.
+- Verification: `node docs/qa/chapter-encounter-resolver-cases.mjs`; `node docs/qa/resonance-invite-authority-cases.mjs`; `node --check` on touched JS.
+- Problems / risks: Alternate meets use generic copy; ch7 always fallback when treated as encounter chapter.
+- Next safe action: Pack 5 Terminology / UI language alignment.
+- Required reading: `docs/architecture/ADR-004-DYNAMIC_CHAPTER_ENCOUNTER_RESOLVER.md`, `src/engine/chapterEncounterResolver.js`, this entry.
+
 ### 2026-07-24 - Cursor Grok - Pack 3 Memory Single Truth Projection Phase 1 - COMPLETED
 
 - Status: `COMPLETED` for projection-only MemoryViewModel + recall gate. No array merge / STORAGE_KEY bump.

@@ -16,7 +16,7 @@
 | 1 | First Session Motivation Repair | **Implemented (await playtest VERIFIED)** |
 | 2 | Multi-Companion Relationship State Authority | **Phase 1 shipped** (invite/snapshot readers); Phases 2–3 plan remain |
 | 3 | Memory Single Truth Projection | **Phase 1 shipped** (projection + recall gate); no schema merge |
-| 4 | Dynamic Chapter Encounter Resolver | Plan only |
+| 4 | Dynamic Chapter Encounter Resolver | **Phase 1 shipped** (resolver + fallback + invite resolvedId) |
 | 5 | Terminology and UI Language Alignment | Docs / UI text plan |
 
 ---
@@ -201,7 +201,7 @@ No RAG, no transcript-as-runtime-memory, no automatic fine-tune.
 
 ---
 
-## TASK PACK 4 — Dynamic Chapter Encounter Resolver（Plan only）
+## TASK PACK 4 — Dynamic Chapter Encounter Resolver（Phase 1 shipped）
 
 ### Objective
 
@@ -239,6 +239,15 @@ No full chapter content rewrite in the plan pack.
 
 - Candidate priority order per chapter.
 - Fallback narrative tone.
+
+### Shipped (2026-07-24)
+
+- `src/engine/chapterEncounterResolver.js` — preferred → council pool → fallback.
+- `mapController.maybeMeetChapterCompanion` wired; `resolvedCompanionId` / `fallbackEventId` on marks.
+- Invite paths use `getChapterCompanionId(chapterNo, state)`.
+- Pack 2 Phase 2: `ensureCompanionRelationshipInDraft` on meet.
+- ADR: `docs/architecture/ADR-004-DYNAMIC_CHAPTER_ENCOUNTER_RESOLVER.md`
+- Harness: `docs/qa/chapter-encounter-resolver-cases.mjs`
 
 ---
 
