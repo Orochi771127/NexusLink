@@ -58,6 +58,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-07-25 - Cursor Grok - Pack B non-confrontation chapter growth - COMPLETED
+
+- Status: `COMPLETED` for Phase 1 life-event chapter trial + shared anti-farm helpers.
+- Branch / commit: `feat/pack-nonconfrontation-chapter-growth` → PR into protected `main`.
+- Scope: Reflective/peaceful/discovery explore can clear current chapter and write `chapter` evidence; standoff path retained.
+- Work performed: `chapterTrialEngine.js`; mapController life-event wiring; battleController shared helpers; strategy doc + harness.
+- Verification: `node docs/qa/nonconfrontation-chapter-growth-cases.mjs`.
+- Problems / risks: Life-event blocked when explore rolls encounter — player may still use standoff path; intentional for Phase 1.
+- Next safe action: Pack C initiative budget (name/export budget view; no daily FOMO persistence).
+- Required reading: `docs/strategy/PACK_NONCONFRONTATION_CHAPTER_GROWTH.md`, `src/engine/chapterTrialEngine.js`, this entry.
+
 ### 2026-07-25 - Cursor Grok - Pack A qualitative bond presentation - IN PROGRESS / COMPLETED
 
 - Status: `COMPLETED` for Phase 1 UI presentation (engines keep numeric bond/trust).

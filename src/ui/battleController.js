@@ -24,11 +24,14 @@ import { isSessionOwnerCurrent } from "../engine/sessionOwnerGuard.js";
 import { deriveResonanceCircle, MAX_MEMBER_BREATH } from "../engine/resonanceCircleEngine.js";
 import {
   CHAPTER_TRIAL_OUTCOMES,
-  advanceChapterProgress,
-  getChapterByNumber,
   getChapterForNode
 } from "../data/chapterRegistry.js";
-import { getChapterNarrative } from "../data/chapterNarrative.js";
+import {
+  applyChapterTrialAdvance,
+  buildChapterAdvanceCompanionLine,
+  buildChapterAdvanceLine,
+  resolveChapterTrialAdvance
+} from "../engine/chapterTrialEngine.js";
 import { t } from "../i18n/i18n.js";
 import {
   createHabitatTraceFromMemory,
@@ -488,19 +491,14 @@ export function createBattleController({
     const copy = getOutcomeCopy(outcome);
     session.log.push({ kind: "system", text: `【${copy.title}】${summary.message}` });
 
-    // CH-5a 章節試煉：當前章首次「穩住/回收」即通關推進（規則見 chapterRegistry，Owner 可改）。
-    // 防刷：對峙節點必須屬於當前章（否則第一章節點可原地刷穿七章）；
+    // CH-5a 章節試煉：當前章首次「穩住/回收」即通關推進（與非對峙 life-event 共用防刷）。
     // 重打已通關章不重複推進；overwhelmed/retreated 不算失敗、無任何懲罰。
     let chapterAdvance = null;
     if (CHAPTER_TRIAL_OUTCOMES.has(outcome)) {
-      const progressBefore = store.getState().chapterProgress || { current: 1, completed: [] };
-      const nodeChapter = getChapterForNode(session.nodeId);
-      if (nodeChapter === progressBefore.current && !progressBefore.completed.includes(progressBefore.current)) {
-        chapterAdvance = {
-          from: getChapterByNumber(progressBefore.current),
-          to: getChapterByNumber(Math.min(progressBefore.current + 1, 7))
-        };
-      }
+      chapterAdvance = resolveChapterTrialAdvance(
+        store.getState().chapterProgress,
+        session.nodeId
+      );
     }
     if (chapterAdvance?.from) {
       // 安靜的通關敘事：一句話、無成就框、無獎勵數字（紅線 6）。
@@ -521,7 +519,7 @@ export function createBattleController({
         }
       }
       if (chapterAdvance?.from) {
-        draft.chapterProgress = advanceChapterProgress(draft.chapterProgress, chapterAdvance.from.chapter);
+        draft.chapterProgress = applyChapterTrialAdvance(draft.chapterProgress, chapterAdvance);
       }
       // CH-5b：章內對峙把牠推到過載（overwhelmed_but_safe）→ 記入該章共鳴邀請的 mark，
       // 影響牠的同行意願（「撐得勉強」＝再陪穩一些日子）。只在已相遇（mark 存在）時計數。
@@ -824,30 +822,6 @@ function injectStandoffLayoutStyles() {
     'html[data-ui="v2"] .panel-layer[data-active-panel="battle"] .panel-backdrop{background:linear-gradient(180deg,rgba(2,6,12,.5),rgba(2,6,12,.1) 40%,rgba(2,6,12,.1) 62%,rgba(2,6,12,.36))}'
   ].join("");
   document.head.appendChild(style);
-}
-
-// 章節通關敘事（CH-5a 骨架 → CH-7 專屬內容）：安靜一句，位置敘事而非成就——
-// 「路亮了」不是「解鎖了」。優先取 chapterNarrative 的每章專屬句（對應該章情緒主題），
-// 缺項時退回通用模板。內容層維持 TC。
-function buildChapterAdvanceLine(chapterAdvance) {
-  const narrative = getChapterNarrative(chapterAdvance.from?.chapter);
-  if (narrative?.clearLine) return `【旅程】${narrative.clearLine}`;
-  const fromZh = chapterAdvance.from?.zh || "這裡";
-  const toZh = chapterAdvance.to?.zh || "";
-  if (chapterAdvance.from?.chapter === 7) {
-    return `【旅程】${fromZh}的雜訊，也安靜下來了。Linkara 的七片土地，你們一起走過了。`;
-  }
-  return `【旅程】${fromZh}一帶的雜訊，被你們一起放輕了。往${toZh}的方向，好像亮了一點。`;
-}
-
-function buildChapterAdvanceCompanionLine(chapterAdvance) {
-  const narrative = getChapterNarrative(chapterAdvance.from?.chapter);
-  if (narrative?.clearCompanionLine) return narrative.clearCompanionLine;
-  if (chapterAdvance.from?.chapter === 7) {
-    return "七片土地都走過了。接下來去哪，我們慢慢想，不急。";
-  }
-  const toZh = chapterAdvance.to?.zh || "下一片土地";
-  return `這一帶安靜下來了。${toZh}那邊……等你想去的時候，我們再一起走。`;
 }
 
 function flashOnce(el, className, ms = 500) {

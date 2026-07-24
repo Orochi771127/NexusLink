@@ -10,6 +10,13 @@ import {
 import { buildEventReflection } from "../engine/soulTalkComposer.js";
 import { getChapterForNode, getChapterByNumber } from "../data/chapterRegistry.js";
 import { getChapterNarrative } from "../data/chapterNarrative.js";
+import {
+  applyChapterTrialAdvance,
+  buildChapterAdvanceCompanionLine,
+  buildChapterAdvanceLine,
+  buildChapterLifeEventGrowthInput,
+  resolveChapterLifeEventAdvance
+} from "../engine/chapterTrialEngine.js";
 import { getCompanionById } from "../data/companionRegistry.js";
 import {
   canAskResonance,
@@ -687,6 +694,19 @@ export function createMapController({
     const companionId = state.activeCompanionId || "greyshade-cat";
     const chapterNo = getChapterForNode(node.id);
     const isRegisteredNode = EXPLORATION_NODES.some((candidate) => candidate.id === node.id);
+    // Pack B：非對峙章節生活事件——與對峙通關共用防刷，並寫入 chapter 成長證據。
+    const chapterAdvance = resolveChapterLifeEventAdvance(state.chapterProgress, node, {
+      encounter: Boolean(result.encounter)
+    });
+    const chapterGrowthInput = chapterAdvance
+      ? buildChapterLifeEventGrowthInput({
+        companionId,
+        node,
+        chapterNo,
+        createdAt: now,
+        safeHarborMode: state.safeHarborMode === true
+      })
+      : null;
 
     store.updateState((draft) => {
       Object.assign(draft, result.statePatch);
@@ -697,6 +717,9 @@ export function createMapController({
         if (trace) {
           draft.habitatTraces = pruneHabitatTraces(upsertHabitatTrace(draft.habitatTraces || [], trace));
         }
+      }
+      if (chapterAdvance?.from) {
+        draft.chapterProgress = applyChapterTrialAdvance(draft.chapterProgress, chapterAdvance);
       }
       if (isRegisteredNode && node.eventType !== "rest") {
         companionGrowthController?.writeIntoDraft?.(draft, {
@@ -717,6 +740,9 @@ export function createMapController({
           }
         });
       }
+      if (chapterGrowthInput) {
+        companionGrowthController?.writeIntoDraft?.(draft, chapterGrowthInput);
+      }
     });
 
     // 探索結果只走下方 toast（本函式尾端的 showToast）；不再以 system 行塞進聊天紀錄。
@@ -734,18 +760,29 @@ export function createMapController({
     ringBurst(node.id);
 
     const chips = buildResultChips(state, result);
+    if (chapterAdvance?.from) {
+      chips.push({ kind: "bond", label: "旅程往前亮了一點" });
+    }
     const toastTone = result.encounter ? "danger" : node.eventType === "rest" || node.eventType === "reflective" ? "calm" : "success";
+    const journeyLine = chapterAdvance?.from ? `\n${buildChapterAdvanceLine(chapterAdvance)}` : "";
     showToast({
       title: `${node.label.zh} ・ ${node.label.en}`,
       text: result.encounter
         ? result.message
-        : `${result.message}\n${t("map.exploreReturnPreview")}`,
+        : `${result.message}\n${t("map.exploreReturnPreview")}${journeyLine}`,
       tone: toastTone,
       chips
     });
 
     if (!result.encounter && statusText) {
-      statusText.textContent = `${result.message.split("\n")[0]}｜${t("map.exploreReturnPreview")}`;
+      statusText.textContent = chapterAdvance?.from
+        ? buildChapterAdvanceLine(chapterAdvance)
+        : `${result.message.split("\n")[0]}｜${t("map.exploreReturnPreview")}`;
+    }
+
+    if (chapterAdvance?.from) {
+      const companionLine = buildChapterAdvanceCompanionLine(chapterAdvance);
+      if (companionLine) soulTalkController.addChat("companion", companionLine);
     }
 
     if (result.encounter && battleController) {
