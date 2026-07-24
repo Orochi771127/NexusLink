@@ -1,7 +1,7 @@
 # Pack 2 — Relationship Authority Migration Plan
 
-- **Status:** Phase 1–2 implemented; Phase 3 **keep-mirror decision recorded** (deprecate deferred)
-- **Last updated:** 2026-07-24
+- **Status:** Phase 1–2 + Pack 2.5 guardrails shipped; Phase 3 keep-mirror (deprecate deferred)
+- **Last updated:** 2026-07-25
 - **ADR:** `docs/architecture/ADR-002-MULTI_COMPANION_RELATIONSHIP_AUTHORITY.md`
 - **Phase 3 decision:** `docs/strategy/PACK2_PHASE3_MIRROR_DECISION.md`
 
@@ -35,11 +35,20 @@ Without this, Greyshade affinity can make Blazetail (or any chapter target) acce
 - Dual-read telemetry flag deferred (optional).
 - Files: `companionStateSchema.js`, `mapController.js` meet path.
 
+## Pack 2.5 — Mirror misuse guardrails (SHIPPED 2026-07-25)
+
+- `src/state/relationshipAuthorityGuard.js`
+- `docs/qa/mirror-misuse-guardrail-cases.mjs`
+- Invite path uses `resolveRelationshipForJudgment`
+- No schema bump
+
+See ADR-002 Pack 2.5 section.
+
 ## Phase 3 — Top-level mirror (DECIDED 2026-07-24)
 
 - **Decision:** Keep top-level bond/trust/… mirror as active compatibility layer.
 - **Full deprecation:** Deferred indefinitely (needs HUD/writer mega-migration + dual-write).
-- **Optional cheap follow-up:** Pack 2.5 misuse guardrails (docs/harness) — not authorized until Owner queues it.
+- **Pack 2.5:** Shipped (static/runtime guardrails); no longer “optional pending”.
 - Details: `docs/strategy/PACK2_PHASE3_MIRROR_DECISION.md`
 
 ### Previous Phase 3 options (superseded)
