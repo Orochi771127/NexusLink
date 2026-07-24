@@ -30,7 +30,7 @@ export const INITIAL_BOND_CHOICES = Object.freeze([
   }
 ]);
 
-export function createOnboardingController({ store, saveCurrentState, onBondChosen } = {}) {
+export function createOnboardingController({ store, saveCurrentState, onBondChosen, onStepShown } = {}) {
   const root = qs("#onboarding-root");
   const shell = root?.querySelector(".onboarding-shell");
   const firstResonance = createFirstResonanceController({ root });
@@ -40,6 +40,7 @@ export function createOnboardingController({ store, saveCurrentState, onBondChos
   let interactionInFlight = false;
   let feedbackEl = null;
   let markingStarted = false;
+  let lastAnnouncedStep = null;
 
   function bind() {
     if (!root) return;
@@ -94,6 +95,7 @@ export function createOnboardingController({ store, saveCurrentState, onBondChos
 
   function restart() {
     firstResonance.cancel();
+    lastAnnouncedStep = null;
     const state = store.getState();
     const now = Date.now();
     store.setState({
@@ -300,6 +302,15 @@ export function createOnboardingController({ store, saveCurrentState, onBondChos
       const meetTitle = qs("#onboarding-meet-title");
       if (meetTitle && companion?.name) {
         meetTitle.textContent = `${companion.name}在月湖邊等你。`;
+      }
+    }
+    // BGM／場景旁路：只在步驟真的變了才通知，避免 render 重入重播。
+    if (step && step !== lastAnnouncedStep) {
+      lastAnnouncedStep = step;
+      try {
+        onStepShown?.(step, state);
+      } catch (error) {
+        console.warn("[onboarding] onStepShown failed", error);
       }
     }
   }
