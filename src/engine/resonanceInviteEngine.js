@@ -17,7 +17,7 @@
 
 import { getChapterByNumber } from "../data/chapterRegistry.js";
 import { getChapterNarrative } from "../data/chapterNarrative.js";
-import { resolveRelationshipForCompanion } from "../state/companionStateSchema.js";
+import { resolveRelationshipForJudgment } from "../state/relationshipAuthorityGuard.js";
 
 // 願意閾值（集中常數，方便調參）。這一章的關係增量要夠、邊界沒被連拍過量踐踏、
 // 章內對峙沒把牠推到勉強撐住。
@@ -84,7 +84,8 @@ export function evaluateResonanceInvite(state = {}, chapterNo) {
   if (!companionId) return null;
 
   const mark = state?.resonance?.chapterMarks?.[chapterNo] || {};
-  const rel = resolveRelationshipForCompanion(state, companionId);
+  // Pack 2.5：判定必須走 judgment 入口，禁止直接讀頂層 bond/trust。
+  const rel = resolveRelationshipForJudgment(state, companionId);
   const bondNow = num(rel.bond, 0);
   const trustNow = num(rel.trust, 0);
   const blockedNow = num(rel.blockedTouchCount, 0);

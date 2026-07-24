@@ -1,9 +1,9 @@
 # ADR-002: Multi-Companion Relationship State Authority
 
-- **Status:** Accepted for Phase 1 (invite/snapshot readers); later phases Proposed
-- **Date:** 2026-07-24
+- **Status:** Accepted Phase 1–2; Phase 3 keep-mirror; **Pack 2.5 guardrails shipped**
+- **Date:** 2026-07-24 (updated 2026-07-25)
 - **Owner:** Terence
-- **Related:** `docs/audits/PRODUCT_TENSION_AND_STATE_AUTHORITY_REVIEW.md` §B, Repair Sequence Pack 2
+- **Related:** `docs/audits/PRODUCT_TENSION_AND_STATE_AUTHORITY_REVIEW.md` §B, Repair Sequence Pack 2, `docs/strategy/PACK2_PHASE3_MIRROR_DECISION.md`
 
 ## Context
 
@@ -35,13 +35,19 @@ Chapter resonance invite (`evaluateResonanceInvite`) and meet/reask snapshots in
 - Existing `_resonance_invite_cases.mjs` fixtures without `companionStates` still pass via dual-read.
 - Polluted historical `chapterMarks` (written from the wrong mirror) may still be wrong until reask resets the snapshot; decline path now re-snapshots from the **target** relationship.
 - Writers (battle/touch/explore) still patch the top-level mirror and archive into **active** byId — correct for “play the active companion”; incorrect only when judging a non-active invite target (now fixed on the read path).
+- **Pack 2.5:** Static harness + `resolveRelationshipForJudgment` / `diagnoseActiveMirrorJudgmentRisk` guard against reintroducing top-level reads in judgment modules (`docs/qa/mirror-misuse-guardrail-cases.mjs`).
 
-## Non-goals (this ADR / Phase 1)
+## Pack 2.5 — Mirror misuse guardrails (shipped)
 
-- Full writer migration off the top-level mirror
-- Memory projection (Pack 3)
-- Dynamic chapter encounter resolver (Pack 4)
-- Medical/terminology sweep (Pack 5)
+**Rule:** Never judge companion X via top-level `bond` / `trust`. Use `resolveRelationshipForJudgment(state, X)` (alias of `resolveRelationshipForCompanion`).
+
+| Kind | Paths |
+|---|---|
+| Guarded (must not read `state.bond` for judgments) | `resonanceInviteEngine.js`, `chapterEncounterResolver.js` |
+| Chapter-mark writers | `mapController.js` must use `buildRelationshipChapterMarkSnapshot` |
+| Active-mirror allowlist (play active) | HUD, battle, touch, explore, gentle invite, soul talk, expedition… |
+
+No STORAGE_KEY / schema bump. Full mirror deprecation remains deferred.
 
 ## Rollback
 

@@ -58,6 +58,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-07-25 - Cursor Grok - Pack 2.5 mirror misuse guardrails - COMPLETED
+
+- Status: `COMPLETED` for static/runtime guardrails + judgment alias. No schema bump / writer migration.
+- Branch / commit: `feat/pack2-5-mirror-misuse-guardrails` → PR into protected `main`.
+- Scope: Prevent reintroducing top-level bond/trust reads in companion-judgment modules; document allowlist for active-mirror play paths.
+- Work performed: `relationshipAuthorityGuard.js`; invite uses `resolveRelationshipForJudgment`; `mirror-misuse-guardrail-cases.mjs`; ADR-002 / Pack2 docs updates.
+- Verification: `node docs/qa/mirror-misuse-guardrail-cases.mjs`; `node docs/qa/resonance-invite-authority-cases.mjs`; `node docs/qa/_resonance_invite_cases.mjs`.
+- Problems / risks: Allowlist is illustrative not exhaustive; new judgment modules must be added to guarded list manually.
+- Next safe action: Product tension packs (initiative budget / loot semantics / qualitative bond / non-confrontation growth) only with Owner approval; or Owner human §J cohort.
+- Required reading: `src/state/relationshipAuthorityGuard.js`, `docs/qa/mirror-misuse-guardrail-cases.mjs`, this entry.
+
 ### 2026-07-25 - Cursor Grok - Pack 1 §J structured acceptance - VERIFIED_STRUCTURED
 
 - Status: `VERIFIED` for Pack 1 **structured** acceptance (harness + map browser gate + moderated walkthrough). **Not** a five-stranger human cohort.

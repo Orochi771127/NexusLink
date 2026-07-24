@@ -27,10 +27,11 @@ Do **not** schedule a schema bump or STORAGE_KEY change solely to delete the mir
 
 ## Optional follow-up (cheap, not required to open immediately)
 
-**Pack 2.5 — Mirror misuse guardrails** (docs + harness only, or tiny helpers):
+**Pack 2.5 — Mirror misuse guardrails** — **SHIPPED 2026-07-25**
 
-- Document “never judge non-active via top-level bond” in ADR-002 consequences.
-- Optional diagnostic harness: scan known invite/growth call sites for `state.bond` when `targetId !== activeId`.
+- Documented in ADR-002 Pack 2.5 section.
+- Runtime/static harness: `docs/qa/mirror-misuse-guardrail-cases.mjs`
+- Helpers: `src/state/relationshipAuthorityGuard.js` (`resolveRelationshipForJudgment`, diagnose helper)
 - No writer rewrite; no schema bump.
 
 ## Full deprecation (deferred indefinitely)
@@ -48,7 +49,7 @@ Until then, “Phase 3 deprecate” stays **Proposed / not authorized**.
 Repair Sequence Task Packs 0–5 Phase 1 are **shipped on `main`**. Suggested next work (pick one):
 
 1. **Human:** Pack 1 §J five-player playtest → mark VERIFIED or open copy fixes.
-2. **Optional engineering:** Pack 2.5 mirror misuse guardrails (above).
+2. **Optional engineering:** ~~Pack 2.5 mirror misuse guardrails~~ → **shipped**.
 3. **Product backlog (from tension review, not yet packed):** initiative budget, expedition loot semantics, qualitative bond presentation, non-confrontation growth routes — each needs its own Task Pack + Owner approval before coding.
 
 ## Codebase memory note
