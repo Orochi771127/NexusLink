@@ -1105,6 +1105,13 @@ canvas {
   min-height: 28px;
 }
 
+/* 質性階段名需要更寬的右欄（數字時代的 44px 不夠）。 */
+.core-stat-row[data-stat="bond"],
+.core-stat-row[data-stat="trust"],
+.core-stat-row[data-stat="mood"] {
+  grid-template-columns: 72px 1fr minmax(5.5em, 7.5em);
+}
+
 .core-stat-label {
   font-size: 11px;
   line-height: 1;
@@ -1161,6 +1168,15 @@ canvas {
   color: transparent;
   -webkit-text-fill-color: transparent;
   white-space: nowrap;
+}
+
+/* 質性羈絆／信任：階段名比數字長，允許換行以免擠爆列寬。 */
+.core-stat-row[data-stat="bond"] .core-stat-value,
+.core-stat-row[data-stat="trust"] .core-stat-value {
+  white-space: normal;
+  max-width: 7.5em;
+  font-size: 12px;
+  line-height: 1.25;
 }
 
 .character-modal {
