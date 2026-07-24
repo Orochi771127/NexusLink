@@ -1,6 +1,9 @@
 import EventBus from "../utils/eventBus.js";
 import { deriveInitiativeMoment } from "../engine/gentleInvitationEngine.js";
-import { evaluateAmbientInitiativeCooldown } from "../ai/autonomy/initiativeCooldown.js";
+import {
+  evaluateAmbientInitiativeCooldown,
+  getAmbientInitiativeBudget
+} from "../ai/autonomy/initiativeCooldown.js";
 
 // 夥伴主動微時刻（TP-7 Companion Presence v1）。
 //
@@ -136,10 +139,24 @@ export function createCompanionInitiativeController({
     }, LINE_VISIBLE_MS);
   }
 
+  /** Pack C：給 gate／除錯讀取目前主動性預算（不寫存檔）。 */
+  function getBudgetView(now = Date.now()) {
+    const state = store?.getState?.() || {};
+    return getAmbientInitiativeBudget({
+      now,
+      bootAt: session.bootAt,
+      lastMomentAt: session.lastMomentAt,
+      momentsThisSession: session.momentsThisSession,
+      safeUnstable: Boolean(state.safeHarborMode)
+    });
+  }
+
   function evaluate(now = Date.now()) {
     const state = store.getState();
     if (!canShow(state)) return null;
 
+    // 預算視圖與 cooldown 同源；allowed 仍以 evaluateAmbientInitiativeCooldown 為準。
+    const budget = getBudgetView(now);
     const cooldown = evaluateAmbientInitiativeCooldown({
       now,
       bootAt: session.bootAt,
@@ -147,7 +164,7 @@ export function createCompanionInitiativeController({
       momentsThisSession: session.momentsThisSession,
       safeUnstable: Boolean(state.safeHarborMode)
     });
-    if (!cooldown.allowed) return null;
+    if (!cooldown.allowed || !budget.allowed) return null;
 
     const momentDef = deriveInitiativeMoment(state, now);
     if (!momentDef) return null;
@@ -184,5 +201,5 @@ export function createCompanionInitiativeController({
     if (el) el.classList.remove("is-visible");
   }
 
-  return { bind, evaluate, dispose };
+  return { bind, evaluate, dispose, getBudgetView };
 }

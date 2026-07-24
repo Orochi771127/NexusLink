@@ -20,8 +20,8 @@
 | 5 | Terminology and UI Language Alignment | **Phase 1 shipped** (player-facing glossary + scan) |
 | A | Qualitative Bond Presentation | **Phase 1 shipped** (UI stages; engines keep numbers) |
 | B | Non-confrontation Growth Route | **Phase 1 shipped** (chapter life-event + shared trial engine) |
-| C | Initiative Budget | **Authorized next** |
-| D | Expedition Loot Semantics | Authorized after C |
+| C | Initiative Budget | **Phase 1 shipped** (session budget view; no daily FOMO) |
+| D | Expedition Loot Semantics | **Authorized next** |
 
 ---
 
@@ -341,3 +341,22 @@ Offer a calm chapter-clear path (life-event explore) equal in authority to stand
 ### Non-goals
 
 No Echo Sorting / G4; no family-count change; no schema bump.
+
+---
+
+## TASK PACK C — Initiative Budget（Phase 1 shipped）
+
+### Objective
+
+Export ambient initiative limits as a named session budget view for gates/debug/future UI.
+
+### Shipped (2026-07-25)
+
+- `getAmbientInitiativeBudget` + block reason copy
+- `companionInitiativeController.getBudgetView`
+- Doc: `docs/strategy/PACK_INITIATIVE_BUDGET.md`
+- Harness: `docs/qa/initiative-budget-cases.mjs`
+
+### Non-goals
+
+No daily cap, streak, unread badge, or save-schema field.

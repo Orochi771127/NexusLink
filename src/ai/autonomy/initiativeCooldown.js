@@ -78,6 +78,79 @@ export function evaluateAmbientInitiativeCooldown({
   return { allowed: blocks.length === 0, blocks };
 }
 
+/**
+ * Pack C — Initiative Budget（主動性預算視圖）
+ *
+ * 把既有 ambient cooldown 常數命名為「預算」：session 剩餘次數、阻擋原因、
+ * 下次可嘗試時間。純函數、不寫存檔、不做每日上限／FOMO。
+ */
+export const INITIATIVE_BUDGET_BLOCK_REASONS = Object.freeze({
+  safety_quiet: Object.freeze({
+    id: "safety_quiet",
+    zh: "安全靜默中，暫時不主動靠近",
+    en: "Safety quiet — no initiative for now"
+  }),
+  boot_quiet: Object.freeze({
+    id: "boot_quiet",
+    zh: "開場安靜中，先讓你安頓",
+    en: "Boot quiet — settling in first"
+  }),
+  session_cap: Object.freeze({
+    id: "session_cap",
+    zh: "這一輪的主動已經夠了",
+    en: "Session initiative budget spent"
+  }),
+  moment_interval: Object.freeze({
+    id: "moment_interval",
+    zh: "剛剛才靠近過，再等一會兒",
+    en: "Waiting out the moment interval"
+  })
+});
+
+export function getAmbientInitiativeBudget({
+  now = Date.now(),
+  bootAt = 0,
+  lastMomentAt = 0,
+  momentsThisSession = 0,
+  safeUnstable = false
+} = {}) {
+  const used = Math.max(0, Math.floor(Number(momentsThisSession) || 0));
+  const remaining = Math.max(0, AMBIENT_SESSION_CAP - used);
+  const cooldown = evaluateAmbientInitiativeCooldown({
+    now,
+    bootAt,
+    lastMomentAt,
+    momentsThisSession: used,
+    safeUnstable
+  });
+
+  const candidates = [];
+  if (bootAt && now - bootAt < AMBIENT_BOOT_QUIET_MS) {
+    candidates.push(bootAt + AMBIENT_BOOT_QUIET_MS);
+  }
+  if (lastMomentAt && now - lastMomentAt < AMBIENT_MIN_INTERVAL_MS) {
+    candidates.push(lastMomentAt + AMBIENT_MIN_INTERVAL_MS);
+  }
+  // session_cap / safety_quiet 沒有「等一下就恢復」的時間點（本 session 用盡或安全旗標）。
+  const nextEligibleAt = candidates.length ? Math.max(...candidates) : null;
+
+  return Object.freeze({
+    allowed: cooldown.allowed,
+    blocks: Object.freeze([...cooldown.blocks]),
+    blockReasons: Object.freeze(
+      cooldown.blocks.map((id) => INITIATIVE_BUDGET_BLOCK_REASONS[id] || Object.freeze({ id, zh: id, en: id }))
+    ),
+    sessionCap: AMBIENT_SESSION_CAP,
+    used,
+    remaining,
+    limits: AMBIENT_INITIATIVE_LIMITS,
+    nextEligibleAt,
+    // 明確契約：預算是 session 內稀少感，不是日課／打卡。
+    persistence: "session_only",
+    dailyCap: null
+  });
+}
+
 function findLastActionTimestamp(chatHistory, pattern) {
   for (let index = chatHistory.length - 1; index >= 0; index -= 1) {
     const entry = chatHistory[index];

@@ -58,6 +58,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-07-25 - Cursor Grok - Pack C initiative budget view - COMPLETED
+
+- Status: `COMPLETED` for Phase 1 session budget API (no daily FOMO / schema).
+- Branch / commit: `feat/pack-initiative-budget-view` → PR into protected `main`.
+- Scope: Name/export ambient initiative remaining + block reasons; wire controller `getBudgetView`.
+- Work performed: `getAmbientInitiativeBudget` in `initiativeCooldown.js`; controller hook; strategy doc + harness.
+- Verification: `node docs/qa/initiative-budget-cases.mjs`.
+- Problems / risks: No player HUD yet — intentional; caps unchanged.
+- Next safe action: Pack D expedition loot semantics (player-facing copy away from farming/power currency).
+- Required reading: `docs/strategy/PACK_INITIATIVE_BUDGET.md`, this entry.
+
 ### 2026-07-25 - Cursor Grok - Pack B non-confrontation chapter growth - COMPLETED
 
 - Status: `COMPLETED` for Phase 1 life-event chapter trial + shared anti-farm helpers.
