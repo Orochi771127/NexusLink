@@ -4399,14 +4399,27 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Lane: `Raphael Core, Companion Reasoning, And Soul Talk`.
 - Task name: `TP-RAPHAEL-EVERYDAY-CHAT-TOPICS-V3`.
 
-### 2026-07-24 - Cursor - Raphael Vent Work/Relationship/Life - IN PROGRESS
+### 2026-07-24 - Cursor - Raphael Vent Work/Relationship/Life - VERIFIED
 
-- Status: `IN PROGRESS`; workplace / romance / life worry venting.
+- Status: `VERIFIED` on `main` (`3dd0bb3`, PR #130).
 - Lane: `Raphael Core, Companion Reasoning, And Soul Talk`.
 - Task name: `TP-RAPHAEL-VENT-WORK-RELATIONSHIP-LIFE`.
-- Hold space without over-directive quit/breakup; no dependency soft-assent.
-- Harness: `docs/qa/raphael-vent-work-relationship-life-*.mjs`.
-- Next safe action: protected PR → `web-release-gate` → merge `main`.
+
+### 2026-07-24 - Cursor - Raphael Proactive Care Guide - VERIFIED
+
+- Status: `VERIFIED` on branch `feat/raphael-proactive-care-guide` (pre-merge);
+  all listed harnesses PASS; awaiting protected PR → `web-release-gate` → `main`.
+- Lane: `Raphael Core, Companion Reasoning, And Soul Talk`.
+- Task name: `TP-RAPHAEL-PROACTIVE-CARE-GUIDE`.
+- Design: thin opens (嗨／在嗎／還好) → proactive care door; vent turns may
+  get soft「若你想…」invite; quiet / safety / dependency skip guide.
+- Work performed:
+  - `src/ai/dialogue/careGuidePolicy.js`
+  - `responseComposer` / `actionExecutor` / `autonomyLoop` preserve `care_guide`
+  - Quick replies + catalog + cases/drill
+- Verification: care-guide / vent / everyday v1+v3 / daily-life / auto-think PASS.
+- MCP: codebase-memory reindex + ADR updated for this decision.
+- Next safe action: commit → PR → gate → merge `main`.
 
 ### 2026-07-22 - Cursor - First-Loop Hint Clear Face - SUPERSEDED
 
