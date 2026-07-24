@@ -17,7 +17,7 @@
 | 2 | Multi-Companion Relationship State Authority | **Phase 1 shipped** (invite/snapshot readers); Phases 2–3 plan remain |
 | 3 | Memory Single Truth Projection | **Phase 1 shipped** (projection + recall gate); no schema merge |
 | 4 | Dynamic Chapter Encounter Resolver | **Phase 1 shipped** (resolver + fallback + invite resolvedId) |
-| 5 | Terminology and UI Language Alignment | Docs / UI text plan |
+| 5 | Terminology and UI Language Alignment | **Phase 1 shipped** (player-facing glossary + scan) |
 
 ---
 
@@ -251,7 +251,7 @@ No full chapter content rewrite in the plan pack.
 
 ---
 
-## TASK PACK 5 — Terminology and UI Language Alignment
+## TASK PACK 5 — Terminology and UI Language Alignment（Phase 1 shipped）
 
 ### Objective
 
@@ -287,3 +287,10 @@ Do not weaken safety hard gates while rewriting copy.
 ### Required human decisions
 
 - Whether Master Canon terminology updates ship with UI strings or later.
+
+### Shipped (2026-07-24)
+
+- Glossary: `docs/strategy/PACK5_TERMINOLOGY_GLOSSARY.md`
+- Player-facing: companion `battleRole`／描述、圖鑑雷達「安撫」、heartspark role 摘要
+- Master Canon 標題用語 **deferred**（需策略核准）
+- Harness: `docs/qa/terminology-ui-language-cases.mjs`
