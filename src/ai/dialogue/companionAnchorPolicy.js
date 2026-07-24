@@ -6,6 +6,8 @@
  * - Emotional：仍走情緒沉澱；本模組只讀 excerpt 做被問時的溫柔引用
  *
  * 不做 RAG、不讀 transcript journal、不自動訓練。
+ *
+ * Pack 3：具體「我記得 X」只能命中玩家可見證據（見 isPlayerVisibleAnchor）。
  */
 
 export const COMPANION_ANCHOR_CAP = 20;
@@ -23,6 +25,19 @@ const RISKY_DETAIL_RE =
 
 const EXPLICIT_RECALL_ASK_RE =
   /(?:還|还|會|会)?記得|想得起|剛才|剛剛|刚才|刚刚|那杯|那件|那次/;
+
+/**
+ * 錨點是否可作為玩家可見／可具體宣稱的證據。
+ * 無細節或風險內容 → 僅可內部調權重，不可寫進 Memory 頁、也不可說「我記得……」。
+ */
+export function isPlayerVisibleAnchor(anchor) {
+  if (!anchor || typeof anchor !== "object") return false;
+  const detail = String(anchor.detail || "").trim();
+  if (!detail) return false;
+  if (RISKY_DETAIL_RE.test(detail)) return false;
+  if (RISKY_DETAIL_RE.test(String(anchor.label || ""))) return false;
+  return true;
+}
 
 /**
  * 從玩家輸入抽取 0..N 個錨點候選。
@@ -262,7 +277,8 @@ export function findPersistedRecall(inputText = "", { companionAnchors = [], emo
 
   for (let i = anchors.length - 1; i >= 0; i -= 1) {
     const anchor = anchors[i];
-    if (!anchor?.detail) continue;
+    // Pack 3：不可見錨點不可被具體宣稱（避免 Memory 頁找不到證據）。
+    if (!isPlayerVisibleAnchor(anchor)) continue;
     const hay = `${anchor.label || ""} ${anchor.detail || ""} ${anchor.key || ""}`;
     if (keywords.some((key) => key && hay.includes(key))) {
       return {
@@ -275,10 +291,11 @@ export function findPersistedRecall(inputText = "", { companionAnchors = [], emo
     }
   }
 
-  // 無明確關鍵字但問「還記得」：回最近一筆錨點（避免空答）。
+  // 無明確關鍵字但問「還記得」：回最近一筆「可見」錨點（避免空答）。
   if (/(?:還|还)?記得|想得起/.test(text) && anchors.length) {
-    const latest = anchors[anchors.length - 1];
-    if (latest?.detail && !RISKY_DETAIL_RE.test(latest.detail)) {
+    for (let i = anchors.length - 1; i >= 0; i -= 1) {
+      const latest = anchors[i];
+      if (!isPlayerVisibleAnchor(latest)) continue;
       return {
         detail: clipDetail(latest.detail, 24),
         softLabel: latest.softLabel || latest.label || latest.key,
@@ -322,7 +339,8 @@ export function retrieveSoftAnchorAllusion(inputText = "", anchors = [], { skipK
 
   const list = Array.isArray(anchors) ? anchors : [];
   const related = list.filter((anchor) => {
-    if (!anchor || anchor.key === skipKey) return false;
+    // 輕提也會說「你提過……我還留著」→ 等同具體宣稱，必須可見。
+    if (!isPlayerVisibleAnchor(anchor) || anchor.key === skipKey) return false;
     return isAnchorRelatedToInput(text, anchor);
   });
   if (!related.length) return null;

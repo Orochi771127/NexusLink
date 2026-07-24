@@ -58,6 +58,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-07-24 - Cursor Grok - Pack 3 Memory Single Truth Projection Phase 1 - COMPLETED
+
+- Status: `COMPLETED` for projection-only MemoryViewModel + recall gate. No array merge / STORAGE_KEY bump.
+- Branch / commit: `feat/pack3-memory-single-truth` → PR into protected `main`.
+- Scope: Player-visible memory evidence timeline; anchors on Memory page; concrete/soft recall require visible evidence; released stays as archive.
+- Work performed: `src/ui/memoryProjection.js`; `pageRouter` Memory strip/list; `companionAnchorPolicy` visibility filters; ADR-003; harness `docs/qa/memory-projection-cases.mjs`.
+- Verification: `node docs/qa/memory-projection-cases.mjs`; `node --check` on touched JS.
+- Problems / risks: Memory list density may rise under cap; tone-only hidden anchors are intentionally non-claimable.
+- Next safe action: Pack 4 Dynamic Chapter Encounter Resolver.
+- Required reading: `docs/architecture/ADR-003-MEMORY_SINGLE_TRUTH_PROJECTION.md`, `src/ui/memoryProjection.js`, this entry.
+
 ### 2026-07-24 - Cursor Grok - Pack 2 relationship authority Phase 1 - COMPLETED
 
 - Status: `COMPLETED` for Phase 1 invite/snapshot authority fix + ADR/migration plan. Phases 2–3 not shipped. Not a full schema migration.

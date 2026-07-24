@@ -10,12 +10,17 @@ import {
 import { resolveCrystalVisualState } from "../engine/crystalVisualState.js";
 import { getCrystalReleaseEligibility } from "../engine/crystalWeavingEngine.js";
 import { getTraceDisplayCopy } from "../engine/traceVisualMapper.js";
+import {
+  MEMORY_PROJECTION_LIMIT,
+  countMemoryEvidence,
+  projectMemoryEvidence
+} from "./memoryProjection.js";
 import { qs, qsa } from "../utils/dom.js";
 import EventBus from "../utils/eventBus.js";
 import { t, getLanguage, LANGUAGE_CHANGED_EVENT } from "../i18n/i18n.js";
 
 const PAGE_ACTIONS = new Set(["home", "explore", "care", "grow", "memory"]);
-const MEMORY_LIMIT = 8;
+const MEMORY_LIMIT = MEMORY_PROJECTION_LIMIT;
 const IDEMPOTENT_CARE_WRITE_REASONS = new Set(["duplicate_key", "duplicate_root"]);
 
 export function createPageRouter({
@@ -401,7 +406,8 @@ export function createPageRouter({
     const body = pageBodies.memory;
     if (!body) return;
     renderedMemoryEntries = collectMemoryEntries(state);
-    const emotionalCount = Array.isArray(state.emotionalMemories) ? state.emotionalMemories.length : 0;
+    const evidence = countMemoryEvidence(state);
+    const emotionalCount = evidence.emotional;
     const canEcho = emotionalCount >= 3;
     const crystalState = resolveCrystalVisualState(state.emotionalMemories);
     const observableMemory = (Array.isArray(state.emotionalMemories) ? state.emotionalMemories : [])
@@ -428,9 +434,10 @@ export function createPageRouter({
         crystalActionStatus
       )}
       <div class="page-evidence-strip" aria-label="${t("memory.evidenceAria")}">
-        <span><strong>${Array.isArray(state.memories) ? state.memories.length : 0}</strong><em>${t("memory.evInteractions")}</em></span>
-        <span><strong>${emotionalCount}</strong><em>${t("memory.evEmotional")}</em></span>
-        <span><strong>${Array.isArray(state.habitatTraces) ? state.habitatTraces.length : 0}</strong><em>${t("memory.evTraces")}</em></span>
+        <span><strong>${evidence.interactions}</strong><em>${t("memory.evInteractions")}</em></span>
+        <span><strong>${evidence.emotional}</strong><em>${t("memory.evEmotional")}</em></span>
+        <span><strong>${evidence.traces}</strong><em>${t("memory.evTraces")}</em></span>
+        <span><strong>${evidence.anchors}</strong><em>${t("memory.evAnchors")}</em></span>
       </div>
       <div class="page-memory-list" aria-label="${t("memory.listAria")}">
         ${renderMemoryEntries(renderedMemoryEntries, pendingCrystalReleaseId)}
@@ -800,46 +807,44 @@ function getCompanionDisplayName(companion) {
 }
 
 function collectMemoryEntries(state) {
-  const emotional = (Array.isArray(state.emotionalMemories) ? state.emotionalMemories : []).map((memory) => {
-    const releaseEligibility = getCrystalReleaseEligibility(state, memory);
+  // Pack 3：單一投影層——錨點／釋放檔案都會出現在玩家可見時間線。
+  const projected = projectMemoryEvidence(state, {
+    limit: MEMORY_LIMIT * 2,
+    fallbackEmotionalTitle: t("memory.fallbackEmotionalTitle"),
+    fallbackEmotionalCopy: t("memory.fallbackEmotionalCopy"),
+    fallbackInteractionTitle: t("memory.fallbackInteractionTitle"),
+    fallbackInteractionCopy: t("memory.fallbackInteractionCopy"),
+    fallbackAnchorTitle: t("memory.fallbackAnchorTitle"),
+    fallbackTraceTitle: t("memory.fallbackTraceTitle"),
+    archiveMeta: t("memory.archiveMeta"),
+    intensityFmt: t("memory.intensityFmt"),
+    getTraceDisplayCopy
+  });
+
+  const entries = projected.map((item) => {
+    const isEmotional = item.kind === "emotional" || item.kind === "emotional_archive";
+    const releaseEligibility = isEmotional && item.kind === "emotional"
+      ? getCrystalReleaseEligibility(state, item.source)
+      : null;
     return {
-      kind: "emotional",
-      source: memory,
-      title: memory.theme || memory.label || t("memory.fallbackEmotionalTitle"),
-      copy: memory.excerpt || memory.label || t("memory.fallbackEmotionalCopy"),
-      createdAt: Number(memory.lastUpdatedAt) || Number(memory.createdAt) || 0,
-      meta: [getMemoryStatusLabel(memory.status), memory.emotion].filter(Boolean).join(" · "),
+      kind: item.kind === "emotional_archive" ? "emotional" : item.kind,
+      source: item.source,
+      title: item.title,
+      copy: item.copy,
+      createdAt: item.createdAt,
+      meta: item.kind === "emotional" || item.kind === "emotional_archive"
+        ? [getMemoryStatusLabel(item.source?.status), item.source?.emotion, item.kind === "emotional_archive" ? t("memory.archiveMeta") : ""]
+          .filter(Boolean)
+          .join(" · ")
+        : item.meta,
       canRelease: Boolean(releaseEligibility?.allowed ?? releaseEligibility?.eligible ?? releaseEligibility?.ok),
-      releaseReason: releaseEligibility?.reason || ""
+      releaseReason: releaseEligibility?.reason || "",
+      claimable: item.claimable !== false
     };
   });
 
-  const simple = (Array.isArray(state.memories) ? state.memories : []).map((memory) => ({
-    kind: "memory",
-    source: memory,
-    title: memory.title || t("memory.fallbackInteractionTitle"),
-    copy: memory.text || t("memory.fallbackInteractionCopy"),
-    createdAt: Number(memory.createdAt) || 0,
-    meta: memory.type || ""
-  }));
-
-  const traces = (Array.isArray(state.habitatTraces) ? state.habitatTraces : []).map((trace) => {
-    const display = getTraceDisplayCopy(trace);
-    const intensityPct = Math.round((Number(trace.intensity) || 0) * 100);
-    return {
-      kind: "trace",
-      source: trace,
-      title: display.title,
-      copy: `${display.copy}${t("memory.intensityFmt").replace("{pct}", String(intensityPct))}`,
-      createdAt: Number(trace.lastUpdatedAt) || Number(trace.createdAt) || 0,
-      meta: trace.status || trace.memoryId || ""
-    };
-  });
-
-  const sorted = [...emotional, ...simple, ...traces]
-    .sort((left, right) => right.createdAt - left.createdAt);
-  const limited = sorted.slice(0, MEMORY_LIMIT);
-  const latestReleasable = emotional
+  const limited = entries.slice(0, MEMORY_LIMIT);
+  const latestReleasable = entries
     .filter((entry) => entry.canRelease)
     .sort((left, right) => right.createdAt - left.createdAt)[0];
 
@@ -868,12 +873,13 @@ function renderMemoryEntries(entries, pendingReleaseId = null) {
   }
 
   return entries.map((entry, index) => {
-    const isReflectable = entry.kind === "emotional";
+    const isReflectable = entry.kind === "emotional" && entry.claimable !== false;
     const memoryId = entry.source?.id || "";
     const isPendingRelease = Boolean(memoryId && pendingReleaseId === memoryId);
+    const glyph = entry.kind === "trace" ? "◇" : entry.kind === "anchor" ? "◎" : "✦";
     return `
       <article class="page-memory-row page-memory-row--${entry.kind}">
-        <span class="page-memory-glyph" aria-hidden="true">${entry.kind === "trace" ? "◇" : "✦"}</span>
+        <span class="page-memory-glyph" aria-hidden="true">${glyph}</span>
         <span class="page-memory-copy">
           <strong>${escapeHtml(entry.title)}</strong>
           <em>${escapeHtml(trimText(entry.copy, 92))}</em>
