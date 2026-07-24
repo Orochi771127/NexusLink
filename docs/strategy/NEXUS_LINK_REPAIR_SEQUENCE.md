@@ -14,7 +14,7 @@
 |---|---|---|
 | 0 | BGM Asset Audit and Integration | **Authorized now** |
 | 1 | First Session Motivation Repair | **Implemented (await playtest VERIFIED)** |
-| 2 | Multi-Companion Relationship State Authority and Migration Plan | Plan only |
+| 2 | Multi-Companion Relationship State Authority | **Phase 1 shipped** (invite/snapshot readers); Phases 2–3 plan remain |
 | 3 | Memory Single Truth Projection | Plan only |
 | 4 | Dynamic Chapter Encounter Resolver | Plan only |
 | 5 | Terminology and UI Language Alignment | Docs / UI text plan |
@@ -147,8 +147,10 @@ Do not ship migration in the same pack as BGM or Motivation UI without explicit 
 
 ### Required human decisions
 
-- Which fields move first (bond/trust only vs full list).
-- Whether top-level bond remains a mirror forever or is deprecated.
+- ~~Which fields move first~~ → **Phase 1:** invite path uses bond/trust/blockedTouch from target `companionId` only.
+- ~~Whether top-level bond remains a mirror~~ → **Keep forever for now** (active compatibility); deprecation deferred to Phase 3 Owner call.
+
+See also: `docs/architecture/ADR-002-MULTI_COMPANION_RELATIONSHIP_AUTHORITY.md`, `docs/strategy/PACK2_RELATIONSHIP_AUTHORITY_MIGRATION.md`.
 
 ---
 

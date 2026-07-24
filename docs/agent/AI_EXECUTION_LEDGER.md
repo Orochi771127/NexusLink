@@ -58,6 +58,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-07-24 - Cursor Grok - Pack 2 relationship authority Phase 1 - COMPLETED
+
+- Status: `COMPLETED` for Phase 1 invite/snapshot authority fix + ADR/migration plan. Phases 2–3 not shipped. Not a full schema migration.
+- Branch / commit: `feat/pack2-relationship-authority` → PR into protected `main`.
+- Scope: Per-companion bond/trust/blocked for resonance invite + chapter mark snapshots; ADR-002; Pack 2 migration plan; authority harness. No STORAGE_KEY / companionStates.version bump.
+- Work performed: `resolveRelationshipForCompanion`, `buildRelationshipChapterMarkSnapshot`; `resonanceInviteEngine` + `mapController` wired; docs + `docs/qa/resonance-invite-authority-cases.mjs`.
+- Verification: `node docs/qa/resonance-invite-authority-cases.mjs`; `node docs/qa/_resonance_invite_cases.mjs`; `node --check` on touched JS.
+- Problems / risks: Historical polluted chapterMarks may linger until reask; top-level mirror writers unchanged; Phase 3 deprecate-mirror still open.
+- Next safe action: Pack 3 Memory Single Truth Projection (plan first) unless Owner queues Pack 2 Phase 2.
+- Required reading: `docs/architecture/ADR-002-MULTI_COMPANION_RELATIONSHIP_AUTHORITY.md`, `docs/strategy/PACK2_RELATIONSHIP_AUTHORITY_MIGRATION.md`, this entry.
+
 ### 2026-07-24 - Cursor Grok - Moonlake BGM correction + Pack 1 motivation repair - COMPLETED (not playtest VERIFIED)
 
 - Status: `COMPLETED` for code+docs in PR worktree; **not** full playtest `VERIFIED` (§J five-player gate still open).
