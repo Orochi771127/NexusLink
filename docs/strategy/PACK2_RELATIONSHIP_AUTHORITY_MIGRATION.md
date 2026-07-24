@@ -1,8 +1,9 @@
 # Pack 2 — Relationship Authority Migration Plan
 
-- **Status:** Phase 1 implemented; Phases 2–3 Proposed / not yet approved for schema bump
+- **Status:** Phase 1–2 implemented; Phase 3 **keep-mirror decision recorded** (deprecate deferred)
 - **Last updated:** 2026-07-24
 - **ADR:** `docs/architecture/ADR-002-MULTI_COMPANION_RELATIONSHIP_AUTHORITY.md`
+- **Phase 3 decision:** `docs/strategy/PACK2_PHASE3_MIRROR_DECISION.md`
 
 ## Objective
 
@@ -34,13 +35,17 @@ Without this, Greyshade affinity can make Blazetail (or any chapter target) acce
 - Dual-read telemetry flag deferred (optional).
 - Files: `companionStateSchema.js`, `mapController.js` meet path.
 
-## Phase 3 — Optional schema bump (Owner decision)
+## Phase 3 — Top-level mirror (DECIDED 2026-07-24)
 
-- Propose `COMPANION_STATE_SCHEMA_VERSION = 2` only if normalize must rewrite polluted marks.
-- Prefer leaving top-level mirror forever unless Owner deprecates it.
-- Required human decisions:
-  1. Move invite fields only (done) vs migrate all 14 mirror writers next.
-  2. Keep top-level mirror permanently vs deprecate.
+- **Decision:** Keep top-level bond/trust/… mirror as active compatibility layer.
+- **Full deprecation:** Deferred indefinitely (needs HUD/writer mega-migration + dual-write).
+- **Optional cheap follow-up:** Pack 2.5 misuse guardrails (docs/harness) — not authorized until Owner queues it.
+- Details: `docs/strategy/PACK2_PHASE3_MIRROR_DECISION.md`
+
+### Previous Phase 3 options (superseded)
+
+- ~~Propose `COMPANION_STATE_SCHEMA_VERSION = 2` only if normalize must rewrite polluted marks.~~ Not required for “keep.”
+- ~~Deprecate top-level mirror now.~~ Rejected for now.
 
 ## Rollback
 

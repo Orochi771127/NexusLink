@@ -58,6 +58,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-07-24 - Cursor Grok - Pack 2 Phase 3 keep-mirror decision recorded - COMPLETED
+
+- Status: `COMPLETED` for decision docs only. No runtime change. Full mirror deprecation deferred.
+- Branch / commit: docs PR into protected `main` (see PR).
+- Scope: Record keep-mirror default; optional Pack 2.5 guardrails; next-work options after Repair Packs 0–5 Phase 1.
+- Work performed: `PACK2_PHASE3_MIRROR_DECISION.md`; ADR-002 / Pack2 migration / repair sequence / README / ledger updates; codebase-memory ADR note.
+- Verification: docs-only review; `git status` clean after merge.
+- Problems / risks: New code can still misuse top-level bond for non-active judgments — Pack 2.5 optional.
+- Next safe action: Owner pick — (1) Pack 1 five-player playtest, (2) Pack 2.5 guardrails, or (3) new Task Pack from remaining tension-review items.
+- Required reading: `docs/strategy/PACK2_PHASE3_MIRROR_DECISION.md`, this entry.
+
 ### 2026-07-24 - Cursor Grok - Pack 5 Terminology / UI language Phase 1 - COMPLETED
 
 - Status: `COMPLETED` for player-facing glossary application + scan harness. Master Canon rewrite deferred.
