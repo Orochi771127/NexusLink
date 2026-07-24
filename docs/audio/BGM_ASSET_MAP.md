@@ -12,8 +12,8 @@
 |---|---|---:|---|---|---|---|---|
 | `assets/audio/linkara/bgm_login_page.mp3` | mp3 | 3959486 | Title / first-session start (filename `login_page`) | `screen:start` | yes | **wired** | iOS cannot autoplay before gesture |
 | `assets/audio/linkara/bgm_linkara_lofi.mp3` | mp3 | 2330696 | Companion selection / Initial Bond | `screen:companion-select` | yes | **wired (Owner-confirmed 2026-07-24)** | Soft UI tone; no dedicated select filename |
-| `assets/audio/bgm_lakefront.mp3` | mp3 | 4052886 | Moonlake home / lakefront | `habitat:moonlake` | yes | **wired (Owner-confirmed 2026-07-24)** | Canonical home BGM |
-| `assets/audio/linkara/bgm_ethereal_moon_lakefront.mp3` | mp3 | 4070794 | Ethereal moonlake variant (filename) | — | yes | **unmapped (alternate)** | Not auto-assigned; keep on disk |
+| `assets/audio/linkara/bgm_ethereal_moon_lakefront.mp3` | mp3 | 4070794 | Moonlake home / lakefront | `habitat:moonlake` | yes | **wired (Owner-corrected 2026-07-24)** | Canonical Moonlake BGM |
+| `assets/audio/bgm_lakefront.mp3` | mp3 | 4052886 | Legacy lakefront | — | yes | **unmapped (alternate)** | Kept on disk; not auto-assigned |
 | `assets/audio/linkara/bgm_northern_verdant_plains.mp3` | mp3 | 4819141 | Northern Verdant Plains | `habitat:plains` | yes | **wired** | Loudness varies vs other maps |
 | `assets/audio/linkara/bgm_southeast_forge_hills.mp3` | mp3 | 4460406 | Southeast Forge Hills | `habitat:forge` | yes | **wired** | |
 | `assets/audio/linkara/bgm_southern_harbor_nexus.mp3` | mp3 | 6583124 | Southern Harbor Nexus | `habitat:harbor` | yes | **wired** | Larger file; lazy-load only |
@@ -32,7 +32,7 @@ Paths use exact relative URLs from repo root (`./assets/...`) for GitHub Pages.
 |---|---|---|---|
 | Title / onboarding start–guidance | `screen:start` | `./assets/audio/linkara/bgm_login_page.mp3` | mapped |
 | Companion select / onboarding bond | `screen:companion-select` | `./assets/audio/linkara/bgm_linkara_lofi.mp3` | mapped (Owner-confirmed) |
-| Moonlake home habitat | `habitat:moonlake` | `./assets/audio/bgm_lakefront.mp3` | mapped (Owner-confirmed) |
+| Moonlake home habitat | `habitat:moonlake` | `./assets/audio/linkara/bgm_ethereal_moon_lakefront.mp3` | mapped (Owner-corrected) |
 | Plains | `habitat:plains` | `./assets/audio/linkara/bgm_northern_verdant_plains.mp3` | mapped |
 | Forge | `habitat:forge` | `./assets/audio/linkara/bgm_southeast_forge_hills.mp3` | mapped |
 | Harbor | `habitat:harbor` | `./assets/audio/linkara/bgm_southern_harbor_nexus.mp3` | mapped |
@@ -40,7 +40,7 @@ Paths use exact relative URLs from repo root (`./assets/...`) for GitHub Pages.
 | Tidal | `habitat:tidal` | `./assets/audio/linkara/bgm_southwest_tidal_frontier.mp3` | mapped |
 | Mystic | `habitat:mystic` | `./assets/audio/linkara/bgm_eastern_mystic_mountains.mp3` | mapped |
 | Unknown / missing map | `fallback:legacy` | `./assets/audio/bgm_nexuslink.m4a` | fallback |
-| — | — | `./assets/audio/linkara/bgm_ethereal_moon_lakefront.mp3` | **unmapped alternate** |
+| — | — | `./assets/audio/bgm_lakefront.mp3` | **unmapped alternate** |
 
 ---
 

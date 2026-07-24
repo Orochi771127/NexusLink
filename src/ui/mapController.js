@@ -18,6 +18,11 @@ import {
 } from "../engine/resonanceInviteEngine.js";
 import EventBus from "../utils/eventBus.js";
 import { MOONLAKE_NODE_LAYOUT, MOONLAKE_ROUTE_ART } from "../data/mapArtLayout.js";
+import {
+  buildStandoffDeferMessage,
+  canEnterUnguidedStandoff
+} from "../engine/resonanceThreadEngine.js";
+import { t } from "../i18n/i18n.js";
 
 const NODE_LAYOUT = MOONLAKE_NODE_LAYOUT;
 
@@ -225,7 +230,21 @@ export function createMapController({
     onStart: (encounter) => {
       mapCanvas?.classList.remove("is-alert");
       hideToast();
-      if (encounter) battleController?.startBattle(encounter);
+      if (!encounter) return;
+      const state = store.getState();
+      // D2：首輪閉環＋可見痕跡前，不直接開未引導對峙。
+      if (!canEnterUnguidedStandoff(state)) {
+        const companion = getCompanionById(state.activeCompanionId);
+        const defer = buildStandoffDeferMessage(companion?.name || "夥伴");
+        showToast({
+          title: t("map.standoffDeferredTitle") || defer.title,
+          text: defer.text,
+          tone: "calm"
+        });
+        if (statusText) statusText.textContent = defer.title;
+        return;
+      }
+      battleController?.startBattle(encounter);
     },
     onCancel: () => {
       mapCanvas?.classList.remove("is-alert");
@@ -706,16 +725,35 @@ export function createMapController({
     const toastTone = result.encounter ? "danger" : node.eventType === "rest" || node.eventType === "reflective" ? "calm" : "success";
     showToast({
       title: `${node.label.zh} ・ ${node.label.en}`,
-      text: result.message,
+      text: result.encounter
+        ? result.message
+        : `${result.message}\n${t("map.exploreReturnPreview")}`,
       tone: toastTone,
       chips
     });
 
+    if (!result.encounter && statusText) {
+      statusText.textContent = `${result.message.split("\n")[0]}｜${t("map.exploreReturnPreview")}`;
+    }
+
     if (result.encounter && battleController) {
-      // 遭遇回饋：光路短暫染紅，停一拍再進戰鬥，讓玩家讀得到發生了什麼。
-      // 遭遇時不播 map 方向 cue——讓 battle cue 獨佔這一拍，避免搶 one-shot lock。
-      mapCanvas?.classList.add("is-alert");
-      encounterTransition.schedule(result.encounter, prefersReducedMotion() ? 0 : ENCOUNTER_DELAY_MS);
+      const readyForStandoff = canEnterUnguidedStandoff(store.getState());
+      if (!readyForStandoff) {
+        // 延後對峙：不走危險 alert／遭遇轉場，避免「已結算卻進不了戰」的白耗感。
+        const companion = getCompanionById(store.getState().activeCompanionId);
+        const defer = buildStandoffDeferMessage(companion?.name || "夥伴");
+        showToast({
+          title: t("map.standoffDeferredTitle") || defer.title,
+          text: defer.text,
+          tone: "calm"
+        });
+        if (statusText) statusText.textContent = defer.title;
+      } else {
+        // 遭遇回饋：光路短暫染紅，停一拍再進戰鬥，讓玩家讀得到發生了什麼。
+        // 遭遇時不播 map 方向 cue——讓 battle cue 獨佔這一拍，避免搶 one-shot lock。
+        mapCanvas?.classList.add("is-alert");
+        encounterTransition.schedule(result.encounter, prefersReducedMotion() ? 0 : ENCOUNTER_DELAY_MS);
+      }
     } else {
       // 非遭遇：地圖保持開啟，玩家直接看到 visited / current / 次數變化。
       // 結果已寫入 state/memory/trace 後，夥伴用一個短方向 cue 回應這趟探索（每次成功只一次）。

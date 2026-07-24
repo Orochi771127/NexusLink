@@ -57,7 +57,15 @@ python -m http.server 5173
 
 - [ ] 標題／onboarding start 在首次有效手勢後播放 `bgm_login_page.mp3`（iOS 不可保證手勢前自動播放）。
 - [ ] Initial Bond／companion select 切到 `bgm_linkara_lofi.mp3`（Owner-confirmed）。
-- [ ] 月湖家使用 `bgm_lakefront.mp3`；Atlas 其他棲地切到對應 `habitat:*`；回家可恢復當前 `activeHabitatId` BGM。
+- [ ] 月湖家使用 `linkara/bgm_ethereal_moon_lakefront.mp3`；Atlas 其他棲地切到對應 `habitat:*`；回家可恢復當前 `activeHabitatId` BGM。
+
+### First Session Motivation（Pack 1）
+
+- [ ] 共鳴線索最多一條、可「先這樣」關閉；無紅點／倒數／貨幣。
+- [ ] 90 秒內能理解第一步；10 分鐘內能說出一項自己造成的可見改變。
+- [ ] 首次 Emotional Standoff：未完成 first-loop／尚無可見痕跡時會延後並說明；生涯首次有引導卡但不永久代選。
+- [ ] 對峙結束可見三層因果＋回棲地預告（非 `+N` 刷分語）。
+- [ ] 至少 5 位新玩家五問 playtest（見 `FIRST_SESSION_MOTIVATION_REVIEW.md` §J）。
 - [ ] 同一場景再進入不無故重頭播放；快速切換不會雙曲疊播。
 - [ ] 靜音／主音量／BGM 音量立即作用；reload 後沿用既有設定（無新 storage key）。
 - [ ] 缺少或未映射曲目不阻斷導航；Network 無 mapped 資產 404。

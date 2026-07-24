@@ -39,6 +39,7 @@ import { createOnboardingController } from "./ui/onboardingController.js";
 import { createFirstLoopController } from "./ui/firstLoopController.js";
 import { createInteractionHintController } from "./ui/interactionHintController.js";
 import { createGentleInvitationController } from "./ui/gentleInvitationController.js";
+import { createResonanceThreadController } from "./ui/resonanceThreadController.js";
 import { createCompanionInitiativeController } from "./ui/companionInitiativeController.js";
 import { createHabitatMomentController } from "./ui/habitatMomentController.js";
 import { createAudioCueController } from "./ui/audioCueController.js";
@@ -295,16 +296,27 @@ async function bootstrap() {
     onStepShown: (step) => bgmController.onOnboardingStep(step)
   });
   // 柔性邀請（支柱二）：首輪後由夥伴狀態驅動的一句溫柔下一步，讓核心迴圈不再沉默。
+  let resonanceThreadController = null;
   const gentleInvitationController = createGentleInvitationController({
     store,
-    isPanelOpen: () => panelManager.isPanelOpen()
+    isPanelOpen: () => panelManager.isPanelOpen(),
+    isResonanceThreadVisible: () => resonanceThreadController?.isVisible?.() === true
+  });
+  // 共鳴線索（Pack 1）：最多一條可關閉方向；session-only，不寫存檔。
+  resonanceThreadController = createResonanceThreadController({
+    store,
+    isPanelOpen: () => panelManager.isPanelOpen(),
+    onVisibilityChange: () => gentleInvitationController.render()
   });
   // Meet 之後的首輪閉環（觸碰→心語→痕跡）：完成/跳過前只開心核與心語入口。
   const firstLoopController = createFirstLoopController({
     store,
     saveCurrentState: () => saveQueue.enqueue(SAVE_LEVEL.CRITICAL),
     // 揭示句淡出後才讓柔性邀請接手同一訊息欄位，避免兩句同屏疊字。
-    onRevealEnd: () => gentleInvitationController.render(),
+    onRevealEnd: () => {
+      resonanceThreadController.render();
+      gentleInvitationController.render();
+    },
     // 面板開啟時（如心語）暫時隱藏首輪單行提示，避免疊在面板內容上方。
     isPanelOpen: () => panelManager.isPanelOpen()
   });
@@ -493,6 +505,7 @@ async function bootstrap() {
   firstLoopController.bind();
   interactionHintController.bind();
   gentleInvitationController.bind();
+  resonanceThreadController.bind();
   habitatMomentController.bind();
   companionInitiativeController.bind();
   audioCueController.bind();
@@ -591,6 +604,7 @@ async function bootstrap() {
     onboardingController.render();
     firstLoopController.render();
     interactionHintController.render();
+    resonanceThreadController.render();
     gentleInvitationController.render();
     pageRouter.render();
     devPanelController?.renderReadout();

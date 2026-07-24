@@ -38,7 +38,11 @@ const LINES = Object.freeze({
 const NAV_ACTIONS = new Set(["explore", "care", "grow", "memory"]);
 const REEVAL_INTERVAL_MS = 4000;
 
-export function createGentleInvitationController({ store, isPanelOpen } = {}) {
+export function createGentleInvitationController({
+  store,
+  isPanelOpen,
+  isResonanceThreadVisible
+} = {}) {
   let el = null;
   let currentKind = null;
   const rotation = {}; // kind -> 下一個要用的索引，讓同一 kind 每次重現時輪播、不呆板
@@ -69,6 +73,8 @@ export function createGentleInvitationController({ store, isPanelOpen } = {}) {
       return false;
     }
     if (typeof isPanelOpen === "function" && isPanelOpen()) return false;
+    // Thread 可見時讓位，避免兩句並存搶注意力。
+    if (typeof isResonanceThreadVisible === "function" && isResonanceThreadVisible()) return false;
     return true;
   }
 

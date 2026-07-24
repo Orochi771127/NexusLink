@@ -10,6 +10,7 @@ import {
   createStandoffSession,
   getIntentTelegraph,
   getOutcomeCopy,
+  buildStandoffCausalityLayers,
   getResonanceSkillName,
   settleStandoff,
   summarizeStandoffOutcome,
@@ -17,6 +18,7 @@ import {
   MAX_SYNC,
   SHARD_GOAL
 } from "../engine/battleEngine.js";
+import { isLifetimeFirstStandoff } from "../engine/resonanceThreadEngine.js";
 import { buildEventReflection } from "../engine/soulTalkComposer.js";
 import { isSessionOwnerCurrent } from "../engine/sessionOwnerGuard.js";
 import { deriveResonanceCircle, MAX_MEMBER_BREATH } from "../engine/resonanceCircleEngine.js";
@@ -100,14 +102,19 @@ export function createBattleController({
   const finishButton = qs("#battle-finish");
   const actionRowEl = qs("#standoff-action-row");
   let telegraphEl = null;
+  let objectiveEl = null;
+  let guideEl = null;
+  let causalityEl = null;
   let riftFigureEl = null;
   let circleStripEl = null;
+  let firstGuideShownThisSession = false;
 
   // 意圖預示（telegraph）：動態插到行動列上方（不動 index.html），玩家在選行動前先讀懂
   // 「裂隙下一拍要做什麼」。樣式由本檔一次性注入 <style>，避免動基底 styles.css。
   function ensureTelegraphElement() {
     if (telegraphEl || !actionRowEl) return telegraphEl;
     injectTelegraphStyles();
+    ensureObjectiveElement();
     telegraphEl = document.createElement("p");
     telegraphEl.className = "standoff-telegraph";
     telegraphEl.hidden = true;
@@ -118,6 +125,71 @@ export function createBattleController({
     telegraphEl.append(label, hint);
     actionRowEl.parentNode.insertBefore(telegraphEl, actionRowEl);
     return telegraphEl;
+  }
+
+  function ensureObjectiveElement() {
+    if (objectiveEl || !actionRowEl) return objectiveEl;
+    objectiveEl = document.createElement("p");
+    objectiveEl.className = "standoff-objective";
+    objectiveEl.setAttribute("role", "status");
+    actionRowEl.parentNode.insertBefore(objectiveEl, actionRowEl);
+    return objectiveEl;
+  }
+
+  function ensureCausalityElement() {
+    if (causalityEl || !logEl) return causalityEl;
+    causalityEl = document.createElement("div");
+    causalityEl.className = "standoff-causality";
+    causalityEl.hidden = true;
+    logEl.parentNode.insertBefore(causalityEl, logEl.nextSibling);
+    return causalityEl;
+  }
+
+  function ensureGuideElement() {
+    if (guideEl) return guideEl;
+    const panel = qs('[data-panel="battle"]');
+    if (!panel) return null;
+    guideEl = document.createElement("div");
+    guideEl.className = "standoff-first-guide";
+    guideEl.hidden = true;
+    guideEl.innerHTML =
+      '<p class="sfg-title"></p><p class="sfg-body"></p><button type="button" class="sfg-continue"></button>';
+    guideEl.querySelector(".sfg-continue")?.addEventListener("click", () => {
+      if (guideEl) guideEl.hidden = true;
+      firstGuideShownThisSession = true;
+    });
+    panel.appendChild(guideEl);
+    return guideEl;
+  }
+
+  function applyActionMeaningHints() {
+    const map = {
+      resonance: "battle.actMeaning.resonance",
+      barrier: "battle.actMeaning.barrier",
+      pulse: "battle.actMeaning.pulse",
+      retreat: "battle.actMeaning.retreat"
+    };
+    Object.entries(map).forEach(([actionId, key]) => {
+      const button = actionButtons[actionId];
+      if (!button) return;
+      let meaning = button.querySelector(".act-meaning");
+      if (!meaning) {
+        meaning = document.createElement("span");
+        meaning.className = "act-meaning";
+        button.appendChild(meaning);
+      }
+      meaning.textContent = t(key);
+    });
+  }
+
+  function showFirstGuideIfNeeded(state) {
+    if (!isLifetimeFirstStandoff(state) || firstGuideShownThisSession) return;
+    const el = ensureGuideElement();
+    if (!el) return;
+    el.querySelector(".sfg-title").textContent = t("battle.guideTitle");
+    el.querySelector(".sfg-body").textContent = t("battle.guideBody");
+    el.querySelector(".sfg-continue").textContent = t("battle.guideContinue");
+    el.hidden = false;
   }
 
   // 裂隙形體：動態插在對峙日誌上方（不動 index.html），樣式自注入。
@@ -331,6 +403,15 @@ export function createBattleController({
       }
     }
     if (finishButton) finishButton.hidden = true;
+    firstGuideShownThisSession = false;
+    ensureObjectiveElement();
+    if (objectiveEl) objectiveEl.textContent = t("battle.objective");
+    applyActionMeaningHints();
+    if (causalityEl) {
+      causalityEl.hidden = true;
+      causalityEl.innerHTML = "";
+    }
+    showFirstGuideIfNeeded(state);
 
     removeCloseGuard?.();
     removeCloseGuard = panelManager.registerCloseGuard("battle", () => {
@@ -485,7 +566,19 @@ export function createBattleController({
     }
     soulTalkController.renderChat();
     saveCurrentState?.(); // patch + 記憶 + 引用台詞一次落盤
-    if (statusText) statusText.textContent = copy.title;
+    const layers = buildStandoffCausalityLayers(outcome);
+    const causality = ensureCausalityElement();
+    if (causality) {
+      causality.hidden = false;
+      causality.innerHTML =
+        `<p><strong>${t("battle.layerImmediate")}</strong>${layers.immediate}</p>` +
+        `<p><strong>${t("battle.layerEvent")}</strong>${layers.event}</p>` +
+        `<p><strong>${t("battle.layerLong")}</strong>${layers.longTerm}</p>` +
+        `<p class="standoff-return-preview">${t("battle.returnPreview")}</p>`;
+    }
+    if (statusText) {
+      statusText.textContent = `${copy.title}｜${t("battle.returnPreview")}`;
+    }
 
     removeCloseGuard?.();
     removeCloseGuard = null;
@@ -596,7 +689,17 @@ function injectTelegraphStyles() {
     "@keyframes fx-shake-strong{0%,100%{transform:translateX(0)}20%{transform:translateX(-4px)}40%{transform:translateX(3px)}60%{transform:translateX(-3px)}80%{transform:translateX(2px)}}",
     ".standoff-fill.fx-shake-strong{animation:fx-shake-strong 380ms ease-in-out}",
     "@keyframes fx-burst{0%{transform:scale(1)}40%{transform:scale(1.35);filter:brightness(1.8)}100%{transform:scale(1)}}",
-    "#standoff-shards.fx-burst{display:inline-block;animation:fx-burst 700ms ease-out}"
+    "#standoff-shards.fx-burst{display:inline-block;animation:fx-burst 700ms ease-out}",
+    ".standoff-objective{margin:0 0 4px;padding:0 4px;font-size:12px;line-height:1.45;color:#e7f4ff;font-weight:600;text-shadow:0 1px 5px rgba(0,0,0,.85)}",
+    ".act-meaning{display:block;margin-top:2px;font-size:10px;font-style:normal;font-weight:500;color:rgba(190,214,240,.88);line-height:1.35}",
+    ".standoff-causality{margin:8px 4px 0;padding:8px 10px;border-radius:10px;background:rgba(6,12,28,.55);border:1px solid rgba(138,217,255,.18);font-size:11.5px;line-height:1.45;color:rgba(220,236,252,.94)}",
+    ".standoff-causality p{margin:0 0 4px}",
+    ".standoff-causality p:last-child{margin:0}",
+    ".standoff-return-preview{color:#cfeaff;font-weight:600}",
+    ".standoff-first-guide{position:absolute;inset:auto 12px 18%;left:12px;right:12px;z-index:5;padding:14px 14px 12px;border-radius:14px;background:rgba(8,14,30,.92);border:1px solid rgba(160,220,255,.28);box-shadow:0 10px 28px rgba(0,0,0,.35);text-align:center}",
+    ".standoff-first-guide .sfg-title{margin:0 0 6px;font-size:14px;font-weight:700;color:#eaf6ff}",
+    ".standoff-first-guide .sfg-body{margin:0 0 10px;font-size:12px;line-height:1.5;color:rgba(210,228,248,.92)}",
+    ".standoff-first-guide .sfg-continue{appearance:none;border:0;border-radius:999px;padding:8px 16px;background:rgba(120,190,255,.22);color:#eaf6ff;font-size:12px;font-weight:600}"
   ].join("");
   document.head.appendChild(style);
 }
