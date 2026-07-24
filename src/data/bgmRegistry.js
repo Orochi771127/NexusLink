@@ -14,8 +14,8 @@ const TRACKS = Object.freeze({
   login: "./assets/audio/linkara/bgm_login_page.mp3",
   // Owner-confirmed 2026-07-24: companion-select uses linkara lofi.
   companionSelect: "./assets/audio/linkara/bgm_linkara_lofi.mp3",
-  // Owner-confirmed 2026-07-24: Moonlake home uses legacy lakefront.
-  moonlake: "./assets/audio/bgm_lakefront.mp3",
+  // Owner-corrected 2026-07-24: Moonlake uses ethereal moon lakefront.
+  moonlake: "./assets/audio/linkara/bgm_ethereal_moon_lakefront.mp3",
   plains: "./assets/audio/linkara/bgm_northern_verdant_plains.mp3",
   forge: "./assets/audio/linkara/bgm_southeast_forge_hills.mp3",
   harbor: "./assets/audio/linkara/bgm_southern_harbor_nexus.mp3",
@@ -40,8 +40,8 @@ const SCENE_TO_SRC = Object.freeze({
 
 /** Unmapped on-disk assets kept for Owner decisions (not auto-assigned). */
 export const BGM_UNMAPPED_ASSETS = Object.freeze([
-  // Ethereal variant kept on disk; Moonlake canonical is bgm_lakefront.mp3 (Owner 2026-07-24).
-  "./assets/audio/linkara/bgm_ethereal_moon_lakefront.mp3"
+  // Legacy lakefront kept on disk; Moonlake canonical is ethereal (Owner 2026-07-24).
+  "./assets/audio/bgm_lakefront.mp3"
 ]);
 
 export function habitatSceneId(habitatId = "moonlake") {

@@ -58,6 +58,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-07-24 - Cursor Grok - Moonlake BGM correction + Pack 1 motivation repair - COMPLETED (not playtest VERIFIED)
+
+- Status: `COMPLETED` for code+docs in PR worktree; **not** full playtest `VERIFIED` (§J five-player gate still open).
+- Branch / commit: `feat/moonlake-bgm-and-first-session-motivation` → merge to protected `main` via PR.
+- Scope: Correct Moonlake BGM to `bgm_ethereal_moon_lakefront.mp3`; implement Pack 1 Resonance Thread + standoff meaning/causality + defer gate. No save-schema / Pack 2–4 migrations.
+- Work performed: `bgmRegistry` remap; `resonanceThreadEngine`/`Controller`; battle objective/meanings/guide/causality; map defer + explore return preview; i18n + CSS; harnesses.
+- Verification: `node docs/qa/first-session-motivation-cases.mjs`; `node docs/qa/bgm-integration-cases.mjs`; `node --check` on touched JS.
+- Problems / risks: Thread copy is TC-first seeds (not full per-companion voice packs); 5-player playtest not run; guided card is session-dismissible only.
+- Next safe action: Human 5-player §J playtest; then Pack 2 plan-only if Owner queues it.
+- Required reading: `docs/superpowers/plans/2026-07-24-first-session-motivation-repair.md`, `src/engine/resonanceThreadEngine.js`, this entry.
+
 ### 2026-07-24 - Cursor Grok - Task Pack 0 BGM + product review archive - COMPLETED (merge pending)
 
 - Status: `COMPLETED` for documentation archive + BGM wiring; Owner confirmed mappings; merge to protected `main` via PR. Not full-device `VERIFIED` (iOS Safari physical pass still open).

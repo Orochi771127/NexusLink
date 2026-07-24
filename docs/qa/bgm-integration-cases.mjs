@@ -59,10 +59,10 @@ cases.push(async () => {
 cases.push(async () => {
   const moon = resolveBgmScene(habitatSceneId("moonlake"));
   assert.equal(moon.sceneId, "habitat:moonlake");
-  assert.match(moon.src, /bgm_lakefront\.mp3$/);
-  assert.equal(moon.src.includes("ethereal"), false);
+  assert.match(moon.src, /bgm_ethereal_moon_lakefront\.mp3$/);
+  assert.equal(moon.src.includes("bgm_lakefront.mp3"), false);
   await assertFileExists(moon.src);
-  ok("habitat:moonlake maps to bgm_lakefront (Owner-confirmed)");
+  ok("habitat:moonlake maps to ethereal_moon_lakefront (Owner-corrected)");
 });
 
 cases.push(async () => {
@@ -85,9 +85,7 @@ cases.push(async () => {
 });
 
 cases.push(async () => {
-  assert.ok(
-    BGM_UNMAPPED_ASSETS.includes("./assets/audio/linkara/bgm_ethereal_moon_lakefront.mp3")
-  );
+  assert.ok(BGM_UNMAPPED_ASSETS.includes("./assets/audio/bgm_lakefront.mp3"));
   for (const asset of BGM_UNMAPPED_ASSETS) {
     await assertFileExists(asset);
   }

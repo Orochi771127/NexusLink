@@ -13,7 +13,7 @@
 | Order | Pack | Mode |
 |---|---|---|
 | 0 | BGM Asset Audit and Integration | **Authorized now** |
-| 1 | First Session Motivation Repair | Plan first; implement only after separate approval |
+| 1 | First Session Motivation Repair | **Implemented (await playtest VERIFIED)** |
 | 2 | Multi-Companion Relationship State Authority and Migration Plan | Plan only |
 | 3 | Memory Single Truth Projection | Plan only |
 | 4 | Dynamic Chapter Encounter Resolver | Plan only |
@@ -62,7 +62,7 @@ Disable `bgmController` wiring and fall back to single legacy track path in `Aud
 ### Required human decisions
 
 - ~~Confirm companion-select track~~ → **Resolved 2026-07-24:** `bgm_linkara_lofi.mp3`.
-- ~~Confirm Moonlake track~~ → **Resolved 2026-07-24:** `bgm_lakefront.mp3` canonical; ethereal variant unmapped alternate.
+- ~~Confirm Moonlake track~~ → **Resolved 2026-07-24 (corrected):** `bgm_ethereal_moon_lakefront.mp3` canonical; `bgm_lakefront.mp3` unmapped alternate.
 
 ---
 

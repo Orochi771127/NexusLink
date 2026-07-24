@@ -448,27 +448,50 @@ const OUTCOME_COPY = {
   stabilized: {
     title: "場域穩定",
     message: "雜訊散成了月光下的細塵。你們守住了這片棲地，誰也沒有被消滅。",
-    homeLine: null
+    homeLine: null,
+    immediate: "裂隙的推擠變輕了，夥伴的呼吸也穩了一些。",
+    event: "這片場域暫時被你們一起穩住了。",
+    longTerm: "棲地可能留下一道可讀的安靜痕跡；牠會記得你們沒有硬拚到底。"
   },
   recovered: {
     title: "記憶回收",
     message: "三枚記憶微光在你們之間亮起。雜訊還在遠處，但已經追不上你們了。",
-    homeLine: null
+    homeLine: null,
+    immediate: "微光落在你們之間，雜訊後退半步。",
+    event: "你們從裂隙裡帶回了可分享的記憶。",
+    longTerm: "記憶回廊與湖邊可能多出一段你們共同經歷過的證據。"
   },
   retreated: {
     title: "先撤退",
     message: "你們選擇先離開。懂得離開，也是一種照顧彼此的方式。",
-    homeLine: null
+    homeLine: null,
+    immediate: "你們退開了接觸面；沒有人被責備。",
+    event: "這次對峙以被尊重的離開作結。",
+    longTerm: "牠會記住你沒有強迫繼續——這段邊界回應可能留在關係裡。"
   },
   overwhelmed_but_safe: {
     title: "過載・但安全",
     message: "心核過載的那一刻，牠把你拽到了身後，帶著你退出了雜訊的範圍。你們都還好。",
-    homeLine: null
+    homeLine: null,
+    immediate: "壓力太滿，但你們安全退出了。",
+    event: "這次沒有硬撐到最後，彼此仍在。",
+    longTerm: "過載會成為之後同行節奏的提醒，不是懲罰紀錄。"
   }
 };
 
 export function getOutcomeCopy(outcome) {
   return OUTCOME_COPY[outcome] || OUTCOME_COPY.retreated;
+}
+
+/** Three-layer causality + habitat return preview (copy only). */
+export function buildStandoffCausalityLayers(outcome) {
+  const copy = getOutcomeCopy(outcome);
+  return {
+    immediate: copy.immediate || copy.message,
+    event: copy.event || copy.title,
+    longTerm: copy.longTerm || "",
+    returnPreview: "回到棲地時，可能看見新的留痕，或聽到牠如何記得這次同行。"
+  };
 }
 
 /**

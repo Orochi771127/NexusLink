@@ -11,7 +11,7 @@ This folder stores ambient audio and sound effects for Nexus Link.
 |---|---|---|
 | `screen:start` | `linkara/bgm_login_page.mp3` | Title / onboarding start–guidance |
 | `screen:companion-select` | `linkara/bgm_linkara_lofi.mp3` | Owner-confirmed companion select / Initial Bond |
-| `habitat:moonlake` | `bgm_lakefront.mp3` | Owner-confirmed default home habitat |
+| `habitat:moonlake` | `linkara/bgm_ethereal_moon_lakefront.mp3` | Owner-corrected default home habitat |
 | `habitat:plains` | `linkara/bgm_northern_verdant_plains.mp3` | |
 | `habitat:forge` | `linkara/bgm_southeast_forge_hills.mp3` | |
 | `habitat:harbor` | `linkara/bgm_southern_harbor_nexus.mp3` | |
@@ -23,11 +23,11 @@ This folder stores ambient audio and sound effects for Nexus Link.
 ## Unmapped (do not auto-assign)
 
 ```text
-linkara/bgm_ethereal_moon_lakefront.mp3
+bgm_lakefront.mp3
 ```
 
-Ethereal moonlake variant kept on disk as an alternate. Canonical
-`habitat:moonlake` is `bgm_lakefront.mp3` (Owner-confirmed 2026-07-24).
+Legacy lakefront kept on disk as an alternate. Canonical
+`habitat:moonlake` is `linkara/bgm_ethereal_moon_lakefront.mp3` (Owner-corrected 2026-07-24).
 
 ## Runtime volume
 

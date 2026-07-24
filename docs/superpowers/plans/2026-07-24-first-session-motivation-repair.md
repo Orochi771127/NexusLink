@@ -8,7 +8,12 @@
 
 **Tech Stack:** 純靜態 ES Modules、既有 `EventBus`／controllers／`src/i18n/strings.js`、dynamic DOM（不改 `index.html`）。
 
-**Status:** Plan ready — **implementation blocked until Owner approves this plan**（含下方兩個人類決策的預設或覆寫）。
+**Status:** Implementation landed on branch — playtest §J still open for VERIFIED.
+
+**Owner decisions applied (2026-07-24):**
+- D1: Active-companion display name seeds (灰影／焰尾／晶鰭／夥伴)
+- D2: Defer unguided standoff until first-loop done + visible emotional trace; lifetime-first guided card when allowed
+- Moonlake BGM corrected to `bgm_ethereal_moon_lakefront.mp3`
 
 **Source reviews:** `docs/audits/FIRST_SESSION_MOTIVATION_REVIEW.md`、`docs/strategy/NEXUS_LINK_REPAIR_SEQUENCE.md` TASK PACK 1。
 

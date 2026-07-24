@@ -470,6 +470,81 @@ html[data-ui="v2"] body.first-loop-reveal-active .gentle-invitation {
   opacity: 0 !important;
 }
 
+/* =========================================================================
+   共鳴線索（Pack 1）：最多一條、可關閉、無紅點／倒數。
+   位置略低於柔性邀請欄，避免與 first-loop hint 完全重疊。
+   ========================================================================= */
+html[data-ui="v2"] .resonance-thread {
+  position: fixed;
+  left: 50%;
+  top: calc(var(--top-safe, 0px) + 148px);
+  transform: translateX(-50%);
+  width: min(82vw, 360px);
+  max-width: calc(100vw - 36px);
+  margin: 0;
+  padding: 10px 12px 8px;
+  border: 1px solid rgba(160, 210, 255, 0.18);
+  border-radius: 14px;
+  background: rgba(6, 12, 26, 0.55);
+  color: rgba(240, 248, 255, 0.96);
+  text-align: left;
+  z-index: calc(var(--z-nav, 30) - 2);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 500ms ease;
+  backdrop-filter: blur(6px);
+}
+
+html[data-ui="v2"] .resonance-thread.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+html[data-ui="v2"] .resonance-thread .rt-kicker {
+  margin: 0 0 4px;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(170, 210, 245, 0.8);
+}
+
+html[data-ui="v2"] .resonance-thread .rt-title {
+  margin: 0 0 4px;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+html[data-ui="v2"] .resonance-thread .rt-body,
+html[data-ui="v2"] .resonance-thread .rt-why,
+html[data-ui="v2"] .resonance-thread .rt-consequence {
+  margin: 0 0 3px;
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: rgba(210, 228, 248, 0.92);
+}
+
+html[data-ui="v2"] .resonance-thread .rt-dismiss {
+  appearance: none;
+  margin-top: 6px;
+  border: 0;
+  border-radius: 999px;
+  padding: 6px 12px;
+  background: rgba(120, 180, 230, 0.18);
+  color: rgba(230, 244, 255, 0.95);
+  font-size: 11.5px;
+  font-weight: 600;
+}
+
+html[data-ui="v2"] body.onboarding-active .resonance-thread,
+html[data-ui="v2"] body.first-loop-active .resonance-thread,
+html[data-ui="v2"] body.first-loop-reveal-active .resonance-thread,
+html[data-ui="v2"] body.standoff-active .resonance-thread,
+html[data-ui="v2"] body.page-open .resonance-thread {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
 html[data-ui="v2"] .bottom-nav .bottom-nav__item.invite-glow {
   position: relative;
 }

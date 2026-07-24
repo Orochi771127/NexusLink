@@ -85,6 +85,14 @@ def install_fresh_completed_onboarding_seed(context):
             defense: 35,
             touchFatigue: 0,
             lastTouchReaction: '',
+            // Pack 1 D2: unguided standoff requires at least one visible emotional habitat trace.
+            habitatTraces: [{{
+              id: 'htrace_map_qa_1',
+              memoryId: 'emem_map_qa_1',
+              type: 'em_fresh_warm',
+              createdAt: now,
+              lastSeenAt: now
+            }}],
             explorationProgress: {{
               totalExplorations: 0,
               lastNodeId: legacyVeteran ? 'starwood_trail' : null,

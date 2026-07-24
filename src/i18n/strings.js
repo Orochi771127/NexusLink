@@ -73,6 +73,10 @@ export const STRINGS = {
     en: "That choice was not saved. You are still at Moonlake and can try again; this does not affect the companion.",
     jp: "さっきの選択は保存されなかった。月湖にいるまま、もう一度試せる。相手には影響しない。"
   },
+  "rt.kicker": { tc: "共鳴線索", sc: "共鸣线索", en: "Resonance Thread", jp: "共鳴の手がかり" },
+  "rt.whyLabel": { tc: "為什麼：", sc: "为什么：", en: "Why:", jp: "なぜ：" },
+  "rt.consequenceLabel": { tc: "可能留下：", sc: "可能留下：", en: "May leave:", jp: "残ること：" },
+  "rt.dismiss": { tc: "先這樣", sc: "先这样", en: "That's enough for now", jp: "いまはこれで" },
   "onboarding.busy": {
     tc: "正在把這一步留在這台裝置上。",
     sc: "正在把这一步留在这台装置上。",
@@ -643,5 +647,59 @@ export const STRINGS = {
   "battle.stabilityOwner": { tc: "{name}的心核", sc: "{name}的心核", en: "{name}'s heart-core", jp: "{name}の心核" },
   "battle.noiseOf": { tc: "{name}的雜訊", sc: "{name}的杂讯", en: "Noise of {name}", jp: "{name}のノイズ" },
   "battle.resonanceHintDefault": { tc: "回收記憶・放輕雜訊", sc: "回收记忆・放轻杂讯", en: "Recover memories · soften the noise", jp: "記憶を拾い・ノイズをやわらげる" },
-  "battle.resonanceHintEmotion": { tc: "心相共鳴・特別能安撫這片{emotion}", sc: "心相共鸣・特别能安抚这片{emotion}", en: "Heart resonance · especially soothes this {emotion}", jp: "心の共鳴・この{emotion}をとくに鎮める" }
+  "battle.resonanceHintEmotion": { tc: "心相共鳴・特別能安撫這片{emotion}", sc: "心相共鸣・特别能安抚这片{emotion}", en: "Heart resonance · especially soothes this {emotion}", jp: "心の共鳴・この{emotion}をとくに鎮める" },
+  "battle.objective": {
+    tc: "本次目標：在疲憊達到上限前，協助夥伴穩定裂隙雜訊。",
+    sc: "本次目标：在疲惫达到上限前，协助伙伴稳定裂隙杂讯。",
+    en: "Goal: help your companion steady rift noise before fatigue peaks.",
+    jp: "今回の目標：疲労が上限に達する前に、裂け目のノイズを鎮める。"
+  },
+  "battle.actMeaning.resonance": {
+    tc: "提升同步、略增疲勞；對方還願意靠近時特別有用。",
+    sc: "提升同步、略增疲劳；对方还愿意靠近时特别有用。",
+    en: "Raises sync, slight fatigue; useful while the companion still approaches.",
+    jp: "同調を上げ、疲労が少し増える。まだ近づけるときに有効。"
+  },
+  "battle.actMeaning.barrier": {
+    tc: "減輕壓力／雜訊推進；對方開始退縮時優先考慮。",
+    sc: "减轻压力／杂讯推进；对方开始退缩时优先考虑。",
+    en: "Eases pressure or noise advance; prefer when the companion withdraws.",
+    jp: "圧力やノイズの進行を抑える。相手が引き始めるときに。"
+  },
+  "battle.actMeaning.pulse": {
+    tc: "快速壓低雜訊，但更耗同步；不要當成唯一解法。",
+    sc: "快速压低杂讯，但更耗同步；不要当成唯一解法。",
+    en: "Quickly softens noise but costs more sync — not the only answer.",
+    jp: "素早くノイズを下げるが同調を多く使う。唯一の解ではない。"
+  },
+  "battle.actMeaning.retreat": {
+    tc: "保留當前進度後離開；撤退不是失敗，也不懲罰關係。",
+    sc: "保留当前进度后离开；撤退不是失败，也不惩罚关系。",
+    en: "Leave while keeping progress where applicable; retreat is not failure.",
+    jp: "進みを残して離れる。退くことは失敗でも関係の罰でもない。"
+  },
+  "battle.guideTitle": { tc: "第一次面對裂隙", sc: "第一次面对裂隙", en: "First time facing a rift", jp: "はじめての裂け目" },
+  "battle.guideBody": {
+    tc: "先讀目標與每個行動的用意。建議只是參考——之後仍由你決定。",
+    sc: "先读目标与每个行动的用意。建议只是参考——之后仍由你决定。",
+    en: "Read the goal and what each action is for. Suggestions are optional — you still choose.",
+    jp: "目標と行動の意味を読んでから。提案は参考だけで、決めるのはあなた。"
+  },
+  "battle.guideContinue": { tc: "我明白了", sc: "我明白了", en: "I understand", jp: "わかった" },
+  "battle.layerImmediate": { tc: "此刻：", sc: "此刻：", en: "Now:", jp: "いま：" },
+  "battle.layerEvent": { tc: "這次：", sc: "这次：", en: "This time:", jp: "今回：" },
+  "battle.layerLong": { tc: "留下：", sc: "留下：", en: "Left behind:", jp: "残る：" },
+  "battle.returnPreview": {
+    tc: "回到棲地時，可能看見新的留痕，或聽到牠如何記得這次同行。",
+    sc: "回到栖地时，可能看见新的留痕，或听到牠如何记得这次同行。",
+    en: "Back home, you may see a new trace or hear how it remembers this walk.",
+    jp: "棲み処に戻ると、新しい痕跡や、今回をどう覚えたかを感じられるかも。"
+  },
+  "map.standoffDeferredTitle": { tc: "裂隙還在遠處", sc: "裂隙还在远处", en: "The rift can wait", jp: "裂け目はまだ遠く" },
+  "map.exploreReturnPreview": {
+    tc: "回到棲地時，看看這段同行有沒有留下可讀的痕跡。",
+    sc: "回到栖地时，看看这段同行有没有留下可读的痕迹。",
+    en: "When you return home, see whether this walk left a readable trace.",
+    jp: "棲み処に戻ったら、この同行が痕跡を残したか見てみよう。"
+  }
 };
