@@ -58,6 +58,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-07-25 - Cursor Grok - Pack 1 §J structured acceptance - VERIFIED_STRUCTURED
+
+- Status: `VERIFIED` for Pack 1 **structured** acceptance (harness + map browser gate + moderated walkthrough). **Not** a five-stranger human cohort.
+- Branch / commit: `docs/pack1-sj-structured-acceptance` → PR into protected `main`.
+- Scope: Close Pack 1 repair gate with reproducible evidence; provide human score sheet for pre-launch cohort.
+- Work performed: `_run_pack1_sj_structured_walkthrough.py`; `PACK1_SJ_ACCEPTANCE_EVIDENCE.md`; `PACK1_SJ_HUMAN_SCORESHEET.md`; checklist / repair sequence / plan / ledger updates.
+- Verification: `node docs/qa/first-session-motivation-cases.mjs` 8/8; map first-session gate + browser gate 45/45; structured walkthrough `passed=true`.
+- Problems / risks: True §J five-new-player study still open for public-launch claims; console encoding on Windows host does not affect UTF-8 artifact JSON.
+- Next safe action: Owner run human score sheet when recruiting testers; or Pack 2.5 / new tension packs.
+- Required reading: `docs/qa/PACK1_SJ_ACCEPTANCE_EVIDENCE.md`, this entry.
+
 ### 2026-07-24 - Cursor Grok - Pack 2 Phase 3 keep-mirror decision recorded - COMPLETED
 
 - Status: `COMPLETED` for decision docs only. No runtime change. Full mirror deprecation deferred.

@@ -65,7 +65,8 @@ python -m http.server 5173
 - [ ] 90 秒內能理解第一步；10 分鐘內能說出一項自己造成的可見改變。
 - [ ] 首次 Emotional Standoff：未完成 first-loop／尚無可見痕跡時會延後並說明；生涯首次有引導卡但不永久代選。
 - [ ] 對峙結束可見三層因果＋回棲地預告（非 `+N` 刷分語）。
-- [ ] 至少 5 位新玩家五問 playtest（見 `FIRST_SESSION_MOTIVATION_REVIEW.md` §J）。
+- [x] Pack 1 結構化 §J 驗收（harness + map gate + moderated walkthrough）見 `docs/qa/PACK1_SJ_ACCEPTANCE_EVIDENCE.md`（`VERIFIED_STRUCTURED`）。
+- [ ] 上線前：至少 5 位新玩家五問 playtest（分數表 `docs/qa/PACK1_SJ_HUMAN_SCORESHEET.md`；規格見 `FIRST_SESSION_MOTIVATION_REVIEW.md` §J）。
 - [ ] 同一場景再進入不無故重頭播放；快速切換不會雙曲疊播。
 - [ ] 靜音／主音量／BGM 音量立即作用；reload 後沿用既有設定（無新 storage key）。
 - [ ] 缺少或未映射曲目不阻斷導航；Network 無 mapped 資產 404。

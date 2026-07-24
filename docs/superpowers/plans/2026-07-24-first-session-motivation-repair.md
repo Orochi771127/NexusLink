@@ -8,7 +8,7 @@
 
 **Tech Stack:** 純靜態 ES Modules、既有 `EventBus`／controllers／`src/i18n/strings.js`、dynamic DOM（不改 `index.html`）。
 
-**Status:** Implementation landed on branch — playtest §J still open for VERIFIED.
+**Status:** Implementation on `main` — `VERIFIED_STRUCTURED` (2026-07-25). Formal 5-stranger cohort remains pre-launch (`PACK1_SJ_HUMAN_SCORESHEET.md`).
 
 **Owner decisions applied (2026-07-24):**
 - D1: Active-companion display name seeds (灰影／焰尾／晶鰭／夥伴)
