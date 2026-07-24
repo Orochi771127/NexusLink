@@ -28,11 +28,11 @@ Without this, Greyshade affinity can make Blazetail (or any chapter target) acce
 - Cultivating B’s byId until delta ≥ threshold ⇒ willing.
 - Legacy fixtures without `companionStates` still pass dual-read.
 
-## Phase 2 — Ensure byId rows + dual-write telemetry (NOT YET)
+## Phase 2 — Ensure byId rows + dual-write telemetry (SHIPPED with Pack 4)
 
-- On chapter meet, ensure `byId[target]` relationship record exists (baseline, not copy of active).
-- Optional console/dev flag when dual-read falls back to mirror for a non-active target.
-- Likely files: `mapController.js`, `companionStateSchema.js` helpers only.
+- On chapter meet, `ensureCompanionRelationshipInDraft` creates baseline `byId[target]` (never copies active).
+- Dual-read telemetry flag deferred (optional).
+- Files: `companionStateSchema.js`, `mapController.js` meet path.
 
 ## Phase 3 — Optional schema bump (Owner decision)
 

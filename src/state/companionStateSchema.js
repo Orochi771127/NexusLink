@@ -284,6 +284,47 @@ export function buildRelationshipChapterMarkSnapshot(state = {}, companionId = "
 }
 
 /**
+ * Pack 2 Phase 2 / Pack 4：確保 byId[target] 有 baseline relationship。
+ * 絕不從 active mirror 複製數值——相遇對象從零開始培養。
+ * 就地寫入 draft（供 store.updateState 使用）。
+ */
+export function ensureCompanionRelationshipInDraft(draft, companionId, now = Date.now()) {
+  if (!draft || !companionId) return false;
+  const canonicalId = resolveCanonicalCompanionId(companionId);
+  if (!isKnownCompanionId(canonicalId)) return false;
+
+  if (!hasCanonicalCompanionStates(draft.companionStates)) {
+    draft.companionStates = createDefaultCompanionStates(
+      draft.activeCompanionId || canonicalId,
+      now
+    );
+  }
+
+  const existing = draft.companionStates.byId?.[canonicalId];
+  if (existing?.relationship) return false;
+
+  const nextRecord = existing
+    ? {
+      ...existing,
+      relationship: createDefaultRelationshipState()
+    }
+    : createCompanionRecord({
+      companionId: canonicalId,
+      relationship: {},
+      now
+    });
+
+  draft.companionStates = {
+    version: COMPANION_STATE_SCHEMA_VERSION,
+    byId: {
+      ...draft.companionStates.byId,
+      [canonicalId]: nextRecord
+    }
+  };
+  return true;
+}
+
+/**
  * Store-runtime helper: seal the top-level active mirror into a canonical
  * companion record while preserving growth data. This function is pure.
  */

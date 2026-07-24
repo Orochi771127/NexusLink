@@ -36,8 +36,19 @@ export const DECLINE_LINES = Object.freeze({
 
 const WILLING_FALLBACK_LINE = "牠安靜地走到你身邊，決定和你們一起走。";
 
-export function getChapterCompanionId(chapterNo) {
-  return getChapterByNumber(chapterNo)?.companionId || null;
+/**
+ * 該章實際相遇／邀請的 companionId。
+ * Pack 4：優先讀 chapterMarks.resolvedCompanionId；fallback 事件回 null。
+ * 無 state 時退回 registry preferred（舊 harness／資料查詢相容）。
+ */
+export function getChapterCompanionId(chapterNo, state = null) {
+  const no = Number(chapterNo);
+  if (state && typeof state === "object") {
+    const mark = state.resonance?.chapterMarks?.[no];
+    if (mark?.resolvedCompanionId) return mark.resolvedCompanionId;
+    if (mark?.fallbackEventId) return null;
+  }
+  return getChapterByNumber(no)?.companionId || null;
 }
 
 /**
@@ -45,7 +56,7 @@ export function getChapterCompanionId(chapterNo) {
  * @returns {{ eligible: boolean, companionId: string|null }}
  */
 export function canAskResonance(state = {}, chapterNo) {
-  const companionId = getChapterCompanionId(chapterNo);
+  const companionId = getChapterCompanionId(chapterNo, state);
   if (!companionId) return { eligible: false, companionId: null };
   const completed = Array.isArray(state?.chapterProgress?.completed) ? state.chapterProgress.completed : [];
   const entry = state?.resonance?.companions?.[companionId] || {};
@@ -65,10 +76,11 @@ export function listAskableChapters(state = {}) {
 /**
  * 判定牠這一章願不願意同行。
  * Pack 2 Phase 1：bond/trust/blocked 一律取「該章目標 companionId」的關係權威。
+ * Pack 4：companionId 來自 resolver 寫入的 resolvedCompanionId（若有）。
  * @returns {{ companionId: string, willing: boolean, cause: string|null, line: string }|null}
  */
 export function evaluateResonanceInvite(state = {}, chapterNo) {
-  const companionId = getChapterCompanionId(chapterNo);
+  const companionId = getChapterCompanionId(chapterNo, state);
   if (!companionId) return null;
 
   const mark = state?.resonance?.chapterMarks?.[chapterNo] || {};
@@ -89,8 +101,12 @@ export function evaluateResonanceInvite(state = {}, chapterNo) {
   else if (bondDelta + trustDelta < RESONANCE_WILLING.affinityGain) cause = "early";
 
   const willing = cause === null;
+  const preferredId = getChapterByNumber(chapterNo)?.companionId || null;
   const narrative = getChapterNarrative(chapterNo);
-  const line = willing ? narrative?.willingLine || WILLING_FALLBACK_LINE : DECLINE_LINES[cause];
+  // 備援相遇者沒有專屬願意句——用中性 fallback，避免叫錯名字。
+  const line = willing
+    ? (companionId === preferredId ? narrative?.willingLine : null) || WILLING_FALLBACK_LINE
+    : DECLINE_LINES[cause];
 
   return { companionId, willing, cause, line };
 }

@@ -16,7 +16,11 @@ import {
   evaluateResonanceInvite,
   listAskableChapters
 } from "../engine/resonanceInviteEngine.js";
-import { buildRelationshipChapterMarkSnapshot } from "../state/companionStateSchema.js";
+import { resolveChapterEncounter } from "../engine/chapterEncounterResolver.js";
+import {
+  buildRelationshipChapterMarkSnapshot,
+  ensureCompanionRelationshipInDraft
+} from "../state/companionStateSchema.js";
 import EventBus from "../utils/eventBus.js";
 import { MOONLAKE_NODE_LAYOUT, MOONLAKE_ROUTE_ART } from "../data/mapArtLayout.js";
 import {
@@ -773,37 +777,84 @@ export function createMapController({
     }
   }
 
-  // ---- 相遇（CH-5b）：首次踏入某章區域即與該章夥伴相遇（自成一拍） ----
+  // ---- 相遇（CH-5b + Pack 4）：首次踏入某章區域 → Encounter Resolver 動態決定遇見誰 ----
   function maybeMeetChapterCompanion(node, state) {
     const chapterNo = getChapterForNode(node.id);
-    if (chapterNo <= 1) return false;
-    const chapter = getChapterByNumber(chapterNo);
-    const companionId = chapter?.companionId;
-    if (!companionId) return false;
-    if (state.resonance?.companions?.[companionId]?.metAt) return false;
+    const resolution = resolveChapterEncounter(state, chapterNo);
+    if (resolution.kind === "skip" || resolution.kind === "already_met" || resolution.kind === "already_fallback") {
+      return false;
+    }
 
-    const narrative = getChapterNarrative(chapterNo);
-    const meetLines = Array.isArray(narrative?.meetLines) ? narrative.meetLines : null;
     const now = Date.now();
+
+    if (resolution.kind === "fallback") {
+      store.updateState((draft) => {
+        if (!draft.resonance.chapterMarks[chapterNo]) {
+          draft.resonance.chapterMarks[chapterNo] = {
+            bondAtStart: 0,
+            trustAtStart: 0,
+            blockedTouchAtStart: 0,
+            overwhelmedCount: 0,
+            enteredAt: now,
+            reaskedAt: null,
+            fallbackEventId: resolution.eventId,
+            encounterResolvedAt: now
+          };
+        } else {
+          draft.resonance.chapterMarks[chapterNo] = {
+            ...draft.resonance.chapterMarks[chapterNo],
+            fallbackEventId: resolution.eventId,
+            encounterResolvedAt: now
+          };
+        }
+      });
+      ringBurst(node.id);
+      showToast({
+        title: "土地的回聲",
+        text: (resolution.lines || []).join("\n"),
+        tone: "calm"
+      });
+      if (statusText) statusText.textContent = "土地的回聲";
+      render();
+      renderInviteBanner();
+      saveCurrentState?.();
+      return true;
+    }
+
+    const companionId = resolution.companionId;
+    if (!companionId) return false;
 
     store.updateState((draft) => {
       const companions = draft.resonance.companions;
-      companions[companionId] = { ...(companions[companionId] || {}), metAt: now };
-      // 關係快照：必須取「相遇對象」的關係權威，不可用 active mirror（Pack 2）。
+      companions[companionId] = {
+        ...(companions[companionId] || {}),
+        metAt: now,
+        meetChapterNo: chapterNo
+      };
+      // Pack 2 Phase 2：確保 byId 有 baseline（不偷 active 羈絆）。
+      ensureCompanionRelationshipInDraft(draft, companionId, now);
       if (!draft.resonance.chapterMarks[chapterNo]) {
         const snap = buildRelationshipChapterMarkSnapshot(draft, companionId, now);
-        draft.resonance.chapterMarks[chapterNo] = snap;
+        draft.resonance.chapterMarks[chapterNo] = {
+          ...snap,
+          resolvedCompanionId: companionId,
+          encounterResolvedAt: now
+        };
+      } else {
+        draft.resonance.chapterMarks[chapterNo] = {
+          ...draft.resonance.chapterMarks[chapterNo],
+          resolvedCompanionId: companionId,
+          encounterResolvedAt: now
+        };
       }
     });
 
     const companion = getCompanionById(companionId);
+    const meetLines = buildResolvedMeetLines(chapterNo, companion, resolution.usedAlternate);
     ringBurst(node.id);
-    // 相遇者不在 Pixi 舞台上（棲地只渲染 active companion）——故只演出於地圖 toast，
-    // 不發 companion 動畫 cue（避免誤動到 active 夥伴）、不寫 chatHistory（避免 active
-    // 夥伴替相遇者發聲）。相遇者的實體登場留待 CH-6 共鳴圈視覺（v3）。
     showToast({
       title: `相遇 ・ ${companion?.name || "心核夥伴"}`,
-      text: meetLines ? meetLines.join("\n") : "一個新的身影，在這片土地上第一次看向你們。",
+      text: meetLines.join("\n"),
       tone: "calm"
     });
     if (statusText) statusText.textContent = "相遇";
@@ -811,6 +862,20 @@ export function createMapController({
     renderInviteBanner();
     saveCurrentState?.();
     return true;
+  }
+
+  function buildResolvedMeetLines(chapterNo, companion, usedAlternate) {
+    if (!usedAlternate) {
+      const narrative = getChapterNarrative(chapterNo);
+      const meetLines = Array.isArray(narrative?.meetLines) ? narrative.meetLines : null;
+      if (meetLines?.length) return meetLines;
+    }
+    const name = companion?.name || "心核夥伴";
+    return [
+      `這片土地上，${name}第一次停下來看你們。`,
+      "沒有急著靠近，也沒有逃走。",
+      `${name}：「……你們的腳步聲，我聽得見。」`
+    ];
   }
 
   // ---- 共鳴邀請橫幅（CH-5b）：通關且已相遇→「牠在附近。去打個招呼」 ----
@@ -841,7 +906,8 @@ export function createMapController({
       return;
     }
     const chapterNo = askable[0];
-    const companion = getCompanionById(getChapterByNumber(chapterNo)?.companionId);
+    const ask = canAskResonance(store.getState(), chapterNo);
+    const companion = getCompanionById(ask.companionId || getChapterByNumber(chapterNo)?.companionId);
     inviteBanner.dataset.chapter = String(chapterNo);
     inviteBanner.querySelector(".map-invite-text").textContent = `${companion?.name || "牠"}在附近。`;
     inviteBanner.querySelector(".map-invite-btn").textContent = "去打個招呼";
