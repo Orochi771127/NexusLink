@@ -4,6 +4,7 @@ import { buildSafetyRedirectReply } from "../safetyShield.js";
 import { buildBoundaryPolicyReply } from "../dialogue/boundaryReplyPolicy.js";
 import { deriveStateMutation } from "../stateMutationPolicy.js";
 import { buildMemoryDecision } from "../memoryWriter.js";
+import { buildAnchorDecision } from "../dialogue/companionAnchorPolicy.js";
 import { mapHabitatTraceIntent } from "../habitatTraceMapper.js";
 import { mapSoulTalkAnimation } from "../animationMapper.js";
 import { sanitizeReply } from "../forbiddenPhrases.js";
@@ -67,6 +68,16 @@ export function executeAutonomousAction({
     memoryDecision.shouldWrite = false;
     memoryDecision.memoryObject = null;
   }
+
+  // 生活錨點與情緒記憶分開：不要求情緒詞典命中；安全／依賴仍擋。
+  const anchorDecision = buildAnchorDecision({
+    inputText: gateway.normalizedInput || gateway.originalInput || "",
+    nlu: perception.nlu,
+    safety: perception.safety,
+    stateMutation,
+    gateway,
+    plan: alignedPlan
+  });
 
   const traceDecision = coerced.shouldCreateTrace
     ? mapHabitatTraceIntent(memoryDecision, alignedPlan, perception.analysis)
@@ -156,6 +167,7 @@ export function executeAutonomousAction({
     statePatch: stateMutation.statePatch || {},
     stateMutation,
     memoryDecision,
+    anchorDecision,
     traceDecision,
     animationDecision,
     actionPlan: coerced,

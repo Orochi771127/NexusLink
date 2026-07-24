@@ -4417,6 +4417,16 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - MCP: codebase-memory reindex + ADR updated.
 - Next safe action: none for this pack; continue everyday/care polish only if Owner asks.
 
+### 2026-07-24 - Cursor - Raphael Companion Anchor Memory - IN PROGRESS
+
+- Status: `IN PROGRESS` on `feat/raphael-companion-anchor-memory`.
+- Lane: `Raphael Core, Companion Reasoning, And Soul Talk`.
+- Task name: `TP-RAPHAEL-COMPANION-ANCHOR-MEMORY`.
+- Dual-track: `companionAnchors` (life facts, cap 20) + emotional excerpt recall.
+- Soft allusion by default; explicit short detail when player asks 還記得.
+- Harness: `docs/qa/raphael-companion-anchor-memory-cases.mjs` PASS locally with full suite.
+- Next safe action: PR → `web-release-gate` → merge `main`.
+
 ### 2026-07-22 - Cursor - First-Loop Hint Clear Face - SUPERSEDED
 
 - Status: `SUPERSEDED` by the VERIFIED entry above (`main` / `74dfa03`, PR #122).

@@ -1,5 +1,5 @@
 import defaultState from "./defaultState.js";
-import { sanitizeEmotionalMemory, sanitizeMemory, sanitizeTrace } from "../engine/storageGuard.js";
+import { sanitizeEmotionalMemory, sanitizeMemory, sanitizeTrace, sanitizeCompanionAnchor } from "../engine/storageGuard.js";
 import { clamp } from "../utils/clamp.js";
 import {
   normalizeRuntimeCompanionId,
@@ -91,6 +91,9 @@ export function normalizeState(rawState = {}) {
   const emotionalMemories = Array.isArray(targetState.emotionalMemories)
     ? targetState.emotionalMemories
     : baseState.emotionalMemories;
+  const companionAnchors = Array.isArray(targetState.companionAnchors)
+    ? targetState.companionAnchors
+    : baseState.companionAnchors;
   const initialUnlockedCompanionIds = normalizeUnlockedCompanionIds(targetState.unlockedCompanionIds, {
     activeCompanionId: targetState.activeCompanionId,
     preserveActiveCompanion: true
@@ -142,7 +145,7 @@ export function normalizeState(rawState = {}) {
     reactionPreview: relationshipTargetState.reactionPreview || "",
     lastTouchReaction: relationshipTargetState.lastTouchReaction || "",
     lastMessage: targetState.lastMessage || "",
-    memorySchemaVersion: Number(targetState.memorySchemaVersion) || 1,
+    memorySchemaVersion: Number(targetState.memorySchemaVersion) || 2,
     safeHarborMode: Boolean(targetState.safeHarborMode),
     lastEmotionTag: targetState.lastEmotionTag || null,
     habitatRepairFactor: clamp(targetState.habitatRepairFactor ?? 0, 0, 1),
@@ -166,7 +169,8 @@ export function normalizeState(rawState = {}) {
     })),
     memories: memories.map((item) => sanitizeMemory(item)).filter(Boolean),
     habitatTraces: habitatTraces.map((item) => sanitizeTrace(item)).filter(Boolean),
-    emotionalMemories: emotionalMemories.map((item) => sanitizeEmotionalMemory(item)).filter(Boolean)
+    emotionalMemories: emotionalMemories.map((item) => sanitizeEmotionalMemory(item)).filter(Boolean),
+    companionAnchors: companionAnchors.map((item) => sanitizeCompanionAnchor(item)).filter(Boolean)
   };
 }
 

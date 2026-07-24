@@ -156,21 +156,32 @@ export function buildConversationalAnswer({ inputText = "", frame = {}, seed = 0
     ], seed);
   }
 
-  // 短程回憶：session 內有 recalledDetail／previousDetail 時接地，不要一律硬拒。
+  // 短程／跨場回憶：有 recalledDetail 就接地；無資料才誠實說不確定。
   if (frame.dialogueAct === "asking_memory" || /(?:還|还|會|会)?記得|想得起/.test(text)) {
     const recalled = String(context.recalledDetail || "").trim()
       || (
-        /recent_dialogue/.test(String(context.source || ""))
+        /recent_dialogue|companion_anchor|emotional_memory/.test(String(context.source || ""))
           ? String(context.previousDetail || context.previousInput || "").trim()
           : ""
       );
     const snippet = clipRecallSnippet(recalled);
     if (snippet) {
-      return pickAvoidingOpenings([
-        `記得。你剛提過「${snippet}」——那件事我還留著，不是裝的。`,
-        `有，剛才那段還在。你說過${snippet}；若你想接著說，我聽著。`,
-        `嗯，我沒忘掉。你提的是${snippet}那一段，對吧？`
-      ], seed, avoidOpenings);
+      const persisted = /companion_anchor|emotional_memory/.test(String(context.source || ""));
+      return pickAvoidingOpenings(
+        persisted
+          ? [
+              `記得。你提過「${snippet}」——那件事我還留著，不是裝的。`,
+              `有，我留著。你說過${snippet}；若你想接著說，我聽著。`,
+              `嗯，我沒忘掉。你提的是${snippet}那一段。`
+            ]
+          : [
+              `記得。你剛提過「${snippet}」——那件事我還留著，不是裝的。`,
+              `有，剛才那段還在。你說過${snippet}；若你想接著說，我聽著。`,
+              `嗯，我沒忘掉。你提的是${snippet}那一段，對吧？`
+            ],
+        seed,
+        avoidOpenings
+      );
     }
     return "我現在沒有可靠的記憶能確認這件事，所以不會假裝記得。你若願意現在告訴我，我就從這一刻開始理解。";
   }

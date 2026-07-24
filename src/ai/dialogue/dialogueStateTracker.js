@@ -1,3 +1,8 @@
+import {
+  findPersistedRecall,
+  isExplicitRecallAsk
+} from "./companionAnchorPolicy.js";
+
 /**
  * Session-scoped dialogue loop state — not persisted to STORAGE_KEY / defaultState.
  * Pattern mirrors companionPreferenceProfile session cache.
@@ -18,7 +23,9 @@ export function createEmptyDialogueState() {
     repetitionScore: 0,
     lastPlayerComplaintType: null,
     activeContext: null,
-    activeBoundary: null
+    activeBoundary: null,
+    // 本場剛輕提過的錨點 key，避免連續堆疊回憶。
+    lastSoftAnchorKey: null
   };
 }
 
@@ -94,7 +101,7 @@ export function recordDialogueTurn(sessionKey = "default", coreResult = {}) {
   return state;
 }
 
-export function applyRecentDialogueContext(nlu = {}, state = {}) {
+export function applyRecentDialogueContext(nlu = {}, state = {}, persisted = {}) {
   const inputText = String(nlu.inputText || "");
   const activeContext = state.activeContext;
   const recentOpenings = collectRecentOpenings(state.recentTurns);
@@ -133,6 +140,35 @@ export function applyRecentDialogueContext(nlu = {}, state = {}) {
         }
       }
     };
+  }
+
+  // 跨場回想：session 無命中時，讀 companionAnchors／emotionalMemories.excerpt。
+  if (!explicitTopicShift && isExplicitRecallAsk(inputText)) {
+    const persistedHit = findPersistedRecall(inputText, {
+      companionAnchors: persisted.companionAnchors || [],
+      emotionalMemories: persisted.emotionalMemories || []
+    });
+    if (persistedHit?.detail) {
+      const dialogueAct = "asking_memory";
+      return {
+        ...nlu,
+        dialogueAct,
+        semanticFrame: {
+          ...nlu.semanticFrame,
+          dialogueAct,
+          conversationContext: {
+            ...(nlu.semanticFrame?.conversationContext || {}),
+            source: persistedHit.source || "companion_anchor",
+            isContinuation: true,
+            recalledDetail: persistedHit.detail,
+            previousDetail: persistedHit.detail,
+            softLabel: persistedHit.softLabel || null,
+            anchorKey: persistedHit.key || null,
+            recentOpenings
+          }
+        }
+      };
+    }
   }
 
   const isContinuation = !explicitTopicShift && isContinuationInput(inputText, activeContext);

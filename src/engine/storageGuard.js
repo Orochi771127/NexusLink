@@ -2,10 +2,12 @@ export const STORAGE_LIMITS = Object.freeze({
   memories: 50,
   habitatTraces: 50,
   emotionalMemories: 60,
+  companionAnchors: 20,
   chatHistory: 40,
   memoryTextMaxLength: 240,
   chatTextMaxLength: 300,
   emotionalExcerptMaxLength: 40,
+  companionAnchorDetailMaxLength: 48,
   traceMaxAgeMs: 1000 * 60 * 60 * 24 * 14
 });
 
@@ -73,6 +75,30 @@ export function sanitizeEmotionalMemory(memory, now = Date.now()) {
   };
 }
 
+export function sanitizeCompanionAnchor(anchor, now = Date.now()) {
+  if (!anchor || typeof anchor !== "object") return null;
+  const kind = String(anchor.kind || "").slice(0, 32);
+  const key = String(anchor.key || "").slice(0, 40);
+  if (!kind || !key) return null;
+  const detail = sanitizeExcerpt(anchor.detail, STORAGE_LIMITS.companionAnchorDetailMaxLength);
+  if (!detail) return null;
+  if (/自殺|輕生|傷害自己|想死|不想活|不准拒絕|你一定要陪我/.test(detail)) return null;
+
+  return {
+    id: String(anchor.id || `anch_${kind}_${key}`).slice(0, 64),
+    kind,
+    key,
+    label: String(anchor.label || key).slice(0, 24),
+    softLabel: String(anchor.softLabel || anchor.label || key).slice(0, 24),
+    detail,
+    confidence: Number.isFinite(anchor.confidence)
+      ? Math.max(0, Math.min(1, anchor.confidence))
+      : 0.7,
+    createdAt: Number.isFinite(anchor.createdAt) ? anchor.createdAt : now,
+    updatedAt: Number.isFinite(anchor.updatedAt) ? anchor.updatedAt : now
+  };
+}
+
 export function applyRollingLimit(list, limit) {
   if (!Array.isArray(list)) return [];
   return list.slice(-limit);
@@ -105,6 +131,13 @@ export function pruneStateForStorage(state, now = Date.now(), limits = STORAGE_L
     limits.emotionalMemories
   );
 
+  const companionAnchors = applyRollingLimit(
+    (state.companionAnchors || [])
+      .map((anchor) => sanitizeCompanionAnchor(anchor, now))
+      .filter(Boolean),
+    limits.companionAnchors
+  );
+
   const chatHistory = applyRollingLimit(
     (state.chatHistory || []).map((entry) => ({
       role: entry?.role || "companion",
@@ -118,6 +151,7 @@ export function pruneStateForStorage(state, now = Date.now(), limits = STORAGE_L
     memories,
     habitatTraces,
     emotionalMemories,
+    companionAnchors,
     chatHistory
   };
 }
