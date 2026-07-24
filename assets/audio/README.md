@@ -2,52 +2,44 @@
 
 This folder stores ambient audio and sound effects for Nexus Link.
 
-## Current BGM
+> Runtime mapping SSOT for multi-scene BGM: `docs/audio/BGM_ASSET_MAP.md`
+> Code registry: `src/data/bgmRegistry.js` · Manager: `src/audio/audioManager.js`
+
+## Current multi-scene BGM (Task Pack 0)
+
+| Runtime scene ID | Relative path | Notes |
+|---|---|---|
+| `screen:start` | `linkara/bgm_login_page.mp3` | Title / onboarding start–guidance |
+| `screen:companion-select` | `linkara/bgm_linkara_lofi.mp3` | Owner-confirmed companion select / Initial Bond |
+| `habitat:moonlake` | `bgm_lakefront.mp3` | Owner-confirmed default home habitat |
+| `habitat:plains` | `linkara/bgm_northern_verdant_plains.mp3` | |
+| `habitat:forge` | `linkara/bgm_southeast_forge_hills.mp3` | |
+| `habitat:harbor` | `linkara/bgm_southern_harbor_nexus.mp3` | |
+| `habitat:core` | `linkara/bgm_central_radiant_core.mp3` | |
+| `habitat:tidal` | `linkara/bgm_southwest_tidal_frontier.mp3` | |
+| `habitat:mystic` | `linkara/bgm_eastern_mystic_mountains.mp3` | |
+| `fallback:legacy` | `bgm_nexuslink.m4a` | Unknown scene fallback only |
+
+## Unmapped (do not auto-assign)
 
 ```text
-bgm_lakefront.mp3
+linkara/bgm_ethereal_moon_lakefront.mp3
 ```
 
-Purpose: current main background music for the Nexus Link base map / Nexus Core lakefront ambience.
+Ethereal moonlake variant kept on disk as an alternate. Canonical
+`habitat:moonlake` is `bgm_lakefront.mp3` (Owner-confirmed 2026-07-24).
 
-Recommended in-game usage:
+## Runtime volume
 
-- scene: base map / home habitat / lakefront companion screen
-- role: main ambient BGM
-- playback: looped background music
-- implemented runtime volume cap: `0.42`
-- suggested tuning range: 35%–55%, then balance against UI SFX and companion voice
-- keep UI confirmation sounds and companion reactions quieter than the BGM's upper-mid shimmer
+- implemented runtime volume cap: `MAX_BGM_VOLUME = 0.42`
+- effective level: `master × bgm × mute` via existing settings (`volMaster` / `volBgm` / `audioMuted`)
+- keep UI SFX quieter than BGM
 
-## Audio analysis
+## Browser notes
 
-| Item | Value |
-|---|---:|
-| File | `bgm_lakefront.mp3` |
-| Format | MP3 |
-| Duration | 02:43.104 |
-| File size | 4,052,886 bytes (~3.87 MiB) |
-| Sample rate | 48,000 Hz |
-| Channels | Stereo |
-| Approx. bitrate | 198.8 kbps |
-| Integrated loudness | -11.73 LUFS |
-| True peak | -0.86 dBTP |
-| Loudness range | 5.70 LU |
-| Estimated tempo | ~133.93 BPM |
-| Estimated tonal center | F# major, with B major / D# minor ambiguity |
-| SHA-256 | `5a58b3d324fbed237028bc15e5a1ad4f00f53a162ae4540318342421458e8980` |
-
-### Production notes
-
-The track is already compact enough for GitHub Pages use, but it is mastered fairly loud for background music. For a browser-based companion game, apply runtime gain reduction rather than editing the source file directly.
-
-Recommended implementation setting:
-
-```js
-const MAX_BGM_VOLUME = 0.42;
-```
-
-For longer sessions, avoid playing it at full volume. A target perceived loudness around `-16 LUFS` to `-18 LUFS` is usually more comfortable for persistent ambient BGM.
+- iOS Safari blocks autoplay until a user gesture; pending scene starts on first unlock click/touch.
+- Paths are relative (`./assets/...`) for GitHub Pages.
+- Do not rename/convert/delete assets without Owner approval.
 
 ## Planned / future files
 

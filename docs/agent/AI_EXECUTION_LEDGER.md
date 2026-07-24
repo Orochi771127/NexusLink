@@ -58,6 +58,19 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-07-24 - Cursor Grok - Task Pack 0 BGM + product review archive - COMPLETED (merge pending)
+
+- Status: `COMPLETED` for documentation archive + BGM wiring; Owner confirmed mappings; merge to protected `main` via PR. Not full-device `VERIFIED` (iOS Safari physical pass still open).
+- Branch / commit: feature branch from `49075e4` → PR into `main` (see PR for SHA).
+- Scope: Persist two proposed product/architecture reviews + repair sequence; multi-scene BGM. Non-goals unchanged for migrations / asset edits.
+- Work performed:
+  - Docs + runtime BGM as prior entry.
+  - Owner decisions applied: companion-select = `bgm_linkara_lofi.mp3`; Moonlake = `bgm_lakefront.mp3`; ethereal variant unmapped alternate.
+- Verification: `node --check` on touched JS; `node docs/qa/bgm-integration-cases.mjs`; `git diff --check`.
+- Problems / risks: iOS autoplay needs gesture; track loudness variance; ethereal alternate unused; bond/trust global authority still a planned P0 (Pack 2).
+- Next safe action: After merge, execute **TASK PACK 1 — First Session Motivation Repair** (plan document first, then implement only if Owner continues approval).
+- Required reading: `docs/audio/BGM_ASSET_MAP.md`, `docs/strategy/NEXUS_LINK_REPAIR_SEQUENCE.md`, `src/data/bgmRegistry.js`, this entry.
+
 ### 2026-07-16 - Codex - Protected main post-merge evidence truth sync - VERIFIED
 
 - Status: `VERIFIED`; Pages payload reduction, repo-native CI, immutable Node 24 action pins, and active protected-`main` enforcement are complete. This remains `AUTOMATED_RC_PASS`, not public-launch approval.

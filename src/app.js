@@ -48,6 +48,7 @@ import { createCrystalWeavingController } from "./ui/crystalWeavingController.js
 import { createCompanionGrowthController } from "./ui/companionGrowthController.js";
 import { createPageRouter } from "./ui/pageRouter.js";
 import { createSettingsController } from "./ui/settingsController.js";
+import { createBgmController } from "./ui/bgmController.js";
 import { createCompanionSelectController } from "./ui/companionSelectController.js";
 import { createMapController } from "./ui/mapController.js";
 import { createAtlasController } from "./ui/atlasController.js";
@@ -170,6 +171,9 @@ async function bootstrap() {
   const statusText = qs("#status-text");
   bindViewportVars();
   AudioManager.initUnlock();
+  // 場景 BGM：單一入口；實際曲目由 bgmRegistry 解析。解鎖前只記錄 pending。
+  const bgmController = createBgmController();
+  bgmController.bind();
   bindSettingsDropdown();
   ensureRaphaelAgentPresenceStyles();
   installRaphaelPreviewHarnessIfRequested();
@@ -287,7 +291,8 @@ async function bootstrap() {
     store,
     saveCurrentState: () => saveQueue.enqueue(SAVE_LEVEL.CRITICAL),
     // 初遇定情（CH-2）：選定即切換棲地夥伴（state 已先寫入，normalize 會放行）。
-    onBondChosen: (companionId) => applyCompanionChange(companionId)
+    onBondChosen: (companionId) => applyCompanionChange(companionId),
+    onStepShown: (step) => bgmController.onOnboardingStep(step)
   });
   // 柔性邀請（支柱二）：首輪後由夥伴狀態驅動的一句溫柔下一步，讓核心迴圈不再沉默。
   const gentleInvitationController = createGentleInvitationController({
@@ -421,6 +426,7 @@ async function bootstrap() {
           if (!switched) return false;
           store.setState({ activeHabitatId: normalizedId });
           renderActiveHabitatName(normalizedId);
+          bgmController.onHabitat(normalizedId);
           saveQueue.enqueue(SAVE_LEVEL.CRITICAL);
           statusText.textContent = `你與${currentCreature.name}來到了${getHabitatById(normalizedId).name}。`;
           panelManager.closePanel();
@@ -437,7 +443,12 @@ async function bootstrap() {
         store,
         panelManager,
         saveCurrentState,
-        onCompanionChanged: (companion) => applyCompanionChange(companion?.id)
+        onCompanionChanged: (companion) => applyCompanionChange(companion?.id),
+        onOpened: () => bgmController.onCompanionSelectOpened()
+      });
+      // 關閉選單回到當前棲地 BGM（與 onboarding bond 共用同一曲目 ID）。
+      panelManager.registerOnClose("companionSelect", () => {
+        bgmController.onCompanionSelectClosed(store.getState().activeHabitatId);
       });
     }
     return companionSelectController;
@@ -488,6 +499,12 @@ async function bootstrap() {
   settingsController.bind();
   pageRouter.bind();
   actionSheetController.bind();
+  // 設定音量／靜音套用後，依啟動情境寫入 pending／active BGM 場景。
+  if (shouldRunOnboarding) {
+    bgmController.onOnboardingStep("start");
+  } else {
+    bgmController.onHome(store.getState().activeHabitatId);
+  }
   // 穩定的唯讀 readiness signal，供本機/CI 瀏覽器 gate 在操作前確認
   // 所有 DOM controllers 已完成綁定；不暴露 gameplay state。
   document.documentElement.dataset.nexusControllersReady = "true";
@@ -613,7 +630,8 @@ async function bootstrap() {
       saveQueue,
       onboardingController,
       emitRestrictedRaphaelAgentEvent,
-      getExpeditionController
+      getExpeditionController,
+      bgmController
     );
     renderActiveHabitatName(store.getState().activeHabitatId);
     markPerf("nexus:first-scene-ready");
@@ -719,7 +737,8 @@ async function bootScene(
   saveQueue,
   onboardingController,
   raphaelAgentEventBridge = null,
-  getExpeditionControllerRef = null
+  getExpeditionControllerRef = null,
+  bgmController = null
 ) {
   const runtimeGuard = createRuntimeGuard(app);
   const world = createWorld(app);
@@ -921,6 +940,7 @@ async function bootScene(
     companionPositionCleanup = positionCompanion(companion, app);
     rebaseCompanionMotion(companionMotionController, companion);
     weatherFx.weatherId = "__pending__";
+    bgmController?.onHabitat?.(normalizedId);
     return true;
   }
 

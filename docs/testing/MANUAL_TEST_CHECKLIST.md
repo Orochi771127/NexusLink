@@ -51,6 +51,21 @@ python -m http.server 5173
 - [ ] 點擊 HUD 可開啟角色面板，X、背景與 Escape 均可關閉。
 - [ ] 設定面板可切換音訊、畫質、文字大小、低動態與語言，操作後不產生第二份設定存檔。
 
+### BGM（多場景背景音樂）
+
+對照：`docs/audio/BGM_ASSET_MAP.md`、`docs/qa/bgm-integration-cases.mjs`。
+
+- [ ] 標題／onboarding start 在首次有效手勢後播放 `bgm_login_page.mp3`（iOS 不可保證手勢前自動播放）。
+- [ ] Initial Bond／companion select 切到 `bgm_linkara_lofi.mp3`（Owner-confirmed）。
+- [ ] 月湖家使用 `bgm_lakefront.mp3`；Atlas 其他棲地切到對應 `habitat:*`；回家可恢復當前 `activeHabitatId` BGM。
+- [ ] 同一場景再進入不無故重頭播放；快速切換不會雙曲疊播。
+- [ ] 靜音／主音量／BGM 音量立即作用；reload 後沿用既有設定（無新 storage key）。
+- [ ] 缺少或未映射曲目不阻斷導航；Network 無 mapped 資產 404。
+- [ ] 既有合成 SFX 仍可用。
+- [ ] iPhone Safari：註明為實體機／僅響應式模擬／僅程式推論，不可混稱。
+
+---
+
 ### 黑鐵駭客五席
 
 - [ ] Fresh save／Initial Bond 仍只呈現 `greyshade-cat`、`blazetail-kit`、`crystalfin-seahorse`；黑鐵五席不會自動解鎖。
