@@ -29,6 +29,9 @@
 | 小額消費情緒 | 買完罪惡感、想存又心動（非理財建議） |
 | 天氣 App 打臉 | 說下雨卻大太陽 |
 | 普通一天變體 | 好普通／平平淡淡／沒什麼好講 |
+| 職場傾訴 | 當眾被損、加班掏空、功勞被搶、想離卡關、同事背後、任務不清卻扛錯 |
+| 感情／關係傾訴 | 曖昧忽冷忽熱、已讀不回、朋友變慢、分手餘空、想告白怕搞砸、被叫想開 |
+| 生活煩惱傾訴 | 同儕比較慌、未來選項過多、想聊怕成負擔、成年人雜務擠壓、無事卻悶 |
 
 ## 原則
 
@@ -43,3 +46,4 @@
 - v1/v2：`raphael-everyday-chat-topics-drill.mjs` / `*-cases.mjs`
 - v3 backlog：`raphael-everyday-chat-topics-v3-drill.mjs` / `*-v3-cases.mjs`
 - 日常招呼／吃飯／洗澡：`raphael-daily-life-conversation-*.mjs`
+- 職場／感情／生活煩惱傾訴：`raphael-vent-work-relationship-life-*.mjs`
