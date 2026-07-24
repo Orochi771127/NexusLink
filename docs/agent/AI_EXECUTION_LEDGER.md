@@ -58,6 +58,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-07-24 - Cursor Grok - Pack 5 Terminology / UI language Phase 1 - COMPLETED
+
+- Status: `COMPLETED` for player-facing glossary application + scan harness. Master Canon rewrite deferred.
+- Branch / commit: `feat/pack5-terminology-ui-language` → PR into protected `main`.
+- Scope: Replace overclaim 「療癒／治癒／Healer」 in companion presentation and codex radar label; document glossary; ban-scan harness.
+- Work performed: `PACK5_TERMINOLOGY_GLOSSARY.md`; companionRegistry; codexController; heartsparkCouncilCanon; `terminology-ui-language-cases.mjs`.
+- Verification: `node docs/qa/terminology-ui-language-cases.mjs`.
+- Problems / risks: Master Canon §2 still uses 「療癒設計」 titles until Owner strategy approval.
+- Next safe action: None remaining in Repair Sequence Packs 0–5 Phase 1; optional Pack 1 playtest / Pack 2 Phase 3.
+- Required reading: `docs/strategy/PACK5_TERMINOLOGY_GLOSSARY.md`, this entry.
+
 ### 2026-07-24 - Cursor Grok - Pack 4 Dynamic Chapter Encounter Resolver Phase 1 - COMPLETED
 
 - Status: `COMPLETED` for resolver + fallback + invite resolvedId + Pack 2 Phase 2 byId baseline on meet. No STORAGE_KEY bump.

@@ -16,14 +16,15 @@ import {
   getCompanionCodexGrowthPresentation
 } from "../state/companionStateSchema.js";
 
-// 雷達六軸（依 R2_CODEX_UI_REFERENCE：力量／防禦／速度／智慧／情感／治癒）。
+// 雷達六軸（依 R2_CODEX_UI_REFERENCE：力量／防禦／速度／智慧／情感／安撫）。
+// Pack 5：玩家可見標籤用「安撫」，避免「治癒」被讀成臨床宣稱；資料鍵仍為 healing。
 const RADAR_AXES = [
   { key: "power", label: "力量" },
   { key: "defense", label: "防禦" },
   { key: "speed", label: "速度" },
   { key: "wisdom", label: "智慧" },
   { key: "emotion", label: "情感" },
-  { key: "healing", label: "治癒" }
+  { key: "healing", label: "安撫" }
 ];
 
 const ELEMENT_ACCENTS = {

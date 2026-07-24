@@ -69,7 +69,7 @@ export const HEARTSPARK_COUNCIL_CANON_V06 = {
         stage3: { zh: "聖林鹿靈", en: "Sacred Grove Stag Spirit", ja: "聖林鹿霊（セイリンロクレイ）" }
       },
       emblem: { zh: "生長・寬恕", en: "Growth / Forgiveness", ja: "成長・赦し" },
-      role: { zh: "治癒／淨化／持續回復", en: "Healer / Cleanser / Regeneration", ja: "治癒／浄化／継続回復" },
+      role: { zh: "安撫／淨化／持續回復", en: "Soother / Cleanser / Regeneration", ja: "なだめ／浄化／継続回復" },
       teamSlot: ["support"],
       temperament: {
         zh: "溫柔、親人、怕衝突，但會在關鍵時刻站出來",
