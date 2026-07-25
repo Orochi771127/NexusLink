@@ -1081,6 +1081,22 @@ async function bootScene(
         } catch {
           // ignore
         }
+        const shadow = companion?.__groundShadow || null;
+        const shadowFoot = companion?.__shadowFoot || null;
+        const shadowLocalX = shadow ? Number(shadow.x) : null;
+        const shadowLocalY = shadow ? Number(shadow.y) : null;
+        // 有量到 opaque-foot 時：影子必須貼同一點。Placeholder 無貼圖則以 sync 結果為準（gap=0）。
+        let shadowGap = null;
+        if (shadowLocalX != null && shadowLocalY != null) {
+          if (companion?.__opaqueFoot) {
+            shadowGap = Math.hypot(
+              shadowLocalX - Number(opaque.x || 0),
+              shadowLocalY - Number(opaque.y || 0)
+            );
+          } else {
+            shadowGap = 0;
+          }
+        }
         return {
           profileId: environmentLayer.profileId,
           companionId: store.getState().activeCompanionId || null,
@@ -1092,7 +1108,12 @@ async function bootScene(
           targetX: Number(target?.x),
           targetY: Number(target?.y),
           globalX,
-          globalY
+          globalY,
+          shadowLocalX,
+          shadowLocalY,
+          shadowFootX: shadowFoot ? Number(shadowFoot.x) : null,
+          shadowFootY: shadowFoot ? Number(shadowFoot.y) : null,
+          shadowGap
         };
       },
       getActiveCompanionNode: () => companion || null
