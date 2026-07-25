@@ -58,6 +58,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-07-25 - Cursor Grok - Moonlake prop scale-up - COMPLETED
+
+- Status: `COMPLETED` for Owner review: enlarge Moonlake diorama props vs companion (placement kept; companion `displayScale` unchanged).
+- Branch / commit: `fix/moonlake-prop-scale-up` → PR into protected `main`.
+- Scope: `moonlakeObjectPack.js` scales, `maxDisplaySize`, shadows, lights; near-tent inward offsets after enlarge.
+- Work performed: far 0.22→0.26; mid tents 0.30→0.52 (screen QA raised past plan 0.38 because art cover vs safe-zone); near 0.52→0.60; shrine/main beacon small uplift; near offsets pulled inboard.
+- Verification: Playwright 390×844 — scales match, `edgeOk`, `plazaClear`; mid/companion height ratio ≈0.90; `docs/qa/_moonlake_prop_scale_qa.json`.
+- Problems / risks: Dual coordinate spaces mean art-local scale ≠ screen parity; further feel may still want mild companion shrink.
+- Next safe action: Owner device feel-check; optional companion `displayScale` nudge if still large.
+- Required reading: `src/data/sceneProfiles/moonlakeObjectPack.js`, this entry.
+
 ### 2026-07-25 - Cursor Grok - Companion shadow flush to opaque feet - COMPLETED
 
 - Status: `COMPLETED` for Owner request: ground shadows must sit on visible foot contact with no float gap.
