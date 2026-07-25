@@ -58,6 +58,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-07-25 - Cursor Grok - Heartcore Orbit Battle agent program - PLANNED
+
+- Status: `PLANNED` — Owner-facing agent instruction pack authored; **no runtime authorization** until PACK R0 contract + Gate 2.
+- Branch / commit: `cursor/heartcore-orbit-agent-program-87a6` / (pending commit)
+- Scope: Document how agents must build chat+bond daily loop, keep Expedition, and add Beyblade×marble「心核迴旋戰」with relationship-projected combat stats only.
+- Work performed: Added `docs/agent/HEARTCORE_ORBIT_BATTLE_AGENT_PROGRAM.md` (master prompt, red lines, projector table, PACK R0–R5); indexed in `docs/README.md`.
+- Verification: docs-only review; no runtime change.
+- Problems / risks: Easy for agents to over-scope into「finish whole game」or real ATK trees — program explicitly forbids; R1+ still needs separate Owner Gate 2.
+- Next safe action: Owner paste §4 master prompt + PACK R0 only; after contract approval, open R1 prototype.
+- Required reading: `docs/agent/HEARTCORE_ORBIT_BATTLE_AGENT_PROGRAM.md`, this entry.
+
 ### 2026-07-25 - Cursor Grok - Moonlake prop scale-up - COMPLETED
 
 - Status: `COMPLETED` for Owner review: enlarge Moonlake diorama props vs companion (placement kept; companion `displayScale` unchanged).
