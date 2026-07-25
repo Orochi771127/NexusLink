@@ -1,0 +1,36 @@
+{
+  "passed": true,
+  "companion": {
+    "w": 130.37314978036432,
+    "h": 130.37314978036432,
+    "cx": 209
+  },
+  "scaleFails": [],
+  "edgeOk": true,
+  "plazaClear": true,
+  "midVsCompanion": [
+    {
+      "id": "tent_mid_right_base",
+      "tentH": 117.03466666666662,
+      "ratio": 0.898
+    },
+    {
+      "id": "tent_mid_left_base",
+      "tentH": 117.03466666666668,
+      "ratio": 0.898
+    }
+  ],
+  "nearBounds": [
+    {
+      "id": "tent_near_right_base",
+      "x": 252.5,
+      "r": 387.5
+    },
+    {
+      "id": "tent_near_left_base",
+      "x": 10,
+      "r": 145.1
+    }
+  ],
+  "screenshot": "docs\\qa\\_moonlake_prop_scale_390x844.png"
+}
