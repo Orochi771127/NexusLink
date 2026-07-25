@@ -1,4 +1,4 @@
-import { getShardType } from "../data/lootTables.js";
+import { formatVaultMoteStripLabel } from "../expedition/lootPresentation.js";
 import { getCompanionById } from "../data/companionRegistry.js";
 import {
   HEART_PHASE_PRACTICES,
@@ -135,8 +135,8 @@ export function createPageRouter({
     const shardStrip = Object.entries(vaultShards)
       .filter(([, count]) => Number(count) > 0)
       .map(([shardId, count]) => {
-        const label = getShardType(shardId).label.zh;
-        return `<span><strong>${Number(count)}</strong><em>${escapeHtml(label)}</em></span>`;
+        const strip = formatVaultMoteStripLabel(shardId, count, getLanguage());
+        return `<span><strong>${strip.count}</strong><em>${escapeHtml(strip.label)}</em></span>`;
       })
       .join("");
     body.innerHTML = `

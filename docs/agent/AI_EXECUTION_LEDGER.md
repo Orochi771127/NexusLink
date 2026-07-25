@@ -58,6 +58,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-07-25 - Cursor Grok - Pack D expedition loot semantics - COMPLETED
+
+- Status: `COMPLETED` for Phase 1 player-facing mote/trace language (ids + craft math unchanged).
+- Branch / commit: `feat/pack-expedition-loot-semantics` → PR into protected `main`.
+- Scope: Labels, settlement/journal/summarize, craft missing copy, collect intents, explore strip; no vault schema bump.
+- Work performed: `lootPresentation.js`; lootTables / craft / expedition voice+state+persistence+brain+intent; strategy doc + harness.
+- Verification: `node docs/qa/expedition-loot-semantics-cases.mjs`.
+- Problems / risks: Internal comments may still say「碎晶」; vault strip still shows counts (inventory need).
+- Next safe action: Owner feel-check four tension packs on main; optional Pack 1 human §J cohort.
+- Required reading: `docs/strategy/PACK_EXPEDITION_LOOT_SEMANTICS.md`, this entry.
+
 ### 2026-07-25 - Cursor Grok - Pack C initiative budget view - COMPLETED
 
 - Status: `COMPLETED` for Phase 1 session budget API (no daily FOMO / schema).

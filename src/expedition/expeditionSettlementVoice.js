@@ -2,7 +2,7 @@
  * RE-2 E-CORE：遠征結算語音拆分。
  *
  * 設計理念：
- * - 系統事實（帶回幾枚碎晶）→ Soul Talk `system`
+ * - 系統事實（帶回的微光痕跡）→ Soul Talk `system`
  * - 夥伴感受（第一人稱短句）→ `companion`，但必須經本 adapter
  *   （可掛 persona／未來 critic；接不到也不准把第三人稱 journal 假扮成夥伴說話）
  *
@@ -10,7 +10,8 @@
  */
 
 import { getCompanionById } from "../data/companionRegistry.js";
-import { getShardType, getRegionLootTable } from "../data/lootTables.js";
+import { getRegionLootTable } from "../data/lootTables.js";
+import { describeMoteAmount, getShardDisplayLabel } from "./lootPresentation.js";
 import { getExpeditionRegionByNodeId } from "../data/expeditionRegions.js";
 import { resolvePersona } from "../ai/personaResolver.js";
 
@@ -23,7 +24,7 @@ export function buildExpeditionSystemFacts(session, settlement = {}) {
   const loot = settlement.lootSummary || session?.lootCollected || {};
   const primaryShard = getRegionLootTable(session?.regionId || "plains_windrest").primaryShard;
   const primaryCount = Number(loot[primaryShard]) || 0;
-  const shardLabel = getShardType(primaryShard).label.zh;
+  const shardLabel = getShardDisplayLabel(primaryShard, "zh");
   const kills = session?.stats?.kills || 0;
   const visited = session?.visitedExplorePoints?.length || 0;
   const memoryEvents = session?.triggeredMemoryEvents?.length || 0;
@@ -39,7 +40,8 @@ export function buildExpeditionSystemFacts(session, settlement = {}) {
   }
 
   if (primaryCount > 0) {
-    facts.push(`帶回 ${primaryCount} 枚${shardLabel}。`);
+    // Pack D：質性數量＋微光語意，避免「帶回 N 枚」刷分框架。
+    facts.push(`帶回了${describeMoteAmount(primaryCount, "zh")}${shardLabel}——同行痕跡，不是戰利品。`);
   }
   if (visited > 0) {
     facts.push(`造訪探索點 ${visited} 處。`);

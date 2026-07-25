@@ -1,20 +1,23 @@
-/** 遠征掉落：原生結晶碎片（依區域元素）。 */
+/**
+ * 遠征微光痕跡（依區域元素）。
+ * Pack D：玩家語意是「同行微光」，不是刷怪戰利品；id 維持 *_shard 以相容存檔／配方。
+ */
 export const SHARD_TYPES = Object.freeze({
   forest_shard: Object.freeze({
     id: "forest_shard",
-    label: { zh: "森息碎晶", en: "Verdant Shard" },
+    label: { zh: "森息微光", en: "Verdant Mote" },
     element: "wood",
     color: 0x7ecf8a
   }),
   tide_shard: Object.freeze({
     id: "tide_shard",
-    label: { zh: "潮汐碎晶", en: "Tide Shard" },
+    label: { zh: "潮汐微光", en: "Tide Mote" },
     element: "water",
     color: 0x6ecfd4
   }),
   ember_shard: Object.freeze({
     id: "ember_shard",
-    label: { zh: "餘燼碎晶", en: "Ember Shard" },
+    label: { zh: "餘燼微光", en: "Ember Mote" },
     element: "fire",
     color: 0xe8925a
   })

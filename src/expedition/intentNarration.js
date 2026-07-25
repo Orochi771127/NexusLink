@@ -67,24 +67,24 @@ const TACTIC_ACK = Object.freeze({
 
 const KILL_AFTER = Object.freeze({
   calm: Object.freeze([
-    "{enemy}散開了。牠站在碎晶邊，呼吸慢慢穩回來。",
-    "{enemy}散開了，碎晶落在附近。牠先看了你一眼。"
+    "{enemy}散開了。牠站在微光邊，呼吸慢慢穩回來。",
+    "{enemy}散開了，微光落在附近。牠先看了你一眼。"
   ]),
   warm: Object.freeze([
-    "{enemy}散開了。牠把碎晶撥近一點，像在等你一起看。",
+    "{enemy}散開了。牠把微光撥近一點，像在等你一起看。",
     "{enemy}散開了。牠的尾巴輕掃了一下地面。"
   ]),
   distant: Object.freeze([
-    "{enemy}散開了。牠沒有靠近碎晶太快，仍留著一點距離。",
+    "{enemy}散開了。牠沒有靠近微光太快，仍留著一點距離。",
     "{enemy}散開了。牠耳朵仍豎著，還沒完全放鬆。"
   ]),
   defensive: Object.freeze([
-    "{enemy}散開了。牠仍擋在你前方半步，才肯低頭看碎晶。",
+    "{enemy}散開了。牠仍擋在你前方半步，才肯低頭看微光。",
     "{enemy}散開了。牠喘了一下，沒有立刻鬆開警戒。"
   ]),
   tired: Object.freeze([
-    "{enemy}散開了。牠靠著碎晶歇了半秒，才繼續動。",
-    "{enemy}散開了。碎晶在腳邊，牠卻先坐了一下。"
+    "{enemy}散開了。牠靠著微光歇了半秒，才繼續動。",
+    "{enemy}散開了。微光在腳邊，牠卻先坐了一下。"
   ])
 });
 
