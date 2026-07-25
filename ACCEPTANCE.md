@@ -388,3 +388,37 @@
 - 通過：雙方不是攻擊玩家或夥伴，而是以不同 stance 共同穩定中性回聲；第一版限 same-device pass-and-play。若另案核准 ghost code，payload 只含 schema version、known companion id、姿態／選擇與 deterministic seed，不含姓名、chat、memory、安全輸入、自由文字或可執行內容。
 - 無 backend、matchmaking、排行、MMR、賽季、streak、每日、loot、XP、growth evidence 或 relationship reward／penalty；stage 只改變表現與 sidegrade 選擇，不給數值優勢。雙方隨時退出且零懲罰；真正線上 PvP 不在本契約授權內。
 - N12 在專屬 sealed contract 與 O-series assertions 完成前只可判定「規格邊界存在」，不可宣稱 prototype／runtime ready。
+
+## O. Heartcore Orbit Battle／心核迴旋戰（垂直切片）
+
+> SSOT：`docs/design/HEARTCORE_ORBIT_BATTLE_CONTRACT_V1.md`、`docs/agent/HEARTCORE_ORBIT_BATTLE_AGENT_PROGRAM.md`。
+> 本節驗收的是「可玩垂直切片」，**不是**商業上架完成。
+
+**O1 — 出場的是心核化身，不是把夥伴本人當武器**
+- 驗法：讀 UI 文案／契約用語；跑 `orbit-battle-prototype-cases.mjs`。
+- 通過：玩家可見「化身／迴旋／核散」語境；不得把夥伴本體描述成可丟擲兵器。
+
+**O2 — 戰鬥強度只來自關係投影，聊天不加 Impact**
+- 驗法：`projectOrbitCombatStats` 在 sharedActionCount 上升時 Impact 上升；純聊天路徑不得直接改 Impact 帳本。
+- 通過：`orbit-battle-prototype-cases.mjs` 綠燈；無獨立永久 ATK 成長樹。
+
+**O3 — 闖關優先：月湖路徑五關＋破關解鎖下一路徑**
+- 驗法：`orbit-stage-cases.mjs`；手動開探索→月湖路徑節點。
+- 通過：五關可定義／可通關解鎖平原首關；進度 session-only 時失敗不倒退已通關。
+
+**O4 — 對決次之：人機／幽靈，無即時 PvP、無 ±bond**
+- 驗法：`orbit-duel-cases.mjs`；連戰 budget 拒戰。
+- 通過：無網路 matchmaking；勝負不改 bond／trust；過熱可休息。
+
+**O5 — 遠征微光可匯流，但不農場、不開 G4**
+- 驗法：`orbit-settlement-cases.mjs`；首次通關寫 vault shards＋exploration evidence。
+- 通過：不呼叫 `buildExpeditionSettlement`；不碰 `totalExpeditions` 農場節奏；對決勝發獎；安全港零 evidence。
+
+**O6 — 敗北情緒預設惜敗陪伴；可撤退且零懲罰進度**
+- 驗法：prototype／duel harness 的 outcome 映射；手動撤退。
+- 通過：結局對齊 `stabilized`／`recovered`／`retreated`／`overwhelmed_but_safe` 語意；無羞辱 win/lose、無鎖死。
+
+**O7 — R5 手感／四語關鍵字／最小回歸**
+- 驗法：`node docs/qa/orbit-feel-cases.mjs`、`orbit-i18n-cases.mjs`、`orbit-regression-cases.mjs`；`docs/qa/ORBIT_MANUAL_390x844.md`。
+- 通過：拉力曲線短拉可控、長拉有爆發；chrome 關鍵字有 tc/sc/en/jp；回歸 harness 全綠。
+- **仍 open（不得宣稱完成）：** 真人測、真機觸控／GPU、法務／上架。

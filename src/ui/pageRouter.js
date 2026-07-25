@@ -36,7 +36,8 @@ export function createPageRouter({
   saveCandidateState,
   openMap,
   openCodex,
-  openAtlas
+  openAtlas,
+  openOrbit
 }) {
   const pageLayer = qs("#page-layer");
   const pageViews = pageLayer ? qsa("[data-page]", pageLayer) : [];
@@ -157,6 +158,10 @@ export function createPageRouter({
         <button type="button" data-page-action="open-map">
           <strong>${t("explore.openMap")}</strong>
           <em>${t("explore.openMapSub")}</em>
+        </button>
+        <button type="button" data-page-action="open-orbit">
+          <strong>${t("explore.openOrbit")}</strong>
+          <em>${t("explore.openOrbitSub")}</em>
         </button>
         <button type="button" data-page-action="open-atlas">
           <strong>${t("explore.atlas")}</strong>
@@ -536,6 +541,7 @@ export function createPageRouter({
 
     try {
       if (action === "open-map") await runRequiredAction(openMap);
+      else if (action === "open-orbit") await runRequiredAction(openOrbit);
       else if (action === "open-atlas") await runRequiredAction(openAtlas);
       else if (action === "open-character") await panelManager.openPanel("character");
       else if (action === "open-codex") await runRequiredAction(openCodex);

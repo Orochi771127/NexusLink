@@ -58,6 +58,7 @@ import { getSceneProfile, setActiveSceneProfile } from "./data/sceneProfiles/ind
 import { LANGUAGE_CHANGED_EVENT } from "./i18n/i18n.js";
 import { createBattleController } from "./ui/battleController.js";
 import { createExpeditionController } from "./ui/expeditionController.js";
+import { createOrbitBattleController } from "./ui/orbitBattleController.js";
 import { createCodexController } from "./ui/codexController.js";
 import {
   animateParticles,
@@ -351,6 +352,7 @@ async function bootstrap() {
   // 只有玩家真的需要時才建立，縮短啟動成本。首屏只建 HUD/SoulTalk/PanelManager/ActionSheet。
   let battleController = null;
   let expeditionController = null;
+  let orbitBattleController = null;
   let mapController = null;
   let codexController = null;
   let companionSelectController = null;
@@ -398,6 +400,20 @@ async function bootstrap() {
       expeditionController.bind();
     }
     return expeditionController;
+  }
+
+  function getOrbitBattleController() {
+    if (!orbitBattleController) {
+      orbitBattleController = createOrbitBattleController({
+        store,
+        statusText,
+        panelManager,
+        companionGrowthController,
+        saveCurrentState: saveInteraction
+      });
+      orbitBattleController.bind();
+    }
+    return orbitBattleController;
   }
 
   function getMapController() {
@@ -490,7 +506,8 @@ async function bootstrap() {
     saveCandidateState: saveCriticalSnapshot,
     openMap: () => getMapController().open(),
     openCodex: () => getCodexController().open(),
-    openAtlas: () => getAtlasController().open()
+    openAtlas: () => getAtlasController().open(),
+    openOrbit: () => getOrbitBattleController().open()
   });
 
   panelManager.bind({

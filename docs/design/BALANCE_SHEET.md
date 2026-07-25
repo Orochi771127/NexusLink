@@ -268,6 +268,70 @@ pulseBonus           = 1 + clamp(dev(power)×0.004, −0.12, 0.18)
 
 ---
 
+## 9. 心核迴旋戰／Orbit（R1–R5；仍服從契約）
+
+> SSOT 契約：`docs/design/HEARTCORE_ORBIT_BATTLE_CONTRACT_V1.md`。
+> 本節與 `src/orbit/*` 對齊；改程式時同步改表。
+> 紅線：數值只能當關係投影的輸出縮放，**禁止**獨立 ATK 成長樹、每日必戰倍率、付費消過熱。
+
+### 9.1 一局節奏（R5 手感常數）
+
+| 常數（暫名） | 現行值 | 可調 | 來源 |
+|---|---|---|---|
+| `MAX_SPIN_SECONDS` | 75 | 45–120 | `orbitEngine.js` |
+| 玩家轉速衰減基線 | 6.2 + overheat×0.035 /s | — | `orbitEngine.js` / `orbitDuelEngine.js` |
+| `LAUNCH_PULL_MIN` / `MAX` | 0.04–0.52 | — | `orbitPhysics.js` |
+| `LAUNCH_CHARGE_EXP` | 0.85（短拉更可控） | — | 同上 |
+| 發射速度 | base 0.48 + charge×2.05 + Impact×0.48 | — | `launchVelocityFromPull` |
+| 預設摩擦 / 轉速衰減 | 0.15 / 6.2 | — | `orbitPhysics.js` |
+| 碰撞傷害 cap（對 B／對 A） | 24 / 22 | — | `resolveCollision` |
+| 拒戰：energy | ≤1 | — | `orbitStatsProjector.js` |
+| 拒戰：trust+疲勞 | trust&lt;3 且 touchFatigue≥7 | — | 同上 |
+
+### 9.2 投影輸出範圍（設計意圖，非最終公式）
+
+| 戰鬥詞 | 建議顯示區間 | 來源提醒 |
+|---|---|---|
+| Impact | 低–高相對條，非永久等級 | bond × 共同行動；**純聊天不加** |
+| Spin | 同上 | sync／默契 |
+| Guard | 同上 | trust + 邊界健康 |
+| Burst | 觸發型，非常駐 | 高張力共同記憶 |
+| Overheat | 風險條 | fatigue／連戰／低 energy |
+
+### 9.3 Session budget（防刷）
+
+| 意圖 | 規則草稿 |
+|---|---|
+| 連打上限 | 過熱升高 → 化身易核散／夥伴拒戰；休息後回穩 |
+| 重遊舊路徑 | 允許手感練習；**不得**刷永久攻擊帳或 trust |
+| 星級（若做） | 只影響微光／記憶清晰度敘事，不鎖成長 |
+
+### 9.4 R2 關卡節奏（月湖路徑）
+
+| 關 | 目標 | 備註 |
+|---|---|---|
+| 湖心訓練 | clear | 教學關 |
+| 薄界窄徑 | clear | `arenaRadius` 0.78 + 2 柱 |
+| 撐過漣漪 | survive 18s | 不需清光雜訊 |
+| 錨點微光 | reach_anchor | 北側錨點 |
+| 月湖終關 | clear | 通關解鎖平原路徑 |
+
+進度：session-only（`orbitPathProgress.js`），失敗不倒退已通關。
+
+### 9.5 R5 手感意圖（給 Owner／手測）
+
+| 意圖 | 調校方向 |
+|---|---|
+| 短拉可控 | charge 用 `^0.85` 緩和，避免輕拉就飛出界 |
+| 長拉有爆發 | pull cap 略收（0.52）＋ Impact 仍加成初速 |
+| 多段撞擊可讀 | 單次碰撞傷害上限略降（24／22），轉速略慢衰減 |
+| 連戰過熱 | 仍由 `orbitDuelBudget`／Overheat 拒戰，不改 FOMO |
+
+自動檢查：`docs/qa/orbit-feel-cases.mjs`、`docs/qa/orbit-regression-cases.mjs`。
+手動：`docs/qa/ORBIT_MANUAL_390x844.md`（真人／真機仍 open）。
+
+---
+
 ## 調校守則（給下一個 AI）
 1. 動任何數值前，在對應 TASK_PACK 的開工計畫標明「改哪個常數、預期玩家體感差異」。
 2. 改完程式**同步更新本表**，並在驗收時抽查 3–5 個常數「表↔程式」一致。
