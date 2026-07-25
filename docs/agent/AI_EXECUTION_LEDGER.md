@@ -58,6 +58,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-07-25 - Cursor Grok - Companion shadow flush to opaque feet - COMPLETED
+
+- Status: `COMPLETED` for Owner request: ground shadows must sit on visible foot contact with no float gap.
+- Branch / commit: `fix/companion-shadow-flush-to-feet` → PR into protected `main`.
+- Scope: Shared `companionFootAndShadow.js`; animated/static/placeholder shadows sync to opaque-foot (or content bottom); animation pose swaps remeasure.
+- Work performed: attach + sync on layout; `__resyncGroundShadow` after animation play; QA `shadowGap` on `__NEXUS_HABITAT.getFootPlacement`; unit harness + live matrix gate extension.
+- Verification: `node docs/qa/companion-shadow-flush-cases.mjs` 8/8; lifecycle 29/29; live gate 112/112, `maxShadowGap≈0.56px`, `maxDist≈0.99px`.
+- Problems / risks: Ellipse half still overlaps paws (intentional contact look); per-frame idle foot wobble not remeasured every tick.
+- Next safe action: Owner device feel-check; optional shadow radius retune per creature scale.
+- Required reading: `src/pixi/companionFootAndShadow.js`, this entry.
+
 ### 2026-07-25 - Cursor Grok - Habitat foot-on-compass alignment - COMPLETED
 
 - Status: `COMPLETED` for Owner correction: opaque feet on authored cross/compass center (supersedes 2026-07-15 visual-center acceptance for this placement).

@@ -2,6 +2,7 @@ import { WORLD_HEIGHT, WORLD_WIDTH } from "./pixiApp.js";
 import { ANIMATION_NAMES, CORE_ANIMATION_NAMES } from "../engine/interactionController.js";
 import { ASSET_MANIFEST, ILLUSTRATED_COMPANION_RUNTIME_POLICY } from "../data/assetManifest.js";
 import { getAnimationProfileForCreature, getMoodIdleAnimationName, resolveMoodIdleAnimationName } from "../engine/animationProfile.js";
+import { attachCompanionGroundShadow, syncCompanionGroundShadow } from "./companionFootAndShadow.js";
 
 export const GREYSHADE_CAT_ANIMATIONS_PATH = ASSET_MANIFEST.characters.greyshadeCat.animations;
 export const GREYSHADE_CAT_ANIMATION_NAMES = ANIMATION_NAMES;
@@ -121,12 +122,8 @@ export function createAnimatedCompanionNode(animationPack, creature) {
 
   const companion = new PIXI.Container();
 
-  // 真人回報：影子跟角色底部有明顯落差，看起來像懸空。
-  // Sprite anchor 固定 bottom-center（見上方 anchor 驗證），container 原點 y=0 已是腳底基準線；
-  // 影子應貼齊腳底、只留極小接地位移，不應遠離 y=0。
-  const shadow = new PIXI.Graphics();
-  shadow.ellipse(0, 6, 54, 13).fill({ color: 0x000000, alpha: 0.28 });
-  companion.addChild(shadow);
+  // 影子中心跟 opaque-foot 同一點：透明 padding 時不能再寫死在 container 原點附近。
+  attachCompanionGroundShadow(companion, { radiusX: 54, radiusY: 13, alpha: 0.28 });
 
   const animatedSprite = new PIXI.AnimatedSprite(idleDefinition.textures);
   animatedSprite.roundPixels = false;
@@ -142,9 +139,16 @@ export function createAnimatedCompanionNode(animationPack, creature) {
   animatedSprite.__baseFrameScale = scale;
   animatedSprite.play();
   companion.addChild(animatedSprite);
+  syncCompanionGroundShadow(companion);
 
   const animationProfile = getAnimationProfileForCreature(creature);
-  const controller = createSpriteAnimationController(animationPack, animatedSprite, creature?.defaultMood || "calm", animationProfile);
+  const controller = createSpriteAnimationController(
+    animationPack,
+    animatedSprite,
+    creature?.defaultMood || "calm",
+    animationProfile,
+    companion
+  );
   companion.__animationController = controller;
   companion.__animationProfile = animationProfile;
   companion.__isSpriteSheetCreature = true;
@@ -157,7 +161,7 @@ export function getMoodAnimationName(mood) {
   return getMoodIdleAnimationName(mood);
 }
 
-function createSpriteAnimationController(animationPack, animatedSprite, initialMood, profile) {
+function createSpriteAnimationController(animationPack, animatedSprite, initialMood, profile, companion = null) {
   let currentAnimationName = "idle_calm";
   let currentMirrorX = false;
   let lastMood = initialMood;
@@ -196,6 +200,8 @@ function createSpriteAnimationController(animationPack, animatedSprite, initialM
     animatedSprite.loop = options.loop === undefined ? Boolean(definition.loop) : Boolean(options.loop);
     animatedSprite.animationSpeed = getPixiAnimationSpeed(definition);
     animatedSprite.gotoAndPlay(0);
+    // 換姿／鏡像後腳接觸點可能變，清 cache 並把影子重新貼齊。
+    companion?.__resyncGroundShadow?.();
     animatedSprite.onComplete = () => {
       if (animatedSprite.loop) return;
       play(resolveMoodIdleAnimationName(lastMood, (name) => animationPack.animations.has(name), profile), { mood: lastMood });

@@ -3,6 +3,11 @@ import { FALLBACK_CREATURE } from "../engine/personalityProfile.js";
 import { SCENE_LAYOUT } from "../data/sceneLayout.js";
 import { createAnimatedCompanionNode, loadCompanionAnimationPack } from "./spriteSheetAnimationLoader.js";
 import { getActiveSceneProfile } from "../data/sceneProfiles/index.js";
+import {
+  attachCompanionGroundShadow,
+  getCompanionOpaqueFoot,
+  syncCompanionGroundShadow
+} from "./companionFootAndShadow.js";
 
 export async function createCreatureNode(creature, { bootOnly = true, onStatus = null } = {}) {
   const reportStatus = (kind, message) => onStatus?.({ kind, message, companionId: creature.id });
@@ -150,6 +155,8 @@ function applyCompanionResponsiveLayout(companion, app) {
     alignment,
     profileId: profile?.id || null
   });
+  // 十字對齊之後立刻把影子貼到同一腳接觸點，避免「腳落地、影懸空」。
+  syncCompanionGroundShadow(companion);
   applyMinimumCompanionHitArea(companion, app, profile);
 }
 
@@ -208,97 +215,6 @@ function resolveCompanionTarget(profile, app, anchor, referenceWidth, referenceH
     x: (Number(anchor?.x) || 0.5) * referenceWidth,
     y: (Number(anchor?.y) || 0.7) * referenceHeight
   };
-}
-
-/**
- * 不透明像素的底部中心（相對 companion container 原點）。
- * 坐姿角色常在 frame 底部留透明，container 原點會低於可見腳掌；
- * 用此偏移把「看得見的腳」放到十字中心。
- */
-function getCompanionOpaqueFoot(companion) {
-  if (companion.__opaqueFoot) return companion.__opaqueFoot;
-
-  const visual = companion.children?.find((child) => child instanceof PIXI.Sprite) || companion;
-  const foot = getOpaqueTextureFoot(visual);
-  if (!foot) return { x: 0, y: 0 };
-  if (visual === companion) {
-    companion.__opaqueFoot = foot;
-    return foot;
-  }
-
-  const scaleX = Number.isFinite(visual.scale?.x) ? visual.scale.x : 1;
-  const scaleY = Number.isFinite(visual.scale?.y) ? visual.scale.y : 1;
-  const pivotX = Number(visual.pivot?.x) || 0;
-  const pivotY = Number(visual.pivot?.y) || 0;
-  const rotation = Number(visual.rotation) || 0;
-  const localX = (foot.x - pivotX) * scaleX;
-  const localY = (foot.y - pivotY) * scaleY;
-  const cos = Math.cos(rotation);
-  const sin = Math.sin(rotation);
-  const resolved = {
-    x: (Number(visual.x) || 0) + localX * cos - localY * sin,
-    y: (Number(visual.y) || 0) + localX * sin + localY * cos
-  };
-  companion.__opaqueFoot = resolved;
-  return resolved;
-}
-
-function getOpaqueTextureFoot(visual) {
-  if (typeof document === "undefined" || !visual?.texture) return null;
-  const texture = visual.texture;
-  const source = texture.source?.resource;
-  const frame = texture.frame;
-  const width = Math.round(Number(frame?.width));
-  const height = Math.round(Number(frame?.height));
-  if (!source || !Number.isFinite(width) || !Number.isFinite(height) || width <= 0 || height <= 0) {
-    return null;
-  }
-
-  try {
-    const canvas = document.createElement("canvas");
-    canvas.width = width;
-    canvas.height = height;
-    const context = canvas.getContext("2d", { willReadFrequently: true });
-    if (!context) return null;
-    context.drawImage(
-      source,
-      Number(frame.x) || 0,
-      Number(frame.y) || 0,
-      width,
-      height,
-      0,
-      0,
-      width,
-      height
-    );
-    const pixels = context.getImageData(0, 0, width, height).data;
-    let minX = width;
-    let maxX = -1;
-    let maxY = -1;
-    for (let y = height - 1; y >= 0; y -= 1) {
-      for (let x = 0; x < width; x += 1) {
-        if (pixels[(y * width + x) * 4 + 3] < 16) continue;
-        if (maxY < 0) maxY = y;
-        if (y === maxY) {
-          if (x < minX) minX = x;
-          if (x > maxX) maxX = x;
-        }
-      }
-      if (maxY >= 0 && y < maxY) break;
-    }
-    if (maxY < 0 || maxX < minX) return null;
-
-    const anchorX = Number(visual.anchor?.x) || 0;
-    const anchorY = Number(visual.anchor?.y) || 0;
-    // 相對 sprite local（已扣 anchor）：底部中心。
-    return {
-      x: (minX + maxX + 1) / 2 - anchorX * width,
-      y: (maxY + 0.5) - anchorY * height
-    };
-  } catch (error) {
-    console.warn("Companion opaque-foot measurement fell back to frame origin:", error);
-    return null;
-  }
 }
 
 function getCompanionVisualCenter(companion) {
@@ -409,12 +325,8 @@ function isSceneEditorMode() {
 function createCreatureSprite(texture, creature) {
   applyStaticCompanionTexturePolicy(texture);
   const companion = new PIXI.Container();
-
-  // 同 spriteSheetAnimationLoader.js 的修正：sprite anchor 是 bottom-center，
-  // container 原點 y=0 即腳底基準線，影子應貼齊腳底而非遠離。
-  const shadow = new PIXI.Graphics();
-  shadow.ellipse(0, 6, 58, 14).fill({ color: 0x000000, alpha: 0.25 });
-  companion.addChild(shadow);
+  // 先掛影子再掛 sprite；layout 時會把影子中心同步到 opaque-foot。
+  attachCompanionGroundShadow(companion, { radiusX: 58, radiusY: 14, alpha: 0.25 });
 
   const sprite = new PIXI.Sprite(texture);
   sprite.roundPixels = false;
@@ -428,6 +340,7 @@ function createCreatureSprite(texture, creature) {
 
   companion.addChild(sprite);
   companion.__isSpriteCreature = true;
+  syncCompanionGroundShadow(companion);
 
   if (creature.element === "fire") {
     const flame = createFlameAccent();
@@ -470,9 +383,8 @@ function createCreaturePlaceholder(creature = FALLBACK_CREATURE) {
   const bodyColor = creature.placeholder?.bodyColor ?? 0x5f6876;
   const lightColor = creature.placeholder?.accentColor ?? 0x8a93a3;
 
-  const shadow = new PIXI.Graphics();
-  shadow.ellipse(0, 48, 54, 13).fill({ color: 0x000000, alpha: 0.28 });
-  companion.addChild(shadow);
+  // Placeholder 無貼圖：attach 後會依內容底緣對齊影子（不再寫死 y=48）。
+  attachCompanionGroundShadow(companion, { radiusX: 54, radiusY: 13, alpha: 0.28 });
 
   const body = new PIXI.Graphics();
   body.roundRect(-42, -28, 84, 70, 24).fill(bodyColor);
@@ -517,6 +429,8 @@ function createCreaturePlaceholder(creature = FALLBACK_CREATURE) {
     if (emblem) companion.addChild(emblem);
   }
 
+  // 全部形體掛完後再量底緣，影子才會貼在輪廓腳線。
+  syncCompanionGroundShadow(companion);
   return companion;
 }
 

@@ -13,6 +13,8 @@ from playwright.sync_api import sync_playwright
 BASE_URL = os.environ.get("NEXUS_QA_BASE", "http://127.0.0.1:5197")
 STORAGE_KEY = "nexusLinkR2State:v1"
 PIXEL_TOLERANCE = float(os.environ.get("NEXUS_FOOT_TOLERANCE", "3"))
+# 影子中心與 opaque-foot 本地距離；貼齊應接近 0（允許亞像素／round）。
+SHADOW_GAP_TOLERANCE = float(os.environ.get("NEXUS_SHADOW_GAP_TOLERANCE", "1.5"))
 VIEWPORT = {"width": 390, "height": 844}
 HABITATS = ["moonlake", "plains", "forge", "harbor", "core", "tidal", "mystic"]
 OUT_DIR = Path(tempfile.gettempdir()) / "nexus-foot-compass-qa"
@@ -152,6 +154,10 @@ def main():
                     failures.append({**sample, "reason": "alignment_not_foot"})
                 elif abs(sample.get("dx", 99)) > PIXEL_TOLERANCE or abs(sample.get("dy", 99)) > PIXEL_TOLERANCE:
                     failures.append({**sample, "reason": "foot_off_cross"})
+                elif sample.get("shadowGap") is None:
+                    failures.append({**sample, "reason": "missing_shadow"})
+                elif float(sample.get("shadowGap") or 99) > SHADOW_GAP_TOLERANCE:
+                    failures.append({**sample, "reason": "shadow_gap"})
 
                 if companion_id == "greyshade-cat":
                     page.screenshot(
@@ -164,6 +170,7 @@ def main():
     report = {
         "baseUrl": BASE_URL,
         "tolerancePx": PIXEL_TOLERANCE,
+        "shadowGapTolerancePx": SHADOW_GAP_TOLERANCE,
         "companionCount": len(companion_ids) if results else 0,
         "totalSamples": len(results),
         "failureCount": len(failures),
@@ -171,6 +178,7 @@ def main():
         "screenshotDir": str(OUT_DIR),
         "failures": failures[:50],
         "maxDist": max((r.get("dist") or 0) for r in results) if results else None,
+        "maxShadowGap": max((r.get("shadowGap") or 0) for r in results) if results else None,
     }
     Path("docs/qa/_habitat_foot_compass_gate_output.json").write_text(
         json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8"
