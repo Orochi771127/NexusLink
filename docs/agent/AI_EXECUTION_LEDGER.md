@@ -58,6 +58,96 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-07-25 - Cursor Grok - Heartcore Orbit PACK R5 polish - COMPLETED
+
+- Status: `COMPLETED`（手感／四語 chrome／基本 a11y／ACCEPTANCE §O／回歸 harness；**真人測・真機・法務仍 OPEN**）
+- Branch / commit: `cursor/heartcore-orbit-agent-program-87a6` / uncommitted
+- Scope: PACK R5 only — 不加新模式、不開 G4、不宣稱上架；整模式完成前不 push `main`／不寫 Codebase MCP。
+- Work performed:
+  - MOD `src/orbit/orbitPhysics.js`（R5 手感常數＋短拉 charge 曲線）
+  - MOD `orbitEngine.js`／`orbitDuelEngine.js`（轉速衰減／摩擦對齊）
+  - MOD `orbitBattleController.js`／`orbitMapController.js`／`orbitDuelController.js`（i18n chrome、focus、aria）
+  - MOD `src/i18n/strings.js`（`orbit.*` 四語關鍵字）
+  - MOD `docs/design/BALANCE_SHEET.md` §9.1／§9.5；`ACCEPTANCE.md` §O
+  - NEW `docs/qa/orbit-feel-cases.mjs`、`orbit-i18n-cases.mjs`、`orbit-regression-cases.mjs`、`ORBIT_MANUAL_390x844.md`
+- Verification: `node docs/qa/orbit-regression-cases.mjs`；`node --check` 變更 JS。
+- Problems / risks: （a）關卡正文／夥伴台詞仍多為內容語繁中；（b）路徑進度仍 session-only；（c）**剩餘 open：真人測、真機、法務**。
+- Next safe action: Owner 依 `ORBIT_MANUAL_390x844.md` 手測；核可後再決定是否 commit／PR；**完成整模式前不要 push main／Codebase MCP index**。
+- Required reading: `ACCEPTANCE.md` §O、`docs/qa/ORBIT_MANUAL_390x844.md`、契約 V1
+
+### 2026-07-25 - Cursor Grok - Heartcore Orbit PACK R4 settlement - COMPLETED
+
+- Status: `COMPLETED`（遠征微光匯流＋exploration evidence；對決勝發獎；不碰 G4）
+- Branch / commit: `cursor/heartcore-orbit-agent-program-87a6` / uncommitted
+- Scope: PACK R4 — 首次通關寫 `expeditionVault.shards`＋`writeIntoDraft(exploration)`；進場讀 vault 微光敘事／Burst 投影；不呼叫 `buildExpeditionSettlement`。
+- Work performed:
+  - NEW `src/orbit/orbitSettlement.js`
+  - MOD `orbitBattleController.js`（結算交易＋save／growth 注入）
+  - MOD `orbitMapController.js`（遠征微光條）
+  - MOD `app.js`（注入 companionGrowthController + saveInteraction）
+  - NEW `docs/qa/orbit-settlement-cases.mjs`
+- Verification: `orbit-settlement-cases.mjs`；回歸 R1–R3 harness。
+- Problems / risks: （a）路徑進度仍 session-only；（b）evidence 依既有 companionStates.growth，缺 record 時 bridge 拒寫；（c）整模式完成前不 push main／Codebase MCP。
+- Next safe action: Owner 手測「遠征帶回微光→迴旋進場→通關見微光／Memory」；核可後開 **PACK R5 only**（打磨／回歸）。
+- Required reading: `src/orbit/orbitSettlement.js`、`docs/design/COMPANION_GROWTH_CONTRACT_V1.md`、契約 V1 §8
+
+### 2026-07-25 - Cursor Grok - Heartcore Orbit PACK R3 duel - COMPLETED
+
+- Status: `COMPLETED`（人機／幽靈對決；無網路；無 ±bond；連戰 budget）
+- Branch / commit: `cursor/heartcore-orbit-agent-program-87a6` / uncommitted
+- Scope: PACK R3 — 雙化身對決引擎、CPU 鏡像／急轉、幽靈重播上一場拉動、過熱連戰拒戰。
+- Work performed:
+  - NEW `src/data/orbit/duelProfiles.js`
+  - NEW `src/orbit/{orbitDuelEngine,orbitDuelBudget,orbitGhostRecorder}.js`
+  - NEW `src/ui/orbitDuelController.js`；路徑圖加「迴旋對決」入口
+  - `orbitBattleController`／`orbitMapController`／`styles.css` 接線
+  - NEW `docs/qa/orbit-duel-cases.mjs`
+- Verification: `node --check`；`orbit-duel-cases.mjs`；回歸 R1/R2 harness。
+- Problems / risks: （a）幽靈無錄製時退回人機鏡像；（b）仍不寫 save／growth；（c）整模式完成前不 push main／Codebase MCP。
+- Next safe action: 已接 R4。
+- Required reading: `src/orbit/orbitDuelEngine.js`、`src/ui/orbitDuelController.js`、契約 V1 §4.3
+
+### 2026-07-25 - Cursor Grok - Heartcore Orbit PACK R2 stages - COMPLETED
+
+- Status: `COMPLETED`（五關＋節點圖＋破關解鎖平原；session-only 進度）
+- Branch / commit: `cursor/heartcore-orbit-agent-program-87a6` / uncommitted
+- Scope: PACK R2 — 月湖五關、護盾柱／窄徑、路徑節點圖、通關解鎖平原路徑首關。
+- Work performed: `src/data/orbit/stages/*`、`orbitPathProgress.js`、`orbitMapController.js`、engine／UI 擴充、`docs/qa/orbit-stage-cases.mjs`
+- Verification: `orbit-stage-cases.mjs` PASS；回歸 R1 harness PASS。
+- Next safe action: 已接 R3。
+- Required reading: `src/data/orbit/stages/moonlakeStages.js`、`src/orbit/orbitPathProgress.js`
+
+### 2026-07-25 - Cursor Grok - Heartcore Orbit PACK R1 prototype - COMPLETED
+
+- Status: `COMPLETED`（單軌道可玩原型；探索入口）
+- Branch / commit: `cursor/heartcore-orbit-agent-program-87a6` / uncommitted
+- Scope: PACK R1 — 拉動／旋轉／撞擊＋探索「月湖路徑・迴旋」。
+- Work performed: `src/orbit/*`、`orbitBattleController.js`、pageRouter／app 接線、`orbit-battle-prototype-cases.mjs`
+- Verification: prototype harness PASS。
+- Next safe action: 已接 R2。
+- Required reading: `src/orbit/orbitEngine.js`、`src/ui/orbitBattleController.js`
+
+### 2026-07-25 - Cursor Grok - Heartcore Orbit PACK R0 contract - COMPLETED
+
+- Status: `COMPLETED`（docs only）
+- Branch / commit: `cursor/heartcore-orbit-agent-program-87a6` / uncommitted
+- Scope: PACK R0 — 心核迴旋戰契約；路徑短名月湖→平原→熔爐→南港→核心→潮汐→秘境。
+- Work performed: `HEARTCORE_ORBIT_BATTLE_CONTRACT_V1.md`、`PACK_HEARTCORE_ORBIT_BATTLE.md`、BALANCE_SHEET §9、README 索引。
+- Verification: docs-only。
+- Next safe action: 已接 R1。
+- Required reading: `docs/design/HEARTCORE_ORBIT_BATTLE_CONTRACT_V1.md`
+
+### 2026-07-25 - Cursor Grok - Heartcore Orbit Battle agent program - PLANNED
+
+- Status: `PLANNED` — Owner-facing agent instruction pack authored; **no runtime authorization** until PACK R0 contract + Gate 2.
+- Branch / commit: `cursor/heartcore-orbit-agent-program-87a6` / (pending commit)
+- Scope: Document how agents must build chat+bond daily loop, keep Expedition, and add Beyblade×marble「心核迴旋戰」with relationship-projected combat stats only.
+- Work performed: Added `docs/agent/HEARTCORE_ORBIT_BATTLE_AGENT_PROGRAM.md` (master prompt, red lines, projector table, PACK R0–R5); indexed in `docs/README.md`.
+- Verification: docs-only review; no runtime change.
+- Problems / risks: Easy for agents to over-scope into「finish whole game」or real ATK trees — program explicitly forbids; R1+ still needs separate Owner Gate 2.
+- Next safe action: Owner paste §4 master prompt + PACK R0 only; after contract approval, open R1 prototype.
+- Required reading: `docs/agent/HEARTCORE_ORBIT_BATTLE_AGENT_PROGRAM.md`, this entry.
+
 ### 2026-07-25 - Cursor Grok - Moonlake prop scale-up - COMPLETED
 
 - Status: `COMPLETED` for Owner review: enlarge Moonlake diorama props vs companion (placement kept; companion `displayScale` unchanged).

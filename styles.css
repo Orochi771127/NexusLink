@@ -3297,3 +3297,364 @@ body.panel-open .dev-reaction-lab {
     transition: opacity 280ms ease;
   }
 }
+
+/* ——— 心核迴旋戰（R1 原型；overlay，不改 index.html） ——— */
+.orbit-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 125;
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 50% 40%, rgba(24, 48, 72, 0.55), rgba(6, 10, 18, 0.92));
+}
+
+body.orbit-active .orbit-overlay {
+  display: flex;
+  pointer-events: auto;
+}
+
+body.orbit-active .core-hud,
+body.orbit-active .bottom-nav,
+body.orbit-active .soul-talk-launcher,
+body.orbit-active #page-layer {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.orbit-hud-top,
+.orbit-hud-bottom {
+  margin: 0 12px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(140, 200, 255, 0.28);
+  background: rgba(10, 18, 32, 0.82);
+  color: #e8f2ff;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+}
+
+.orbit-hud-top {
+  margin-top: calc(env(safe-area-inset-top, 0px) + 10px);
+}
+
+.orbit-hud-bottom {
+  margin-bottom: calc(env(safe-area-inset-bottom, 0px) + 12px);
+}
+
+.orbit-kicker {
+  margin: 0;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  opacity: 0.75;
+}
+
+.orbit-title {
+  margin: 4px 0 0;
+  font-size: 1.05rem;
+  letter-spacing: 0.03em;
+}
+
+.orbit-copy,
+.orbit-hint,
+.orbit-status,
+.orbit-companion-line,
+.orbit-stats {
+  margin: 6px 0 0;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  opacity: 0.9;
+}
+
+.orbit-companion-line {
+  color: #cfe9ff;
+  font-style: italic;
+}
+
+.orbit-stage {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  padding: 8px 12px;
+}
+
+.orbit-canvas {
+  display: block;
+  width: min(390px, 100%);
+  height: auto;
+  border-radius: 16px;
+  border: 1px solid rgba(140, 200, 255, 0.22);
+  touch-action: none;
+  cursor: crosshair;
+}
+
+.orbit-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.orbit-btn {
+  border: 1px solid rgba(160, 220, 255, 0.4);
+  border-radius: 10px;
+  padding: 10px 14px;
+  background: rgba(36, 64, 96, 0.9);
+  color: #eef6ff;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.orbit-btn--ghost {
+  background: rgba(16, 24, 36, 0.85);
+  border-color: rgba(180, 200, 220, 0.28);
+}
+
+.orbit-btn:active {
+  transform: translateY(1px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .orbit-btn:active {
+    transform: none;
+  }
+}
+
+/* R2 路徑節點圖 */
+.orbit-map {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: calc(env(safe-area-inset-top, 0px) + 10px) 12px calc(env(safe-area-inset-bottom, 0px) + 12px);
+  padding: 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(140, 200, 255, 0.28);
+  background: rgba(10, 18, 32, 0.88);
+  color: #e8f2ff;
+  max-height: calc(100vh - 24px);
+  overflow: auto;
+  pointer-events: auto;
+}
+
+.orbit-map[hidden] {
+  display: none !important;
+}
+
+.orbit-map-title {
+  margin: 4px 0 0;
+  font-size: 1.05rem;
+}
+
+.orbit-map-note,
+.orbit-map-narrative,
+.orbit-map-motes {
+  margin: 6px 0 0;
+  font-size: 0.8rem;
+  line-height: 1.45;
+  opacity: 0.88;
+}
+
+.orbit-map-motes {
+  color: #cfe9ff;
+}
+
+.orbit-map-narrative {
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(255, 230, 160, 0.08);
+  border: 1px solid rgba(255, 230, 160, 0.22);
+}
+
+.orbit-map-regions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.orbit-region-chip {
+  border: 1px solid rgba(160, 220, 255, 0.35);
+  border-radius: 999px;
+  padding: 6px 10px;
+  background: rgba(20, 36, 56, 0.9);
+  color: #e8f2ff;
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+
+.orbit-region-chip.is-active {
+  border-color: rgba(255, 220, 140, 0.7);
+  background: rgba(48, 64, 40, 0.95);
+}
+
+.orbit-region-chip.is-locked,
+.orbit-node-btn.is-locked {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.orbit-map-nodes {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.orbit-node-btn {
+  width: 100%;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  text-align: left;
+  border: 1px solid rgba(140, 200, 255, 0.28);
+  border-radius: 12px;
+  padding: 10px 12px;
+  background: rgba(16, 28, 44, 0.92);
+  color: inherit;
+  cursor: pointer;
+}
+
+.orbit-node-btn.is-cleared {
+  border-color: rgba(140, 220, 180, 0.45);
+}
+
+.orbit-node-index {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: rgba(140, 200, 255, 0.18);
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+
+.orbit-node-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.orbit-node-body strong {
+  font-size: 0.92rem;
+}
+
+.orbit-node-body em,
+.orbit-node-body small {
+  font-style: normal;
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+
+.orbit-map-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.orbit-battle[hidden] {
+  display: none !important;
+}
+
+body.orbit-active .orbit-battle:not([hidden]) {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex: 1;
+  min-height: 0;
+}
+
+/* R3 對決 */
+.orbit-duel {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  pointer-events: auto;
+}
+
+.orbit-duel[hidden] {
+  display: none !important;
+}
+
+.orbit-duel-picker {
+  margin: calc(env(safe-area-inset-top, 0px) + 10px) 12px calc(env(safe-area-inset-bottom, 0px) + 12px);
+  padding: 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 180, 140, 0.3);
+  background: rgba(18, 14, 24, 0.9);
+  color: #fff0e8;
+}
+
+.orbit-duel-title {
+  margin: 4px 0 0;
+  font-size: 1.05rem;
+}
+
+.orbit-duel-note {
+  margin: 6px 0 0;
+  font-size: 0.8rem;
+  line-height: 1.45;
+  opacity: 0.88;
+}
+
+.orbit-duel-profiles {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.orbit-duel-profile-btn {
+  text-align: left;
+  border: 1px solid rgba(255, 180, 140, 0.35);
+  border-radius: 12px;
+  padding: 10px 12px;
+  background: rgba(36, 24, 28, 0.92);
+  color: inherit;
+  cursor: pointer;
+}
+
+.orbit-duel-profile-btn strong {
+  display: block;
+  font-size: 0.92rem;
+}
+
+.orbit-duel-profile-btn em {
+  display: block;
+  margin-top: 4px;
+  font-style: normal;
+  font-size: 0.75rem;
+  opacity: 0.82;
+  line-height: 1.4;
+}
+
+.orbit-duel-picker-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.orbit-duel-arena:not([hidden]) {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex: 1;
+  min-height: 0;
+}
+
+.orbit-duel-canvas {
+  display: block;
+  width: min(390px, 100%);
+  height: auto;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 180, 140, 0.28);
+  touch-action: none;
+  cursor: crosshair;
+}

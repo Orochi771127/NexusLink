@@ -38,6 +38,7 @@ agent/AI_EXECUTION_LEDGER.md                ← 「當前真實狀態」唯一�
 | `strategy/NEXUS_LINK_MASTER_CANON_v3.1.md` | 最高戰略：定位、賣點、商業紅線 | 策略轉向時 |
 | `agent/AI_EXECUTION_LEDGER.md` | 當前三線狀態 SSOT（Engineering / Art / Raphael） | 每次工作 |
 | `design/COMPANION_GROWTH_CONTRACT_V1.md` | 心核夥伴養成／三階覺醒的現行設計與驗收契約（G1 session-only、G2 per-companion state 已接入；G3+ 尚未實作） | 每次動養成 |
+| `design/HEARTCORE_ORBIT_BATTLE_CONTRACT_V1.md` | 心核迴旋戰設計／驗收契約（化身制、關係投影、探索××路徑、破關換地圖；runtime 尚未實作） | 每次動迴旋戰 |
 | `design/BALANCE_SHEET.md` | 所有調校數值的單一可調表（本輪新增） | 每次動數值 |
 | `production/NEXUS_LINK_COMMERCIAL_UIUX_HANDOFF.md` | 商業 UI/UX 執行入口 | 商業切片期 |
 
@@ -49,11 +50,11 @@ agent/AI_EXECUTION_LEDGER.md                ← 「當前真實狀態」唯一�
 ## 2. 依主題分類
 
 - **戰略 / 商業**：`strategy/NEXUS_LINK_MASTER_CANON_v3.1.md`、`strategy/NEXUS_LINK_STEAM_DEMO_MASTER_BLUEPRINT.md`、`research/MARKET_EVIDENCE_AI_COMPANION.md`、`production/NEXUS_LINK_COMMERCIAL_UIUX_HANDOFF.md`。
-- **產品／架構審查（Proposed，未升格 Canon）**：`audits/PRODUCT_TENSION_AND_STATE_AUTHORITY_REVIEW.md`、`audits/FIRST_SESSION_MOTIVATION_REVIEW.md`、`strategy/NEXUS_LINK_REPAIR_SEQUENCE.md`、`strategy/PACK2_RELATIONSHIP_AUTHORITY_MIGRATION.md`、`strategy/PACK2_PHASE3_MIRROR_DECISION.md`、`strategy/PACK5_TERMINOLOGY_GLOSSARY.md`、`strategy/PACK_QUALITATIVE_BOND_PRESENTATION.md`、`strategy/PACK_NONCONFRONTATION_CHAPTER_GROWTH.md`、`strategy/PACK_INITIATIVE_BUDGET.md`、`strategy/PACK_EXPEDITION_LOOT_SEMANTICS.md`；Pack 1 §J 證據：`qa/PACK1_SJ_ACCEPTANCE_EVIDENCE.md`。
+- **產品／架構審查（Proposed，未升格 Canon）**：`audits/PRODUCT_TENSION_AND_STATE_AUTHORITY_REVIEW.md`、`audits/FIRST_SESSION_MOTIVATION_REVIEW.md`、`strategy/NEXUS_LINK_REPAIR_SEQUENCE.md`、`strategy/PACK2_RELATIONSHIP_AUTHORITY_MIGRATION.md`、`strategy/PACK2_PHASE3_MIRROR_DECISION.md`、`strategy/PACK5_TERMINOLOGY_GLOSSARY.md`、`strategy/PACK_QUALITATIVE_BOND_PRESENTATION.md`、`strategy/PACK_NONCONFRONTATION_CHAPTER_GROWTH.md`、`strategy/PACK_INITIATIVE_BUDGET.md`、`strategy/PACK_EXPEDITION_LOOT_SEMANTICS.md`、`strategy/PACK_HEARTCORE_ORBIT_BATTLE.md`（心核迴旋戰產品摘要；細節以設計契約為準）；Pack 1 §J 證據：`qa/PACK1_SJ_ACCEPTANCE_EVIDENCE.md`。
 - **音訊**：`audio/BGM_ASSET_MAP.md`（BGM 資產盤點與 runtime 場景對照）、`../assets/audio/README.md`。
-- **AI 協作流程（作業核心）**：`agent/AI_WORKFLOW.md`（6-Gate 全文）、`agent/TASK_TEMPLATE.md`、`agent/REVIEW_CHECKLIST.md`、`agent/AI_EXECUTION_LEDGER.md`（**當前狀態 SSOT**）。
+- **AI 協作流程（作業核心）**：`agent/AI_WORKFLOW.md`（6-Gate 全文）、`agent/TASK_TEMPLATE.md`、`agent/REVIEW_CHECKLIST.md`、`agent/AI_EXECUTION_LEDGER.md`（**當前狀態 SSOT**）、`agent/HEARTCORE_ORBIT_BATTLE_AGENT_PROGRAM.md`（**心核迴旋戰分階段 agent 指令；Owner 草案，逐包 Gate 2 核可**）。
 - **架構 / 檔案治理**：`architecture/FILE_OWNERSHIP.md`、`architecture/ADR-002-MULTI_COMPANION_RELATIONSHIP_AUTHORITY.md`（Pack 2 + Pack 2.5 guardrails）、`architecture/ADR-003-MEMORY_SINGLE_TRUTH_PROJECTION.md`（Pack 3）、`architecture/ADR-004-DYNAMIC_CHAPTER_ENCOUNTER_RESOLVER.md`（Pack 4）、`architecture/RAPHAEL_CORE_JS_V1.md`、`architecture/COMPANION_PREFERENCE_PERSISTENCE_V1.md`、`architecture/RAPHAEL_GATEWAY_SERVER_V1.md`、`architecture/PACKAGING_ROADMAP.md`、`architecture/RUNTIME_MAP.md`（⚠️ NEEDS UPDATE：對照現行程式驗證舊 storage/runtime 陳述）。
-- **設計規格**：`design/NEXUS_LINK_V3_VISUAL_SYSTEM.md`、`design/COMPANION_GROWTH_CONTRACT_V1.md`（**夥伴養成設計／驗收 SSOT；G1 session-only、G2 per-companion state 已接入，G3+ 尚未實作**）、`design/BALANCE_SHEET.md`（**數值 SSOT**）、`rfc/RFC_2_5D_HABITAT_RENDERER.md`。`r2-canon/*` 為歷史詳規；只有被現行文件明確引用且不衝突的部分才能沿用。
+- **設計規格**：`design/NEXUS_LINK_V3_VISUAL_SYSTEM.md`、`design/COMPANION_GROWTH_CONTRACT_V1.md`（**夥伴養成設計／驗收 SSOT；G1 session-only、G2 per-companion state 已接入，G3+ 尚未實作**）、`design/HEARTCORE_ORBIT_BATTLE_CONTRACT_V1.md`（**心核迴旋戰設計／驗收 SSOT；探索××路徑＋破關換地圖；runtime 未實作**）、`design/BALANCE_SHEET.md`（**數值 SSOT**）、`rfc/RFC_2_5D_HABITAT_RENDERER.md`。`r2-canon/*` 為歷史詳規；只有被現行文件明確引用且不衝突的部分才能沿用。
 - **品保 / 測試**：`testing/MANUAL_TEST_CHECKLIST.md`、`testing/PRIVATE_TEST_SCRIPT.md`、`testing/STEAM_DEMO_WEB_RELEASE_CHECKLIST.md`、`qa/WEB_RELEASE_EVIDENCE.md`、`qa/RAPHAEL_CORE_JS_V1_TEST_PROTOCOL.md`、`qa/bgm-integration-cases.mjs`、`qa/resonance-invite-authority-cases.mjs`（Pack 2）。
 - **資產 / 美術管線**：`art/STAGE1_CHARACTER_ASSET_INDEX.md`（正式五元守護入口）、`art/character-locks/*`（外觀權威）、`art/SPECIES_MOTION_TRANSLATION.md`（鳥／海馬／鹿／狐／虎動作翻譯）、`assets/CHARACTER_ASSET_PIPELINE.md`、`assets/COMPANION_ANIMATION_CATALOG.md`、`assets/COMPANION_ASSET_AUTOMATION.md`、`assets/SKILL_ORCHESTRATED_COMPANION_PIPELINE.md`、`asset-pipeline.md`（⚠️ NEEDS UPDATE：64×64 步驟需與現行 illustrated 512 政策分開）、`prompts/*`。
 - **交接歷史**：`handoff/*` — 各輪 AI 交接；**歷史軌跡非當前狀態**，當前狀態一律查執行分類帳。
