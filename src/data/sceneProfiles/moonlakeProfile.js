@@ -55,10 +55,10 @@ export const moonlakeProfile = Object.freeze({
     })
   }),
 
-  // This scene anchor is the visible compass center. The renderer preserves the
-  // sprite asset's bottom-center frame anchor while aligning its visual center here.
+  // Owner 2026-07-25：腳底對齊地圖十字／羅盤中心（非角色視覺中心）。
+  // Sprite 資產錨點維持 bottom-center；placement 把 container 原點（腳）放到 backgroundPoint。
   companion: Object.freeze({
-    alignment: "visual-center",
+    alignment: "foot",
     backgroundPoint: Object.freeze({ x: 540, y: 1348 }),
     anchor: Object.freeze({ x: 0.5, y: 1348 / 1920 }),
     displayScale: 0.9,

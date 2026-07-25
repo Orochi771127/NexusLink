@@ -126,14 +126,30 @@ function applyCompanionResponsiveLayout(companion, app) {
   const targetX = target.x;
   const targetY = target.y;
 
-  if (profile?.companion?.alignment === "visual-center") {
+  // foot（預設）：以「不透明像素底部中心」對齊十字——坐姿／透明 padding 時
+  // 比單純 container 原點更貼近玩家看到的腳掌落地點。
+  // frame-foot：強制用 sprite bottom-center 原點（舊行為）。
+  // visual-center：角色不透明視覺中心對齊（2026-07-15 契約，保留回滾）。
+  const alignment = profile?.companion?.alignment || "foot";
+  if (alignment === "visual-center") {
     const visualCenter = getCompanionVisualCenter(companion);
     companion.x = Math.round(targetX - visualCenter.x * companion.scale.x);
     companion.y = Math.round(targetY - visualCenter.y * companion.scale.y);
-  } else {
+  } else if (alignment === "frame-foot") {
     companion.x = Math.round(targetX);
     companion.y = Math.round(targetY);
+  } else {
+    const opaqueFoot = getCompanionOpaqueFoot(companion);
+    companion.x = Math.round(targetX - opaqueFoot.x * companion.scale.x);
+    companion.y = Math.round(targetY - opaqueFoot.y * companion.scale.y);
   }
+  // QA／除錯：記錄這一拍的目標點（十字中心投影）與對齊模式。
+  companion.__placementTarget = Object.freeze({
+    x: Math.round(targetX),
+    y: Math.round(targetY),
+    alignment,
+    profileId: profile?.id || null
+  });
   applyMinimumCompanionHitArea(companion, app, profile);
 }
 
@@ -192,6 +208,97 @@ function resolveCompanionTarget(profile, app, anchor, referenceWidth, referenceH
     x: (Number(anchor?.x) || 0.5) * referenceWidth,
     y: (Number(anchor?.y) || 0.7) * referenceHeight
   };
+}
+
+/**
+ * 不透明像素的底部中心（相對 companion container 原點）。
+ * 坐姿角色常在 frame 底部留透明，container 原點會低於可見腳掌；
+ * 用此偏移把「看得見的腳」放到十字中心。
+ */
+function getCompanionOpaqueFoot(companion) {
+  if (companion.__opaqueFoot) return companion.__opaqueFoot;
+
+  const visual = companion.children?.find((child) => child instanceof PIXI.Sprite) || companion;
+  const foot = getOpaqueTextureFoot(visual);
+  if (!foot) return { x: 0, y: 0 };
+  if (visual === companion) {
+    companion.__opaqueFoot = foot;
+    return foot;
+  }
+
+  const scaleX = Number.isFinite(visual.scale?.x) ? visual.scale.x : 1;
+  const scaleY = Number.isFinite(visual.scale?.y) ? visual.scale.y : 1;
+  const pivotX = Number(visual.pivot?.x) || 0;
+  const pivotY = Number(visual.pivot?.y) || 0;
+  const rotation = Number(visual.rotation) || 0;
+  const localX = (foot.x - pivotX) * scaleX;
+  const localY = (foot.y - pivotY) * scaleY;
+  const cos = Math.cos(rotation);
+  const sin = Math.sin(rotation);
+  const resolved = {
+    x: (Number(visual.x) || 0) + localX * cos - localY * sin,
+    y: (Number(visual.y) || 0) + localX * sin + localY * cos
+  };
+  companion.__opaqueFoot = resolved;
+  return resolved;
+}
+
+function getOpaqueTextureFoot(visual) {
+  if (typeof document === "undefined" || !visual?.texture) return null;
+  const texture = visual.texture;
+  const source = texture.source?.resource;
+  const frame = texture.frame;
+  const width = Math.round(Number(frame?.width));
+  const height = Math.round(Number(frame?.height));
+  if (!source || !Number.isFinite(width) || !Number.isFinite(height) || width <= 0 || height <= 0) {
+    return null;
+  }
+
+  try {
+    const canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+    const context = canvas.getContext("2d", { willReadFrequently: true });
+    if (!context) return null;
+    context.drawImage(
+      source,
+      Number(frame.x) || 0,
+      Number(frame.y) || 0,
+      width,
+      height,
+      0,
+      0,
+      width,
+      height
+    );
+    const pixels = context.getImageData(0, 0, width, height).data;
+    let minX = width;
+    let maxX = -1;
+    let maxY = -1;
+    for (let y = height - 1; y >= 0; y -= 1) {
+      for (let x = 0; x < width; x += 1) {
+        if (pixels[(y * width + x) * 4 + 3] < 16) continue;
+        if (maxY < 0) maxY = y;
+        if (y === maxY) {
+          if (x < minX) minX = x;
+          if (x > maxX) maxX = x;
+        }
+      }
+      if (maxY >= 0 && y < maxY) break;
+    }
+    if (maxY < 0 || maxX < minX) return null;
+
+    const anchorX = Number(visual.anchor?.x) || 0;
+    const anchorY = Number(visual.anchor?.y) || 0;
+    // 相對 sprite local（已扣 anchor）：底部中心。
+    return {
+      x: (minX + maxX + 1) / 2 - anchorX * width,
+      y: (maxY + 0.5) - anchorY * height
+    };
+  } catch (error) {
+    console.warn("Companion opaque-foot measurement fell back to frame origin:", error);
+    return null;
+  }
 }
 
 function getCompanionVisualCenter(companion) {

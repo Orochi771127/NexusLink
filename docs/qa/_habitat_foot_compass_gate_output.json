@@ -1,0 +1,11 @@
+{
+  "baseUrl": "http://127.0.0.1:5288",
+  "tolerancePx": 3.0,
+  "companionCount": 16,
+  "totalSamples": 112,
+  "failureCount": 0,
+  "passed": true,
+  "screenshotDir": "C:\\Users\\User\\AppData\\Local\\Temp\\nexus-foot-compass-qa",
+  "failures": [],
+  "maxDist": 1.085095990970251
+}

@@ -58,6 +58,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-07-25 - Cursor Grok - Habitat foot-on-compass alignment - COMPLETED
+
+- Status: `COMPLETED` for Owner correction: opaque feet on authored cross/compass center (supersedes 2026-07-15 visual-center acceptance for this placement).
+- Branch / commit: `fix/habitat-foot-on-compass-center` → PR into protected `main`.
+- Scope: Scene Profiles `alignment: "foot"`; `getCompanionOpaqueFoot` compensates sit-pose transparent padding; QA APIs + live matrix gate.
+- Work performed: companionRenderer opaque-foot placement; moonlake + Linkara profiles; `__NEXUS_HABITAT.getFootPlacement/swapCompanionById`; `_run_habitat_foot_compass_gate.py`.
+- Verification: `node docs/qa/companion-renderer-lifecycle-cases.mjs` 29/29; live gate 7 habitats × 16 companions = 112/112, `maxDist≈1.1px`.
+- Problems / risks: Sitting poses still show front paws slightly above geometric center (contact point under body); authored compass points unchanged.
+- Next safe action: Owner visual feel-check on device; optional per-habitat compass point retune if any plate still feels high/low.
+- Required reading: `src/pixi/companionRenderer.js`, `docs/qa/_run_habitat_foot_compass_gate.py`, this entry.
+
 ### 2026-07-25 - Cursor Grok - Pack D expedition loot semantics - COMPLETED
 
 - Status: `COMPLETED` for Phase 1 player-facing mote/trace language (ids + craft math unchanged).

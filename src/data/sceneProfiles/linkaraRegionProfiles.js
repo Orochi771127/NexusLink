@@ -20,7 +20,8 @@ function createRegionProfile(id, definition) {
     background: Object.freeze({ mode: "cover", day: art.day, night: art.night, sameComposition: true }),
     layers: Object.freeze({ depthMask: art.depthMask, placementMask: art.placementMask }),
     companion: Object.freeze({
-      alignment: "visual-center",
+      // Owner 2026-07-25：腳底對齊各區十字中心（compassCenter）。
+      alignment: "foot",
       backgroundPoint: definition.compassCenter,
       anchor: Object.freeze({ x: 0.5, y: definition.compassCenter.y / 1920 }),
       reservedRect: Object.freeze({ x: 0.38, y: definition.compassCenter.y / 1920 - 0.135, w: 0.24, h: 0.27 })

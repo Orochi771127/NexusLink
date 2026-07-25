@@ -808,13 +808,13 @@ async function bootScene(
     // ignore malformed query
   }
 
+  // 天氣／時間 hook 可先掛；依賴 companion / swapCompanion 的 QA API 在 attach 後再補。
   if (typeof window !== "undefined") {
     window.__NEXUS_HABITAT = {
       setWeather: setHabitatWeather,
       setTimePhase: setSceneTimePhaseOverride,
       clearTimePhase: clearSceneTimePhaseOverride,
       weatherHooks: HABITAT_WEATHER_HOOKS,
-      switchHabitat: (habitatId) => switchHabitat(habitatId),
       getActiveHabitat: () => environmentLayer.profileId
     };
   }
@@ -951,6 +951,8 @@ async function bootScene(
     const profile = getSceneProfile(normalizedId);
     const switched = await switchEnvironmentHabitat(environmentLayer, layers, app, profile);
     if (!switched) return false;
+    store.setState({ activeHabitatId: normalizedId });
+    renderActiveHabitatName(normalizedId);
     companionPositionCleanup = positionCompanion(companion, app);
     rebaseCompanionMotion(companionMotionController, companion);
     weatherFx.weatherId = "__pending__";
@@ -1040,6 +1042,63 @@ async function bootScene(
     habitatTraceRenderer.update(t);
   });
 
+  if (typeof window !== "undefined") {
+    Object.assign(window.__NEXUS_HABITAT || (window.__NEXUS_HABITAT = {}), {
+      switchHabitat: (habitatId) => switchHabitat(habitatId),
+      // QA：切換夥伴（先寫 activeCompanionId，再走 scene swap）。
+      swapCompanionById: async (companionId) => {
+        const next = getCompanionById(companionId);
+        if (!next) return false;
+        store.setState({ activeCompanionId: next.id });
+        return swapCompanion(next);
+      },
+      // QA：腳底基準（motion.base）對十字投影目標（__placementTarget）。
+      getFootPlacement() {
+        const target = companion?.__placementTarget || null;
+        const baseX = Number(companionMotionController?.baseX ?? companion?.x);
+        const baseY = Number(companionMotionController?.baseY ?? companion?.y);
+        const scaleX = Number(companion?.scale?.x) || 1;
+        const scaleY = Number(companion?.scale?.y) || 1;
+        // opaque-foot 對齊時，可見腳掌 = base + opaqueFoot*scale；應等於十字目標。
+        const opaque = companion?.__opaqueFoot || { x: 0, y: 0 };
+        const footX = baseX + Number(opaque.x || 0) * scaleX;
+        const footY = baseY + Number(opaque.y || 0) * scaleY;
+        let globalX = null;
+        let globalY = null;
+        try {
+          if (companion && typeof companion.toGlobal === "function") {
+            const global = companion.toGlobal({
+              x: Number(opaque.x || 0),
+              y: Number(opaque.y || 0)
+            });
+            globalX = Number(global.x);
+            globalY = Number(global.y);
+          } else if (companion && typeof companion.getGlobalPosition === "function") {
+            const global = companion.getGlobalPosition();
+            globalX = Number(global.x) + Number(opaque.x || 0) * scaleX;
+            globalY = Number(global.y) + Number(opaque.y || 0) * scaleY;
+          }
+        } catch {
+          // ignore
+        }
+        return {
+          profileId: environmentLayer.profileId,
+          companionId: store.getState().activeCompanionId || null,
+          alignment: target?.alignment || null,
+          footX,
+          footY,
+          baseX,
+          baseY,
+          targetX: Number(target?.x),
+          targetY: Number(target?.y),
+          globalX,
+          globalY
+        };
+      },
+      getActiveCompanionNode: () => companion || null
+    });
+  }
+
   return { swapCompanion, switchHabitat, sceneBridge };
 }
 
@@ -1114,9 +1173,12 @@ function getAnimationLabState() {
 
 function exposeDevCompanion(companion) {
   if (typeof window === "undefined") return;
+  // 常駐把手：腳底／十字 QA 與部分 gate 需要；舊 devPanel 別名一併保留。
+  window.__NEXUS_ACTIVE_COMPANION__ = companion;
   const params = new URLSearchParams(window.location.search);
-  if (params.get("devPanel") !== "1" && params.get("devSceneEditor") !== "1") return;
-  window.__NEXUS_TEST_COMPANION__ = companion;
+  if (params.get("devPanel") === "1" || params.get("devSceneEditor") === "1") {
+    window.__NEXUS_TEST_COMPANION__ = companion;
+  }
 }
 
 function installRaphaelPreviewHarnessIfRequested() {
