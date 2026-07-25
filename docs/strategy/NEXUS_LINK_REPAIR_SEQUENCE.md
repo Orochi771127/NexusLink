@@ -21,7 +21,7 @@
 | A | Qualitative Bond Presentation | **Phase 1 shipped** (UI stages; engines keep numbers) |
 | B | Non-confrontation Growth Route | **Phase 1 shipped** (chapter life-event + shared trial engine) |
 | C | Initiative Budget | **Phase 1 shipped** (session budget view; no daily FOMO) |
-| D | Expedition Loot Semantics | **Authorized next** |
+| D | Expedition Loot Semantics | **Phase 1 shipped** (mote/trace copy; ids & craft math kept) |
 
 ---
 
@@ -360,3 +360,21 @@ Export ambient initiative limits as a named session budget view for gates/debug/
 ### Non-goals
 
 No daily cap, streak, unread badge, or save-schema field.
+
+---
+
+## TASK PACK D — Expedition Loot Semantics（Phase 1 shipped）
+
+### Objective
+
+Reframe expedition returns as shared light-traces, not farming trophies.
+
+### Shipped (2026-07-25)
+
+- `lootPresentation.js`; mote labels; settlement/journal/craft/intent copy
+- Doc: `docs/strategy/PACK_EXPEDITION_LOOT_SEMANTICS.md`
+- Harness: `docs/qa/expedition-loot-semantics-cases.mjs`
+
+### Non-goals
+
+No vault schema rename; no drop-rate / cost retune.

@@ -1,5 +1,6 @@
 import { clamp } from "../utils/clamp.js";
-import { getShardType, getRegionLootTable } from "../data/lootTables.js";
+import { getRegionLootTable } from "../data/lootTables.js";
+import { formatBroughtMotesLine } from "./lootPresentation.js";
 import { getMemoryEventForExplorePoint } from "../data/expeditionMemoryEvents.js";
 import { getExpeditionRegionByNodeId } from "../data/expeditionRegions.js";
 import { EmotionDict } from "../data/emotionDictionary.js";
@@ -128,15 +129,21 @@ export function buildExpeditionJournal(session, {
   const name = session?.companionName || "夥伴";
   const region = getExpeditionRegionByNodeId(session?.regionId);
   const regionLabel = region?.label?.zh || "遠征區";
-  const shardLabel = getShardType(primaryShard).label.zh;
   const lines = [];
 
   if (retreated) {
     lines.push(`${name}在${regionLabel}深處停了下來，決定先回到營地。`);
   } else if (kills > 0 && primaryCount > 0) {
-    lines.push(`${name}在${regionLabel}謹慎接戰後，帶回了 ${primaryCount} 枚${shardLabel}。`);
+    lines.push(
+      formatBroughtMotesLine({
+        companionName: name,
+        shardId: primaryShard,
+        count: primaryCount,
+        regionLabel
+      })
+    );
   } else if (kills > 0) {
-    lines.push(`${name}驅散了${regionLabel}裡的雜訊，但來不及撿齊碎晶。`);
+    lines.push(`${name}驅散了${regionLabel}裡的雜訊，微光痕跡還沒來得及收齊。`);
   } else {
     lines.push(`${name}在${regionLabel}巡視了一陣，把可疑的動靜都記在心裡。`);
   }

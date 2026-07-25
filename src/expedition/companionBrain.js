@@ -34,8 +34,8 @@ const REASON_COPY = Object.freeze({
     anxious: "牠對未知目標保持距離。"
   },
   COLLECT: {
-    default: "牠想先撿取附近的碎晶。",
-    near: "碎晶就在腳邊，牠湊了過去。"
+    default: "牠想先靠近附近的微光痕跡。",
+    near: "微光就在腳邊，牠湊了過去。"
   },
   RETREAT: {
     default: "牠的能量不足，想先離開這裡。",

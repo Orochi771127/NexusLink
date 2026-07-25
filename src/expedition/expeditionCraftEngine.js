@@ -69,8 +69,8 @@ export function applyCraftRecipe(currentState = {}, recipeId, now = Date.now()) 
     return {
       ok: false,
       message: missing
-        ? `碎晶還差一些：${missing}。先完成遠征，把碎晶帶回棲地吧。`
-        : "還沒有足夠的碎晶。",
+        ? `微光還差一些：${missing}。先完成遠征，把同行痕跡帶回棲地吧。`
+        : "還沒有足夠的微光痕跡。",
       reactionPreview: "牠看著你空著的手，像在等一縷從遠征帶回來的光。"
     };
   }

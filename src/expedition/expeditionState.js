@@ -1,5 +1,6 @@
 import { getExpeditionRegionByNodeId } from "../data/expeditionRegions.js";
-import { getRegionLootTable, getShardType } from "../data/lootTables.js";
+import { getRegionLootTable } from "../data/lootTables.js";
+import { formatBroughtMotesLine } from "./lootPresentation.js";
 import { getAdventureProfile } from "../data/companionAdventureProfiles.js";
 import { bootstrapExpeditionEncounter } from "./encounterDirector.js";
 import { createSessionHeart } from "./sessionHeart.js";
@@ -117,14 +118,18 @@ export function summarizeExpeditionSession(session) {
   const regionLabel = region?.label?.zh || "遠征區";
   const primaryShard = getRegionLootTable(regionId).primaryShard;
   const primaryCount = Number(loot[primaryShard]) || 0;
-  const shardLabel = getShardType(primaryShard).label.zh;
   const kills = session.stats?.kills || 0;
 
   let message = `${session.companionName}在${regionLabel}邊緣張望了一會兒，還沒來得及深入。`;
   if (kills > 0 && primaryCount > 0) {
-    message = `${session.companionName}帶回了 ${primaryCount} 枚${shardLabel}。`;
+    message = formatBroughtMotesLine({
+      companionName: session.companionName,
+      shardId: primaryShard,
+      count: primaryCount,
+      regionLabel
+    });
   } else if (visited > 0) {
-    message = `${session.companionName}在${regionLabel}巡視了一陣，造訪了 ${visited} 處可疑地點。`;
+    message = `${session.companionName}在${regionLabel}巡視了一陣，看過幾處讓人心安或心懸的地方。`;
   }
 
   return {
