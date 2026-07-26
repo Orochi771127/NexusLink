@@ -59,11 +59,11 @@ export const moonlakeProfile = Object.freeze({
   // Sprite 資產錨點維持 bottom-center；placement 把 container 原點（腳）放到 backgroundPoint。
   companion: Object.freeze({
     alignment: "foot",
-    backgroundPoint: Object.freeze({ x: 540, y: 1348 }),
-    anchor: Object.freeze({ x: 0.5, y: 1348 / 1920 }),
+    backgroundPoint: Object.freeze({ x: 562.75, y: 1417.25 }),
+    anchor: Object.freeze({ x: 205 / 390, y: 623 / 844 }),
     displayScale: 0.9,
     minimumHitArea: Object.freeze({ width: 84, height: 104 }),
-    reservedRect: Object.freeze({ x: 0.38, y: 1348 / 1920 - 0.135, w: 0.24, h: 0.27 })
+    reservedRect: Object.freeze({ x: 205 / 390 - 0.12, y: 623 / 844 - 0.135, w: 0.24, h: 0.27 })
   }),
 
   ui: Object.freeze({

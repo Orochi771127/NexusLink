@@ -4973,3 +4973,63 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
   editor URL.
 - Required reading: `src/tools/sceneEditor.js`,
   `docs/qa/moonlake-mobile-scene-editor-cases.cjs`.
+
+### 2026-07-26 - Codex - Owner Moonlake JSON Layout Lock - IN PROGRESS
+
+- Status: `IN PROGRESS`; Owner supplied the scene-editor JSON and explicitly
+  authorized GROUNDWORK implementation, commit, push to protected `main`, and
+  MCP indexing.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `TP-MOONLAKE-OWNER-JSON-LAYOUT-LOCK`.
+- Layer: `GROUNDWORK` for `sceneLayout.js` and Moonlake scene-profile data.
+- Scope: write the Owner-exported coordinates, grid cells, offsets and scales
+  for four legacy scene props, eight R2 object-pack placements and the active
+  companion target; preserve dynamic celestial motion and existing asset paths.
+- Files: `src/data/sceneLayout.js`,
+  `src/data/sceneProfiles/moonlakeObjectPack.js`,
+  `src/data/sceneProfiles/moonlakeProfile.js`, focused QA and this ledger.
+- Red-line check: no save, relationship, reward, safety, RaphaelCore, battle,
+  asset bytes, asset manifest, dependency or Initial Bond change.
+- Non-goals: no image edits, no new objects, no dynamic sun/moon policy change,
+  no promotion of staged art.
+- Planned verification: exact JSON value lock, grid-to-art-position
+  reconstruction, 390x844 companion projection and effective scale, syntax,
+  scoped diff, required GitHub release gate and MCP readback.
+- Next safe action: implement in the isolated latest-main worktree, verify,
+  publish through protected-main PR, then reindex MCP.
+- Required reading: Owner JSON in task context, `src/data/sceneLayout.js`,
+  `src/data/sceneProfiles/moonlakeObjectPack.js`,
+  `src/data/sceneProfiles/moonlakeProfile.js`.
+
+### 2026-07-26 - Codex - Owner Moonlake JSON Layout Lock - VERIFIED
+
+- Status: `VERIFIED`; exact data implementation and focused QA are complete in
+  the isolated latest-main worktree. Protected-main publication is authorized
+  and pending.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `TP-MOONLAKE-OWNER-JSON-LAYOUT-LOCK`.
+- Branch / commit: `codex/moonlake-json-layout-lock` / pending commit.
+- Work performed:
+  - wrote Owner values for sun, moon, lantern, crystal and companion base
+    layout;
+  - wrote all eight R2 slot cells, offsets and placement scales so their
+    reconstructed art positions exactly match the supplied JSON;
+  - projected the companion target to 205x623 at 390x844 and retained the
+    existing 0.9 display multiplier, producing runtime scale 0.648;
+  - updated the companion reserved rectangle around the new target.
+- Verification:
+  - changed JS and QA syntax PASS;
+  - `moonlake-layout-json-lock-cases.mjs` `38/38 PASS`;
+  - mobile editor regression `12/12 PASS`;
+  - scoped `git diff --check` PASS.
+- Red-line result: no asset, save, state, relationship, reward, safety,
+  RaphaelCore, battle, dependency or onboarding change.
+- Honest runtime note: sun and moon retain the canonical time-driven celestial
+  arc; exported x/y values are static/editor layout defaults and do not freeze
+  day/night motion.
+- Next safe action: commit, push, protected PR, required `web-release-gate`,
+  merge to `main`, Pages verification, then full MCP reindex and readback.
+- Required reading: `docs/qa/moonlake-layout-json-lock-cases.mjs`,
+  `src/data/sceneLayout.js`,
+  `src/data/sceneProfiles/moonlakeObjectPack.js`,
+  `src/data/sceneProfiles/moonlakeProfile.js`.
