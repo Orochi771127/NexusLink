@@ -4885,3 +4885,37 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 - Status: `SUPERSEDED` by the VERIFIED entry above (`main` / `74dfa03`, PR #122).
 - Kept for chronology only; do not treat as open work.
+
+### 2026-07-26 - Codex - Video-Inspired Clay/Resin Required Visuals R2 - VERIFIED
+
+- Status: `VERIFIED` for output-only staging; human visual approval and
+  reference audit remain pending.
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `TP-E2 VIDEO-INSPIRED CLAY-RESIN ART COMPLETION`.
+- Layer: `GROUNDWORK`, restricted to `output/**`, the art production index and
+  documentation. No `assets/**`, runtime, Pixi, save, state, RaphaelCore,
+  gameplay economy, tool or project script change was made.
+- Need audit: current-main runtime inspection plus codebase-memory MCP found no
+  additional required PNG slots beyond the existing eighteen First Resonance,
+  Habitat Moments and Rift/Crystal visuals. Current UI still uses CSS/Pixi
+  procedural visuals; generated candidates are not runtime integration.
+- Generation: all `18/18` functional slots received new
+  `clay_resin_3d_miniature` R2 candidates through built-in image generation;
+  R1 was preserved. Optional polish remains `0/8` because no runtime consumer
+  or acceptance requirement justified it.
+- Mechanical verification: `18/18` finals are RGBA with exact dimensions,
+  transparent corners, no alpha-over-8 cell-edge contact, at least 24 px cell
+  margins and zero hidden RGB.
+- Visual self-review: `ritual-fx-pulse-r2` remains too close to a heart/healing
+  emblem; `resonance-circle-layer-r2` still risks formation/device-network
+  interpretation. Both are recorded as `revise`, not approved.
+- Evidence:
+  `output/habitat/moonlake-video-inspired-r2/clay-resin-required-r2/BATCH_QC.md`,
+  `previews/contact-sheet-required-18-r2.png`,
+  `qc/batch-mechanical-report.json`, `manifest.json`, and
+  `prompts/required-batch-r2.json`.
+- Promotion state: `humanApproved:false`, `referenceAuditPassed:false`,
+  `assetPromoted:false`, `runtimeIntegrated:false`.
+- Next safe action: human batch review, then targeted R3 generation only for
+  rejected or unclear candidates. Asset promotion remains a separately
+  approved GROUNDWORK package.

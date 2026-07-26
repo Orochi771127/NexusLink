@@ -1,0 +1,1130 @@
+{
+  "schemaVersion": 1,
+  "batchId": "TP-E2-CLAY-RESIN-REQUIRED-VISUALS-R2",
+  "itemCount": 18,
+  "passCount": 18,
+  "allMechanicalChecksPassed": true,
+  "humanVisualReview": "PENDING",
+  "referenceAuditPassed": false,
+  "assetPromoted": false,
+  "runtimeIntegrated": false,
+  "items": [
+    {
+      "id": "heart-core-carrier-r2",
+      "group": "first-resonance",
+      "grid": "1x1",
+      "path": "output/habitat/moonlake-video-inspired-r2/clay-resin-required-r2/concepts/normalized/heart-core-carrier-r2/final/heart-core-carrier-r2.png",
+      "mode": "RGBA",
+      "size": [
+        512,
+        512
+      ],
+      "expectedSize": [
+        512,
+        512
+      ],
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "hiddenRgbAtAlphaZero": 0,
+      "cells": [
+        {
+          "row": 0,
+          "col": 0,
+          "alphaBboxOver8": [
+            26,
+            38,
+            486,
+            473
+          ],
+          "margins": {
+            "left": 26,
+            "top": 38,
+            "right": 26,
+            "bottom": 39
+          },
+          "minMargin": 26,
+          "edgeTouchOver8": false
+        }
+      ],
+      "sha256": "a514b8ef8c2429879d8fad40c0d2cefaf6356602bf1104a1e8ecab6b35d428ea",
+      "pass": true
+    },
+    {
+      "id": "element-light-moon-r2",
+      "group": "first-resonance",
+      "grid": "1x1",
+      "path": "output/habitat/moonlake-video-inspired-r2/clay-resin-required-r2/concepts/normalized/element-light-moon-r2/final/element-light-moon-r2.png",
+      "mode": "RGBA",
+      "size": [
+        512,
+        512
+      ],
+      "expectedSize": [
+        512,
+        512
+      ],
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "hiddenRgbAtAlphaZero": 0,
+      "cells": [
+        {
+          "row": 0,
+          "col": 0,
+          "alphaBboxOver8": [
+            26,
+            28,
+            486,
+            483
+          ],
+          "margins": {
+            "left": 26,
+            "top": 28,
+            "right": 26,
+            "bottom": 29
+          },
+          "minMargin": 26,
+          "edgeTouchOver8": false
+        }
+      ],
+      "sha256": "6fbcfdb2f6e1b3213cb5c9701dbf515187209143ec8f5552d1339b2c37f79bb7",
+      "pass": true
+    },
+    {
+      "id": "element-light-fire-r2",
+      "group": "first-resonance",
+      "grid": "1x1",
+      "path": "output/habitat/moonlake-video-inspired-r2/clay-resin-required-r2/concepts/normalized/element-light-fire-r2/final/element-light-fire-r2.png",
+      "mode": "RGBA",
+      "size": [
+        512,
+        512
+      ],
+      "expectedSize": [
+        512,
+        512
+      ],
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "hiddenRgbAtAlphaZero": 0,
+      "cells": [
+        {
+          "row": 0,
+          "col": 0,
+          "alphaBboxOver8": [
+            38,
+            26,
+            473,
+            486
+          ],
+          "margins": {
+            "left": 38,
+            "top": 26,
+            "right": 39,
+            "bottom": 26
+          },
+          "minMargin": 26,
+          "edgeTouchOver8": false
+        }
+      ],
+      "sha256": "c17bb83322583ee92ce5a5feca460afecf8f20e6d0147cad74b5725f15bfd8e9",
+      "pass": true
+    },
+    {
+      "id": "element-light-water-r2",
+      "group": "first-resonance",
+      "grid": "1x1",
+      "path": "output/habitat/moonlake-video-inspired-r2/clay-resin-required-r2/concepts/normalized/element-light-water-r2/final/element-light-water-r2.png",
+      "mode": "RGBA",
+      "size": [
+        512,
+        512
+      ],
+      "expectedSize": [
+        512,
+        512
+      ],
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "hiddenRgbAtAlphaZero": 0,
+      "cells": [
+        {
+          "row": 0,
+          "col": 0,
+          "alphaBboxOver8": [
+            33,
+            26,
+            478,
+            486
+          ],
+          "margins": {
+            "left": 33,
+            "top": 26,
+            "right": 34,
+            "bottom": 26
+          },
+          "minMargin": 26,
+          "edgeTouchOver8": false
+        }
+      ],
+      "sha256": "3f945494d1f9ad98d0cb6573d2825dcd13dbcccb340c617ae6e135ce11fe4bbf",
+      "pass": true
+    },
+    {
+      "id": "ritual-foreground-veil-r2",
+      "group": "first-resonance",
+      "grid": "1x1",
+      "path": "output/habitat/moonlake-video-inspired-r2/clay-resin-required-r2/concepts/normalized/ritual-foreground-veil-r2/final/ritual-foreground-veil-r2.png",
+      "mode": "RGBA",
+      "size": [
+        512,
+        512
+      ],
+      "expectedSize": [
+        512,
+        512
+      ],
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "hiddenRgbAtAlphaZero": 0,
+      "cells": [
+        {
+          "row": 0,
+          "col": 0,
+          "alphaBboxOver8": [
+            46,
+            68,
+            465,
+            443
+          ],
+          "margins": {
+            "left": 46,
+            "top": 68,
+            "right": 47,
+            "bottom": 69
+          },
+          "minMargin": 46,
+          "edgeTouchOver8": false
+        }
+      ],
+      "sha256": "030fbd94b1e7524b2ba33b37e40ab21932fe29991fe40269b718f90ccfc32f37",
+      "pass": true
+    },
+    {
+      "id": "ritual-fx-pulse-r2",
+      "group": "first-resonance",
+      "grid": "2x2",
+      "path": "output/habitat/moonlake-video-inspired-r2/clay-resin-required-r2/concepts/normalized/ritual-fx-pulse-r2/final/ritual-fx-pulse-r2.png",
+      "mode": "RGBA",
+      "size": [
+        1024,
+        1024
+      ],
+      "expectedSize": [
+        1024,
+        1024
+      ],
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "hiddenRgbAtAlphaZero": 0,
+      "cells": [
+        {
+          "row": 0,
+          "col": 0,
+          "alphaBboxOver8": [
+            69,
+            60,
+            442,
+            452
+          ],
+          "margins": {
+            "left": 69,
+            "top": 60,
+            "right": 70,
+            "bottom": 60
+          },
+          "minMargin": 60,
+          "edgeTouchOver8": false
+        },
+        {
+          "row": 0,
+          "col": 1,
+          "alphaBboxOver8": [
+            67,
+            59,
+            444,
+            453
+          ],
+          "margins": {
+            "left": 67,
+            "top": 59,
+            "right": 68,
+            "bottom": 59
+          },
+          "minMargin": 59,
+          "edgeTouchOver8": false
+        },
+        {
+          "row": 1,
+          "col": 0,
+          "alphaBboxOver8": [
+            54,
+            46,
+            458,
+            465
+          ],
+          "margins": {
+            "left": 54,
+            "top": 46,
+            "right": 54,
+            "bottom": 47
+          },
+          "minMargin": 46,
+          "edgeTouchOver8": false
+        },
+        {
+          "row": 1,
+          "col": 1,
+          "alphaBboxOver8": [
+            69,
+            58,
+            442,
+            454
+          ],
+          "margins": {
+            "left": 69,
+            "top": 58,
+            "right": 70,
+            "bottom": 58
+          },
+          "minMargin": 58,
+          "edgeTouchOver8": false
+        }
+      ],
+      "sha256": "2dc1551204f2f29d728f3051617987dff9bb18f98435ca3c2efad78514edf2da",
+      "pass": true
+    },
+    {
+      "id": "ritual-fx-response-r2",
+      "group": "first-resonance",
+      "grid": "2x2",
+      "path": "output/habitat/moonlake-video-inspired-r2/clay-resin-required-r2/concepts/normalized/ritual-fx-response-r2/final/ritual-fx-response-r2.png",
+      "mode": "RGBA",
+      "size": [
+        1024,
+        1024
+      ],
+      "expectedSize": [
+        1024,
+        1024
+      ],
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "hiddenRgbAtAlphaZero": 0,
+      "cells": [
+        {
+          "row": 0,
+          "col": 0,
+          "alphaBboxOver8": [
+            50,
+            115,
+            461,
+            396
+          ],
+          "margins": {
+            "left": 50,
+            "top": 115,
+            "right": 51,
+            "bottom": 116
+          },
+          "minMargin": 50,
+          "edgeTouchOver8": false
+        },
+        {
+          "row": 0,
+          "col": 1,
+          "alphaBboxOver8": [
+            46,
+            120,
+            465,
+            391
+          ],
+          "margins": {
+            "left": 46,
+            "top": 120,
+            "right": 47,
+            "bottom": 121
+          },
+          "minMargin": 46,
+          "edgeTouchOver8": false
+        },
+        {
+          "row": 1,
+          "col": 0,
+          "alphaBboxOver8": [
+            53,
+            115,
+            459,
+            396
+          ],
+          "margins": {
+            "left": 53,
+            "top": 115,
+            "right": 53,
+            "bottom": 116
+          },
+          "minMargin": 53,
+          "edgeTouchOver8": false
+        },
+        {
+          "row": 1,
+          "col": 1,
+          "alphaBboxOver8": [
+            46,
+            119,
+            465,
+            392
+          ],
+          "margins": {
+            "left": 46,
+            "top": 119,
+            "right": 47,
+            "bottom": 120
+          },
+          "minMargin": 46,
+          "edgeTouchOver8": false
+        }
+      ],
+      "sha256": "334113800c8999bc60ae89b87aa7b32d3ee7f3d8977492c2ded6124ec50c7dac",
+      "pass": true
+    },
+    {
+      "id": "resonance-symbol-atlas-r2",
+      "group": "first-resonance",
+      "grid": "2x2",
+      "path": "output/habitat/moonlake-video-inspired-r2/clay-resin-required-r2/concepts/normalized/resonance-symbol-atlas-r2/final/resonance-symbol-atlas-r2.png",
+      "mode": "RGBA",
+      "size": [
+        1024,
+        1024
+      ],
+      "expectedSize": [
+        1024,
+        1024
+      ],
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "hiddenRgbAtAlphaZero": 0,
+      "cells": [
+        {
+          "row": 0,
+          "col": 0,
+          "alphaBboxOver8": [
+            53,
+            67,
+            459,
+            445
+          ],
+          "margins": {
+            "left": 53,
+            "top": 67,
+            "right": 53,
+            "bottom": 67
+          },
+          "minMargin": 53,
+          "edgeTouchOver8": false
+        },
+        {
+          "row": 0,
+          "col": 1,
+          "alphaBboxOver8": [
+            46,
+            141,
+            465,
+            371
+          ],
+          "margins": {
+            "left": 46,
+            "top": 141,
+            "right": 47,
+            "bottom": 141
+          },
+          "minMargin": 46,
+          "edgeTouchOver8": false
+        },
+        {
+          "row": 1,
+          "col": 0,
+          "alphaBboxOver8": [
+            52,
+            103,
+            460,
+            408
+          ],
+          "margins": {
+            "left": 52,
+            "top": 103,
+            "right": 52,
+            "bottom": 104
+          },
+          "minMargin": 52,
+          "edgeTouchOver8": false
+        },
+        {
+          "row": 1,
+          "col": 1,
+          "alphaBboxOver8": [
+            62,
+            62,
+            449,
+            449
+          ],
+          "margins": {
+            "left": 62,
+            "top": 62,
+            "right": 63,
+            "bottom": 63
+          },
+          "minMargin": 62,
+          "edgeTouchOver8": false
+        }
+      ],
+      "sha256": "fd83c6c56a1e7ed082eb391129f217e5e1156c3c9b3152a62c85b5512918a124",
+      "pass": true
+    },
+    {
+      "id": "moment-symbol-quiet-approach-r2",
+      "group": "habitat-moments",
+      "grid": "1x1",
+      "path": "output/habitat/moonlake-video-inspired-r2/clay-resin-required-r2/concepts/normalized/moment-symbol-quiet-approach-r2/final/moment-symbol-quiet-approach-r2.png",
+      "mode": "RGBA",
+      "size": [
+        512,
+        512
+      ],
+      "expectedSize": [
+        512,
+        512
+      ],
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "hiddenRgbAtAlphaZero": 0,
+      "cells": [
+        {
+          "row": 0,
+          "col": 0,
+          "alphaBboxOver8": [
+            26,
+            87,
+            486,
+            424
+          ],
+          "margins": {
+            "left": 26,
+            "top": 87,
+            "right": 26,
+            "bottom": 88
+          },
+          "minMargin": 26,
+          "edgeTouchOver8": false
+        }
+      ],
+      "sha256": "b2f8352b39efc407cede3e9a06ffc05d3d67c64153d7f023b9f885f1e48c09a9",
+      "pass": true
+    },
+    {
+      "id": "moment-symbol-moon-gaze-r2",
+      "group": "habitat-moments",
+      "grid": "1x1",
+      "path": "output/habitat/moonlake-video-inspired-r2/clay-resin-required-r2/concepts/normalized/moment-symbol-moon-gaze-r2/final/moment-symbol-moon-gaze-r2.png",
+      "mode": "RGBA",
+      "size": [
+        512,
+        512
+      ],
+      "expectedSize": [
+        512,
+        512
+      ],
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "hiddenRgbAtAlphaZero": 0,
+      "cells": [
+        {
+          "row": 0,
+          "col": 0,
+          "alphaBboxOver8": [
+            26,
+            50,
+            486,
+            462
+          ],
+          "margins": {
+            "left": 26,
+            "top": 50,
+            "right": 26,
+            "bottom": 50
+          },
+          "minMargin": 26,
+          "edgeTouchOver8": false
+        }
+      ],
+      "sha256": "d4d62211e3bd13f6cf7639bed01ee42df74d3f617dfbb4a5aa8932a66d7aa0a7",
+      "pass": true
+    },
+    {
+      "id": "moment-symbol-crystal-glimmer-r2",
+      "group": "habitat-moments",
+      "grid": "1x1",
+      "path": "output/habitat/moonlake-video-inspired-r2/clay-resin-required-r2/concepts/normalized/moment-symbol-crystal-glimmer-r2/final/moment-symbol-crystal-glimmer-r2.png",
+      "mode": "RGBA",
+      "size": [
+        512,
+        512
+      ],
+      "expectedSize": [
+        512,
+        512
+      ],
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "hiddenRgbAtAlphaZero": 0,
+      "cells": [
+        {
+          "row": 0,
+          "col": 0,
+          "alphaBboxOver8": [
+            26,
+            26,
+            486,
+            486
+          ],
+          "margins": {
+            "left": 26,
+            "top": 26,
+            "right": 26,
+            "bottom": 26
+          },
+          "minMargin": 26,
+          "edgeTouchOver8": false
+        }
+      ],
+      "sha256": "102a01e9849ce92c87649d368d2093cf0d4eea5bf7a30735f82422704021301d",
+      "pass": true
+    },
+    {
+      "id": "habitat-fx-gentle-motes-r2",
+      "group": "habitat-moments",
+      "grid": "2x2",
+      "path": "output/habitat/moonlake-video-inspired-r2/clay-resin-required-r2/concepts/normalized/habitat-fx-gentle-motes-r2/final/habitat-fx-gentle-motes-r2.png",
+      "mode": "RGBA",
+      "size": [
+        1024,
+        1024
+      ],
+      "expectedSize": [
+        1024,
+        1024
+      ],
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "hiddenRgbAtAlphaZero": 0,
+      "cells": [
+        {
+          "row": 0,
+          "col": 0,
+          "alphaBboxOver8": [
+            90,
+            49,
+            422,
+            463
+          ],
+          "margins": {
+            "left": 90,
+            "top": 49,
+            "right": 90,
+            "bottom": 49
+          },
+          "minMargin": 49,
+          "edgeTouchOver8": false
+        },
+        {
+          "row": 0,
+          "col": 1,
+          "alphaBboxOver8": [
+            78,
+            58,
+            433,
+            454
+          ],
+          "margins": {
+            "left": 78,
+            "top": 58,
+            "right": 79,
+            "bottom": 58
+          },
+          "minMargin": 58,
+          "edgeTouchOver8": false
+        },
+        {
+          "row": 1,
+          "col": 0,
+          "alphaBboxOver8": [
+            106,
+            46,
+            406,
+            465
+          ],
+          "margins": {
+            "left": 106,
+            "top": 46,
+            "right": 106,
+            "bottom": 47
+          },
+          "minMargin": 46,
+          "edgeTouchOver8": false
+        },
+        {
+          "row": 1,
+          "col": 1,
+          "alphaBboxOver8": [
+            95,
+            52,
+            417,
+            459
+          ],
+          "margins": {
+            "left": 95,
+            "top": 52,
+            "right": 95,
+            "bottom": 53
+          },
+          "minMargin": 52,
+          "edgeTouchOver8": false
+        }
+      ],
+      "sha256": "25b7e044942eabea8c1c4fb00c9eaed43a5cd72a37b486aa2a8f7c8577ea792a",
+      "pass": true
+    },
+    {
+      "id": "habitat-fx-water-ripple-r2",
+      "group": "habitat-moments",
+      "grid": "2x2",
+      "path": "output/habitat/moonlake-video-inspired-r2/clay-resin-required-r2/concepts/normalized/habitat-fx-water-ripple-r2/final/habitat-fx-water-ripple-r2.png",
+      "mode": "RGBA",
+      "size": [
+        1024,
+        1024
+      ],
+      "expectedSize": [
+        1024,
+        1024
+      ],
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "hiddenRgbAtAlphaZero": 0,
+      "cells": [
+        {
+          "row": 0,
+          "col": 0,
+          "alphaBboxOver8": [
+            153,
+            199,
+            359,
+            312
+          ],
+          "margins": {
+            "left": 153,
+            "top": 199,
+            "right": 153,
+            "bottom": 200
+          },
+          "minMargin": 153,
+          "edgeTouchOver8": false
+        },
+        {
+          "row": 0,
+          "col": 1,
+          "alphaBboxOver8": [
+            74,
+            166,
+            437,
+            345
+          ],
+          "margins": {
+            "left": 74,
+            "top": 166,
+            "right": 75,
+            "bottom": 167
+          },
+          "minMargin": 74,
+          "edgeTouchOver8": false
+        },
+        {
+          "row": 1,
+          "col": 0,
+          "alphaBboxOver8": [
+            46,
+            136,
+            465,
+            375
+          ],
+          "margins": {
+            "left": 46,
+            "top": 136,
+            "right": 47,
+            "bottom": 137
+          },
+          "minMargin": 46,
+          "edgeTouchOver8": false
+        },
+        {
+          "row": 1,
+          "col": 1,
+          "alphaBboxOver8": [
+            49,
+            147,
+            463,
+            364
+          ],
+          "margins": {
+            "left": 49,
+            "top": 147,
+            "right": 49,
+            "bottom": 148
+          },
+          "minMargin": 49,
+          "edgeTouchOver8": false
+        }
+      ],
+      "sha256": "3febd60b6ce878e91ea31af23f7947683439e8e22f6b932c8f31e12ea985ae1e",
+      "pass": true
+    },
+    {
+      "id": "intervention-symbol-steady-r2",
+      "group": "rift-crystal",
+      "grid": "1x1",
+      "path": "output/habitat/moonlake-video-inspired-r2/clay-resin-required-r2/concepts/normalized/intervention-symbol-steady-r2/final/intervention-symbol-steady-r2.png",
+      "mode": "RGBA",
+      "size": [
+        512,
+        512
+      ],
+      "expectedSize": [
+        512,
+        512
+      ],
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "hiddenRgbAtAlphaZero": 0,
+      "cells": [
+        {
+          "row": 0,
+          "col": 0,
+          "alphaBboxOver8": [
+            54,
+            26,
+            457,
+            486
+          ],
+          "margins": {
+            "left": 54,
+            "top": 26,
+            "right": 55,
+            "bottom": 26
+          },
+          "minMargin": 26,
+          "edgeTouchOver8": false
+        }
+      ],
+      "sha256": "b4ad649241be5464656931da20dc2e72e45c2086e66fd54ca26ff87f00eed350",
+      "pass": true
+    },
+    {
+      "id": "intervention-symbol-boundary-r2",
+      "group": "rift-crystal",
+      "grid": "1x1",
+      "path": "output/habitat/moonlake-video-inspired-r2/clay-resin-required-r2/concepts/normalized/intervention-symbol-boundary-r2/final/intervention-symbol-boundary-r2.png",
+      "mode": "RGBA",
+      "size": [
+        512,
+        512
+      ],
+      "expectedSize": [
+        512,
+        512
+      ],
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "hiddenRgbAtAlphaZero": 0,
+      "cells": [
+        {
+          "row": 0,
+          "col": 0,
+          "alphaBboxOver8": [
+            45,
+            26,
+            466,
+            486
+          ],
+          "margins": {
+            "left": 45,
+            "top": 26,
+            "right": 46,
+            "bottom": 26
+          },
+          "minMargin": 26,
+          "edgeTouchOver8": false
+        }
+      ],
+      "sha256": "a85ed48401c717f9bf57193a2dd0818996eb4be7762f01b492658241c99f255f",
+      "pass": true
+    },
+    {
+      "id": "intervention-symbol-step-back-r2",
+      "group": "rift-crystal",
+      "grid": "1x1",
+      "path": "output/habitat/moonlake-video-inspired-r2/clay-resin-required-r2/concepts/normalized/intervention-symbol-step-back-r2/final/intervention-symbol-step-back-r2.png",
+      "mode": "RGBA",
+      "size": [
+        512,
+        512
+      ],
+      "expectedSize": [
+        512,
+        512
+      ],
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "hiddenRgbAtAlphaZero": 0,
+      "cells": [
+        {
+          "row": 0,
+          "col": 0,
+          "alphaBboxOver8": [
+            113,
+            26,
+            398,
+            486
+          ],
+          "margins": {
+            "left": 113,
+            "top": 26,
+            "right": 114,
+            "bottom": 26
+          },
+          "minMargin": 26,
+          "edgeTouchOver8": false
+        }
+      ],
+      "sha256": "f853b8ef2851b843775f5e8da172ea0fe55fef91e3fdf69ca51230b0bb2ae0f1",
+      "pass": true
+    },
+    {
+      "id": "resonance-circle-layer-r2",
+      "group": "rift-crystal",
+      "grid": "1x1",
+      "path": "output/habitat/moonlake-video-inspired-r2/clay-resin-required-r2/concepts/normalized/resonance-circle-layer-r2/final/resonance-circle-layer-r2.png",
+      "mode": "RGBA",
+      "size": [
+        512,
+        512
+      ],
+      "expectedSize": [
+        512,
+        512
+      ],
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "hiddenRgbAtAlphaZero": 0,
+      "cells": [
+        {
+          "row": 0,
+          "col": 0,
+          "alphaBboxOver8": [
+            26,
+            52,
+            486,
+            459
+          ],
+          "margins": {
+            "left": 26,
+            "top": 52,
+            "right": 26,
+            "bottom": 53
+          },
+          "minMargin": 26,
+          "edgeTouchOver8": false
+        }
+      ],
+      "sha256": "fec06d4dd4f23530a95e0fa4d27cbe986d05c8b5b58b1ae9baf21b4d74022078",
+      "pass": true
+    },
+    {
+      "id": "crystal-release-afterglow-r2",
+      "group": "rift-crystal",
+      "grid": "2x2",
+      "path": "output/habitat/moonlake-video-inspired-r2/clay-resin-required-r2/concepts/normalized/crystal-release-afterglow-r2/final/crystal-release-afterglow-r2.png",
+      "mode": "RGBA",
+      "size": [
+        1024,
+        1024
+      ],
+      "expectedSize": [
+        1024,
+        1024
+      ],
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "hiddenRgbAtAlphaZero": 0,
+      "cells": [
+        {
+          "row": 0,
+          "col": 0,
+          "alphaBboxOver8": [
+            50,
+            109,
+            461,
+            403
+          ],
+          "margins": {
+            "left": 50,
+            "top": 109,
+            "right": 51,
+            "bottom": 109
+          },
+          "minMargin": 50,
+          "edgeTouchOver8": false
+        },
+        {
+          "row": 0,
+          "col": 1,
+          "alphaBboxOver8": [
+            46,
+            133,
+            465,
+            378
+          ],
+          "margins": {
+            "left": 46,
+            "top": 133,
+            "right": 47,
+            "bottom": 134
+          },
+          "minMargin": 46,
+          "edgeTouchOver8": false
+        },
+        {
+          "row": 1,
+          "col": 0,
+          "alphaBboxOver8": [
+            50,
+            165,
+            461,
+            347
+          ],
+          "margins": {
+            "left": 50,
+            "top": 165,
+            "right": 51,
+            "bottom": 165
+          },
+          "minMargin": 50,
+          "edgeTouchOver8": false
+        },
+        {
+          "row": 1,
+          "col": 1,
+          "alphaBboxOver8": [
+            47,
+            189,
+            465,
+            322
+          ],
+          "margins": {
+            "left": 47,
+            "top": 189,
+            "right": 47,
+            "bottom": 190
+          },
+          "minMargin": 47,
+          "edgeTouchOver8": false
+        }
+      ],
+      "sha256": "b9e1aeb9c61f5dbbccc6b1b19de77f426b492635c7288499dfa875d3d19824e6",
+      "pass": true
+    }
+  ],
+  "contactSheet": "output/habitat/moonlake-video-inspired-r2/clay-resin-required-r2/previews/contact-sheet-required-18-r2.png"
+}

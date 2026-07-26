@@ -1,0 +1,155 @@
+{
+  "target": "asset",
+  "mode": "fx",
+  "prompt": "",
+  "role": "",
+  "input": "output\\habitat\\moonlake-video-inspired-r2\\clay-resin-required-r2\\concepts\\raw\\habitat-fx-water-ripple-r2_raw.png",
+  "threshold": 100,
+  "edge_threshold": 150,
+  "duration": 200,
+  "rows": 2,
+  "cols": 2,
+  "cell_size": 512,
+  "fit_scale": 0.82,
+  "trim_border": 4,
+  "edge_clean_depth": 3,
+  "align": "center",
+  "shared_scale": true,
+  "component_mode": "all",
+  "component_padding": 4,
+  "min_component_area": 1,
+  "edge_touch_margin": 8,
+  "frame_labels": [
+    "fx-1",
+    "fx-2",
+    "fx-3",
+    "fx-4"
+  ],
+  "frames": [
+    {
+      "grid": [
+        0,
+        0
+      ],
+      "source_box": [
+        0,
+        0,
+        627,
+        627
+      ],
+      "component_mode": "all",
+      "component_count": 25,
+      "selected_component_area": null,
+      "selected_component_bbox": null,
+      "crop_bbox": [
+        184,
+        252,
+        440,
+        393
+      ],
+      "edge_touch": false,
+      "output_size": [
+        206,
+        113
+      ],
+      "paste_position": [
+        153,
+        199
+      ]
+    },
+    {
+      "grid": [
+        0,
+        1
+      ],
+      "source_box": [
+        627,
+        0,
+        1254,
+        627
+      ],
+      "component_mode": "all",
+      "component_count": 158,
+      "selected_component_area": null,
+      "selected_component_bbox": null,
+      "crop_bbox": [
+        42,
+        217,
+        493,
+        440
+      ],
+      "edge_touch": false,
+      "output_size": [
+        363,
+        179
+      ],
+      "paste_position": [
+        74,
+        166
+      ]
+    },
+    {
+      "grid": [
+        1,
+        0
+      ],
+      "source_box": [
+        0,
+        627,
+        627,
+        1254
+      ],
+      "component_mode": "all",
+      "component_count": 172,
+      "selected_component_area": null,
+      "selected_component_bbox": null,
+      "crop_bbox": [
+        62,
+        150,
+        583,
+        447
+      ],
+      "edge_touch": false,
+      "output_size": [
+        419,
+        239
+      ],
+      "paste_position": [
+        46,
+        136
+      ]
+    },
+    {
+      "grid": [
+        1,
+        1
+      ],
+      "source_box": [
+        627,
+        627,
+        1254,
+        1254
+      ],
+      "component_mode": "all",
+      "component_count": 90,
+      "selected_component_area": null,
+      "selected_component_bbox": null,
+      "crop_bbox": [
+        22,
+        157,
+        536,
+        427
+      ],
+      "edge_touch": false,
+      "output_size": [
+        414,
+        217
+      ],
+      "paste_position": [
+        49,
+        147
+      ]
+    }
+  ],
+  "edge_touch_frames": []
+}
