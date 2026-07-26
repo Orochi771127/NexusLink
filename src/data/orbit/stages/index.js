@@ -1,4 +1,5 @@
 import { getOrbitPathLabel, ORBIT_PATH_ORDER } from "../trainingArena.js";
+import { MOONLAKE_CAMP_SLICE } from "./moonlakeCampSlice.js";
 import { MOONLAKE_STAGES } from "./moonlakeStages.js";
 import { PLAINS_STAGES } from "./plainsStages.js";
 
@@ -7,7 +8,11 @@ const BY_REGION = Object.freeze({
   plains: PLAINS_STAGES
 });
 
-const ALL_STAGES = Object.freeze([...MOONLAKE_STAGES, ...PLAINS_STAGES]);
+const ALL_STAGES = Object.freeze([
+  ...MOONLAKE_STAGES,
+  ...PLAINS_STAGES,
+  MOONLAKE_CAMP_SLICE
+]);
 
 export function listStagesForRegion(regionId) {
   return BY_REGION[regionId] || [];
@@ -29,4 +34,10 @@ export function getRegionPathMeta(regionId) {
   };
 }
 
-export { MOONLAKE_STAGES, PLAINS_STAGES, getOrbitPathLabel, ORBIT_PATH_ORDER };
+export {
+  MOONLAKE_CAMP_SLICE,
+  MOONLAKE_STAGES,
+  PLAINS_STAGES,
+  getOrbitPathLabel,
+  ORBIT_PATH_ORDER
+};

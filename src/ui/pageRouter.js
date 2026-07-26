@@ -10,6 +10,7 @@ import {
 import { resolveCrystalVisualState } from "../engine/crystalVisualState.js";
 import { getCrystalReleaseEligibility } from "../engine/crystalWeavingEngine.js";
 import { getTraceDisplayCopy } from "../engine/traceVisualMapper.js";
+import { resolveOrbitNodeActionSheet } from "../orbit/orbitNodeActionResolver.js";
 import {
   MEMORY_PROJECTION_LIMIT,
   countMemoryEvidence,
@@ -51,6 +52,7 @@ export function createPageRouter({
   let renderedMemoryEntries = [];
   let pendingCrystalReleaseId = null;
   let crystalActionStatus = "";
+  let exploreNodeActionSheetOpen = false;
   let actionInFlight = false;
   const growthSessions = new Map();
 
@@ -59,6 +61,16 @@ export function createPageRouter({
     pageLayer.addEventListener("click", handlePageClick);
     pageLayer.addEventListener("keydown", handlePageKeydown);
     document.addEventListener("keydown", (event) => {
+      if (
+        event.key === "Escape"
+        && activePage === "explore"
+        && exploreNodeActionSheetOpen
+        && !panelManager.isPanelOpen()
+      ) {
+        event.preventDefault();
+        closeExploreNodeActionSheet();
+        return;
+      }
       if (event.key === "Escape" && activePage !== "home" && !panelManager.isPanelOpen()) {
         navigate("home");
       }
@@ -84,6 +96,7 @@ export function createPageRouter({
     if (!PAGE_ACTIONS.has(action)) return;
     pendingCrystalReleaseId = null;
     crystalActionStatus = "";
+    exploreNodeActionSheetOpen = false;
 
     // 再按一次目前分頁 → 收合回 home（toggle 開關）。
     if (action !== "home" && action === activePage) {
@@ -140,6 +153,54 @@ export function createPageRouter({
         return `<span><strong>${strip.count}</strong><em>${escapeHtml(strip.label)}</em></span>`;
       })
       .join("");
+    const nodeActionSheet = resolveOrbitNodeActionSheet(state);
+    const nodeActionMarkup = nodeActionSheet.actions.map((action) => `
+      <button
+        type="button"
+        class="explore-node-action${action.primary ? " is-primary" : ""}"
+        data-page-action="choose-node-mode"
+        data-node-mode="${action.id}"
+        ${action.available ? "" : 'disabled aria-disabled="true"'}
+      >
+        <span class="explore-node-action__copy">
+          <strong>${t(action.labelKey)}</strong>
+          <em>${t(action.copyKey)}</em>
+        </span>
+        ${action.primary
+          ? `<span class="explore-node-action__mark">${t("explore.nodeActions.primary")}</span>`
+          : ""}
+      </button>
+    `).join("");
+    const nodeActionSheetMarkup = exploreNodeActionSheetOpen
+      ? `
+        <div class="explore-node-actions-backdrop" data-node-action-sheet>
+          <section
+            class="explore-node-actions"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="explore-node-actions-title"
+            aria-describedby="explore-node-actions-copy"
+          >
+            <header class="explore-node-actions__header">
+              <div>
+                <p>Moonlake Camp</p>
+                <h3 id="explore-node-actions-title">${t(nodeActionSheet.titleKey)}</h3>
+                <span id="explore-node-actions-copy">${t(nodeActionSheet.copyKey)}</span>
+              </div>
+              <button
+                type="button"
+                class="explore-node-actions__close"
+                data-page-action="close-node-actions"
+                aria-label="${t("explore.nodeActions.close")}"
+              >×</button>
+            </header>
+            <div class="explore-node-actions__list">
+              ${nodeActionMarkup}
+            </div>
+          </section>
+        </div>
+      `
+      : "";
     body.innerHTML = `
       <div class="page-focus-card page-focus-card--moonlake">
         <span class="page-orb" aria-hidden="true">☾</span>
@@ -159,9 +220,9 @@ export function createPageRouter({
           <strong>${t("explore.openMap")}</strong>
           <em>${t("explore.openMapSub")}</em>
         </button>
-        <button type="button" data-page-action="open-orbit">
-          <strong>${t("explore.openOrbit")}</strong>
-          <em>${t("explore.openOrbitSub")}</em>
+        <button type="button" data-page-action="open-node-actions">
+          <strong>${t("explore.nodeActions.open")}</strong>
+          <em>${t("explore.nodeActions.openSub")}</em>
         </button>
         <button type="button" data-page-action="open-atlas">
           <strong>${t("explore.atlas")}</strong>
@@ -176,7 +237,30 @@ export function createPageRouter({
           <em>${t("explore.crystalSub")}</em>
         </button>
       </div>
+      ${nodeActionSheetMarkup}
     `;
+  }
+
+  function openExploreNodeActionSheet() {
+    exploreNodeActionSheetOpen = true;
+    setViewState("ready");
+    render();
+    queueMicrotask(() => {
+      pageBodies.explore
+        ?.querySelector('[data-page-action="choose-node-mode"]:not([disabled])')
+        ?.focus({ preventScroll: true });
+    });
+  }
+
+  function closeExploreNodeActionSheet() {
+    exploreNodeActionSheetOpen = false;
+    setViewState("ready");
+    render();
+    queueMicrotask(() => {
+      pageBodies.explore
+        ?.querySelector('[data-page-action="open-node-actions"]')
+        ?.focus({ preventScroll: true });
+    });
   }
 
   function renderCare(state) {
@@ -477,6 +561,29 @@ export function createPageRouter({
   }
 
   function handlePageKeydown(event) {
+    if (
+      event.key === "Tab"
+      && activePage === "explore"
+      && exploreNodeActionSheetOpen
+    ) {
+      const focusable = [
+        ...(pageBodies.explore?.querySelectorAll(
+          '[data-node-action-sheet] button:not([disabled])'
+        ) || [])
+      ];
+      if (!focusable.length) return;
+      const currentIndex = focusable.indexOf(document.activeElement);
+      const nextIndex = event.shiftKey
+        ? currentIndex <= 0
+          ? focusable.length - 1
+          : currentIndex - 1
+        : currentIndex < 0 || currentIndex >= focusable.length - 1
+          ? 0
+          : currentIndex + 1;
+      event.preventDefault();
+      focusable[nextIndex].focus({ preventScroll: true });
+      return;
+    }
     if (event.key !== "Enter" && event.key !== " ") return;
     const memoryButton = event.target.closest("[data-memory-open]");
     if (!memoryButton) return;
@@ -521,8 +628,16 @@ export function createPageRouter({
   }
 
   async function handlePageAction(button) {
-    if (actionInFlight || button.disabled) return;
     const action = button.dataset.pageAction;
+    if (actionInFlight || button.disabled) return;
+    if (action === "open-node-actions") {
+      openExploreNodeActionSheet();
+      return;
+    }
+    if (action === "close-node-actions") {
+      closeExploreNodeActionSheet();
+      return;
+    }
     const wasDisabled = button.disabled;
     const isCrystalAction = [
       "observe-crystal",
@@ -542,6 +657,26 @@ export function createPageRouter({
     try {
       if (action === "open-map") await runRequiredAction(openMap);
       else if (action === "open-orbit") await runRequiredAction(openOrbit);
+      else if (action === "choose-node-mode") {
+        const nodeActionSheet = resolveOrbitNodeActionSheet(store.getState());
+        const selectedAction = nodeActionSheet.actions.find(
+          (candidate) => candidate.id === button.dataset.nodeMode
+        );
+        if (!selectedAction?.available) {
+          const error = new Error("Explore node mode is unavailable");
+          error.code = "ACTION_UNAVAILABLE";
+          throw error;
+        }
+        exploreNodeActionSheetOpen = false;
+        render();
+        if (selectedAction.route === "orbit") await runRequiredAction(openOrbit);
+        else if (selectedAction.route === "map") await runRequiredAction(openMap);
+        else {
+          const error = new Error(`Unsupported Explore node route: ${selectedAction.route}`);
+          error.code = "ACTION_UNAVAILABLE";
+          throw error;
+        }
+      }
       else if (action === "open-atlas") await runRequiredAction(openAtlas);
       else if (action === "open-character") await panelManager.openPanel("character");
       else if (action === "open-codex") await runRequiredAction(openCodex);

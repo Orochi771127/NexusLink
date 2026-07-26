@@ -3372,6 +3372,69 @@ body.orbit-active #page-layer {
   font-style: italic;
 }
 
+.orbit-control-depth {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.orbit-control-depth[hidden] {
+  display: none !important;
+}
+
+.orbit-stance-picker {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 5px;
+}
+
+.orbit-stance-btn,
+.orbit-pulse-btn {
+  min-height: 34px;
+  border: 1px solid rgba(150, 205, 235, 0.32);
+  border-radius: 9px;
+  background: rgba(18, 34, 52, 0.88);
+  color: rgba(225, 240, 252, 0.82);
+  font: inherit;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.orbit-stance-btn {
+  position: relative;
+}
+
+.orbit-stance-btn[aria-pressed="true"] {
+  border-color: rgba(255, 218, 145, 0.78);
+  background: rgba(92, 68, 38, 0.78);
+  color: #fff1ce;
+}
+
+.orbit-stance-btn[aria-pressed="true"]::after {
+  content: "✓";
+  position: absolute;
+  top: 2px;
+  right: 4px;
+  font-size: 0.62rem;
+  font-weight: 700;
+}
+
+.orbit-pulse-btn {
+  padding-inline: 11px;
+  border-color: rgba(135, 225, 245, 0.52);
+  background: rgba(24, 68, 82, 0.86);
+  color: #d9f8ff;
+  white-space: nowrap;
+}
+
+.orbit-stance-btn:disabled,
+.orbit-pulse-btn:disabled {
+  cursor: default;
+  opacity: 0.52;
+}
+
 .orbit-stage {
   flex: 1;
   display: flex;
@@ -3420,6 +3483,63 @@ body.orbit-active #page-layer {
 @media (prefers-reduced-motion: reduce) {
   .orbit-btn:active {
     transform: none;
+  }
+}
+
+/* 390×844：保留場地高度，避免標題／說明／結算擠進 Canvas。 */
+@media (max-width: 420px) {
+  .orbit-hud-top,
+  .orbit-hud-bottom {
+    padding: 9px 12px;
+  }
+
+  .orbit-title {
+    margin-top: 2px;
+    font-size: 1rem;
+  }
+
+  .orbit-copy,
+  .orbit-status,
+  .orbit-companion-line,
+  .orbit-stats {
+    margin-top: 4px;
+    font-size: 0.77rem;
+    line-height: 1.35;
+  }
+
+  .orbit-control-depth {
+    gap: 6px;
+    margin-top: 6px;
+  }
+
+  .orbit-stance-picker {
+    gap: 4px;
+  }
+
+  .orbit-stance-btn,
+  .orbit-pulse-btn {
+    min-height: 31px;
+    font-size: 0.7rem;
+  }
+
+  .orbit-pulse-btn {
+    padding-inline: 8px;
+  }
+
+  .orbit-hint {
+    display: none;
+  }
+
+  .orbit-stage {
+    padding: 4px 12px;
+  }
+
+  .orbit-actions {
+    margin-top: 7px;
+  }
+
+  .orbit-btn {
+    padding: 9px 12px;
   }
 }
 

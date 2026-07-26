@@ -422,3 +422,22 @@
 - 驗法：`node docs/qa/orbit-feel-cases.mjs`、`orbit-i18n-cases.mjs`、`orbit-regression-cases.mjs`；`docs/qa/ORBIT_MANUAL_390x844.md`。
 - 通過：拉力曲線短拉可控、長拉有爆發；chrome 關鍵字有 tc/sc/en/jp；回歸 harness 全綠。
 - **仍 open（不得宣稱完成）：** 真人測、真機觸控／GPU、法務／上架。
+
+**O8 — Hybrid Spin 月湖營火證明關（opt-in）**
+- 驗法：網址加 `?orbitCampSlice=1`，從探索開啟迴旋；跑 `node docs/qa/orbit-moonlake-camp-slice-cases.mjs` 與完整 Orbit regression。
+- 通過：沿用 `src/orbit/`；依序掠過 3 個記憶光點後，只有低速停入營火圈才完成；無 dummy／HP 歸零；短／中／長拉有不同初速與軌跡；30／60／120 Hz exact-match；結算只顯示夥伴句與 session-only 微痕，`progressEligible=false` 且不寫主存檔。
+- 390×844：頂欄、Canvas、記憶／營火進度、結算與按鈕不得重疊；battle status／companion line 不得誤寫進隱藏 duel DOM。
+- **仍 open（不得宣稱完成）：** 真人需在 30 秒內會發射、三次內說出力度差異、發射前能預測大致方向、能指出光點／營火對結局的影響；Safari 真觸控／GPU。
+
+**O9 — 營火切片操作深度：三姿態＋每發一次共鳴脈衝（opt-in）**
+- 驗法：跑 `node docs/qa/orbit-control-depth-cases.mjs` 與完整 Orbit regression；網址加 `?orbitCampSlice=1`，在 390×844 依序操作三顆姿態鈕、拉曳發射、共鳴脈衝。
+- 通過：同一拉距下，直立／傾斜／保守的初速、tilt／spin 與後續軌跡有可重播差異；只可在 `aiming` 選姿態，發射後鎖定。共鳴脈衝只在 `spinning` 可用且每發 `1/1`，第二次無效；只能有限轉向／收束，不能直接收記憶、增加停圈秒數或產生 outcome。
+- 確定性與安全：固定時點的姿態＋脈衝在 30／60／120 Hz exact-match；三姿態保留可完成路徑；`progressEligible=false`，不寫 path／vault／Growth／bond／trust／主存檔。
+- 390×844：三姿態與脈衝控制不得擠壓 Canvas／結算；選中態不能只靠顏色（`aria-pressed`），disabled／已用狀態可讀。
+- **仍 open（不得宣稱完成）：** 真人三次內能說出三姿態用途、知道脈衝是一次有限修正而非自動獲勝；Safari 真觸控、文字放大與 GPU。
+
+**O10 — 月湖節點 Action Sheet：主要玩法與條件式旁支**
+- 驗法：跑 `node docs/qa/orbit-node-action-sheet-cases.mjs` 與完整 Orbit regression；在 fresh save 與具 Chapter 2＋可見 emotional trace 的 fixture 各開一次 Explore。
+- 通過：月湖焦點同時呈現心核迴旋／心域遠征／裂隙對峙；迴旋永遠可用且標為主要玩法。遠征只沿用 `isExpeditionUnlocked`，對峙只沿用 `canEnterUnguidedStandoff`；不可用項目 disabled 且有低壓力說明。
+- 路由與零寫入：迴旋進既有 Orbit；遠征／對峙回既有地圖再選合法節點。Action Sheet 不生成遭遇、不改節點解鎖、不寫 save／path／vault／Growth／bond／trust，並保留 `data-page-action="open-map"` 的 first-session 直接地圖入口。
+- 390×844／鍵盤：dialog 不超出 Explore 面板；開啟後 focus 落在第一個可用選項，Esc／關閉鈕只關閉 sheet 並把 focus 還給 launcher；四語 chrome 不缺 key。
