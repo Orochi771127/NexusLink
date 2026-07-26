@@ -51,14 +51,28 @@ export const MOONLAKE_STAGES = Object.freeze([
     index: 3,
     title: "撐過漣漪",
     goal: "survive",
-    goalLabel: "撐過 18 秒漣漪",
+    goalLabel: "撐過 15 秒漣漪",
     copy: "不必趕盡殺絕。在場上稳住，讓漣漪過去就好。",
     clearNarrative: "漣漪退去。懂得撐住，也是一種一起。",
     dummyName: "漣漪雜訊",
     dummyStability: 120,
     dummyGuardBonus: 10,
     arenaRadius: 1,
-    surviveSeconds: 18,
+    surviveSeconds: 15,
+    containedArena: true,
+    physicsTuning: Object.freeze({
+      friction: 0.18,
+      driveScale: 0.72,
+      driveTargetSpeed: 2.35,
+      speedCap: 2.8,
+      dummyDriveScale: 0.24,
+      dummyDriveTargetSpeed: 1.25,
+      dummySpeedCap: 1.7
+    }),
+    collisionTuning: Object.freeze({
+      damageScaleToA: 0.18,
+      damageScaleToB: 0.6
+    }),
     pillars: [{ x: 0, y: 0, r: 0.08 }],
     playerStart: { x: 0, y: 0.55 },
     dummyStart: { x: -0.2, y: -0.15 }

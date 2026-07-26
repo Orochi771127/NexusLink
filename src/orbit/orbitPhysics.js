@@ -32,8 +32,11 @@ export const SPIN_CURVE_STRENGTH = 1.9; // R6：彎軌更明顯，避免看起�
  * 才不會因 FPS／子步數提高而憑空得到更多速度。
  */
 export const SPIN_DRIVE = 5.4;
-export const WALL_BOUNCE = 0.98;
-export const BODY_RESTITUTION = 0.97; // R6：對撞更彈更脆
+export const SPIN_TARGET_SPEED = 3.2;
+export const DEFAULT_SPEED_CAP = 4.2;
+export const WALL_BOUNCE = 0.82;
+export const BODY_RESTITUTION = 0.78;
+export const COLLISION_ENERGY_RETENTION = 0.96;
 export const COLLIDE_DAMAGE_MAX_TO_B = 30; // R6：對撞份量加重，減少乾磨
 export const COLLIDE_DAMAGE_MAX_TO_A = 26;
 /**
@@ -60,6 +63,17 @@ const HYBRID_LAUNCH_SECONDS = 0.28;
 
 function clamp(n, min, max) {
   return Math.max(min, Math.min(max, n));
+}
+
+function capBodySpeed(body) {
+  const speed = Math.hypot(body.vx, body.vy);
+  if (!body.speedCap || speed <= body.speedCap) return body;
+  const scale = body.speedCap / speed;
+  return {
+    ...body,
+    vx: body.vx * scale,
+    vy: body.vy * scale
+  };
 }
 
 function isHybridSpinBody(body) {
@@ -110,7 +124,8 @@ export function createBody({
   tilt = 0.06,
   wobble = 0,
   driveScale = 1,
-  speedCap = null
+  driveTargetSpeed = SPIN_TARGET_SPEED,
+  speedCap = DEFAULT_SPEED_CAP
 } = {}) {
   const hybridSpin = physicsModel === ORBIT_PHYSICS_MODELS.hybridSpin;
   return {
@@ -128,10 +143,14 @@ export function createBody({
     tilt: clamp(tilt, 0, 1),
     wobble: clamp(wobble, 0, 1),
     driveScale: Math.max(0, Number.isFinite(driveScale) ? driveScale : 1),
+    driveTargetSpeed:
+      Number.isFinite(driveTargetSpeed) && driveTargetSpeed > 0
+        ? driveTargetSpeed
+        : SPIN_TARGET_SPEED,
     speedCap:
       Number.isFinite(speedCap) && speedCap > 0
         ? speedCap
-        : null,
+        : DEFAULT_SPEED_CAP,
     spinAge: 0,
     spinPhase: hybridSpin
       ? HYBRID_SPIN_PHASES.launch
@@ -251,30 +270,48 @@ export function stepBody(body, dt, opts = {}) {
       SPIN_CURVE_STRENGTH *
       (hybridSpin ? next.spinDirection : 1) *
       (hybridSpin ? 1 + next.tilt * 1.4 + wobbleWave * 0.32 : 1);
-    const tx = -next.vy / speed;
-    const ty = next.vx / speed;
-    next.vx += tx * curve * speed * dt * 2.4;
-    next.vy += ty * curve * speed * dt * 2.4;
+    const turn = curve * dt * 2.4;
+    const cos = Math.cos(turn);
+    const sin = Math.sin(turn);
+    const vx = next.vx;
+    const vy = next.vy;
+    next.vx = vx * cos - vy * sin;
+    next.vy = vx * sin + vy * cos;
     speed = Math.hypot(next.vx, next.vy);
   }
 
-  // 高轉速持續「甩」一小段速度：外圈繞行／不那麼快趴下
+  // 自旋只把速度維持到目標值，不會越過上限持續製造能量。
   if (next.spin > 18 && speed > 0.02) {
     const wobbleDriveScale = isHybridSpinBody(next)
       ? 1 - next.wobble * 0.35
       : 1;
-    const boost =
-      (next.spin / 100) *
-      SPIN_DRIVE *
-      wobbleDriveScale *
-      (Number.isFinite(next.driveScale) ? next.driveScale : 1) *
-      dt;
-    const ang = Math.atan2(next.vy, next.vx);
-    next.vx += Math.cos(ang) * boost;
-    next.vy += Math.sin(ang) * boost;
+    const targetSpeed = Math.min(
+      next.speedCap || DEFAULT_SPEED_CAP,
+      next.driveTargetSpeed || SPIN_TARGET_SPEED
+    );
+    if (speed < targetSpeed) {
+      const response =
+        1 -
+        Math.exp(
+          -SPIN_DRIVE *
+            (next.spin / 100) *
+            wobbleDriveScale *
+            (Number.isFinite(next.driveScale) ? next.driveScale : 1) *
+            dt
+        );
+      const boost = (targetSpeed - speed) * response;
+      const ang = Math.atan2(next.vy, next.vx);
+      next.vx += Math.cos(ang) * boost;
+      next.vy += Math.sin(ang) * boost;
+    }
   } else if (next.spin > 28 && speed < 0.12) {
     // 幾乎停住但仍在轉：給一點起步，避免「轉了卻不動」
-    const boost = (next.spin / 100) * (SPIN_DRIVE * 0.5) * dt;
+    const targetSpeed = Math.min(
+      next.speedCap || DEFAULT_SPEED_CAP,
+      next.driveTargetSpeed || SPIN_TARGET_SPEED
+    );
+    const response = 1 - Math.exp(-SPIN_DRIVE * 0.5 * dt);
+    const boost = Math.max(0, targetSpeed - speed) * response;
     const ang = Math.atan2(next.y || -0.2, next.x || 0.01) + Math.PI * 0.5;
     next.vx += Math.cos(ang) * boost;
     next.vy += Math.sin(ang) * boost;
@@ -282,7 +319,7 @@ export function stepBody(body, dt, opts = {}) {
 
   const dist = Math.hypot(next.x, next.y);
   if (dist > arenaRadius - next.radius * 0.35) {
-    // 擦邊可加速；過頭則出場
+    // 一般牆面只耗能反彈；未來只有明示導流環可以提供加速。
     if (!containAtBoundary && dist > arenaRadius + next.radius * 0.15) {
       next.out = true;
       next.vx = 0;
@@ -297,25 +334,16 @@ export function stepBody(body, dt, opts = {}) {
       next.x = nx * push;
       next.y = ny * push;
       const dot = next.vx * nx + next.vy * ny;
-      // 牆擦：高彈性 + 轉速回饋（像咬到外圈導軌）
-      next.vx = (next.vx - 2 * dot * nx) * WALL_BOUNCE;
-      next.vy = (next.vy - 2 * dot * ny) * WALL_BOUNCE;
-      const tangentBoost = (next.spin / 100) * 0.08;
-      next.vx += -ny * tangentBoost;
-      next.vy += nx * tangentBoost;
-      next.spin = Math.min(100, next.spin + 6);
-      next = disturbHybridSpin(next, Math.min(1, Math.abs(dot) / 4));
+      if (dot > 0) {
+        next.vx = (next.vx - 2 * dot * nx) * WALL_BOUNCE;
+        next.vy = (next.vy - 2 * dot * ny) * WALL_BOUNCE;
+        next.spin = Math.max(0, next.spin - 2);
+        next = disturbHybridSpin(next, Math.min(1, Math.abs(dot) / 4));
+      }
     }
   }
 
-  const finalSpeed = Math.hypot(next.vx, next.vy);
-  if (next.speedCap && finalSpeed > next.speedCap) {
-    const scale = next.speedCap / finalSpeed;
-    next.vx *= scale;
-    next.vy *= scale;
-  }
-
-  return next;
+  return capBodySpeed(next);
 }
 
 /**
@@ -341,17 +369,25 @@ export function collidePillars(body, pillars = []) {
     if (dot < 0) {
       next.vx = (next.vx - 2 * dot * nx) * WALL_BOUNCE;
       next.vy = (next.vy - 2 * dot * ny) * WALL_BOUNCE;
-      next.spin = Math.min(100, next.spin + 3);
+      next.spin = Math.max(0, next.spin - 1);
       next = disturbHybridSpin(next, Math.min(1, Math.abs(dot) / 4));
     }
   }
-  return next;
+  return capBodySpeed(next);
 }
 
 /**
  * 兩球彈性碰撞；回傳更新後的兩體與對穩定性的衝擊。
  */
-export function collideBodies(a, b, impactA = 50, impactB = 40, guardA = 50, guardB = 50) {
+export function collideBodies(
+  a,
+  b,
+  impactA = 50,
+  impactB = 40,
+  guardA = 50,
+  guardB = 50,
+  options = {}
+) {
   if (a.out || b.out) return { a, b, hit: false, damageToA: 0, damageToB: 0 };
 
   const dx = b.x - a.x;
@@ -374,17 +410,20 @@ export function collideBodies(a, b, impactA = 50, impactB = 40, guardA = 50, gua
   b2.y += ny * overlap * 0.55;
 
   // 相對速度沿法線
-  const hybridCollision = isHybridSpinBody(a2) || isHybridSpinBody(b2);
-  // Baseline 保留 R1–R6 compatibility；Hybrid sandbox 使用標準 b-a 相對速度。
-  const rvx = hybridCollision ? b2.vx - a2.vx : a2.vx - b2.vx;
-  const rvy = hybridCollision ? b2.vy - a2.vy : a2.vy - b2.vy;
+  const rvx = b2.vx - a2.vx;
+  const rvy = b2.vy - a2.vy;
   const velAlongNormal = rvx * nx + rvy * ny;
-  if (hybridCollision ? velAlongNormal >= 0 : velAlongNormal > 0) {
+  if (velAlongNormal >= 0) {
     return { a: a2, b: b2, hit: false, damageToA: 0, damageToB: 0 };
   }
 
+  const energyBefore =
+    a2.vx * a2.vx +
+    a2.vy * a2.vy +
+    b2.vx * b2.vx +
+    b2.vy * b2.vy;
   const restitution = BODY_RESTITUTION;
-  const j = -(1 + restitution) * velAlongNormal * 0.55;
+  const j = -(1 + restitution) * velAlongNormal * 0.5;
   a2.vx -= j * nx;
   a2.vy -= j * ny;
   b2.vx += j * nx;
@@ -398,12 +437,42 @@ export function collideBodies(a, b, impactA = 50, impactB = 40, guardA = 50, gua
   b2.vx -= tx * spinKick;
   b2.vy -= ty * spinKick;
 
+  const energyAfter =
+    a2.vx * a2.vx +
+    a2.vy * a2.vy +
+    b2.vx * b2.vx +
+    b2.vy * b2.vy;
+  const energyBudget = energyBefore * COLLISION_ENERGY_RETENTION;
+  if (energyAfter > energyBudget && energyAfter > 1e-12) {
+    const energyScale = Math.sqrt(energyBudget / energyAfter);
+    a2.vx *= energyScale;
+    a2.vy *= energyScale;
+    b2.vx *= energyScale;
+    b2.vy *= energyScale;
+  }
+  a2 = capBodySpeed(a2);
+  b2 = capBodySpeed(b2);
+
   // 轉速參與撞擊力
   const spinBonus = (a2.spin + b2.spin) * 0.055;
   const rawToB = 6 + (impactA / 100) * 14 + spinBonus + Math.abs(velAlongNormal) * 8;
   const rawToA = 6 + (impactB / 100) * 12 + spinBonus * 0.8 + Math.abs(velAlongNormal) * 7;
-  const damageToB = Math.round(clamp(rawToB * (1 - guardB / 180), 2, COLLIDE_DAMAGE_MAX_TO_B));
-  const damageToA = Math.round(clamp(rawToA * (1 - guardA / 180), 2, COLLIDE_DAMAGE_MAX_TO_A));
+  const damageScaleToA = clamp(options.damageScaleToA ?? 1, 0, 1);
+  const damageScaleToB = clamp(options.damageScaleToB ?? 1, 0, 1);
+  const damageToB = Math.round(
+    clamp(
+      rawToB * (1 - guardB / 180) * damageScaleToB,
+      damageScaleToB > 0 ? 1 : 0,
+      COLLIDE_DAMAGE_MAX_TO_B
+    )
+  );
+  const damageToA = Math.round(
+    clamp(
+      rawToA * (1 - guardA / 180) * damageScaleToA,
+      damageScaleToA > 0 ? 1 : 0,
+      COLLIDE_DAMAGE_MAX_TO_A
+    )
+  );
 
   a2.stability = clamp(a2.stability - damageToA, 0, 100);
   b2.stability = clamp(b2.stability - damageToB, 0, 100);

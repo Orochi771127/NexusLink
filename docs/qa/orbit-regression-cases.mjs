@@ -17,6 +17,7 @@ const harnesses = [
   "orbit-duel-cases.mjs",
   "orbit-settlement-cases.mjs",
   "orbit-feel-cases.mjs",
+  "orbit-energy-ringout-cases.mjs",
   "orbit-hybrid-physics-cases.mjs",
   "orbit-moonlake-camp-slice-cases.mjs",
   "orbit-control-depth-cases.mjs",

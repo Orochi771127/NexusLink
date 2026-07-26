@@ -5033,3 +5033,68 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
   `src/data/sceneLayout.js`,
   `src/data/sceneProfiles/moonlakeObjectPack.js`,
   `src/data/sceneProfiles/moonlakeProfile.js`.
+
+### 2026-07-26 - Codex - Orbit R10 Energy And Ringout Repair - IN PROGRESS
+
+- Status: `IN PROGRESS`; Owner approved continuation in chat.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `ORBIT_R10_ENERGY_AND_RINGOUT_REPAIR`.
+- Layer: `EXPERIENCE`; existing `src/orbit/` physics, Moonlake stage tuning,
+  focused QA, balance/acceptance docs and this ledger only. No GROUNDWORK file.
+- Scope: remove accidental energy creation from continuous drive, neutral
+  walls, pillars and baseline body collision; make Moonlake stage 3 a
+  deterministic, realistically reachable survival objective; replace the
+  resolution-only QA with actual survivability and energy assertions.
+- Red-line check: no HP-zero farming objective, loot, daily/FOMO loop,
+  relationship reward/penalty, save schema, Safety, RaphaelCore or Growth
+  change. Retreat/refusal/non-punishing outcomes remain intact.
+- Non-goals: no movement-profile archetypes, parts/shop UI, guide rail, new
+  arena, art/assets, duel expansion or persistence.
+- Planned verification: JS syntax; focused energy/ringout harness; complete
+  Orbit regression; 24-angle x 6-pull deterministic stage-3 sweep; exact
+  30/60/120 Hz replay; 390x844 Chromium probe; scoped diff review/check.
+- Required reading: `docs/design/HEARTCORE_ORBIT_BATTLE_CONTRACT_V1.md`,
+  `docs/design/BALANCE_SHEET.md` section 9, `ACCEPTANCE.md` section O,
+  latest Orbit entries in this ledger.
+
+### 2026-07-26 - Codex - Orbit R10 Energy And Ringout Repair - VERIFIED
+
+- Status: `VERIFIED`; deterministic QA, complete Orbit regression and 390x844
+  Chromium probe are complete. Protected-main publication is authorized and
+  pending from the isolated latest-main worktree.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `ORBIT_R10_ENERGY_AND_RINGOUT_REPAIR`.
+- Branch / base: `codex/orbit-r10-energy-ringout` / `c367abe`.
+- Work performed:
+  - replaced unbounded continuous thrust with bounded target-speed response;
+  - changed curvature integration to rotate velocity without increasing its
+    magnitude;
+  - neutral wall/pillar contacts now dissipate speed and spin, with no hidden
+    tangent boost or spin refill;
+  - corrected baseline body collision to standard `b-a` relative velocity,
+    ignored separating overlaps and capped post-contact translational energy;
+  - applied default player/dummy speed caps and lower autonomous dummy target
+    speed; stage data can override those values without a second physics path;
+  - changed Moonlake stage 3 to a contained 15-second survival objective with
+    stage-local motion caps and reduced player stability loss;
+  - added `orbit-energy-ringout-cases.mjs` to the full regression runner;
+  - added `ACCEPTANCE.md` O11 and Balance Sheet section 9.10.
+- Verification:
+  - changed runtime/QA `node --check` PASS;
+  - focused R10 harness PASS;
+  - complete `node docs/qa/orbit-regression-cases.mjs` PASS;
+  - deterministic stage-3 sweep improved from 1/144 survived before repair to
+    144/144 after repair, with runtime speed at or below the 2.8 stage cap;
+  - 390x844 Chromium short-pull probe improved from 0/12 survived and 12/12
+    ring-outs to 12/12 survived and 0 ring-outs; max speed 2.36; page errors 0;
+  - scoped `git diff --check` PASS.
+- Problems / risks:
+  - sandboxed browser blocks the existing external Pixi CDN request and logs
+    `ERR_NETWORK_ACCESS_DENIED`; the Orbit engine probe itself has no page error;
+  - 144/144 automated reachability intentionally makes this early lesson
+    forgiving; Owner finger feel may tune pressure but must keep O11 at or
+    above 132/144;
+  - Owner human play, Safari touch/GPU and movement-profile readability remain
+    open and must not be claimed complete.
+- Next safe action: publish through the required PR gate, merge to `main`,
+  reindex MCP, then open the separate R11 movement-profile package.
