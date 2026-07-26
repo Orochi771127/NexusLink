@@ -441,3 +441,10 @@
 - 通過：月湖焦點同時呈現心核迴旋／心域遠征／裂隙對峙；迴旋永遠可用且標為主要玩法。遠征只沿用 `isExpeditionUnlocked`，對峙只沿用 `canEnterUnguidedStandoff`；不可用項目 disabled 且有低壓力說明。
 - 路由與零寫入：迴旋進既有 Orbit；遠征／對峙回既有地圖再選合法節點。Action Sheet 不生成遭遇、不改節點解鎖、不寫 save／path／vault／Growth／bond／trust，並保留 `data-page-action="open-map"` 的 first-session 直接地圖入口。
 - 390×844／鍵盤：dialog 不超出 Explore 面板；開啟後 focus 落在第一個可用選項，Esc／關閉鈕只關閉 sheet 並把 focus 還給 launcher；四語 chrome 不缺 key。
+
+**O11 — R10 能量守恆與第三關生存可達**
+- 驗法：跑 `node docs/qa/orbit-energy-ringout-cases.mjs` 與完整 Orbit regression；在 390×844 Chromium 以第三關短拉測 12 個方向。
+- 通過：普通牆與柱碰撞後速度、轉速不增加；approaching body collision 正確反彈，separating overlap 不施加第二次衝量；碰撞後總平移能量不高於碰撞前預算；玩家與假對手都受 speed cap 約束。
+- 第三關：玩家可見條件與 runtime 同為 contained 15 秒；24 方向 × 6 力度的 deterministic sweep 至少 132／144 次完成 `survived`，不能把 `player_out`、`player_burst` 或單純「有結算」算 PASS。
+- 確定性：同一第三關發射在 30／60／120 Hz exact-match；修復不得改 bond／trust、path/vault/Growth 寫入資格、撤退、拒戰或非懲罰結局。
+- **仍 open（不得宣稱完成）：** Owner 真人手感、Safari 真觸控／GPU，以及四種 movement profile 的玩家可辨識度。

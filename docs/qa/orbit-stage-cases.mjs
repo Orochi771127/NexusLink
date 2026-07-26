@@ -91,14 +91,8 @@ while (session.phase === "spinning" && guard < 5000) {
   guard += 1;
 }
 assert.equal(session.phase, "resolved");
-assert.ok(
-  session.outcome.reason === "survived" ||
-    session.outcome.reason === "player_out" ||
-    session.outcome.reason === "player_burst" ||
-    session.outcome.reason === "timeout" ||
-    session.outcome.reason === "dummy_burst"
-);
-ok("survive stage session resolves");
+assert.equal(session.outcome.reason, "survived");
+ok("survive stage is actually reachable, not merely resolved");
 
 // Anchor stage win when forced onto anchor
 const anchorStage = getOrbitStageById("moonlake-4");

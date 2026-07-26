@@ -432,6 +432,21 @@ disabled 文案只說明目前狀態，沒有紅點、倒數或懲罰。
 狀態、既有 gate 對齊、零 mutation、四語 chrome、直接地圖入口、dialog／Esc
 與 mobile CSS 結構。
 
+### 9.10 R10 能量與出界修復
+
+| 項目 | R10 規則 |
+|---|---|
+| 自旋推進 | `SPIN_DRIVE=5.4` 改為目標速度回應率；只追逐 `SPIN_TARGET_SPEED=3.2`，不在高於目標時繼續加速 |
+| 全域速度安全 | 預設 `speedCap=4.2`；stage 可用 `physicsTuning.speedCap` 收窄 |
+| 彎軌 | 旋轉速度向量而不增加向量長度；保留彎軌但不生成動能 |
+| 普通牆／柱 | `WALL_BOUNCE=0.82`；只耗能反彈，牆損失 spin 2、柱損失 spin 1；不再補速或補轉速 |
+| 化身碰撞 | 所有 model 使用標準 `b-a` 相對速度；`BODY_RESTITUTION=0.78`，總平移能量上限為碰撞前 `0.96` |
+| 假對手 | 預設 target speed 1.6、speed cap 2.2，避免自動巡場成為能量泵 |
+| 月湖第三關 | 15 秒 contained 生存場；玩家 target 2.35／cap 2.8，假對手 target 1.25／cap 1.7；生存關玩家 stability loss ×0.18 |
+| 驗收 | `orbit-energy-ringout-cases.mjs`：牆／柱／body 守恆、分離不重複衝量、144-shot 可達率、speed cap、30／60／120 Hz exact-match |
+
+普通牆不是導流環。未來若加入裂隙導流環，必須是可見、資料驅動且獨立驗收的特殊場地規則，不能重新把加速藏回共用 boundary。
+
 ---
 
 ## 調校守則（給下一個 AI）

@@ -62,6 +62,7 @@ export function createOrbitSession(opts = {}) {
   const dummyStart = stage?.dummyStart || { x: 0, y: -0.25 };
   const dummyEnabled = stage?.dummyEnabled !== false;
   const physicsTuning = stage?.physicsTuning || {};
+  const collisionTuning = stage?.collisionTuning || {};
   const memoryMotes = Array.isArray(stage?.memoryMotes)
     ? stage.memoryMotes.map((mote, index) => ({
         ...mote,
@@ -115,6 +116,7 @@ export function createOrbitSession(opts = {}) {
     launchOrigin: { ...playerStart },
     dummyEnabled,
     containedArena: stage?.containedArena === true,
+    collisionTuning: { ...collisionTuning },
     playerPhysics: {
       spinDecay:
         Number.isFinite(physicsTuning.spinDecay)
@@ -157,6 +159,10 @@ export function createOrbitSession(opts = {}) {
         Number.isFinite(physicsTuning.driveScale)
           ? physicsTuning.driveScale
           : 1,
+      driveTargetSpeed:
+        Number.isFinite(physicsTuning.driveTargetSpeed)
+          ? physicsTuning.driveTargetSpeed
+          : undefined,
       speedCap:
         Number.isFinite(physicsTuning.speedCap)
           ? physicsTuning.speedCap
@@ -175,7 +181,19 @@ export function createOrbitSession(opts = {}) {
         team: "dummy",
         physicsModel,
         spinDirection: -1,
-        tilt: 0.06
+        tilt: 0.06,
+        driveScale:
+          Number.isFinite(physicsTuning.dummyDriveScale)
+            ? physicsTuning.dummyDriveScale
+            : 0.35,
+        driveTargetSpeed:
+          Number.isFinite(physicsTuning.dummyDriveTargetSpeed)
+            ? physicsTuning.dummyDriveTargetSpeed
+            : 1.6,
+        speedCap:
+          Number.isFinite(physicsTuning.dummySpeedCap)
+            ? physicsTuning.dummySpeedCap
+            : 2.2
       }),
       out: !dummyEnabled,
       spinPhase: dummyEnabled
@@ -229,10 +247,18 @@ export function launchOrbitSession(session, pullDx, pullDy) {
     : 1;
   const launchSpin =
     session.stats.spin + 18 + Math.hypot(pullDx, pullDy) * 72;
+  const rawLaunchVx = vx * speedScale;
+  const rawLaunchVy = vy * speedScale;
+  const rawLaunchSpeed = Math.hypot(rawLaunchVx, rawLaunchVy);
+  const launchSpeedLimit = session.player.speedCap || rawLaunchSpeed;
+  const launchVelocityScale =
+    rawLaunchSpeed > launchSpeedLimit
+      ? launchSpeedLimit / rawLaunchSpeed
+      : 1;
   const player = {
     ...session.player,
-    vx: vx * speedScale,
-    vy: vy * speedScale,
+    vx: rawLaunchVx * launchVelocityScale,
+    vy: rawLaunchVy * launchVelocityScale,
     // 發射當下灌一波轉速：沒有「轉起來」就不像陀螺
     spin: Math.min(100, launchSpin * spinScale),
     spinDirection: Number.isFinite(stance?.spinDirection)
@@ -620,7 +646,8 @@ export function stepOrbitSession(session, dt) {
           next.stats.impact,
           38,
           next.stats.guard,
-          42
+          42,
+          next.collisionTuning
         )
       : {
           a: next.player,
