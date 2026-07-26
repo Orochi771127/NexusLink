@@ -238,3 +238,43 @@ notes:
 After review, create a targeted TP-E2 R2 regeneration pass only for rejected or
 unclear items. Do not regenerate accepted candidates. Promotion to `assets/**`
 should be a separate GROUNDWORK task after review.
+
+## 2026-07-26 R2 Clay/Resin Completion Update
+
+The Owner explicitly requested continuing generation with a locked
+`clay_resin_3d_miniature` direction. A current-main runtime audit plus
+codebase-memory MCP check found no additional required PNG slots beyond the
+eighteen already planned. The R1 batch had complete numeric coverage but used a
+flat icon/enamel language, so all eighteen functional slots received new R2
+staging candidates.
+
+R2 evidence:
+
+- root:
+  `output/habitat/moonlake-video-inspired-r2/clay-resin-required-r2/`
+- contact sheet:
+  `output/habitat/moonlake-video-inspired-r2/clay-resin-required-r2/previews/contact-sheet-required-18-r2.png`
+- mechanical report:
+  `output/habitat/moonlake-video-inspired-r2/clay-resin-required-r2/qc/batch-mechanical-report.json`
+- visual QC:
+  `output/habitat/moonlake-video-inspired-r2/clay-resin-required-r2/BATCH_QC.md`
+- prompt record:
+  `output/habitat/moonlake-video-inspired-r2/clay-resin-required-r2/prompts/required-batch-r2.json`
+
+Current truth:
+
+- R2 raw sources: `18/18`.
+- R2 normalized finals: `18/18`.
+- Mechanical QC: `18/18` pass.
+- Style: premium handcrafted 3D clay/resin miniature candidates.
+- Optional polish: `0/8`; MCP/runtime audit found no current consumer or
+  acceptance requirement.
+- Human approval: pending.
+- Reference audit: pending.
+- Asset promotion: false.
+- Runtime integration: false.
+- Pre-flagged revise candidates: `ritual-fx-pulse-r2`,
+  `resonance-circle-layer-r2`.
+
+Do not regenerate the full R2 batch. Continue only with targeted R3 revisions
+after human review, and keep promotion as a separate approved GROUNDWORK pack.

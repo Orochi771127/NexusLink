@@ -1,0 +1,11 @@
+{
+  "target": "asset",
+  "mode": "single",
+  "prompt": "",
+  "role": "",
+  "input": "output\\habitat\\moonlake-video-inspired-r2\\clay-resin-required-r2\\concepts\\raw\\intervention-symbol-step-back-r2_raw.png",
+  "threshold": 100,
+  "edge_threshold": 150,
+  "duration": 200,
+  "single_size": 512
+}

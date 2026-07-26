@@ -396,6 +396,51 @@
       ]
     },
     {
+      "id": "TP-E2-CLAY-RESIN-REQUIRED-VISUALS-R2",
+      "title": "Video-inspired gameplay required visuals - clay/resin R2 staging",
+      "status": "generated-staging-human-review-pending",
+      "generatedOn": "2026-07-26",
+      "count": 18,
+      "stylePreset": "clay_resin_3d_miniature",
+      "designRef": "docs/agent/VIDEO_INSPIRED_GAMEPLAY_AND_ART_HANDOFF_2026-07-22.md",
+      "stagingRef": "output/habitat/moonlake-video-inspired-r2/clay-resin-required-r2",
+      "qcRef": "output/habitat/moonlake-video-inspired-r2/clay-resin-required-r2/qc/batch-mechanical-report.json",
+      "contactSheet": "output/habitat/moonlake-video-inspired-r2/clay-resin-required-r2/previews/contact-sheet-required-18-r2.png",
+      "reviewStatus": "18/18 generated and mechanical QC passed; human visual approval and reference audit remain pending. ritual-fx-pulse-r2 and resonance-circle-layer-r2 are pre-flagged revise candidates.",
+      "runtimeNeedAudit": {
+        "source": "codebase-memory-mcp plus current main runtime inspection",
+        "result": "No additional required PNG slots were found. Existing First Resonance, Habitat Moments and Crystal Weaving surfaces still use CSS/Pixi procedural visuals; this batch supplies style-correct staging candidates only.",
+        "optionalPolishGenerated": 0,
+        "optionalPolishReason": "No current runtime consumer or acceptance requirement justified the optional eight polish images."
+      },
+      "promotion": {
+        "humanApproved": false,
+        "referenceAuditPassed": false,
+        "assetPromoted": false,
+        "runtimeIntegrated": false
+      },
+      "items": [
+        "heart-core-carrier-r2",
+        "element-light-moon-r2",
+        "element-light-fire-r2",
+        "element-light-water-r2",
+        "ritual-foreground-veil-r2",
+        "ritual-fx-pulse-r2",
+        "ritual-fx-response-r2",
+        "resonance-symbol-atlas-r2",
+        "moment-symbol-quiet-approach-r2",
+        "moment-symbol-moon-gaze-r2",
+        "moment-symbol-crystal-glimmer-r2",
+        "habitat-fx-gentle-motes-r2",
+        "habitat-fx-water-ripple-r2",
+        "intervention-symbol-steady-r2",
+        "intervention-symbol-boundary-r2",
+        "intervention-symbol-step-back-r2",
+        "resonance-circle-layer-r2",
+        "crystal-release-afterglow-r2"
+      ]
+    },
+    {
       "id": "GAP-2",
       "title": "Companion evolution Stage-2 / Stage-3 sprites",
       "status": "blocked",

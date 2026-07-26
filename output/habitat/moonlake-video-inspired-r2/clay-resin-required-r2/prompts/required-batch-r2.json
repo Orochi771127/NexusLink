@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "generator": "built-in image generation",
+  "mode": "style-transfer",
+  "sharedPrompt": {
+    "referenceRole": "Preserve only the R1 functional meaning or broad silhouette; replace the flat enamel icon language.",
+    "style": "Project-native premium handcrafted 3D clay-and-resin miniature model kit; rounded physical forms; subtle hand-shaped clay micro-roughness; translucent cast resin where light or water is needed; matte-to-satin material response; restrained pale-cyan and pale-gold Cyber-Taoist accents; mobile-first readability.",
+    "background": "Perfectly flat uniform #FF00FF chroma-key background with no floor, cast shadow, reflection, gradient, or texture.",
+    "avoid": [
+      "UI",
+      "text",
+      "labels",
+      "rarity",
+      "loot",
+      "reward burst",
+      "ability badge",
+      "medical icon",
+      "target reticle",
+      "summoning circle",
+      "watermark",
+      "#FF00FF inside the subject"
+    ],
+    "sheetRule": "For 2x2 assets use exactly four equal invisible cells, consistent scale and anchor, no visible dividers, and no edge crossing."
+  },
+  "items": [
+    {"id": "heart-core-carrier-r2", "request": "Low crescent ritual cradle holding an unseen heart-core; asymmetric ivory clay with pale-gold repaired seams; open, grounded, welcoming; not a pedestal or altar."},
+    {"id": "element-light-moon-r2", "request": "Two soft violet moonlight wisps curving inward without forming a rigid frame; translucent resin ribbons with clay-soft edges."},
+    {"id": "element-light-fire-r2", "request": "Two warm coral firelight wisps breathing inward; translucent resin flame ribbons with rounded hand-shaped clay bases; no crest or portrait frame."},
+    {"id": "element-light-water-r2", "request": "Two cyan waterlight wisps curling inward; translucent resin water ribbons and small rounded droplets; no crest or portrait frame."},
+    {"id": "ritual-foreground-veil-r2", "request": "Very low soft foreground mist curl made as translucent resin vapor with sparse clay-gold specks; edge veil only."},
+    {"id": "ritual-fx-pulse-r2", "request": "2x2 heart-core breath from tiny inward warm light through gentle expansion to quiet settle; no cradle."},
+    {"id": "ritual-fx-response-r2", "request": "2x2 response gestures for approach, hesitate, keep distance and settle; open resin light gestures only."},
+    {"id": "resonance-symbol-atlas-r2", "request": "2x2 tactile resonance marks for listening, approaching, hesitating and keeping distance; open asymmetrical clay gestures, no badge."},
+    {"id": "moment-symbol-quiet-approach-r2", "request": "Two separate low clay-resin arcs turning toward the same quiet center while preserving personal space."},
+    {"id": "moment-symbol-moon-gaze-r2", "request": "Handcrafted crescent moon with two low wave-like rests; ivory clay and faint translucent cyan resin."},
+    {"id": "moment-symbol-crystal-glimmer-r2", "request": "Tiny grounded crystal glimmer beside an irregular clay pebble and soft water ripple; no pedestal, target ring or collectible spotlight."},
+    {"id": "habitat-fx-gentle-motes-r2", "request": "2x2 sparse translucent resin motes drifting slowly with tiny clay-gold dust flecks; no burst."},
+    {"id": "habitat-fx-water-ripple-r2", "request": "2x2 soft resin-water ripple appearing, widening, thinning and vanishing; irregular ellipse, no reticle."},
+    {"id": "intervention-symbol-steady-r2", "request": "Grounded cairn of three rounded stones with a calm cyan seam; no heartbeat, medical cross or badge."},
+    {"id": "intervention-symbol-boundary-r2", "request": "Open pair of firm upright boundary stones with clear safe space and soft cyan inner edges; nonaggressive."},
+    {"id": "intervention-symbol-step-back-r2", "request": "Two low clay footprints receding into open space with a pale cyan trail that fades; valid retreat, no signal bars."},
+    {"id": "resonance-circle-layer-r2", "request": "Three separate low clay stones facing inward with wide gaps and a barely visible resin thread; consent-based companionship, not formation or summoning."},
+    {"id": "crystal-release-afterglow-r2", "request": "2x2 grounded crystal becoming quieter until only a faint water residue remains; no burst, reward or loot."}
+  ]
+}

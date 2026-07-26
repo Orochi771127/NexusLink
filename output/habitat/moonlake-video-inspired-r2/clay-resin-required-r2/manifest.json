@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "batchId": "TP-E2-CLAY-RESIN-REQUIRED-VISUALS-R2",
+  "mode": "concept_pilot",
+  "stylePreset": "clay_resin_3d_miniature",
+  "generatedOn": "2026-07-26",
+  "sourceReferenceRoles": {
+    "r1Batch": "functional meaning and broad silhouette only",
+    "runtime": "required visual slot and qualitative interaction audit",
+    "style": "project-native premium 3D clay-and-resin miniature model kit"
+  },
+  "canvas": {
+    "static": [512, 512],
+    "sheet2x2": [1024, 1024],
+    "cell": [512, 512],
+    "colorMode": "RGBA",
+    "colorSpace": "sRGB"
+  },
+  "sceneProfileRef": "src/data/sceneProfiles/moonlakeProfile.js",
+  "companionReservedRect": {
+    "x": 0.38,
+    "y": 0.45,
+    "w": 0.24,
+    "h": 0.27
+  },
+  "uiForbiddenZones": {
+    "top": "y < .12",
+    "bottom": "y > .80"
+  },
+  "dayNightCompositionIdentity": "not-applicable; isolated staging candidates only",
+  "promptRecord": "prompts/required-batch-r2.json",
+  "contactSheet": "previews/contact-sheet-required-18-r2.png",
+  "mechanicalQc": "qc/batch-mechanical-report.json",
+  "candidateState": "human-review-pending",
+  "humanApproved": false,
+  "referenceAuditPassed": false,
+  "runtimeIntegrated": false,
+  "assetPromoted": false,
+  "optionalPolishGenerated": 0,
+  "notes": [
+    "All eighteen required functional slots have R2 clay/resin candidates.",
+    "No additional required runtime PNG slot was found by the MCP/runtime audit.",
+    "ritual-fx-pulse-r2 and resonance-circle-layer-r2 are pre-flagged for revision.",
+    "No file in this batch may be copied to assets/** without a separate approved GROUNDWORK promotion task."
+  ]
+}
