@@ -268,25 +268,33 @@ pulseBonus           = 1 + clamp(dev(power)×0.004, −0.12, 0.18)
 
 ---
 
-## 9. 心核迴旋戰／Orbit（R1–R5；仍服從契約）
+## 9. 心核迴旋戰／Orbit（R1–R6；仍服從契約）
 
 > SSOT 契約：`docs/design/HEARTCORE_ORBIT_BATTLE_CONTRACT_V1.md`。
 > 本節與 `src/orbit/*` 對齊；改程式時同步改表。
 > 紅線：數值只能當關係投影的輸出縮放，**禁止**獨立 ATK 成長樹、每日必戰倍率、付費消過熱。
 
-### 9.1 一局節奏（R5 手感常數）
+### 9.1 一局節奏（R6 deterministic baseline／2026-07-26）
 
-| 常數（暫名） | 現行值 | 可調 | 來源 |
+> 2026-07-25 R6 speed pass 保留較快發射、彎軌與碰撞手感；2026-07-26 baseline
+> 把 continuous drive 改為每秒加速度並統一 120 Hz 固定物理步，避免 FPS／子步數越高
+> 就憑空得到更多速度。Runtime player 的摩擦／轉速衰減須直接引用本表常數，不可另藏 override。
+
+| 常數（暫名） | 現行值（R6） | 舊值（R5.1） | 來源 |
 |---|---|---|---|
-| `MAX_SPIN_SECONDS` | 75 | 45–120 | `orbitEngine.js` |
-| 玩家轉速衰減基線 | 6.2 + overheat×0.035 /s | — | `orbitEngine.js` / `orbitDuelEngine.js` |
-| `LAUNCH_PULL_MIN` / `MAX` | 0.04–0.52 | — | `orbitPhysics.js` |
-| `LAUNCH_CHARGE_EXP` | 0.85（短拉更可控） | — | 同上 |
-| 發射速度 | base 0.48 + charge×2.05 + Impact×0.48 | — | `launchVelocityFromPull` |
-| 預設摩擦 / 轉速衰減 | 0.15 / 6.2 | — | `orbitPhysics.js` |
-| 碰撞傷害 cap（對 B／對 A） | 24 / 22 | — | `resolveCollision` |
-| 拒戰：energy | ≤1 | — | `orbitStatsProjector.js` |
-| 拒戰：trust+疲勞 | trust&lt;3 且 touchFatigue≥7 | — | 同上 |
+| `MAX_SPIN_SECONDS` / `MAX_DUEL_SECONDS` | 45 / 45 | 75 / 70 | `orbitEngine.js` / `orbitDuelEngine.js` |
+| 玩家轉速衰減基線 | 5.4 + overheat×0.03 /s | 4.6 + overheat×0.03 /s | `orbitEngine.js` / `orbitDuelEngine.js` |
+| `LAUNCH_PULL_MIN` / `MAX` | 0.04–0.55（不變） | 同左 | `orbitPhysics.js` |
+| `LAUNCH_CHARGE_EXP` | 0.82（不變，短拉仍可控） | 同左 | 同上 |
+| 發射速度 | base 1.05 + charge×4.3 + Impact×0.9 | base 0.78 + charge×2.95 + Impact×0.7 | `launchVelocityFromPull` |
+| 預設摩擦 / 轉速衰減 | 0.05 / 5.4 | 0.075 / 4.6 | `orbitPhysics.js` |
+| `SPIN_CURVE_STRENGTH` / `SPIN_DRIVE` | 1.9 / 5.4 每秒 | 1.35 / 0.055 每畫面步 | 自旋彎軌＋持續推進；continuous drive 必須乘 `dt` |
+| 牆彈／體彈 | 0.98 / 0.97 | 0.98 / 0.9 | `WALL_BOUNCE` / `BODY_RESTITUTION` |
+| 碰撞傷害 cap（對 B／對 A） | 30 / 26 | 24 / 22 | `collideBodies` |
+| 固定物理步／每畫面最大補步 | 1/120 s／6 | `PHYSICS_SUBSTEPS=2` | `orbitPhysics.js`；30／60／120 Hz 共用同一物理時鐘 |
+| 場地視覺縮放（canvas） | 0.46 | 0.42 | `orbitBattleController.js`（`worldToScreen`/`screenToWorld`） |
+| 拒戰：energy | ≤1（不變） | 同左 | `orbitStatsProjector.js` |
+| 拒戰：trust+疲勞 | trust&lt;3 且 touchFatigue≥7（不變） | 同左 | 同上 |
 
 ### 9.2 投影輸出範圍（設計意圖，非最終公式）
 
@@ -318,17 +326,111 @@ pulseBonus           = 1 + clamp(dev(power)×0.004, −0.12, 0.18)
 
 進度：session-only（`orbitPathProgress.js`），失敗不倒退已通關。
 
-### 9.5 R5 手感意圖（給 Owner／手測）
+### 9.5 R6 手感意圖（給 Owner／手測）
 
 | 意圖 | 調校方向 |
 |---|---|
-| 短拉可控 | charge 用 `^0.85` 緩和，避免輕拉就飛出界 |
-| 長拉有爆發 | pull cap 略收（0.52）＋ Impact 仍加成初速 |
-| 多段撞擊可讀 | 單次碰撞傷害上限略降（24／22），轉速略慢衰減 |
-| 連戰過熱 | 仍由 `orbitDuelBudget`／Overheat 拒戰，不改 FOMO |
+| 速度感／陀螺感 | 再提初速（base 1.05／pull×4.3）、再降摩擦（0.05）；**自旋彎軌**加強（1.9） |
+| 場次更短促 | `MAX_SPIN_SECONDS`/`MAX_DUEL_SECONDS` 75/70 → 45／45，轉速衰減加快（5.4），避免長時間漂移 |
+| 短拉可控 | charge 曲線 `^0.82` 不變；短拉仍明顯慢於長拉（`orbit-feel-cases.mjs` 門檻同步拉高） |
+| 長拉有爆發 | pull×4.3＋Impact×0.9；牆擦回饋轉速不變 |
+| 多段撞擊可讀更重 | 彈性 0.97＋側向 spinKick；傷害 cap 提高到 30／26，減少乾磨 |
+| 高速防穿模／可重播 | `PHYSICS_FIXED_DT=1/120`、每畫面最多補 6 步；continuous drive 全部乘 `dt` |
+| 連戰過熱 | 仍由 `orbitDuelBudget`／Overheat 拒戰，不改 FOMO（本輪未動這塊） |
 
-自動檢查：`docs/qa/orbit-feel-cases.mjs`、`docs/qa/orbit-regression-cases.mjs`。
-手動：`docs/qa/ORBIT_MANUAL_390x844.md`（真人／真機仍 open）。
+自動檢查：`docs/qa/orbit-feel-cases.mjs` 必須證明同一發射在 30／60／120 Hz 得到相同結果；再跑 `docs/qa/orbit-regression-cases.mjs`。
+2026-07-26 本機驗證：上述兩項皆 PASS；真人手感／真機 GPU 仍依 `ORBIT_MANUAL_390x844.md` 另驗。
+手動：`docs/qa/ORBIT_MANUAL_390x844.md`（真人／真機仍 open；本輪提速後應優先重測）。
+
+### 9.6 Hybrid Spin 物理沙盒（opt-in，未進正式關卡）
+
+> 這不是第二套模式。Runtime 仍沿用 `src/orbit/*`；只有網址帶
+> `?orbitSandbox=1` 時，現有 Orbit battle controller 才為測試 body 選用
+> `physicsModel="hybrid-spin-v1"`。五關與對決預設仍是 `orbit-r6`。
+
+| 狀態／規則 | 沙盒定義 |
+|---|---|
+| body state | `spinDirection`（±1）、`tilt`（0–1）、`wobble`（0–1）、`spinAge`、`spinPhase` |
+| lifecycle | `launch`（前 0.28s）→ `stable`（spin≥55、低晃動）→ `curving`（spin≥18、wobble&lt;0.72）→ `wobbling` → `stopped` |
+| 彎軌 | 由 spin direction、tilt、wobble 的 deterministic wave 推導；不使用 RNG |
+| 失穩 | 牆／柱／body 碰撞依法線撞擊強度增加 tilt 與 wobble；同時改變速度與 stability |
+| 確定性 | 與 R6 共用 1/120s fixed dt；同一發射在 30／60／120 Hz 必須 exact-match |
+| 寫入邊界 | `sandbox=true` 的勝利在 engine 層強制 `progressEligible=false`；controller 也跳過路徑、微光、Growth 與 save settlement |
+| 可視化 | Canvas debug 顯示 phase／speed／spin／tilt／wobble／direction；body 以 tilt／wobble 橢圓化呈現 |
+
+自動檢查：`node docs/qa/orbit-hybrid-physics-cases.mjs`。
+本節只證明 Hybrid Spin 的可預測生命週期與碰撞因果；**尚未**代表月湖營地垂直切片、記憶光點、營火共鳴圈、姿態或脈衝已完成。
+
+### 9.7 Moonlake Camp 垂直切片（opt-in）
+
+> `?orbitCampSlice=1` 從既有探索 Orbit 入口直接開啟
+> `moonlake-camp-slice`。它不加入 `MOONLAKE_STAGES`，所以月湖正式路徑仍維持
+> 五關；通過真人手感 Gate 前不替換 `moonlake-1`。
+
+| 項目 | 切片值／規則 |
+|---|---|
+| 目標 | `collect_then_resonate`：依序掠過 3 個記憶光點，再低速停入營火圈 0.42s |
+| 對手／HP | `dummyEnabled=false`；無雜訊血條、無 HP 歸零勝利 |
+| Arena | 半徑 1.0 的 contained 圓場；中央 soft well 半徑 0.74、strength 0.62、damping 0.32 |
+| Stage-local physics | spin decay 9.5/s、friction 0.32、drive scale 0.12、speed cap 3.4；不改正式 R6 常數 |
+| 營火圈 | 半徑 0.23；進圈後 brake 8.5/s；speed≤0.52 才累積停留 |
+| 引導 | 場內虛線串起發射點 → 1 → 2 → 3 → 營火；只顯示記憶進度與停圈進度，不顯示敵方 stability |
+| 結算 | `camp_resonated → recovered`；一句夥伴台詞＋session-only 弧光微痕 |
+| 寫入邊界 | `prototypeSlice=true / nonPersistent=true`；engine 強制 `progressEligible=false`，controller 不呼叫路徑／vault／Growth／save settlement |
+| 390 HUD | ≤420px 隱藏重複 hint、縮短 padding／字級／行高；保留 Canvas 與結算按鈕空間 |
+
+自動檢查：`node docs/qa/orbit-moonlake-camp-slice-cases.mjs`，包含 fresh-save
+短／中／長拉、順序光點、停圈、contained speed cap、零結算資格與
+30／60／120 Hz exact-match。
+
+仍未完成：真人 30 秒理解、三次手指拉動 feel-check、Safari 真觸控／GPU、
+正式五關語意替換。三姿態與共鳴脈衝已於 §9.8 進入同一 opt-in 原型，
+但尚未升格正式路徑。
+
+### 9.8 Control Depth 原型（三姿態＋單次共鳴脈衝，opt-in）
+
+> 只擴充 §9.7 的 `moonlake-camp-slice`；正式 `MOONLAKE_STAGES`、
+> `moonlake-1`、對決與 R6 baseline 不套用。姿態與脈衝規則都由 stage data
+> 傳入既有 `orbitEngine.js`，不建立第二套 controller／physics。
+
+| 控制 | 決定性規則 |
+|---|---|
+| 直立 `upright` | speed×1.00、spin×1.00、drive×1.00、tilt 0.08、wobble 0；保留 §9.7 原始軌跡 |
+| 傾斜 `tilted` | speed×0.90、spin×0.96、drive×0.92、tilt 0.46、wobble 0.08；起步較慢、較早畫弧 |
+| 保守 `conservative` | speed×0.76、spin×1.08、drive×0.72、tilt 0.03、wobble 0；速度較低、較容易抓停圈 |
+| 選擇時機 | 只可在 `aiming` 切換；發射後姿態鎖定，沒有中途換零件 |
+| 共鳴脈衝 | 每次發射 `1/1`；只在 `spinning` 可用。速度方向以 0.34 權重有限轉向下一個未收記憶／營火，不 teleport、不直接收點 |
+| 脈衝速度 | 尋路階段 speed×0.92；三點全亮後 speed×0.66，協助收束但仍須實際入圈並低速停留 |
+| 脈衝穩定 | spin +6、tilt -0.10、wobble -0.16；全數 clamp，不改 stability／HP／objective |
+| 寫入邊界 | 延續 `prototypeSlice / nonPersistent`；姿態與脈衝皆為 session state，不寫路徑、vault、Growth 或 save |
+| 390 UI | 三顆姿態 segmented buttons＋一顆 pulse button；發射後姿態 disabled，脈衝用後顯示「已用」 |
+
+自動檢查：`node docs/qa/orbit-control-depth-cases.mjs`。必須證明同一拉距的
+速度／tilt／spin 差異、三姿態各有可完成路徑、脈衝單次鎖且不直接改
+objective／outcome，以及固定時點脈衝在 30／60／120 Hz exact-match。
+
+本包仍是操作深度證明，不代表姿態／脈衝已升格正式月湖路徑；真人是否能在
+三次內說出三姿態用途、是否理解脈衝是有限修正而非自動獲勝，仍由 §7 手測
+延伸項目驗收。
+
+### 9.9 月湖節點 Action Sheet（入口收斂）
+
+> Explore 的月湖焦點以同一張 Action Sheet 呈現三種玩法；它只解析既有
+> runtime gate 與路由，不建立第二套探索、遠征或對峙流程。
+
+| 選項 | 可用條件 | 路由／邊界 |
+|---|---|---|
+| 心核迴旋 | 永遠可見且為主要玩法 | 進入既有 Orbit；正式五關與 opt-in query 行為不變 |
+| 心域遠征 | 沿用 `isExpeditionUnlocked(state)` | 回到既有地圖，由區域 launch row 再檢查角色、能量與節點資格 |
+| 裂隙對峙 | 沿用 `canEnterUnguidedStandoff(state)` | 回到既有地圖選擇已出現裂隙；不生成遭遇、不繞過 safety gate |
+
+直達「月湖路徑」按鈕保留，維持 first-session map gate 與既有玩家路徑。
+Action Sheet 是純呈現：不寫 save、不解鎖節點、不改 bond／trust／Growth，
+disabled 文案只說明目前狀態，沒有紅點、倒數或懲罰。
+
+自動檢查：`node docs/qa/orbit-node-action-sheet-cases.mjs`，包含 fresh／進度
+狀態、既有 gate 對齊、零 mutation、四語 chrome、直接地圖入口、dialog／Esc
+與 mobile CSS 結構。
 
 ---
 

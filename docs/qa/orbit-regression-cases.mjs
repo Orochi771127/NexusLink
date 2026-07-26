@@ -1,8 +1,8 @@
 /**
- * PACK R5 — Orbit regression runner（平行於 web-release-gate 的最小自動檢查）
+ * Orbit R1–R6 regression runner（平行於 web-release-gate 的最小自動檢查）
  * Run: node docs/qa/orbit-regression-cases.mjs
  *
- * 依序跑 R1–R5 harness；任一失敗則 exit 1。
+ * 依序跑 R1–R6 harness；任一失敗則 exit 1。
  */
 
 import { spawnSync } from "node:child_process";
@@ -17,6 +17,10 @@ const harnesses = [
   "orbit-duel-cases.mjs",
   "orbit-settlement-cases.mjs",
   "orbit-feel-cases.mjs",
+  "orbit-hybrid-physics-cases.mjs",
+  "orbit-moonlake-camp-slice-cases.mjs",
+  "orbit-control-depth-cases.mjs",
+  "orbit-node-action-sheet-cases.mjs",
   "orbit-i18n-cases.mjs"
 ];
 

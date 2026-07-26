@@ -234,6 +234,21 @@ export const STRINGS = {
   "explore.evTraces": { tc: "可見痕跡", sc: "可见痕迹", en: "Visible traces", jp: "見える痕跡" },
   "explore.evMemories": { tc: "情緒記憶", sc: "情绪记忆", en: "Emotional memories", jp: "感情の記憶" },
 
+  "explore.nodeActions.open": { tc: "選擇月湖玩法", sc: "选择月湖玩法", en: "Choose a Moonlake activity", jp: "月湖での過ごし方を選ぶ" },
+  "explore.nodeActions.openSub": { tc: "迴旋是主路徑；遠征與對峙依世界狀態開放。", sc: "回旋是主路径；远征与对峙依世界状态开放。", en: "Orbit is the main path; Expedition and Standoff open with the world.", jp: "迴旋が主な道。遠征と対峙は世界の状態に応じて開く。" },
+  "explore.nodeActions.title": { tc: "這次想怎麼走進月湖？", sc: "这次想怎么走进月湖？", en: "How do you want to enter Moonlake?", jp: "今回は、どう月湖へ入る？" },
+  "explore.nodeActions.copy": { tc: "同一個探索節點，依你們此刻的狀態選擇玩法。", sc: "同一个探索节点，依你们此刻的状态选择玩法。", en: "Choose a mode for this node based on where you both are now.", jp: "同じ探索ノードから、今のふたりに合う遊び方を選ぶ。" },
+  "explore.nodeActions.close": { tc: "關閉玩法選擇", sc: "关闭玩法选择", en: "Close activity choices", jp: "選択を閉じる" },
+  "explore.nodeActions.primary": { tc: "主要玩法", sc: "主要玩法", en: "Main activity", jp: "メイン" },
+  "explore.nodeActions.orbit": { tc: "心核迴旋", sc: "心核回旋", en: "Heartcore Orbit", jp: "心核迴旋" },
+  "explore.nodeActions.orbitSub": { tc: "決定啟動條件，陪夥伴完成一段可讀的共鳴軌跡。", sc: "决定启动条件，陪伙伴完成一段可读的共鸣轨迹。", en: "Set the launch, then follow your companion's readable resonance path.", jp: "起動を決め、仲間が描く共鳴の軌跡を見届ける。" },
+  "explore.nodeActions.expedition": { tc: "心域遠征", sc: "心域远征", en: "Heart-domain Expedition", jp: "心域遠征" },
+  "explore.nodeActions.expeditionSub": { tc: "前往已亮起的區域，讓夥伴自主取材。", sc: "前往已亮起的区域，让伙伴自主取材。", en: "Visit a lit region and let your companion gather impressions.", jp: "灯った地域へ向かい、仲間自身の取材を見守る。" },
+  "explore.nodeActions.expeditionLocked": { tc: "更遠的區域尚未亮起；先沿月湖主路徑前進。", sc: "更远的区域尚未亮起；先沿月湖主路径前进。", en: "Farther regions are not lit yet. Follow Moonlake's main path first.", jp: "遠い地域はまだ灯っていない。まず月湖の主な道を進もう。" },
+  "explore.nodeActions.standoff": { tc: "裂隙對峙", sc: "裂隙对峙", en: "Rift Standoff", jp: "裂隙対峙" },
+  "explore.nodeActions.standoffSub": { tc: "回到路徑圖，選擇已出現的裂隙節點。", sc: "回到路径图，选择已出现的裂隙节点。", en: "Return to the path map and choose a rift that has appeared.", jp: "経路図へ戻り、現れた裂隙ノードを選ぶ。" },
+  "explore.nodeActions.standoffLocked": { tc: "等你們留下可見痕跡後，裂隙才會成為可讀的選項。", sc: "等你们留下可见痕迹后，裂隙才会成为可读的选项。", en: "A rift becomes readable only after you have left a visible trace together.", jp: "ふたりの痕跡が見えるようになってから、裂隙は選べる形になる。" },
+
   // ---- Care page body ----
   "care.boundary": { tc: "邊界", sc: "边界", en: "Boundary", jp: "境界" },
   "care.trust": { tc: "信任", sc: "信任", en: "Trust", jp: "信頼" },

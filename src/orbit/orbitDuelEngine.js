@@ -7,16 +7,20 @@
 
 import {
   AVATAR_RADIUS,
+  DEFAULT_FRICTION,
+  DEFAULT_SPIN_DECAY,
+  PHYSICS_FIXED_DT,
   collideBodies,
   createBody,
   launchVelocityFromPull,
+  planFixedPhysicsSteps,
   stepBody
 } from "./orbitPhysics.js";
 import { companionLineForOutcome, mapOrbitResultToOutcome } from "./orbitOutcomes.js";
 import { scaleStatsForOpponent, CPU_DUEL_PROFILES, DUEL_MODES } from "../data/orbit/duelProfiles.js";
 import { getOrbitGhostRecording } from "./orbitGhostRecorder.js";
 
-const MAX_DUEL_SECONDS = 70;
+const MAX_DUEL_SECONDS = 45; // R6：場次更短促，避免長時間漂移感
 
 function clamp(n, min, max) {
   return Math.max(min, Math.min(max, n));
@@ -47,6 +51,7 @@ export function createOrbitDuelSession(opts = {}) {
     mode: "duel",
     phase: "aiming",
     elapsed: 0,
+    physicsAccumulator: 0,
     hits: 0,
     profileId: profile.id,
     profileName: profile.name,
@@ -92,13 +97,17 @@ export function launchOrbitDuelPlayer(session, pullDx, pullDy) {
     ...session,
     phase: "spinning",
     elapsed: 0,
+    physicsAccumulator: 0,
     foeLaunchAt: session.launchDelaySec,
     foeLaunched: false,
     player: {
       ...session.player,
       vx,
       vy,
-      spin: Math.min(100, session.playerStats.spin + Math.hypot(pullDx, pullDy) * 40)
+      spin: Math.min(
+        100,
+        session.playerStats.spin + 18 + Math.hypot(pullDx, pullDy) * 72
+      )
     },
     lastPlayerPull: { pullDx, pullDy }
   };
@@ -197,6 +206,32 @@ function resolveDuel(session, reason) {
   };
 }
 
+function resolveDuelIfFinished(session) {
+  if (session.foe.out || session.foe.stability <= 0) {
+    return resolveDuel(
+      session,
+      session.foe.stability <= 0 ? "foe_burst" : "foe_out"
+    );
+  }
+  if (session.player.out || session.player.stability <= 0) {
+    return resolveDuel(
+      session,
+      session.player.stability <= 0 ? "player_burst" : "player_out"
+    );
+  }
+  if (session.elapsed >= MAX_DUEL_SECONDS) {
+    // 逾時比穩定性，不羞辱
+    if (session.player.stability > session.foe.stability + 5) {
+      return resolveDuel(session, "foe_out");
+    }
+    if (session.foe.stability > session.player.stability + 5) {
+      return resolveDuel(session, "player_out");
+    }
+    return resolveDuel(session, "timeout");
+  }
+  return session;
+}
+
 /**
  * @param {ReturnType<typeof createOrbitDuelSession>} session
  * @param {number} dt
@@ -204,76 +239,78 @@ function resolveDuel(session, reason) {
 export function stepOrbitDuel(session, dt) {
   if (!session || session.phase !== "spinning") return session;
 
+  const physicsPlan = planFixedPhysicsSteps(session.physicsAccumulator, dt);
   let next = {
     ...session,
-    elapsed: session.elapsed + dt,
-    player: stepBody(session.player, dt, {
-      spinDecay: 6.2 + session.playerStats.overheat * 0.035,
-      friction: 0.15,
-      arenaRadius: 1
-    }),
-    foe: stepBody(session.foe, dt, {
-      spinDecay: 5.9,
-      friction: 0.145,
-      arenaRadius: 1
-    }),
-    foeLaunchAt:
-      session.foeLaunched || session.foeLaunchAt == null
-        ? session.foeLaunchAt
-        : session.foeLaunchAt - dt
+    physicsAccumulator: physicsPlan.accumulator
   };
 
-  if (!next.foeLaunched && next.foeLaunchAt != null && next.foeLaunchAt <= 0) {
-    next = launchFoe(next);
-  }
-
-  // 對手尚未發射時略微蠕動，避免完全呆站
-  if (!next.foeLaunched && !next.foe.out) {
+  // 畫面更新頻率只決定本次補幾個固定步；物理與發射倒數都以 1/120s 推進。
+  for (let i = 0; i < physicsPlan.steps; i++) {
     next = {
       ...next,
-      foe: {
-        ...next.foe,
-        vx: Math.sin(next.elapsed * 2) * 0.05,
-        vy: Math.cos(next.elapsed * 1.6) * 0.04
-      }
+      elapsed: next.elapsed + PHYSICS_FIXED_DT,
+      foeLaunchAt:
+        next.foeLaunched || next.foeLaunchAt == null
+          ? next.foeLaunchAt
+          : next.foeLaunchAt - PHYSICS_FIXED_DT
     };
-  }
 
-  const collision = collideBodies(
-    next.player,
-    next.foe,
-    next.playerStats.impact,
-    next.foeStats.impact,
-    next.playerStats.guard,
-    next.foeStats.guard
-  );
-  if (collision.hit) {
+    if (!next.foeLaunched && next.foeLaunchAt != null && next.foeLaunchAt <= 0) {
+      next = launchFoe(next);
+    }
+
+    // 對手尚未發射時略微蠕動。放在固定步內，避免 FPS 改變假動作節奏。
+    if (!next.foeLaunched && !next.foe.out) {
+      next = {
+        ...next,
+        foe: {
+          ...next.foe,
+          vx: Math.sin(next.elapsed * 2) * 0.05,
+          vy: Math.cos(next.elapsed * 1.6) * 0.04
+        }
+      };
+    }
+
     next = {
       ...next,
-      player: collision.a,
-      foe: collision.b,
-      hits: next.hits + 1,
-      lastHitFlash: 0.18
+      player: stepBody(next.player, PHYSICS_FIXED_DT, {
+        spinDecay: DEFAULT_SPIN_DECAY + next.playerStats.overheat * 0.03,
+        friction: DEFAULT_FRICTION,
+        arenaRadius: 1
+      }),
+      foe: stepBody(next.foe, PHYSICS_FIXED_DT, {
+        spinDecay: DEFAULT_SPIN_DECAY - 1,
+        friction: DEFAULT_FRICTION + 0.02,
+        arenaRadius: 1
+      })
     };
-  } else {
-    next = { ...next, lastHitFlash: Math.max(0, next.lastHitFlash - dt) };
-  }
 
-  if (next.foe.out || next.foe.stability <= 0) {
-    return resolveDuel(next, next.foe.stability <= 0 ? "foe_burst" : "foe_out");
-  }
-  if (next.player.out || next.player.stability <= 0) {
-    return resolveDuel(next, next.player.stability <= 0 ? "player_burst" : "player_out");
-  }
-  if (next.elapsed >= MAX_DUEL_SECONDS) {
-    // 逾時比穩定性，不羞辱
-    if (next.player.stability > next.foe.stability + 5) {
-      return resolveDuel(next, "foe_out");
+    const collision = collideBodies(
+      next.player,
+      next.foe,
+      next.playerStats.impact,
+      next.foeStats.impact,
+      next.playerStats.guard,
+      next.foeStats.guard
+    );
+    if (collision.hit) {
+      next = {
+        ...next,
+        player: collision.a,
+        foe: collision.b,
+        hits: next.hits + 1,
+        lastHitFlash: 0.18
+      };
+    } else {
+      next = {
+        ...next,
+        lastHitFlash: Math.max(0, next.lastHitFlash - PHYSICS_FIXED_DT)
+      };
     }
-    if (next.foe.stability > next.player.stability + 5) {
-      return resolveDuel(next, "player_out");
-    }
-    return resolveDuel(next, "timeout");
+
+    next = resolveDuelIfFinished(next);
+    if (next.phase === "resolved") break;
   }
 
   return next;

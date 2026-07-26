@@ -14,7 +14,7 @@ export const ORBIT_OUTCOME_KEYS = Object.freeze([
 
 /**
  * @param {{
- *  reason: 'dummy_burst' | 'noise_cleared' | 'player_out' | 'player_burst' | 'retreat' | 'timeout',
+ *  reason: 'dummy_burst' | 'noise_cleared' | 'camp_resonated' | 'player_out' | 'player_burst' | 'retreat' | 'timeout',
  *  playerStability: number,
  *  dummyStability: number,
  *  hits: number,
@@ -42,6 +42,13 @@ export function mapOrbitResultToOutcome(result) {
       key: "recovered",
       title: "抵達錨點",
       summary: "錨點亮了。微光被你們一起接住。"
+    };
+  }
+  if (reason === "camp_resonated") {
+    return {
+      key: "recovered",
+      title: "營火共鳴",
+      summary: "三點記憶沿著軌跡回來，最後在營火旁安靜停住。"
     };
   }
   if (reason === "dummy_burst" || reason === "noise_cleared") {

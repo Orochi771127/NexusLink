@@ -58,6 +58,192 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-07-26 - Codex - Nexus Spin node Action Sheet and R6-to-R9 total review - VERIFIED
+
+- Status: `VERIFIED`（本機自動化、scoped diff review、390×844 headless Chromium 與零存檔寫入通過；真人手指／Safari 真機仍 open）
+- Branch / commit: `main` / pending Owner-authorized protected-main publication（本條與實作同一 commit；最終 SHA 由交付回報）
+- Scope: 完成資料驅動月湖 Action Sheet，並依 Owner 指示總審本工作樹尚未提交的 Orbit R6 deterministic baseline、Hybrid Physics Sandbox、Moonlake Camp Slice、Control Depth 與本包。
+- Work performed:
+  - 新增 `orbitNodeActionResolver.js`：心核迴旋永遠可用且為主要玩法；心域遠征只讀 `isExpeditionUnlocked`；裂隙對峙只讀 `canEnterUnguidedStandoff`。Resolver 純 derive，不生成遭遇、不改 state。
+  - `pageRouter.js` 在 Explore 月湖焦點加入 modal Action Sheet；保留 first-session `open-map` 直達入口。迴旋進既有 Orbit，遠征／對峙回既有地圖再走既有合法節點；Esc／關閉鈕還 focus，Tab 被限制在 dialog 的可用控制內。
+  - `strings.js` 補齊 tc／sc／en／jp；`styles/page-content.css` 完成 panel-contained mobile sheet、disabled 可讀性、44px 關閉鈕與 ≥60px mode rows。
+  - 新增 `orbit-node-action-sheet-cases.mjs` 並納入完整 Orbit regression；同步 `BALANCE_SHEET.md` §9.9、`ACCEPTANCE.md` O10、`ORBIT_MANUAL_390x844.md` §9。
+  - 總審修正兩項整潔問題：移除重複 Action Sheet 文件區塊、合併重複 stance selected pseudo rule；未改玩法數值。
+- Verification:
+  - PASS `node docs/qa/orbit-node-action-sheet-cases.mjs`
+  - PASS `node docs/qa/orbit-regression-cases.mjs`（prototype／stage／duel／settlement／R6 feel／Hybrid／Camp／Control Depth／Action Sheet／i18n 全綠）
+  - PASS release-gate 等價 Node 靜態面：`src/**/*.js`＋`docs/qa/*.mjs` 共 349 檔 `node --check`
+  - PASS release-gate Node harness 14 組：state／storage migration、renderer lifecycle、Growth G1-G3、i18n、session owner、onboarding／Codex、crystal、map first-session、safety terminal、Orbit regression
+  - PASS 390×844 headless Chromium fresh：Orbit available；Expedition／Standoff disabled；initial focus=Orbit；Tab focus loop；Esc 關閉並回 launcher；直接 `open-map` 與 Orbit route 都可進；主 storage writes=0
+  - PASS 390×844 progressed：Chapter 2 使 Expedition available；完成 first loop＋可見 emotional trace 使 Standoff available；兩者只回既有 map；主 storage writes=0
+  - PASS bounding boxes：Action Sheet 完整留在 370×628 Explore panel；close 44×44；三列高度 81／65／65px；無 page error
+  - PASS screenshots: `orbit-node-action-sheet-fresh-390x844.png`、`orbit-node-action-sheet-progressed-390x844.png`
+  - PASS `git diff --check`
+- Problems / risks: bundled Python 缺 Playwright，repo-native Python web gate 無法在本機啟動；依 `webapp-testing` fallback 使用 bundled Node Playwright完成本包真瀏覽器 smoke。沙盒封鎖外部 Pixi CDN（`ERR_NETWORK_ACCESS_DENIED`），背景走既有 load-failure 告知，Action Sheet／map／Orbit DOM 路由不受影響。完整 GitHub `web-release-gate`、真人 30 秒理解／三次力度與姿態心智模型、Safari 真觸控／GPU、法務／上架仍不得宣稱完成。
+- Scope isolation: 明確排除既有 unrelated dirty `src/ui/orbitDuelController.js`、`docs/qa/_foot_compass_visual/**`、`docs/qa/_moonlake_prop_scale_390x844.png`；提交不得包含。
+- Next safe action: 只 stage 本批 Orbit allowlist，走受保護 main 的 branch／PR／required check／merge 路徑；merge 後同步本機 main，刷新 codebase-memory MCP。
+- Required reading: `docs/design/HEARTCORE_ORBIT_BATTLE_CONTRACT_V1.md`、`docs/design/BALANCE_SHEET.md` §9.1–§9.9、`ACCEPTANCE.md` O6–O10、`docs/qa/ORBIT_MANUAL_390x844.md`
+
+### 2026-07-26 - Codex - Nexus Spin node Action Sheet - IN PROGRESS
+
+- Status: `IN PROGRESS`
+- Branch / commit: `main` / uncommitted（Owner 已授權本包完成且總審通過後 commit／push main）
+- Scope: 在 Explore 的月湖焦點建立資料驅動 Action Sheet，收斂「心核迴旋／心域遠征／裂隙對峙」入口；沿用既有 Orbit、地圖、遠征解鎖與對峙安全 gate。
+- Files: 新增 Orbit node action resolver；修改 `pageRouter.js`、`strings.js`、`styles/page-content.css`、Orbit QA、Balance／Acceptance／390 手測、本 Lane。
+- Red-line check: 不生成遭遇、不繞過 `canEnterUnguidedStandoff`、不強開未解鎖遠征、不寫存檔；disabled 只描述「現在還不是時候」，無紅點、倒數、FOMO 或懲罰。
+- Non-goals: 不改 map node 探索／相遇／結算、不改 `index.html`、save schema、月湖五關、導流環、零件、多角色、遠征引擎或 battle safety。
+- Planned verification: resolver pure QA、四語字串、鍵盤／Esc／focus、390×844 browser route、既有 map first-session gate、完整 Orbit regression、全工作樹 scoped diff／release gate 自審。
+- Next safe action: 完成本包後總審 R6／Hybrid／Camp／Control Depth／Action Sheet，僅 staging 授權 Orbit 範圍，再 commit／push main 與刷新 MCP。
+- Required reading: `docs/design/HEARTCORE_ORBIT_BATTLE_CONTRACT_V1.md` §2／§8、`docs/design/BALANCE_SHEET.md` §9.8、`ACCEPTANCE.md` O9、`src/ui/pageRouter.js`、`src/expedition/expeditionConfig.js`、`src/engine/resonanceThreadEngine.js`
+
+### 2026-07-26 - Codex - Nexus Spin control depth prototype - VERIFIED
+
+- Status: `VERIFIED`
+- Branch / commit: `main` / uncommitted（current `HEAD=d47602e`；Owner 未授權 commit／push）
+- Scope: 沿用既有 `src/orbit/` 與 opt-in `moonlake-camp-slice`，完成三種發射姿態與每次發射一次的共鳴脈衝；正式月湖五關、`moonlake-1`、對決與存檔接線不變。
+- Work performed:
+  - `moonlakeCampSlice.js` 新增 data-driven `upright / tilted / conservative`，分別投影平衡、較早彎軌、低速穩定的 launch speed／spin／drive／tilt／wobble；預設直立保持原切片軌跡。
+  - `orbitEngine.js` 新增 `selectOrbitLaunchStance()` 與 `triggerOrbitResonancePulse()`；姿態只可在 `aiming` 選擇，發射後鎖定。脈衝每發 `1/1`，只有限轉向下一記憶／營火並收束速度與晃動，不直接改記憶 index、停圈秒數、outcome、stability 或 settlement eligibility。
+  - `orbitBattleController.js` 在同一動態 overlay 加入三顆姿態 segmented buttons 與 pulse button；以 `aria-pressed`、可見勾記、disabled 與「1/1／已用」呈現狀態，Canvas 顯示姿態／脈衝文字與單次環形回饋。
+  - `styles.css` 完成 390×844 緊湊控制列；`orbit-control-depth-cases.mjs` 覆蓋三姿態差異、三條可完成路徑、脈衝單次鎖／非自動勝利與固定時點跨幀率 replay；已納入 Orbit regression。
+  - 同步 `BALANCE_SHEET.md` §9.8、`ACCEPTANCE.md` O9、`ORBIT_MANUAL_390x844.md` §8。
+- Verification:
+  - PASS task JS／QA `node --check`
+  - PASS `node docs/qa/orbit-control-depth-cases.mjs`
+  - PASS `node docs/qa/orbit-regression-cases.mjs`（prototype／stages／duel／settlement／feel／hybrid／camp slice／control depth／i18n 全綠）
+  - PASS 390×844 headless Chromium：直立／傾斜／保守切換；發射後姿態 disabled；pulse `1/1 → 已用`；營火完成；主 storage 寫入 0；無 page error；top HUD／Canvas／bottom HUD 無 bounding-box overlap
+  - PASS screenshots: `moonlake-control-depth-aiming-390x844.png`、`moonlake-control-depth-pulse-390x844.png`、`moonlake-control-depth-resolved-390x844.png`
+  - PASS `git diff --check`
+- Problems / risks: bundled Python 無 Playwright，依 `webapp-testing` fallback 使用 bundled Node Playwright；沙盒阻擋外部 Pixi CDN（`ERR_NETWORK_ACCESS_DENIED`），所以背景走既有 fallback，但 Orbit DOM／Canvas smoke 完整。真人三次內能否理解三姿態、脈衝時機是否直覺、Safari 真觸控／文字放大／GPU 仍 open；本包未升格正式 `moonlake-1`。既有 unrelated dirty `src/ui/orbitDuelController.js` 與 QA 圖檔未觸碰。
+- Next safe action: Owner 依 `ORBIT_MANUAL_390x844.md` §8 做真手指 feel-check；通過後再二選一開 Gate 2：先調校／升格月湖證明關，或開資料驅動節點 Action Sheet。不得直接把三姿態／脈衝灌入全部五關。
+- Required reading: `docs/design/HEARTCORE_ORBIT_BATTLE_CONTRACT_V1.md`、`docs/design/BALANCE_SHEET.md` §9.8、`ACCEPTANCE.md` O9、`docs/qa/ORBIT_MANUAL_390x844.md` §8、`docs/qa/orbit-control-depth-cases.mjs`
+
+### 2026-07-26 - Codex - Nexus Spin control depth prototype - IN PROGRESS
+
+- Status: `IN PROGRESS`
+- Branch / commit: `main` / uncommitted（Owner 未授權 commit／push）
+- Scope: 只在既有 `src/orbit/` 與 opt-in `moonlake-camp-slice` 上加入三種發射姿態與每次發射一次的共鳴脈衝；不替換正式月湖五關、不另建平行玩法系統。
+- Files: `src/data/orbit/stages/moonlakeCampSlice.js`、`src/orbit/orbitEngine.js`、`src/ui/orbitBattleController.js`、`styles.css`、Orbit QA、`BALANCE_SHEET.md`、`ACCEPTANCE.md`、本 Lane。
+- Red-line check: 無 HP／傷害成長／掉寶／每日任務／關係懲罰／save schema；脈衝只 deterministic 地調整當次速度方向與失穩，不直接收集光點、不直接完成營火停留。
+- Non-goals: 不改 `MOONLAKE_STAGES`、月湖 2–5、對決、遠征、Growth、Action Sheet、導流環、零件商城、多角色或 GROUNDWORK。
+- Planned verification: 姿態差異與脈衝單次鎖 pure-engine QA、固定時點 30／60／120 Hz exact-match、完整 Orbit regression、390×844 browser smoke、主存檔零寫入、`git diff --check`。
+- Next safe action: 完成後追加 `VERIFIED`；真人／Safari feel gate 仍保持 open，不自動升格正式 `moonlake-1`。
+- Required reading: `docs/design/HEARTCORE_ORBIT_BATTLE_CONTRACT_V1.md`、`docs/agent/HEARTCORE_ORBIT_BATTLE_AGENT_PROGRAM.md`、`docs/design/BALANCE_SHEET.md` §9.7、`ACCEPTANCE.md` O8、`docs/qa/ORBIT_MANUAL_390x844.md` §7
+
+### 2026-07-26 - Codex - Nexus Spin Moonlake Camp slice - VERIFIED
+
+- Status: `VERIFIED`（自動化、390×844 headless browser 與零存檔寫入監測通過；真人手指／Safari 真機仍 open）
+- Branch / commit: `main` / uncommitted（未 commit、未 push）
+- Scope: 在既有 `src/orbit/` 與 `hybrid-spin-v1` 上完成一個 opt-in Moonlake Camp 證明關；沒有建立第二套模式、沒有加入或替換正式 `MOONLAKE_STAGES` 五關。
+- Work performed:
+  - 新增 `moonlakeCampSlice.js`：`collect_then_resonate` 目標、3 個有順序的記憶光點、中央 soft well、營火共鳴圈、無 dummy／HP、session-only 夥伴句與弧光微痕。`stages/index.js` 可依 id 取用，但 `listStagesForRegion("moonlake")` 仍只回 5 關。
+  - `orbitPhysics.js`／`orbitEngine.js`：新增 opt-in contained boundary、body `driveScale / speedCap` 與 stage-local physics tuning；正式 R6 常數不變。切片依序收光點，三點全亮後只在圈內且 speed≤0.52 時累積 0.42s 停留；`prototypeSlice / nonPersistent` 在 engine 層強制 `progressEligible=false`。
+  - `orbitOutcomes.js`：`camp_resonated` 映射 `recovered`，使用本場夥伴第一人稱短評；無 win/lose 羞辱或關係懲罰。
+  - `orbitBattleController.js`：`?orbitCampSlice=1` 從既有探索 Orbit 入口開啟切片；程序化顯示虛線導引、1→2→3 光點、營火圈、停留環與記憶進度，不顯示敵方 stability。結算顯示 session-only 微痕並跳過路徑／vault／Growth／save。Browser smoke 另發現並修正 battle status／companion line 誤寫到隱藏 duel DOM 的同名 selector。
+  - `styles.css`：≤420px 壓短 Orbit HUD、隱藏重複 hint、縮小間距與按鈕，保留 Canvas／結算空間。
+  - 新增 `orbit-moonlake-camp-slice-cases.mjs` 並接入完整 regression；更新 `BALANCE_SHEET.md` §9.7、`ACCEPTANCE.md` O8 與 `ORBIT_MANUAL_390x844.md`。
+- Verification:
+  - PASS 所有變更 JS／QA `node --check`
+  - PASS `node docs/qa/orbit-moonlake-camp-slice-cases.mjs`：五關寬度不變、無 dummy／HP、順序光點、低速停圈、contained speed cap、fresh-save 短／中／長拉差異、30／60／120 Hz exact-match、零 settlement eligibility、UI wiring
+  - PASS `node docs/qa/orbit-regression-cases.mjs`：prototype／stages／duel／settlement／feel／hybrid／camp slice／i18n 全綠
+  - PASS 390×844 headless Chromium：標題／目標／Canvas／結算／兩按鈕無重疊；長拉完成 3/3 與 0.4/0.4s 營火停留；顯示指定夥伴句與 session-only 微痕；`nexusLinkR2State:v1` 監測為 0 次寫入；無 page error
+  - PASS `git diff --check`
+- Problems / risks: headless 沙盒封鎖 Pixi CDN（`ERR_NETWORK_ACCESS_DENIED`），所以背景走既有 habitat fallback；Orbit DOM／Canvas 流程不受影響。自動搜尋證明 fresh-save 可用不同拉力完成，但「30 秒理解／三次內能說出力度差異／發射前預測」仍必須由真人判定。Safari pointer、真機 GPU 與觸覺手感仍 open。
+- Next safe action: Owner 以 `?orbitCampSlice=1` 依 `ORBIT_MANUAL_390x844.md` §7 手測；通過後再另開 Gate 2 決定是否把此目標替換 `moonlake-1`，或進姿態／共鳴脈衝包。未核准前保持 opt-in。
+- Required reading: `docs/design/HEARTCORE_ORBIT_BATTLE_CONTRACT_V1.md`、`docs/agent/HEARTCORE_ORBIT_BATTLE_AGENT_PROGRAM.md`、`docs/design/BALANCE_SHEET.md` §9.7、`ACCEPTANCE.md` O8、`docs/qa/ORBIT_MANUAL_390x844.md` §7
+
+### 2026-07-26 - Codex - Nexus Spin Moonlake Camp slice - IN PROGRESS
+
+- Status: `IN PROGRESS`
+- Branch / commit: `main` / uncommitted（未取得 commit／push 授權）
+- Scope: 在現有 `src/orbit/` 與 `hybrid-spin-v1` 上做一個 Moonlake Camp opt-in 垂直切片：依序掠過記憶光點，最後停入營火共鳴圈；不建立第二套模式。
+- Files: Orbit engine／stage data／battle controller、專屬 QA、`orbit-regression-cases.mjs`、`BALANCE_SHEET.md`、`ACCEPTANCE.md` §O、本台帳。
+- Red-line check: 無 HP 歸零勝利、無掉寶／刷關／每日節奏；不改 bond／trust／Safety／save schema；撤退與失敗零懲罰；夥伴拒戰仍優先。
+- Non-goals: 不重做月湖 2–5、不做三姿態、共鳴脈衝、零件、多角色、導流環、章節推進或新主入口。
+- Planned verification: 目標狀態機與 30／60／120 Hz deterministic QA；完整 Orbit regression；390×844 headless browser 的入口、光點、營火圈、HUD 與零寫入煙測；`git diff --check`。
+- Next safe action: 本包 VERIFIED 後停止；操作深度或正式路徑替換需另開 Gate 2。
+- Required reading: `docs/design/HEARTCORE_ORBIT_BATTLE_CONTRACT_V1.md`、`docs/agent/HEARTCORE_ORBIT_BATTLE_AGENT_PROGRAM.md`、`docs/design/BALANCE_SHEET.md` §9、`ACCEPTANCE.md` §O
+
+### 2026-07-26 - Codex - Nexus Spin hybrid physics sandbox - VERIFIED
+
+- Status: `VERIFIED`（自動化、靜態檢查與 390×844 headless browser smoke 完成；真人手指／真機 GPU 仍 open）
+- Branch / commit: `main` / uncommitted（延續 Owner 指示：未 commit、未 push）
+- Scope: 沿用既有 `src/orbit/` 與 battle overlay，加入 opt-in `hybrid-spin-v1` 物理生命週期與 `?orbitSandbox=1` 隱藏 debug；沒有建立第二套模式或改寫正式五關／對決的預設 R6 physics model。
+- Work performed:
+  - `orbitPhysics.js`：新增 `ORBIT_PHYSICS_MODELS`、`HYBRID_SPIN_PHASES` 與 body state `spinDirection / tilt / wobble / spinAge / spinPhase`；由 spin／stability／時間 deterministic 推導 `launch → stable → curving → wobbling → stopped`；Hybrid 彎軌依旋轉方向鏡像，牆／柱／body collision 會同時改速度、stability、tilt 與 wobble。
+  - `orbitEngine.js`：session 可 opt-in Hybrid model；發射重置 lifecycle；`sandbox=true` 的勝利在 engine 層強制 `progressEligible=false`，不具備路徑／settlement 寫入資格。
+  - `orbitBattleController.js`：網址帶 `?orbitSandbox=1` 時直接重用 `moonlake-1` 幾何開啟隱藏物理沙盒；Canvas 顯示 phase／speed／spin／tilt／wobble／direction 與 wobble ellipse；沙盒結算跳過路徑、微光、Growth、save。Browser smoke 另抓到既有 `.orbit-status` 與 duel status 同名衝突，已把四處寫入 selector 收窄到 `.orbit-battle .orbit-status`。
+  - 新增 `docs/qa/orbit-hybrid-physics-cases.mjs`，並接入 `orbit-regression-cases.mjs`；`BALANCE_SHEET.md` §9.6 記錄 opt-in 模式、轉相門檻、寫入邊界與未完成範圍。
+- Verification:
+  - PASS 變更 JS／QA 的 `node --check`
+  - PASS `node docs/qa/orbit-hybrid-physics-cases.mjs`（opt-in、完整 phase 生命週期、方向鏡像、碰撞擾動、出界停止、30／60／120 Hz exact-match、sandbox progress lock、UI wiring）
+  - PASS `node docs/qa/orbit-regression-cases.mjs`（prototype／stages／duel／settlement／feel／hybrid／i18n 全綠）
+  - PASS 390×844 headless Chromium：進入 `Hybrid Spin 物理沙盒・湖心訓練`、拖曳發射、battle status 顯示旋轉中、Canvas debug 讀到 `curving / speed / spin / tilt / wobble / CW`，無 page error；截圖位於 Codex visualization staging。
+  - PASS `git diff --check`
+- Problems / risks: 測試 sandbox 封鎖外網，Pixi CDN 請求得到 `ERR_NETWORK_ACCESS_DENIED`，所以截圖背景顯示既有 habitat fallback；Orbit DOM／Canvas smoke 本身通過。沙盒仍借用 `moonlake-1` 的 clear dummy 與關係投影 stats，只證明物理生命週期，不得宣稱記憶光點／營火共鳴圈／正式 Moonlake Camp slice 已完成。真人手感與 Safari pointer／GPU 仍需真機。
+- Next safe action: 本包在此停止；若 Owner 核准，另開 `NEXUS_SPIN_MOONLAKE_CAMP_SLICE` Gate 2，把此 opt-in physics model 接到一個無 HP 的記憶光點＋營火共鳴圈證明關。
+- Required reading: `docs/design/HEARTCORE_ORBIT_BATTLE_CONTRACT_V1.md`、`docs/design/BALANCE_SHEET.md` §9、`ACCEPTANCE.md` §O
+
+### 2026-07-26 - Codex - Nexus Spin hybrid physics sandbox - IN PROGRESS
+
+- Status: `IN PROGRESS`
+- Branch / commit: `main` / uncommitted（延續 Owner 的 no commit / no push 指示）
+- Scope: 在現有 `src/orbit/` 原型加入 opt-in `hybrid-spin-v1` body lifecycle（spin direction／tilt／wobble／phase）與 `?orbitSandbox=1` 隱藏 debug；不是第二套模式。
+- Files: `src/orbit/orbitPhysics.js`、`src/orbit/orbitEngine.js`、`src/ui/orbitBattleController.js`、Orbit QA、`BALANCE_SHEET.md`、本台帳。
+- Red-line check: sandbox 不寫路徑進度、vault、Growth 或 save；不改 bond／trust／Safety；正式五關與對決預設仍走 R6 baseline。
+- Non-goals: 不做三姿態、共鳴脈衝、記憶光點、月湖正式切片、多角色、導流環或新入口。
+- Planned verification: lifecycle／碰撞擾動／30-60-120 Hz deterministic QA；完整 Orbit regression；JS static check。
+- Next safe action: 本包 VERIFIED 後停下；Moonlake Camp slice 必須另開 Gate 2。
+- Required reading: `docs/design/HEARTCORE_ORBIT_BATTLE_CONTRACT_V1.md`、`docs/design/BALANCE_SHEET.md` §9、`ACCEPTANCE.md` §O
+
+### 2026-07-26 - Codex - Orbit R6 deterministic baseline - VERIFIED
+
+- Status: `VERIFIED`（自動化與靜態檢查完成；真人手感／真機 GPU 仍 open）
+- Branch / commit: `main` / uncommitted（依 Owner 指示未 commit、未 push）
+- Scope: 修正既有 `src/orbit/*` R6 原型的 FPS／子步數依賴；沒有另建 `nexusSpin/`、新入口、關卡、姿態、脈衝或獎勵。
+- Work performed:
+  - `orbitPhysics.js`：continuous `SPIN_DRIVE` 改成每秒加速度並乘 `dt`；線性 drag 改為 exponential decay；新增 `PHYSICS_FIXED_DT=1/120`、`PHYSICS_MAX_STEPS_PER_FRAME=6` 與 `planFixedPhysicsSteps()`。
+  - `orbitEngine.js`／`orbitDuelEngine.js`：使用同一固定物理時鐘；elapsed、CPU 發射倒數、假動作、碰撞與結算都在固定步內推進；player runtime 直接引用 `DEFAULT_SPIN_DECAY`／`DEFAULT_FRICTION`，消除 Balance Sheet 與 runtime override 不一致。
+  - `orbit-feel-cases.mjs`：保留長拉速度與高 Spin 彎軌門檻，新增 30／60／120 Hz 相同發射結果完全一致的回歸。
+  - `BALANCE_SHEET.md` §9：同步每秒 drive 與固定步規格；`orbit-regression-cases.mjs` 標記涵蓋 R1–R6。
+- Verification:
+  - PASS `node --check src/orbit/orbitPhysics.js`
+  - PASS `node --check src/orbit/orbitEngine.js`
+  - PASS `node --check src/orbit/orbitDuelEngine.js`
+  - PASS `node --check docs/qa/orbit-feel-cases.mjs`
+  - PASS `node docs/qa/orbit-feel-cases.mjs`（含 30／60／120 Hz exact-match）
+  - PASS `node docs/qa/orbit-regression-cases.mjs`（prototype／stages／duel／settlement／feel／i18n 全綠）
+- Problems / risks: CPU 對決的 `Math.random()` seed replay、Hybrid Spin 的 tilt／wobble／phase、390×844 真人手感與真機 GPU 都不在本包；不得把本 baseline 宣稱成完整 Hybrid Spin。
+- Next safe action: Owner 真機感受 R6；若核可，再另開 `NEXUS_SPIN_HYBRID_PHYSICS_SANDBOX` Gate 2，繼續沿用 `src/orbit/`。
+- Required reading: `docs/design/HEARTCORE_ORBIT_BATTLE_CONTRACT_V1.md`、`docs/design/BALANCE_SHEET.md` §9、`ACCEPTANCE.md` §O
+
+### 2026-07-26 - Codex - Orbit R6 deterministic baseline - IN PROGRESS
+
+- Status: `IN PROGRESS`
+- Branch / commit: `main` / uncommitted（Owner 明示不要 commit / push）
+- Scope: 只在既有 `src/orbit/*` 原型管線修正 R6 的時間步長依賴、固定物理步進與 runtime／Balance Sheet 常數不一致；不另建 `nexusSpin/` 或第二套模式。
+- Red-line check: 不改 bond／trust、Safety、Growth、存檔 schema、獎勵或入口；撤退、拒戰與非懲罰結局保持不變。
+- Planned verification: `orbit-feel-cases.mjs` 加入 30／60／120 Hz 一致性；跑 `orbit-regression-cases.mjs` 與變更 JS 的 `node --check`。
+- Next safe action: 完成實作與回歸後把本 lane 追加為 `VERIFIED`；未通過不得進 Hybrid Spin sandbox。
+- Required reading: `docs/design/HEARTCORE_ORBIT_BATTLE_CONTRACT_V1.md`、`docs/design/BALANCE_SHEET.md` §9、`ACCEPTANCE.md` §O
+
+### 2026-07-25 - Claude - Heartcore Orbit PACK R6 feel tuning (speed pass) - COMPLETED (unverified — no local run)
+
+- Status: `COMPLETED` 但**完全未在本機執行**——本 session 的 code-task／shell 皆不可用，只用 Read/Edit 直接改檔；未跑過任何 `node docs/qa/orbit-*.mjs`、未 `node --check`、未實機播放測試。Owner／Cursor 需在有 shell 的環境補跑一次再決定 commit。
+- Branch / commit: 未建 branch，直接改工作目錄（uncommitted）
+- Scope: 使用者原話「速度不夠快，不太像戰鬥陀螺的那種競技感」，Cursor 額度用盡，Owner 授權由 Claude 直接代勞這一個调校任務；範圍限定在既有 `src/orbit/*` 手感常數＋防穿模，**未**碰 ChatGPT 建議的 `src/gameplay/nexusSpin/` 全新架構重寫（評估過該重寫規模過大，且本 session 無法驗證，故不做）。
+- Work performed:
+  - MOD `src/orbit/orbitPhysics.js`：發射初速／拉力係數大幅提高（base 0.78→1.05、pull 係數 2.95→4.3）、摩擦降低（0.075→0.05）、轉速衰減加快（4.6→5.4）、自旋彎軌與外圈推力加強（`SPIN_CURVE_STRENGTH` 1.35→1.9、`SPIN_DRIVE` 0.055→0.09）、碰撞更脆更重（`BODY_RESTITUTION` 0.9→0.97、傷害 cap 24/22→30/26）；新增 `PHYSICS_SUBSTEPS=2` 常數
+  - MOD `src/orbit/orbitEngine.js`：`stepOrbitSession` 改為每幀跑 2 個物理子步（避免提速後高速穿模漏碰撞），`MAX_SPIN_SECONDS` 75→45（場次更短促）
+  - MOD `src/orbit/orbitDuelEngine.js`：`stepOrbitDuel` 同步改細分步；`MAX_DUEL_SECONDS` 70→45；發射倒數／假動作邏輯挪到子步迴圈外，避免隨子步重複套用
+  - MOD `src/ui/orbitBattleController.js`：`worldToScreen`/`screenToWorld` 場地視覺縮放 0.42→0.46
+  - MOD `docs/qa/orbit-feel-cases.mjs`：同步新常數的 `assert.equal` 精確值；把「長拉應該快」的下限從 1.8 拉高到 3.2 鎖住本輪提速目標
+  - MOD `docs/design/BALANCE_SHEET.md` §9.1／§9.5：新增 R6 常數對照表（新值 vs R5.1 舊值）
+- Verification: **無**。已用 Grep 逐一確認沒有其他檔案對這些常數做 `assert.equal` 硬編碼（`orbit-duel-cases.mjs`／`orbit-regression-cases.mjs` 檢查過，只有 `orbit-feel-cases.mjs` 有精確值，已同步）；純靠讀碼推演，**未實際執行過一次**。
+- Problems / risks: （a）本輪完全跳過「跑一次證明」——不同於契約要求的驗證紀律，這是明確已知的缺口，不是疏漏；（b）`PHYSICS_SUBSTEPS` 細分步是新增邏輯，雖經過人工推演（假對手漂移／發射倒數已移出子步迴圈避免重複套用），仍需要實機／自動測試才能排除語意誤差；（c）`BALANCE_SHEET.md` §9.1 表頭仍寫「R5.1」的其餘小節（例如 9.2–9.4）未動，屬正常（未變更範圍）；（d）尚未讓夥伴任何持久 stat／存檔邏輯被動到，維持契約紅線。
+- Next safe action: 在有 shell／瀏覽器部署能力的環境（Cursor 額度恢復後，或 Owner 本機）執行 `node docs/qa/orbit-feel-cases.mjs`、`node docs/qa/orbit-regression-cases.mjs`、`node docs/qa/orbit-duel-cases.mjs`，並實機／瀏覽器手測一輪「發射→對撞→結算」節奏是否真的達到「戰鬥陀螺競技感」；確認無誤後才 commit／push。
+- Required reading: `docs/design/HEARTCORE_ORBIT_BATTLE_CONTRACT_V1.md`、`docs/design/BALANCE_SHEET.md` §9
+
 ### 2026-07-25 - Cursor Grok - Heartcore Orbit PACK R5 polish - COMPLETED
 
 - Status: `COMPLETED`（手感／四語 chrome／基本 a11y／ACCEPTANCE §O／回歸 harness；**真人測・真機・法務仍 OPEN**）
@@ -4699,4 +4885,3 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 - Status: `SUPERSEDED` by the VERIFIED entry above (`main` / `74dfa03`, PR #122).
 - Kept for chronology only; do not treat as open work.
-
