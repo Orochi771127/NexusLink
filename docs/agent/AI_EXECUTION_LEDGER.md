@@ -4919,3 +4919,57 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Next safe action: human batch review, then targeted R3 generation only for
   rejected or unclear candidates. Asset promotion remains a separately
   approved GROUNDWORK package.
+
+### 2026-07-26 - Codex - Moonlake Mobile Scene Editor - IN PROGRESS
+
+- Status: `IN PROGRESS`; Owner approved the task pack in chat.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `TP-MOONLAKE-MOBILE-SCENE-EDITOR`.
+- Layer: `EXPERIENCE`; developer-only scene editing UI. No GROUNDWORK file,
+  runtime asset, save schema, gameplay state, RaphaelCore or safety change.
+- Scope: make the existing `?devSceneEditor=1&showPlacementGrid=1` Moonlake
+  editor usable at 390x844 with touch selection, drag positioning, explicit
+  scale and nudge controls, original-layout reset and JSON export.
+- Files: `src/tools/sceneEditor.js`, focused QA, and this ledger.
+- Non-goals: no automatic writeback to `sceneLayout.js` or the Moonlake scene
+  profile, no `assets/**`, no dependency, no `index.html`, no commit or push.
+- Planned verification: syntax, focused DOM/controller QA, 390x844 browser
+  interaction, export payload inspection, console/page errors and scoped diff.
+- Next safe action: implement and verify locally, then request separate
+  publication authorization.
+- Required reading: `src/tools/sceneEditor.js`,
+  `src/data/sceneLayout.js`, `src/data/sceneProfiles/moonlakeProfile.js`.
+
+### 2026-07-26 - Codex - Moonlake Mobile Scene Editor - VERIFIED
+
+- Status: `VERIFIED`; local implementation and focused mobile browser QA are
+  complete. Publication is not yet performed.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `TP-MOONLAKE-MOBILE-SCENE-EDITOR`.
+- Branch / commit: `main` / `c13676ae7fee65484cd16c8a84cbc2e3735c01ed`
+  plus scoped uncommitted changes.
+- Work performed:
+  - added a 390x844-safe touch panel to the existing scene editor with selected
+    object identity, live x/y and scale readouts, a scale slider, +/- controls,
+    four-direction 4 px nudging and a collapsible 44 px touch UI;
+  - kept direct Pixi pointer dragging and JSON import/export behavior;
+  - corrected reset semantics so it restores the transforms captured when the
+    editor opens instead of moving non-placement objects to viewport center.
+- Verification:
+  - `node --check src/tools/sceneEditor.js` PASS;
+  - `node --check docs/qa/moonlake-mobile-scene-editor-cases.cjs` PASS;
+  - 390x844 touch Chromium harness `12/12 PASS`: select, scale, nudge, live
+    export, exact reset, collapse/expand, width, 44 px targets, page errors 0
+    and console errors 0;
+  - scoped `git diff --check` PASS.
+- Scope isolation: no `sceneLayout.js`, scene profile, `assets/**`, game save,
+  state, RaphaelCore, safety, dependency or `index.html` change. Existing dirty
+  Orbit, art-index, visual-QA and handoff work was left untouched.
+- Problems / risks: the public GitHub Pages URL still serves the previous
+  version until Owner separately authorizes commit and protected-main
+  publication.
+- Next safe action: Owner authorization for commit and push; publish through a
+  feature branch, PR and required `web-release-gate`, then verify the public
+  editor URL.
+- Required reading: `src/tools/sceneEditor.js`,
+  `docs/qa/moonlake-mobile-scene-editor-cases.cjs`.

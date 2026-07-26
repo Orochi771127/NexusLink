@@ -2,7 +2,10 @@ const EXPORT_BUTTON_ID = "dev-export-json";
 const IMPORT_BUTTON_ID = "dev-import-json";
 const RESET_BUTTON_ID = "dev-reset-objects";
 const EXPORT_MODAL_ID = "dev-export-modal";
+const MOBILE_PANEL_ID = "dev-scene-mobile-panel";
+const MOBILE_PANEL_TOGGLE_ID = "dev-scene-mobile-toggle";
 const SCALE_STEP = 0.06;
+const NUDGE_STEP = 4;
 const MIN_SCALE = 0.05;
 const MAX_SCALE = 6;
 
@@ -23,11 +26,17 @@ export function enableEditorMode(stage) {
     stage,
     controlledObjects,
     selected: null,
-    dragging: null
+    dragging: null,
+    initialTransforms: new Map(controlledObjects.map((object) => [
+      object,
+      captureObjectTransform(object)
+    ])),
+    mobileControls: null
   };
 
   controlledObjects.forEach((object) => bindEditableObject(object, state));
   injectExportButton(state);
+  injectMobileControlPanel(state);
   bindScaleShortcuts(state);
 
   window.__NEXUS_SCENE_EDITOR_EXPORT__ = () => createScenePayload(state);
@@ -100,6 +109,7 @@ function moveDrag(event, state) {
     object.zIndex = placementZIndex(object.__sceneEditor.renderLayer, nextPosition.y);
   }
   object.__sceneEditorPinned = true;
+  syncMobileControlPanel(state);
 }
 
 function endDrag(state) {
@@ -114,6 +124,7 @@ function selectObject(object, state) {
   object.__sceneEditorSelected = true;
   object.__sceneEditorOriginalAlpha = object.alpha;
   object.alpha = Math.max(0.42, object.alpha * 0.72);
+  syncMobileControlPanel(state);
 }
 
 function clearSelection(state) {
@@ -126,6 +137,7 @@ function clearSelection(state) {
   delete object.__sceneEditorOriginalAlpha;
   delete object.__sceneEditorSelected;
   state.selected = null;
+  syncMobileControlPanel(state);
 }
 
 function bindScaleShortcuts(state) {
@@ -157,6 +169,192 @@ function scaleSelectedObject(object, delta) {
   const nextY = clampScale(object.scale.y + delta);
   object.scale.set(roundSceneNumber(nextX), roundSceneNumber(nextY));
   object.__sceneEditorPinned = true;
+}
+
+function injectMobileControlPanel(state) {
+  document.getElementById(MOBILE_PANEL_ID)?.remove();
+  document.getElementById(MOBILE_PANEL_TOGGLE_ID)?.remove();
+
+  const panel = document.createElement("section");
+  panel.id = MOBILE_PANEL_ID;
+  panel.setAttribute("aria-label", "月湖物件調整");
+  panel.style.cssText = [
+    "position:fixed",
+    "left:8px",
+    "right:8px",
+    "bottom:max(58px,env(safe-area-inset-bottom))",
+    "z-index:9998",
+    "box-sizing:border-box",
+    "padding:10px",
+    "border:1px solid rgba(141,238,255,0.55)",
+    "border-radius:12px",
+    "background:rgba(2,6,12,0.94)",
+    "box-shadow:0 8px 28px rgba(0,0,0,0.46)",
+    "color:#eafcff",
+    "font:13px system-ui,sans-serif",
+    "touch-action:manipulation"
+  ].join(";");
+
+  const header = document.createElement("div");
+  header.style.cssText = "display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px";
+
+  const selectedLabel = document.createElement("strong");
+  selectedLabel.style.cssText = "min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap";
+
+  const collapseButton = createControlButton("收合", "收合調整面板");
+  collapseButton.onclick = () => setMobilePanelCollapsed(state, true);
+  header.append(selectedLabel, collapseButton);
+
+  const hint = document.createElement("div");
+  hint.textContent = "先點選物件，再直接拖曳位置";
+  hint.style.cssText = "margin-bottom:8px;color:rgba(234,252,255,0.72);font-size:12px";
+
+  const scaleRow = document.createElement("div");
+  scaleRow.style.cssText = "display:grid;grid-template-columns:48px 44px 1fr 44px 58px;align-items:center;gap:6px;margin-bottom:8px";
+  const scaleTitle = document.createElement("span");
+  scaleTitle.textContent = "大小";
+  const decreaseButton = createControlButton("−", "縮小選取物件");
+  const scaleInput = document.createElement("input");
+  scaleInput.type = "range";
+  scaleInput.min = String(MIN_SCALE);
+  scaleInput.max = String(MAX_SCALE);
+  scaleInput.step = "0.01";
+  scaleInput.setAttribute("aria-label", "物件大小");
+  scaleInput.style.cssText = "width:100%;accent-color:#8deeff";
+  const increaseButton = createControlButton("+", "放大選取物件");
+  const scaleValue = document.createElement("output");
+  scaleValue.style.cssText = "text-align:right;font:12px ui-monospace,Consolas,monospace";
+  scaleRow.append(scaleTitle, decreaseButton, scaleInput, increaseButton, scaleValue);
+
+  decreaseButton.onclick = () => adjustSelectedScale(state, -SCALE_STEP);
+  increaseButton.onclick = () => adjustSelectedScale(state, SCALE_STEP);
+  scaleInput.oninput = () => setSelectedScale(state, Number(scaleInput.value));
+
+  const moveRow = document.createElement("div");
+  moveRow.style.cssText = "display:grid;grid-template-columns:48px repeat(4,1fr) 76px;align-items:center;gap:6px";
+  const moveTitle = document.createElement("span");
+  moveTitle.textContent = "微調";
+  const leftButton = createControlButton("←", "向左移動");
+  const upButton = createControlButton("↑", "向上移動");
+  const downButton = createControlButton("↓", "向下移動");
+  const rightButton = createControlButton("→", "向右移動");
+  const positionValue = document.createElement("output");
+  positionValue.style.cssText = "text-align:right;font:11px ui-monospace,Consolas,monospace";
+  moveRow.append(moveTitle, leftButton, upButton, downButton, rightButton, positionValue);
+
+  leftButton.onclick = () => nudgeSelectedObject(state, -NUDGE_STEP, 0);
+  upButton.onclick = () => nudgeSelectedObject(state, 0, -NUDGE_STEP);
+  downButton.onclick = () => nudgeSelectedObject(state, 0, NUDGE_STEP);
+  rightButton.onclick = () => nudgeSelectedObject(state, NUDGE_STEP, 0);
+
+  panel.append(header, hint, scaleRow, moveRow);
+  document.body.appendChild(panel);
+
+  const toggle = createControlButton("調整物件", "展開月湖物件調整面板");
+  toggle.id = MOBILE_PANEL_TOGGLE_ID;
+  toggle.style.cssText += [
+    "position:fixed",
+    "left:12px",
+    "bottom:max(58px,env(safe-area-inset-bottom))",
+    "z-index:9998",
+    "display:none"
+  ].join(";");
+  toggle.onclick = () => setMobilePanelCollapsed(state, false);
+  document.body.appendChild(toggle);
+
+  state.mobileControls = {
+    panel,
+    toggle,
+    selectedLabel,
+    scaleInput,
+    scaleValue,
+    positionValue,
+    interactive: [
+      decreaseButton,
+      scaleInput,
+      increaseButton,
+      leftButton,
+      upButton,
+      downButton,
+      rightButton
+    ]
+  };
+  syncMobileControlPanel(state);
+}
+
+function createControlButton(text, label) {
+  const button = document.createElement("button");
+  button.type = "button";
+  button.textContent = text;
+  button.setAttribute("aria-label", label);
+  button.style.cssText = [
+    "min-width:44px",
+    "min-height:44px",
+    "box-sizing:border-box",
+    "padding:7px 9px",
+    "border:1px solid rgba(0,206,209,0.55)",
+    "border-radius:8px",
+    "background:rgba(0,206,209,0.16)",
+    "color:#eafcff",
+    "font:600 14px system-ui,sans-serif",
+    "cursor:pointer"
+  ].join(";");
+  return button;
+}
+
+function setMobilePanelCollapsed(state, collapsed) {
+  if (!state.mobileControls) return;
+  state.mobileControls.panel.hidden = collapsed;
+  state.mobileControls.toggle.style.display = collapsed ? "block" : "none";
+}
+
+function adjustSelectedScale(state, delta) {
+  if (!state.selected) return;
+  scaleSelectedObject(state.selected, delta);
+  syncMobileControlPanel(state);
+}
+
+function setSelectedScale(state, value) {
+  if (!state.selected) return;
+  const scale = roundSceneNumber(clampScale(value));
+  state.selected.scale.set(scale);
+  state.selected.__sceneEditorPinned = true;
+  syncMobileControlPanel(state);
+}
+
+function nudgeSelectedObject(state, deltaX, deltaY) {
+  if (!state.selected) return;
+  const object = state.selected;
+  object.x = roundSceneNumber(object.x + deltaX);
+  object.y = roundSceneNumber(object.y + deltaY);
+  if (object.__sceneEditor?.placement) {
+    object.zIndex = placementZIndex(object.__sceneEditor.renderLayer, object.y);
+  }
+  object.__sceneEditorPinned = true;
+  syncMobileControlPanel(state);
+}
+
+function syncMobileControlPanel(state) {
+  const controls = state.mobileControls;
+  if (!controls) return;
+  const object = state.selected;
+  const enabled = Boolean(object);
+  controls.selectedLabel.textContent = object
+    ? `已選：${object.__sceneEditor?.id || object.label || "物件"}`
+    : "尚未選取物件";
+  controls.interactive.forEach((control) => {
+    control.disabled = !enabled;
+    control.style.opacity = enabled ? "1" : "0.46";
+  });
+  if (!object) {
+    controls.scaleValue.textContent = "—";
+    controls.positionValue.textContent = "x —  y —";
+    return;
+  }
+  const scale = roundSceneNumber(object.scale.x);
+  controls.scaleInput.value = String(scale);
+  controls.scaleValue.textContent = `${scale.toFixed(2)}×`;
+  controls.positionValue.textContent = `x ${Math.round(object.x)}  y ${Math.round(object.y)}`;
 }
 
 function injectExportButton(state) {
@@ -381,26 +579,29 @@ function downloadSceneJson(json) {
 }
 
 function resetControlledObjects(state) {
-  const x = roundSceneNumber(window.innerWidth / 2);
-  const y = roundSceneNumber(window.innerHeight / 2);
-
   state.controlledObjects.forEach((object) => {
-    resetObjectPosition(object, x, y);
+    resetObjectPosition(object, state.initialTransforms.get(object));
   });
+  syncMobileControlPanel(state);
 }
 
-function resetObjectPosition(object, x, y) {
-  const metadata = object.__sceneEditor;
-  if (metadata?.placement && metadata.initialArtPosition && metadata.placementGrid) {
-    object.x = metadata.initialArtPosition.x - metadata.placementGrid.artWidth / 2;
-    object.y = metadata.initialArtPosition.y - metadata.placementGrid.artHeight / 2;
-    object.scale.set(1);
-    object.zIndex = placementZIndex(metadata.renderLayer, object.y);
-  } else {
-    object.x = x;
-    object.y = y;
-  }
-  object.__sceneEditorPinned = true;
+function captureObjectTransform(object) {
+  return {
+    x: object.x,
+    y: object.y,
+    scaleX: object.scale.x,
+    scaleY: object.scale.y,
+    zIndex: object.zIndex
+  };
+}
+
+function resetObjectPosition(object, initialTransform) {
+  if (!initialTransform) return;
+  object.x = initialTransform.x;
+  object.y = initialTransform.y;
+  object.scale.set(initialTransform.scaleX, initialTransform.scaleY);
+  object.zIndex = initialTransform.zIndex;
+  delete object.__sceneEditorPinned;
 }
 
 function createDevButtonStyle({ right }) {
