@@ -3,8 +3,8 @@ import {
   MOONLAKE_WORLD_WAYPOINTS
 } from "../three/moonlakeLive3dConfig.js";
 
-const NORMAL_SPEED_PER_SECOND = 1.05;
-const BRIDGE_SPEED_PER_SECOND = 0.68;
+const NORMAL_SPEED_PER_SECOND = 0.86;
+const BRIDGE_SPEED_PER_SECOND = 0.64;
 const DIRECTION_HYSTERESIS = 0.16;
 const IDLE_DWELL_MIN_MS = 2_500;
 const IDLE_DWELL_MAX_MS = 8_000;
@@ -27,6 +27,31 @@ const MOOD_ROUTE_POLICY = Object.freeze({
   tired: Object.freeze({ allowBridge: false, dwellMultiplier: 2 })
 });
 
+const DEFAULT_LOCOMOTION_PROFILE = Object.freeze({
+  stridePx390: 17,
+  minPlaybackRate: 0.55,
+  maxPlaybackRate: 3
+});
+
+export const MOONLAKE_LOCOMOTION_PROFILES = Object.freeze({
+  "greyshade-cat": Object.freeze({ stridePx390: 17 }),
+  auriowl: Object.freeze({ stridePx390: 12, maxPlaybackRate: 3.2 }),
+  sprigfawn: Object.freeze({ stridePx390: 20, maxPlaybackRate: 2.8 }),
+  "crystalfin-seahorse": Object.freeze({ stridePx390: 11, maxPlaybackRate: 2.6 }),
+  "blazetail-kit": Object.freeze({ stridePx390: 17 }),
+  "starstripe-cub": Object.freeze({ stridePx390: 17 }),
+  "thunder-pup": Object.freeze({ stridePx390: 17 }),
+  wavecub: Object.freeze({ stridePx390: 17 }),
+  "starflame-phoenix": Object.freeze({ stridePx390: 12, maxPlaybackRate: 3.2 }),
+  "star-foal": Object.freeze({ stridePx390: 21, maxPlaybackRate: 2.8 }),
+  "goldenspark-wyrm": Object.freeze({ stridePx390: 16 }),
+  "flame-flicker": Object.freeze({ stridePx390: 17 }),
+  "ice-talon": Object.freeze({ stridePx390: 17 }),
+  "stone-shard": Object.freeze({ stridePx390: 16 }),
+  "vine-twist": Object.freeze({ stridePx390: 20, maxPlaybackRate: 2.8 }),
+  "crystal-rabbit": Object.freeze({ stridePx390: 13, maxPlaybackRate: 3.2 })
+});
+
 export function createMoonlakeRoamingState(nowMs = 0) {
   const origin = MOONLAKE_WORLD_WAYPOINTS[ORIGIN_ID];
   return {
@@ -39,7 +64,10 @@ export function createMoonlakeRoamingState(nowMs = 0) {
     direction: null,
     lastDirection: "front",
     distanceTravelled: 0,
-    bridgeTraversals: 0
+    bridgeTraversals: 0,
+    lastProjectedX: null,
+    lastProjectedY: null,
+    projectedSpeedPxPerSecond: 0
   };
 }
 
@@ -59,6 +87,9 @@ export function snapMoonlakeRoamingToWaypoint(state, waypointId, nowMs = 0) {
   state.z = waypoint.z;
   state.dwellUntil = nowMs + IDLE_DWELL_MAX_MS;
   state.direction = null;
+  state.lastProjectedX = null;
+  state.lastProjectedY = null;
+  state.projectedSpeedPxPerSecond = 0;
   return true;
 }
 
@@ -75,6 +106,9 @@ export function stageMoonlakeRoamingSegment(state, fromWaypointId, toWaypointId,
   state.z = from.z + (to.z - from.z) * amount;
   state.dwellUntil = 0;
   state.direction = null;
+  state.lastProjectedX = null;
+  state.lastProjectedY = null;
+  state.projectedSpeedPxPerSecond = 0;
   return true;
 }
 
@@ -107,7 +141,8 @@ export function updateMoonlakeRoaming(state, {
           : !ready
             ? "missing_directional_assets"
             : "tired",
-      projectWorldPoint
+      projectWorldPoint,
+      deltaMs
     });
   }
 
@@ -121,7 +156,8 @@ export function updateMoonlakeRoaming(state, {
       enabled: true,
       ready: true,
       reason: "dwell",
-      projectWorldPoint
+      projectWorldPoint,
+      deltaMs
     });
   }
 
@@ -168,7 +204,8 @@ export function updateMoonlakeRoaming(state, {
     enabled: true,
     ready: true,
     reason: roaming.direction ? "walking" : "arrived",
-    projectWorldPoint
+    projectWorldPoint,
+    deltaMs
   });
 }
 
@@ -221,7 +258,8 @@ function buildResult(state, {
   enabled,
   ready,
   reason,
-  projectWorldPoint
+  projectWorldPoint,
+  deltaMs = 0
 }) {
   const waypoint = MOONLAKE_WORLD_WAYPOINTS[state.targetId || state.currentId];
   const area = waypoint?.area || "platform";
@@ -232,6 +270,12 @@ function buildResult(state, {
   const projected = typeof projectWorldPoint === "function"
     ? projectWorldPoint(worldPosition)
     : null;
+  const projectedSpeedPxPerSecond = updateProjectedSpeed(
+    state,
+    projected,
+    deltaMs,
+    Boolean(state.direction)
+  );
   return {
     enabled,
     ready,
@@ -240,12 +284,71 @@ function buildResult(state, {
     animationName: state.direction ? `${state.direction}_walk` : null,
     worldPosition,
     projected,
+    projectedSpeedPxPerSecond,
     projectionReady: Boolean(projected),
     scaleMultiplier: Number(projected?.scale) || 1,
     area,
     isFishingSpot: fishingOptions.length > 0 && !state.direction,
     fishingOptions
   };
+}
+
+function updateProjectedSpeed(state, projected, deltaMs, moving) {
+  const nextX = Number(projected?.x);
+  const nextY = Number(projected?.y);
+  if (!Number.isFinite(nextX) || !Number.isFinite(nextY)) {
+    state.lastProjectedX = null;
+    state.lastProjectedY = null;
+    state.projectedSpeedPxPerSecond = 0;
+    return 0;
+  }
+
+  const hasPreviousProjection = state.lastProjectedX != null && state.lastProjectedY != null;
+  const previousX = Number(state.lastProjectedX);
+  const previousY = Number(state.lastProjectedY);
+  state.lastProjectedX = nextX;
+  state.lastProjectedY = nextY;
+  if (
+    !moving
+    || !hasPreviousProjection
+    || !Number.isFinite(previousX)
+    || !Number.isFinite(previousY)
+    || deltaMs <= 0
+  ) {
+    state.projectedSpeedPxPerSecond = 0;
+    return 0;
+  }
+
+  const instantaneous = Math.hypot(nextX - previousX, nextY - previousY)
+    / Math.max(0.001, deltaMs / 1000);
+  const previous = Number(state.projectedSpeedPxPerSecond) || instantaneous;
+  state.projectedSpeedPxPerSecond = previous + (instantaneous - previous) * 0.32;
+  return state.projectedSpeedPxPerSecond;
+}
+
+export function getMoonlakeWalkPlaybackRate({
+  companionId,
+  animationDurationMs,
+  projectedSpeedPxPerSecond,
+  projectedScale = 1,
+  referenceScale390 = 1
+} = {}) {
+  const authored = MOONLAKE_LOCOMOTION_PROFILES[companionId] || {};
+  const profile = { ...DEFAULT_LOCOMOTION_PROFILE, ...authored };
+  const durationSeconds = Math.max(0.1, Number(animationDurationMs) / 1000 || 1.6);
+  const visibleStride = Math.max(
+    4,
+    profile.stridePx390
+      * Math.max(0.5, Number(projectedScale) || 1)
+      * Math.max(0.5, Number(referenceScale390) || 1)
+  );
+  const rawRate = Math.max(0, Number(projectedSpeedPxPerSecond) || 0)
+    * durationSeconds
+    / visibleStride;
+  return Math.min(
+    profile.maxPlaybackRate,
+    Math.max(profile.minPlaybackRate, rawRate || profile.minPlaybackRate)
+  );
 }
 
 function randomBetween(min, max, random) {

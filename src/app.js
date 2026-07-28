@@ -90,6 +90,7 @@ import {
   setSceneTimePhaseOverride
 } from "./engine/environmentController.js";
 import { createMoonlakeLive3dScene } from "./three/moonlakeLive3dScene.js";
+import { MOONLAKE_INTERACTION_HOTSPOTS } from "./three/moonlakeLive3dConfig.js";
 import { bindCompanionTap, createCreatureNode, positionCompanion } from "./pixi/companionRenderer.js";
 import { createHabitatTraceRenderer } from "./pixi/habitatTraceRenderer.js";
 import { createCrystalStateRenderer } from "./pixi/crystalStateRenderer.js";
@@ -108,6 +109,7 @@ import { resolveAnimationIntent } from "./engine/animationProfile.js";
 const ENVIRONMENT_INTERACTION_EVENT = "ENVIRONMENT_INTERACTION";
 const COMPANION_ANIMATION_INTENT_EVENT = "COMPANION_ANIMATION_INTENT";
 const ENVIRONMENT_EFFECT_LIFETIME_MS = 720;
+const FISHING_LINE_COLOR = 0xd9f7ff;
 let currentCreature = FALLBACK_CREATURE;
 let companionMotionController = null;
 
@@ -331,7 +333,8 @@ async function bootstrap() {
   const interactionHintController = createInteractionHintController({
     store,
     isPanelOpen: () => panelManager.isPanelOpen(),
-    isOnboardingActive: () => onboardingController?.isActive?.()
+    isOnboardingActive: () => onboardingController?.isActive?.(),
+    getCompanionTouchTarget: () => sceneApi?.getCompanionTouchTarget?.()
   });
   const habitatMomentController = createHabitatMomentController({
     store,
@@ -808,7 +811,7 @@ async function bootScene(
   // leaves untreated bright strips along both sides of the habitat.
   const viewportFx = new PIXI.Container();
   viewportFx.name = "habitat_viewport_fx";
-  viewportFx.eventMode = "none";
+  viewportFx.eventMode = "passive";
   world.addChild(viewportFx);
 
   const lightingFx = createHabitatLightingFx(PIXI, {
@@ -864,6 +867,30 @@ async function bootScene(
   environmentEffects.name = "environment_effects";
   layers.layerFX.addChild(environmentEffects);
   const activeEnvironmentEffects = [];
+  const fishingFx = createMoonlakeFishingFx(layers.layerFX);
+  const habitatInteractionLayer = createMoonlakeInteractionLayer(PIXI, {
+    parent: viewportFx,
+    live3d,
+    isActive: () => live3d.ready && environmentLayer.profileId === "moonlake",
+    isBlocked: () => panelManager.isPanelOpen() || onboardingController?.isActive?.(),
+    onInteraction: (interaction) => {
+      markInteraction();
+      const local = layers.layerFX.toLocal({ x: interaction.x, y: interaction.y });
+      const event = {
+        type: `${interaction.type}_tap`,
+        interactionId: interaction.id,
+        color: interaction.type === "lantern"
+          ? "#FFD47A"
+          : interaction.type === "crystal"
+            ? "#56E8FF"
+            : "#8EEBFF",
+        x: local.x,
+        y: local.y
+      };
+      EventBus.emit(ENVIRONMENT_INTERACTION_EVENT, event);
+      statusText.textContent = getMoonlakeInteractionMessage(interaction.type);
+    }
+  });
 
   const habitatTraceRenderer = createHabitatTraceRenderer(PIXI, {
     fx: layers.layerFX,
@@ -872,8 +899,17 @@ async function bootScene(
   });
 
   EventBus.on(ENVIRONMENT_INTERACTION_EVENT, (event) => {
-    if (event?.type !== "crystal_touch") return;
-    activeEnvironmentEffects.push(createCrystalTouchEffect(environmentEffects, event));
+    if (event?.type === "crystal_touch" || event?.type === "crystal_tap") {
+      activeEnvironmentEffects.push(createCrystalTouchEffect(environmentEffects, event));
+      return;
+    }
+    if (event?.type === "lantern_tap") {
+      activeEnvironmentEffects.push(createLanternTouchEffect(environmentEffects, event));
+      return;
+    }
+    if (event?.type === "water_tap") {
+      activeEnvironmentEffects.push(createWaterRippleEffect(environmentEffects, event));
+    }
   });
 
   // 氛圍鉤子：對峙／心語相關動畫意圖 → 天氣 preset（無獎勵、無 FOMO）
@@ -951,6 +987,34 @@ async function bootScene(
         });
       }
     });
+  }
+
+  function getCompanionTouchTarget() {
+    let bounds = null;
+    try {
+      bounds = companion?.getBounds?.() || null;
+    } catch {
+      return null;
+    }
+    const width = Number(bounds?.width);
+    const height = Number(bounds?.height);
+    const x = Number(bounds?.x);
+    const y = Number(bounds?.y);
+    if (
+      !Number.isFinite(width)
+      || !Number.isFinite(height)
+      || !Number.isFinite(x)
+      || !Number.isFinite(y)
+      || width <= 0
+      || height <= 0
+    ) {
+      return null;
+    }
+    return {
+      x: x + width / 2,
+      y: y + height / 2,
+      size: Math.min(128, Math.max(68, Math.max(width, height) * 1.18))
+    };
   }
 
   attachCompanion(companion, currentCreature);
@@ -1081,6 +1145,7 @@ async function bootScene(
         canAmbientWalk: !panelManager.isPanelOpen() && !onboardingController?.isActive?.(),
         isSleeping,
         activeHabitatId: environmentLayer.profileId,
+        companionId: currentCreature.id,
         deltaMs: safeTicker.deltaMS,
         reducedMotion: Boolean(window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches)
           || document.documentElement?.dataset?.reducedMotionPreference === "reduced",
@@ -1091,6 +1156,12 @@ async function bootScene(
           ? ["fishing_back", "fishing_front", "fishing_side"]
           : []
       });
+      updateMoonlakeFishingFx(
+        fishingFx,
+        getCompanionRoamingSnapshot(companionMotionController),
+        companion,
+        safeTicker
+      );
     }
     if (environmentLayer.magicCircle && !environmentLayer.magicCircle.__sceneEditorOriginalAlpha) {
       environmentLayer.magicCircle.alpha = 0.76 + Math.sin(t * 1.4) * 0.03;
@@ -1102,6 +1173,10 @@ async function bootScene(
 
     resizeHabitatLightingFx(lightingFx, app.screen.width, app.screen.height);
     resizeHabitatWeatherFx(weatherFx, app.screen.width, app.screen.height);
+    habitatInteractionLayer.resize(app.screen.width, app.screen.height);
+    habitatInteractionLayer.setVisible(
+      live3d.ready && environmentLayer.profileId === "moonlake"
+    );
     updateEnvironmentLayer(environmentLayer, safeTicker);
     live3d.update(safeTicker);
     updateHabitatLightingFx(lightingFx);
@@ -1190,6 +1265,13 @@ async function bootScene(
       getActiveCompanionNode: () => companion || null,
       getLive3dDiagnostics: () => live3d.getDiagnostics(),
       getRoamingSnapshot: () => getCompanionRoamingSnapshot(companionMotionController),
+      getFishingFxDiagnostics: () => fishingFx.getDiagnostics(),
+      getInteractionHotspots: () => habitatInteractionLayer.getDiagnostics(),
+      triggerHabitatInteractionForQa(interactionId) {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get("moonlakeBridgeQa") !== "1") return null;
+        return habitatInteractionLayer.trigger(interactionId);
+      },
       setRoamingWaypointForQa(waypointId) {
         const params = new URLSearchParams(window.location.search);
         if (params.get("moonlakeBridgeQa") !== "1") return false;
@@ -1252,12 +1334,19 @@ async function bootScene(
         companionMotionController.ambientActionMirrorX = false;
         companionMotionController.ambientActionWaterSide = null;
         companionMotionController.ambientActionRailOffsetX390 = 0;
+        companionMotionController.fishingSequence = null;
         return true;
       }
     });
   }
 
-  return { swapCompanion, switchHabitat, sceneBridge, live3d };
+  return {
+    swapCompanion,
+    switchHabitat,
+    sceneBridge,
+    live3d,
+    getCompanionTouchTarget
+  };
 }
 
 function setPixiEnvironmentVisibility(layers, visible, environmentLayer = null) {
@@ -1277,12 +1366,203 @@ function setPixiEnvironmentVisibility(layers, visible, environmentLayer = null) 
   }
 }
 
+function createMoonlakeInteractionLayer(PIXI, {
+  parent,
+  live3d,
+  isActive,
+  isBlocked,
+  onInteraction
+}) {
+  const root = new PIXI.Container();
+  root.name = "moonlake_interaction_hotspots";
+  root.eventMode = "passive";
+  parent.addChild(root);
+  let lastWidth = 0;
+  let lastHeight = 0;
+  const targets = MOONLAKE_INTERACTION_HOTSPOTS.map((hotspot) => {
+    const target = new PIXI.Container();
+    target.name = `moonlake_interaction_${hotspot.id}`;
+    target.eventMode = "static";
+    target.cursor = "pointer";
+    target.__hotspot = hotspot;
+    target.on("pointerdown", (event) => {
+      event?.stopPropagation?.();
+      trigger(hotspot.id);
+    });
+    root.addChild(target);
+    return target;
+  });
+
+  function resize(width, height) {
+    if (lastWidth === width && lastHeight === height) return;
+    lastWidth = width;
+    lastHeight = height;
+    targets.forEach((target) => {
+      const projected = live3d.projectImageToScreen(target.__hotspot);
+      target.visible = Boolean(projected?.visible);
+      if (!projected) return;
+      target.position.set(projected.x, projected.y);
+      target.hitArea = new PIXI.Circle(
+        0,
+        0,
+        target.__hotspot.radiusPx390 * projected.referenceScale390
+      );
+    });
+  }
+
+  function trigger(interactionId) {
+    if (!isActive() || isBlocked()) return null;
+    const result = live3d.triggerInteraction(interactionId);
+    if (!result) return null;
+    onInteraction?.(result);
+    return result;
+  }
+
+  return {
+    root,
+    resize,
+    trigger,
+    setVisible(visible) {
+      root.visible = Boolean(visible);
+    },
+    getDiagnostics() {
+      return {
+        active: root.visible,
+        count: targets.length,
+        targets: targets.map((target) => ({
+          id: target.__hotspot.id,
+          type: target.__hotspot.type,
+          x: target.x,
+          y: target.y,
+          radius: Number(target.hitArea?.radius) || 0,
+          visible: target.visible
+        }))
+      };
+    }
+  };
+}
+
+function createMoonlakeFishingFx(parent) {
+  const root = new PIXI.Container();
+  root.name = "moonlake_fishing_line_fx";
+  root.eventMode = "none";
+  root.visible = false;
+  const graphics = new PIXI.Graphics();
+  root.addChild(graphics);
+  parent.addChild(root);
+  const diagnostics = {
+    visible: false,
+    phase: null,
+    waterSide: null,
+    lineLengthPx: 0,
+    extendsBeyondRail: false,
+    start: null,
+    end: null
+  };
+  return {
+    root,
+    graphics,
+    diagnostics,
+    getDiagnostics: () => ({ ...diagnostics })
+  };
+}
+
+function updateMoonlakeFishingFx(fishingFx, roaming, companion, ticker) {
+  const fishing = roaming?.fishing;
+  const graphics = fishingFx.graphics;
+  graphics.clear();
+  if (!fishing || !companion) {
+    fishingFx.root.visible = false;
+    Object.assign(fishingFx.diagnostics, {
+      visible: false,
+      phase: null,
+      waterSide: null,
+      lineLengthPx: 0,
+      extendsBeyondRail: false,
+      start: null,
+      end: null
+    });
+    return;
+  }
+
+  fishingFx.root.visible = true;
+  const phase = fishing.phase || "wait";
+  const progress = Math.min(1, Math.max(0, Number(fishing.phaseProgress) || 0));
+  const referenceScale = Number(roaming.projected?.referenceScale390) || 1;
+  const depthScale = Math.min(0.9, Math.max(0.42, Number(roaming.projected?.scale) || 0.72));
+  const startX = companion.x;
+  const startY = companion.y - 80 * referenceScale * depthScale;
+  const reach = 64 * referenceScale * Math.max(0.62, Math.sqrt(depthScale));
+  const direction = fishing.waterSide === "left"
+    ? { x: -1, y: 0.22 }
+    : fishing.waterSide === "far"
+      ? { x: 0, y: -1 }
+      : { x: 1, y: 0.22 };
+  const extension = phase === "cast"
+    ? easeOutCubic(progress)
+    : phase === "reel"
+      ? Math.max(0.08, 1 - easeOutCubic(progress))
+      : phase === "settle"
+        ? 0.2
+        : 1;
+  const endX = startX + direction.x * reach * extension;
+  const endY = startY + direction.y * reach * extension;
+  const controlX = startX + (endX - startX) * 0.56;
+  const controlY = Math.min(startY, endY) - 10 * referenceScale * depthScale;
+  const bitePulse = phase === "bite"
+    ? 0.7 + Math.sin((Number(ticker?.lastTime) || performance.now()) * 0.032) * 0.3
+    : 0;
+
+  graphics
+    .moveTo(startX, startY)
+    .quadraticCurveTo(controlX, controlY, endX, endY)
+    .stroke({
+      color: FISHING_LINE_COLOR,
+      alpha: phase === "settle" ? 0.35 : 0.86,
+      width: Math.max(1, 1.35 * referenceScale)
+    });
+  graphics
+    .circle(endX, endY, Math.max(2.2, 3.2 * referenceScale * depthScale))
+    .fill({
+      color: phase === "bite" ? 0xffd36c : 0x6fe9ff,
+      alpha: phase === "settle" ? 0.35 : 0.9
+    });
+  if (phase === "wait" || phase === "bite") {
+    const ringRadius = (8 + bitePulse * 8) * referenceScale * depthScale;
+    graphics
+      .ellipse(endX, endY + 2 * referenceScale, ringRadius, ringRadius * 0.42)
+      .stroke({
+        color: phase === "bite" ? 0xffe5a5 : 0x8eefff,
+        alpha: phase === "bite" ? 0.82 : 0.34,
+        width: Math.max(1, referenceScale)
+      });
+  }
+
+  const lineLengthPx = Math.hypot(endX - startX, endY - startY);
+  Object.assign(fishingFx.diagnostics, {
+    visible: true,
+    phase,
+    waterSide: fishing.waterSide,
+    lineLengthPx,
+    extendsBeyondRail: lineLengthPx >= 36 * referenceScale,
+    start: { x: startX, y: startY },
+    end: { x: endX, y: endY }
+  });
+}
+
+function getMoonlakeInteractionMessage(type) {
+  if (type === "lantern") return "燈火回應你的觸碰，暖光慢慢亮起。";
+  if (type === "crystal") return "水晶閃出一圈細碎星光。";
+  return "湖面泛開一圈柔和漣漪。";
+}
+
 function createCrystalTouchEffect(parent, event) {
   const effect = new PIXI.Container();
   effect.x = event.x;
   effect.y = event.y - 38;
   effect.__ageMs = 0;
   effect.__baseY = effect.y;
+  effect.__effectKind = "crystal";
 
   const glow = new PIXI.Graphics();
   glow.circle(0, 0, 18).fill({ color: event.color, alpha: 0.16 });
@@ -1312,6 +1592,41 @@ function createCrystalTouchEffect(parent, event) {
   return effect;
 }
 
+function createLanternTouchEffect(parent, event) {
+  const effect = new PIXI.Container();
+  effect.x = event.x;
+  effect.y = event.y;
+  effect.__ageMs = 0;
+  effect.__baseY = effect.y;
+  effect.__effectKind = "lantern";
+  const glow = new PIXI.Graphics();
+  glow.circle(0, 0, 22).fill({ color: event.color, alpha: 0.2 });
+  glow.circle(0, 0, 11).fill({ color: 0xfff4c2, alpha: 0.52 });
+  glow.circle(0, 0, 3.5).fill({ color: 0xffffff, alpha: 0.9 });
+  effect.addChild(glow);
+  parent.addChild(effect);
+  return effect;
+}
+
+function createWaterRippleEffect(parent, event) {
+  const effect = new PIXI.Container();
+  effect.x = event.x;
+  effect.y = event.y;
+  effect.__ageMs = 0;
+  effect.__baseY = effect.y;
+  effect.__effectKind = "water";
+  const ripple = new PIXI.Graphics();
+  ripple
+    .ellipse(0, 0, 18, 7)
+    .stroke({ color: event.color, alpha: 0.8, width: 1.5 });
+  ripple
+    .ellipse(0, 0, 8, 3)
+    .stroke({ color: 0xffffff, alpha: 0.56, width: 1 });
+  effect.addChild(ripple);
+  parent.addChild(effect);
+  return effect;
+}
+
 function updateEnvironmentEffects(activeEffects, ticker) {
   for (let index = activeEffects.length - 1; index >= 0; index -= 1) {
     const effect = activeEffects[index];
@@ -1320,9 +1635,19 @@ function updateEnvironmentEffects(activeEffects, ticker) {
     const pulse = Math.sin(progress * Math.PI);
 
     effect.alpha = 1 - progress;
-    effect.y = effect.__baseY - progress * 18;
-    effect.scale.set(0.7 + pulse * 0.35 + progress * 0.2);
-    effect.rotation = progress * 0.22;
+    if (effect.__effectKind === "water") {
+      effect.y = effect.__baseY;
+      effect.scale.set(0.72 + progress * 1.8);
+      effect.rotation = 0;
+    } else if (effect.__effectKind === "lantern") {
+      effect.y = effect.__baseY - pulse * 3;
+      effect.scale.set(0.74 + pulse * 0.5);
+      effect.rotation = 0;
+    } else {
+      effect.y = effect.__baseY - progress * 18;
+      effect.scale.set(0.7 + pulse * 0.35 + progress * 0.2);
+      effect.rotation = progress * 0.22;
+    }
 
     if (progress >= 1) {
       effect.parent?.removeChild(effect);
@@ -1330,6 +1655,10 @@ function updateEnvironmentEffects(activeEffects, ticker) {
       activeEffects.splice(index, 1);
     }
   }
+}
+
+function easeOutCubic(value) {
+  return 1 - Math.pow(1 - value, 3);
 }
 
 function getAnimationLabState() {

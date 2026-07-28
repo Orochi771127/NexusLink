@@ -14,8 +14,14 @@ import { prefersReducedMotion } from "../utils/motionPreference.js";
 //   - pointer-events:none，讓點擊直接穿透到 Pixi 貓；本元素只負責「被看見」。
 // 元素於 boot 動態建立（不動 index.html）；垂直錨點用 CSS 變數，可在真機微調。
 
-export function createInteractionHintController({ store, isPanelOpen, isOnboardingActive } = {}) {
+export function createInteractionHintController({
+  store,
+  isPanelOpen,
+  isOnboardingActive,
+  getCompanionTouchTarget
+} = {}) {
   let el = null;
+  let trackingFrame = null;
 
   function ensureElement() {
     if (el) return el;
@@ -44,17 +50,65 @@ export function createInteractionHintController({ store, isPanelOpen, isOnboardi
     const state = store.getState();
     if (!shouldShow(state)) {
       if (el) el.classList.remove("is-visible");
+      stopTracking();
       return;
     }
     const node = ensureElement();
     // 遊戲設定或系統無障礙偏好任一成立 → 靜態微光
     node.classList.toggle("is-lowmotion", Boolean(state.settings?.lowMotion) || prefersReducedMotion());
     node.classList.add("is-visible");
+    syncTarget(node);
+    startTracking(node);
   }
 
   function bind() {
     render();
   }
 
-  return { bind, render };
+  function syncTarget(node) {
+    const target = getCompanionTouchTarget?.();
+    const x = Number(target?.x);
+    const y = Number(target?.y);
+    const size = Number(target?.size);
+    if (!Number.isFinite(x) || !Number.isFinite(y)) return false;
+    node.style.setProperty("--touch-affordance-x", `${x}px`);
+    node.style.setProperty("--touch-affordance-y", `${y}px`);
+    if (Number.isFinite(size)) {
+      node.style.setProperty("--touch-affordance-size", `${size}px`);
+    }
+    document.documentElement.style.setProperty("--touch-affordance-y", `${y}px`);
+    return true;
+  }
+
+  function startTracking(node) {
+    if (trackingFrame != null) return;
+    const track = () => {
+      trackingFrame = null;
+      if (!node.classList.contains("is-visible")) return;
+      syncTarget(node);
+      trackingFrame = window.requestAnimationFrame(track);
+    };
+    trackingFrame = window.requestAnimationFrame(track);
+  }
+
+  function stopTracking() {
+    if (trackingFrame == null) return;
+    window.cancelAnimationFrame(trackingFrame);
+    trackingFrame = null;
+  }
+
+  return {
+    bind,
+    render,
+    getDiagnostics() {
+      if (!el) return null;
+      const bounds = el.getBoundingClientRect();
+      return {
+        visible: el.classList.contains("is-visible"),
+        x: bounds.x + bounds.width / 2,
+        y: bounds.y + bounds.height / 2,
+        size: bounds.width
+      };
+    }
+  };
 }
