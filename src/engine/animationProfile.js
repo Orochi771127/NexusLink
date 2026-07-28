@@ -1,5 +1,6 @@
 const warnedFallbacks = new Set();
 
+// 基礎夥伴 Profile（如灰影貓、正式心輝議會五席、黑鐵駭客）
 export const GREYSHADE_CAT_ANIMATION_PROFILE = Object.freeze({
   moodIdle: Object.freeze({
     calm: "idle_calm",
@@ -10,7 +11,7 @@ export const GREYSHADE_CAT_ANIMATION_PROFILE = Object.freeze({
     sad: "idle_sad",
     soft: "idle_sad",
     alert: "idle_distant",
-    safe_harbor: "idle_calm",
+    safe_harbor: "idle_enjoy",
     tired: "idle_sick",
     sleeping: "sleep",
     angry: "idle_angry"
@@ -33,9 +34,10 @@ export const GREYSHADE_CAT_ANIMATION_PROFILE = Object.freeze({
   })
 });
 
-// 心輝議會・五元守護專屬 profile：比灰影貓多用三個情緒待機圖
-// （alert→idle_alert、tired→idle_downcast、safe_harbor→idle_resonance）。
-// 這些角色沒有走路幀，故關閉 ambient 走動避免無動畫滑步。
+// 心輝議會・測試體專屬 profile（焰紋狐、冰晶狼等初期版）：
+// 由於早期測試體使用了特定的情緒詞彙（alert→idle_alert、tired→idle_downcast、safe_harbor→idle_resonance），
+// 以及缺乏 special_angry、idle_wake，故使用專用映射。
+// 目前已補齊 walk 幀，故正常開啟 ambient 走動。
 export const GUARDIAN_ANIMATION_PROFILE = Object.freeze({
   moodIdle: Object.freeze({
     calm: "idle_calm",
@@ -48,7 +50,7 @@ export const GUARDIAN_ANIMATION_PROFILE = Object.freeze({
     alert: "idle_alert",
     safe_harbor: "idle_resonance",
     tired: "idle_downcast",
-    sleeping: "idle_calm",
+    sleeping: "sleep",
     angry: "idle_angry"
   }),
   touchMotion: Object.freeze({
@@ -56,8 +58,8 @@ export const GUARDIAN_ANIMATION_PROFILE = Object.freeze({
     guarded_accept: "touch_guarded",
     hesitate: "touch_guarded",
     reject: "touch_reject",
-    spam_angry: "idle_angry",
-    wake: "idle_alert"
+    spam_angry: "idle_angry", // 早期測試體以 idle_angry 替代 special_angry
+    wake: "idle_alert" // 早期測試體以 idle_alert 替代 idle_wake
   }),
   fallbackIdle: "idle_calm",
   ambientWalkEnabled: true,
