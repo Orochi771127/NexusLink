@@ -6198,3 +6198,27 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
   `output/**`, unrelated runtime/state/assets and all external dependencies.
 - Release plan: explicit staging, focused validation, push, PR, required
   `web-release-gate`, merge, Pages completion and public mobile evidence.
+
+### 2026-07-29 - Codex - Standoff Stage UI And Node Art Publication - VERIFIED
+
+- Status: `VERIFIED`; the approved package is merged to protected `main` and
+  publicly deployed.
+- Lane: `Game Engineering And Architecture`.
+- Publication proof:
+  - content commit: `29df34d73cc563e899407a1675ee68f558929a41`;
+  - PR: `#164` (`Polish mobile standoff and map nodes`);
+  - required PR `web-release-gate`: run `30392363959`, SUCCESS;
+  - squash merge: `105e2f1a19ae514adc58a68430f9fabe4946acce`;
+  - Pages build/deploy: run `30392720709`, SUCCESS;
+  - post-merge release gate: run `30392721486`, attempt 2 SUCCESS.
+- Gate note: post-merge attempt 1 had one transient browser-focus failure,
+  `phase_direct_receives_focus`, while the other map checks passed `44/45`.
+  The same SHA reran without code changes and passed the complete gate on
+  attempt 2; PR gate had already passed before merge.
+- Public verification:
+  - `https://orochi771127.github.io/NexusLink/`: HTTP `200`;
+  - deployed `mapArtLayout.js`: HTTP `200`, both new asset paths present;
+  - Windrest Meadow JPEG: HTTP `200`, `88452` bytes;
+  - Lonesong Rift JPEG: HTTP `200`, `86260` bytes.
+- Remote proof: merge SHA and `origin/main` divergence are `0/0`.
+- Existing `.codex/**` worktree content remained untracked and untouched.
