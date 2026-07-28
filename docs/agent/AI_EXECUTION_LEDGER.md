@@ -5934,3 +5934,267 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
   removed decorative lights.
 - Non-goals honored: no assets, dependencies, renderer, scene composition,
   gameplay tuning, commit, push or publication.
+
+### 2026-07-29 - Codex - Standoff Stage And Map Node Vignette R1 - IN PROGRESS
+
+- Status: `IN PROGRESS`; Owner approved implementation from three physical
+  iPhone screenshots.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `STANDOFF_STAGE_AND_MAP_NODE_VIGNETTE_R1`.
+- Layer: `EXPERIENCE`; the Standoff controller and focused QA may be changed.
+  Two new map-node images remain a separate `GROUNDWORK` promotion gate and
+  will not enter `assets/**` before Owner visual approval.
+- Scope:
+  - reserve a real text-free performance corridor for companion and rift
+    staging on short mobile viewports;
+  - move telegraph, event feedback, player state and the four sealed actions
+    into compact top and bottom HUD bands;
+  - preserve the four-action Standoff contract, all outcomes and safe retreat;
+  - generate review-only Windrest Meadow and Lonely Rift vignette candidates
+    outside the runtime asset tree.
+- Red-line check: no battle-engine values, outcome logic, relationship,
+  fatigue, memory, reward, save, Safety or RaphaelCore change. Retreat remains
+  always available and non-punitive while the encounter is active.
+- Non-goals: no `index.html`, map layout, `assets/**`, dependency, renderer,
+  schema, commit, push or publication change in this implementation phase.
+- Acceptance refs: `E1` through `E6`, base mobile integrity and Standoff
+  telegraph / action / animation manual checks.
+- Required reading: `RAPHAEL_STANDOFF_EVAL_CONTRACT.md`, `ACCEPTANCE.md`
+  section E, `MANUAL_TEST_CHECKLIST.md`, current Standoff controller and the
+  Owner screenshots.
+
+### 2026-07-29 - Codex - Standoff Stage And Map Node Vignette R1 - IN PROGRESS
+
+- Status: `IN PROGRESS`; Owner approved the visual correction package.
+- Lane: `Game Art, UI, And Visual Production`.
+- Visual scope:
+  - replace the stacked square-card mobile HUD with two restrained glass
+    ribbons and one four-part capsule action rail;
+  - keep the center and lower-middle stage clear of explanatory text so the
+    companion's bodily response remains readable;
+  - retain minimum `44px` touch targets, visible focus, reduced-motion support
+    and readable DOM text;
+  - prepare two project-native `512x512` circular-crop-safe node vignette
+    candidates matching the existing Moonlake route art.
+- Asset gate: candidates are review-only and must remain outside `assets/**`;
+  promotion and `mapArtLayout.js` wiring require a later explicit Owner
+  approval.
+- Non-goals: no emoji or improvised SVG icon replacement, gameplay redesign,
+  new dependency, formal asset promotion, commit, push or publication.
+- Evidence target: `390x664` and `390x844` rendered proof, geometry-based
+  no-overlap checks, console health and side-by-side candidate review.
+
+### 2026-07-29 - Codex - Standoff Stage And Map Node Vignette R1 - VERIFIED
+
+- Status: `VERIFIED`; the active Standoff runtime UI correction is complete.
+  Asset promotion remains a separate Owner visual-approval gate.
+- Lane: `Game Engineering And Architecture`.
+- Completed:
+  - changed the active encounter flow to top information ribbon -> flexible
+    text-free stage -> bottom player ribbon and action rail;
+  - limited event feedback to the latest two lines, or the latest one on short
+    viewports, while retaining full live-region DOM content;
+  - converted the four sealed actions into one four-part capsule rail and
+    retained their full accessible descriptions;
+  - moved the rift visual upward and reduced it on short viewports so it does
+    not cover the companion performance;
+  - hid the disabled action rail after settlement and kept the return action
+    reachable.
+- Browser proof:
+  - `390x664`: `scrollHeight=664`; stage `343.1px` high; every text/control
+    intersection with the stage measured `0px`; all four actions measured
+    `44px` high; companion remained visible before and after one noise turn;
+  - `390x844`: `scrollHeight=844`; stage `489px` high; every text/control
+    intersection with the stage measured `0px`; all four actions measured
+    `44px` high;
+  - retreat path: action rail hidden after settlement, `回到棲地` visible,
+    all former actions disabled;
+  - browser console: zero errors.
+- Automated verification:
+  - `node --check src/ui/battleController.js`: PASS;
+  - Raphael Standoff eval harness: `12/12` PASS;
+  - `git diff --check`: PASS.
+- Changed files: `src/ui/battleController.js`, this ledger.
+- Evidence:
+  `output/playwright/standoff-stage-r1-390x664.png`,
+  `output/playwright/standoff-stage-r1-390x664-after-turn.png`,
+  `output/playwright/standoff-stage-r1-390x844.png`.
+- Branch / commit: `agent/standoff-stage-ui-r1`; commit, push and publication
+  not authorized for this package and not performed.
+
+### 2026-07-29 - Codex - Standoff Stage And Map Node Vignette R1 - VERIFIED / ASSET REVIEW REQUIRED
+
+- Status: active Standoff UI `VERIFIED`; two node-vignette candidates are
+  `READY FOR OWNER REVIEW`, not runtime assets.
+- Lane: `Game Art, UI, And Visual Production`.
+- Visual result:
+  - active Standoff uses restrained top/bottom glass ribbons and a single
+    segmented capsule rail instead of stacked square action cards;
+  - the companion remains the readable lower-stage subject while the rift is
+    held above it;
+  - no explanatory text crosses the central performance corridor at either
+    tested mobile height.
+- Review-only image candidates:
+  - `output/imagegen/map-node-candidates/standoff-stage-ui-r1/windrest-meadow-candidate-r1.png`;
+  - `output/imagegen/map-node-candidates/standoff-stage-ui-r1/lonesong-rift-candidate-r1.png`.
+- Generation method: OpenAI image generation with existing Moonlake node
+  vignettes used as style references. Both candidates are square clean-HD
+  source images, circular-crop safe, and contain no character, UI, border,
+  text, logo or watermark.
+- Groundwork gate: no file under `assets/**` and no `mapArtLayout.js` entry was
+  changed. If Owner approves both candidates, the next package may export the
+  approved images to the canonical `512x512` node format, add prompt metadata
+  and wire `plains_windrest` / `plains_rift`.
+- Non-goals honored: no gameplay, dependency, renderer, schema, formal asset
+  promotion, commit, push or publication change.
+
+### 2026-07-29 - Codex - Standoff Stage UI R1.1 - IN PROGRESS
+
+- Status: `IN PROGRESS`; Owner supplied `390x844` visual correction notes.
+- Lane: `Game Art, UI, And Visual Production`.
+- Layer: `EXPERIENCE`; `src/ui/battleController.js` presentation only.
+- Scope:
+  - reserve a fixed right inset for the companion stability value so its final
+    digit cannot touch or escape the ribbon;
+  - move the rift visual upward into the unoccupied land between the two
+    waterfalls while preserving the foreground companion plane.
+- Red-line check: no action, outcome, timing, battle value, retreat, save,
+  Safety or RaphaelCore change.
+- Non-goals: no asset promotion, map wiring, dependency, commit, push or
+  publication.
+- Acceptance refs: `E1` through `E6`, `390x844` mobile stage readability and
+  minimum `44px` action targets.
+
+### 2026-07-29 - Codex - Standoff Stage UI R1.1 - VERIFIED
+
+- Status: `VERIFIED`; both Owner-reported `390x844` corrections are complete.
+- Lane: `Game Art, UI, And Visual Production`.
+- Completed:
+  - gave the stability value a fixed width, tabular numerals and an additional
+    `10px` trailing inset;
+  - moved sprite-based rifts upward `24px` on the regular mobile stage and
+    `8px` on short viewports;
+  - moved the procedural shadow / mist / core focal point upward with the
+    sprite so all rift variants occupy the same waterfall-gap plane.
+- Browser proof:
+  - `390x844`: stability value right edge has `14.5px` clearance from the
+    outer ribbon edge; label and value do not collide; rift visual center is
+    `y=278.6px`, between the two waterfalls; `scrollHeight=844`;
+  - `390x664`: stability value clearance is `26.5px`; rift and companion both
+    remain visible; `scrollHeight=664`;
+  - all four action targets remain `44px` high; browser console has zero
+    errors.
+- Automated verification:
+  - `node --check src/ui/battleController.js`: PASS;
+  - Raphael Standoff eval harness: `12/12` PASS;
+  - `git diff --check`: PASS.
+- Evidence:
+  `output/playwright/standoff-stage-r11-390x844.png`,
+  `output/playwright/standoff-stage-r11-390x664.png`.
+- Changed files: `src/ui/battleController.js`, this ledger.
+- Branch / commit: `agent/standoff-stage-ui-r1`; commit, push and publication
+  remain unperformed.
+
+### 2026-07-29 - Codex - Standoff Vitals And Node Promotion R1 - IN PROGRESS
+
+- Status: `IN PROGRESS`; Owner confirmed the `390x844` memory-shard overflow
+  and explicitly approved both previously generated node candidates.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `STANDOFF_VITALS_AND_NODE_PROMOTION_R1`.
+- Layer: `EXPERIENCE` presentation plus explicitly approved `GROUNDWORK` asset
+  promotion and map-art wiring.
+- Files touched: `src/ui/battleController.js`, `src/data/mapArtLayout.js`, two
+  new `assets/maps/moonlake/route/nodes/*.jpg` files, their prompt metadata,
+  and this ledger.
+- Red-line check: no battle value, action, outcome, retreat, relationship,
+  fatigue, memory, reward, save, Safety or RaphaelCore behavior changes.
+- Non-goals: no `index.html`, state schema, renderer, dependency, map-node
+  coordinates, commit, push or publication.
+- Acceptance refs: `E1` through `E6`, base mobile integrity, route-node asset
+  integrity and `390x844` no-overflow browser proof.
+
+### 2026-07-29 - Codex - Standoff Vitals And Node Promotion R1 - IN PROGRESS
+
+- Status: `IN PROGRESS`; Owner approval promotes both review candidates from
+  staging to formal runtime assets.
+- Lane: `Game Art, UI, And Visual Production`.
+- Approved sources:
+  - `output/imagegen/map-node-candidates/standoff-stage-ui-r1/windrest-meadow-candidate-r1.png`;
+  - `output/imagegen/map-node-candidates/standoff-stage-ui-r1/lonesong-rift-candidate-r1.png`.
+- Promotion contract: preserve the approved composition, export canonical
+  `512x512` JPEGs beside existing Moonlake node vignettes, retain prompt
+  provenance, and wire only `plains_windrest` / `plains_rift`.
+- UI correction: reserve a visible right-side safe inset for the complete
+  `記憶微光 ◈ 0/3` cluster at both supported mobile heights.
+- Non-goals: no regeneration, redesign, gameplay change, new dependency,
+  commit, push or publication.
+
+### 2026-07-29 - Codex - Standoff Vitals And Node Promotion R1 - VERIFIED
+
+- Status: `VERIFIED`; the reported memory-shard overflow is fixed and both
+  approved node candidates are integrated.
+- Lane: `Game Engineering And Architecture`.
+- Completed:
+  - reorganized the companion stability ribbon into three compact rows:
+    name/value, full-width stability track, then sync/fatigue/memory-shards;
+  - reserved a stable right safe inset for the complete `記憶微光 ◈ 0/3`
+    cluster instead of shrinking only the final numeral;
+  - wired `plains_windrest` and `plains_rift` to their approved runtime
+    vignettes without changing node coordinates or behavior.
+- Browser proof:
+  - `390x844`: card right edge `359px`, memory-shard right edge `338px`,
+    clearance `21px`; full stability track width `306px`;
+    `scrollWidth=390`, `scrollHeight=844`;
+  - `390x664`: memory-shard clearance `21px`; stage height `335.06px`;
+    `scrollWidth=390`, `scrollHeight=664`;
+  - all four action targets remain `44px` high;
+  - chapter 2 map rendered eight visible nodes; Windrest Meadow and Lonesong
+    Rift images both reported `naturalWidth=512` and `is-node-art-ready`;
+  - browser console and page errors: zero.
+- Automated verification:
+  - `node --check` for `battleController.js` and `mapArtLayout.js`: PASS;
+  - Raphael Standoff eval harness: `12/12` PASS;
+  - map first-session gate: PASS (`K9`, phase search, encounter lifecycle,
+    panel-close notifications);
+  - both new runtime asset URLs returned HTTP `200`;
+  - `git diff --check`: PASS.
+- Evidence:
+  `output/playwright/standoff-vitals-node-promotion-r1-390x844.png`,
+  `output/playwright/standoff-vitals-node-promotion-r1-390x664.png`,
+  `output/playwright/standoff-node-promotion-r1-map-390x844.png`.
+- Branch / commit: `agent/standoff-stage-ui-r1`; commit, push and publication
+  were not authorized for this package and were not performed.
+
+### 2026-07-29 - Codex - Standoff Vitals And Node Promotion R1 - VERIFIED
+
+- Status: `VERIFIED`; Owner-approved review sources are now formal runtime
+  node assets.
+- Lane: `Game Art, UI, And Visual Production`.
+- Promoted assets:
+  - `windrest-meadow-candidate-r1.png` -> `windrest-meadow-v1.jpg`;
+  - `lonesong-rift-candidate-r1.png` -> `lonesong-rift-v1.jpg`.
+- Asset proof:
+  - both final assets are canonical `512x512` JPEGs;
+  - approved compositions were preserved through high-quality bicubic
+    downscaling and JPEG quality `92`;
+  - prompt/provenance sidecars record OpenAI image generation and the
+    2026-07-29 Owner approval;
+  - both images were visually inspected after export and verified inside the
+    live circular map-node crop.
+- No regeneration, new visual interpretation, coordinate change, fallback
+  replacement, dependency, commit, push or publication was performed.
+
+### 2026-07-29 - Codex - Standoff Stage UI And Node Art Publication - IN PROGRESS
+
+- Status: `IN PROGRESS`; Owner explicitly authorized commit, push and
+  publication after reviewing the final mobile and map evidence.
+- Lane: `Game Engineering And Architecture`.
+- Publication scope: the complete verified Standoff Stage UI R1/R1.1,
+  memory-shard safe-inset correction, approved Windrest Meadow / Lonesong Rift
+  promotion, map-art wiring, prompt provenance and their ledger records.
+- Branch: `agent/standoff-stage-ui-r1`, created from and currently synchronized
+  with `origin/main` before the publication commit.
+- Excluded: existing untracked `.codex/**`, review sources under ignored
+  `output/**`, unrelated runtime/state/assets and all external dependencies.
+- Release plan: explicit staging, focused validation, push, PR, required
+  `web-release-gate`, merge, Pages completion and public mobile evidence.
