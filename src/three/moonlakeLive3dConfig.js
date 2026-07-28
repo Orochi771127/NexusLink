@@ -148,6 +148,72 @@ export const MOONLAKE_WATERFALLS = Object.freeze([
   })
 ]);
 
+export const MOONLAKE_INTERACTION_HOTSPOTS = Object.freeze([
+  Object.freeze({
+    id: "lantern-front-left",
+    type: "lantern",
+    imageX: 0.382,
+    imageY: 0.612,
+    radiusPx390: 30
+  }),
+  Object.freeze({
+    id: "lantern-front-right",
+    type: "lantern",
+    imageX: 0.658,
+    imageY: 0.612,
+    radiusPx390: 30
+  }),
+  Object.freeze({
+    id: "crystal-tent-left",
+    type: "crystal",
+    imageX: 0.164,
+    imageY: 0.54,
+    radiusPx390: 28
+  }),
+  Object.freeze({
+    id: "crystal-bridge-left",
+    type: "crystal",
+    imageX: 0.402,
+    imageY: 0.46,
+    radiusPx390: 26
+  }),
+  Object.freeze({
+    id: "crystal-bridge-right",
+    type: "crystal",
+    imageX: 0.714,
+    imageY: 0.46,
+    radiusPx390: 26
+  }),
+  Object.freeze({
+    id: "crystal-tent-right",
+    type: "crystal",
+    imageX: 0.858,
+    imageY: 0.548,
+    radiusPx390: 28
+  }),
+  Object.freeze({
+    id: "waterfall-pool-left",
+    type: "water",
+    imageX: 0.205,
+    imageY: 0.305,
+    radiusPx390: 34
+  }),
+  Object.freeze({
+    id: "waterfall-pool-right",
+    type: "water",
+    imageX: 0.795,
+    imageY: 0.305,
+    radiusPx390: 34
+  }),
+  Object.freeze({
+    id: "lake-center",
+    type: "water",
+    imageX: 0.5,
+    imageY: 0.37,
+    radiusPx390: 42
+  })
+]);
+
 export const MOONLAKE_WORLD_WAYPOINTS = Object.freeze({
   platform_center: Object.freeze({ x: 0, y: 0.28, z: 1.2, area: "platform" }),
   platform_left: Object.freeze({ x: -1.35, y: 0.24, z: 1.0, area: "platform" }),

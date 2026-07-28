@@ -172,13 +172,14 @@ try {
         routeId: "bridge-clearance-r2-1"
       })
     });
-    assert.equal(motion.ambientActionState, option.animationName);
-    assert.equal(motion.ambientActionMirrorX, option.mirrorX);
-    assert.equal(motion.ambientActionWaterSide, option.waterSide);
+    assert.equal(motion.fishingSequence?.animationName, option.animationName);
+    assert.equal(motion.fishingSequence?.mirrorX, option.mirrorX);
+    assert.equal(motion.fishingSequence?.waterSide, option.waterSide);
     assert.equal(
-      motion.ambientActionRailOffsetX390,
+      motion.fishingSequence?.railOffsetX390,
       option.railOffsetX390
     );
+    assert.equal(motion.fishingSequence?.phase, "cast");
     assert.ok(
       Math.abs(
         companion.x
@@ -206,10 +207,11 @@ try {
       routeId: "bridge-clearance-r2-1"
     })
   });
-  assert.equal(motion.ambientActionState, "fishing_back");
-  assert.equal(motion.ambientActionMirrorX, false);
-  assert.equal(motion.ambientActionWaterSide, "far");
-  assert.equal(motion.ambientActionRailOffsetX390, 0);
+  assert.equal(motion.fishingSequence?.animationName, "fishing_back");
+  assert.equal(motion.fishingSequence?.mirrorX, false);
+  assert.equal(motion.fishingSequence?.waterSide, "far");
+  assert.equal(motion.fishingSequence?.railOffsetX390, 0);
+  assert.equal(motion.fishingSequence?.phase, "cast");
   assert.deepEqual(played.at(-1), {
     animationName: "fishing_back",
     mirrorX: false

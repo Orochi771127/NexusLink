@@ -365,10 +365,10 @@ html[data-ui="v2"] .first-loop-skip {
    ========================================================================= */
 html[data-ui="v2"] .touch-affordance {
   position: fixed;
-  left: 50%;
+  left: var(--touch-affordance-x, 50%);
   top: var(--touch-affordance-y, 60%);
-  width: 128px;
-  height: 128px;
+  width: var(--touch-affordance-size, 128px);
+  height: var(--touch-affordance-size, 128px);
   transform: translate(-50%, -50%);
   pointer-events: none;             /* 點擊穿透到 Pixi 貓 */
   z-index: calc(var(--z-nav, 30) - 4);

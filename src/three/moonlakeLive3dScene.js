@@ -1,6 +1,7 @@
 import {
   MOONLAKE_BRIDGE_PRESENTATION,
   MOONLAKE_CAMERA,
+  MOONLAKE_INTERACTION_HOTSPOTS,
   MOONLAKE_LIVE3D_ASSET,
   MOONLAKE_VISUAL_MASTER,
   MOONLAKE_VISUAL_WALKWAY,
@@ -153,6 +154,12 @@ export async function createMoonlakeLive3dScene({
       grass,
       weather,
       lights,
+      interactions: {
+        lantern: { strength: 0, center: { x: 0.5, y: 0.5 } },
+        crystal: { strength: 0, center: { x: 0.5, y: 0.5 } },
+        water: { strength: 0, center: { x: 0.5, y: 0.5 } }
+      },
+      lastInteraction: null,
       size: { width: 1, height: 1 }
     };
 
@@ -190,6 +197,15 @@ export async function createMoonlakeLive3dScene({
       },
       projectWorldToScreen(point) {
         return projectWorldToScreen(THREE, state, point);
+      },
+      projectImageToScreen(point) {
+        return projectMoonlakeImagePoint(point, state.size);
+      },
+      hitTestScreenPoint(point) {
+        return hitTestMoonlakeInteraction(point, state.size);
+      },
+      triggerInteraction(interactionId) {
+        return triggerMoonlakeInteraction(state, interactionId);
       },
       getDiagnostics() {
         return buildDiagnostics(state);
@@ -252,6 +268,15 @@ function createDisabledController(reason) {
     projectWorldToScreen() {
       return null;
     },
+    projectImageToScreen() {
+      return null;
+    },
+    hitTestScreenPoint() {
+      return null;
+    },
+    triggerInteraction() {
+      return null;
+    },
     getDiagnostics() {
       return { ready: false, fallback: true, reason };
     },
@@ -276,6 +301,12 @@ function createVisualBackdrop(THREE, texture) {
     time: { value: 0 },
     nightMix: { value: 0 },
     rainStrength: { value: 0 },
+    lanternPulse: { value: 0 },
+    lanternCenter: { value: new THREE.Vector2(0.5, 0.5) },
+    crystalPulse: { value: 0 },
+    crystalCenter: { value: new THREE.Vector2(0.5, 0.5) },
+    waterPulse: { value: 0 },
+    waterCenter: { value: new THREE.Vector2(0.5, 0.5) },
     viewportAspect: { value: MOONLAKE_VISUAL_MASTER.imageAspect },
     imageAspect: { value: MOONLAKE_VISUAL_MASTER.imageAspect },
     bridgeNear: {
@@ -312,6 +343,12 @@ function createVisualBackdrop(THREE, texture) {
       "uniform float time;",
       "uniform float nightMix;",
       "uniform float rainStrength;",
+      "uniform float lanternPulse;",
+      "uniform vec2 lanternCenter;",
+      "uniform float crystalPulse;",
+      "uniform vec2 crystalCenter;",
+      "uniform float waterPulse;",
+      "uniform vec2 waterCenter;",
       "uniform float viewportAspect;",
       "uniform float imageAspect;",
       "uniform vec4 bridgeNear;",
@@ -322,6 +359,10 @@ function createVisualBackdrop(THREE, texture) {
       "  vec2 lower = smoothstep(minUv, minUv + feather, uv);",
       "  vec2 upper = 1.0 - smoothstep(maxUv - feather, maxUv, uv);",
       "  return lower.x * lower.y * upper.x * upper.y;",
+      "}",
+      "",
+      "float radialMask(vec2 uv, vec2 center, float radius, float feather) {",
+      "  return 1.0 - smoothstep(radius - feather, radius + feather, distance(uv, center));",
       "}",
       "",
       "vec2 coverUv(vec2 uv) {",
@@ -353,9 +394,14 @@ function createVisualBackdrop(THREE, texture) {
       "  float leftFall = boxMask(imageUv, vec2(0.135, 0.625), vec2(0.285, 0.865), 0.018);",
       "  float rightFall = boxMask(imageUv, vec2(0.715, 0.625), vec2(0.865, 0.875), 0.018);",
       "  float waterfallMask = (leftFall + rightFall) * coolWater;",
-      "  float fallingStreak = pow(0.5 + 0.5 * sin(imageUv.x * 164.0 - imageUv.y * 42.0 + time * 4.2), 8.0);",
-      "  float fallingPulse = 0.5 + 0.5 * sin(imageUv.y * 118.0 + time * 2.1);",
-      "  color += vec3(0.06, 0.14, 0.18) * waterfallMask * (0.16 + fallingStreak * 0.18 + fallingPulse * 0.04);",
+      "  float fallingStreak = pow(0.5 + 0.5 * sin(imageUv.x * 164.0 - imageUv.y * 42.0 + time * 6.2), 7.0);",
+      "  float fallingBand = pow(0.5 + 0.5 * sin(imageUv.y * 176.0 + time * 7.6), 6.0);",
+      "  float fallingPulse = 0.5 + 0.5 * sin(imageUv.y * 118.0 + time * 2.8);",
+      "  color += vec3(0.075, 0.18, 0.235) * waterfallMask * (0.24 + fallingStreak * 0.28 + fallingBand * 0.13 + fallingPulse * 0.06);",
+      "  float fallFoam = boxMask(imageUv, vec2(0.12, 0.605), vec2(0.30, 0.675), 0.025)",
+      "    + boxMask(imageUv, vec2(0.69, 0.60), vec2(0.88, 0.675), 0.025);",
+      "  float foamPulse = 0.5 + 0.5 * sin(imageUv.x * 94.0 + time * 3.4);",
+      "  color += vec3(0.09, 0.19, 0.24) * fallFoam * coolWater * (0.10 + foamPulse * 0.10);",
       "",
       "  float waterGlint = pow(0.5 + 0.5 * sin(imageUv.x * 122.0 + imageUv.y * 76.0 + time * 0.9), 12.0);",
       "  color += vec3(0.05, 0.11, 0.14) * waterGlint * waterMask * (0.07 + rainStrength * 0.05);",
@@ -379,6 +425,17 @@ function createVisualBackdrop(THREE, texture) {
       "  color = mix(color, bridgeWood, bridgeExtension * 0.82);",
       "  color = mix(color, bridgeWood * 0.72, plankLine * bridgeExtension * 0.42);",
       "  color = mix(color, vec3(0.43, 0.29, 0.15), railMask * 0.92);",
+      "",
+      "  float lanternGlow = radialMask(imageUv, lanternCenter, 0.052, 0.032) * lanternPulse;",
+      "  float lanternSpark = pow(0.5 + 0.5 * sin(time * 11.0 + distance(imageUv, lanternCenter) * 220.0), 10.0);",
+      "  color += vec3(0.34, 0.16, 0.035) * lanternGlow * (0.58 + lanternSpark * 0.22);",
+      "  float crystalGlow = radialMask(imageUv, crystalCenter, 0.047, 0.030) * crystalPulse;",
+      "  float crystalSpark = pow(0.5 + 0.5 * sin(time * 18.0 + imageUv.x * 170.0 - imageUv.y * 130.0), 12.0);",
+      "  color += vec3(0.03, 0.31, 0.44) * crystalGlow * (0.54 + crystalSpark * 0.42);",
+      "  float waterDistance = distance(imageUv, waterCenter);",
+      "  float waterRingRadius = mix(0.012, 0.092, 1.0 - waterPulse);",
+      "  float waterRing = 1.0 - smoothstep(0.004, 0.014, abs(waterDistance - waterRingRadius));",
+      "  color += vec3(0.035, 0.18, 0.24) * waterRing * waterPulse * waterMask * 0.72;",
       "",
       "  vec3 nightColor = color * vec3(0.34, 0.46, 0.68) * 0.78 + vec3(0.006, 0.014, 0.045);",
       "  float cyanCrystal = smoothstep(0.12, 0.48, color.b - color.r) * smoothstep(0.35, 0.74, color.g);",
@@ -1269,6 +1326,7 @@ function updateScene(state, ticker, getEnvironmentState, getWeather) {
   state.visualBackdrop.uniforms.time.value = state.elapsed * motionScale;
   state.visualBackdrop.uniforms.nightMix.value = nightMix;
   state.visualBackdrop.uniforms.rainStrength.value = rainStrength;
+  updateInteractionPulses(state, deltaSeconds);
   state.water.uniforms.time.value = state.elapsed * motionScale;
   state.water.uniforms.nightMix.value = nightMix;
   state.water.uniforms.rainStrength.value = rainStrength;
@@ -1281,6 +1339,23 @@ function updateScene(state, ticker, getEnvironmentState, getWeather) {
   updateGrass(state, motionScale);
   updateWeather(state, weatherId, deltaSeconds, motionScale);
   state.renderer.render(state.scene, state.camera);
+}
+
+function updateInteractionPulses(state, deltaSeconds) {
+  const decay = {
+    lantern: 0.48,
+    crystal: 0.7,
+    water: 0.58
+  };
+  Object.entries(state.interactions).forEach(([type, interaction]) => {
+    interaction.strength = Math.max(0, interaction.strength - deltaSeconds * decay[type]);
+    const pulseUniform = state.visualBackdrop.uniforms[`${type}Pulse`];
+    const centerUniform = state.visualBackdrop.uniforms[`${type}Center`];
+    if (pulseUniform) pulseUniform.value = interaction.strength;
+    if (centerUniform) {
+      centerUniform.value.set(interaction.center.x, 1 - interaction.center.y);
+    }
+  });
 }
 
 function updateGrass(state, motionScale) {
@@ -1378,6 +1453,72 @@ export function projectMoonlakeVisualPoint(point, viewport = {}) {
   };
 }
 
+export function projectMoonlakeImagePoint(point, viewport = {}) {
+  if (!point) return null;
+  const imageX = Number(point.imageX);
+  const imageY = Number(point.imageY);
+  if (!Number.isFinite(imageX) || !Number.isFinite(imageY)) return null;
+  const width = Math.max(1, Number(viewport.width) || 1);
+  const height = Math.max(1, Number(viewport.height) || 1);
+  const viewportAspect = width / height;
+  const imageAspect = MOONLAKE_VISUAL_MASTER.imageAspect;
+  let screenX = imageX;
+  let screenY = imageY;
+  if (viewportAspect < imageAspect) {
+    screenX = 0.5 + (imageX - 0.5) * (imageAspect / viewportAspect);
+  } else {
+    screenY = 0.5 + (imageY - 0.5) * (viewportAspect / imageAspect);
+  }
+  return {
+    x: screenX * width,
+    y: screenY * height,
+    visible: screenX >= 0 && screenX <= 1 && screenY >= 0 && screenY <= 1,
+    referenceScale390: width / 390
+  };
+}
+
+function hitTestMoonlakeInteraction(point, viewport) {
+  const screenX = Number(point?.x);
+  const screenY = Number(point?.y);
+  if (!Number.isFinite(screenX) || !Number.isFinite(screenY)) return null;
+  let closest = null;
+  MOONLAKE_INTERACTION_HOTSPOTS.forEach((hotspot) => {
+    const projected = projectMoonlakeImagePoint(hotspot, viewport);
+    if (!projected?.visible) return;
+    const radius = hotspot.radiusPx390 * projected.referenceScale390;
+    const distance = Math.hypot(projected.x - screenX, projected.y - screenY);
+    if (distance > radius || (closest && closest.distance <= distance)) return;
+    closest = {
+      ...hotspot,
+      x: projected.x,
+      y: projected.y,
+      radius,
+      distance
+    };
+  });
+  return closest;
+}
+
+function triggerMoonlakeInteraction(state, interactionId) {
+  const hotspot = MOONLAKE_INTERACTION_HOTSPOTS.find((candidate) => candidate.id === interactionId);
+  const interaction = hotspot ? state.interactions[hotspot.type] : null;
+  if (!hotspot || !interaction) return null;
+  interaction.strength = 1;
+  interaction.center = { x: hotspot.imageX, y: hotspot.imageY };
+  const projected = projectMoonlakeImagePoint(hotspot, state.size);
+  state.lastInteraction = {
+    id: hotspot.id,
+    type: hotspot.type,
+    at: state.elapsed
+  };
+  return {
+    ...hotspot,
+    x: projected?.x,
+    y: projected?.y,
+    visible: Boolean(projected?.visible)
+  };
+}
+
 function resolveVisualWalkwayPoint(worldX, worldZ) {
   const route = MOONLAKE_VISUAL_WALKWAY;
   const isFarLanding = worldZ <= route.farLandingWorldZ;
@@ -1462,7 +1603,18 @@ function buildDiagnostics(state) {
       visualTime: state.visualBackdrop.uniforms.time.value,
       waterTime: state.water.uniforms.time.value,
       waterfallTimes: state.waterfalls.items.map((item) => item.uniforms.time.value),
+      waterfallBackdropStrength: 0.47,
       grassSway: state.lastGrassSway
+    },
+    interactions: {
+      hotspots: MOONLAKE_INTERACTION_HOTSPOTS.length,
+      last: state.lastInteraction,
+      pulses: Object.fromEntries(
+        Object.entries(state.interactions).map(([type, interaction]) => [
+          type,
+          interaction.strength
+        ])
+      )
     },
     renderer: {
       calls: state.renderer.info.render.calls,
