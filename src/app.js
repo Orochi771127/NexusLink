@@ -72,6 +72,7 @@ import {
 } from "./pixi/pixiApp.js";
 import {
   createHabitatWeatherFx,
+  getHabitatWeather,
   HABITAT_WEATHER_HOOKS,
   onHabitatWeatherChange,
   resizeHabitatWeatherFx,
@@ -85,14 +86,17 @@ import {
 } from "./pixi/habitatLightingFx.js";
 import {
   clearSceneTimePhaseOverride,
+  getEnvironmentState,
   setSceneTimePhaseOverride
 } from "./engine/environmentController.js";
+import { createMoonlakeLive3dScene } from "./three/moonlakeLive3dScene.js";
 import { bindCompanionTap, createCreatureNode, positionCompanion } from "./pixi/companionRenderer.js";
 import { createHabitatTraceRenderer } from "./pixi/habitatTraceRenderer.js";
 import { createCrystalStateRenderer } from "./pixi/crystalStateRenderer.js";
 import { enableEditorMode, readSceneEditorFlag } from "./tools/sceneEditor.js";
 import {
   createCompanionMotion,
+  getCompanionRoamingSnapshot,
   playDevMotion,
   rebaseCompanionMotion,
   updateCompanionMotion
@@ -778,6 +782,18 @@ async function bootScene(
   const initialHabitatId = normalizeHabitatId(store.getState().activeHabitatId);
   const initialProfile = setActiveSceneProfile(initialHabitatId);
   const environmentLayer = await createEnvironmentLayer(layers, app, initialProfile);
+  const live3d = await createMoonlakeLive3dScene({
+    gameRoot: app.canvas.parentElement,
+    getEnvironmentState,
+    getWeather: getHabitatWeather
+  });
+  const syncHybridRendererVisibility = () => {
+    const useLive3d = live3d.ready && environmentLayer.profileId === "moonlake";
+    live3d.setActive(useLive3d);
+    setPixiEnvironmentVisibility(layers, !useLive3d, environmentLayer);
+    return useLive3d;
+  };
+  syncHybridRendererVisibility();
   const crystalStateRenderer = createCrystalStateRenderer(PIXI, {
     crystal: environmentLayer.crystal,
     isReducedMotion: () =>
@@ -812,6 +828,12 @@ async function bootScene(
   onHabitatWeatherChange(() => {
     weatherFx.weatherId = "__pending__";
   });
+  const syncPixiAtmosphereVisibility = () => {
+    const useLive3d = live3d.ready && environmentLayer.profileId === "moonlake";
+    lightingFx.root.visible = !useLive3d;
+    weatherFx.root.visible = !useLive3d;
+  };
+  syncPixiAtmosphereVisibility();
 
   // 預覽覆寫：?weather=rain|mist|clear|…  ?timePhase=dawn|day|dusk|night
   try {
@@ -973,6 +995,8 @@ async function bootScene(
     companionPositionCleanup = positionCompanion(companion, app);
     rebaseCompanionMotion(companionMotionController, companion);
     weatherFx.weatherId = "__pending__";
+    syncHybridRendererVisibility();
+    syncPixiAtmosphereVisibility();
     bgmController?.onHabitat?.(normalizedId);
     return true;
   }
@@ -996,13 +1020,27 @@ async function bootScene(
       expeditionHost.removeChildren();
       expeditionHost.addChild(root);
       world.visible = false;
+      live3d.setActive(false);
       expeditionHost.visible = true;
     },
     unmountExpedition() {
       expeditionHost.removeChildren();
       expeditionHost.visible = false;
       world.visible = true;
+      syncHybridRendererVisibility();
     }
+  };
+
+  const projectMoonlakeWorldPoint = (worldPoint) => {
+    const screen = live3d.projectWorldToScreen(worldPoint);
+    if (!screen?.visible) return null;
+    const local = layers.layerEntity.toLocal({ x: screen.x, y: screen.y });
+    return {
+      x: Number(local.x),
+      y: Number(local.y),
+      scale: Number(screen.scale) || 1,
+      depth: Number(screen.depth)
+    };
   };
 
   let t = 0;
@@ -1037,6 +1075,11 @@ async function bootScene(
       }, {
         canAmbientWalk: !panelManager.isPanelOpen() && !onboardingController?.isActive?.(),
         isSleeping,
+        activeHabitatId: environmentLayer.profileId,
+        deltaMs: safeTicker.deltaMS,
+        reducedMotion: Boolean(window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches)
+          || document.documentElement?.dataset?.reducedMotionPreference === "reduced",
+        projectWorldPoint: projectMoonlakeWorldPoint,
         // Moonlake's companion datum sits on the shoreline below the lake.
         // Only the back-facing fishing loop is eligible for autonomous habitat
         // playback here; front/side remain explicit animation intents and QA views.
@@ -1056,6 +1099,7 @@ async function bootScene(
     resizeHabitatLightingFx(lightingFx, app.screen.width, app.screen.height);
     resizeHabitatWeatherFx(weatherFx, app.screen.width, app.screen.height);
     updateEnvironmentLayer(environmentLayer, safeTicker);
+    live3d.update(safeTicker);
     updateHabitatLightingFx(lightingFx);
     updateHabitatWeatherFx(weatherFx, safeTicker);
     animateParticles(particles, t, safeTicker);
@@ -1139,11 +1183,30 @@ async function bootScene(
           shadowGap
         };
       },
-      getActiveCompanionNode: () => companion || null
+      getActiveCompanionNode: () => companion || null,
+      getLive3dDiagnostics: () => live3d.getDiagnostics(),
+      getRoamingSnapshot: () => getCompanionRoamingSnapshot(companionMotionController)
     });
   }
 
-  return { swapCompanion, switchHabitat, sceneBridge };
+  return { swapCompanion, switchHabitat, sceneBridge, live3d };
+}
+
+function setPixiEnvironmentVisibility(layers, visible, environmentLayer = null) {
+  const environmentLayerNames = [
+    "layerBackground",
+    "layerCelestial",
+    "layerMidground",
+    "layerPlatform",
+    "layerForeground",
+    "layerOcclusion"
+  ];
+  environmentLayerNames.forEach((name) => {
+    if (layers?.[name]) layers[name].visible = Boolean(visible);
+  });
+  if (environmentLayer?.habitatObjects?.root) {
+    environmentLayer.habitatObjects.root.visible = Boolean(visible);
+  }
 }
 
 function createCrystalTouchEffect(parent, event) {

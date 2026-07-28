@@ -1,8 +1,12 @@
 # Habitat Weather And Mood Preset Spec
 
-*Status: PROPOSAL - docs only - no runtime implementation*
+*Status: LEGACY PIXI FALLBACK PROPOSAL - superseded for Moonlake live 3D by `MOONLAKE_LIVE_3D_HYBRID_CONTRACT_V1.md`*
 
-This document translates throwaway weather / lighting demos into the Nexus Link habitat language. The goal is not to import a Three.js demo. The goal is to extract visual rules and rebuild them as lightweight PixiJS v8 habitat FX governed by Scene Profiles.
+This document remains the lightweight PixiJS fallback and non-live-3D habitat
+weather path. Moonlake's approved Three.js environment implements the same
+atmospheric-only rules under
+`docs/design/MOONLAKE_LIVE_3D_HYBRID_CONTRACT_V1.md`; the old no-Three.js
+restriction does not apply to that Moonlake renderer.
 
 One sentence:
 
@@ -57,9 +61,11 @@ Extract rules from the prototype, not its full code package:
 
 Rebuild the accepted rules in the existing stack:
 
-- PixiJS v8 only.
+- PixiJS v8 for this fallback path; approved Moonlake live 3D weather is handled
+  by the presentation-only Three.js environment layer.
 - Vanilla JS ES modules only.
-- No React, Three.js, React Three Fiber, TypeScript, backend, dependency, or build step.
+- No React, React Three Fiber, TypeScript, backend, npm dependency, or build
+  step. Three.js is allowed only under the Moonlake hybrid contract.
 - `ParticleContainer` for rain lines, motes, and tiny glows where appropriate.
 - Sprite sheets for splash, ripple, or compact VFX loops.
 - Semi-transparent overlays for wet stone, low fog, and reflections.
@@ -223,7 +229,8 @@ Acceptance:
 - Defines preset schema.
 - Defines Moonlake first presets.
 - Defines performance budget.
-- Blocks Three.js / React / baked-weather assets.
+- Blocks unapproved Three.js / React / baked-weather assets; the approved
+  Moonlake hybrid contract is the sole exception.
 
 ### TP-HAB-WEATHER-1 - Moonlake Pixi Prototype
 

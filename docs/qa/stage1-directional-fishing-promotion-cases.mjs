@@ -270,8 +270,19 @@ const companion = {
 const motion = createCompanionMotion(companion, "calm");
 motion.ambientNextAt = Number.POSITIVE_INFINITY;
 motion.ambientActionNextAt = 0;
+Object.assign(motion.moonlakeRoaming, {
+  currentId: "far_bank_center",
+  targetId: null,
+  x: 0.75,
+  y: 0.1,
+  z: -12.55,
+  dwellUntil: Number.POSITIVE_INFINITY
+});
 updateCompanionMotion(companion, motion, 1, 1_000, "calm", () => {}, {
-  ambientActions: ["fishing_back"]
+  activeHabitatId: "moonlake",
+  ambientActions: ["fishing_back"],
+  deltaMs: 16,
+  projectWorldPoint: ({ x, z }) => ({ x, y: z, scale: 1, depth: 0 })
 });
 assert.equal(motion.ambientActionState, "fishing_back", "Moonlake action candidate starts bounded fishing");
 assert.equal(played.at(-1), "fishing_back", "Moonlake action candidate plays fishing sheet");

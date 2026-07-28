@@ -1,5 +1,11 @@
 import { getTouchMotionState } from "../engine/touchReactionEngine.js";
 import { getAmbientWalkAnimation, getMoodIdleAnimationName } from "../engine/animationProfile.js";
+import {
+  createMoonlakeRoamingState,
+  getMoonlakeRoamingSnapshot,
+  resetMoonlakeRoamingState,
+  updateMoonlakeRoaming
+} from "./moonlakeRoamingController.js";
 import EventBus from "../utils/eventBus.js";
 
 const ENVIRONMENT_INTERACTION_EVENT = "ENVIRONMENT_INTERACTION";
@@ -44,6 +50,8 @@ export function createCompanionMotion(companion, initialMood) {
     ambientActionState: null,
     ambientActionUntil: 0,
     ambientActionNextAt: 0,
+    moonlakeRoaming: createMoonlakeRoamingState(performance.now()),
+    moonlakeRoamingResult: null,
     fallbackMotionActive: true,
     getAnimationDurationMs: (animationName) => companion.__animationController?.getAnimationDurationMs(animationName),
     getAnimationController: () => companion.__animationController || null
@@ -61,6 +69,8 @@ export function rebaseCompanionMotion(motion, companion) {
   motion.baseScale = companion.scale.x || motion.baseScale || 1;
   motion.baseAlpha = companion.alpha;
   motion.baseRotation = companion.rotation || 0;
+  resetMoonlakeRoamingState(motion.moonlakeRoaming, performance.now());
+  motion.moonlakeRoamingResult = null;
   return motion;
 }
 
@@ -131,7 +141,37 @@ export function updateCompanionMotion(companion, motion, timeSeconds, nowMs, moo
   const canAmbientWalk = options.canAmbientWalk !== false;
   const isBattleActive = Boolean(options.isBattleActive);
   const isSleeping = Boolean(options.isSleeping);
-  const isAmbientBlocked = !canAmbientWalk || Boolean(motion.temporaryState) || isBattleActive || isSleeping || mood === "tired" || companion.__animationProfile?.ambientWalkEnabled === false;
+  const animationController = companion.__animationController;
+  const canResolveAnimation = (name) => animationController?.canResolve
+    ? animationController.canResolve(name)
+    : animationController?.hasAnimation?.(name);
+  const canRoam = options.activeHabitatId === "moonlake"
+    && canAmbientWalk
+    && !motion.temporaryState
+    && !motion.devForcedState
+    && !motion.ambientActionState
+    && !isBattleActive
+    && !isSleeping;
+  const roamingResult = updateMoonlakeRoaming(motion.moonlakeRoaming, {
+    deltaMs: options.deltaMs,
+    nowMs,
+    mood,
+    canRoam,
+    reducedMotion: Boolean(options.reducedMotion),
+    canResolve: canResolveAnimation,
+    projectWorldPoint: options.projectWorldPoint
+  });
+  motion.moonlakeRoamingResult = roamingResult;
+  const isRoamingReady = roamingResult.enabled
+    && roamingResult.ready
+    && roamingResult.projectionReady;
+  const isAmbientBlocked = !canAmbientWalk
+    || Boolean(motion.temporaryState)
+    || isBattleActive
+    || isSleeping
+    || mood === "tired"
+    || isRoamingReady
+    || companion.__animationProfile?.ambientWalkEnabled === false;
 
   if (motion.ambientState && (isAmbientBlocked || nowMs >= motion.ambientUntil)) {
     stopAmbientWalk(motion);
@@ -143,11 +183,18 @@ export function updateCompanionMotion(companion, motion, timeSeconds, nowMs, moo
 
   // 偶發日常動作（原地、不位移）：閒置且心情平穩時，偶爾坐下/理毛/伸懶腰/打盹。
   const profileAmbientActions = companion.__animationProfile?.ambientActions || [];
-  const habitatAmbientActions = Array.isArray(options.ambientActions) ? options.ambientActions : [];
+  const habitatAmbientActions = roamingResult.isFishingSpot && Array.isArray(options.ambientActions)
+    ? options.ambientActions
+    : [];
   const ambientActions = habitatAmbientActions.length > 0
     ? [...new Set([...profileAmbientActions, ...habitatAmbientActions])]
     : profileAmbientActions;
-  const isBusy = !canAmbientWalk || Boolean(motion.temporaryState) || isBattleActive || isSleeping || Boolean(motion.ambientState);
+  const isBusy = !canAmbientWalk
+    || Boolean(motion.temporaryState)
+    || isBattleActive
+    || isSleeping
+    || Boolean(motion.ambientState)
+    || Boolean(roamingResult.moving);
   if (motion.ambientActionState && (isBusy || nowMs >= motion.ambientActionUntil)) {
     motion.ambientActionState = null;
     scheduleNextAmbientAction(motion, nowMs);
@@ -174,9 +221,9 @@ export function updateCompanionMotion(companion, motion, timeSeconds, nowMs, moo
     (isSleeping ? "sleep" : null) ||
     motion.devForcedState ||
     motion.ambientActionState ||
+    roamingResult.animationName ||
     ambientAnimation?.animationName ||
     motion.state;
-  const animationController = companion.__animationController;
   let spriteAnimationPlayed = false;
   if (animationController?.hasAnimation?.(activeState)) {
     spriteAnimationPlayed = animationController.play(activeState, {
@@ -190,7 +237,9 @@ export function updateCompanionMotion(companion, motion, timeSeconds, nowMs, moo
   }
   const transform = motion.temporaryState
     ? getTemporaryMotionTransform(activeState, motion, nowMs)
-    : motion.ambientState
+    : isRoamingReady
+      ? getMoonlakeRoamingTransform(roamingResult, activeState, timeSeconds, motion)
+      : motion.ambientState
       ? getAmbientWalkTransform(motion, nowMs)
       : getIdleMotionTransform(activeState, timeSeconds);
 
@@ -202,6 +251,14 @@ export function updateCompanionMotion(companion, motion, timeSeconds, nowMs, moo
   maybeEmitTemporaryEnvironmentInteraction(activeState, motion, companion, nowMs);
   motion.fallbackMotionActive = !spriteAnimationPlayed;
   onStateChange(activeState);
+}
+
+export function getCompanionRoamingSnapshot(motion) {
+  if (!motion) return null;
+  return {
+    ...getMoonlakeRoamingSnapshot(motion.moonlakeRoaming),
+    ...(motion.moonlakeRoamingResult || {})
+  };
 }
 
 function getMotionDurationMs(motion, motionState, fallbackDurationMs) {
@@ -309,6 +366,21 @@ function getAmbientWalkTransform(motion, nowMs) {
     scaleMultiplier: 1,
     alphaMultiplier: 1,
     rotation: 0.006 * Math.sin(easedProgress * Math.PI * 2)
+  };
+}
+
+function getMoonlakeRoamingTransform(roamingResult, activeState, timeSeconds, motion) {
+  const idle = roamingResult.moving
+    ? { offsetX: 0, offsetY: 0, scaleMultiplier: 1, alphaMultiplier: 1, rotation: 0 }
+    : getIdleMotionTransform(activeState, timeSeconds);
+  const projectedX = Number(roamingResult.projected?.x);
+  const projectedY = Number(roamingResult.projected?.y);
+  return {
+    offsetX: (Number.isFinite(projectedX) ? projectedX - motion.baseX : 0) + idle.offsetX,
+    offsetY: (Number.isFinite(projectedY) ? projectedY - motion.baseY : 0) + idle.offsetY,
+    scaleMultiplier: roamingResult.scaleMultiplier * idle.scaleMultiplier,
+    alphaMultiplier: idle.alphaMultiplier,
+    rotation: idle.rotation
   };
 }
 

@@ -1,8 +1,10 @@
-# RFC: Future 2.5D Habitat Renderer Prototype
+# RFC: 2.5D Habitat Renderer
 
 ## Status
 
-Future prototype lane. This RFC does not authorize a runtime change.
+Accepted for Moonlake by Owner on 2026-07-28. The production contract is
+`docs/design/MOONLAKE_LIVE_3D_HYBRID_CONTRACT_V1.md`; that document supersedes
+the former sandbox-only and no-Three.js restrictions below for Moonlake only.
 
 ## Proposed composition
 
@@ -20,14 +22,14 @@ The visual target may take inspiration from RO-like 2.5D depth and staging: a sp
 
 ## Boundaries
 
-- Canonical runtime remains the current PixiJS + DOM architecture.
-- This RFC does not replace `src/pixi/pixiApp.js`, companion rendering, or RaphaelCore.
-- Do not add Three.js, Tauri, Electron, Capacitor, a build step, or new dependencies to `main` for this exploration.
-- A prototype must be isolated in a sandbox and cannot reuse production save state as an experimental data store.
+- Canonical runtime remains PixiJS + DOM, with a controlled Three.js environment canvas for Moonlake.
+- Three.js does not replace companion rendering, DOM UI, store, save or RaphaelCore.
+- Fixed-version Three.js CDN ES Modules are allowed; Tauri, Electron, Capacitor, React Three Fiber, TypeScript, npm and build steps remain prohibited.
+- Production integration must preserve a static fallback and must not use save state as renderer-owned data.
 
 ## Entry criteria for a future prototype
 
-1. A separate ADR defines renderer ownership, DOM/Pixi boundaries, performance budgets, input routing, and rollback.
-2. A sandbox prototype proves desktop and mobile focal-zone behavior without altering canonical runtime files.
+1. The production contract defines renderer ownership, DOM/Pixi/Three boundaries, performance budgets, input routing and rollback.
+2. Desktop and mobile focal-zone behavior must be proven before release.
 3. Acceptance covers live companion visibility, frame time, memory pressure, accessibility, responsive sizing, and Raphael/Soul Talk continuity.
 4. Human approval is obtained before any canonical integration task is opened.

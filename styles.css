@@ -159,6 +159,33 @@ button {
   z-index: var(--z-pixi);
   pointer-events: auto;
   background: transparent;
+  overflow: hidden;
+}
+
+#game-root > canvas {
+  position: absolute;
+  inset: 0;
+}
+
+#game-root > canvas:not(.moonlake-live3d-canvas) {
+  z-index: 1;
+}
+
+.moonlake-live3d-canvas {
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 320ms ease;
+}
+
+.moonlake-live3d-canvas[data-ready="true"] {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .moonlake-live3d-canvas {
+    transition: none;
+  }
 }
 
 .pixi-load-failure {

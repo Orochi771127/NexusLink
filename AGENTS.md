@@ -52,7 +52,9 @@ RaphaelCore is a Stateful Companion Cognition Agent: safety-gated, memory-bearin
 
 允許：HTML / 純 CSS（`styles.css`）/ Vanilla JS（ES Modules，無 build step）/ PixiJS v8（CDN）/ localStorage（集中於 `saveManager.js`，key=`nexusLinkR2State:v1`）/ GitHub Pages。
 
-絕對禁止：React、Vue、Svelte、TypeScript、CSS 框架、後端、資料庫、LLM API、npm 套件（除非 human 確認）、任何 build step。
+**Moonlake Live 3D Hybrid 受控例外（2026-07-28 Owner 核准）**：月湖營地可在 `docs/design/MOONLAKE_LIVE_3D_HYBRID_CONTRACT_V1.md` 的邊界內，使用固定版本的 Three.js CDN ES Module 載入 GLB/glTF 即時 3D 棲地。Three.js 只負責 3D 環境、水面／瀑布、風吹植被、天氣、日月光照、導航與 world-to-screen 投影；2D illustrated companion 仍由 PixiJS 動畫層呈現，DOM UI、store、save、RaphaelCore 與 gameplay authority 不移入 3D renderer。
+
+絕對禁止：React、Vue、Svelte、React Three Fiber、TypeScript、CSS 框架、後端、資料庫、LLM API、未核准 npm 套件、任何 build step。Three.js 例外不得擴張到全站 renderer migration 或第二套遊戲狀態。
 
 ---
 
