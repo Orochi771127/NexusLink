@@ -319,9 +319,7 @@ canvas {
   inset: 0;
   border-radius: inherit;
   pointer-events: none;
-  background:
-    radial-gradient(circle at 42% 34%, rgba(255, 255, 255, 0.56) 0 4px, transparent 5px),
-    radial-gradient(circle at 50% 118%, rgba(0, 206, 209, 0.34), transparent 58%);
+  background: radial-gradient(circle at 50% 118%, rgba(0, 206, 209, 0.34), transparent 58%);
   box-shadow: inset 0 0 14px rgba(160, 200, 255, 0.2);
 }
 
@@ -2691,6 +2689,32 @@ body.panel-open .dev-reaction-lab {
   border-bottom-right-radius: 14px;
 }
 
+/* Modal panels already draw a full-width glass sheen. Keep that treatment when
+   rune-border is present instead of letting the corner glyph replace it. */
+.modal-panel.rune-border::before,
+.action-sheet.rune-border::before {
+  top: 0;
+  right: 10%;
+  bottom: auto;
+  left: 10%;
+  width: auto;
+  height: 1px;
+  border: 0;
+  border-radius: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.42) 30%,
+    rgba(255, 255, 255, 0.16) 70%,
+    transparent
+  );
+}
+
+.modal-panel.rune-border::after,
+.action-sheet.rune-border::after {
+  content: none;
+}
+
 /* ======================================================
    探索地圖 — 心核路徑節點地圖
    ====================================================== */
@@ -3705,6 +3729,55 @@ body.orbit-active #page-layer {
   margin-top: 4px;
 }
 
+.orbit-map-toolbar,
+.orbit-duel-toolbar,
+.orbit-battle-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.orbit-map-heading,
+.orbit-duel-heading,
+.orbit-battle-heading {
+  min-width: 0;
+  flex: 1;
+}
+
+.orbit-back-btn {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 44px;
+  width: 44px;
+  height: 44px;
+  min-height: 44px;
+  max-height: 44px;
+  padding: 0;
+  border-radius: 50%;
+  color: transparent;
+  font-size: 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.orbit-back-btn::before {
+  content: "‹";
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #eef6ff;
+  font-size: 1.8rem;
+  line-height: 1;
+  transform: translateX(-1px);
+}
+
+.orbit-back-btn[hidden] {
+  display: none !important;
+}
+
 .orbit-battle[hidden] {
   display: none !important;
 }
@@ -3740,6 +3813,11 @@ body.orbit-active .orbit-battle:not([hidden]) {
 }
 
 .orbit-duel-title {
+  margin: 4px 0 0;
+  font-size: 1.05rem;
+}
+
+.orbit-duel-arena-title {
   margin: 4px 0 0;
   font-size: 1.05rem;
 }
@@ -3804,4 +3882,209 @@ body.orbit-active .orbit-battle:not([hidden]) {
   border: 1px solid rgba(255, 180, 140, 0.28);
   touch-action: none;
   cursor: crosshair;
+}
+
+@media (max-width: 420px) and (max-height: 860px) {
+  .orbit-overlay {
+    height: 100dvh;
+    min-height: 100svh;
+    overflow: hidden;
+  }
+
+  .orbit-map-slot,
+  .orbit-duel-slot {
+    display: contents;
+  }
+
+  .orbit-map {
+    flex: 1;
+    min-height: 0;
+    width: calc(100% - 16px);
+    max-height: none;
+    margin: calc(env(safe-area-inset-top, 0px) + 6px) 8px calc(env(safe-area-inset-bottom, 0px) + 6px);
+    padding: 9px;
+    gap: 6px;
+    overflow: hidden;
+  }
+
+  .orbit-map-toolbar,
+  .orbit-duel-toolbar,
+  .orbit-battle-toolbar {
+    gap: 8px;
+  }
+
+  .orbit-map-title,
+  .orbit-duel-title,
+  .orbit-duel-arena-title,
+  .orbit-title {
+    margin-top: 0;
+    font-size: 0.94rem;
+  }
+
+  .orbit-map-note,
+  .orbit-map-motes,
+  .orbit-duel-note {
+    margin-top: 3px;
+    font-size: 0.69rem;
+    line-height: 1.28;
+  }
+
+  .orbit-map-note {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .orbit-map-regions {
+    gap: 5px;
+    margin-top: 5px;
+  }
+
+  .orbit-region-chip {
+    min-height: 32px;
+    padding: 4px 9px;
+    font-size: 0.72rem;
+  }
+
+  .orbit-map-nodes {
+    flex: 1;
+    min-height: 0;
+    gap: 5px;
+  }
+
+  .orbit-node-btn {
+    min-height: 51px;
+    gap: 8px;
+    padding: 5px 8px;
+    border-radius: 10px;
+  }
+
+  .orbit-node-index {
+    width: 26px;
+    height: 26px;
+    font-size: 0.78rem;
+  }
+
+  .orbit-node-body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 1px 8px;
+    align-items: baseline;
+    width: 100%;
+  }
+
+  .orbit-node-body strong {
+    overflow: hidden;
+    font-size: 0.82rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .orbit-node-body em {
+    grid-column: 1 / -1;
+    overflow: hidden;
+    font-size: 0.67rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .orbit-node-body small {
+    grid-column: 2;
+    grid-row: 1;
+    font-size: 0.66rem;
+    white-space: nowrap;
+  }
+
+  .orbit-map-narrative {
+    margin: 0;
+    padding: 5px 8px;
+    overflow: hidden;
+    font-size: 0.69rem;
+    line-height: 1.25;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .orbit-map-actions {
+    margin-top: 0;
+  }
+
+  .orbit-map-actions .orbit-btn {
+    width: 100%;
+    min-height: 44px;
+  }
+
+  .orbit-duel-picker {
+    width: calc(100% - 16px);
+    margin: calc(env(safe-area-inset-top, 0px) + 6px) 8px calc(env(safe-area-inset-bottom, 0px) + 6px);
+    padding: 10px;
+    overflow: auto;
+  }
+
+  .orbit-duel-profiles {
+    gap: 6px;
+    margin-top: 7px;
+  }
+
+  .orbit-duel-profile-btn {
+    min-height: 54px;
+    padding: 7px 9px;
+  }
+
+  .orbit-duel-profile-btn em {
+    margin-top: 2px;
+    line-height: 1.25;
+  }
+
+  .orbit-hud-top,
+  .orbit-hud-bottom {
+    margin-right: 8px;
+    margin-left: 8px;
+    padding: 7px 9px;
+  }
+
+  .orbit-hud-top {
+    margin-top: calc(env(safe-area-inset-top, 0px) + 6px);
+  }
+
+  .orbit-hud-bottom {
+    margin-bottom: calc(env(safe-area-inset-bottom, 0px) + 6px);
+  }
+
+  .orbit-kicker {
+    font-size: 0.63rem;
+  }
+
+  .orbit-copy,
+  .orbit-duel-arena-copy,
+  .orbit-status,
+  .orbit-companion-line,
+  .orbit-stats {
+    margin-top: 3px;
+    font-size: 0.69rem;
+    line-height: 1.28;
+  }
+
+  .orbit-copy,
+  .orbit-duel-arena-copy,
+  .orbit-status,
+  .orbit-companion-line {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .orbit-stage {
+    padding: 3px 8px;
+  }
+
+  .orbit-actions {
+    margin-top: 5px;
+  }
+
+  .orbit-actions .orbit-btn {
+    min-height: 44px;
+  }
 }

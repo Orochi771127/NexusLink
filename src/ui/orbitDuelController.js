@@ -70,10 +70,16 @@ export function createOrbitDuelController({ store, statusText, onBack, onCloseAl
     if (pickerKicker) pickerKicker.textContent = t("orbit.duelKicker");
     if (title) title.textContent = t("orbit.duelTitle");
     if (note && !session) note.textContent = t("orbit.duelNote");
-    if (backBtn) backBtn.textContent = t("orbit.toMap");
+    if (backBtn) {
+      backBtn.textContent = t("orbit.toMap");
+      backBtn.setAttribute("aria-label", t("orbit.toMap"));
+    }
     if (arenaKicker) arenaKicker.textContent = t("orbit.duelArenaKicker");
     if (hint) hint.textContent = t("orbit.duelHint");
-    if (retreatBtn) retreatBtn.textContent = t("orbit.retreat");
+    if (retreatBtn) {
+      retreatBtn.textContent = t("orbit.retreat");
+      retreatBtn.setAttribute("aria-label", t("orbit.retreat"));
+    }
     if (pickerBtn) pickerBtn.textContent = t("orbit.pickerAgain");
     if (againBtn) againBtn.textContent = t("orbit.duelAgain");
     if (canvas) canvas.setAttribute("aria-label", t("orbit.duelCanvas"));
@@ -89,18 +95,25 @@ export function createOrbitDuelController({ store, statusText, onBack, onCloseAl
     rootEl.hidden = true;
     rootEl.innerHTML = `
       <div class="orbit-duel-picker">
-        <p class="orbit-kicker"></p>
-        <h2 class="orbit-duel-title" id="orbit-duel-title"></h2>
+        <div class="orbit-duel-toolbar">
+          <button type="button" class="orbit-btn orbit-btn--ghost orbit-back-btn" data-duel-ui="back"></button>
+          <div class="orbit-duel-heading">
+            <p class="orbit-kicker"></p>
+            <h2 class="orbit-duel-title" id="orbit-duel-title"></h2>
+          </div>
+        </div>
         <p class="orbit-duel-note"></p>
         <div class="orbit-duel-profiles"></div>
-        <div class="orbit-duel-picker-actions">
-          <button type="button" class="orbit-btn orbit-btn--ghost" data-duel-ui="back"></button>
-        </div>
       </div>
       <div class="orbit-duel-arena" hidden>
         <div class="orbit-hud-top">
-          <p class="orbit-kicker"></p>
-          <h2 class="orbit-duel-arena-title"></h2>
+          <div class="orbit-duel-toolbar">
+            <button type="button" class="orbit-btn orbit-btn--ghost orbit-back-btn" data-duel-ui="retreat"></button>
+            <div class="orbit-duel-heading">
+              <p class="orbit-kicker"></p>
+              <h2 class="orbit-duel-arena-title"></h2>
+            </div>
+          </div>
           <p class="orbit-duel-arena-copy"></p>
           <div class="orbit-stats orbit-duel-stats"></div>
           <p class="orbit-hint"></p>
@@ -112,7 +125,6 @@ export function createOrbitDuelController({ store, statusText, onBack, onCloseAl
           <p class="orbit-status orbit-duel-status" aria-live="polite"></p>
           <p class="orbit-companion-line orbit-duel-line" hidden></p>
           <div class="orbit-actions">
-            <button type="button" class="orbit-btn orbit-btn--ghost" data-duel-ui="retreat"></button>
             <button type="button" class="orbit-btn" data-duel-ui="picker" hidden></button>
             <button type="button" class="orbit-btn" data-duel-ui="again" hidden></button>
           </div>
