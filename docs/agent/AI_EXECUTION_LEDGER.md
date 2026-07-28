@@ -5311,3 +5311,344 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Manual gates still open: physical-device verification, three-user first-session comprehension, private blind Raphael review, legal/privacy/store readiness and public-launch approval.
 - Branch / commit: `codex/stage1-directional-fishing-r1`; commit and PR publication follow this verified ledger closeout.
 - Next safe action: merge only after the required `web-release-gate` passes, prove local/remote synchronization, and refresh the codebase MCP index.
+
+### 2026-07-28 - Codex - Moonlake Visual Fidelity R2 - IN PROGRESS
+
+- Status: `IN PROGRESS`; Owner explicitly approved construction in chat after
+  rejecting the live R1 visual fidelity against the supplied premium
+  clay/resin diorama target.
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `TP-MOONLAKE-2.5D-VISUAL-FIDELITY-R2`.
+- Layer: `GROUNDWORK + EXPERIENCE`; GROUNDWORK is limited to the approved
+  Moonlake visual foundation and any derived masks under
+  `assets/backgrounds/MoonlakeDiorama_r2/`.
+- Branch / base: `codex/moonlake-visual-fidelity-r2` from `origin/main`
+  `f790239`; isolated from the primary checkout and its retained `.codex/`
+  worktree container.
+- Scope:
+  - use the Owner-supplied final target as the visual-quality and composition
+    authority for a premium clay/resin miniature Moonlake;
+  - retain the approved Moonlake Three/Pixi hybrid boundary, world positions,
+    four-direction companion roaming, bridge traversal, fishing, weather and
+    time authorities;
+  - replace the primitive-looking visible environment treatment with a
+    high-fidelity fixed-camera presentation, subtle live water/waterfall and
+    foliage response, and corrected mobile composition;
+  - recalibrate companion depth scale and route placement so the 2D companion
+    remains grounded on the plaza and bridge and never appears on tent roofs.
+- Expected files: `assets/backgrounds/MoonlakeDiorama_r2/**`,
+  `src/three/moonlakeLive3dConfig.js`,
+  `src/three/moonlakeLive3dScene.js`, focused Moonlake QA/evidence, and this
+  ledger. `src/pixi/moonlakeRoamingController.js` and `styles.css` are changed
+  only if focused browser proof requires them.
+- Red-line check: no save, relationship, reward, Growth, Safety, RaphaelCore,
+  battle, unlock, Initial Bond or companion-identity change. Weather and
+  fishing remain non-reward atmospheric expressions.
+- Non-goals: no companion asset regeneration, no other habitat, no npm/build
+  dependency, no backend, no free camera and no automatic commit/push.
+- Acceptance refs: `H1-H6`, `I`, the complete
+  `MOONLAKE_LIVE_3D_HYBRID_CONTRACT_V1` release gate, 390x844 visual evidence,
+  reduced-motion fallback and explicit Owner visual review.
+- Required reading: Owner target and current-state screenshots,
+  `docs/design/MOONLAKE_LIVE_3D_HYBRID_CONTRACT_V1.md`,
+  `docs/qa/MOONLAKE_LIVE3D_HYBRID_R1_EVIDENCE.md`,
+  `docs/architecture/HABITAT_SYSTEM_MASTER_SPEC.md`,
+  `src/three/moonlakeLive3dConfig.js`,
+  `src/three/moonlakeLive3dScene.js`,
+  `src/pixi/moonlakeRoamingController.js`.
+
+### 2026-07-28 - Codex - Moonlake Visual Fidelity R2 - AWAITING OWNER VISUAL APPROVAL
+
+- Status: local runtime integration and automated verification are complete;
+  publication is intentionally blocked on explicit Owner runtime visual review.
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `TP-MOONLAKE-2.5D-VISUAL-FIDELITY-R2`.
+- Layer: `GROUNDWORK + EXPERIENCE`; the new Groundwork asset is limited to
+  `assets/backgrounds/MoonlakeDiorama_r2/`.
+- Completed:
+  - normalized the Owner-supplied final target to a validated `1080x1920` RGB
+    visual master and recorded its role in a staging manifest;
+  - replaced the visible primitive landscape with a fixed-camera premium
+    clay/resin presentation driven by a live Three.js shader;
+  - retained the existing GLB as hidden structural/spatial authority and the
+    Pixi illustrated companion as the 2D character layer;
+  - retained live water/waterfall response, foliage movement, day/night,
+    clear/rain/mist weather, four-direction roaming, bridge traversal and
+    bounded fishing;
+  - corrected companion projection/depth scale, bridge grounding, mist edge
+    feathering and reduced-motion platform placement.
+- Changed runtime files:
+  `src/three/moonlakeLive3dConfig.js`,
+  `src/three/moonlakeLive3dScene.js`,
+  `src/pixi/motionController.js`,
+  `assets/backgrounds/MoonlakeDiorama_r2/**`.
+- Evidence:
+  `docs/qa/MOONLAKE_VISUAL_FIDELITY_R2_EVIDENCE.md` and
+  `docs/qa/moonlake-visual-fidelity-r2-browser.cjs`.
+- Verification:
+  - JavaScript syntax: PASS;
+  - habitat pack validator: PASS (`1080x1920`, RGB);
+  - Blender GLB audit: PASS (7 meshes, 66,726 triangles);
+  - Moonlake roaming: PASS (four directions, bridge traversal, fishing spot,
+    reduced-motion fallback);
+  - companion renderer lifecycle: `29/29 PASS`;
+  - 390x844 browser visual matrix: PASS for day/clear, night/rain, dusk/mist,
+    reduced motion and forced bridge traversal;
+  - complete web release gate: `28/28 PASS`, no accessibility warnings.
+- Honest boundary: the premium visible detail is a fixed-camera live visual
+  master over the retained GLB spatial world. It is a 2.5D hybrid, not a
+  free-camera claim that every visible detail was rebuilt as authored 3D
+  geometry.
+- Remaining gates: Owner runtime visual approval, physical iOS/Safari and
+  representative mobile-GPU proof, then separately authorized commit/push/PR
+  and publication.
+- Branch / commit: `codex/moonlake-visual-fidelity-r2`; no commit or push.
+- Next safe action: Owner reviews the browser captures. If approved, obtain
+  explicit publication authorization and proceed through the protected-main
+  PR gate.
+
+### 2026-07-28 - Codex - Moonlake Bridge Clearance R2.1 - IN PROGRESS
+
+- Status: `IN PROGRESS`; Owner approved continuation after identifying that
+  Greyshade Cat visually exceeded the bridge deck and requesting equivalent
+  validation for all sixteen runtime companions and the fishing pose.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `TP-MOONLAKE-BRIDGE-CLEARANCE-R2.1`.
+- Layer: `GROUNDWORK + EXPERIENCE`; Groundwork remains limited to the approved
+  Moonlake fixed-camera visual presentation. No companion art is changed.
+- Scope:
+  - calibrate one visible bridge centerline from plaza to a dedicated far
+    bridge fishing stop;
+  - widen the visible bridge presentation only as much as required for the
+    largest approved companion silhouette;
+  - apply route-specific perspective scaling for bridge-near, bridge-mid,
+    bridge-far and the bridge fishing stop;
+  - make `bridge_far` the only lake-facing fishing stop and disconnect every
+    far-bank point so roaming cannot leave the visible deck;
+  - run bridge and fishing clearance proof across all sixteen runtime
+    companions at 390x844.
+- Expected files:
+  `src/three/moonlakeLive3dConfig.js`,
+  `src/three/moonlakeLive3dScene.js`,
+  `src/pixi/moonlakeRoamingController.js`,
+  `src/pixi/motionController.js`,
+  `src/app.js`, focused QA/evidence, and this ledger.
+- Red-line check: no save, unlock, relationship, reward, Growth, Safety,
+  RaphaelCore, battle, companion identity or animation art change. Fishing
+  remains interruptible and writes no catch, reward, progression or memory.
+- Non-goals: no free camera, no companion regeneration, no other habitat, no
+  new dependency, no automatic commit/push/publication.
+- Acceptance refs: `H1-H6`, `I`, the Moonlake hybrid release contract,
+  390x844 bridge/fishing matrix, reduced-motion fallback and Owner visual
+  review.
+- Required reading: existing R2 evidence and runtime files,
+  `MOONLAKE_LIVE_3D_HYBRID_CONTRACT_V1`, habitat master spec, all sixteen
+  animation manifests and the Owner-supplied current-state screenshots.
+
+### 2026-07-28 - Codex - Moonlake Bridge Clearance R2.1 - VERIFIED
+
+- Status: `VERIFIED`; local implementation and automated release validation
+  are complete. Commit, push and publication were not authorized.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `TP-MOONLAKE-BRIDGE-CLEARANCE-R2.1`.
+- Completed:
+  - added a calibrated bridge route with near/mid/far fixed-camera projection
+    anchors and depth scale;
+  - added query-gated QA controls for deterministic waypoint and segment
+    staging without writing product state;
+  - retained projected placement while roaming is intentionally blocked, so
+    a dev-forced fishing loop stays on its bridge stop;
+  - made `bridge_far` the sole fishing spot and disconnected
+    `far_bank_center`, `far_bank_left` and `far_bank_right`;
+  - updated the legacy directional/fishing fixture to the current bridge
+    fishing authority.
+- Verification:
+  - bridge route assertions: PASS at `390x844`;
+  - 16-companion transparent-frame audit: PASS, 64/64 cases;
+  - 16-companion live browser matrix: PASS, 32/32 playback cases, zero page or
+    console errors;
+  - Stage 1 directional/fishing promotion: PASS, 68 sheets / 16 companions;
+  - companion renderer lifecycle: `29/29 PASS`;
+  - Moonlake layout lock: `38/38 PASS`;
+  - complete web release gate: `28/28 PASS`, no accessibility warnings;
+  - `git diff --check`: PASS.
+- Problems / risks:
+  - physical iOS/Safari and representative mobile-GPU proof remain open;
+  - the deterministic QA seam is disabled unless
+    `?moonlakeBridgeQa=1` is present;
+  - no save, reward, relationship, Safety, RaphaelCore, battle, identity or
+    companion-art authority changed.
+- Branch / commit: `codex/moonlake-visual-fidelity-r2`; no commit or push.
+- Next safe action: Owner performs runtime visual review, then separately
+  authorizes publication if accepted.
+
+### 2026-07-28 - Codex - Moonlake Bridge Clearance R2.1 - AWAITING OWNER VISUAL APPROVAL
+
+- Status: engineering and visual QA are complete; final runtime visual approval
+  remains with the Owner.
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `TP-MOONLAKE-BRIDGE-CLEARANCE-R2.1`.
+- Visual decisions:
+  - retained the premium R2 fixed-camera clay/resin master;
+  - widened only the visible bridge corridor and kept rail/plank perspective;
+  - rejected and removed an experimental elliptical fishing landing because it
+    read as a floating wooden disc;
+  - placed every fishing pose on `bridge_far`, not on the far bank or water.
+- Visual proof:
+  - `output/playwright/moonlake-bridge-clearance-r2-1/bridge-back-walk-contact-sheet.png`;
+  - `output/playwright/moonlake-bridge-clearance-r2-1/fishing-back-contact-sheet.png`;
+  - 32 individual `390x844` captures plus `results.json`.
+- Clearance:
+  - widest calculated walking silhouette: `stone-shard` at `65.54px` against
+    the `66px` bridge limit;
+  - widest calculated fishing silhouette: `star-foal` at `57.97px`;
+  - all sixteen silhouettes remain between the rails in live captures.
+- Branch / commit: `codex/moonlake-visual-fidelity-r2`; no commit or push.
+- Next safe action: Owner reviews the two contact sheets and representative
+  full-frame captures. Publication remains separately gated.
+
+### 2026-07-28 - Codex - Moonlake Fishing Orientation R2.2 - IN PROGRESS
+
+- Status: `IN PROGRESS`; Owner explicitly approved
+  `TP-MOONLAKE-FISHING-ORIENTATION-R2.2`.
+- Lane: `Game Engineering And Architecture`.
+- Layer: `EXPERIENCE`; no asset, save, relationship, reward, Growth, Safety,
+  RaphaelCore, battle, unlock or companion-identity authority is changed.
+- Scope:
+  - retain `bridge_far` as the existing lake-facing `fishing_back` stop;
+  - allow `fishing_front` and `fishing_side` only at the bridge-midpoint,
+    mirrored toward the left or right water side;
+  - keep stepping stones, waterfall basins, shallow water, far-bank terrain,
+    tent shoreline and near-ground vegetation unavailable for fishing;
+  - verify all sixteen runtime companions in front-left, front-right,
+    side-left, side-right and existing back-facing fishing placements.
+- Expected files:
+  `src/three/moonlakeLive3dConfig.js`,
+  `src/pixi/moonlakeRoamingController.js`,
+  `src/pixi/motionController.js`,
+  `src/app.js`, focused QA/evidence, and this ledger.
+- Red-line check: fishing remains interruptible habitat expression only. It
+  writes no catch, reward, progression, relationship, memory or persistence.
+- Non-goals: no new pier or asset, no far-bank route, no stepping-stone
+  traversal, no fishing minigame, no dependency, no commit/push/publication.
+- Acceptance refs: `H1-H6`, `I`, the Moonlake Live 3D Hybrid Contract,
+  `390x844` visual proof, reduced-motion regression and Owner visual review.
+- Required reading: R2/R2.1 evidence and runtime files,
+  `MOONLAKE_LIVE_3D_HYBRID_CONTRACT_V1`, habitat master spec, the active
+  Scene Profile, all sixteen animation manifests, and the current art index.
+
+### 2026-07-28 - Codex - Moonlake Fishing Orientation R2.2 - VERIFIED
+
+- Status: `VERIFIED`; local implementation and automated release validation
+  are complete. Commit, push and publication were not authorized.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `TP-MOONLAKE-FISHING-ORIENTATION-R2.2`.
+- Completed:
+  - retained `bridge_far` as the sole `fishing_back` stop;
+  - added four authored `bridge_mid` options:
+    `fishing_front` and `fishing_side`, each toward left or right water;
+  - propagated fishing mirror and water-side metadata through autonomous
+    ambient selection and the Pixi animation controller;
+  - kept rejected non-solid/unreachable terrain unavailable;
+  - added query-gated deterministic QA staging without product-state writes.
+- Verification:
+  - orientation/manifest contract: PASS, 80 cases / 16 companions;
+  - transparent-frame bridge/water clearance: PASS, 80 cases;
+  - live Chromium `390x844` matrix: PASS, 80/80 cases, zero page or console
+    errors;
+  - maximum dense body width `61.57px` against `66px`;
+  - minimum maximum cast reach `37.01px` against `25px`;
+  - maximum live container width `59.48px`, horizontal anchor drift `0px`,
+    vertical anchor drift `2.50px`;
+  - legacy bridge clearance: PASS, 64 cases;
+  - Stage 1 promotion: PASS, 68 sheets / 16 companions;
+  - companion renderer lifecycle `29/29 PASS`;
+  - companion shadow flush `8/8 PASS`;
+  - Moonlake layout lock `38/38 PASS`;
+  - complete web release gate `28/28 PASS`, no accessibility warnings;
+  - `git diff --check`: PASS.
+- Runtime boundary: fishing remains interruptible and writes no catch, reward,
+  progression, relationship, memory, persistence, Safety or RaphaelCore state.
+- Branch / commit: `codex/moonlake-visual-fidelity-r2`; no commit or push.
+- Next safe action: Owner reviews R2.2 visual evidence together with R2/R2.1,
+  then separately authorizes publication if accepted.
+
+### 2026-07-28 - Codex - Moonlake Fishing Orientation R2.2 - AWAITING OWNER VISUAL APPROVAL
+
+- Status: implementation, automated QA and Codex visual self-review are
+  complete; final runtime visual approval remains with the Owner.
+- Lane: `Game Art, UI, And Visual Production`.
+- Visual decisions:
+  - preserve the premium R2 clay/resin master and existing bridge geometry;
+  - use the bridge midpoint as the only additional universal fishing surface;
+  - mirror native right-cast sheets for the left water side;
+  - reject stepping stones, waterfall basins, shallow water, far bank, tent
+    shoreline and near ground rather than inventing unsupported walkable art.
+- Visual proof:
+  - five orientation contact sheets and 80 individual captures under
+    `output/playwright/moonlake-fishing-orientation-r2-2/`;
+  - machine results in the same directory's `results.json`;
+  - evidence recorded in
+    `docs/qa/MOONLAKE_VISUAL_FIDELITY_R2_EVIDENCE.md`.
+- Open gates: physical iOS/Safari, representative mobile GPU, Owner visual
+  approval and separately authorized commit/push/publication.
+- Branch / commit: `codex/moonlake-visual-fidelity-r2`; no commit or push.
+
+### 2026-07-28 - Codex - Moonlake Fishing Rail Alignment R2.2.1 - IN PROGRESS
+
+- Status: `IN PROGRESS`; Owner found that the side-facing fishing line could
+  still read as landing on the bridge deck and authorized the final fix,
+  complete-scene validation and publication to `main`.
+- Lanes: `Game Engineering And Architecture` and
+  `Game Art, UI, And Visual Production`.
+- Layer: `EXPERIENCE`; publication will follow the protected-`main` PR and
+  `web-release-gate` path.
+- Scope:
+  - shift only `fishing_side` placement toward its selected water-side rail;
+  - keep the companion body, foot anchor and shadow on the bridge surface;
+  - prove the stable fishing-line frames cross the visible rail at `390x844`;
+  - rerun all sixteen companion/orientation cases and the complete release gate.
+- Red-line check: fishing remains interruptible habitat expression and writes
+  no reward, catch, progression, relationship, memory, persistence, Safety or
+  RaphaelCore state.
+- Non-goals: no bridge enlargement, new platform, new art generation,
+  dependency, save/schema change, fishing minigame or terrain expansion.
+- Acceptance refs: `H1-H6`, `I`, the Moonlake Live 3D Hybrid Contract,
+  `390x844` visual proof, reduced-motion regression and protected-main release
+  proof.
+
+### 2026-07-28 - Codex - Moonlake Fishing Rail Alignment R2.2.1 - VERIFIED / PUBLICATION AUTHORIZED
+
+- Status: `VERIFIED`; Owner authorized committing and publishing the complete
+  Moonlake R2/R2.1/R2.2 package to the protected `main` branch.
+- Lanes: `Game Engineering And Architecture` and
+  `Game Art, UI, And Visual Production`.
+- Completed:
+  - added a responsive `8px` reference-space offset toward the selected water
+    side only for `fishing_side`;
+  - propagated the authored rail offset through autonomous ambient selection,
+    deterministic QA staging, runtime snapshots and viewport projection;
+  - retained the existing bridge, front-facing and far-facing fishing anchors;
+  - kept every companion foot and shadow on the solid bridge surface.
+- Verification:
+  - orientation contract and transparent-frame audit: PASS, `80/80`;
+  - minimum stable side-line rail overhang: `5.47px` against `4px`;
+  - live Chromium `390x844` orientation matrix: PASS, `80/80`, zero page or
+    console errors, `0px` rail-offset drift;
+  - legacy bridge browser matrix: PASS, `32/32`;
+  - Stage 1 promotion: PASS, `68` sheets / `16` companions;
+  - companion renderer lifecycle `29/29 PASS`;
+  - companion shadow flush `8/8 PASS`;
+  - Moonlake layout lock `38/38 PASS`;
+  - day/clear, night/rain, dusk/mist, reduced-motion and forced-bridge full
+    scene captures: PASS;
+  - complete web release gate `28/28 PASS`, no accessibility warnings;
+  - `git diff --check`: PASS.
+- Runtime boundary: fishing remains interruptible and writes no catch, reward,
+  progression, relationship, memory, persistence, Safety or RaphaelCore state.
+- Known manual gates: physical iOS/Safari and representative mobile-GPU proof
+  remain open; automated mobile Chromium proof is complete.
+- Branch / commit: `codex/moonlake-visual-fidelity-r2`; publication commit and
+  protected-main PR immediately follow this entry.
+- Next safe action: push this branch, pass the required remote
+  `web-release-gate`, merge the PR, then verify `origin/main` and Pages.

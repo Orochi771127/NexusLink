@@ -99,6 +99,8 @@ import {
   getCompanionRoamingSnapshot,
   playDevMotion,
   rebaseCompanionMotion,
+  snapCompanionRoamingToWaypoint,
+  stageCompanionRoamingSegment,
   updateCompanionMotion
 } from "./pixi/motionController.js";
 import { resolveAnimationIntent } from "./engine/animationProfile.js";
@@ -1039,7 +1041,10 @@ async function bootScene(
       x: Number(local.x),
       y: Number(local.y),
       scale: Number(screen.scale) || 1,
-      depth: Number(screen.depth)
+      referenceScale390: Number(screen.referenceScale390) || 1,
+      depth: Number(screen.depth),
+      surface: screen.surface || null,
+      routeId: screen.routeId || null
     };
   };
 
@@ -1080,11 +1085,10 @@ async function bootScene(
         reducedMotion: Boolean(window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches)
           || document.documentElement?.dataset?.reducedMotionPreference === "reduced",
         projectWorldPoint: projectMoonlakeWorldPoint,
-        // Moonlake's companion datum sits on the shoreline below the lake.
-        // Only the back-facing fishing loop is eligible for autonomous habitat
-        // playback here; front/side remain explicit animation intents and QA views.
+        // Moonlake fishing eligibility is further constrained by the active
+        // bridge waypoint's authored orientation options.
         ambientActions: environmentLayer.profileId === "moonlake"
-          ? ["fishing_back"]
+          ? ["fishing_back", "fishing_front", "fishing_side"]
           : []
       });
     }
@@ -1185,7 +1189,71 @@ async function bootScene(
       },
       getActiveCompanionNode: () => companion || null,
       getLive3dDiagnostics: () => live3d.getDiagnostics(),
-      getRoamingSnapshot: () => getCompanionRoamingSnapshot(companionMotionController)
+      getRoamingSnapshot: () => getCompanionRoamingSnapshot(companionMotionController),
+      setRoamingWaypointForQa(waypointId) {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get("moonlakeBridgeQa") !== "1") return false;
+        return snapCompanionRoamingToWaypoint(
+          companionMotionController,
+          waypointId,
+          performance.now()
+        );
+      },
+      setRoamingSegmentForQa(fromWaypointId, toWaypointId, progress = 0) {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get("moonlakeBridgeQa") !== "1") return false;
+        return stageCompanionRoamingSegment(
+          companionMotionController,
+          fromWaypointId,
+          toWaypointId,
+          progress
+        );
+      },
+      playFishingForQa(waypointId, animationName, mirrorX = false) {
+        const params = new URLSearchParams(window.location.search);
+        const allowedAnimations = new Set([
+          "fishing_back",
+          "fishing_front",
+          "fishing_side"
+        ]);
+        if (
+          params.get("moonlakeBridgeQa") !== "1"
+          || !allowedAnimations.has(animationName)
+        ) {
+          return false;
+        }
+        const snapped = snapCompanionRoamingToWaypoint(
+          companionMotionController,
+          waypointId,
+          performance.now()
+        );
+        if (!snapped) return false;
+        playDevMotion(companionMotionController, animationName, {
+          mirrorX,
+          waterSide: animationName === "fishing_back"
+            ? "far"
+            : mirrorX
+              ? "left"
+              : "right",
+          durationMs: 10_000
+        });
+        return true;
+      },
+      clearForcedMotionForQa() {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get("moonlakeBridgeQa") !== "1" || !companionMotionController) return false;
+        companionMotionController.devForcedState = null;
+        companionMotionController.devForcedUntil = 0;
+        companionMotionController.devForcedMirrorX = false;
+        companionMotionController.devForcedWaterSide = null;
+        companionMotionController.devForcedRailOffsetX390 = 0;
+        companionMotionController.ambientActionState = null;
+        companionMotionController.ambientActionUntil = 0;
+        companionMotionController.ambientActionMirrorX = false;
+        companionMotionController.ambientActionWaterSide = null;
+        companionMotionController.ambientActionRailOffsetX390 = 0;
+        return true;
+      }
     });
   }
 

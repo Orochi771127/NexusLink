@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "id": "moonlake-visual-fidelity-r2",
+  "stylePreset": "clay_resin_3d_miniature",
+  "sourceReferenceRoles": {
+    "moonlake_visual_master_r2.png": "owner-approved composition and visual-quality authority"
+  },
+  "canvas": {
+    "width": 1080,
+    "height": 1920,
+    "colorMode": "RGB"
+  },
+  "runtime": {
+    "engine": "Moonlake controlled Three.js environment exception",
+    "presentation": "fixed-camera live diorama master with shader-driven water, waterfall, foliage, weather and day-night response",
+    "companionLayer": "PixiJS illustrated 2D sprite",
+    "fallback": "existing Moonlake Pixi habitat"
+  },
+  "sceneProfile": "docs/design/MOONLAKE_LIVE_3D_HYBRID_CONTRACT_V1.md",
+  "mobilePreview": {
+    "width": 390,
+    "height": 844
+  },
+  "companionReservedRect": {
+    "x": 0.38,
+    "y": 0.45,
+    "w": 0.24,
+    "h": 0.27
+  },
+  "uiForbiddenZones": {
+    "top": 0.12,
+    "bottom": 0.2
+  },
+  "dayNightSameComposition": true,
+  "bridgeClearance": {
+    "routeId": "bridge-clearance-r2-1",
+    "mobileViewport": "390x844",
+    "visibleDeckSilhouetteLimitPx": 66,
+    "fishingStop": "bridge_far",
+    "disconnectedOpenWaterStops": [
+      "far_bank_center",
+      "far_bank_left",
+      "far_bank_right"
+    ],
+    "runtimeCompanionCount": 16,
+    "walkingAnimation": "back_walk",
+    "fishingAnimation": "fishing_back"
+  },
+  "humanApproved": true,
+  "referenceAuditPassed": true,
+  "runtimeIntegrated": true,
+  "ownerRuntimeReviewApproved": false,
+  "published": false,
+  "approvalNote": "Owner explicitly required the completed Moonlake to meet the supplied final target standard and authorized construction on 2026-07-28."
+}

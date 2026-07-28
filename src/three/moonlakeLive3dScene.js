@@ -1,6 +1,9 @@
 import {
+  MOONLAKE_BRIDGE_PRESENTATION,
   MOONLAKE_CAMERA,
   MOONLAKE_LIVE3D_ASSET,
+  MOONLAKE_VISUAL_MASTER,
+  MOONLAKE_VISUAL_WALKWAY,
   MOONLAKE_WATERFALLS
 } from "./moonlakeLive3dConfig.js";
 
@@ -61,7 +64,7 @@ export async function createMoonlakeLive3dScene({
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x9bc9e8);
+    scene.background = new THREE.Color(0x071322);
     scene.fog = new THREE.FogExp2(0x9fc9dd, 0.012);
 
     const camera = new THREE.PerspectiveCamera(
@@ -85,17 +88,32 @@ export async function createMoonlakeLive3dScene({
     habitatRoot.name = "moonlake_live3d_root";
     scene.add(habitatRoot);
 
+    const visualTexture = await withTimeout(
+      new THREE.TextureLoader().loadAsync(MOONLAKE_VISUAL_MASTER.texture),
+      ASSET_TIMEOUT_MS,
+      "moonlake_visual_master_timeout"
+    );
+    configureVisualTexture(THREE, visualTexture);
+    const visualBackdrop = createVisualBackdrop(THREE, visualTexture);
+    scene.add(visualBackdrop.mesh);
+
     const lights = createLighting(THREE, scene, quality);
     const sky = createSky(THREE);
-    scene.add(sky.mesh);
     const water = createLakeWater(THREE);
-    habitatRoot.add(water.mesh);
     const clayLandscape = createClayLandscape(THREE, quality);
-    habitatRoot.add(clayLandscape.root);
     const waterfalls = createWaterfalls(THREE);
-    waterfalls.items.forEach((item) => habitatRoot.add(item.group));
     const grass = createGrass(THREE, quality);
-    habitatRoot.add(grass.mesh);
+    const hiddenGeometryRig = new THREE.Group();
+    hiddenGeometryRig.name = "moonlake_structural_projection_rig";
+    hiddenGeometryRig.visible = false;
+    hiddenGeometryRig.add(
+      sky.mesh,
+      water.mesh,
+      clayLandscape.root,
+      grass.mesh,
+      ...waterfalls.items.map((item) => item.group)
+    );
+    habitatRoot.add(hiddenGeometryRig);
     const weather = createWeather(THREE, quality);
     habitatRoot.add(weather.root);
 
@@ -127,6 +145,7 @@ export async function createMoonlakeLive3dScene({
       camera,
       canvas,
       model,
+      visualBackdrop,
       sky,
       water,
       clayLandscape,
@@ -181,6 +200,8 @@ export async function createMoonlakeLive3dScene({
         resizeObserver?.disconnect();
         window.removeEventListener("resize", resize);
         disposeObjectTree(habitatRoot);
+        disposeObjectTree(visualBackdrop.mesh);
+        visualBackdrop.texture.dispose();
         renderer.dispose();
         canvas.remove();
       }
@@ -236,6 +257,145 @@ function createDisabledController(reason) {
     },
     dispose() {}
   };
+}
+
+function configureVisualTexture(THREE, texture) {
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.wrapS = THREE.ClampToEdgeWrapping;
+  texture.wrapT = THREE.ClampToEdgeWrapping;
+  texture.minFilter = THREE.LinearMipmapLinearFilter;
+  texture.magFilter = THREE.LinearFilter;
+  texture.generateMipmaps = true;
+  texture.needsUpdate = true;
+}
+
+function createVisualBackdrop(THREE, texture) {
+  const bridge = MOONLAKE_BRIDGE_PRESENTATION;
+  const uniforms = {
+    map: { value: texture },
+    time: { value: 0 },
+    nightMix: { value: 0 },
+    rainStrength: { value: 0 },
+    viewportAspect: { value: MOONLAKE_VISUAL_MASTER.imageAspect },
+    imageAspect: { value: MOONLAKE_VISUAL_MASTER.imageAspect },
+    bridgeNear: {
+      value: new THREE.Vector4(
+        bridge.nearCenterX,
+        bridge.textureNearY,
+        bridge.sourceNearHalfWidth,
+        bridge.widenedNearHalfWidth
+      )
+    },
+    bridgeFar: {
+      value: new THREE.Vector4(
+        bridge.farCenterX,
+        bridge.textureFarY,
+        bridge.sourceFarHalfWidth,
+        bridge.widenedFarHalfWidth
+      )
+    }
+  };
+  const material = new THREE.ShaderMaterial({
+    uniforms,
+    depthTest: false,
+    depthWrite: false,
+    toneMapped: false,
+    vertexShader: [
+      "varying vec2 vUv;",
+      "void main() {",
+      "  vUv = uv;",
+      "  gl_Position = vec4(position.xy, 0.9999, 1.0);",
+      "}"
+    ].join("\n"),
+    fragmentShader: [
+      "uniform sampler2D map;",
+      "uniform float time;",
+      "uniform float nightMix;",
+      "uniform float rainStrength;",
+      "uniform float viewportAspect;",
+      "uniform float imageAspect;",
+      "uniform vec4 bridgeNear;",
+      "uniform vec4 bridgeFar;",
+      "varying vec2 vUv;",
+      "",
+      "float boxMask(vec2 uv, vec2 minUv, vec2 maxUv, float feather) {",
+      "  vec2 lower = smoothstep(minUv, minUv + feather, uv);",
+      "  vec2 upper = 1.0 - smoothstep(maxUv - feather, maxUv, uv);",
+      "  return lower.x * lower.y * upper.x * upper.y;",
+      "}",
+      "",
+      "vec2 coverUv(vec2 uv) {",
+      "  vec2 result = uv;",
+      "  if (viewportAspect < imageAspect) {",
+      "    result.x = (uv.x - 0.5) * (viewportAspect / imageAspect) + 0.5;",
+      "  } else {",
+      "    result.y = (uv.y - 0.5) * (imageAspect / viewportAspect) + 0.5;",
+      "  }",
+      "  return result;",
+      "}",
+      "",
+      "void main() {",
+      "  vec2 imageUv = coverUv(vUv);",
+      "  vec3 probe = texture2D(map, imageUv).rgb;",
+      "  float coolWater = smoothstep(0.02, 0.24, min(probe.g - probe.r, probe.b - probe.r));",
+      "  float waterBand = smoothstep(0.50, 0.57, imageUv.y)",
+      "    * (1.0 - smoothstep(0.84, 0.89, imageUv.y));",
+      "  float waterMask = coolWater * waterBand;",
+      "  float green = smoothstep(0.015, 0.16, probe.g - max(probe.r, probe.b));",
+      "  float foliageBand = 1.0 - smoothstep(0.70, 0.88, imageUv.y);",
+      "",
+      "  vec2 animatedUv = imageUv;",
+      "  animatedUv.x += sin(imageUv.y * 96.0 + time * 0.72) * 0.00072 * waterMask;",
+      "  animatedUv.y += cos(imageUv.x * 72.0 - time * 0.46) * 0.00042 * waterMask;",
+      "  animatedUv.x += sin(time * 0.42 + imageUv.y * 19.0) * 0.00058 * green * foliageBand;",
+      "",
+      "  vec3 color = texture2D(map, animatedUv).rgb;",
+      "  float leftFall = boxMask(imageUv, vec2(0.135, 0.625), vec2(0.285, 0.865), 0.018);",
+      "  float rightFall = boxMask(imageUv, vec2(0.715, 0.625), vec2(0.865, 0.875), 0.018);",
+      "  float waterfallMask = (leftFall + rightFall) * coolWater;",
+      "  float fallingStreak = pow(0.5 + 0.5 * sin(imageUv.x * 164.0 - imageUv.y * 42.0 + time * 4.2), 8.0);",
+      "  float fallingPulse = 0.5 + 0.5 * sin(imageUv.y * 118.0 + time * 2.1);",
+      "  color += vec3(0.06, 0.14, 0.18) * waterfallMask * (0.16 + fallingStreak * 0.18 + fallingPulse * 0.04);",
+      "",
+      "  float waterGlint = pow(0.5 + 0.5 * sin(imageUv.x * 122.0 + imageUv.y * 76.0 + time * 0.9), 12.0);",
+      "  color += vec3(0.05, 0.11, 0.14) * waterGlint * waterMask * (0.07 + rainStrength * 0.05);",
+      "",
+      "  float bridgeT = clamp((imageUv.y - bridgeNear.y) / max(0.0001, bridgeFar.y - bridgeNear.y), 0.0, 1.0);",
+      "  float bridgeCenterX = mix(bridgeNear.x, bridgeFar.x, bridgeT);",
+      "  float sourceHalfWidth = mix(bridgeNear.z, bridgeFar.z, bridgeT);",
+      "  float widenedHalfWidth = mix(bridgeNear.w, bridgeFar.w, bridgeT);",
+      "  float bridgeVertical = smoothstep(bridgeNear.y - 0.004, bridgeNear.y + 0.004, imageUv.y)",
+      "    * (1.0 - smoothstep(bridgeFar.y - 0.004, bridgeFar.y + 0.004, imageUv.y));",
+      "  float bridgeDistanceX = abs(imageUv.x - bridgeCenterX);",
+      "  float widenedMask = (1.0 - smoothstep(widenedHalfWidth - 0.003, widenedHalfWidth + 0.003, bridgeDistanceX)) * bridgeVertical;",
+      "  float sourceMask = (1.0 - smoothstep(sourceHalfWidth - 0.002, sourceHalfWidth + 0.002, bridgeDistanceX)) * bridgeVertical;",
+      "  float bridgeExtension = max(0.0, widenedMask - sourceMask * 0.94);",
+      "  float railMask = smoothstep(widenedHalfWidth - 0.008, widenedHalfWidth - 0.003, bridgeDistanceX)",
+      "    * (1.0 - smoothstep(widenedHalfWidth - 0.001, widenedHalfWidth + 0.003, bridgeDistanceX))",
+      "    * bridgeVertical;",
+      "  float plankPhase = fract(bridgeT * 16.0);",
+      "  float plankLine = (1.0 - smoothstep(0.03, 0.10, min(plankPhase, 1.0 - plankPhase))) * widenedMask;",
+      "  vec3 bridgeWood = mix(vec3(0.34, 0.205, 0.105), vec3(0.56, 0.37, 0.19), 0.5 + 0.5 * bridgeT);",
+      "  color = mix(color, bridgeWood, bridgeExtension * 0.82);",
+      "  color = mix(color, bridgeWood * 0.72, plankLine * bridgeExtension * 0.42);",
+      "  color = mix(color, vec3(0.43, 0.29, 0.15), railMask * 0.92);",
+      "",
+      "  vec3 nightColor = color * vec3(0.34, 0.46, 0.68) * 0.78 + vec3(0.006, 0.014, 0.045);",
+      "  float cyanCrystal = smoothstep(0.12, 0.48, color.b - color.r) * smoothstep(0.35, 0.74, color.g);",
+      "  float warmMetal = smoothstep(0.03, 0.26, color.r - color.b) * smoothstep(0.30, 0.72, color.r);",
+      "  nightColor += cyanCrystal * vec3(0.01, 0.13, 0.25) * 0.56;",
+      "  nightColor += warmMetal * vec3(0.10, 0.045, 0.008) * 0.20;",
+      "  color = mix(color, nightColor, nightMix);",
+      "  color *= 1.0 - rainStrength * 0.055;",
+      "  gl_FragColor = vec4(color, 1.0);",
+      "}"
+    ].join("\n")
+  });
+  const mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
+  mesh.name = "moonlake_owner_approved_visual_master";
+  mesh.frustumCulled = false;
+  mesh.renderOrder = -1000;
+  return { mesh, uniforms, texture };
 }
 
 function createLighting(THREE, scene, quality) {
@@ -1007,11 +1167,31 @@ function createWeather(THREE, quality) {
   rain.visible = false;
   root.add(rain);
 
-  const mistMaterial = new THREE.MeshBasicMaterial({
-    color: 0xc9dfdf,
+  const mistMaterial = new THREE.ShaderMaterial({
     transparent: true,
-    opacity: 0,
-    depthWrite: false
+    depthWrite: false,
+    uniforms: {
+      opacity: { value: 0 },
+      color: { value: new THREE.Color(0xc9dfdf) }
+    },
+    vertexShader: [
+      "varying vec2 vUv;",
+      "void main() {",
+      "  vUv = uv;",
+      "  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);",
+      "}"
+    ].join("\n"),
+    fragmentShader: [
+      "uniform float opacity;",
+      "uniform vec3 color;",
+      "varying vec2 vUv;",
+      "void main() {",
+      "  float edgeX = smoothstep(0.0, 0.24, vUv.x) * (1.0 - smoothstep(0.76, 1.0, vUv.x));",
+      "  float edgeY = smoothstep(0.0, 0.34, vUv.y) * (1.0 - smoothstep(0.66, 1.0, vUv.y));",
+      "  float drift = 0.82 + 0.18 * sin(vUv.x * 11.0 + vUv.y * 7.0);",
+      "  gl_FragColor = vec4(color, opacity * edgeX * edgeY * drift);",
+      "}"
+    ].join("\n")
   });
   const mist = new THREE.Mesh(new THREE.PlaneGeometry(26, 11), mistMaterial);
   mist.rotation.x = -Math.PI / 2;
@@ -1042,6 +1222,7 @@ function resizeRenderer(state, gameRoot) {
   state.renderer.setSize(width, height, false);
   state.camera.aspect = width / height;
   state.camera.updateProjectionMatrix();
+  state.visualBackdrop.uniforms.viewportAspect.value = width / height;
 }
 
 function updateScene(state, ticker, getEnvironmentState, getWeather) {
@@ -1085,6 +1266,9 @@ function updateScene(state, ticker, getEnvironmentState, getWeather) {
   state.renderer.toneMappingExposure = 1.14 - nightMix * 0.12;
 
   const motionScale = state.reducedMotion ? 0.16 : 1;
+  state.visualBackdrop.uniforms.time.value = state.elapsed * motionScale;
+  state.visualBackdrop.uniforms.nightMix.value = nightMix;
+  state.visualBackdrop.uniforms.rainStrength.value = rainStrength;
   state.water.uniforms.time.value = state.elapsed * motionScale;
   state.water.uniforms.nightMix.value = nightMix;
   state.water.uniforms.rainStrength.value = rainStrength;
@@ -1119,8 +1303,8 @@ function updateWeather(state, weatherId, deltaSeconds, motionScale) {
   const showMist = weatherId === "mist";
   state.weather.rain.visible = showRain;
   state.weather.mist.visible = showMist;
-  state.weather.mistMaterial.opacity = showMist
-    ? 0.13 + Math.sin(state.elapsed * 0.2) * 0.025 * motionScale
+  state.weather.mistMaterial.uniforms.opacity.value = showMist
+    ? 0.105 + Math.sin(state.elapsed * 0.2) * 0.018 * motionScale
     : 0;
   if (!showRain) return;
   const positions = state.weather.rain.geometry.getAttribute("position");
@@ -1144,20 +1328,110 @@ function updateWeather(state, weatherId, deltaSeconds, motionScale) {
 
 function projectWorldToScreen(THREE, state, point) {
   if (!state.ready || state.contextLost || !point) return null;
-  const vector = new THREE.Vector3(
-    Number(point.x) || 0,
-    Number(point.y) || 0,
-    Number(point.z) || 0
-  );
-  const distance = vector.distanceTo(state.camera.position);
-  vector.project(state.camera);
+  return projectMoonlakeVisualPoint(point, state.size);
+}
+
+export function projectMoonlakeVisualPoint(point, viewport = {}) {
+  if (!point) return null;
+  const worldX = Number(point.x) || 0;
+  const worldZ = Number(point.z) || 0;
+  const imageAspect = MOONLAKE_VISUAL_MASTER.imageAspect;
+  const width = Math.max(1, Number(viewport.width) || 1);
+  const height = Math.max(1, Number(viewport.height) || 1);
+  const viewportAspect = width / height;
+  const perspectiveScale = Math.max(0.038, 0.068 + worldZ * 0.0022);
+  const genericImageX = 0.5 + worldX * perspectiveScale;
+  const genericImageY = 0.56 + (worldZ - 1.2) * 0.0195;
+  const genericScale = clamp(0.72 + genericImageY * 0.16, 0.74, 0.84);
+  const walkway = resolveVisualWalkwayPoint(worldX, worldZ);
+  const routeWeight = walkway
+    ? resolveVisualWalkwayWeight(worldX, worldZ)
+    : 0;
+  const imageX = walkway
+    ? lerp(genericImageX, walkway.imageX, routeWeight)
+    : genericImageX;
+  const imageY = walkway
+    ? lerp(genericImageY, walkway.imageY, routeWeight)
+    : genericImageY;
+  const displayScale = walkway
+    ? lerp(genericScale, walkway.scale, routeWeight)
+    : genericScale;
+  let screenX = imageX;
+  let screenY = imageY;
+  if (viewportAspect < imageAspect) {
+    screenX = 0.5 + (imageX - 0.5) * (imageAspect / viewportAspect);
+  } else {
+    screenY = 0.5 + (imageY - 0.5) * (viewportAspect / imageAspect);
+  }
   return {
-    x: (vector.x * 0.5 + 0.5) * state.size.width,
-    y: (-vector.y * 0.5 + 0.5) * state.size.height,
-    depth: vector.z,
-    scale: clamp(1.04 - (distance - 31) * 0.018, 0.74, 1.04),
-    visible: vector.z >= -1 && vector.z <= 1
+    x: screenX * width,
+    y: screenY * height,
+    referenceScale390: width / 390,
+    depth: clamp((imageY - 0.28) / 0.42, 0, 1),
+    scale: displayScale,
+    surface: walkway?.surface || "ground",
+    routeId: walkway ? MOONLAKE_VISUAL_WALKWAY.routeId : null,
+    visible: screenX >= -0.08
+      && screenX <= 1.08
+      && screenY >= -0.08
+      && screenY <= 1.08
   };
+}
+
+function resolveVisualWalkwayPoint(worldX, worldZ) {
+  const route = MOONLAKE_VISUAL_WALKWAY;
+  const isFarLanding = worldZ <= route.farLandingWorldZ;
+  const isBridgeApproach = worldZ <= route.bridgeWorldZMax
+    && worldX >= route.bridgeEntryBlendStartX;
+  if (!isFarLanding && !isBridgeApproach) return null;
+
+  const anchors = route.anchors;
+  let from = anchors[0];
+  let to = anchors[anchors.length - 1];
+  for (let index = 0; index < anchors.length - 1; index += 1) {
+    const candidateFrom = anchors[index];
+    const candidateTo = anchors[index + 1];
+    if (worldZ <= candidateFrom.worldZ && worldZ >= candidateTo.worldZ) {
+      from = candidateFrom;
+      to = candidateTo;
+      break;
+    }
+  }
+  if (worldZ >= anchors[0].worldZ) {
+    from = anchors[0];
+    to = anchors[0];
+  } else if (worldZ <= anchors[anchors.length - 1].worldZ) {
+    from = anchors[anchors.length - 1];
+    to = anchors[anchors.length - 1];
+  }
+
+  const span = Math.max(0.0001, from.worldZ - to.worldZ);
+  const progress = from === to
+    ? 0
+    : clamp((from.worldZ - worldZ) / span, 0, 1);
+  const expectedWorldX = lerp(from.worldX, to.worldX, progress);
+  const lateralOffset = (worldX - expectedWorldX) * route.lateralImageScale;
+  return {
+    imageX: lerp(from.imageX, to.imageX, progress) + lateralOffset,
+    imageY: lerp(from.imageY, to.imageY, progress),
+    scale: lerp(from.scale, to.scale, progress),
+    surface: "bridge"
+  };
+}
+
+function resolveVisualWalkwayWeight(worldX, worldZ) {
+  const route = MOONLAKE_VISUAL_WALKWAY;
+  if (worldZ <= route.farLandingWorldZ) return 1;
+  const width = Math.max(
+    0.0001,
+    route.bridgeEntryBlendEndX - route.bridgeEntryBlendStartX
+  );
+  const normalized = clamp(
+    (worldX - route.bridgeEntryBlendStartX) / width,
+    0,
+    1
+  );
+  return normalized * normalized * (3 - 2 * normalized);
 }
 
 function buildDiagnostics(state) {
@@ -1174,6 +1448,10 @@ function buildDiagnostics(state) {
       : 0,
     size: { ...state.size },
     asset: { ...MOONLAKE_LIVE3D_ASSET },
+    visualMaster: {
+      ...MOONLAKE_VISUAL_MASTER,
+      mode: "owner_approved_live_diorama"
+    },
     environment: {
       weather: state.lastWeather,
       nightMix: state.lastNightMix,
@@ -1181,6 +1459,7 @@ function buildDiagnostics(state) {
       mistVisible: state.weather.mist.visible
     },
     animation: {
+      visualTime: state.visualBackdrop.uniforms.time.value,
       waterTime: state.water.uniforms.time.value,
       waterfallTimes: state.waterfalls.items.map((item) => item.uniforms.time.value),
       grassSway: state.lastGrassSway
@@ -1229,6 +1508,10 @@ function mulberry32(seed) {
 
 function clamp01(value) {
   return clamp(Number(value) || 0, 0, 1);
+}
+
+function lerp(from, to, amount) {
+  return from + (to - from) * clamp(Number(amount) || 0, 0, 1);
 }
 
 function clamp(value, min, max) {

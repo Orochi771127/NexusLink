@@ -71,7 +71,7 @@
       "preferredResponse": "practical_explanation",
       "constraints": [],
       "strategy": "practical_explanation",
-      "reply": "自然語言理解會經過 intent、semanticFrame、response pack 幾層；如果都 miss，才會掉到 generic fallback。",
+      "reply": "自然語言理解會經過 intent、semanticFrame、response pack 幾層；如果都 miss，才會掉到 generic fallback——你若只想停在這裡，也完全可以。",
       "checks": {
         "topic_ok": true,
         "dialogue_act_ok": true,
@@ -91,7 +91,7 @@
         "no_advice"
       ],
       "strategy": "practical_clarification",
-      "reply": "先對準你說的「被人否定」。",
+      "reply": "先對準你說的「被人否定」——沒有大事也可以講；想從感覺開始也行。",
       "checks": {
         "topic_ok": true,
         "constraint_ok": true,

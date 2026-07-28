@@ -49,6 +49,35 @@ export function resetMoonlakeRoamingState(state, nowMs = 0) {
   return state;
 }
 
+export function snapMoonlakeRoamingToWaypoint(state, waypointId, nowMs = 0) {
+  const waypoint = MOONLAKE_WORLD_WAYPOINTS[waypointId];
+  if (!state || !waypoint) return false;
+  state.currentId = waypointId;
+  state.targetId = null;
+  state.x = waypoint.x;
+  state.y = waypoint.y;
+  state.z = waypoint.z;
+  state.dwellUntil = nowMs + IDLE_DWELL_MAX_MS;
+  state.direction = null;
+  return true;
+}
+
+export function stageMoonlakeRoamingSegment(state, fromWaypointId, toWaypointId, progress = 0) {
+  const from = MOONLAKE_WORLD_WAYPOINTS[fromWaypointId];
+  const to = MOONLAKE_WORLD_WAYPOINTS[toWaypointId];
+  const isConnected = MOONLAKE_WORLD_EDGES[fromWaypointId]?.includes(toWaypointId);
+  if (!state || !from || !to || !isConnected) return false;
+  const amount = clamp01(progress);
+  state.currentId = fromWaypointId;
+  state.targetId = toWaypointId;
+  state.x = from.x + (to.x - from.x) * amount;
+  state.y = from.y + (to.y - from.y) * amount;
+  state.z = from.z + (to.z - from.z) * amount;
+  state.dwellUntil = 0;
+  state.direction = null;
+  return true;
+}
+
 export function hasFourDirectionAnimations(canResolve) {
   return typeof canResolve === "function"
     && REQUIRED_DIRECTIONAL_ANIMATIONS.every((name) => Boolean(canResolve(name)));
@@ -194,7 +223,11 @@ function buildResult(state, {
   reason,
   projectWorldPoint
 }) {
-  const area = MOONLAKE_WORLD_WAYPOINTS[state.targetId || state.currentId]?.area || "platform";
+  const waypoint = MOONLAKE_WORLD_WAYPOINTS[state.targetId || state.currentId];
+  const area = waypoint?.area || "platform";
+  const fishingOptions = Array.isArray(waypoint?.fishingOptions)
+    ? waypoint.fishingOptions
+    : [];
   const worldPosition = { x: state.x, y: state.y, z: state.z };
   const projected = typeof projectWorldPoint === "function"
     ? projectWorldPoint(worldPosition)
@@ -210,7 +243,8 @@ function buildResult(state, {
     projectionReady: Boolean(projected),
     scaleMultiplier: Number(projected?.scale) || 1,
     area,
-    isFishingSpot: area === "fishing_spot" && !state.direction
+    isFishingSpot: fishingOptions.length > 0 && !state.direction,
+    fishingOptions
   };
 }
 
@@ -225,3 +259,16 @@ function clamp01(value) {
 export const MOONLAKE_ROAMING_WAYPOINTS = MOONLAKE_WORLD_WAYPOINTS;
 export const MOONLAKE_ROAMING_EDGES = MOONLAKE_WORLD_EDGES;
 export const MOONLAKE_DIRECTIONAL_ANIMATIONS = REQUIRED_DIRECTIONAL_ANIMATIONS;
+
+export function getMoonlakeFishingOption(
+  waypointId,
+  animationName,
+  mirrorX = false
+) {
+  const options = MOONLAKE_WORLD_WAYPOINTS[waypointId]?.fishingOptions;
+  if (!Array.isArray(options)) return null;
+  return options.find((option) => (
+    option.animationName === animationName
+    && Boolean(option.mirrorX) === Boolean(mirrorX)
+  )) || null;
+}

@@ -271,11 +271,11 @@ const motion = createCompanionMotion(companion, "calm");
 motion.ambientNextAt = Number.POSITIVE_INFINITY;
 motion.ambientActionNextAt = 0;
 Object.assign(motion.moonlakeRoaming, {
-  currentId: "far_bank_center",
+  currentId: "bridge_far",
   targetId: null,
-  x: 0.75,
-  y: 0.1,
-  z: -12.55,
+  x: 2.2,
+  y: 0.18,
+  z: -11.1,
   dwellUntil: Number.POSITIVE_INFINITY
 });
 updateCompanionMotion(companion, motion, 1, 1_000, "calm", () => {}, {
