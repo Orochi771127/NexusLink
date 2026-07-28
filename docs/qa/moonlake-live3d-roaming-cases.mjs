@@ -49,21 +49,17 @@ function walkTo(targetId, expectedDirection, nowMs) {
 walkTo("platform_right", "right", 10);
 walkTo("bridge_near", "back", 20);
 walkTo("bridge_mid", "back", 30);
-walkTo("bridge_far", "back", 40);
-const fishingArrival = walkTo("far_bank_center", "back", 50);
+const fishingArrival = walkTo("bridge_far", "back", 40);
 
-assert.equal(state.currentId, "far_bank_center");
+assert.equal(state.currentId, "bridge_far");
 assert.equal(state.bridgeTraversals, 1);
 assert.equal(fishingArrival.isFishingSpot, true);
 
-walkTo("far_bank_left", "left", 60);
-walkTo("far_bank_center", "right", 70);
-walkTo("bridge_far", "right", 80);
-walkTo("bridge_mid", "front", 85);
+walkTo("bridge_mid", "front", 50);
 
 const reducedMotion = updateMoonlakeRoaming(state, {
   deltaMs: 16,
-  nowMs: 90,
+  nowMs: 60,
   mood: "calm",
   canRoam: true,
   reducedMotion: true,

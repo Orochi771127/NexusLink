@@ -2,8 +2,11 @@ import { getTouchMotionState } from "../engine/touchReactionEngine.js";
 import { getAmbientWalkAnimation, getMoodIdleAnimationName } from "../engine/animationProfile.js";
 import {
   createMoonlakeRoamingState,
+  getMoonlakeFishingOption,
   getMoonlakeRoamingSnapshot,
   resetMoonlakeRoamingState,
+  snapMoonlakeRoamingToWaypoint,
+  stageMoonlakeRoamingSegment,
   updateMoonlakeRoaming
 } from "./moonlakeRoamingController.js";
 import EventBus from "../utils/eventBus.js";
@@ -47,9 +50,15 @@ export function createCompanionMotion(companion, initialMood) {
     baseRotation: companion.rotation || 0,
     devForcedState: null,
     devForcedUntil: 0,
+    devForcedMirrorX: false,
+    devForcedWaterSide: null,
+    devForcedRailOffsetX390: 0,
     ambientActionState: null,
     ambientActionUntil: 0,
     ambientActionNextAt: 0,
+    ambientActionMirrorX: false,
+    ambientActionWaterSide: null,
+    ambientActionRailOffsetX390: 0,
     moonlakeRoaming: createMoonlakeRoamingState(performance.now()),
     moonlakeRoamingResult: null,
     fallbackMotionActive: true,
@@ -97,7 +106,7 @@ export function triggerCompanionTouchMotion(motion, interactionResult = {}) {
   });
 }
 
-export function playDevMotion(motion, motionState) {
+export function playDevMotion(motion, motionState, options = {}) {
   if (!motion || !motionState) return;
   const now = performance.now();
   if (motionState === AMBIENT_WALK_STATE) {
@@ -112,8 +121,24 @@ export function playDevMotion(motion, motionState) {
     motion.temporaryEnvironmentEventEmitted = false;
     return;
   }
+  const mirrorX = Boolean(options.mirrorX);
+  const fishingOption = motionState.startsWith("fishing_")
+    ? getMoonlakeFishingOption(
+      motion.moonlakeRoaming?.currentId,
+      motionState,
+      mirrorX
+    )
+    : null;
   motion.devForcedState = motionState;
-  motion.devForcedUntil = now + (motionState === "blink" ? getMotionDurationMs(motion, motionState, 700) : 3000);
+  motion.devForcedMirrorX = mirrorX;
+  motion.devForcedWaterSide = options.waterSide || fishingOption?.waterSide || null;
+  motion.devForcedRailOffsetX390 = Number(
+    options.railOffsetX390 ?? fishingOption?.railOffsetX390
+  ) || 0;
+  motion.devForcedUntil = now + (
+    Number(options.durationMs)
+    || (motionState === "blink" ? getMotionDurationMs(motion, motionState, 700) : 3000)
+  );
 }
 
 export function updateCompanionMotion(companion, motion, timeSeconds, nowMs, mood, onStateChange = () => {}, options = {}) {
@@ -121,6 +146,9 @@ export function updateCompanionMotion(companion, motion, timeSeconds, nowMs, moo
     stopAmbientWalk(motion);
     motion.temporaryState = null;
     motion.devForcedState = null;
+    motion.devForcedMirrorX = false;
+    motion.devForcedWaterSide = null;
+    motion.devForcedRailOffsetX390 = 0;
     motion.fallbackMotionActive = false;
     onStateChange(companion.__animationController?.getCurrentAnimationName?.() || motion.state);
     return;
@@ -136,6 +164,9 @@ export function updateCompanionMotion(companion, motion, timeSeconds, nowMs, moo
   if (motion.devForcedState && nowMs >= motion.devForcedUntil) {
     motion.devForcedState = null;
     motion.devForcedUntil = 0;
+    motion.devForcedMirrorX = false;
+    motion.devForcedWaterSide = null;
+    motion.devForcedRailOffsetX390 = 0;
   }
 
   const canAmbientWalk = options.canAmbientWalk !== false;
@@ -162,9 +193,13 @@ export function updateCompanionMotion(companion, motion, timeSeconds, nowMs, moo
     projectWorldPoint: options.projectWorldPoint
   });
   motion.moonlakeRoamingResult = roamingResult;
-  const isRoamingReady = roamingResult.enabled
-    && roamingResult.ready
-    && roamingResult.projectionReady;
+  const isRoamingReady = roamingResult.ready
+    && roamingResult.projectionReady
+    && (
+      roamingResult.enabled
+      || roamingResult.reason === "reduced_motion"
+      || roamingResult.reason === "blocked"
+    );
   const isAmbientBlocked = !canAmbientWalk
     || Boolean(motion.temporaryState)
     || isBattleActive
@@ -183,11 +218,24 @@ export function updateCompanionMotion(companion, motion, timeSeconds, nowMs, moo
 
   // 偶發日常動作（原地、不位移）：閒置且心情平穩時，偶爾坐下/理毛/伸懶腰/打盹。
   const profileAmbientActions = companion.__animationProfile?.ambientActions || [];
-  const habitatAmbientActions = roamingResult.isFishingSpot && Array.isArray(options.ambientActions)
-    ? options.ambientActions
+  const configuredFishingOptions = roamingResult.isFishingSpot
+    && Array.isArray(roamingResult.fishingOptions)
+    ? roamingResult.fishingOptions
     : [];
+  const legacyHabitatActions = roamingResult.isFishingSpot
+    && configuredFishingOptions.length === 0
+    && Array.isArray(options.ambientActions)
+    ? options.ambientActions.map((animationName) => ({
+      animationName,
+      mirrorX: false,
+      waterSide: null
+    }))
+    : [];
+  const habitatAmbientActions = configuredFishingOptions.length > 0
+    ? configuredFishingOptions
+    : legacyHabitatActions;
   const ambientActions = habitatAmbientActions.length > 0
-    ? [...new Set([...profileAmbientActions, ...habitatAmbientActions])]
+    ? [...profileAmbientActions, ...habitatAmbientActions]
     : profileAmbientActions;
   const isBusy = !canAmbientWalk
     || Boolean(motion.temporaryState)
@@ -197,13 +245,21 @@ export function updateCompanionMotion(companion, motion, timeSeconds, nowMs, moo
     || Boolean(roamingResult.moving);
   if (motion.ambientActionState && (isBusy || nowMs >= motion.ambientActionUntil)) {
     motion.ambientActionState = null;
+    motion.ambientActionMirrorX = false;
+    motion.ambientActionWaterSide = null;
+    motion.ambientActionRailOffsetX390 = 0;
     scheduleNextAmbientAction(motion, nowMs);
   }
   if (
     !motion.ambientActionState && !motion.devForcedState && !isBusy &&
     ambientActions.length > 0 && AMBIENT_ACTION_MOODS.has(mood) && nowMs >= motion.ambientActionNextAt
   ) {
-    motion.ambientActionState = ambientActions[Math.floor(Math.random() * ambientActions.length)];
+    const candidate = ambientActions[Math.floor(Math.random() * ambientActions.length)];
+    const action = normalizeAmbientActionCandidate(candidate);
+    motion.ambientActionState = action.animationName;
+    motion.ambientActionMirrorX = action.mirrorX;
+    motion.ambientActionWaterSide = action.waterSide;
+    motion.ambientActionRailOffsetX390 = action.railOffsetX390;
     motion.ambientActionUntil = nowMs + randomBetween(AMBIENT_ACTION_DURATION_MIN_MS, AMBIENT_ACTION_DURATION_MAX_MS);
     scheduleNextAmbientAction(motion, nowMs);
   }
@@ -226,9 +282,14 @@ export function updateCompanionMotion(companion, motion, timeSeconds, nowMs, moo
     motion.state;
   let spriteAnimationPlayed = false;
   if (animationController?.hasAnimation?.(activeState)) {
+    const mirrorX = motion.devForcedState
+      ? motion.devForcedMirrorX
+      : motion.ambientActionState
+        ? motion.ambientActionMirrorX
+        : Boolean(ambientAnimation?.mirrorX);
     spriteAnimationPlayed = animationController.play(activeState, {
       mood,
-      mirrorX: Boolean(ambientAnimation?.mirrorX)
+      mirrorX
     });
   } else {
     animationController?.loadAnimation?.(activeState).catch((error) => {
@@ -255,14 +316,78 @@ export function updateCompanionMotion(companion, motion, timeSeconds, nowMs, moo
 
 export function getCompanionRoamingSnapshot(motion) {
   if (!motion) return null;
+  const fishingAnimationName = motion.devForcedState?.startsWith("fishing_")
+    ? motion.devForcedState
+    : motion.ambientActionState?.startsWith("fishing_")
+      ? motion.ambientActionState
+      : null;
   return {
     ...getMoonlakeRoamingSnapshot(motion.moonlakeRoaming),
-    ...(motion.moonlakeRoamingResult || {})
+    ...(motion.moonlakeRoamingResult || {}),
+    fishing: fishingAnimationName
+      ? {
+        animationName: fishingAnimationName,
+        mirrorX: motion.devForcedState
+          ? Boolean(motion.devForcedMirrorX)
+          : Boolean(motion.ambientActionMirrorX),
+        waterSide: motion.devForcedState
+          ? motion.devForcedWaterSide
+          : motion.ambientActionWaterSide,
+        railOffsetX390: motion.devForcedState
+          ? motion.devForcedRailOffsetX390
+          : motion.ambientActionRailOffsetX390
+      }
+      : null
   };
+}
+
+export function snapCompanionRoamingToWaypoint(motion, waypointId, nowMs = performance.now()) {
+  if (!motion?.moonlakeRoaming) return false;
+  const snapped = snapMoonlakeRoamingToWaypoint(
+    motion.moonlakeRoaming,
+    waypointId,
+    nowMs
+  );
+  if (snapped) motion.moonlakeRoamingResult = null;
+  return snapped;
+}
+
+export function stageCompanionRoamingSegment(
+  motion,
+  fromWaypointId,
+  toWaypointId,
+  progress = 0
+) {
+  if (!motion?.moonlakeRoaming) return false;
+  const staged = stageMoonlakeRoamingSegment(
+    motion.moonlakeRoaming,
+    fromWaypointId,
+    toWaypointId,
+    progress
+  );
+  if (staged) motion.moonlakeRoamingResult = null;
+  return staged;
 }
 
 function getMotionDurationMs(motion, motionState, fallbackDurationMs) {
   return motion?.getAnimationDurationMs?.(motionState) || fallbackDurationMs;
+}
+
+function normalizeAmbientActionCandidate(candidate) {
+  if (typeof candidate === "string") {
+    return {
+      animationName: candidate,
+      mirrorX: false,
+      waterSide: null,
+      railOffsetX390: 0
+    };
+  }
+  return {
+    animationName: candidate?.animationName || "idle_calm",
+    mirrorX: Boolean(candidate?.mirrorX),
+    waterSide: candidate?.waterSide || null,
+    railOffsetX390: Number(candidate?.railOffsetX390) || 0
+  };
 }
 
 function resolveTemporaryMotion(motion) {
@@ -375,8 +500,16 @@ function getMoonlakeRoamingTransform(roamingResult, activeState, timeSeconds, mo
     : getIdleMotionTransform(activeState, timeSeconds);
   const projectedX = Number(roamingResult.projected?.x);
   const projectedY = Number(roamingResult.projected?.y);
+  const referenceScale390 = Number(roamingResult.projected?.referenceScale390) || 1;
+  const railOffsetX390 = motion.devForcedState?.startsWith("fishing_")
+    ? motion.devForcedRailOffsetX390
+    : motion.ambientActionState?.startsWith("fishing_")
+      ? motion.ambientActionRailOffsetX390
+      : 0;
   return {
-    offsetX: (Number.isFinite(projectedX) ? projectedX - motion.baseX : 0) + idle.offsetX,
+    offsetX: (Number.isFinite(projectedX) ? projectedX - motion.baseX : 0)
+      + railOffsetX390 * referenceScale390
+      + idle.offsetX,
     offsetY: (Number.isFinite(projectedY) ? projectedY - motion.baseY : 0) + idle.offsetY,
     scaleMultiplier: roamingResult.scaleMultiplier * idle.scaleMultiplier,
     alphaMultiplier: idle.alphaMultiplier,
