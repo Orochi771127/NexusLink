@@ -41,7 +41,7 @@ export const STRINGS = {
   "ob.skipBtn": { tc: "稍後決定", sc: "稍后决定", en: "Decide later", jp: "あとで決める" },
   "ob.continueBtn": { tc: "繼續", sc: "继续", en: "Continue", jp: "続ける" },
   "ob.identityNote": {
-    tc: "資料只保存在此裝置的既有存檔中。",
+    tc: "你的稱呼只會留存在這台裝置裡，不會上傳。",
     sc: "资料只保存在此装置的既有存档中。",
     en: "Your data stays only in the save on this device.",
     jp: "データはこの端末のセーブ内だけに保存されます。"
@@ -68,7 +68,7 @@ export const STRINGS = {
   "fl.skip": { tc: "先自己逛", sc: "先自己逛", en: "Explore on my own", jp: "自分で見て回る" },
   "fl.retrySkip": { tc: "再試一次", sc: "再试一次", en: "Try again", jp: "もう一度試す" },
   "fl.recoverableError": {
-    tc: "剛才的選擇沒有保存。你仍在月湖，可以再試一次；這不會影響牠。",
+    tc: "剛才的選擇沒存到喔。你還在月湖，想再試一次也沒關係，這不會影響到牠。",
     sc: "刚才的选择没有保存。你仍在月湖，可以再试一次；这不会影响牠。",
     en: "That choice was not saved. You are still at Moonlake and can try again; this does not affect the companion.",
     jp: "さっきの選択は保存されなかった。月湖にいるまま、もう一度試せる。相手には影響しない。"
@@ -78,13 +78,13 @@ export const STRINGS = {
   "rt.consequenceLabel": { tc: "可能留下：", sc: "可能留下：", en: "May leave:", jp: "残ること：" },
   "rt.dismiss": { tc: "先這樣", sc: "先这样", en: "That's enough for now", jp: "いまはこれで" },
   "onboarding.busy": {
-    tc: "正在把這一步留在這台裝置上。",
+    tc: "正在幫你把這一步記在手機裡...",
     sc: "正在把这一步留在这台装置上。",
     en: "Saving this step on this device.",
     jp: "この端末にこの一歩を残している。"
   },
   "onboarding.recoverableError": {
-    tc: "這一步還沒有保存。你仍留在原處，可以再試一次；先離開也不會受罰。",
+    tc: "這一步還沒存檔。你還在這裡，隨時可以再試一次，現在離開也沒關係。",
     sc: "这一步还没有保存。你仍留在原处，可以再试一次；先离开也不会受罚。",
     en: "This step was not saved. You are still here and can try again; leaving now carries no penalty.",
     jp: "この一歩はまだ保存されていない。ここにいるまま、もう一度試せる。いったん離れても不利益はない。"
@@ -97,7 +97,7 @@ export const STRINGS = {
     jp: "二つの心核の光が、初めて互いの声を聴こうとする。"
   },
   "fr.phaseListening": {
-    tc: "你先靠近。牠沒有被要求立刻回應。",
+    tc: "你先靠近了。而牠不需要立刻回應你。",
     sc: "你先靠近。牠没有被要求立刻回应。",
     en: "You draw near first. It is not asked to answer at once.",
     jp: "あなたが先に近づく。すぐ応えることは求められていない。"
@@ -109,19 +109,19 @@ export const STRINGS = {
     jp: "月明かりの縁に留まり、静かに見つめる。それもひとつの応え。"
   },
   "fr.responseApproach": {
-    tc: "牠按自己的步調，向你的光靠近了一點。",
+    tc: "牠照著自己的步調，向你的光靠近了些。",
     sc: "牠按自己的步调，向你的光靠近了一点。",
     en: "At its own pace, it moves a little closer to your light.",
     jp: "自分の歩調で、あなたの光へ少しだけ近づく。"
   },
   "fr.responseHesitate": {
-    tc: "牠的光停了一會兒，才輕輕回響。遲疑也被允許。",
+    tc: "牠的光停了一會兒，才輕輕給了回音。想猶豫一下也沒關係。",
     sc: "牠的光停了一会儿，才轻轻回响。迟疑也被允许。",
     en: "Its light pauses before softly answering. Hesitation is welcome here.",
     jp: "光はしばらく留まり、そっと響き返す。ためらいも許されている。"
   },
   "fr.phaseSettled": {
-    tc: "這不是擁有的印記，只是一句：我們可以從這裡開始。",
+    tc: "這不是為了佔有，只是一句簡單的：我們可以從這裡開始。",
     sc: "这不是拥有的印记，只是一句：我们可以从这里开始。",
     en: "This is not a mark of ownership—only: we can begin here.",
     jp: "これは所有の印ではない。ただ、ここから始められるということ。"
@@ -237,7 +237,7 @@ export const STRINGS = {
   "explore.nodeActions.open": { tc: "選擇月湖玩法", sc: "选择月湖玩法", en: "Choose a Moonlake activity", jp: "月湖での過ごし方を選ぶ" },
   "explore.nodeActions.openSub": { tc: "迴旋是主路徑；遠征與對峙依世界狀態開放。", sc: "回旋是主路径；远征与对峙依世界状态开放。", en: "Orbit is the main path; Expedition and Standoff open with the world.", jp: "迴旋が主な道。遠征と対峙は世界の状態に応じて開く。" },
   "explore.nodeActions.title": { tc: "這次想怎麼走進月湖？", sc: "这次想怎么走进月湖？", en: "How do you want to enter Moonlake?", jp: "今回は、どう月湖へ入る？" },
-  "explore.nodeActions.copy": { tc: "同一個探索節點，依你們此刻的狀態選擇玩法。", sc: "同一个探索节点，依你们此刻的状态选择玩法。", en: "Choose a mode for this node based on where you both are now.", jp: "同じ探索ノードから、今のふたりに合う遊び方を選ぶ。" },
+  "explore.nodeActions.copy": { tc: "就算在同一個地方，也可以看你們現在的心情來決定想做什麼。", sc: "同一个探索节点，依你们此刻的状态选择玩法。", en: "Choose a mode for this node based on where you both are now.", jp: "同じ探索ノードから、今のふたりに合う遊び方を選ぶ。" },
   "explore.nodeActions.close": { tc: "關閉玩法選擇", sc: "关闭玩法选择", en: "Close activity choices", jp: "選択を閉じる" },
   "explore.nodeActions.primary": { tc: "主要玩法", sc: "主要玩法", en: "Main activity", jp: "メイン" },
   "explore.nodeActions.orbit": { tc: "心核迴旋", sc: "心核回旋", en: "Heartcore Orbit", jp: "心核迴旋" },
@@ -257,7 +257,7 @@ export const STRINGS = {
   "care.softComfort": { tc: "輕聲安撫", sc: "轻声安抚", en: "Soft comfort", jp: "やさしくなだめる" },
   "care.keepDistance": { tc: "靜靜陪伴", sc: "静静陪伴", en: "Sit quietly nearby", jp: "静かに寄り添う" },
   "care.restTogether": { tc: "一起休息", sc: "一起休息", en: "Rest together", jp: "一緒に休む" },
-  "care.observe": { tc: "讀身體語言", sc: "读身体语言", en: "Read its body language", jp: "からだの言葉を読む" },
+  "care.observe": { tc: "觀察牠的動作", sc: "读身体语言", en: "Read its body language", jp: "からだの言葉を読む" },
   "care.calmSync": { tc: "心核共息", sc: "心核共息", en: "Calm Sync", jp: "心核の共息" },
 
   // ---- Growth page body ----
@@ -441,7 +441,7 @@ export const STRINGS = {
   // ---- Care page content ----
   "care.hintBoundary": { tc: "牠是否需要更多空間", sc: "牠是否需要更多空间", en: "Whether it needs more space", jp: "もっと空間が要るかどうか" },
   "care.hintTrust": { tc: "牠是否願意靠近", sc: "牠是否愿意靠近", en: "Whether it is willing to come close", jp: "近づきたい気持ちがあるか" },
-  "care.hintEnergy": { tc: "目前活動餘裕", sc: "目前活动余裕", en: "Room for activity right now", jp: "いまの活動の余裕" },
+  "care.hintEnergy": { tc: "目前還有的精力", sc: "目前活动余裕", en: "Room for activity right now", jp: "いまの活動の余裕" },
   "care.softNote": {
     tc: "這裡不交換、不討好。陪伴牠，也讓牠選擇距離。",
     sc: "这里不交换、不讨好。陪伴牠，也让牠选择距离。",
@@ -478,9 +478,9 @@ export const STRINGS = {
   "growth.session.phase.steady.copy": { tc: "牠的姿態很穩；不必證明什麼，也能一起留在這裡。", sc: "牠的姿态很稳；不必证明什么，也能一起留在这里。", en: "Its posture is steady. You can stay without proving anything.", jp: "姿勢は穏やかだ。何かを証明しなくても、一緒にここにいられる。" },
   "growth.session.waitingTitle": { tc: "先讀牠的姿態", sc: "先读牠的姿态", en: "Read its posture first", jp: "まず姿勢を読む" },
   "growth.session.waitingCopy": { tc: "選一種共同練習。牠可以接受、改寫、休息或不做。", sc: "选一种共同练习。牠可以接受、改写、休息或不做。", en: "Choose a shared practice. It may accept, adapt, rest, or decline.", jp: "共同練習をひとつ選ぶ。受け入れる、変える、休む、断る、どれも選べる。" },
-  "growth.session.observedTitle": { tc: "這一幕看見的傾向", sc: "这一幕看见的倾向", en: "Tendencies seen in this moment", jp: "この場面で見えた傾向" },
-  "growth.session.observedNote": { tc: "是質性觀察，不是進度；當下相位會淡去，只有確實完成的共同片刻可能留下痕跡。", sc: "是质性观察，不是进度；当下相位会淡去，只有确实完成的共同片刻可能留下痕迹。", en: "A qualitative observation, not progress. The phase fades; only a shared moment truly completed may leave a trace.", jp: "進捗ではない質的な観察。相位は薄れ、実際に終えた共同の瞬間だけが痕跡になることがある。" },
-  "growth.session.observedEmpty": { tc: "還沒有留下觀察；休息與拒絕不需要被記成進度。", sc: "还没有留下观察；休息与拒绝不需要被记成进度。", en: "Nothing observed yet. Rest and refusal do not need to become progress.", jp: "まだ観察はない。休息や拒否を進捗にする必要はない。" },
+  "growth.session.observedTitle": { tc: "這次觀察到的感覺", sc: "这一幕看见的倾向", en: "Tendencies seen in this moment", jp: "この場面で見えた傾向" },
+  "growth.session.observedNote": { tc: "這只是一種感覺，不是進度條。當下的氣氛會慢慢淡去，只有真正一起度過的片刻，才會留下痕跡。", sc: "是质性观察，不是进度；当下相位会淡去，只有确实完成的共同片刻可能留下痕迹。", en: "A qualitative observation, not progress. The phase fades; only a shared moment truly completed may leave a trace.", jp: "進捗ではない質的な観察。相位は薄れ、実際に終えた共同の瞬間だけが痕跡になることがある。" },
+  "growth.session.observedEmpty": { tc: "還沒留下什麼觀察。休息或拒絕本來就不需要當作進度來記錄。", sc: "还没有留下观察；休息与拒绝不需要被记成进度。", en: "Nothing observed yet. Rest and refusal do not need to become progress.", jp: "まだ観察はない。休息や拒否を進捗にする必要はない。" },
   "growth.session.tendency.attunement": { tc: "共息", sc: "共息", en: "Attunement", jp: "共息" },
   "growth.session.tendency.boundary_respect": { tc: "守界", sc: "守界", en: "Boundary respect", jp: "境界尊重" },
   "growth.session.tendency.pathfinding": { tc: "探路", sc: "探路", en: "Pathfinding", jp: "道探し" },
@@ -516,10 +516,10 @@ export const STRINGS = {
   "growth.session.rewriteAccept.copy": { tc: "接受牠改過的節奏，一起走完這一小段。", sc: "接受牠改过的节奏，一起走完这一小段。", en: "Accept its changed rhythm and complete this small moment together.", jp: "変えられたリズムを受け入れ、この短い時間を一緒に終える。" },
   "growth.session.rewriteDefer.label": { tc: "今天先停在這裡", sc: "今天先停在这里", en: "Stop here today", jp: "今日はここで止める" },
   "growth.session.rewriteDefer.copy": { tc: "不形成證據、不扣關係；之後仍可再提。", sc: "不形成证据、不扣关系；之后仍可再提。", en: "No evidence and no relationship loss. You may return another time.", jp: "証拠にも罰にもならない。また別の時に提案できる。" },
-  "growth.session.zeroEvidence": { tc: "零進度、零懲罰；不留下養成證據。", sc: "零进度、零惩罚；不留下养成证据。", en: "No progress, no penalty, and no growth evidence.", jp: "進捗も罰もなく、成長の証拠も残さない。" },
-  "growth.session.safetyLabel": { tc: "養成暫停", sc: "养成暂停", en: "Growth paused", jp: "成長を一時停止" },
-  "growth.session.safetyCopy": { tc: "目前不顯示練習結果，也不建立任何養成觀察。可以先回到安全停泊。", sc: "目前不显示练习结果，也不建立任何养成观察。可以先回到安全停泊。", en: "No practice result or growth observation is created here. Return to safe harbor first.", jp: "ここでは練習結果も成長観察も作らない。まず安全な停泊へ戻れる。" },
-  "growth.session.safetyStatus": { tc: "安全停泊保持完整；養成沒有記錄任何內容。", sc: "安全停泊保持完整；养成没有记录任何内容。", en: "Safe harbor remains intact; Growth records nothing.", jp: "安全な停泊を保ち、成長には何も記録しない。" },
+  "growth.session.zeroEvidence": { tc: "沒有進度，也沒有懲罰；不用勉強留下任何證明的痕跡。", sc: "零进度、零惩罚；不留下养成证据。", en: "No progress, no penalty, and no growth evidence.", jp: "進捗も罰もなく、成長の証拠も残さない。" },
+  "growth.session.safetyLabel": { tc: "暫停記錄", sc: "养成暂停", en: "Growth paused", jp: "成長を一時停止" },
+  "growth.session.safetyCopy": { tc: "現在不會顯示結果，也不會做任何紀錄。我們可以先回到有安全感的地方。", sc: "目前不显示练习结果，也不建立任何养成观察。可以先回到安全停泊。", en: "No practice result or growth observation is created here. Return to safe harbor first.", jp: "ここでは練習結果も成長観察も作らない。まず安全な停泊へ戻れる。" },
+  "growth.session.safetyStatus": { tc: "安全感還在；這次我們沒有記錄任何東西。", sc: "安全停泊保持完整；养成没有记录任何内容。", en: "Safe harbor remains intact; Growth records nothing.", jp: "安全な停泊を保ち、成長には何も記録しない。" },
   "growth.persisted.stageLabel": { tc: "正式階段", sc: "正式阶段", en: "Formal stage", jp: "正式段階" },
   "growth.persisted.signalLabel": { tc: "關係訊號", sc: "关系讯号", en: "Relationship signal", jp: "関係の合図" },
   "growth.persisted.stage.initial_awakened": { tc: "初醒夥伴", sc: "初醒伙伴", en: "Initial awakened", jp: "初醒のパートナー" },
@@ -681,7 +681,7 @@ export const STRINGS = {
   "ob.namePlaceholder": { tc: "星夜旅人", sc: "星夜旅人", en: "Star-Night Traveler", jp: "星夜の旅人" },
   "hud.levelPill": { tc: "等級 01", sc: "等级 01", en: "Level 01", jp: "レベル 01" },
   "hud.soulPlaceholderNamed": { tc: "對 {name} 輕聲說些什麼...", sc: "对 {name} 轻声说些什么...", en: "Say something softly to {name}...", jp: "{name}にそっと話しかけて..." },
-  "char.descFallback": { tc: "心核夥伴資料尚未完成。", sc: "心核伙伴资料尚未完成。", en: "Companion profile not ready yet.", jp: "相棒のデータはまだ準備中。" },
+  "char.descFallback": { tc: "夥伴的資料還沒準備好。", sc: "心核伙伴资料尚未完成。", en: "Companion profile not ready yet.", jp: "相棒のデータはまだ準備中。" },
   "roster.kicker": { tc: "心核連結 ・ 已締結", sc: "心核连结 ・ 已缔结", en: "Nexus Link ・ Bonded", jp: "心核連結 ・ 結ばれた仲間" },
 
   // ---- Map / codex / action sheet panel statics ----
@@ -710,19 +710,19 @@ export const STRINGS = {
   "battle.resonanceHintDefault": { tc: "回收記憶・放輕雜訊", sc: "回收记忆・放轻杂讯", en: "Recover memories · soften the noise", jp: "記憶を拾い・ノイズをやわらげる" },
   "battle.resonanceHintEmotion": { tc: "心相共鳴・特別能安撫這片{emotion}", sc: "心相共鸣・特别能安抚这片{emotion}", en: "Heart resonance · especially soothes this {emotion}", jp: "心の共鳴・この{emotion}をとくに鎮める" },
   "battle.objective": {
-    tc: "本次目標：在疲憊達到上限前，協助夥伴穩定裂隙雜訊。",
+    tc: "本次目標：在你們累倒之前，陪著夥伴把裂隙的雜訊穩定下來。",
     sc: "本次目标：在疲惫达到上限前，协助伙伴稳定裂隙杂讯。",
     en: "Goal: help your companion steady rift noise before fatigue peaks.",
     jp: "今回の目標：疲労が上限に達する前に、裂け目のノイズを鎮める。"
   },
   "battle.actMeaning.resonance": {
-    tc: "提升同步、略增疲勞；對方還願意靠近時特別有用。",
+    tc: "能提升同步，但會有點累；趁牠還願意靠近時特別有用。",
     sc: "提升同步、略增疲劳；对方还愿意靠近时特别有用。",
     en: "Raises sync, slight fatigue; useful while the companion still approaches.",
     jp: "同調を上げ、疲労が少し増える。まだ近づけるときに有効。"
   },
   "battle.actMeaning.barrier": {
-    tc: "減輕壓力／雜訊推進；對方開始退縮時優先考慮。",
+    tc: "能減輕壓力，順便推開雜訊；如果牠開始退縮了，可以優先選這個。",
     sc: "减轻压力／杂讯推进；对方开始退缩时优先考虑。",
     en: "Eases pressure or noise advance; prefer when the companion withdraws.",
     jp: "圧力やノイズの進行を抑える。相手が引き始めるときに。"
