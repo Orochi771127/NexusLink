@@ -164,6 +164,8 @@ export function getMoodAnimationName(mood) {
 function createSpriteAnimationController(animationPack, animatedSprite, initialMood, profile, companion = null) {
   let currentAnimationName = "idle_calm";
   let currentMirrorX = false;
+  let currentPlaybackMode = "";
+  let currentPlaybackRate = 1;
   let lastMood = initialMood;
   const pendingLoads = new Map();
 
@@ -189,21 +191,55 @@ function createSpriteAnimationController(animationPack, animatedSprite, initialM
     if (!definition) return false;
 
     const mirrorX = Boolean(options.mirrorX);
-    if (currentAnimationName === animationName && currentMirrorX === mirrorX && animatedSprite.playing) return true;
+    const playbackRate = clampPlaybackRate(options.playbackRate);
+    const reverse = Boolean(options.reverse);
+    const loop = options.loop === undefined ? Boolean(definition.loop) : Boolean(options.loop);
+    const holdFrame = normalizeHoldFrame(options.holdFrame, definition.textures.length);
+    const holdOnComplete = Boolean(options.holdOnComplete);
+    const restartKey = options.restartKey == null ? "" : String(options.restartKey);
+    const playbackMode = [
+      loop ? "loop" : "once",
+      reverse ? "reverse" : "forward",
+      holdFrame == null ? "play" : `hold:${holdFrame}`,
+      holdOnComplete ? "hold-complete" : "idle-complete",
+      restartKey
+    ].join("|");
+    const animationSpeed = Math.abs(getPixiAnimationSpeed(definition) * playbackRate) * (reverse ? -1 : 1);
+    const samePlayback = currentAnimationName === animationName
+      && currentMirrorX === mirrorX
+      && currentPlaybackMode === playbackMode;
+    if (samePlayback) {
+      currentPlaybackRate = playbackRate;
+      animatedSprite.animationSpeed = animationSpeed;
+      if (holdFrame != null && animatedSprite.currentFrame !== holdFrame) {
+        animatedSprite.gotoAndStop(holdFrame);
+      }
+      if (animatedSprite.playing || holdFrame != null || holdOnComplete) return true;
+    }
 
     currentAnimationName = animationName;
     currentMirrorX = mirrorX;
+    currentPlaybackMode = playbackMode;
+    currentPlaybackRate = playbackRate;
     animatedSprite.textures = definition.textures;
     animatedSprite.anchor.set(definition.anchor.x, definition.anchor.y);
     const baseFrameScale = animatedSprite.__baseFrameScale || 1;
     animatedSprite.scale.set(mirrorX ? -baseFrameScale : baseFrameScale, baseFrameScale);
-    animatedSprite.loop = options.loop === undefined ? Boolean(definition.loop) : Boolean(options.loop);
-    animatedSprite.animationSpeed = getPixiAnimationSpeed(definition);
-    animatedSprite.gotoAndPlay(0);
+    animatedSprite.loop = loop;
+    animatedSprite.animationSpeed = animationSpeed;
+    if (holdFrame != null) {
+      animatedSprite.gotoAndStop(holdFrame);
+    } else {
+      animatedSprite.gotoAndPlay(reverse ? Math.max(0, definition.textures.length - 1) : 0);
+    }
     // 換姿／鏡像後腳接觸點可能變，清 cache 並把影子重新貼齊。
     companion?.__resyncGroundShadow?.();
     animatedSprite.onComplete = () => {
       if (animatedSprite.loop) return;
+      if (holdOnComplete) {
+        animatedSprite.gotoAndStop(reverse ? 0 : Math.max(0, definition.textures.length - 1));
+        return;
+      }
       play(resolveMoodIdleAnimationName(lastMood, (name) => animationPack.animations.has(name), profile), { mood: lastMood });
     };
     return true;
@@ -219,10 +255,32 @@ function createSpriteAnimationController(animationPack, animatedSprite, initialM
       animationPack.animations.has(animationName) ||
       isValidAnimationDefinition(animationPack.metadata?.[animationName]),
     getCurrentAnimationName: () => currentAnimationName,
+    getPlaybackState: () => ({
+      animationName: currentAnimationName,
+      mirrorX: currentMirrorX,
+      mode: currentPlaybackMode,
+      playbackRate: currentPlaybackRate,
+      playing: Boolean(animatedSprite.playing),
+      currentFrame: Number(animatedSprite.currentFrame) || 0
+    }),
     getStatus: () => animationPack.status,
     getAnimatedSprite: () => animatedSprite,
     getAnimationDurationMs: (animationName) => animationPack.animations.get(animationName)?.durationMs || null
   };
+}
+
+function clampPlaybackRate(value) {
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed)) return 1;
+  return Math.min(3.2, Math.max(0.35, parsed));
+}
+
+function normalizeHoldFrame(value, frameCount) {
+  if (value == null) return null;
+  if (value === "last") return Math.max(0, frameCount - 1);
+  const parsed = Math.round(Number(value));
+  if (!Number.isFinite(parsed)) return null;
+  return Math.min(Math.max(0, frameCount - 1), Math.max(0, parsed));
 }
 
 async function loadAnimationDefinition({ animations, metadata, status, name }) {

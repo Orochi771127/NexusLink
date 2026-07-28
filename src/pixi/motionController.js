@@ -3,6 +3,7 @@ import { getAmbientWalkAnimation, getMoodIdleAnimationName } from "../engine/ani
 import {
   createMoonlakeRoamingState,
   getMoonlakeFishingOption,
+  getMoonlakeWalkPlaybackRate,
   getMoonlakeRoamingSnapshot,
   resetMoonlakeRoamingState,
   snapMoonlakeRoamingToWaypoint,
@@ -26,6 +27,10 @@ const AMBIENT_ACTION_DURATION_MIN_MS = 3_500;
 const AMBIENT_ACTION_DURATION_MAX_MS = 6_500;
 const AMBIENT_ACTION_MOODS = new Set(["calm", "warm", "happy"]);
 const TOUCH_ACCEPT_ENVIRONMENT_EVENT_PROGRESS = 0.5;
+const FISHING_WAIT_MIN_MS = 8_500;
+const FISHING_WAIT_MAX_MS = 14_000;
+const FISHING_BITE_DURATION_MS = 950;
+const FISHING_SETTLE_DURATION_MS = 850;
 
 export function createCompanionMotion(companion, initialMood) {
   const motion = {
@@ -59,6 +64,7 @@ export function createCompanionMotion(companion, initialMood) {
     ambientActionMirrorX: false,
     ambientActionWaterSide: null,
     ambientActionRailOffsetX390: 0,
+    fishingSequence: null,
     moonlakeRoaming: createMoonlakeRoamingState(performance.now()),
     moonlakeRoamingResult: null,
     fallbackMotionActive: true,
@@ -129,6 +135,22 @@ export function playDevMotion(motion, motionState, options = {}) {
       mirrorX
     )
     : null;
+  if (fishingOption || motionState.startsWith("fishing_")) {
+    startFishingSequence(
+      motion,
+      {
+        animationName: motionState,
+        mirrorX,
+        waterSide: options.waterSide || fishingOption?.waterSide || null,
+        railOffsetX390: Number(options.railOffsetX390 ?? fishingOption?.railOffsetX390) || 0
+      },
+      now,
+      {
+        waitDurationMs: Number(options.durationMs) || 10_000
+      }
+    );
+    return;
+  }
   motion.devForcedState = motionState;
   motion.devForcedMirrorX = mirrorX;
   motion.devForcedWaterSide = options.waterSide || fishingOption?.waterSide || null;
@@ -181,6 +203,7 @@ export function updateCompanionMotion(companion, motion, timeSeconds, nowMs, moo
     && !motion.temporaryState
     && !motion.devForcedState
     && !motion.ambientActionState
+    && !motion.fishingSequence
     && !isBattleActive
     && !isSleeping;
   const roamingResult = updateMoonlakeRoaming(motion.moonlakeRoaming, {
@@ -243,6 +266,11 @@ export function updateCompanionMotion(companion, motion, timeSeconds, nowMs, moo
     || isSleeping
     || Boolean(motion.ambientState)
     || Boolean(roamingResult.moving);
+  if (motion.fishingSequence && isBusy) {
+    stopFishingSequence(motion, nowMs);
+  } else if (motion.fishingSequence) {
+    advanceFishingSequence(motion, nowMs);
+  }
   if (motion.ambientActionState && (isBusy || nowMs >= motion.ambientActionUntil)) {
     motion.ambientActionState = null;
     motion.ambientActionMirrorX = false;
@@ -251,17 +279,21 @@ export function updateCompanionMotion(companion, motion, timeSeconds, nowMs, moo
     scheduleNextAmbientAction(motion, nowMs);
   }
   if (
-    !motion.ambientActionState && !motion.devForcedState && !isBusy &&
+    !motion.ambientActionState && !motion.fishingSequence && !motion.devForcedState && !isBusy &&
     ambientActions.length > 0 && AMBIENT_ACTION_MOODS.has(mood) && nowMs >= motion.ambientActionNextAt
   ) {
     const candidate = ambientActions[Math.floor(Math.random() * ambientActions.length)];
     const action = normalizeAmbientActionCandidate(candidate);
-    motion.ambientActionState = action.animationName;
-    motion.ambientActionMirrorX = action.mirrorX;
-    motion.ambientActionWaterSide = action.waterSide;
-    motion.ambientActionRailOffsetX390 = action.railOffsetX390;
-    motion.ambientActionUntil = nowMs + randomBetween(AMBIENT_ACTION_DURATION_MIN_MS, AMBIENT_ACTION_DURATION_MAX_MS);
-    scheduleNextAmbientAction(motion, nowMs);
+    if (action.animationName.startsWith("fishing_")) {
+      startFishingSequence(motion, action, nowMs);
+    } else {
+      motion.ambientActionState = action.animationName;
+      motion.ambientActionMirrorX = action.mirrorX;
+      motion.ambientActionWaterSide = action.waterSide;
+      motion.ambientActionRailOffsetX390 = action.railOffsetX390;
+      motion.ambientActionUntil = nowMs + randomBetween(AMBIENT_ACTION_DURATION_MIN_MS, AMBIENT_ACTION_DURATION_MAX_MS);
+      scheduleNextAmbientAction(motion, nowMs);
+    }
   }
 
   const ambientAnimation = motion.ambientState
@@ -275,6 +307,7 @@ export function updateCompanionMotion(companion, motion, timeSeconds, nowMs, moo
   const activeState = motion.temporaryState ||
     (isBattleActive ? "battle" : null) ||
     (isSleeping ? "sleep" : null) ||
+    motion.fishingSequence?.animationName ||
     motion.devForcedState ||
     motion.ambientActionState ||
     roamingResult.animationName ||
@@ -284,12 +317,26 @@ export function updateCompanionMotion(companion, motion, timeSeconds, nowMs, moo
   if (animationController?.hasAnimation?.(activeState)) {
     const mirrorX = motion.devForcedState
       ? motion.devForcedMirrorX
+      : motion.fishingSequence
+        ? motion.fishingSequence.mirrorX
       : motion.ambientActionState
         ? motion.ambientActionMirrorX
         : Boolean(ambientAnimation?.mirrorX);
+    const fishingPlayback = getFishingPlaybackOptions(motion.fishingSequence);
+    const walkPlaybackRate = roamingResult.moving && activeState.endsWith("_walk")
+      ? getMoonlakeWalkPlaybackRate({
+        companionId: options.companionId,
+        animationDurationMs: animationController.getAnimationDurationMs?.(activeState),
+        projectedSpeedPxPerSecond: roamingResult.projectedSpeedPxPerSecond,
+        projectedScale: roamingResult.projected?.scale,
+        referenceScale390: roamingResult.projected?.referenceScale390
+      })
+      : 1;
     spriteAnimationPlayed = animationController.play(activeState, {
       mood,
-      mirrorX
+      mirrorX,
+      playbackRate: fishingPlayback?.playbackRate || walkPlaybackRate,
+      ...(fishingPlayback || {})
     });
   } else {
     animationController?.loadAnimation?.(activeState).catch((error) => {
@@ -316,26 +363,38 @@ export function updateCompanionMotion(companion, motion, timeSeconds, nowMs, moo
 
 export function getCompanionRoamingSnapshot(motion) {
   if (!motion) return null;
-  const fishingAnimationName = motion.devForcedState?.startsWith("fishing_")
+  const fishingAnimationName = motion.fishingSequence?.animationName
+    || (motion.devForcedState?.startsWith("fishing_")
     ? motion.devForcedState
     : motion.ambientActionState?.startsWith("fishing_")
       ? motion.ambientActionState
-      : null;
+      : null);
+  const fishingPhaseProgress = motion.fishingSequence
+    ? getFishingPhaseProgress(motion.fishingSequence, performance.now())
+    : null;
   return {
     ...getMoonlakeRoamingSnapshot(motion.moonlakeRoaming),
     ...(motion.moonlakeRoamingResult || {}),
     fishing: fishingAnimationName
       ? {
         animationName: fishingAnimationName,
-        mirrorX: motion.devForcedState
+        mirrorX: motion.fishingSequence
+          ? Boolean(motion.fishingSequence.mirrorX)
+          : motion.devForcedState
           ? Boolean(motion.devForcedMirrorX)
           : Boolean(motion.ambientActionMirrorX),
-        waterSide: motion.devForcedState
+        waterSide: motion.fishingSequence
+          ? motion.fishingSequence.waterSide
+          : motion.devForcedState
           ? motion.devForcedWaterSide
           : motion.ambientActionWaterSide,
-        railOffsetX390: motion.devForcedState
+        railOffsetX390: motion.fishingSequence
+          ? motion.fishingSequence.railOffsetX390
+          : motion.devForcedState
           ? motion.devForcedRailOffsetX390
-          : motion.ambientActionRailOffsetX390
+          : motion.ambientActionRailOffsetX390,
+        phase: motion.fishingSequence?.phase || "legacy",
+        phaseProgress: fishingPhaseProgress
       }
       : null
   };
@@ -387,6 +446,107 @@ function normalizeAmbientActionCandidate(candidate) {
     mirrorX: Boolean(candidate?.mirrorX),
     waterSide: candidate?.waterSide || null,
     railOffsetX390: Number(candidate?.railOffsetX390) || 0
+  };
+}
+
+function startFishingSequence(motion, action, nowMs, {
+  waitDurationMs = null
+} = {}) {
+  const castDurationMs = getMotionDurationMs(motion, action.animationName, 1_350);
+  motion.devForcedState = null;
+  motion.devForcedUntil = 0;
+  motion.devForcedMirrorX = false;
+  motion.devForcedWaterSide = null;
+  motion.devForcedRailOffsetX390 = 0;
+  motion.ambientActionState = null;
+  motion.ambientActionUntil = 0;
+  motion.fishingSequence = {
+    animationName: action.animationName,
+    mirrorX: Boolean(action.mirrorX),
+    waterSide: action.waterSide || null,
+    railOffsetX390: Number(action.railOffsetX390) || 0,
+    phase: "cast",
+    phaseStartedAt: nowMs,
+    phaseUntil: nowMs + castDurationMs,
+    phaseDurationMs: castDurationMs,
+    waitDurationMs: Math.max(
+      FISHING_WAIT_MIN_MS,
+      Number(waitDurationMs) || randomBetween(FISHING_WAIT_MIN_MS, FISHING_WAIT_MAX_MS)
+    )
+  };
+}
+
+function advanceFishingSequence(motion, nowMs) {
+  const sequence = motion.fishingSequence;
+  if (!sequence || nowMs < sequence.phaseUntil) return;
+  if (sequence.phase === "cast") {
+    setFishingPhase(sequence, "wait", nowMs, sequence.waitDurationMs);
+    return;
+  }
+  if (sequence.phase === "wait") {
+    setFishingPhase(sequence, "bite", nowMs, FISHING_BITE_DURATION_MS);
+    return;
+  }
+  if (sequence.phase === "bite") {
+    setFishingPhase(
+      sequence,
+      "reel",
+      nowMs,
+      getMotionDurationMs(motion, sequence.animationName, 1_350)
+    );
+    return;
+  }
+  if (sequence.phase === "reel") {
+    setFishingPhase(sequence, "settle", nowMs, FISHING_SETTLE_DURATION_MS);
+    return;
+  }
+  stopFishingSequence(motion, nowMs);
+}
+
+function setFishingPhase(sequence, phase, nowMs, durationMs) {
+  sequence.phase = phase;
+  sequence.phaseStartedAt = nowMs;
+  sequence.phaseDurationMs = Math.max(1, durationMs);
+  sequence.phaseUntil = nowMs + sequence.phaseDurationMs;
+}
+
+function stopFishingSequence(motion, nowMs) {
+  if (!motion.fishingSequence) return;
+  motion.fishingSequence = null;
+  scheduleNextAmbientAction(motion, nowMs);
+}
+
+function getFishingPhaseProgress(sequence, nowMs) {
+  if (!sequence) return 0;
+  const duration = Math.max(1, sequence.phaseDurationMs);
+  return Math.min(1, Math.max(0, (nowMs - sequence.phaseStartedAt) / duration));
+}
+
+function getFishingPlaybackOptions(sequence) {
+  if (!sequence) return null;
+  const restartKey = `fishing:${sequence.phase}:${sequence.phaseStartedAt}`;
+  if (sequence.phase === "cast") {
+    return {
+      loop: false,
+      holdOnComplete: true,
+      playbackRate: 1,
+      restartKey
+    };
+  }
+  if (sequence.phase === "reel") {
+    return {
+      loop: false,
+      reverse: true,
+      holdOnComplete: true,
+      playbackRate: 1.05,
+      restartKey
+    };
+  }
+  return {
+    loop: false,
+    holdFrame: "last",
+    playbackRate: 1,
+    restartKey
   };
 }
 
@@ -503,6 +663,8 @@ function getMoonlakeRoamingTransform(roamingResult, activeState, timeSeconds, mo
   const referenceScale390 = Number(roamingResult.projected?.referenceScale390) || 1;
   const railOffsetX390 = motion.devForcedState?.startsWith("fishing_")
     ? motion.devForcedRailOffsetX390
+    : motion.fishingSequence
+      ? motion.fishingSequence.railOffsetX390
     : motion.ambientActionState?.startsWith("fishing_")
       ? motion.ambientActionRailOffsetX390
       : 0;

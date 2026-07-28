@@ -181,6 +181,17 @@ function snapshotPage() {
   page.on("console", (message) => {
     if (message.type() === "error") consoleErrors.push(message.text());
   });
+  await page.route("https://cdn.jsdelivr.net/**", async (route) => {
+    const response = await fetch(route.request().url());
+    await route.fulfill({
+      status: response.status,
+      body: Buffer.from(await response.arrayBuffer()),
+      headers: {
+        "access-control-allow-origin": "*",
+        "content-type": response.headers.get("content-type") || "application/javascript"
+      }
+    });
+  });
 
   await page.addInitScript((companionIds) => {
     const now = Date.now();

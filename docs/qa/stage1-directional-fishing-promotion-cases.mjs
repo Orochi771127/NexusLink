@@ -284,7 +284,8 @@ updateCompanionMotion(companion, motion, 1, 1_000, "calm", () => {}, {
   deltaMs: 16,
   projectWorldPoint: ({ x, z }) => ({ x, y: z, scale: 1, depth: 0 })
 });
-assert.equal(motion.ambientActionState, "fishing_back", "Moonlake action candidate starts bounded fishing");
+assert.equal(motion.fishingSequence?.animationName, "fishing_back", "Moonlake action candidate starts bounded fishing");
+assert.equal(motion.fishingSequence?.phase, "cast", "Moonlake fishing begins with one cast phase");
 assert.equal(played.at(-1), "fishing_back", "Moonlake action candidate plays fishing sheet");
 
 console.log(`stage1-directional-fishing-promotion: PASS (${promotedSheets.size} promoted sheets, ${COMPANION_IDS.length} companions)`);

@@ -5666,3 +5666,167 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
   - `node --check src/i18n/strings.js` PASS.
   - No structural JSON/object alterations.
 - Next safe action: Owner to verify the UI text in-game on the `codex/moonlake-mobile-scene-editor` branch.
+
+### 2026-07-28 - Codex - Moonlake Living Habitat R3 - IN PROGRESS
+
+- Status: `IN PROGRESS`; Owner explicitly approved
+  `TP-MOONLAKE-LIVING-HABITAT-R3` after live production review found visible
+  foot sliding, weak fishing cadence, unclear waterfall motion and missing
+  in-world object interactions.
+- Lane: `Game Engineering And Architecture`.
+- Layer: `GROUNDWORK + EXPERIENCE`; Groundwork is limited to the already
+  approved Moonlake controlled Three.js environment exception and its hybrid
+  Pixi projection. No save schema or binary companion art change is authorized
+  in the first implementation pass.
+- Scope:
+  - synchronize projected travel speed with the declared four-direction walk
+    cadence for all sixteen runtime companions, including bridge depth;
+  - replace repeated short fishing loops with an interruptible
+    cast/wait/bite/reel cadence using existing approved sheets where possible;
+  - expose bounded habitat hit testing and event-driven lantern, crystal and
+    water responses without giving Three.js gameplay authority;
+  - strengthen visually readable waterfall flow and retain weather,
+    day/night, reduced-motion and context-loss fallbacks;
+  - calibrate companion, bridge and tent readability at `390x844`.
+- Expected files:
+  `src/three/moonlakeLive3dConfig.js`,
+  `src/three/moonlakeLive3dScene.js`,
+  `src/pixi/moonlakeRoamingController.js`,
+  `src/pixi/motionController.js`,
+  `src/app.js`, focused QA/evidence and this ledger. Any need for new
+  `assets/**` is a separate approval gate.
+- Red-line check: no reward, catch, currency, progression, relationship,
+  memory, Growth, unlock, persistence, Safety, RaphaelCore or battle write.
+  Roaming, fishing and scenery reactions remain interruptible expressions.
+- Non-goals: no free camera, physics engine, fishing minigame, loot, new
+  dependency, other habitat, repo-slimming deletion, commit, push or
+  publication.
+- Acceptance refs: `H1-H6`, `I`, the Moonlake Live 3D Hybrid Contract,
+  sixteen-companion directional/fishing matrices, `390x844`, reduced motion,
+  mobile performance and Owner visual review.
+- Required reading: R2/R2.1/R2.2 evidence and runtime files,
+  `MOONLAKE_LIVE_3D_HYBRID_CONTRACT_V1`,
+  `HABITAT_SYSTEM_MASTER_SPEC`, active Scene Profile, current art index and all
+  sixteen animation manifests.
+
+### 2026-07-28 - Codex - Moonlake Living Habitat R3 - IN PROGRESS
+
+- Status: `IN PROGRESS`; Owner approved a living-scene polish pass before
+  repository art/output slimming.
+- Lane: `Game Art, UI, And Visual Production`.
+- Visual contract:
+  - keep the approved clay/resin fixed-camera composition and 2D illustrated
+    companions;
+  - remove the reading of foot sliding rather than hiding it with blur;
+  - make fishing read as one cast followed by a quiet wait, a restrained bite
+    cue and one reel response;
+  - make lantern warmth, crystal sparkle/particles, lake ripples and waterfall
+    descent visible at phone scale without excessive neon or reward language;
+  - preserve the companion focal corridor, bridge rail clearance and
+    day/night geometry identity.
+- Asset boundary: use current approved character sheets and procedural
+  Pixi/Three effects first. New fishing art, if existing frames cannot support
+  a readable held pose, requires a separate `assets/**` GROUNDWORK approval.
+- Evidence target: state/contact sheets plus live `390x844` captures for all
+  sixteen companions, representative object interactions, day/night/weather,
+  reduced motion and tent/bridge scale comparison.
+
+### 2026-07-28 - Codex - Moonlake Living Habitat R3 - VERIFIED
+
+- Status: `VERIFIED`; local implementation and focused regression proof are
+  complete. Commit, push and publication were not authorized and were not
+  performed.
+- Lane: `Game Engineering And Architecture`.
+- Completed:
+  - tied four-direction walk playback to measured projected screen travel and
+    added sixteen species-aware stride profiles;
+  - added an interruptible five-phase fishing sequence with a persistent line
+    whose water endpoint crosses the selected bridge rail;
+  - added bounded presentation-only hit testing for nine Moonlake lantern,
+    crystal and water targets;
+  - strengthened waterfall downward motion while retaining reduced-motion and
+    the hidden structural-GLB projection boundary.
+- Verification:
+  - R3 contract: PASS, sixteen companions, sixteen stride profiles, nine
+    hotspots and five fishing phases;
+  - live Chromium `390x844` fishing orientation matrix: PASS, `80/80`, zero
+    page or console errors;
+  - bridge/back-fishing browser matrix: PASS, `32/32`;
+  - actual wait-phase line length `43.96px`, `extendsBeyondRail:true`;
+  - near-ground travel `31.69px/s` with matching `3.0x` animation playback;
+  - waterfall mean pixel-channel delta `0.797` after `650ms`;
+  - 364-file JavaScript syntax sweep and `git diff --check`: PASS.
+- Runtime boundary: no catch, reward, progression, relationship, memory,
+  Growth, unlock, persistence, Safety, RaphaelCore or battle write.
+- Evidence: `docs/qa/MOONLAKE_LIVING_HABITAT_R3_EVIDENCE.md`.
+- Branch / commit: `codex/moonlake-living-habitat-r3`; commit not created.
+- Next safe action: Owner visual review, then a separate explicit publication
+  authorization for commit, protected-main PR, remote `web-release-gate` and
+  merge. Repository slimming remains a later package.
+
+### 2026-07-28 - Codex - Moonlake Living Habitat R3 - VERIFIED
+
+- Status: `VERIFIED`; the approved clay/resin composition remains the visual
+  authority and no binary art was replaced.
+- Lane: `Game Art, UI, And Visual Production`.
+- Completed:
+  - removed the strongest foot-sliding read by matching directional frame
+    cadence to actual travel rather than masking it;
+  - made fishing read as cast, quiet wait, restrained bite and reel, with the
+    float and line remaining visible over water;
+  - added phone-readable warm lantern response, cyan crystal sparkle/particles,
+    water ripples and visibly descending waterfall texture motion;
+  - retained current companion scale because all sixteen silhouettes pass the
+    bridge clearance matrix and remain subordinate to the larger tents.
+- Visual proof:
+  - `output/playwright/moonlake-r3-living-habitat-mobile.png`;
+  - `output/playwright/moonlake-r3-fishing-zoom.png`;
+  - real touch interaction proof at `390x844` for lantern, crystal and water.
+- Remaining human gates: Owner subjective review, physical iOS/Safari and
+  representative mobile-GPU verification.
+- Branch / commit: `codex/moonlake-living-habitat-r3`; commit not created.
+
+### 2026-07-28 - Codex - Moonlake Living Habitat R3 Touch Affordance - VERIFIED / PUBLICATION AUTHORIZED
+
+- Status: `VERIFIED`; Owner identified the first-touch ring at the old fixed
+  stage coordinate and explicitly authorized the complete R3 package for
+  commit, push, protected-main integration and publication after correction.
+- Lane: `Game Engineering And Architecture`.
+- Root cause: `interactionHintController` created a fixed-position DOM overlay
+  using `left:50%` and `--touch-affordance-y`, while Moonlake R3 moves the
+  companion through live Pixi/Three projection.
+- Completed:
+  - exposed a read-only active-companion touch target derived from live Pixi
+    global bounds;
+  - made the affordance track that target each animation frame only while the
+    first-touch cue is visible;
+  - scaled the cue between `68px` and `128px` with the current projected
+    companion silhouette;
+  - retained `pointer-events:none`, first-touch completion behavior,
+    low-motion behavior and all persistence boundaries.
+- Verification:
+  - initial spawn alignment: PASS within `1px`, `126.02px` cue size;
+  - bridge fishing alignment: PASS within `1px`, `69.20px` cue size;
+  - R3 mobile Chromium at `390x844`: PASS with zero page or console errors;
+  - repo-native web release gate: `28/28 PASS`, no accessibility warnings;
+  - `git diff --check`: PASS.
+- Red-line check: read-only presentation tracking; no reward, relationship,
+  memory, state, save, Safety, Growth or RaphaelCore write.
+- Evidence: `docs/qa/MOONLAKE_LIVING_HABITAT_R3_EVIDENCE.md`.
+- Branch: `codex/moonlake-living-habitat-r3`; protected-main PR publication
+  follows this entry.
+
+### 2026-07-28 - Codex - Moonlake Living Habitat R3 Touch Affordance - VERIFIED / PUBLICATION AUTHORIZED
+
+- Status: `VERIFIED`; Owner approved publication after the visual correction.
+- Lane: `Game Art, UI, And Visual Production`.
+- Visual correction:
+  - the cyan first-touch ring now encloses the companion rather than the empty
+    center platform;
+  - the ring follows near-ground roaming and bridge/fishing positions;
+  - perspective-aware sizing preserves phone readability without covering the
+    tents, plaza or lake.
+- Visual proof:
+  `output/playwright/moonlake-r3-living-habitat-mobile.png`.
+- Remaining human gates: physical iOS/Safari and representative mobile-GPU
+  verification; these do not block the Owner-authorized web publication.
