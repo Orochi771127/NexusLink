@@ -4973,3 +4973,18 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
   editor URL.
 - Required reading: `src/tools/sceneEditor.js`,
   `docs/qa/moonlake-mobile-scene-editor-cases.cjs`.
+
+### 2026-07-28 - Antigravity - UI Text & Copywriting Humanization - VERIFIED
+
+- Status: `VERIFIED`; text update only.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `UI_TEXT_HUMANIZATION`.
+- Scope: humanize traditional Chinese (tc) UI strings in `src/i18n/strings.js` to remove mechanical meta-language and translate-ese, enhancing the non-virtual-pet companion atmosphere.
+- Work performed:
+  - Reviewed and safely updated 22 strings in `src/i18n/strings.js`.
+  - Removed meta terms like "養成證據" (training evidence) and "質性觀察" (qualitative observation).
+  - Softened error messages and onboarding instructions.
+- Verification:
+  - `node --check src/i18n/strings.js` PASS.
+  - No structural JSON/object alterations.
+- Next safe action: Owner to verify the UI text in-game on the `codex/moonlake-mobile-scene-editor` branch.
