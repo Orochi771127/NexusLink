@@ -484,6 +484,7 @@ def run_asset_integrity(node: str):
     policy = manifest_bundle["policy"]
     required_animation_names = set(manifest_bundle.get("requiredRuntimeAnimationNames") or [])
     profile_fallback_names = set(manifest_bundle.get("profileFallbackAnimationNames") or [])
+    allowed_formal_animation_names = required_animation_names | profile_fallback_names
     max_edge = int(policy.get("maxSheetEdge") or 4096)
     failures = []
     companion_summaries = []
@@ -548,7 +549,11 @@ def run_asset_integrity(node: str):
             for animation_id in sorted(required_animation_names - set(data)):
                 failures.append(f"missing-required-animation:{asset['id']}:{animation_id}")
         if approval_status.startswith("formal-"):
-            for animation_id in sorted(set(data) - required_animation_names):
+            # A profile fallback is allowed to be absent, but a reviewed formal
+            # companion may ship the real directional/special sheet. Continue
+            # rejecting every animation outside the explicit runtime + fallback
+            # catalogs.
+            for animation_id in sorted(set(data) - allowed_formal_animation_names):
                 failures.append(f"unexpected-formal-animation:{asset['id']}:{animation_id}")
         unique_sheets = {}
         for animation_id, entry in data.items():

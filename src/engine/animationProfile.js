@@ -27,6 +27,8 @@ export const GREYSHADE_CAT_ANIMATION_PROFILE = Object.freeze({
   ambientWalk: Object.freeze({
     left: "left_walk",
     right: "right_walk",
+    front: "front_walk",
+    back: "back_walk",
     mirrorFallback: "right_walk"
   })
 });
@@ -58,12 +60,14 @@ export const GUARDIAN_ANIMATION_PROFILE = Object.freeze({
     wake: "idle_alert"
   }),
   fallbackIdle: "idle_calm",
-  ambientWalkEnabled: false,
+  ambientWalkEnabled: true,
   // 偶發日常動作（原地）：讓五元守護有「自己的生活」。
   ambientActions: Object.freeze(["sit", "groom", "stretch", "dance"]),
   ambientWalk: Object.freeze({
     left: "left_walk",
     right: "right_walk",
+    front: "front_walk",
+    back: "back_walk",
     mirrorFallback: "right_walk"
   })
 });
@@ -111,17 +115,35 @@ export function getBodyCueProfile(cue) {
   return BODY_CUE_PROFILE[cue] || BODY_CUE_PROFILE.neutral;
 }
 
-export function getAmbientWalkAnimation(targetOffsetX, hasAnimation, profile = GREYSHADE_CAT_ANIMATION_PROFILE) {
+export function getAmbientWalkAnimation(
+  targetOffsetX,
+  targetOffsetY,
+  canResolveAnimation,
+  profile = GREYSHADE_CAT_ANIMATION_PROFILE
+) {
+  const verticalDirection = targetOffsetY < 0 ? "back" : "front";
+  // Habitat perspective deliberately compresses Y travel (15px versus 60px X).
+  // Normalize that range before choosing the visible facing direction.
+  const isVertical = Math.abs(targetOffsetY) * 4 > Math.abs(targetOffsetX);
+  const verticalAnimation = profile.ambientWalk?.[verticalDirection];
+  if (
+    isVertical &&
+    verticalAnimation &&
+    (!canResolveAnimation || canResolveAnimation(verticalAnimation))
+  ) {
+    return { animationName: verticalAnimation, mirrorX: false };
+  }
+
   const isLeft = targetOffsetX < 0;
   const preferred = isLeft ? profile.ambientWalk.left : profile.ambientWalk.right;
-  if (!hasAnimation || hasAnimation(preferred)) {
+  if (!canResolveAnimation || canResolveAnimation(preferred)) {
     return { animationName: preferred, mirrorX: false };
   }
 
   const fallback = profile.ambientWalk.mirrorFallback;
   return {
     animationName: fallback,
-    mirrorX: isLeft && (!hasAnimation || hasAnimation(fallback))
+    mirrorX: isLeft && (!canResolveAnimation || canResolveAnimation(fallback))
   };
 }
 
@@ -136,6 +158,9 @@ const ANIMATION_INTENT_MAP = Object.freeze({
   "move.right": "right_walk",
   "move.front": "front_walk",
   "move.back": "back_walk",
+  "habitat.fishing.side": "fishing_side",
+  "habitat.fishing.front": "fishing_front",
+  "habitat.fishing.back": "fishing_back",
   "battle.attack": "attack_basic",
   "battle.skill": "skill_cast",
   "battle.defend": "defend",
@@ -171,6 +196,9 @@ const ANIMATION_FALLBACK_CHAINS = Object.freeze({
   right_walk: ["idle_calm"],
   front_walk: ["right_walk", "idle_calm"],
   back_walk: ["left_walk", "idle_calm"],
+  fishing_side: ["sit", "idle_calm"],
+  fishing_front: ["sit", "idle_calm"],
+  fishing_back: ["sit", "idle_calm"],
   attack_basic: ["skill_cast", "idle_calm"],
   skill_cast: ["attack_basic", "idle_calm"],
   defend: ["idle_defensive", "idle_calm"],

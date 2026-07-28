@@ -45,7 +45,10 @@ export const ANIMATION_REGISTRY = Object.freeze({
   idle_enjoy: { id: "idle_enjoy", category: "idle", interruptible: true, pack: "async" },
   special_sad: { id: "special_sad", category: "special", interruptible: false, pack: "async" },
   special_dance: { id: "special_dance", category: "special", interruptible: false, pack: "async" },
-  special_wash: { id: "special_wash", category: "special", interruptible: false, pack: "async" }
+  special_wash: { id: "special_wash", category: "special", interruptible: false, pack: "async" },
+  fishing_side: { id: "fishing_side", category: "habitat", interruptible: true, pack: "async" },
+  fishing_front: { id: "fishing_front", category: "habitat", interruptible: true, pack: "async" },
+  fishing_back: { id: "fishing_back", category: "habitat", interruptible: true, pack: "async" }
 });
 
 export const ANIMATION_NAMES = Object.freeze(Object.keys(ANIMATION_REGISTRY));

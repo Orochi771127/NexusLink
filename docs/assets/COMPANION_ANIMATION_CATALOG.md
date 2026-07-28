@@ -82,6 +82,32 @@ assets/characters/thunder-pup/runtime/sheets/emotion/thunder-pup_idle_calm_512x5
 
 ---
 
+## Directional And Moonlake Habitat Extensions
+
+These five IDs extend the original 29-animation baseline. They use the same
+identity, anchor, transparency, sheet-layout and species-motion requirements as
+the core catalog.
+
+| ID | Category | Frames | FPS | Loop | Priority | Meaning |
+|----|----------|--------|-----|------|----------|---------|
+| front_walk | movement | 8 | 10 | true | P1 | Stable locomotion toward the viewer, selected from positive habitat Y travel. |
+| back_walk | movement | 8 | 10 | true | P1 | Stable locomotion away from the viewer, selected from negative habitat Y travel. |
+| fishing_side | habitat | 8 | 6 | true | P2 | Species-specific side-facing shoreline fishing loop. |
+| fishing_front | habitat | 8 | 6 | true | P2 | Species-specific viewer-facing shoreline fishing loop. |
+| fishing_back | habitat | 8 | 6 | true | P2 | Species-specific lake-facing shoreline fishing loop. |
+
+All sixteen current runtime companions declare the three fishing IDs. The ten
+formal Heartspark Council and Ironflow Hackers companions additionally declare
+native `front_walk` and `back_walk` sheets; legacy/test carriers retain their
+already-established four-direction locomotion assets.
+
+`fishing_*` is a bounded habitat expression only. It does not create a fishing
+minigame, catch table, reward, persistence write, daily task, relationship
+reward, Growth evidence or forced action. Autonomous fishing is enabled only in
+Moonlake and resolves through the normal interruptible animation policy.
+
+---
+
 ## Priority Phases
 
 - P1: MVP runtime essentials for baseline presence, consent, and movement.

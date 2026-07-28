@@ -1036,7 +1036,13 @@ async function bootScene(
         devPanelController?.renderReadout();
       }, {
         canAmbientWalk: !panelManager.isPanelOpen() && !onboardingController?.isActive?.(),
-        isSleeping
+        isSleeping,
+        // Moonlake's companion datum sits on the shoreline below the lake.
+        // Only the back-facing fishing loop is eligible for autonomous habitat
+        // playback here; front/side remain explicit animation intents and QA views.
+        ambientActions: environmentLayer.profileId === "moonlake"
+          ? ["fishing_back"]
+          : []
       });
     }
     if (environmentLayer.magicCircle && !environmentLayer.magicCircle.__sceneEditorOriginalAlpha) {

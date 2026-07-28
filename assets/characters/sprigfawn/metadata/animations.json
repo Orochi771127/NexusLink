@@ -462,5 +462,85 @@
       "x": 0.5,
       "y": 1
     }
+  },
+  "front_walk": {
+    "id": "front_walk",
+    "category": "movement",
+    "sheet": "./assets/characters/sprigfawn/spritesheets/movement/sprigfawn_front_walk_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 5,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "back_walk": {
+    "id": "back_walk",
+    "category": "movement",
+    "sheet": "./assets/characters/sprigfawn/spritesheets/movement/sprigfawn_back_walk_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 5,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "fishing_side": {
+    "id": "fishing_side",
+    "category": "habitat",
+    "sheet": "./assets/characters/sprigfawn/spritesheets/habitat/sprigfawn_fishing_side_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 6,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "fishing_front": {
+    "id": "fishing_front",
+    "category": "habitat",
+    "sheet": "./assets/characters/sprigfawn/spritesheets/habitat/sprigfawn_fishing_front_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 6,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
+  },
+  "fishing_back": {
+    "id": "fishing_back",
+    "category": "habitat",
+    "sheet": "./assets/characters/sprigfawn/spritesheets/habitat/sprigfawn_fishing_back_512x512_8f.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frameCount": 8,
+    "rows": 2,
+    "columns": 4,
+    "fps": 6,
+    "loop": true,
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    }
   }
 }
