@@ -58,6 +58,38 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-07-28 - Codex - Moonlake Live 3D Hybrid R1 - IN PROGRESS
+
+- Status: `IN PROGRESS`; Owner explicitly approved revising the technical
+  constitution and replacing the raster-only Moonlake route with a real-time
+  3D habitat plus 2D companion presentation.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `TP-MOONLAKE-LIVE-3D-R1`.
+- Layer: `GROUNDWORK + EXPERIENCE`; approved Groundwork includes the technical
+  constitution, `index.html`, `pixiApp.js`, `assets/**` GLB/fallback payload and
+  a Moonlake-scoped Three.js CDN ES Module exception. No state/save foundation.
+- Branch / base: `codex/moonlake-r5-integration` /
+  `11e1b0e70f636a88674fc1060e7dc32e2be42edc`.
+- Planned scope:
+  - add a presentation-only Three.js environment canvas below Pixi and DOM;
+  - load the approved Moonlake GLB and provide static fallback;
+  - implement bounded camera, walkable world path and world-to-Pixi projection;
+  - preserve all sixteen companions' current animation/fallback policy,
+    directional walking and lake-facing fishing;
+  - prove bridge traversal, mobile quality tiers, context loss and no duplicate
+    render loops.
+- Red-line check: no relationship, Growth, reward, catch, persistence, Safety,
+  RaphaelCore, battle, unlock or Initial Bond change. Weather and time remain
+  atmosphere only and cannot create FOMO or reward windows.
+- Non-goals: no 3D companion conversion, free camera, physics sandbox, open
+  world, backend, TypeScript, npm, bundler or unrelated habitat migration.
+- Acceptance refs: `G1-G7`, `H1-H6`, `I`, and
+  `docs/design/MOONLAKE_LIVE_3D_HYBRID_CONTRACT_V1.md`.
+- Required reading: `docs/strategy/NEXUS_LINK_MASTER_CANON_v3.1.md`,
+  `docs/architecture/HABITAT_SYSTEM_MASTER_SPEC.md`,
+  `docs/rfc/RFC_2_5D_HABITAT_RENDERER.md`, current Pixi environment lifecycle,
+  current companion animation manifests and this lane.
+
 ### 2026-07-26 - Codex - Nexus Spin node Action Sheet and R6-to-R9 total review - VERIFIED
 
 - Status: `VERIFIED`（本機自動化、scoped diff review、390×844 headless Chromium 與零存檔寫入通過；真人手指／Safari 真機仍 open）
@@ -1496,7 +1528,62 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ---
 
+### 2026-07-28 - Codex - Moonlake Live 3D Hybrid R1 - VERIFIED
+
+- Status: `VERIFIED`; implementation and automated release validation are complete.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `TP-MOONLAKE-LIVE-3D-R1`.
+- Layer: `GROUNDWORK + EXPERIENCE`; Owner explicitly approved the constitution change, Three.js exception, GLB promotion and Moonlake runtime integration.
+- Runtime integration:
+  - fixed Three.js `0.185.0` ES-module import map with matching `GLTFLoader`;
+  - one live 3D environment canvas below the existing Pixi companion canvas, driven by the existing Pixi ticker rather than a second animation loop;
+  - 3D world-to-screen projection feeds the current 2D companion motion controller;
+  - explicit Moonlake waypoint graph crosses a sixteen-plank bridge to the far-bank fishing point;
+  - clear/rain/mist and day/dusk/night/dawn use existing environment authorities;
+  - WebGL/Three/GLB failures retain the existing Pixi habitat as a non-blocking fallback.
+- Performance and lifecycle:
+  - quality-tier DPR, shadows, rain density, grass and shrubs;
+  - bounded import/GLB timeouts;
+  - context loss/restoration handling and explicit disposal;
+  - 30.002-second 390×844 soak: 1,801 frames / 60.03 FPS in the automated desktop browser, one live-3D canvas, animation state advanced.
+- Verification:
+  - `moonlake-live3d-roaming-cases.mjs`: PASS, all four walking directions, bridge traversal, fishing point and reduced-motion fallback;
+  - browser action matrix: 16 companions / 112 loads, zero failures and zero console errors;
+  - live 3D, night rain, dusk mist, context recovery and `?live3d=0` fallback probes: PASS;
+  - full web release gate: `28/28 PASS`, no accessibility warnings;
+  - JavaScript syntax, Python syntax and `git diff --check`: PASS.
+- Red-line check: no reward, Growth, save schema, unlock, relationship, Safety, RaphaelCore, battle or FOMO authority changed.
+- Problems / risks: the 60 FPS result is desktop-browser evidence at a mobile viewport; physical-device D1/D2/D3/D6 verification remains a separate manual gate.
+- Evidence: `docs/qa/MOONLAKE_LIVE3D_HYBRID_R1_EVIDENCE.md`.
+- Branch / commit: `codex/moonlake-r5-integration`; commit and protected-main publication follow this verified closeout.
+- Next safe action: publish through the required PR gate, merge to `main`, then refresh the codebase MCP index.
+
 ## Lane 2 - Game Art, UI, And Visual Production
+
+### 2026-07-28 - Codex - Moonlake Live 3D Clay Resin Art R1 - IN PROGRESS
+
+- Status: `IN PROGRESS`; Owner approved live 3D Moonlake production in the
+  selected clay/resin miniature direction.
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `TP-MOONLAKE-LIVE-3D-R1`.
+- Layer: `GROUNDWORK` at GLB/fallback promotion; staging and audit precede the
+  asset copy.
+- Visual lock: two close framing cliffs, two subtle waterfalls, central
+  circular camp platform, ornate blue/ivory tents, traversable bridge, original
+  low-shrub language, readable lake edge, matte-satin clay/resin materials and
+  restrained Cyber-Taoism cyan/gold accents.
+- Motion lock: low-amplitude lake movement, continuous subtle waterfalls,
+  asynchronous grass sway, clear/rain/mist atmosphere and day/dusk/night/dawn
+  lighting. Companions remain 2D illustrated sprites.
+- Quality route: use the existing Blender R3 candidate as geometry source and
+  the Owner-provided/candidate imagery as composition and material reference;
+  apply the `img2threejs` staged quality contract before runtime promotion.
+- Non-goals: no generated 3D companion, generic stock campsite, distant
+  mountain wall, rigid whole-island sway, baked weather or raster scene
+  presented as live 3D.
+- Required reading: `docs/design/MOONLAKE_LIVE_3D_HYBRID_CONTRACT_V1.md`,
+  `docs/architecture/HABITAT_SYSTEM_MASTER_SPEC.md`, the selected visual
+  references, GLB audit output and this lane.
 
 ### 2026-07-16 - Codex - Silent Anchor phase-search interaction surface - VERIFIED
 
@@ -2130,6 +2217,34 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
   `docs/assets/COMPANION_ANIMATION_CATALOG.md`, `AGENTS.md`.
 
 ---
+
+### 2026-07-28 - Codex - Moonlake Live 3D Clay Resin Art R1 - VERIFIED
+
+- Status: `VERIFIED`; the approved clay/resin direction is integrated in the live habitat.
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `TP-MOONLAKE-LIVE-3D-R1`.
+- Layer: `GROUNDWORK + EXPERIENCE`; the promoted GLB and live visual implementation were explicitly authorized by Owner.
+- Visual result:
+  - two close framing cliffs instead of many distant mountains;
+  - two readable, subtly flowing waterfalls;
+  - blue lake, green grass islands, original rounded shrub language, shore stones and resin pines;
+  - central compass platform, playable timber-and-rope bridge and two custom blue/ivory tents with warm interiors, gold bands, braces, masts, finials and guy ropes;
+  - matte/satin clay-resin materials with restrained Cyber-Taoism blue, cyan and gold;
+  - illustrated companions remain 2D and readable over the live 3D scene.
+- Source handling:
+  - Blender audit passed for `assets/3d/moonlake/moonlake_clay_resin_r3.glb`;
+  - the rough original render meshes remain hidden at runtime;
+  - audited scale and bridge measurements guide a lighter procedural Three.js reskin;
+  - superseded raster R5 candidates were moved back to ignored `output/` staging and were not promoted.
+- Visual QA:
+  - day and night-rain mobile captures inspected at 390×844;
+  - old Pixi tents/towers are hidden only while live 3D is active;
+  - bridge deck, far bank, platform, both tents and both waterfalls remain readable;
+  - lake, waterfall and grass motion advance independently without moving rigid islands.
+- Problems / risks: physical OLED/low-end phone color, thermal and aesthetic review remain human/device gates; automated rendering evidence does not replace Owner final visual taste.
+- Evidence: `docs/qa/MOONLAKE_LIVE3D_HYBRID_R1_EVIDENCE.md`.
+- Branch / commit: `codex/moonlake-r5-integration`; commit and protected-main publication follow this verified closeout.
+- Next safe action: after merge, review the public Pages build on a physical phone before declaring store-ready visual quality.
 
 ## Lane 3 - Raphael Core, Companion Reasoning, And Soul Talk
 

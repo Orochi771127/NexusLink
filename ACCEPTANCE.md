@@ -152,7 +152,11 @@
 - 通過：`main.js` / `style.css` / `script.js` 原封不動；`node --check script.js` 仍通過。
 
 **H5 — 技術邊界未被破壞**
-- 通過：無新增 React/Vue/TS/CSS 框架/後端/DB/LLM API/npm 套件/build step。
+- 通過：無新增 React/Vue/Svelte/React Three Fiber/TS/CSS 框架/後端/DB/LLM API/npm 套件/build step。Moonlake 若啟用 Three.js，只能是合約指定的固定版本 CDN ES Module，且不得持有 gameplay/save/safety authority。
+
+**H6 — Moonlake Live 3D Hybrid 邊界**
+- 驗法：讀 `docs/design/MOONLAKE_LIVE_3D_HYBRID_CONTRACT_V1.md`，檢查 renderer ownership、DOM/Pixi/Three 分層、CDN 版本、fallback、context-loss、reduced-motion 與 mobile quality tier。
+- 通過：月湖基礎場景是可從不同 world position 投影的真 3D GLB/glTF，而非單張 raster 假 3D；角色仍為 bottom-center 2D illustrated sprite；3D renderer 關閉或失敗時不阻斷 Soul Talk、HUD、存檔與 companion interaction。
 
 ---
 

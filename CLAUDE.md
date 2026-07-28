@@ -104,18 +104,20 @@ Initial Bond 已接入：fresh save 固定呈現 `greyshade-cat` / `blazetail-ki
 
 ---
 
-## 3. 技術邊界（硬限制，永不放寬）
+## 3. 技術邊界（硬限制；受控例外須由 Owner 明文修訂）
 
 ### 允許
 - HTML（單頁 `index.html`）
 - CSS（`styles.css`，純 CSS，無預處理器）
 - Vanilla JavaScript（ES Modules，無 bundler，無 build step）
 - PixiJS v8（CDN：`pixi.js@8.8.1`，全域 `window.PIXI`）
+- Three.js（僅限 Moonlake Live 3D Hybrid；固定版本 CDN ES Module，無 npm、無 build step；見 `docs/design/MOONLAKE_LIVE_3D_HYBRID_CONTRACT_V1.md`）
 - localStorage（集中於 `src/state/saveManager.js`）
 - GitHub Pages（純靜態部署）
 
 ### 絕對禁止引入
 - React / Vue / Svelte 或任何前端框架
+- React Three Fiber 或其他框架式 3D renderer
 - TypeScript
 - Tailwind 或任何 CSS 框架
 - 後端伺服器 / API 服務 / 資料庫（SQL / NoSQL / Firebase）
@@ -128,12 +130,14 @@ Initial Bond 已接入：fresh save 固定呈現 `greyshade-cat` / `blazetail-ki
 ## 4. 架構規範（解耦三層，不可破壞）
 
 ### 渲染分層
-- **PixiJS canvas**（`src/pixi/`）：背景、天體、平台、角色、粒子、棲地痕跡、特效。
+- **Three.js habitat canvas**（`src/three/`）：僅在核准的 Moonlake Live 3D Hybrid 啟用；3D 場景、GLB、光照、瀑布／水面、風吹植被、天氣與 world-to-screen 投影。
+- **PixiJS canvas**（`src/pixi/`）：2D illustrated companion、棲地痕跡、互動特效、非 3D habitat 的既有背景與其他 Pixi 頁面。
 - **DOM UI**（`src/ui/` + `styles.css`）：HUD、面板、對話框、導覽、戰鬥/地圖/圖鑑 modal。
 
 ### 解耦原則（硬規則）
-- **UI 不可直接操作 Pixi 容器**；**Pixi 不可直接操作 DOM**。
+- **UI 不可直接操作 Pixi／Three 容器**；**Pixi／Three 不可直接操作 DOM UI**。
 - 跨層通訊只能透過 `src/utils/eventBus.js` 或 store 訂閱。
+- Three.js 不得持有或改寫 save、relationship、Growth、Safety、RaphaelCore、battle 或 reward authority；場景可視狀態只接受現有 environment state 的唯讀投影。
 - State 變更一律透過 `src/state/store.js` 的 `setState` / `updateState` / `replaceState`，禁止直接 mutate state 物件。
 
 ### 效能規範

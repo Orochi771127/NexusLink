@@ -754,9 +754,15 @@ def run_accessibility_probe(base_url: str):
                     .filter(isActuallyFocusable)
                     .map((node) => node.id || node.className || node.outerHTML.slice(0, 80));
                   const navButtons = Array.from(document.querySelectorAll('[data-nav-action], .aurora-nav-item, .bottom-nav button'));
+                  const canvases = Array.from(document.querySelectorAll('#game-root canvas'));
+                  const live3dCanvases = canvases.filter((canvas) => canvas.classList.contains('moonlake-live3d-canvas'));
+                  const pixiCanvases = canvases.filter((canvas) => !canvas.classList.contains('moonlake-live3d-canvas'));
                   return {
                     title: document.title,
-                    canvasCount: document.querySelectorAll('canvas').length,
+                    canvasCount: canvases.length,
+                    pixiCanvasCount: pixiCanvases.length,
+                    live3dCanvasCount: live3dCanvases.length,
+                    live3dCanvasReady: live3dCanvases.every((canvas) => canvas.dataset.ready === 'true'),
                     gameRoot: Boolean(document.querySelector('#game-root')),
                     soulLauncher: Boolean(document.querySelector('[data-panel-trigger="soulTalk"]')),
                     messageInput: Boolean(document.querySelector('#message-input')),
@@ -796,7 +802,10 @@ def run_accessibility_probe(base_url: str):
                 },
                 "ok": (
                     not console_errors
-                    and probe["canvasCount"] == 1
+                    and probe["pixiCanvasCount"] == 1
+                    and probe["live3dCanvasCount"] <= 1
+                    and probe["canvasCount"] == probe["pixiCanvasCount"] + probe["live3dCanvasCount"]
+                    and probe["live3dCanvasReady"]
                     and probe["gameRoot"]
                     and onboarding_round["completed"]
                     and probe["soulLauncher"]

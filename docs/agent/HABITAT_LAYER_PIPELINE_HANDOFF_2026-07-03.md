@@ -7,6 +7,11 @@ Scope: Documentation-only handoff for Unity / UModeler authored 2.5D habitat lay
 
 This handoff exists so Codex can judge the proposed pipeline without reconstructing the discussion from chat history.
 
+> Historical note (2026-07-28): the Owner later approved the Moonlake Live 3D
+> Hybrid exception. For Moonlake, the runtime constraints below are superseded
+> by `docs/design/MOONLAKE_LIVE_3D_HYBRID_CONTRACT_V1.md`; they remain historical
+> context and continue to apply to habitats without separate live-3D approval.
+
 ---
 
 ## Source Discussion Summary

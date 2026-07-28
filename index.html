@@ -511,6 +511,14 @@
       crossorigin="anonymous"
       onerror="window.__NEXUS_PIXI_LOAD_FAILED__=true;document.getElementById('pixi-load-failure')?.removeAttribute('hidden')"
     ></script>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@0.185.0/build/three.module.js",
+          "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.185.0/examples/jsm/"
+        }
+      }
+    </script>
     <script type="module" src="./src/app.js"></script>
   </body>
 </html>
