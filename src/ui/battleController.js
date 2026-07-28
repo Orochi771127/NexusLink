@@ -631,6 +631,7 @@ export function createBattleController({
     }
 
     const isPlayerTurn = session.turn === "player";
+    if (actionRowEl) actionRowEl.hidden = session.turn === "ended";
     Object.entries(actionButtons).forEach(([actionId, button]) => {
       if (!button) return;
       if (actionId === "retreat") {
@@ -771,55 +772,72 @@ function injectRiftFigureStyles() {
   document.head.appendChild(style);
 }
 
-// 環繞式對峙佈局 v2（Owner 真機回饋 2026-07-13：「介面擋住角色、血量方塊過大、
-// 畫面一堆方塊」）——HUD 化：狀態不再是卡片，而是貼邊的細條。
-// 佈局骨架（flex order，DOM 不動）：標題 → 雜訊細條（敵方，頂部）→ 裂隙形體 →
-// ［彈性舞台：夥伴在這裡］→ 日誌（上緣淡出）→ 下一拍（無框）→ 心核帶（玩家，
-// 貼行動列上方＝操作語境）→ 共鳴圈 → 行動列。
-// 去方塊手段：邊框全移除、深底改文字陰影/淡漸層、standoff-field 以 display:contents
-// 解散成 flex 項目重排。全部 override 自注入，不動 index.html / styles.css 基底。
+// 環繞式對峙佈局 v3（Owner 真機回饋 2026-07-29）：資訊不能再借用中央演出空間。
+// 佈局骨架（flex order，DOM 不動）：標題／目標／雜訊／下一拍／最新事件（頂部資訊帶）
+// → 裂隙形體所在的可伸縮無字舞台（夥伴也在這裡演出）→ 心核／共鳴圈／四段膠囊行動列。
+// `.rift-figure` 同時是明確的 stage spacer；因此日誌不會再以 margin-auto 浮到角色身上。
+// 全部 override 自注入，不動 GROUNDWORK 的 index.html，也不改任何對峙數值或結算。
 function injectStandoffLayoutStyles() {
   if (document.getElementById("standoff-layout-styles")) return;
   const style = document.createElement("style");
   style.id = "standoff-layout-styles";
   style.textContent = [
-    // modal 透明化 + 上下貼邊：中段讓出「舞台」給 canvas 上的夥伴。
-    // 對峙期間 bottom-nav 隱藏（standoff-active），modal 直接貼到底部安全區。
-    'html[data-ui="v2"] .battle-modal{background:transparent;border-color:transparent;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none;max-height:none;top:calc(var(--top-safe, 0px) + 6px);bottom:calc(var(--bottom-safe, 0px) + 10px);display:flex;flex-direction:column;gap:6px;overflow:hidden;padding:10px 14px}',
+    // modal 透明化 + 上下貼邊；所有 flex 項目都有明確 order，中央不接受文字內容。
+    'html[data-ui="v2"] .battle-modal{background:transparent;border-color:transparent;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none;max-height:none;top:calc(var(--top-safe, 0px) + 6px);bottom:calc(var(--bottom-safe, 0px) + 10px);display:flex;flex-direction:column;gap:5px;overflow:hidden;padding:10px 14px}',
     'html[data-ui="v2"] body.standoff-active .bottom-nav--aurora{opacity:0;pointer-events:none;transition:opacity 260ms ease}',
     // 對峙全神貫注：夥伴名片與右上設定一併退場，避免與對峙標題疊字（finish 時恢復）。
     'html[data-ui="v2"] body.standoff-active .core-hud,html[data-ui="v2"] body.standoff-active .quick-hud{opacity:0;pointer-events:none;transition:opacity 260ms ease}',
-    // 標題收斂：kicker + 標題各一行，不佔舞台。
+    // 頂部資訊帶：階層靠字級、色彩與細光軌建立，不再堆疊卡片。
     'html[data-ui="v2"] .battle-modal .panel-header{order:0;flex:0 0 auto;text-shadow:0 1px 6px rgba(0,0,0,.85)}',
     'html[data-ui="v2"] .battle-modal .panel-header h2{margin:0;font-size:17px;line-height:1.2}',
     'html[data-ui="v2"] .battle-modal .panel-header p{margin:0 0 1px;font-size:11px}',
+    'html[data-ui="v2"] .battle-modal .standoff-objective{order:1;flex:0 0 auto;margin:1px 0;padding:0 4px;display:-webkit-box;overflow:hidden;-webkit-box-orient:vertical;-webkit-line-clamp:2;font-size:11px;line-height:1.38;color:rgba(235,246,255,.94)}',
     // 解散雙卡欄位：兩個 meter 直接成為 modal 的 flex 項目，雜訊上、心核下。
     'html[data-ui="v2"] .standoff-field{display:contents}',
     'html[data-ui="v2"] .standoff-meter-hint{display:none}',
     'html[data-ui="v2"] .standoff-meter-head strong{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}',
     // 雜訊（敵方）＝頂部細條 HUD：無卡無框，文字靠陰影、量條自帶深色軌。
-    'html[data-ui="v2"] .standoff-meter.standoff-noise{order:1;flex:0 0 auto;display:grid;gap:4px;margin:0;padding:0 2px;border:0;border-radius:0;background:none}',
+    'html[data-ui="v2"] .standoff-meter.standoff-noise{order:2;flex:0 0 auto;display:grid;gap:3px;margin:0;padding:0 2px;border:0;border-radius:0;background:none}',
     'html[data-ui="v2"] .standoff-noise .standoff-meter-head{font-size:12px;gap:8px;text-shadow:0 1px 6px rgba(0,0,0,.9)}',
     'html[data-ui="v2"] .standoff-noise .standoff-meter-head span{color:rgba(214,232,250,.88)}',
-    'html[data-ui="v2"] .standoff-noise .standoff-bar{height:6px;background:rgba(5,9,22,.55);box-shadow:0 1px 4px rgba(0,0,0,.4)}',
-    // 形體＝夥伴面對的對象：置中段上方；其後以彈性空隙讓出舞台。
-    'html[data-ui="v2"] .battle-modal .rift-figure{order:2;flex:0 0 auto;width:min(80%,300px);height:104px;margin:2px auto auto}',
-    // 日誌：無框、上緣淡出的半透明帶——像浮在湖面上的字，不是一塊面板。
-    'html[data-ui="v2"] .battle-modal #battle-log{order:3;flex:0 0 auto;margin-top:auto;min-height:0;max-height:60px;overflow-y:auto;padding:6px 8px 4px;border:0;border-radius:10px;background:rgba(5,9,22,.32);font-size:11.5px;line-height:1.4;text-shadow:0 1px 4px rgba(0,0,0,.75);-webkit-mask-image:linear-gradient(180deg,transparent,#000 12px);mask-image:linear-gradient(180deg,transparent,#000 12px)}',
-    'html[data-ui="v2"] .battle-modal .standoff-telegraph{order:4;flex:0 0 auto}',
-    // 心核（玩家）＝行動列上方的淡漸層帶：跟按鈕同一個「操作區」語境，頂部完全讓出。
-    'html[data-ui="v2"] .standoff-meter.standoff-stability{order:5;flex:0 0 auto;display:grid;gap:4px;margin:0;padding:6px 10px 7px;border:0;border-radius:12px;background:linear-gradient(180deg,rgba(5,9,22,.14),rgba(5,9,22,.5))}',
-    'html[data-ui="v2"] .standoff-stability .standoff-meter-head{font-size:12px;gap:8px;text-shadow:0 1px 5px rgba(0,0,0,.85)}',
-    'html[data-ui="v2"] .standoff-stability .standoff-bar{height:6px}',
-    'html[data-ui="v2"] .standoff-vitals-row{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:10px}',
-    'html[data-ui="v2"] .battle-modal .circle-strip{order:6}',
-    // 行動列變薄：邊框放輕、底色降透明，按鈕是「可按的地方」而不是又一疊卡。
-    'html[data-ui="v2"] .battle-modal #standoff-action-row{order:7;flex:0 0 auto;gap:7px}',
-    'html[data-ui="v2"] .battle-modal #standoff-action-row button{padding-top:7px;padding-bottom:7px;border-color:rgba(138,217,255,.18);background:rgba(8,13,32,.44)}',
-    'html[data-ui="v2"] .battle-modal #standoff-action-row button em{font-size:9px;opacity:.8}',
-    'html[data-ui="v2"] .battle-modal #battle-finish{order:8;flex:0 0 auto}',
+    'html[data-ui="v2"] .standoff-noise .standoff-bar{height:5px;background:rgba(5,9,22,.55);box-shadow:0 1px 4px rgba(0,0,0,.4),0 0 10px rgba(236,122,186,.12)}',
+    // 下一拍與最新兩筆事件都固定在頂部；長文以單行 ticker 呈現，完整內容仍留在 DOM。
+    'html[data-ui="v2"] .battle-modal .standoff-telegraph{order:3;flex:0 0 auto;display:grid;grid-template-columns:auto minmax(0,1fr);align-items:baseline;gap:7px;padding:1px 4px;border-inline-start:2px solid rgba(121,220,255,.48)}',
+    'html[data-ui="v2"] .battle-modal .standoff-telegraph .tel-label{white-space:nowrap}',
+    'html[data-ui="v2"] .battle-modal .standoff-telegraph .tel-hint{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}',
+    'html[data-ui="v2"] .battle-modal #battle-log{order:4;flex:0 0 auto;display:grid;gap:1px;margin:0;min-height:0;max-height:38px;overflow:hidden;padding:3px 8px 3px 10px;border:0;border-inline-start:1px solid rgba(159,202,255,.28);border-radius:0 999px 999px 0;background:linear-gradient(90deg,rgba(5,9,22,.48),rgba(5,9,22,.16) 78%,transparent);font-size:10.5px;line-height:1.35;text-shadow:0 1px 4px rgba(0,0,0,.82)}',
+    'html[data-ui="v2"] .battle-modal #battle-log p{display:none;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}',
+    'html[data-ui="v2"] .battle-modal #battle-log p:nth-last-child(-n+2){display:block}',
+    // 可伸縮的無字舞台：裂隙視覺偏上，夥伴的中央／下半身演出不再被文字橫切。
+    'html[data-ui="v2"] .battle-modal .rift-figure{order:5;flex:1 1 210px;width:min(76%,288px);height:auto;min-height:140px;margin:0 auto;overflow:visible}',
+    'html[data-ui="v2"] .battle-modal .rift-figure .rf-sprite{inset:-24px 0 auto;height:min(58%,190px);object-position:50% 12%;transform-origin:50% 28%}',
+    'html[data-ui="v2"] .battle-modal .rift-figure .rf-shadow{background:radial-gradient(56% 38% at 50% 24%,rgba(4,8,18,calc(.42*var(--rift-density))),transparent 74%)}',
+    'html[data-ui="v2"] .battle-modal .rift-figure .rf-mist{background:radial-gradient(52% 34% at 50% 24%,hsla(var(--rift-hue),var(--rift-sat),62%,calc(.36*var(--rift-density))),transparent 72%)}',
+    'html[data-ui="v2"] .battle-modal .rift-figure .rf-core{background:radial-gradient(26% 18% at 50% 23%,hsla(var(--rift-hue),var(--rift-sat),78%,calc(.55*var(--rift-density))),transparent 66%)}',
+    // 心核（玩家）＝底部流線狀態帶，和操作列形成一個連續的控制區。
+    'html[data-ui="v2"] .standoff-meter.standoff-stability{order:6;flex:0 0 auto;display:grid;grid-template-columns:minmax(0,1fr);gap:3px;margin:0;padding:6px 10px 7px;border:1px solid rgba(138,217,255,.16);border-block-end:0;border-radius:18px 18px 7px 7px;background:linear-gradient(110deg,rgba(5,9,22,.68),rgba(10,20,40,.42) 58%,rgba(93,78,146,.22));box-shadow:inset 0 1px 0 rgba(216,241,255,.07),0 -10px 28px rgba(3,7,18,.12)}',
+    'html[data-ui="v2"] .standoff-stability .standoff-meter-head{grid-column:1 / -1;min-width:0;padding-inline:2px 7px;box-sizing:border-box;font-size:12px;gap:8px;text-shadow:0 1px 5px rgba(0,0,0,.85)}',
+    'html[data-ui="v2"] .standoff-stability .standoff-meter-head strong{min-width:0}',
+    'html[data-ui="v2"] .standoff-stability .standoff-meter-head span{flex:0 0 auto;min-width:48px;margin-inline-end:10px;text-align:right;font-variant-numeric:tabular-nums}',
+    'html[data-ui="v2"] .standoff-stability .standoff-bar{grid-column:1;grid-row:2;width:100%;height:5px;align-self:center}',
+    'html[data-ui="v2"] .standoff-vitals-row{grid-column:1;grid-row:3;min-width:0;display:flex;flex-wrap:nowrap;align-items:center;justify-content:flex-end;gap:4px;margin-inline:1px 10px;font-size:9px;white-space:nowrap}',
+    'html[data-ui="v2"] .battle-modal .circle-strip{order:7;margin:0}',
+    // 四個動作合成一條分段膠囊；不是四張說明卡。文字提示保留為可存取內容。
+    'html[data-ui="v2"] .battle-modal #standoff-action-row{order:8;flex:0 0 auto;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:2px;padding:3px;border:1px solid rgba(138,217,255,.18);border-radius:999px;background:linear-gradient(100deg,rgba(5,10,25,.86),rgba(20,25,54,.72));box-shadow:inset 0 1px 0 rgba(224,244,255,.08),0 10px 28px rgba(0,0,0,.22)}',
+    'html[data-ui="v2"] .battle-modal #standoff-action-row[hidden]{display:none}',
+    'html[data-ui="v2"] .battle-modal #standoff-action-row button{position:relative;min-width:0;min-height:44px;place-content:center;padding:7px 4px;border:0;border-radius:999px;background:transparent;text-align:center;box-shadow:none}',
+    'html[data-ui="v2"] .battle-modal #standoff-action-row button+button::before{content:"";position:absolute;inset:10px auto 10px -2px;width:1px;background:linear-gradient(transparent,rgba(174,220,255,.22),transparent)}',
+    'html[data-ui="v2"] .battle-modal #standoff-action-row button strong{font-size:11px;line-height:1.2;white-space:nowrap}',
+    'html[data-ui="v2"] .battle-modal #standoff-action-row button:focus-visible{outline:2px solid rgba(161,228,255,.9);outline-offset:1px;background:rgba(98,179,230,.16)}',
+    'html[data-ui="v2"] .battle-modal #standoff-action-row button:disabled{opacity:.38}',
+    'html[data-ui="v2"] .battle-modal #battle-finish{order:10;flex:0 0 auto;min-height:44px;border-radius:999px}',
+    'html[data-ui="v2"] .battle-modal .standoff-causality{order:9;flex:0 0 auto;max-height:128px;overflow:auto;margin:0;padding:8px 10px;border-radius:14px;background:linear-gradient(110deg,rgba(5,10,25,.82),rgba(17,24,48,.66))}',
     // backdrop：上深（狀態可讀）、中淡（夥伴可見）、下略深（行動列對比）。
-    'html[data-ui="v2"] .panel-layer[data-active-panel="battle"] .panel-backdrop{background:linear-gradient(180deg,rgba(2,6,12,.5),rgba(2,6,12,.1) 40%,rgba(2,6,12,.1) 62%,rgba(2,6,12,.36))}'
+    'html[data-ui="v2"] .panel-layer[data-active-panel="battle"] .panel-backdrop{background:linear-gradient(180deg,rgba(2,6,12,.56),rgba(2,6,12,.08) 31%,rgba(2,6,12,.04) 70%,rgba(2,6,12,.48))}',
+    // 手機：次要說明只做視覺隱藏（仍可由輔助科技讀取），讓行動列保持俐落單層。
+    '@media (max-width:720px){html[data-ui="v2"] .battle-modal #standoff-action-row button em,html[data-ui="v2"] .battle-modal #standoff-action-row button .act-meaning{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}}',
+    // 短視窗只顯示最新事件；優先保住舞台，不把控制列縮到 44px 以下。
+    '@media (max-height:720px){html[data-ui="v2"] .battle-modal{gap:4px;padding-block:8px}html[data-ui="v2"] .battle-modal .panel-header h2{font-size:16px}html[data-ui="v2"] .battle-modal .standoff-objective{-webkit-line-clamp:1;font-size:10.5px}html[data-ui="v2"] .battle-modal #battle-log{max-height:20px;padding-block:2px}html[data-ui="v2"] .battle-modal #battle-log p{display:none!important}html[data-ui="v2"] .battle-modal #battle-log p:last-child{display:block!important}html[data-ui="v2"] .battle-modal .rift-figure{flex-basis:180px;min-height:118px}html[data-ui="v2"] .battle-modal .rift-figure .rf-sprite{inset:-8px 0 auto;height:min(44%,118px)}html[data-ui="v2"] .standoff-meter.standoff-stability{padding-block:5px}html[data-ui="v2"] .standoff-vitals-row{font-size:8.75px}}'
   ].join("");
   document.head.appendChild(style);
 }
