@@ -168,7 +168,7 @@
     "frameCount": 8,
     "rows": 2,
     "columns": 4,
-    "fps": 5,
+    "fps": 1,
     "loop": true,
     "anchor": {
       "x": 0.5,
@@ -360,7 +360,7 @@
     "frameCount": 8,
     "rows": 2,
     "columns": 4,
-    "fps": 5,
+    "fps": 1,
     "loop": true,
     "anchor": {
       "x": 0.5,
@@ -376,7 +376,7 @@
     "frameCount": 8,
     "rows": 2,
     "columns": 4,
-    "fps": 5,
+    "fps": 2.67,
     "loop": false,
     "anchor": {
       "x": 0.5,
@@ -472,7 +472,7 @@
     "frameCount": 8,
     "rows": 2,
     "columns": 4,
-    "fps": 5,
+    "fps": 1,
     "loop": true,
     "anchor": {
       "x": 0.5,
@@ -488,7 +488,7 @@
     "frameCount": 8,
     "rows": 2,
     "columns": 4,
-    "fps": 5,
+    "fps": 1,
     "loop": true,
     "anchor": {
       "x": 0.5,
