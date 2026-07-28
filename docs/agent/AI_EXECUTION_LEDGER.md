@@ -5830,3 +5830,107 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
   `output/playwright/moonlake-r3-living-habitat-mobile.png`.
 - Remaining human gates: physical iOS/Safari and representative mobile-GPU
   verification; these do not block the Owner-authorized web publication.
+
+### 2026-07-29 - Codex - Mobile Short-Viewport UI Correction - IN PROGRESS
+
+- Status: `IN PROGRESS`; Owner approved implementation after reviewing five
+  physical iPhone screenshots.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `MOBILE_SHORT_VIEWPORT_UI_CORRECTION`.
+- Layer: `EXPERIENCE`; CSS and existing Explore / Orbit UI controllers only.
+  No GROUNDWORK file is authorized or required.
+- Scope:
+  - keep the Orbit arena visually dominant while fitting its top and bottom
+    controls inside `390x664` and `390x844`;
+  - make every Orbit view expose a reachable contextual back control;
+  - preserve the existing map, duel, retreat and non-punitive outcome wiring;
+  - add focused short-viewport regression proof.
+- Red-line check: no physics, outcome, relationship, reward, progress, save,
+  Safety, Growth or RaphaelCore change. Leaving an active duel remains the
+  existing safe retreat path.
+- Non-goals: no assets, dependency, renderer, schema, gameplay tuning, commit,
+  push or publication.
+- Acceptance refs: base mobile integrity; `O6`, `O7`, `O8`, `O10`; additional
+  Safari-like `390x664` no-clipping proof.
+- Required reading: `HEARTCORE_ORBIT_BATTLE_CONTRACT_V1`, `BALANCE_SHEET`
+  section 9, `ACCEPTANCE.md` section O, `ORBIT_MANUAL_390x844.md`, latest Orbit
+  entries in this ledger and the Owner screenshots.
+
+### 2026-07-29 - Codex - Mobile Short-Viewport UI Correction - IN PROGRESS
+
+- Status: `IN PROGRESS`; Owner approved the visual correction package.
+- Lane: `Game Art, UI, And Visual Production`.
+- Visual scope:
+  - remove portrait highlights that cover companion faces;
+  - resolve the pseudo-element collision that renders isolated cyan/gold corner
+    lights on modal and page surfaces;
+  - make the Explore action hierarchy fit the short mobile viewport without
+    hiding the main path, world map or companion actions behind an undisclosed
+    scroll trap;
+  - compact Orbit path information and keep the arena as the largest surface.
+- Visual contract: preserve Cyber-Taoism glass, restrained glow, readable
+  companion hierarchy, minimum `44px` touch targets and reduced-motion behavior.
+- Non-goals: no image generation, asset replacement, scene composition change,
+  dependency, commit, push or publication.
+- Evidence target: rendered `390x664` and `390x844` captures for companion
+  status, Explore, Orbit path and Orbit duel, plus DOM geometry and console
+  health.
+
+### 2026-07-29 - Codex - Mobile Short-Viewport UI Correction - VERIFIED
+
+- Status: `VERIFIED`; implementation and browser proof are complete. Commit,
+  push and publication were not authorized and were not performed.
+- Lane: `Game Engineering And Architecture`.
+- Completed:
+  - moved map close, duel back and active retreat controls into reachable
+    top-left `44x44px` contextual controls;
+  - preserved the existing safe retreat handlers and hid retreat after
+    resolution so it cannot compete with the next-step actions;
+  - made Orbit map and duel slots participate in one overlay flex context,
+    preventing hidden sibling slots from consuming half of a short viewport;
+  - compacted map nodes and HUD copy without changing physics, stats, outcomes,
+    settlement, progression or persistence.
+- Browser proof:
+  - `390x664` Explore: `scrollHeight=clientHeight=446`, all five actions fully
+    visible;
+  - `390x664` Orbit map: `scrollHeight=clientHeight=650`, all five nodes,
+    top back and bottom duel action visible;
+  - `390x664` duel: top HUD `116.43px`, canvas `390x409`, bottom HUD ends at
+    `658px`; canvas occupies `61.6%` of viewport height;
+  - `390x844` Explore and Orbit map: no internal overflow; all actions visible;
+  - active duel safe retreat: PASS; resolved retreat locator count `0`;
+  - browser console: zero errors. Existing Three.js
+    `PCFSoftShadowMap` deprecation warnings remain unrelated.
+- Automated verification:
+  - `node --check` for all three changed Orbit controllers: PASS;
+  - `node docs/qa/orbit-regression-cases.mjs`: PASS;
+  - `git diff --check`: PASS.
+- Changed files: `styles.css`, `styles/page-content.css`,
+  `src/ui/orbitMapController.js`, `src/ui/orbitDuelController.js`,
+  `src/ui/orbitBattleController.js`, this ledger.
+- Branch / commit: `agent/mobile-short-viewport-ui`; commit pending publication.
+- Remaining human gate: physical iOS Safari and Owner subjective visual review.
+
+### 2026-07-29 - Codex - Mobile Short-Viewport UI Correction - VERIFIED
+
+- Status: `VERIFIED`; the screenshot-reported visual defects are corrected in
+  the local runtime.
+- Lane: `Game Art, UI, And Visual Production`.
+- Visual corrections:
+  - removed the hard white radial highlight from the companion portrait while
+    retaining the lower cyan depth glow;
+  - restored the modal glass top sheen and removed the conflicting corner
+    pseudo-elements; page inset borders now use their full intended geometry;
+  - changed short-mobile Explore to a two-column action hierarchy with the
+    final action spanning both columns;
+  - kept all five route nodes in one view and made back affordances circular,
+    consistent and visually separate from explanatory copy;
+  - reduced duel chrome while keeping the `409px` arena canvas as the dominant
+    surface at `390x664`.
+- Visual proof: rendered in-app captures at `390x664` for Explore, Orbit map
+  and Orbit duel; geometry was repeated at `390x844`.
+- Accessibility: contextual controls retain localized accessible names and
+  minimum `44px` touch targets; no gameplay information is encoded only by the
+  removed decorative lights.
+- Non-goals honored: no assets, dependencies, renderer, scene composition,
+  gameplay tuning, commit, push or publication.

@@ -126,7 +126,10 @@ export function createOrbitBattleController({
     const againBtn = overlayEl.querySelector('[data-orbit-action="again"]');
     if (kicker) kicker.textContent = t("orbit.kicker");
     if (hint) hint.textContent = t("orbit.hint");
-    if (retreatBtn) retreatBtn.textContent = t("orbit.retreat");
+    if (retreatBtn) {
+      retreatBtn.textContent = t("orbit.retreat");
+      retreatBtn.setAttribute("aria-label", t("orbit.retreat"));
+    }
     if (toMapBtn) toMapBtn.textContent = t("orbit.toMap");
     if (againBtn) againBtn.textContent = t("orbit.again");
     if (canvas) canvas.setAttribute("aria-label", t("orbit.canvasLabel"));
@@ -156,8 +159,13 @@ export function createOrbitBattleController({
       <div class="orbit-duel-slot"></div>
       <div class="orbit-battle" hidden>
         <div class="orbit-hud-top">
-          <p class="orbit-kicker"></p>
-          <h2 class="orbit-title" id="orbit-battle-title"></h2>
+          <div class="orbit-battle-toolbar">
+            <button type="button" class="orbit-btn orbit-btn--ghost orbit-back-btn" data-orbit-action="retreat"></button>
+            <div class="orbit-battle-heading">
+              <p class="orbit-kicker"></p>
+              <h2 class="orbit-title" id="orbit-battle-title"></h2>
+            </div>
+          </div>
           <p class="orbit-copy"></p>
           <div class="orbit-stats" aria-live="polite"></div>
           <div class="orbit-control-depth" data-orbit-control-depth hidden>
@@ -178,7 +186,6 @@ export function createOrbitBattleController({
           <p class="orbit-status" aria-live="polite"></p>
           <p class="orbit-companion-line" hidden></p>
           <div class="orbit-actions">
-            <button type="button" class="orbit-btn orbit-btn--ghost" data-orbit-action="retreat"></button>
             <button type="button" class="orbit-btn" data-orbit-action="to-map" hidden></button>
             <button type="button" class="orbit-btn" data-orbit-action="again" hidden></button>
           </div>

@@ -51,7 +51,10 @@ export function createOrbitMapController({
     if (regions) regions.setAttribute("aria-label", t("orbit.mapRegions"));
     if (nodes) nodes.setAttribute("aria-label", t("orbit.mapNodes"));
     if (duelBtn) duelBtn.textContent = t("orbit.duelOpen");
-    if (closeBtn) closeBtn.textContent = t("orbit.closeExplore");
+    if (closeBtn) {
+      closeBtn.textContent = t("orbit.closeExplore");
+      closeBtn.setAttribute("aria-label", t("orbit.closeExplore"));
+    }
   }
 
   function ensure() {
@@ -61,8 +64,13 @@ export function createOrbitMapController({
     rootEl.hidden = true;
     rootEl.innerHTML = `
       <div class="orbit-map-head">
-        <p class="orbit-kicker"></p>
-        <h2 class="orbit-map-title" id="orbit-map-title"></h2>
+        <div class="orbit-map-toolbar">
+          <button type="button" class="orbit-btn orbit-btn--ghost orbit-back-btn" data-orbit-map="close"></button>
+          <div class="orbit-map-heading">
+            <p class="orbit-kicker"></p>
+            <h2 class="orbit-map-title" id="orbit-map-title"></h2>
+          </div>
+        </div>
         <p class="orbit-map-note"></p>
         <p class="orbit-map-motes" aria-live="polite"></p>
         <div class="orbit-map-regions" role="tablist" aria-label=""></div>
@@ -71,7 +79,6 @@ export function createOrbitMapController({
       <p class="orbit-map-narrative" hidden></p>
       <div class="orbit-map-actions">
         <button type="button" class="orbit-btn" data-orbit-map="duel"></button>
-        <button type="button" class="orbit-btn orbit-btn--ghost" data-orbit-map="close"></button>
       </div>
     `;
     applyChrome();
