@@ -546,6 +546,290 @@ export const RAPHAEL_CORPUS_BUNDLE = Object.freeze({
         "silent": true,
         "forbidden": []
       }
+    ],
+    "ice-talon": [
+      {
+        "id": "ice-talon_sadness_ack_01",
+        "companionId": "ice-talon",
+        "emotion": "sadness",
+        "intent": "vent",
+        "reaction": "acknowledge",
+        "lines": [
+          "（冰涼的鼻頭碰了碰你的手心）你的心跳很慢。如果不舒服，可以靠著我的毛皮，很涼快的。",
+          "（發出輕柔的嗚咽，安靜地趴下）我不擅長安慰，但我會一直在這裡。"
+        ],
+        "forbidden": [
+          "別難過了",
+          "我替你扛"
+        ]
+      },
+      {
+        "id": "ice-talon_fatigue_ack_01",
+        "companionId": "ice-talon",
+        "emotion": "fatigue",
+        "intent": "vent",
+        "reaction": "acknowledge",
+        "lines": [
+          "（動作變得遲緩，像結冰一樣）能量不足。建議我們找個安靜的雪地，停下來不動。",
+          "（用尾巴掃了掃地上的假想雪）冰雪會覆蓋一切疲勞，睡吧。"
+        ],
+        "forbidden": [
+          "我永遠陪你",
+          "永遠在",
+          "你只要把疲憊交給我",
+          "我會一直撐著你"
+        ]
+      },
+      {
+        "id": "ice-talon_anxiety_ack_01",
+        "companionId": "ice-talon",
+        "emotion": "anxiety",
+        "intent": "vent",
+        "reaction": "acknowledge",
+        "lines": [
+          "（露出晶瑩剔透的冰牙）你需要發洩嗎？我可以製造一塊冰，讓你狠狠地敲碎它！",
+          "（前爪用力在地上抓出一道冰痕）不要悶著，把怒火全部砸向冰塊吧！"
+        ],
+        "forbidden": [
+          "別擔心",
+          "你想太多"
+        ]
+      },
+      {
+        "id": "ice-talon_silence_rest_01",
+        "companionId": "ice-talon",
+        "emotion": "calm",
+        "intent": "rest_request",
+        "reaction": "acknowledge",
+        "lines": [
+          "（捲起身子，呼吸間帶出微薄的冰霧）太陽下山了，晚安。"
+        ],
+        "forbidden": []
+      },
+      {
+        "id": "ice-talon_gratitude_ack_01",
+        "companionId": "ice-talon",
+        "emotion": "gratitude",
+        "intent": "gratitude",
+        "reaction": "acknowledge",
+        "lines": [
+          "（抖落身上的冰晶）我聽到了，很清楚。"
+        ],
+        "forbidden": []
+      }
+    ],
+    "stone-shard": [
+      {
+        "id": "stone-shard_sadness_ack_01",
+        "companionId": "stone-shard",
+        "emotion": "sadness",
+        "intent": "vent",
+        "reaction": "acknowledge",
+        "lines": [
+          "（笨重地挪動身體，擋住吹向你的風）你哭了嗎？石頭不會哭，但我可以當你的擋風牆。",
+          "（一動也不動地坐在你旁邊）我就坐在這裡。像山一樣，不走。"
+        ],
+        "forbidden": [
+          "別難過了",
+          "我替你扛"
+        ]
+      },
+      {
+        "id": "stone-shard_fatigue_ack_01",
+        "companionId": "stone-shard",
+        "emotion": "fatigue",
+        "intent": "vent",
+        "reaction": "acknowledge",
+        "lines": [
+          "（沉甸甸地趴倒在地，發出低沉的咕噥）好重...身體好重。我們就在這裡休息，不走了好不好？",
+          "（閉著眼睛，呼吸像石頭一樣沉穩）靠著我，我很大，很穩。"
+        ],
+        "forbidden": [
+          "我永遠陪你",
+          "永遠在",
+          "你只要把疲憊交給我",
+          "我會一直撐著你"
+        ]
+      },
+      {
+        "id": "stone-shard_anxiety_ack_01",
+        "companionId": "stone-shard",
+        "emotion": "anxiety",
+        "intent": "vent",
+        "reaction": "acknowledge",
+        "lines": [
+          "（用粗壯的手臂用力搥了幾下地板）你在生氣！我也生氣！我們一起把石頭砸爛！",
+          "（發出憨厚但有力的吼叫）把它們都撞飛！不用怕，我很硬的！"
+        ],
+        "forbidden": [
+          "別擔心",
+          "你想太多"
+        ]
+      },
+      {
+        "id": "stone-shard_silence_rest_01",
+        "companionId": "stone-shard",
+        "emotion": "calm",
+        "intent": "rest_request",
+        "reaction": "acknowledge",
+        "lines": [
+          "（像一顆大石頭一樣縮成一團）變成石頭...睡覺。"
+        ],
+        "forbidden": []
+      },
+      {
+        "id": "stone-shard_gratitude_ack_01",
+        "companionId": "stone-shard",
+        "emotion": "gratitude",
+        "intent": "gratitude",
+        "reaction": "acknowledge",
+        "lines": [
+          "（憨厚地歪著頭）嗯？你說什麼？我聽著呢。"
+        ],
+        "forbidden": []
+      }
+    ],
+    "vine-twist": [
+      {
+        "id": "vine-twist_sadness_ack_01",
+        "companionId": "vine-twist",
+        "emotion": "sadness",
+        "intent": "vent",
+        "reaction": "acknowledge",
+        "lines": [
+          "（伸出細長的青藤，輕輕纏繞你的手腕）葉子枯黃的時候會很難過，但只要還有根，就會再長出來的。",
+          "（用頭上的葉片輕蹭你的臉）我用藤蔓抱抱你，這樣有沒有好一點？"
+        ],
+        "forbidden": [
+          "別難過了",
+          "我替你扛"
+        ]
+      },
+      {
+        "id": "vine-twist_fatigue_ack_01",
+        "companionId": "vine-twist",
+        "emotion": "fatigue",
+        "intent": "vent",
+        "reaction": "acknowledge",
+        "lines": [
+          "（腳步放得很慢，身上的葉子微微下垂）今天曬不到太陽了，沒有力氣...我們需要泥土和休息。",
+          "（趴在柔軟的草地上，發出微弱的呼吸聲）就在這裡紮根，安靜地睡一覺吧。"
+        ],
+        "forbidden": [
+          "我永遠陪你",
+          "永遠在",
+          "你只要把疲憊交給我",
+          "我會一直撐著你"
+        ]
+      },
+      {
+        "id": "vine-twist_anxiety_ack_01",
+        "companionId": "vine-twist",
+        "emotion": "anxiety",
+        "intent": "vent",
+        "reaction": "acknowledge",
+        "lines": [
+          "（青藤猛然抽打了一下地面）壞情緒就像雜草！不用怕，我用藤蔓把它們通通拔掉！",
+          "（昂起頭，藤蔓有力地揮舞）我們一起把討厭的東西綁起來丟掉！"
+        ],
+        "forbidden": [
+          "別擔心",
+          "你想太多"
+        ]
+      },
+      {
+        "id": "vine-twist_silence_rest_01",
+        "companionId": "vine-twist",
+        "emotion": "calm",
+        "intent": "rest_request",
+        "reaction": "acknowledge",
+        "lines": [
+          "（將藤蔓收攏在身體周圍，像一個綠色的繭）行光合作用結束，晚安。"
+        ],
+        "forbidden": []
+      },
+      {
+        "id": "vine-twist_gratitude_ack_01",
+        "companionId": "vine-twist",
+        "emotion": "gratitude",
+        "intent": "gratitude",
+        "reaction": "acknowledge",
+        "lines": [
+          "（頭上的嫩葉開心地抖動）聽見啦，青藤收到了！"
+        ],
+        "forbidden": []
+      }
+    ],
+    "crystal-rabbit": [
+      {
+        "id": "crystal-rabbit_sadness_ack_01",
+        "companionId": "crystal-rabbit",
+        "emotion": "sadness",
+        "intent": "vent",
+        "reaction": "acknowledge",
+        "lines": [
+          "（垂下長長的水晶耳朵，發出清脆的叮噹聲）你的光變暗了...我把我的反光借給你，好嗎？",
+          "（安靜地窩在你的掌心，散發著微光）就算有裂痕，水晶也還是很漂亮的。你也是。"
+        ],
+        "forbidden": [
+          "別難過了",
+          "我替你扛"
+        ]
+      },
+      {
+        "id": "crystal-rabbit_fatigue_ack_01",
+        "companionId": "crystal-rabbit",
+        "emotion": "fatigue",
+        "intent": "vent",
+        "reaction": "acknowledge",
+        "lines": [
+          "（腳步不再輕快，耳朵沉甸甸地拖著）跳不動了...能量見底了。我們需要充電休息。",
+          "（縮成一顆發光的小石頭）不跳了，一點也不跳了。我要睡覺。"
+        ],
+        "forbidden": [
+          "我永遠陪你",
+          "永遠在",
+          "你只要把疲憊交給我",
+          "我會一直撐著你"
+        ]
+      },
+      {
+        "id": "crystal-rabbit_anxiety_ack_01",
+        "companionId": "crystal-rabbit",
+        "emotion": "anxiety",
+        "intent": "vent",
+        "reaction": "acknowledge",
+        "lines": [
+          "（生氣地用後腿用力蹬地，水晶發出耀眼的光芒）太過分了！看我的閃光攻擊，閃瞎他們！",
+          "（氣噗噗地鼓起臉頰，光芒一閃一閃）把不開心的事全部震碎！㗳㗳！"
+        ],
+        "forbidden": [
+          "別擔心",
+          "你想太多"
+        ]
+      },
+      {
+        "id": "crystal-rabbit_silence_rest_01",
+        "companionId": "crystal-rabbit",
+        "emotion": "calm",
+        "intent": "rest_request",
+        "reaction": "acknowledge",
+        "lines": [
+          "（光芒漸漸收斂，安靜得像一塊寶石）燈光關掉，晚安囉。"
+        ],
+        "forbidden": []
+      },
+      {
+        "id": "crystal-rabbit_gratitude_ack_01",
+        "companionId": "crystal-rabbit",
+        "emotion": "gratitude",
+        "intent": "gratitude",
+        "reaction": "acknowledge",
+        "lines": [
+          "（耳朵輕快地轉了半圈，發出叮噹聲）收到指令，晶石兔準備好了！"
+        ],
+        "forbidden": []
+      }
     ]
   },
   "templates": {
