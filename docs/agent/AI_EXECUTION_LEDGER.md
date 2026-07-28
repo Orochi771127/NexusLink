@@ -5098,3 +5098,101 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
     open and must not be claimed complete.
 - Next safe action: publish through the required PR gate, merge to `main`,
   reindex MCP, then open the separate R11 movement-profile package.
+
+### 2026-07-26 - Codex - Stage 1 Directional Walk And Fishing Animation R1 - IN PROGRESS
+
+- Status: `IN PROGRESS`; Owner approved the complete art-production package in chat.
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `TP-STAGE1-DIRECTIONAL-WALK-FISHING-R1`.
+- Layer: `GROUNDWORK` only at the later asset-promotion gate. Generation begins in review staging and cannot enter `assets/**` before Owner visual approval.
+- Branch / base: `codex/stage1-directional-fishing-r1` from `origin/main` `1e8b101e3e722acede57aa13292cd05c5f16090d`, isolated from the dirty `codex/moonlake-mobile-scene-editor` worktree.
+- Approved staging scope:
+  - create `front_walk` and `back_walk` eight-frame candidates for the ten formal Heartspark Council and Ironflow Hackers companions that currently lack them;
+  - create species-specific `fishing_side`, `fishing_front`, and `fishing_back` eight-frame candidates for all sixteen current runtime companions;
+  - produce transparent `512x512` frames, `2048x1024` 2x4 sheets, GIF previews, review boards and strict identity/anchor/crop QA.
+- Species boundary: avian, aquatic-hover, cervid, equine, saurian, feline, canine, vulpine, ursine and rabbit motion must remain distinct. No generic quadruped fishing pose and no humanoid hands may be invented for hoofed, avian or aquatic bodies.
+- Red-line check: no relationship reward, Growth evidence, daily/FOMO loop, offline yield, Safety mutation, combat power or forced-companion obedience.
+- Non-goals: no bridge trigger, fishing minigame, navigation, persistence, water physics, reward table, runtime promotion, commit or push in the staging phase.
+- Acceptance refs: `G1-G7`, `H1-H5`, `I`, `J1-J5`; existing roster, unlock and Initial Bond policy remains unchanged.
+- Required reading: all sixteen current runtime character assets; the ten formal character locks; `docs/art/SPECIES_MOTION_TRANSLATION.md`; `docs/art/BLACK_IRON_HACKERS_STAGE1_SPECIES_MOTION_TRANSLATION.md`; `docs/assets/COMPANION_ANIMATION_CATALOG.md`; this lane.
+- Next safe action: build identity/direction reference boards, then generate and QC the twenty missing front/back walk candidates before starting fishing.
+
+### 2026-07-27 - Codex - Stage 1 Directional Walk And Fishing Animation R1 - AWAITING OWNER VISUAL APPROVAL
+
+- Status: `AWAITING OWNER VISUAL APPROVAL`; review-stage production and strict QC are complete, but asset promotion is intentionally blocked at the human visual gate.
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `TP-STAGE1-DIRECTIONAL-WALK-FISHING-R1`.
+- Branch / base: `codex/stage1-directional-fishing-r1` from `origin/main` `1e8b101e3e722acede57aa13292cd05c5f16090d`.
+- Review output:
+  - 20 missing directional walk sheets for the ten formal companions: `front_walk` and `back_walk`, eight frames each;
+  - 48 species-specific fishing sheets for all sixteen runtime companions: `fishing_side`, `fishing_front`, and `fishing_back`, eight frames each;
+  - 68 transparent `2048x1024` sheets / 544 non-empty `512x512` frames in total;
+  - GIF previews, identity boards, per-frame anchor metadata, rejection evidence, gridded review boards and `OWNER_REVIEW.md` under `output/character-pilots/stage1-directional-fishing-r1/`.
+- Strict QA and corrections:
+  - Crystalfin Seahorse side v1 was rejected for invented humanoid arms and regenerated with a species-correct tail-coil hold;
+  - ThunderPup front v1 and WaveCub front v1 were rejected for right-edge crop and regenerated with compact casting arcs;
+  - a later visual audit caught detached tail/fin bleed that dimension checks missed; final QC removes non-primary solid alpha fragments while preserving the rod, line and bobber;
+  - the first fishing normalization kept all content in bounds but allowed long casts to shift body anchors left; final QC4 applies one common scale per eight-frame action and fixes the body at bottom-center.
+- Verification:
+  - 68/68 sheets are `2048x1024`; 544/544 cells are non-empty;
+  - fishing QC4 body center x range `254.11..257.64`, foot/hover datum y range `455..457`, minimum foreground margin `18px`, common action scale range `0.786..0.985`;
+  - walk sheets keep at least `44px` foreground margin, body-center span no greater than `4px`, and zero bottom-datum span;
+  - eight final gridded review boards were visually inspected for identity, complete silhouette, direction, detached fragments, species mechanics and crop.
+- Runtime truth: no file under `assets/**`, registry, animation catalog, Moonlake runtime, save state or gameplay code was changed. The candidates are not runtime-ready until Owner visual approval and a separate GROUNDWORK promotion package.
+- Problems / risks:
+  - human aesthetic approval remains open even though mechanical and self-review QC pass;
+  - fishing interaction semantics, bridge trigger, line/water overlay, catch flow, rewards, persistence and runtime memory budget remain out of scope;
+  - `output/**` is ignored staging evidence; only this ledger entry appears in the Git diff.
+- Next safe action: Owner reviews the eight boards and approves or rejects by character/action. On approval, prepare an explicit `assets/**` promotion plan and wait for GROUNDWORK authorization before copying or wiring anything.
+
+### 2026-07-28 - Codex - Stage 1 Directional Walk And Fishing Animation R1 - VERIFIED
+
+- Status: `VERIFIED`; Owner accepted the review direction and authorized continued implementation.
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `TP-STAGE1-DIRECTIONAL-WALK-FISHING-R1`.
+- Layer: `GROUNDWORK` asset promotion, limited to the explicitly approved companion sheets and their animation metadata.
+- Promoted assets:
+  - 20 approved `front_walk` / `back_walk` sheets for the ten formal Heartspark Council and Ironflow Hackers companions;
+  - 48 approved `fishing_side` / `fishing_front` / `fishing_back` sheets for all sixteen runtime companions, including `greyshade-cat`;
+  - 68 transparent `2048x1024` sheets / 544 populated `512x512` frames in total.
+- Metadata and catalog:
+  - all sixteen character animation manifests now declare their native fishing actions;
+  - the ten formal companions now declare their native front/back walk actions;
+  - `COMPANION_ANIMATION_CATALOG.md` records the five directional/habitat extension IDs and their non-reward boundary.
+- Verification:
+  - `stage1-directional-fishing-promotion-cases.mjs`: PASS, 68 promoted sheets / 16 companions;
+  - PNG decoder QC confirmed exact dimensions, RGBA transparency, eight non-empty cells, safe margins and stable bottom-center datum;
+  - browser loader playtest covered 112 action loads across all sixteen companions with zero failures and zero console errors;
+  - representative Moonlake captures visually confirmed Greyshade Cat fishing back, Auriowl front walk, Crystalfin Seahorse species-correct side fishing and Star Foal back walk.
+- Problems / risks:
+  - the fishing loop is intentionally a bounded habitat expression, not a minigame, reward, persistence or catch system;
+  - mobile real-device and human aesthetic approval beyond the Owner-approved review boards remain separate release evidence.
+- Branch / commit: `codex/stage1-directional-fishing-r1`; commit and PR publication follow this verified ledger closeout.
+- Next safe action: publish through the protected-main PR gate, merge after required checks pass, then reindex the merged repository.
+
+### 2026-07-28 - Codex - Stage 1 Directional Walk And Fishing Runtime R1 - VERIFIED
+
+- Status: `VERIFIED`; runtime integration and automated release validation are complete.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `TP-STAGE1-DIRECTIONAL-WALK-FISHING-R1`.
+- Layer: `EXPERIENCE`; no save schema, default unlock, relationship state, Safety, RaphaelCore or battle authority was changed.
+- Runtime integration:
+  - all non-Greyshade runtime companions can now use ambient habitat roaming;
+  - ambient movement resolves left/right/front/back from both X and Y travel while consulting lazy-loadable animation metadata;
+  - all three fishing directions resolve through the interaction registry and bounded fallback policy;
+  - Moonlake may autonomously choose the lake-facing `fishing_back` loop; other habitats do not receive autonomous fishing;
+  - fishing stays interruptible and does not write rewards, catches, progression, memory or persistence.
+- Release-gate maintenance:
+  - formal asset integrity now accepts only the union of required runtime actions and explicitly declared profile fallbacks;
+  - unknown formal animations remain rejected, while real native front/back sheets no longer produce a false failure.
+- Verification:
+  - syntax checks: PASS for all changed runtime JavaScript;
+  - companion renderer lifecycle: `29/29 PASS`;
+  - companion shadow flush: `8/8 PASS`;
+  - Moonlake layout JSON lock: `38/38 PASS`;
+  - complete web release gate: `28/28 PASS`, no accessibility warnings;
+  - browser action matrix: 16 companions / 112 action loads, zero failed companions, zero failed actions, zero console errors;
+  - `git diff --check`: PASS.
+- Manual gates still open: physical-device verification, three-user first-session comprehension, private blind Raphael review, legal/privacy/store readiness and public-launch approval.
+- Branch / commit: `codex/stage1-directional-fishing-r1`; commit and PR publication follow this verified ledger closeout.
+- Next safe action: merge only after the required `web-release-gate` passes, prove local/remote synchronization, and refresh the codebase MCP index.

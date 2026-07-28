@@ -142,7 +142,11 @@ export function updateCompanionMotion(companion, motion, timeSeconds, nowMs, moo
   }
 
   // 偶發日常動作（原地、不位移）：閒置且心情平穩時，偶爾坐下/理毛/伸懶腰/打盹。
-  const ambientActions = companion.__animationProfile?.ambientActions || [];
+  const profileAmbientActions = companion.__animationProfile?.ambientActions || [];
+  const habitatAmbientActions = Array.isArray(options.ambientActions) ? options.ambientActions : [];
+  const ambientActions = habitatAmbientActions.length > 0
+    ? [...new Set([...profileAmbientActions, ...habitatAmbientActions])]
+    : profileAmbientActions;
   const isBusy = !canAmbientWalk || Boolean(motion.temporaryState) || isBattleActive || isSleeping || Boolean(motion.ambientState);
   if (motion.ambientActionState && (isBusy || nowMs >= motion.ambientActionUntil)) {
     motion.ambientActionState = null;
@@ -158,7 +162,12 @@ export function updateCompanionMotion(companion, motion, timeSeconds, nowMs, moo
   }
 
   const ambientAnimation = motion.ambientState
-    ? getAmbientWalkAnimation(motion.ambientTargetOffsetX, (name) => companion.__animationController?.hasAnimation?.(name))
+    ? getAmbientWalkAnimation(
+      motion.ambientTargetOffsetX,
+      motion.ambientTargetOffsetY,
+      (name) => companion.__animationController?.canResolve?.(name),
+      companion.__animationProfile
+    )
     : null;
   const activeState = motion.temporaryState ||
     (isBattleActive ? "battle" : null) ||
