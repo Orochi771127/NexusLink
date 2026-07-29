@@ -38,7 +38,9 @@ export function createPageRouter({
   openMap,
   openCodex,
   openAtlas,
-  openOrbit
+  openOrbit,
+  openExpedition,
+  openStandoff
 }) {
   const pageLayer = qs("#page-layer");
   const pageViews = pageLayer ? qsa("[data-page]", pageLayer) : [];
@@ -671,6 +673,8 @@ export function createPageRouter({
         render();
         if (selectedAction.route === "orbit") await runRequiredAction(openOrbit);
         else if (selectedAction.route === "map") await runRequiredAction(openMap);
+        else if (selectedAction.route === "expedition") await runRequiredAction(openExpedition);
+        else if (selectedAction.route === "standoff") await runRequiredAction(openStandoff);
         else {
           const error = new Error(`Unsupported Explore node route: ${selectedAction.route}`);
           error.code = "ACTION_UNAVAILABLE";

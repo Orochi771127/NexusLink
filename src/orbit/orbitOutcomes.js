@@ -51,6 +51,13 @@ export function mapOrbitResultToOutcome(result) {
       summary: "三點記憶沿著軌跡回來，最後在營火旁安靜停住。"
     };
   }
+  if (reason === "stage_completed") {
+    return {
+      key: "recovered",
+      title: "軌跡完成",
+      summary: "這一關的每一段都被你們接住了。理解比壓過場地更重要。"
+    };
+  }
   if (reason === "dummy_burst" || reason === "noise_cleared") {
     if ((result.hits || 0) >= 2 && result.playerStability >= 45) {
       return {

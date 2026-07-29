@@ -406,9 +406,9 @@
 - 驗法：`projectOrbitCombatStats` 在 sharedActionCount 上升時 Impact 上升；純聊天路徑不得直接改 Impact 帳本。
 - 通過：`orbit-battle-prototype-cases.mjs` 綠燈；無獨立永久 ATK 成長樹。
 
-**O3 — 闖關優先：月湖路徑五關＋破關解鎖下一路徑**
-- 驗法：`orbit-stage-cases.mjs`；手動開探索→月湖路徑節點。
-- 通過：五關可定義／可通關解鎖平原首關；進度 session-only 時失敗不倒退已通關。
+**O3 — 闖關優先：月湖五區 × 五關＋持久解鎖鏈**
+- 驗法：`node docs/qa/orbit-stage-cases.mjs`、`node docs/qa/moonlake-activity-progress-cases.mjs`；手動完成首次月湖營地，再開五個月湖路徑節點。
+- 通過：月湖營地仍是零遭遇的首次安全抵達；星林／霧潮同時開放，兩區終關完成後依序開湖心→晶岩→裂隙；每區五關內部順序解鎖。五個地圖點只開地點／關卡面板，不直接結算探索羈絆、信任、記憶或遭遇。`activityProgress.orbit.clearedStageIds` 隨既有存檔持久化，失敗／撤退不倒退。
 
 **O4 — 對決次之：人機／幽靈，無即時 PvP、無 ±bond**
 - 驗法：`orbit-duel-cases.mjs`；連戰 budget 拒戰。
@@ -416,7 +416,7 @@
 
 **O5 — 遠征微光可匯流，但不農場、不開 G4**
 - 驗法：`orbit-settlement-cases.mjs`；首次通關寫 vault shards＋exploration evidence。
-- 通過：不呼叫 `buildExpeditionSettlement`；不碰 `totalExpeditions` 農場節奏；對決勝發獎；安全港零 evidence。
+- 通過：Orbit 每個 stage 僅首次通關寫 vault shard＋exploration evidence，重玩零永久獎勵；安全港零 evidence。Expedition 現有局內採集與重複結算保持原樣，不由 Orbit first-clear gate 截斷，且 `coreIntegrated:false` 不變。
 
 **O6 — 敗北情緒預設惜敗陪伴；可撤退且零懲罰進度**
 - 驗法：prototype／duel harness 的 outcome 映射；手動撤退。
@@ -443,12 +443,12 @@
 **O10 — 月湖節點 Action Sheet：主要玩法與條件式旁支**
 - 驗法：跑 `node docs/qa/orbit-node-action-sheet-cases.mjs` 與完整 Orbit regression；在 fresh save 與具 Chapter 2＋可見 emotional trace 的 fixture 各開一次 Explore。
 - 通過：月湖焦點同時呈現心核迴旋／心域遠征／裂隙對峙；迴旋永遠可用且標為主要玩法。遠征只沿用 `isExpeditionUnlocked`，對峙只沿用 `canEnterUnguidedStandoff`；不可用項目 disabled 且有低壓力說明。
-- 路由與零寫入：迴旋進既有 Orbit；遠征／對峙回既有地圖再選合法節點。Action Sheet 不生成遭遇、不改節點解鎖、不寫 save／path／vault／Growth／bond／trust，並保留 `data-page-action="open-map"` 的 first-session 直接地圖入口。
+- 路由與零寫入：迴旋回月湖路徑圖，由五個點選正式關卡；遠征直達既有地圖 launch rows；對峙以當前章合法裂隙直接開啟，仍先過 `canEnterUnguidedStandoff`。Action Sheet 本身不寫 save／path／vault／Growth／bond／trust，並保留 `data-page-action="open-map"` 的 first-session 直接地圖入口。
 - 390×844／鍵盤：dialog 不超出 Explore 面板；開啟後 focus 落在第一個可用選項，Esc／關閉鈕只關閉 sheet 並把 focus 還給 launcher；四語 chrome 不缺 key。
 
-**O11 — R10 能量守恆與第三關生存可達**
-- 驗法：跑 `node docs/qa/orbit-energy-ringout-cases.mjs` 與完整 Orbit regression；在 390×844 Chromium 以第三關短拉測 12 個方向。
+**O11 — R10 能量守恆與星林第四關生存可達**
+- 驗法：跑 `node docs/qa/orbit-energy-ringout-cases.mjs` 與完整 Orbit regression；在 390×844 Chromium 以星林第四關短拉測 12 個方向。
 - 通過：普通牆與柱碰撞後速度、轉速不增加；approaching body collision 正確反彈，separating overlap 不施加第二次衝量；碰撞後總平移能量不高於碰撞前預算；玩家與假對手都受 speed cap 約束。
-- 第三關：玩家可見條件與 runtime 同為 contained 15 秒；24 方向 × 6 力度的 deterministic sweep 至少 132／144 次完成 `survived`，不能把 `player_out`、`player_burst` 或單純「有結算」算 PASS。
-- 確定性：同一第三關發射在 30／60／120 Hz exact-match；修復不得改 bond／trust、path/vault/Growth 寫入資格、撤退、拒戰或非懲罰結局。
+- 星林第四關：玩家可見條件與 runtime 同為 contained 12 秒；24 方向 × 6 力度的 deterministic sweep 至少 132／144 次完成 `stage_completed`，不能把 `player_out`、`player_burst` 或單純「有結算」算 PASS。
+- 確定性：同一星林第四關發射在 30／60／120 Hz exact-match；修復不得改 bond／trust、path/vault/Growth 寫入資格、撤退、拒戰或非懲罰結局。
 - **仍 open（不得宣稱完成）：** Owner 真人手感、Safari 真觸控／GPU，以及四種 movement profile 的玩家可辨識度。

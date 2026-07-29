@@ -52,11 +52,11 @@ assert.deepEqual(
 );
 assert.equal(freshById.orbit.available, true);
 assert.equal(freshById.orbit.primary, true);
-assert.equal(freshById.orbit.route, "orbit");
+assert.equal(freshById.orbit.route, "map");
 assert.equal(freshById.expedition.available, false);
-assert.equal(freshById.expedition.route, "map");
+assert.equal(freshById.expedition.route, "expedition");
 assert.equal(freshById.standoff.available, false);
-assert.equal(freshById.standoff.route, "map");
+assert.equal(freshById.standoff.route, "standoff");
 assert.equal(JSON.stringify(freshState), freshSnapshot);
 ok("fresh Moonlake exposes Orbit first and keeps gated branches unavailable without mutation");
 

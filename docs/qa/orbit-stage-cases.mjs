@@ -1,5 +1,5 @@
 /**
- * PACK R2 — Orbit five-stage route + progress cases.
+ * Moonlake five-zone / twenty-five-stage route cases.
  * Run: node docs/qa/orbit-stage-cases.mjs
  */
 
@@ -7,20 +7,22 @@ import assert from "node:assert/strict";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const repoRoot = path.resolve(__dirname, "../..");
-
-const { MOONLAKE_STAGES, PLAINS_STAGES, getOrbitStageById, listStagesForRegion } =
-  await import(pathToFileURL(path.join(repoRoot, "src/data/orbit/stages/index.js")).href);
+const qaDir = path.dirname(fileURLToPath(import.meta.url));
+const repoRoot = path.resolve(qaDir, "../..");
 
 const {
-  resetOrbitPathProgressForTests,
+  MOONLAKE_ORBIT_ZONES,
+  MOONLAKE_STAGES,
+  getOrbitStageById,
+  listStagesForMoonlakeZone,
+  listStagesForRegion
+} = await import(pathToFileURL(path.join(repoRoot, "src/data/orbit/stages/index.js")).href);
+
+const {
+  getMoonlakeZoneProgress,
+  isMoonlakeOrbitZoneUnlocked,
   isOrbitStageUnlocked,
-  isOrbitRegionUnlocked,
-  recordOrbitStageClear,
-  listOrbitMapNodes,
-  getOrbitPathProgressSnapshot,
-  setActiveOrbitRegion
+  recordOrbitStageClear
 } = await import(pathToFileURL(path.join(repoRoot, "src/orbit/orbitPathProgress.js")).href);
 
 const {
@@ -34,27 +36,45 @@ function ok(name) {
   console.log(`PASS  ${name}`);
 }
 
-resetOrbitPathProgressForTests();
+function makeState({ arrived = true } = {}) {
+  return {
+    explorationProgress: {
+      totalExplorations: arrived ? 1 : 0,
+      visitCounts: arrived ? { moonlake_camp: 1 } : {}
+    },
+    activityProgress: {
+      version: 1,
+      orbit: { clearedStageIds: [] },
+      standoff: { clearedScenarioIds: [] },
+      expedition: { clearedRouteIds: [] }
+    }
+  };
+}
 
-assert.equal(MOONLAKE_STAGES.length, 5);
-assert.equal(listStagesForRegion("moonlake").length, 5);
-assert.ok(PLAINS_STAGES.length >= 1);
-ok("moonlake has 5 stages; plains has at least 1");
+assert.equal(MOONLAKE_ORBIT_ZONES.length, 5);
+assert.equal(MOONLAKE_STAGES.length, 25);
+assert.equal(listStagesForRegion("moonlake").length, 25);
+for (const zone of MOONLAKE_ORBIT_ZONES) {
+  assert.equal(listStagesForMoonlakeZone(zone.id).length, 5);
+}
+ok("Moonlake is five Orbit zones with five stages each");
 
-const goals = new Set(MOONLAKE_STAGES.map((s) => s.goal));
-assert.ok(goals.has("clear"));
-assert.ok(goals.has("survive"));
-assert.ok(goals.has("reach_anchor"));
-ok("stage goals include clear / survive / reach_anchor");
+const beforeArrival = makeState({ arrived: false });
+assert.equal(isOrbitStageUnlocked("moonlake-1", beforeArrival), false);
+assert.equal(isOrbitStageUnlocked("moonlake-6", beforeArrival), false);
+ok("safe Moonlake Camp arrival remains the first gate");
 
-assert.equal(isOrbitStageUnlocked("moonlake-1"), true);
-assert.equal(isOrbitStageUnlocked("moonlake-2"), false);
-assert.equal(isOrbitRegionUnlocked("plains"), false);
-ok("only first stage unlocked initially; plains locked");
+const state = makeState();
+assert.equal(isMoonlakeOrbitZoneUnlocked("starwood_trail", state), true);
+assert.equal(isMoonlakeOrbitZoneUnlocked("misttide_shore", state), true);
+assert.equal(isMoonlakeOrbitZoneUnlocked("mirror_hollow", state), false);
+assert.equal(isOrbitStageUnlocked("moonlake-1", state), true);
+assert.equal(isOrbitStageUnlocked("moonlake-2", state), false);
+assert.equal(isOrbitStageUnlocked("moonlake-6", state), true);
+ok("Starwood and Misttide open together; stages remain sequential");
 
-// Sequential unlock without regression on retreat
-recordOrbitStageClear("moonlake-1");
-assert.equal(isOrbitStageUnlocked("moonlake-2"), true);
+recordOrbitStageClear("moonlake-1", state);
+assert.equal(isOrbitStageUnlocked("moonlake-2", state), true);
 const retreated = retreatOrbitSession(
   createOrbitSession({
     stats: { impact: 50, spin: 50, guard: 50, burst: 20, overheat: 10 },
@@ -62,24 +82,38 @@ const retreated = retreatOrbitSession(
   })
 );
 assert.equal(retreated.progressEligible, false);
-assert.equal(isOrbitStageUnlocked("moonlake-2"), true);
-assert.equal(getOrbitPathProgressSnapshot().clearedStageIds.includes("moonlake-1"), true);
-ok("retreat does not revoke cleared progress");
+assert.ok(state.activityProgress.orbit.clearedStageIds.includes("moonlake-1"));
+ok("retreat never writes or revokes persistent progress");
 
-// Clear all moonlake → unlock plains
-for (const stage of MOONLAKE_STAGES) {
-  recordOrbitStageClear(stage.id);
+for (const stage of listStagesForMoonlakeZone("starwood_trail")) {
+  recordOrbitStageClear(stage.id, state);
 }
-assert.equal(isOrbitRegionUnlocked("plains"), true);
-assert.ok(setActiveOrbitRegion("plains"));
-const plainsNodes = listOrbitMapNodes("plains");
-assert.ok(plainsNodes.length >= 1);
-assert.equal(plainsNodes[0].unlocked, true);
-ok("clearing moonlake-5 unlocks plains path");
+assert.equal(isMoonlakeOrbitZoneUnlocked("mirror_hollow", state), false);
+for (const stage of listStagesForMoonlakeZone("misttide_shore")) {
+  recordOrbitStageClear(stage.id, state);
+}
+assert.equal(isMoonlakeOrbitZoneUnlocked("mirror_hollow", state), true);
+assert.equal(isOrbitStageUnlocked("moonlake-11", state), true);
+ok("Mirror opens only after both Starwood and Misttide finals");
 
-// Survive stage can win by time
-resetOrbitPathProgressForTests();
-const surviveStage = getOrbitStageById("moonlake-3");
+for (const stage of listStagesForMoonlakeZone("mirror_hollow")) {
+  recordOrbitStageClear(stage.id, state);
+}
+assert.equal(isMoonlakeOrbitZoneUnlocked("crystal_ruins", state), true);
+for (const stage of listStagesForMoonlakeZone("crystal_ruins")) {
+  recordOrbitStageClear(stage.id, state);
+}
+assert.equal(isMoonlakeOrbitZoneUnlocked("rift_observatory", state), true);
+assert.deepEqual(getMoonlakeZoneProgress("crystal_ruins", state), {
+  zoneId: "crystal_ruins",
+  unlocked: true,
+  clearedCount: 5,
+  totalCount: 5,
+  complete: true
+});
+ok("Mirror → Crystal → Rift zone chain is derived from final clears");
+
+const surviveStage = getOrbitStageById("moonlake-4");
 let session = createOrbitSession({
   stats: { impact: 55, spin: 60, guard: 60, burst: 20, overheat: 5 },
   stage: surviveStage
@@ -91,11 +125,11 @@ while (session.phase === "spinning" && guard < 5000) {
   guard += 1;
 }
 assert.equal(session.phase, "resolved");
-assert.equal(session.outcome.reason, "survived");
-ok("survive stage is actually reachable, not merely resolved");
+assert.equal(session.outcome.reason, "stage_completed");
+assert.equal(session.progressEligible, true);
+ok("authored survival objective is reachable");
 
-// Anchor stage win when forced onto anchor
-const anchorStage = getOrbitStageById("moonlake-4");
+const anchorStage = getOrbitStageById("moonlake-1");
 session = createOrbitSession({
   stats: { impact: 40, spin: 40, guard: 70, burst: 10, overheat: 0 },
   stage: anchorStage
@@ -112,21 +146,15 @@ session = {
   }
 };
 session = stepOrbitSession(session, 1 / 30);
-assert.equal(session.phase, "resolved");
-assert.equal(session.outcome.reason, "anchor_reached");
-assert.equal(session.progressEligible, true);
-ok("reach_anchor wins when avatar on anchor");
+assert.equal(session.outcome.reason, "stage_completed");
+ok("reach-anchor objective completes through the sequence runner");
 
-// Narrow stage has pillars + smaller radius
-const narrow = getOrbitStageById("moonlake-2");
-assert.ok(narrow.arenaRadius < 1);
-assert.ok(narrow.pillars.length >= 2);
-const narrowSession = createOrbitSession({
-  stats: { impact: 40, spin: 40, guard: 40, burst: 10, overheat: 0 },
-  stage: narrow
-});
-assert.equal(narrowSession.arenaRadius, narrow.arenaRadius);
-assert.equal(narrowSession.pillars.length, narrow.pillars.length);
-ok("narrow stage carries pillars and arena radius");
+const finalStage = getOrbitStageById("moonlake-25");
+assert.deepEqual(
+  finalStage.objectives.map((entry) => entry.type),
+  ["survive", "collect_motes", "resonate_zone"]
+);
+assert.equal(finalStage.maxSeconds, 60);
+ok("final stage composes survival, collection and resonance under 60 seconds");
 
-console.log("\nAll orbit stage cases passed.");
+console.log("\nAll Moonlake Orbit stage cases passed.");

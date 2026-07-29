@@ -314,17 +314,20 @@ pulseBonus           = 1 + clamp(dev(power)×0.004, −0.12, 0.18)
 | 重遊舊路徑 | 允許手感練習；**不得**刷永久攻擊帳或 trust |
 | 星級（若做） | 只影響微光／記憶清晰度敘事，不鎖成長 |
 
-### 9.4 R2 關卡節奏（月湖路徑）
+### 9.4 月湖五區 × 五關
 
-| 關 | 目標 | 備註 |
+| 區域 | 關卡 1–5 的核心節奏 | 開放條件 |
 |---|---|---|
-| 湖心訓練 | clear | 教學關 |
-| 薄界窄徑 | clear | `arenaRadius` 0.78 + 2 柱 |
-| 撐過漣漪 | survive 18s | 不需清光雜訊 |
-| 錨點微光 | reach_anchor | 北側錨點 |
-| 月湖終關 | clear | 通關解鎖平原路徑 |
+| 星林步道 | 錨點 → 任意拾光 → 雙柱折徑 → 守圈 12s → 依序拾光＋共鳴 | 首次安全抵達月湖營地 |
+| 霧潮河岸 | 低速錨點 → 側流 → 漂流拾光 → 窄徑 15s → 低速定泊 | 首次安全抵達月湖營地 |
+| 湖心倒影 | 鏡像錨點 → 鏡像折返 → 對稱守圈 → 外側雙光＋中心 → 四光共鳴 | 星林與霧潮終關 |
+| 晶岩遺跡 | 單柱清訊 → 三柱錨點 → 四晶連鳴 → 主動雜訊 18s → 拾光／清訊／錨點 | 湖心終關 |
+| 裂隙觀測點 | 守圈 → 逆流 → 三柱清訊 → 四光共鳴 → 12s／三光／最終共鳴 | 晶岩終關 |
 
-進度：session-only（`orbitPathProgress.js`），失敗不倒退已通關。
+進度：`activityProgress.orbit.clearedStageIds` 隨既有存檔持久化；區域與
+關內解鎖皆由 clear IDs 推導。撤退／失穩不倒退；重玩不再發 shard、Growth、
+bond、trust 或章節推進。月湖五個地圖節點只開關卡面板，不再呼叫一般探索
+結算。完整關卡值以 `src/data/orbit/stages/moonlakeStages.js` 為準。
 
 ### 9.5 R6 手感意圖（給 Owner／手測）
 
@@ -420,9 +423,9 @@ objective／outcome，以及固定時點脈衝在 30／60／120 Hz exact-match�
 
 | 選項 | 可用條件 | 路由／邊界 |
 |---|---|---|
-| 心核迴旋 | 永遠可見且為主要玩法 | 進入既有 Orbit；正式五關與 opt-in query 行為不變 |
-| 心域遠征 | 沿用 `isExpeditionUnlocked(state)` | 回到既有地圖，由區域 launch row 再檢查角色、能量與節點資格 |
-| 裂隙對峙 | 沿用 `canEnterUnguidedStandoff(state)` | 回到既有地圖選擇已出現裂隙；不生成遭遇、不繞過 safety gate |
+| 心核迴旋 | 永遠可見且為主要玩法 | 回到月湖路徑圖；五個地點各開五關面板 |
+| 心域遠征 | 沿用 `isExpeditionUnlocked(state)` | 直達既有地圖 launch rows，再檢查角色、能量與節點資格 |
+| 裂隙對峙 | 沿用 `canEnterUnguidedStandoff(state)` | 直開當前章合法裂隙；不先結算一般探索，也不繞過 safety gate |
 
 直達「月湖路徑」按鈕保留，維持 first-session map gate 與既有玩家路徑。
 Action Sheet 是純呈現：不寫 save、不解鎖節點、不改 bond／trust／Growth，

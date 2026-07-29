@@ -186,7 +186,11 @@ export function planOrbitStageSettlement(opts = {}) {
     stageId: stage.id,
     chapterNo: opts.chapterNo,
     safeHarborMode: opts.safeHarborMode === true,
-    tendency: stage.goal === "survive" ? "steadfastness" : "pathfinding"
+    tendency:
+      stage.goal === "survive" ||
+      stage.objectives?.some?.((objective) => objective.type === "survive")
+        ? "steadfastness"
+        : "pathfinding"
   });
 
   const label = getShardDisplayLabel(shardId, "zh");

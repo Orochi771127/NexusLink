@@ -3,6 +3,7 @@ import { prefersReducedMotion } from "../utils/motionPreference.js";
 import { getCompanionById } from "../data/companionRegistry.js";
 import { getEnemyRiftSilhouettePath } from "../data/assetManifest.js";
 import { getExplorationNodeById } from "../data/explorationNodes.js";
+import { getStandoffTensionProfile } from "../data/standoffDifficultyProfiles.js";
 import {
   applyNoiseTurn,
   applyPlayerAction,
@@ -40,6 +41,10 @@ import {
 } from "../engine/habitatTraceEngine.js";
 import EventBus from "../utils/eventBus.js";
 import AudioManager from "../audio/audioManager.js";
+import {
+  recordStandoffScenarioClear,
+  resolveStandoffFirstClear
+} from "../engine/standoffProgress.js";
 
 const NOISE_TURN_DELAY_MS = 620;
 const COMPANION_ANIMATION_INTENT_EVENT = "COMPANION_ANIMATION_INTENT";
@@ -365,9 +370,18 @@ export function createBattleController({
   function startBattle({ enemyId, nodeId }) {
     const state = store.getState();
     const companion = getCompanionById(state.activeCompanionId);
+    const chapterNo = getChapterForNode(nodeId);
+    const tensionProfile = getStandoffTensionProfile(chapterNo);
     // CH-6 共鳴圈：進場前定圈（最早結緣者優先，最多 3 隻同場），對峙中不換。
     const circle = deriveResonanceCircle(state);
-    session = createStandoffSession({ companion, enemyId, nodeId, state, circle });
+    session = createStandoffSession({
+      companion,
+      enemyId,
+      nodeId,
+      state,
+      circle,
+      tensionProfile
+    });
     renderedLogCount = 0;
     lastOutcome = null;
     prevNoise = null;
@@ -380,7 +394,7 @@ export function createBattleController({
     // 節點名/敵名/心相標籤是內容層資料（維持繁中）；外框模板走 i18n key（{name} 佔位）。
     if (nodeLabelEl) {
       nodeLabelEl.textContent = node
-        ? `${node.label.zh} ・ ${t("battle.nodeUnstable")}`
+        ? `${node.label.zh} ・ ${tensionProfile.label} ・ ${t("battle.nodeUnstable")}`
         : t("battle.nodeUnstable");
     }
     if (companionNameEl) {
@@ -488,13 +502,30 @@ export function createBattleController({
     const now = Date.now();
     const stateBeforeSettlement = store.getState();
     const summary = summarizeStandoffOutcome(outcome, session, stateBeforeSettlement, now);
+    const firstClear = resolveStandoffFirstClear(
+      stateBeforeSettlement,
+      session.nodeId,
+      outcome
+    );
+    const {
+      scenarioId,
+      alreadyCleared,
+      clearOutcome: isClearOutcome,
+      grantsFirstClear
+    } = firstClear;
     const copy = getOutcomeCopy(outcome);
     session.log.push({ kind: "system", text: `【${copy.title}】${summary.message}` });
+    if (isClearOutcome && alreadyCleared) {
+      session.log.push({
+        kind: "system",
+        text: "這段裂隙已被你們理解過。這次只留下練習，不重複發放關係、記憶或章節獎勵。"
+      });
+    }
 
     // CH-5a 章節試煉：當前章首次「穩住/回收」即通關推進（與非對峙 life-event 共用防刷）。
     // 重打已通關章不重複推進；overwhelmed/retreated 不算失敗、無任何懲罰。
     let chapterAdvance = null;
-    if (CHAPTER_TRIAL_OUTCOMES.has(outcome)) {
+    if (grantsFirstClear && CHAPTER_TRIAL_OUTCOMES.has(outcome)) {
       chapterAdvance = resolveChapterTrialAdvance(
         store.getState().chapterProgress,
         session.nodeId
@@ -509,8 +540,16 @@ export function createBattleController({
 
     // 結算回寫：patch + 對峙記憶/棲地痕跡（走既有沉積鏈）+ 章節推進。
     store.updateState((draft) => {
-      Object.assign(draft, summary.statePatch);
-      if (summary.memorySeed) {
+      const operationalPatch = { ...summary.statePatch };
+      if (!grantsFirstClear) {
+        delete operationalPatch.bond;
+        delete operationalPatch.trust;
+      }
+      Object.assign(draft, operationalPatch);
+      if (grantsFirstClear) {
+        recordStandoffScenarioClear(draft, scenarioId);
+      }
+      if (grantsFirstClear && summary.memorySeed) {
         draft.emotionalMemories.push(summary.memorySeed);
         draft.lastEmotionTag = summary.memorySeed.emotion;
         const trace = createHabitatTraceFromMemory(summary.memorySeed, now);
@@ -523,12 +562,12 @@ export function createBattleController({
       }
       // CH-5b：章內對峙把牠推到過載（overwhelmed_but_safe）→ 記入該章共鳴邀請的 mark，
       // 影響牠的同行意願（「撐得勉強」＝再陪穩一些日子）。只在已相遇（mark 存在）時計數。
-      if (outcome === "overwhelmed_but_safe") {
+      if (grantsFirstClear && outcome === "overwhelmed_but_safe") {
         const nodeChapterNo = getChapterForNode(session.nodeId);
         const mark = draft.resonance?.chapterMarks?.[nodeChapterNo];
         if (mark) mark.overwhelmedCount = (Number(mark.overwhelmedCount) || 0) + 1;
       }
-      if (getExplorationNodeById(session.nodeId)) {
+      if (grantsFirstClear && getExplorationNodeById(session.nodeId)) {
         companionGrowthController?.writeIntoDraft?.(draft, {
           companionId: session.companionId,
           sourceType: "standoff",
@@ -554,7 +593,9 @@ export function createBattleController({
       }
     });
     // 閉環：回棲地後，夥伴用自己的聲音記得這件事（companion 角色，非 system）。
-    const reflection = buildEventReflection(store.getState(), now, { outcomeOverride: outcome });
+    const reflection = grantsFirstClear
+      ? buildEventReflection(store.getState(), now, { outcomeOverride: outcome })
+      : null;
     if (reflection) {
       soulTalkController.addChat("companion", reflection);
     }

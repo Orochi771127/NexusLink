@@ -6,10 +6,24 @@ export const EXPEDITION_LAUNCH_NODE_ID = "plains_windrest";
 
 /** 各遠征節點解鎖章節（current≥N 或已通關該章）。 */
 export const EXPEDITION_NODES = Object.freeze({
-  plains_windrest: Object.freeze({ chapterRequired: 2 }),
-  forge_emberpath: Object.freeze({ chapterRequired: 3 }),
-  harbor_quayside: Object.freeze({ chapterRequired: 4 })
+  plains_windrest: Object.freeze({
+    chapterRequired: 2,
+    depth: Object.freeze({ id: "near_shore", label: "近岸", duration: "3–4 分鐘" })
+  }),
+  forge_emberpath: Object.freeze({
+    chapterRequired: 3,
+    depth: Object.freeze({ id: "turning_path", label: "轉折", duration: "4–6 分鐘" })
+  }),
+  harbor_quayside: Object.freeze({
+    chapterRequired: 4,
+    depth: Object.freeze({ id: "deep_path", label: "深徑", duration: "5–7 分鐘" })
+  })
 });
+
+export const EXPEDITION_FUTURE_DEPTHS = Object.freeze([
+  Object.freeze({ id: "far_return", label: "遠回", chapters: Object.freeze([5, 6]) }),
+  Object.freeze({ id: "boundary", label: "邊界", chapters: Object.freeze([7]) })
+]);
 
 /** 夥伴 AI 決策間隔（毫秒）。 */
 export const BRAIN_TICK_MS = 400;
@@ -19,6 +33,10 @@ export const EXPEDITION_TILE_PX = 16;
 
 function getNodeChapterRequired(nodeId) {
   return EXPEDITION_NODES[nodeId]?.chapterRequired ?? 99;
+}
+
+export function getExpeditionRouteDepth(nodeId) {
+  return EXPEDITION_NODES[nodeId]?.depth || null;
 }
 
 /** 單一遠征區是否已解鎖。 */

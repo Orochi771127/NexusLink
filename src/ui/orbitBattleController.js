@@ -29,6 +29,7 @@ import {
 import {
   consumeJustUnlockedRegion,
   isOrbitStageCleared,
+  isOrbitStageUnlocked,
   recordOrbitStageClear
 } from "../orbit/orbitPathProgress.js";
 import {
@@ -82,7 +83,8 @@ export function createOrbitBattleController({
   statusText,
   panelManager,
   companionGrowthController,
-  saveCurrentState
+  saveCurrentState,
+  returnToMoonlakeZone = null
 }) {
   let overlayEl = null;
   let canvas = null;
@@ -102,7 +104,8 @@ export function createOrbitBattleController({
     onOpenDuel: () => openDuel(),
     onClose: () => close(),
     statusText,
-    getVault: () => store.getState()?.expeditionVault
+    getVault: () => store.getState()?.expeditionVault,
+    getState: () => store.getState()
   });
 
   const duelController = createOrbitDuelController({
@@ -211,7 +214,7 @@ export function createOrbitBattleController({
       if (!btn) return;
       const action = btn.dataset.orbitAction;
       if (action === "retreat") retreat();
-      else if (action === "to-map") showMap();
+      else if (action === "to-map") returnFromStage();
       else if (action === "again" && currentStageId) openStage(currentStageId);
       else if (action === "pulse") activateResonancePulse();
     });
@@ -227,7 +230,7 @@ export function createOrbitBattleController({
       if (event.key === "Escape") {
         event.preventDefault();
         if (view === "map") close();
-        else if (session?.phase === "resolved") showMap();
+        else if (session?.phase === "resolved") returnFromStage();
         else retreat();
       }
     });
@@ -310,15 +313,26 @@ export function createOrbitBattleController({
     const sandboxEnabled = isOrbitSandboxEnabled();
     const campSliceEnabled = stage.id === MOONLAKE_CAMP_SLICE.id;
     const hybridEnabled = sandboxEnabled || campSliceEnabled;
+    const state = store.getState();
+    if (
+      !sandboxEnabled &&
+      !campSliceEnabled &&
+      !isOrbitStageUnlocked(stageId, state)
+    ) {
+      if (statusText) statusText.textContent = "前一段軌跡還沒有完成。";
+      return;
+    }
 
     ensureOverlay();
+    panelManager?.closePanel?.({ reason: "orbit-stage-open" });
+    document.body.classList.add("orbit-active");
+    active = true;
     currentStageId = stageId;
     view = "battle";
     mapController.hide();
     duelController.hide();
     overlayEl.querySelector(".orbit-battle").hidden = false;
 
-    const state = store.getState();
     const baseStats = projectOrbitCombatStats(
       vitalsFromState(state),
       recentEvidenceFromState(state)
@@ -413,9 +427,20 @@ export function createOrbitBattleController({
     if (statusText) statusText.textContent = "你們離開了迴旋軌道。";
   }
 
+  function returnFromStage() {
+    const stageId = currentStageId;
+    const stage = getOrbitStageById(stageId);
+    if (stage?.zoneId && typeof returnToMoonlakeZone === "function") {
+      close();
+      returnToMoonlakeZone(stageId);
+      return;
+    }
+    showMap();
+  }
+
   function retreat() {
     if (!session || session.phase === "resolved") {
-      showMap();
+      returnFromStage();
       return;
     }
     session = retreatOrbitSession(session);
@@ -539,18 +564,19 @@ export function createOrbitBattleController({
       status = `${status}　物理沙盒未寫入路徑、微光或 Growth。`;
     } else if (session.progressEligible && session.stageId) {
       const stage = getOrbitStageById(session.stageId);
-      const alreadyCleared = isOrbitStageCleared(session.stageId);
-      const result = recordOrbitStageClear(session.stageId);
+      const state = store.getState();
+      const alreadyCleared = isOrbitStageCleared(session.stageId, state);
+      let result = {
+        narrative: stage?.clearNarrative || null,
+        unlockedRegionId: null,
+        unlockedZoneId: null
+      };
       if (result.narrative) {
         status = `${status}　${result.narrative}`;
-      }
-      if (result.unlockedRegionId) {
-        status = `${status}　${getOrbitPathLabel(result.unlockedRegionId)}已可前往。`;
       }
 
       // R4：首次通關才寫微光＋evidence；對決不走這裡
       if (stage) {
-        const state = store.getState();
         const plan = planOrbitStageSettlement({
           stage,
           alreadyCleared,
@@ -560,8 +586,14 @@ export function createOrbitBattleController({
           existingVault: state.expeditionVault
         });
         if (plan.moteLine) status = `${status}　${plan.moteLine}`;
-        if (plan.shouldGrant && (plan.shardGrant || plan.growth)) {
-          applyOrbitSettlement(plan);
+        if (!alreadyCleared) {
+          result = applyOrbitSettlement(session.stageId, plan) || result;
+        }
+        if (result.unlockedZoneId) {
+          status = `${status}　新的月湖路徑已亮起。`;
+        }
+        if (result.unlockedRegionId) {
+          status = `${status}　${getOrbitPathLabel(result.unlockedRegionId)}已可前往。`;
         }
       }
     }
@@ -574,17 +606,20 @@ export function createOrbitBattleController({
   /**
    * 同一筆 updateState 寫 vault＋growth（對齊 mapController 交易模式）。
    */
-  function applyOrbitSettlement(plan) {
-    if (!store?.updateState || !plan?.shouldGrant) return;
+  function applyOrbitSettlement(stageId, plan) {
+    if (!store?.updateState || !stageId) return null;
+    let progressResult = null;
     store.updateState((draft) => {
-      if (plan.shardGrant?.nextVault) {
+      progressResult = recordOrbitStageClear(stageId, draft);
+      if (plan?.shouldGrant && plan.shardGrant?.nextVault) {
         draft.expeditionVault = plan.shardGrant.nextVault;
       }
-      if (plan.growth && companionGrowthController?.writeIntoDraft) {
+      if (plan?.shouldGrant && plan.growth && companionGrowthController?.writeIntoDraft) {
         companionGrowthController.writeIntoDraft(draft, plan.growth);
       }
     });
     saveCurrentState?.();
+    return progressResult;
   }
 
   function startLoop() {
@@ -733,7 +768,10 @@ export function createOrbitBattleController({
 
     if (!session) return;
 
-    if (session.goal === "collect_then_resonate") {
+    if (
+      session.memoryMotes?.length > 0 ||
+      session.resonanceZone
+    ) {
       drawCampSliceField(session, cssW, cssH);
     }
 
@@ -810,8 +848,15 @@ export function createOrbitBattleController({
       ctx.fillRect(0, 0, cssW, cssH);
     }
 
-    if (session.goal === "collect_then_resonate") {
-      drawCampSliceProgress(session);
+    if (Array.isArray(session.objectives) && session.objectives.length > 0) {
+      drawObjectiveProgress(session);
+      drawMeter(
+        12,
+        48,
+        session.player.stability,
+        "化身",
+        "rgba(160,220,255,0.95)"
+      );
     } else {
       drawMeter(
         12,
@@ -821,17 +866,18 @@ export function createOrbitBattleController({
         "rgba(160,220,255,0.95)"
       );
     }
-    if (session.goal === "survive") {
-      const remain = Math.max(0, (session.surviveSeconds || 0) - session.elapsed);
+    const currentObjective = session.objectives?.[session.objectiveIndex] || null;
+    if (currentObjective?.type === "survive") {
+      const remain = Math.max(
+        0,
+        (currentObjective.seconds || 0) - session.objectiveElapsed
+      );
       ctx.fillStyle = "rgba(230,240,255,0.85)";
       ctx.font = "11px sans-serif";
       ctx.textAlign = "left";
-      ctx.fillText(`撐住 ${remain.toFixed(1)}s`, 12, 52);
-    } else if (
-      session.goal !== "collect_then_resonate" &&
-      session.dummyEnabled
-    ) {
-      drawMeter(12, 32, session.dummy.stability, "雜訊", "rgba(255,140,120,0.95)");
+      ctx.fillText(`撐住 ${remain.toFixed(1)}s`, 12, 88);
+    } else if (session.dummyEnabled) {
+      drawMeter(12, 68, session.dummy.stability, "雜訊", "rgba(255,140,120,0.95)");
     }
 
     if (session.sandbox) {
@@ -967,25 +1013,40 @@ export function createOrbitBattleController({
     ctx.fillStyle = "rgba(235, 225, 205, 0.82)";
     ctx.font = "10px sans-serif";
     ctx.textAlign = "center";
-    ctx.fillText("營火", fire.sx, fire.sy + radius + 14);
+    ctx.fillText("共鳴圈", fire.sx, fire.sy + radius + 14);
   }
 
-  function drawCampSliceProgress(activeSession) {
+  function drawObjectiveProgress(activeSession) {
     const total = activeSession.memoryMotes.length;
     const collected = activeSession.nextMemoryMoteIndex;
+    const objectives = activeSession.objectives || [];
+    const current = objectives[activeSession.objectiveIndex] || null;
     ctx.fillStyle = "rgba(225, 242, 255, 0.92)";
     ctx.font = "bold 11px sans-serif";
     ctx.textAlign = "left";
-    ctx.fillText(`記憶 ${collected}/${total}`, 12, 18);
+    ctx.fillText(
+      `目標 ${Math.min(objectives.length, activeSession.objectiveIndex + 1)}/${objectives.length}`,
+      12,
+      18
+    );
     ctx.font = "10px sans-serif";
-    ctx.fillStyle = activeSession.resonanceReady
-      ? "rgba(255, 225, 160, 0.92)"
-      : "rgba(180, 210, 230, 0.8)";
-    const holdSeconds = activeSession.resonanceZone?.holdSeconds || 0.4;
-    const campText = activeSession.resonanceReady
-      ? `營火停留 ${Math.min(holdSeconds, activeSession.resonanceHold).toFixed(1)}/${holdSeconds.toFixed(1)}s`
-      : `下一點 ${Math.min(total, collected + 1)}`;
-    ctx.fillText(campText, 12, 34);
+    ctx.fillStyle = "rgba(180, 210, 230, 0.86)";
+    let progressText = activeSession.goalLabel;
+    if (current?.type === "collect_motes") {
+      progressText = `微光 ${collected}/${total}`;
+    } else if (current?.type === "survive") {
+      progressText = `守圈 ${Math.min(current.seconds || 0, activeSession.objectiveElapsed).toFixed(1)}/${Number(current.seconds || 0).toFixed(1)}s`;
+    } else if (current?.type === "clear_noise") {
+      progressText = `雜訊穩定度 ${Math.max(0, Math.round(activeSession.dummy.stability))}`;
+    } else if (current?.type === "reach_anchor") {
+      progressText = Number.isFinite(current.maxSpeed)
+        ? `錨點限速 ${current.maxSpeed.toFixed(2)}`
+        : "抵達錨點";
+    } else if (current?.type === "resonate_zone") {
+      const holdSeconds = activeSession.resonanceZone?.holdSeconds || 0.4;
+      progressText = `共鳴 ${Math.min(holdSeconds, activeSession.resonanceHold).toFixed(1)}/${holdSeconds.toFixed(1)}s`;
+    }
+    ctx.fillText(progressText, 12, 34);
     const stance = activeSession.launchStances?.find(
       (candidate) => candidate.id === activeSession.launchStanceId
     );
@@ -995,7 +1056,9 @@ export function createOrbitBattleController({
       : activeSession.phase === "aiming"
         ? "脈衝 待發射"
         : "脈衝 1/1";
-    ctx.fillText(`姿態 ${stance?.label || "直立"}・${pulseText}`, 12, 50);
+    if (activeSession.prototypeSlice) {
+      ctx.fillText(`姿態 ${stance?.label || "直立"}・${pulseText}`, 12, 50);
+    }
   }
 
   function drawResonancePulse(activeSession, cssW, cssH) {

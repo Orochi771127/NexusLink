@@ -25,6 +25,23 @@ import { companionLineForOutcome, mapOrbitResultToOutcome } from "./orbitOutcome
 
 const MAX_SPIN_SECONDS = 45; // R6：場次更短促，避免長時間漂移感
 
+function deriveObjectives(stage, goal) {
+  if (Array.isArray(stage?.objectives) && stage.objectives.length > 0) {
+    return stage.objectives.map((entry) => ({ ...entry }));
+  }
+  if (goal === "collect_then_resonate") {
+    return [
+      { type: "collect_motes", ordered: true },
+      { type: "resonate_zone" }
+    ];
+  }
+  if (goal === "survive") {
+    return [{ type: "survive", seconds: stage?.surviveSeconds || 0 }];
+  }
+  if (goal === "reach_anchor") return [{ type: "reach_anchor" }];
+  return [{ type: "clear_noise" }];
+}
+
 /**
  * @param {{
  *  stats: { impact: number, spin: number, guard: number, burst: number, overheat: number },
@@ -56,6 +73,10 @@ export function createOrbitSession(opts = {}) {
   const arenaRadius = stage?.arenaRadius ?? 1;
   const pillars = Array.isArray(stage?.pillars) ? stage.pillars : [];
   const goal = stage?.goal || "clear";
+  const objectives = deriveObjectives(stage, goal);
+  const usesObjectiveSequence =
+    (Array.isArray(stage?.objectives) && stage.objectives.length > 0) ||
+    goal === "collect_then_resonate";
   const surviveSeconds = stage?.surviveSeconds || 0;
   const anchor = stage?.anchor || null;
   const playerStart = stage?.playerStart || { x: 0, y: 0.55 };
@@ -109,6 +130,12 @@ export function createOrbitSession(opts = {}) {
     pathLabel,
     dummyName,
     goal,
+    objectives,
+    usesObjectiveSequence,
+    objectiveIndex: 0,
+    objectiveElapsed: 0,
+    anchorHold: 0,
+    maxSeconds: stage?.maxSeconds || MAX_SPIN_SECONDS,
     surviveSeconds,
     anchor,
     arenaRadius,
@@ -135,6 +162,7 @@ export function createOrbitSession(opts = {}) {
     memoryMotes,
     nextMemoryMoteIndex: 0,
     softWell: stage?.softWell || null,
+    driftField: stage?.driftField || null,
     resonanceZone: stage?.resonanceZone || null,
     resonanceHold: 0,
     resonanceReady: false,
@@ -402,7 +430,8 @@ function resolveSession(session, reason) {
     reason === "noise_cleared" ||
     reason === "anchor_reached" ||
     reason === "survived" ||
-    reason === "camp_resonated";
+    reason === "camp_resonated" ||
+    reason === "stage_completed";
   return {
     ...session,
     phase: "resolved",
@@ -415,6 +444,16 @@ function resolveSession(session, reason) {
 }
 
 function checkStageWin(session) {
+  if (
+    session.usesObjectiveSequence &&
+    Array.isArray(session.objectives) &&
+    session.objectives.length > 0
+  ) {
+    if (session.objectiveIndex < session.objectives.length) return null;
+    return session.goal === "collect_then_resonate"
+      ? "camp_resonated"
+      : "stage_completed";
+  }
   if (session.goal === "collect_then_resonate") {
     const holdSeconds = session.resonanceZone?.holdSeconds || 0.4;
     if (
@@ -449,6 +488,20 @@ function checkStageWin(session) {
   return null;
 }
 
+function applyDriftField(body, field, elapsed, dt) {
+  if (!body || body.out || !field) return body;
+  const reverseEvery = Math.max(0, Number(field.reverseEverySeconds) || 0);
+  const direction = reverseEvery > 0 && Math.floor(elapsed / reverseEvery) % 2 === 1
+    ? -1
+    : 1;
+  const strength = Math.max(0, Number(field.strength) || 0);
+  return {
+    ...body,
+    vx: body.vx + (Number(field.x) || 0) * strength * direction * dt,
+    vy: body.vy + (Number(field.y) || 0) * strength * direction * dt
+  };
+}
+
 function applySoftWell(body, well, dt) {
   if (!body || body.out || !well) return body;
   const dx = (well.x || 0) - body.x;
@@ -469,39 +522,54 @@ function applySoftWell(body, well, dt) {
   };
 }
 
-function stepCampSliceObjectives(session, dt) {
-  if (session.goal !== "collect_then_resonate") return session;
-
+function stepCollectMotes(session, objective, dt) {
   let player = session.player;
   let memoryMotes = session.memoryMotes;
   let nextMemoryMoteIndex = session.nextMemoryMoteIndex;
   let lastMoteFlash = Math.max(0, session.lastMoteFlash - dt);
-  const lastPulseFlash = Math.max(0, session.lastPulseFlash - dt);
-  const currentMote = memoryMotes[nextMemoryMoteIndex];
-
-  if (currentMote && !player.out) {
+  const candidates = objective.ordered === false
+    ? memoryMotes
+        .map((mote, index) => ({ mote, index }))
+        .filter(({ mote }) => !mote.collected)
+    : memoryMotes[nextMemoryMoteIndex]
+      ? [{ mote: memoryMotes[nextMemoryMoteIndex], index: nextMemoryMoteIndex }]
+      : [];
+  const hit = candidates.find(({ mote }) => {
+    if (player.out) return false;
     const distance = Math.hypot(
-      player.x - currentMote.x,
-      player.y - currentMote.y
+      player.x - mote.x,
+      player.y - mote.y
     );
-    if (distance <= currentMote.r + player.radius * 0.8) {
+    return distance <= mote.r + player.radius * 0.8;
+  });
+  if (hit) {
       memoryMotes = memoryMotes.map((mote, index) =>
-        index === nextMemoryMoteIndex
+        index === hit.index
           ? { ...mote, collected: true }
           : mote
       );
-      nextMemoryMoteIndex += 1;
+      nextMemoryMoteIndex = memoryMotes.filter((mote) => mote.collected).length;
       lastMoteFlash = 0.24;
-    }
   }
-
   const resonanceReady =
     memoryMotes.length > 0 &&
     nextMemoryMoteIndex >= memoryMotes.length;
+  return {
+    ...session,
+    player,
+    memoryMotes,
+    nextMemoryMoteIndex,
+    resonanceReady,
+    lastMoteFlash
+  };
+}
+
+function stepResonanceZone(session, dt) {
+  let player = session.player;
   let resonanceHold = session.resonanceHold;
   const zone = session.resonanceZone;
 
-  if (resonanceReady && zone && !player.out) {
+  if (zone && !player.out) {
     const zoneDistance = Math.hypot(
       player.x - zone.x,
       player.y - zone.y
@@ -526,22 +594,88 @@ function stepCampSliceObjectives(session, dt) {
   } else {
     resonanceHold = 0;
   }
-
   return {
     ...session,
     player,
-    memoryMotes,
-    nextMemoryMoteIndex,
-    resonanceReady,
-    resonanceHold,
-    lastMoteFlash,
-    lastPulseFlash
+    resonanceHold
+  };
+}
+
+function stepObjectiveSequence(session, dt) {
+  if (
+    !session.usesObjectiveSequence ||
+    !Array.isArray(session.objectives) ||
+    session.objectives.length === 0
+  ) {
+    return session;
+  }
+  const objective = session.objectives[session.objectiveIndex];
+  if (!objective) return session;
+
+  let next = {
+    ...session,
+    objectiveElapsed: session.objectiveElapsed + dt,
+    lastMoteFlash: Math.max(0, session.lastMoteFlash - dt),
+    lastPulseFlash: Math.max(0, session.lastPulseFlash - dt)
+  };
+  let completed = false;
+
+  if (objective.type === "collect_motes") {
+    next = stepCollectMotes(next, objective, dt);
+    completed =
+      next.memoryMotes.length > 0 &&
+      next.memoryMotes.every((mote) => mote.collected);
+  } else if (objective.type === "survive") {
+    completed =
+      next.objectiveElapsed >= Math.max(0.1, Number(objective.seconds) || 0) &&
+      !next.player.out &&
+      next.player.stability > 0;
+  } else if (objective.type === "clear_noise") {
+    completed = next.dummy.out || next.dummy.stability <= 0;
+  } else if (objective.type === "reach_anchor" && next.anchor) {
+    const distance = Math.hypot(
+      next.player.x - next.anchor.x,
+      next.player.y - next.anchor.y
+    );
+    const speed = Math.hypot(next.player.vx, next.player.vy);
+    const inside = distance <= next.anchor.r + next.player.radius * 0.5;
+    const slowEnough =
+      !Number.isFinite(objective.maxSpeed) || speed <= objective.maxSpeed;
+    const holdSeconds = Math.max(0, Number(objective.holdSeconds) || 0);
+    const anchorHold = inside && slowEnough ? next.anchorHold + dt : 0;
+    next = { ...next, anchorHold };
+    completed = inside && slowEnough && anchorHold >= holdSeconds;
+  } else if (objective.type === "resonate_zone") {
+    next = stepResonanceZone(next, dt);
+    completed =
+      next.resonanceHold >= Math.max(
+        0.01,
+        next.resonanceZone?.holdSeconds || 0.4
+      );
+  }
+
+  if (!completed) return next;
+  return {
+    ...next,
+    objectiveIndex: next.objectiveIndex + 1,
+    objectiveElapsed: 0,
+    anchorHold: 0,
+    resonanceHold: 0,
+    resonanceReady: next.objectiveIndex + 1 >= next.objectives.length
+      ? next.resonanceReady
+      : next.objectives[next.objectiveIndex + 1]?.type === "resonate_zone"
   };
 }
 
 function resolveSessionIfFinished(session) {
   const winReason = checkStageWin(session);
   if (winReason) {
+    if (winReason === "stage_completed") {
+      return resolveSession(
+        { ...session, hits: Math.max(session.hits, 2) },
+        winReason
+      );
+    }
     if (winReason === "survived" || winReason === "anchor_reached") {
       return resolveSession(
         { ...session, hits: Math.max(session.hits, 2) },
@@ -558,12 +692,8 @@ function resolveSessionIfFinished(session) {
     return resolveSession(session, "player_burst");
   }
   if (
-    session.goal === "survive" &&
-    session.elapsed >= (session.surviveSeconds || MAX_SPIN_SECONDS)
+    session.elapsed >= session.maxSeconds
   ) {
-    return resolveSession(session, "timeout");
-  }
-  if (session.goal !== "survive" && session.elapsed >= MAX_SPIN_SECONDS) {
     return resolveSession(session, "timeout");
   }
   return session;
@@ -610,9 +740,14 @@ export function stepOrbitSession(session, dt) {
       };
     }
 
-    const playerWithField = applySoftWell(
-      next.player,
-      next.softWell,
+    const playerWithField = applyDriftField(
+      applySoftWell(
+        next.player,
+        next.softWell,
+        PHYSICS_FIXED_DT
+      ),
+      next.driftField,
+      next.elapsed,
       PHYSICS_FIXED_DT
     );
     next = {
@@ -669,7 +804,7 @@ export function stepOrbitSession(session, dt) {
       };
     }
 
-    next = stepCampSliceObjectives(next, PHYSICS_FIXED_DT);
+    next = stepObjectiveSequence(next, PHYSICS_FIXED_DT);
     next = resolveSessionIfFinished(next);
     if (next.phase === "resolved") break;
   }

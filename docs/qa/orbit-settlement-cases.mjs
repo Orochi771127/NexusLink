@@ -120,7 +120,7 @@ assert.equal(repeat.growth, null);
 ok("first clear grants mote+evidence; repeat clear does not farm");
 
 // Survive stage prefers steadfastness tendency
-const survive = getOrbitStageById("moonlake-3");
+const survive = getOrbitStageById("moonlake-4");
 const survivePlan = planOrbitStageSettlement({
   stage: survive,
   alreadyCleared: false,

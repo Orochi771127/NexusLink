@@ -1,133 +1,230 @@
 /**
- * 心核迴旋戰路徑進度（R2：session-only，不寫 localStorage）
+ * Orbit path progress.
  *
- * 設計理念：
- * - 重整頁面會重置——刻意避免未核准的 GROUNDWORK 存檔欄位。
- * - 失敗／撤退不倒退已通關節點；通關才解鎖下一關／下一區。
+ * Product runtime reads and writes activityProgress.orbit.clearedStageIds.
+ * A tiny in-memory fallback remains only for isolated QA calls that do not
+ * construct a store state.
  */
 
 import {
+  getMoonlakeOrbitZone,
   getOrbitStageById,
+  listStagesForMoonlakeZone,
   listStagesForRegion,
+  MOONLAKE_ORBIT_ZONES,
   ORBIT_PATH_ORDER
 } from "../data/orbit/stages/index.js";
 
-function createDefaultProgress() {
+function createLegacyProgress() {
   return {
-    /** @type {string} */
     activeRegionId: "moonlake",
-    /** @type {Set<string>} */
-    unlockedRegionIds: new Set(["moonlake"]),
-    /** @type {Set<string>} */
     clearedStageIds: new Set(),
-    /** 最近一段短敘事（給 UI） */
     lastNarrative: null,
-    /** 若剛解鎖新區域，記在這裡給地圖提示 */
-    justUnlockedRegionId: null
+    justUnlockedRegionId: null,
+    justUnlockedZoneId: null
   };
 }
 
-let progress = createDefaultProgress();
+let legacyProgress = createLegacyProgress();
+
+function isStateLike(value) {
+  return Boolean(value && typeof value === "object" && (
+    value.activityProgress ||
+    value.explorationProgress ||
+    value.chapterProgress
+  ));
+}
+
+function clearedStageSet(state) {
+  if (isStateLike(state)) {
+    return new Set(state.activityProgress?.orbit?.clearedStageIds || []);
+  }
+  return legacyProgress.clearedStageIds;
+}
+
+function hasSafeMoonlakeArrival(state) {
+  if (!isStateLike(state)) return true;
+  return Number(state.explorationProgress?.visitCounts?.moonlake_camp || 0) > 0;
+}
+
+function ensureOrbitDraft(draft) {
+  if (!draft.activityProgress || typeof draft.activityProgress !== "object") {
+    draft.activityProgress = {};
+  }
+  draft.activityProgress.version = 1;
+  if (!draft.activityProgress.orbit || typeof draft.activityProgress.orbit !== "object") {
+    draft.activityProgress.orbit = {};
+  }
+  if (!Array.isArray(draft.activityProgress.orbit.clearedStageIds)) {
+    draft.activityProgress.orbit.clearedStageIds = [];
+  }
+  return draft.activityProgress.orbit.clearedStageIds;
+}
 
 export function resetOrbitPathProgressForTests() {
-  progress = createDefaultProgress();
+  legacyProgress = createLegacyProgress();
 }
 
-export function getOrbitPathProgressSnapshot() {
+export function isMoonlakeOrbitZoneUnlocked(zoneId, state = null) {
+  const zone = getMoonlakeOrbitZone(zoneId);
+  if (!zone || !hasSafeMoonlakeArrival(state)) return false;
+  const cleared = clearedStageSet(state);
+  return zone.prerequisiteFinalStageIds.every((stageId) => cleared.has(stageId));
+}
+
+export function getMoonlakeZoneProgress(zoneId, state = null) {
+  const stages = listStagesForMoonlakeZone(zoneId);
+  const cleared = clearedStageSet(state);
   return {
-    activeRegionId: progress.activeRegionId,
-    unlockedRegionIds: [...progress.unlockedRegionIds],
-    clearedStageIds: [...progress.clearedStageIds],
-    lastNarrative: progress.lastNarrative,
-    justUnlockedRegionId: progress.justUnlockedRegionId
+    zoneId,
+    unlocked: isMoonlakeOrbitZoneUnlocked(zoneId, state),
+    clearedCount: stages.filter((stage) => cleared.has(stage.id)).length,
+    totalCount: stages.length,
+    complete: stages.length > 0 && stages.every((stage) => cleared.has(stage.id))
   };
 }
 
-export function setActiveOrbitRegion(regionId) {
-  if (!progress.unlockedRegionIds.has(regionId)) return false;
-  progress.activeRegionId = regionId;
+export function getOrbitPathProgressSnapshot(state = null) {
+  const cleared = clearedStageSet(state);
+  const unlockedRegionIds = ORBIT_PATH_ORDER.filter((regionId) =>
+    isOrbitRegionUnlocked(regionId, state)
+  );
+  return {
+    activeRegionId: legacyProgress.activeRegionId,
+    unlockedRegionIds,
+    clearedStageIds: [...cleared],
+    lastNarrative: legacyProgress.lastNarrative,
+    justUnlockedRegionId: legacyProgress.justUnlockedRegionId,
+    justUnlockedZoneId: legacyProgress.justUnlockedZoneId
+  };
+}
+
+export function setActiveOrbitRegion(regionId, state = null) {
+  if (!isOrbitRegionUnlocked(regionId, state)) return false;
+  legacyProgress.activeRegionId = regionId;
   return true;
 }
 
-export function isOrbitRegionUnlocked(regionId) {
-  return progress.unlockedRegionIds.has(regionId);
+export function isOrbitRegionUnlocked(regionId, state = null) {
+  if (regionId === "moonlake") return hasSafeMoonlakeArrival(state);
+  if (regionId === "plains") return clearedStageSet(state).has("moonlake-25");
+  const index = ORBIT_PATH_ORDER.indexOf(regionId);
+  if (index <= 0) return false;
+  const previousRegionId = ORBIT_PATH_ORDER[index - 1];
+  const previousStages = listStagesForRegion(previousRegionId);
+  return previousStages.length > 0 && previousStages.every((stage) =>
+    clearedStageSet(state).has(stage.id)
+  );
 }
 
-export function isOrbitStageCleared(stageId) {
-  return progress.clearedStageIds.has(stageId);
+export function isOrbitStageCleared(stageId, state = null) {
+  return clearedStageSet(state).has(stageId);
 }
 
-/**
- * 第一關永遠可打；其後需前一關已通關。
- */
-export function isOrbitStageUnlocked(stageId) {
+export function isOrbitStageUnlocked(stageId, state = null) {
   const stage = getOrbitStageById(stageId);
   if (!stage) return false;
-  if (!progress.unlockedRegionIds.has(stage.regionId)) return false;
-  const stages = listStagesForRegion(stage.regionId);
-  if (!stages.length) return false;
-  if (stage.index <= 1) return true;
-  const prev = stages.find((s) => s.index === stage.index - 1);
-  return prev ? progress.clearedStageIds.has(prev.id) : false;
-}
+  const cleared = clearedStageSet(state);
 
-/**
- * 通關結算：標記 cleared、解鎖下一關／下一區。
- * 非勝利結局（撤退／過載）不呼叫此函式 → 進度不倒退也不前進。
- */
-export function recordOrbitStageClear(stageId) {
-  const stage = getOrbitStageById(stageId);
-  if (!stage) {
-    return { ok: false, unlockedNextStageId: null, unlockedRegionId: null };
+  if (stage.zoneId) {
+    if (!isMoonlakeOrbitZoneUnlocked(stage.zoneId, state)) return false;
+    const stages = listStagesForMoonlakeZone(stage.zoneId);
+    if (stage.zoneStageIndex <= 1) return true;
+    const previous = stages.find(
+      (candidate) => candidate.zoneStageIndex === stage.zoneStageIndex - 1
+    );
+    return previous ? cleared.has(previous.id) : false;
   }
 
-  progress.clearedStageIds.add(stageId);
-  progress.lastNarrative = stage.clearNarrative || null;
-  progress.justUnlockedRegionId = null;
-
+  if (!isOrbitRegionUnlocked(stage.regionId, state)) return false;
   const stages = listStagesForRegion(stage.regionId);
-  const nextStage = stages.find((s) => s.index === stage.index + 1) || null;
-  let unlockedRegionId = null;
+  if (stage.index <= 1) return true;
+  const previous = stages.find((candidate) => candidate.index === stage.index - 1);
+  return previous ? cleared.has(previous.id) : false;
+}
 
-  if (stage.unlocksNextRegion) {
-    progress.unlockedRegionIds.add(stage.unlocksNextRegion);
-    progress.justUnlockedRegionId = stage.unlocksNextRegion;
-    unlockedRegionId = stage.unlocksNextRegion;
-  } else if (!nextStage) {
-    // 該區最後一關但未標 unlocksNextRegion 時，依全域順序嘗試解鎖下一區
-    const idx = ORBIT_PATH_ORDER.indexOf(stage.regionId);
-    const nextRegion = idx >= 0 ? ORBIT_PATH_ORDER[idx + 1] : null;
-    if (nextRegion && listStagesForRegion(nextRegion).length) {
-      progress.unlockedRegionIds.add(nextRegion);
-      progress.justUnlockedRegionId = nextRegion;
-      unlockedRegionId = nextRegion;
+export function recordOrbitStageClear(stageId, stateOrDraft = null) {
+  const stage = getOrbitStageById(stageId);
+  if (!stage) {
+    return {
+      ok: false,
+      firstClear: false,
+      unlockedNextStageId: null,
+      unlockedRegionId: null,
+      unlockedZoneId: null
+    };
+  }
+
+  const state = isStateLike(stateOrDraft) ? stateOrDraft : null;
+  const alreadyCleared = isOrbitStageCleared(stageId, state);
+  const lockedZonesBefore = new Set(
+    MOONLAKE_ORBIT_ZONES
+      .filter((zone) => !isMoonlakeOrbitZoneUnlocked(zone.id, state))
+      .map((zone) => zone.id)
+  );
+
+  if (state) {
+    const ids = ensureOrbitDraft(state);
+    if (!ids.includes(stageId)) ids.push(stageId);
+  } else {
+    legacyProgress.clearedStageIds.add(stageId);
+  }
+
+  legacyProgress.lastNarrative = stage.clearNarrative || null;
+  legacyProgress.justUnlockedRegionId = null;
+  legacyProgress.justUnlockedZoneId = null;
+
+  const zoneStages = stage.zoneId
+    ? listStagesForMoonlakeZone(stage.zoneId)
+    : listStagesForRegion(stage.regionId);
+  const stageIndex = stage.zoneId ? stage.zoneStageIndex : stage.index;
+  const nextStage = zoneStages.find((candidate) =>
+    (stage.zoneId ? candidate.zoneStageIndex : candidate.index) === stageIndex + 1
+  ) || null;
+
+  let unlockedZoneId = null;
+  for (const zone of MOONLAKE_ORBIT_ZONES) {
+    if (
+      lockedZonesBefore.has(zone.id) &&
+      isMoonlakeOrbitZoneUnlocked(zone.id, state)
+    ) {
+      unlockedZoneId = zone.id;
+      break;
     }
   }
 
+  let unlockedRegionId = null;
+  if (stage.unlocksNextRegion && isOrbitRegionUnlocked(stage.unlocksNextRegion, state)) {
+    unlockedRegionId = stage.unlocksNextRegion;
+  }
+  legacyProgress.justUnlockedZoneId = unlockedZoneId;
+  legacyProgress.justUnlockedRegionId = unlockedRegionId;
+
   return {
     ok: true,
+    firstClear: !alreadyCleared,
     unlockedNextStageId: nextStage?.id || null,
     unlockedRegionId,
-    narrative: progress.lastNarrative
+    unlockedZoneId,
+    narrative: stage.clearNarrative || null
   };
 }
 
 export function consumeJustUnlockedRegion() {
-  const id = progress.justUnlockedRegionId;
-  progress.justUnlockedRegionId = null;
+  const id = legacyProgress.justUnlockedRegionId;
+  legacyProgress.justUnlockedRegionId = null;
   return id;
 }
 
-/**
- * 給地圖 UI 的節點列。
- */
-export function listOrbitMapNodes(regionId = progress.activeRegionId) {
+export function listOrbitMapNodes(regionId = legacyProgress.activeRegionId, state = null) {
   return listStagesForRegion(regionId).map((stage) => ({
     id: stage.id,
     index: stage.index,
+    zoneStageIndex: stage.zoneStageIndex || stage.index,
+    zoneId: stage.zoneId || null,
     title: stage.title,
     goalLabel: stage.goalLabel,
-    unlocked: isOrbitStageUnlocked(stage.id),
-    cleared: isOrbitStageCleared(stage.id)
+    unlocked: isOrbitStageUnlocked(stage.id, state),
+    cleared: isOrbitStageCleared(stage.id, state)
   }));
 }
