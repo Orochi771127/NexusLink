@@ -6452,3 +6452,98 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Branch: `codex/moonlake-ro-depth-direction-r3-2`; verified content commit:
   `002d83e3d9d945a76d60b0e6cef8362e2c57b3cf`; no unrelated assets were changed
   or deleted.
+
+### 2026-07-29 - Codex - Moonlake Navigation Collision And Scale R3.3 - IN PROGRESS
+
+- Status: `IN PROGRESS`; Owner approved `TP-MOONLAKE-NAV-COLLISION-SCALE-R3.3`.
+- Lane: `Game Engineering And Architecture`.
+- Scope: calibrate the existing fixed-camera Three.js environment plus Pixi
+  companion hybrid for authored no-go geometry, grounded route movement,
+  bridge clearance, fishing placement and live companion touch-target tracking.
+- Red-line / isolation: no save, relationship, reward, growth, RaphaelCore,
+  free-camera, physics-engine, dependency, backend or build-step change; no
+  commit, push or publication is authorized by this implementation approval.
+- Required reading completed: `AGENTS.md`, `CLAUDE.md`, `ACCEPTANCE.md`,
+  `docs/design/MOONLAKE_LIVE_3D_HYBRID_CONTRACT_V1.md`,
+  `docs/architecture/HABITAT_SCENE_PROFILE_SPEC.md`, active Moonlake profile,
+  current art production index, and the latest R3.2 engineering/art ledger
+  entries.
+- Branch: `codex/moonlake-nav-collision-scale-r3-3`, based on exact
+  `origin/main` commit `500528079508875d2233d416e3c84fe00fd54d9a`.
+
+### 2026-07-29 - Codex - Moonlake Navigation Collision And Scale R3.3 - IN PROGRESS
+
+- Status: `IN PROGRESS`; Owner approved mobile visual calibration across all
+  sixteen runtime companions.
+- Lane: `Game Art, UI, And Visual Production`.
+- Scope: species-aware display scale, bottom-center foot anchor, contact shadow,
+  prop/shoreline depth readability, bridge/fishing silhouette clarity and
+  companion-following first-touch affordance at `390x844`, with day/night proof.
+- Asset boundary: preserve all approved and fallback art; no asset deletion,
+  regeneration, redesign or repository slimming in this package.
+- Branch: `codex/moonlake-nav-collision-scale-r3-3`.
+
+### 2026-07-29 - Codex - Moonlake Navigation Collision And Scale R3.3 - VERIFIED / PUBLICATION AUTHORIZED
+
+- Status: `VERIFIED`; implementation and local regression are complete, and
+  Owner subsequently authorized commit, push, PR and protected-main merge.
+- Lane: `Game Engineering And Architecture`.
+- Completed:
+  - added one canonical projected-foot collision service with eight authored
+    prop footprints and species-aware clearance radii for all sixteen runtime
+    companions;
+  - replaced the two lamp-crossing near-ground routes and the left-tent
+    waypoint with collision-safe coordinates, while preserving the fixed
+    camera and existing waypoint graph;
+  - route selection now samples the full projected segment and rejects unsafe
+    candidates instead of snapping back through an occupied origin;
+  - every projected movement and interaction-locked animation now re-aligns
+    the current opaque foot after scale/animation changes, removing the
+    container-origin drift that previously looked like sliding;
+  - live diagnostics now expose navigation safety, actual animated visual
+    bounds and the first-touch cue target.
+- Validation:
+  - R3.3 deterministic safety suite: PASS for `16` companion profiles, `8`
+    footprints, `144` reachable waypoint states and `256` directed-edge
+    checks; the retired lamp-crossing route reproduces as unsafe;
+  - R3.3 Playwright matrix: PASS at `390x844` for `16` companions x `2`
+    phases x `9` waypoints = `288/288`, zero page/console errors;
+  - bridge clearance: `32/32`; fishing orientation: `80/80`, maximum rail
+    offset drift `0 px`, maximum opaque-foot datum drift `2.50 px`;
+  - R3 living-habitat and R3.2 depth/direction regressions: PASS; every one of
+    the sixteen companions selected `right_walk` with `mirrorX:false`;
+  - complete local `web-release-gate`: required automated checks `28/28`;
+    `node --check` and `git diff --check`: PASS.
+- Red-line / scope proof: no asset, save, relationship, reward, growth,
+  RaphaelCore, free-camera, physics-engine, dependency, backend or build-step
+  change.
+- Branch: `codex/moonlake-nav-collision-scale-r3-3`; base remains
+  `500528079508875d2233d416e3c84fe00fd54d9a`; publication commit is the
+  current commit carrying this ledger entry.
+
+### 2026-07-29 - Codex - Moonlake Navigation Collision And Scale R3.3 - VERIFIED / PUBLICATION AUTHORIZED
+
+- Status: `VERIFIED`; mobile 2.5D scale, grounding and overlap behavior passed
+  visual review, and Owner subsequently authorized protected-main publication.
+- Lane: `Game Art, UI, And Visual Production`.
+- Visual calibration:
+  - added per-species habitat, bridge, fishing and collision calibration for
+    the full sixteen-character runtime roster without regenerating art;
+  - widened the live bridge presentation envelope and increased fishing
+    readability while retaining rail occlusion and bridge-foot alignment;
+  - the first-touch affordance now follows the animated visual bounds rather
+    than the container shadow/hit area and remains capped for mobile;
+  - safe routes keep feet clear of lamp, tent, rock and crystal bases; when a
+    character is actually behind a tent/rail/foreground prop, the authored
+    depth plate still covers the character.
+- Visual proof:
+  - day screenshot confirms Greyshade grounded between the lamps with the cue
+    centered on the current visual;
+  - night screenshot confirms the persistent fishing wait pose and line
+    extending beyond the bridge rail toward water;
+  - representative and matrix screenshots are retained under ignored
+    `output/playwright/moonlake-nav-collision-scale-r3-3/`.
+- Asset boundary: no approved, fallback or legacy asset was changed or
+  deleted; repository slimming remains a separate future package.
+- Branch: `codex/moonlake-nav-collision-scale-r3-3`; publication commit is the
+  current commit carrying this ledger entry.

@@ -1,15 +1,62 @@
 const assert = require("node:assert/strict");
 const fs = require("node:fs");
+const http = require("node:http");
 const path = require("node:path");
 const { chromium } = require("playwright");
 const { PNG } = require("pngjs");
 
-const BASE_URL = process.env.MOONLAKE_QA_URL || "http://127.0.0.1:4175/";
+const ROOT = path.resolve(".");
+const EXTERNAL_BASE_URL = process.env.MOONLAKE_QA_URL || null;
 const OUTPUT_DIR = path.resolve("output/playwright");
+const CONTENT_TYPES = {
+  ".css": "text/css; charset=utf-8",
+  ".glb": "model/gltf-binary",
+  ".html": "text/html; charset=utf-8",
+  ".jpg": "image/jpeg",
+  ".js": "text/javascript; charset=utf-8",
+  ".json": "application/json; charset=utf-8",
+  ".mjs": "text/javascript; charset=utf-8",
+  ".png": "image/png",
+  ".svg": "image/svg+xml"
+};
 let browser;
+let staticServer;
+
+async function startStaticServer() {
+  const server = http.createServer((request, response) => {
+    const pathname = decodeURIComponent(new URL(request.url, "http://127.0.0.1").pathname);
+    const relativePath = pathname === "/" ? "index.html" : pathname.replace(/^\/+/, "");
+    const filePath = path.resolve(ROOT, relativePath);
+    if (!filePath.startsWith(`${ROOT}${path.sep}`) || !fs.existsSync(filePath)) {
+      response.writeHead(404).end("Not found");
+      return;
+    }
+    const stat = fs.statSync(filePath);
+    const resolved = stat.isDirectory() ? path.join(filePath, "index.html") : filePath;
+    if (!fs.existsSync(resolved)) {
+      response.writeHead(404).end("Not found");
+      return;
+    }
+    response.writeHead(200, {
+      "Content-Type": CONTENT_TYPES[path.extname(resolved).toLowerCase()]
+        || "application/octet-stream",
+      "Cache-Control": "no-store"
+    });
+    fs.createReadStream(resolved).pipe(response);
+  });
+  await new Promise((resolve, reject) => {
+    server.once("error", reject);
+    server.listen(0, "127.0.0.1", resolve);
+  });
+  return server;
+}
 
 (async () => {
   fs.mkdirSync(OUTPUT_DIR, { recursive: true });
+  staticServer = EXTERNAL_BASE_URL ? null : await startStaticServer();
+  const address = staticServer?.address();
+  const baseUrl = EXTERNAL_BASE_URL
+    || `http://127.0.0.1:${address.port}/`;
   browser = await chromium.launch({
     headless: true,
     args: [
@@ -76,7 +123,7 @@ let browser;
     }));
   });
 
-  await page.goto(`${BASE_URL}?live3d=1&moonlakeBridgeQa=1&timePhase=day&weather=clear`, {
+  await page.goto(`${baseUrl}?live3d=1&moonlakeBridgeQa=1&timePhase=day&weather=clear`, {
     waitUntil: "commit",
     timeout: 60_000
   });
@@ -111,8 +158,7 @@ let browser;
   }
 
   const initial = await page.evaluate(() => {
-    const companion = window.__NEXUS_ACTIVE_COMPANION__;
-    const bounds = companion?.getBounds?.();
+    const bounds = window.__NEXUS_HABITAT.getCompanionVisualBounds();
     const affordanceBounds = document.querySelector(".touch-affordance")?.getBoundingClientRect?.();
     return {
       diagnostics: window.__NEXUS_HABITAT.getLive3dDiagnostics(),
@@ -201,7 +247,7 @@ let browser;
     roaming: window.__NEXUS_HABITAT.getRoamingSnapshot(),
     fx: window.__NEXUS_HABITAT.getFishingFxDiagnostics(),
     companionBounds: (() => {
-      const bounds = window.__NEXUS_ACTIVE_COMPANION__?.getBounds?.();
+      const bounds = window.__NEXUS_HABITAT.getCompanionVisualBounds();
       return bounds
         ? { x: bounds.x, y: bounds.y, width: bounds.width, height: bounds.height }
         : null;
@@ -280,9 +326,11 @@ let browser;
     renderer: initial.diagnostics.renderer
   }, null, 2));
   await browser.close();
+  await new Promise((resolve) => staticServer?.close(resolve) || resolve());
 })().catch(async (error) => {
   console.error(error);
   await browser?.close();
+  await new Promise((resolve) => staticServer?.close(resolve) || resolve());
   process.exitCode = 1;
 });
 

@@ -325,15 +325,15 @@ function snapshotPage() {
       assert.equal(snapshot.animatedFrameScaleX < 0, orientation.mirrorX);
       assert.ok(
         Math.abs(
-          snapshot.companionX
+          foot.globalX
           - projected.x
           - orientation.railOffsetX390
         ) <= 1.5,
-        `${companionId}/${orientation.id}: rail-side anchor offset drifted`
+        `${companionId}/${orientation.id}: opaque foot left the rail-side datum`
       );
       assert.ok(
-        Math.abs(snapshot.companionY - projected.y) <= 5,
-        `${companionId}/${orientation.id}: anchor left bridge datum`
+        Math.abs(foot.globalY - projected.y) <= 4,
+        `${companionId}/${orientation.id}: opaque foot left bridge datum`
       );
 
       if (
@@ -368,7 +368,7 @@ function snapshotPage() {
         );
       } else {
         assert.ok(
-          bounds.width <= 76,
+          bounds.width <= 80,
           `${companionId}/${orientation.id}: far fishing silhouette too wide`
         );
       }
@@ -403,13 +403,13 @@ function snapshotPage() {
     maximumBoundsWidth: Math.max(...cases.map((entry) => entry.snapshot.bounds.width)),
     maximumRailOffsetDrift: Math.max(...cases.map((entry) =>
       Math.abs(
-        entry.snapshot.companionX
+        entry.snapshot.foot.globalX
         - entry.snapshot.roaming.projected.x
         - entry.railOffsetX390
       )
     )),
     maximumAnchorDatumDrift: Math.max(...cases.map((entry) =>
-      Math.abs(entry.snapshot.companionY - entry.snapshot.roaming.projected.y)
+      Math.abs(entry.snapshot.foot.globalY - entry.snapshot.roaming.projected.y)
     )),
     cases
   };
@@ -430,7 +430,7 @@ function snapshotPage() {
       id,
       width: snapshot.bounds.width,
       railOffsetDrift: Math.abs(
-        snapshot.companionX
+        snapshot.foot.globalX
         - snapshot.roaming.projected.x
         - railOffsetX390
       )

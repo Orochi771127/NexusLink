@@ -93,6 +93,10 @@ import { createMoonlakeLive3dScene } from "./three/moonlakeLive3dScene.js";
 import { MOONLAKE_INTERACTION_HOTSPOTS } from "./three/moonlakeLive3dConfig.js";
 import { bindCompanionTap, createCreatureNode, positionCompanion } from "./pixi/companionRenderer.js";
 import { createMoonlakeDepthOcclusion } from "./pixi/moonlakeDepthOcclusion.js";
+import {
+  getMoonlakeCompanionPresentation,
+  getMoonlakeProjectedFootSafety
+} from "./pixi/moonlakeNavigationSafety.js";
 import { createHabitatTraceRenderer } from "./pixi/habitatTraceRenderer.js";
 import { createCrystalStateRenderer } from "./pixi/crystalStateRenderer.js";
 import { enableEditorMode, readSceneEditorFlag } from "./tools/sceneEditor.js";
@@ -679,6 +683,11 @@ async function bootstrap() {
       getExpeditionController,
       bgmController
     );
+    if (window.__NEXUS_HABITAT) {
+      window.__NEXUS_HABITAT.getTouchAffordanceDiagnostics = () => (
+        interactionHintController.getDiagnostics()
+      );
+    }
     renderActiveHabitatName(store.getState().activeHabitatId);
     markPerf("nexus:first-scene-ready");
 
@@ -997,10 +1006,13 @@ async function bootScene(
     });
   }
 
-  function getCompanionTouchTarget() {
+  function getCompanionVisualBounds() {
     let bounds = null;
     try {
-      bounds = companion?.getBounds?.() || null;
+      const visual = companion?.__animationController?.getAnimatedSprite?.()
+        || companion?.children?.find?.((child) => child instanceof PIXI.Sprite)
+        || companion;
+      bounds = visual?.getBounds?.() || companion?.getBounds?.() || null;
     } catch {
       return null;
     }
@@ -1018,10 +1030,17 @@ async function bootScene(
     ) {
       return null;
     }
+    return { x, y, width, height };
+  }
+
+  function getCompanionTouchTarget() {
+    const bounds = getCompanionVisualBounds();
+    if (!bounds) return null;
+    const { x, y, width, height } = bounds;
     return {
       x: x + width / 2,
       y: y + height / 2,
-      size: Math.min(128, Math.max(68, Math.max(width, height) * 1.18))
+      size: Math.min(118, Math.max(68, Math.max(width, height) * 1.12))
     };
   }
 
@@ -1280,9 +1299,24 @@ async function bootScene(
         };
       },
       getActiveCompanionNode: () => companion || null,
+      getCompanionVisualBounds,
       getLive3dDiagnostics: () => live3d.getDiagnostics(),
       getDepthOcclusionDiagnostics: () => moonlakeDepthOcclusion?.getDiagnostics() || null,
       getRoamingSnapshot: () => getCompanionRoamingSnapshot(companionMotionController),
+      getNavigationSafetyDiagnostics() {
+        const roaming = getCompanionRoamingSnapshot(companionMotionController);
+        const companionId = store.getState().activeCompanionId || null;
+        return {
+          companionId,
+          area: roaming?.area || null,
+          presentation: getMoonlakeCompanionPresentation(companionId),
+          footSafety: getMoonlakeProjectedFootSafety(roaming?.projected, {
+            companionId,
+            area: roaming?.area
+          }),
+          touchTarget: getCompanionTouchTarget()
+        };
+      },
       getFishingFxDiagnostics: () => fishingFx.getDiagnostics(),
       getInteractionHotspots: () => habitatInteractionLayer.getDiagnostics(),
       triggerHabitatInteractionForQa(interactionId) {

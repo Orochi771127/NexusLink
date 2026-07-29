@@ -10,6 +10,7 @@ import {
   stageMoonlakeRoamingSegment,
   updateMoonlakeRoaming
 } from "./moonlakeRoamingController.js";
+import { getMoonlakePresentationScale } from "./moonlakeNavigationSafety.js";
 import EventBus from "../utils/eventBus.js";
 
 const ENVIRONMENT_INTERACTION_EVENT = "ENVIRONMENT_INTERACTION";
@@ -172,7 +173,28 @@ export function updateCompanionMotion(companion, motion, timeSeconds, nowMs, moo
     motion.devForcedWaterSide = null;
     motion.devForcedRailOffsetX390 = 0;
     motion.fallbackMotionActive = false;
-    onStateChange(companion.__animationController?.getCurrentAnimationName?.() || motion.state);
+    const lockedAnimationName = companion.__animationController?.getCurrentAnimationName?.()
+      || motion.state;
+    const roamingResult = motion.moonlakeRoamingResult;
+    const projectedX = Number(roamingResult?.projected?.x);
+    const projectedY = Number(roamingResult?.projected?.y);
+    if (
+      roamingResult?.projectionReady
+      && Number.isFinite(projectedX)
+      && Number.isFinite(projectedY)
+    ) {
+      companion.scale.set(
+        motion.baseScale
+        * roamingResult.scaleMultiplier
+        * getMoonlakePresentationScale(
+          options.companionId,
+          roamingResult.area,
+          lockedAnimationName
+        )
+      );
+      placeCompanionAtOpaqueFoot(companion, projectedX, projectedY);
+    }
+    onStateChange(lockedAnimationName);
     return;
   }
 
@@ -212,6 +234,7 @@ export function updateCompanionMotion(companion, motion, timeSeconds, nowMs, moo
     mood,
     canRoam,
     reducedMotion: Boolean(options.reducedMotion),
+    companionId: options.companionId,
     canResolve: canResolveAnimation,
     projectWorldPoint: options.projectWorldPoint
   });
@@ -351,14 +374,31 @@ export function updateCompanionMotion(companion, motion, timeSeconds, nowMs, moo
       ? getAmbientWalkTransform(motion, nowMs)
       : getIdleMotionTransform(activeState, timeSeconds);
 
-  companion.x = motion.baseX + transform.offsetX;
-  companion.y = motion.baseY + transform.offsetY;
   companion.scale.set(motion.baseScale * transform.scaleMultiplier);
+  if (
+    Number.isFinite(transform.footTargetX)
+    && Number.isFinite(transform.footTargetY)
+  ) {
+    placeCompanionAtOpaqueFoot(
+      companion,
+      transform.footTargetX,
+      transform.footTargetY
+    );
+  } else {
+    companion.x = motion.baseX + transform.offsetX;
+    companion.y = motion.baseY + transform.offsetY;
+  }
   companion.alpha = motion.baseAlpha * transform.alphaMultiplier;
   companion.rotation = motion.baseRotation + transform.rotation;
   maybeEmitTemporaryEnvironmentInteraction(activeState, motion, companion, nowMs);
   motion.fallbackMotionActive = !spriteAnimationPlayed;
   onStateChange(activeState);
+}
+
+function placeCompanionAtOpaqueFoot(companion, targetX, targetY) {
+  const opaqueFoot = companion.__opaqueFoot || { x: 0, y: 0 };
+  companion.x = targetX - Number(opaqueFoot.x || 0) * companion.scale.x;
+  companion.y = targetY - Number(opaqueFoot.y || 0) * companion.scale.y;
 }
 
 export function getCompanionRoamingSnapshot(motion) {
@@ -673,7 +713,19 @@ function getMoonlakeRoamingTransform(roamingResult, activeState, timeSeconds, mo
       + railOffsetX390 * referenceScale390
       + idle.offsetX,
     offsetY: (Number.isFinite(projectedY) ? projectedY - motion.baseY : 0) + idle.offsetY,
-    scaleMultiplier: roamingResult.scaleMultiplier * idle.scaleMultiplier,
+    footTargetX: Number.isFinite(projectedX)
+      ? projectedX + railOffsetX390 * referenceScale390 + idle.offsetX
+      : null,
+    footTargetY: Number.isFinite(projectedY)
+      ? projectedY + idle.offsetY
+      : null,
+    scaleMultiplier: roamingResult.scaleMultiplier
+      * getMoonlakePresentationScale(
+        roamingResult.companionId,
+        roamingResult.area,
+        activeState
+      )
+      * idle.scaleMultiplier,
     alphaMultiplier: idle.alphaMultiplier,
     rotation: idle.rotation
   };
