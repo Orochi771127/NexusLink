@@ -109,6 +109,20 @@ const defaultState = {
     visitCounts: {}
   },
 
+  // 三種探索玩法的首次通關真相。解鎖全部由 ID 推導，沿用既有存檔 key。
+  activityProgress: {
+    version: 1,
+    orbit: {
+      clearedStageIds: []
+    },
+    standoff: {
+      clearedScenarioIds: []
+    },
+    expedition: {
+      clearedRouteIds: []
+    }
+  },
+
   // 心域遠征（Phase 2）：結晶碎片庫 + 遠征日誌。存於既有 STORAGE_KEY，無新 key。
   expeditionVault: {
     shards: {},

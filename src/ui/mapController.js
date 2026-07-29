@@ -1,6 +1,12 @@
 import { qs } from "../utils/dom.js";
 import { prefersReducedMotion } from "../utils/motionPreference.js";
 import { EXPLORATION_NODES } from "../data/explorationNodes.js";
+import {
+  getMoonlakeOrbitZone,
+  getOrbitStageById,
+  isMoonlakeOrbitZoneId,
+  listStagesForMoonlakeZone
+} from "../data/orbit/stages/index.js";
 import { resolveExplorationEvent } from "../engine/explorationEngine.js";
 import {
   createHabitatTraceFromMemory,
@@ -36,6 +42,12 @@ import {
 } from "../engine/resonanceThreadEngine.js";
 import { t, getLanguage } from "../i18n/i18n.js";
 import { formatAffinityDeltaChip } from "./bondPresentation.js";
+import {
+  getMoonlakeZoneProgress,
+  isMoonlakeOrbitZoneUnlocked,
+  isOrbitStageCleared,
+  isOrbitStageUnlocked
+} from "../orbit/orbitPathProgress.js";
 
 const NODE_LAYOUT = MOONLAKE_NODE_LAYOUT;
 
@@ -219,6 +231,7 @@ export function createMapController({
   expeditionController,
   companionGrowthController,
   statusText,
+  openOrbitStage = null,
   returnToHabitat = null
 }) {
   const mapCanvas = qs("#map-canvas");
@@ -234,6 +247,8 @@ export function createMapController({
   let inviteBanner = null;
   let firstRouteGuide = null;
   let phaseSearchPanel = null;
+  let orbitZoneSheet = null;
+  let activeOrbitZoneId = null;
   let activePhaseNode = null;
   let phaseSearchSession = { anchorRead: false, settled: false };
   let pendingMapCueTimer = null;
@@ -274,6 +289,7 @@ export function createMapController({
     }
     mapCanvas?.classList.remove("is-alert");
     closePhaseSearch({ restoreFocus: false });
+    closeOrbitZone({ restoreFocus: false });
     hideToast();
   }
 
@@ -285,6 +301,158 @@ export function createMapController({
     expeditionController?.renderMapLaunch?.(qs(".map-modal"));
     hideToast();
     panelManager.openPanel("map");
+  }
+
+  function ensureOrbitZoneSheet() {
+    if (orbitZoneSheet || !mapCanvas) return;
+    orbitZoneSheet = document.createElement("section");
+    orbitZoneSheet.className = "moonlake-orbit-zone-sheet";
+    orbitZoneSheet.hidden = true;
+    orbitZoneSheet.tabIndex = -1;
+    orbitZoneSheet.setAttribute("role", "region");
+    orbitZoneSheet.setAttribute("aria-labelledby", "moonlake-orbit-zone-title");
+    orbitZoneSheet.innerHTML = `
+      <header class="moonlake-orbit-zone-head">
+        <button type="button" class="moonlake-orbit-zone-back" data-orbit-zone-close aria-label="回到月湖路徑">‹</button>
+        <div>
+          <p class="moonlake-orbit-zone-kicker"></p>
+          <h3 id="moonlake-orbit-zone-title"></h3>
+          <span class="moonlake-orbit-zone-theme"></span>
+        </div>
+        <strong class="moonlake-orbit-zone-count"></strong>
+      </header>
+      <p class="moonlake-orbit-zone-copy"></p>
+      <ol class="moonlake-orbit-stage-list"></ol>
+      <p class="moonlake-orbit-zone-note">首次通關會留下微光與成長痕跡；重玩只保留練習與敘事，不重複發放永久獎勵。</p>
+    `;
+    orbitZoneSheet.addEventListener("click", (event) => {
+      if (event.target.closest("[data-orbit-zone-close]")) {
+        closeOrbitZone();
+        return;
+      }
+      const stageButton = event.target.closest("[data-moonlake-orbit-stage]");
+      if (!stageButton || stageButton.disabled) return;
+      const stageId = stageButton.dataset.moonlakeOrbitStage;
+      closeOrbitZone({ restoreFocus: false });
+      panelManager.closePanel({ reason: "moonlake-orbit-stage" });
+      openOrbitStage?.(stageId);
+    });
+    mapCanvas.appendChild(orbitZoneSheet);
+  }
+
+  function renderOrbitZoneSheet() {
+    if (!orbitZoneSheet || !activeOrbitZoneId) return;
+    const state = store.getState();
+    const zone = getMoonlakeOrbitZone(activeOrbitZoneId);
+    if (!zone) return;
+    const progress = getMoonlakeZoneProgress(zone.id, state);
+    const stages = listStagesForMoonlakeZone(zone.id);
+    orbitZoneSheet.querySelector(".moonlake-orbit-zone-kicker").textContent = zone.englishTitle;
+    orbitZoneSheet.querySelector("#moonlake-orbit-zone-title").textContent = zone.title;
+    orbitZoneSheet.querySelector(".moonlake-orbit-zone-theme").textContent = zone.theme;
+    orbitZoneSheet.querySelector(".moonlake-orbit-zone-count").textContent =
+      `${progress.clearedCount}/${progress.totalCount}`;
+    orbitZoneSheet.querySelector(".moonlake-orbit-zone-copy").textContent =
+      progress.unlocked
+        ? zone.copy
+        : `${zone.copy}　前一段月湖路徑還沒有完成。`;
+    orbitZoneSheet.querySelector(".moonlake-orbit-stage-list").innerHTML = stages
+      .map((stage) => {
+        const cleared = isOrbitStageCleared(stage.id, state);
+        const unlocked = isOrbitStageUnlocked(stage.id, state);
+        const stateLabel = cleared ? "已完成・可重玩" : unlocked ? "可以開始" : "尚未亮起";
+        return `
+          <li>
+            <button
+              type="button"
+              class="moonlake-orbit-stage${cleared ? " is-cleared" : ""}${unlocked ? "" : " is-locked"}"
+              data-moonlake-orbit-stage="${stage.id}"
+              ${unlocked ? "" : 'disabled aria-disabled="true"'}
+            >
+              <span class="moonlake-orbit-stage-index">${stage.zoneStageIndex}</span>
+              <span class="moonlake-orbit-stage-copy">
+                <strong>${stage.title}</strong>
+                <em>${stage.goalLabel}</em>
+              </span>
+              <small>${stateLabel}</small>
+            </button>
+          </li>
+        `;
+      })
+      .join("");
+  }
+
+  function openOrbitZone(zoneId) {
+    if (!isMoonlakeOrbitZoneId(zoneId)) return false;
+    const state = store.getState();
+    if (!hasExistingExplorationProgress(state)) {
+      showToast({
+        title: "先回到月湖營地",
+        text: "第一次探索仍從安全的月湖營地開始；完成這一拍後，星林與霧潮會亮起。",
+        tone: "calm"
+      });
+      return false;
+    }
+    ensureOrbitZoneSheet();
+    if (!orbitZoneSheet) return false;
+    hideToast();
+    closePhaseSearch({ restoreFocus: false });
+    activeOrbitZoneId = zoneId;
+    renderOrbitZoneSheet();
+    orbitZoneSheet.hidden = false;
+    mapCanvas.classList.add("is-orbit-zone-open");
+    requestAnimationFrame(() => orbitZoneSheet?.querySelector("[data-orbit-zone-close]")?.focus());
+    return true;
+  }
+
+  function openOrbitZoneByStage(stageId) {
+    const stage = getOrbitStageById(stageId);
+    if (!stage?.zoneId) {
+      open();
+      return false;
+    }
+    open();
+    return openOrbitZone(stage.zoneId);
+  }
+
+  function closeOrbitZone({ restoreFocus = true } = {}) {
+    const previousZoneId = activeOrbitZoneId;
+    if (orbitZoneSheet) orbitZoneSheet.hidden = true;
+    mapCanvas?.classList.remove("is-orbit-zone-open");
+    activeOrbitZoneId = null;
+    if (restoreFocus && previousZoneId) {
+      nodeButtons.get(previousZoneId)?.focus({ preventScroll: true });
+    }
+  }
+
+  function openExpeditionEntry() {
+    open();
+    requestAnimationFrame(() => {
+      qs(".map-expedition-launch:not(:disabled)")?.focus({ preventScroll: true });
+    });
+  }
+
+  function openStandoffEntry() {
+    const state = store.getState();
+    if (!canEnterUnguidedStandoff(state)) {
+      open();
+      const companion = getCompanionById(state.activeCompanionId);
+      const defer = buildStandoffDeferMessage(companion?.name || "夥伴");
+      showToast({ title: defer.title, text: defer.text, tone: "calm" });
+      return false;
+    }
+    const chapterNo = Number(state.chapterProgress?.current) || 1;
+    const node = EXPLORATION_NODES.find((candidate) =>
+      candidate.eventType === "danger" &&
+      getChapterForNode(candidate.id) === chapterNo &&
+      Array.isArray(candidate.enemyPool) &&
+      candidate.enemyPool.length > 0
+    ) || EXPLORATION_NODES.find((candidate) => candidate.id === "rift_observatory");
+    const enemyId = node?.enemyPool?.[0];
+    if (!node || !enemyId) return false;
+    panelManager.closePanel({ reason: "standoff-entry" });
+    battleController?.startBattle({ enemyId, nodeId: node.id });
+    return true;
   }
 
   function ensureMapArt() {
@@ -525,24 +693,44 @@ export function createMapController({
         } else {
           nodeArt?.addEventListener("load", () => button.classList.add("is-node-art-ready"), { once: true });
         }
-        button.addEventListener("click", () => exploreNode(node));
+        button.addEventListener("click", () => {
+          if (isMoonlakeOrbitZoneId(node.id)) {
+            openOrbitZone(node.id);
+            return;
+          }
+          exploreNode(node);
+        });
         nodeLayer.appendChild(button);
         nodeButtons.set(node.id, button);
       }
 
       const visits = visitCounts[node.id] || 0;
+      const orbitZoneProgress = isMoonlakeOrbitZoneId(node.id)
+        ? getMoonlakeZoneProgress(node.id, state)
+        : null;
       const isCurrent = node.id === currentNodeId;
       const firstRouteLocked = !isFirstExplorationNodeAllowed(state, node.id);
       const isFirstSafeNode = isFirstExploration && node.id === FIRST_EXPLORATION_NODE_ID;
       button.classList.remove("tone-safe", "tone-calm", "tone-discovery", "tone-danger");
       button.classList.add(`tone-${layout.tone}`);
-      button.classList.toggle("is-visited", visits > 0);
+      button.classList.toggle(
+        "is-visited",
+        orbitZoneProgress ? orbitZoneProgress.clearedCount > 0 : visits > 0
+      );
       button.classList.toggle("is-current", isCurrent);
       button.classList.toggle("is-first-route-locked", firstRouteLocked);
       button.classList.toggle("is-first-safe", isFirstSafeNode);
+      button.classList.toggle(
+        "is-orbit-zone-locked",
+        Boolean(orbitZoneProgress && !isMoonlakeOrbitZoneUnlocked(node.id, state))
+      );
       button.disabled = firstRouteLocked;
       button.setAttribute("aria-disabled", String(firstRouteLocked));
-      button.title = firstRouteLocked ? "首次探索請先前往月湖營地。" : node.description;
+      button.title = firstRouteLocked
+        ? "首次探索請先前往月湖營地。"
+        : orbitZoneProgress
+          ? `${node.description}（心核迴旋 ${orbitZoneProgress.clearedCount}/${orbitZoneProgress.totalCount}）`
+          : node.description;
       if (isFirstSafeNode) {
         button.setAttribute("aria-describedby", "map-first-route-guide");
       } else {
@@ -550,13 +738,17 @@ export function createMapController({
       }
       button.setAttribute(
         "aria-label",
-        `${node.label.zh}（${node.label.en}）${visits > 0 ? `，到訪 ${visits} 次` : "，尚未到訪"}${isCurrent ? "，最近探索" : ""}${firstRouteLocked ? "，首次探索尚未開放" : ""}${isFirstSafeNode ? "，首次安全探索" : ""}。${node.description}`
+        orbitZoneProgress
+          ? `${node.label.zh}（${node.label.en}），心核迴旋 ${orbitZoneProgress.clearedCount}/${orbitZoneProgress.totalCount}${orbitZoneProgress.unlocked ? "" : "，路徑尚未亮起"}。${node.description}`
+          : `${node.label.zh}（${node.label.en}）${visits > 0 ? `，到訪 ${visits} 次` : "，尚未到訪"}${isCurrent ? "，最近探索" : ""}${firstRouteLocked ? "，首次探索尚未開放" : ""}${isFirstSafeNode ? "，首次安全探索" : ""}。${node.description}`
       );
 
       const visitsEl = button.querySelector(".map-node-visits");
       if (visitsEl) {
-        visitsEl.hidden = visits <= 0;
-        visitsEl.textContent = `×${visits}`;
+        visitsEl.hidden = orbitZoneProgress ? false : visits <= 0;
+        visitsEl.textContent = orbitZoneProgress
+          ? `${orbitZoneProgress.clearedCount}/5`
+          : `×${visits}`;
       }
     });
     expeditionController?.renderMapLaunch?.(qs(".map-modal"));
@@ -1010,5 +1202,13 @@ export function createMapController({
     renderInviteBanner();
   }
 
-  return { open, render };
+  return {
+    open,
+    render,
+    openOrbitZone,
+    openOrbitZoneByStage,
+    closeOrbitZone,
+    openExpeditionEntry,
+    openStandoffEntry
+  };
 }

@@ -2894,6 +2894,182 @@ body.panel-open .dev-reaction-lab {
   display: none;
 }
 
+.map-node.is-orbit-zone-locked:not(.is-first-route-locked) {
+  filter: grayscale(0.45) saturate(0.65);
+  opacity: 0.68;
+}
+
+.moonlake-orbit-zone-sheet {
+  position: absolute;
+  z-index: 9;
+  inset: 0;
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
+  gap: 10px;
+  overflow: hidden;
+  padding: 15px;
+  border: 1px solid rgba(111, 213, 255, 0.3);
+  border-radius: inherit;
+  background:
+    radial-gradient(circle at 84% 8%, rgba(125, 112, 255, 0.2), transparent 34%),
+    linear-gradient(180deg, rgba(5, 14, 32, 0.985), rgba(6, 18, 38, 0.99));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.moonlake-orbit-zone-sheet[hidden] {
+  display: none;
+}
+
+.moonlake-orbit-zone-head {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 9px;
+}
+
+.moonlake-orbit-zone-back {
+  width: 42px;
+  height: 42px;
+  border: 1px solid rgba(132, 205, 235, 0.35);
+  border-radius: 13px;
+  background: rgba(7, 22, 43, 0.82);
+  color: rgba(232, 246, 255, 0.94);
+  font-size: 26px;
+  cursor: pointer;
+}
+
+.moonlake-orbit-zone-kicker,
+.moonlake-orbit-zone-theme,
+.moonlake-orbit-zone-copy,
+.moonlake-orbit-zone-note {
+  margin: 0;
+}
+
+.moonlake-orbit-zone-kicker {
+  color: rgba(111, 213, 255, 0.68);
+  font-size: 8.5px;
+  letter-spacing: 0.16em;
+}
+
+#moonlake-orbit-zone-title {
+  margin: 1px 0;
+  font-size: 20px;
+}
+
+.moonlake-orbit-zone-theme {
+  display: block;
+  color: rgba(219, 230, 244, 0.72);
+  font-size: 11px;
+}
+
+.moonlake-orbit-zone-count {
+  min-width: 44px;
+  color: rgba(255, 222, 154, 0.94);
+  font-size: 16px;
+  text-align: right;
+}
+
+.moonlake-orbit-zone-copy {
+  color: rgba(222, 235, 247, 0.78);
+  font-size: 11.5px;
+  line-height: 1.48;
+}
+
+.moonlake-orbit-stage-list {
+  display: grid;
+  gap: 7px;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  list-style: none;
+  scrollbar-width: thin;
+}
+
+.moonlake-orbit-stage {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  min-height: 54px;
+  padding: 8px 10px;
+  border: 1px solid rgba(124, 184, 216, 0.25);
+  border-radius: 13px;
+  background: rgba(10, 28, 51, 0.72);
+  color: rgba(236, 246, 255, 0.94);
+  text-align: left;
+  cursor: pointer;
+}
+
+.moonlake-orbit-stage.is-cleared {
+  border-color: rgba(120, 226, 194, 0.4);
+  background: rgba(10, 42, 52, 0.68);
+}
+
+.moonlake-orbit-stage:disabled {
+  cursor: default;
+  opacity: 0.48;
+}
+
+.moonlake-orbit-stage-index {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid rgba(255, 216, 140, 0.34);
+  border-radius: 999px;
+  color: rgba(255, 222, 154, 0.94);
+  font-weight: 800;
+}
+
+.moonlake-orbit-stage-copy {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.moonlake-orbit-stage-copy strong {
+  font-size: 13px;
+}
+
+.moonlake-orbit-stage-copy em {
+  overflow: hidden;
+  color: rgba(201, 219, 234, 0.66);
+  font-size: 10.5px;
+  font-style: normal;
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.moonlake-orbit-stage small {
+  color: rgba(172, 211, 230, 0.78);
+  font-size: 9.5px;
+  white-space: nowrap;
+}
+
+.moonlake-orbit-zone-note {
+  color: rgba(187, 204, 220, 0.62);
+  font-size: 9.5px;
+  line-height: 1.4;
+}
+
+@media (max-width: 430px) {
+  .moonlake-orbit-zone-sheet {
+    padding: 12px;
+  }
+
+  .moonlake-orbit-stage {
+    grid-template-columns: 32px minmax(0, 1fr);
+  }
+
+  .moonlake-orbit-stage small {
+    grid-column: 2;
+    justify-self: start;
+  }
+}
+
 /* 共鳴邀請橫幅（CH-5b）：安靜一行 + 「去打個招呼」。無紅點、無倒數（紅線 6）。 */
 .map-invite-banner {
   display: flex;

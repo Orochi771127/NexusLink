@@ -140,13 +140,12 @@ const separating = collideBodies(
 assert.equal(separating.hit, false);
 ok("separating overlap does not receive a second collision impulse");
 
-const stage = stages.getOrbitStageById("moonlake-3");
+const stage = stages.getOrbitStageById("moonlake-4");
 assert.equal(stage.goal, "survive");
-assert.equal(stage.surviveSeconds, 15);
+assert.equal(stage.objectives[0].seconds, 12);
 assert.equal(stage.containedArena, true);
-assert.equal(stage.physicsTuning.speedCap, 2.8);
-assert.ok(stage.collisionTuning.damageScaleToA < 0.25);
-ok("Moonlake stage 3 is a contained 15-second survival objective");
+assert.equal(stage.physicsTuning.speedCap, 2.9);
+ok("Moonlake Starwood stage 4 is a contained 12-second survival objective");
 
 const stats = { impact: 55, spin: 60, guard: 60, burst: 20, overheat: 5 };
 const pulls = [0.08, 0.15, 0.25, 0.35, 0.45, 0.55];
@@ -168,7 +167,7 @@ for (const pull of pulls) {
       Math.hypot(session.player.vx, session.player.vy) <=
         session.player.speedCap + 1e-12
     );
-    while (session.phase === "spinning" && session.elapsed < 16) {
+    while (session.phase === "spinning" && session.elapsed < 13) {
       session = stepOrbitSession(session, 1 / 60);
       maxRuntimeSpeed = Math.max(
         maxRuntimeSpeed,
@@ -179,20 +178,20 @@ for (const pull of pulls) {
           session.player.speedCap + 1e-12
       );
     }
-    if (session.outcome?.reason === "survived") survived += 1;
+    if (session.outcome?.reason === "stage_completed") survived += 1;
   }
 }
 assert.ok(
   survived >= 132,
-  `stage 3 should survive at least 90% of the 144-shot sweep; got ${survived}`
+  `Starwood survival should pass at least 90% of the 144-shot sweep; got ${survived}`
 );
 assert.ok(maxRuntimeSpeed <= stage.physicsTuning.speedCap + 1e-12);
-ok(`stage 3 survives ${survived}/144 deterministic launch samples`);
+ok(`Starwood survival passes ${survived}/144 deterministic launch samples`);
 
 function snapshotAtHz(hz) {
   let session = createOrbitSession({ stats, stage });
   session = launchOrbitSession(session, 0.15, 0);
-  for (let frame = 0; frame < hz * 16; frame += 1) {
+  for (let frame = 0; frame < hz * 13; frame += 1) {
     session = stepOrbitSession(session, 1 / hz);
     if (session.phase === "resolved") break;
   }
@@ -211,7 +210,7 @@ const snapshot60 = snapshotAtHz(60);
 const snapshot120 = snapshotAtHz(120);
 assert.deepEqual(snapshot30, snapshot60);
 assert.deepEqual(snapshot60, snapshot120);
-assert.equal(snapshot60.outcome, "survived");
-ok("stage 3 remains exact-match deterministic at 30/60/120 Hz");
+assert.equal(snapshot60.outcome, "stage_completed");
+ok("Starwood survival remains exact-match deterministic at 30/60/120 Hz");
 
 console.log("\nAll Orbit R10 energy and ring-out cases passed.");

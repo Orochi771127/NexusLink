@@ -5,6 +5,7 @@ import { hasAdventureProfile } from "../data/companionAdventureProfiles.js";
 import {
   canLaunchExpedition,
   EXPEDITION_LAUNCH_NODE_ID,
+  getExpeditionRouteDepth,
   isExpeditionUnlocked,
   listUnlockedExpeditionNodes
 } from "../expedition/expeditionConfig.js";
@@ -230,10 +231,11 @@ export function createExpeditionController({
     mapLaunchContainer.innerHTML = nodes.map((nodeId) => {
       const region = getExpeditionRegionByNodeId(nodeId);
       const canLaunch = canLaunchExpedition(state, nodeId);
+      const depth = getExpeditionRouteDepth(nodeId);
       const primaryShard = getRegionLootTable(nodeId).primaryShard;
       const shardHint = getShardType(primaryShard).label.zh;
       const sub = canLaunch
-        ? `俯視黏土地景 · 自主索敵、接戰、拾取${shardHint}`
+        ? `${depth?.label || "近岸"}路徑 · 約 ${depth?.duration || "3–4 分鐘"} · 自主索敵、接戰、拾取${shardHint}`
         : (state.energy ?? 0) <= 0
           ? "夥伴能量不足，請先回營地休息"
           : !hasAdventureProfile(state.activeCompanionId)
@@ -310,6 +312,23 @@ export function createExpeditionController({
       if (typeof patch.bond === "number") draft.bond = patch.bond;
       if (typeof patch.trust === "number") draft.trust = patch.trust;
       draft.expeditionVault = settlement.vaultPatch;
+      if (extracted && session.nodeId) {
+        draft.activityProgress = draft.activityProgress || { version: 1 };
+        draft.activityProgress.version = 1;
+        draft.activityProgress.expedition =
+          draft.activityProgress.expedition || { clearedRouteIds: [] };
+        const routeIds = Array.isArray(
+          draft.activityProgress.expedition.clearedRouteIds
+        )
+          ? draft.activityProgress.expedition.clearedRouteIds
+          : [];
+        if (!routeIds.includes(session.nodeId)) {
+          draft.activityProgress.expedition.clearedRouteIds = [
+            ...routeIds,
+            session.nodeId
+          ];
+        }
+      }
       const progress = draft.explorationProgress || { totalExplorations: 0, visitCounts: {} };
       draft.explorationProgress = {
         ...progress,

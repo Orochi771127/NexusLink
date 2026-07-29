@@ -23,7 +23,7 @@ export function resolveOrbitNodeActionSheet(state = {}) {
     actions: Object.freeze([
       Object.freeze({
         id: ORBIT_NODE_ACTION_IDS.ORBIT,
-        route: "orbit",
+        route: "map",
         available: true,
         primary: true,
         labelKey: "explore.nodeActions.orbit",
@@ -31,7 +31,7 @@ export function resolveOrbitNodeActionSheet(state = {}) {
       }),
       Object.freeze({
         id: ORBIT_NODE_ACTION_IDS.EXPEDITION,
-        route: "map",
+        route: "expedition",
         available: expeditionAvailable,
         primary: false,
         labelKey: "explore.nodeActions.expedition",
@@ -41,7 +41,7 @@ export function resolveOrbitNodeActionSheet(state = {}) {
       }),
       Object.freeze({
         id: ORBIT_NODE_ACTION_IDS.STANDOFF,
-        route: "map",
+        route: "standoff",
         available: standoffAvailable,
         primary: false,
         labelKey: "explore.nodeActions.standoff",

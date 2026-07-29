@@ -48,7 +48,7 @@ function ok(name) {
 }
 
 assert.equal(getOrbitStageById(MOONLAKE_CAMP_SLICE.id), MOONLAKE_CAMP_SLICE);
-assert.equal(listStagesForRegion("moonlake").length, 5);
+assert.equal(listStagesForRegion("moonlake").length, 25);
 assert.equal(
   listStagesForRegion("moonlake").some(
     (stage) => stage.id === MOONLAKE_CAMP_SLICE.id
@@ -58,7 +58,7 @@ assert.equal(
 assert.equal(MOONLAKE_CAMP_SLICE.goal, "collect_then_resonate");
 assert.equal(MOONLAKE_CAMP_SLICE.dummyEnabled, false);
 assert.equal(MOONLAKE_CAMP_SLICE.memoryMotes.length, 3);
-ok("camp slice is addressable but does not widen the five-stage route");
+ok("camp slice is addressable but does not widen the twenty-five-stage route");
 
 function createSliceSession() {
   return createOrbitSession({
@@ -231,7 +231,7 @@ const controllerSource = fs.readFileSync(
 );
 assert.ok(controllerSource.includes('.get("orbitCampSlice") === "1"'));
 assert.ok(controllerSource.includes("drawCampSliceField"));
-assert.ok(controllerSource.includes("drawCampSliceProgress"));
+assert.ok(controllerSource.includes("drawObjectiveProgress"));
 assert.ok(controllerSource.includes("本切片未寫入路徑、微光、Growth 或存檔"));
 assert.doesNotMatch(
   controllerSource,

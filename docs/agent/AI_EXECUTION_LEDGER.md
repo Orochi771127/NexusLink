@@ -6222,3 +6222,136 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
   - Lonesong Rift JPEG: HTTP `200`, `86260` bytes.
 - Remote proof: merge SHA and `origin/main` divergence are `0/0`.
 - Existing `.codex/**` worktree content remained untracked and untouched.
+
+### 2026-07-29 - Codex - Moonlake Three-Mode Level Restructure R1 - IN PROGRESS
+
+- Status: `IN PROGRESS`; Owner approved implementation of the consolidated
+  Moonlake route/gameplay plan.
+- Lane: `Game Engineering And Architecture`.
+- Scope:
+  - preserve Moonlake Camp as the first safe arrival;
+  - convert the five Moonlake route nodes into five Orbit zones with five
+    authored stages each;
+  - persist Orbit and Standoff first-clear progress under the existing save
+    state while leaving Expedition repeatable run collection unchanged;
+  - give Standoff and Expedition separate natural progression profiles without
+    a traditional difficulty selector.
+- GROUNDWORK authorization: limited to `src/state/defaultState.js` and the
+  `src/state/store.js` normalizer for the versioned `activityProgress` schema.
+- Red-line guard: companion refusal, retreat, D2 safety terminal, guaranteed
+  repair reachability and `coreIntegrated:false` remain authoritative; replay
+  cannot farm relationship, growth or chapter progress.
+- Excluded: `saveManager.js`, `index.html`, Pixi foundation, assets, external
+  dependencies, commit, push and publication.
+- Branch: `agent/moonlake-three-mode-levels-r1`, based on `origin/main`.
+
+### 2026-07-29 - Codex - Moonlake Three-Mode Level Restructure R1 - IN PROGRESS
+
+- Status: `IN PROGRESS`; mobile map and stage-selection surfaces are being
+  integrated with the approved gameplay structure.
+- Lane: `Game Art, UI, And Visual Production`.
+- Visual scope: retain the existing Moonlake artwork and node positions, replace
+  visit/reward clicks with a readable location sheet and five sequential stage
+  rows, and keep the existing Standoff/Expedition small entries distinct.
+- Acceptance target: usable at `390x844`, no horizontal overflow, no nested
+  second map, visible locked/completed/replay states, and reduced-motion-safe
+  transitions.
+- No asset generation, replacement, deletion or node-coordinate changes are in
+  scope.
+
+### 2026-07-29 - Codex - Moonlake Three-Mode Level Restructure R1 - VERIFIED
+
+- Status: `VERIFIED`; the approved gameplay/state package is implemented on
+  `agent/moonlake-three-mode-levels-r1`.
+- Lane: `Game Engineering And Architecture`.
+- Completed:
+  - Moonlake Camp remains the first safe arrival; the five route nodes now own
+    five authored Orbit stages each (`25` total) with sequential stage gates
+    and the approved cross-zone unlock chain;
+  - `activityProgress:v1` persists Orbit stage clears, Standoff scenario clears
+    and Expedition route discovery through the existing store/save path;
+  - Orbit and Standoff permanent settlement grants are first-clear-only, while
+    retreat and replay remain non-punitive and cannot farm relationship,
+    memory, growth or chapter progress;
+  - Standoff uses five chapter-authored tension profiles; Expedition keeps its
+    existing repeatable collection loop and exposes three current route depths
+    with two future data definitions;
+  - Explore routes Orbit, Expedition and Standoff to their own existing
+    controllers instead of treating all three as one Orbit sub-menu.
+- Validation:
+  - all `src/**/*.js` passed `node --check`;
+  - Moonlake activity progress `7/7`, Orbit stage `9/9`, Orbit settlement
+    `8/8`, Orbit bounded-energy/ring-out `9/9`, Orbit regression suite PASS;
+  - state/onboarding migration `35/35`, first-session motivation `8/8`,
+    session-owner guard `9/9`, resonance-circle `18/18`, non-confrontation
+    chapter growth PASS, map first-session gate PASS;
+  - deterministic Starwood survival passed `144/144` launch samples and exact
+    `30/60/120 Hz` replay equivalence;
+  - `git diff --check` PASS.
+- Known unrelated baseline debt: Expedition behavior matrix remains `31/32`;
+  the failing legacy `RE2 E-CORE` settlement-voice case and all files it imports
+  are unchanged from `origin/main`. The authorized depth/config UI work does
+  not promote Expedition beyond `Prototype + partial Core bridge`, and
+  `coreIntegrated:false` remains unchanged.
+- No commit, push or publication was performed. Existing untracked
+  `.codex/**` content was preserved.
+
+### 2026-07-29 - Codex - Moonlake Three-Mode Level Restructure R1 - VERIFIED
+
+- Status: `VERIFIED`; the integrated Moonlake stage-selection surface passed
+  mobile browser review.
+- Lane: `Game Art, UI, And Visual Production`.
+- Browser proof:
+  - Chrome at `390x844`: five Moonlake route nodes render their own `0/5`
+    progress; Starwood opens a scrollable five-stage sheet with only stage 1
+    enabled; starting stage 1 opens the existing Orbit canvas and authored
+    objective;
+  - retreat resolves safely, exposes `回路徑圖`, and returns focus to the
+    original Starwood zone sheet;
+  - locked Mirror Hollow remains visible as a preview but all `5/5` stage
+    buttons are disabled;
+  - Chrome at `390x664`: sheet bounds stay inside the viewport
+    (`326 x 316.7 px`), the stage list scrolls (`141/409 px`), and document
+    width remains exactly `390 px`;
+  - no browser console or page errors were observed.
+- Evidence: `output/playwright/moonlake-three-mode-r1-390x844.png` (ignored QA
+  output; not part of the product diff).
+- Existing map artwork, node coordinates, assets and reduced-motion behavior
+  were preserved. No asset generation or replacement was performed.
+
+### 2026-07-29 - Codex - Moonlake Three-Mode Level Restructure R1 Publication - IN PROGRESS
+
+- Status: `IN PROGRESS`; Owner explicitly authorized commit, push and public
+  release after reviewing the verified local implementation.
+- Lane: `Game Engineering And Architecture`.
+- Publication scope: the complete Moonlake five-zone / twenty-five-stage
+  package, versioned three-mode progress state, first-clear reward policy,
+  independent Explore routes, Standoff tension profiles, Expedition depth
+  labels, acceptance/spec updates, focused QA and this ledger record.
+- Cleanup proof: repository-local `.codex/**` was not product source. It held
+  two empty Moonlake QA logs and a clean `2.37 GiB` Git worktree for already
+  merged PR `#157`; the worktree was removed through `git worktree remove`,
+  the empty logs and directory were deleted, and remote branch
+  `codex/stage1-directional-fishing-r1` / commit `113bb5a` remain recoverable.
+- Release path: explicit staging on
+  `agent/moonlake-three-mode-levels-r1` -> push -> PR -> required
+  `web-release-gate` -> protected-main merge -> Pages and public mobile
+  verification.
+
+### 2026-07-29 - Codex - Moonlake Three-Mode Browser Gate Alignment - VERIFIED
+
+- Status: `VERIFIED`; PR `#167` run `30437149965` exposed a stale browser-gate
+  assumption, not a runtime crash.
+- Lane: `Game Engineering And Architecture`.
+- Root cause: `_run_map_first_session_browser_gate.py` still expected clicking
+  Starwood Trail to open the retired `.phase-search` exploration sheet. The
+  approved runtime now opens the five-stage Moonlake Orbit zone sheet, so the
+  old selector timed out.
+- Focused correction: the browser gate now proves safe-camp unlock, five-stage
+  Starwood selection, mobile containment, zero-write preview, real Orbit entry,
+  affirmed zero-write retreat and return-to-source-zone, locked-zone preview,
+  separate Standoff/Expedition entries, no Standoff first-clear reward on
+  retreat, reduced motion and veteran migration.
+- Local browser result: `32/32 PASS` at `390x844`, with zero console/page
+  errors. Product runtime, state and safety code were not changed by this CI
+  alignment.

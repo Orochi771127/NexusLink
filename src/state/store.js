@@ -37,6 +37,7 @@ export function createDefaultState() {
     chapterProgress: { current: defaultState.chapterProgress.current, completed: [...defaultState.chapterProgress.completed] },
     resonance: { chapterMarks: {}, companions: {} },
     explorationProgress: { ...defaultState.explorationProgress, visitCounts: {} },
+    activityProgress: normalizeActivityProgress(defaultState.activityProgress),
     expeditionVault: normalizeExpeditionVault(defaultState.expeditionVault),
     companionPreferences: normalizeCompanionPreferences(defaultState.companionPreferences),
     settings: { ...defaultState.settings }
@@ -160,6 +161,7 @@ export function normalizeState(rawState = {}) {
     chapterProgress: normalizeChapterProgress(targetState.chapterProgress),
     resonance: normalizeResonance(targetState.resonance),
     explorationProgress: normalizeExplorationProgress(targetState.explorationProgress, baseState.explorationProgress),
+    activityProgress: normalizeActivityProgress(targetState.activityProgress),
     expeditionVault: normalizeExpeditionVault(targetState.expeditionVault, baseState.expeditionVault),
     companionPreferences: normalizeCompanionPreferences(targetState.companionPreferences),
     settings: normalizeSettings(targetState.settings, baseState.settings),
@@ -201,6 +203,29 @@ const ONBOARDING_STATUSES = new Set(["pending", "start", "identity", "guidance",
 const QUALITY_VALUES = new Set(["low", "medium", "high"]);
 const TEXT_SIZE_VALUES = new Set(["small", "medium", "large"]);
 const LANGUAGE_VALUES = new Set(["tc", "sc", "en", "jp"]);
+
+function normalizeActivityProgress(rawProgress) {
+  const progress = rawProgress && typeof rawProgress === "object" ? rawProgress : {};
+  const normalizeIds = (value) => [
+    ...new Set(
+      (Array.isArray(value) ? value : [])
+        .map((id) => String(id || "").trim())
+        .filter(Boolean)
+    )
+  ];
+  return {
+    version: 1,
+    orbit: {
+      clearedStageIds: normalizeIds(progress.orbit?.clearedStageIds)
+    },
+    standoff: {
+      clearedScenarioIds: normalizeIds(progress.standoff?.clearedScenarioIds)
+    },
+    expedition: {
+      clearedRouteIds: normalizeIds(progress.expedition?.clearedRouteIds)
+    }
+  };
+}
 
 function normalizeSettings(rawSettings, baseSettings) {
   const settings = rawSettings && typeof rawSettings === "object" ? rawSettings : {};

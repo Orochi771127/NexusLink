@@ -171,7 +171,16 @@ export function getIntentTelegraph(session) {
   return { intent: "lull", tone: "calm", label: "暫歇", hint: "雜訊歇了一拍，像在看你——放心共鳴、回收微光。" };
 }
 
-export function createStandoffSession({ companion, enemyId, nodeId, state, now = Date.now(), rng = Math.random, circle = [] }) {
+export function createStandoffSession({
+  companion,
+  enemyId,
+  nodeId,
+  state,
+  now = Date.now(),
+  rng = Math.random,
+  circle = [],
+  tensionProfile = null
+}) {
   const enemy = getEnemyById(enemyId);
   const radar = companion?.radar || { power: 50, emotion: 50 };
   const stabilityMax = Math.round(22 + (radar.emotion || 50) * 0.16 + (state?.bond || 0) * 0.18);
@@ -208,6 +217,8 @@ export function createStandoffSession({ companion, enemyId, nodeId, state, now =
   }
   const radarMods = getRadarModifiers(radar);
 
+  const enemyIntentBias = enemy.intentBias || {};
+  const profileIntentBias = tensionProfile?.intentBias || {};
   const session = {
     nodeId: nodeId || null,
     companionId: companion?.id || "greyshade-cat",
@@ -221,7 +232,13 @@ export function createStandoffSession({ companion, enemyId, nodeId, state, now =
     enemyName: enemy.name.zh,
     enemySurge: enemy.attack,
     enemyLullChance: enemy.guardChance,
-    intentBias: enemy.intentBias || null,
+    intentBias: {
+      surge: (enemyIntentBias.surge || 0) + (profileIntentBias.surge || 0),
+      gather: (enemyIntentBias.gather || 0) + (profileIntentBias.gather || 0),
+      lull: (enemyIntentBias.lull || 0) + (profileIntentBias.lull || 0)
+    },
+    tensionProfileId: tensionProfile?.id || null,
+    tensionProfileLabel: tensionProfile?.label || null,
     // 裂隙心相
     riftEmotion: affinity.emotion,
     riftEmotionLabelZh: affinity.labelZh,
@@ -253,6 +270,9 @@ export function createStandoffSession({ companion, enemyId, nodeId, state, now =
       ...(affinity.attuneLine ? [{ kind: "system", text: affinity.attuneLine }] : []),
       ...(affinity.tier === "dissonant"
         ? [{ kind: "system", text: `${companion?.name || "夥伴"}的氣息和這片${affinity.labelZh}有點相沖，但你們仍能慢慢靠近。` }]
+        : []),
+      ...(tensionProfile?.label
+        ? [{ kind: "system", text: `【${tensionProfile.label}】${tensionProfile.copy}` }]
         : []),
       { kind: "system", text: "穩住心核，把雜訊放輕。你們不需要消滅誰。" }
     ]

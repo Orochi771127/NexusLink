@@ -418,7 +418,9 @@ async function bootstrap() {
         statusText,
         panelManager,
         companionGrowthController,
-        saveCurrentState: saveInteraction
+        saveCurrentState: saveInteraction,
+        returnToMoonlakeZone: (stageId) =>
+          getMapController().openOrbitZoneByStage(stageId)
       });
       orbitBattleController.bind();
     }
@@ -436,6 +438,7 @@ async function bootstrap() {
         expeditionController: getExpeditionController(),
         companionGrowthController,
         statusText,
+        openOrbitStage: (stageId) => getOrbitBattleController().openStage(stageId),
         returnToHabitat: () => {
           panelManager.closePanel({ reason: "phase-return" });
           pageRouter?.navigate("home");
@@ -516,7 +519,9 @@ async function bootstrap() {
     openMap: () => getMapController().open(),
     openCodex: () => getCodexController().open(),
     openAtlas: () => getAtlasController().open(),
-    openOrbit: () => getOrbitBattleController().open()
+    openOrbit: () => getOrbitBattleController().open(),
+    openExpedition: () => getMapController().openExpeditionEntry(),
+    openStandoff: () => getMapController().openStandoffEntry()
   });
 
   panelManager.bind({

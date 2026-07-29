@@ -26,7 +26,8 @@ import { describeOrbitEntryFromVault } from "../orbit/orbitSettlement.js";
  *  onOpenDuel?: () => void,
  *  onClose: () => void,
  *  statusText?: HTMLElement | null,
- *  getVault?: () => object
+ *  getVault?: () => object,
+ *  getState?: () => object
  * }} deps
  */
 export function createOrbitMapController({
@@ -34,7 +35,8 @@ export function createOrbitMapController({
   onOpenDuel,
   onClose,
   statusText,
-  getVault
+  getVault,
+  getState
 }) {
   let rootEl = null;
 
@@ -86,8 +88,9 @@ export function createOrbitMapController({
       const regionBtn = event.target.closest("[data-orbit-region]");
       if (regionBtn) {
         const regionId = regionBtn.dataset.orbitRegion;
-        if (isOrbitRegionUnlocked(regionId)) {
-          setActiveOrbitRegion(regionId);
+        const state = getState?.() || null;
+        if (isOrbitRegionUnlocked(regionId, state)) {
+          setActiveOrbitRegion(regionId, state);
           render();
         }
         return;
@@ -127,13 +130,14 @@ export function createOrbitMapController({
   function render() {
     const el = ensure();
     applyChrome();
-    const snap = getOrbitPathProgressSnapshot();
+    const state = getState?.() || null;
+    const snap = getOrbitPathProgressSnapshot(state);
     const regions = listPlayableRegionIds();
     const regionRow = el.querySelector(".orbit-map-regions");
     const farLabel = t("orbit.mapFar");
     regionRow.innerHTML = regions
       .map((regionId) => {
-        const unlocked = isOrbitRegionUnlocked(regionId);
+        const unlocked = isOrbitRegionUnlocked(regionId, state);
         const active = snap.activeRegionId === regionId;
         const label = getOrbitPathLabel(regionId);
         return `<button type="button" class="orbit-region-chip${active ? " is-active" : ""}${
@@ -163,7 +167,7 @@ export function createOrbitMapController({
       ? `${t("orbit.motesPrefix")}：${strip}。${entry.line}`
       : entry.line;
 
-    const nodes = listOrbitMapNodes(snap.activeRegionId);
+    const nodes = listOrbitMapNodes(snap.activeRegionId, state);
     const list = el.querySelector(".orbit-map-nodes");
     list.innerHTML = nodes
       .map((node) => {
