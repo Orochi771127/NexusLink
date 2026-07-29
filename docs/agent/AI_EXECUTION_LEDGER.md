@@ -6418,8 +6418,8 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Red-line / scope proof: no `saveManager`, relationship, reward, growth,
   RaphaelCore, free camera, physics, renderer migration or new dependency
   change.
-- Branch: `codex/moonlake-ro-depth-direction-r3-2`; publication commit is
-  recorded by the follow-up publication entry after intentional staging.
+- Branch: `codex/moonlake-ro-depth-direction-r3-2`; verified content commit:
+  `002d83e3d9d945a76d60b0e6cef8362e2c57b3cf`.
 
 ### 2026-07-29 - Codex - Moonlake RO Depth And Direction R3.2 - VERIFIED / PUBLICATION AUTHORIZED
 
@@ -6449,5 +6449,6 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Evidence is retained under ignored
   `output/playwright/moonlake-ro-depth-direction-r3-2/`; production assets are
   under `assets/layers/MoonlakeDiorama_r2/depth_occluders/`.
-- Branch: `codex/moonlake-ro-depth-direction-r3-2`; no unrelated assets were
-  changed or deleted.
+- Branch: `codex/moonlake-ro-depth-direction-r3-2`; verified content commit:
+  `002d83e3d9d945a76d60b0e6cef8362e2c57b3cf`; no unrelated assets were changed
+  or deleted.
