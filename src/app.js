@@ -105,6 +105,7 @@ import {
   getCompanionRoamingSnapshot,
   playDevMotion,
   rebaseCompanionMotion,
+  setCompanionFishingPaused,
   snapCompanionRoamingToWaypoint,
   stageCompanionRoamingSegment,
   updateCompanionMotion
@@ -1045,6 +1046,15 @@ async function bootScene(
   }
 
   attachCompanion(companion, currentCreature);
+  const syncFishingVisibility = () => {
+    setCompanionFishingPaused(
+      companionMotionController,
+      "visibility",
+      document.visibilityState === "hidden",
+      performance.now()
+    );
+  };
+  document.addEventListener("visibilitychange", syncFishingVisibility);
   moonlakeDepthOcclusion = await createMoonlakeDepthOcclusion(PIXI, {
     parent: layers.layerOcclusion,
     live3d,
@@ -1184,6 +1194,7 @@ async function bootScene(
         deltaMs: safeTicker.deltaMS,
         reducedMotion: Boolean(window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches)
           || document.documentElement?.dataset?.reducedMotionPreference === "reduced",
+        lifecycleActive: document.visibilityState !== "hidden",
         projectWorldPoint: projectMoonlakeWorldPoint,
         // Moonlake fishing eligibility is further constrained by the active
         // bridge waypoint's authored orientation options.
@@ -1343,7 +1354,12 @@ async function bootScene(
           progress
         );
       },
-      playFishingForQa(waypointId, animationName, mirrorX = false) {
+      playFishingForQa(
+        waypointId,
+        animationName,
+        mirrorX = false,
+        lifecycleScale = 1
+      ) {
         const params = new URLSearchParams(window.location.search);
         const allowedAnimations = new Set([
           "fishing_back",
@@ -1369,9 +1385,20 @@ async function bootScene(
             : mirrorX
               ? "left"
               : "right",
-          durationMs: 10_000
+          durationMs: 10_000,
+          lifecycleScale
         });
         return true;
+      },
+      setFishingLifecycleActiveForQa(active) {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get("moonlakeBridgeQa") !== "1") return false;
+        return setCompanionFishingPaused(
+          companionMotionController,
+          "qa_visibility",
+          !active,
+          performance.now()
+        );
       },
       clearForcedMotionForQa() {
         const params = new URLSearchParams(window.location.search);
@@ -1511,9 +1538,13 @@ function createMoonlakeFishingFx(parent) {
   const diagnostics = {
     visible: false,
     phase: null,
+    phaseProgress: 0,
+    paused: false,
     waterSide: null,
     lineLengthPx: 0,
     extendsBeyondRail: false,
+    bobberVisible: false,
+    rippleCount: 0,
     start: null,
     end: null
   };
@@ -1534,9 +1565,13 @@ function updateMoonlakeFishingFx(fishingFx, roaming, companion, ticker) {
     Object.assign(fishingFx.diagnostics, {
       visible: false,
       phase: null,
+      phaseProgress: 0,
+      paused: false,
       waterSide: null,
       lineLengthPx: 0,
       extendsBeyondRail: false,
+      bobberVisible: false,
+      rippleCount: 0,
       start: null,
       end: null
     });
@@ -1546,11 +1581,17 @@ function updateMoonlakeFishingFx(fishingFx, roaming, companion, ticker) {
   fishingFx.root.visible = true;
   const phase = fishing.phase || "wait";
   const progress = Math.min(1, Math.max(0, Number(fishing.phaseProgress) || 0));
+  const reducedMotion = Boolean(
+    document.documentElement?.dataset?.reducedMotionPreference === "reduced"
+      || window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches
+  );
+  const motionTime = Number(ticker?.lastTime) || performance.now();
   const referenceScale = Number(roaming.projected?.referenceScale390) || 1;
   const depthScale = Math.min(0.9, Math.max(0.42, Number(roaming.projected?.scale) || 0.72));
-  const startX = companion.x;
-  const startY = companion.y - 80 * referenceScale * depthScale;
-  const reach = 64 * referenceScale * Math.max(0.62, Math.sqrt(depthScale));
+  const startSide = fishing.waterSide === "left" ? -1 : fishing.waterSide === "right" ? 1 : 0;
+  const startX = companion.x + startSide * 7 * referenceScale * depthScale;
+  const startY = companion.y - 76 * referenceScale * depthScale;
+  const reach = 88 * referenceScale * Math.max(0.64, Math.sqrt(depthScale));
   const direction = fishing.waterSide === "left"
     ? { x: -1, y: 0.22 }
     : fishing.waterSide === "far"
@@ -1563,12 +1604,25 @@ function updateMoonlakeFishingFx(fishingFx, roaming, companion, ticker) {
       : phase === "settle"
         ? 0.2
         : 1;
+  const waitBob = phase === "wait" && !reducedMotion
+    ? Math.sin(motionTime * 0.0032) * 1.4 * referenceScale
+    : 0;
+  const biteJolt = phase === "bite" && !reducedMotion
+    ? Math.sin(motionTime * 0.034) * 3.4 * referenceScale
+    : 0;
   const endX = startX + direction.x * reach * extension;
-  const endY = startY + direction.y * reach * extension;
+  const endY = startY + direction.y * reach * extension + waitBob + biteJolt;
   const controlX = startX + (endX - startX) * 0.56;
   const controlY = Math.min(startY, endY) - 10 * referenceScale * depthScale;
   const bitePulse = phase === "bite"
-    ? 0.7 + Math.sin((Number(ticker?.lastTime) || performance.now()) * 0.032) * 0.3
+    ? reducedMotion
+      ? 1
+      : 0.7 + Math.sin(motionTime * 0.032) * 0.3
+    : 0;
+  const waitPulse = phase === "wait"
+    ? reducedMotion
+      ? 0.5
+      : 0.5 + Math.sin(motionTime * 0.0024) * 0.5
     : 0;
 
   graphics
@@ -1577,7 +1631,7 @@ function updateMoonlakeFishingFx(fishingFx, roaming, companion, ticker) {
     .stroke({
       color: FISHING_LINE_COLOR,
       alpha: phase === "settle" ? 0.35 : 0.86,
-      width: Math.max(1, 1.35 * referenceScale)
+      width: Math.max(1.2, 1.75 * referenceScale)
     });
   graphics
     .circle(endX, endY, Math.max(2.2, 3.2 * referenceScale * depthScale))
@@ -1586,7 +1640,11 @@ function updateMoonlakeFishingFx(fishingFx, roaming, companion, ticker) {
       alpha: phase === "settle" ? 0.35 : 0.9
     });
   if (phase === "wait" || phase === "bite") {
-    const ringRadius = (8 + bitePulse * 8) * referenceScale * depthScale;
+    const ringRadius = (
+      phase === "bite"
+        ? 9 + bitePulse * 9
+        : 9 + waitPulse * 4
+    ) * referenceScale * depthScale;
     graphics
       .ellipse(endX, endY + 2 * referenceScale, ringRadius, ringRadius * 0.42)
       .stroke({
@@ -1594,15 +1652,29 @@ function updateMoonlakeFishingFx(fishingFx, roaming, companion, ticker) {
         alpha: phase === "bite" ? 0.82 : 0.34,
         width: Math.max(1, referenceScale)
       });
+    if (phase === "wait") {
+      const outerRadius = ringRadius + 7 * referenceScale * depthScale;
+      graphics
+        .ellipse(endX, endY + 2 * referenceScale, outerRadius, outerRadius * 0.42)
+        .stroke({
+          color: 0x8eefff,
+          alpha: reducedMotion ? 0.18 : 0.12 + waitPulse * 0.12,
+          width: Math.max(0.8, referenceScale * 0.8)
+        });
+    }
   }
 
   const lineLengthPx = Math.hypot(endX - startX, endY - startY);
   Object.assign(fishingFx.diagnostics, {
     visible: true,
     phase,
+    phaseProgress: progress,
+    paused: Boolean(fishing.paused),
     waterSide: fishing.waterSide,
     lineLengthPx,
     extendsBeyondRail: lineLengthPx >= 36 * referenceScale,
+    bobberVisible: phase !== "settle" || progress < 0.7,
+    rippleCount: phase === "wait" ? 2 : phase === "bite" ? 1 : 0,
     start: { x: startX, y: startY },
     end: { x: endX, y: endY }
   });

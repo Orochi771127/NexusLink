@@ -6547,3 +6547,140 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
   deleted; repository slimming remains a separate future package.
 - Branch: `codex/moonlake-nav-collision-scale-r3-3`; publication commit is the
   current commit carrying this ledger entry.
+
+### 2026-07-29 - Codex - Moonlake Fishing Lifecycle Public R3.4 - IN PROGRESS
+
+- Status: `IN PROGRESS`; Owner approved
+  `TP-MOONLAKE-FISHING-LIFECYCLE-PUBLIC-R3.4`.
+- Lane: `Game Engineering And Architecture`.
+- Scope: repair the Moonlake fishing state machine so cast, patient wait,
+  bite, reel and settle all advance through the same production path for
+  ambient, player-triggered and QA-triggered fishing; preserve progress across
+  background/foreground transitions without freezing or instant completion.
+- Validation target: all sixteen runtime companions, all five authored fishing
+  orientations, day/night, legal fishing spots, reduced motion, bridge
+  clearance and lifecycle cleanup at `390x844`.
+- Red-line / isolation: fishing remains an interruptible companion expression
+  with no reward, progression, relationship, memory, save, RaphaelCore,
+  dependency, free-camera, physics-engine, backend or build-step change.
+- Required reading completed: `AGENTS.md`, `CLAUDE.md`, `ACCEPTANCE.md`,
+  `docs/design/MOONLAKE_LIVE_3D_HYBRID_CONTRACT_V1.md` and the latest R3.2/R3.3
+  engineering and art ledger entries.
+- Branch: `codex/moonlake-fishing-lifecycle-public-r3-4`, based on exact
+  `origin/main` commit `d2dce40e33723721024a50968c38ea0215a593b7`.
+- Publication boundary: implementation approval does not authorize commit,
+  push, PR, merge or deployment.
+
+### 2026-07-29 - Codex - Moonlake Fishing Lifecycle Public R3.4 - IN PROGRESS
+
+- Status: `IN PROGRESS`; Owner approved the mobile fishing readability pass.
+- Lane: `Game Art, UI, And Visual Production`.
+- Scope: retain the approved Moonlake composition and companion art while
+  making the cast, sustained waiting line/bobber, bite cue, reel and settle
+  phases legible at phone scale; keep the line beyond the bridge rail and
+  remove temporary FX cleanly when fishing ends.
+- Asset boundary: no asset generation, replacement, deletion or repository
+  slimming; visual work is limited to existing runtime transforms and effects.
+- Branch: `codex/moonlake-fishing-lifecycle-public-r3-4`.
+
+### 2026-07-29 - Codex - Moonlake Fishing Lifecycle Public R3.4 - VERIFIED LOCALLY
+
+- Status: `VERIFIED LOCALLY`; implementation and scoped regression are
+  complete. Commit, push, PR, merge and deployment remain unauthorized.
+- Lane: `Game Engineering And Architecture`.
+- Completed:
+  - fishing now records and completes one shared
+    `cast -> wait -> bite -> reel -> settle -> idle` lifecycle for ambient,
+    player/runtime and QA paths;
+  - interaction-animation locks pause rather than consume the fishing clock;
+    page backgrounding shifts the active phase deadline, so foreground resume
+    neither freezes nor skips the patient wait;
+  - busy states still interrupt cleanly and now report an in-memory reason;
+    completed and interrupted lifecycle diagnostics leave no reward, save,
+    relationship or memory write;
+  - added bounded QA acceleration plus lifecycle history only behind the
+    existing `moonlakeBridgeQa=1` gate; production timing remains unchanged,
+    including the authored `8.5-14 s` wait.
+- Validation:
+  - R3.4 deterministic lifecycle: PASS for interaction-lock pause,
+    visibility pause/resume, all phases and interruption cleanup;
+  - R3.4 `390x844` browser matrix: `160/160` lifecycle cases
+    (`16` companions x `5` orientations x day/night) and `80/80` bridge-line
+    readability cases; zero page/console errors;
+  - production-speed Greyshade proof: sustained `10 s` wait, reduced-motion,
+    `900 ms` simulated background pause with unchanged progress, successful
+    resume through bite/reel/settle/idle and FX cleanup;
+  - existing deterministic regressions: navigation `16` companions, `8`
+    footprints, `144` waypoint states and `256` directed edges; bridge
+    clearance `64/64`; fishing orientation `80/80`; R3 living-habitat PASS;
+  - repo-native release gate first run: `27/28`; the sole failure was mobile
+    `live3dCanvasReady:false` with zero console/accessibility errors. Exact
+    `accessibility_responsive_probe` rerun passed mobile and desktop with
+    `live3dCanvasReady:true`, zero console errors, zero warnings and no
+    horizontal overflow, confirming a transient Three.js/CDN readiness flake;
+  - `node --check` and `git diff --check`: PASS.
+- Known test-environment note: two older Moonlake browser scripts start during
+  the real nighttime sleep window and correctly interrupt fishing as `sleep`;
+  R3.4's time-independent matrix explicitly performs one habitat interaction
+  before testing and is the authoritative browser evidence for this package.
+- MCP note: repeated `codebase-memory-mcp` index/list attempts returned
+  `Transport closed`; no false MCP success is claimed. Retry indexing and ADR
+  recording before publication if the service becomes available.
+- Branch: `codex/moonlake-fishing-lifecycle-public-r3-4`; base remains exact
+  `origin/main` commit `d2dce40e33723721024a50968c38ea0215a593b7`.
+
+### 2026-07-29 - Codex - Moonlake Fishing Lifecycle Public R3.4 - VERIFIED LOCALLY
+
+- Status: `VERIFIED LOCALLY`; mobile visual proof passed and no asset was
+  changed.
+- Lane: `Game Art, UI, And Visual Production`.
+- Visual result:
+  - the bridge line is longer and thicker, begins from the water-facing side
+    of the companion, and ends visibly beyond the bridge rail for left, right
+    and far-water orientations;
+  - the wait phase holds a visible bobber with two restrained water rings and
+    a slight non-reduced-motion drift; bite adds one bounded line/bobber jolt;
+  - reduced-motion keeps a static but readable line, bobber and rings;
+    settle fades and lifecycle completion removes all fishing FX;
+  - first-touch guidance remains hidden after `firstTouchCompleted`.
+- Visual proof: `390x844` day/night checks cover all sixteen runtime
+  companions and five fishing orientations; representative Greyshade proof is
+  retained under ignored
+  `output/playwright/moonlake-fishing-lifecycle-public-r3-4/`.
+- Asset boundary: no scene, character, GLB, texture, approved fallback or
+  legacy asset was generated, modified or deleted.
+- Branch: `codex/moonlake-fishing-lifecycle-public-r3-4`.
+
+### 2026-07-30 - Codex - Moonlake Fishing Lifecycle Public R3.4 - MCP RESTORED / PUBLICATION AUTHORIZED
+
+- Status: `VERIFIED`; Owner explicitly authorized commit, push, PR and
+  protected-main integration.
+- Lane: `Game Engineering And Architecture`.
+- MCP recovery:
+  - the desktop transport remained closed, so the installed
+    `codebase-memory-mcp` CLI was used as the supported local fallback;
+  - persistent indexing completed successfully with `7,463` nodes and
+    `15,949` edges for this exact R3.4 worktree;
+  - the R3.4 architecture decision was recorded: fishing is a pausable,
+    in-memory lifecycle; visibility and interaction locks shift deadlines;
+    QA acceleration is restricted to `moonlakeBridgeQa=1`; fishing writes no
+    save, reward, relationship, memory or RaphaelCore state.
+- Publication scope: only the two runtime modules, two R3.4 QA scripts and
+  this cross-agent ledger are eligible. The generated `.codebase-memory/`
+  local index cache and ignored browser evidence are not repository payload.
+- Branch: `codex/moonlake-fishing-lifecycle-public-r3-4`; base remains exact
+  `origin/main` commit `d2dce40e33723721024a50968c38ea0215a593b7`.
+
+### 2026-07-30 - Codex - Moonlake Fishing Lifecycle Public R3.4 - PUBLICATION AUTHORIZED
+
+- Status: `VERIFIED`; Owner explicitly authorized protected-main publication.
+- Lane: `Game Art, UI, And Visual Production`.
+- Visual publication scope remains limited to runtime transforms and effects:
+  readable bridge-side line, sustained bobber/rings, bite cue and clean
+  settle/cleanup at mobile scale.
+- Asset boundary: no scene, character, GLB, texture, approved fallback or
+  legacy asset is part of this publication package.
+- Public QA: the R3.4 browser harness accepts `R3_4_BASE_URL` so the same
+  production-speed lifecycle proof can be run against GitHub Pages after the
+  protected-main deployment.
+- Branch: `codex/moonlake-fishing-lifecycle-public-r3-4`.
