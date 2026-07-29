@@ -1,9 +1,11 @@
 const assert = require("node:assert/strict");
 const fs = require("node:fs");
+const http = require("node:http");
 const path = require("node:path");
 const { chromium } = require("playwright");
 
-const BASE_URL = process.env.MOONLAKE_QA_URL || "http://127.0.0.1:4174/";
+const ROOT = path.resolve(".");
+const EXTERNAL_BASE_URL = process.env.MOONLAKE_QA_URL || null;
 const OUTPUT_DIR = path.resolve("output/playwright/moonlake-ro-depth-direction-r3-2");
 const COMPANION_IDS = [
   "greyshade-cat",
@@ -23,10 +25,55 @@ const COMPANION_IDS = [
   "vine-twist",
   "crystal-rabbit"
 ];
+const CONTENT_TYPES = {
+  ".css": "text/css; charset=utf-8",
+  ".glb": "model/gltf-binary",
+  ".html": "text/html; charset=utf-8",
+  ".jpg": "image/jpeg",
+  ".js": "text/javascript; charset=utf-8",
+  ".json": "application/json; charset=utf-8",
+  ".mjs": "text/javascript; charset=utf-8",
+  ".png": "image/png",
+  ".svg": "image/svg+xml"
+};
 let browser;
+let staticServer;
+
+async function startStaticServer() {
+  const server = http.createServer((request, response) => {
+    const pathname = decodeURIComponent(new URL(request.url, "http://127.0.0.1").pathname);
+    const relativePath = pathname === "/" ? "index.html" : pathname.replace(/^\/+/, "");
+    const filePath = path.resolve(ROOT, relativePath);
+    if (!filePath.startsWith(`${ROOT}${path.sep}`) || !fs.existsSync(filePath)) {
+      response.writeHead(404).end("Not found");
+      return;
+    }
+    const stat = fs.statSync(filePath);
+    const resolved = stat.isDirectory() ? path.join(filePath, "index.html") : filePath;
+    if (!fs.existsSync(resolved)) {
+      response.writeHead(404).end("Not found");
+      return;
+    }
+    response.writeHead(200, {
+      "Content-Type": CONTENT_TYPES[path.extname(resolved).toLowerCase()]
+        || "application/octet-stream",
+      "Cache-Control": "no-store"
+    });
+    fs.createReadStream(resolved).pipe(response);
+  });
+  await new Promise((resolve, reject) => {
+    server.once("error", reject);
+    server.listen(0, "127.0.0.1", resolve);
+  });
+  return server;
+}
 
 (async () => {
   fs.mkdirSync(OUTPUT_DIR, { recursive: true });
+  staticServer = EXTERNAL_BASE_URL ? null : await startStaticServer();
+  const address = staticServer?.address();
+  const baseUrl = EXTERNAL_BASE_URL
+    || `http://127.0.0.1:${address.port}/`;
   browser = await chromium.launch({
     headless: true,
     args: [
@@ -88,7 +135,7 @@ let browser;
     }));
   });
 
-  await page.goto(`${BASE_URL}?live3d=1&moonlakeBridgeQa=1&timePhase=day&weather=clear`, {
+  await page.goto(`${baseUrl}?live3d=1&moonlakeBridgeQa=1&timePhase=day&weather=clear`, {
     waitUntil: "commit",
     timeout: 60_000
   });
@@ -123,23 +170,20 @@ let browser;
   await page.waitForFunction(
     () => {
       const roaming = window.__NEXUS_HABITAT?.getRoamingSnapshot?.();
-      const depth = window.__NEXUS_HABITAT?.getDepthOcclusionDiagnostics?.();
       return roaming?.targetId === "near_ground_center"
-        && roaming.x < -0.8
-        && depth?.foot?.x < 170
-        && depth?.visibleIds?.includes("lantern-front-left");
+        && window.__NEXUS_HABITAT
+          ?.getNavigationSafetyDiagnostics?.()
+          ?.footSafety
+          ?.safe === true;
     },
     null,
     { timeout: 5_000 }
   );
   const leftLamp = await readDepthState(page);
-  assert.ok(leftLamp.depth.visibleIds.includes("lantern-front-left"));
-  assert.equal(
-    leftLamp.depth.entries.find((entry) => entry.id === "lantern-front-left")?.behind,
-    true
-  );
+  assert.ok(!leftLamp.depth.visibleIds.includes("lantern-front-left"));
+  assert.equal(leftLamp.navigation.footSafety.safe, true);
   await page.screenshot({
-    path: path.join(OUTPUT_DIR, "lamp-left-behind-390x844.png"),
+    path: path.join(OUTPUT_DIR, "lamp-left-safe-route-390x844.png"),
     fullPage: false
   });
 
@@ -153,19 +197,20 @@ let browser;
   await page.waitForFunction(
     () => {
       const roaming = window.__NEXUS_HABITAT?.getRoamingSnapshot?.();
-      const depth = window.__NEXUS_HABITAT?.getDepthOcclusionDiagnostics?.();
       return roaming?.targetId === "near_ground_center"
-        && roaming.x > 0.8
-        && depth?.foot?.x > 220
-        && depth?.visibleIds?.includes("lantern-front-right");
+        && window.__NEXUS_HABITAT
+          ?.getNavigationSafetyDiagnostics?.()
+          ?.footSafety
+          ?.safe === true;
     },
     null,
     { timeout: 5_000 }
   );
   const rightLamp = await readDepthState(page);
-  assert.ok(rightLamp.depth.visibleIds.includes("lantern-front-right"));
+  assert.ok(!rightLamp.depth.visibleIds.includes("lantern-front-right"));
+  assert.equal(rightLamp.navigation.footSafety.safe, true);
   await page.screenshot({
-    path: path.join(OUTPUT_DIR, "lamp-right-behind-390x844.png"),
+    path: path.join(OUTPUT_DIR, "lamp-right-safe-route-390x844.png"),
     fullPage: false
   });
 
@@ -255,8 +300,8 @@ let browser;
     await page.evaluate(() => {
       window.__NEXUS_HABITAT.clearForcedMotionForQa();
       window.__NEXUS_HABITAT.setRoamingSegmentForQa(
-        "near_ground_left",
-        "near_ground_center",
+        "platform_left",
+        "platform_center",
         0.25
       );
     });
@@ -293,17 +338,19 @@ let browser;
   await page.waitForFunction(
     () => {
       const live3d = window.__NEXUS_HABITAT?.getLive3dDiagnostics?.();
-      const depth = window.__NEXUS_HABITAT?.getDepthOcclusionDiagnostics?.();
       return live3d?.environment?.nightMix === 1
-        && depth?.foot?.x < 170
-        && depth?.visibleIds?.includes("lantern-front-left");
+        && window.__NEXUS_HABITAT
+          ?.getNavigationSafetyDiagnostics?.()
+          ?.footSafety
+          ?.safe === true;
     },
     null,
     { timeout: 15_000 }
   );
   const night = await readDepthState(page);
+  assert.ok(!night.depth.visibleIds.includes("lantern-front-left"));
   await page.screenshot({
-    path: path.join(OUTPUT_DIR, "lamp-left-night-390x844.png"),
+    path: path.join(OUTPUT_DIR, "lamp-left-safe-route-night-390x844.png"),
     fullPage: false
   });
 
@@ -313,8 +360,8 @@ let browser;
     pass: true,
     viewport: "390x844",
     initial,
-    leftLamp: leftLamp.depth,
-    rightLamp: rightLamp.depth,
+    leftLampSafeRoute: leftLamp,
+    rightLampSafeRoute: rightLamp,
     leftTent: leftTent.depth,
     rightTent: rightTent.depth,
     bridge: bridge.depth,
@@ -322,18 +369,20 @@ let browser;
     rightWalkRuntime,
     night: night.depth,
     screenshots: [
-      path.join(OUTPUT_DIR, "lamp-left-behind-390x844.png"),
-      path.join(OUTPUT_DIR, "lamp-right-behind-390x844.png"),
+      path.join(OUTPUT_DIR, "lamp-left-safe-route-390x844.png"),
+      path.join(OUTPUT_DIR, "lamp-right-safe-route-390x844.png"),
       path.join(OUTPUT_DIR, "tent-left-behind-390x844.png"),
       path.join(OUTPUT_DIR, "tent-right-behind-390x844.png"),
       path.join(OUTPUT_DIR, "bridge-rail-occlusion-390x844.png"),
-      path.join(OUTPUT_DIR, "lamp-left-night-390x844.png")
+      path.join(OUTPUT_DIR, "lamp-left-safe-route-night-390x844.png")
     ]
   }, null, 2));
   await browser.close();
+  await new Promise((resolve) => staticServer?.close(resolve) || resolve());
 })().catch(async (error) => {
   console.error(error);
   await browser?.close();
+  await new Promise((resolve) => staticServer?.close(resolve) || resolve());
   process.exitCode = 1;
 });
 
@@ -347,6 +396,7 @@ async function readDepthState(page) {
     const night = occlusionLayer?.children?.find?.((child) => child.name === "foreground_occlusion_night");
     return {
       depth,
+      navigation: window.__NEXUS_HABITAT.getNavigationSafetyDiagnostics(),
       oldOcclusion: {
         dayVisible: day?.visible ?? false,
         nightVisible: night?.visible ?? false

@@ -122,10 +122,193 @@ export const MOONLAKE_BRIDGE_PRESENTATION = Object.freeze({
   farCenterX: 0.635,
   sourceNearHalfWidth: 0.052,
   sourceFarHalfWidth: 0.041,
-  widenedNearHalfWidth: 0.07,
-  widenedFarHalfWidth: 0.062,
+  widenedNearHalfWidth: 0.086,
+  widenedFarHalfWidth: 0.096,
   maxBridgeSilhouetteWidthPx390: 66,
-  maxFishingSilhouetteWidthPx390: 66
+  maxFishingSilhouetteWidthPx390: 80
+});
+
+const DEFAULT_COMPANION_PRESENTATION = Object.freeze({
+  habitatScale: 0.96,
+  collisionRadiusPx390: 22,
+  bridgeScale: 0.98,
+  fishingScale: 1.45
+});
+
+export const MOONLAKE_COMPANION_PRESENTATION = Object.freeze({
+  default: DEFAULT_COMPANION_PRESENTATION,
+  "greyshade-cat": Object.freeze({
+    habitatScale: 0.96,
+    collisionRadiusPx390: 23,
+    bridgeScale: 0.97,
+    fishingScale: 1.45
+  }),
+  auriowl: Object.freeze({
+    habitatScale: 0.9,
+    collisionRadiusPx390: 18,
+    bridgeScale: 1,
+    fishingScale: 1.5
+  }),
+  sprigfawn: Object.freeze({
+    habitatScale: 1,
+    collisionRadiusPx390: 24,
+    bridgeScale: 0.95,
+    fishingScale: 1.4
+  }),
+  "crystalfin-seahorse": Object.freeze({
+    habitatScale: 0.9,
+    collisionRadiusPx390: 18,
+    bridgeScale: 1,
+    fishingScale: 1.5
+  }),
+  "blazetail-kit": Object.freeze({
+    habitatScale: 0.95,
+    collisionRadiusPx390: 21,
+    bridgeScale: 0.98,
+    fishingScale: 1.45
+  }),
+  "starstripe-cub": Object.freeze({
+    habitatScale: 0.97,
+    collisionRadiusPx390: 23,
+    bridgeScale: 0.97,
+    fishingScale: 1.42
+  }),
+  "thunder-pup": Object.freeze({
+    habitatScale: 0.96,
+    collisionRadiusPx390: 22,
+    bridgeScale: 0.98,
+    fishingScale: 1.45
+  }),
+  wavecub: Object.freeze({
+    habitatScale: 0.96,
+    collisionRadiusPx390: 22,
+    bridgeScale: 0.98,
+    fishingScale: 1.45
+  }),
+  "starflame-phoenix": Object.freeze({
+    habitatScale: 0.9,
+    collisionRadiusPx390: 18,
+    bridgeScale: 1,
+    fishingScale: 1.5
+  }),
+  "star-foal": Object.freeze({
+    habitatScale: 1,
+    collisionRadiusPx390: 24,
+    bridgeScale: 0.95,
+    fishingScale: 1.4
+  }),
+  "goldenspark-wyrm": Object.freeze({
+    habitatScale: 0.98,
+    collisionRadiusPx390: 23,
+    bridgeScale: 0.97,
+    fishingScale: 1.42
+  }),
+  "flame-flicker": Object.freeze({
+    habitatScale: 0.95,
+    collisionRadiusPx390: 21,
+    bridgeScale: 0.98,
+    fishingScale: 1.45
+  }),
+  "ice-talon": Object.freeze({
+    habitatScale: 0.98,
+    collisionRadiusPx390: 23,
+    bridgeScale: 0.97,
+    fishingScale: 1.42
+  }),
+  "stone-shard": Object.freeze({
+    habitatScale: 1,
+    collisionRadiusPx390: 25,
+    bridgeScale: 0.94,
+    fishingScale: 1.4
+  }),
+  "vine-twist": Object.freeze({
+    habitatScale: 1,
+    collisionRadiusPx390: 24,
+    bridgeScale: 0.95,
+    fishingScale: 1.4
+  }),
+  "crystal-rabbit": Object.freeze({
+    habitatScale: 0.9,
+    collisionRadiusPx390: 18,
+    bridgeScale: 1,
+    fishingScale: 1.5
+  })
+});
+
+export const MOONLAKE_NAVIGATION_SAFETY = Object.freeze({
+  id: "moonlake-nav-collision-scale-r3-3",
+  segmentSamples: 18,
+  bridgeCollisionMultiplier: 0.76,
+  footprints: Object.freeze([
+    Object.freeze({
+      id: "lantern-front-left-base",
+      shape: "circle",
+      x390: 139,
+      y390: 532,
+      radiusPx390: 7,
+      areas: Object.freeze(["near_ground"])
+    }),
+    Object.freeze({
+      id: "lantern-front-right-base",
+      shape: "circle",
+      x390: 270,
+      y390: 532,
+      radiusPx390: 7,
+      areas: Object.freeze(["near_ground"])
+    }),
+    Object.freeze({
+      id: "tent-left-footprint",
+      shape: "ellipse",
+      x390: 95,
+      y390: 480,
+      radiusXPx390: 57,
+      radiusYPx390: 12,
+      areas: Object.freeze(["platform"])
+    }),
+    Object.freeze({
+      id: "tent-right-footprint",
+      shape: "ellipse",
+      x390: 310,
+      y390: 488,
+      radiusXPx390: 55,
+      radiusYPx390: 14,
+      areas: Object.freeze(["platform"])
+    }),
+    Object.freeze({
+      id: "rocks-front-left-footprint",
+      shape: "ellipse",
+      x390: 82,
+      y390: 548,
+      radiusXPx390: 42,
+      radiusYPx390: 17,
+      areas: Object.freeze(["near_ground"])
+    }),
+    Object.freeze({
+      id: "rocks-front-right-footprint",
+      shape: "ellipse",
+      x390: 335,
+      y390: 555,
+      radiusXPx390: 46,
+      radiusYPx390: 18,
+      areas: Object.freeze(["near_ground"])
+    }),
+    Object.freeze({
+      id: "crystal-bridge-right-base",
+      shape: "circle",
+      x390: 297,
+      y390: 389,
+      radiusPx390: 8,
+      areas: Object.freeze(["bridge", "fishing_spot"])
+    }),
+    Object.freeze({
+      id: "crystal-bridge-left-base",
+      shape: "circle",
+      x390: 149,
+      y390: 389,
+      radiusPx390: 8,
+      areas: Object.freeze(["bridge", "fishing_spot"])
+    })
+  ])
 });
 
 const BRIDGE_MID_FISHING_OPTIONS = Object.freeze([
@@ -271,11 +454,11 @@ export const MOONLAKE_INTERACTION_HOTSPOTS = Object.freeze([
 
 export const MOONLAKE_WORLD_WAYPOINTS = Object.freeze({
   platform_center: Object.freeze({ x: 0, y: 0.28, z: 1.2, area: "platform" }),
-  platform_left: Object.freeze({ x: -1.35, y: 0.24, z: 1.0, area: "platform" }),
+  platform_left: Object.freeze({ x: -0.7, y: 0.24, z: 1.0, area: "platform" }),
   platform_right: Object.freeze({ x: 1.35, y: 0.24, z: 0.7, area: "platform" }),
-  near_ground_center: Object.freeze({ x: 0, y: 0.08, z: 4.25, area: "near_ground" }),
-  near_ground_left: Object.freeze({ x: -2.35, y: 0.08, z: 4.4, area: "near_ground" }),
-  near_ground_right: Object.freeze({ x: 2.4, y: 0.08, z: 4.0, area: "near_ground" }),
+  near_ground_center: Object.freeze({ x: 0, y: 0.08, z: 4.45, area: "near_ground" }),
+  near_ground_left: Object.freeze({ x: -0.55, y: 0.08, z: 6.3, area: "near_ground" }),
+  near_ground_right: Object.freeze({ x: 1.03, y: 0.08, z: 6.1, area: "near_ground" }),
   bridge_near: Object.freeze({ x: 2.2, y: 0.2, z: -3.2, area: "bridge" }),
   bridge_mid: Object.freeze({
     x: 2.2,

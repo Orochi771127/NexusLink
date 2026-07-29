@@ -248,16 +248,18 @@ function snapshotPage() {
     assert.equal(bridge.roaming.projected.routeId, "bridge-clearance-r2-1");
     assert.ok(bridge.bounds.width <= 76, `${companionId} bridge bounds too wide`);
     assert.ok(
-      Math.abs(
-        bridge.bounds.x + bridge.bounds.width / 2 - bridge.roaming.projected.x
-      ) <= 1.5,
-      `${companionId} bridge silhouette left the centerline`
+      Math.abs(bridge.foot.globalX - bridge.roaming.projected.x) <= 1.5,
+      `${companionId} bridge foot left the centerline`
+    );
+    assert.ok(
+      Math.abs(bridge.foot.globalY - bridge.roaming.projected.y) <= 4,
+      `${companionId} bridge foot left the deck datum`
     );
     assert.ok(
       Math.abs(
-        bridge.bounds.y + bridge.bounds.height - bridge.roaming.projected.y
-      ) <= 1.5,
-      `${companionId} bridge silhouette left the deck datum`
+        bridge.bounds.x + bridge.bounds.width / 2 - bridge.roaming.projected.x
+      ) <= 18,
+      `${companionId} bridge body no longer reads over the deck`
     );
 
     await page.evaluate(() => {
@@ -289,16 +291,18 @@ function snapshotPage() {
     assert.equal(fishing.roaming.projected.routeId, "bridge-clearance-r2-1");
     assert.ok(fishing.bounds.width <= 76, `${companionId} fishing bounds too wide`);
     assert.ok(
-      Math.abs(
-        fishing.bounds.x + fishing.bounds.width / 2 - fishing.roaming.projected.x
-      ) <= 1.5,
-      `${companionId} fishing silhouette left the bridge centerline`
+      Math.abs(fishing.foot.globalX - fishing.roaming.projected.x) <= 1.5,
+      `${companionId} fishing foot left the bridge centerline`
+    );
+    assert.ok(
+      Math.abs(fishing.foot.globalY - fishing.roaming.projected.y) <= 4,
+      `${companionId} fishing foot left the bridge datum`
     );
     assert.ok(
       Math.abs(
-        fishing.bounds.y + fishing.bounds.height - fishing.roaming.projected.y
-      ) <= 4,
-      `${companionId} fishing silhouette left the bridge datum`
+        fishing.bounds.x + fishing.bounds.width / 2 - fishing.roaming.projected.x
+      ) <= 18,
+      `${companionId} fishing body no longer reads over the bridge`
     );
 
     cases.push({ companionId, bridge, fishing });

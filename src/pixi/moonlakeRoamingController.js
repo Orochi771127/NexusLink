@@ -2,6 +2,11 @@ import {
   MOONLAKE_WORLD_EDGES,
   MOONLAKE_WORLD_WAYPOINTS
 } from "../three/moonlakeLive3dConfig.js";
+import {
+  getMoonlakeCollisionRadiusPx390,
+  getMoonlakeProjectedFootSafety,
+  isMoonlakeRouteSegmentSafe
+} from "./moonlakeNavigationSafety.js";
 
 const NORMAL_SPEED_PER_SECOND = 0.86;
 const BRIDGE_SPEED_PER_SECOND = 0.64;
@@ -123,6 +128,7 @@ export function updateMoonlakeRoaming(state, {
   mood = "calm",
   canRoam = true,
   reducedMotion = false,
+  companionId = null,
   canResolve,
   projectWorldPoint,
   random = Math.random
@@ -141,13 +147,17 @@ export function updateMoonlakeRoaming(state, {
           : !ready
             ? "missing_directional_assets"
             : "tired",
+      companionId,
       projectWorldPoint,
       deltaMs
     });
   }
 
   if (!roaming.targetId && nowMs >= roaming.dwellUntil) {
-    roaming.targetId = chooseNextWaypoint(roaming.currentId, mood, random);
+    roaming.targetId = chooseNextWaypoint(roaming.currentId, mood, random, {
+      companionId,
+      projectWorldPoint
+    });
   }
 
   if (!roaming.targetId) {
@@ -156,6 +166,7 @@ export function updateMoonlakeRoaming(state, {
       enabled: true,
       ready: true,
       reason: "dwell",
+      companionId,
       projectWorldPoint,
       deltaMs
     });
@@ -204,6 +215,7 @@ export function updateMoonlakeRoaming(state, {
     enabled: true,
     ready: true,
     reason: roaming.direction ? "walking" : "arrived",
+    companionId,
     projectWorldPoint,
     deltaMs
   });
@@ -223,15 +235,30 @@ export function getMoonlakeRoamingSnapshot(state) {
   };
 }
 
-function chooseNextWaypoint(currentId, mood, random) {
+function chooseNextWaypoint(currentId, mood, random, {
+  companionId,
+  projectWorldPoint
+} = {}) {
   const policy = MOOD_ROUTE_POLICY[mood] || MOOD_ROUTE_POLICY.calm;
+  const from = MOONLAKE_WORLD_WAYPOINTS[currentId];
   const candidates = (MOONLAKE_WORLD_EDGES[currentId] || []).filter((id) => {
-    if (policy.allowBridge) return true;
-    return MOONLAKE_WORLD_WAYPOINTS[id]?.area !== "bridge"
+    const target = MOONLAKE_WORLD_WAYPOINTS[id];
+    const moodAllows = policy.allowBridge
+      || (target?.area !== "bridge"
       && MOONLAKE_WORLD_WAYPOINTS[id]?.area !== "far_bank"
-      && MOONLAKE_WORLD_WAYPOINTS[id]?.area !== "fishing_spot";
+      && MOONLAKE_WORLD_WAYPOINTS[id]?.area !== "fishing_spot");
+    if (!moodAllows || !from || !target) return false;
+    return isMoonlakeRouteSegmentSafe(from, target, {
+      companionId,
+      area: from.area,
+      projectWorldPoint
+    }) && isMoonlakeRouteSegmentSafe(from, target, {
+      companionId,
+      area: target.area,
+      projectWorldPoint
+    });
   });
-  if (!candidates.length) return ORIGIN_ID;
+  if (!candidates.length) return null;
   const index = Math.min(candidates.length - 1, Math.floor(clamp01(random()) * candidates.length));
   return candidates[index];
 }
@@ -258,6 +285,7 @@ function buildResult(state, {
   enabled,
   ready,
   reason,
+  companionId,
   projectWorldPoint,
   deltaMs = 0
 }) {
@@ -276,6 +304,10 @@ function buildResult(state, {
     deltaMs,
     Boolean(state.direction)
   );
+  const footSafety = getMoonlakeProjectedFootSafety(projected, {
+    companionId,
+    area
+  });
   return {
     enabled,
     ready,
@@ -288,6 +320,8 @@ function buildResult(state, {
     projectionReady: Boolean(projected),
     scaleMultiplier: Number(projected?.scale) || 1,
     area,
+    collisionRadiusPx390: getMoonlakeCollisionRadiusPx390(companionId, area),
+    footSafety,
     isFishingSpot: fishingOptions.length > 0 && !state.direction,
     fishingOptions
   };
