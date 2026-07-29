@@ -6337,3 +6337,21 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
   `agent/moonlake-three-mode-levels-r1` -> push -> PR -> required
   `web-release-gate` -> protected-main merge -> Pages and public mobile
   verification.
+
+### 2026-07-29 - Codex - Moonlake Three-Mode Browser Gate Alignment - VERIFIED
+
+- Status: `VERIFIED`; PR `#167` run `30437149965` exposed a stale browser-gate
+  assumption, not a runtime crash.
+- Lane: `Game Engineering And Architecture`.
+- Root cause: `_run_map_first_session_browser_gate.py` still expected clicking
+  Starwood Trail to open the retired `.phase-search` exploration sheet. The
+  approved runtime now opens the five-stage Moonlake Orbit zone sheet, so the
+  old selector timed out.
+- Focused correction: the browser gate now proves safe-camp unlock, five-stage
+  Starwood selection, mobile containment, zero-write preview, real Orbit entry,
+  affirmed zero-write retreat and return-to-source-zone, locked-zone preview,
+  separate Standoff/Expedition entries, no Standoff first-clear reward on
+  retreat, reduced motion and veteran migration.
+- Local browser result: `32/32 PASS` at `390x844`, with zero console/page
+  errors. Product runtime, state and safety code were not changed by this CI
+  alignment.
