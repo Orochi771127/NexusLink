@@ -32,6 +32,8 @@ const FISHING_WAIT_MIN_MS = 8_500;
 const FISHING_WAIT_MAX_MS = 14_000;
 const FISHING_BITE_DURATION_MS = 950;
 const FISHING_SETTLE_DURATION_MS = 850;
+const FISHING_VISIBILITY_PAUSE_REASON = "visibility";
+const FISHING_INTERACTION_PAUSE_REASON = "interaction_lock";
 
 export function createCompanionMotion(companion, initialMood) {
   const motion = {
@@ -66,6 +68,8 @@ export function createCompanionMotion(companion, initialMood) {
     ambientActionWaterSide: null,
     ambientActionRailOffsetX390: 0,
     fishingSequence: null,
+    fishingSequenceSerial: 0,
+    lastFishingLifecycle: null,
     moonlakeRoaming: createMoonlakeRoamingState(performance.now()),
     moonlakeRoamingResult: null,
     fallbackMotionActive: true,
@@ -147,7 +151,8 @@ export function playDevMotion(motion, motionState, options = {}) {
       },
       now,
       {
-        waitDurationMs: Number(options.durationMs) || 10_000
+        waitDurationMs: Number(options.durationMs) || 10_000,
+        durationScale: Number(options.lifecycleScale) || 1
       }
     );
     return;
@@ -165,7 +170,22 @@ export function playDevMotion(motion, motionState, options = {}) {
 }
 
 export function updateCompanionMotion(companion, motion, timeSeconds, nowMs, mood, onStateChange = () => {}, options = {}) {
-  if (companion.__interactionController?.isAnimationLocked?.()) {
+  const interactionLocked = Boolean(
+    companion.__interactionController?.isAnimationLocked?.()
+  );
+  setCompanionFishingPaused(
+    motion,
+    FISHING_VISIBILITY_PAUSE_REASON,
+    options.lifecycleActive === false,
+    nowMs
+  );
+  setCompanionFishingPaused(
+    motion,
+    FISHING_INTERACTION_PAUSE_REASON,
+    interactionLocked,
+    nowMs
+  );
+  if (interactionLocked) {
     stopAmbientWalk(motion);
     motion.temporaryState = null;
     motion.devForcedState = null;
@@ -290,7 +310,18 @@ export function updateCompanionMotion(companion, motion, timeSeconds, nowMs, moo
     || Boolean(motion.ambientState)
     || Boolean(roamingResult.moving);
   if (motion.fishingSequence && isBusy) {
-    stopFishingSequence(motion, nowMs);
+    const interruptionReason = !canAmbientWalk
+      ? "ambient_walk_disabled"
+      : motion.temporaryState
+        ? "touch_motion"
+        : isBattleActive
+          ? "battle"
+          : isSleeping
+            ? "sleep"
+            : motion.ambientState
+              ? "ambient_walk"
+              : "roaming";
+    stopFishingSequence(motion, nowMs, "interrupted", interruptionReason);
   } else if (motion.fishingSequence) {
     advanceFishingSequence(motion, nowMs);
   }
@@ -415,6 +446,12 @@ export function getCompanionRoamingSnapshot(motion) {
   return {
     ...getMoonlakeRoamingSnapshot(motion.moonlakeRoaming),
     ...(motion.moonlakeRoamingResult || {}),
+    lastFishingLifecycle: motion.lastFishingLifecycle
+      ? {
+        ...motion.lastFishingLifecycle,
+        phases: [...motion.lastFishingLifecycle.phases]
+      }
+      : null,
     fishing: fishingAnimationName
       ? {
         animationName: fishingAnimationName,
@@ -434,10 +471,40 @@ export function getCompanionRoamingSnapshot(motion) {
           ? motion.devForcedRailOffsetX390
           : motion.ambientActionRailOffsetX390,
         phase: motion.fishingSequence?.phase || "legacy",
-        phaseProgress: fishingPhaseProgress
+        phaseProgress: fishingPhaseProgress,
+        paused: Boolean(motion.fishingSequence?.pausedAt),
+        pauseReasons: [...(motion.fishingSequence?.pauseReasons || [])]
       }
       : null
   };
+}
+
+export function setCompanionFishingPaused(
+  motion,
+  reason,
+  paused,
+  nowMs = performance.now()
+) {
+  const sequence = motion?.fishingSequence;
+  if (!sequence || !reason) return false;
+  const pauseReasons = sequence.pauseReasons instanceof Set
+    ? sequence.pauseReasons
+    : new Set(sequence.pauseReasons || []);
+  sequence.pauseReasons = pauseReasons;
+
+  if (paused) {
+    pauseReasons.add(reason);
+    if (!sequence.pausedAt) sequence.pausedAt = nowMs;
+    return true;
+  }
+
+  pauseReasons.delete(reason);
+  if (pauseReasons.size > 0 || !sequence.pausedAt) return true;
+  const pausedDurationMs = Math.max(0, nowMs - sequence.pausedAt);
+  sequence.phaseStartedAt += pausedDurationMs;
+  sequence.phaseUntil += pausedDurationMs;
+  sequence.pausedAt = 0;
+  return true;
 }
 
 export function snapCompanionRoamingToWaypoint(motion, waypointId, nowMs = performance.now()) {
@@ -490,9 +557,19 @@ function normalizeAmbientActionCandidate(candidate) {
 }
 
 function startFishingSequence(motion, action, nowMs, {
-  waitDurationMs = null
+  waitDurationMs = null,
+  durationScale = 1
 } = {}) {
-  const castDurationMs = getMotionDurationMs(motion, action.animationName, 1_350);
+  const normalizedDurationScale = Math.min(1, Math.max(0.02, durationScale));
+  const castDurationMs = getMotionDurationMs(
+    motion,
+    action.animationName,
+    1_350
+  ) * normalizedDurationScale;
+  const baseWaitDurationMs = Math.max(
+    FISHING_WAIT_MIN_MS,
+    Number(waitDurationMs) || randomBetween(FISHING_WAIT_MIN_MS, FISHING_WAIT_MAX_MS)
+  );
   motion.devForcedState = null;
   motion.devForcedUntil = 0;
   motion.devForcedMirrorX = false;
@@ -501,6 +578,7 @@ function startFishingSequence(motion, action, nowMs, {
   motion.ambientActionState = null;
   motion.ambientActionUntil = 0;
   motion.fishingSequence = {
+    id: ++motion.fishingSequenceSerial,
     animationName: action.animationName,
     mirrorX: Boolean(action.mirrorX),
     waterSide: action.waterSide || null,
@@ -509,22 +587,35 @@ function startFishingSequence(motion, action, nowMs, {
     phaseStartedAt: nowMs,
     phaseUntil: nowMs + castDurationMs,
     phaseDurationMs: castDurationMs,
-    waitDurationMs: Math.max(
-      FISHING_WAIT_MIN_MS,
-      Number(waitDurationMs) || randomBetween(FISHING_WAIT_MIN_MS, FISHING_WAIT_MAX_MS)
-    )
+    durationScale: normalizedDurationScale,
+    pausedAt: 0,
+    pauseReasons: new Set(),
+    phases: ["cast"],
+    waitDurationMs: baseWaitDurationMs * normalizedDurationScale
   };
 }
 
 function advanceFishingSequence(motion, nowMs) {
   const sequence = motion.fishingSequence;
-  if (!sequence || nowMs < sequence.phaseUntil) return;
+  if (
+    !sequence
+    || sequence.pausedAt
+    || sequence.pauseReasons?.size > 0
+    || nowMs < sequence.phaseUntil
+  ) {
+    return;
+  }
   if (sequence.phase === "cast") {
     setFishingPhase(sequence, "wait", nowMs, sequence.waitDurationMs);
     return;
   }
   if (sequence.phase === "wait") {
-    setFishingPhase(sequence, "bite", nowMs, FISHING_BITE_DURATION_MS);
+    setFishingPhase(
+      sequence,
+      "bite",
+      nowMs,
+      FISHING_BITE_DURATION_MS * sequence.durationScale
+    );
     return;
   }
   if (sequence.phase === "bite") {
@@ -533,11 +624,17 @@ function advanceFishingSequence(motion, nowMs) {
       "reel",
       nowMs,
       getMotionDurationMs(motion, sequence.animationName, 1_350)
+        * sequence.durationScale
     );
     return;
   }
   if (sequence.phase === "reel") {
-    setFishingPhase(sequence, "settle", nowMs, FISHING_SETTLE_DURATION_MS);
+    setFishingPhase(
+      sequence,
+      "settle",
+      nowMs,
+      FISHING_SETTLE_DURATION_MS * sequence.durationScale
+    );
     return;
   }
   stopFishingSequence(motion, nowMs);
@@ -545,13 +642,30 @@ function advanceFishingSequence(motion, nowMs) {
 
 function setFishingPhase(sequence, phase, nowMs, durationMs) {
   sequence.phase = phase;
+  sequence.phases.push(phase);
   sequence.phaseStartedAt = nowMs;
   sequence.phaseDurationMs = Math.max(1, durationMs);
   sequence.phaseUntil = nowMs + sequence.phaseDurationMs;
 }
 
-function stopFishingSequence(motion, nowMs) {
+function stopFishingSequence(
+  motion,
+  nowMs,
+  status = "completed",
+  reason = null
+) {
   if (!motion.fishingSequence) return;
+  const sequence = motion.fishingSequence;
+  motion.lastFishingLifecycle = {
+    id: sequence.id,
+    animationName: sequence.animationName,
+    mirrorX: sequence.mirrorX,
+    waterSide: sequence.waterSide,
+    phases: [...sequence.phases, status === "completed" ? "idle" : status],
+    status,
+    reason,
+    completedAt: nowMs
+  };
   motion.fishingSequence = null;
   scheduleNextAmbientAction(motion, nowMs);
 }
@@ -559,7 +673,8 @@ function stopFishingSequence(motion, nowMs) {
 function getFishingPhaseProgress(sequence, nowMs) {
   if (!sequence) return 0;
   const duration = Math.max(1, sequence.phaseDurationMs);
-  return Math.min(1, Math.max(0, (nowMs - sequence.phaseStartedAt) / duration));
+  const effectiveNow = sequence.pausedAt || nowMs;
+  return Math.min(1, Math.max(0, (effectiveNow - sequence.phaseStartedAt) / duration));
 }
 
 function getFishingPlaybackOptions(sequence) {
