@@ -10,7 +10,11 @@ import {
   getMoonlakeWalkPlaybackRate,
   MOONLAKE_LOCOMOTION_PROFILES
 } from "../../src/pixi/moonlakeRoamingController.js";
-import { MOONLAKE_INTERACTION_HOTSPOTS } from "../../src/three/moonlakeLive3dConfig.js";
+import { shouldMoonlakeOccluderCover } from "../../src/pixi/moonlakeDepthOcclusion.js";
+import {
+  MOONLAKE_DEPTH_OCCLUDERS,
+  MOONLAKE_INTERACTION_HOTSPOTS
+} from "../../src/three/moonlakeLive3dConfig.js";
 import { projectMoonlakeImagePoint } from "../../src/three/moonlakeLive3dScene.js";
 
 const COMPANION_IDS = [
@@ -168,6 +172,51 @@ assert.ok(
   "lantern, crystal, and water interaction families are all present"
 );
 
+assert.equal(MOONLAKE_DEPTH_OCCLUDERS.length, 7, "Moonlake has seven authored RO-style occluders");
+for (const occluder of MOONLAKE_DEPTH_OCCLUDERS) {
+  assert.ok(fs.existsSync(occluder.texture.replace("./", "")), `${occluder.id} texture exists`);
+  assert.ok(occluder.imageRect.width > 0 && occluder.imageRect.height > 0, `${occluder.id} has a valid crop`);
+}
+const overlapFixture = {
+  companionBounds: { left: 120, top: 200, right: 180, bottom: 280 },
+  foot: { x: 150, y: 275 },
+  projectedRect: { left: 140, top: 180, right: 200, bottom: 300 },
+  projectedBaselineY: 290
+};
+assert.equal(
+  shouldMoonlakeOccluderCover(overlapFixture),
+  true,
+  "a prop covers an intersecting companion whose feet are behind its baseline"
+);
+assert.equal(
+  shouldMoonlakeOccluderCover({
+    ...overlapFixture,
+    foot: { x: 150, y: 305 }
+  }),
+  false,
+  "a companion in front of a prop baseline remains in front"
+);
+assert.equal(
+  shouldMoonlakeOccluderCover({
+    ...overlapFixture,
+    mode: "surface",
+    area: "bridge",
+    surfaces: ["bridge", "fishing_spot"]
+  }),
+  true,
+  "bridge rails cover an intersecting companion while it is on the bridge"
+);
+assert.equal(
+  shouldMoonlakeOccluderCover({
+    ...overlapFixture,
+    mode: "surface",
+    area: "platform",
+    surfaces: ["bridge", "fishing_spot"]
+  }),
+  false,
+  "bridge rails do not cover a platform companion"
+);
+
 const sceneSource = fs.readFileSync("src/three/moonlakeLive3dScene.js", "utf8");
 assert.match(sceneSource, /fallingBand/);
 assert.match(sceneSource, /lanternPulse/);
@@ -183,6 +232,7 @@ assert.match(appSource, /createWaterRippleEffect/);
 console.log(JSON.stringify({
   pass: true,
   companions: COMPANION_IDS.length,
+  depthOccluders: MOONLAKE_DEPTH_OCCLUDERS.length,
   interactionHotspots: projectedHotspots.length,
   fishingPhases: ["cast", "wait", "bite", "reel", "settle"],
   strideProfiles: Object.keys(MOONLAKE_LOCOMOTION_PROFILES).length
