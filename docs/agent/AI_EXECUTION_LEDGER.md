@@ -6355,3 +6355,33 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Local browser result: `32/32 PASS` at `390x844`, with zero console/page
   errors. Product runtime, state and safety code were not changed by this CI
   alignment.
+
+### 2026-07-29 - Codex - Moonlake Three-Mode Level Restructure R1 Publication - VERIFIED
+
+- Status: `VERIFIED`; the approved Moonlake three-mode package is merged to
+  protected `main` and publicly deployed.
+- Lane: `Game Engineering And Architecture`.
+- Publication proof:
+  - content commit: `fc570baa41e364d7c0452d329c82068e72c6cec3`;
+  - browser-gate alignment commit:
+    `22c755346d4a40de9e1923cccdf35992bf06021a`;
+  - PR: `#167` (`Add Moonlake three-mode level progression`);
+  - required PR `web-release-gate`: run `30438269083`, SUCCESS;
+  - squash merge: `fb33e739cc26da38ef8d892b1e01e0d4cc125a8d`;
+  - Pages build/deploy: run `30438647507`, SUCCESS;
+  - post-merge release gate: run `30438652893`, SUCCESS.
+- Gate note: initial PR run `30437149965` failed only because its map browser
+  test still waited for the retired `.phase-search` selector. The focused QA
+  alignment described above passed locally `32/32`; the complete required gate
+  then passed before merge.
+- Public mobile verification:
+  - `https://orochi771127.github.io/NexusLink/?build=fb33e739` loaded the
+    deployed build at `390x844`;
+  - five route nodes exposed their `0/5` progression, Starwood exposed five
+    stages with only stage 1 enabled, and stage 1 opened the existing Orbit
+    canvas as `月湖路徑・林口初旋`;
+  - document width remained exactly `390 px`, with zero console errors.
+- Cleanup proof: `.codex/**` was fully removed after verifying it contained
+  only two zero-byte QA logs and a clean `2.37 GiB` linked worktree whose PR
+  `#157` was already merged. Its remote commit `113bb5a0c3b298aca1d6a360fac5c2d1f9dd73ed`
+  remains recoverable; no product source or unmerged work was deleted.
