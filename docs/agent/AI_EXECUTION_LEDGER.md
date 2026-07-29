@@ -6385,3 +6385,70 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
   only two zero-byte QA logs and a clean `2.37 GiB` linked worktree whose PR
   `#157` was already merged. Its remote commit `113bb5a0c3b298aca1d6a360fac5c2d1f9dd73ed`
   remains recoverable; no product source or unmerged work was deleted.
+
+### 2026-07-29 - Codex - Moonlake RO Depth And Direction R3.2 - VERIFIED / PUBLICATION AUTHORIZED
+
+- Status: `VERIFIED`; Owner approved the fixed-camera 3D environment plus 2D
+  companion depth/direction correction and explicitly authorized protected-main
+  publication.
+- Lane: `Game Engineering And Architecture`.
+- Completed:
+  - added a live Moonlake depth-occlusion renderer on the existing Pixi
+    `layerOcclusion` without moving environment, weather, world projection,
+    gameplay or state authority out of the approved Three.js/Pixi hybrid;
+  - seven authored occluders now use companion opaque-foot depth or bridge
+    surface authority, and are clipped to the actual companion/prop
+    intersection so the visual master is not redrawn as a bright foreground
+    patch;
+  - bridge rails cover companions only on `bridge` / `fishing_spot`; tents,
+    lamps and stones switch by projected baseline; legacy R1 foreground plates
+    remain available for raster fallback but are hidden in live 3D;
+  - QA diagnostics expose loaded occluders, projected rectangles, foot, area
+    and currently visible IDs without changing save or product state.
+- Validation:
+  - `moonlake-living-habitat-r3-cases.mjs`: PASS, `16` companions, `7`
+    occluders, `9` interaction hotspots and all fishing phases;
+  - `moonlake-ro-depth-direction-r3-2-browser.cjs`: PASS at `390x844`, day and
+    night, both front lamps, both tents, bridge rails and all `16` runtime
+    `right_walk` selections with `mirrorX:false`;
+  - existing R3 living-habitat, fishing-orientation and bridge-clearance
+    browser suites: PASS with zero page/console errors;
+  - complete local `web-release-gate`: required automated checks `28/28`;
+  - `node --check` and `git diff --check`: PASS.
+- Red-line / scope proof: no `saveManager`, relationship, reward, growth,
+  RaphaelCore, free camera, physics, renderer migration or new dependency
+  change.
+- Branch: `codex/moonlake-ro-depth-direction-r3-2`; verified content commit:
+  `002d83e3d9d945a76d60b0e6cef8362e2c57b3cf`.
+
+### 2026-07-29 - Codex - Moonlake RO Depth And Direction R3.2 - VERIFIED / PUBLICATION AUTHORIZED
+
+- Status: `VERIFIED`; the approved visual correction passed direct mobile
+  inspection and asset-integrity QA.
+- Lane: `Game Art, UI, And Visual Production`.
+- Asset corrections:
+  - repaired the mislabeled right-walk sheets for `auriowl`,
+    `crystalfin-seahorse`, `blazetail-kit` and `starstripe-cub` by exact
+    horizontal mirroring of their approved left sheets; no regeneration,
+    redesign or style drift was introduced;
+  - extracted seven transparent foreground plates from the current
+    Owner-approved Moonlake R2 visual master: bridge rails, two tents, two
+    lamps and two stone groups;
+  - removed surrounding ground/foliage pixels from the plates, clipped runtime
+    redraw to only the companion overlap and calibrated tent/day/night tint to
+    avoid bright seams.
+- Visual proof:
+  - `16/16` right-walk sheets are mechanically closer to mirrored left-facing
+    art than same-direction art; the four repaired sheets are exact pixel
+    mirrors;
+  - the `390x844` contact sheet shows all sixteen heads/bodies facing screen
+    right;
+  - mobile screenshots prove lamp-before-character, tent-before-character,
+    stone/feet coverage and bridge-rail containment in day and night without
+    full-screen foreground duplication.
+- Evidence is retained under ignored
+  `output/playwright/moonlake-ro-depth-direction-r3-2/`; production assets are
+  under `assets/layers/MoonlakeDiorama_r2/depth_occluders/`.
+- Branch: `codex/moonlake-ro-depth-direction-r3-2`; verified content commit:
+  `002d83e3d9d945a76d60b0e6cef8362e2c57b3cf`; no unrelated assets were changed
+  or deleted.

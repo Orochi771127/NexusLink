@@ -17,6 +17,61 @@ export const MOONLAKE_VISUAL_MASTER = Object.freeze({
   sourceRole: "owner-approved-composition-and-quality-authority"
 });
 
+export const MOONLAKE_DEPTH_OCCLUDERS = Object.freeze([
+  Object.freeze({
+    id: "bridge-rails",
+    texture: "./assets/layers/MoonlakeDiorama_r2/depth_occluders/bridge_rails.png",
+    imageRect: Object.freeze({ x: 580, y: 570, width: 230, height: 350 }),
+    mode: "surface",
+    surfaces: Object.freeze(["bridge", "fishing_spot"]),
+    boundsPaddingPx390: 8
+  }),
+  Object.freeze({
+    id: "tent-left",
+    texture: "./assets/layers/MoonlakeDiorama_r2/depth_occluders/tent_left.png",
+    imageRect: Object.freeze({ x: 30, y: 690, width: 370, height: 420 }),
+    baselineImageY: 0.568,
+    dayTint: 0xc6c6c6,
+    boundsPaddingPx390: 6
+  }),
+  Object.freeze({
+    id: "tent-right",
+    texture: "./assets/layers/MoonlakeDiorama_r2/depth_occluders/tent_right.png",
+    imageRect: Object.freeze({ x: 690, y: 775, width: 345, height: 355 }),
+    baselineImageY: 0.58,
+    dayTint: 0xb8b8b8,
+    boundsPaddingPx390: 6
+  }),
+  Object.freeze({
+    id: "lantern-front-left",
+    texture: "./assets/layers/MoonlakeDiorama_r2/depth_occluders/lantern_front_left.png",
+    imageRect: Object.freeze({ x: 340, y: 1010, width: 130, height: 215 }),
+    baselineImageY: 0.63,
+    boundsPaddingPx390: 4
+  }),
+  Object.freeze({
+    id: "lantern-front-right",
+    texture: "./assets/layers/MoonlakeDiorama_r2/depth_occluders/lantern_front_right.png",
+    imageRect: Object.freeze({ x: 640, y: 1010, width: 130, height: 215 }),
+    baselineImageY: 0.63,
+    boundsPaddingPx390: 4
+  }),
+  Object.freeze({
+    id: "rocks-front-left",
+    texture: "./assets/layers/MoonlakeDiorama_r2/depth_occluders/rocks_front_left.png",
+    imageRect: Object.freeze({ x: 70, y: 1070, width: 250, height: 175 }),
+    baselineImageY: 0.645,
+    boundsPaddingPx390: 4
+  }),
+  Object.freeze({
+    id: "rocks-front-right",
+    texture: "./assets/layers/MoonlakeDiorama_r2/depth_occluders/rocks_front_right.png",
+    imageRect: Object.freeze({ x: 780, y: 1070, width: 300, height: 210 }),
+    baselineImageY: 0.66,
+    boundsPaddingPx390: 4
+  })
+]);
+
 export const MOONLAKE_VISUAL_WALKWAY = Object.freeze({
   routeId: "bridge-clearance-r2-1",
   anchors: Object.freeze([

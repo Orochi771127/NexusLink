@@ -92,6 +92,7 @@ import {
 import { createMoonlakeLive3dScene } from "./three/moonlakeLive3dScene.js";
 import { MOONLAKE_INTERACTION_HOTSPOTS } from "./three/moonlakeLive3dConfig.js";
 import { bindCompanionTap, createCreatureNode, positionCompanion } from "./pixi/companionRenderer.js";
+import { createMoonlakeDepthOcclusion } from "./pixi/moonlakeDepthOcclusion.js";
 import { createHabitatTraceRenderer } from "./pixi/habitatTraceRenderer.js";
 import { createCrystalStateRenderer } from "./pixi/crystalStateRenderer.js";
 import { enableEditorMode, readSceneEditorFlag } from "./tools/sceneEditor.js";
@@ -797,10 +798,12 @@ async function bootScene(
     getEnvironmentState,
     getWeather: getHabitatWeather
   });
+  let moonlakeDepthOcclusion = null;
   const syncHybridRendererVisibility = () => {
     const useLive3d = live3d.ready && environmentLayer.profileId === "moonlake";
     live3d.setActive(useLive3d);
     setPixiEnvironmentVisibility(layers, !useLive3d, environmentLayer);
+    moonlakeDepthOcclusion?.setActive(useLive3d);
     return useLive3d;
   };
   syncHybridRendererVisibility();
@@ -1023,6 +1026,14 @@ async function bootScene(
   }
 
   attachCompanion(companion, currentCreature);
+  moonlakeDepthOcclusion = await createMoonlakeDepthOcclusion(PIXI, {
+    parent: layers.layerOcclusion,
+    live3d,
+    getCompanion: () => companion,
+    getEnvironmentState,
+    getRoamingSnapshot: () => getCompanionRoamingSnapshot(companionMotionController)
+  });
+  syncHybridRendererVisibility();
 
   // 一次性註冊：動畫意圖橋接（戰鬥結算回棲地、dev helper 等都透過此事件）。
   EventBus.on(COMPANION_ANIMATION_INTENT_EVENT, (payload) => {
@@ -1167,6 +1178,7 @@ async function bootScene(
         companion,
         safeTicker
       );
+      moonlakeDepthOcclusion?.update();
     }
     if (environmentLayer.magicCircle && !environmentLayer.magicCircle.__sceneEditorOriginalAlpha) {
       environmentLayer.magicCircle.alpha = 0.76 + Math.sin(t * 1.4) * 0.03;
@@ -1269,6 +1281,7 @@ async function bootScene(
       },
       getActiveCompanionNode: () => companion || null,
       getLive3dDiagnostics: () => live3d.getDiagnostics(),
+      getDepthOcclusionDiagnostics: () => moonlakeDepthOcclusion?.getDiagnostics() || null,
       getRoamingSnapshot: () => getCompanionRoamingSnapshot(companionMotionController),
       getFishingFxDiagnostics: () => fishingFx.getDiagnostics(),
       getInteractionHotspots: () => habitatInteractionLayer.getDiagnostics(),
@@ -1360,12 +1373,18 @@ function setPixiEnvironmentVisibility(layers, visible, environmentLayer = null) 
     "layerCelestial",
     "layerMidground",
     "layerPlatform",
-    "layerForeground",
-    "layerOcclusion"
+    "layerForeground"
   ];
   environmentLayerNames.forEach((name) => {
     if (layers?.[name]) layers[name].visible = Boolean(visible);
   });
+  if (layers?.layerOcclusion) layers.layerOcclusion.visible = true;
+  if (environmentLayer?.foregroundOcclusionDay) {
+    environmentLayer.foregroundOcclusionDay.visible = Boolean(visible);
+  }
+  if (environmentLayer?.foregroundOcclusionNight) {
+    environmentLayer.foregroundOcclusionNight.visible = Boolean(visible);
+  }
   if (environmentLayer?.habitatObjects?.root) {
     environmentLayer.habitatObjects.root.visible = Boolean(visible);
   }
