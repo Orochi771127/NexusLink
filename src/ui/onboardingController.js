@@ -47,6 +47,8 @@ export function createOnboardingController({
   let feedbackEl = null;
   let markingStarted = false;
   let lastAnnouncedStep = null;
+  let replayActive = false;
+  let replayStep = "start";
 
   function bind() {
     if (!root) return;
@@ -76,7 +78,7 @@ export function createOnboardingController({
   function render() {
     if (!root) return;
     const state = store.getState();
-    const shouldShow = !state.onboarding?.completed;
+    const shouldShow = replayActive || !state.onboarding?.completed;
 
     root.hidden = !shouldShow;
     root.setAttribute("aria-hidden", String(!shouldShow));
@@ -92,9 +94,11 @@ export function createOnboardingController({
       nameInput.value = storedName;
     }
 
-    activeStep = resolveStep(state.onboarding?.status, state.onboarding);
+    activeStep = replayActive
+      ? replayStep
+      : resolveStep(state.onboarding?.status, state.onboarding);
     showStep(activeStep, state);
-    markStarted(state);
+    if (!replayActive) markStarted(state);
   }
 
   function isActive() {
@@ -104,20 +108,20 @@ export function createOnboardingController({
   function restart() {
     firstResonance.cancel();
     lastAnnouncedStep = null;
-    const state = store.getState();
-    const now = Date.now();
-    store.setState({
-      onboarding: {
-        ...state.onboarding,
-        completed: false,
-        status: "start",
-        startedAt: now,
-        completedAt: null,
-        identityCompleted: false,
-        guidanceCompleted: false
-      }
-    });
-    persist();
+    replayActive = true;
+    replayStep = "start";
+    render();
+  }
+
+  function setReplayStep(step) {
+    replayStep = step;
+    render();
+  }
+
+  function completeReplay() {
+    replayActive = false;
+    replayStep = "start";
+    lastAnnouncedStep = null;
     render();
   }
 
@@ -134,7 +138,13 @@ export function createOnboardingController({
     setFeedback(t("onboarding.busy"), "status");
 
     try {
-      if (action === "start") {
+      if (replayActive && action === "start") {
+        setReplayStep("identity");
+      } else if (replayActive && (action === "skip-identity" || action === "save-identity")) {
+        setReplayStep("guidance");
+      } else if (replayActive && action === "guidance-next") {
+        completeReplay();
+      } else if (action === "start") {
         setOnboardingStep("identity", { startedAt: Date.now() });
       } else if (action === "skip-identity") {
         saveIdentity(true);

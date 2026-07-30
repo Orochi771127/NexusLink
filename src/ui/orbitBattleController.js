@@ -852,7 +852,7 @@ export function createOrbitBattleController({
       drawObjectiveProgress(session);
       drawMeter(
         12,
-        48,
+        session.prototypeSlice ? 68 : 48,
         session.player.stability,
         "化身",
         "rgba(160,220,255,0.95)"

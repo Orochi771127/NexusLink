@@ -53,7 +53,11 @@ import { createSettingsController } from "./ui/settingsController.js";
 import { createBgmController } from "./ui/bgmController.js";
 import { createCompanionSelectController } from "./ui/companionSelectController.js";
 import { createMapController } from "./ui/mapController.js";
-import { createAtlasController } from "./ui/atlasController.js";
+import {
+  createAtlasController,
+  isAtlasRegionSelectable,
+  resolveAtlasHabitatId
+} from "./ui/atlasController.js";
 import { getHabitatById, normalizeHabitatId } from "./data/habitatRegistry.js";
 import { getSceneProfile, setActiveSceneProfile } from "./data/sceneProfiles/index.js";
 import { LANGUAGE_CHANGED_EVENT } from "./i18n/i18n.js";
@@ -346,7 +350,8 @@ async function bootstrap() {
     store,
     isPanelOpen: () => panelManager.isPanelOpen(),
     isOnboardingActive: () => onboardingController?.isActive?.(),
-    getCompanionTouchTarget: () => sceneApi?.getCompanionTouchTarget?.()
+    getCompanionTouchTarget: () => sceneApi?.getCompanionTouchTarget?.(),
+    onCompanionTouch: (touchType) => sceneApi?.requestCompanionTouch?.(touchType)
   });
   const habitatMomentController = createHabitatMomentController({
     store,
@@ -474,6 +479,9 @@ async function bootstrap() {
         store,
         onHabitatSelect: async (habitatId) => {
           const normalizedId = normalizeHabitatId(habitatId);
+          if (!isAtlasRegionSelectable(normalizedId, store.getState().chapterProgress)) {
+            return false;
+          }
           const switched = await sceneApi?.switchHabitat?.(normalizedId);
           if (!switched) return false;
           store.setState({ activeHabitatId: normalizedId });
@@ -694,6 +702,8 @@ async function bootstrap() {
       bgmController,
       firstSessionPresentation
     );
+    firstLoopController.render();
+    interactionHintController.render();
     await firstSessionPresentation.settleScene(sceneApi);
     if (window.__NEXUS_HABITAT) {
       window.__NEXUS_HABITAT.getTouchAffordanceDiagnostics = () => (
@@ -813,7 +823,14 @@ async function bootScene(
   const world = createWorld(app);
   const layers = getSceneLayers(world);
 
-  const initialHabitatId = normalizeHabitatId(store.getState().activeHabitatId);
+  const initialHabitatId = resolveAtlasHabitatId(
+    normalizeHabitatId(store.getState().activeHabitatId),
+    store.getState().chapterProgress
+  );
+  if (initialHabitatId !== store.getState().activeHabitatId) {
+    store.setState({ activeHabitatId: initialHabitatId });
+    saveQueue.enqueue(SAVE_LEVEL.CRITICAL);
+  }
   const initialProfile = setActiveSceneProfile(initialHabitatId);
   const environmentLayer = await createEnvironmentLayer(layers, app, initialProfile);
   const live3d = await createMoonlakeLive3dScene({
@@ -998,6 +1015,32 @@ async function bootScene(
   let companionSwapVersion = 0;
   let companion = await createCreatureNode(currentCreature, { onStatus: reportCompanionStatus });
 
+  async function performCompanionTouch(touchType, handleTouch) {
+    if (
+      typeof handleTouch !== "function"
+      || panelManager.isPanelOpen()
+      || onboardingController?.isActive?.()
+    ) {
+      return false;
+    }
+    markInteraction();
+    const touchResult = await handleTouch();
+    raphaelAgentEventBridge?.("touch", {
+      touchType,
+      touchResult
+    }, { animationAlreadyApplied: true });
+    return touchResult;
+  }
+
+  async function requestCompanionTouch(touchType = "touch") {
+    if (!interactionController) return false;
+    const currentInteractionController = interactionController;
+    return performCompanionTouch(
+      touchType,
+      () => currentInteractionController.handleTouch(touchType)
+    );
+  }
+
   function attachCompanion(node, creature) {
     companionPositionCleanup?.();
     companionPositionCleanup = positionCompanion(node, app);
@@ -1020,14 +1063,11 @@ async function bootScene(
     bindCompanionTap(node, {
       isInteractionBlocked: () => panelManager.isPanelOpen() || onboardingController?.isActive?.(),
       onTouch: (touchType) => {
-        markInteraction(); // 觸碰會喚醒睡眠中的夥伴
-        return Promise.resolve(nodeInteractionController.handleTouch(touchType)).then((touchResult) => {
-          raphaelAgentEventBridge?.("touch", {
-            touchType,
-            touchResult
-          }, { animationAlreadyApplied: true });
-          return touchResult;
-        });
+        if (interactionController !== nodeInteractionController) return false;
+        return performCompanionTouch(
+          touchType,
+          () => nodeInteractionController.handleTouch(touchType)
+        );
       }
     });
   }
@@ -1456,7 +1496,8 @@ async function bootScene(
       syncPixiAtmosphereVisibility();
       return useLive3d;
     },
-    getCompanionTouchTarget
+    getCompanionTouchTarget,
+    requestCompanionTouch
   };
 }
 

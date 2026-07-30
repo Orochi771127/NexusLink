@@ -74,6 +74,34 @@ html[data-ui="v2"] .page-view__header {
   gap: 2px 12px;
   align-items: end;
   margin-bottom: 14px;
+  padding-right: 58px;
+}
+
+html[data-ui="v2"] .page-soul-talk-action {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: inline-grid;
+  place-items: center;
+  min-width: 52px;
+  min-height: 44px;
+  padding: 0 8px;
+  border: 1px solid rgba(124, 231, 255, 0.34);
+  border-radius: 14px;
+  color: var(--v3-cyan-300, #7ce7ff);
+  background: rgba(7, 18, 38, 0.72);
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+}
+
+html[data-ui="v2"] .page-soul-talk-action:hover,
+html[data-ui="v2"] .page-soul-talk-action:focus-visible {
+  border-color: rgba(124, 231, 255, 0.72);
+  outline: none;
+  box-shadow: 0 0 18px rgba(124, 231, 255, 0.18);
 }
 
 html[data-ui="v2"] .page-view__header p,

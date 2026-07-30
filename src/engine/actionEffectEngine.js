@@ -291,7 +291,7 @@ export function evaluateActionEffect(currentState, action, choice, context = {})
         createMemory(currentState, "care_soft_comfort", "輕聲安撫", "你放輕聲音，夥伴稍微放鬆了一點。", now),
         now
       );
-      statePatch.reactionPreview = "牠的耳朵動了一下，肩線鬆開半寸。";
+      statePatch.reactionPreview = "牠周身的光動了一下，姿態鬆開半寸。";
       message = "你放輕聲音。夥伴稍微放鬆了一點。";
     } else if (normalizedChoice === "energy_supply") {
       setVitals({ energy: 2, mood: "warm" });
