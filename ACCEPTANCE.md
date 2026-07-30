@@ -110,6 +110,21 @@
 - 驗法：抽查各情緒的回應文案。
 - 通過：無醫療宣稱、無說教、無「你應該」式糾正；符合 `soulTalkResponsePacks.js` 既定基調。
 
+**F3 — 手機先看見最新夥伴回覆**
+- 驗法：跑 `node docs/qa/soul-talk-mobile-viewport-r1-cases.mjs` 與
+  `node docs/qa/soul-talk-mobile-viewport-r1-browser.cjs`；在 `390×844`、
+  Safari-like `390×664` 連續送出短句與長句。
+- 通過：最新玩家訊息＋夥伴回覆若能放進 chat viewport，整個最新回合都可見；
+  若最新回合本身過長，第一段夥伴回覆必須已進入視野，不得只把玩家訊息固定在
+  對話區底部、讓夥伴回覆從折線外才開始。面板不覆蓋底部導覽，文件無水平溢出。
+
+**F4 — 快速回覆是單排、短文案、可觸控**
+- 驗法：同 F3 focused QA；另測鍵盤 focus、200% 文字與 reduced motion。
+- 通過：繁中三個快速回覆在 `390px` 寬度內同列且無需水平拖曳；列高不超過
+  `44px`，每個 chip 觸控高度至少 `44px`，不出現 `（換個說法）` 冗長後綴。
+  較長語系可水平捲動但不可增加第二排；鍵盤狀態 composer 仍完整可見；低動態
+  模式停止心湖聲紋動畫。高風險 safety 回合仍為零快速回覆。
+
 ---
 
 ## G. Companion Art Policy（illustrated root 主版本）

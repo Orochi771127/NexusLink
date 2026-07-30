@@ -6778,3 +6778,94 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Asset boundary: no approved scene, character, GLB, texture, fallback or
   legacy art asset is part of this publication package.
 - Branch: `codex/moonlake-occlusion-seam-r3-5`.
+### 2026-07-30 - Codex - Soul Talk Mobile Viewport R1 - IN PROGRESS
+
+- Status: `IN PROGRESS`; Owner approved `TP-SOUL-TALK-MOBILE-VIEWPORT-R1`.
+- Lane: `Game Art, UI, And Visual Production`.
+- Scope: make the phone Soul Talk drawer prioritize the latest companion
+  response, merge the heading and presence state into one compact control row,
+  keep Traditional Chinese quick replies on one 44px row, and preserve the
+  composer plus bottom navigation at `390x844` and the Safari-like `390x664`
+  effective viewport.
+- Design boundary: retain the Moonlake navy/cyan/gold visual system and use the
+  miniature heart-lake waveform as the only primary motion signature. Do not
+  shrink dialogue copy below a readable mobile size or reduce interactive
+  targets below 44px.
+- GROUNDWORK / non-goals: no `index.html`, state, save, Pixi, asset, bottom-nav,
+  dependency, backend or build-step change.
+- Planned proof: focused deterministic quick-reply cases, `390x844` and
+  `390x664` Chromium geometry, keyboard-focus compaction, 200% text, reduced
+  motion, horizontal-overflow checks and inspected screenshots.
+- Branch: `codex/soul-talk-mobile-viewport-r1`, based on exact `origin/main`
+  commit `ae5f124`.
+
+### 2026-07-30 - Codex - Soul Talk Mobile Viewport R1 - IN PROGRESS
+
+- Status: `IN PROGRESS`; the approved UI package also touches the quick-reply
+  presentation contract and latest-turn scroll policy.
+- Lane: `Raphael Core, Companion Reasoning, And Soul Talk`.
+- Scope: replace generic visible `（換個說法）` suffixes with authored compact
+  alternate labels while retaining full action intent, and make each rendered
+  turn show the companion response before historical context can consume the
+  short mobile viewport.
+- Red-line check: RaphaelCore safety classification, response authority,
+  gameplay state, reward, relationship, preference, memory and trace writers
+  remain unchanged. Safety-terminal turns must still render zero quick replies.
+- Required reading completed: `AGENTS.md`, `CLAUDE.md`, `ACCEPTANCE.md`,
+  `docs/production/ANTI_AI_SLOP_UX_GATE.md`, current Soul Talk controller and
+  quick-reply planner, and the latest relevant ledger entries.
+- Branch: `codex/soul-talk-mobile-viewport-r1`, based on exact `origin/main`
+  commit `ae5f124`.
+
+### 2026-07-30 - Codex - Soul Talk Mobile Viewport R1 - VERIFIED
+
+- Status: `VERIFIED`; the approved mobile composition is implemented.
+- Lane: `Game Art, UI, And Visual Production`.
+- Completed: the mobile header now combines companion identity and presence in
+  one compact row; the quick-reply region is a single 44px horizontal rail; the
+  composer is 60px or less with 44px controls; the reading-state drawer uses
+  recovered height for the conversation instead of stacked helper controls.
+- Mobile behavior: after a touch send completes, the keyboard is dismissed and
+  the expanded reading viewport re-anchors on the completed turn. Desktop input
+  focus remains unchanged. If the latest turn fits, the player line and complete
+  companion reply remain visible; if it is taller than the chat viewport, the
+  first companion response is brought into view.
+- Focused proof:
+  - `node docs/qa/soul-talk-mobile-viewport-r1-cases.mjs`: `11/11 PASS`.
+  - `node docs/qa/soul-talk-mobile-viewport-r1-browser.cjs`: `39/39 PASS`
+    across `390x844` and Safari-like `390x664`.
+  - Geometry covered document overflow, header height, single-row quick replies,
+    44px targets, composer height, bottom-nav clearance, latest-response
+    visibility, keyboard focus, 200% text and reduced motion.
+  - Screenshots inspected at both target sizes; no page or console errors.
+- Scope audit: only EXPERIENCE CSS/controller/planner, focused QA,
+  `ACCEPTANCE.md` and this ledger changed. No GROUNDWORK file or dependency
+  changed. `git diff --check` passed.
+- Branch: `codex/soul-talk-mobile-viewport-r1`; no commit or publication was
+  authorized.
+
+### 2026-07-30 - Codex - Soul Talk Mobile Viewport R1 - VERIFIED
+
+- Status: `VERIFIED`; compact presentation did not weaken RaphaelCore or safety
+  authority.
+- Lane: `Raphael Core, Companion Reasoning, And Soul Talk`.
+- Completed: long visible quick-reply copy and the generic
+  `（換個說法）` suffix were replaced with authored compact labels. Intent,
+  action type and accessible alternate meaning remain available to the
+  controller.
+- Regression proof:
+  - `node docs/qa/soul-talk-diversity-short-memory-cases.mjs`: all passed.
+  - `node docs/qa/soul-talk-transcript-journal-cases.mjs`: all passed.
+  - `python docs/qa/_run_dialogue_loop.py`: `21/21 PASS`, zero forbidden
+    phrases and zero console errors.
+  - `python docs/qa/_run_safety_terminal_ui_gate.py`: `7/7 PASS` at energy
+    `0`, `7` and `10`.
+- Red-line result: safety-terminal turns still expose zero quick replies, zero
+  SFX, zero gameplay/reward/memory delta and no secondary storage. RaphaelCore
+  safety classification, companion boundaries, preference profile and response
+  authority remain unchanged.
+- Handoff: retain the one-row rail and latest-response scroll contract when
+  adding future languages; longer locales may use horizontal chip scrolling,
+  but must not restore a second stacked row above the composer.
+- Branch: `codex/soul-talk-mobile-viewport-r1`; no commit or publication was
+  authorized.

@@ -78,9 +78,9 @@ export function createSoulTalkController({ store, saveCurrentState, saveCritical
   function bind() {
     ensureWaveformShell();
 
-    // 送出鈕不奪走輸入框焦點：st-focus 模式下 blur 會讓 drawer 位移 180ms，
-    // 按鈕在手指/游標下方移走，click 落在舊座標上 → 送出靜默失敗、訊息消失
-    //（真機點按與 Playwright 閘門都會中招；鍵盤保持開啟也更接近一般聊天體驗）。
+    // pointerdown 階段不奪走輸入框焦點：st-focus 模式下若先 blur，drawer
+    // 會在 click 前位移 180ms，按鈕從手指下方移走而造成靜默送出失敗。
+    // click 完整落下後，觸控手機再主動離開輸入焦點進入回覆閱讀模式。
     sendButton.addEventListener("pointerdown", (event) => {
       event.preventDefault();
     });
@@ -90,6 +90,12 @@ export function createSoulTalkController({ store, saveCurrentState, saveCritical
       if (!value) return;
       messageInput.value = "";
       handlePlayerMessage(value);
+      if (
+        document.activeElement === messageInput
+        && window.matchMedia?.("(hover: none) and (pointer: coarse)")?.matches
+      ) {
+        messageInput.blur();
+      }
     });
 
     messageInput.addEventListener("keydown", (event) => {
@@ -120,6 +126,9 @@ export function createSoulTalkController({ store, saveCurrentState, saveCritical
       // iOS 26 回歸：鍵盤收起後頁面可能停在被上推的位置（下半屏黑塊）。
       // 延遲檢查點把捲動歸零；玩家若立刻聚焦別的輸入框會自動跳過（見 dom.js）。
       restoreViewportAfterKeyboard();
+      // drawer 會用 180ms 從輸入模式回到閱讀高度；轉場後重新捲到底，
+      // 讓剛完成的夥伴回覆保留在擴大的可視區內。
+      window.setTimeout(() => scrollChatLog(), 240);
     });
   }
 
@@ -272,8 +281,13 @@ export function createSoulTalkController({ store, saveCurrentState, saveCritical
     lastQuickReplies = safetyTurn ? [] : result?.coreResult?.quickReplies || [];
     if (safetyTurn || result?.firstTraceCreated) saveCriticalState();
     else saveCurrentState();
-    renderChat();
     renderQuickReplies(lastQuickReplies);
+    renderChat();
+    // store.subscribe may render the reply before the quick-reply row reaches
+    // its final height. Re-anchor once more after both regions settle so short
+    // mobile viewports measure the actual remaining conversation space.
+    scrollAnchorText = message;
+    scrollChatLog();
     // safety 回合連「送出／收到」提示音都不播，避免求助導引被包裝成遊戲回饋。
     if (!safetyTurn) {
       AudioManager.playSfx("soul_send");
@@ -405,6 +419,7 @@ export function createSoulTalkController({ store, saveCurrentState, saveCritical
       button.type = "button";
       button.className = "quick-reply-chip";
       button.textContent = item.label;
+      if (item.ariaLabel) button.setAttribute("aria-label", item.ariaLabel);
       button.addEventListener("click", () => handleQuickReply(item));
       quickReplyRow.appendChild(button);
     }
@@ -467,13 +482,42 @@ export function createSoulTalkController({ store, saveCurrentState, saveCritical
       }
     }
     if (anchorLine) {
-      const offsetWithinLog =
-        anchorLine.getBoundingClientRect().top - chatLog.getBoundingClientRect().top + chatLog.scrollTop;
       const maxScroll = Math.max(0, chatLog.scrollHeight - chatLog.clientHeight);
-      chatLog.scrollTop = Math.max(0, Math.min(offsetWithinLog - 6, maxScroll));
+      const chatRect = chatLog.getBoundingClientRect();
+      const offsetWithinLog = (line) =>
+        line.getBoundingClientRect().top - chatRect.top + chatLog.scrollTop;
+      const latestTurn = [anchorLine];
+      let nextLine = anchorLine.nextElementSibling;
+      while (nextLine && !nextLine.classList.contains("player")) {
+        latestTurn.push(nextLine);
+        nextLine = nextLine.nextElementSibling;
+      }
+
+      const firstResponse = latestTurn.find(
+        (line) => line.classList.contains("companion") || line.classList.contains("system")
+      );
+      if (!firstResponse) {
+        // The player line can render before the synchronous Core result arrives.
+        // Keep the anchor live for the reply render instead of finalizing early.
+        chatLog.scrollTop = maxScroll;
+        return;
+      }
+
+      const inset = 6;
+      const lastTurnLine = latestTurn[latestTurn.length - 1];
+      const turnTop = offsetWithinLog(anchorLine);
+      const turnBottom = offsetWithinLog(lastTurnLine) + lastTurnLine.getBoundingClientRect().height;
+      const turnHeight = turnBottom - turnTop;
+      const targetScroll =
+        turnHeight <= Math.max(0, chatLog.clientHeight - inset * 2)
+          ? turnBottom - chatLog.clientHeight + inset
+          : offsetWithinLog(firstResponse) - inset;
+
+      chatLog.scrollTop = Math.max(0, Math.min(targetScroll, maxScroll));
+      scrollAnchorText = null;
       return;
     }
-    chatLog.scrollTop = chatLog.scrollHeight;
+    chatLog.scrollTop = Math.max(0, chatLog.scrollHeight - chatLog.clientHeight);
   }
 
   function reflectOnMemory(memory) {
