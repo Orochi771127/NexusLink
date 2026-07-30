@@ -29,7 +29,7 @@
     width: auto;
     /* 同樣吃 --app-height（佈局視口高，v6 下 iOS 鍵盤不改變它——見 dom.js）；
        Android resizes-content 縮排版時隨之收縮、不溢出（與 soul-talk-drawer.css 一致）。 */
-    height: min(76svh, calc(var(--app-height, 100dvh) - var(--top-safe) - 20px));
-    padding: 14px;
+    height: min(78svh, calc(var(--app-height, 100dvh) - var(--top-safe) - 18px));
+    padding: 10px 14px;
   }
 }

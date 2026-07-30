@@ -13,6 +13,48 @@ export const QUICK_REPLY_ACTION_TYPES = Object.freeze({
   REPAIR: "repair"
 });
 
+const QUICK_REPLY_ALTERNATE_LABELS = Object.freeze({
+  "說說畫面": "再說畫面",
+  "先不解釋": "暫不解釋",
+  "回到日常": "換回日常",
+  "說說感覺": "再說感覺",
+  "最沉的一段": "再說最沉",
+  "先這樣就好": "停在這裡",
+  "先拆 HUD": "再看 HUD",
+  "看心語面板": "再看面板",
+  "重述步驟": "再排步驟",
+  "列出重現": "再列重現",
+  "最卡的一段": "再說卡點",
+  "直接拆解": "再拆一次",
+  "保持安靜": "繼續安靜",
+  "陪我待著": "再待一下",
+  "先不問問題": "暫時不問",
+  "換種說法": "再換說法",
+  "指出問題": "再說問題",
+  "少點模板": "再少一點",
+  "拆成步驟": "再拆步驟",
+  "說出重點": "再說重點",
+  "換個角度": "再換角度",
+  "慢慢看地圖": "再慢一點",
+  "休息再去": "先留在這",
+  "說說力氣": "再說力氣",
+  "先慢一點": "再慢一點",
+  "身體或心裡？": "再分清一點",
+  "先不給建議": "暫時不建議",
+  "繼續拆 HUD": "再拆 HUD",
+  "繼續講開發": "再講開發",
+  "繼續談理解": "再談理解",
+  "繼續講探索": "再講探索",
+  "繼續講累": "再講一點累",
+  "繼續講人際": "再講人際",
+  "繼續講工作": "再講工作",
+  "繼續講情緒": "再講情緒",
+  "再說重點": "再說一次",
+  "先講重點": "再說重點",
+  "先陪著就好": "再陪一下",
+  "換個方向": "再換方向"
+});
+
 export function planQuickReplies({
   nlu = {},
   dialogueState = {},
@@ -68,7 +110,7 @@ function buildReflectiveCareQuickReplies(strategy) {
   if (strategy === RESPONSE_STRATEGIES.SYMBOLIC_REFLECTION) {
     return [
       createQuickReply({
-        label: "說說那個畫面",
+        label: "說說畫面",
         intent: "symbolic_continue",
         actionType: QUICK_REPLY_ACTION_TYPES.CONTINUE,
         topic: "emotion",
@@ -77,7 +119,7 @@ function buildReflectiveCareQuickReplies(strategy) {
         priority: 3
       }),
       createQuickReply({
-        label: "先不解釋它",
+        label: "先不解釋",
         intent: "symbolic_no_interpretation",
         actionType: QUICK_REPLY_ACTION_TYPES.CONSTRAINT,
         topic: "emotion",
@@ -87,7 +129,7 @@ function buildReflectiveCareQuickReplies(strategy) {
         priority: 2
       }),
       createQuickReply({
-        label: "換回日常聊",
+        label: "回到日常",
         intent: "leave_symbolic_mode",
         actionType: QUICK_REPLY_ACTION_TYPES.SHIFT,
         topic: "daily_life",
@@ -111,7 +153,7 @@ function buildReflectiveCareQuickReplies(strategy) {
       priority: 3
     }),
     createQuickReply({
-      label: nameHeaviest.label,
+      label: "最沉的一段",
       intent: nameHeaviest.intent,
       actionType: QUICK_REPLY_ACTION_TYPES.CLARIFY,
       topic: "emotion",
@@ -136,7 +178,7 @@ function buildPracticalQuickReplies(topic, constraints = []) {
   if (topic === "hud_ui") {
     return [
       createQuickReply({
-        label: "先拆 HUD 問題",
+        label: "先拆 HUD",
         intent: "clarify_hud_top",
         actionType: QUICK_REPLY_ACTION_TYPES.CLARIFY,
         topic: "hud_ui",
@@ -151,7 +193,7 @@ function buildPracticalQuickReplies(topic, constraints = []) {
         priority: 3
       }),
       createQuickReply({
-        label: "看 Soul Talk 面板",
+        label: "看心語面板",
         intent: "clarify_soul_talk_panel",
         actionType: QUICK_REPLY_ACTION_TYPES.CLARIFY,
         topic: "hud_ui",
@@ -165,7 +207,7 @@ function buildPracticalQuickReplies(topic, constraints = []) {
         priority: 2
       }),
       createQuickReply({
-        label: "用步驟重述問題",
+        label: "重述步驟",
         intent: "restate_practical",
         actionType: QUICK_REPLY_ACTION_TYPES.CONTINUE,
         topic: "hud_ui",
@@ -179,7 +221,7 @@ function buildPracticalQuickReplies(topic, constraints = []) {
 
   return [
     createQuickReply({
-      label: "先列現象與重現",
+      label: "列出重現",
       intent: "clarify_steps",
       actionType: QUICK_REPLY_ACTION_TYPES.CLARIFY,
       topic,
@@ -189,7 +231,7 @@ function buildPracticalQuickReplies(topic, constraints = []) {
       priority: 3
     }),
     createQuickReply({
-      label: "先講最卡的一段",
+      label: "最卡的一段",
       intent: "focus_blocker",
       actionType: QUICK_REPLY_ACTION_TYPES.CONTINUE,
       topic,
@@ -198,7 +240,7 @@ function buildPracticalQuickReplies(topic, constraints = []) {
       priority: 2
     }),
     createQuickReply({
-      label: "不用安慰，直接拆",
+      label: "直接拆解",
       intent: "no_comfort_practical",
       actionType: QUICK_REPLY_ACTION_TYPES.CONSTRAINT,
       topic,
@@ -248,7 +290,7 @@ function buildQuietPresenceQuickReplies() {
 function buildRepairQuickReplies() {
   return [
     createQuickReply({
-      label: "換一種說法",
+      label: "換種說法",
       intent: "repair_rephrase",
       actionType: QUICK_REPLY_ACTION_TYPES.REPAIR,
       topic: "unknown",
@@ -258,7 +300,7 @@ function buildRepairQuickReplies() {
       priority: 3
     }),
     createQuickReply({
-      label: "直接指出問題",
+      label: "指出問題",
       intent: "repair_direct",
       actionType: QUICK_REPLY_ACTION_TYPES.REPAIR,
       topic: "unknown",
@@ -267,7 +309,7 @@ function buildRepairQuickReplies() {
       priority: 2
     }),
     createQuickReply({
-      label: "少一點模板句",
+      label: "少點模板",
       intent: "repair_less_template",
       actionType: QUICK_REPLY_ACTION_TYPES.SHIFT,
       topic: "unknown",
@@ -291,7 +333,7 @@ function buildClarificationQuickReplies(topic) {
       priority: 3
     }),
     createQuickReply({
-      label: "講你聽到的重點",
+      label: "說出重點",
       intent: "mirror_topic",
       actionType: QUICK_REPLY_ACTION_TYPES.CONTINUE,
       topic,
@@ -300,7 +342,7 @@ function buildClarificationQuickReplies(topic) {
       priority: 2
     }),
     createQuickReply({
-      label: "換個角度說",
+      label: "換個角度",
       intent: "shift_angle",
       actionType: QUICK_REPLY_ACTION_TYPES.SHIFT,
       topic,
@@ -323,7 +365,7 @@ function buildExplorationQuickReplies() {
       priority: 3
     }),
     createQuickReply({
-      label: "先休息再出去",
+      label: "休息再去",
       intent: "explore_rest_first",
       actionType: QUICK_REPLY_ACTION_TYPES.SHIFT,
       topic: "exploration",
@@ -332,7 +374,7 @@ function buildExplorationQuickReplies() {
       priority: 2
     }),
     createQuickReply({
-      label: "先講現在的力氣",
+      label: "說說力氣",
       intent: "check_energy",
       actionType: QUICK_REPLY_ACTION_TYPES.CLARIFY,
       topic: "physical_tiredness",
@@ -346,7 +388,7 @@ function buildExplorationQuickReplies() {
 function buildFatigueQuickReplies() {
   return [
     createQuickReply({
-      label: "先放慢節奏",
+      label: "先慢一點",
       intent: "fatigue_slow",
       actionType: QUICK_REPLY_ACTION_TYPES.QUIET,
       topic: "physical_tiredness",
@@ -356,7 +398,7 @@ function buildFatigueQuickReplies() {
       priority: 3
     }),
     createQuickReply({
-      label: "這次是身體還是心裡",
+      label: "身體或心裡？",
       intent: "fatigue_clarify",
       actionType: QUICK_REPLY_ACTION_TYPES.CLARIFY,
       topic: "physical_tiredness",
@@ -399,7 +441,7 @@ function buildDefaultContextualQuickReplies({ dialogueState, strategy, topic, us
       priority: 2
     }),
     createQuickReply({
-      label: userNeed === "validation" ? "先陪著就好" : "換個方向聊",
+      label: userNeed === "validation" ? "先陪著就好" : "換個方向",
       intent: "shift_topic",
       actionType: QUICK_REPLY_ACTION_TYPES.SHIFT,
       topic: "unknown",
@@ -449,7 +491,13 @@ function diversifyQuickReplySet(candidates = [], dialogueState = {}) {
   const rotated = [...candidates.slice(1), candidates[0]].filter(Boolean);
   const relabeled = rotated.map((item, index) => {
     if (lastLabels.includes(item.label)) {
-      return { ...item, label: `${item.label}（換個說法）`, intent: `${item.intent}_alt${index}` };
+      const label = QUICK_REPLY_ALTERNATE_LABELS[item.label] || item.label;
+      return {
+        ...item,
+        label,
+        ariaLabel: label === item.label ? label : `${label}，換個說法`,
+        intent: `${item.intent}_alt${index}`
+      };
     }
     return item;
   });
@@ -491,12 +539,12 @@ function topicLabel(topic) {
   const map = {
     hud_ui: "繼續拆 HUD",
     development: "繼續講開發",
-    raphael_ai: "繼續講理解層",
+    raphael_ai: "繼續談理解",
     exploration: "繼續講探索",
     physical_tiredness: "繼續講累",
     social_conflict: "繼續講人際",
     work_pressure: "繼續講工作",
     emotion: "繼續講情緒"
   };
-  return map[topic] || "再說一句重點";
+  return map[topic] || "再說重點";
 }
