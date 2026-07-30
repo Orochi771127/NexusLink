@@ -69,7 +69,7 @@
   --z-nav: 30;
   --z-overlay: 60;
   --z-panel: 70;
-  --asset-bg-lake: url("./assets/backgrounds/LakeNightCamp_v2/bg_night_base.png");
+  --asset-bg-lake: url("./assets/backgrounds/MoonlakeDiorama_r2/moonlake_onboarding_first_frame_r1.webp");
 }
 
 * {
@@ -180,6 +180,10 @@ button {
 
 .moonlake-live3d-canvas[data-ready="true"] {
   opacity: 1;
+}
+
+html[data-first-session-scene-mode="static"] .moonlake-live3d-canvas {
+  opacity: 0 !important;
 }
 
 @media (prefers-reduced-motion: reduce) {

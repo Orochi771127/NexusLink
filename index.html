@@ -4,15 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content" />
     <title data-i18n="meta.title">Nexus Link · 心核連結</title>
-    <link rel="preload" as="image" href="./assets/backgrounds/MoonlakeDiorama_r1/bg_day_base.png" />
-    <link rel="preload" as="image" href="./assets/ui/nav/nav_explore_default.png" />
-    <link rel="preload" as="image" href="./assets/ui/nav/nav_explore_active.png" />
-    <link rel="preload" as="image" href="./assets/ui/nav/nav_care_default.png" />
-    <link rel="preload" as="image" href="./assets/ui/nav/nav_care_active.png" />
-    <link rel="preload" as="image" href="./assets/ui/nav/nav_grow_default.png" />
-    <link rel="preload" as="image" href="./assets/ui/nav/nav_grow_active.png" />
-    <link rel="preload" as="image" href="./assets/ui/nav/nav_memory_default.png" />
-    <link rel="preload" as="image" href="./assets/ui/nav/nav_memory_active.png" />
+    <link rel="preload" as="image" type="image/webp" href="./assets/backgrounds/MoonlakeDiorama_r2/moonlake_onboarding_first_frame_r1.webp" fetchpriority="high" />
     <link rel="preload" as="image" href="./assets/characters/greyshade-cat/previews/illustrated/emotion/greyshade-cat_idle_calm_512x512_8f_preview.png" />
     <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2064%2064%27%3E%3Ccircle%20cx%3D%2732%27%20cy%3D%2732%27%20r%3D%2730%27%20fill%3D%27%23050915%27%2F%3E%3Ccircle%20cx%3D%2732%27%20cy%3D%2732%27%20r%3D%2718%27%20fill%3D%27%2300ced1%27%2F%3E%3C%2Fsvg%3E" />
     <link rel="stylesheet" href="./styles.css" />
@@ -51,6 +43,22 @@
             </aside>
           </div>
         </div>
+
+        <section id="first-session-loading" class="first-session-loading" aria-label="月湖載入狀態">
+          <div class="first-session-loading__content">
+            <div class="heartcore-mark heartcore-mark--loading" aria-hidden="true">
+              <span class="heartcore-mark__ring"></span>
+              <span class="heartcore-mark__core"></span>
+              <span class="heartcore-mark__reflection"></span>
+            </div>
+            <p class="first-session-loading__kicker">Nexus Link · Moonlake</p>
+            <h1>月湖正在甦醒</h1>
+            <div class="first-session-loading__progress" role="progressbar" aria-label="首輪介面載入進度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="8">
+              <span class="first-session-loading__progress-fill"></span>
+            </div>
+            <p class="first-session-loading__status" role="status" aria-live="polite">正在整理月湖的第一道光</p>
+          </div>
+        </section>
 
         <section id="page-layer" class="page-layer" data-active-page="home" aria-label="核心行動頁面" data-i18n-aria="aria.pageLayer">
           <section class="page-view page-view--explore rune-border" data-page="explore" aria-labelledby="explore-page-title" aria-hidden="true" hidden>
@@ -91,7 +99,16 @@
         </section>
 
         <section id="onboarding-root" class="onboarding-layer" aria-label="心核引導" data-i18n-aria="aria.onboardingRoot" aria-live="polite" hidden>
-          <div class="onboarding-shell rune-border" data-onboarding-step="start">
+          <div class="onboarding-worldmark" aria-hidden="true">
+            <div class="heartcore-mark">
+              <span class="heartcore-mark__ring"></span>
+              <span class="heartcore-mark__core"></span>
+              <span class="heartcore-mark__reflection"></span>
+            </div>
+            <span>Moonlake Heartcore</span>
+          </div>
+          <p class="onboarding-scene-status" data-state="pending" role="status" aria-live="polite">月湖棲地正在幕後甦醒</p>
+          <div class="onboarding-shell" data-onboarding-step="start">
             <section class="onboarding-step is-active" data-step="start" aria-labelledby="onboarding-start-title">
               <p class="onboarding-kicker" data-i18n="ob.kicker">Nexus Link ・ 心核連結</p>
               <h1 id="onboarding-start-title" data-i18n="ob.startTitle">這不是電子寵物。</h1>

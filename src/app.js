@@ -36,6 +36,7 @@ import { createHudController } from "./ui/hudController.js";
 import { createCompanionFeedbackController } from "./ui/companionFeedbackController.js";
 import { createSoulTalkController } from "./ui/soulTalkController.js";
 import { createOnboardingController } from "./ui/onboardingController.js";
+import { createFirstSessionPresentationController } from "./ui/firstSessionPresentationController.js";
 import { createFirstLoopController } from "./ui/firstLoopController.js";
 import { createInteractionHintController } from "./ui/interactionHintController.js";
 import { createGentleInvitationController } from "./ui/gentleInvitationController.js";
@@ -202,6 +203,10 @@ async function bootstrap() {
   const previousSeenAt = Number(loadedState.lastSeenAt) || bootNow;
   const initialState = applyDevQueryHooks(applyOfflineRecovery(loadedState), devQueryHooks);
   const shouldRunOnboarding = !initialState.onboarding?.completed;
+  const firstSessionPresentation = createFirstSessionPresentationController({
+    shouldRunOnboarding
+  });
+  firstSessionPresentation.begin();
 
   const elapsedAwayMs = bootNow - previousSeenAt;
   const returnBehavior = shouldRunOnboarding ? null : buildReturnBehavior(initialState, bootNow);
@@ -308,7 +313,8 @@ async function bootstrap() {
     saveCurrentState: () => saveQueue.enqueue(SAVE_LEVEL.CRITICAL),
     // 初遇定情（CH-2）：選定即切換棲地夥伴（state 已先寫入，normalize 會放行）。
     onBondChosen: (companionId) => applyCompanionChange(companionId),
-    onStepShown: (step) => bgmController.onOnboardingStep(step)
+    onStepShown: (step) => bgmController.onOnboardingStep(step),
+    prepareSceneReveal: () => firstSessionPresentation.prepareReveal()
   });
   // 柔性邀請（支柱二）：首輪後由夥伴狀態驅動的一句溫柔下一步，讓核心迴圈不再沉默。
   let resonanceThreadController = null;
@@ -558,6 +564,7 @@ async function bootstrap() {
   // 穩定的唯讀 readiness signal，供本機/CI 瀏覽器 gate 在操作前確認
   // 所有 DOM controllers 已完成綁定；不暴露 gameplay state。
   document.documentElement.dataset.nexusControllersReady = "true";
+  firstSessionPresentation.markControllersReady();
   markPerf("nexus:controllers-ready");
 
   let raphaelPresenceResetTimer = null;
@@ -667,11 +674,13 @@ async function bootstrap() {
     statusText.setAttribute("role", "alert");
     statusText.textContent = "棲地暫時無法顯示。請檢查網路後重新整理；你的本機記憶仍安全保留。";
     showPixiLoadFailure();
+    firstSessionPresentation.resolveScene("static", "pixi_unavailable");
     return;
   }
 
   try {
     const app = await createPixiApp(qs("#game-root"));
+    firstSessionPresentation.markPixiReady();
     markPerf("nexus:pixi-ready");
     sceneApi = await bootScene(
       app,
@@ -682,8 +691,10 @@ async function bootstrap() {
       onboardingController,
       emitRestrictedRaphaelAgentEvent,
       getExpeditionController,
-      bgmController
+      bgmController,
+      firstSessionPresentation
     );
+    await firstSessionPresentation.settleScene(sceneApi);
     if (window.__NEXUS_HABITAT) {
       window.__NEXUS_HABITAT.getTouchAffordanceDiagnostics = () => (
         interactionHintController.getDiagnostics()
@@ -732,6 +743,7 @@ async function bootstrap() {
     console.error(error);
     statusText.textContent = "場景初始化失敗，請重新整理頁面。";
     showPixiLoadFailure("場景初始化失敗，請重新整理頁面；你的本機記憶仍安全保留。");
+    firstSessionPresentation.resolveScene("static", "scene_initialization_failed");
   }
 }
 
@@ -794,7 +806,8 @@ async function bootScene(
   onboardingController,
   raphaelAgentEventBridge = null,
   getExpeditionControllerRef = null,
-  bgmController = null
+  bgmController = null,
+  firstSessionPresentation = null
 ) {
   const runtimeGuard = createRuntimeGuard(app);
   const world = createWorld(app);
@@ -809,10 +822,21 @@ async function bootScene(
     getWeather: getHabitatWeather
   });
   let moonlakeDepthOcclusion = null;
+  const isStaticMoonlakeBackdrop = () => (
+    environmentLayer.profileId === "moonlake"
+    && firstSessionPresentation?.isStaticFallbackLocked?.() === true
+  );
+  const isLiveMoonlakeActive = () => (
+    live3d.ready
+    && environmentLayer.profileId === "moonlake"
+    && !isStaticMoonlakeBackdrop()
+  );
   const syncHybridRendererVisibility = () => {
-    const useLive3d = live3d.ready && environmentLayer.profileId === "moonlake";
+    const useStaticBackdrop = isStaticMoonlakeBackdrop();
+    const useLive3d = isLiveMoonlakeActive();
     live3d.setActive(useLive3d);
-    setPixiEnvironmentVisibility(layers, !useLive3d, environmentLayer);
+    setPixiEnvironmentVisibility(layers, !useLive3d && !useStaticBackdrop, environmentLayer);
+    if (layers?.layerOcclusion) layers.layerOcclusion.visible = !useStaticBackdrop;
     moonlakeDepthOcclusion?.setActive(useLive3d);
     return useLive3d;
   };
@@ -852,9 +876,10 @@ async function bootScene(
     weatherFx.weatherId = "__pending__";
   });
   const syncPixiAtmosphereVisibility = () => {
-    const useLive3d = live3d.ready && environmentLayer.profileId === "moonlake";
-    lightingFx.root.visible = !useLive3d;
-    weatherFx.root.visible = !useLive3d;
+    const useStaticBackdrop = isStaticMoonlakeBackdrop();
+    const useLive3d = isLiveMoonlakeActive();
+    lightingFx.root.visible = !useLive3d && !useStaticBackdrop;
+    weatherFx.root.visible = !useLive3d && !useStaticBackdrop;
   };
   syncPixiAtmosphereVisibility();
 
@@ -889,7 +914,7 @@ async function bootScene(
   const habitatInteractionLayer = createMoonlakeInteractionLayer(PIXI, {
     parent: viewportFx,
     live3d,
-    isActive: () => live3d.ready && environmentLayer.profileId === "moonlake",
+    isActive: isLiveMoonlakeActive,
     isBlocked: () => panelManager.isPanelOpen() || onboardingController?.isActive?.(),
     onInteraction: (interaction) => {
       markInteraction();
@@ -1222,7 +1247,7 @@ async function bootScene(
     resizeHabitatWeatherFx(weatherFx, app.screen.width, app.screen.height);
     habitatInteractionLayer.resize(app.screen.width, app.screen.height);
     habitatInteractionLayer.setVisible(
-      live3d.ready && environmentLayer.profileId === "moonlake"
+      isLiveMoonlakeActive()
     );
     updateEnvironmentLayer(environmentLayer, safeTicker);
     live3d.update(safeTicker);
@@ -1424,6 +1449,11 @@ async function bootScene(
     switchHabitat,
     sceneBridge,
     live3d,
+    syncRendererVisibility() {
+      const useLive3d = syncHybridRendererVisibility();
+      syncPixiAtmosphereVisibility();
+      return useLive3d;
+    },
     getCompanionTouchTarget
   };
 }
