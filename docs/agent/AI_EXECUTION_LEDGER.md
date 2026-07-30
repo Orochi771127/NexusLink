@@ -7158,3 +7158,127 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
   assets, GLB, bridge depth plate, fallbacks and legacy art remain unchanged.
 - Remaining human proof: real iOS Safari remains a release-level device check;
   the local mobile browser and automated Chromium matrices are green.
+
+### 2026-07-30 - Gemini - Moonlake Bridge Compositing R3.6 - PUBLISHED
+
+- Status: `COMPLETED`; the Owner-authorized R3.6 package is merged and live.
+- Lane: `Game Engineering And Architecture`.
+- Delivery: PR `#177` passed the required `web-release-gate` and was
+  squash-merged into protected `main` as
+  `b8c76be0ccf1486bb6240cbf632bb64feed9bc38`.
+- Post-merge proof: the `main` Nexus Link Release Gate and GitHub Pages
+  deployment completed successfully. Cache-busted public reads of
+  `moonlakeLive3dScene.js` and `moonlakeLive3dConfig.js` are byte-for-byte
+  SHA-256 matches with local `main`.
+- Remote truth: local `main`, `origin/main` and the deployed Pages build resolve
+  to `b8c76be` with `0/0` divergence and a clean worktree before R4.0 starts.
+- MCP: project
+  `C-Users-User-NexusLink_RaphaelAI_Workspace-NexusLink` is `ready`; graph
+  search resolves the R3.6 `useAuthoredSilhouette` contract.
+
+### 2026-07-30 - Codex - Moonlake Visible GLB Feasibility R4.0 - IN PROGRESS
+
+- Status: `IN PROGRESS`; Owner approved
+  `TP-MOONLAKE-VISIBLE-GLB-FEASIBILITY-R4.0`.
+- Lane: `Game Engineering And Architecture`.
+- Layer: `GROUNDWORK + EXPERIENCE`; the candidate remains dev-query-gated and
+  cannot become the shipping default in this package without a separate Owner
+  visual approval.
+- Scope: audit and expose the existing Moonlake GLB as a genuinely visible
+  Three.js environment candidate, preserve the raster visual master strictly
+  as the default/loading/reduced-capability/failure presentation, and validate
+  the existing Pixi 2D companion projection against real visible geometry.
+- Expected files: `src/three/moonlakeLive3dScene.js`,
+  `src/three/moonlakeLive3dConfig.js`, focused R4 QA/evidence, and this ledger.
+- Asset boundary: the existing
+  `assets/3d/moonlake/moonlake_clay_resin_r3.glb`, R2 visual master, depth
+  plates and all sixteen companion roots remain byte-unchanged. If the current
+  GLB cannot meet the visual bar, this package stops with evidence and proposes
+  a separately approved R4.1 Blender reconstruction.
+- Red-line / isolation: no `src/pixi/pixiApp.js`, save, state normalization,
+  relationship, reward, Growth, RaphaelCore, Safety, dependency, backend,
+  build-step, free-camera or gameplay-authority change.
+- Acceptance: H1-H6 and I; sixteen companions retain their own animation
+  policy and pass bridge/platform projection, foot anchoring and depth
+  readability at `390x844`; GLB/WebGL failure and reduced motion retain a
+  usable static fallback; no duplicate render loop or context-loss leak.
+- Branch: clean local `main` at `b8c76be`; commit, push, promotion and
+  publication remain unauthorized.
+
+### 2026-07-30 - Codex - Moonlake Visible GLB Feasibility R4.0 - IN PROGRESS
+
+- Status: `IN PROGRESS`; this is an evidence-gated visible-geometry candidate,
+  not an automatic replacement of the Owner-approved R2 composition.
+- Lane: `Game Art, UI, And Visual Production`.
+- Visual target: a fixed elevated three-quarter GLB scene with readable cliff
+  masses, waterfalls, lake, central platform, tents and a continuous bridge,
+  while the active companion remains an illustrated bottom-center Pixi sprite
+  with Ragnarok Online-like foreground/background depth.
+- Human gate: day/clear, dusk/mist, night/rain and reduced-motion mobile
+  captures must be inspected before any default-mode promotion. A technically
+  correct but visually primitive GLB candidate is a valid R4.0 blocker, not a
+  reason to lower the approved visual bar.
+
+### 2026-07-30 - Codex - Moonlake Visible GLB Feasibility R4.0 - VERIFIED / PROMOTION BLOCKED
+
+- Status: `VERIFIED`; the feasibility package is complete, but the current GLB
+  is explicitly `BLOCKED` from becoming the shipping visual.
+- Lane: `Game Engineering And Architecture`.
+- Completed: added the dev-query-only
+  `?live3d=1&moonlakeVisibleGlb=1` render mode. It exposes the existing GLB
+  meshes, keeps the live Three.js water/waterfall/grass/weather rig active,
+  hides the raster visual master only inside the candidate, and uses the real
+  Three camera for world-to-screen companion projection. The shipping default
+  remains `false` and continues to use the Owner-approved R2/R3.6 live
+  diorama.
+- Sixteen-companion proof: `64/64` candidate projection cases passed at
+  `390x844` across platform center and bridge near/mid/far. All companions used
+  `projectionMode:three_camera`, stayed visible and retained their Pixi
+  opaque-foot anchor within tolerance.
+- Promotion blockers: `32` route-safety mismatches remain because the
+  R2-coordinate collision map flags the hidden
+  `crystal-bridge-right-base` at bridge mid/far. The 30-second mobile probe
+  measured `66.7 ms` median frame time against the `<=25 ms` contract.
+  Therefore candidate `promotionReady:false`.
+- Recovery proof: WebGL context loss/restoration and static `?live3d=0`
+  fallback passed with zero page or console errors.
+- Regression proof: R3.6 deterministic and `32/32` browser matrix passed;
+  R3.5 deterministic and `96/96` browser matrix passed; R3.3 deterministic and
+  `288/288` browser matrix passed. Full Web Release Gate passed `28/28`
+  required automated checks with zero accessibility warnings.
+- Scope audit: the audited GLB remains exactly `3,098,820` bytes with SHA-256
+  `60423EDAA8C15C519A8A596BC8DF007662E46F9D575C56571F3AA4E611C4B1A6`;
+  no `assets/**`, `src/pixi/pixiApp.js`, save/state, relationship, Growth,
+  reward, RaphaelCore, Safety, dependency, backend or build-step change.
+  `src/app.js` received only the minimal pass-through for projection mode and
+  visibility diagnostics.
+- Evidence:
+  `docs/qa/MOONLAKE_VISIBLE_GLB_R4_0_EVIDENCE.md`,
+  `docs/qa/moonlake-visible-glb-r4-0-cases.mjs`, and
+  `docs/qa/moonlake-visible-glb-r4-0-browser.cjs`.
+- Branch: local `main` based on `b8c76be`; no commit, push, promotion or
+  publication was authorized.
+
+### 2026-07-30 - Codex - Moonlake Visible GLB Feasibility R4.0 - BLOCKED
+
+- Status: `BLOCKED`; the current GLB fails the human visual promotion gate.
+- Lane: `Game Art, UI, And Visual Production`.
+- Visual finding: the rendered GLB is a colored structural blockout. Its
+  cliffs, repeated vegetation, tents, campfire and foreground lack the approved
+  miniature detail, while the bridge appears as disconnected white blocks
+  instead of one continuous walkable deck. It is materially below the R2
+  composition and the required Ragnarok Online-like 2.5D presentation.
+- Safe next package: an Owner-approved R4.1 GROUNDWORK Blender reconstruction
+  must create a parallel new GLB, author a continuous route-aligned bridge and
+  collision set, match the R2 camera/depth/composition bar, meet the mobile
+  performance contract, rerun all sixteen companions plus the full
+  day/night/rain/mist and recovery matrix, and obtain human visual approval.
+- Preservation: R3 GLB, R2 raster visual master, depth plates, all sixteen
+  companion roots and the published R3.6 default remain unchanged.
+
+### 2026-07-30 - Raphael - UI Fixes & Expedition UX Optimization - VERIFIED
+
+- Status: `VERIFIED`
+- Lane: `Game Engineering And Architecture`
+- Scope: Fixed Three.js shadow map deprecation warning, removed unused preload resource in index.html, and enhanced expedition energy depletion tooltip.
+- MCP: Memory and Graph indexed.

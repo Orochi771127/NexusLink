@@ -3,6 +3,7 @@ import {
   MOONLAKE_INTERACTION_HOTSPOTS,
   MOONLAKE_LIVE3D_ASSET,
   MOONLAKE_VISUAL_MASTER,
+  MOONLAKE_VISIBLE_GLB_CANDIDATE,
   MOONLAKE_VISUAL_WALKWAY,
   MOONLAKE_WATERFALLS
 } from "./moonlakeLive3dConfig.js";
@@ -28,6 +29,12 @@ export async function createMoonlakeLive3dScene({
   const params = new URLSearchParams(window.location.search);
   if (params.get("live3d") === "0") return createDisabledController("query_disabled");
   if (!supportsWebGl()) return createDisabledController("webgl_unavailable");
+  const visibleGlbCandidate = params.get(
+    MOONLAKE_VISIBLE_GLB_CANDIDATE.queryParam
+  ) === MOONLAKE_VISIBLE_GLB_CANDIDATE.queryValue;
+  const renderMode = visibleGlbCandidate
+    ? "visible_glb_candidate"
+    : "owner_approved_live_diorama";
 
   let canvas = null;
   let renderer = null;
@@ -61,27 +68,30 @@ export async function createMoonlakeLive3dScene({
     renderer.toneMappingExposure = 1.12;
     renderer.setPixelRatio(QUALITY_DPR[quality] || QUALITY_DPR.high);
     renderer.shadowMap.enabled = quality !== "low";
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.shadowMap.type = THREE.PCFShadowMap;
 
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x071322);
     scene.fog = new THREE.FogExp2(0x9fc9dd, 0.012);
 
+    const cameraProfile = visibleGlbCandidate
+      ? MOONLAKE_VISIBLE_GLB_CANDIDATE.camera
+      : MOONLAKE_CAMERA;
     const camera = new THREE.PerspectiveCamera(
-      MOONLAKE_CAMERA.fov,
+      cameraProfile.fov,
       1,
       MOONLAKE_CAMERA.near,
       MOONLAKE_CAMERA.far
     );
     camera.position.set(
-      MOONLAKE_CAMERA.position.x,
-      MOONLAKE_CAMERA.position.y,
-      MOONLAKE_CAMERA.position.z
+      cameraProfile.position.x,
+      cameraProfile.position.y,
+      cameraProfile.position.z
     );
     camera.lookAt(
-      MOONLAKE_CAMERA.target.x,
-      MOONLAKE_CAMERA.target.y,
-      MOONLAKE_CAMERA.target.z
+      cameraProfile.target.x,
+      cameraProfile.target.y,
+      cameraProfile.target.z
     );
 
     const habitatRoot = new THREE.Group();
@@ -95,6 +105,7 @@ export async function createMoonlakeLive3dScene({
     );
     configureVisualTexture(THREE, visualTexture);
     const visualBackdrop = createVisualBackdrop(THREE, visualTexture);
+    visualBackdrop.mesh.visible = !visibleGlbCandidate;
     scene.add(visualBackdrop.mesh);
 
     const lights = createLighting(THREE, scene, quality);
@@ -103,17 +114,18 @@ export async function createMoonlakeLive3dScene({
     const clayLandscape = createClayLandscape(THREE, quality);
     const waterfalls = createWaterfalls(THREE);
     const grass = createGrass(THREE, quality);
-    const hiddenGeometryRig = new THREE.Group();
-    hiddenGeometryRig.name = "moonlake_structural_projection_rig";
-    hiddenGeometryRig.visible = false;
-    hiddenGeometryRig.add(
+    const liveGeometryRig = new THREE.Group();
+    liveGeometryRig.name = "moonlake_visible_glb_dynamic_rig";
+    liveGeometryRig.visible = visibleGlbCandidate;
+    liveGeometryRig.add(
       sky.mesh,
       water.mesh,
-      clayLandscape.root,
       grass.mesh,
       ...waterfalls.items.map((item) => item.group)
     );
-    habitatRoot.add(hiddenGeometryRig);
+    habitatRoot.add(liveGeometryRig);
+    clayLandscape.root.visible = false;
+    habitatRoot.add(clayLandscape.root);
     const weather = createWeather(THREE, quality);
     habitatRoot.add(weather.root);
 
@@ -125,7 +137,12 @@ export async function createMoonlakeLive3dScene({
     );
     const model = gltf.scene;
     model.name = "moonlake_clay_resin_r3";
-    configureModel(THREE, model, quality);
+    const modelDiagnostics = configureModel(
+      THREE,
+      model,
+      quality,
+      visibleGlbCandidate
+    );
     habitatRoot.add(model);
 
     const state = {
@@ -135,6 +152,8 @@ export async function createMoonlakeLive3dScene({
       ready: true,
       quality,
       reducedMotion,
+      renderMode,
+      visibleGlbCandidate,
       elapsed: 0,
       frameCount: 0,
       lastWeather: null,
@@ -145,7 +164,9 @@ export async function createMoonlakeLive3dScene({
       camera,
       canvas,
       model,
+      modelDiagnostics,
       visualBackdrop,
+      liveGeometryRig,
       sky,
       water,
       clayLandscape,
@@ -1218,14 +1239,86 @@ function createWeather(THREE, quality) {
   return { root, rain, rainSeeds, mist, mistMaterial };
 }
 
-function configureModel(THREE, model, quality) {
+function configureModel(THREE, model, quality, visibleGlbCandidate) {
   model.userData.structuralSource = true;
   model.userData.runtimeReskinned = true;
+  model.userData.visibleGlbCandidate = visibleGlbCandidate;
+  const visibleMeshNames = [];
+  const hiddenMeshNames = [];
+  const retiredMaterials = new Set();
   model.traverse((node) => {
     if (!node.isMesh) return;
-    node.visible = false;
-    node.castShadow = false;
-    node.receiveShadow = false;
+    const normalizedName = String(node.name || "").toLowerCase();
+    const intentionallyHidden = MOONLAKE_VISIBLE_GLB_CANDIDATE
+      .hiddenMeshTokens
+      .some((token) => normalizedName.includes(token));
+    node.visible = visibleGlbCandidate && !intentionallyHidden;
+    node.castShadow = node.visible && quality !== "low";
+    node.receiveShadow = node.visible;
+    (node.visible ? visibleMeshNames : hiddenMeshNames).push(node.name);
+    const sourceMaterials = Array.isArray(node.material)
+      ? node.material
+      : [node.material];
+    if (!visibleGlbCandidate || intentionallyHidden) return;
+    sourceMaterials.filter(Boolean).forEach((material) => retiredMaterials.add(material));
+    const replacement = sourceMaterials.map((_, index) => (
+      createVisibleGlbCandidateMaterial(THREE, normalizedName, index)
+    ));
+    node.material = Array.isArray(node.material)
+      ? replacement
+      : replacement[0];
+  });
+  retiredMaterials.forEach((material) => material.dispose?.());
+  const bounds = new THREE.Box3().setFromObject(model);
+  const size = bounds.getSize(new THREE.Vector3());
+  return {
+    visibleMeshNames,
+    hiddenMeshNames,
+    bounds: {
+      min: bounds.min.toArray(),
+      max: bounds.max.toArray(),
+      size: size.toArray()
+    }
+  };
+}
+
+function createVisibleGlbCandidateMaterial(THREE, nodeName, slotIndex) {
+  const base = {
+    roughness: 0.78,
+    metalness: 0,
+    clearcoat: 0.12,
+    clearcoatRoughness: 0.82
+  };
+  if (nodeName.includes("platform")) {
+    return new THREE.MeshPhysicalMaterial({
+      ...base,
+      color: slotIndex % 2 === 0 ? 0xc8b78f : 0x9f8b68
+    });
+  }
+  if (nodeName.includes("tent_a")) {
+    return new THREE.MeshPhysicalMaterial({
+      ...base,
+      color: slotIndex % 2 === 0 ? 0x274c83 : 0xe1d9c3
+    });
+  }
+  if (nodeName.includes("tent_b")) {
+    return new THREE.MeshPhysicalMaterial({
+      ...base,
+      color: slotIndex % 2 === 0 ? 0x604478 : 0xd9c9b5
+    });
+  }
+  if (nodeName.includes("campfire")) {
+    return new THREE.MeshStandardMaterial({
+      color: slotIndex % 2 === 0 ? 0x46c6d3 : 0xff9b4d,
+      roughness: 0.62,
+      metalness: 0,
+      emissive: slotIndex % 2 === 0 ? 0x0c6d78 : 0xa54318,
+      emissiveIntensity: 0.72
+    });
+  }
+  return new THREE.MeshPhysicalMaterial({
+    ...base,
+    color: slotIndex % 2 === 0 ? 0x58784a : 0x71847b
   });
 }
 
@@ -1363,7 +1456,39 @@ function updateWeather(state, weatherId, deltaSeconds, motionScale) {
 
 function projectWorldToScreen(THREE, state, point) {
   if (!state.ready || state.contextLost || !point) return null;
+  if (state.visibleGlbCandidate) {
+    return projectMoonlakeCameraPoint(THREE, state, point);
+  }
   return projectMoonlakeVisualPoint(point, state.size);
+}
+
+function projectMoonlakeCameraPoint(THREE, state, point) {
+  const worldX = Number(point?.x);
+  const worldY = Number(point?.y);
+  const worldZ = Number(point?.z);
+  if (
+    !Number.isFinite(worldX)
+    || !Number.isFinite(worldY)
+    || !Number.isFinite(worldZ)
+  ) {
+    return null;
+  }
+  const projected = new THREE.Vector3(worldX, worldY, worldZ)
+    .project(state.camera);
+  const metadata = projectMoonlakeVisualPoint(point, state.size);
+  return {
+    ...metadata,
+    x: (projected.x * 0.5 + 0.5) * state.size.width,
+    y: (-projected.y * 0.5 + 0.5) * state.size.height,
+    depth: clamp(projected.z * 0.5 + 0.5, 0, 1),
+    visible: projected.z >= -1
+      && projected.z <= 1
+      && projected.x >= -1.08
+      && projected.x <= 1.08
+      && projected.y >= -1.08
+      && projected.y <= 1.08,
+    projectionMode: "three_camera"
+  };
 }
 
 export function projectMoonlakeVisualPoint(point, viewport = {}) {
@@ -1543,6 +1668,7 @@ function buildDiagnostics(state) {
     contextLost: state.contextLost,
     quality: state.quality,
     reducedMotion: state.reducedMotion,
+    renderMode: state.renderMode,
     frameCount: state.frameCount,
     canvasCount: state.canvas.parentElement
       ? state.canvas.parentElement.querySelectorAll(".moonlake-live3d-canvas").length
@@ -1551,7 +1677,21 @@ function buildDiagnostics(state) {
     asset: { ...MOONLAKE_LIVE3D_ASSET },
     visualMaster: {
       ...MOONLAKE_VISUAL_MASTER,
-      mode: "owner_approved_live_diorama"
+      mode: state.renderMode,
+      visible: state.visualBackdrop.mesh.visible,
+      role: state.visibleGlbCandidate
+        ? MOONLAKE_VISIBLE_GLB_CANDIDATE.rasterRole
+        : MOONLAKE_VISUAL_MASTER.sourceRole
+    },
+    visibleGlbCandidate: {
+      ...MOONLAKE_VISIBLE_GLB_CANDIDATE,
+      enabled: state.visibleGlbCandidate,
+      dynamicRigVisible: state.liveGeometryRig.visible,
+      modelVisibleMeshCount: state.modelDiagnostics.visibleMeshNames.length,
+      modelHiddenMeshCount: state.modelDiagnostics.hiddenMeshNames.length,
+      visibleMeshNames: [...state.modelDiagnostics.visibleMeshNames],
+      hiddenMeshNames: [...state.modelDiagnostics.hiddenMeshNames],
+      bounds: state.modelDiagnostics.bounds
     },
     environment: {
       weather: state.lastWeather,

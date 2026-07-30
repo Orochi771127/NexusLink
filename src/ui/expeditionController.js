@@ -237,7 +237,7 @@ export function createExpeditionController({
       const sub = canLaunch
         ? `${depth?.label || "近岸"}路徑 · 約 ${depth?.duration || "3–4 分鐘"} · 自主索敵、接戰、拾取${shardHint}`
         : (state.energy ?? 0) <= 0
-          ? "夥伴能量不足，請先回營地休息"
+          ? "夥伴能量不足，請透過與夥伴互動或讓牠休息來恢復能量"
           : !hasAdventureProfile(state.activeCompanionId)
             ? "這位夥伴的遠征習性尚未寫入"
             : "尚未解鎖此區域";

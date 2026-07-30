@@ -1178,7 +1178,9 @@ async function bootScene(
       referenceScale390: Number(screen.referenceScale390) || 1,
       depth: Number(screen.depth),
       surface: screen.surface || null,
-      routeId: screen.routeId || null
+      routeId: screen.routeId || null,
+      projectionMode: screen.projectionMode || "visual_master",
+      visible: Boolean(screen.visible)
     };
   };
 

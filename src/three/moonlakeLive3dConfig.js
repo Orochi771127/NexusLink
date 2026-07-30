@@ -17,6 +17,23 @@ export const MOONLAKE_VISUAL_MASTER = Object.freeze({
   sourceRole: "owner-approved-composition-and-quality-authority"
 });
 
+export const MOONLAKE_VISIBLE_GLB_CANDIDATE = Object.freeze({
+  id: "moonlake-visible-glb-feasibility-r4-0",
+  queryParam: "moonlakeVisibleGlb",
+  queryValue: "1",
+  shippingDefault: false,
+  rasterRole: "loading-reduced-capability-renderer-failure-fallback",
+  camera: Object.freeze({
+    position: Object.freeze({ x: 9.2, y: 17.8, z: 31.5 }),
+    target: Object.freeze({ x: 0, y: 0.9, z: -4.2 }),
+    fov: 36
+  }),
+  hiddenMeshTokens: Object.freeze([
+    "backdrop",
+    "water"
+  ])
+});
+
 export const MOONLAKE_DEPTH_OCCLUDERS = Object.freeze([
   Object.freeze({
     id: "bridge-rails",
