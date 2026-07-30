@@ -6869,3 +6869,39 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
   but must not restore a second stacked row above the composer.
 - Branch: `codex/soul-talk-mobile-viewport-r1`; no commit or publication was
   authorized.
+
+### 2026-07-30 - Codex - Soul Talk Mobile Viewport R1 - PUBLISHED
+
+- Status: `COMPLETED`; Owner subsequently authorized commit, push and protected
+  `main` integration.
+- Lane: `Game Art, UI, And Visual Production`.
+- Delivery: implementation commit `c87e0af` was pushed on
+  `codex/soul-talk-mobile-viewport-r1`; PR `#173` passed the required
+  `web-release-gate` and was squash-merged as
+  `0e6ac0898df4bc72f20ff5ac6653a11e8a5a3199`.
+- Post-merge proof: the main-branch release gate and GitHub Pages deployment
+  both completed successfully. Public cache-busted reads returned HTTP `200`
+  and confirmed the latest-response scroll policy, touch reading mode and
+  single 44px quick-reply rail in the deployed controller, planner and CSS.
+- Public target: `https://orochi771127.github.io/NexusLink/`.
+- MCP: project
+  `C-Users-User-NexusLink_RaphaelAI_Workspace-NexusLink` was re-indexed in
+  `moderate` mode with `11,419` nodes and `19,448` edges; graph lookup resolves
+  the updated `scrollChatLog`, `renderQuickReplies` and quick-reply planner
+  functions.
+
+### 2026-07-30 - Codex - Soul Talk Mobile Viewport R1 - PUBLISHED
+
+- Status: `COMPLETED`; protected publication preserved RaphaelCore and safety
+  authority.
+- Lane: `Raphael Core, Companion Reasoning, And Soul Talk`.
+- Gate evidence: pre-merge focused checks remained `11/11`, `39/39`, `21/21`
+  and `7/7`; required PR gate and post-merge main gate both concluded
+  `success`.
+- Safety evidence: deployed safety-terminal behavior remains zero quick
+  replies, zero SFX, zero gameplay/reward/memory delta and no secondary
+  storage. No Core classifier, response authority, preference or state-writer
+  contract changed.
+- Remote truth: PR `#173` is `MERGED`; GitHub remote `main` and
+  `origin/main` both resolved to
+  `0e6ac0898df4bc72f20ff5ac6653a11e8a5a3199` at publication verification.
