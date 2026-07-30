@@ -42,10 +42,11 @@ assert.deepEqual(MOONLAKE_WORLD_EDGES.bridge_far, ["bridge_mid"]);
 assert.deepEqual(MOONLAKE_WORLD_EDGES.far_bank_center, []);
 assert.deepEqual(MOONLAKE_WORLD_EDGES.far_bank_left, []);
 assert.deepEqual(MOONLAKE_WORLD_EDGES.far_bank_right, []);
-assert.ok(MOONLAKE_BRIDGE_PRESENTATION.widenedNearHalfWidth
-  > MOONLAKE_BRIDGE_PRESENTATION.sourceNearHalfWidth);
-assert.ok(MOONLAKE_BRIDGE_PRESENTATION.widenedFarHalfWidth
-  > MOONLAKE_BRIDGE_PRESENTATION.sourceFarHalfWidth);
+assert.equal(MOONLAKE_BRIDGE_PRESENTATION.useAuthoredSilhouette, true);
+assert.equal("widenedNearHalfWidth" in MOONLAKE_BRIDGE_PRESENTATION, false);
+assert.equal("widenedFarHalfWidth" in MOONLAKE_BRIDGE_PRESENTATION, false);
+assert.equal(MOONLAKE_BRIDGE_PRESENTATION.maxBridgeSilhouetteWidthPx390, 58);
+assert.equal(MOONLAKE_BRIDGE_PRESENTATION.maxFishingSilhouetteWidthPx390, 76);
 
 const state = createMoonlakeRoamingState(0);
 assert.equal(snapMoonlakeRoamingToWaypoint(state, "bridge_mid", 100), true);
