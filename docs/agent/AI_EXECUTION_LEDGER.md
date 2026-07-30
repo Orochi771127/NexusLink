@@ -7035,3 +7035,36 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Visual scope: Loading, Start, Identity, Guidance, Initial Bond and First
   Resonance retain the same Moonlake composition and one ritual-scroll language
   until the single live/static scene reveal.
+
+### 2026-07-30 - Codex - First Session Visual Continuity R1 - PUBLISHED
+
+- Status: `COMPLETED`; Owner-authorized protected-main publication is complete.
+- Lane: `Game Engineering And Architecture`.
+- Delivery: implementation commit `c3f0763` was pushed on
+  `codex/first-session-visual-continuity-r1`; PR `#175` passed the required
+  `web-release-gate` and was squash-merged into `main` as
+  `4de910729fe8b03f61f0483709658577b5567778`.
+- Post-merge proof: the `main` Nexus Link Release Gate and GitHub Pages
+  deployment both completed successfully. Cache-busted public reads returned
+  HTTP `200` and confirmed the loader markup, presentation controller, app
+  wiring and first-session readiness styles.
+- Remote truth: local `main`, remote `main` and `origin/main` resolved to
+  `4de910729fe8b03f61f0483709658577b5567778` with `0/0` divergence and a clean
+  worktree before this ledger-only closure.
+- MCP: project `C-Users-User-NexusLink_RaphaelAI_Workspace-NexusLink` was
+  re-indexed in `moderate` mode and reached `ready` with `11,450` nodes and
+  `19,551` edges. Graph search resolves
+  `createFirstSessionPresentationController`.
+
+### 2026-07-30 - Codex - First Session Visual Continuity R1 - PUBLISHED
+
+- Status: `COMPLETED`; the approved Moonlake onboarding art/UI package is live.
+- Lane: `Game Art, UI, And Visual Production`.
+- Public proof: `https://orochi771127.github.io/NexusLink/` serves the unified
+  onboarding CSS and the exact 104,012-byte
+  `moonlake_onboarding_first_frame_r1.webp` derivative.
+- 3D boundary after publication: the merged package contains no GLB/glTF,
+  Three.js scene module, Moonlake layout, object pack, profile, water,
+  waterfall, lighting, navigation, depth plate or `src/pixi/pixiApp.js` change.
+  Only the existing renderer's reveal timing and session-static fallback
+  visibility are coordinated by the presentation layer.
