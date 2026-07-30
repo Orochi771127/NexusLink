@@ -4,8 +4,18 @@ import {
   MOONLAKE_WORLD_WAYPOINTS
 } from "../three/moonlakeLive3dConfig.js";
 
-const NIGHT_TINT = 0x5d759f;
-const DAY_TINT = 0xd4d4d4;
+const OPAQUE_ALPHA_THRESHOLD = 16;
+const NIGHT_MULTIPLIER = Object.freeze({
+  red: 0.34 * 0.78,
+  green: 0.46 * 0.78,
+  blue: 0.68 * 0.78
+});
+const NIGHT_LIFT = Object.freeze({
+  red: 0.006,
+  green: 0.014,
+  blue: 0.045
+});
+const opaqueTextureBoundsCache = new WeakMap();
 
 export async function createMoonlakeDepthOcclusion(PIXI, {
   parent,
@@ -29,6 +39,9 @@ export async function createMoonlakeDepthOcclusion(PIXI, {
       sprite.anchor.set(0, 0);
       sprite.eventMode = "none";
       sprite.visible = false;
+      sprite.tint = 0xffffff;
+      const colorFilter = createOccluderColorFilter(PIXI);
+      if (colorFilter) sprite.filters = [colorFilter];
       root.addChild(sprite);
       const clipMask = new PIXI.Graphics();
       clipMask.name = `moonlake_occluder_clip_${spec.id}`;
@@ -38,10 +51,14 @@ export async function createMoonlakeDepthOcclusion(PIXI, {
       entries.push({
         spec,
         sprite,
+        colorFilter,
+        colorNightAlpha: null,
         clipMask,
         visible: false,
         intersects: false,
         behind: false,
+        intersectionArea: 0,
+        overlapRatio: 0,
         projectedRect: null,
         projectedBaselineY: null
       });
@@ -53,6 +70,7 @@ export async function createMoonlakeDepthOcclusion(PIXI, {
   let active = false;
   let lastFoot = null;
   let lastArea = null;
+  let companionBoundsSnapshot = null;
 
   function setActive(nextActive) {
     active = Boolean(nextActive);
@@ -75,6 +93,7 @@ export async function createMoonlakeDepthOcclusion(PIXI, {
     const nightAlpha = clamp01(getEnvironmentState?.()?.nightAlpha);
     lastFoot = foot;
     lastArea = area;
+    companionBoundsSnapshot = companionBounds ? { ...companionBounds } : null;
 
     entries.forEach((entry) => {
       const projected = projectOccluder(entry.spec, live3d);
@@ -85,6 +104,8 @@ export async function createMoonlakeDepthOcclusion(PIXI, {
         entry.visible = false;
         entry.intersects = false;
         entry.behind = false;
+        entry.intersectionArea = 0;
+        entry.overlapRatio = 0;
         return;
       }
 
@@ -99,11 +120,7 @@ export async function createMoonlakeDepthOcclusion(PIXI, {
       entry.sprite.position.set(topLeft.x, topLeft.y);
       entry.sprite.width = bottomRight.x - topLeft.x;
       entry.sprite.height = bottomRight.y - topLeft.y;
-      entry.sprite.tint = mixColor(
-        Number(entry.spec.dayTint) || DAY_TINT,
-        NIGHT_TINT,
-        nightAlpha
-      );
+      applyOccluderColor(entry, nightAlpha);
 
       const padding = (Number(entry.spec.boundsPaddingPx390) || 0)
         * projected.referenceScale390;
@@ -114,32 +131,36 @@ export async function createMoonlakeDepthOcclusion(PIXI, {
       const behind = entry.spec.mode === "surface"
         ? Boolean(area && entry.spec.surfaces?.includes(area))
         : foot.y <= projected.baselineY;
-      const visible = intersects && behind;
+      const intersection = intersectRect(companionBounds, projected.rect);
+      const intersectionArea = intersection
+        ? rectArea(intersection)
+        : 0;
+      const overlapRatio = intersectionArea / Math.max(1, rectArea(companionBounds));
+      const visible = Boolean(intersection && intersects && behind);
       entry.sprite.visible = visible;
       entry.visible = visible;
       entry.intersects = intersects;
       entry.behind = behind;
+      entry.intersectionArea = intersectionArea;
+      entry.overlapRatio = overlapRatio;
       entry.clipMask.clear();
       if (visible) {
-        const intersection = intersectRect(companionBounds, projected.rect);
-        if (intersection) {
-          const clipTopLeft = root.toLocal({
-            x: intersection.left - 1,
-            y: intersection.top - 1
-          });
-          const clipBottomRight = root.toLocal({
-            x: intersection.right + 1,
-            y: intersection.bottom + 1
-          });
-          entry.clipMask
-            .rect(
-              clipTopLeft.x,
-              clipTopLeft.y,
-              clipBottomRight.x - clipTopLeft.x,
-              clipBottomRight.y - clipTopLeft.y
-            )
-            .fill({ color: 0xffffff });
-        }
+        const clipTopLeft = root.toLocal({
+          x: intersection.left - 1,
+          y: intersection.top - 1
+        });
+        const clipBottomRight = root.toLocal({
+          x: intersection.right + 1,
+          y: intersection.bottom + 1
+        });
+        entry.clipMask
+          .rect(
+            clipTopLeft.x,
+            clipTopLeft.y,
+            clipBottomRight.x - clipTopLeft.x,
+            clipBottomRight.y - clipTopLeft.y
+          )
+          .fill({ color: 0xffffff });
       }
     });
   }
@@ -151,6 +172,7 @@ export async function createMoonlakeDepthOcclusion(PIXI, {
       configuredCount: MOONLAKE_DEPTH_OCCLUDERS.length,
       area: lastArea,
       foot: lastFoot ? { ...lastFoot } : null,
+      companionBounds: companionBoundsSnapshot,
       visibleIds: entries.filter((entry) => entry.visible).map((entry) => entry.spec.id),
       entries: entries.map((entry) => ({
         id: entry.spec.id,
@@ -158,6 +180,10 @@ export async function createMoonlakeDepthOcclusion(PIXI, {
         visible: entry.visible,
         intersects: entry.intersects,
         behind: entry.behind,
+        intersectionArea: entry.intersectionArea,
+        overlapRatio: entry.overlapRatio,
+        colorMode: entry.colorFilter ? "matrix-filter" : "tint-fallback",
+        colorNightAlpha: entry.colorNightAlpha,
         projectedBaselineY: entry.projectedBaselineY,
         projectedRect: entry.projectedRect ? { ...entry.projectedRect } : null
       }))
@@ -232,8 +258,41 @@ function projectOccluder(spec, live3d) {
 }
 
 function getGlobalCompanionBounds(companion) {
+  const visual = companion?.__animationController?.getAnimatedSprite?.()
+    || companion?.children?.find?.((child) => child?.texture)
+    || companion;
+  const opaqueBounds = getOpaqueTextureLocalBounds(visual);
+  if (opaqueBounds && typeof visual?.toGlobal === "function") {
+    try {
+      const corners = [
+        visual.toGlobal({ x: opaqueBounds.left, y: opaqueBounds.top }),
+        visual.toGlobal({ x: opaqueBounds.right, y: opaqueBounds.top }),
+        visual.toGlobal({ x: opaqueBounds.left, y: opaqueBounds.bottom }),
+        visual.toGlobal({ x: opaqueBounds.right, y: opaqueBounds.bottom })
+      ];
+      const xs = corners.map((point) => Number(point?.x));
+      const ys = corners.map((point) => Number(point?.y));
+      if (xs.every(Number.isFinite) && ys.every(Number.isFinite)) {
+        const left = Math.min(...xs);
+        const top = Math.min(...ys);
+        const right = Math.max(...xs);
+        const bottom = Math.max(...ys);
+        return {
+          left,
+          top,
+          right,
+          bottom,
+          width: right - left,
+          height: bottom - top,
+          source: "opaque-frame"
+        };
+      }
+    } catch {
+      // Fall through to Pixi bounds when a texture cannot be projected.
+    }
+  }
   try {
-    const bounds = companion?.getBounds?.();
+    const bounds = visual?.getBounds?.() || companion?.getBounds?.();
     const left = Number(bounds?.x);
     const top = Number(bounds?.y);
     const width = Number(bounds?.width);
@@ -254,11 +313,124 @@ function getGlobalCompanionBounds(companion) {
       right: left + width,
       bottom: top + height,
       width,
-      height
+      height,
+      source: "visual-frame-fallback"
     };
   } catch {
     return null;
   }
+}
+
+function getOpaqueTextureLocalBounds(visual) {
+  const texture = visual?.texture;
+  if (!texture || typeof document === "undefined") return null;
+  if (opaqueTextureBoundsCache.has(texture)) {
+    return opaqueTextureBoundsCache.get(texture);
+  }
+
+  const source = texture.source?.resource;
+  const frame = texture.frame;
+  const frameWidth = Math.round(Number(frame?.width));
+  const frameHeight = Math.round(Number(frame?.height));
+  if (
+    !source
+    || !Number.isFinite(frameWidth)
+    || !Number.isFinite(frameHeight)
+    || frameWidth <= 0
+    || frameHeight <= 0
+    || texture.rotate
+  ) {
+    opaqueTextureBoundsCache.set(texture, null);
+    return null;
+  }
+
+  let result = null;
+  try {
+    const canvas = document.createElement("canvas");
+    canvas.width = frameWidth;
+    canvas.height = frameHeight;
+    const context = canvas.getContext("2d", { willReadFrequently: true });
+    if (!context) {
+      opaqueTextureBoundsCache.set(texture, null);
+      return null;
+    }
+    context.drawImage(
+      source,
+      Number(frame.x) || 0,
+      Number(frame.y) || 0,
+      frameWidth,
+      frameHeight,
+      0,
+      0,
+      frameWidth,
+      frameHeight
+    );
+    const opaque = measureOpaquePixelBounds(
+      context.getImageData(0, 0, frameWidth, frameHeight).data,
+      frameWidth,
+      frameHeight,
+      OPAQUE_ALPHA_THRESHOLD
+    );
+    if (opaque) {
+      const originalWidth = Number(texture.orig?.width) || frameWidth;
+      const originalHeight = Number(texture.orig?.height) || frameHeight;
+      const trimX = Number(texture.trim?.x) || 0;
+      const trimY = Number(texture.trim?.y) || 0;
+      const anchorX = Number(visual.anchor?.x) || 0;
+      const anchorY = Number(visual.anchor?.y) || 0;
+      result = {
+        left: opaque.left + trimX - anchorX * originalWidth,
+        top: opaque.top + trimY - anchorY * originalHeight,
+        right: opaque.right + trimX - anchorX * originalWidth,
+        bottom: opaque.bottom + trimY - anchorY * originalHeight
+      };
+    }
+  } catch (error) {
+    console.warn("Moonlake opaque-frame bounds fell back to visual bounds:", error);
+  }
+  opaqueTextureBoundsCache.set(texture, result);
+  return result;
+}
+
+export function measureOpaquePixelBounds(
+  pixels,
+  width,
+  height,
+  alphaThreshold = OPAQUE_ALPHA_THRESHOLD
+) {
+  if (
+    !pixels
+    || !Number.isInteger(width)
+    || !Number.isInteger(height)
+    || width <= 0
+    || height <= 0
+    || pixels.length < width * height * 4
+  ) {
+    return null;
+  }
+  let minX = width;
+  let minY = height;
+  let maxX = -1;
+  let maxY = -1;
+  const threshold = Math.max(0, Math.min(255, Number(alphaThreshold) || 0));
+  for (let y = 0; y < height; y += 1) {
+    for (let x = 0; x < width; x += 1) {
+      if (pixels[(y * width + x) * 4 + 3] < threshold) continue;
+      if (x < minX) minX = x;
+      if (x > maxX) maxX = x;
+      if (y < minY) minY = y;
+      if (y > maxY) maxY = y;
+    }
+  }
+  if (maxX < minX || maxY < minY) return null;
+  return {
+    left: minX,
+    top: minY,
+    right: maxX + 1,
+    bottom: maxY + 1,
+    width: maxX - minX + 1,
+    height: maxY - minY + 1
+  };
 }
 
 function getGlobalCompanionFoot(companion, bounds) {
@@ -316,18 +488,45 @@ function expandRect(rect, padding) {
   };
 }
 
-function mixColor(from, to, progress) {
-  const amount = clamp01(progress);
-  const fromR = (from >> 16) & 0xff;
-  const fromG = (from >> 8) & 0xff;
-  const fromB = from & 0xff;
-  const toR = (to >> 16) & 0xff;
-  const toG = (to >> 8) & 0xff;
-  const toB = to & 0xff;
-  const r = Math.round(fromR + (toR - fromR) * amount);
-  const g = Math.round(fromG + (toG - fromG) * amount);
-  const b = Math.round(fromB + (toB - fromB) * amount);
-  return (r << 16) | (g << 8) | b;
+function rectArea(rect) {
+  return Math.max(0, Number(rect?.right) - Number(rect?.left))
+    * Math.max(0, Number(rect?.bottom) - Number(rect?.top));
+}
+
+function createOccluderColorFilter(PIXI) {
+  if (typeof PIXI?.ColorMatrixFilter !== "function") return null;
+  return new PIXI.ColorMatrixFilter();
+}
+
+function applyOccluderColor(entry, nightAlpha) {
+  const amount = clamp01(nightAlpha);
+  if (entry.colorNightAlpha === amount) return;
+  entry.colorNightAlpha = amount;
+  if (entry.colorFilter) {
+    entry.colorFilter.matrix = getMoonlakeOccluderColorMatrix(amount);
+    entry.sprite.tint = 0xffffff;
+    return;
+  }
+
+  const matrix = getMoonlakeOccluderColorMatrix(amount);
+  const red = Math.round(clamp01(matrix[0]) * 255);
+  const green = Math.round(clamp01(matrix[6]) * 255);
+  const blue = Math.round(clamp01(matrix[12]) * 255);
+  entry.sprite.tint = (red << 16) | (green << 8) | blue;
+}
+
+export function getMoonlakeOccluderColorMatrix(nightAlpha) {
+  const amount = clamp01(nightAlpha);
+  return [
+    mix(1, NIGHT_MULTIPLIER.red, amount), 0, 0, 0, NIGHT_LIFT.red * amount,
+    0, mix(1, NIGHT_MULTIPLIER.green, amount), 0, 0, NIGHT_LIFT.green * amount,
+    0, 0, mix(1, NIGHT_MULTIPLIER.blue, amount), 0, NIGHT_LIFT.blue * amount,
+    0, 0, 0, 1, 0
+  ];
+}
+
+function mix(from, to, amount) {
+  return from + (to - from) * amount;
 }
 
 function clamp01(value) {

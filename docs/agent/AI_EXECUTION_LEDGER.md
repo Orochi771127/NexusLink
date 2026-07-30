@@ -6684,3 +6684,97 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
   production-speed lifecycle proof can be run against GitHub Pages after the
   protected-main deployment.
 - Branch: `codex/moonlake-fishing-lifecycle-public-r3-4`.
+
+### 2026-07-30 - Codex - Moonlake Occlusion Seam R3.5 - VERIFIED LOCALLY
+
+- Status: `VERIFIED LOCALLY`; Owner approved
+  `TP-MOONLAKE-OCCLUSION-SEAM-R3.5`. Commit, push, PR, merge and deployment
+  remain unauthorized.
+- Lane: `Game Engineering And Architecture`.
+- Root cause: the circled mark beside the left foreground lamp was the
+  authored Pixi depth-occlusion plate, not an extra Three.js shadow. The
+  plate copied the correct scene pixels but used a flat night tint that did
+  not match the live Three.js night colour transform, making its rectangular
+  seam visible. Full transparent animation-frame bounds could also activate a
+  plate before opaque companion pixels reached it.
+- Completed:
+  - depth checks now use cached opaque-pixel bounds for the current animated
+    frame and fall back safely when pixel data cannot be read;
+  - masks are clipped to the actual opaque-frame intersection, while genuine
+    lamp, tent and bridge-rail foreground coverage is preserved;
+  - occlusion plates use a Pixi colour matrix matching the live Three.js base
+    day/night transform, with a bounded tint fallback;
+  - diagnostics now expose bounds source, intersection area, overlap ratio
+    and colour mode without moving authority out of the existing hybrid
+    runtime.
+- Validation:
+  - R3.5 deterministic alpha-bounds, day identity, night base transform,
+    transparent-padding rejection and genuine-overlap fixtures: PASS;
+  - R3.5 browser matrix: `96/96` cases for `16` companions x `3` light phases
+    x `2` phone viewports; `192/192` left/right lamp route checks; tent and
+    bridge-rail regression assertions passed; zero page/console errors;
+  - existing deterministic R3/R3.2/R3.3/R3.4, bridge-clearance and fishing
+    orientation suites: PASS;
+  - complete repo-native web release gate: required checks `28/28`, JavaScript
+    syntax `368/368`, zero accessibility warnings;
+  - `node --check` and `git diff --check`: PASS.
+- Known test-environment note: two older browser harnesses still enter the
+  real nighttime sleep/fishing state and therefore do not deterministically
+  reach their requested walk assertion. The R3.5 harness wakes the habitat
+  through the existing QA interaction before checking depth and is the
+  authoritative time-independent proof for this package.
+- MCP: the reconnected desktop connector indexed this exact worktree
+  persistently as
+  `C-Users-User-NexusLink_RaphaelAI_Workspace-NexusLink-moonlake-occlusion-r3-5`
+  with `15,800` nodes and `31,619` edges, wrote a shareable compressed graph
+  artifact, and recorded the R3.5 depth-occlusion architecture decision.
+- Required reading completed: `AGENTS.md`, `CLAUDE.md`, `ACCEPTANCE.md`,
+  `docs/design/MOONLAKE_LIVE_3D_HYBRID_CONTRACT_V1.md` and the latest
+  R3.2-R3.4 engineering/art ledger entries.
+- Red-line / scope proof: no scene/character asset, GLB, texture, save,
+  relationship, reward, growth, RaphaelCore, dependency, free-camera,
+  physics-engine, backend or build-step change.
+- Branch: `codex/moonlake-occlusion-seam-r3-5`, based on exact
+  `origin/main` commit `ae5f1241cb03c418a997f32a2b3acc687ba608bd`.
+
+### 2026-07-30 - Codex - Moonlake Occlusion Seam R3.5 - VERIFIED LOCALLY
+
+- Status: `VERIFIED LOCALLY`; the left-lamp ghost seam is removed while real
+  foreground occlusion remains.
+- Lane: `Game Art, UI, And Visual Production`.
+- Visual result:
+  - the lamp plate now follows only the companion's visible current-frame
+    pixels, so transparent sprite padding cannot create a premature block;
+  - day pixels remain unchanged and dusk/night plates follow the environment's
+    base colour grading instead of appearing as a grey-green rectangle;
+  - lamps still cover a companion when its visible body actually passes
+    behind them; tent entrances and bridge rails retain their authored depth.
+- Visual proof: representative night captures at `390x844` and `430x932`,
+  plus the full sixteen-companion matrix, are retained under ignored
+  `output/playwright/moonlake-occlusion-seam-r3-5/`.
+- Asset boundary: all seven depth plates were pixel-compared with the approved
+  visual master and matched; no asset was regenerated, modified or deleted.
+- Branch: `codex/moonlake-occlusion-seam-r3-5`.
+
+### 2026-07-30 - Codex - Moonlake Occlusion Seam R3.5 - PUBLICATION AUTHORIZED
+
+- Status: `VERIFIED`; Owner explicitly authorized commit, push, PR,
+  protected-main integration and persistent codebase-memory publication.
+- Lane: `Game Engineering And Architecture`.
+- Publication scope: the depth-occlusion runtime module, two R3.5 QA
+  harnesses, this cross-agent ledger, and the MCP-generated
+  `.codebase-memory` manifest, attributes and compressed graph artifact.
+- MCP publication: the persisted graph contains the indexed repository plus
+  the R3.5 ADR covering opaque current-frame bounds, real-intersection
+  clipping and Three/Pixi base day-night colour matching.
+- Branch: `codex/moonlake-occlusion-seam-r3-5`; target: protected `main`.
+
+### 2026-07-30 - Codex - Moonlake Occlusion Seam R3.5 - PUBLICATION AUTHORIZED
+
+- Status: `VERIFIED`; Owner explicitly authorized protected-main publication.
+- Lane: `Game Art, UI, And Visual Production`.
+- Visual publication scope remains runtime-only: remove the left-lamp ghost
+  seam while preserving real lamp, tent and bridge-rail foreground depth.
+- Asset boundary: no approved scene, character, GLB, texture, fallback or
+  legacy art asset is part of this publication package.
+- Branch: `codex/moonlake-occlusion-seam-r3-5`.
