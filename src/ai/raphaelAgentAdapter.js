@@ -10,7 +10,8 @@ export const RAPHAEL_AGENT_EVENT_TYPES = Object.freeze([
   "return_echo",
   "habitat_change",
   "exploration_result",
-  "standoff_result"
+  "standoff_result",
+  "expedition_result"
 ]);
 
 const SILENT_EVENTS = new Set([
@@ -98,7 +99,7 @@ function deriveEventActions(eventType, event = {}, coreResult = {}) {
     actions.push("offer_presence");
   } else if (eventType === "habitat_change") {
     actions.push("body_cue_only");
-  } else if (eventType === "exploration_result") {
+  } else if (eventType === "exploration_result" || eventType === "expedition_result") {
     actions.push("suggest_exploration");
   } else if (eventType === "standoff_result") {
     actions.push("body_cue_only");
