@@ -30,7 +30,13 @@ export const INITIAL_BOND_CHOICES = Object.freeze([
   }
 ]);
 
-export function createOnboardingController({ store, saveCurrentState, onBondChosen, onStepShown } = {}) {
+export function createOnboardingController({
+  store,
+  saveCurrentState,
+  onBondChosen,
+  onStepShown,
+  prepareSceneReveal
+} = {}) {
   const root = qs("#onboarding-root");
   const shell = root?.querySelector(".onboarding-shell");
   const firstResonance = createFirstResonanceController({ root });
@@ -78,6 +84,8 @@ export function createOnboardingController({ store, saveCurrentState, onBondChos
     document.body.classList.toggle("v3-home-ready", !shouldShow);
 
     if (!shouldShow) return;
+    root.classList.remove("is-revealing");
+    delete root.dataset.revealMode;
 
     const storedName = state.playerProfile?.displayName || "";
     if (nameInput && document.activeElement !== nameInput) {
@@ -140,7 +148,7 @@ export function createOnboardingController({ store, saveCurrentState, onBondChos
       } else if (action === "bond-choose") {
         await chooseBond(button.dataset.bondId);
       } else if (action === "complete") {
-        completeOnboarding();
+        await completeOnboarding();
       } else {
         throw new Error(`Unsupported onboarding action: ${action || "missing"}`);
       }
@@ -242,7 +250,8 @@ export function createOnboardingController({ store, saveCurrentState, onBondChos
     persist();
   }
 
-  function completeOnboarding() {
+  async function completeOnboarding() {
+    await prepareSceneReveal?.();
     const state = store.getState();
     const now = Date.now();
     const chatHistory = Array.isArray(state.chatHistory) ? state.chatHistory : [];
@@ -290,6 +299,7 @@ export function createOnboardingController({ store, saveCurrentState, onBondChos
   }
 
   function showStep(step, state) {
+    root.dataset.currentStep = step;
     if (shell) shell.dataset.onboardingStep = step;
     steps.forEach((stepEl) => {
       const isActiveStep = stepEl.dataset.step === step;

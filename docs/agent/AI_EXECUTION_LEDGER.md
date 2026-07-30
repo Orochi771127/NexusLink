@@ -6905,3 +6905,133 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Remote truth: PR `#173` is `MERGED`; GitHub remote `main` and
   `origin/main` both resolved to
   `0e6ac0898df4bc72f20ff5ac6653a11e8a5a3199` at publication verification.
+### 2026-07-30 - Codex - First Session Visual Continuity R1 - IN PROGRESS
+
+- Status: `IN PROGRESS`; Owner approved
+  `TP-FIRST-SESSION-VISUAL-CONTINUITY-R1`.
+- Lane: `Game Engineering And Architecture`.
+- Scope: replace the exposed fallback/Pixi/Live3D boot swaps with one
+  first-session presentation gate. Start, Identity, Guidance and Initial Bond
+  retain one Moonlake composition while Pixi/Three load behind it; the
+  renderer is revealed only after a stable scene result or a session-locked
+  static fallback.
+- GROUNDWORK approval: `index.html` and one optimized derivative under
+  `assets/backgrounds/MoonlakeDiorama_r2/` are approved for this task.
+  `src/pixi/pixiApp.js`, save, state normalization and existing approved
+  source art remain unchanged.
+- Runtime boundary: Three.js remains environment-only, Pixi remains the
+  illustrated companion/FX layer, and DOM remains UI authority. No gameplay,
+  relationship, reward, safety, RaphaelCore or persistence semantics change.
+- Planned proof: deterministic readiness/fallback cases, JavaScript syntax,
+  existing first-session regression gates, and Chromium visual/geometry proof
+  at mobile and desktop sizes including throttled/failure paths.
+- Branch: current clean `main` at `24eb3a3`; commit, push and publication are
+  not authorized.
+
+### 2026-07-30 - Codex - First Session Visual Continuity R1 - IN PROGRESS
+
+- Status: `IN PROGRESS`; Owner approved the unified
+  `Moonlake Heartcore Arrival` presentation.
+- Lane: `Game Art, UI, And Visual Production`.
+- Visual direction: an owner-approved Moonlake R2 composition remains fixed
+  from boot through Start, Identity, Guidance and Initial Bond. A single
+  incomplete moon-ring/heart-core mark carries loading, focus and resonance;
+  the onboarding surface becomes one ritual scroll instead of nested glass
+  cards.
+- Asset boundary: the new first frame is a mechanically compressed derivative
+  of `moonlake_visual_master_r2.png`; it does not revise the approved
+  composition, characters, GLB, depth plates or source master.
+- Mobile target: `390x844` and `430x932`, 14-16px edge safety, 44px controls,
+  no horizontal overflow, keyboard-reachable Identity actions, and no visible
+  habitat swap before the single reveal.
+- Branch: current clean `main` at `24eb3a3`; commit, push and publication are
+  not authorized.
+
+### 2026-07-30 - Codex - First Session Visual Continuity R1 - VERIFIED
+
+- Status: `VERIFIED`; the first-session presentation gate and fallback path are
+  implemented on the current worktree.
+- Lane: `Game Engineering And Architecture`.
+- Completed: boot now exposes a real progress surface while the same approved
+  Moonlake first frame decodes; onboarding can proceed without waiting for
+  Three/Pixi; the renderer receives a first-wins `live` or session-locked
+  `static` result; the onboarding surface performs one controlled reveal only
+  after that result is ready.
+- Failure result: with `live3d=0`, Start through the completed habitat remains
+  on the static Moonlake frame while the illustrated companion and DOM UI stay
+  available. There is no blank canvas, half-built terrain or late live-scene
+  takeover.
+- Automated proof:
+  - JavaScript syntax, manifest JSON and `git diff --check`: passed.
+  - onboarding normalization: `35/35`; first-session motivation: `8/8`.
+  - map first-session browser gate: `32/32`.
+  - Growth browser gate after adopting the new loader-readiness contract:
+    `156/156`.
+  - full Web Release Gate: `28/28` required automated checks, zero
+    accessibility warnings.
+- Browser proof: the complete Start → Identity → Guidance → Initial Bond →
+  First Resonance → habitat path passed in Chromium at `390x844`; live and
+  forced-static completion paths both reached the usable habitat.
+- Scope audit: no save schema, state normalization, default state,
+  `pixiApp.js`, dependency, build step, gameplay, reward, RaphaelCore or safety
+  authority changed.
+- Branch: local `main` based on `24eb3a3`; no commit, push or publication was
+  authorized.
+
+### 2026-07-30 - Codex - First Session Visual Continuity R1 - VERIFIED
+
+- Status: `VERIFIED`; the unified `Moonlake Heartcore Arrival` art and UI
+  composition passed inspected browser proof.
+- Lane: `Game Art, UI, And Visual Production`.
+- Completed: Loading, Start, Identity, Guidance, Initial Bond and the final
+  meet panel share one portrait Moonlake crop, indigo ritual-scroll surface,
+  incomplete moon-ring mark and restrained cyan/gold hierarchy. The three bond
+  choices now read as one uninterrupted list rather than nested cards.
+- Mobile geometry:
+  - `390x844`: 362x470 shell, 50px primary controls, zero document overflow;
+    all three Initial Bond choices fit in the shell with 72-85px rows.
+  - `430x932`: 402x470 shell, 50px primary control, zero document overflow.
+  - `390x664`: the short-screen shell remains 470px instead of stretching into
+    an empty full-height panel; the 52px identity input and 50px actions remain
+    visible.
+  - `1280x900`: the portrait game stage remains centered with a 444x470 shell
+    and 50px CTA; no horizontal overflow.
+- Visual inspection: Start, Identity and Guidance terrain crops were stable;
+  Identity → Guidance was pixel-identical in the terrain region. Initial Bond,
+  First Resonance, live habitat and static-fallback habitat screenshots were
+  inspected with no clipping, blank frame or mixed-background seam.
+- Asset boundary: the added 720x1280 WebP is a 104,012-byte mechanical
+  derivative of the approved Moonlake R2 master. The master, GLB, depth plates,
+  character art and existing approved assets were not revised or removed.
+- Remaining human proof: real iOS/Android browser matrices and moderated
+  first-session comprehension remain release-level manual gates.
+- Branch: local `main` based on `24eb3a3`; no commit, push or publication was
+  authorized.
+
+### 2026-07-30 - Codex - First Session Visual Continuity R1 - PUBLICATION AUTHORIZED
+
+- Status: `VERIFIED`; Owner explicitly authorized commit, push, protected-main
+  integration and codebase MCP refresh after a strict 3D-scope review.
+- Lane: `Game Engineering And Architecture`.
+- Publication scope: the first-session loader, presentation controller,
+  onboarding reveal handshake, static fallback visibility, focused browser-gate
+  readiness update and engineering ledger evidence.
+- Strict 3D audit: no GLB/glTF, Three.js scene module, Moonlake scene layout,
+  object pack, profile, water, waterfall, lighting, navigation or
+  `src/pixi/pixiApp.js` file changed. `src/app.js` only coordinates when the
+  existing live renderer becomes visible and locks a session to the static
+  fallback when stable frames are unavailable.
+- Delivery route: feature branch → PR → required `web-release-gate` → protected
+  `main` merge → local/remote synchronization → codebase MCP re-index.
+
+### 2026-07-30 - Codex - First Session Visual Continuity R1 - PUBLICATION AUTHORIZED
+
+- Status: `VERIFIED`; Owner approved publication of the unified Moonlake
+  onboarding art/UI surface.
+- Lane: `Game Art, UI, And Visual Production`.
+- Asset scope: one 720x1280, 104,012-byte WebP derivative and its manifest
+  declaration. The approved 1080x1920 Moonlake R2 master remains byte-unchanged;
+  no source composition, character art, 3D asset or depth plate is replaced.
+- Visual scope: Loading, Start, Identity, Guidance, Initial Bond and First
+  Resonance retain the same Moonlake composition and one ritual-scroll language
+  until the single live/static scene reveal.

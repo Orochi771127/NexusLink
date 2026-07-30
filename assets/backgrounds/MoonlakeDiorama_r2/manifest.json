@@ -3,7 +3,8 @@
   "id": "moonlake-visual-fidelity-r2",
   "stylePreset": "clay_resin_3d_miniature",
   "sourceReferenceRoles": {
-    "moonlake_visual_master_r2.png": "owner-approved composition and visual-quality authority"
+    "moonlake_visual_master_r2.png": "owner-approved composition and visual-quality authority",
+    "moonlake_onboarding_first_frame_r1.webp": "720x1280 mechanically compressed first-session continuity derivative"
   },
   "canvas": {
     "width": 1080,
@@ -20,6 +21,13 @@
   "mobilePreview": {
     "width": 390,
     "height": 844
+  },
+  "firstSessionContinuity": {
+    "asset": "moonlake_onboarding_first_frame_r1.webp",
+    "width": 720,
+    "height": 1280,
+    "bytes": 104012,
+    "sourceCompositionChanged": false
   },
   "companionReservedRect": {
     "x": 0.38,

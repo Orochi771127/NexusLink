@@ -113,6 +113,10 @@ def wait_ready(page, reload=False, expect_pixi_failure=True):
             "() => document.querySelector('#pixi-load-failure')?.hidden !== false",
             timeout=10000,
         )
+    page.wait_for_function(
+        "() => document.documentElement.dataset.firstSessionLoader === 'complete'",
+        timeout=30000,
+    )
 
 
 def open_growth(page):
