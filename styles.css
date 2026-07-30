@@ -1885,9 +1885,15 @@ body.panel-open .dev-reaction-lab {
 
 .quick-hud .settings-item {
   display: flex;
-  width: 36px;
-  height: 36px;
-  min-height: 36px;
+  width: 44px;
+  height: 44px;
+  min-height: 44px;
+}
+
+#btn-settings-toggle {
+  width: 44px;
+  height: 44px;
+  min-height: 44px;
 }
 
 /* ======================================================
@@ -3758,7 +3764,10 @@ body.orbit-active #page-layer {
   }
 
   .orbit-hint {
-    display: none;
+    display: block;
+    margin-top: 3px;
+    font-size: 0.7rem;
+    line-height: 1.25;
   }
 
   .orbit-stage {

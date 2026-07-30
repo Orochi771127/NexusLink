@@ -9,12 +9,12 @@
 const REGION_EXPLORE = Object.freeze({
   plains_windrest: Object.freeze([
     "牠想先看看附近有什麼可疑的地方。",
-    "草坡的風把氣味送來，牠耳朵動了一下。",
+    "草坡的風把氣味送來，牠周身的光動了一下。",
     "牠繞過一叢草，像在找沒說出口的東西。"
   ]),
   forge_emberpath: Object.freeze([
     "牠想先看看附近有什麼可疑的地方。",
-    "餘熱還在縫裡，牠把鼻尖湊近又退開。",
+    "餘熱還在縫裡，牠靠近感受了一下又退開。",
     "牠沿著小徑往前，腳步比平常更小心。"
   ]),
   harbor_quayside: Object.freeze([
@@ -26,17 +26,17 @@ const REGION_EXPLORE = Object.freeze({
 
 const REGION_IDLE = Object.freeze({
   plains_windrest: Object.freeze([
-    "牠停下來，耳朵轉向風的方向。",
+    "牠停下來，把注意力轉向風的方向。",
     "風停了一瞬。牠沒有動，只是聽。",
-    "牠坐下，尾巴掃過草葉，像在確認這裡還安全。"
+    "牠停在草葉旁，像在確認這裡還安全。"
   ]),
   forge_emberpath: Object.freeze([
-    "牠停下來，耳朵轉向熱霧的方向。",
+    "牠停下來，把注意力轉向熱霧的方向。",
     "火星在視野邊緣亮了一下，牠沒有追。",
     "牠把身體壓低，像在聞舊日的鍛聲。"
   ]),
   harbor_quayside: Object.freeze([
-    "牠停下來，耳朵轉向潮聲。",
+    "牠停下來，把注意力轉向潮聲。",
     "霧笛沒響。牠仍等了一下。",
     "牠看著纜繩鬆了又緊，沒有著急。"
   ])
@@ -45,19 +45,19 @@ const REGION_IDLE = Object.freeze({
 const TACTIC_ACK = Object.freeze({
   conservative: Object.freeze([
     "牠放慢了腳步，像聽懂你想保守一點。",
-    "牠把距離拉開些，尾巴垂得更低。"
+    "牠把距離拉開些，姿態收得更低。"
   ]),
   balanced: Object.freeze([
     "牠重新對齊節奏，不急也不退。",
     "牠點了點頭似的，繼續看向前方。"
   ]),
   aggressive: Object.freeze([
-    "牠的背脊微微拱起，準備更積極一點。",
+    "牠的重心微微前傾，準備更積極一點。",
     "牠往前踏了半步，像在說「我知道了」。"
   ]),
   focus: Object.freeze([
     "牠相信你的判斷，視線鎖向那個目標。",
-    "牠耳朵朝你指的方向轉過去。"
+    "牠把注意力轉向你指的方向。"
   ]),
   focus_empty: Object.freeze([
     "附近暫時沒有可鎖定的目標。牠仍聽著你。",
@@ -72,11 +72,11 @@ const KILL_AFTER = Object.freeze({
   ]),
   warm: Object.freeze([
     "{enemy}散開了。牠把微光撥近一點，像在等你一起看。",
-    "{enemy}散開了。牠的尾巴輕掃了一下地面。"
+    "{enemy}散開了。牠身側的微光輕掃了一下地面。"
   ]),
   distant: Object.freeze([
     "{enemy}散開了。牠沒有靠近微光太快，仍留著一點距離。",
-    "{enemy}散開了。牠耳朵仍豎著，還沒完全放鬆。"
+    "{enemy}散開了。牠仍專注看著四周，還沒完全放鬆。"
   ]),
   defensive: Object.freeze([
     "{enemy}散開了。牠仍擋在你前方半步，才肯低頭看微光。",

@@ -60,6 +60,7 @@ export function createPageRouter({
 
   function bind() {
     if (!pageLayer) return;
+    ensurePageSoulTalkActions();
     pageLayer.addEventListener("click", handlePageClick);
     pageLayer.addEventListener("keydown", handlePageKeydown);
     document.addEventListener("keydown", (event) => {
@@ -89,6 +90,7 @@ export function createPageRouter({
     EventBus.on(LANGUAGE_CHANGED_EVENT, () => {
       crystalActionStatus = "";
       statusText.textContent = getPageStatus(activePage);
+      ensurePageSoulTalkActions();
       render();
     });
     render();
@@ -140,6 +142,23 @@ export function createPageRouter({
     if (activePage === "care") renderCare(state);
     if (activePage === "grow") renderGrowth(state);
     if (activePage === "memory") renderMemory(state);
+  }
+
+  function ensurePageSoulTalkActions() {
+    pageViews.forEach((view) => {
+      const header = view.querySelector(".page-view__header");
+      if (!header) return;
+      let button = header.querySelector(".page-soul-talk-action");
+      if (!button) {
+        button = document.createElement("button");
+        button.type = "button";
+        button.className = "page-soul-talk-action";
+        button.dataset.pageAction = "open-soul-talk";
+        header.appendChild(button);
+      }
+      button.textContent = t("memory.openSoul");
+      button.setAttribute("aria-label", t("aria.openSoulTalk"));
+    });
   }
 
   function renderExplore(state) {

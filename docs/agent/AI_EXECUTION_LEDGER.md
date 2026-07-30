@@ -7282,3 +7282,142 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Lane: `Game Engineering And Architecture`
 - Scope: Fixed Three.js shadow map deprecation warning, removed unused preload resource in index.html, and enhanced expedition energy depletion tooltip.
 - MCP: Memory and Graph indexed.
+
+### 2026-07-30 - Codex - Public New-Player QA Repair R1 - IN PROGRESS
+
+- Status: `IN PROGRESS`; Owner approved the four scoped repair packs after a
+  public-site new-player playtest. Protected-main baseline gate is satisfied by
+  squash merge `ff72042` (PR `#179`); branch
+  `codex/public-new-player-qa-r1` starts from that exact remote commit.
+- Lane: `Game Engineering And Architecture`.
+- Scope: repair session-only onboarding replay, first-touch readiness,
+  unguided-Standoff gate continuity, Linkara locked-region habitat switching
+  and invalid legacy active-habitat recovery.
+- Expected files: `src/ui/onboardingController.js`,
+  `src/ui/settingsController.js`, `src/ui/firstLoopController.js`,
+  `src/ui/interactionHintController.js`, `src/ui/atlasController.js`,
+  `src/app.js`, focused CSS and QA.
+- Red-line / GROUNDWORK boundary: no state schema, `defaultState.js`,
+  `store.js`, `saveManager.js`, `index.html`, `pixiApp.js`, assets,
+  dependencies, backend, rewards or chapter-unlock changes. First touch must
+  still pass through `touchReactionEngine` and preserve guard/refusal.
+- Acceptance refs: `K1`, `K4-K9`, `L6`, `M2-M3`, `O3`, `O10`.
+- Publication boundary: local implementation and verification only; commit,
+  push, PR and deployment remain unauthorized.
+
+### 2026-07-30 - Codex - Public Mobile UI And Codex Repair R1 - IN PROGRESS
+
+- Status: `IN PROGRESS`; Owner approved mobile and player-facing presentation
+  repairs found at `390x844` and Safari-like `390x664`.
+- Lane: `Game Art, UI, And Visual Production`.
+- Scope: add a real 44px Soul Talk entry on full pages without restoring the
+  overlapping floating launcher, keep the Orbit launch instruction visible,
+  separate Orbit completion labels, enlarge small phone hit targets, replace
+  species-invalid shared anatomy copy and remove internal RPG/runtime labels
+  from player-facing Codex detail.
+- Expected files: `src/ui/pageRouter.js`, `src/ui/orbitBattleController.js`,
+  `src/ui/codexController.js`, `src/ui/gentleInvitationController.js`,
+  `src/data/explorationNodes.js`, `src/data/soulTalkResponsePacks.js`,
+  `styles.css`, `styles/page-content.css`, focused QA.
+- Visual boundary: preserve the Moonlake navy/cyan/gold language, large
+  playable stage, one compact contextual hint and the existing bottom-nav
+  contract. No asset generation, renderer migration or new persistent HUD
+  cluster.
+- Acceptance refs: `F3-F4`, `M1-M5`, `N9-N11`, `O7-O10`.
+- Publication boundary: local implementation and verification only.
+
+### 2026-07-30 - Codex - Public Soul Talk Presence Repair R1 - IN PROGRESS
+
+- Status: `IN PROGRESS`; Owner approved the Soul Talk presence-state repair as
+  part of the public new-player QA package.
+- Lane: `Raphael Core, Companion Reasoning, And Soul Talk`.
+- Scope: completed replies must leave the visible listening state and settle
+  into the canonical companion presence copy; species-neutral shared reply
+  lines must remain companion-first and non-diagnostic.
+- Expected files: `src/ui/soulTalkController.js`,
+  `src/data/soulTalkResponsePacks.js`, existing Soul Talk focused QA.
+- Red-line check: no classifier, safety terminal, memory/preference/trace
+  writer, relationship delta, quick-reply policy, SFX safety suppression or
+  RaphaelCore authority change. High-risk turns remain zero quick replies,
+  zero gameplay/reward/memory delta and no secondary storage.
+- Acceptance refs: `F2-F4`, `M2-M4`.
+- Publication boundary: local implementation and verification only.
+
+### 2026-07-30 - Codex - Public New-Player QA Repair R1 - VERIFIED LOCALLY
+
+- Status: `VERIFIED LOCALLY`; `TP-PUBLIC-FIRST-SESSION-REPAIR-R1` and
+  `TP-LINKARA-ATLAS-GATE-R1` are implemented on the approved protected-main
+  baseline. Commit, push, PR and deployment remain unauthorized.
+- Lane: `Game Engineering And Architecture`.
+- Completed:
+  - Settings guidance replay is session-only and cannot reopen progression
+    gates, replace the active companion or rewrite persisted onboarding state;
+  - the visible first-touch affordance is now a semantic button that invokes
+    the same interaction controller, touch reaction engine and Raphael event
+    bridge as the Pixi target;
+  - stale companion nodes retain their own controller capture and fail closed
+    after an async companion swap;
+  - Linkara Atlas future regions are non-interactive and cannot persist an
+    invalid habitat; invalid legacy habitat selection recovers to the current
+    chapter without changing unlock policy.
+- Automated proof:
+  `public-first-session-repair-r1-cases.mjs` `13/13`,
+  `companion-renderer-lifecycle-cases.mjs` `29/29`,
+  onboarding/Codex `16/16`, first-session motivation `8/8`, all Orbit
+  regression harnesses, four-language i18n `494` keys, and Web Release Gate
+  `28/28` with zero accessibility warnings.
+- Browser proof: real pointer input completed the first touch and all replay
+  steps; locked Forge selection left Moonlake active; no console error was
+  observed in the required release matrix.
+- Groundwork / red-line result: no `index.html`, `src/state/**`,
+  `pixiApp.js`, `assets/**`, dependency, reward, safety or chapter-unlock
+  authority changed. Touch guard/refusal remains authoritative.
+- Branch / commit: `codex/public-new-player-qa-r1` from `ff72042`; local
+  worktree only, no commit.
+- Next safe action: Owner review of the local diff and visual evidence; obtain
+  separate publication authorization before commit, push, PR or deployment.
+
+### 2026-07-30 - Codex - Public Mobile UI And Codex Repair R1 - VERIFIED LOCALLY
+
+- Status: `VERIFIED LOCALLY`; `TP-MOBILE-ACCESS-AND-ORBIT-READABILITY-R1` and
+  the player-facing portion of `TP-COMPANION-COPY-AND-CODEX-R1` are complete.
+- Lane: `Game Art, UI, And Visual Production`.
+- Completed:
+  - every full action page receives a visible 44px `開啟心語` entry without
+    restoring the overlapping fixed launcher;
+  - the phone settings target is 44x44, Orbit launch guidance remains visible,
+    and the Orbit stability meter has its own row below completion labels;
+  - shared first-session, exploration and expedition copy no longer assumes
+    ears, fur, paws, nose or tail for non-mammal companions;
+  - Codex removes runtime status, team slot, RPG role/stat radar and tactic
+    metadata while retaining identity, faction, temperament, habitat affinity,
+    encounter state and growth silhouettes.
+- Visual proof: inspected screenshots and real input at `390x664` and
+  `390x844`; the Soul Talk page entry, bottom navigation, settings target,
+  Orbit instruction, meter and canvas labels remain readable without white
+  blocks or overlap.
+- Verification: focused repair contract `13/13`, Soul Talk phone copy
+  `11/11`, all Orbit regression harnesses and Web Release Gate `28/28`.
+- Asset boundary: no scene, companion, GLB, texture, approved fallback or
+  other `assets/**` content changed.
+- Branch / commit: `codex/public-new-player-qa-r1` / no commit.
+
+### 2026-07-30 - Codex - Public Soul Talk Presence Repair R1 - VERIFIED LOCALLY
+
+- Status: `VERIFIED LOCALLY`; the Raphael/Soul Talk portion of
+  `TP-COMPANION-COPY-AND-CODEX-R1` is complete.
+- Lane: `Raphael Core, Companion Reasoning, And Soul Talk`.
+- Completed: a finished response now clears transient thinking state and
+  replaces stale `正在聽` copy only when that exact listening status is still
+  present; response, trace, refusal and safety statuses are never overwritten.
+  Shared gratitude and reflection lines use species-neutral presence/light
+  language.
+- Safety result: no RaphaelCore policy, classifier, constitution critic,
+  safety terminal, memory/preference/trace writer, relationship delta,
+  quick-reply policy or reward path changed. High-risk and refusal authority
+  remain intact.
+- Verification: focused repair contract `13/13`, Soul Talk mobile cases
+  `11/11`, dialogue/Core suites inside Web Release Gate, and complete automated
+  gate `28/28` with zero accessibility warnings.
+- Branch / commit: `codex/public-new-player-qa-r1` / no commit, push, PR or
+  deployment.

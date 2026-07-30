@@ -25,6 +25,18 @@ const RIVER_LINKS = [
 const VIEW_W = LINKARA_ATLAS_ART.viewWidth;
 const VIEW_H = LINKARA_ATLAS_ART.viewHeight;
 
+export function isAtlasRegionSelectable(regionId, chapterProgress) {
+  const chapter = getChapterForRegion(regionId);
+  if (!chapter) return false;
+  const status = getChapterStatus(chapter.chapter, chapterProgress);
+  return status === "current" || status === "completed";
+}
+
+export function resolveAtlasHabitatId(habitatId, chapterProgress) {
+  if (isAtlasRegionSelectable(habitatId, chapterProgress)) return habitatId;
+  return getChapterByNumber(chapterProgress?.current)?.regionId || "moonlake";
+}
+
 export function createAtlasController({ panelManager, store, onHabitatSelect }) {
   const canvas = qs("#atlas-canvas");
   const legend = qs("#atlas-legend");
@@ -94,6 +106,11 @@ export function createAtlasController({ panelManager, store, onHabitatSelect }) 
     if (switching || typeof onHabitatSelect !== "function") return;
     const node = canvas?.querySelector(`[data-region-id="${regionId}"]`);
     if (!node || node.getAttribute("aria-disabled") === "true") return;
+    const chapterProgress = store?.getState?.()?.chapterProgress;
+    if (!isAtlasRegionSelectable(regionId, chapterProgress)) {
+      build();
+      return;
+    }
     switching = true;
     canvas?.setAttribute("aria-busy", "true");
     try {
@@ -135,9 +152,7 @@ function buildMapSvg(regions) {
 
   const nodes = regions.map((region) => {
     const isCurrent = region.status === "current";
-    // Habitat viewing is independent from chapter progression: every atlas node
-    // may change the visual habitat, while its chapter status remains locked.
-    const isSelectable = true;
+    const isSelectable = region.status === "current" || region.status === "completed";
     const haloR = isCurrent ? 7.4 : 5;
     const dotR = isCurrent ? 3.4 : 2.6;
     const classes = [

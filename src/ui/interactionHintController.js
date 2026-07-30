@@ -1,4 +1,6 @@
 import { prefersReducedMotion } from "../utils/motionPreference.js";
+import EventBus from "../utils/eventBus.js";
+import { LANGUAGE_CHANGED_EVENT, t } from "../i18n/i18n.js";
 
 // 互動可讀性提示（First-Session 支柱一）。
 //
@@ -18,16 +20,20 @@ export function createInteractionHintController({
   store,
   isPanelOpen,
   isOnboardingActive,
-  getCompanionTouchTarget
+  getCompanionTouchTarget,
+  onCompanionTouch
 } = {}) {
   let el = null;
   let trackingFrame = null;
+  let interactionInFlight = false;
 
   function ensureElement() {
     if (el) return el;
-    el = document.createElement("div");
+    el = document.createElement("button");
+    el.type = "button";
     el.className = "touch-affordance";
-    el.setAttribute("aria-hidden", "true"); // 純視覺；指示文字由 first-loop hint（aria-live）負責
+    el.setAttribute("aria-label", t("fl.hintTouch"));
+    el.addEventListener("click", handleTouch);
     const ring = document.createElement("span");
     ring.className = "touch-affordance__ring";
     const core = document.createElement("span");
@@ -56,13 +62,34 @@ export function createInteractionHintController({
     const node = ensureElement();
     // 遊戲設定或系統無障礙偏好任一成立 → 靜態微光
     node.classList.toggle("is-lowmotion", Boolean(state.settings?.lowMotion) || prefersReducedMotion());
+    if (!syncTarget(node)) {
+      node.classList.remove("is-visible");
+      stopTracking();
+      return;
+    }
     node.classList.add("is-visible");
-    syncTarget(node);
     startTracking(node);
   }
 
   function bind() {
+    EventBus.on(LANGUAGE_CHANGED_EVENT, () => {
+      if (el) el.setAttribute("aria-label", t("fl.hintTouch"));
+    });
     render();
+  }
+
+  async function handleTouch() {
+    if (interactionInFlight || typeof onCompanionTouch !== "function") return;
+    interactionInFlight = true;
+    el?.setAttribute("aria-busy", "true");
+    try {
+      await onCompanionTouch("touch");
+    } catch (error) {
+      console.warn("Companion touch affordance interaction failed:", error);
+    } finally {
+      interactionInFlight = false;
+      el?.removeAttribute("aria-busy");
+    }
   }
 
   function syncTarget(node) {

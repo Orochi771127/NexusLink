@@ -307,7 +307,12 @@ export function createSoulTalkController({ store, saveCurrentState, saveCritical
       setStatusText(FIRST_TRACE_STATUS_TEXT);
     }
     window.clearTimeout(thinkingTimer);
-    thinkingTimer = window.setTimeout(() => setSoulTalkState("idle"), 720);
+    thinkingTimer = window.setTimeout(() => {
+      setSoulTalkState("idle");
+      if (statusText?.textContent.startsWith(`${companionName}正在聽`)) {
+        setStatusText();
+      }
+    }, 720);
     return result;
   }
 

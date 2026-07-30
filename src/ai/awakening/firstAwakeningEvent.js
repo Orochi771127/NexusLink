@@ -50,12 +50,12 @@ export function buildFirstAwakeningPayload({ state = {}, companion = null, now =
     memoryObject,
     traceObject,
     awakeningLine,
-    reactionPreview: `${displayName}的耳朵動了一下，像從很深的安靜裡回來。`,
+    reactionPreview: `${displayName}周身的光微微一動，像從很深的安靜裡回來。`,
     animationKey: "idle_wake",
     animationIntent: "soul.awaken",
     statePatch: {
       mood: "calm",
-      reactionPreview: `${displayName}的耳朵動了一下，像從很深的安靜裡回來。`,
+      reactionPreview: `${displayName}周身的光微微一動，像從很深的安靜裡回來。`,
       lastEmotionTag: "calm"
     },
     chatEntry: {
