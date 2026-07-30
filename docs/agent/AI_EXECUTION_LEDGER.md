@@ -7275,3 +7275,10 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
   day/night/rain/mist and recovery matrix, and obtain human visual approval.
 - Preservation: R3 GLB, R2 raster visual master, depth plates, all sixteen
   companion roots and the published R3.6 default remain unchanged.
+
+### 2026-07-30 - Raphael - UI Fixes & Expedition UX Optimization - VERIFIED
+
+- Status: `VERIFIED`
+- Lane: `Game Engineering And Architecture`
+- Scope: Fixed Three.js shadow map deprecation warning, removed unused preload resource in index.html, and enhanced expedition energy depletion tooltip.
+- MCP: Memory and Graph indexed.
