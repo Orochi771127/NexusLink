@@ -1,5 +1,4 @@
 import {
-  MOONLAKE_BRIDGE_PRESENTATION,
   MOONLAKE_CAMERA,
   MOONLAKE_INTERACTION_HOTSPOTS,
   MOONLAKE_LIVE3D_ASSET,
@@ -295,7 +294,6 @@ function configureVisualTexture(THREE, texture) {
 }
 
 function createVisualBackdrop(THREE, texture) {
-  const bridge = MOONLAKE_BRIDGE_PRESENTATION;
   const uniforms = {
     map: { value: texture },
     time: { value: 0 },
@@ -308,23 +306,7 @@ function createVisualBackdrop(THREE, texture) {
     waterPulse: { value: 0 },
     waterCenter: { value: new THREE.Vector2(0.5, 0.5) },
     viewportAspect: { value: MOONLAKE_VISUAL_MASTER.imageAspect },
-    imageAspect: { value: MOONLAKE_VISUAL_MASTER.imageAspect },
-    bridgeNear: {
-      value: new THREE.Vector4(
-        bridge.nearCenterX,
-        bridge.textureNearY,
-        bridge.sourceNearHalfWidth,
-        bridge.widenedNearHalfWidth
-      )
-    },
-    bridgeFar: {
-      value: new THREE.Vector4(
-        bridge.farCenterX,
-        bridge.textureFarY,
-        bridge.sourceFarHalfWidth,
-        bridge.widenedFarHalfWidth
-      )
-    }
+    imageAspect: { value: MOONLAKE_VISUAL_MASTER.imageAspect }
   };
   const material = new THREE.ShaderMaterial({
     uniforms,
@@ -351,8 +333,6 @@ function createVisualBackdrop(THREE, texture) {
       "uniform vec2 waterCenter;",
       "uniform float viewportAspect;",
       "uniform float imageAspect;",
-      "uniform vec4 bridgeNear;",
-      "uniform vec4 bridgeFar;",
       "varying vec2 vUv;",
       "",
       "float boxMask(vec2 uv, vec2 minUv, vec2 maxUv, float feather) {",
@@ -405,26 +385,6 @@ function createVisualBackdrop(THREE, texture) {
       "",
       "  float waterGlint = pow(0.5 + 0.5 * sin(imageUv.x * 122.0 + imageUv.y * 76.0 + time * 0.9), 12.0);",
       "  color += vec3(0.05, 0.11, 0.14) * waterGlint * waterMask * (0.07 + rainStrength * 0.05);",
-      "",
-      "  float bridgeT = clamp((imageUv.y - bridgeNear.y) / max(0.0001, bridgeFar.y - bridgeNear.y), 0.0, 1.0);",
-      "  float bridgeCenterX = mix(bridgeNear.x, bridgeFar.x, bridgeT);",
-      "  float sourceHalfWidth = mix(bridgeNear.z, bridgeFar.z, bridgeT);",
-      "  float widenedHalfWidth = mix(bridgeNear.w, bridgeFar.w, bridgeT);",
-      "  float bridgeVertical = smoothstep(bridgeNear.y - 0.004, bridgeNear.y + 0.004, imageUv.y)",
-      "    * (1.0 - smoothstep(bridgeFar.y - 0.004, bridgeFar.y + 0.004, imageUv.y));",
-      "  float bridgeDistanceX = abs(imageUv.x - bridgeCenterX);",
-      "  float widenedMask = (1.0 - smoothstep(widenedHalfWidth - 0.003, widenedHalfWidth + 0.003, bridgeDistanceX)) * bridgeVertical;",
-      "  float sourceMask = (1.0 - smoothstep(sourceHalfWidth - 0.002, sourceHalfWidth + 0.002, bridgeDistanceX)) * bridgeVertical;",
-      "  float bridgeExtension = max(0.0, widenedMask - sourceMask * 0.94);",
-      "  float railMask = smoothstep(widenedHalfWidth - 0.008, widenedHalfWidth - 0.003, bridgeDistanceX)",
-      "    * (1.0 - smoothstep(widenedHalfWidth - 0.001, widenedHalfWidth + 0.003, bridgeDistanceX))",
-      "    * bridgeVertical;",
-      "  float plankPhase = fract(bridgeT * 16.0);",
-      "  float plankLine = (1.0 - smoothstep(0.03, 0.10, min(plankPhase, 1.0 - plankPhase))) * widenedMask;",
-      "  vec3 bridgeWood = mix(vec3(0.34, 0.205, 0.105), vec3(0.56, 0.37, 0.19), 0.5 + 0.5 * bridgeT);",
-      "  color = mix(color, bridgeWood, bridgeExtension * 0.82);",
-      "  color = mix(color, bridgeWood * 0.72, plankLine * bridgeExtension * 0.42);",
-      "  color = mix(color, vec3(0.43, 0.29, 0.15), railMask * 0.92);",
       "",
       "  float lanternGlow = radialMask(imageUv, lanternCenter, 0.052, 0.032) * lanternPulse;",
       "  float lanternSpark = pow(0.5 + 0.5 * sin(time * 11.0 + distance(imageUv, lanternCenter) * 220.0), 10.0);",

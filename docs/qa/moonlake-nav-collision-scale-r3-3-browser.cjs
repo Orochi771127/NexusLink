@@ -271,7 +271,7 @@ function readSnapshot() {
   const fishing = await page.evaluate(readSnapshot);
   assert.equal(fishing.navigation.footSafety.safe, true);
   assert.ok(fishing.visual.width >= 72, "far-bridge fishing must remain readable");
-  assert.ok(fishing.visual.width <= 80, "far-bridge fishing must remain within widened rails");
+  assert.ok(fishing.visual.width <= 76, "far-bridge fishing must remain within the authored bridge presentation cap");
   await page.screenshot({
     path: path.join(OUTPUT_DIR, "greyshade-cat-fishing-wait-390x844.png"),
     fullPage: false

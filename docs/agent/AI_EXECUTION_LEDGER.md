@@ -7068,3 +7068,93 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
   waterfall, lighting, navigation, depth plate or `src/pixi/pixiApp.js` change.
   Only the existing renderer's reveal timing and session-static fallback
   visibility are coordinated by the presentation layer.
+
+### 2026-07-30 - Codex - Moonlake Bridge Compositing R3.6 - IN PROGRESS
+
+- Status: `IN PROGRESS`; Owner approved
+  `TP-MOONLAKE-BRIDGE-COMPOSITING-R3.6` and requires all sixteen runtime
+  companions to pass.
+- Lane: `Game Engineering And Architecture`.
+- Scope: remove the flat shader-painted bridge extensions that appear as two
+  brown blocks, keep the fixed-camera Moonlake Three/Pixi ownership boundary,
+  and recalibrate the existing bridge projection and rail occlusion against the
+  authored bridge silhouette.
+- Expected files: `src/three/moonlakeLive3dScene.js`,
+  `src/three/moonlakeLive3dConfig.js`, only if required
+  `src/pixi/moonlakeDepthOcclusion.js`, focused QA, and this ledger.
+- Red-line / isolation: no `assets/**`, `src/pixi/pixiApp.js`, save, state
+  normalization, relationship, reward, Growth, RaphaelCore, safety, dependency,
+  backend, build-step, free-camera or gameplay-authority change.
+- Acceptance: all sixteen runtime companions must pass bridge near/mid/far
+  projection, bridge-rail depth continuity, foot anchoring and mobile visual
+  inspection at `390x844`; existing R3.2-R3.5 and bridge/fishing regressions
+  remain green.
+- Required reading completed: `AGENTS.md`, `CLAUDE.md`, `ACCEPTANCE.md`,
+  `docs/design/MOONLAKE_LIVE_3D_HYBRID_CONTRACT_V1.md`, and the latest
+  R3.2-R3.5 engineering/art ledger entries.
+- Branch: local `main` at `ffe321c`; commit, push and publication remain
+  unauthorized.
+
+### 2026-07-30 - Codex - Moonlake Bridge Compositing R3.6 - IN PROGRESS
+
+- Status: `IN PROGRESS`; the visual gate is sixteen companions, not a
+  single-character patch.
+- Lane: `Game Art, UI, And Visual Production`.
+- Visual defect: the fullscreen Moonlake shader widens the source bridge with
+  flat wood-colour bands, while the transparent Pixi bridge-rail depth plate
+  remains aligned to the original bridge. The mismatch produces two permanent
+  brown blocks and a detached pale rail fragment when the companion crosses the
+  bridge.
+- Visual target: preserve the approved Moonlake composition and natural
+  Ragnarok Online-like foreground depth, but render no synthetic block-shaped
+  bridge extension and no disconnected white/pale occlusion fragment.
+- Asset boundary: no scene, character, GLB, depth-plate, fallback or legacy art
+  asset may be regenerated, modified or deleted in this package.
+
+### 2026-07-30 - Codex - Moonlake Bridge Compositing R3.6 - VERIFIED
+
+- Status: `VERIFIED`; all sixteen runtime companions pass the corrected bridge
+  compositing path.
+- Lane: `Game Engineering And Architecture`.
+- Completed: removed the fragment-shader bridge widening and its flat
+  wood-colour extension masks. The live backdrop now preserves the authored
+  Moonlake bridge silhouette while the existing Pixi bridge-rail depth plate
+  retains foreground occlusion ownership.
+- Focused proof:
+  - R3.6 deterministic contract: passed; all sixteen presentation profiles,
+    authored-silhouette flag and absence of synthetic bridge shader tokens were
+    asserted.
+  - R3.6 mobile browser matrix: `32/32` at `390x844` (sixteen companions,
+    day/front-walk and night/back-walk); bridge projection, opaque-frame
+    bounds, foot placement, rail intersection and rail visibility passed with
+    zero page or console errors.
+  - Navigation/collision/scale browser matrix: `288/288`.
+  - Occlusion seam browser matrix: `96/96` across sixteen companions, day/dusk/
+    night and `390x844` / `430x932`.
+  - Full Web Release Gate: `28/28` required automated checks and zero
+    accessibility warnings.
+- Scope audit: no `assets/**`, GLB/glTF, depth plate, `src/pixi/pixiApp.js`,
+  save/state, relationship, Growth, reward, RaphaelCore, safety, dependency,
+  backend or build-step change.
+- Remaining architecture boundary: this package corrects the current
+  fixed-camera Three/Pixi compositor. Enabling or rebuilding hidden GLB scene
+  geometry would be a separate Owner-approved GROUNDWORK/art package.
+- Branch: local `main` based on `ffe321c`; no commit, push or publication was
+  authorized.
+
+### 2026-07-30 - Codex - Moonlake Bridge Compositing R3.6 - VERIFIED
+
+- Status: `VERIFIED`; the photographed brown blocks and detached pale bridge
+  fragment are no longer present in the corrected composition.
+- Lane: `Game Art, UI, And Visual Production`.
+- Visual proof: the sixteen-companion contact sheet and full-resolution
+  Blazetail/Greyshade frames were inspected. The natural narrow bridge remains
+  readable, the foreground rails stay connected during body overlap, and feet
+  remain planted on the fixed bridge datum.
+- Pixel proof: the two retired extension bands resolve to lake colours
+  (`blue-red` deltas `92.06` and `49.81`) with a wood-like pixel ratio of `0`
+  in both samples.
+- Asset boundary: the approved Moonlake visual master, all sixteen character
+  assets, GLB, bridge depth plate, fallbacks and legacy art remain unchanged.
+- Remaining human proof: real iOS Safari remains a release-level device check;
+  the local mobile browser and automated Chromium matrices are green.

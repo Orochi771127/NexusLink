@@ -122,10 +122,9 @@ export const MOONLAKE_BRIDGE_PRESENTATION = Object.freeze({
   farCenterX: 0.635,
   sourceNearHalfWidth: 0.052,
   sourceFarHalfWidth: 0.041,
-  widenedNearHalfWidth: 0.086,
-  widenedFarHalfWidth: 0.096,
-  maxBridgeSilhouetteWidthPx390: 66,
-  maxFishingSilhouetteWidthPx390: 80
+  useAuthoredSilhouette: true,
+  maxBridgeSilhouetteWidthPx390: 58,
+  maxFishingSilhouetteWidthPx390: 76
 });
 
 const DEFAULT_COMPANION_PRESENTATION = Object.freeze({
