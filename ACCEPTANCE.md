@@ -98,6 +98,42 @@
 - 驗法：檢查開場提示與結算文案。
 - 通過：玩家能從一句短文理解對象是「裂隙裡卡住的情緒 / 雜訊 / 記憶回聲」，不是怪物、玩家或夥伴本身；無長篇教學。
 
+**E7 — 共鳴協議只邀請合法夥伴，零至三位皆可玩**
+- 驗法：用零／一／二位支援者 fixture，交叉測 known／joined／unlocked／runtime-enabled／owner match；再注入未知、鎖定、非 runtime 與 owner mismatch id。
+- 通過：同場上限是 active lead 加最多兩位圈員；只有全部合法者可被邀請，非法或損壞資料 fail closed。零圈員與單圈員都能完成原有對峙；UI 不顯示空槽、戰力推薦或「湊滿三位」。沒有明示選擇時才沿用 `joinedAt` 早者優先；圈員與共同約定不持久化。
+
+**E8 — 夥伴參與有接受、改寫、休息與拒絕**
+- 驗法：覆蓋 `steady / curious / guarded / resting / distant / blocked boundary / safeHarborMode`，比較 preparation、session、relationship、Growth、reward、memory 與 trace。
+- 通過：接受與合法改寫可進圈；休息／拒絕不被替補、不扣關係、不產生 evidence。Guarded 可把靠近改寫為圈邊見證；明確拒絕與 blocked boundary 不被繞過。Safe harbor 不建立 preparation、不播回應變體、零 gameplay state delta。
+
+**E9 — 共鳴託付是確定性領拍，不是三倍輸出**
+- 驗法：同一 seed／session／approach 重跑，覆蓋 `adaptive / attune / shelter`、`surge / gather / lull`、低穩定、高疲勞、無邊界與 pulse 不合法。
+- 通過：相同輸入得到相同 decision；每拍恰好一個合法 lead action，圈員只能執行既有 bounded stance。安全覆寫先於共同約定，候選一律通過 `canUseAction()`；不得讀 bond／trust／stage 計算服從、威力或暗中破壞率。
+
+**E10 — 手動同行、接手、暫停與撤退永遠可達**
+- 驗法：分別以 `manual`／`entrusted` 開場；在預示、lead animation、noise turn 前後暫停／接手／撤退，另測頁面失焦、panel owner 改變與第 20 拍。
+- 通過：`manual` 保留既有四個 action；`entrusted` 每場明示且不保存。接手不重建 session、不重擲 `nextIntent`；失焦／owner 改變即暫停。自主 20 拍未結束時只暫停並提供接手／撤退，不自動判負；撤退任何時刻可達。
+
+**E11 — 每場一次共鳴請託不是命令**
+- 驗法：對仍在圈內的夥伴分別請託 `barrier / resonance / pulse`，覆蓋 accept／rewrite／rest／decline、不安全 action、重複送出與非圈員目標。
+- 通過：請託每場只解析一次；四種回應都消耗該次機會，只影響下一個 lead action。Guarded 或不安全請求改寫成安全的設界／共鳴；休息與拒絕被尊重。無 bond、trust、Growth、reward、memory、trace 或 cooldown 寫入。
+
+**E12 — 三位夥伴可見，但 renderer 無權改結果**
+- 驗法：以三個不同角色開場，逐一觸發 lead／support／rest／outcome；注入單一資產載入失敗，結束 modal 後檢查 timer、listener、Pixi node 與 store diff。
+- 通過：active 在中央前方、兩位圈員在左右後方；每位有自己的 intent、body cue 與 breath／rest 狀態。專用事件以 `companionId` 路由，不借 active-only event 錯播圈員。Renderer 只表演、不讀寫 settlement／relationship／Growth；失敗只 fallback 同角色，teardown 後資源歸零。
+
+**E13 — 共鳴圈 R2 保留四種安全結局與 authority seam**
+- 驗法：在 manual／entrusted、零／一／二圈員下走完 `stabilized / recovered / retreated / overwhelmed_but_safe`，追蹤 autonomy、controller、renderer、RaphaelCore／Nuwa 與 `battleEngine` 的輸入輸出。
+- 通過：四種結局與既有 first-clear／Growth authority 不變，沒有第五種 win／lose、死亡、淘汰或懲罰結算。Autonomy 只選 action，`battleEngine` 是唯一逐拍結算權威；RaphaelCore 只在賽前／賽後表達，Nuwa 維持 `trusted:false`，兩者都不改 RNG、stats、outcome 或 safety terminal。
+
+**E14 — 三心同場可及、可讀且不壓進 First Session**
+- 驗法：在 `390x844`、`390x664`、desktop、200% 文字、鍵盤、觸控、screen reader 與 reduced motion 檢查共鳴協議和對峙；另以 fresh save 跑完整 First Session 十拍至 Return Echo。
+- 通過：裂隙預示、三位角色、理由、呼吸與控制列無遮擋、無水平 overflow；主要 target 至少 44px，新觸控操作以 48px 為目標。Reduced motion 只移除位移／震動，不隱藏理由或改 gameplay timing truth。Return Echo 前不出現 R2 準備畫面、教學、空槽、紅點、倒數或收集提示；沒有合法圈員時維持原單夥伴流程。
+
+**E15 — 生態相位、共鳴織痕與裂隙譜式都是零壓力練習**
+- 驗法：切換晨／晝／暮／夜並比較可用內容與 state delta；用 pointer、touch、keyboard、reduced motion 完成／退出／重玩共鳴織痕；在已通關節點分別完成 `solo_witness / shared_breath / cross_current`。
+- 通過：四相位隨時可選且回報完全等價，沒有倒數、錯過或收益倍率。織痕不可選取 companion，未完成／退出／重玩皆零損失且 `permanentDelta:null`。三種譜式不建立 stage、排名或獎勵，整場不寫 relationship、memory、progress、Growth 或 save；仍只由既有 `battleEngine` 結算四種安全 outcome。
+
 ---
 
 ## F. Soul Talk 升級（CLAUDE.md §9）
@@ -323,6 +359,7 @@
 - **商業章節 / 旅痕 / 未來同行規格**：L1–L9 + D6 + H5 全過。
 - **黑鐵駭客五席 runtime promotion**：L10–L13 + D1–D2 + G1–G7 + H1–H5 + I 全過；仍須另完成真機、人工與 Owner launch gates 才可宣稱 launch-ready。
 - **Companion Growth / 心相養成**：N1–N11 + C1–C2 + D1–D2 + D6 + H1–H5 + I 全過。
+- **共鳴圈 R2 棲地／反思／旅路星圖**：E7–E15 + N13–N15 + C1–C2 + D1–D2 + D6 + H1–H5 + I 全過；Reflection production activation 仍須另案 GROUNDWORK provenance gate。
 - **Heartcore Orbit D0 文件重定版**：Orbit／Growth 契約與 O12–O17 的取消、保留、權限與驗法必須互相一致；D0 不宣稱 O12–O17 runtime 已實作。
 - **Heartcore Orbit 後續實作包**：依實作範圍通過 O1–O17、D（全）、H 與 I；若碰正式形態資產／renderer promotion，另跑 G1–G7 與 human visual gate。
 - **Future Resonance Practice / 未來共鳴對練**：N12 目前只驗設計邊界，不是 implementation-ready gate；另開 sealed contract 與 O-series assertions 後才可施工。真正線上 PvP 另需 backend／privacy／anti-cheat 授權包。
@@ -409,6 +446,18 @@
 - 通過：雙方不是攻擊玩家或夥伴，而是以不同 stance 共同穩定中性回聲；第一版限 same-device pass-and-play。若另案核准 ghost code，payload 只含 schema version、known companion id、姿態／選擇與 deterministic seed，不含姓名、chat、memory、安全輸入、自由文字或可執行內容。
 - 無 backend、matchmaking、排行、MMR、賽季、streak、每日、loot、XP、growth evidence 或 relationship reward／penalty；stage 只改變表現與 sidegrade 選擇，不給數值優勢。雙方隨時退出且零懲罰；真正線上 PvP 不在本契約授權內。
 - N12 在專屬 sealed contract 與 O-series assertions 完成前只可判定「規格邊界存在」，不可宣稱 prototype／runtime ready。
+
+**N13 — 棲地共鳴實踐只把完成且被同意的照顧寫成一個 root**
+- 驗法：覆蓋 `resting / guarded / steady / curious` 與 accept／rewrite／rest／decline；同一 hotspot 重做 50 次，另測 safe harbor、owner switch、save failure。
+- 通過：只有 completed accept 或玩家明示接受後完成的 rewrite 可進既有 candidate-first care writer；同章全部 hotspot 共用 `care:<chapter>:heart_phase_practice`，重做仍只有一個 root。Rest／decline／pending rewrite／safe harbor／owner mismatch／儲存失敗皆零證據且完整 rollback。
+
+**N14 — Reflection owner 無法證明時必須 fail closed**
+- 驗法：對 canonical memory／trace 注入未知 ID、跨 companion、原文、安全敏感來源、缺 owner、缺 sealed safety provenance、重複 root、過期或未來 timestamp。
+- 通過：只有同 owner、canonical、immutable-safe 的單一來源可建立 `reflection:<source-id>:<resolution-id>`；不保存玩家原文且同一來源只形成一個 root。現行 normalizer 若未保存 owner／安全 provenance，production 路徑必須回傳 `source_owner_unverifiable`，不得以 active companion、目前 UI 或文字內容推測。
+
+**N15 — Codex Lived Paths 是 canonical Growth 的唯讀質性投影**
+- 驗法：由 per-companion Growth evidence 重建 Codex；移除／竄改 coverage、consumed root、clear ID、chapter mark、owner 或 safety source；檢視鎖定角色。
+- 通過：只顯示 sourceType／tendency 對應的生活語句與正式 stage，不顯示百分比、缺項、門檻、最佳路線、reward、readiness 或 raw ID。Global clear／chapter mark 只能佐證既有 per-companion evidence，不能建立 ownership；檢視鎖定角色不建立 companion state。
 
 ## O. Heartcore Orbit Battle／心核迴旋戰
 

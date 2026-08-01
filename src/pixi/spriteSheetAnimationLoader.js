@@ -41,7 +41,10 @@ export function loadGreyshadeCatAnimationPack() {
   return loadCompanionAnimationPack(GREYSHADE_CAT_ANIMATIONS_PATH);
 }
 
-export async function loadCompanionAnimationPack(animationsPath, { bootOnly = false } = {}) {
+export async function loadCompanionAnimationPack(
+  animationsPath,
+  { bootOnly = false, animationNames = null, warmup = bootOnly } = {}
+) {
   const status = {
     metadataLoaded: false,
     available: Object.fromEntries(GREYSHADE_CAT_ANIMATION_NAMES.map((name) => [name, false])),
@@ -70,7 +73,12 @@ export async function loadCompanionAnimationPack(animationsPath, { bootOnly = fa
       }
     });
 
-    const initialAnimationNames = bootOnly ? BOOT_ANIMATION_NAMES : GREYSHADE_CAT_CORE_ANIMATION_NAMES;
+    // Focused renderers (for example the three-member standoff stage) can
+    // request only their first visible pose and lazy-load later intents. The
+    // default path remains unchanged for the habitat renderer.
+    const initialAnimationNames = Array.isArray(animationNames)
+      ? [...new Set(animationNames.filter((name) => typeof name === "string" && name))]
+      : (bootOnly ? BOOT_ANIMATION_NAMES : GREYSHADE_CAT_CORE_ANIMATION_NAMES);
     await Promise.all(
       initialAnimationNames.map((name) => loadAnimationDefinition({
         animations,
@@ -81,7 +89,7 @@ export async function loadCompanionAnimationPack(animationsPath, { bootOnly = fa
     );
 
     const pack = { animations, metadata, status };
-    if (bootOnly) scheduleAnimationWarmup(pack);
+    if (bootOnly && warmup) scheduleAnimationWarmup(pack);
     return pack;
   } catch (error) {
     console.warn("Companion animations metadata failed to load", error);

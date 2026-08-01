@@ -58,6 +58,36 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-08-01 - Codex - Standoff Resonance Circle R2 - VERIFIED LOCALLY
+
+- Status: `VERIFIED LOCALLY`; P0-P4 of `STANDOFF_RESONANCE_CIRCLE_R2` are implemented in the isolated EXPERIENCE worktree. P5 awakening／formal-form work remains a separately authorized future package.
+- Lane: `Game Engineering And Architecture`.
+- Completed: added the subordinate contract and acceptance assertions; restored Expedition terminology QA to 32/32; implemented deterministic three-approach lead autonomy, explicit zero-to-two-member preparation, accept／rewrite／rest／decline participation, once-only resonance requests, manual takeover, 20-beat pause, safe lifecycle teardown and the dedicated per-companion animation event while preserving `battleEngine` as sole settlement authority.
+- Completed beyond the vertical slice: added Heart Phase habitat rhythm and canonical care-root projection, session-only morning／day／dusk／night ecology phases, zero-write resonance weaving, three cleared-stage practice variants, fail-closed reflection-owner validation and a read-only Codex Lived Paths projection.
+- Persistence / safety result: safe harbor remains terminal; all preparation, approach, request, ecology-phase and weaving state is session-only; practice variants leave canonical state and saves unchanged; rest, refusal, rewrite, retreat and `overwhelmed_but_safe` cause no bond／trust／Growth／reward penalty; the four established outcomes and first-clear authority are unchanged.
+- Reflection activation gate: current normalized memories／traces do not retain immutable companion-owner and safety provenance. `reflectionGrowthOwner.js` therefore correctly returns `source_owner_unverifiable` for production-normalized candidates instead of inferring the current active companion. Activating reflection evidence requires a separate provenance/schema GROUNDWORK task; no weaker fallback was added.
+- Independent review repairs: safe harbor now closes an invitation surface before session creation and terminates an already scheduled telegraph／noise callback after session creation, leaving no invitation variant and only retreat in an active standoff; inviting after `solo_witness` explicitly returns the preparation to standard; a stale or invalid practice variant aborts instead of silently becoming a persistence-capable standard standoff. The V2 telegraph hidden rule was also made visually authoritative.
+- Automated proof: R2 Node QA `194/194`; key baselines `295/295` including Standoff `12/12`, Resonance Circle `18/18`, Habitat Autonomy `32/32`, First Session `8/8`, Expedition `32/32`, Growth State `25/25` and Orbit `96/96`; safety／lifecycle `106/106`; functional gates total `604/604`. JavaScript syntax `27/27`, Python AST `2/2` and `git diff --check` PASS. Chromium gates passed Standoff `4/4` and Resonance Weave `5/5` with zero horizontal overflow, preparation-mid-toggle and mid-telegraph safe-harbor terminal scenarios. Final bounded independent re-review: PASS with no remaining P0／P1 blocker.
+- Scope audit: no `index.html`, `src/state/**`, `pixiApp.js`, `assets/**`, `tools/**`, `scripts/**`, dependency, Master Canon, RaphaelCore or Nuwa authority change. The primary dirty worktree remains untouched.
+- Branch / commit: `codex/resonance-circle-r2` / uncommitted; no push, PR or deployment.
+- Next safe action: Owner diff review and the contract's five-person feel-check. Any reflection-source provenance, persistent ecology／circle preset, awakening invitation or formal-form asset requires its own approved task package, with GROUNDWORK approval where applicable.
+
+### 2026-08-01 - Codex - Standoff Resonance Circle R2 - IN PROGRESS
+
+- Status: `IN PROGRESS`; Owner approved `STANDOFF_RESONANCE_CIRCLE_R2`, beginning with the P0 contract／baseline and continuing into the P1 three-companion autonomous standoff vertical slice.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `STANDOFF_RESONANCE_CIRCLE_R2`.
+- Layer: `EXPERIENCE`; no approved GROUNDWORK. Do not modify `index.html`, `saveManager.js`, `defaultState.js`, store normalization, `pixiApp.js`, `assets/**`, `tools/**` or `scripts/**`.
+- Branch / commit: `codex/resonance-circle-r2` / `uncommitted`; isolated worktree `C:\Users\User\NexusLink_RaphaelAI_Workspace\NexusLink_resonance_r2`. Existing dirty work in the primary worktree is out of scope and must not be copied or overwritten.
+- Scope: lock the subordinate R2 contract and E-series assertions; align the Expedition player-facing QA expectation from legacy「碎晶」to shipped「微光」without changing `shards` compatibility keys; then add a pure deterministic autonomy／request engine, legal zero-to-two support preparation, `manual / entrusted` control, three approaches, once-only request resolution and controller lifecycle integration.
+- Current baseline: before the terminology assertion fix, `node docs/qa/expedition-behavior-matrix.mjs` was 31/32 because the runtime emitted「森息微光」while the test still required「碎晶」. P0 changes only the QA label／comment／assertion; runtime and schema remain unchanged. Post-change result: 32/32 PASS.
+- Red-line check: keep `stabilized / recovered / retreated / overwhelmed_but_safe`; retreat remains always reachable and non-punishing; accept／rewrite／rest／decline create no relationship or Growth delta; safe harbor is terminal; `battleEngine` remains the only per-beat settlement authority; RaphaelCore is pre／post expression only and Nuwa stays `trusted:false`; no HP, attack, DPS, power party, collection gate or replay farming.
+- Non-goals: no First Session change, Expedition expansion, PvP, ranking, currency, equipment, permanent party preset, save schema, Growth stage advance, form asset or Master Canon edit.
+- Verification pending: deterministic autonomy／eligibility／request matrices, safe-terminal invariants, existing Standoff／Resonance Circle／Growth／First Session／Orbit regressions, and browser lifecycle proof after P1 runtime integration.
+- Next safe action: implement only P1 against `docs/design/STANDOFF_RESONANCE_CIRCLE_R2_CONTRACT.md`; keep all preparation and request state session-only, then append a VERIFIED／BLOCKED closeout before handoff.
+- Acceptance refs: `ACCEPTANCE.md` E1-E14, K1-K10, N1-N12, H1-H6 and I.
+- Required reading: `docs/strategy/NEXUS_LINK_MASTER_CANON_v3.1.md`, `docs/design/STANDOFF_RESONANCE_CIRCLE_R2_CONTRACT.md`, `docs/design/CHAPTER_RESONANCE_ROADMAP_V2.md`, `docs/design/COMPANION_GROWTH_CONTRACT_V1.md`, `ACCEPTANCE.md`, current `resonanceCircleEngine.js`／`battleEngine.js`／`battleController.js`, and this lane.
+
 ### 2026-07-28 - Codex - Moonlake Live 3D Hybrid R1 - IN PROGRESS
 
 - Status: `IN PROGRESS`; Owner explicitly approved revising the technical
@@ -1313,6 +1343,33 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Next safe action: publish through the required PR gate, merge to `main`, then refresh the codebase MCP index.
 
 ## Lane 2 - Game Art, UI, And Visual Production
+
+### 2026-08-01 - Codex - Standoff Resonance Circle R2 Visual Surface - VERIFIED LOCALLY
+
+- Status: `VERIFIED LOCALLY`; the P1 three-heart stage and P2-P3 Moonlake interaction surfaces are complete without new or modified art assets.
+- Lane: `Game Art, UI, And Visual Production`.
+- Completed: the dynamically mounted transparent Pixi stage presents the lead at centre-front and up to two supporters rear-left／rear-right, with per-companion intent, body cue and breath／rest state. Dedicated animation routing prevents supporters from hijacking the global active-companion channel; each fallback is the same companion's portrait or a neutral silhouette.
+- Completed: the preparation surface exposes explicit `同行／共鳴託付`, the three shared approaches and zero-to-two invitations without empty-slot pressure. The Moonlake action sheet adds Heart Phase practices and the procedural resonance-weave surface with freely selectable ecology phase, mouse／touch／pen／keyboard completion, replay and exit.
+- Accessibility / lifecycle proof: Chromium passed `390x844`, `390x664`, desktop, 200% text and reduced-motion matrices; horizontal overflow was zero, existing controls met 44px and weaving targets met 48px. Reduced motion preserves pose, reason and event order. Close, owner mismatch, active-companion swap and async teardown leave no session timer, listener, observer or Pixi node.
+- Performance result: only the current maximum-three companions and requested standoff animation subsets are loaded; no all-roster warmup, sprite replacement, asset promotion, 3D migration or `pixiApp.js` modification was introduced.
+- Visual review: required screenshots were inspected locally and show three distinct illustrated companions, readable telegraph／intent／breath labels and an unobstructed control row at all required layouts. The five-person comprehension／feel-check remains a human acceptance gate and is not claimed complete.
+- Branch / commit: `codex/resonance-circle-r2` / uncommitted; no asset write, commit, push, PR or deployment.
+- Next safe action: Owner visual/diff review followed by the five-person feel-check; formal stage-form art remains a separate GROUNDWORK package with human art approval.
+
+### 2026-08-01 - Codex - Standoff Resonance Circle R2 Visual Surface - IN PROGRESS
+
+- Status: `IN PROGRESS`; Owner approved a three-companion on-stage presentation as the P1 visual half of `STANDOFF_RESONANCE_CIRCLE_R2`.
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `STANDOFF_RESONANCE_CIRCLE_R2`.
+- Layer: `EXPERIENCE`; reuse approved current companion manifests and animations. No `assets/**`, `index.html` or `pixiApp.js` change is authorized.
+- Branch / commit: `codex/resonance-circle-r2` / `uncommitted`; isolated worktree `C:\Users\User\NexusLink_RaphaelAI_Workspace\NexusLink_resonance_r2`.
+- Visual scope: dynamically compose the active lead at centre-front and up to two supporters at rear-left／rear-right; show per-companion intent, body cue and breath／rest state; add a pre-standoff resonance agreement without adding First Session steps; route animation through a dedicated event carrying `sessionKey`、`beatIndex`、`companionId` and `role` so support companions never hijack the active-only animation channel.
+- Performance／accessibility lock: load only the current session's maximum three standoff animation subsets; reduced motion removes travel／shake but preserves pose, reason and event order; missing art can only use the same companion's approved static visual or neutral silhouette; teardown must leave zero timers, listeners and Pixi nodes; prove `390x844`、`390x664`、desktop、200% text、keyboard、touch and screen-reader layout with no horizontal overflow.
+- Red-line check: the visual language is joint regulation, not combat output; no skill bar, damage number, rarity, team-power slot, empty collection slot, urgency cue, red dot or「fill three」prompt. Rest and refusal remain visually neutral and non-punishing.
+- Non-goals: no new generated art, sprite replacement, form swap, all-roster preload, 3D companion, Pixi app migration, habitat redesign or P2-P5 presentation work.
+- Verification pending: three-character composition／fallback／teardown browser probes, reduced-motion and zoom checks, mobile screenshots, and the five-person feel-check in the R2 contract.
+- Next safe action: implement the presentation-only `standoffCircleRenderer` and dynamic preparation UI within the approved EXPERIENCE seam; stop for separate GROUNDWORK approval if current manifests cannot provide a same-character fallback without asset or `pixiApp.js` changes.
+- Required reading: `docs/design/STANDOFF_RESONANCE_CIRCLE_R2_CONTRACT.md`, `docs/design/CHAPTER_RESONANCE_ROADMAP_V2.md`, `ACCEPTANCE.md` E7-E14／K, current companion manifest／animation mapping, current `battleController.js`, and this lane.
 
 ### 2026-07-28 - Codex - Moonlake Live 3D Clay Resin Art R1 - IN PROGRESS
 
