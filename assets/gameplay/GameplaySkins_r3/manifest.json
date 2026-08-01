@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "packId": "GameplaySkins_r3",
+  "status": "runtime-promoted-owner-approved",
+  "createdAt": "2026-08-02",
+  "styleFamily": "nexus-clay-resin-miniature-v1",
+  "generator": {
+    "mode": "openai-built-in-image-generation",
+    "externalWebAssetsUsed": false,
+    "derivation": "precise object removal and environment reconstruction from Owner-approved V3 direction images"
+  },
+  "approval": {
+    "directionGate": "OWNER APPROVED",
+    "approvedPair": [
+      "Heartcore Orbit V3 bright Moonlake clay/resin ritual arena",
+      "Nexus Expedition V3 elevated Windrest Meadow clay/resin navigation field"
+    ],
+    "ledgerRef": "docs/agent/AI_EXECUTION_LEDGER.md"
+  },
+  "license": {
+    "thirdPartyAssets": [],
+    "webDownloads": [],
+    "projectUse": "Nexus Link project-owned generated derivative",
+    "attributionRequired": false
+  },
+  "assets": [
+    {
+      "id": "orbit_moonlake_foundation",
+      "path": "assets/gameplay/GameplaySkins_r3/orbit_moonlake_foundation.png",
+      "dimensions": { "width": 852, "height": 1846 },
+      "sha256": "9108456C61C7CC2451D2BB3EE271F19D756454C4B31805A775C1B5B35A1A1481",
+      "runtimeOwner": "src/ui/orbitClayRenderer.js",
+      "profile": "orbit-moonlake-clay-resin-v1",
+      "excludes": ["UI", "text", "companion", "player projection", "anchor", "objectives", "trajectory"]
+    },
+    {
+      "id": "expedition_windrest_foundation",
+      "path": "assets/gameplay/GameplaySkins_r3/expedition_windrest_foundation.png",
+      "dimensions": { "width": 853, "height": 1844 },
+      "sha256": "780156CEC27A2C8E5BA5FD186273684BE69D9021A8595E08BA0603D1CE67D453",
+      "runtimeOwner": "src/pixi/expeditionScene.js",
+      "profile": "expedition-windrest-clay-resin-v1",
+      "excludes": ["UI", "text", "companion", "rift entities", "memory crystal", "loot"]
+    }
+  ],
+  "runtimeContract": {
+    "lazyLoad": true,
+    "proceduralFallback": true,
+    "simulationAuthority": false,
+    "saveAuthority": false,
+    "companionLayer": "canonical illustrated 2D",
+    "dynamicEntityLayer": "renderer-owned"
+  }
+}

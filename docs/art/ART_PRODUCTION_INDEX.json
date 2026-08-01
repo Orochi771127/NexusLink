@@ -144,6 +144,35 @@
       ]
     }
   ],
+  "gameplaySkins": [
+    {
+      "id": "GAMEPLAY-SKINS-R3",
+      "title": "Heartcore Orbit + Nexus Expedition clay/resin foundations",
+      "packId": "GameplaySkins_r3",
+      "status": "runtime-promoted-owner-approved",
+      "verifiedOnDisk": "2026-08-02",
+      "artDirection": "Shared handcrafted 3D miniature with matte polymer clay, contact shadows, and selective translucent resin",
+      "designRef": "docs/art/GAMEPLAY_SKIN_PACKAGE_V1.md",
+      "manifest": "assets/gameplay/GameplaySkins_r3/manifest.json",
+      "runtimeProfiles": "src/data/gameplayVisualProfiles.js",
+      "assets": [
+        {
+          "id": "orbit_moonlake_foundation",
+          "path": "assets/gameplay/GameplaySkins_r3/orbit_moonlake_foundation.png",
+          "dimensions": "852x1846",
+          "git": "tracked"
+        },
+        {
+          "id": "expedition_windrest_foundation",
+          "path": "assets/gameplay/GameplaySkins_r3/expedition_windrest_foundation.png",
+          "dimensions": "853x1844",
+          "git": "tracked"
+        }
+      ],
+      "runtimeNote": "Foundations lazy-load by pure-data profile; Orbit Canvas and Expedition Pixi keep procedural fallback. Dynamic objectives, rifts, loot and canonical illustrated companions remain separate renderer layers.",
+      "licenseNote": "Project-owned generated derivatives; no third-party or downloaded web assets used."
+    }
+  ],
   "globalSpec": {
     "format": "transparent PNG (RGBA)",
     "frameSize": 512,

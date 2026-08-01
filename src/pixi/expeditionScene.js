@@ -7,125 +7,323 @@ import {
   destroyExpeditionAtmosphere,
   updateExpeditionAtmosphere
 } from "./expeditionAtmosphere.js";
-
-const CLAY = Object.freeze({
-  grass: 0x4a6741,
-  grassLight: 0x5c7a52,
-  grassDark: 0x3d5238,
-  rock: 0x6b5d52,
-  rockHighlight: 0x8a7b6e,
-  bush: 0x456340,
-  companion: 0x5f6876,
-  companionAccent: 0x8a93a3,
-  crystal: 0x6ecfd4,
-  forestShard: 0x7ecf8a,
-  enemy: 0x4a5568,
-  enemyCore: 0x9aa5b5,
-  shadow: 0x1a2418,
-  hpBar: 0x7ecf8a,
-  hpBarBg: 0x2a3a28
-});
+import {
+  getEnemyRiftSilhouettePath,
+  getIllustratedCompanionAssetById
+} from "../data/assetManifest.js";
+import { getExpeditionGameplayVisualProfile } from "../data/gameplayVisualProfiles.js";
 
 function drawRoundedRect(g, x, y, w, h, r, fill) {
   g.roundRect(x, y, w, h, r).fill(fill);
 }
 
-function addClayShadow(parent, x, y, rx, ry, alpha = 0.22) {
+function addClayShadow(PIXI, parent, x, y, rx, ry, color, alpha = 0.22) {
   const shadow = new PIXI.Graphics();
-  shadow.ellipse(x, y, rx, ry).fill({ color: CLAY.shadow, alpha });
+  shadow.ellipse(x, y, rx, ry).fill({ color, alpha });
   parent.addChild(shadow);
   return shadow;
 }
 
-function buildGroundLayer(region) {
+function attachFoundationSprite(PIXI, root, ground, obstacles, region, visual) {
+  const source = visual.assetSlots?.foundation;
+  if (!source || !PIXI?.Assets?.load) return null;
+  const worldW = region.worldWidth || 1170;
+  const worldH = region.worldHeight || 780;
+  const focalY = visual.assetSlots?.foundationFocalY ?? 0.5;
+  const loading = PIXI.Assets.load(source)
+    .then((texture) => {
+      if (!texture || root.destroyed || ground.destroyed) return null;
+      const sprite = new PIXI.Sprite(texture);
+      sprite.name = "authored_foundation";
+      const sourceW = texture.width || visual.assetSlots?.foundationWidth || 1;
+      const sourceH = texture.height || visual.assetSlots?.foundationHeight || 1;
+      const scale = Math.max(worldW / sourceW, worldH / sourceH);
+      const renderedW = sourceW * scale;
+      const renderedH = sourceH * scale;
+      sprite.scale.set(scale);
+      sprite.x = (worldW - renderedW) * 0.5;
+      sprite.y = Math.max(worldH - renderedH, Math.min(0, worldH * 0.5 - renderedH * focalY));
+      ground.addChildAt(sprite, 0);
+      if (ground.__proceduralFallback) ground.__proceduralFallback.alpha = 0.035;
+      if (obstacles) obstacles.alpha = 0.035;
+      root.__foundationSprite = sprite;
+      return sprite;
+    })
+    .catch(() => null);
+  root.__foundationPromise = loading;
+  return loading;
+}
+
+function sliceIdleTextures(PIXI, texture, definition) {
+  const columns = Number(definition?.columns) || 1;
+  const rows = Number(definition?.rows) || 1;
+  const frameWidth = Number(definition?.frameWidth) || 0;
+  const frameHeight = Number(definition?.frameHeight) || 0;
+  const frameCount = Math.min(Number(definition?.frameCount) || 1, columns * rows);
+  if (!texture || !frameWidth || !frameHeight || frameCount < 1) return [];
+  const source = texture.source || texture.baseTexture;
+  return Array.from({ length: frameCount }, (_, index) => new PIXI.Texture({
+    source,
+    frame: new PIXI.Rectangle(
+      (index % columns) * frameWidth,
+      Math.floor(index / columns) * frameHeight,
+      frameWidth,
+      frameHeight
+    )
+  }));
+}
+
+function attachIllustratedCompanion(PIXI, node, companionId) {
+  const asset = getIllustratedCompanionAssetById(companionId);
+  if (!asset?.animations || !PIXI?.Assets?.load || typeof fetch !== "function") return null;
+  const loading = fetch(asset.animations, { cache: "no-cache" })
+    .then((response) => {
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      return response.json();
+    })
+    .then((metadata) => {
+      const definition = metadata?.idle_calm;
+      if (!definition?.sheet) return null;
+      return PIXI.Assets.load(definition.sheet).then((texture) => ({ definition, texture }));
+    })
+    .then((loaded) => {
+      if (!loaded || node.destroyed) return null;
+      const textures = sliceIdleTextures(PIXI, loaded.texture, loaded.definition);
+      if (!textures.length) return null;
+      const sprite = new PIXI.AnimatedSprite(textures);
+      sprite.name = "illustrated_companion";
+      sprite.anchor.set(loaded.definition.anchor?.x ?? 0.5, loaded.definition.anchor?.y ?? 1);
+      sprite.animationSpeed = Math.max(0.01, (Number(loaded.definition.fps) || 3) / 60);
+      sprite.loop = loaded.definition.loop !== false;
+      const frameHeight = Number(loaded.definition.frameHeight) || 512;
+      sprite.scale.set(112 / frameHeight);
+      sprite.y = 18;
+      sprite.roundPixels = false;
+      node.addChildAt(sprite, Math.min(1, node.children.length));
+      const fallback = node.getChildByName?.("procedural_body_fallback");
+      if (fallback) fallback.visible = false;
+      sprite.play();
+      node.__illustratedSprite = sprite;
+      return sprite;
+    })
+    .catch(() => null);
+  node.__illustratedPromise = loading;
+  return loading;
+}
+
+function attachRiftSilhouette(PIXI, node, enemy) {
+  const source = getEnemyRiftSilhouettePath(enemy?.enemyId);
+  if (!source || !PIXI?.Assets?.load) return null;
+  const loading = PIXI.Assets.load(source)
+    .then((texture) => {
+      if (!texture || node.destroyed) return null;
+      const sprite = new PIXI.Sprite(texture);
+      sprite.name = "rift_silhouette";
+      sprite.anchor.set(0.5);
+      const maxEdge = Math.max(texture.width || 1, texture.height || 1);
+      sprite.scale.set(58 / maxEdge);
+      sprite.y = -5;
+      node.addChildAt(sprite, Math.min(1, node.children.length));
+      const fallback = node.getChildByName?.("procedural_rift_fallback");
+      if (fallback) fallback.visible = false;
+      node.__riftSprite = sprite;
+      return sprite;
+    })
+    .catch(() => null);
+  node.__riftPromise = loading;
+  return loading;
+}
+
+function buildPathLayer(PIXI, region, visual) {
   const layer = new PIXI.Container();
-  layer.name = "ground";
-  (region.groundPatches || []).forEach((patch) => {
-    const g = new PIXI.Graphics();
-    drawRoundedRect(g, patch.x, patch.y, patch.w, patch.h, 24, {
-      color: patch.color ?? CLAY.grass,
-      alpha: 1
-    });
-    layer.addChild(g);
+  layer.name = "clay_paths";
+  const shadows = new PIXI.Graphics();
+  const stones = new PIXI.Graphics();
+  const highlights = new PIXI.Graphics();
+  const palette = visual.palette;
+  const worldW = region.worldWidth || 1170;
+  const worldH = region.worldHeight || 780;
+
+  (visual.pathPolylines || []).forEach((polyline, pathIndex) => {
+    const points = polyline.map((point) => ({ x: point.x * worldW, y: point.y * worldH }));
+    for (let i = 1; i < points.length; i += 1) {
+      const from = points[i - 1];
+      const to = points[i];
+      const distance = Math.hypot(to.x - from.x, to.y - from.y);
+      const steps = Math.max(1, Math.ceil(distance / 30));
+      for (let step = 0; step <= steps; step += 1) {
+        const ratio = step / steps;
+        const x = from.x + (to.x - from.x) * ratio;
+        const y = from.y + (to.y - from.y) * ratio;
+        const seed = pathIndex * 37 + i * 17 + step;
+        const rx = 11 + (seed % 4);
+        const ry = 7 + (seed % 3);
+        const rotation = ((seed % 7) - 3) * 0.04;
+        shadows.ellipse(x + 2, y + 4, rx + 2, ry + 2, rotation).fill({ color: palette.shadow, alpha: 0.24 });
+        stones.ellipse(x, y, rx, ry, rotation).fill({ color: seed % 3 === 0 ? palette.pathLight : palette.path, alpha: 1 });
+        highlights.ellipse(x - rx * 0.22, y - ry * 0.25, rx * 0.42, ry * 0.26, rotation).fill({ color: palette.pathLight, alpha: 0.42 });
+      }
+    }
   });
+  layer.addChild(shadows, stones, highlights);
   return layer;
 }
 
-function buildObstacleLayer(region) {
+function buildGroundLayer(PIXI, region, visual) {
+  const layer = new PIXI.Container();
+  layer.name = "ground";
+  const fallback = new PIXI.Container();
+  fallback.name = "procedural_foundation_fallback";
+  const { palette } = visual;
+  const worldW = region.worldWidth || 1170;
+  const worldH = region.worldHeight || 780;
+  const base = new PIXI.Graphics();
+  base.rect(0, 0, worldW, worldH).fill({ color: palette.ground, alpha: 1 });
+  fallback.addChild(base);
+
+  const mounds = new PIXI.Graphics();
+  const moundSpecs = [
+    [0.1, 0.1, 0.23, 0.2],
+    [0.88, 0.14, 0.22, 0.24],
+    [0.16, 0.74, 0.25, 0.25],
+    [0.88, 0.78, 0.24, 0.22],
+    [0.5, 0.48, 0.2, 0.15]
+  ];
+  moundSpecs.forEach(([x, y, rx, ry], index) => {
+    mounds.ellipse(x * worldW + 8, y * worldH + 12, rx * worldW, ry * worldH).fill({ color: palette.shadow, alpha: 0.15 });
+    mounds.ellipse(x * worldW, y * worldH, rx * worldW, ry * worldH).fill({ color: index % 2 ? palette.groundDark : palette.groundLight, alpha: 0.54 });
+  });
+  fallback.addChild(mounds, buildPathLayer(PIXI, region, visual));
+  layer.addChild(fallback);
+  layer.__proceduralFallback = fallback;
+  return layer;
+}
+
+function buildBush(PIXI, obs, palette) {
+  const node = new PIXI.Container();
+  addClayShadow(PIXI, node, 4, obs.r * 0.52, obs.r * 0.9, obs.r * 0.34, palette.shadow, 0.23);
+  const body = new PIXI.Graphics();
+  const pieces = [
+    [-0.48, 0.05, 0.52],
+    [0, -0.3, 0.62],
+    [0.48, 0.05, 0.52],
+    [-0.22, 0.35, 0.46],
+    [0.25, 0.35, 0.46]
+  ];
+  pieces.forEach(([x, y, r], index) => {
+    body.circle(x * obs.r, y * obs.r, r * obs.r).fill({ color: index === 1 ? palette.bushLight : palette.bush, alpha: 1 });
+  });
+  const flower = Math.max(2, obs.r * 0.08);
+  body.circle(-obs.r * 0.34, -obs.r * 0.05, flower).fill({ color: palette.flower, alpha: 0.9 });
+  body.circle(obs.r * 0.28, obs.r * 0.2, flower).fill({ color: palette.flower, alpha: 0.82 });
+  node.addChild(body);
+  node.x = obs.x;
+  node.y = obs.y;
+  return node;
+}
+
+function buildRock(PIXI, obs, palette) {
+  const node = new PIXI.Container();
+  addClayShadow(PIXI, node, 4, obs.r * 0.58, obs.r * 0.88, obs.r * 0.34, palette.shadow, 0.25);
+  const rock = new PIXI.Graphics();
+  rock.ellipse(0, 0, obs.r, obs.r * 0.78).fill({ color: palette.rock, alpha: 1 });
+  rock.ellipse(-obs.r * 0.25, -obs.r * 0.28, obs.r * 0.48, obs.r * 0.2, -0.2).fill({ color: palette.rockLight, alpha: 0.48 });
+  node.addChild(rock);
+  node.x = obs.x;
+  node.y = obs.y;
+  return node;
+}
+
+function buildObstacleLayer(PIXI, region, visual) {
   const layer = new PIXI.Container();
   layer.name = "obstacles";
+  const { palette } = visual;
 
   (region.circleObstacles || []).forEach((obs) => {
-    addClayShadow(layer, obs.x + 4, obs.y + obs.r * 0.55, obs.r * 0.85, obs.r * 0.35);
-    const g = new PIXI.Graphics();
-    g.circle(obs.x, obs.y, obs.r).fill({ color: obs.id.startsWith("bush") ? CLAY.bush : CLAY.rock, alpha: 1 });
-    layer.addChild(g);
+    layer.addChild(obs.id.includes("bush") ? buildBush(PIXI, obs, palette) : buildRock(PIXI, obs, palette));
   });
 
   (region.rectObstacles || []).forEach((obs) => {
     const r = obs.r ?? 12;
-    addClayShadow(layer, obs.x + obs.w / 2, obs.y + obs.h + 6, obs.w * 0.42, 10);
+    addClayShadow(PIXI, layer, obs.x + obs.w / 2, obs.y + obs.h + 6, obs.w * 0.42, 10, palette.shadow, 0.24);
     const g = new PIXI.Graphics();
-    drawRoundedRect(g, obs.x, obs.y, obs.w, obs.h, r, { color: CLAY.rock, alpha: 1 });
+    drawRoundedRect(g, obs.x, obs.y, obs.w, obs.h, r, { color: palette.rock, alpha: 1 });
+    drawRoundedRect(g, obs.x + 8, obs.y + 5, obs.w - 16, Math.max(8, obs.h * 0.28), Math.max(4, r - 4), { color: palette.rockLight, alpha: 0.38 });
     layer.addChild(g);
   });
 
   return layer;
 }
 
-function buildExploreMarkers(region) {
+function buildExploreMarkers(PIXI, region, visual) {
   const layer = new PIXI.Container();
   layer.name = "explore_markers";
+  const { palette } = visual;
 
   (region.explorePoints || []).forEach((point) => {
     const marker = new PIXI.Container();
     marker.name = `marker_${point.id}`;
     marker.x = point.x;
     marker.y = point.y;
-    addClayShadow(marker, 0, 8, 10, 4, 0.18);
+    addClayShadow(PIXI, marker, 0, 10, 11, 4, palette.shadow, 0.2);
+    const halo = new PIXI.Graphics();
+    halo.circle(0, 0, 17).fill({ color: palette.resin, alpha: 0.12 });
     const crystal = new PIXI.Graphics();
     crystal
-      .moveTo(0, -10)
-      .lineTo(7, 0)
-      .lineTo(0, 10)
-      .lineTo(-7, 0)
+      .moveTo(0, -13)
+      .lineTo(8, -1)
+      .lineTo(3, 11)
+      .lineTo(-6, 7)
+      .lineTo(-8, -1)
       .closePath()
-      .fill({ color: CLAY.crystal, alpha: 0.85 });
-    marker.addChild(crystal);
+      .fill({ color: palette.resin, alpha: 0.88 });
+    crystal.moveTo(0, -11).lineTo(1, 8).lineTo(7, -1).closePath().fill({ color: palette.resinDeep, alpha: 0.42 });
+    marker.addChild(halo, crystal);
     layer.addChild(marker);
   });
 
   return layer;
 }
 
-function buildEnemyNode(enemy) {
+function buildEnemyNode(PIXI, enemy, visual) {
   const node = new PIXI.Container();
   node.name = `enemy_${enemy.id}`;
+  const { palette } = visual;
 
-  addClayShadow(node, 0, 12, 18, 8, 0.25);
-  const body = new PIXI.Graphics();
-  body.circle(0, 0, 16).fill({ color: CLAY.enemy, alpha: 0.92 });
-  body.circle(0, -2, 8).fill({ color: CLAY.enemyCore, alpha: 0.55 });
-  node.addChild(body);
+  addClayShadow(PIXI, node, 0, 15, 19, 7, palette.shadow, 0.28);
+  const aura = new PIXI.Graphics();
+  aura.circle(0, -2, 23).fill({ color: palette.riftLight, alpha: 0.1 });
+  const ribbons = new PIXI.Graphics();
+  ribbons.name = "procedural_rift_fallback";
+  for (let i = 0; i < 3; i += 1) {
+    const offset = (i - 1) * 7;
+    ribbons
+      .moveTo(offset, 15)
+      .bezierCurveTo(offset - 11, 5, offset + 13, -5, offset - 2, -21)
+      .stroke({ color: i === 1 ? palette.riftLight : palette.rift, width: 6 - i, alpha: 0.78, cap: "round" });
+  }
+  ribbons.circle(0, -4, 6).fill({ color: palette.riftLight, alpha: 0.7 });
+  node.addChild(aura, ribbons);
 
   const hpBg = new PIXI.Graphics();
-  hpBg.roundRect(-16, -28, 32, 5, 2).fill({ color: CLAY.hpBarBg, alpha: 0.9 });
+  hpBg.roundRect(-16, -34, 32, 4, 2).fill({ color: palette.hpBarBg, alpha: 0.82 });
   const hpFill = new PIXI.Graphics();
   hpFill.name = "hp_fill";
-  hpFill.roundRect(-16, -28, 32, 5, 2).fill({ color: CLAY.hpBar, alpha: 1 });
+  hpFill.roundRect(-16, -34, 32, 4, 2).fill({ color: palette.hpBar, alpha: 1 });
   node.addChild(hpBg, hpFill);
 
   node.x = enemy.x;
   node.y = enemy.y;
+  attachRiftSilhouette(PIXI, node, enemy);
   return node;
 }
 
-function buildLootNode(piece) {
+function buildLootNode(PIXI, piece, visual) {
   const node = new PIXI.Container();
   node.name = `loot_${piece.id}`;
   const g = new PIXI.Graphics();
   g.moveTo(0, -6).lineTo(5, 0).lineTo(0, 6).lineTo(-5, 0).closePath().fill({
-    color: piece.color ?? CLAY.forestShard,
+    color: piece.color ?? visual.palette.resin,
     alpha: 0.95
   });
   node.addChild(g);
@@ -134,21 +332,24 @@ function buildLootNode(piece) {
   return node;
 }
 
-function buildCompanionNode() {
+function buildCompanionNode(PIXI, visual) {
   const node = new PIXI.Container();
   node.name = "companion";
+  const { palette } = visual;
 
-  addClayShadow(node, 0, 14, 16, 7, 0.28);
+  addClayShadow(PIXI, node, 0, 14, 16, 7, palette.shadow, 0.28);
   const body = new PIXI.Graphics();
-  body.roundRect(-14, -18, 28, 26, 12).fill({ color: CLAY.companion, alpha: 1 });
-  body.roundRect(-10, -14, 20, 16, 8).fill({ color: CLAY.companionAccent, alpha: 0.35 });
+  body.name = "procedural_body_fallback";
+  body.roundRect(-14, -18, 28, 26, 12).fill({ color: palette.companion, alpha: 1 });
+  body.roundRect(-10, -14, 20, 16, 8).fill({ color: palette.companionAccent, alpha: 0.24 });
+  body.moveTo(0, -8).lineTo(5, -2).lineTo(0, 5).lineTo(-5, -2).closePath().fill({ color: palette.companionAccent, alpha: 0.9 });
   node.addChild(body);
 
   const hpBg = new PIXI.Graphics();
-  hpBg.roundRect(-18, -32, 36, 5, 2).fill({ color: CLAY.hpBarBg, alpha: 0.9 });
+  hpBg.roundRect(-18, -32, 36, 5, 2).fill({ color: palette.hpBarBg, alpha: 0.9 });
   const hpFill = new PIXI.Graphics();
   hpFill.name = "hp_fill";
-  hpFill.roundRect(-18, -32, 36, 5, 2).fill({ color: CLAY.hpBar, alpha: 1 });
+  hpFill.roundRect(-18, -32, 36, 5, 2).fill({ color: palette.hpBar, alpha: 1 });
   node.addChild(hpBg, hpFill);
 
   return node;
@@ -159,23 +360,33 @@ export function createExpeditionScene(PIXI, region, session) {
   root.name = "expedition_scene";
   root.sortableChildren = true;
 
-  const ground = buildGroundLayer(region);
-  const atmosphere = createExpeditionAtmosphere(PIXI, region);
-  const obstacles = buildObstacleLayer(region);
-  const markers = buildExploreMarkers(region);
+  const visual = getExpeditionGameplayVisualProfile(region?.id || session?.regionId || session?.nodeId);
+  const atmosphereRegion = {
+    ...region,
+    atmosphere: {
+      ...(region?.atmosphere || {}),
+      ...(visual.atmosphere || {})
+    }
+  };
+
+  const ground = buildGroundLayer(PIXI, region, visual);
+  const atmosphere = createExpeditionAtmosphere(PIXI, atmosphereRegion);
+  const obstacles = buildObstacleLayer(PIXI, region, visual);
+  const markers = buildExploreMarkers(PIXI, region, visual);
   const lootLayer = new PIXI.Container();
   lootLayer.name = "loot";
   const enemyLayer = new PIXI.Container();
   enemyLayer.name = "enemies";
 
   (session.enemies || []).forEach((enemy) => {
-    if (enemy.hp > 0) enemyLayer.addChild(buildEnemyNode(enemy));
+    if (enemy.hp > 0) enemyLayer.addChild(buildEnemyNode(PIXI, enemy, visual));
   });
 
-  const companion = buildCompanionNode();
+  const companion = buildCompanionNode(PIXI, visual);
   companion.zIndex = 10;
   companion.x = session.companion.x;
   companion.y = session.companion.y;
+  attachIllustratedCompanion(PIXI, companion, session.companionId);
 
   root.addChild(ground);
   if (atmosphere) root.addChild(atmosphere);
@@ -185,28 +396,33 @@ export function createExpeditionScene(PIXI, region, session) {
   root.__enemyLayer = enemyLayer;
   root.__lootLayer = lootLayer;
   root.__atmosphereLayer = atmosphere;
+  root.__PIXI = PIXI;
+  root.__visualProfile = visual;
+  attachFoundationSprite(PIXI, root, ground, obstacles, region, visual);
 
   return root;
 }
 
-function updateHpBar(node, hp, hpMax) {
+function updateHpBar(node, hp, hpMax, palette) {
   const fill = node?.getChildByName?.("hp_fill");
   if (!fill) return;
   const ratio = hpMax > 0 ? Math.max(0, hp / hpMax) : 0;
   fill.clear();
-  fill.roundRect(-16, -28, 32 * ratio, 5, 2).fill({ color: CLAY.hpBar, alpha: 1 });
+  fill.roundRect(-16, -34, 32 * ratio, 4, 2).fill({ color: palette.hpBar, alpha: 1 });
 }
 
-function updateCompanionHpBar(node, hp, hpMax) {
+function updateCompanionHpBar(node, hp, hpMax, palette) {
   const fill = node?.getChildByName?.("hp_fill");
   if (!fill) return;
   const ratio = hpMax > 0 ? Math.max(0, hp / hpMax) : 0;
   fill.clear();
-  fill.roundRect(-18, -32, 36 * ratio, 5, 2).fill({ color: CLAY.hpBar, alpha: 1 });
+  fill.roundRect(-18, -32, 36 * ratio, 5, 2).fill({ color: palette.hpBar, alpha: 1 });
 }
 
 export function syncExpeditionScene(sceneRoot, session, deltaMs = 16) {
   if (!sceneRoot || !session) return;
+  const PIXI = sceneRoot.__PIXI;
+  const visual = sceneRoot.__visualProfile || getExpeditionGameplayVisualProfile(session.regionId || session.nodeId);
 
   if (sceneRoot.__atmosphereLayer) {
     updateExpeditionAtmosphere(sceneRoot.__atmosphereLayer, deltaMs);
@@ -217,7 +433,7 @@ export function syncExpeditionScene(sceneRoot, session, deltaMs = 16) {
     companion.x = session.companion.x;
     companion.y = session.companion.y;
     companion.scale.x = session.companion.facing >= 0 ? 1 : -1;
-    updateCompanionHpBar(companion, session.companion.hp, session.companion.hpMax);
+    updateCompanionHpBar(companion, session.companion.hp, session.companion.hpMax, visual.palette);
   }
 
   const markers = sceneRoot.__markerLayer;
@@ -243,12 +459,12 @@ export function syncExpeditionScene(sceneRoot, session, deltaMs = 16) {
       if (enemy.hp <= 0) return;
       let node = enemyLayer.getChildByName(`enemy_${enemy.id}`);
       if (!node) {
-        node = buildEnemyNode(enemy);
+        node = buildEnemyNode(PIXI, enemy, visual);
         enemyLayer.addChild(node);
       }
       node.x = enemy.x;
       node.y = enemy.y;
-      updateHpBar(node, enemy.hp, enemy.hpMax);
+      updateHpBar(node, enemy.hp, enemy.hpMax, visual.palette);
       node.alpha = enemy.state === "alert" ? 1 : 0.72;
     });
   }
@@ -264,7 +480,7 @@ export function syncExpeditionScene(sceneRoot, session, deltaMs = 16) {
       if (piece.collected) return;
       let node = lootLayer.getChildByName(`loot_${piece.id}`);
       if (!node) {
-        node = buildLootNode(piece);
+        node = buildLootNode(PIXI, piece, visual);
         lootLayer.addChild(node);
       }
       node.x = piece.x;

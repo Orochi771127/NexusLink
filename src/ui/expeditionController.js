@@ -416,8 +416,11 @@ export function createExpeditionController({
     // 除錯列預設隱藏；需要時在 body 加 data-expedition-debug="1"
     const debugEl = overlayEl.querySelector(".expedition-intent-debug");
     if (debugEl) {
-      debugEl.textContent =
-        `[${intent.type || "—"}] target=${intent.targetId || "—"} · conf=${(intent.confidence ?? 0).toFixed(2)} · kills=${session.stats?.kills || 0} · enemies=${getLivingEnemies(session).length}`;
+      const debugEnabled = document.body?.dataset?.expeditionDebug === "1";
+      debugEl.hidden = !debugEnabled;
+      debugEl.textContent = debugEnabled
+        ? `[${intent.type || "—"}] target=${intent.targetId || "—"} · conf=${(intent.confidence ?? 0).toFixed(2)} · kills=${session.stats?.kills || 0} · enemies=${getLivingEnemies(session).length}`
+        : "";
     }
 
     const extractBtn = overlayEl.querySelector(".expedition-extract-btn");

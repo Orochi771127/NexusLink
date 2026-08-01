@@ -6,6 +6,7 @@
  */
 
 import { getCompanionById } from "../data/companionRegistry.js";
+import { getOrbitGameplayVisualProfile } from "../data/gameplayVisualProfiles.js";
 import {
   getDuelProfile,
   listDuelProfiles,
@@ -33,6 +34,11 @@ import {
   recentEvidenceFromState,
   vitalsFromState
 } from "../orbit/orbitStatsProjector.js";
+import {
+  drawOrbitClayArena,
+  drawOrbitClayBody,
+  preloadOrbitGameplaySkin
+} from "./orbitClayRenderer.js";
 
 /**
  * @param {{
@@ -55,6 +61,8 @@ export function createOrbitDuelController({ store, statusText, onBack, onCloseAl
   let active = false;
   let pickerVisible = true;
   let currentProfileId = CPU_DUEL_PROFILES.mirror.id;
+  const visualProfile = getOrbitGameplayVisualProfile("moonlake");
+  preloadOrbitGameplaySkin(visualProfile);
 
   function applyChrome() {
     if (!rootEl) return;
@@ -427,9 +435,19 @@ export function createOrbitDuelController({ store, statusText, onBack, onCloseAl
     const cssW = canvas.clientWidth;
     const cssH = canvas.clientHeight;
     ctx.clearRect(0, 0, cssW, cssH);
-    ctx.fillStyle = "rgba(8, 16, 28, 0.92)";
+    const center = worldToScreen(0, 0, cssW, cssH);
+    drawOrbitClayArena(ctx, {
+      width: cssW,
+      height: cssH,
+      centerX: center.sx,
+      centerY: center.sy,
+      arenaRadius: center.scale,
+      profile: visualProfile,
+      reducedMotion: true
+    });
+    ctx.fillStyle = "rgba(18, 54, 59, 0.42)";
     ctx.fillRect(0, 0, cssW, cssH);
-    ctx.fillStyle = "rgba(200, 220, 240, 0.9)";
+    ctx.fillStyle = visualProfile.palette.text;
     ctx.font = "14px sans-serif";
     ctx.textAlign = "center";
     ctx.fillText(message || "現在不宜出場。", cssW / 2, cssH / 2);
@@ -440,20 +458,27 @@ export function createOrbitDuelController({ store, statusText, onBack, onCloseAl
     const cssW = canvas.clientWidth || 360;
     const cssH = canvas.clientHeight || 380;
     ctx.clearRect(0, 0, cssW, cssH);
-    ctx.fillStyle = "rgba(8, 16, 28, 0.92)";
-    ctx.fillRect(0, 0, cssW, cssH);
-
     const center = worldToScreen(0, 0, cssW, cssH);
+    drawOrbitClayArena(ctx, {
+      width: cssW,
+      height: cssH,
+      centerX: center.sx,
+      centerY: center.sy,
+      arenaRadius: center.scale,
+      profile: visualProfile,
+      time: session?.elapsed || 0,
+      reducedMotion: globalThis.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches === true
+    });
     ctx.beginPath();
     ctx.arc(center.sx, center.sy, center.scale, 0, Math.PI * 2);
-    ctx.strokeStyle = "rgba(140, 200, 255, 0.45)";
-    ctx.lineWidth = 2;
+    ctx.strokeStyle = "rgba(245, 221, 150, 0.46)";
+    ctx.lineWidth = 1.5;
     ctx.stroke();
 
     if (!session) return;
 
-    drawBody(session.foe, cssW, cssH, "rgba(255, 160, 120, 0.95)", session.profileName || "對手");
-    drawBody(session.player, cssW, cssH, "rgba(160, 220, 255, 0.95)", "你的化身");
+    drawBody(session.foe, cssW, cssH, "foe", session.profileName || "對手");
+    drawBody(session.player, cssW, cssH, "player", "你的化身");
 
     if (session.phase === "aiming" && dragging && pullNow) {
       const from = worldToScreen(session.player.x, session.player.y, cssW, cssH);
@@ -475,25 +500,20 @@ export function createOrbitDuelController({ store, statusText, onBack, onCloseAl
     drawMeter(12, 32, session.foe.stability, "對手", "rgba(255,160,120,0.95)");
   }
 
-  function drawBody(body, cssW, cssH, color, label) {
+  function drawBody(body, cssW, cssH, variant, label) {
     if (!body || body.out) return;
     const { sx, sy, scale } = worldToScreen(body.x, body.y, cssW, cssH);
     const r = body.radius * scale;
-    ctx.beginPath();
-    ctx.arc(sx, sy, r, 0, Math.PI * 2);
-    ctx.fillStyle = color;
-    ctx.fill();
     const ang = (body.spin / 100) * Math.PI * 4 + (session?.elapsed || 0) * 2;
-    ctx.beginPath();
-    ctx.moveTo(sx, sy);
-    ctx.lineTo(sx + Math.cos(ang) * r, sy + Math.sin(ang) * r);
-    ctx.strokeStyle = "rgba(255,255,255,0.85)";
-    ctx.lineWidth = 2;
-    ctx.stroke();
-    ctx.fillStyle = "rgba(230,240,255,0.75)";
-    ctx.font = "11px sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillText(label, sx, sy - r - 6);
+    drawOrbitClayBody(ctx, {
+      x: sx,
+      y: sy,
+      radius: r,
+      profile: visualProfile,
+      variant,
+      spinAngle: ang,
+      label
+    });
   }
 
   function drawMeter(x, y, value, label, color) {
