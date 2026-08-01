@@ -1,9 +1,9 @@
 # COMPANION_GROWTH_CONTRACT_V1.md
 # 心核夥伴養成與覺醒契約 v1
 
-> **狀態**：`ACTIVE DESIGN CONTRACT / G1 + G2 + G3 + G3.1 CARE SOURCE IMPLEMENTED / G4+ NOT YET IMPLEMENTED`
+> **狀態**：`ACTIVE DESIGN CONTRACT / G1 + G2 + G3 + G3.1 CARE SOURCE IMPLEMENTED / ORBIT D0 CROSS-CONTRACT REBASELINED / G4+ NOT YET IMPLEMENTED`
 >
-> **Owner direction**：2026-07-17 已核准此契約與 G1 session-only 切片；2026-07-18 核准 G2 GROUNDWORK；2026-07-22 核准 G3／G3.1 EXPERIENCE。現已接入 per-companion 持久狀態、正式 key factory、bounded evidence／coverage、readiness／willingness、質性 Growth UI，以及由 Heart Phase completion 擁有的 `care` source。現行 live source owner 為 exploration、emotional standoff、care；夥伴改寫只有在玩家第二次明示接受後才可封存 `respected_rewrite` consent anchor。三-family readiness 現在可經包含 standoff 的流程形成，但不對峙路徑仍未完成；G4 覺醒邀請／stage advance 與 G5 形態資產尚未實作。涉及 `assets/**` 或 `pixiApp.js` 時，仍須依 GROUNDWORK 核准範圍施工。
+> **Owner direction**：2026-07-17 已核准此契約與 G1 session-only 切片；2026-07-18 核准 G2 GROUNDWORK；2026-07-22 核准 G3／G3.1 EXPERIENCE；2026-08-01 核准 Orbit D0 文件重定版。現已接入 per-companion 持久狀態、正式 key factory、bounded evidence／coverage、readiness／willingness、質性 Growth UI，以及由 Heart Phase completion 擁有的 `care` source。現行 live source owner 為 exploration、emotional standoff、care；Orbit first-clear 沿用 `exploration` family，不另開可農 `orbit` family。夥伴改寫只有在玩家第二次明示接受後才可封存 `respected_rewrite` consent anchor。三-family readiness 現在可經包含 standoff 的流程形成，但不對峙路徑仍未完成；G4 覺醒邀請／stage advance、G5 形態資產與 Orbit 心相展開 runtime 尚未實作。涉及 `assets/**` 或 `pixiApp.js` 時，仍須依 GROUNDWORK 核准範圍施工。
 >
 > **權威關係**：本文件服從 `NEXUS_LINK_MASTER_CANON_v3.1.md`，是 Companion Growth／心核夥伴養成的現行**設計與驗收 SSOT**。G1 提供當頁、可逆的質性心相觀察，phase／session 本身不持久；G2 提供 per-companion relationship／growth truth、migration 與 Codex 隔離；G3 提供正式 evidence foundation、readiness／willingness 評估與質性痕跡呈現；G3.1 只讓確實完成並存檔成功的 Heart Phase care moment 寫入一個 deterministic root。G3／G3.1 都不會自動升階，也不等於正式覺醒玩法已完成。`docs/r2-canon/R2_EVOLUTION_SYSTEM.md` 的等級、勝場、道具、五階與能力雷達只保留為歷史參考，不得作新實作依據。
 >
@@ -22,12 +22,12 @@
 - 玩家可以影響，不能按下「強制進化」。
 - 夥伴可以接受、改寫、婉拒或延後一次練習／覺醒。
 - 不同選擇形成不同敘事傾向，但沒有唯一正解或最佳收益路線。
-- 成熟改變表達、身體語言、棲地回應與情境選項，不增加戰鬥輸出。
+- 成熟改變表達、身體語言、棲地回應、情境選項，以及在 Orbit 中經正規化的輪廓／慣性／objective affordance；不得增加總戰鬥預算或形成全目標優勢。
 - 一段關係只屬於那一隻夥伴，不能用 A 的 bond 解鎖 B 的成長。
 
 ---
 
-## 2. 2026-07-18 runtime 真相
+## 2. 2026-08-01 runtime 真相
 
 本契約不把 transitional UI 誤稱為已完成的養成系統。
 
@@ -38,6 +38,7 @@
 | `companionStates.byId` 保存 relationship／growth；14 個頂層欄位是 active mirror | G2 已接入；A→B→A 原子封存／hydrate，未知 id fail closed，仍只用主存檔 key |
 | 舊 memory / milestone 多數沒有 `companionId` | 不可把舊歷史複製給整個 roster，也不可臆測逐筆歸屬 |
 | Growth 頁已有 Heart Phase 與四種質性練習 | phase、當頁觀察與未完成改寫仍是 session-only；接受並完成的練習可寫一個 care root，玩家接受夥伴改寫時可封存 consent anchor。休息、拒絕、延後、安全中止與存檔失敗全為零 evidence；遠征碎晶／crafting 不掛在 Growth |
+| Orbit first-clear 已可寫 `exploration` evidence；stage 目前未投影進 Orbit 物理 | D0 只允許未來把已擁有 stage 投影為 normalized sidegrade；shared-control、情緒動勢、心相展開與 Stage 2／3 form runtime 仍未接入 |
 | registry 只有單一角色 portrait／animation manifest | 尚無正式 Stage 2／3 形態資產對照；不可假裝已換形 |
 | `growthHint` 只有 action effect 寫入，無 consumer／normalizer | 非正式狀態，不可據此宣稱養成已完成 |
 
@@ -62,12 +63,12 @@
 ### 3.1 可沿用的玩家動詞
 
 - Care：溫柔陪伴、一起休息、共息、觀察身體語言。
-- Exploration：直接前行、讀取寂靜錨、返回營地、接受未知。
+- Exploration：直接前行、讀取寂靜錨、返回營地、接受未知；Orbit 只有 first-clear 且 source owner 驗證成功的共同闖關可沿此 family 留一枚 root。
 - Reflection：回看一段共同記憶、提出暫定理解、接受夥伴修正或拒絕。
 - Standoff：穩住、設界、回收記憶、退一步、事後修復。
 - Chapter moments：完成章節分支、共鳴邀請與關係儀式；每條有效分支提供等價的 `chapter` domain，不要求某個不可逆選項。若事件可被跳過，必須另有可重做或可替代的合法路徑。
 
-不得另建餵食條、訓練場、每日任務或素材農場，來取代現有情緒棲地動詞。
+不得另建餵食條、訓練場、每日任務、勝場門檻、碰撞計數或素材農場，來取代現有情緒棲地動詞。Orbit 重玩、失敗、撤退、心相展開與 outcome subtype 都不能額外增加 readiness。
 
 ---
 
@@ -86,10 +87,10 @@
 
 ### 4.1 Heart Phase 與 Formal Stage 必須分開
 
-- **Heart Phase／心核相位**：當下、可逆、由目前 mood／energy／fatigue／情境形成；可改變這一幕的姿態與選項。
-- **Formal Stage／正式階段**：持久、只向前一階、由多樣證據、章節條件與夥伴意願共同觸發。
+- **Heart Phase／心核相位**：當下、可逆、由目前 mood／energy／fatigue／情境形成；可改變這一幕的姿態、選項，以及未來 Orbit 中有名稱、可預覽、可重播的 session movement expression。
+- **Formal Stage／正式階段**：持久、只向前一階、由多樣證據、章節條件與夥伴意願共同觸發；可在 Orbit 投影成等總預算的形態／手感 sidegrade。
 
-相位不是「暫時進化戰力」。正式階段也不抹除原 persona、舊傷、拒絕能力或修復需求。
+相位不是「暫時進化戰力」。正式階段的 Orbit sidegrade 也不抹除原 persona、舊傷、拒絕能力或修復需求；它不能直接乘進 Impact／damage／winner，也不能讓任何 stage 在所有 objective 都更強。
 
 `fatigue` 必須帶型別，不得混成一個通用數值：Care／Growth 只能讀 active companion 的 `touchFatigue` 與明示 regulation view；standoff session fatigue 留在 `battleEngine`；共鳴圈 breath 留在該次 circle session。後兩者只能透過已完成的 domain event 進入 evidence，不能被複製成持久 Growth fatigue。
 
@@ -99,11 +100,13 @@
 
 正式 canon 固定三階；不得重新擴回 Baby／Child／Adult／Perfect／Ultimate 五階線。
 
-| Proposed id | 正式名稱 | 玩家感受 | 主要變化 |
-|---|---|---|---|
-| `initial_awakened` | **初醒夥伴** | 牠剛開始讓你看見自己的節奏與界線 | 基礎 persona、初始姿態、可讀邊界 |
-| `resonant_mature` | **共鳴成熟體** | 你們已有一段可被彼此辨認的相處方式 | 語氣分化、身體 cue、情境 sidegrade、棲地回應 |
-| `final_awakened` | **終局覺醒體** | 共同經歷已形成不可替換、帶痕跡的生命樣貌 | 深層 persona hysteresis、專屬儀式與完整 approved 形態表現 |
+| Proposed id | 正式名稱 | 玩家感受 | 主要變化 | Orbit 合法表達（非固定數值） |
+|---|---|---|---|---|
+| `initial_awakened` | **初醒夥伴** | 牠剛開始讓你看見自己的節奏與界線 | 基礎 persona、初始姿態、可讀邊界 | 可偏靈活穿越、短半徑與快速讀軌 |
+| `resonant_mature` | **共鳴成熟體** | 你們已有一段可被彼此辨認的相處方式 | 語氣分化、身體 cue、情境 sidegrade、棲地回應 | 可偏場域牽引、訊號整理與中段改軌 |
+| `final_awakened` | **終局覺醒體** | 共同經歷已形成不可替換、帶痕跡的生命樣貌 | 深層 persona hysteresis、專屬儀式與完整 approved 形態表現 | 可偏守定錨點、穩定反射與長餘韻 |
+
+表中 Orbit 欄只定義可探索的 affordance family；每隻夥伴仍須有自己的 species／persona profile，並以 radius、mass、speed cap、spin retention、steering、stability 與 objective affordance 的 normalized total budget 證明沒有垂直優勢。
 
 ### 5.1 Readiness 與 willingness 是兩道不同的門
 
@@ -127,6 +130,7 @@ Willingness 另外檢查（G3 已固定 typed enum／profile gate 並納入 muta
 - 玩家可以接受或延後；延後不扣 trust、不產生 missed flag、不設期限。
 - 一次只能前進一階；重複提交已完成階段必須 idempotent。
 - `deferredAt` 只記 provenance，不是 cooldown。離線時間、推進時鐘或等待本身不能把「還不是時候」變成 willing；必須由新的合法當場 context 或明示、零懲罰的 regulation／repair 行動重新評估。
+- Orbit 的 `BondAffinity`、JoySorrow、dialogueCount、勝場、碰撞數、連鎖數、界紋電荷或戰中 meter 都不是 readiness／willingness gate。場中「心相展開」只能呈現進場前已持久解鎖且夥伴當場願意使用的 stage；不得在 Orbit session 內建立 stage offer 或 advance。
 
 正式 UI 不顯示精確門檻、差幾點、最佳行動或倒數，只顯示質性線索與實際發生過的證據。
 
@@ -182,6 +186,7 @@ Willingness 另外檢查（G3 已固定 typed enum／profile gate 並納入 muta
   - `chapter:<chapterNo>:<eventId>:<normalized-branch-family>`
   - `boundary:<immutable-origin-key>:respected`
   - `recovery:<immutable-origin-key>:completed`
+- Orbit 不新增 `orbit` source family。合法 first-clear 由 Orbit settlement 先正規化為 `exploration:<chapterNo>:<stageId>:first_clear`（或 source owner 鎖定的等價固定 key）；同一 stage 的 replay、不同 outcome subtype、心相展開、界紋疾走、失敗與撤退都不得建立第二枚 root。
 - `createdAt` 必須是正有限的 epoch timestamp；0、負數、NaN 或 Infinity 視為損壞資料，不得參與 readiness。
 - 每隻夥伴最多保留 24 枚 evidence detail；`coverage.rootsBySourceType` 與 `consentAnchorRootKey` 是目前 target stage 的 bounded、monotonic readiness summary，不因 evidence compaction 倒退。Stage 一旦完成也永不倒退。
 - 每個 target window 最多接受 24 個 immutable root，writer 必須為尚缺的必要 source family 與 consent anchor 預留槽位；非必要 root 在會吃掉預留槽位時只作敘事，不進 growth。兩次正式升階合計的 `consumedRootKeys` 上限為 48，接受時立即寫入且不因 detail compaction 刪除。
@@ -192,6 +197,7 @@ Willingness 另外檢查（G3 已固定 typed enum／profile gate 並納入 muta
 - 單一 domain 無論重複多少次都不能使 stage ready。
 - 同一節點的 standoff detail key 使用 `standoff:<chapterNo>:<nodeId>:<outcome-family>`，但 `rootContextKey` 固定為 `standoff:<chapterNo>:<nodeId>`；只有第一枚合法 root 可進 detail／tendency／readiness，之後重打或換結局都只作敘事。
 - `stabilized`、`recovered`、`retreated`、`overwhelmed_but_safe` 四種完成結局都留下**等價的一枚 `standoff` domain evidence**；只可有不同 tendency／敘事標籤，不得有不同 readiness 權重。任何結局後的 repair 都是可選敘事；同一 `rootContextKey` 不可再多算一個 readiness domain，沒有 catch-up tax 或最佳結局。
+- Orbit 四個上位 outcome family 與未來 subtype 同樣沒有 readiness 高低差；只有 source owner 判定為合法 first-clear 的完成結果可沿 `exploration` 留一枚 root。失敗／撤退可保留 session trace，但 trace 本身不是 evidence。
 - Evidence 只證明「這件事發生過」，不直接給 bond、trust、素材、戰力或 stage。
 
 ### 6.3 絕對排除
@@ -205,6 +211,7 @@ Willingness 另外檢查（G3 已固定 typed enum／profile gate 並納入 muta
 - 依賴、孤獨、診斷或心理狀態推測。
 - 夥伴的拒絕本身、玩家單純打開頁面、idle 等待。
 - 每日任務、倒數活動、稀有掉落、勝場、敵人擊倒、付費內容。
+- Orbit 的發射次數、命中／碰撞數、速度、界紋疾走、心相展開、outcome subtype、重玩、核散、失敗與撤退。
 
 High-risk 回合前後，完整 gameplay／companion state（含 relationship、growth、mood、touchFatigue、record creation）、preference、memory、trace、stage readiness、stage offer、SFX 與 animation intent 必須完全不變；只允許既有 safety UI/mode 狀態。非 high-risk 的 safety／caution route 若依既有政策做 bounded regulation，該 regulation 可保留，但仍是零 growth、零 preference/memory/trace、零 reward、零 stage offer。
 
@@ -343,6 +350,33 @@ Pixi 只消費 `heart_phase_manifestation`、姿態與環境 cue，不讀寫 sta
 
 月湖情緒水晶六態是 presentation-only memory lifecycle，不是夥伴 XP bar 或正式覺醒儀式。
 
+### 8.5 Orbit cross-system ownership（D0；未實作）
+
+未來 Orbit 只能透過純投影邊界讀取 Growth truth：
+
+```js
+projectOrbitEmbodimentProfile({
+  companionId,
+  formalStage,
+  heartPhaseSnapshot,
+  personaProfile,
+  assetReadiness,
+  stageContract
+}) -> {
+  participation,
+  visibleRewrite,
+  movementExpression,
+  normalizedPhysicsProfile,
+  manifestationIntent
+}
+```
+
+- 此函式必須純、可 replay、無 DOM／Pixi／store／localStorage／RaphaelCore call；輸出不能改寫 `growth.stage`、evidence、relationship 或 asset readiness。
+- `formalStage` 只能來自 canonical per-companion Growth state；Heart Phase 只能調整當次可見動勢，不能冒充 stage。
+- `normalizedPhysicsProfile` 必須先通過等總預算與跨 objective reachability gate；stage 不直接乘進 Impact、damage、reward 或 winner。
+- `manifestationIntent` 只有在該 companion／stage 的 illustrated asset 已 human-approved 時才可要求形態 swap；否則只可要求 aura／姿態／光紋 cue。
+- 夥伴可在 session 前接受、可見改寫、休息或拒絕；已確認後 Orbit deterministic engine 擁有軌跡與結果，Growth／RaphaelCore 不得逐 frame 改寫。
+
 ---
 
 ## 9. 首片與後續施工順序
@@ -355,8 +389,9 @@ Pixi 只消費 `heart_phase_manifestation`、姿態與環境 cue，不讀寫 sta
 | G3 | EXPERIENCE | 正式 key factory、evidence writer、coverage／compaction、readiness／willingness、Growth UI | ✅ Evidence Foundation 已接入；N1–N11 + safety／alias／repeat-50／compaction／source-owner browser tests 全過；不包含 G4 stage offer／advance |
 | G3.1 | EXPERIENCE | Heart Phase completion 成為 care source owner；夥伴改寫需第二次明示接受 | ✅ candidate-first critical save、canonical result validation、A/B owner guard、全域 safety session invalidation、root／anchor dedupe 已接入；零 relationship／reward mutation |
 | G3.2 | EXPERIENCE | Reflection／Echo Sorting source owner + 不依賴 standoff 的獨立章節生活事件 | 下一個安全切片；先封 immutable provenance、零記憶臆測與 source-owner gate，再考慮 G4 offer |
+| Orbit D0 | Docs | **本次重定版**：已擁有 formal stage 可投影為 normalized Orbit sidegrade；心相展開不得戰中升階 | O12–O17 + N2／N5／N7／N11 的文件一致性；不改 runtime／schema／assets |
 | G4 | EXPERIENCE | 夥伴主動 stage offer、可延後的覺醒儀式、heart-phase 表現 | N2／N3／N5／N7／N8／N11 + H + I；無強制、無 FOMO、無獎勵、可再提出 |
-| G5 | GROUNDWORK + ART | 一隻 companion 的完整 Stage 2 視覺資產與 renderer switch | N2／N11 + G1–G7 + H + I；512 asset readiness、mobile memory、真機與 human art gate |
+| G5 | GROUNDWORK + ART | 一隻 companion 的完整 Stage 2 視覺資產、renderer switch 與可選 Orbit manifestation profile | N2／N11 + O15–O17 + G1–G7 + H + I；512 asset readiness、normalized physics、mobile memory、真機與 human art gate |
 
 G1 不得偷偷建立 localStorage 欄位；G2 只完成每隻夥伴的狀態地基；G3／G3.1 只完成 evidence/readiness/willingness 與 care source，不得把它宣稱為完整正式覺醒玩法已上線。G4 開工前必須先證明 readiness 有不依賴 standoff 的產品路徑。
 
@@ -389,7 +424,9 @@ Companion Growth 只有在以下條件同時成立時，才能稱為 runtime-com
 - High-risk 與所有 `growthSafetyExcluded` route、離線／登入資料、重複刷取與付費內容皆不能推進 growth；numeric defense 也永遠不是資格門檻。
 - 拒絕、休息、返回、夥伴延後、玩家延後均零關係懲罰、零 FOMO。
 - Evidence detail bounded 在 24 枚內，source-family coverage／stage 不因 compaction 倒退；四種 standoff 結局與所有有效章節分支沒有 readiness 高低差。
-- 成長首先可見於姿態、語氣、環境與選擇；沒有戰力、勝場、稀有度或素材最佳路線。
+- 成長首先可見於姿態、語氣、環境與選擇；在 Orbit 可增加等總預算的輪廓／慣性／objective sidegrade，但沒有戰力、勝場、稀有度、stage 全面優勢或素材最佳路線。
 - DOM、純 engine、state writer 與 Pixi ownership 清楚，save 只保存 serializable simulation truth。
 - 沒有 approved 形態資產時，不宣稱新形態已完成。
+- Orbit 的場中心相展開只呈現進場前已解鎖且當場願意使用的 stage；BondAffinity、JoySorrow、dialogueCount、命中、碰撞、勝負與 meter 都不能建立 stage offer／advance。
+- Orbit failure／retreat／replay 不刪記憶、不降 stage／coverage、不扣 relationship，也不形成額外 evidence；合法 first-clear 只沿 `exploration` family 去重一次。
 - `ACCEPTANCE.md` N1–N11、既有安全紅線、web gate 與 human/mobile gate 全部通過。

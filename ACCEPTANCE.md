@@ -323,6 +323,8 @@
 - **商業章節 / 旅痕 / 未來同行規格**：L1–L9 + D6 + H5 全過。
 - **黑鐵駭客五席 runtime promotion**：L10–L13 + D1–D2 + G1–G7 + H1–H5 + I 全過；仍須另完成真機、人工與 Owner launch gates 才可宣稱 launch-ready。
 - **Companion Growth / 心相養成**：N1–N11 + C1–C2 + D1–D2 + D6 + H1–H5 + I 全過。
+- **Heartcore Orbit D0 文件重定版**：Orbit／Growth 契約與 O12–O17 的取消、保留、權限與驗法必須互相一致；D0 不宣稱 O12–O17 runtime 已實作。
+- **Heartcore Orbit 後續實作包**：依實作範圍通過 O1–O17、D（全）、H 與 I；若碰正式形態資產／renderer promotion，另跑 G1–G7 與 human visual gate。
 - **Future Resonance Practice / 未來共鳴對練**：N12 目前只驗設計邊界，不是 implementation-ready gate；另開 sealed contract 與 O-series assertions 後才可施工。真正線上 PvP 另需 backend／privacy／anti-cheat 授權包。
 
 任一 D 條（安全紅線）未過 → 整個 TASK_PACK 不通過，無論其他多漂亮。
@@ -360,9 +362,9 @@
 - 驗法：準備兩隻已解鎖夥伴 A／B，寫入不同 relationship、growth 與身體狀態，執行 A→B→A、reload 與快速連換。
 - 通過：canonical 狀態依 `companionId` 完全隔離；A 的互動不改 B；切回 A 後還原。未完成的 A session/result 不可重新綁定給 B。未知 id 不建立資料、不解鎖角色。Top-level compatibility mirror 在每個可觀察 state 都與 active companion 一致。
 
-**N2 — 正式三階是人格／姿態回應，不是變強**
+**N2 — 正式三階是人格／姿態與等預算 sidegrade，不是變強**
 - 驗法：讀 stage gate、Growth UI、Codex、對峙與資產 mapping。
-- 通過：正式只有「初醒夥伴 → 共鳴成熟體 → 終局覺醒體」；沒有 HP／ATK、稀有度、裝備、戰力評分、勝場、擊倒、素材或付費 gate。階段差異首先表現在姿態、語氣、選擇與棲地回應。
+- 通過：正式只有「初醒夥伴 → 共鳴成熟體 → 終局覺醒體」；沒有 HP／ATK、稀有度、裝備、戰力評分、勝場、擊倒、素材或付費 gate。階段差異首先表現在姿態、語氣、選擇與棲地回應；若投影進 Orbit，只能以 normalized total budget 改變輪廓、慣性與 objective affordance，不得形成全目標優勢或直接乘進 Impact／damage／winner。
 - 未有 approved evolved asset 時，只可顯示心相姿態、aura 與敘事 cue，不可宣稱新形態已 runtime-ready。
 
 **N3 — 高風險安全終端完全排除養成**
@@ -408,14 +410,14 @@
 - 無 backend、matchmaking、排行、MMR、賽季、streak、每日、loot、XP、growth evidence 或 relationship reward／penalty；stage 只改變表現與 sidegrade 選擇，不給數值優勢。雙方隨時退出且零懲罰；真正線上 PvP 不在本契約授權內。
 - N12 在專屬 sealed contract 與 O-series assertions 完成前只可判定「規格邊界存在」，不可宣稱 prototype／runtime ready。
 
-## O. Heartcore Orbit Battle／心核迴旋戰（垂直切片）
+## O. Heartcore Orbit Battle／心核迴旋戰
 
-> SSOT：`docs/design/HEARTCORE_ORBIT_BATTLE_CONTRACT_V1.md`、`docs/agent/HEARTCORE_ORBIT_BATTLE_AGENT_PROGRAM.md`。
-> 本節驗收的是「可玩垂直切片」，**不是**商業上架完成。
+> 現行 SSOT：`docs/design/HEARTCORE_ORBIT_BATTLE_CONTRACT_V1.md`。`docs/agent/HEARTCORE_ORBIT_BATTLE_AGENT_PROGRAM.md` 只保留為歷史施工紀錄，若有衝突不得覆蓋 D0 重定版。
+> O1–O11 記錄現有可玩切片；O12–O17 是 D0 後續實作的強制驗收契約。文件列入不等於 runtime 已完成，更不等於商業上架完成。
 
-**O1 — 出場的是心核化身，不是把夥伴本人當武器**
+**O1 — 出場的是夥伴自我投影的心核化身，不是把夥伴本人當武器**
 - 驗法：讀 UI 文案／契約用語；跑 `orbit-battle-prototype-cases.mjs`。
-- 通過：玩家可見「化身／迴旋／核散」語境；不得把夥伴本體描述成可丟擲兵器。
+- 通過：玩家可見「化身／迴旋／核散」語境；化身可呈現夥伴可辨識的 illustrated 自我投影，但必須由外層共鳴場承受碰撞，不得把夥伴肉身描述成可丟擲兵器。
 
 **O2 — 戰鬥強度只來自關係投影，聊天不加 Impact**
 - 驗法：`projectOrbitCombatStats` 在 sharedActionCount 上升時 Impact 上升；純聊天路徑不得直接改 Impact 帳本。
@@ -448,9 +450,9 @@
 - 390×844：頂欄、Canvas、記憶／營火進度、結算與按鈕不得重疊；battle status／companion line 不得誤寫進隱藏 duel DOM。
 - **仍 open（不得宣稱完成）：** 真人需在 30 秒內會發射、三次內說出力度差異、發射前能預測大致方向、能指出光點／營火對結局的影響；Safari 真觸控／GPU。
 
-**O9 — 營火切片操作深度：三姿態＋每發一次共鳴脈衝（opt-in）**
+**O9 — 營火入門切片操作深度：三姿態＋每發一次共鳴脈衝（opt-in baseline）**
 - 驗法：跑 `node docs/qa/orbit-control-depth-cases.mjs` 與完整 Orbit regression；網址加 `?orbitCampSlice=1`，在 390×844 依序操作三顆姿態鈕、拉曳發射、共鳴脈衝。
-- 通過：同一拉距下，直立／傾斜／保守的初速、tilt／spin 與後續軌跡有可重播差異；只可在 `aiming` 選姿態，發射後鎖定。共鳴脈衝只在 `spinning` 可用且每發 `1/1`，第二次無效；只能有限轉向／收束，不能直接收記憶、增加停圈秒數或產生 outcome。
+- 通過：同一拉距下，直立／傾斜／保守的初速、tilt／spin 與後續軌跡有可重播差異；只可在 `aiming` 選姿態，發射後鎖定。**此營火 baseline** 的共鳴脈衝只在 `spinning` 可用且每發 `1/1`，第二次無效；只能有限轉向／收束，不能直接收記憶、增加停圈秒數或產生 outcome。未來關卡可依 O14 由 stage data 授權有限共鳴時機，不能由 bond、付費或刷取增加。
 - 確定性與安全：固定時點的姿態＋脈衝在 30／60／120 Hz exact-match；三姿態保留可完成路徑；`progressEligible=false`，不寫 path／vault／Growth／bond／trust／主存檔。
 - 390×844：三姿態與脈衝控制不得擠壓 Canvas／結算；選中態不能只靠顏色（`aria-pressed`），disabled／已用狀態可讀。
 - **仍 open（不得宣稱完成）：** 真人三次內能說出三姿態用途、知道脈衝是一次有限修正而非自動獲勝；Safari 真觸控、文字放大與 GPU。
@@ -467,3 +469,33 @@
 - 星林第四關：玩家可見條件與 runtime 同為 contained 12 秒；24 方向 × 6 力度的 deterministic sweep 至少 132／144 次完成 `stage_completed`，不能把 `player_out`、`player_burst` 或單純「有結算」算 PASS。
 - 確定性：同一星林第四關發射在 30／60／120 Hz exact-match；修復不得改 bond／trust、path/vault/Growth 寫入資格、撤退、拒戰或非懲罰結局。
 - **仍 open（不得宣稱完成）：** Owner 真人手感、Safari 真觸控／GPU，以及四種 movement profile 的玩家可辨識度。
+
+**O12 — 共同定軌與夥伴主體性：確認前可協商，確認後可重播**
+- 驗法：以接受／改寫／休息／拒絕四種回應建立 session snapshot；固定 seed、同一輸入與同一 snapshot，在 30／60／120 Hz 重播；另以高低 trust、各 mood 與高低 SpamScore 交叉測試。
+- 通過：夥伴的改寫必須在發射確認前以可讀方式呈現，玩家可接受、重談或取消；一旦雙方確認，最終軌跡參數不得再因隱藏 trust、mood、SpamScore 或非同步 AI 回覆而暗改。Trust 只能影響協商語氣與意願，不能被翻譯成服從率。
+- 休息／拒絕／取消必須零懲罰：不改 relationship、Growth、path、vault、memory 或主存檔；high-risk safety terminal 不得啟動 session，也不得排入延遲獎勵或證據寫入。
+
+**O13 — 情緒驅動物理必須有界、可讀、非污名化**
+- 驗法：對 Energy 邊界值、現行 mood 集合、JoySorrow 兩端、BondAffinity 與 SpamScore 做 session projection；重播並比對 snapshot 是否在 session 內保持 immutable。
+- 通過：Energy 只形成可見的參與／拉力包絡；mood 只能選擇命名、有限、確定且可重播的表達型運動曲線；JoySorrow 可改 VFX、音色或節奏提示，但不得直接增加傷害、Impact 或勝率；BondAffinity 不得在戰中解鎖階段；SpamScore 不得直接進物理公式。
+- 禁止把 anxious、sad、defensive 或低 trust 寫成隨機失控、故意撞偏、能力劣化或需要被玩家「打掉」的狀態；所有軌跡差異都必須在確認前可說明，且保留可完成路徑。
+
+**O14 — 界紋疾走／邊界共鳴遵守能量守恆與 stage data 授權**
+- 驗法：記錄初始能量、可用共鳴 charge、每次 rune trigger 的 debit 與碰撞後能量；覆蓋零 charge、普通牆／柱、stage 授權多次窗口、30／60／120 Hz 與 reduced-motion。
+- 通過：共鳴只能把已儲存 charge 轉換為有上限的速度／轉向窗口，每次觸發須可追溯扣帳；總能量不得超過初始預算加 stage 明示 charge。普通牆與柱仍耗散，不能提供免費加速，也不得使用固定 `+300%` 無條件爆發。
+- 現行月湖營火 `1/1` 保持入門 baseline；未來若提供 2–3 次窗口，必須來自版本化 stage data 與相同總預算，不能由 bond、付費、刷取或稀有度增加。共鳴不得直接完成 objective、產生 reward 或改 Growth。
+
+**O15 — 正式三階心相展開是等預算 sidegrade，且受資產就緒門控**
+- 驗法：以三個 canonical stage 投影多種 objective 的 Orbit profile，比較 normalized total budget；覆蓋未解鎖、夥伴拒絕、缺少／部分資產、512 illustrated 規格、species motion、mobile GPU 與 reduced-motion。
+- 通過：三階可改 silhouette、inertia、turn authority、field／signal 範圍或 objective affordance，但每階總預算一致，且不存在對所有 objective 都更優的高階型態。canonical stage 必須在 session 前已合法解鎖；Orbit 不得用 BondAffinity、dialogueCount、勝場或戰中高潮直接升階。
+- 夥伴可保留目前形態並完成內容；缺少 human-approved、runtime-ready 正式資產時，只能顯示 aura／軌跡／符號提示，不得以舊概念圖、外部參考或尺寸放大假裝完成形態。`ThunderPup` 是獨立夥伴 ID，不得被推定為其他夥伴的後續進化。
+
+**O16 — 四種父 outcome、失敗語意與記憶寫入皆為安全、非懲罰**
+- 驗法：覆蓋 `stabilized`、`recovered`、`retreated`、`overwhelmed_but_safe` 及其 subtype；對失敗、撤退、重播、首次完成前後做 relationship／Growth／stage／memory／path／vault 深比較。
+- 通過：subtype 只能增加情境敘事與復盤線索，不得另建勝敗權重或獎勵梯度；失敗時是投影化身安全解聚，不是夥伴死亡／被擊敗。不得刪除記憶、永久戰損、降階、扣 bond／trust、降低 coverage 或封鎖修復路徑。
+- 失敗、撤退與重播不產生 Growth evidence；session trace 不得收錄玩家原文。若日後需要戰後反思，必須由獨立、合法、可拒絕的記憶根寫入；現行 Orbit 只有合法 first-clear 可一次性映射 exploration evidence。
+
+**O17 — 物理、渲染、RaphaelCore 與效能權限必須解耦**
+- 驗法：檢查 module ownership、serializable snapshot／replay、固定 `1/120` simulation；以現行 Canvas 2D＋DOM 與未來可選 Pixi 呈現層驗證相同 replay；測 390×844、390×664、desktop、觸控／鍵盤、文字放大、44px hit target、reduced-motion 與 mobile GPU 預算。
+- 通過：Orbit engine 是唯一碰撞／能量／objective／outcome authority，結果不依 renderer frame rate；renderer 不得決定 winner、Growth 或 save delta。RaphaelCore 只在 session 前協商與 session 後反思，不能進高頻 simulation loop，也不能因 LLM 延遲改變已確認軌跡。
+- D0／V1 不引入 Matter.js、Planck.js、Node backend 或第二套狀態權威；現行 Canvas 2D renderer 保持有效，未來 Pixi renderer 也只能讀同一 simulation truth。reduced-motion 必須提供等價訊號，UI 不溢出／不遮住主要盤面，且任一技術替換都須通過 O1–O17 回歸。
