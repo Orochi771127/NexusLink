@@ -7465,3 +7465,62 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Raphael boundary: future Core participation is limited to pre-session and
   post-session expression; it cannot own collision, trajectory, outcome,
   reward, growth or save truth.
+
+### 2026-08-01 - Codex - Heartcore Orbit D0 Contract Rebaseline - VERIFIED
+
+- Status: `VERIFIED`; the four-file docs-only D0 rebaseline is complete and
+  does not claim the O12-O17 runtime is implemented.
+- Lane: `Game Engineering And Architecture`.
+- Completed: Orbit V1.1 now records current Moonlake 25-stage plus Plains
+  proof-stage runtime truth, six formally cancelled legacy limits, twelve
+  retained companion/safety/architecture contracts, a 35-75 second objective
+  range, four safe outcome families with subtypes, and V1-V4 implementation
+  gates. `ACCEPTANCE.md` adds O12-O17 and makes the old Agent Program
+  historical when it conflicts with D0.
+- Verification: scoped-doc assertion `4/4`; cancelled limits `6/6`; retained
+  contracts `12/12`; O12-O17 headings exactly once; `git diff --check` PASS.
+  Existing QA also passed: complete Orbit regression `96/96` across 11
+  harnesses, Moonlake stage `9/9`, settlement `8/8`, control depth `7/7`,
+  bounded energy/ring-out `9/9`, and companion Growth state `25/25`.
+- Red-line result: no `src/**`, save/schema, `assets/**`, Pixi foundation,
+  dependency, backend, networking or PvP write. Failure remains non-punitive;
+  retreat/refusal/rest stay available and high-risk remains zero-write.
+- Branch / content commit: `agent/heartcore-orbit-d0-r1` / `4ce989f`.
+- Next safe action: V1+ requires a new Owner-approved EXPERIENCE task pack;
+  any form asset or renderer promotion separately requires GROUNDWORK and
+  human visual approval.
+
+### 2026-08-01 - Codex - Heartcore Orbit D0 Growth And Form Boundary - VERIFIED
+
+- Status: `VERIFIED`; Growth D0 now permits formal-stage Orbit expression only
+  as a normalized, cross-objective sidegrade and keeps G4/G5 unimplemented.
+- Lane: `Game Art, UI, And Visual Production`.
+- Completed: three canonical stages may differ in silhouette, inertia,
+  collision envelope and objective affordance, but must share one total budget
+  and remain completable without a form swap. The contract explicitly rejects
+  mid-battle stage advance, tint/scale stand-ins and using the standalone
+  `thunder-pup` companion as another companion's inferred evolution.
+- Asset and accessibility gates retained: 512 illustrated readiness, species
+  motion, bottom-center stability, mobile GPU, reduced-motion fallback and
+  human approval remain mandatory before Stage 2/3 form promotion.
+- Verification: cross-contract marker assertions PASS; Growth state `25/25`;
+  O15/O17 define asset, renderer, mobile and normalized-budget evidence.
+- Branch / content commit: `agent/heartcore-orbit-d0-r1` / `4ce989f`.
+
+### 2026-08-01 - Codex - Heartcore Orbit D0 Companion Agency Boundary - VERIFIED
+
+- Status: `VERIFIED`; the D0 contract translates companion agency into a
+  visible pre-launch negotiation without hidden post-confirmation sabotage.
+- Lane: `Raphael Core, Companion Reasoning, And Soul Talk`.
+- Completed: accept/rewrite/rest/refuse happens before final-plan lock; Trust
+  affects willingness and legibility rather than obedience, Mood selects named
+  deterministic expression rather than random deviation, JoySorrow does not
+  grant critical damage, and SpamScore is not a direct physics parameter.
+- Core and memory boundary: RaphaelCore is pre/post-session expression only;
+  deterministic Orbit owns trajectory and outcome. Failure safely disperses
+  the projection and never deletes memory, damages the companion, lowers stage
+  or relationship, or creates Growth evidence; later reflection must be a
+  separate legal, consent-respecting root.
+- Verification: O12/O13/O16/O17 present exactly once; full Orbit regression
+  `96/96`; high-risk mutation invariant included in Growth state `25/25`.
+- Branch / content commit: `agent/heartcore-orbit-d0-r1` / `4ce989f`.
