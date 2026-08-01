@@ -7421,3 +7421,47 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
   gate `28/28` with zero accessibility warnings.
 - Branch / commit: `codex/public-new-player-qa-r1` / no commit, push, PR or
   deployment.
+
+### 2026-08-01 - Codex - Heartcore Orbit D0 Contract Rebaseline - IN PROGRESS
+
+- Status: `IN PROGRESS`; Owner explicitly authorized the docs-only D0
+  rebaseline, protected-main publication and codebase-memory reindex.
+- Lane: `Game Engineering And Architecture`.
+- Scope: replace the stale pre-runtime Orbit contract with current runtime
+  truth, formally retire the abstract-orb-only, fixed-duration, global
+  one-pulse ceiling and flat-outcome assumptions, and add deterministic shared
+  control, bounded emotion projection, boundary-resonance energy conservation,
+  safe failure and renderer/physics authority boundaries.
+- Expected files: `docs/design/HEARTCORE_ORBIT_BATTLE_CONTRACT_V1.md`,
+  `docs/design/COMPANION_GROWTH_CONTRACT_V1.md`, `ACCEPTANCE.md` and this
+  ledger only.
+- Red-line / GROUNDWORK boundary: no runtime, save/schema, asset, Pixi
+  foundation, RaphaelCore, dependency, backend or PvP change; unrelated dirty
+  cloud-auth work remains isolated in the original checkout.
+- Branch / base: `agent/heartcore-orbit-d0-r1` from `origin/main` at
+  `130a5fae857e566f4fa53b7f63bf94ea555dc185`.
+
+### 2026-08-01 - Codex - Heartcore Orbit D0 Growth And Form Boundary - IN PROGRESS
+
+- Status: `IN PROGRESS`; the Growth/Orbit cross-contract is being rebaselined
+  without claiming G4 stage advance or G5 form assets are implemented.
+- Lane: `Game Art, UI, And Visual Production`.
+- Scope: allow an approved formal stage to change Orbit silhouette, collision
+  feel and objective affordance as a normalized sidegrade; keep illustrated
+  512 asset readiness, species motion, mobile GPU, reduced-motion and human
+  visual approval as mandatory gates before any form swap.
+- Non-goals: no generated or promoted asset, renderer migration, tint/scale
+  placeholder promotion or claim that ThunderPup has an approved later form.
+
+### 2026-08-01 - Codex - Heartcore Orbit D0 Companion Agency Boundary - IN PROGRESS
+
+- Status: `IN PROGRESS`; companion participation and pre-launch rewrite rules
+  are being made explicit for the future Orbit V2 implementation.
+- Lane: `Raphael Core, Companion Reasoning, And Soul Talk`.
+- Scope: the companion may accept, visibly rewrite, rest or refuse before a
+  launch; once a shared plan is confirmed, deterministic simulation remains
+  authoritative. Trust is not obedience, mood is not hidden aim sabotage,
+  JoySorrow is not critical damage and SpamScore is not a direct physics input.
+- Raphael boundary: future Core participation is limited to pre-session and
+  post-session expression; it cannot own collision, trajectory, outcome,
+  reward, growth or save truth.
