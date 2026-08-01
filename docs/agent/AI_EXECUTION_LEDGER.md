@@ -7341,4 +7341,75 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Verification pending: three-character composition／fallback／teardown browser probes, reduced-motion and zoom checks, mobile screenshots, and the five-person feel-check in the R2 contract.
 - Next safe action: implement the presentation-only `standoffCircleRenderer` and dynamic preparation UI within the approved EXPERIENCE seam; stop for separate GROUNDWORK approval if current manifests cannot provide a same-character fallback without asset or `pixiApp.js` changes.
 - Required reading: `docs/design/STANDOFF_RESONANCE_CIRCLE_R2_CONTRACT.md`, `docs/design/CHAPTER_RESONANCE_ROADMAP_V2.md`, `ACCEPTANCE.md` E7-E14／K, current companion manifest／animation mapping, current `battleController.js`, and this lane.
+### 2026-08-02 - Codex - Gameplay Skin Package R3 Architecture - VERIFIED
 
+- Status: `VERIFIED`; the Owner-approved Heartcore Orbit and Nexus Expedition
+  V3 directions are now runtime-integrated from current `origin/main`.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `Gameplay Skin Package R3 - profile-driven authored foundations`.
+- Layer: `GROUNDWORK + EXPERIENCE`; Owner explicitly authorized the full asset,
+  runtime, commit, push, protected-main integration and MCP update package.
+- Files touched: `assets/gameplay/GameplaySkins_r3/**`,
+  `src/data/gameplayVisualProfiles.js`, `src/ui/orbitClayRenderer.js`,
+  `src/ui/orbitBattleController.js`, `src/ui/orbitDuelController.js`,
+  `src/pixi/expeditionScene.js`, `src/ui/expeditionController.js`, scoped CSS,
+  art docs/index, QA and this ledger. No `index.html`, `pixiApp.js`, state/save,
+  dependency, backend or RaphaelCore write.
+- Completed:
+  - introduced versioned, presentation-only visual profiles with one stable
+    asset root and per-map authored-foundation slots;
+  - Orbit Canvas and Expedition Pixi lazy-load the active foundation and retain
+    their procedural clay fallback if the file is missing or fails to decode;
+  - Expedition promotes the active companion through the existing canonical
+    illustrated asset manifest and registered rift silhouettes, with same-owner
+    procedural fallbacks and no second companion state;
+  - collision, objectives, outcome, rewards, relationship, Growth, save and
+    RaphaelCore remain outside the skin package;
+  - player-facing Expedition diagnostics are now hidden unless
+    `data-expedition-debug="1"` is explicitly enabled.
+- Red-line check: no battle/Orbit outcome authority moved into rendering; no
+  bond/trust/Growth/save mutation was added; retreat remains unconditional;
+  companion willingness and safety terminals are unchanged.
+- Non-goals: no Three.js expansion, renderer migration, collision-map rewrite,
+  new dependency, online module, asset store, character skin commerce or
+  procedural fallback deletion.
+- Acceptance refs: Orbit `O1`, `O6-O9`, `O15`, `O17`; Expedition `E-EXIT`,
+  `E-CORE`; `G1-G7`, `H1-H5`, `I`; 390x844, desktop, reduced motion, asset
+  failure and 44px controls.
+- Verification: gameplay skin contract `15/15`; browser gate `7/7` across
+  Orbit/Expedition at `390x844` and `1280x800`, Orbit reduced motion, and both
+  asset-failure fallbacks; full Orbit aggregate and V1/V2/V3 gates PASS;
+  Expedition behavior `32/32`, loot semantics PASS, session-owner `9/9`.
+- Branch / commit: `codex/gameplay-skins-r3` / this package commit.
+
+### 2026-08-02 - Codex - Gameplay Skin Package R3 Visual Production - VERIFIED
+
+- Status: `VERIFIED`; both live modes now match the Owner-approved bright 3D
+  miniature + resin-clay visual family instead of the earlier procedural-only
+  proof.
+- Lane: `Game Art, UI, And Visual Production`.
+- Approved source direction: Orbit V3 bright Moonlake clay/resin ritual arena
+  and Expedition V3 elevated Windrest Meadow clay/resin navigation field.
+- Promoted assets:
+  - `orbit_moonlake_foundation.png` (`852x1846`, SHA-256
+    `9108456C61C7CC2451D2BB3EE271F19D756454C4B31805A775C1B5B35A1A1481`);
+  - `expedition_windrest_foundation.png` (`853x1844`, SHA-256
+    `780156CEC27A2C8E5BA5FD186273684BE69D9021A8595E08BA0603D1CE67D453`).
+- Production method: built-in image generation performed precise object
+  removal and environment reconstruction from the approved V3 compositions;
+  UI, text, companion proxies, objectives, rifts and indicators were excluded
+  from the foundations. No third-party or downloaded web asset is present.
+- Visual result: Orbit retains a quiet translucent-resin arena, clay rim,
+  waterfalls, lanterns, shrine and lifted cyan/gold light; Expedition retains
+  the elevated free-navigation meadow, branching stone path, rounded cliffs,
+  model foliage and readable open clearings. Canonical 2D companion art stays
+  separate and bottom-centered.
+- Evidence: screenshots under `output/gameplay-skins/r3-runtime/` were visually
+  inspected at phone and desktop; mobile playfields are unobstructed, visible
+  controls measure at least 44px, debug chrome is absent, and fallback scenes
+  remain playable when promoted PNG requests are aborted.
+- Provenance / license / onboarding: exact hashes and ownership are recorded in
+  `assets/gameplay/GameplaySkins_r3/manifest.json`; layer and future-map swap
+  rules are recorded in `docs/art/GAMEPLAY_SKIN_PACKAGE_V1.md` and
+  `docs/art/ART_PRODUCTION_INDEX.json`.
+- Branch / commit: `codex/gameplay-skins-r3` / this package commit.

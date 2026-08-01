@@ -10,6 +10,7 @@
 import { getCompanionById } from "../data/companionRegistry.js";
 import { getIllustratedCompanionAssetById } from "../data/assetManifest.js";
 import { getEvolutionLine } from "../data/evolutionLines.js";
+import { getOrbitGameplayVisualProfile } from "../data/gameplayVisualProfiles.js";
 import {
   getOrbitStageById,
   getOrbitPathLabel,
@@ -59,6 +60,11 @@ import EventBus from "../utils/eventBus.js";
 import { getCompanionCodexGrowthPresentation } from "../state/companionStateSchema.js";
 import { createOrbitMapController } from "./orbitMapController.js";
 import { createOrbitDuelController } from "./orbitDuelController.js";
+import {
+  drawOrbitClayArena,
+  drawOrbitClayBody,
+  preloadOrbitGameplaySkin
+} from "./orbitClayRenderer.js";
 import {
   clearOrbitManifestationAsset,
   drawOrbitManifestation,
@@ -194,6 +200,8 @@ export function createOrbitBattleController({
   let companionEntryBridge = null;
   let companionSettlementReflection = null;
   let settlementReflectionSession = null;
+  const visualProfile = getOrbitGameplayVisualProfile("moonlake");
+  preloadOrbitGameplaySkin(visualProfile);
 
   const mapController = createOrbitMapController({
     onSelectStage: (stageId) => openStage(stageId),
@@ -1237,9 +1245,19 @@ export function createOrbitBattleController({
     const cssW = canvas.clientWidth;
     const cssH = canvas.clientHeight;
     ctx.clearRect(0, 0, cssW, cssH);
-    ctx.fillStyle = "rgba(8, 16, 28, 0.92)";
+    const center = worldToScreen(0, 0, cssW, cssH);
+    drawOrbitClayArena(ctx, {
+      width: cssW,
+      height: cssH,
+      centerX: center.sx,
+      centerY: center.sy,
+      arenaRadius: center.scale,
+      profile: visualProfile,
+      reducedMotion: true
+    });
+    ctx.fillStyle = "rgba(18, 54, 59, 0.42)";
     ctx.fillRect(0, 0, cssW, cssH);
-    ctx.fillStyle = "rgba(200, 220, 240, 0.9)";
+    ctx.fillStyle = visualProfile.palette.text;
     ctx.font = "14px sans-serif";
     ctx.textAlign = "center";
     ctx.fillText(message || "現在不宜出場。", cssW / 2, cssH / 2);
@@ -1251,15 +1269,22 @@ export function createOrbitBattleController({
     const cssH = canvas.clientHeight || 380;
     ctx.clearRect(0, 0, cssW, cssH);
 
-    ctx.fillStyle = "rgba(8, 16, 28, 0.92)";
-    ctx.fillRect(0, 0, cssW, cssH);
-
     const arenaRadius = session?.arenaRadius ?? 1;
     const center = worldToScreen(0, 0, cssW, cssH);
+    drawOrbitClayArena(ctx, {
+      width: cssW,
+      height: cssH,
+      centerX: center.sx,
+      centerY: center.sy,
+      arenaRadius: center.scale * arenaRadius,
+      profile: visualProfile,
+      time: session?.elapsed || 0,
+      reducedMotion: prefersReducedOrbitMotion()
+    });
     ctx.beginPath();
     ctx.arc(center.sx, center.sy, center.scale * arenaRadius, 0, Math.PI * 2);
-    ctx.strokeStyle = "rgba(140, 200, 255, 0.45)";
-    ctx.lineWidth = 2;
+    ctx.strokeStyle = "rgba(245, 221, 150, 0.46)";
+    ctx.lineWidth = 1.5;
     ctx.stroke();
 
     if (!session) return;
@@ -1713,6 +1738,25 @@ export function createOrbitBattleController({
     const wobbleAngle = hybridSpin
       ? Math.sin((body.spinAge || 0) * 9.5) * (body.wobble || 0) * 0.35
       : 0;
+    const ang =
+      (body.spin / 100) * Math.PI * 6 +
+      (session?.elapsed || 0) *
+        (2.8 + body.spin / 18) *
+        (body.spinDirection || 1);
+    if (!formalManifestation) {
+      drawOrbitClayBody(ctx, {
+        x: sx,
+        y: sy,
+        radius: r,
+        profile: visualProfile,
+        variant: body.id === "avatar" ? "player" : "foe",
+        spinAngle: ang,
+        tilt: hybridSpin ? body.tilt || 0 : 0,
+        wobbleAngle,
+        label
+      });
+      return;
+    }
     ctx.beginPath();
     if (hybridSpin) {
       ctx.ellipse(
@@ -1760,11 +1804,6 @@ export function createOrbitBattleController({
       }
     }
     // 轉速視覺加速：轉得越快線掃越急
-    const ang =
-      (body.spin / 100) * Math.PI * 6 +
-      (session?.elapsed || 0) *
-        (2.8 + body.spin / 18) *
-        (body.spinDirection || 1);
     ctx.beginPath();
     ctx.moveTo(sx, sy);
     ctx.lineTo(sx + Math.cos(ang) * r, sy + Math.sin(ang) * r);

@@ -3544,7 +3544,9 @@ body.panel-open .dev-reaction-lab {
   flex-direction: column;
   justify-content: space-between;
   pointer-events: none;
-  background: radial-gradient(ellipse at 50% 40%, rgba(24, 48, 72, 0.55), rgba(6, 10, 18, 0.92));
+  background:
+    radial-gradient(ellipse at 50% 36%, rgba(176, 244, 255, 0.38), transparent 54%),
+    linear-gradient(180deg, #8bcbd4 0%, #b9dcae 48%, #efd39b 100%);
 }
 
 body.orbit-active .orbit-overlay {
@@ -3565,11 +3567,11 @@ body.orbit-active #page-layer {
   margin: 0 12px;
   padding: 12px 14px;
   border-radius: 14px;
-  border: 1px solid rgba(140, 200, 255, 0.28);
-  background: rgba(10, 18, 32, 0.82);
-  color: #e8f2ff;
-  backdrop-filter: blur(8px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+  border: 1px solid rgba(216, 249, 244, 0.54);
+  background: rgba(19, 50, 59, 0.73);
+  color: #f4fbf4;
+  backdrop-filter: blur(12px) saturate(1.14);
+  box-shadow: 0 9px 24px rgba(44, 67, 61, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.13);
 }
 
 .orbit-hud-top {
@@ -3605,7 +3607,7 @@ body.orbit-active #page-layer {
 }
 
 .orbit-companion-line {
-  color: #cfe9ff;
+  color: #dffaf0;
   font-style: italic;
 }
 
@@ -3803,7 +3805,9 @@ body.orbit-active #page-layer {
   width: min(390px, 100%);
   height: auto;
   border-radius: 16px;
-  border: 1px solid rgba(140, 200, 255, 0.22);
+  border: 1px solid rgba(236, 255, 245, 0.6);
+  background: #9ed4d3;
+  box-shadow: 0 18px 36px rgba(52, 73, 58, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.28);
   touch-action: none;
   cursor: crosshair;
 }
@@ -4272,7 +4276,9 @@ body.orbit-active .orbit-battle:not([hidden]) {
   width: min(390px, 100%);
   height: auto;
   border-radius: 16px;
-  border: 1px solid rgba(255, 180, 140, 0.28);
+  border: 1px solid rgba(236, 255, 245, 0.6);
+  background: #9ed4d3;
+  box-shadow: 0 18px 36px rgba(52, 73, 58, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.28);
   touch-action: none;
   cursor: crosshair;
 }
