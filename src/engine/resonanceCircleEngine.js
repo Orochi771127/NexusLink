@@ -69,16 +69,57 @@ export function getCircleStance(element) {
  * 依結緣先後（joinedAt 升冪）取最多 MAX_CIRCLE_SIZE - 1 位。
  * 純讀 state，絕不寫入；查無此夥伴（registry fallback 觸發）一律排除。
  */
-export function deriveResonanceCircle(state = {}) {
+export function listEligibleResonanceCompanions(state = {}) {
   const activeId = state?.activeCompanionId || "greyshade-cat";
   const unlocked = new Set(Array.isArray(state?.unlockedCompanionIds) ? state.unlockedCompanionIds : []);
   const companions = state?.resonance?.companions || {};
 
   return Object.keys(companions)
-    .filter((id) => id !== activeId && companions[id]?.joinedAt && unlocked.has(id))
+    .filter((id) => {
+      const joinedAt = Number(companions[id]?.joinedAt);
+      return id !== activeId && Number.isFinite(joinedAt) && joinedAt > 0 && unlocked.has(id);
+    })
     .map((id) => ({ id, joinedAt: Number(companions[id].joinedAt) || 0, companion: getCompanionById(id) }))
     .filter(({ id, companion }) => companion && companion.id === id && companion.runtimeEnabled !== false)
-    .sort((a, b) => a.joinedAt - b.joinedAt)
-    .slice(0, MAX_CIRCLE_SIZE - 1)
+    .sort((a, b) => a.joinedAt - b.joinedAt || a.id.localeCompare(b.id))
     .map(({ companion }) => companion);
+}
+
+/**
+ * 推導本場實際同行者（不含主夥伴）。
+ *
+ * preferredIds 是 session-only 的邀請清單：一旦呼叫端明示提供，就只會從該
+ * 清單依序挑選，不會在無效、鎖定或拒絕的 id 後自動補人。這個 fail-closed
+ * 規則避免 UI 選了 A，runtime 卻暗中換成 B。未提供 preferredIds 時仍保留
+ * 舊版「最早結緣者優先」行為，讓既有呼叫端與存檔相容。
+ */
+export function deriveResonanceCircle(state = {}, options = undefined) {
+  const eligible = listEligibleResonanceCompanions(state);
+  const preferredProvided = Array.isArray(options)
+    || Boolean(options && Object.prototype.hasOwnProperty.call(options, "preferredIds"));
+
+  if (!preferredProvided) {
+    return eligible.slice(0, MAX_CIRCLE_SIZE - 1);
+  }
+
+  const preferredIds = Array.isArray(options)
+    ? options
+    : Array.isArray(options?.preferredIds)
+      ? options.preferredIds
+      : [];
+  const eligibleById = new Map(eligible.map((companion) => [companion.id, companion]));
+  const selected = [];
+  const seen = new Set();
+
+  for (const rawId of preferredIds) {
+    const id = typeof rawId === "string" ? rawId.trim() : "";
+    if (!id || seen.has(id)) continue;
+    seen.add(id);
+    const companion = eligibleById.get(id);
+    if (!companion) continue;
+    selected.push(companion);
+    if (selected.length >= MAX_CIRCLE_SIZE - 1) break;
+  }
+
+  return selected;
 }

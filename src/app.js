@@ -45,6 +45,7 @@ import { createCompanionInitiativeController } from "./ui/companionInitiativeCon
 import { createHabitatMomentController } from "./ui/habitatMomentController.js";
 import { createAudioCueController } from "./ui/audioCueController.js";
 import { createActionSheetController } from "./ui/actionSheetController.js";
+import { createResonanceWeaveController } from "./ui/resonanceWeaveController.js";
 import { createCalmSyncController } from "./ui/calmSyncController.js";
 import { createCrystalWeavingController } from "./ui/crystalWeavingController.js";
 import { createCompanionGrowthController } from "./ui/companionGrowthController.js";
@@ -397,6 +398,10 @@ async function bootstrap() {
     onOutcome: applyQualitativeSliceOutcome
   });
   const companionGrowthController = createCompanionGrowthController();
+  const resonanceWeaveController = createResonanceWeaveController({
+    setTimePhase: setSceneTimePhaseOverride,
+    getTimePhase: () => getEnvironmentState().sceneTimePhase
+  });
 
   function getBattleController() {
     if (!battleController) {
@@ -521,6 +526,9 @@ async function bootstrap() {
     panelManager,
     store,
     calmSyncController,
+    companionGrowthController,
+    saveCandidateState: saveCriticalSnapshot,
+    resonanceWeaveController,
     openMap: () => getMapController().open(),
     openCodex: () => getCodexController().open(),
     routeNavAction: (action) => pageRouter?.navigate(action)
@@ -939,6 +947,8 @@ async function bootScene(
       const event = {
         type: `${interaction.type}_tap`,
         interactionId: interaction.id,
+        timePhaseId: getEnvironmentState().sceneTimePhase,
+        weatherId: getHabitatWeather(),
         color: interaction.type === "lantern"
           ? "#FFD47A"
           : interaction.type === "crystal"

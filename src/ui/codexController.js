@@ -14,6 +14,24 @@ import {
   COMPANION_GROWTH_STAGES,
   getCompanionCodexGrowthPresentation
 } from "../state/companionStateSchema.js";
+import { projectCodexLivedPaths } from "../engine/codexLivedPaths.js";
+
+const LIVED_PATH_SOURCE_LABELS = Object.freeze({
+  care: "共同生活",
+  exploration: "旅路",
+  reflection: "回望",
+  standoff: "裂隙共鳴",
+  chapter: "章節痕跡",
+  boundary: "界線",
+  recovery: "回到安穩"
+});
+
+const LIVED_PATH_TENDENCY_COPY = Object.freeze({
+  attunement: "牠曾在願意先聽清彼此的時候，靠近半步。",
+  boundary_respect: "牠曾守住自己的距離，而你讓那個界線留在場上。",
+  pathfinding: "你們曾一起找路，也接受過不照原計畫前進。",
+  steadfastness: "有些共同生活的痕跡，正在安靜地變得穩固。"
+});
 
 const CANON_STAGE_LABELS = [
   { zh: "第一階", en: "Stage 1" },
@@ -51,6 +69,22 @@ export function getCodexEntries() {
       character
       }))
   ];
+}
+
+function ensureLivedPathStyles() {
+  if (document.getElementById("codex-lived-path-styles")) return;
+  const style = document.createElement("style");
+  style.id = "codex-lived-path-styles";
+  style.textContent = [
+    ".codex-lived-paths{display:grid;gap:8px;margin:14px 0;padding:12px;border:1px solid rgba(139,217,255,.18);border-radius:16px;background:linear-gradient(135deg,rgba(11,26,45,.62),rgba(39,31,67,.52))}",
+    ".codex-lived-paths .codex-section-title{margin:0}",
+    ".codex-lived-paths-intro,.codex-lived-paths-quiet{margin:0;font-size:12px;line-height:1.55;color:rgba(218,235,249,.86)}",
+    ".codex-lived-path-list{display:grid;gap:7px;margin:0;padding:0;list-style:none}",
+    ".codex-lived-path-list li{display:grid;gap:2px;padding:8px 10px;border-inline-start:2px solid rgba(151,226,255,.42);background:rgba(4,10,24,.28)}",
+    ".codex-lived-path-list strong{font-size:11px;color:#bdeeff}",
+    ".codex-lived-path-list span{font-size:12px;line-height:1.5;color:#eef7ff}"
+  ].join("");
+  document.head.appendChild(style);
 }
 
 export function createCodexController({ store, panelManager }) {
@@ -108,6 +142,7 @@ export function createCodexController({ store, panelManager }) {
     // inactive record may retain a display-only floor, but never borrows the
     // currently active companion's bond or relationship.
     const codexGrowth = getCompanionCodexGrowthPresentation(state.companionStates, companionId);
+    const livedPaths = projectCodexLivedPaths({ state, companionId });
     const eligibility = getCompanionRuntimeEligibility(companion, state);
     const elementLabel = ELEMENT_LABELS[companion.element];
     bodyEl.innerHTML = "";
@@ -157,6 +192,35 @@ export function createCodexController({ store, panelManager }) {
       evolutionSection.appendChild(archiveNote);
     }
     detail.appendChild(evolutionSection);
+
+    if (livedPaths.stageId) {
+      ensureLivedPathStyles();
+      const livedPathSection = document.createElement("section");
+      livedPathSection.className = "codex-lived-paths";
+      livedPathSection.innerHTML =
+        '<h4 class="codex-section-title">旅路星圖・生活過的路</h4>' +
+        '<p class="codex-lived-paths-intro">這裡只回望已經發生的質感，不顯示完成率、門檻或最佳路線。</p>';
+
+      if (livedPaths.pathEchoes.length > 0) {
+        const list = document.createElement("ul");
+        list.className = "codex-lived-path-list";
+        livedPaths.pathEchoes.forEach((echo) => {
+          const item = document.createElement("li");
+          const label = LIVED_PATH_SOURCE_LABELS[echo.sourceType] || "共同痕跡";
+          const copy = LIVED_PATH_TENDENCY_COPY[echo.tendencyId]
+            || "有一道共同生活的痕跡，仍在安靜回響。";
+          item.innerHTML = `<strong>${label}</strong><span>${copy}</span>`;
+          list.appendChild(item);
+        });
+        livedPathSection.appendChild(list);
+      } else {
+        const quiet = document.createElement("p");
+        quiet.className = "codex-lived-paths-quiet";
+        quiet.textContent = "有些痕跡還沒有形成可說清的句子；這不是待辦清單，也不需要追趕。";
+        livedPathSection.appendChild(quiet);
+      }
+      detail.appendChild(livedPathSection);
+    }
 
     const lore = document.createElement("p");
     lore.className = "codex-lore";

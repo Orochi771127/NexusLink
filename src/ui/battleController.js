@@ -24,6 +24,16 @@ import { buildEventReflection } from "../engine/soulTalkComposer.js";
 import { isSessionOwnerCurrent } from "../engine/sessionOwnerGuard.js";
 import { deriveResonanceCircle, MAX_MEMBER_BREATH } from "../engine/resonanceCircleEngine.js";
 import {
+  createStandoffAutonomyState,
+  deriveAutonomousLeadDecision,
+  deriveStandoffPreparation,
+  getAutonomyBeatMetadata,
+  markAutonomousBeatComplete,
+  resolveStandoffRequest
+} from "../engine/standoffAutonomyEngine.js";
+import { listEligibleResonanceCompanions } from "../engine/resonanceCircleEngine.js";
+import { createStandoffCircleRenderer } from "../pixi/standoffCircleRenderer.js";
+import {
   CHAPTER_TRIAL_OUTCOMES,
   getChapterForNode
 } from "../data/chapterRegistry.js";
@@ -45,9 +55,61 @@ import {
   recordStandoffScenarioClear,
   resolveStandoffFirstClear
 } from "../engine/standoffProgress.js";
+import {
+  advanceStandoffPracticeIntent,
+  applyStandoffPracticeVariant,
+  listAvailableStandoffPracticeVariants
+} from "../engine/standoffPracticeVariantEngine.js";
 
 const NOISE_TURN_DELAY_MS = 620;
+const AUTONOMOUS_TELEGRAPH_MS = 1200;
 const COMPANION_ANIMATION_INTENT_EVENT = "COMPANION_ANIMATION_INTENT";
+export const STANDOFF_COMPANION_INTENT_EVENT = "STANDOFF_COMPANION_INTENT";
+
+const APPROACH_COPY = Object.freeze({
+  adaptive: Object.freeze({ label: "順著下一拍", hint: "先讀預示，再一起調整節奏。" }),
+  attune: Object.freeze({ label: "先聽清楚", hint: "優先累積同步與回收微光。" }),
+  shelter: Object.freeze({ label: "先護住彼此", hint: "先守穩界線，再慢慢靠近。" })
+});
+
+const PARTICIPATION_COPY = Object.freeze({
+  accept: "牠願意走進圈裡",
+  rewrite: "牠會站在圈邊，用自己的距離同行",
+  rest: "牠選擇留在棲地休息",
+  decline: "牠說現在還不是時候"
+});
+
+const REQUEST_ACTION_COPY = Object.freeze({
+  barrier: "請幫我們守住界線",
+  resonance: "一起聽清這道回聲",
+  pulse: "現在放輕這一拍"
+});
+
+const REQUEST_RESULT_COPY = Object.freeze({
+  accept: "牠聽見了，願意照這個方向一起試試。",
+  rewrite: "牠聽見了，也把請託改成此刻更安全的方式。",
+  rest: "牠需要在圈邊休息，沒有被要求繼續撐住。",
+  decline: "牠保留了自己的界線；你們仍能繼續或先離開。"
+});
+
+const PRACTICE_VARIANT_COPY = Object.freeze({
+  standard: Object.freeze({
+    label: "原來的裂隙",
+    hint: "照既有節奏同行；首通規則維持不變。"
+  }),
+  solo_witness: Object.freeze({
+    label: "獨自見證",
+    hint: "不邀圈員，確認一位夥伴也能安全走完整段。"
+  }),
+  shared_breath: Object.freeze({
+    label: "共息",
+    hint: "一位圈員較早退到圈外休息；不補位、不懲罰。"
+  }),
+  cross_current: Object.freeze({
+    label: "交錯流",
+    hint: "湧動與離息清楚交替；只改下一拍預示。"
+  })
+});
 
 // 結局 → 回棲地時的動畫意圖。對峙 modal 會遮住 canvas，所以「被看見的後果」
 // 安排在玩家點「回到棲地」、modal 關閉的瞬間播放（夥伴完全可見）。
@@ -109,13 +171,843 @@ export function createBattleController({
   };
   const finishButton = qs("#battle-finish");
   const actionRowEl = qs("#standoff-action-row");
+  const battlePanelEl = qs('[data-panel="battle"]');
+  const fieldEl = stabilityFillEl?.closest(".standoff-field") || null;
   let telegraphEl = null;
   let objectiveEl = null;
   let guideEl = null;
   let causalityEl = null;
   let riftFigureEl = null;
   let circleStripEl = null;
+  let circleStageEl = null;
+  let circleRendererHostEl = null;
+  let preparationEl = null;
+  let autonomyControlsEl = null;
+  let requestSheetEl = null;
   let firstGuideShownThisSession = false;
+  let pendingBattle = null;
+  let preparationDraft = null;
+  let selectedInviteIds = [];
+  let selectedControlMode = null;
+  let selectedApproach = "adaptive";
+  let selectedPracticeVariantId = null;
+  let autonomyState = null;
+  let autonomyPaused = false;
+  let autonomyTimer = null;
+  let autonomyScheduleToken = 0;
+  let circleRenderer = null;
+  let lastLeadDecision = null;
+  let visibilityBound = false;
+  let battleCloseLifecycleBound = false;
+  let safeHarborSubscriptionBound = false;
+  let requestTargetId = null;
+  let requestActionId = null;
+
+  function ensureResonanceR2Styles() {
+    if (document.getElementById("standoff-resonance-r2-styles")) return;
+    const style = document.createElement("style");
+    style.id = "standoff-resonance-r2-styles";
+    style.textContent = [
+      ".standoff-preparation{order:1;display:grid;gap:12px;min-height:0;overflow:auto;padding:4px 2px 8px;color:#eef7ff}",
+      ".standoff-preparation[hidden]{display:none}",
+      ".sr2-prelude{display:grid;gap:4px;padding:4px 6px 8px;border-bottom:1px solid rgba(138,217,255,.18)}",
+      ".sr2-prelude h3{margin:0;font-size:17px;letter-spacing:.03em;color:#f1fbff}",
+      ".sr2-prelude p{margin:0;font-size:12px;line-height:1.55;color:rgba(214,232,250,.9)}",
+      ".sr2-fieldset{display:grid;gap:7px;margin:0;padding:0 4px;border:0}",
+      ".sr2-fieldset legend{padding:0 0 2px;font-size:12px;font-weight:700;color:#dff3ff}",
+      ".sr2-choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}",
+      ".sr2-approach-grid{grid-template-columns:repeat(3,minmax(0,1fr))}",
+      ".sr2-practice-grid{grid-template-columns:repeat(2,minmax(0,1fr))}",
+      ".sr2-choice{appearance:none;min-height:48px;padding:9px 10px;border:1px solid rgba(138,217,255,.22);border-radius:14px;background:linear-gradient(145deg,rgba(8,18,38,.72),rgba(22,24,55,.62));color:#eef7ff;text-align:left}",
+      ".sr2-choice strong,.sr2-choice span{display:block}",
+      ".sr2-choice strong{font-size:12px}",
+      ".sr2-choice span{margin-top:2px;font-size:10.5px;line-height:1.35;color:rgba(202,222,243,.82)}",
+      ".sr2-choice[aria-pressed=true]{border-color:rgba(151,226,255,.78);background:linear-gradient(145deg,rgba(34,91,119,.76),rgba(75,55,126,.7));box-shadow:0 0 0 1px rgba(151,226,255,.18),0 0 20px rgba(92,205,255,.13)}",
+      ".sr2-choice:disabled{opacity:.42;cursor:not-allowed}",
+      ".sr2-practice-note{margin:0;padding:6px 9px;border-inline-start:2px solid rgba(255,225,154,.42);font-size:10.5px;line-height:1.45;color:rgba(226,235,246,.84)}",
+      ".sr2-choice:focus-visible,.sr2-invite:focus-visible,.sr2-request-button:focus-visible,.sr2-control-button:focus-visible{outline:2px solid #a1e4ff;outline-offset:2px}",
+      ".sr2-recommended{display:inline!important;margin:0 0 3px;font-size:9.5px!important;letter-spacing:.04em;color:#ffe19a!important}",
+      ".sr2-invite-list{display:grid;gap:7px}",
+      ".sr2-invite{appearance:none;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 10px;align-items:center;min-height:52px;padding:9px 11px;border:1px solid rgba(171,151,231,.24);border-radius:16px;background:rgba(9,14,33,.62);color:#eef7ff;text-align:left}",
+      ".sr2-invite strong{font-size:12px}",
+      ".sr2-invite em{grid-column:1/-1;font-size:10.5px;font-style:normal;line-height:1.4;color:rgba(207,226,246,.82)}",
+      ".sr2-invite[aria-pressed=true]{border-color:rgba(193,172,255,.72);background:linear-gradient(120deg,rgba(52,42,91,.78),rgba(23,68,91,.7))}",
+      ".sr2-invite-mark{font-size:10px;color:#d8c9ff}",
+      ".sr2-empty-circle{margin:0;padding:8px 10px;border-inline-start:2px solid rgba(138,217,255,.34);font-size:11px;line-height:1.45;color:rgba(207,226,246,.82)}",
+      ".sr2-prep-actions{position:sticky;bottom:0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;padding:8px 4px 2px;background:linear-gradient(transparent,rgba(4,9,22,.94) 35%)}",
+      ".sr2-prep-actions button,.sr2-control-button,.sr2-request-button{appearance:none;min-height:48px;border:1px solid rgba(138,217,255,.24);border-radius:999px;padding:9px 14px;background:rgba(17,31,58,.86);color:#eef7ff;font-weight:650}",
+      ".sr2-prep-actions .is-primary{border-color:rgba(151,226,255,.64);background:linear-gradient(105deg,rgba(41,122,150,.88),rgba(77,66,139,.88))}",
+      ".sr2-prep-actions button:disabled{opacity:.42}",
+      ".standoff-circle-stage{order:5;position:relative;flex:1 1 230px;min-height:180px;width:100%;margin:0 auto;overflow:hidden;isolation:isolate}",
+      ".standoff-circle-stage[hidden]{display:none}",
+      ".standoff-circle-stage .rift-figure{position:absolute!important;inset:-12px 50% auto auto!important;transform:translateX(50%);width:min(58%,250px)!important;height:118px!important;min-height:0!important;margin:0!important;z-index:0}",
+      ".standoff-circle-renderer-host{position:absolute;inset:0;z-index:1;pointer-events:none}",
+      ".standoff-autonomy-controls{order:8;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;padding:4px;border:1px solid rgba(138,217,255,.18);border-radius:18px;background:linear-gradient(105deg,rgba(5,10,25,.86),rgba(24,25,58,.76))}",
+      ".standoff-autonomy-controls[hidden]{display:none}",
+      ".sr2-control-button{min-width:0;padding-inline:7px;font-size:11px}",
+      ".sr2-control-button[data-role=retreat]{color:#ffd8dd}",
+      ".sr2-autonomy-status{grid-column:1/-1;margin:0;padding:1px 7px 3px;font-size:10.5px;line-height:1.4;color:rgba(213,231,249,.86)}",
+      ".standoff-request-sheet{order:9;display:grid;gap:8px;max-height:min(42vh,290px);overflow:auto;padding:10px;border:1px solid rgba(193,172,255,.3);border-radius:16px;background:linear-gradient(130deg,rgba(12,18,40,.96),rgba(39,30,72,.94));color:#eef7ff}",
+      ".standoff-request-sheet[hidden]{display:none}",
+      ".standoff-request-sheet h3,.standoff-request-sheet p{margin:0}",
+      ".standoff-request-sheet h3{font-size:13px}",
+      ".standoff-request-sheet p{font-size:10.5px;line-height:1.45;color:rgba(211,229,247,.86)}",
+      ".sr2-request-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}",
+      ".sr2-request-button{min-height:48px;border-radius:13px;padding:7px;font-size:10.5px;line-height:1.3}",
+      ".sr2-request-targets{display:flex;flex-wrap:wrap;gap:5px}",
+      ".sr2-request-targets .sr2-request-button{flex:1 1 96px}",
+      ".sr2-request-button[aria-pressed=true]{border-color:#cdbaff;background:rgba(81,61,133,.86)}",
+      ".battle-modal[data-standoff-phase=preparation]>.standoff-field,.battle-modal[data-standoff-phase=preparation]>#battle-log,.battle-modal[data-standoff-phase=preparation]>#standoff-action-row,.battle-modal[data-standoff-phase=preparation]>.standoff-objective,.battle-modal[data-standoff-phase=preparation]>.standoff-telegraph,.battle-modal[data-standoff-phase=preparation]>.standoff-circle-stage,.battle-modal[data-standoff-phase=preparation]>.circle-strip,.battle-modal[data-standoff-phase=preparation]>.battle-footer-row{display:none!important}",
+      "@media(max-width:420px){.sr2-approach-grid{grid-template-columns:1fr}.sr2-approach-grid .sr2-choice{min-height:44px}.standoff-circle-stage{min-height:160px}.sr2-request-grid{grid-template-columns:1fr}.standoff-request-sheet{max-height:48vh}}",
+      "@media(max-height:700px){.standoff-preparation{gap:8px}.sr2-prelude{padding-bottom:4px}.sr2-choice{min-height:44px;padding-block:7px}.sr2-invite{min-height:46px;padding-block:7px}.standoff-circle-stage{min-height:132px;flex-basis:160px}}",
+      "@media(prefers-reduced-motion:reduce){.sr2-choice,.sr2-invite{transition:none!important}}",
+      'html[data-reduced-motion-preference="reduced"] .sr2-choice,html[data-reduced-motion-preference="reduced"] .sr2-invite{transition:none!important}'
+    ].join("");
+    document.head.appendChild(style);
+  }
+
+  function ensurePreparationElement() {
+    if (preparationEl || !battlePanelEl) return preparationEl;
+    ensureResonanceR2Styles();
+    preparationEl = document.createElement("section");
+    preparationEl.className = "standoff-preparation";
+    preparationEl.hidden = true;
+    preparationEl.setAttribute("aria-labelledby", "standoff-preparation-title");
+    battlePanelEl.querySelector(".panel-header")?.insertAdjacentElement("afterend", preparationEl);
+    return preparationEl;
+  }
+
+  function renderPreparation() {
+    const el = ensurePreparationElement();
+    if (!el || !pendingBattle) return;
+    const state = store.getState();
+    const eligible = listEligibleResonanceCompanions(state);
+    const availablePracticeVariants = listAvailableStandoffPracticeVariants(
+      state,
+      pendingBattle.nodeId
+    );
+    if (
+      selectedPracticeVariantId
+      && !availablePracticeVariants.some(({ id }) => id === selectedPracticeVariantId)
+    ) {
+      selectedPracticeVariantId = null;
+    }
+    preparationDraft = deriveStandoffPreparation(state, {
+      preferredIds: selectedInviteIds,
+      controlMode: selectedControlMode || "manual",
+      approach: selectedApproach
+    });
+    const participationById = new Map(
+      (preparationDraft?.participation || []).map((entry) => [entry.companionId, entry])
+    );
+
+    el.innerHTML = "";
+    const prelude = document.createElement("div");
+    prelude.className = "sr2-prelude";
+    prelude.innerHTML =
+      '<h3 id="standoff-preparation-title">先說好，這一場怎麼同行</h3>' +
+      "<p>邀請不是編隊。牠們可以靠近、改用自己的距離、休息或說現在不行；空圈也能出發。</p>";
+    el.appendChild(prelude);
+
+    const controlFieldset = document.createElement("fieldset");
+    controlFieldset.className = "sr2-fieldset";
+    controlFieldset.innerHTML = '<legend>誰來領拍</legend><div class="sr2-choice-grid"></div>';
+    const controlGrid = controlFieldset.querySelector(".sr2-choice-grid");
+    [
+      { id: "entrusted", label: "共鳴託付", hint: "夥伴讀取下一拍自主選擇；你仍可接手或撤退。", recommended: true },
+      { id: "manual", label: "同行", hint: "保留現有四種行動，由你逐拍選擇。", recommended: false }
+    ].forEach((choice) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "sr2-choice";
+      button.dataset.controlMode = choice.id;
+      button.setAttribute("aria-pressed", String(selectedControlMode === choice.id));
+      button.innerHTML = `${choice.recommended ? '<span class="sr2-recommended">推薦・仍由你明示選擇</span>' : ""}<strong>${choice.label}</strong><span>${choice.hint}</span>`;
+      button.addEventListener("click", () => {
+        selectedControlMode = choice.id;
+        renderPreparation();
+      });
+      controlGrid.appendChild(button);
+    });
+    el.appendChild(controlFieldset);
+
+    const approachFieldset = document.createElement("fieldset");
+    approachFieldset.className = "sr2-fieldset";
+    approachFieldset.innerHTML = '<legend>共同約定</legend><div class="sr2-choice-grid sr2-approach-grid"></div>';
+    const approachGrid = approachFieldset.querySelector(".sr2-approach-grid");
+    Object.entries(APPROACH_COPY).forEach(([id, copy]) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "sr2-choice";
+      button.dataset.approach = id;
+      button.setAttribute("aria-pressed", String(selectedApproach === id));
+      button.innerHTML = `<strong>${copy.label}</strong><span>${copy.hint}</span>`;
+      button.addEventListener("click", () => {
+        selectedApproach = id;
+        renderPreparation();
+      });
+      approachGrid.appendChild(button);
+    });
+    el.appendChild(approachFieldset);
+
+    const inviteFieldset = document.createElement("fieldset");
+    inviteFieldset.className = "sr2-fieldset";
+    inviteFieldset.innerHTML = '<legend>共鳴邀請・最多兩位</legend><div class="sr2-invite-list"></div>';
+    const inviteList = inviteFieldset.querySelector(".sr2-invite-list");
+    if (!eligible.length) {
+      const empty = document.createElement("p");
+      empty.className = "sr2-empty-circle";
+      empty.textContent = "這次先由你和主夥伴同行。共鳴圈不需要補滿。";
+      inviteList.appendChild(empty);
+    }
+    eligible.forEach((companion) => {
+      const selected = selectedInviteIds.includes(companion.id);
+      const participation = participationById.get(companion.id);
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "sr2-invite";
+      button.dataset.companionId = companion.id;
+      button.setAttribute("aria-pressed", String(selected));
+      const name = companion.displayName?.zh || companion.name || companion.id;
+      button.innerHTML = `<strong>${name}</strong><span class="sr2-invite-mark">${selected ? "已提出邀請" : "保持自由"}</span><em>${selected ? (PARTICIPATION_COPY[participation?.outcomeId] || "牠正在聽這份邀請") : "點一下，聽聽牠現在願不願意同行"}</em>`;
+      button.addEventListener("click", () => {
+        if (selected) {
+          selectedInviteIds = selectedInviteIds.filter((id) => id !== companion.id);
+        } else if (selectedInviteIds.length < 2) {
+          if (selectedPracticeVariantId === "solo_witness") selectedPracticeVariantId = null;
+          selectedInviteIds = [...selectedInviteIds, companion.id];
+        } else {
+          if (selectedPracticeVariantId === "solo_witness") selectedPracticeVariantId = null;
+          const replaced = selectedInviteIds.slice(1);
+          selectedInviteIds = [...replaced, companion.id];
+        }
+        renderPreparation();
+      });
+      inviteList.appendChild(button);
+    });
+    el.appendChild(inviteFieldset);
+
+    if (availablePracticeVariants.length > 0) {
+      const hasParticipatingSupport = Array.isArray(preparationDraft?.companions)
+        && preparationDraft.companions.length > 0;
+      if (selectedPracticeVariantId === "shared_breath" && !hasParticipatingSupport) {
+        selectedPracticeVariantId = null;
+      }
+      const practiceFieldset = document.createElement("fieldset");
+      practiceFieldset.className = "sr2-fieldset";
+      practiceFieldset.innerHTML = '<legend>已理解裂隙・譜式演練</legend><div class="sr2-choice-grid sr2-practice-grid"></div>';
+      const practiceGrid = practiceFieldset.querySelector(".sr2-practice-grid");
+      [
+        { id: null, ...PRACTICE_VARIANT_COPY.standard },
+        ...availablePracticeVariants.map(({ id }) => ({ id, ...PRACTICE_VARIANT_COPY[id] }))
+      ].forEach((choice) => {
+        const disabled = choice.id === "shared_breath" && !hasParticipatingSupport;
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "sr2-choice";
+        button.dataset.practiceVariant = choice.id || "standard";
+        button.disabled = disabled;
+        button.setAttribute("aria-pressed", String(selectedPracticeVariantId === choice.id));
+        button.innerHTML = `<strong>${choice.label}</strong><span>${choice.hint}</span>`;
+        button.addEventListener("click", () => {
+          selectedPracticeVariantId = choice.id;
+          if (choice.id === "solo_witness") selectedInviteIds = [];
+          renderPreparation();
+        });
+        practiceGrid.appendChild(button);
+      });
+      const practiceNote = document.createElement("p");
+      practiceNote.className = "sr2-practice-note";
+      practiceNote.textContent = "演練不新增關卡、不給獎勵，也不寫入關係、記憶或成長；任何時候都能撤退。";
+      practiceFieldset.appendChild(practiceNote);
+      el.appendChild(practiceFieldset);
+    }
+
+    const actions = document.createElement("div");
+    actions.className = "sr2-prep-actions";
+    const start = document.createElement("button");
+    start.type = "button";
+    start.className = "is-primary";
+    start.disabled = !selectedControlMode || preparationDraft?.ok !== true;
+    start.textContent = selectedControlMode ? "照彼此的節奏開始" : "先選擇領拍方式";
+    start.addEventListener("click", beginPreparedBattle);
+    const leave = document.createElement("button");
+    leave.type = "button";
+    leave.textContent = "先回地圖";
+    leave.addEventListener("click", () => {
+      clearPreparationState();
+      removeCloseGuard?.();
+      removeCloseGuard = null;
+      document.body.classList.remove("standoff-active");
+      panelManager.closePanel({ force: true });
+    });
+    actions.append(start, leave);
+    el.appendChild(actions);
+  }
+
+  function clearPreparationState() {
+    pendingBattle = null;
+    preparationDraft = null;
+    selectedInviteIds = [];
+    selectedControlMode = null;
+    selectedApproach = "adaptive";
+    selectedPracticeVariantId = null;
+    if (preparationEl) preparationEl.hidden = true;
+    if (battlePanelEl) delete battlePanelEl.dataset.standoffPhase;
+  }
+
+  function ensureCircleStage() {
+    if (circleStageEl || !battlePanelEl || !logEl) return circleStageEl;
+    ensureResonanceR2Styles();
+    circleStageEl = document.createElement("div");
+    circleStageEl.className = "standoff-circle-stage";
+    circleStageEl.setAttribute("role", "img");
+    circleStageEl.setAttribute("aria-label", "主夥伴與共鳴圈夥伴面向裂隙的同場姿態");
+    circleRendererHostEl = document.createElement("div");
+    circleRendererHostEl.className = "standoff-circle-renderer-host";
+    circleRendererHostEl.setAttribute("aria-hidden", "true");
+    circleStageEl.appendChild(circleRendererHostEl);
+    logEl.parentNode.insertBefore(circleStageEl, logEl);
+    if (riftFigureEl) circleStageEl.insertBefore(riftFigureEl, circleRendererHostEl);
+    return circleStageEl;
+  }
+
+  function getCircleRendererMembers() {
+    if (!session) return [];
+    const leadCreature = getCompanionById(session.companionId);
+    const lead = {
+      companionId: session.companionId,
+      role: "lead",
+      name: session.companionName,
+      creature: leadCreature,
+      resting: session.fatigue >= MAX_FATIGUE,
+      intentLabel: lastLeadDecision
+        ? getDecisionCopy(lastLeadDecision.reasonId, lastLeadDecision.actionId)
+        : "牠在讀下一道預示"
+    };
+    const supports = (session.circle || []).map((member) => ({
+      companionId: member.id,
+      role: "support",
+      name: member.name,
+      breath: member.breath,
+      maxBreath: MAX_MEMBER_BREATH,
+      resting: Boolean(member.resting),
+      intentLabel: member.resting ? "牠退到圈邊喘息" : member.stanceHint
+    }));
+    return [lead, ...supports];
+  }
+
+  function initializeCircleRenderer() {
+    destroyCircleRenderer();
+    const stage = ensureCircleStage();
+    if (!stage || !circleRendererHostEl || !session) return;
+    const sessionKey = String(session.sessionKey || `${session.nodeId || "standoff"}:${session.startedAt}`);
+    circleRenderer = createStandoffCircleRenderer({
+      host: circleRendererHostEl,
+      sessionKey,
+      members: getCircleRendererMembers(),
+      reducedMotion: prefersReducedMotion(),
+      onStatus: ({ kind, message }) => {
+        if (kind === "error" && statusText) statusText.textContent = `${message}；已保留文字與同角色回退。`;
+      }
+    });
+    circleRenderer.ready.then((ready) => {
+      if (!ready || !session || circleRenderer?.getDiagnostics?.().sessionKey !== sessionKey) return;
+      syncCircleRendererMembers();
+    });
+  }
+
+  function syncCircleRendererMembers() {
+    if (!circleRenderer || !session) return;
+    circleRenderer.updateMembers(getCircleRendererMembers());
+  }
+
+  function destroyCircleRenderer() {
+    circleRenderer?.destroy?.();
+    circleRenderer = null;
+    if (circleRendererHostEl) circleRendererHostEl.innerHTML = "";
+  }
+
+  function emitCircleIntent({
+    companionId,
+    role,
+    intent,
+    reasonId = null,
+    bodyCueId = null,
+    beatIndex = null
+  }) {
+    if (!session || !intent || !companionId) return;
+    const payload = {
+      sessionKey: String(session.sessionKey || `${session.nodeId || "standoff"}:${session.startedAt}`),
+      beatIndex: Number.isInteger(beatIndex)
+        ? beatIndex
+        : Math.max(0, Number(autonomyState?.beatCount) || 0) + 1,
+      companionId,
+      role,
+      intent,
+      reasonId,
+      bodyCueId
+    };
+    EventBus.emit(STANDOFF_COMPANION_INTENT_EVENT, payload);
+    if (!circleRenderer?.consumeIntent) {
+      if (role === "lead") emitBattleAnimationIntent(intent, { reason: reasonId || "circle-renderer-unavailable" });
+      return Promise.resolve(0);
+    }
+    return Promise.resolve(circleRenderer.consumeIntent(payload)).then((consumed) => {
+      if (!consumed && role === "lead") {
+        emitBattleAnimationIntent(intent, { reason: reasonId || "circle-renderer-fallback" });
+      }
+      return circleRenderer?.getIntentDurationMs?.(companionId) || 0;
+    }).catch(() => {
+      if (role === "lead") emitBattleAnimationIntent(intent, { reason: "circle-renderer-error" });
+      return 0;
+    });
+  }
+
+  function ensureAutonomyControls() {
+    if (autonomyControlsEl || !actionRowEl) return autonomyControlsEl;
+    ensureResonanceR2Styles();
+    autonomyControlsEl = document.createElement("div");
+    autonomyControlsEl.className = "standoff-autonomy-controls";
+    autonomyControlsEl.hidden = true;
+    autonomyControlsEl.setAttribute("aria-label", "共鳴託付控制");
+    autonomyControlsEl.innerHTML =
+      '<button type="button" class="sr2-control-button" data-role="pause">暫停</button>' +
+      '<button type="button" class="sr2-control-button" data-role="takeover">接手</button>' +
+      '<button type="button" class="sr2-control-button" data-role="request">共鳴請託</button>' +
+      '<button type="button" class="sr2-control-button" data-role="retreat">先撤退</button>' +
+      '<p class="sr2-autonomy-status" role="status" aria-live="polite"></p>';
+    actionRowEl.insertAdjacentElement("afterend", autonomyControlsEl);
+    autonomyControlsEl.querySelector('[data-role="pause"]')?.addEventListener("click", () => {
+      if (autonomyPaused) resumeAutonomy();
+      else pauseAutonomy("你暫停了這一拍；可以接手，或讓牠繼續。", { userInitiated: true });
+    });
+    autonomyControlsEl.querySelector('[data-role="takeover"]')?.addEventListener("click", takeOverStandoff);
+    autonomyControlsEl.querySelector('[data-role="request"]')?.addEventListener("click", openRequestSheet);
+    autonomyControlsEl.querySelector('[data-role="retreat"]')?.addEventListener("click", () => handleAction("retreat"));
+    return autonomyControlsEl;
+  }
+
+  function renderAutonomyControls(message = "") {
+    const controls = ensureAutonomyControls();
+    if (!controls) return;
+    const entrusted = autonomyState?.controlMode === "entrusted" && session?.turn !== "ended";
+    controls.hidden = !entrusted;
+    if (!entrusted) return;
+    const pauseButton = controls.querySelector('[data-role="pause"]');
+    const takeoverButton = controls.querySelector('[data-role="takeover"]');
+    const requestButton = controls.querySelector('[data-role="request"]');
+    const status = controls.querySelector(".sr2-autonomy-status");
+    const safetyTerminal = session?.growthSafetyExcluded === true;
+    if (pauseButton) pauseButton.textContent = autonomyPaused ? "繼續託付" : "暫停／接手";
+    if (pauseButton) pauseButton.disabled = safetyTerminal;
+    if (takeoverButton) takeoverButton.disabled = safetyTerminal;
+    if (requestButton) {
+      requestButton.disabled = safetyTerminal || autonomyState?.request?.used === true || session.turn !== "player";
+      requestButton.textContent = autonomyState?.request?.used ? "請託已回應" : "共鳴請託・一次";
+    }
+    const beat = getAutonomyBeatMetadata(autonomyState || {});
+    if (status) {
+      status.textContent = message || (autonomyPaused
+        ? "共鳴託付已暫停。接手不會重建或重擲這場對峙。"
+        : `牠們正依「${APPROACH_COPY[autonomyState.approach]?.label || "共同約定"}」讀取下一拍；自主拍數 ${beat.beatCount}/${beat.maxBeats}。`);
+    }
+  }
+
+  function ensureRequestSheet() {
+    if (requestSheetEl || !actionRowEl) return requestSheetEl;
+    ensureResonanceR2Styles();
+    requestSheetEl = document.createElement("section");
+    requestSheetEl.className = "standoff-request-sheet";
+    requestSheetEl.hidden = true;
+    requestSheetEl.setAttribute("aria-labelledby", "standoff-request-title");
+    requestSheetEl.innerHTML =
+      '<h3 id="standoff-request-title">提出一次共鳴請託</h3>' +
+      "<p>這不是命令。牠可以接受、改寫、休息或拒絕；無論回應如何，本場都只提出一次。</p>" +
+      '<div class="sr2-request-targets" aria-label="請託對象"></div>' +
+      '<div class="sr2-request-grid" aria-label="請託內容"></div>' +
+      '<button type="button" class="sr2-control-button" data-role="cancel-request">先不說</button>';
+    requestSheetEl.querySelector('[data-role="cancel-request"]')?.addEventListener("click", closeRequestSheet);
+    autonomyControlsEl?.insertAdjacentElement("afterend", requestSheetEl);
+    return requestSheetEl;
+  }
+
+  function openRequestSheet() {
+    if (!session || session.turn !== "player" || autonomyState?.request?.used) return;
+    if (guardSafeHarborTerminal()) return;
+    pauseAutonomy("你們先停一拍，聽清這份請託。", { requestPause: true });
+    const sheet = ensureRequestSheet();
+    if (!sheet) return;
+    const targets = getCircleRendererMembers().filter((member) => !member.resting);
+    requestTargetId = targets[0]?.companionId || null;
+    requestActionId = null;
+    const targetHost = sheet.querySelector(".sr2-request-targets");
+    const actionHost = sheet.querySelector(".sr2-request-grid");
+    targetHost.innerHTML = "";
+    actionHost.innerHTML = "";
+    targets.forEach((member) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "sr2-request-button";
+      button.textContent = member.name;
+      button.setAttribute("aria-pressed", String(requestTargetId === member.companionId));
+      button.addEventListener("click", () => {
+        requestTargetId = member.companionId;
+        [...targetHost.children].forEach((child) => child.setAttribute("aria-pressed", String(child === button)));
+      });
+      targetHost.appendChild(button);
+    });
+    Object.entries(REQUEST_ACTION_COPY).forEach(([actionId, label]) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "sr2-request-button";
+      button.textContent = label;
+      button.setAttribute("aria-pressed", "false");
+      button.addEventListener("click", () => {
+        requestActionId = actionId;
+        [...actionHost.children].forEach((child) => child.setAttribute("aria-pressed", String(child === button)));
+        submitRequest();
+      });
+      actionHost.appendChild(button);
+    });
+    sheet.hidden = false;
+    sheet.querySelector(".sr2-request-targets button")?.focus();
+  }
+
+  function submitRequest() {
+    if (!requestTargetId || !requestActionId || !session || !autonomyState) return;
+    if (guardSafeHarborTerminal()) return;
+    const resolved = resolveStandoffRequest({
+      state: store.getState(),
+      session,
+      autonomy: autonomyState,
+      targetId: requestTargetId,
+      requestedActionId: requestActionId
+    });
+    if (!resolved.ok) {
+      renderAutonomyControls("這份請託沒有送出；你仍保留本場的請託機會。");
+      return;
+    }
+    autonomyState = { ...resolved.nextAutonomy, paused: false, pauseReason: null };
+    autonomyPaused = false;
+    const response = REQUEST_RESULT_COPY[resolved.requestResult.outcomeId] || "牠用自己的方式回應了。";
+    session.log.push({ kind: "system", text: `【共鳴請託】${response}` });
+    const leadAnimationDuration = emitCircleIntent({
+      companionId: resolved.requestResult.targetId,
+      role: resolved.requestResult.targetId === session.companionId ? "lead" : "support",
+      intent: resolved.requestResult.resolvedActionId
+        ? ACTION_INTENT[resolved.requestResult.resolvedActionId]
+        : "standoff.retreat",
+      reasonId: resolved.requestResult.reasonId,
+      bodyCueId: resolved.requestResult.bodyCueId
+    });
+    closeRequestSheet();
+    render();
+    renderAutonomyControls(response);
+    scheduleAutonomousTurn(AUTONOMOUS_TELEGRAPH_MS);
+  }
+
+  function closeRequestSheet() {
+    if (requestSheetEl) requestSheetEl.hidden = true;
+    requestTargetId = null;
+    requestActionId = null;
+  }
+
+  function getDecisionCopy(reasonId, actionId) {
+    const reasonCopy = {
+      stability_needs_boundary: "牠察覺心核需要先站穩",
+      fatigue_needs_boundary: "牠先替彼此留出喘息",
+      surge_without_boundary: "牠先把界線立穩",
+      adaptive_reads_surge: "牠讀見湧動，先守住界線",
+      adaptive_reads_gather: "牠趁蓄勢時聽清回聲",
+      adaptive_uses_safe_lull: "牠在安全的暫歇裡放輕這一拍",
+      adaptive_follows_quiet: "牠順著安靜的縫隙共鳴",
+      attune_stability_low: "牠先穩住彼此，再繼續聽",
+      attune_listens_first: "牠選擇先把回聲聽完整",
+      shelter_maintains_boundary: "牠繼續守著彼此的界線",
+      shelter_boundary_is_steady: "界線站穩後，牠才靠近回聲",
+      request_accepted: "牠聽見請託，決定一起試試",
+      guarded_rewrites_request: "牠用自己的距離改寫了請託",
+      request_rewritten_for_safety: "牠把請託改成更安全的做法",
+      request_revalidated_for_safety: "情勢變了，牠先守住安全"
+    };
+    return reasonCopy[reasonId]
+      || (actionId === "barrier" ? "牠先把界線立穩" : actionId === "pulse" ? "牠把這一拍放輕" : "牠正聽清這道回聲");
+  }
+
+  function enterSafeHarborTerminal() {
+    const copy = "安全照顧模式已接手；這場只保留一起離開，不再領拍、回應請託或推進雜訊。";
+    if (!session) {
+      if (!pendingBattle) return false;
+      autonomyScheduleToken += 1;
+      window.clearTimeout(autonomyTimer);
+      window.clearTimeout(noiseTurnTimer);
+      autonomyTimer = null;
+      noiseTurnTimer = null;
+      closeRequestSheet();
+      clearPreparationState();
+      removeCloseGuard?.();
+      removeCloseGuard = null;
+      document.body.classList.remove("standoff-active");
+      if (statusText) statusText.textContent = "安全照顧模式已接手；共鳴邀請已安靜收起，沒有建立對峙。";
+      panelManager.closePanel({ force: true });
+      return true;
+    }
+    if (session.turn === "ended") return false;
+    session.growthSafetyExcluded = true;
+    autonomyPaused = true;
+    autonomyScheduleToken += 1;
+    window.clearTimeout(autonomyTimer);
+    window.clearTimeout(noiseTurnTimer);
+    autonomyTimer = null;
+    noiseTurnTimer = null;
+    closeRequestSheet();
+    if (autonomyState) {
+      autonomyState = {
+        ...autonomyState,
+        paused: true,
+        pauseReason: "safe-harbor-terminal",
+        nextActionOverride: null
+      };
+    }
+    render();
+    renderAutonomyControls(copy);
+    if (statusText) statusText.textContent = copy;
+    return true;
+  }
+
+  function guardSafeHarborTerminal(state = store.getState()) {
+    if (!session && !pendingBattle) return false;
+    if (session?.turn === "ended") return false;
+    if (session?.growthSafetyExcluded !== true && state?.safeHarborMode !== true) return false;
+    return enterSafeHarborTerminal();
+  }
+
+  function pauseAutonomy(message = "共鳴託付已暫停。", options = {}) {
+    if (autonomyState?.controlMode !== "entrusted") return;
+    autonomyPaused = true;
+    autonomyScheduleToken += 1;
+    window.clearTimeout(autonomyTimer);
+    autonomyTimer = null;
+    window.clearTimeout(noiseTurnTimer);
+    noiseTurnTimer = null;
+    autonomyState = {
+      ...autonomyState,
+      paused: true,
+      pauseReason: options.lifecycle ? "lifecycle-paused" : options.requestPause ? "request-paused" : "player-paused"
+    };
+    renderAutonomyControls(message);
+  }
+
+  function resumeAutonomy() {
+    if (!session || autonomyState?.controlMode !== "entrusted") return;
+    if (guardSafeHarborTerminal()) return;
+    if (document.visibilityState === "hidden") {
+      renderAutonomyControls("頁面仍在背景；回到這裡後才會繼續。");
+      return;
+    }
+    autonomyPaused = false;
+    autonomyState = { ...autonomyState, paused: false, pauseReason: null };
+    closeRequestSheet();
+    renderAutonomyControls();
+    if (session.turn === "player") scheduleAutonomousTurn(AUTONOMOUS_TELEGRAPH_MS);
+    else if (session.turn === "noise") scheduleNoiseTurn({ autonomous: true });
+  }
+
+  function takeOverStandoff() {
+    if (!session || autonomyState?.controlMode !== "entrusted") return;
+    if (guardSafeHarborTerminal()) return;
+    autonomyScheduleToken += 1;
+    window.clearTimeout(autonomyTimer);
+    autonomyTimer = null;
+    autonomyPaused = false;
+    autonomyState = {
+      ...autonomyState,
+      controlMode: "manual",
+      paused: false,
+      pauseReason: null,
+      nextActionOverride: null
+    };
+    closeRequestSheet();
+    render();
+    renderAutonomyControls();
+    if (statusText) statusText.textContent = "你接過了領拍；這一場沒有重建，也沒有重擲下一拍。";
+    if (session.turn === "noise") scheduleNoiseTurn({ autonomous: false });
+  }
+
+  function scheduleAutonomousTurn(delayMs = AUTONOMOUS_TELEGRAPH_MS) {
+    if (!session || session.turn !== "player" || autonomyState?.controlMode !== "entrusted") return;
+    if (autonomyPaused || autonomyState.paused || document.visibilityState === "hidden") return;
+    if (guardSafeHarborTerminal()) return;
+    const metadata = getAutonomyBeatMetadata(autonomyState);
+    if (metadata.limitReached) {
+      pauseAutonomy("自主同行已走完 20 拍。你可以接手，或一起先離開。", { userInitiated: true });
+      return;
+    }
+    const token = ++autonomyScheduleToken;
+    window.clearTimeout(autonomyTimer);
+    autonomyTimer = window.setTimeout(() => {
+      autonomyTimer = null;
+      if (token !== autonomyScheduleToken) return;
+      runAutonomousLead();
+    }, Math.max(AUTONOMOUS_TELEGRAPH_MS, Number(delayMs) || 0));
+  }
+
+  function runAutonomousLead() {
+    if (!session || session.turn !== "player" || autonomyPaused) return;
+    if (!guardCurrentSessionOwner()) return;
+    if (guardSafeHarborTerminal()) return;
+    const decision = deriveAutonomousLeadDecision(session, autonomyState);
+    if (!decision.ok || !decision.leadDecision) {
+      pauseAutonomy(
+        decision.reason === "max-beats"
+          ? "自主同行已走完 20 拍。你可以接手，或一起先離開。"
+          : "牠停下來確認彼此的安全；你可以接手或先撤退。",
+        { userInitiated: true }
+      );
+      return;
+    }
+    lastLeadDecision = decision.leadDecision;
+    executeLeadAction(decision.leadDecision.actionId, {
+      autonomous: true,
+      decision: decision.leadDecision
+    });
+  }
+
+  function executeLeadAction(actionId, { autonomous = false, decision = null } = {}) {
+    if (!session || session.turn !== "player" || !canUseAction(session, actionId)) return false;
+    if (guardSafeHarborTerminal()) return false;
+    const beforeCircle = snapshotCircleBreath(session.circle);
+    const beatIndex = decision?.beatIndex || Math.max(1, Number(autonomyState?.beatCount) + 1 || session.round);
+    const rng = autonomous
+      ? createDeterministicRng(`${session.sessionKey}:${beatIndex}:lead:${actionId}`)
+      : Math.random;
+    AudioManager.playSfx("standoff_action");
+    session = applyPlayerAction(session, actionId, rng);
+    if (decision) {
+      session.log.push({
+        kind: "system",
+        text: `【自主領拍】${getDecisionCopy(decision.reasonId, actionId)}。`
+      });
+    }
+    render();
+    const leadAnimationDuration = emitCircleIntent({
+      companionId: session.companionId,
+      role: "lead",
+      intent: decision?.animationIntent || ACTION_INTENT[actionId],
+      reasonId: decision?.reasonId || "manual_companion_action",
+      bodyCueId: decision?.bodyCueId || null,
+      beatIndex
+    });
+    emitSupportBreathEvents(beforeCircle, session.circle, { actionId, beatIndex });
+
+    const verdict = settleStandoff(session);
+    if (verdict.settled) {
+      endStandoff(verdict.outcome);
+      return true;
+    }
+    Promise.resolve(leadAnimationDuration).then((durationMs) => {
+      if (!session || session.turn !== "noise") return;
+      scheduleNoiseTurn({
+        autonomous,
+        beatIndex,
+        delayMs: Math.max(NOISE_TURN_DELAY_MS, Number(durationMs) || 0)
+      });
+    });
+    return true;
+  }
+
+  function scheduleNoiseTurn({ autonomous = false, beatIndex = null, delayMs = NOISE_TURN_DELAY_MS } = {}) {
+    if (guardSafeHarborTerminal()) return;
+    window.clearTimeout(noiseTurnTimer);
+    noiseTurnTimer = window.setTimeout(() => {
+      noiseTurnTimer = null;
+      if (!session || session.turn !== "noise") return;
+      if (autonomous && (autonomyPaused || autonomyState?.paused)) return;
+      if (!guardCurrentSessionOwner()) return;
+      if (guardSafeHarborTerminal()) return;
+      const stabilityBefore = session.stability.current;
+      const beforeCircle = snapshotCircleBreath(session.circle);
+      const resolvedBeatIndex = beatIndex || Math.max(1, Number(autonomyState?.beatCount) + 1 || session.round);
+      const rng = autonomous
+        ? createDeterministicRng(`${session.sessionKey}:${resolvedBeatIndex}:noise:${session.nextIntent}`)
+        : Math.random;
+      session = applyNoiseTurn(session, rng);
+      if (session.practiceVariant?.id === "cross_current" && session.turn === "player") {
+        const advancedPractice = advanceStandoffPracticeIntent(session);
+        if (advancedPractice.ok) session = advancedPractice.session;
+      }
+      render();
+      emitSupportBreathEvents(beforeCircle, session.circle, {
+        actionId: "noise",
+        beatIndex: resolvedBeatIndex
+      });
+      if (session.stability.current < stabilityBefore) {
+        if (circleRenderer) {
+          emitCircleIntent({
+            companionId: session.companionId,
+            role: "lead",
+            intent: "standoff.barrier",
+            reasonId: "noise_pressure_received",
+            bodyCueId: "brace",
+            beatIndex: resolvedBeatIndex + 1000
+          });
+        } else {
+          emitBattleAnimationIntent("battle.hit", { reason: "noise-pressure" });
+        }
+      }
+      const noiseVerdict = settleStandoff(session);
+      if (noiseVerdict.settled) {
+        endStandoff(noiseVerdict.outcome);
+        return;
+      }
+      if (autonomous && autonomyState?.controlMode === "entrusted") {
+        const completed = markAutonomousBeatComplete(autonomyState);
+        autonomyState = completed.nextAutonomy;
+        autonomyPaused = completed.beatMetadata.shouldPause;
+        renderAutonomyControls(
+          completed.beatMetadata.limitReached
+            ? "自主同行已走完 20 拍。你可以接手，或一起先離開。"
+            : ""
+        );
+        if (!completed.beatMetadata.shouldPause) scheduleAutonomousTurn(AUTONOMOUS_TELEGRAPH_MS);
+      }
+    }, Math.max(0, Number(delayMs) || NOISE_TURN_DELAY_MS));
+  }
+
+  function snapshotCircleBreath(circle = []) {
+    return new Map((circle || []).map((member) => [member.id, {
+      breath: Number(member.breath) || 0,
+      resting: Boolean(member.resting)
+    }]));
+  }
+
+  function emitSupportBreathEvents(before, after = [], { actionId, beatIndex }) {
+    (after || []).forEach((member) => {
+      const previous = before.get(member.id);
+      if (!previous || member.breath >= previous.breath) return;
+      const intent = actionId === "barrier" || ["water", "earth", "neutral"].includes(member.element)
+        ? "standoff.barrier"
+        : actionId === "pulse"
+          ? "standoff.pulse"
+          : "standoff.resonance";
+      emitCircleIntent({
+        companionId: member.id,
+        role: "support",
+        intent,
+        reasonId: member.resting ? "support_breath_spent" : `support_${member.stanceId}`,
+        bodyCueId: member.resting ? "settle_back" : member.stanceId,
+        beatIndex
+      });
+    });
+    syncCircleRendererMembers();
+  }
+
+  function handleVisibilityChange() {
+    if (document.visibilityState === "hidden" && autonomyState?.controlMode === "entrusted") {
+      pauseAutonomy("頁面進入背景，共鳴託付已立即暫停。", { lifecycle: true });
+    }
+  }
 
   // 意圖預示（telegraph）：動態插到行動列上方（不動 index.html），玩家在選行動前先讀懂
   // 「裂隙下一拍要做什麼」。樣式由本檔一次性注入 <style>，避免動基底 styles.css。
@@ -216,7 +1108,11 @@ export function createBattleController({
     const spriteEl = riftFigureEl.querySelector(".rf-sprite");
     spriteEl.addEventListener("load", () => riftFigureEl?.classList.add("has-sprite"));
     spriteEl.addEventListener("error", () => riftFigureEl?.classList.remove("has-sprite"));
-    logEl.parentNode.insertBefore(riftFigureEl, logEl);
+    if (circleStageEl && circleRendererHostEl) {
+      circleStageEl.insertBefore(riftFigureEl, circleRendererHostEl);
+    } else {
+      logEl.parentNode.insertBefore(riftFigureEl, logEl);
+    }
     return riftFigureEl;
   }
 
@@ -323,9 +1219,17 @@ export function createBattleController({
 
   function abortStandoffForOwnerMismatch({ closePanel = true } = {}) {
     window.clearTimeout(noiseTurnTimer);
+    window.clearTimeout(autonomyTimer);
     noiseTurnTimer = null;
+    autonomyTimer = null;
+    autonomyScheduleToken += 1;
     removeCloseGuard?.();
     removeCloseGuard = null;
+    destroyCircleRenderer();
+    closeRequestSheet();
+    autonomyState = null;
+    autonomyPaused = false;
+    clearPreparationState();
     session = null;
     lastOutcome = null;
     document.body.classList.remove("standoff-active");
@@ -362,26 +1266,191 @@ export function createBattleController({
       // 回棲地：先發出「被看見的後果」動畫意圖，再關閉 modal。
       // lazy load + modal 淡出（180ms）的時間差，剛好讓動畫落在夥伴可見後播放。
       emitBattleAnimationIntent(OUTCOME_RETURN_INTENT[lastOutcome], { source: "standoff" });
+      destroyCircleRenderer();
+      closeRequestSheet();
+      autonomyState = null;
+      autonomyPaused = false;
+      clearPreparationState();
+      removeCloseGuard?.();
+      removeCloseGuard = null;
       document.body.classList.remove("standoff-active");
       panelManager.closePanel({ force: true });
     });
+    if (!visibilityBound) {
+      document.addEventListener("visibilitychange", handleVisibilityChange);
+      visibilityBound = true;
+    }
+    if (!safeHarborSubscriptionBound && typeof store.subscribe === "function") {
+      store.subscribe((nextState) => {
+        if (nextState?.safeHarborMode === true) guardSafeHarborTerminal(nextState);
+      });
+      safeHarborSubscriptionBound = true;
+    }
+    if (!battleCloseLifecycleBound && typeof panelManager.registerOnClose === "function") {
+      panelManager.registerOnClose("battle", ({ reason }) => {
+        const abandonedUnsettled = Boolean(session && session.turn !== "ended");
+        window.clearTimeout(noiseTurnTimer);
+        window.clearTimeout(autonomyTimer);
+        noiseTurnTimer = null;
+        autonomyTimer = null;
+        autonomyScheduleToken += 1;
+        destroyCircleRenderer();
+        closeRequestSheet();
+        clearPreparationState();
+        removeCloseGuard?.();
+        removeCloseGuard = null;
+        autonomyState = null;
+        autonomyPaused = false;
+        session = null;
+        document.body.classList.remove("standoff-active");
+        if (abandonedUnsettled && statusText) {
+          statusText.textContent = reason === "switch"
+            ? "畫面已切換；這場對峙沒有結算或留下進度。"
+            : "這場對峙已安靜收起，沒有結算或留下進度。";
+        }
+      });
+      battleCloseLifecycleBound = true;
+    }
   }
 
   function startBattle({ enemyId, nodeId }) {
     const state = store.getState();
+    const eligible = listEligibleResonanceCompanions(state);
+    const practiceVariants = listAvailableStandoffPracticeVariants(state, nodeId);
+    const firstLoop = state.onboarding?.firstLoop || {};
+    const mayOfferR2Preparation = state.safeHarborMode !== true
+      && (eligible.length > 0 || practiceVariants.length > 0)
+      && Boolean(firstLoop.completedAt || firstLoop.skippedAt);
+
+    window.clearTimeout(noiseTurnTimer);
+    window.clearTimeout(autonomyTimer);
+    noiseTurnTimer = null;
+    autonomyTimer = null;
+    autonomyScheduleToken += 1;
+    destroyCircleRenderer();
+    closeRequestSheet();
+    session = null;
+    autonomyState = null;
+    autonomyPaused = false;
+    lastLeadDecision = null;
+    pendingBattle = { enemyId, nodeId, ownerId: state.activeCompanionId };
+    selectedInviteIds = [];
+    selectedControlMode = null;
+    selectedApproach = "adaptive";
+    selectedPracticeVariantId = null;
+
+    if (mayOfferR2Preparation) {
+      if (battlePanelEl) battlePanelEl.dataset.standoffPhase = "preparation";
+      const prep = ensurePreparationElement();
+      if (prep) prep.hidden = false;
+      if (nodeLabelEl) nodeLabelEl.textContent = "共鳴協議・這一場不必補滿";
+      if (finishButton) finishButton.hidden = true;
+      removeCloseGuard?.();
+      removeCloseGuard = panelManager.registerCloseGuard("battle", () => {
+        clearPreparationState();
+        document.body.classList.remove("standoff-active");
+        const release = removeCloseGuard;
+        removeCloseGuard = null;
+        release?.();
+        return false;
+      });
+      document.body.classList.add("standoff-active");
+      panelManager.openPanel("battle");
+      renderPreparation();
+      return;
+    }
+
+    const fallbackPreparation = deriveStandoffPreparation(state, {
+      controlMode: "manual",
+      approach: "adaptive"
+    });
+    beginBattle(
+      { enemyId, nodeId, ownerId: state.activeCompanionId },
+      fallbackPreparation.ok
+        ? fallbackPreparation
+        : { ...fallbackPreparation, controlMode: "manual", companions: [], participation: [] }
+    );
+  }
+
+  function beginPreparedBattle() {
+    if (!pendingBattle || !selectedControlMode) return;
+    const state = store.getState();
+    if (state.activeCompanionId !== pendingBattle.ownerId) {
+      clearPreparationState();
+      if (statusText) statusText.textContent = "夥伴已切換，這次邀請沒有建立。";
+      panelManager.closePanel({ force: true });
+      return;
+    }
+    const finalPreparation = deriveStandoffPreparation(state, {
+      preferredIds: selectedInviteIds,
+      controlMode: selectedControlMode,
+      approach: selectedApproach
+    });
+    if (!finalPreparation.ok) {
+      clearPreparationState();
+      if (statusText) statusText.textContent = "安全照顧模式已接手；共鳴邀請沒有建立。";
+      panelManager.closePanel({ force: true });
+      return;
+    }
+    const battle = {
+      ...pendingBattle,
+      practiceVariantId: selectedPracticeVariantId
+    };
+    clearPreparationState();
+    beginBattle(battle, finalPreparation);
+  }
+
+  function beginBattle({ enemyId, nodeId, practiceVariantId = null }, preparation) {
+    const state = store.getState();
     const companion = getCompanionById(state.activeCompanionId);
     const chapterNo = getChapterForNode(nodeId);
     const tensionProfile = getStandoffTensionProfile(chapterNo);
-    // CH-6 共鳴圈：進場前定圈（最早結緣者優先，最多 3 隻同場），對峙中不換。
-    const circle = deriveResonanceCircle(state);
+    const circle = Array.isArray(preparation?.companions)
+      ? preparation.companions
+      : deriveResonanceCircle(state);
+    const startedAt = Date.now();
+    const sessionKey = `${nodeId || enemyId || "standoff"}:${state.activeCompanionId}:${startedAt}`;
     session = createStandoffSession({
       companion,
       enemyId,
       nodeId,
       state,
       circle,
-      tensionProfile
+      tensionProfile,
+      now: startedAt,
+      rng: createDeterministicRng(`${sessionKey}:opening`)
     });
+    if (state.safeHarborMode === true) session.growthSafetyExcluded = true;
+    if (practiceVariantId) {
+      const practiceResult = applyStandoffPracticeVariant(session, {
+        state,
+        nodeId,
+        variantId: practiceVariantId
+      });
+      if (!practiceResult.ok) {
+        session = null;
+        autonomyState = null;
+        autonomyPaused = false;
+        removeCloseGuard?.();
+        removeCloseGuard = null;
+        destroyCircleRenderer();
+        closeRequestSheet();
+        clearPreparationState();
+        document.body.classList.remove("standoff-active");
+        if (statusText) {
+          statusText.textContent = "譜式條件已改變；這場演練沒有開始，也沒有轉成正式對峙。";
+        }
+        panelManager.closePanel({ force: true });
+        return false;
+      }
+      session = practiceResult.session;
+    }
+    session.sessionKey = sessionKey;
+    autonomyState = createStandoffAutonomyState(preparation, {
+      sessionKey,
+      leadCompanionId: session.companionId
+    });
+    autonomyPaused = false;
     renderedLogCount = 0;
     lastOutcome = null;
     prevNoise = null;
@@ -396,6 +1465,8 @@ export function createBattleController({
       nodeLabelEl.textContent = node
         ? `${node.label.zh} ・ ${tensionProfile.label} ・ ${t("battle.nodeUnstable")}`
         : t("battle.nodeUnstable");
+      const practiceCopy = PRACTICE_VARIANT_COPY[session.practiceVariant?.id];
+      if (practiceCopy) nodeLabelEl.textContent += ` ・ ${practiceCopy.label}`;
     }
     if (companionNameEl) {
       companionNameEl.textContent = t("battle.stabilityOwner").replace("{name}", session.companionName);
@@ -428,7 +1499,7 @@ export function createBattleController({
       causalityEl.hidden = true;
       causalityEl.innerHTML = "";
     }
-    showFirstGuideIfNeeded(state);
+    if (autonomyState.controlMode === "manual") showFirstGuideIfNeeded(state);
 
     removeCloseGuard?.();
     removeCloseGuard = panelManager.registerCloseGuard("battle", () => {
@@ -444,52 +1515,46 @@ export function createBattleController({
     // 對峙是全神貫注的時刻：藏起 bottom-nav，把底部舞台讓給夥伴（finish 時恢復）。
     document.body.classList.add("standoff-active");
     panelManager.openPanel("battle");
-    // 環繞式佈局後夥伴在對峙中可見：進場先給一個警戒面對的姿態（idle_defensive）。
-    emitBattleAnimationIntent("soul.defensive", { reason: "standoff-engage" });
+    ensureCircleStage();
+    initializeCircleRenderer();
+    render();
+    if (guardSafeHarborTerminal(state)) {
+      return;
+    } else if (autonomyState.controlMode === "entrusted") {
+      renderAutonomyControls();
+      scheduleAutonomousTurn(AUTONOMOUS_TELEGRAPH_MS);
+    } else if (!circleRenderer) {
+      emitBattleAnimationIntent("soul.defensive", { reason: "standoff-engage" });
+    }
+    return true;
   }
 
   function handleAction(actionId) {
-    if (!session || session.turn !== "player") return;
+    if (!session || session.turn === "ended") return;
     if (!guardCurrentSessionOwner()) return;
 
     if (actionId === "retreat") {
       // 撤退不是失敗：下行柔音 + 回身 cue，再走「被尊重的離開」結算。
       AudioManager.playSfx("standoff_retreat");
-      emitBattleAnimationIntent("standoff.retreat");
+      if (circleRenderer) {
+        getCircleRendererMembers().forEach((member) => emitCircleIntent({
+          companionId: member.companionId,
+          role: member.role,
+          intent: "standoff.retreat",
+          reasonId: "retreat_is_respected",
+          bodyCueId: "step_back",
+          beatIndex: Math.max(1, Number(autonomyState?.beatCount) + 100 || session.round + 100)
+        }));
+      } else {
+        emitBattleAnimationIntent("standoff.retreat");
+      }
       endStandoff("retreated");
       return;
     }
 
-    if (!canUseAction(session, actionId)) return;
-
-    AudioManager.playSfx("standoff_action");
-    session = applyPlayerAction(session, actionId);
-    render();
-    // 即時 cue：行動已照原流程成立後才發；能播就播，不能播也不阻斷 gameplay。
-    emitBattleAnimationIntent(ACTION_INTENT[actionId]);
-
-    const verdict = settleStandoff(session);
-    if (verdict.settled) {
-      endStandoff(verdict.outcome);
-      return;
-    }
-
-    window.clearTimeout(noiseTurnTimer);
-    noiseTurnTimer = window.setTimeout(() => {
-      if (!session || session.turn !== "noise") return;
-      if (!guardCurrentSessionOwner()) return;
-      const stabilityBefore = session.stability.current;
-      session = applyNoiseTurn(session);
-      render();
-      // 只有雜訊真的造成 stability 下降才播 hit（暫歇/lull 不播）→ 一回合最多一次，不 spam。
-      if (session.stability.current < stabilityBefore) {
-        emitBattleAnimationIntent("battle.hit", { reason: "noise-pressure" });
-      }
-      const noiseVerdict = settleStandoff(session);
-      if (noiseVerdict.settled) {
-        endStandoff(noiseVerdict.outcome);
-      }
-    }, NOISE_TURN_DELAY_MS);
+    if (guardSafeHarborTerminal()) return;
+    if (session.turn !== "player" || autonomyState?.controlMode === "entrusted") return;
+    executeLeadAction(actionId, { autonomous: false });
   }
 
   function endStandoff(outcome) {
@@ -497,10 +1562,37 @@ export function createBattleController({
     if (!guardCurrentSessionOwner()) return;
     lastOutcome = outcome;
     window.clearTimeout(noiseTurnTimer);
+    window.clearTimeout(autonomyTimer);
+    noiseTurnTimer = null;
+    autonomyTimer = null;
+    autonomyScheduleToken += 1;
+    autonomyPaused = true;
+    closeRequestSheet();
+    const outcomeIntent = outcome === "stabilized"
+      ? "standoff.stabilized"
+      : outcome === "recovered"
+        ? "standoff.recovered"
+        : outcome === "retreated"
+          ? "standoff.retreat"
+          : "standoff.overwhelmed";
+    if (circleRenderer) {
+      getCircleRendererMembers().forEach((member) => emitCircleIntent({
+        companionId: member.companionId,
+        role: member.role,
+        intent: outcomeIntent,
+        reasonId: `outcome_${outcome}`,
+        bodyCueId: outcome === "retreated" ? "step_back" : "settle_breath",
+        beatIndex: Math.max(1, Number(autonomyState?.beatCount) + 200 || session.round + 200)
+      }));
+    }
     session = { ...session, turn: "ended", log: [...session.log] };
 
     const now = Date.now();
     const stateBeforeSettlement = store.getState();
+    const safetyTerminal = session.growthSafetyExcluded === true
+      || stateBeforeSettlement.safeHarborMode === true;
+    const practiceOnly = session.practiceVariant?.sessionOnly === true;
+    const persistenceExcluded = safetyTerminal || practiceOnly;
     const summary = summarizeStandoffOutcome(outcome, session, stateBeforeSettlement, now);
     const firstClear = resolveStandoffFirstClear(
       stateBeforeSettlement,
@@ -510,15 +1602,27 @@ export function createBattleController({
     const {
       scenarioId,
       alreadyCleared,
-      clearOutcome: isClearOutcome,
-      grantsFirstClear
+      clearOutcome: isClearOutcome
     } = firstClear;
+    const grantsFirstClear = firstClear.grantsFirstClear && !persistenceExcluded;
     const copy = getOutcomeCopy(outcome);
     session.log.push({ kind: "system", text: `【${copy.title}】${summary.message}` });
     if (isClearOutcome && alreadyCleared) {
       session.log.push({
         kind: "system",
         text: "這段裂隙已被你們理解過。這次只留下練習，不重複發放關係、記憶或章節獎勵。"
+      });
+    }
+    if (safetyTerminal) {
+      session.log.push({
+        kind: "system",
+        text: "安全照顧模式保留了這次經過，但不留下進度、獎勵、記憶或成長證據。"
+      });
+    }
+    if (practiceOnly) {
+      session.log.push({
+        kind: "system",
+        text: "譜式演練只留在這一場：沒有獎勵，也不寫入關係、記憶、進度或成長。"
       });
     }
 
@@ -539,7 +1643,7 @@ export function createBattleController({
     setRiftOutcome(outcome);
 
     // 結算回寫：patch + 對峙記憶/棲地痕跡（走既有沉積鏈）+ 章節推進。
-    store.updateState((draft) => {
+    if (!persistenceExcluded) store.updateState((draft) => {
       const operationalPatch = { ...summary.statePatch };
       if (!grantsFirstClear) {
         delete operationalPatch.bond;
@@ -604,23 +1708,40 @@ export function createBattleController({
       soulTalkController.addChat("companion", buildChapterAdvanceCompanionLine(chapterAdvance));
     }
     soulTalkController.renderChat();
-    saveCurrentState?.(); // patch + 記憶 + 引用台詞一次落盤
+    if (!persistenceExcluded) saveCurrentState?.(); // patch + 記憶 + 引用台詞一次落盤
     const layers = buildStandoffCausalityLayers(outcome);
     const causality = ensureCausalityElement();
     if (causality) {
       causality.hidden = false;
-      causality.innerHTML =
-        `<p><strong>${t("battle.layerImmediate")}</strong>${layers.immediate}</p>` +
-        `<p><strong>${t("battle.layerEvent")}</strong>${layers.event}</p>` +
-        `<p><strong>${t("battle.layerLong")}</strong>${layers.longTerm}</p>` +
-        `<p class="standoff-return-preview">${t("battle.returnPreview")}</p>`;
+      causality.innerHTML = practiceOnly
+        ? '<p><strong>這一拍</strong>你們讀完了演練，但沒有把它變成任何永久紀錄。</p>' +
+          '<p><strong>離場之後</strong>關係、記憶、進度、成長與可用資源都維持原樣。</p>' +
+          '<p class="standoff-return-preview">可以重玩、換一種譜式，或安靜回到月湖。</p>'
+        : `<p><strong>${t("battle.layerImmediate")}</strong>${layers.immediate}</p>` +
+          `<p><strong>${t("battle.layerEvent")}</strong>${layers.event}</p>` +
+          `<p><strong>${t("battle.layerLong")}</strong>${layers.longTerm}</p>` +
+          `<p class="standoff-return-preview">${t("battle.returnPreview")}</p>`;
     }
     if (statusText) {
-      statusText.textContent = `${copy.title}｜${t("battle.returnPreview")}`;
+      statusText.textContent = practiceOnly
+        ? `${copy.title}｜譜式演練沒有留下永久紀錄`
+        : `${copy.title}｜${t("battle.returnPreview")}`;
     }
 
     removeCloseGuard?.();
-    removeCloseGuard = null;
+    removeCloseGuard = panelManager.registerCloseGuard("battle", () => {
+      destroyCircleRenderer();
+      closeRequestSheet();
+      autonomyState = null;
+      autonomyPaused = false;
+      clearPreparationState();
+      document.body.classList.remove("standoff-active");
+      const release = removeCloseGuard;
+      removeCloseGuard = null;
+      release?.();
+      return false;
+    });
+    renderAutonomyControls();
     if (finishButton) finishButton.hidden = false;
   }
 
@@ -672,24 +1793,28 @@ export function createBattleController({
     }
 
     const isPlayerTurn = session.turn === "player";
-    if (actionRowEl) actionRowEl.hidden = session.turn === "ended";
+    const entrusted = autonomyState?.controlMode === "entrusted";
+    const safetyTerminal = session.growthSafetyExcluded === true;
+    if (actionRowEl) actionRowEl.hidden = session.turn === "ended" || entrusted;
     Object.entries(actionButtons).forEach(([actionId, button]) => {
       if (!button) return;
       if (actionId === "retreat") {
         button.disabled = session.turn === "ended";
         return;
       }
-      button.disabled = !isPlayerTurn || !canUseAction(session, actionId);
+      button.disabled = safetyTerminal || !isPlayerTurn || !canUseAction(session, actionId);
     });
 
     updateRiftFigure();
     renderCircleStrip();
+    syncCircleRendererMembers();
+    renderAutonomyControls();
 
     // 意圖預示：只在玩家回合顯示（讓玩家據此選穩住/設界/脈衝）；雜訊回合與結束時隱藏。
     ensureTelegraphElement();
     if (telegraphEl) {
       const tel = getIntentTelegraph(session);
-      if (tel && isPlayerTurn) {
+      if (tel && isPlayerTurn && !safetyTerminal) {
         telegraphEl.hidden = false;
         telegraphEl.dataset.tone = tel.tone;
         telegraphEl.querySelector(".tel-label").textContent = `下一拍・${tel.label}`;
@@ -844,6 +1969,7 @@ function injectStandoffLayoutStyles() {
     'html[data-ui="v2"] .standoff-noise .standoff-bar{height:5px;background:rgba(5,9,22,.55);box-shadow:0 1px 4px rgba(0,0,0,.4),0 0 10px rgba(236,122,186,.12)}',
     // 下一拍與最新兩筆事件都固定在頂部；長文以單行 ticker 呈現，完整內容仍留在 DOM。
     'html[data-ui="v2"] .battle-modal .standoff-telegraph{order:3;flex:0 0 auto;display:grid;grid-template-columns:auto minmax(0,1fr);align-items:baseline;gap:7px;padding:1px 4px;border-inline-start:2px solid rgba(121,220,255,.48)}',
+    'html[data-ui="v2"] .battle-modal .standoff-telegraph[hidden]{display:none}',
     'html[data-ui="v2"] .battle-modal .standoff-telegraph .tel-label{white-space:nowrap}',
     'html[data-ui="v2"] .battle-modal .standoff-telegraph .tel-hint{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}',
     'html[data-ui="v2"] .battle-modal #battle-log{order:4;flex:0 0 auto;display:grid;gap:1px;margin:0;min-height:0;max-height:38px;overflow:hidden;padding:3px 8px 3px 10px;border:0;border-inline-start:1px solid rgba(159,202,255,.28);border-radius:0 999px 999px 0;background:linear-gradient(90deg,rgba(5,9,22,.48),rgba(5,9,22,.16) 78%,transparent);font-size:10.5px;line-height:1.35;text-shadow:0 1px 4px rgba(0,0,0,.82)}',
@@ -889,4 +2015,20 @@ function flashOnce(el, className, ms = 500) {
   void el.offsetWidth; // 重啟一次性動畫
   el.classList.add(className);
   window.setTimeout(() => el.classList.remove(className), ms);
+}
+
+function createDeterministicRng(seedInput) {
+  let seed = 2166136261;
+  const text = String(seedInput || "nexus-link-standoff");
+  for (let index = 0; index < text.length; index += 1) {
+    seed ^= text.charCodeAt(index);
+    seed = Math.imul(seed, 16777619);
+  }
+  return () => {
+    seed += 0x6d2b79f5;
+    let value = seed;
+    value = Math.imul(value ^ (value >>> 15), value | 1);
+    value ^= value + Math.imul(value ^ (value >>> 7), value | 61);
+    return ((value ^ (value >>> 14)) >>> 0) / 4294967296;
+  };
 }

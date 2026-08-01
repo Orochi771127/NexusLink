@@ -194,7 +194,7 @@ const cases = [
     (_intent, s) => s.enemies.length === 2 && s.enemies.some((e) => e.enemyId === "hollow_echo")
   ),
   runCase(
-    "碎晶庫存持久化 merge",
+    "微光庫存持久化 merge",
     () => {},
     () => {
       const vault = mergeExpeditionVault(
@@ -211,7 +211,7 @@ const cases = [
     () => Boolean(getExpeditionRegionByNodeId("forge_emberpath")?.enemySpawnPools?.length === 2)
   ),
   runCase(
-    "碎晶共鳴：足夠時扣除並回傳 patch",
+    "微光共鳴：足夠時扣除並回傳 patch",
     () => {},
     () => {
       const result = applyCraftRecipe(
@@ -224,7 +224,7 @@ const cases = [
     }
   ),
   runCase(
-    "碎晶共鳴：不足時拒絕",
+    "微光共鳴：不足時拒絕",
     () => {},
     () => {
       const result = applyCraftRecipe(
@@ -243,7 +243,7 @@ const cases = [
     }
   ),
   runCase(
-    "潮息定神：潮汐碎晶消耗",
+    "潮息定神：潮汐微光消耗",
     () => {},
     () => {
       const result = applyCraftRecipe(
@@ -310,7 +310,7 @@ const cases = [
       }, "plains_windrest")
   ),
   runCase(
-    "RE1 E-FARM：僅擊殺／碎晶不加 bond/trust",
+    "RE1 E-FARM：僅擊殺／微光不加 bond/trust",
     () => {},
     () => {
       const session = createExpeditionSession({
@@ -394,11 +394,11 @@ const cases = [
       const voice = buildExpeditionSettlementVoice(session, settlement);
       const facts = buildExpeditionSystemFacts(session, settlement);
       const reflection = voice.companionReflection || "";
-      // 系統事實應提到碎晶；夥伴句應是第一人稱（含「我」），且不是舊 journal 整段貼上。
-      const hasShardFact = facts.some((line) => line.includes("森息碎晶") || line.includes("碎晶"));
+      // 系統事實應使用已 ship 的玩家語意「微光」；夥伴句應是第一人稱（含「我」），且不是舊 journal 整段貼上。
+      const hasMoteFact = facts.some((line) => line.includes("森息微光") || line.includes("微光"));
       const firstPerson = reflection.includes("我");
       const notThirdPersonJournal = !reflection.includes("灰影貓在");
-      return hasShardFact && firstPerson && notThirdPersonJournal && voice.systemFacts.length >= 1;
+      return hasMoteFact && firstPerson && notThirdPersonJournal && voice.systemFacts.length >= 1;
     }
   ),
   runCase(
@@ -585,7 +585,7 @@ const cases = [
         companion: { id: "greyshade-cat", soulTalkTone: "quiet_observer" }
       });
       const text = prep.composeReflection({ session, settlement });
-      const thirdPerson = critiqueExpeditionReflection("牠決定先歇一會，湊過去看碎晶。");
+      const thirdPerson = critiqueExpeditionReflection("牠決定先歇一會，湊過去看微光。");
       const farmTone = critiqueExpeditionReflection("這趟羈絆+2，刷怪升好感真爽。");
       return typeof text === "string"
         && text.trim().length > 0
