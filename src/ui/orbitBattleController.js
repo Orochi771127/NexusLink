@@ -8,6 +8,8 @@
  */
 
 import { getCompanionById } from "../data/companionRegistry.js";
+import { getIllustratedCompanionAssetById } from "../data/assetManifest.js";
+import { getEvolutionLine } from "../data/evolutionLines.js";
 import {
   getOrbitStageById,
   getOrbitPathLabel,
@@ -15,13 +17,24 @@ import {
 } from "../data/orbit/stages/index.js";
 import { LANGUAGE_CHANGED_EVENT, t } from "../i18n/i18n.js";
 import {
+  confirmOrbitAttunement,
   createOrbitSession,
   launchOrbitSession,
   retreatOrbitSession,
+  selectOrbitEmbodiment,
   selectOrbitLaunchStance,
   triggerOrbitResonancePulse,
   stepOrbitSession
 } from "../orbit/orbitEngine.js";
+import { createOrbitAttunementSnapshot } from "../orbit/orbitAttunement.js";
+import {
+  prepareOrbitCompanionEntry,
+  prepareOrbitSettlementReflection
+} from "../orbit/orbitCompanionBridge.js";
+import {
+  ORBIT_FORMAL_STAGE_IDS,
+  projectOrbitEmbodimentProfile
+} from "../orbit/orbitEmbodimentProfile.js";
 import {
   HYBRID_SPIN_PHASES,
   ORBIT_PHYSICS_MODELS
@@ -43,8 +56,14 @@ import {
   vitalsFromState
 } from "../orbit/orbitStatsProjector.js";
 import EventBus from "../utils/eventBus.js";
+import { getCompanionCodexGrowthPresentation } from "../state/companionStateSchema.js";
 import { createOrbitMapController } from "./orbitMapController.js";
 import { createOrbitDuelController } from "./orbitDuelController.js";
+import {
+  clearOrbitManifestationAsset,
+  drawOrbitManifestation,
+  loadOrbitManifestationAsset
+} from "./orbitManifestationRenderer.js";
 
 function formatOrbitStatsLine(stats) {
   return [
@@ -54,6 +73,28 @@ function formatOrbitStatsLine(stats) {
     `${t("orbit.statBurst")} ${stats.burst}`,
     `${t("orbit.statOverheat")} ${stats.overheat}`
   ].join(" · ");
+}
+
+function formatAttunementLine(attunement) {
+  if (!attunement) return "";
+  return [
+    `心相：${attunement.moodLabel}（${attunement.mood}）`,
+    `Energy ${attunement.energy}/10 → 拉力上限 ${attunement.maxPullDistance.toFixed(2)}`,
+    `界紋蓄能 1/1`
+  ].join("　");
+}
+
+function attunementDecisionLabel(decision) {
+  return {
+    accept: "接受同行",
+    rewrite: "提出改軌",
+    rest: "選擇休息",
+    refuse: "保留邊界"
+  }[decision] || "等待回應";
+}
+
+function prefersReducedOrbitMotion() {
+  return globalThis.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches === true;
 }
 
 function isOrbitSandboxEnabled() {
@@ -78,6 +119,55 @@ function isMoonlakeCampSliceEnabled() {
     .get("orbitCampSlice") === "1";
 }
 
+function availableFormalStagesForCompanion(companion) {
+  const line = getEvolutionLine(companion?.evolutionLineId);
+  const count = Math.max(
+    0,
+    Math.min(ORBIT_FORMAL_STAGE_IDS.length, line?.stages?.length || 0)
+  );
+  return ORBIT_FORMAL_STAGE_IDS.slice(0, count);
+}
+
+async function prepareOrbitEmbodiment(state, companion) {
+  const growthPresentation = getCompanionCodexGrowthPresentation(
+    state?.companionStates,
+    companion?.id
+  );
+  const availableFormalStages = availableFormalStagesForCompanion(companion);
+  const initialProjection = projectOrbitEmbodimentProfile({
+    companionId: companion?.id,
+    companionName:
+      companion?.displayName?.zh || companion?.name || "夥伴",
+    formalStage: growthPresentation.formalStage,
+    availableFormalStages,
+    requestedMode: "formal_stage"
+  });
+  const assetRecord = getIllustratedCompanionAssetById(companion?.id);
+  const assetLoad = initialProjection.formalStage
+    ? await loadOrbitManifestationAsset({
+        companionId: companion?.id,
+        formalStage: initialProjection.formalStage,
+        assetRecord
+      })
+    : {
+        ready: false,
+        stage: null,
+        status: "formal_stage_unavailable"
+      };
+  return {
+    embodiment: projectOrbitEmbodimentProfile({
+      companionId: companion?.id,
+      companionName:
+        companion?.displayName?.zh || companion?.name || "夥伴",
+      formalStage: growthPresentation.formalStage,
+      availableFormalStages,
+      assetReadiness: assetLoad,
+      requestedMode: "formal_stage"
+    }),
+    renderAsset: assetLoad.renderAsset || null
+  };
+}
+
 export function createOrbitBattleController({
   store,
   statusText,
@@ -98,6 +188,12 @@ export function createOrbitBattleController({
   let active = false;
   let view = "map"; // map | battle | duel
   let currentStageId = null;
+  let manifestationRenderAsset = null;
+  let manifestationLoadToken = 0;
+  let companionBridgeToken = 0;
+  let companionEntryBridge = null;
+  let companionSettlementReflection = null;
+  let settlementReflectionSession = null;
 
   const mapController = createOrbitMapController({
     onSelectStage: (stageId) => openStage(stageId),
@@ -172,13 +268,37 @@ export function createOrbitBattleController({
           <p class="orbit-copy"></p>
           <div class="orbit-stats" aria-live="polite"></div>
           <div class="orbit-control-depth" data-orbit-control-depth hidden>
-            <div class="orbit-stance-picker" role="group" aria-label="發射姿態"></div>
+            <div class="orbit-attunement-panel" data-orbit-attunement-panel>
+              <p class="orbit-attunement-summary" data-orbit-attunement-summary></p>
+              <div class="orbit-attunement-actions">
+                <button
+                  type="button"
+                  class="orbit-attunement-btn orbit-attunement-btn--confirm"
+                  data-orbit-action="confirm-attunement"
+                >合息定軌</button>
+                <button
+                  type="button"
+                  class="orbit-attunement-btn"
+                  data-orbit-action="rest-attunement"
+                >先休息</button>
+              </div>
+            </div>
+            <div
+              class="orbit-manifestation-picker"
+              data-orbit-manifestation-picker
+              role="group"
+              aria-label="心相展開"
+            >
+              <p class="orbit-manifestation-summary" data-orbit-manifestation-summary></p>
+              <div class="orbit-manifestation-actions"></div>
+            </div>
+            <div class="orbit-stance-picker" role="group" aria-label="可見改軌提案"></div>
             <button
               type="button"
               class="orbit-pulse-btn"
               data-orbit-action="pulse"
               disabled
-            >共鳴脈衝・發射後可用</button>
+            >可見改軌・發射後可用</button>
           </div>
           <p class="orbit-hint"></p>
         </div>
@@ -205,6 +325,11 @@ export function createOrbitBattleController({
     applyBattleChrome();
 
     overlayEl.addEventListener("click", (event) => {
+      const embodimentBtn = event.target.closest("[data-orbit-embodiment]");
+      if (embodimentBtn) {
+        chooseEmbodiment(embodimentBtn.dataset.orbitEmbodiment);
+        return;
+      }
       const stanceBtn = event.target.closest("[data-orbit-stance]");
       if (stanceBtn) {
         chooseLaunchStance(stanceBtn.dataset.orbitStance);
@@ -217,6 +342,8 @@ export function createOrbitBattleController({
       else if (action === "to-map") returnFromStage();
       else if (action === "again" && currentStageId) openStage(currentStageId);
       else if (action === "pulse") activateResonancePulse();
+      else if (action === "confirm-attunement") confirmAttunementPlan();
+      else if (action === "rest-attunement") restFromAttunement();
     });
 
     canvas.addEventListener("pointerdown", onPointerDown);
@@ -248,6 +375,10 @@ export function createOrbitBattleController({
 
   function showMap() {
     ensureOverlay();
+    manifestationLoadToken += 1;
+    manifestationRenderAsset = null;
+    resetOrbitCompanionBridge();
+    clearOrbitManifestationAsset();
     stopLoop();
     session = null;
     dragging = false;
@@ -266,6 +397,10 @@ export function createOrbitBattleController({
 
   function openDuel() {
     ensureOverlay();
+    manifestationLoadToken += 1;
+    manifestationRenderAsset = null;
+    resetOrbitCompanionBridge();
+    clearOrbitManifestationAsset();
     stopLoop();
     session = null;
     renderControlDepth();
@@ -307,13 +442,15 @@ export function createOrbitBattleController({
     focusPrimaryAction();
   }
 
-  function openStage(stageId) {
+  async function openStage(stageId) {
+    const loadToken = ++manifestationLoadToken;
     const stage = getOrbitStageById(stageId);
     if (!stage) return;
     const sandboxEnabled = isOrbitSandboxEnabled();
     const campSliceEnabled = stage.id === MOONLAKE_CAMP_SLICE.id;
     const hybridEnabled = sandboxEnabled || campSliceEnabled;
     const state = store.getState();
+    const companion = getCompanionById(state.activeCompanionId);
     if (
       !sandboxEnabled &&
       !campSliceEnabled &&
@@ -329,12 +466,25 @@ export function createOrbitBattleController({
     active = true;
     currentStageId = stageId;
     view = "battle";
+    session = null;
+    manifestationRenderAsset = null;
+    resetOrbitCompanionBridge();
+    const bridgeToken = companionBridgeToken;
     mapController.hide();
     duelController.hide();
     overlayEl.querySelector(".orbit-battle").hidden = false;
 
+    const vitals = vitalsFromState(state);
+    const attunement = campSliceEnabled
+      ? createOrbitAttunementSnapshot(vitals, {
+          safetyPaused: state.safeHarborMode === true,
+          defaultStanceId: stage.defaultLaunchStanceId,
+          minPullDistance: stage.attunement?.minPullDistance,
+          maxPullDistance: stage.attunement?.maxPullDistance
+        })
+      : null;
     const baseStats = projectOrbitCombatStats(
-      vitalsFromState(state),
+      vitals,
       recentEvidenceFromState(state)
     );
     // 遠征→微光→進場：有 vault 微光時略增 Burst（非永久 ATK）
@@ -355,13 +505,63 @@ export function createOrbitBattleController({
         : sandboxEnabled
         ? "既有 Orbit 管線的隱藏物理測試；觀察 tilt／wobble／phase，不寫入任何進度。"
         : `${stage.copy}　${t("orbit.goalPrefix")}：${stage.goalLabel}`;
-    overlayEl.querySelector(".orbit-stats").textContent =
+    overlayEl.querySelector(".orbit-battle .orbit-stats").textContent =
       campSliceEnabled
-        ? "先選姿態，再拉曳發射；途中只有一次共鳴脈衝"
+        ? formatAttunementLine(attunement)
         : formatOrbitStatsLine(stats);
     overlayEl.querySelector(".orbit-battle .orbit-companion-line").hidden = true;
     overlayEl.querySelector(".orbit-battle .orbit-companion-line").textContent = "";
     setActionVisibility({ retreat: true, toMap: false, again: false });
+
+    if (campSliceEnabled) {
+      const battleEl = overlayEl.querySelector(".orbit-battle");
+      const lineEl = overlayEl.querySelector(".orbit-battle .orbit-companion-line");
+      battleEl.dataset.coreEntryStatus = "pending";
+      overlayEl.querySelector(".orbit-battle .orbit-status").textContent =
+        "正在確認夥伴是否願意一起進場……";
+      drawIdleRefuse("合息之前，先等牠說出自己的意願。");
+      companionEntryBridge = await prepareOrbitCompanionEntry({
+        state,
+        companion,
+        attunement: stats.canLaunch
+          ? attunement
+          : {
+              ...attunement,
+              canStart: false,
+              decision: "rest",
+              response: stats.refuseReason || "現在先讓心核休息。"
+            }
+      });
+      if (
+        bridgeToken !== companionBridgeToken ||
+        loadToken !== manifestationLoadToken ||
+        !active ||
+        currentStageId !== stageId
+      ) {
+        return;
+      }
+      battleEl.dataset.coreEntryStatus = companionEntryBridge.status;
+      battleEl.dataset.coreEntrySource = companionEntryBridge.source;
+      battleEl.dataset.coreSimulationAuthority =
+        companionEntryBridge.authority.simulationAuthority;
+      lineEl.hidden = false;
+      lineEl.textContent = companionEntryBridge.line;
+      lineEl.dataset.coreSource = companionEntryBridge.source;
+
+      if (companionEntryBridge.willing !== true) {
+        session = null;
+        renderControlDepth();
+        overlayEl.querySelector(".orbit-battle .orbit-status").textContent =
+          `${attunementDecisionLabel(companionEntryBridge.decision)}：${companionEntryBridge.line}`;
+        setActionVisibility({ retreat: false, toMap: true, again: true });
+        drawIdleRefuse(companionEntryBridge.line);
+        if (statusText) {
+          statusText.textContent = "本次沒有開始，也沒有任何扣除或寫入。";
+        }
+        focusPrimaryAction();
+        return;
+      }
+    }
 
     if (!stats.canLaunch) {
       session = null;
@@ -375,6 +575,23 @@ export function createOrbitBattleController({
       return;
     }
 
+    let embodiment = null;
+    if (campSliceEnabled && stage.embodiment?.enabled === true) {
+      overlayEl.querySelector(".orbit-battle .orbit-status").textContent =
+        "正在讀取這隻夥伴已核准的初醒投影……";
+      drawIdleRefuse("心相正在月湖界紋中成形……");
+      const prepared = await prepareOrbitEmbodiment(state, companion);
+      if (
+        loadToken !== manifestationLoadToken ||
+        !active ||
+        currentStageId !== stageId
+      ) {
+        return;
+      }
+      embodiment = prepared.embodiment;
+      manifestationRenderAsset = prepared.renderAsset;
+    }
+
     session = createOrbitSession({
       stats,
       stage,
@@ -384,12 +601,24 @@ export function createOrbitBattleController({
         : ORBIT_PHYSICS_MODELS.baseline,
       sandbox: sandboxEnabled && !campSliceEnabled,
       prototypeSlice: campSliceEnabled,
-      nonPersistent: campSliceEnabled
+      nonPersistent: campSliceEnabled,
+      attunement,
+      embodiment
     });
+    if (campSliceEnabled && session.embodiment) {
+      overlayEl.querySelector(".orbit-battle .orbit-stats").textContent =
+        `${formatAttunementLine(attunement)}　正式階段：${session.embodiment.formalStageLabel || "未就緒"}`;
+    }
+    if (campSliceEnabled && companionEntryBridge?.line) {
+      const lineEl = overlayEl.querySelector(".orbit-battle .orbit-companion-line");
+      lineEl.hidden = false;
+      lineEl.textContent = companionEntryBridge.line;
+      lineEl.dataset.coreSource = companionEntryBridge.source;
+    }
     renderControlDepth();
     overlayEl.querySelector(".orbit-battle .orbit-status").textContent =
       campSliceEnabled
-        ? "選直立／傾斜／保守，再沿虛線點亮 1 → 2 → 3；脈衝只能在發射後使用一次。"
+        ? `${attunementDecisionLabel(attunement.decision)}：${companionEntryBridge?.line || attunement.response}　心相與姿態都可先調整；確認合息定軌後再拉曳發射。`
         : sandboxEnabled
         ? "拉曳發射後，觀察 launch → stable → curving → wobbling。沙盒結果不保存。"
         : `${entry.line}　${stats.label}　${stage.goalLabel}`;
@@ -411,6 +640,10 @@ export function createOrbitBattleController({
   }
 
   function close() {
+    manifestationLoadToken += 1;
+    manifestationRenderAsset = null;
+    resetOrbitCompanionBridge();
+    clearOrbitManifestationAsset();
     stopLoop();
     active = false;
     session = null;
@@ -462,22 +695,110 @@ export function createOrbitBattleController({
     ) || null;
   }
 
+  function selectedEmbodimentOption() {
+    return session?.embodiment?.options?.find(
+      (option) => option.id === session.embodimentMode
+    ) || null;
+  }
+
   function renderControlDepth() {
     if (!overlayEl) return;
     const controls = overlayEl.querySelector("[data-orbit-control-depth]");
     const picker = overlayEl.querySelector(".orbit-stance-picker");
     const pulseBtn = overlayEl.querySelector('[data-orbit-action="pulse"]');
+    const attunementPanel = overlayEl.querySelector("[data-orbit-attunement-panel]");
+    const attunementSummary = overlayEl.querySelector("[data-orbit-attunement-summary]");
+    const manifestationPicker = overlayEl.querySelector(
+      "[data-orbit-manifestation-picker]"
+    );
+    const manifestationSummary = overlayEl.querySelector(
+      "[data-orbit-manifestation-summary]"
+    );
+    const manifestationActions = overlayEl.querySelector(
+      ".orbit-manifestation-actions"
+    );
+    const confirmBtn = overlayEl.querySelector('[data-orbit-action="confirm-attunement"]');
+    const restBtn = overlayEl.querySelector('[data-orbit-action="rest-attunement"]');
     const enabled =
       session?.prototypeSlice === true &&
       Array.isArray(session.launchStances) &&
       session.launchStances.length > 0;
 
-    if (!controls || !picker || !pulseBtn) return;
+    if (
+      !controls ||
+      !picker ||
+      !pulseBtn ||
+      !attunementPanel ||
+      !attunementSummary ||
+      !manifestationPicker ||
+      !manifestationSummary ||
+      !manifestationActions ||
+      !confirmBtn ||
+      !restBtn
+    ) return;
     controls.hidden = !enabled;
     if (!enabled) {
       picker.replaceChildren();
       pulseBtn.disabled = true;
+      attunementPanel.hidden = true;
+      manifestationPicker.hidden = true;
+      manifestationActions.replaceChildren();
       return;
+    }
+
+    const isNegotiating =
+      session.phase === "aiming" &&
+      session.attunement &&
+      !session.attunementConfirmed;
+    attunementPanel.hidden = !session.attunement;
+    attunementPanel.dataset.confirmed = session.attunementConfirmed
+      ? "true"
+      : "false";
+    attunementSummary.textContent = session.attunementConfirmed
+      ? `已定軌・${session.attunement.moodLabel}：${session.attunement.trustLine}`
+      : `${attunementDecisionLabel(session.attunement?.decision)}・${session.attunement?.moodLabel}：${session.attunement?.trustLine}`;
+    confirmBtn.disabled = !isNegotiating;
+    confirmBtn.textContent = session.attunementConfirmed ? "合息已定" : "合息定軌";
+    restBtn.disabled = session.phase !== "aiming" || session.attunementConfirmed;
+
+    manifestationPicker.hidden = !session.embodiment;
+    if (session.embodiment) {
+      manifestationPicker.dataset.assetReady = session.embodiment.assetReady
+        ? "true"
+        : "false";
+      manifestationPicker.dataset.formalStage =
+        session.embodiment.formalStage || "none";
+      manifestationPicker.dataset.sourceDecodedBytes = String(
+        manifestationRenderAsset?.sourceDecodedBytes || 0
+      );
+      manifestationPicker.dataset.mipDecodedBytes = String(
+        manifestationRenderAsset?.mipDecodedBytes || 0
+      );
+      const selectedEmbodiment = selectedEmbodimentOption();
+      const stageNotice = session.embodiment.stageNotice;
+      manifestationSummary.textContent = stageNotice || (
+        selectedEmbodiment?.manifestationIntent === "illustrated"
+          ? `${session.embodiment.companionName}・${session.embodiment.formalStageLabel} illustrated form 已就緒；碰撞由外層共鳴場承受。`
+          : `${session.embodiment.formalStageLabel || "心相"}缺少正式 illustrated asset；只顯示 aura。`
+      );
+      const manifestationButtons = session.embodiment.options.map((option) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "orbit-manifestation-btn";
+        button.dataset.orbitEmbodiment = option.id;
+        button.textContent = option.label;
+        button.title = option.hint || option.label;
+        button.disabled =
+          session.phase !== "aiming" || session.attunementConfirmed;
+        button.setAttribute(
+          "aria-pressed",
+          option.id === session.embodimentMode ? "true" : "false"
+        );
+        return button;
+      });
+      manifestationActions.replaceChildren(...manifestationButtons);
+    } else {
+      manifestationActions.replaceChildren();
     }
 
     const stanceButtons = session.launchStances.map((stance) => {
@@ -487,7 +808,7 @@ export function createOrbitBattleController({
       button.dataset.orbitStance = stance.id;
       button.textContent = stance.label;
       button.title = stance.hint || stance.label;
-      button.disabled = session.phase !== "aiming";
+      button.disabled = session.phase !== "aiming" || session.attunementConfirmed;
       button.setAttribute(
         "aria-pressed",
         stance.id === session.launchStanceId ? "true" : "false"
@@ -501,29 +822,78 @@ export function createOrbitBattleController({
       session.resonancePulse &&
       !session.resonancePulseUsed;
     pulseBtn.disabled = !pulseAvailable;
+    const pulseLabel = session.resonancePulse?.label || "可見改軌";
     pulseBtn.textContent = session.resonancePulseUsed
-      ? "共鳴脈衝・已用"
+      ? `${pulseLabel}・已用`
       : session.phase === "aiming"
-        ? "共鳴脈衝・發射後可用"
-        : "共鳴脈衝・1/1";
+        ? `${pulseLabel}・發射後可用`
+        : `${pulseLabel}・1/1`;
     pulseBtn.setAttribute(
       "aria-label",
       session.resonancePulseUsed
-        ? "本次發射的共鳴脈衝已使用"
-        : "使用本次發射唯一一次共鳴脈衝"
+        ? "本次發射的可見改軌已使用"
+        : "使用本次發射唯一一次可見改軌"
     );
   }
 
+  function chooseEmbodiment(modeId) {
+    if (
+      !session ||
+      session.phase !== "aiming" ||
+      session.attunementConfirmed
+    ) return;
+    const before = session;
+    session = selectOrbitEmbodiment(session, modeId);
+    if (session === before) return;
+    const selected = selectedEmbodimentOption();
+    overlayEl.querySelector(".orbit-battle .orbit-status").textContent =
+      `心相提案・${selected?.label || "維持核心"}：${selected?.hint || ""}　尚未確認；維持原形也能完成。`;
+    renderControlDepth();
+    draw();
+  }
+
   function chooseLaunchStance(stanceId) {
-    if (!session || session.phase !== "aiming") return;
+    if (
+      !session ||
+      session.phase !== "aiming" ||
+      session.attunementConfirmed
+    ) return;
     session = selectOrbitLaunchStance(session, stanceId);
     const stance = selectedLaunchStance();
     if (stance) {
       overlayEl.querySelector(".orbit-battle .orbit-status").textContent =
-        `${stance.label}姿態：${stance.hint}　拉曳化身決定啟動方向與力度。`;
+        `可見改軌提案・${stance.label}：${stance.hint}　尚未確認；你可以再換或先休息。`;
     }
     renderControlDepth();
     draw();
+  }
+
+  function confirmAttunementPlan() {
+    if (!session || session.phase !== "aiming") return;
+    const before = session;
+    session = confirmOrbitAttunement(session);
+    if (session === before) return;
+    const stance = selectedLaunchStance();
+    const embodiment = selectedEmbodimentOption();
+    overlayEl.querySelector(".orbit-battle .orbit-status").textContent =
+      `合息定軌完成・${embodiment?.label || "維持核心"}・${stance?.label || "直立"}。拉力上限 ${session.confirmedLaunchPlan.maxPullDistance.toFixed(2)}；確認後不會暗改方向或形態。`;
+    renderControlDepth();
+    draw();
+    canvas?.focus?.({ preventScroll: true });
+  }
+
+  function restFromAttunement() {
+    if (
+      !session?.prototypeSlice ||
+      session.phase !== "aiming" ||
+      session.attunementConfirmed
+    ) return;
+    session = retreatOrbitSession(session);
+    session = {
+      ...session,
+      companionLine: "好，我們先停在月湖邊。沒有什麼因此被扣走。"
+    };
+    showResolved();
   }
 
   function activateResonancePulse() {
@@ -538,7 +908,7 @@ export function createOrbitBattleController({
           session.nextMemoryMoteIndex + 1
         )}；仍要實際掠過光點。`;
     overlayEl.querySelector(".orbit-battle .orbit-status").textContent =
-      `共鳴脈衝已用。${targetText}`;
+      `可見改軌已用。${targetText}`;
     renderControlDepth();
     draw();
   }
@@ -549,7 +919,8 @@ export function createOrbitBattleController({
       ".orbit-battle .orbit-companion-line"
     );
     lineEl.hidden = false;
-    lineEl.textContent = session.companionLine || "";
+    lineEl.textContent =
+      companionSettlementReflection?.line || session.companionLine || "";
 
     let status = `${session.outcome.title}：${session.outcome.summary}`;
     if (session.prototypeSlice) {
@@ -600,7 +971,75 @@ export function createOrbitBattleController({
     overlayEl.querySelector(".orbit-battle .orbit-status").textContent = status;
     setActionVisibility({ retreat: false, toMap: true, again: true });
     renderControlDepth();
-    if (statusText) statusText.textContent = session.companionLine || session.outcome.summary;
+    if (statusText) {
+      statusText.textContent =
+        companionSettlementReflection?.line ||
+        session.companionLine ||
+        session.outcome.summary;
+    }
+    requestSettlementReflection(session);
+  }
+
+  function resetOrbitCompanionBridge() {
+    companionBridgeToken += 1;
+    companionEntryBridge = null;
+    companionSettlementReflection = null;
+    settlementReflectionSession = null;
+    const battleEl = overlayEl?.querySelector?.(".orbit-battle");
+    if (battleEl) {
+      delete battleEl.dataset.coreEntryStatus;
+      delete battleEl.dataset.coreEntrySource;
+      delete battleEl.dataset.coreSettlementStatus;
+      delete battleEl.dataset.coreSettlementSource;
+      delete battleEl.dataset.coreSimulationAuthority;
+    }
+    const lineEl = overlayEl?.querySelector?.(
+      ".orbit-battle .orbit-companion-line"
+    );
+    if (lineEl) delete lineEl.dataset.coreSource;
+  }
+
+  function requestSettlementReflection(resolvedSession) {
+    if (
+      !resolvedSession?.prototypeSlice ||
+      settlementReflectionSession === resolvedSession
+    ) {
+      return;
+    }
+    settlementReflectionSession = resolvedSession;
+    const requestToken = ++companionBridgeToken;
+    const battleEl = overlayEl.querySelector(".orbit-battle");
+    const lineEl = overlayEl.querySelector(
+      ".orbit-battle .orbit-companion-line"
+    );
+    battleEl.dataset.coreSettlementStatus = "pending";
+    lineEl.dataset.coreSource = "deterministic_fallback";
+    const state = store.getState();
+    const companion = getCompanionById(state.activeCompanionId);
+
+    prepareOrbitSettlementReflection({
+      state,
+      companion,
+      session: resolvedSession
+    }).then((reflection) => {
+      if (
+        requestToken !== companionBridgeToken ||
+        !active ||
+        view !== "battle" ||
+        session !== resolvedSession
+      ) {
+        return;
+      }
+      companionSettlementReflection = reflection;
+      battleEl.dataset.coreSettlementStatus = reflection.status;
+      battleEl.dataset.coreSettlementSource = reflection.source;
+      battleEl.dataset.coreSimulationAuthority =
+        reflection.authority.simulationAuthority;
+      lineEl.hidden = false;
+      lineEl.textContent = reflection.line;
+      lineEl.dataset.coreSource = reflection.source;
+      if (statusText) statusText.textContent = reflection.line;
+    });
   }
 
   /**
@@ -631,7 +1070,13 @@ export function createOrbitBattleController({
       const dt = Math.min(0.05, (ts - lastTs) / 1000);
       lastTs = ts;
       if (session?.phase === "spinning") {
+        const boundaryCountBefore = session.boundaryResonanceCount || 0;
         session = stepOrbitSession(session, dt);
+        if ((session.boundaryResonanceCount || 0) > boundaryCountBefore) {
+          overlayEl.querySelector(".orbit-battle .orbit-status").textContent =
+            `界紋疾走・${session.lastBoundaryRailId}：蓄能 ${session.boundaryChargesRemaining}/${session.boundaryChargeBudget}。只改變走線，沒有增加動能。`;
+          renderControlDepth();
+        }
         if (session.phase === "resolved") showResolved();
       }
       draw();
@@ -650,7 +1095,28 @@ export function createOrbitBattleController({
     if (!canvas) return;
     const stage = overlayEl.querySelector(".orbit-stage");
     const w = Math.min(390, stage?.clientWidth || 360);
-    const h = Math.min(420, Math.max(300, Math.floor(w * 1.05)));
+    const topRect = overlayEl
+      .querySelector(".orbit-battle .orbit-hud-top")
+      ?.getBoundingClientRect();
+    const bottomRect = overlayEl
+      .querySelector(".orbit-battle .orbit-hud-bottom")
+      ?.getBoundingClientRect();
+    const clearVerticalGap =
+      topRect && bottomRect
+        ? bottomRect.top - topRect.bottom - 12
+        : Number.POSITIVE_INFINITY;
+    const availableHeight = Math.max(
+      220,
+      Math.min(
+        (stage?.clientHeight || 428) - 8,
+        clearVerticalGap > 0 ? clearVerticalGap : Number.POSITIVE_INFINITY
+      )
+    );
+    const h = Math.min(
+      420,
+      availableHeight,
+      Math.max(260, Math.floor(w * 1.05))
+    );
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     canvas.width = Math.floor(w * dpr);
     canvas.height = Math.floor(h * dpr);
@@ -686,8 +1152,29 @@ export function createOrbitBattleController({
     };
   }
 
+  function constrainPullPoint(point) {
+    if (!pullStart || !session?.confirmedLaunchPlan) return point;
+    const dx = point.x - pullStart.x;
+    const dy = point.y - pullStart.y;
+    const distance = Math.hypot(dx, dy);
+    const limit = session.confirmedLaunchPlan.maxPullDistance;
+    if (!Number.isFinite(limit) || distance <= limit || distance <= 1e-8) {
+      return point;
+    }
+    const scale = limit / distance;
+    return {
+      x: pullStart.x + dx * scale,
+      y: pullStart.y + dy * scale
+    };
+  }
+
   function onPointerDown(event) {
     if (!session || session.phase !== "aiming") return;
+    if (session.attunement && !session.attunementConfirmed) {
+      overlayEl.querySelector(".orbit-battle .orbit-status").textContent =
+        "先確認合息定軌；所有改軌都必須在發射前讓你看見。";
+      return;
+    }
     const p = pointerPos(event);
     const world = screenToWorld(p.x, p.y, p.cssW, p.cssH);
     const dx = world.x - session.player.x;
@@ -707,7 +1194,9 @@ export function createOrbitBattleController({
   function onPointerMove(event) {
     if (!dragging || !session || session.phase !== "aiming") return;
     const p = pointerPos(event);
-    pullNow = screenToWorld(p.x, p.y, p.cssW, p.cssH);
+    pullNow = constrainPullPoint(
+      screenToWorld(p.x, p.y, p.cssW, p.cssH)
+    );
   }
 
   function onPointerUp(event) {
@@ -717,7 +1206,9 @@ export function createOrbitBattleController({
     }
     dragging = false;
     const p = pointerPos(event);
-    pullNow = screenToWorld(p.x, p.y, p.cssW, p.cssH);
+    pullNow = constrainPullPoint(
+      screenToWorld(p.x, p.y, p.cssW, p.cssH)
+    );
     const pullDx = pullNow.x - pullStart.x;
     const pullDy = pullNow.y - pullStart.y;
     if (Math.hypot(pullDx, pullDy) < 0.04) {
@@ -726,10 +1217,15 @@ export function createOrbitBattleController({
       return;
     }
     session = launchOrbitSession(session, pullDx, pullDy);
+    if (session.phase !== "spinning") {
+      pullStart = null;
+      pullNow = null;
+      return;
+    }
     const stance = selectedLaunchStance();
     overlayEl.querySelector(".orbit-battle .orbit-status").textContent =
       session.prototypeSlice
-        ? `${stance?.label || "直立"}姿態已啟動。化身會自主彎軌；你只剩一次共鳴脈衝可調整走向。`
+        ? `${stance?.label || "直立"}定軌已啟動。可見改軌 1/1、界紋蓄能 ${session.boundaryChargesRemaining}/${session.boundaryChargeBudget}；兩者都不直接完成目標。`
         : `化身旋轉中……${session.goalLabel}，或先撤退。`;
     renderControlDepth();
     pullStart = null;
@@ -810,9 +1306,22 @@ export function createOrbitBattleController({
         session.dummyName
       );
     }
-    drawBody(session.player, cssW, cssH, "rgba(160, 220, 255, 0.95)", "心核化身");
+    const embodimentLabel = session.embodimentMode === "formal_stage"
+      ? `${session.embodiment?.companionName || "夥伴"}・${session.embodiment?.formalStageLabel || "心相"}`
+      : "心核化身";
+    drawBody(
+      session.player,
+      cssW,
+      cssH,
+      "rgba(160, 220, 255, 0.95)",
+      embodimentLabel
+    );
     if (session.lastPulseFlash > 0) {
       drawResonancePulse(session, cssW, cssH);
+    }
+
+    if (session.phase === "aiming" && !dragging) {
+      drawAttunementPreview(session, cssW, cssH);
     }
 
     if (session.phase === "aiming" && dragging && pullNow) {
@@ -906,6 +1415,8 @@ export function createOrbitBattleController({
       ctx.arc(center.sx, center.sy, radius, 0, Math.PI * 2);
       ctx.fill();
     }
+
+    drawBoundaryRails(activeSession, cssW, cssH);
 
     const guidePoints = [
       activeSession.launchOrigin,
@@ -1016,6 +1527,94 @@ export function createOrbitBattleController({
     ctx.fillText("共鳴圈", fire.sx, fire.sy + radius + 14);
   }
 
+  function drawBoundaryRails(activeSession, cssW, cssH) {
+    const boundary = activeSession.boundaryResonance;
+    if (!boundary?.rails?.length) return;
+    const center = worldToScreen(0, 0, cssW, cssH);
+    const railRadius =
+      ((activeSession.arenaRadius ?? 1) - activeSession.player.radius * 0.18) *
+      center.scale;
+    const hasCharge = activeSession.boundaryChargesRemaining > 0;
+    for (const rail of boundary.rails) {
+      const startDeg = ((rail.startDeg % 360) + 360) % 360;
+      let endDeg = ((rail.endDeg % 360) + 360) % 360;
+      if (endDeg < startDeg) endDeg += 360;
+      const flashing =
+        activeSession.lastBoundaryFlash > 0 &&
+        activeSession.lastBoundaryRailId === rail.id;
+      ctx.beginPath();
+      ctx.arc(
+        center.sx,
+        center.sy,
+        railRadius,
+        startDeg * Math.PI / 180,
+        endDeg * Math.PI / 180
+      );
+      ctx.strokeStyle = flashing
+        ? "rgba(205, 250, 255, 0.98)"
+        : hasCharge
+          ? "rgba(125, 225, 245, 0.78)"
+          : "rgba(105, 135, 150, 0.32)";
+      ctx.lineWidth = flashing ? 6 : 4;
+      ctx.setLineDash(hasCharge ? [9, 5] : [3, 8]);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+  }
+
+  function drawAttunementPreview(activeSession, cssW, cssH) {
+    if (!activeSession.attunement) return;
+    const from = worldToScreen(
+      activeSession.player.x,
+      activeSession.player.y,
+      cssW,
+      cssH
+    );
+    const target =
+      activeSession.memoryMotes?.[activeSession.nextMemoryMoteIndex] ||
+      activeSession.resonanceZone;
+    if (!target) return;
+    const to = worldToScreen(target.x, target.y, cssW, cssH);
+    const stance = activeSession.launchStances?.find(
+      (candidate) => candidate.id === activeSession.launchStanceId
+    );
+    const curveScale = stance?.id === "tilted"
+      ? 0.34
+      : stance?.id === "conservative"
+        ? 0.12
+        : 0.22;
+    const dx = to.sx - from.sx;
+    const dy = to.sy - from.sy;
+    const controlX = (from.sx + to.sx) * 0.5 - dy * curveScale;
+    const controlY = (from.sy + to.sy) * 0.5 + dx * curveScale;
+
+    ctx.beginPath();
+    ctx.arc(
+      from.sx,
+      from.sy,
+      activeSession.attunement.maxPullDistance * from.scale,
+      0,
+      Math.PI * 2
+    );
+    ctx.strokeStyle = activeSession.attunementConfirmed
+      ? "rgba(255, 224, 155, 0.3)"
+      : "rgba(155, 215, 235, 0.25)";
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3, 6]);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(from.sx, from.sy);
+    ctx.quadraticCurveTo(controlX, controlY, to.sx, to.sy);
+    ctx.strokeStyle = activeSession.attunementConfirmed
+      ? "rgba(255, 226, 165, 0.82)"
+      : "rgba(145, 225, 235, 0.6)";
+    ctx.lineWidth = activeSession.attunementConfirmed ? 2.4 : 1.8;
+    ctx.setLineDash(activeSession.attunementConfirmed ? [] : [6, 5]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
   function drawObjectiveProgress(activeSession) {
     const total = activeSession.memoryMotes.length;
     const collected = activeSession.nextMemoryMoteIndex;
@@ -1052,12 +1651,13 @@ export function createOrbitBattleController({
     );
     ctx.fillStyle = "rgba(185, 215, 235, 0.82)";
     const pulseText = activeSession.resonancePulseUsed
-      ? "脈衝 已用"
+      ? "改軌 已用"
       : activeSession.phase === "aiming"
-        ? "脈衝 待發射"
-        : "脈衝 1/1";
+        ? "改軌 待發射"
+        : "改軌 1/1";
+    const boundaryText = `界紋 ${activeSession.boundaryChargesRemaining}/${activeSession.boundaryChargeBudget}`;
     if (activeSession.prototypeSlice) {
-      ctx.fillText(`姿態 ${stance?.label || "直立"}・${pulseText}`, 12, 50);
+      ctx.fillText(`姿態 ${stance?.label || "直立"}・${pulseText}・${boundaryText}`, 12, 50);
     }
   }
 
@@ -1072,7 +1672,7 @@ export function createOrbitBattleController({
       0,
       Math.min(1, activeSession.lastPulseFlash / flashSeconds)
     );
-    const progress = 1 - ratio;
+    const progress = prefersReducedOrbitMotion() ? 0.12 : 1 - ratio;
     const radius =
       body.radius * point.scale * (1.35 + progress * 2.8);
     ctx.beginPath();
@@ -1088,7 +1688,11 @@ export function createOrbitBattleController({
     const r = body.radius * scale;
     const speed = Math.hypot(body.vx || 0, body.vy || 0);
     // 高速時短拖尾：加強「咻」的速度感（非完整軌跡記錄）
-    if (speed > 0.35 && session?.phase === "spinning") {
+    if (
+      speed > 0.35 &&
+      session?.phase === "spinning" &&
+      !prefersReducedOrbitMotion()
+    ) {
       const trail = Math.min(18, speed * 14);
       const angV = Math.atan2(body.vy || 0, body.vx || 0);
       ctx.beginPath();
@@ -1100,6 +1704,12 @@ export function createOrbitBattleController({
     }
     const hybridSpin =
       body.physicsModel === ORBIT_PHYSICS_MODELS.hybridSpin;
+    const formalManifestation =
+      body.id === "avatar" &&
+      session?.embodimentMode === "formal_stage";
+    const embodimentOption = formalManifestation
+      ? selectedEmbodimentOption()
+      : null;
     const wobbleAngle = hybridSpin
       ? Math.sin((body.spinAge || 0) * 9.5) * (body.wobble || 0) * 0.35
       : 0;
@@ -1117,8 +1727,38 @@ export function createOrbitBattleController({
     } else {
       ctx.arc(sx, sy, r, 0, Math.PI * 2);
     }
-    ctx.fillStyle = color;
+    ctx.fillStyle = formalManifestation
+      ? "rgba(90, 190, 235, 0.2)"
+      : color;
     ctx.fill();
+    if (formalManifestation) {
+      ctx.strokeStyle = "rgba(170, 235, 255, 0.92)";
+      ctx.lineWidth = 2.2;
+      ctx.stroke();
+      const illustrated =
+        embodimentOption?.manifestationIntent === "illustrated" &&
+        drawOrbitManifestation(ctx, manifestationRenderAsset, {
+          x: sx,
+          y: sy,
+          radius: r,
+          elapsed: session?.elapsed || 0,
+          reducedMotion: prefersReducedOrbitMotion(),
+          wobbleAngle,
+          alpha: 0.96
+        });
+      if (!illustrated) {
+        ctx.beginPath();
+        ctx.arc(sx, sy, Math.max(4, r * 0.42), 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(210, 245, 255, 0.88)";
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(sx, sy, r * 0.72, 0, Math.PI * 2);
+        ctx.strokeStyle = "rgba(185, 225, 255, 0.6)";
+        ctx.setLineDash([3, 3]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+    }
     // 轉速視覺加速：轉得越快線掃越急
     const ang =
       (body.spin / 100) * Math.PI * 6 +

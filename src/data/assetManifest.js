@@ -11,12 +11,15 @@ function createIllustratedCompanionAsset({
   id,
   sourceRoot,
   animations,
+  orbitManifestations = null,
   approvalStatus = "runtime-ready-registry"
 }) {
   return Object.freeze({
     id,
     sourceRoot,
     animations,
+    orbitManifestations:
+      orbitManifestations || `${sourceRoot}/metadata/orbit-manifestations.json`,
     runtimeManifest: animations,
     fallbackImage: null,
     protectedRuntimeRoot: true,
@@ -313,3 +316,10 @@ export const ASSET_MANIFEST = Object.freeze({
     }),
   })
 });
+
+export function getIllustratedCompanionAssetById(companionId) {
+  if (typeof companionId !== "string" || !companionId) return null;
+  return Object.values(ASSET_MANIFEST.characters || {}).find(
+    (asset) => asset?.id === companionId
+  ) || null;
+}

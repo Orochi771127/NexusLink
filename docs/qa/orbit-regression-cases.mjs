@@ -21,6 +21,9 @@ const harnesses = [
   "orbit-hybrid-physics-cases.mjs",
   "orbit-moonlake-camp-slice-cases.mjs",
   "orbit-control-depth-cases.mjs",
+  "orbit-v1-attunement-boundary-cases.mjs",
+  "orbit-v2-embodiment-cases.mjs",
+  "orbit-v3-companion-bridge-cases.mjs",
   "orbit-node-action-sheet-cases.mjs",
   "orbit-i18n-cases.mjs"
 ];

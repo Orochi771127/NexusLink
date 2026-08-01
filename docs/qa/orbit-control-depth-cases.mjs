@@ -222,11 +222,12 @@ assert.ok(controllerSource.includes("selectOrbitLaunchStance"));
 assert.ok(controllerSource.includes("triggerOrbitResonancePulse"));
 assert.ok(controllerSource.includes("data-orbit-stance"));
 assert.ok(controllerSource.includes('data-orbit-action="pulse"'));
-assert.ok(controllerSource.includes("脈衝只能在發射後使用一次"));
+assert.ok(controllerSource.includes("可見改軌・發射後可用"));
+assert.ok(controllerSource.includes("合息定軌"));
 assert.ok(cssSource.includes(".orbit-control-depth"));
 assert.ok(cssSource.includes(".orbit-stance-picker"));
 assert.ok(cssSource.includes(".orbit-pulse-btn"));
 assert.ok(cssSource.includes('content: "✓"'));
-ok("390-friendly stance and pulse controls remain wired into the existing overlay");
+ok("390-friendly attunement, stance, and rewrite controls remain wired into the existing overlay");
 
 console.log("\nAll Nexus Spin control-depth cases passed.");
