@@ -25,6 +25,7 @@ import { LOW_RECALL_INTENTS } from "./memoryRecallPolicy.js";
 import {
   applyRecentBoundaryContext,
   applyRecentDialogueContext,
+  createEmptyDialogueState,
   getDialogueState,
   recordDialogueTurn,
   getRepetitionScore
@@ -39,6 +40,7 @@ import { evaluateConstitutionSignals } from "./eval/constitutionCritic.js";
 export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
   const companion = runtime.companion || null;
   const companionId = companion?.id || state.activeCompanionId || "default";
+  const readOnly = runtime.readOnly === true;
   const gateway = prepareSoulTalkInput(inputText, state, runtime);
   const corpus = loadRaphaelCorpus();
 
@@ -46,7 +48,9 @@ export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
   const analysis = interpretEmotionInput(gateway.originalInput, state, { repeated: gateway.repeated });
   const intent = classifyIntent(gateway.normalizedInput, analysis, safety);
   const dialogueSessionKey = companionId;
-  const dialogueState = getDialogueState(dialogueSessionKey);
+  const dialogueState = readOnly
+    ? createEmptyDialogueState()
+    : getDialogueState(dialogueSessionKey);
   let nlu = runNluPipeline(gateway.normalizedInput, analysis, intent, safety);
   nlu = applyRecentDialogueContext(nlu, dialogueState, {
     companionAnchors: state.companionAnchors || [],
@@ -212,7 +216,7 @@ export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
     ? []
     : planQuickReplies({
         nlu,
-        dialogueState: getDialogueState(dialogueSessionKey),
+        dialogueState,
         responseStrategy,
         state,
         reply: finalReply
@@ -230,7 +234,7 @@ export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
     reply: finalReply
   });
 
-  if (!isSafetyTerminal) {
+  if (!isSafetyTerminal && !readOnly) {
     logConversationDebugTrace(debugTrace, runtime);
   }
 
@@ -326,9 +330,17 @@ export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
     forbiddenPhraseDetected: Boolean(execution.forbiddenPhraseDetected || forbiddenCheck.hasForbidden)
   };
 
+  coreResult.invocation = Object.freeze({
+    surface: String(runtime.surface || "soul_talk"),
+    readOnly,
+    simulationAuthority: false,
+    stateWriteApplied: false,
+    memoryWriteApplied: false
+  });
+
   // High-risk text remains visible in the UI transcript, but it must not enter
   // Raphael's dialogue-memory or evolution-trace caches.
-  if (!isSafetyTerminal) {
+  if (!isSafetyTerminal && !readOnly) {
     recordDialogueTurn(dialogueSessionKey, coreResult);
     collectInteractionTrace(coreResult);
   }

@@ -22,6 +22,7 @@ import {
 } from "./orbitPhysics.js";
 import { getOrbitPathLabel } from "../data/orbit/stages/index.js";
 import { companionLineForOutcome, mapOrbitResultToOutcome } from "./orbitOutcomes.js";
+import { applyOrbitBoundaryResonance } from "./orbitBoundaryResonance.js";
 
 const MAX_SPIN_SECONDS = 45; // R6：場次更短促，避免長時間漂移感
 
@@ -42,6 +43,59 @@ function deriveObjectives(stage, goal) {
   return [{ type: "clear_noise" }];
 }
 
+function cloneOrbitEmbodiment(input) {
+  if (!input || !Array.isArray(input.options) || input.options.length === 0) {
+    return null;
+  }
+  const options = input.options
+    .filter((option) => option?.id && option?.normalizedPhysicsProfile)
+    .map((option) => ({
+      ...option,
+      normalizedPhysicsProfile: {
+        ...option.normalizedPhysicsProfile
+      }
+    }));
+  if (options.length === 0) return null;
+  const selectedMode = options.some(
+    (option) => option.id === input.selectedMode
+  )
+    ? input.selectedMode
+    : options[0].id;
+  return {
+    ...input,
+    selectedMode,
+    options
+  };
+}
+
+function applyEmbodimentToPlayer(basePlayer, embodimentBase, option) {
+  const profile = option?.normalizedPhysicsProfile || {};
+  return {
+    ...basePlayer,
+    radius:
+      embodimentBase.radius *
+      Math.max(0.7, Math.min(1.35, Number(profile.collisionRadius) || 1)),
+    inertiaScale:
+      embodimentBase.inertiaScale *
+      Math.max(0.5, Math.min(1.5, Number(profile.inertia) || 1)),
+    speedCap:
+      embodimentBase.speedCap *
+      Math.max(0.65, Math.min(1.25, Number(profile.speedCap) || 1)),
+    spinRetentionScale: Math.max(
+      0.65,
+      Math.min(1.35, Number(profile.spinRetention) || 1)
+    ),
+    turnAuthorityScale: Math.max(
+      0.65,
+      Math.min(1.35, Number(profile.turnAuthority) || 1)
+    ),
+    signalReachScale: Math.max(
+      0.65,
+      Math.min(1.35, Number(profile.signalReach) || 1)
+    )
+  };
+}
+
 /**
  * @param {{
  *  stats: { impact: number, spin: number, guard: number, burst: number, overheat: number },
@@ -50,7 +104,9 @@ function deriveObjectives(stage, goal) {
  *  personaBias?: 'comfort' | 'eager',
  *  sandbox?: boolean,
  *  prototypeSlice?: boolean,
- *  nonPersistent?: boolean
+ *  nonPersistent?: boolean,
+ *  attunement?: object,
+ *  embodiment?: object
  * }} opts
  */
 export function createOrbitSession(opts = {}) {
@@ -96,7 +152,14 @@ export function createOrbitSession(opts = {}) {
         .filter((stance) => stance?.id && stance?.label)
         .map((stance) => ({ ...stance }))
     : [];
+  const attunement =
+    opts.attunement?.canStart === true
+      ? { ...opts.attunement }
+      : null;
   const defaultLaunchStanceId =
+    launchStances.find(
+      (stance) => stance.id === attunement?.proposedStanceId
+    )?.id ||
     launchStances.find(
       (stance) => stance.id === stage?.defaultLaunchStanceId
     )?.id ||
@@ -106,6 +169,19 @@ export function createOrbitSession(opts = {}) {
     stage?.resonancePulse?.enabled === true
       ? { ...stage.resonancePulse }
       : null;
+  const boundaryResonance =
+    stage?.boundaryResonance?.chargeBudget > 0
+      ? {
+          ...stage.boundaryResonance,
+          rails: Array.isArray(stage.boundaryResonance.rails)
+            ? stage.boundaryResonance.rails.map((rail) => ({ ...rail }))
+            : []
+        }
+      : null;
+  const boundaryChargeBudget = Math.max(
+    0,
+    Math.floor(boundaryResonance?.chargeBudget || 0)
+  );
   const sandbox = opts.sandbox === true;
   const prototypeSlice = opts.prototypeSlice === true;
   const nonPersistent =
@@ -114,6 +190,46 @@ export function createOrbitSession(opts = {}) {
   const playerStability = Math.round(72 + stats.guard * 0.22 - stats.overheat * 0.12);
   const baseDummy = stage?.dummyStability ?? 78;
   const dummyStability = Math.round(baseDummy + (stage?.dummyGuardBonus || arena.dummyGuardBonus || 0));
+  const embodiment = cloneOrbitEmbodiment(opts.embodiment);
+  const basePlayer = createBody({
+    id: "avatar",
+    x: playerStart.x,
+    y: playerStart.y,
+    spin: stats.spin,
+    stability: Math.max(40, Math.min(100, playerStability)),
+    radius: AVATAR_RADIUS,
+    team: "player",
+    physicsModel,
+    spinDirection: 1,
+    tilt: physicsModel === ORBIT_PHYSICS_MODELS.hybridSpin ? 0.08 : 0.06,
+    driveScale:
+      Number.isFinite(physicsTuning.driveScale)
+        ? physicsTuning.driveScale
+        : 1,
+    driveTargetSpeed:
+      Number.isFinite(physicsTuning.driveTargetSpeed)
+        ? physicsTuning.driveTargetSpeed
+        : undefined,
+    speedCap:
+      Number.isFinite(physicsTuning.speedCap)
+        ? physicsTuning.speedCap
+        : undefined
+  });
+  const embodimentBase = Object.freeze({
+    radius: basePlayer.radius,
+    inertiaScale: basePlayer.inertiaScale,
+    speedCap: basePlayer.speedCap
+  });
+  const selectedEmbodimentOption = embodiment?.options.find(
+    (option) => option.id === embodiment.selectedMode
+  ) || null;
+  const player = selectedEmbodimentOption
+    ? applyEmbodimentToPlayer(
+        basePlayer,
+        embodimentBase,
+        selectedEmbodimentOption
+      )
+    : basePlayer;
 
   return {
     phase: "aiming",
@@ -156,9 +272,23 @@ export function createOrbitSession(opts = {}) {
     },
     launchStances,
     launchStanceId: defaultLaunchStanceId,
+    attunement,
+    attunementConfirmed: attunement ? attunement.confirmed === true : true,
+    confirmedLaunchPlan: null,
+    embodiment,
+    embodimentMode: selectedEmbodimentOption?.id || "core",
+    embodimentBase,
     resonancePulse,
     resonancePulseUsed: false,
     lastPulseFlash: 0,
+    boundaryResonance,
+    boundaryChargeBudget,
+    boundaryChargesRemaining: boundaryChargeBudget,
+    boundaryChargeSpent: 0,
+    boundaryResonanceCount: 0,
+    lastBoundaryFlash: 0,
+    lastBoundaryRailId: null,
+    boundaryResonanceTrace: null,
     memoryMotes,
     nextMemoryMoteIndex: 0,
     softWell: stage?.softWell || null,
@@ -172,30 +302,7 @@ export function createOrbitSession(opts = {}) {
     sessionTrace: stage?.sessionTrace || null,
     stats: { ...stats },
     personaBias: opts.personaBias || "comfort",
-    player: createBody({
-      id: "avatar",
-      x: playerStart.x,
-      y: playerStart.y,
-      spin: stats.spin,
-      stability: Math.max(40, Math.min(100, playerStability)),
-      radius: AVATAR_RADIUS,
-      team: "player",
-      physicsModel,
-      spinDirection: 1,
-      tilt: physicsModel === ORBIT_PHYSICS_MODELS.hybridSpin ? 0.08 : 0.06,
-      driveScale:
-        Number.isFinite(physicsTuning.driveScale)
-          ? physicsTuning.driveScale
-          : 1,
-      driveTargetSpeed:
-        Number.isFinite(physicsTuning.driveTargetSpeed)
-          ? physicsTuning.driveTargetSpeed
-          : undefined,
-      speedCap:
-        Number.isFinite(physicsTuning.speedCap)
-          ? physicsTuning.speedCap
-          : null
-    }),
+    player,
     dummy: {
       ...createBody({
         id: "dummy",
@@ -236,17 +343,107 @@ export function createOrbitSession(opts = {}) {
 }
 
 /**
+ * Select the visible embodiment before the attunement plan is confirmed.
+ * Both modes keep the same normalized total budget and never touch Growth.
+ */
+export function selectOrbitEmbodiment(session, modeId) {
+  if (
+    !session ||
+    session.phase !== "aiming" ||
+    (session.attunement && session.attunementConfirmed) ||
+    !session.embodiment ||
+    !session.embodimentBase
+  ) {
+    return session;
+  }
+  const option = session.embodiment.options?.find(
+    (candidate) => candidate.id === modeId
+  );
+  if (!option || option.id === session.embodimentMode) return session;
+  const player = applyEmbodimentToPlayer(
+    session.player,
+    session.embodimentBase,
+    option
+  );
+  return {
+    ...session,
+    player,
+    embodimentMode: option.id,
+    embodiment: {
+      ...session.embodiment,
+      selectedMode: option.id
+    }
+  };
+}
+
+/**
  * 只在發射前切換姿態。正式五關沒有 launchStances，因此完全不受影響。
  */
 export function selectOrbitLaunchStance(session, stanceId) {
-  if (!session || session.phase !== "aiming") return session;
+  if (
+    !session ||
+    session.phase !== "aiming" ||
+    (session.attunement && session.attunementConfirmed)
+  ) {
+    return session;
+  }
   const stance = session.launchStances?.find(
     (candidate) => candidate.id === stanceId
   );
   if (!stance || stance.id === session.launchStanceId) return session;
   return {
     ...session,
-    launchStanceId: stance.id
+    launchStanceId: stance.id,
+    attunement: session.attunement
+      ? {
+          ...session.attunement,
+          proposedStanceId: stance.id
+        }
+      : session.attunement
+  };
+}
+
+/**
+ * Lock the exact visible pre-launch plan. Once confirmed, stance selection is
+ * immutable and the simulation reads no live Mood/Trust/Energy values.
+ */
+export function confirmOrbitAttunement(session) {
+  if (
+    !session ||
+    session.phase !== "aiming" ||
+    !session.attunement ||
+    session.attunementConfirmed ||
+    session.attunement.canStart !== true
+  ) {
+    return session;
+  }
+  const stance = session.launchStances?.find(
+    (candidate) => candidate.id === session.launchStanceId
+  );
+  if (!stance) return session;
+
+  const confirmedLaunchPlan = Object.freeze({
+    version: "orbit-launch-plan-v2",
+    stanceId: stance.id,
+    embodimentMode: session.embodimentMode || "core",
+    formalStage:
+      session.embodimentMode === "formal_stage"
+        ? session.embodiment?.formalStage || null
+        : null,
+    maxPullDistance: session.attunement.maxPullDistance,
+    mood: session.attunement.mood,
+    moodLabel: session.attunement.moodLabel
+  });
+  return {
+    ...session,
+    attunementConfirmed: true,
+    confirmedLaunchPlan,
+    attunement: {
+      ...session.attunement,
+      confirmed: true,
+      confirmedStanceId: stance.id,
+      confirmedEmbodimentMode: session.embodimentMode || "core"
+    }
   };
 }
 
@@ -255,13 +452,25 @@ export function selectOrbitLaunchStance(session, stanceId) {
  */
 export function launchOrbitSession(session, pullDx, pullDy) {
   if (!session || session.phase !== "aiming") return session;
+  if (session.attunement && !session.attunementConfirmed) return session;
+  const rawPullLength = Math.hypot(pullDx, pullDy);
+  const planPullLimit = Number(session.confirmedLaunchPlan?.maxPullDistance);
+  const pullLimit = Number.isFinite(planPullLimit)
+    ? Math.max(0.04, planPullLimit)
+    : rawPullLength;
+  const pullScale =
+    rawPullLength > pullLimit && rawPullLength > 1e-8
+      ? pullLimit / rawPullLength
+      : 1;
+  const effectivePullDx = pullDx * pullScale;
+  const effectivePullDy = pullDy * pullScale;
   const stance =
     session.launchStances?.find(
       (candidate) => candidate.id === session.launchStanceId
     ) || null;
   const { vx, vy } = launchVelocityFromPull(
-    pullDx,
-    pullDy,
+    effectivePullDx,
+    effectivePullDy,
     session.stats.impact
   );
   const speedScale = Number.isFinite(stance?.speedScale)
@@ -274,7 +483,7 @@ export function launchOrbitSession(session, pullDx, pullDy) {
     ? Math.max(0, stance.driveScale)
     : 1;
   const launchSpin =
-    session.stats.spin + 18 + Math.hypot(pullDx, pullDy) * 72;
+    session.stats.spin + 18 + Math.hypot(effectivePullDx, effectivePullDy) * 72;
   const rawLaunchVx = vx * speedScale;
   const rawLaunchVy = vy * speedScale;
   const rawLaunchSpeed = Math.hypot(rawLaunchVx, rawLaunchVy);
@@ -312,7 +521,13 @@ export function launchOrbitSession(session, pullDx, pullDy) {
     phase: "spinning",
     player,
     elapsed: 0,
-    physicsAccumulator: 0
+    physicsAccumulator: 0,
+    launchInput: Object.freeze({
+      pullDx: effectivePullDx,
+      pullDy: effectivePullDy,
+      pullDistance: Math.hypot(effectivePullDx, effectivePullDy),
+      wasClamped: pullScale < 1
+    })
   };
 }
 
@@ -350,7 +565,11 @@ export function triggerOrbitResonancePulse(session) {
   const targetY = dy / distance;
   const steerStrength = Math.max(
     0,
-    Math.min(1, session.resonancePulse.steerStrength || 0)
+    Math.min(
+      1,
+      (session.resonancePulse.steerStrength || 0) *
+        (session.player.turnAuthorityScale || 1)
+    )
   );
   let directionX =
     currentX * (1 - steerStrength) + targetX * steerStrength;
@@ -540,7 +759,9 @@ function stepCollectMotes(session, objective, dt) {
       player.x - mote.x,
       player.y - mote.y
     );
-    return distance <= mote.r + player.radius * 0.8;
+    return distance <=
+      mote.r +
+        player.radius * 0.8 * (player.signalReachScale || 1);
   });
   if (hit) {
       memoryMotes = memoryMotes.map((mote, index) =>
@@ -754,8 +975,9 @@ export function stepOrbitSession(session, dt) {
       ...next,
       player: stepBody(playerWithField, PHYSICS_FIXED_DT, {
         spinDecay:
-          next.playerPhysics.spinDecay ??
-          DEFAULT_SPIN_DECAY + next.stats.overheat * 0.03,
+          (next.playerPhysics.spinDecay ??
+            DEFAULT_SPIN_DECAY + next.stats.overheat * 0.03) /
+          (next.player.spinRetentionScale || 1),
         friction: next.playerPhysics.friction ?? DEFAULT_FRICTION,
         arenaRadius,
         containAtBoundary: next.containedArena
@@ -767,6 +989,8 @@ export function stepOrbitSession(session, dt) {
         containAtBoundary: next.containedArena
       })
     };
+
+    next = applyOrbitBoundaryResonance(next, playerWithField);
 
     next = {
       ...next,

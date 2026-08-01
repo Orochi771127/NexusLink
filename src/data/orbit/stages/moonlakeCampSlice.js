@@ -25,6 +25,16 @@ export const MOONLAKE_CAMP_SLICE = Object.freeze({
     driveScale: 0.12,
     speedCap: 3.4
   }),
+  attunement: Object.freeze({
+    minPullDistance: 0.24,
+    maxPullDistance: 0.55
+  }),
+  embodiment: Object.freeze({
+    enabled: true,
+    defaultMode: "formal_stage",
+    normalizedBudget: 6,
+    affordance: "collision_and_signal_contact"
+  }),
   defaultLaunchStanceId: "upright",
   launchStances: Object.freeze([
     Object.freeze({
@@ -63,13 +73,36 @@ export const MOONLAKE_CAMP_SLICE = Object.freeze({
   ]),
   resonancePulse: Object.freeze({
     enabled: true,
+    label: "可見改軌",
     steerStrength: 0.34,
     travelSpeedScale: 0.92,
     settleSpeedScale: 0.66,
-    spinBoost: 6,
+    spinBoost: 0,
     tiltRecovery: 0.1,
     wobbleRecovery: 0.16,
     flashSeconds: 0.36
+  }),
+  boundaryResonance: Object.freeze({
+    chargeBudget: 1,
+    minSpeed: 0.72,
+    speedRetention: 0.96,
+    spinRetention: 0.94,
+    contactTolerance: 0.026,
+    flashSeconds: 0.32,
+    rails: Object.freeze([
+      Object.freeze({
+        id: "moonlake-east-rune",
+        startDeg: 300,
+        endDeg: 48,
+        direction: -1
+      }),
+      Object.freeze({
+        id: "moonlake-west-rune",
+        startDeg: 132,
+        endDeg: 228,
+        direction: 1
+      })
+    ])
   }),
   playerStart: Object.freeze({ x: 0, y: 0.66 }),
   memoryMotes: Object.freeze([

@@ -164,11 +164,16 @@ export function runAutonomyLoop({
     stateMutation: execution.stateMutation
   });
 
-  const updatedProfile = updateCompanionPreferenceProfile(companionId, {
-    reflection,
-    perception,
-    gateway: perception.gateway
-  });
+  // Read-only lifecycle bridges (Orbit preflight / settlement) may ask the
+  // cognition pipeline for a bounded reaction, but they must not teach the
+  // cross-session preference store. Soul Talk keeps the existing writer path.
+  const updatedProfile = runtime.readOnly === true
+    ? preferenceProfile
+    : updateCompanionPreferenceProfile(companionId, {
+        reflection,
+        perception,
+        gateway: perception.gateway
+      });
 
   // 表達偏好可以改一般陪伴語氣，但不能把 boundary policy 裁成只剩
   // 「我聽見你需要有人在」，否則玩家看不到夥伴真正說不的內容。

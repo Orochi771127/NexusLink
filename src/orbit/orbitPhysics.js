@@ -118,6 +118,7 @@ export function createBody({
   spin = 40,
   stability = 100,
   radius = AVATAR_RADIUS,
+  inertiaScale = 1,
   team = "player",
   physicsModel = ORBIT_PHYSICS_MODELS.baseline,
   spinDirection = 1,
@@ -137,6 +138,11 @@ export function createBody({
     spin,
     stability,
     radius,
+    inertiaScale: clamp(
+      Number.isFinite(inertiaScale) ? inertiaScale : 1,
+      0.5,
+      1.5
+    ),
     team,
     physicsModel,
     spinDirection: spinDirection < 0 ? -1 : 1,
@@ -417,17 +423,29 @@ export function collideBodies(
     return { a: a2, b: b2, hit: false, damageToA: 0, damageToB: 0 };
   }
 
+  const massA = clamp(
+    Number.isFinite(a2.inertiaScale) ? a2.inertiaScale : 1,
+    0.5,
+    1.5
+  );
+  const massB = clamp(
+    Number.isFinite(b2.inertiaScale) ? b2.inertiaScale : 1,
+    0.5,
+    1.5
+  );
+  const inverseMassA = 1 / massA;
+  const inverseMassB = 1 / massB;
   const energyBefore =
-    a2.vx * a2.vx +
-    a2.vy * a2.vy +
-    b2.vx * b2.vx +
-    b2.vy * b2.vy;
+    massA * (a2.vx * a2.vx + a2.vy * a2.vy) +
+    massB * (b2.vx * b2.vx + b2.vy * b2.vy);
   const restitution = BODY_RESTITUTION;
-  const j = -(1 + restitution) * velAlongNormal * 0.5;
-  a2.vx -= j * nx;
-  a2.vy -= j * ny;
-  b2.vx += j * nx;
-  b2.vy += j * ny;
+  const j =
+    (-(1 + restitution) * velAlongNormal) /
+    (inverseMassA + inverseMassB);
+  a2.vx -= j * inverseMassA * nx;
+  a2.vy -= j * inverseMassA * ny;
+  b2.vx += j * inverseMassB * nx;
+  b2.vy += j * inverseMassB * ny;
   // 偏心一點：碰撞後帶側向甩，避免「撞完就對撞靜止」
   const tx = -ny;
   const ty = nx;
@@ -438,10 +456,8 @@ export function collideBodies(
   b2.vy -= ty * spinKick;
 
   const energyAfter =
-    a2.vx * a2.vx +
-    a2.vy * a2.vy +
-    b2.vx * b2.vx +
-    b2.vy * b2.vy;
+    massA * (a2.vx * a2.vx + a2.vy * a2.vy) +
+    massB * (b2.vx * b2.vx + b2.vy * b2.vy);
   const energyBudget = energyBefore * COLLISION_ENERGY_RETENTION;
   if (energyAfter > energyBudget && energyAfter > 1e-12) {
     const energyScale = Math.sqrt(energyBudget / energyAfter);

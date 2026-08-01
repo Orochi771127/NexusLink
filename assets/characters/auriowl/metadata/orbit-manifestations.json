@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "companionId": "auriowl",
+  "formalStages": {
+    "initial_awakened": {
+      "status": "runtime-ready",
+      "animationId": "idle_calm",
+      "renderMode": "illustrated-self-projection",
+      "collisionCarrier": "outer-resonance-field"
+    }
+  }
+}
