@@ -1,8 +1,10 @@
 import AudioManager from "../audio/audioManager.js";
 import { qs, qsa } from "../utils/dom.js";
-import { clearState, exportSaveData } from "../state/saveManager.js";
+import { clearState, exportSaveData, STORAGE_KEY } from "../state/saveManager.js";
 import { exportTranscriptData } from "../ai/dialogue/soulTalkTranscriptJournal.js";
 import { applyLanguage } from "../i18n/i18n.js";
+import { loginWithGoogle, logout, onAuthStateChanged } from "../auth/authManager.js";
+import { pullState, pushState } from "../auth/cloudSync.js";
 
 // data-settings-range key → state.settings 欄位
 const VOLUME_FIELD = { master: "volMaster", bgm: "volBgm", sfx: "volSfx" };
@@ -55,6 +57,28 @@ export function createSettingsController({ panelManager, restartOnboarding, stor
     syncControlsFromState();
     applyToRuntime();
     applyLanguage(getSettings().lang || "tc");
+    bindAuth();
+  }
+
+  function bindAuth() {
+    if (!panel) return;
+    onAuthStateChanged((user) => {
+      const statusText = qs("#settings-account-status", panel);
+      const btnLogin = qs('[data-settings-action="login-google"]', panel);
+      const btnLogout = qs('[data-settings-action="logout"]', panel);
+      
+      if (!statusText || !btnLogin || !btnLogout) return;
+
+      if (user) {
+        statusText.textContent = `已綁定帳號：${user.email || 'Google User'}`;
+        btnLogin.style.display = 'none';
+        btnLogout.style.display = 'inline-block';
+      } else {
+        statusText.textContent = "目前未登入，存檔僅保存在此裝置中。";
+        btnLogin.style.display = 'inline-block';
+        btnLogout.style.display = 'none';
+      }
+    });
   }
 
   function open() {
@@ -140,6 +164,46 @@ export function createSettingsController({ panelManager, restartOnboarding, stor
     }
     if (action === "delete-save") {
       deleteSave();
+      return;
+    }
+    if (action === "login-google") {
+      handleLogin();
+      return;
+    }
+    if (action === "logout") {
+      logout();
+      return;
+    }
+  }
+
+  async function handleLogin() {
+    const res = await loginWithGoogle();
+    if (res && res.ok) {
+      // 登入成功後，檢查雲端是否有更新的存檔
+      const syncRes = await pullState();
+      if (syncRes.ok && syncRes.data) {
+        const localState = store ? store.getState() : {};
+        const localTime = localState.lastSeenAt || 0;
+        
+        // Firestore Timestamp 轉毫秒
+        const cloudTime = syncRes.serverTimestamp 
+            ? (syncRes.serverTimestamp.seconds * 1000 + syncRes.serverTimestamp.nanoseconds / 1000000)
+            : localTime + 1; // Fallback to always prompt if server format differs
+            
+        if (cloudTime > localTime) {
+          const confirmed = window.confirm("發現雲端有更新的存檔，是否要將雲端進度同步至此裝置？\n(若選擇取消，則會以目前裝置的進度覆蓋雲端)");
+          if (confirmed) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(syncRes.data));
+            window.location.reload();
+            return;
+          }
+        }
+      }
+      
+      // 若雲端無存檔，或是玩家拒絕下載雲端，則以本地為主推上去
+      if (store) {
+        pushState(store.getState());
+      }
     }
   }
 

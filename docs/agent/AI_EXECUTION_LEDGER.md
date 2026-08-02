@@ -58,6 +58,26 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-08-02 - Antigravity - 2.5D RO-Style Habitat Integration & Workspace Agent Skills - VERIFIED
+
+- Status: `VERIFIED` (Syntax checked, QA 9/9 PASS, Hermes Shadow 31/31 PASS)
+- Lane: `Game Engineering And Architecture`.
+- Task name: `TP-2D5-RO-HABITAT-AND-AGENTSKILLS`.
+- Layer: `EXPERIENCE + AGENT_WORKFLOW`; Approved Groundwork includes 2.5D RO Billboard Companion renderer module and workspace Agent Skill suite.
+- Branch / commit: `main` / uncommitted
+- Work performed:
+  - Created `src/three/roBillboardCompanion.js` for 3D world positioning, camera-facing billboard rotation (`THREE.Sprite`), ground shadow blob projection, and 8-direction sprite sheet calculation (`Front`, `Front-Right`, `Right`, `Back-Right`, `Back`, `Back-Left`, `Left`, `Front-Left`).
+  - Added `MOONLAKE_2D5_RO_CONFIG` to `src/three/moonlakeLive3dConfig.js` containing RO 2.5D camera angles and sprite scale defaults.
+  - Mounted `roBillboardCompanion` into Three.js `habitatRoot` in `src/three/moonlakeLive3dScene.js` and exposed `getCompanionScreenPosition()`, `setCompanionWorldPosition()`, and `updateROBillboardFacing()`.
+  - Installed 6 workspace Agent SKILLs into `.claude/skills/`: `pixijs-v8-skill.md`, `threejs-2.5d-ro-habitat-skill.md`, `state-machine-behavior-tree-skill.md`, `inkjs-narrative-skill.md`, `web-audio-pixi-sound-skill.md`, `game-qa-testing-skill.md`.
+- Verification:
+  - PASS Node syntax check across entire `src/` codebase (0 syntax errors).
+  - PASS `node docs/qa/gameplay-skin-runtime-r2-cases.mjs` (9/9 PASS).
+  - PASS `node src/ai/external/testHermesShadowBridge.js` (31/31 PASS).
+  - PASS All 21 test harnesses in `src/ai/testHarness/`.
+- Required reading: `.claude/skills/*`, `src/three/roBillboardCompanion.js`, `docs/agent/AI_EXECUTION_LEDGER.md`
+
+
 ### 2026-07-28 - Codex - Moonlake Live 3D Hybrid R1 - IN PROGRESS
 
 - Status: `IN PROGRESS`; Owner explicitly approved revising the technical

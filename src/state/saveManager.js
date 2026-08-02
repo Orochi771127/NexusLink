@@ -1,6 +1,7 @@
 import { createDefaultState, normalizeState } from "./store.js";
 import { getEmergencyStorageLimits, pruneStateForStorage } from "../engine/storageGuard.js";
 import { clearTranscriptJournal } from "../ai/dialogue/soulTalkTranscriptJournal.js";
+import { pushState } from "../auth/cloudSync.js";
 
 export const STORAGE_KEY = "nexusLinkR2State:v1";
 const LEGACY_STORAGE_KEYS = ["nexusLinkPrototypeState", "nexusLinkState"];
@@ -33,6 +34,10 @@ export function saveState(state) {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(prunedState));
     cleanupMigratedLegacyKeys();
+    
+    // [NEW] 雲端同步 (Optimistic Save)
+    pushState(prunedState).catch(err => console.warn("Background cloud sync failed:", err));
+
     return { ok: true, state: prunedState, emergency: false };
   } catch (error) {
     if (error?.name !== "QuotaExceededError") {
@@ -44,6 +49,10 @@ export function saveState(state) {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(emergencyState));
       cleanupMigratedLegacyKeys();
+
+      // [NEW] 雲端同步 (Optimistic Save)
+      pushState(emergencyState).catch(err => console.warn("Background cloud sync failed:", err));
+
       return { ok: true, state: emergencyState, emergency: true };
     } catch (retryError) {
       console.warn("[saveManager] Emergency save failed:", retryError);

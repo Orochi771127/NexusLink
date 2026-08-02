@@ -11,6 +11,22 @@ export const GATEWAY_TOOLS = Object.freeze({
   SYNC_MEMORY: "sync_memory"
 });
 
+export const HERMES_CAPABILITY_ALLOWLIST = Object.freeze([
+  "web_search",
+  "doc_retrieval",
+  "code_analysis",
+  "candidate_generation",
+  "knowledge_synthesis"
+]);
+
+export const HERMES_FORBIDDEN_TOOLS = Object.freeze([
+  "file_write",
+  "terminal_exec",
+  "cron_mutate",
+  "memory_write",
+  "state_delta"
+]);
+
 const DEFAULT_POLICY = Object.freeze({
   externalEnabled: false,
   advisorEnabled: false,
@@ -21,7 +37,10 @@ const DEFAULT_POLICY = Object.freeze({
   webAccessEnabled: false,
   userConsent: false,
   humanApproval: false,
-  allowedModes: ["advisor", "renderer", "critic"]
+  hermesShadowEnabled: false,
+  hermesShadowUrl: "http://127.0.0.1:8788", // Example sidecar port
+  allowedHermesCapabilities: [...HERMES_CAPABILITY_ALLOWLIST],
+  allowedModes: ["advisor", "renderer", "critic", "shadow"]
 });
 
 /**
@@ -30,10 +49,21 @@ const DEFAULT_POLICY = Object.freeze({
  */
 export function resolveExternalIntelligencePolicy(runtime = {}) {
   const incoming = runtime.externalIntelligence || {};
+
+  // Issue 7 fix: never allow incoming to expand beyond static allowlist
+  let hermesCapabilities = [...HERMES_CAPABILITY_ALLOWLIST];
+  if (Array.isArray(incoming.allowedHermesCapabilities)) {
+    hermesCapabilities = incoming.allowedHermesCapabilities.filter(
+      (cap) => HERMES_CAPABILITY_ALLOWLIST.includes(cap)
+    );
+  }
+
   return {
     ...DEFAULT_POLICY,
     ...incoming,
-    gatewayUrl: incoming.gatewayUrl || DEFAULT_GATEWAY_URL
+    gatewayUrl: incoming.gatewayUrl || DEFAULT_GATEWAY_URL,
+    hermesShadowUrl: incoming.hermesShadowUrl || "http://127.0.0.1:8788",
+    allowedHermesCapabilities: hermesCapabilities
   };
 }
 

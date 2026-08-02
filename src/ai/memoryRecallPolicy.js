@@ -273,3 +273,35 @@ export function containsExplicitRecallLanguage(text = "") {
     String(text || "")
   );
 }
+
+/**
+ * Resolves matching companionAnchors for the current input text.
+ * Returned anchors can be used by responseComposer for gentle quotes.
+ */
+export function resolveAnchorRecall({ inputText = "", companionAnchors = [] } = {}) {
+  if (!Array.isArray(companionAnchors) || companionAnchors.length === 0) {
+    return { matchedAnchors: [], hasAnchorRecall: false };
+  }
+
+  const text = String(inputText || "").trim();
+  if (!text) return { matchedAnchors: [], hasAnchorRecall: false };
+
+  const explicitRequest = isExplicitRecallRequest(text);
+  const matched = companionAnchors.filter((anchor) => {
+    if (!anchor || typeof anchor !== 'object') return false;
+    const label = String(anchor.label || "").toLowerCase();
+    const detail = String(anchor.detail || "").toLowerCase();
+    const key = String(anchor.key || "").toLowerCase();
+
+    if (explicitRequest) return true; // recall all on explicit "你還記得嗎"
+    if (label && text.toLowerCase().includes(label)) return true;
+    if (detail && text.toLowerCase().includes(detail)) return true;
+    if (key && text.toLowerCase().includes(key)) return true;
+    return false;
+  });
+
+  return {
+    matchedAnchors: matched.slice(0, 3), // max 3 recalled anchors per turn
+    hasAnchorRecall: matched.length > 0
+  };
+}
