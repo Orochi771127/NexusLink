@@ -1866,6 +1866,85 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 3 - Raphael Core, Companion Reasoning, And Soul Talk
 
+### 2026-08-03 - Claude Code - TP-WORLD-BARK-AND-DIALOGUE-DIRECTOR-R1 - VERIFIED
+
+- Status: `VERIFIED` (machine, module layer only; NOT wired into runtime)
+- Lane: `Raphael Core, Companion Reasoning, And Soul Talk`.
+- Task name: `TP-WORLD-BARK-AND-DIALOGUE-DIRECTOR-R1`.
+- Layer: `EXPERIENCE`. No `CLAUDE.md §5.1` GROUNDWORK file touched (no
+  `index.html` / `saveManager.js` / `store.js` / `defaultState.js` /
+  `pixiApp.js` / `assets/**` / `tools/**` change).
+- Branch / commit: `feature/2d5-ro-habitat-agent-skills` / uncommitted (baseline `d4e5e0a`)
+- Scope: Phase 2 of `HANDOFF_CLAUDE_CODE.md` — zero-cost bark system plus a
+  read-only world-grounding and dialogue-direction seam. Owner pre-approved the
+  scope, the bark budget numbers, and the four-language i18n decision.
+- Findings that changed the build:
+  - `src/ai/worldAutonomy/` (Antigravity Phase 1) is **orphaned** — nothing
+    imports it — and reads a schema that does not exist
+    (`state.companion.needs`, `state.habitat.objects`, `state.player.isOnline`).
+    Canonical state only has `state.energy` (0–10). `foodDrive` was therefore
+    permanently `0` and `eat_available_food` could never fire.
+  - The existing local NLU (`intentClassifier.js` 18 intents, `runNluPipeline`,
+    `nluReplyBuilder.js` 21 strategies) already resolves 「累」/「想休息」. No
+    second keyword→template system was built, per owner instruction.
+- Work performed:
+  - New `src/ai/worldAutonomy/worldStateAdapter.js`: read-only canonical→runtime
+    view; maps real `energy`, marks `hunger`/`boredom`/`loneliness`/habitat
+    objects/player presence `"unavailable"` rather than inventing them. Sealed
+    comment forbidding any loneliness-from-player-absence derivation (紅線 1).
+  - New `src/ai/worldAutonomy/worldBarkPolicy.js`: dedicated bark budget —
+    boot quiet 60s, min interval 150s, session cap 4, hint sub-cap 2,
+    interaction grace 20s with a 30s floor, `persistence: "session_only"`,
+    `dailyCap: null`. Styled after `src/ai/autonomy/initiativeCooldown.js`.
+  - New `src/data/worldBarkPacks.js` (i18n key tables + body cues) and
+    `src/ai/worldAutonomy/worldBarkSystem.js` (deterministic seeded selection,
+    duplicate suppression, degrade-to-body-cue).
+  - New `src/ai/worldAutonomy/worldObservationGrounding.js`: 7 grounding fields,
+    each `"ok"` or `"unavailable"`; never invents.
+  - New `src/ai/dialogue/dialogueDirector.js`: pure 5-mode seam
+    (follow/share/invite/question/silence) emitting a structured dialogue intent
+    only. Safety/boundary turns are `follow`-locked with `allowWorldTopic:false`;
+    no consecutive duplicate mode; question rate-limited over a 2-turn lookback
+    and requires an anchor in the player's own content.
+  - Modified `worldActionExecutor.js` (optional second arg attaches
+    `patch.bark` / `patch.bodyCueId`; single-arg calls unchanged) and
+    `worldAutonomyLoop.js` (adapter + bark threading + a bark on the previously
+    silent policy-abort branch).
+  - Fixed a real defect found in verification: `worldActionPolicy.js` used
+    wall-clock `Date.now()` while the loop threads an injected `now` — two
+    clocks in one tick. It now reads `actionState.now` with a `Date.now()`
+    fallback, and the loop passes its tick clock.
+  - `src/i18n/strings.js`: appended 30 `worldBark.*` keys × tc/sc/en/jp, plus a
+    header note recording the owner-approved exception (short ambient barks
+    belong in `STRINGS`; Soul Talk deep dialogue stays 繁中).
+- Verification (bundled Node v24.14.0; `node` is not on PATH):
+  - PASS `node --check` on all 12 new/modified `.js` files.
+  - PASS `node docs/qa/world-bark-system-cases.mjs` — **18/18**.
+  - PASS `node docs/qa/dialogue-director-cases.mjs` — **13/13**.
+  - PASS `node docs/qa/verify_i18n_strings.mjs` — 524 keys complete in tc/sc/en/jp.
+  - PASS no-regression `node docs/qa/initiative-budget-cases.mjs` and
+    `node docs/qa/raphael-daily-life-conversation-cases.mjs`.
+  - PASS static scans: no `openai|anthropic|gemini|fetch(|XMLHttpRequest|http(s)://`
+    and no real `Math.random()` call anywhere in the new code.
+- Problems / risks:
+  - **Not wired into the running game.** `runWorldAutonomyLoop` still has no
+    caller; nothing renders `patch.bark`. This pack is a verified module layer.
+  - `hunger` / `boredom` / `loneliness` / `weather` / `nearbyInteractableSummary`
+    have no canonical source, so those barks and grounding fields stay inert.
+    Backing them means adding save fields — `§5.1` GROUNDWORK, owner-gated.
+  - `dialogueDirector` is not called by `raphaelCore.js`; consuming its
+    structured intent inside `nluReplyBuilder` is a separate TASK_PACK.
+  - Two other agents have uncommitted work in this worktree (`src/auth/`,
+    `scratch/`, prior `src/i18n/strings.js` edits). `strings.js` was appended to,
+    not rewritten.
+- Next safe action: owner review of the 30 bark lines and the 5-mode rhythm; then
+  one bounded pack — either (a) consume `dialogueDirector` inside the existing
+  reply pipeline, or (b) an owner-approved GROUNDWORK pack adding companion needs
+  to the save schema so the drives become real.
+- Required reading: `HANDOFF_CLAUDE_CODE.md`, `src/ai/worldAutonomy/*`,
+  `src/ai/dialogue/dialogueDirector.js`, `src/ai/autonomy/initiativeCooldown.js`,
+  `CLAUDE.md` §2 紅線 1/6 and §5, and this lane.
+
 ### 2026-07-21 - Cursor Grok - Fix forever-promise false positive on attachment refusal
 
 - Status: `VERIFIED` (machine); Owner authorized narrow TASK_PACK ??PR ??main
