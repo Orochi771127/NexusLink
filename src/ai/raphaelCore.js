@@ -21,6 +21,8 @@ import {
 } from "./companionPreferenceProfile.js";
 import { buildRecoveryContext } from "./recovery/recoveryLoop.js";
 import { runNluPipeline } from "./nlu/runNluPipeline.js";
+import { selectDialogueDirection, DIALOGUE_MODES } from "./dialogue/dialogueDirector.js";
+import { buildWorldGrounding } from "./worldAutonomy/worldObservationGrounding.js";
 import { selectResponseStrategy, RESPONSE_STRATEGIES } from "./responseStrategySelector.js";
 import { LOW_RECALL_INTENTS } from "./memoryRecallPolicy.js";
 import {
@@ -59,6 +61,18 @@ export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
   });
   nlu = applyQuickReplyContext(nlu, runtime.quickReply);
   safety = applyRecentBoundaryContext(safety, nlu, dialogueState, intent);
+  
+  const worldGrounding = buildWorldGrounding({ state, environment: runtime.environment });
+  const dialogueDirection = selectDialogueDirection({
+    nlu,
+    intent,
+    safety,
+    worldGrounding,
+    recentModes: dialogueState.recentModes || [],
+    repeatedReply: false,
+    seed: (gateway.normalizedInput || "").length + Math.round(state.energy || 0)
+  });
+
   const isSafetyTerminal = safety.isHighRisk === true;
   let responseStrategy = isSafetyTerminal
     ? { strategy: RESPONSE_STRATEGIES.SAFETY_REDIRECT, reason: "safety_terminal" }
@@ -170,6 +184,10 @@ export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
       });
 
   const plan = planSoulTalkReaction({ analysis, intent, semanticSoul, safety, state, memories });
+  if (dialogueDirection.mode !== DIALOGUE_MODES.FOLLOW && !isSafetyTerminal) {
+    plan.mode = dialogueDirection.mode;
+    responseStrategy = { strategy: dialogueDirection.mode, reason: "dialogue_director" };
+  }
 
   const perception = {
     gateway,

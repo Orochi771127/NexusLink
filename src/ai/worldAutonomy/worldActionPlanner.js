@@ -1,55 +1,26 @@
 /**
  * worldActionPlanner.js
- * Maps a Goal ID to a specific Action ID and determines the target.
+ * Maps a Goal ID to a specific Action ID and determines the target using Procedural Memory (Skills).
  */
+import { SKILL_CONTRACTS } from "./skillContracts.js";
 
 export function planWorldAction(goal, observations) {
   if (!goal || !goal.id) {
     return { actionId: "idle", targetId: null };
   }
 
-  switch(goal.id) {
-    case "restore_energy":
-      // Prioritize an actual rest spot if available
-      const restSpot = observations.nearbyRestSpots?.[0];
-      return { 
-        actionId: "rest_at_spot", 
-        targetId: restSpot ? restSpot.id : null 
+  // Phase 4: Procedural Memory - Skill Contract Evaluation
+  const candidateSkills = SKILL_CONTRACTS.filter(skill => skill.goalId === goal.id);
+  
+  for (const skill of candidateSkills) {
+    if (skill.preconditions(observations)) {
+      return {
+        actionId: skill.id,
+        targetId: skill.getTarget(observations)
       };
-
-    case "satisfy_hunger":
-      const food = observations.availableFood?.[0];
-      return { 
-        actionId: "eat_available_food", 
-        targetId: food ? food.id : null 
-      };
-
-    case "socialize":
-      return { 
-        actionId: "approach_player_avatar_anchor", 
-        targetId: "player_avatar" 
-      };
-
-    case "explore_new_object":
-      const newObj = observations.newObjects?.[0];
-      return { 
-        actionId: "inspect_habitat_object", 
-        targetId: newObj ? newObj.id : null 
-      };
-
-    case "idle_play":
-      return { 
-        actionId: "play_idle_activity", 
-        targetId: null 
-      };
-
-    case "wander":
-      return { 
-        actionId: "wander_safe_area", 
-        targetId: null 
-      };
-
-    default:
-      return { actionId: "idle", targetId: null };
+    }
   }
+
+  // Fallback if no skill is valid
+  return { actionId: "idle", targetId: null };
 }
