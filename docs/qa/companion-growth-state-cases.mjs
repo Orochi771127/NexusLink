@@ -23,6 +23,9 @@ const EXPECTED_RELATION_FIELDS = [
   "trust",
   "mood",
   "energy",
+  "hunger",
+  "boredom",
+  "loneliness",
   "defense",
   "touchFatigue",
   "lastTouchAt",
@@ -40,7 +43,7 @@ const cases = [];
 installFakeLocalStorage();
 installFakeWindow();
 
-await runCase("G2 mirror inventory is the exact 14-field contract", () => {
+await runCase("G2 mirror inventory is the exact 17-field contract", () => {
   assertDeepEqual(RELATION_MIRROR_FIELDS, EXPECTED_RELATION_FIELDS, "mirror fields");
 });
 

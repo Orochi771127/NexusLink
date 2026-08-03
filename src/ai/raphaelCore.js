@@ -186,7 +186,7 @@ export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
   const plan = planSoulTalkReaction({ analysis, intent, semanticSoul, safety, state, memories });
   if (dialogueDirection.mode !== DIALOGUE_MODES.FOLLOW && !isSafetyTerminal) {
     plan.mode = dialogueDirection.mode;
-    responseStrategy = { strategy: dialogueDirection.mode, reason: "dialogue_director" };
+    responseStrategy.dialogueMode = dialogueDirection.mode;
   }
 
   const perception = {
