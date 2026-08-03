@@ -7,6 +7,7 @@ import {
   MOONLAKE_VISUAL_WALKWAY,
   MOONLAKE_WATERFALLS
 } from "./moonlakeLive3dConfig.js";
+import { createROBillboardCompanion } from "./roBillboardCompanion.js";
 
 const QUALITY_DPR = Object.freeze({
   low: 1,
@@ -145,6 +146,13 @@ export async function createMoonlakeLive3dScene({
     );
     habitatRoot.add(model);
 
+    const roBillboardCompanion = createROBillboardCompanion({
+      THREE,
+      scene: habitatRoot,
+      texturePath: "./assets/companions/greyshade_cat/idle.png"
+    });
+    roBillboardCompanion.setPosition(0, 0.28, 1.2); // Position at platform center
+
     const state = {
       active: true,
       contextLost: false,
@@ -213,7 +221,21 @@ export async function createMoonlakeLive3dScene({
       },
       resize,
       update(ticker) {
+        roBillboardCompanion.updateFacing(camera);
         updateScene(state, ticker, getEnvironmentState, getWeather);
+      },
+      getCompanionScreenPosition() {
+        return roBillboardCompanion.getScreenCoordinates(
+          camera,
+          state.size?.width || window.innerWidth,
+          state.size?.height || window.innerHeight
+        );
+      },
+      setCompanionWorldPosition(x, y, z) {
+        roBillboardCompanion.setPosition(x, y, z);
+      },
+      getROBillboardCompanion() {
+        return roBillboardCompanion;
       },
       projectWorldToScreen(point) {
         return projectWorldToScreen(THREE, state, point);

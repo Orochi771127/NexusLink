@@ -520,3 +520,24 @@ export const MOONLAKE_BRIDGE_AUDIT = Object.freeze({
   nearShoreOverlap: true,
   farBankOverlap: true
 });
+
+export const MOONLAKE_2D5_RO_CONFIG = Object.freeze({
+  id: "moonlake-2.5d-ro-billboard-r1",
+  style: "2.5D RO Isometric Billboard",
+  billboardScale: Object.freeze({
+    width: 2.2,
+    height: 2.2,
+    anchorX: 0.5,
+    anchorY: 0.0
+  }),
+  cameraPreset: Object.freeze({
+    pitchDeg: 35.0,
+    yawDeg: 45.0,
+    fov: 36
+  }),
+  eightDirections: Object.freeze([
+    "Front", "Front-Right", "Right", "Back-Right",
+    "Back", "Back-Left", "Left", "Front-Left"
+  ])
+});
+

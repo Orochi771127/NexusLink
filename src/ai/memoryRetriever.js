@@ -1,4 +1,5 @@
 import { resolveRecallPolicy, RECALL_MODES } from "./memoryRecallPolicy.js";
+import { searchEpisodicCandidates } from "./memoryVectorStub.js";
 
 const ACTIVE_STATUSES = new Set(["fresh", "settled", "transformed"]);
 const BOUNDARY_SOURCES = new Set(["boundary", "bond", "battle_repair"]);
@@ -11,7 +12,12 @@ export function retrieveRelevantMemories(state = {}, analysis = {}, runtime = {}
     .filter((memory) => memory && ACTIVE_STATUSES.has(memory.status));
 
   const emotionKey = analysis?.emotionKey || null;
-  const ranked = memories
+  const queryText = runtime.inputText || analysis?.inputText || "";
+  
+  // Phase 4: Episodic Candidate Search
+  const candidateMemories = searchEpisodicCandidates(memories, queryText, emotionKey, 20);
+
+  const ranked = candidateMemories
     .map((memory) => ({
       memory,
       score: scoreMemory(memory, emotionKey, now)
@@ -24,14 +30,14 @@ export function retrieveRelevantMemories(state = {}, analysis = {}, runtime = {}
     .map((entry) => entry.memory);
 
   const strongestMemory = ranked[0]?.memory || null;
-  const hasBoundaryMemory = memories.some(
+  const hasBoundaryMemory = candidateMemories.some(
     (memory) =>
       BOUNDARY_SOURCES.has(memory.source) ||
       memory.emotion === "boundary" ||
       /邊界|拒絕|退後/.test(String(memory.theme || memory.label || ""))
   );
 
-  const recentSlice = memories
+  const recentSlice = candidateMemories
     .slice()
     .sort((a, b) => (Number(b.createdAt) || 0) - (Number(a.createdAt) || 0))
     .slice(0, SIMILAR_EMOTION_WINDOW);

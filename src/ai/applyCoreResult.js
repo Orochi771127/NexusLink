@@ -7,6 +7,7 @@ import { buildMilestoneMemory, findNewBondMilestone, getMilestoneLine } from "..
 import { shouldBlockMilestone } from "./stateMutationPolicy.js";
 import { dispatchRaphaelAnimationCue } from "./raphaelAnimationBridge.js";
 import { mergeCompanionAnchors } from "./dialogue/companionAnchorPolicy.js";
+import { updateTurnCounter, pruneCompanionAnchors } from "./memory/memoryLifecycleEngine.js";
 
 const NON_REWARDING_MODES = new Set(["safety_redirect", "withdraw", "reject"]);
 
@@ -42,12 +43,17 @@ export function applyRaphaelCoreResult(
     );
   }
 
+  if (!isSafetyTerminal) {
+    updateTurnCounter(state);
+  }
+
   if (!isSafetyTerminal && anchorDecision.shouldWrite && Array.isArray(anchorDecision.anchors)) {
-    state.companionAnchors = mergeCompanionAnchors(
+    const merged = mergeCompanionAnchors(
       state.companionAnchors || [],
       anchorDecision.anchors,
       now
     );
+    state.companionAnchors = pruneCompanionAnchors(merged);
   }
 
   if (!isSafetyTerminal) {

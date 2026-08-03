@@ -33,6 +33,10 @@ export function saveState(state) {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(prunedState));
     cleanupMigratedLegacyKeys();
+    
+    // [NEW] 雲端同步 (Optimistic Save)
+    import("../auth/cloudSync.js").then(mod => mod.pushState(prunedState).catch(err => console.warn("Background cloud sync failed:", err))).catch(() => {});
+
     return { ok: true, state: prunedState, emergency: false };
   } catch (error) {
     if (error?.name !== "QuotaExceededError") {
@@ -44,6 +48,10 @@ export function saveState(state) {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(emergencyState));
       cleanupMigratedLegacyKeys();
+
+      // [NEW] 雲端同步 (Optimistic Save)
+      import("../auth/cloudSync.js").then(mod => mod.pushState(emergencyState).catch(err => console.warn("Background cloud sync failed:", err))).catch(() => {});
+
       return { ok: true, state: emergencyState, emergency: true };
     } catch (retryError) {
       console.warn("[saveManager] Emergency save failed:", retryError);

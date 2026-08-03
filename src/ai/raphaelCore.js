@@ -13,6 +13,7 @@ import { processEmotionInput } from "../engine/emotionalSedimentationEngine.js";
 import { runAutonomyLoop } from "./autonomy/autonomyLoop.js";
 import { collectInteractionTrace } from "./evolution/interactionTraceCollector.js";
 import { askAdvisor } from "./external/externalModelGateway.js";
+import { askHermesShadow } from "./external/hermesShadowAdapter.js";
 import { searchCorpus } from "./corpusSearch.js";
 import {
   getCompanionPreferenceProfile,
@@ -20,6 +21,8 @@ import {
 } from "./companionPreferenceProfile.js";
 import { buildRecoveryContext } from "./recovery/recoveryLoop.js";
 import { runNluPipeline } from "./nlu/runNluPipeline.js";
+import { selectDialogueDirection, DIALOGUE_MODES } from "./dialogue/dialogueDirector.js";
+import { buildWorldGrounding } from "./worldAutonomy/worldObservationGrounding.js";
 import { selectResponseStrategy, RESPONSE_STRATEGIES } from "./responseStrategySelector.js";
 import { LOW_RECALL_INTENTS } from "./memoryRecallPolicy.js";
 import {
@@ -58,6 +61,18 @@ export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
   });
   nlu = applyQuickReplyContext(nlu, runtime.quickReply);
   safety = applyRecentBoundaryContext(safety, nlu, dialogueState, intent);
+  
+  const worldGrounding = buildWorldGrounding({ state, environment: runtime.environment });
+  const dialogueDirection = selectDialogueDirection({
+    nlu,
+    intent,
+    safety,
+    worldGrounding,
+    recentModes: dialogueState.recentModes || [],
+    repeatedReply: false,
+    seed: (gateway.normalizedInput || "").length + Math.round(state.energy || 0)
+  });
+
   const isSafetyTerminal = safety.isHighRisk === true;
   let responseStrategy = isSafetyTerminal
     ? { strategy: RESPONSE_STRATEGIES.SAFETY_REDIRECT, reason: "safety_terminal" }
@@ -169,6 +184,10 @@ export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
       });
 
   const plan = planSoulTalkReaction({ analysis, intent, semanticSoul, safety, state, memories });
+  if (dialogueDirection.mode !== DIALOGUE_MODES.FOLLOW && !isSafetyTerminal) {
+    plan.mode = dialogueDirection.mode;
+    responseStrategy.dialogueMode = dialogueDirection.mode;
+  }
 
   const perception = {
     gateway,
@@ -411,7 +430,28 @@ export async function runRaphaelCoreWithExternal(inputText = "", state = {}, run
   const coreResult = runRaphaelCore(inputText, state, runtime);
   if (coreResult.safety?.isHighRisk) return coreResult;
   const settings = runtime?.externalIntelligence || {};
-  if (!settings.advisorEnabled && !settings.externalEnabled) return coreResult;
+
+  let shadowResult = null;
+  if (settings.hermesShadowEnabled) {
+    // Issue 4 fix: pass only perception subset, never raw coreResult
+    shadowResult = await askHermesShadow(settings, coreResult.perception || {}, inputText);
+
+    // Issue 8 fix: enforce read-only contract
+    if (shadowResult) {
+      const { assertHermesShadowIsReadOnly } = await import("./external/hermesShadowAdapter.js");
+      const readOnlyCheck = assertHermesShadowIsReadOnly(shadowResult);
+      if (!readOnlyCheck.ok) {
+        console.error("[HermesShadow] READ-ONLY CONTRACT VIOLATED — discarding result");
+        shadowResult = null;
+      } else {
+        console.log("[QA Report] Hermes Shadow Candidates:", shadowResult);
+      }
+    }
+  }
+
+  if (!settings.advisorEnabled && !settings.externalEnabled) {
+      return { ...coreResult, hermesShadow: shadowResult };
+  }
 
   const advice = await askAdvisor({
     perception: { ...coreResult.perception, gateway: coreResult.input },
@@ -420,7 +460,7 @@ export async function runRaphaelCoreWithExternal(inputText = "", state = {}, run
     runtime
   });
 
-  return { ...coreResult, externalAdvice: advice };
+  return { ...coreResult, externalAdvice: advice, hermesShadow: shadowResult };
 }
 
 export { applyRaphaelCoreResult } from "./applyCoreResult.js";

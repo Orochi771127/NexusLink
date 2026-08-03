@@ -5,6 +5,9 @@ const defaultState = {
   trust: 5,
   mood: "calm",
   energy: 10,
+  hunger: 0,
+  boredom: 0,
+  loneliness: 0,
   spamScore: 0,
   lastMessage: "",
   chatHistory: [

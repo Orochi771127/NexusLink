@@ -2,6 +2,8 @@
 // 範圍：靜態/動態「介面外框」字串（nav、HUD、設定、開場、頁標、面板標籤、按鈕），
 // 以及四大頁（pageRouter）內容文案與行動回饋、心情標籤、狀態列文字。
 // 不含：夥伴對話（Soul Talk 回應池）、Raphael 敘事、地圖結果文、區域/里程碑專有名詞 —— 維持繁中（另開內容翻譯 pack）。
+// 例外（2026-08-03 Owner 核准）：`worldBark.*` 是棲地環境短句（8–24 字、身體語言優先），
+// 不是 Soul Talk 深層對話，因此進本字典並四語齊全。深層對話仍維持繁中。
 // 簡/英/日 由 AI 生成，建議人工校對（尤其日文語氣）。
 
 export const LANGUAGES = [
@@ -41,10 +43,10 @@ export const STRINGS = {
   "ob.skipBtn": { tc: "稍後決定", sc: "稍后决定", en: "Decide later", jp: "あとで決める" },
   "ob.continueBtn": { tc: "繼續", sc: "继续", en: "Continue", jp: "続ける" },
   "ob.identityNote": {
-    tc: "你的稱呼只會留存在這台裝置裡，不會上傳。",
-    sc: "资料只保存在此装置的既有存档中。",
-    en: "Your data stays only in the save on this device.",
-    jp: "データはこの端末のセーブ内だけに保存されます。"
+    tc: "你的稱呼只會安靜留在這台手機裡，不被傳往任何地方。",
+    sc: "你的称呼只会安静留在这台手机里，不被传往任何地方。",
+    en: "Your name stays quietly on this device and is never uploaded anywhere.",
+    jp: "あなたの呼び名は、この端末にそっと残るだけ。どこへも送信されません。"
   },
   "ob.guidanceTitle": { tc: "三件事先說清楚。", sc: "三件事先说清楚。", en: "Three things, up front.", jp: "先に三つだけ。" },
   "ob.contract1": { tc: "牠會記得你，但牠不屬於你。", sc: "牠会记得你，但牠不属于你。", en: "It will remember you, but it is not yours.", jp: "あなたを覚えているが、あなたのものではない。" },
@@ -68,26 +70,26 @@ export const STRINGS = {
   "fl.skip": { tc: "先自己逛", sc: "先自己逛", en: "Explore on my own", jp: "自分で見て回る" },
   "fl.retrySkip": { tc: "再試一次", sc: "再试一次", en: "Try again", jp: "もう一度試す" },
   "fl.recoverableError": {
-    tc: "剛才的選擇沒存到喔。你還在月湖，想再試一次也沒關係，這不會影響到牠。",
-    sc: "刚才的选择没有保存。你仍在月湖，可以再试一次；这不会影响牠。",
-    en: "That choice was not saved. You are still at Moonlake and can try again; this does not affect the companion.",
-    jp: "さっきの選択は保存されなかった。月湖にいるまま、もう一度試せる。相手には影響しない。"
+    tc: "剛才那一拍沒對上。沒關係，你還停在月湖邊，想再試試或先停下都可以，這不會影響你們的關係。",
+    sc: "刚才那一拍没对上。没关系，你还停在月湖边，想再试试或先停下都可以，这不会影响你们的关系。",
+    en: "That moment didn't quite catch. No worries—you're still at Moonlake, free to try again or pause.",
+    jp: "さっきの一拍はうまく合いませんでした。月湖にいるまま、もう一度試すのも休むのも自由です。"
   },
   "rt.kicker": { tc: "共鳴線索", sc: "共鸣线索", en: "Resonance Thread", jp: "共鳴の手がかり" },
   "rt.whyLabel": { tc: "為什麼：", sc: "为什么：", en: "Why:", jp: "なぜ：" },
   "rt.consequenceLabel": { tc: "可能留下：", sc: "可能留下：", en: "May leave:", jp: "残ること：" },
   "rt.dismiss": { tc: "先這樣", sc: "先这样", en: "That's enough for now", jp: "いまはこれで" },
   "onboarding.busy": {
-    tc: "正在幫你把這一步記在手機裡...",
-    sc: "正在把这一步留在这台装置上。",
-    en: "Saving this step on this device.",
-    jp: "この端末にこの一歩を残している。"
+    tc: "正在把這一步，安靜留在你手心裡...",
+    sc: "正在把这一步，安静留在你手心里...",
+    en: "Placing this small step quietly into your hands...",
+    jp: "この一歩を、そっと手元に残しています..."
   },
   "onboarding.recoverableError": {
-    tc: "這一步還沒存檔。你還在這裡，隨時可以再試一次，現在離開也沒關係。",
-    sc: "这一步还没有保存。你仍留在原处，可以再试一次；先离开也不会受罚。",
-    en: "This step was not saved. You are still here and can try again; leaving now carries no penalty.",
-    jp: "この一歩はまだ保存されていない。ここにいるまま、もう一度試せる。いったん離れても不利益はない。"
+    tc: "這一拍還沒安放好。你還停在這裡，想休息或重新開始都可以，別擔心。",
+    sc: "这一拍还没安放好。你还停在这里，想休息或重新开始都可以，别担心。",
+    en: "This moment hasn't settled yet. You're still right here; rest or try again whenever you like.",
+    jp: "この一拍はまだ静まっていません。あなたはここにいるので、休むのもやり直すのも自由です。"
   },
   "fr.kicker": { tc: "初響", sc: "初响", en: "First Resonance", jp: "はじめの共鳴" },
   "fr.title": {
@@ -192,7 +194,7 @@ export const STRINGS = {
   // ---- Heartcore Orbit Battle chrome（R5 關鍵字；關卡正文仍可為內容語）----
   "orbit.dialogLabel": { tc: "心核迴旋戰", sc: "心核回旋战", en: "Heartcore Orbit Battle", jp: "心核回旋戦" },
   "orbit.kicker": { tc: "心核迴旋戰 ・ Resonance Orbit", sc: "心核回旋战 ・ Resonance Orbit", en: "Heartcore Orbit · Resonance", jp: "心核回旋戦 ・ Resonance Orbit" },
-  "orbit.hint": { tc: "按住化身往後拉，鬆手發射。Esc 或「先撤退」可離開。", sc: "按住化身往后拉，松手发射。Esc 或「先撤退」可离开。", en: "Hold the avatar, pull back, release to launch. Esc or Retreat to leave.", jp: "化身を引いて離すと発射。Esc か「いったん退く」で離れられる。" },
+  "orbit.hint": { tc: "拉開微光化身，放手讓它順勢出發。隨時按 Esc 或退一步，這不是退縮。", sc: "拉开微光化身，放手让它顺势出发。随时按 Esc 或退一步，这不是退缩。", en: "Pull back the glowing avatar and let it leap forth. Press Esc or step back anytime—leaving is always okay.", jp: "光の化身を引き、手を放して解き放つ。Esc や退くことでいつでも離れられます。" },
   "orbit.retreat": { tc: "先撤退", sc: "先撤退", en: "Retreat", jp: "いったん退く" },
   "orbit.toMap": { tc: "回路徑圖", sc: "回路径图", en: "Back to path map", jp: "道の図へ戻る" },
   "orbit.again": { tc: "再挑戰本關", sc: "再挑战本关", en: "Retry this stage", jp: "この関に再挑戦" },
@@ -200,7 +202,7 @@ export const STRINGS = {
   "orbit.mapKicker": { tc: "心核路徑 ・ 節點", sc: "心核路径 ・ 节点", en: "Heartcore paths · Nodes", jp: "心核の道 ・ 節点" },
   "orbit.mapTitle": { tc: "選擇路徑關卡", sc: "选择路径关卡", en: "Choose a path stage", jp: "道の関を選ぶ" },
   "orbit.mapNodesSuffix": { tc: "節點", sc: "节点", en: "Nodes", jp: "節点" },
-  "orbit.mapNote": { tc: "路徑進度暫存於本次開啟；微光痕跡會寫入遠征倉庫（同行痕跡，不是戰利品）。失敗不倒退已通關。", sc: "路径进度暂存于本次开启；微光痕迹会写入远征仓库（同行痕迹，不是战利品）。失败不倒退已通关。", en: "Path progress is for this session; motes join the expedition vault as shared traces, not loot. Failure does not undo clears.", jp: "道の進捗はこの起動分。微光は遠征の倉庫へ（同行の跡であり戦利品ではない）。失敗しても通関は戻らない。" },
+  "orbit.mapNote": { tc: "這段路的步調留在這次相聚；蒐集的微光會安穩存入倉庫——這是你們走過的痕跡，不是冷冰冰的戰利品。即使受挫，走過的路也不會被抹去。", sc: "这段路的步调留在这次相聚；搜集的微光会安稳存入仓库——这是你们走过的痕迹，不是冷冰冰的战利品。即使受挫，走过的路也不会被抹去。", en: "Path progress rests in this gathering. Gathered motes stay in your vault as shared memories, not cold loot. Setbacks never erase your path.", jp: "道の歩みは今回のもの。集めた微光は倉庫に収まります——戦利品ではなく同行の痕跡です。つまずいても歩んだ過去は消えません。" },
   "orbit.mapRegions": { tc: "路徑區域", sc: "路径区域", en: "Path regions", jp: "道の区域" },
   "orbit.mapNodes": { tc: "關卡節點", sc: "关卡节点", en: "Stage nodes", jp: "関の節点" },
   "orbit.mapFar": { tc: "遠方", sc: "远方", en: "Far", jp: "遠方" },
@@ -211,7 +213,7 @@ export const STRINGS = {
   "orbit.closeExplore": { tc: "回到探索", sc: "回到探索", en: "Back to Explore", jp: "探索へ戻る" },
   "orbit.duelKicker": { tc: "迴旋對決 ・ 人機／幽靈", sc: "回旋对决 ・ 人机／幽灵", en: "Orbit duel · CPU / Ghost", jp: "回旋対局 ・ CPU／ゴースト" },
   "orbit.duelTitle": { tc: "選擇對手", sc: "选择对手", en: "Choose an opponent", jp: "相手を選ぶ" },
-  "orbit.duelNote": { tc: "勝負不改變羈絆或信任。連打太多次會過熱休息。", sc: "胜负不改变羁绊或信任。连打太多次会过热休息。", en: "Outcomes do not change bond or trust. Too many bouts in a row means overheat rest.", jp: "勝敗で絆や信頼は変わらない。連続しすぎると過熱で休む。" },
+  "orbit.duelNote": { tc: "勝負只是過程，不會動搖你們的信任與羈絆。步調若太急切，心核會需要稍作沉靜休息。", sc: "胜负只是过程，不会动摇你们的信任与羁绊。步调若太急切，心核会需要稍作沉静休息。", en: "Wins or losses never shake your bond or trust. If the pace grows intense, take a quiet pause together.", jp: "勝敗でふたりの絆が揺らぐことはありません。急ぎすぎた時は、少し心を休めましょう。" },
   "orbit.duelArenaKicker": { tc: "迴旋對決", sc: "回旋对决", en: "Orbit duel", jp: "回旋対局" },
   "orbit.duelHint": { tc: "拉動發射你的化身；對手稍後進場。Esc 可撤退。", sc: "拉动发射你的化身；对手稍后进场。Esc 可撤退。", en: "Pull to launch your avatar; the foe enters shortly. Esc to retreat.", jp: "引いて化身を放つ。相手は少し遅れて入場。Esc で退ける。" },
   "orbit.duelCanvas": { tc: "對決軌道", sc: "对决轨道", en: "Duel arena", jp: "対局の軌道" },
@@ -332,10 +334,10 @@ export const STRINGS = {
   "set.sfx": { tc: "音效", sc: "音效", en: "Sound FX", jp: "効果音" },
   "set.soundToggle": { tc: "聲音開關", sc: "声音开关", en: "Sound on/off", jp: "サウンド オン/オフ" },
   "set.audioNote": {
-    tc: "主音量、背景音樂與音效可即時調整（首次需輕觸畫面以啟用聲音）。",
-    sc: "主音量、背景音乐与音效可即时调整（首次需轻触画面以启用声音）。",
-    en: "Master, music, and sound FX update live (tap the screen once to enable audio).",
-    jp: "全体音量・BGM・効果音は即時に変わります（最初に画面を一度タップして音を有効化）。"
+    tc: "隨時調成你最舒服的音量（第一次輕觸畫面時，棲地的聲音就會醒來）。",
+    sc: "随时调成你最舒服的音量（第一次轻触画面时，栖地的声音就会醒来）。",
+    en: "Adjust volume to whatever feels most comfortable (tap once on screen to awaken the audio).",
+    jp: "一番心地よい音量に調整できます（画面を一度タップすると、棲み処の音が目覚めます）。"
   },
   "set.display": { tc: "畫面", sc: "画面", en: "Display", jp: "画面" },
   "set.quality": { tc: "畫質", sc: "画质", en: "Quality", jp: "画質" },
@@ -350,10 +352,10 @@ export const STRINGS = {
   "set.language": { tc: "語言", sc: "语言", en: "Language", jp: "言語" },
   "set.saveTitle": { tc: "存檔與引導", sc: "存档与引导", en: "Save & guidance", jp: "セーブと案内" },
   "set.saveNote": {
-    tc: "目前進度保存在這台裝置。若要在手機重看開始、身份與心核引導，可從這裡重新播放，不會刪除記憶或痕跡。",
-    sc: "目前进度保存在这台装置。若要在手机重看开始、身份与心核引导，可从这里重新播放，不会删除记忆或痕迹。",
-    en: "Progress is saved on this device. Replay the start, identity, and guidance here without deleting memories or traces.",
-    jp: "進行状況はこの端末に保存されます。開始・名前・案内をここから再生できます（記憶や痕跡は消えません）。"
+    tc: "你的旅程記憶保存在這台手機裡。想重溫初遇、稱呼或棲地引導時，隨時可以重新播放，這不會抹去任何回憶或痕跡。",
+    sc: "你的旅程记忆保存在这台手机里。想重温初遇、称呼或栖地引导时，随时可以重新播放，这不会抹去任何回忆或痕迹。",
+    en: "Your memories stay safe on this device. Replay the opening, identity, or guidance anytime without losing any memories or traces.",
+    jp: "旅の記憶はこの端末に大切に保管されています。出会いや案内をいつでも再再生できます（思い出や痕跡は消えません）。"
   },
   "set.restart": { tc: "重新播放引導", sc: "重新播放引导", en: "Replay guidance", jp: "案内を再生" },
   "set.export": { tc: "匯出存檔", sc: "导出存档", en: "Export save", jp: "セーブを書き出す" },
@@ -364,17 +366,17 @@ export const STRINGS = {
     jp: "心の声ログを書き出す"
   },
   "set.exportTranscriptNote": {
-    tc: "只存在這台裝置。匯出給你自己複查回覆品質；不會上傳，也不會自動訓練。",
-    sc: "只存在这台装置。导出给你自己复查回复质量；不会上传，也不会自动训练。",
-    en: "Stays on this device. Export for your own reply review — no upload, no auto-training.",
-    jp: "この端末のみ。返答の見直し用に書き出します（アップロード／自動学習なし）。"
+    tc: "對話紀錄只珍藏在這台手機中。匯出僅供你自己留存細看，絕不會被上傳或作為任何自動訓練。",
+    sc: "对话纪录只珍藏在这台手机中。导出仅供你自己留存细看，绝不会被上传或作为任何自动训练。",
+    en: "Conversation logs belong solely to this device. Exporting is strictly for your personal review—no uploads, no auto-training.",
+    jp: "対話の記憶はこの端末だけのもの。ご自身での振り返り用に書き出せます（アップロードや自動学習はありません）。"
   },
   "set.delete": { tc: "刪除存檔", sc: "删除存档", en: "Delete save", jp: "セーブを削除" },
   "set.deleteNote": {
-    tc: "刪除後會清空這台裝置上的記憶與痕跡，回到最開始的開場與輸入名字流程，無法復原。",
-    sc: "删除后会清空这台装置上的记忆与痕迹，回到最开始的开场与输入名字流程，无法复原。",
-    en: "Deleting clears this device's memories and traces and returns to the opening and name-entry flow. This cannot be undone.",
-    jp: "削除するとこの端末の記憶と痕跡が消え、最初の開始と名前入力に戻ります。元には戻せません。"
+    tc: "這會抹去這台手機裡所有的記憶與走過的痕跡，回到最初相遇的時刻。此動作無法復原，請溫柔決定。",
+    sc: "这会抹去这台手机里所有的记忆与走过的痕迹，回到最初相遇的时刻。此动作无法复原，请温柔决定。",
+    en: "This clears all memories and traces on this device and returns to your very first meeting. This cannot be undone.",
+    jp: "この端末のすべての記憶と痕跡を消去し、最初の出会いに戻ります。元に戻せませんので、慎重にお選びください。"
   },
 
   // ---- Page status line（狀態列）----
@@ -384,22 +386,22 @@ export const STRINGS = {
   "page.status.grow": { tc: "關係章節翻開了。", sc: "关系章节翻开了。", en: "A relationship chapter opens.", jp: "関係の章がひらいた。" },
   "page.status.memory": { tc: "已保存的回憶在這裡。", sc: "已保存的回忆在这里。", en: "Saved memories live here.", jp: "保存された思い出はここに。" },
   "page.status.busy": {
-    tc: "這個動作正在發生，先留在這裡。",
-    sc: "这个动作正在发生，先留在这里。",
-    en: "This action is in progress. Stay here for a moment.",
-    jp: "いま動いている。少しだけここで待って。"
+    tc: "陪伴正在發生，先放慢腳步，留在此刻...",
+    sc: "陪伴正在发生，先放慢脚步，留在此刻...",
+    en: "This quiet moment is taking shape. Stay right here...",
+    jp: "静かな時間が流れています。どうぞそのまま..."
   },
   "page.status.unavailable": {
-    tc: "這條路現在沒有打開。你仍留在原處，可以換一個動作。",
-    sc: "这条路现在没有打开。你仍留在原处，可以换一个动作。",
-    en: "That path is not open right now. You are still here and can choose another action.",
-    jp: "その道はいま開いていない。ここにいるまま、別の動きを選べる。"
+    tc: "這條路此刻還在沉睡。別急，你們隨時可以換個安穩的步調。",
+    sc: "这条路此刻还在沉睡。别急，你们随时可以换个安稳的步调。",
+    en: "That path slumbers for now. No hurry—feel free to choose another comfortable action.",
+    jp: "その道はまだ眠っています。焦らず、別の心地よい動作を選んでみましょう。"
   },
   "page.status.recoverableError": {
-    tc: "剛才的動作沒有完成。這一頁還在，你可以再試一次或先回心核。",
-    sc: "刚才的动作没有完成。这一页还在，你可以再试一次或先回心核。",
-    en: "That action did not finish. This page is still here; try again or return to the heart-core.",
-    jp: "さっきの動きは完了しなかった。この画面は残っている。もう一度試すか、心核へ戻れる。"
+    tc: "剛才的呼吸沒完全對上。別擔心，這一頁還安好，你們可以再試試或先回心核。",
+    sc: "刚才的呼吸没完全对上。别担心，这一页还安好，你们可以再试试或先回心核。",
+    en: "That motion didn't quite sync. No worries—this page remains open. Feel free to retry or head back.",
+    jp: "さっきの息合いは未完了でした。大丈夫、この画面は残っています。再試行するか心核へ戻れます。"
   },
 
   // ---- Mood labels（心情標籤）----
@@ -716,35 +718,35 @@ export const STRINGS = {
     jp: "今回の目標：疲労が上限に達する前に、裂け目のノイズを鎮める。"
   },
   "battle.actMeaning.resonance": {
-    tc: "能提升同步，但會有點累；趁牠還願意靠近時特別有用。",
-    sc: "提升同步、略增疲劳；对方还愿意靠近时特别有用。",
-    en: "Raises sync, slight fatigue; useful while the companion still approaches.",
-    jp: "同調を上げ、疲労が少し増える。まだ近づけるときに有効。"
+    tc: "輕聲呼吸能拉近你們的共鳴，雖然會耗點精神；趁牠還願意靠近時，這份心意最能傳遞。",
+    sc: "轻声呼吸能拉近你们的共鸣，虽然会耗点精神；趁牠还愿意靠近时，这份心意最能传递。",
+    en: "Breathing softly deepens your resonance, though it costs energy; most effective while your companion is open to coming closer.",
+    jp: "呼吸を合わせることで共鳴を深めます。少し消耗しますが、相棒が近づきたいと思っている時に特に響きます。"
   },
   "battle.actMeaning.barrier": {
-    tc: "能減輕壓力，順便推開雜訊；如果牠開始退縮了，可以優先選這個。",
-    sc: "减轻压力／杂讯推进；对方开始退缩时优先考虑。",
-    en: "Eases pressure or noise advance; prefer when the companion withdraws.",
-    jp: "圧力やノイズの進行を抑える。相手が引き始めるときに。"
+    tc: "站穩邊界，替牠擋開混濁的雜訊；當牠有些退縮時，先給牠一處安穩的空間。",
+    sc: "站稳边界，替牠挡开混浊的杂讯；当牠有些退缩时，先给牠一处安稳的空间。",
+    en: "Hold your ground to shield against turbulent noise; offer a safe sanctuary when your companion hesitates.",
+    jp: "境界をしっかり保ち、ノイズを跳ね返します。相手が身を引こうとしている時、まずは安心できる空間を作りましょう。"
   },
   "battle.actMeaning.pulse": {
-    tc: "快速壓低雜訊，但更耗同步；不要當成唯一解法。",
-    sc: "快速压低杂讯，但更耗同步；不要当成唯一解法。",
-    en: "Quickly softens noise but costs more sync — not the only answer.",
-    jp: "素早くノイズを下げるが同調を多く使う。唯一の解ではない。"
+    tc: "用較強的共振迅速平息雜訊，但會比較耗神——不必每次都選擇硬碰硬。",
+    sc: "用较强的共振迅速平息杂讯，但会比较耗神——不必每次都选择硬碰硬。",
+    en: "Calms the noise rapidly with a strong burst, but uses more sync—you don't always need to force your way.",
+    jp: "強い共振で素早くノイズを鎮めますが、消費も大きめです。毎回力押しする必要はありません。"
   },
   "battle.actMeaning.retreat": {
-    tc: "保留當前進度後離開；撤退不是失敗，也不懲罰關係。",
-    sc: "保留当前进度后离开；撤退不是失败，也不惩罚关系。",
-    en: "Leave while keeping progress where applicable; retreat is not failure.",
-    jp: "進みを残して離れる。退くことは失敗でも関係の罰でもない。"
+    tc: "轉身先休息一會兒。懂得適時離場也是一種溫柔，不會有任何負擔或懲罰。",
+    sc: "转身先休息一会儿。懂得适时离场也是一种温柔，不会有任何负担或惩罚。",
+    en: "Step back and take a pause. Knowing when to step away is a form of gentleness, free of penalties.",
+    jp: "そっと退いてひと休みします。離れる判断も優しさのひとつ。罰やペナルティはありません。"
   },
   "battle.guideTitle": { tc: "第一次面對裂隙", sc: "第一次面对裂隙", en: "First time facing a rift", jp: "はじめての裂け目" },
   "battle.guideBody": {
-    tc: "先讀目標與每個行動的用意。建議只是參考——之後仍由你決定。",
-    sc: "先读目标与每个行动的用意。建议只是参考——之后仍由你决定。",
-    en: "Read the goal and what each action is for. Suggestions are optional — you still choose.",
-    jp: "目標と行動の意味を読んでから。提案は参考だけで、決めるのはあなた。"
+    tc: "先感受這片場域與每個行動的脈絡。這些引導只是溫柔的建議——究竟該如何前進，始終由你決定。",
+    sc: "先感受这片场域与每个行动的脉络。这些引导只是温柔的建议——究竟该如何前进，始终由你决定。",
+    en: "Sense the rhythm of this domain and the flow of each action. These tips are gentle thoughts—how to proceed remains entirely your choice.",
+    jp: "場の空気と行動の意味をじっくり味わってください。助言は提案にすぎず、選ぶのはいつでもあなたです。"
   },
   "battle.guideContinue": { tc: "我明白了", sc: "我明白了", en: "I understand", jp: "わかった" },
   "battle.layerImmediate": { tc: "此刻：", sc: "此刻：", en: "Now:", jp: "いま：" },
@@ -762,5 +764,193 @@ export const STRINGS = {
     sc: "回到栖地时，看看这段同行有没有留下可读的痕迹。",
     en: "When you return home, see whether this walk left a readable trace.",
     jp: "棲み処に戻ったら、この同行が痕跡を残したか見てみよう。"
+  },
+
+  // ---- World barks（棲地自主行動短句 / World Autonomy）----
+  // 規格見 src/data/worldBarkPacks.js：繁中 8–24 字、最多兩句、提示是邀請不是命令、
+  // 禁止 FOMO／內疚／依賴施壓／登入壓力（紅線 6）。只反映當下 Needs，不改寫人格。
+  "worldBark.rest.high.0": {
+    tc: "我有點撐不住了，火堆旁坐一下。",
+    sc: "我有点撑不住了，火堆旁坐一下。",
+    en: "I'm running low. Going to sit by the fire.",
+    jp: "少し限界かも。焚き火のそばに座るね。"
+  },
+  "worldBark.rest.high.1": {
+    tc: "累了。火光那邊也許適合歇著。",
+    sc: "累了。火光那边也许适合歇着。",
+    en: "Tired. The firelight looks like a good place to rest.",
+    jp: "疲れた。灯りのそばなら休めそう。"
+  },
+  "worldBark.rest.mid.0": {
+    tc: "腳步慢下來了，先找個地方坐。",
+    sc: "脚步慢下来了，先找个地方坐。",
+    en: "My steps are slowing. I'll find somewhere to sit.",
+    jp: "歩みが遅くなってきた。座れる場所を探すよ。"
+  },
+  "worldBark.rest.mid.1": {
+    tc: "不趕路了。這裡的光剛剛好。",
+    sc: "不赶路了。这里的光刚刚好。",
+    en: "No more hurrying. The light here is just right.",
+    jp: "急ぐのはやめた。ここの光がちょうどいい。"
+  },
+  "worldBark.rest.low.0": {
+    tc: "不特別累，只是想靠一會兒。",
+    sc: "不特别累，只是想靠一会儿。",
+    en: "Not especially tired — just want to lean a while.",
+    jp: "特に疲れてはない。少し寄りかかりたいだけ。"
+  },
+  "worldBark.rest.low.1": {
+    tc: "先坐著。沒有要去哪裡。",
+    sc: "先坐着。没有要去哪里。",
+    en: "Sitting for now. Not headed anywhere.",
+    jp: "とりあえず座る。どこへも行かないよ。"
+  },
+
+  "worldBark.eat.high.0": {
+    tc: "終於有東西吃了。",
+    sc: "终于有东西吃了。",
+    en: "Something to eat at last.",
+    jp: "やっと食べられるものがある。"
+  },
+  "worldBark.eat.high.1": {
+    tc: "餓很久了，這個看起來能吃。",
+    sc: "饿很久了，这个看起来能吃。",
+    en: "Hungry for a while now — this looks edible.",
+    jp: "ずっとお腹が空いてた。これは食べられそう。"
+  },
+  "worldBark.eat.mid.0": {
+    tc: "找到吃的了。看起來還不錯。",
+    sc: "找到吃的了。看起来还不错。",
+    en: "Found some food. Looks decent.",
+    jp: "食べ物を見つけた。悪くなさそう。"
+  },
+  "worldBark.eat.mid.1": {
+    tc: "這邊有東西可以吃。",
+    sc: "这边有东西可以吃。",
+    en: "There's something to eat over here.",
+    jp: "こっちに食べられるものがある。"
+  },
+  "worldBark.eat.low.0": {
+    tc: "不太餓，但先嚐一口。",
+    sc: "不太饿，但先尝一口。",
+    en: "Not very hungry, but I'll take a bite.",
+    jp: "そんなに空腹じゃないけど、ひと口だけ。"
+  },
+  "worldBark.eat.low.1": {
+    tc: "隨手撿了一點，不急著吃完。",
+    sc: "随手捡了一点，不急着吃完。",
+    en: "Picked a little up. No rush to finish it.",
+    jp: "少しだけ拾った。急いで食べなくていい。"
+  },
+
+  "worldBark.inspect.high.0": {
+    tc: "那邊有東西在動，我去看看。",
+    sc: "那边有东西在动，我去看看。",
+    en: "Something moved over there. I'll go look.",
+    jp: "あそこで何か動いた。見てくる。"
+  },
+  "worldBark.inspect.high.1": {
+    tc: "這個之前不在。我靠近一點。",
+    sc: "这个之前不在。我靠近一点。",
+    en: "This wasn't here before. Moving closer.",
+    jp: "これ、さっきまで無かった。近づいてみる。"
+  },
+  "worldBark.inspect.mid.0": {
+    tc: "有點在意那邊，先看一眼。",
+    sc: "有点在意那边，先看一眼。",
+    en: "That's been on my mind — just one look.",
+    jp: "あそこが少し気になる。ひと目だけ見る。"
+  },
+  "worldBark.inspect.mid.1": {
+    tc: "這東西的形狀有點奇怪。",
+    sc: "这东西的形状有点奇怪。",
+    en: "The shape of this is a little odd.",
+    jp: "これ、形がちょっと変わってる。"
+  },
+  "worldBark.inspect.low.0": {
+    tc: "隨便看看，沒什麼特別的。",
+    sc: "随便看看，没什么特别的。",
+    en: "Just looking around. Nothing special.",
+    jp: "なんとなく見てるだけ。特に何も。"
+  },
+  "worldBark.inspect.low.1": {
+    tc: "路過的時候瞄了一眼。",
+    sc: "路过的时候瞄了一眼。",
+    en: "Caught a glance while passing by.",
+    jp: "通りすがりにちらっと見た。"
+  },
+
+  "worldBark.approach.high.0": {
+    tc: "我走近一點，不會擋著你。",
+    sc: "我走近一点，不会挡着你。",
+    en: "Coming a bit closer. I won't get in your way.",
+    jp: "少し近づくね。邪魔はしないよ。"
+  },
+  "worldBark.approach.high.1": {
+    tc: "靠過來一些。你忙你的。",
+    sc: "靠过来一些。你忙你的。",
+    en: "Drawing a little nearer. Carry on with what you're doing.",
+    jp: "ちょっとだけ寄る。そっちはそのままでいい。"
+  },
+  "worldBark.approach.mid.0": {
+    tc: "我在這附近，不遠不近。",
+    sc: "我在这附近，不远不近。",
+    en: "I'm around here — not too close, not too far.",
+    jp: "この辺にいる。近すぎず遠すぎず。"
+  },
+  "worldBark.approach.mid.1": {
+    tc: "走過來看看，沒別的意思。",
+    sc: "走过来看看，没别的意思。",
+    en: "Wandered over to see. Nothing more than that.",
+    jp: "様子を見に来ただけ。他意はない。"
+  },
+  "worldBark.approach.low.0": {
+    tc: "順路經過你這邊。",
+    sc: "顺路经过你这边。",
+    en: "Just passing by your side.",
+    jp: "ついでにそっちを通っただけ。"
+  },
+  "worldBark.approach.low.1": {
+    tc: "就站這裡，不打擾。",
+    sc: "就站这里，不打扰。",
+    en: "Just standing here. I won't interrupt.",
+    jp: "ここに立ってるだけ。邪魔しないよ。"
+  },
+
+  "worldBark.blocked.cooldown.0": {
+    tc: "剛才才做過，先緩一緩。",
+    sc: "刚才才做过，先缓一缓。",
+    en: "Just did that. Giving it a moment.",
+    jp: "さっきやったばかり。少し置いておく。"
+  },
+  "worldBark.blocked.cooldown.1": {
+    tc: "這件事得等一下再說。",
+    sc: "这件事得等一下再说。",
+    en: "This one will have to wait a bit.",
+    jp: "これはもう少し後にする。"
+  },
+  "worldBark.blocked.resource.0": {
+    tc: "這裡沒有可以吃的了。",
+    sc: "这里没有可以吃的了。",
+    en: "Nothing left to eat here.",
+    jp: "ここにはもう食べられるものがない。"
+  },
+  "worldBark.blocked.resource.1": {
+    tc: "東西不夠，先算了。",
+    sc: "东西不够，先算了。",
+    en: "Not enough for that. Never mind.",
+    jp: "足りないみたい。今はやめておく。"
+  },
+  "worldBark.blocked.unknown.0": {
+    tc: "這個動作我還做不出來。",
+    sc: "这个动作我还做不出来。",
+    en: "I can't do that one yet.",
+    jp: "その動きはまだできない。"
+  },
+  "worldBark.blocked.unknown.1": {
+    tc: "我不太確定怎麼做這件事。",
+    sc: "我不太确定怎么做这件事。",
+    en: "I'm not quite sure how to do this.",
+    jp: "これのやり方がよく分からない。"
   }
 };
