@@ -3,6 +3,11 @@
 
 ---
 # 04_RUNTIME_CANON.md
+
+> **LEGACY REFERENCE NOTICE**
+> - This is a legacy reference document.
+> - It is not the current cross-runtime technical authority.
+> - Current technical authority: `docs/architecture/NEXUS_LINK_MULTI_RUNTIME_TECHNICAL_CONSTITUTION.md`
 # Nexus Link／心核連結 — Runtime Canon v2.0
 ## 第四層：現況與落地規格
 
@@ -21,14 +26,15 @@
 
 目前 repo 的現況是：
 
-> R2 prototype 已經 promote 到 root。root 現在是 current active runtime。
+> R2-derived Web Runtime 已經 promote 到 root。root 現在是 Current active commercial Web runtime。
+> Unity is an approved and existing parallel native habitat loadable greybox scene / tool-validation prototype and target runtime. Its current implementation maturity must be described from the Unity repository evidence; it is not yet the complete production game unless the repository proves otherwise。
 
 因此：
 
 - `/` 是現行主入口。
 - `/r2/` 不是目前主入口。
-- 舊 R2 文件仍可作 reference，但不可再要求 agent 回到 `/r2/` 開發。
-- `R2` 這個名稱在文件中應改成「R2-derived root runtime」或「Root White Lab」。
+- 舊 R2-derived Web Runtime 文件仍可作 reference，但不可再要求 agent 回到 `/r2/` 開發。
+- `R2` 這個名稱在文件中應改成「R2-derived Web Runtime」或「Root White Lab」。
 
 目前 root `index.html` 標題為：
 

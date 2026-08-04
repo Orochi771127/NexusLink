@@ -1,4 +1,7 @@
-# CLAUDE.md — Nexus Link 開發憲法（給 Claude Fable 5 / Claude Code）
+# CLAUDE.md — Nexus Link Web Repo Operating Constitution
+
+這是 Nexus Link **Web 版本專案**的最高行為與技術準則（System Prompt / Constitution）。
+請注意，本文件為 Web Repo 限定。關於跨運行時（Unity / Blender）之規範，請參見 `docs/architecture/NEXUS_LINK_MULTI_RUNTIME_TECHNICAL_CONSTITUTION.md`。
 
 > 本檔服從 `NEXUS_LINK_MASTER_CANON_v3.1.md`（最高戰略上位法）。若有衝突，以 `NEXUS_LINK_MASTER_CANON_v3.1.md` 為準。
 > 這是你進入 Nexus Link repo 後最先讀的協作入口文件。
@@ -106,12 +109,12 @@ Initial Bond 已接入：fresh save 固定呈現 `greyshade-cat` / `blazetail-ki
 
 ## 3. 技術邊界（硬限制；受控例外須由 Owner 明文修訂）
 
-### 允許
-- HTML（單頁 `index.html`）
-- CSS（`styles.css`，純 CSS，無預處理器）
-- Vanilla JavaScript（ES Modules，無 bundler，無 build step）
-- PixiJS v8（CDN：`pixi.js@8.8.1`，全域 `window.PIXI`）
-- Three.js（僅限 Moonlake Live 3D Hybrid；固定版本 CDN ES Module，無 npm、無 build step；見 `docs/design/MOONLAKE_LIVE_3D_HYBRID_CONTRACT_V1.md`）
+### 1. 核心技術棧與禁令
+- **絕對禁止**：未經 Human 核准的框架（React / Vue / Svelte）、TypeScript、Node.js 依賴（npm install）擴張。
+- **允許清單**：Vanilla JavaScript (ES Modules)、HTML5、CSS3、DOM 操作、Canvas API、PixiJS、Three.js、GLB / glTF。
+- **跨運行時邊界**：「無構建步驟（Zero-build）」與「禁止 Bundler」僅約束 Web current runtime。Unity is an approved and existing parallel native habitat loadable greybox scene / tool-validation prototype and target runtime. Its current implementation maturity must be described from the Unity repository evidence; it is not yet the complete production game unless the repository proves otherwise。
+- **渲染分層**：PixiJS 不再被描述為唯一 renderer；PixiJS 繼續負責 2D、角色、特效或 legacy layer。Three.js／GLB 3D habitat 是經核准的 Web runtime 能力。Moonlake 3D Source v2 is the canonical scene-authoring workspace. Web `assets/3d/moonlake` contains runtime-exported or candidate assets and is not the complete source workspace.
+- **架構本質**：Web Repo 是一個打開 `index.html`（或經簡易 local server）就能直接運行的前端遊戲，並保留向後兼容性。不得藉此授權 React、TS、npm 擴張。
 - localStorage（集中於 `src/state/saveManager.js`）
 - GitHub Pages（純靜態部署）
 
