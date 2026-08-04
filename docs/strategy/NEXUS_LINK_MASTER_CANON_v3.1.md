@@ -10,7 +10,18 @@
 
 ---
 
-## 第零部：一頁定生死
+## 第零部：更新紀錄 (Changelog)
+
+- Multi-runtime technical scope correction
+- Three.js / Unity / Blender formalized
+- Web-first retained
+- Emotional contracts unchanged
+- Safety red lines unchanged
+- No claim that Unity or Moonlake Production Art is complete
+
+---
+
+## 第零點一部：一頁定生死
 
 **Nexus Link／心核連結是一款情緒棲地型 AI 夥伴遊戲。**
 
@@ -146,7 +157,12 @@
 
 ### 3.1 技術邊界（硬限制；僅 Owner 明文核准的受控例外可修訂）
 
-**允許**：HTML（單頁 `index.html`）／純 CSS（`styles.css`）／Vanilla JS（ES Modules，無 bundler）／PixiJS v8（CDN，`window.PIXI`）／localStorage（集中於 `saveManager.js`）／GitHub Pages。
+**跨運行時總原則**：
+- **Web**: Current active commercial Web runtime.
+- **Unity**: Unity is an approved and existing parallel native habitat loadable greybox scene / tool-validation prototype and target runtime. Its current implementation maturity must be described from the Unity repository evidence; it is not yet the complete production game unless the repository proves otherwise.
+- **Moonlake 3D Source**: Moonlake 3D Source v2 is the canonical scene-authoring workspace. Web `assets/3d/moonlake` contains runtime-exported or candidate assets and is not the complete source workspace.
+
+**Web Repo 允許**：HTML（單頁 `index.html`）／純 CSS（`styles.css`）／Vanilla JS（ES Modules，無 bundler）／PixiJS v8（CDN，`window.PIXI`）／localStorage（集中於 `saveManager.js`）／GitHub Pages。
 
 **Moonlake Live 3D Hybrid 修訂（2026-07-28 Owner 拍板）**：月湖營地正式採用「即時 3D 棲地環境 + 2D illustrated companion + DOM UI」的 RO 式 2.5D 組合。允許在棲地渲染邊界內，以**固定版本、CDN ES Module、無 npm、無 build step**方式載入 Three.js；其用途只限 GLB/glTF 場景、水面與瀑布流動、風吹草、天氣粒子、日月光照、3D 導航／遮擋投影。PixiJS 保留 2D 角色動畫、既有特效與其他頁面渲染權責，RaphaelCore、遊戲規則、store 與 save authority 不移入 Three.js。
 

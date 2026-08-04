@@ -50,11 +50,13 @@ RaphaelCore is a Stateful Companion Cognition Agent: safety-gated, memory-bearin
 
 ## 3. 技術邊界
 
-允許：HTML / 純 CSS（`styles.css`）/ Vanilla JS（ES Modules，無 build step）/ PixiJS v8（CDN）/ localStorage（集中於 `saveManager.js`，key=`nexusLinkR2State:v1`）/ GitHub Pages。
+理解這是一個雙引擎架構（Web + Unity），但請針對 Web repo 提出相容的 vanilla JS 實作方案，或者告知此功能更適合在 Unity 中實作。
 
-**Moonlake Live 3D Hybrid 受控例外（2026-07-28 Owner 核准）**：月湖營地可在 `docs/design/MOONLAKE_LIVE_3D_HYBRID_CONTRACT_V1.md` 的邊界內，使用固定版本的 Three.js CDN ES Module 載入 GLB/glTF 即時 3D 棲地。Three.js 只負責 3D 環境、水面／瀑布、風吹植被、天氣、日月光照、導航與 world-to-screen 投影；2D illustrated companion 仍由 PixiJS 動畫層呈現，DOM UI、store、save、RaphaelCore 與 gameplay authority 不移入 3D renderer。
+允許：HTML / 純 CSS（`styles.css`）/ Vanilla JS（ES Modules，無 build step）/ PixiJS v8（CDN）/ Three.js（CDN ES Module） / GLB / localStorage（集中於 `saveManager.js`，key=`nexusLinkR2State:v1`）/ GitHub Pages。
 
-絕對禁止：React、Vue、Svelte、React Three Fiber、TypeScript、CSS 框架、後端、資料庫、LLM API、未核准 npm 套件、任何 build step。Three.js 例外不得擴張到全站 renderer migration 或第二套遊戲狀態。
+**Moonlake Live 3D Hybrid**：月湖營地使用 Three.js 載入 GLB/glTF 即時 3D 棲地。Three.js 負責 3D 環境、水面／瀑布、風吹植被、天氣、日月光照、導航與 world-to-screen 投影；PixiJS 負責 2D illustrated companion 動畫層呈現。
+
+絕對禁止：未經 Human 核准的 React、Vue、Svelte、React Three Fiber、TypeScript、CSS 框架、後端、資料庫、LLM API、未核准 npm 套件。 Web repo 維持無 build step。
 
 ---
 
@@ -62,15 +64,15 @@ RaphaelCore is a Stateful Companion Cognition Agent: safety-gated, memory-bearin
 
 | AI | 主要職責 |
 |----|---------|
-| **Claude Fable 5 / Claude Code** | 體驗層大型實作、戰鬥情緒對峙改造、Soul Talk 升級、UI、自動測試、產生 diff |
-| **Codex / ChatGPT** | 架構審查、規格收斂、避免技術債、TASK_PACK 拆解 |
+| **Gemini Antigravity** | document governance, repository audit, constitution synchronization, docs-only implementation, conflict matrix, acceptance document maintenance |
+| **Claude Code** | Unity, Blender, C#, Shader / Shader Graph, NavMesh, Unity Editor automation, Blender Python automation, high-risk runtime implementation |
+| **Codex / ChatGPT** | architecture review, TASK_PACK decomposition, risk analysis, acceptance design, code review |
 | **ChatGPT image generation** | 角色概念圖、sprite sheet 初稿 |
-| **Gemini** | 看圖 / 看截圖 review，找 UI / 資產問題（不改 runtime code） |
 | **Grok** | Codex / Fable 沒額度時的備援 |
 
 分工原則：
+- 此分工是協作資源策略，不是產品情感憲法。
 - 圖像生成輸出的資產需經 human 確認後才能進 `assets/`。
-- Gemini 只做視覺 review，不改 runtime code。
 - Spine 動畫僅後期高階選項，非 MVP 主線。
 - Game Studio 只做任務分類與工作流輔助，不可把 Nexus Link 導回 Phaser、React、TypeScript、npm 或任何 build step。
 - Sprite Pipeline 可用於動畫一致性、切格、對齊、anchor、QC；套用時必須遵守 Nexus Link illustrated `512×512` companion 規格，不得回退成 chunky pixel art 預設。
