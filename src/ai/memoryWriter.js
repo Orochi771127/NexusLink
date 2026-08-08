@@ -35,6 +35,10 @@ export function buildMemoryDecision({
     return emptyDecision("high_risk_no_ordinary_memory", sedimentation);
   }
 
+  if (safety?.action === "safe_harbor") {
+    return emptyDecision("distress_caution_session_only", sedimentation);
+  }
+
   if (plan.mode === SOUL_TALK_REACTIONS.WITHDRAW || plan.mode === SOUL_TALK_REACTIONS.REJECT) {
     return emptyDecision("boundary_no_raw_memory", sedimentation);
   }

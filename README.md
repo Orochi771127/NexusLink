@@ -5,6 +5,27 @@
 
 ---
 
+## Raphael Platform Role / Raphael 平台角色
+
+Nexus Link is Raphael's first-party game client, not the canonical home of the future standalone RaphaelCore platform. Until cross-runtime parity is proven, this repository's mature local `src/ai/` path remains the live Soul Talk authority.
+
+Nexus Link 是 Raphael 的第一方遊戲客戶端，不是未來獨立 RaphaelCore 平台的唯一宿主。在跨 runtime parity 通過前，本儲存庫成熟的本機 `src/ai/` 鏈仍是 Soul Talk 的正式權威。
+
+| Repository / 儲存庫 | Responsibility / 職責 | Status / 狀態 |
+|---|---|---|
+| [`NexusLink`](https://github.com/Orochi771127/NexusLink) | first-party client, gameplay reducer, save/game authority / 第一方客戶端、遊戲 reducer、存檔與玩法權威 | live vertical slice / 現行垂直切片 |
+| [`raphael-ai-engine`](https://github.com/Orochi771127/raphael-ai-engine) | standalone cognition kernel and public contracts / 獨立認知核心與公開契約 | parity-gated extraction target / 須通過 parity 才能接管 |
+| `raphael-HMAX` | private Hosted Memory, Auth & eXecution control plane / 私有託管記憶、認證與受限執行控制平面 | private foundation; not production / 私有地基，尚非 production |
+| [`aiforge-raphael-corpus`](https://github.com/Orochi771127/aiforge-raphael-corpus) | reviewed source corpus and historical semantic material / 經審閱的來源語料與歷史語意材料 | canonical corpus source / canonical 語料來源 |
+
+Players never provide a model API token. High-risk safety remains device-local and produces no hosted request, durable memory, reward, Growth or intimacy effect.
+
+玩家不需要提供模型 API Token。高風險 safety 一律留在裝置端，且不產生遠端請求、耐久記憶、獎勵、Growth 或親密效果。
+
+Architecture contract: `docs/architecture/RAPHAEL_SOVEREIGN_COMPANION_PLATFORM_V1.md`.
+
+---
+
 ## Current Status
 
 **Nexus Link** is a Web-first pre-commercial vertical slice built around one core loop:

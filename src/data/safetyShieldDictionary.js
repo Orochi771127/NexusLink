@@ -9,7 +9,14 @@ export const SafetyShieldDict = Object.freeze({
     /殺了自己/,
     /割腕/,
     /跳樓/,
-    /活不下去/
+    /活不下去/,
+    /吞了很多藥/,
+    /藥物過量/,
+    /药物过量/,
+    /無法呼吸/,
+    /无法呼吸/,
+    /嚴重出血/,
+    /严重出血/
   ],
 
   cautionPatterns: [

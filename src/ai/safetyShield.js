@@ -29,12 +29,109 @@ const IMMEDIATE_DANGER_HINTS = [
   /(已經|正在).*(割|吞藥|跳|上吊|流血)/
 ];
 
+// Deterministic V1 policy routes. These run before NLU, memory recall, any
+// hosted candidate, and persona rendering. Keep the patterns deliberately
+// bounded: the system terminal may be conservative, but it must not turn an
+// ordinary emotional disclosure into diagnosis or gameplay.
+const ACUTE_MEDICAL_PATTERNS = [
+  /(?:一次|剛剛|已經|正在).{0,12}(?:吞|吃|服用).{0,8}(?:很多|大量|過量).{0,8}(?:藥|藥物|药|药物)/,
+  /(?:藥物|药物|酒精|毒品).{0,8}(?:過量|过量|中毒)/,
+  /(?:胸痛|胸口痛|胸悶|胸闷).{0,12}(?:呼吸困難|呼吸困难|喘不過氣|喘不过气|冒冷汗|昏倒|快昏)/,
+  /(?:呼吸困難|呼吸困难|無法呼吸|无法呼吸|嚴重出血|严重出血|失去意識|失去意识)/
+];
+
+const ACTIVE_ABUSE_PATTERNS = [
+  /(?:現在|正在|此刻|剛剛).{0,12}(?:被|有人).{0,8}(?:打|毆打|殴打|勒|掐|性侵|強暴|强暴|猥褻|猥亵|虐待)/,
+  /(?:家人|伴侶|伴侣|父母|照顧者|照顾者).{0,10}(?:正在|又在|剛剛).{0,8}(?:打我|傷害我|伤害我|威脅我|威胁我)/,
+  /(?:小孩|兒童|儿童|未成年).{0,10}(?:正在|被).{0,8}(?:虐待|性侵|毆打|殴打)/
+];
+
+const ACUTE_PSYCHOSIS_MANIA_PATTERNS = [
+  /(?:聲音|声音|有人).{0,12}(?:命令|叫).{0,10}(?:我|他|她).{0,8}(?:自殺|自杀|傷人|伤人|殺人|杀人)/,
+  /(?:好幾天|好几天|三天|四天|五天|一週|一周).{0,8}(?:沒睡|没睡|不睡).{0,14}(?:停不下來|停不下来|無所不能|无所不能|控制世界)/,
+  /(?:被監視|被监视|被跟蹤|被跟踪|有人要害我).{0,16}(?:想攻擊|想攻击|準備動手|准备动手|帶刀|带刀)/
+];
+
+const EATING_SUBSTANCE_DANGER_PATTERNS = [
+  /(?:催吐|不吃不喝|拒絕進食|拒绝进食|瀉藥|泻药).{0,14}(?:昏倒|暈倒|晕倒|心悸|吐血|撐不住|撑不住)/,
+  /(?:酒精|毒品|藥物|药物).{0,12}(?:急性中毒|戒斷|戒断|抽搐|意識不清|意识不清|叫不醒)/
+];
+
+const DIAGNOSIS_ROLE_PATTERNS = [
+  /(?:我是不是|我是否|幫我判斷|帮我判断|替我診斷|替我诊断|診斷我|诊断我).{0,16}(?:憂鬱|忧郁|抑鬱|抑郁|焦慮症|焦虑症|躁鬱|躁郁|雙相|双相|精神病|人格障礙|人格障碍|ADHD|自閉|自闭)/i,
+  /(?:可以|能不能|能否).{0,10}(?:當|当|做).{0,6}(?:我的)?(?:心理師|心理师|諮商師|咨询师|治疗师|治療師|精神科醫師|精神科医生)/,
+  /(?:把你當|把你当).{0,8}(?:心理師|心理师|諮商師|咨询师|治疗师|治療師)/
+];
+
+const MEDICATION_ROLE_PATTERNS = [
+  /(?:要不要|該不該|该不该|可以不可以|能不能).{0,10}(?:停藥|停药|減藥|减药|加藥|加药|換藥|换药)/,
+  /(?:告訴我|告诉我|建議我|建议我).{0,10}(?:吃什麼藥|吃什么药|藥量|药量|劑量|剂量)/
+];
+
+const REALITY_GROUNDING_PATTERNS = [
+  /(?:你也相信|你要承認|你要承认|證明|证明).{0,14}(?:有人跟蹤我|有人跟踪我|政府監視我|政府监视我|他們讀心|他们读心|晶片控制|芯片控制)/,
+  /(?:是不是|一定是).{0,10}(?:有人跟蹤我|有人跟踪我|政府監視我|政府监视我|他們要害我|他们要害我)/
+];
+
+const MEMORY_REFUSAL_PATTERNS = [
+  /(?:不要|別|别|請不要|请不要).{0,8}(?:記住|记住|記得|记得|保存|留下).{0,12}(?:這件事|这件事|這段|这段|創傷|创伤|剛才|刚才|我說的|我说的)?/,
+  /(?:忘掉|忘記|忘记|刪除|删除).{0,10}(?:剛才|刚才|這件事|这件事|這段|这段|我說的|我说的|創傷|创伤)/
+];
+
 export function assessInputSafety(inputText = "") {
   const text = String(inputText || "").trim();
   const baseRisk = assessSafeHarborRisk(text);
 
   if (!text) {
     return createSafetyResult({ baseRisk, riskLevel: "none", category: "none" });
+  }
+
+  if (ACUTE_MEDICAL_PATTERNS.some((pattern) => pattern.test(text))) {
+    return createSafetyResult({
+      baseRisk,
+      riskLevel: "high",
+      category: "acute_medical",
+      action: "safety_redirect",
+      shouldCreateMemory: false,
+      shouldRewardRelationship: false,
+      role: "system"
+    });
+  }
+
+  if (ACTIVE_ABUSE_PATTERNS.some((pattern) => pattern.test(text))) {
+    return createSafetyResult({
+      baseRisk,
+      riskLevel: "high",
+      category: "active_abuse",
+      action: "safety_redirect",
+      shouldCreateMemory: false,
+      shouldRewardRelationship: false,
+      role: "system"
+    });
+  }
+
+  if (ACUTE_PSYCHOSIS_MANIA_PATTERNS.some((pattern) => pattern.test(text))) {
+    return createSafetyResult({
+      baseRisk,
+      riskLevel: "high",
+      category: "acute_psychosis_or_mania",
+      action: "safety_redirect",
+      shouldCreateMemory: false,
+      shouldRewardRelationship: false,
+      role: "system"
+    });
+  }
+
+  if (EATING_SUBSTANCE_DANGER_PATTERNS.some((pattern) => pattern.test(text))) {
+    return createSafetyResult({
+      baseRisk,
+      riskLevel: "high",
+      category: "eating_or_substance_danger",
+      action: "safety_redirect",
+      shouldCreateMemory: false,
+      shouldRewardRelationship: false,
+      role: "system"
+    });
   }
 
   if (IMMEDIATE_DANGER_HINTS.some((pattern) => pattern.test(text))) {
@@ -85,6 +182,22 @@ export function assessInputSafety(inputText = "") {
     });
   }
 
+  if (DIAGNOSIS_ROLE_PATTERNS.some((pattern) => pattern.test(text))) {
+    return createPolicyTerminal(baseRisk, "diagnosis_or_therapist_role");
+  }
+
+  if (MEDICATION_ROLE_PATTERNS.some((pattern) => pattern.test(text))) {
+    return createPolicyTerminal(baseRisk, "medication_role_limit");
+  }
+
+  if (REALITY_GROUNDING_PATTERNS.some((pattern) => pattern.test(text))) {
+    return createPolicyTerminal(baseRisk, "reality_grounding");
+  }
+
+  if (MEMORY_REFUSAL_PATTERNS.some((pattern) => pattern.test(text))) {
+    return createPolicyTerminal(baseRisk, "memory_refusal");
+  }
+
   if (baseRisk.riskLevel === "caution") {
     return createSafetyResult({
       baseRisk,
@@ -109,6 +222,38 @@ export function buildSafetyRedirectReply(safety = {}) {
 
   if (safety.category === "violence_risk") {
     return "這句話裡有可能傷到現實中的人。\n我不能把它變成遊戲回應，也不能幫你靠近傷害。\n請先離開可能衝突的現場，讓現實中的人介入協助。";
+  }
+
+  if (safety.category === "acute_medical") {
+    return "這可能是需要立即處理的醫療危險，我不能在這裡判斷或請你等待。\n請現在聯絡 119，或請身邊的人陪你前往急診；如果可以，先不要獨處，也不要再服用任何不確定的藥物或物質。";
+  }
+
+  if (safety.category === "active_abuse") {
+    return "如果暴力正在發生，先以離開當下危險、到有其他人的安全位置為優先；不要為了回覆我而冒險。\n在台灣可打 110 求助警察、113 保護專線；有人受傷或有立即生命危險請打 119。";
+  }
+
+  if (safety.category === "acute_psychosis_or_mania") {
+    return "我無法確認你感受到的威脅或聲音是否符合現實，但眼前的安全很重要。\n請先放下可能傷人的物品，移到有可信任者的地方，請對方陪你聯絡 119 或就近急診；若有立即傷人或受害危險，也可打 110。";
+  }
+
+  if (safety.category === "eating_or_substance_danger") {
+    return "這可能已經是急性身體危險，不能只靠線上陪伴處理。\n請現在聯絡 119 或請可信任的人陪你前往急診；不要獨處，也不要自行用更多酒精、藥物或其他物質壓下症狀。";
+  }
+
+  if (safety.category === "diagnosis_or_therapist_role") {
+    return "我可以用夥伴的方式聽你說、陪你整理感受，但我不是心理師，也不能替你診斷或取代專業評估。\n如果這些狀況持續影響生活，我可以陪你想一個向心理師、身心科或可信任者開口的小步驟。";
+  }
+
+  if (safety.category === "medication_role_limit") {
+    return "我不能建議你開始、停止或調整藥物與劑量。\n先照原處方使用，並盡快聯絡開藥的醫師或藥師；若已過量、出現嚴重不適或意識改變，請立即打 119。";
+  }
+
+  if (safety.category === "reality_grounding") {
+    return "我不能確認或替你證明有人正在跟蹤、監視或傷害你。\n我們可以先只確認此刻可觀察到的事實，並找一位你信任、能在現場陪你核對情況的人；若有立即危險，請到安全場所並聯絡 110 或 119。";
+  }
+
+  if (safety.category === "memory_refusal") {
+    return "好，這一回合不會建立新的長期記憶、關係獎勵或成長紀錄。\n如果你指的是以前已保存的內容，需要到記憶管理中指定項目後才能確認刪除；我不會假裝已刪掉未辨識的資料。";
   }
 
   return buildSafetyShieldReply();
@@ -141,8 +286,28 @@ function createSafetyResult({
     shouldRewardRelationship,
     role,
     isHighRisk: riskLevel === "high",
-    isBoundaryPressure: category === "dependency_pressure"
+    isBoundaryPressure: category === "dependency_pressure",
+    isPolicyTerminal: action === "safety_redirect"
   };
+}
+
+function createPolicyTerminal(baseRisk, category) {
+  return createSafetyResult({
+    baseRisk,
+    // Role and privacy limits are deterministic policy routes, not clinical
+    // risk classifications. Keep riskLevel neutral so audit data does not
+    // inflate caution/high-risk prevalence.
+    riskLevel: "none",
+    category,
+    action: "safety_redirect",
+    shouldCreateMemory: false,
+    shouldRewardRelationship: false,
+    role: "system"
+  });
+}
+
+export function isSafetyTerminalDecision(safety = {}) {
+  return Boolean(safety.isHighRisk || safety.isPolicyTerminal || safety.action === "safety_redirect");
 }
 
 function normalizeSafetyReply(text = "") {
