@@ -7481,6 +7481,24 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
   Expedition behavior `32/32`, loot semantics PASS, session-owner `9/9`.
 - Branch / commit: `codex/gameplay-skins-r3` / this package commit.
 
+### 2026-08-08 - Codex - Raphael Sovereign Companion Platform V1 Phase 0/1 - VERIFIED LOCALLY
+
+- Status: `VERIFIED LOCALLY`; no commit, push, deployment or live hosted cutover.
+- Lane: `Raphael Core, Companion Reasoning, And Soul Talk`.
+- Task name: `RAPHAEL_SOVEREIGN_PLATFORM_V1_PHASE_0_1`.
+- Layer: `EXPERIENCE + high-risk safety`; no GROUNDWORK. `index.html`, save/default/normalize state, Pixi, assets, tools and scripts were not intentionally modified.
+- Branch / worktree: `codex/raphael-sovereign-platform-v1` / `C:\Users\User\.codex\visualizations\2026\08\02\019fc01a-d3c6-75b3-b783-7f32efd07ab5\raphael-sovereign-platform-v1`; based on `2b7c193`; uncommitted.
+- Completed: platform ADR, authority matrix, no-player-token rule, psychology-informed support role contract, bounded memory/consent contract and Q-series acceptance; deterministic routes for overdose/acute medical, active abuse/child abuse, dangerous psychosis/mania, eating/substance danger, diagnosis/therapist/medication role limits, delusion-safe reality grounding and current-turn memory refusal.
+- Completed: strict draft `TurnRequest`/`TurnDecision` validation, claims-only hosted identity rule, immutable request snapshot, embedded read-only adapter and shadow comparison client. Shadow returns no applicable decision and cannot display hosted speech, apply effects or commit memory; idempotency cache prevents duplicate hosted calls.
+- Red-line check: acute high-risk remains local system terminal with zero external advice, memory, trace, reward, relationship delta and animation. Caution memory now fails closed at `memoryWriter`; ordinary non-caution memory remains unchanged. No absence/login/dependency trigger was added.
+- Verification: psychological safety `13/13`; runtime contract/shadow `9/9`; existing safety terminal invariant `56/56`; sealed conversation `48/48` hard gates with zero quality flags and human blind review `not_run`; sealed autonomy `32/32`, `advisoryTrustedFalse:true`.
+- Standalone foundation: sibling branch `raphael-ai-engine:codex/sovereign-platform-v1` adds strict runtime contract validation, claims-only identity prohibition in body, deterministic sovereign safety parity and `runSovereignTurn`; verification is new 16 assertions plus existing engine/gateway/legacy/probe `8 + 7 + 3 + 9` PASS.
+- Hosted foundation: private repository target `raphael-HMAX` (**Hosted Memory, Auth & eXecution**), developed from the isolated local `raphael-gateway-server:codex/sovereign-hosted-v1` branch, adds injected AuthPort, tenant/subject-scoped FIFO MemoryPort, disabled/test ModelPorts and HostedRuntimeService; 14 assertions prove forged body authority rejection, cross-tenant non-disclosure, guest/crisis no-write, complete forget markers and metadata-only audit. The old Phase A gateway paths remain quarantined legacy lab code and are not a production server.
+- Known limits: the standalone branch is a parity foundation, not yet the published canonical release. The old gateway `src/server.js` remains an insecure localhost mock and is not wired to the new hosted service. No PostgreSQL/Redis/vLLM, OIDC/PKCE, production rate limiter/KMS, clinical/legal/privacy/security review or live Soul Talk cutover exists. Qwen is not connected. Human blind review and all clinical rollout gates remain open.
+- Workspace note: the isolated checkout reports unrelated long-path habitat PNG differences created during worktree materialization; they were not edited, approved, staged or included in this package and must remain excluded.
+- Next safe action: create separately approved isolated worktrees for `raphael-ai-engine` and gateway, port this contract and safety dataset, implement auth/tenant/memory/model ports, then prove cross-runtime parity before any live client wiring. Phase 5 save/account/raw-transcript changes require file-by-file GROUNDWORK approval.
+- Required reading: `docs/architecture/RAPHAEL_SOVEREIGN_COMPANION_PLATFORM_V1.md`, `docs/raphael/RAPHAEL_PSYCHOLOGY_INFORMED_SUPPORT_V1.md`, `docs/privacy/RAPHAEL_MEMORY_CONSENT_CONTRACT_V1.md`, `ACCEPTANCE.md` Q1-Q6, `AGENTS.md`, Master Canon, Raphael handoff/status and this lane.
+
 ### 2026-08-02 - Codex - Gameplay Skin Package R3 Visual Production - VERIFIED
 
 - Status: `VERIFIED`; both live modes now match the Owner-approved bright 3D
@@ -7512,3 +7530,20 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
   rules are recorded in `docs/art/GAMEPLAY_SKIN_PACKAGE_V1.md` and
   `docs/art/ART_PRODUCTION_INDEX.json`.
 - Branch / commit: `codex/gameplay-skins-r3` / this package commit.
+
+### 2026-08-09 - Codex - Raphael Sovereign Review Remediation R1 - VERIFIED LOCALLY
+
+- Status: `VERIFIED LOCALLY`; the bounded cross-repository review remediation is complete. Merge, deployment, hosted cutover and public-launch approval remain open.
+- Lane: `Raphael Core, Companion Reasoning, And Soul Talk`.
+- Task name: `RAPHAEL_SOVEREIGN_REVIEW_REMEDIATION_R1`.
+- Layer: `EXPERIENCE + high-risk safety + CI governance`; no GROUNDWORK. No `index.html`, save/default/normalize state, Pixi, assets, tools or scripts change.
+- Review result: Claude Code correctly identified a V1 `ClientReducer` versus `NexusLinkReducer` contract mismatch, incomplete policy-terminal isolation, and missing executable CI coverage. Gemini correctly recognized the repository split but over-stated readiness and supplied incorrect corpus paths; its merge/tag/Phase 4 advice is not authorized by this package.
+- Completed: `runRaphaelCore`, external advice, and async external entry now share `isSafetyTerminalDecision()`. Diagnosis/therapist-role, medication, reality-grounding and memory-refusal routes retain non-acute `riskLevel:none` but fail closed with zero recall, dialogue/evolution cache, raw-input debug, animation, external/Hermes call, memory, trace, reward or relationship mutation.
+- Contract result: Nexus Link, standalone Engine and HMAX keep V1 authority at `authority.gameMutation:NexusLinkReducer`; a generic `ClientReducer` is rejected fail-closed and deferred to a separately versioned future multi-client contract.
+- CI result: Nexus release gate executes both sovereign suites; Engine, HMAX and Corpus have dependency-free Node workflows. Corpus CI uses the actual `concepts/A`, `sentences/F` and `mappings/G` paths.
+- Verification: psychological safety `14/14`; runtime contract `12/12`; existing safety terminal invariant `56/56`; sealed holdout v1 `48/48`, `hardGateOk:true`, quality flags `0`, console errors `0`, human blind review `not_run`; full Web release gate `28/28`, JS syntax `439/439`, accessibility warnings `0`; Engine `18 + 8 + shadow PASS + probe 9/9`; HMAX `15`; Corpus `3/3`; diff check PASS in all four repositories.
+- Evidence: `docs/qa/RAPHAEL_SOVEREIGN_REVIEW_REMEDIATION_R1_2026-08-09.md`; isolated holdout and Web-gate JSON were written outside the repository. Test-generated tracked QA churn was restored and is not part of the package.
+- Known limits: private blind review, real-device D1/D2/D3/D6, qualified psychological review, specialist red-team, privacy/legal/security/store-copy review, production auth/storage/model infrastructure and Owner launch approval remain open. Automated PASS is not production readiness.
+- Branch / commit: `codex/raphael-sovereign-platform-v1` / this remediation package commit; companion branches are `raphael-ai-engine:codex/sovereign-platform-v1`, `raphael-HMAX:codex/sovereign-hosted-v1`, and `aiforge-raphael-corpus:codex/raphael-platform-governance`.
+- Next safe action: publish the four scoped commits, let GitHub parse and execute the workflows, and review Draft PR checks. Do not merge or deploy until the remaining human gates are explicitly approved.
+- Required reading: `docs/qa/RAPHAEL_SOVEREIGN_REVIEW_REMEDIATION_R1_2026-08-09.md`, `docs/architecture/RAPHAEL_SOVEREIGN_COMPANION_PLATFORM_V1.md`, `docs/raphael/RAPHAEL_PSYCHOLOGY_INFORMED_SUPPORT_V1.md`, `docs/privacy/RAPHAEL_MEMORY_CONSENT_CONTRACT_V1.md`, Raphael handoff/status, `ACCEPTANCE.md` Q1-Q7, and this lane.

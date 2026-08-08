@@ -57,6 +57,11 @@ jobs:
           --port 5238
           --output "$RUNNER_TEMP/web-release-gate.json"
 
+      - name: Run Raphael sovereign safety and contract suites
+        run: |
+          node docs/qa/raphael-psychological-safety-v1-cases.mjs
+          node docs/qa/raphael-runtime-contract-v1-cases.mjs
+
       - name: Upload compact release evidence
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
