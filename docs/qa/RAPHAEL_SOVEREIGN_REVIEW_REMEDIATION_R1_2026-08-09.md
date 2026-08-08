@@ -84,6 +84,21 @@ No hosted model, database, authentication provider, live Soul Talk cutover, merg
 
 The full Web release gate was run against a dirty candidate tree because it was validating the uncommitted remediation itself. Its evidence records the exact pre-commit HEAD and the scoped runtime diff. Generated QA output churn was not retained in the patch.
 
+## Publication proof
+
+The reviewed foundations were published through protected pull requests in dependency order on 2026-08-09:
+
+| Repository | Pull request | Published `main` commit | Post-merge workflow |
+|---|---|---|---|
+| `aiforge-raphael-corpus` | `#2` | `1b6be1fc5c2b1f6fb281335dd9119f5590b0d745` | Corpus Integrity PASS |
+| `raphael-ai-engine` | `#1` | `42f6bbbd3e395861d3aa17a51fc1a5db8e4f4387` | Sovereign Engine CI PASS |
+| `raphael-HMAX` | `#1` | `30c368ec4921d6311d5a36fc960ef169429d4c83` | HMAX Boundary CI PASS |
+| `NexusLink` | `#186` | `92df13d9ea08a9b21439cde4c17efcabcca1b928` | Web Release Gate and Pages deployment PASS |
+
+All four local `main` refs match `origin/main` at `0/0`. Post-merge Codebase MCP indexes were refreshed from trees proven byte-identical to the published `main` trees.
+
+Public Nexus Link verification returned HTTP 200 for `src/ai/raphaelCore.js` and `src/ui/soulTalkController.js`. The public controller imports and calls synchronous embedded `runRaphaelCore()` for the visible Soul Talk turn. It has no `runRaphaelCoreWithExternal` call; the hosted shadow client and async external entry remain module-only with zero live callers. HMAX was merged as a boundary foundation and was not deployed as a public service.
+
 ## Remaining non-automated gates
 
 - Raphael private blind review: `not_run` (minimum 3 testers x 20 turns).
