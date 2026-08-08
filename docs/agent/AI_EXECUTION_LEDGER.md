@@ -7547,3 +7547,18 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Branch / commit: `codex/raphael-sovereign-platform-v1` / this remediation package commit; companion branches are `raphael-ai-engine:codex/sovereign-platform-v1`, `raphael-HMAX:codex/sovereign-hosted-v1`, and `aiforge-raphael-corpus:codex/raphael-platform-governance`.
 - Next safe action: publish the four scoped commits, let GitHub parse and execute the workflows, and review Draft PR checks. Do not merge or deploy until the remaining human gates are explicitly approved.
 - Required reading: `docs/qa/RAPHAEL_SOVEREIGN_REVIEW_REMEDIATION_R1_2026-08-09.md`, `docs/architecture/RAPHAEL_SOVEREIGN_COMPANION_PLATFORM_V1.md`, `docs/raphael/RAPHAEL_PSYCHOLOGY_INFORMED_SUPPORT_V1.md`, `docs/privacy/RAPHAEL_MEMORY_CONSENT_CONTRACT_V1.md`, Raphael handoff/status, `ACCEPTANCE.md` Q1-Q7, and this lane.
+
+### 2026-08-09 - Codex - Raphael Sovereign Platform V1 Foundation Publication - PUBLISHED / HOSTED CUTOVER DISABLED
+
+- Status: `PUBLISHED`; the four approved foundation PRs are merged and their post-merge `main` workflows passed. This is not an HMAX production deployment or Hosted Soul Talk cutover.
+- Lane: `Raphael Core, Companion Reasoning, And Soul Talk`.
+- Task name: `RAPHAEL_SOVEREIGN_PLATFORM_V1_FOUNDATION_PUBLICATION`.
+- Publication order and commits: Corpus PR `#2` -> `1b6be1fc5c2b1f6fb281335dd9119f5590b0d745`; Engine PR `#1` -> `42f6bbbd3e395861d3aa17a51fc1a5db8e4f4387`; HMAX PR `#1` -> `30c368ec4921d6311d5a36fc960ef169429d4c83`; Nexus Link PR `#186` -> `92df13d9ea08a9b21439cde4c17efcabcca1b928`.
+- Post-merge verification: all four `main` refs equal `origin/main` at `0/0`; Corpus Integrity, Sovereign Engine, HMAX Boundary, Nexus Web Release Gate and Nexus Pages deployment all completed successfully. Codebase MCP was refreshed from trees exactly matching each published `main` tree.
+- Public Soul Talk truth: the Pages deployment at Nexus commit `92df13d` serves the updated `raphaelCore.js` and `soulTalkController.js` with HTTP 200. The visible turn remains `soulTalkController -> runRaphaelCore -> applyRaphaelCoreResult`, executed as embedded browser JavaScript. `runRaphaelCoreWithExternal` and `createRaphaelShadowClient` have no live caller; GitHub is source/static hosting, not a per-turn AI inference service.
+- Safety result: the published embedded Core includes unified acute and policy terminal isolation. Diagnosis/therapist role, medication, reality grounding and memory refusal cannot reach recall, session cache, raw-input debug, animation, external/Hermes request, memory, trace, reward or relationship mutation.
+- Deployment boundary: HMAX `main` contains Auth/Memory/Model Port boundaries and CI only. No production listener, OIDC/PKCE, PostgreSQL/Redis/KMS, private vLLM/Qwen serving, public endpoint, account federation or live Nexus client wiring exists.
+- Human gates still open: private blind review, real-device D1/D2/D3/D6, qualified psychological and specialist red-team review, privacy/legal/security/store-copy review, hosted staging and Owner rollout approval.
+- Branch / commit: `codex/raphael-sovereign-publication-proof` / this docs-only closure commit.
+- Next safe action: design and implement `RAPHAEL_HMAX_PRODUCTION_FOUNDATION_V1` in an isolated package, deploy only to private staging, then run shadow-only Nexus parity before any player-visible Hosted speech.
+- Required reading: `docs/qa/RAPHAEL_SOVEREIGN_REVIEW_REMEDIATION_R1_2026-08-09.md`, `docs/architecture/RAPHAEL_SOVEREIGN_COMPANION_PLATFORM_V1.md`, `docs/raphael/RAPHAEL_PSYCHOLOGY_INFORMED_SUPPORT_V1.md`, `docs/privacy/RAPHAEL_MEMORY_CONSENT_CONTRACT_V1.md`, `ACCEPTANCE.md` Q1-Q7, and this lane.
