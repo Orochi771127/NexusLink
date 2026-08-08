@@ -592,3 +592,7 @@
 **Q6 — 自主性與 absence-invariance**
 - 驗法：沿用 RA-1／RA-2 sealed cases，加入 shared profile、Care memory 與 hosted outage 情境。
 - 通過：boot quiet ≥90 秒、interval ≥240 秒、session cap ≤2；離線時數、登入頻率、推測孤獨／依賴與舊創傷記憶都不能觸發主動關心；Nuwa／model 維持 `trusted:false`。
+
+**Q7 — Policy terminal 隱私與跨 runtime authority parity**
+- 驗法：對 diagnosis／therapist role／medication／reality grounding／memory refusal 開啟所有 external flags，並檢查 debug、dialogue、evolution trace 與 Engine-style decision interop。
+- 通過：policy terminal 保留非臨床 `riskLevel:none`，但與高風險同樣阻斷 recall、session cache、raw-input debug、Hermes／advisor request、animation、memory、trace、reward 與 relationship delta；Nexus Link、standalone engine 與 HMAX 的 V1 decision 一律宣告 `authority.gameMutation:NexusLinkReducer`，其他值 fail-closed。

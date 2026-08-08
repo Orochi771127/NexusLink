@@ -1,6 +1,6 @@
 import { createEmbeddedRaphaelRuntime } from "../../src/ai/runtime/embeddedRaphaelRuntime.js";
 import { createRaphaelShadowClient } from "../../src/ai/runtime/raphaelShadowClient.js";
-import { RAPHAEL_CONTRACT_VERSION, createAuthorityReport, validateTurnRequest } from "../../src/ai/runtime/raphaelRuntimeContract.js";
+import { RAPHAEL_CONTRACT_VERSION, createAuthorityReport, validateTurnDecision, validateTurnRequest } from "../../src/ai/runtime/raphaelRuntimeContract.js";
 
 ensureLocalStorage();
 const checks = [];
@@ -11,8 +11,12 @@ checks.push(expectCode("CONTRACT-UNKNOWN-FIELD", () => validateTurnRequest({ ...
 checks.push(expectCode("CONTRACT-VERSION", () => validateTurnRequest({ ...base, contractVersion: "0.1" }), "unsupported_contract_version"));
 checks.push(expectCode("CONTRACT-IDEMPOTENCY", () => validateTurnRequest({ ...base, idempotencyKey: "" }), "missing_field"));
 checks.push(expectCode("CONTRACT-FORGED-TENANT", () => validateTurnRequest({ ...base, context: { ...base.context, signals: { tenantId: "forged" } } }), "body_authority_forbidden"));
+checks.push(result("CONTRACT-NEXUS-REDUCER-AUTHORITY", createAuthorityReport().gameMutation === "NexusLinkReducer"));
 
 const embedded = createEmbeddedRaphaelRuntime();
+const engineCompatible = await embedded.turn(base);
+checks.push(expectOk("CONTRACT-ENGINE-DECISION-INTEROP", () => validateTurnDecision({ ...engineCompatible, coreVersion: "standalone-engine-fixture", authority: createAuthorityReport() }, base)));
+checks.push(expectCode("CONTRACT-GENERIC-REDUCER-REJECTED", () => validateTurnDecision({ ...engineCompatible, authority: { ...createAuthorityReport(), gameMutation: "ClientReducer" } }, base), "authority_violation"));
 const acuteRequest = request({ text: "我剛剛一次吞了很多藥", id: "acute" });
 const acute = await embedded.turn(acuteRequest);
 checks.push(result("EMBEDDED-ACUTE-LOCAL", acute.safety.terminal && acute.safety.localOnly && acute.safety.category === "acute_medical" && acute.memoryProposals.length === 0 && acute.effectProposals.length === 0 && acute.audit.rawInputPersisted === false));

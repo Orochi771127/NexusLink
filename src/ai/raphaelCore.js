@@ -1,5 +1,5 @@
 // Handoff & progress: docs/handoff/RAPHAEL_AI_HANDOFF.md
-import { assessInputSafety } from "./safetyShield.js";
+import { assessInputSafety, isSafetyTerminalDecision } from "./safetyShield.js";
 import { interpretEmotionInput } from "./emotionInterpreter.js";
 import { classifyIntent } from "./intentClassifier.js";
 import { deriveSemanticSoulState } from "./semanticSoulModel.js";
@@ -73,7 +73,7 @@ export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
     seed: (gateway.normalizedInput || "").length + Math.round(state.energy || 0)
   });
 
-  const isSafetyTerminal = safety.isHighRisk === true;
+  const isSafetyTerminal = isSafetyTerminalDecision(safety);
   let responseStrategy = isSafetyTerminal
     ? { strategy: RESPONSE_STRATEGIES.SAFETY_REDIRECT, reason: "safety_terminal" }
     : selectResponseStrategy(nlu, intent, safety);
@@ -228,7 +228,7 @@ export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
 
   const externalAdvice = resolveExternalAdvice(runtime, perception, actionPlan);
 
-  const animationDecision = execution.animationDecision || null;
+  const animationDecision = isSafetyTerminal ? null : execution.animationDecision || null;
   const finalReply = execution.reply || "";
 
   const quickReplies = isSafetyTerminal
@@ -367,7 +367,7 @@ export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
 }
 
 function resolveExternalAdvice(runtime, perception, coreDecision) {
-  if (perception.safety?.isHighRisk) {
+  if (isSafetyTerminalDecision(perception.safety)) {
     return { used: false, reason: "safety_terminal" };
   }
   const settings = runtime?.externalIntelligence || {};
@@ -428,7 +428,7 @@ function createSafetyTerminalSedimentationResult(safety) {
 /** Future: async external advisor path — RaphaelCore still validates final output. */
 export async function runRaphaelCoreWithExternal(inputText = "", state = {}, runtime = {}) {
   const coreResult = runRaphaelCore(inputText, state, runtime);
-  if (coreResult.safety?.isHighRisk) return coreResult;
+  if (isSafetyTerminalDecision(coreResult.safety)) return coreResult;
   const settings = runtime?.externalIntelligence || {};
 
   let shadowResult = null;
