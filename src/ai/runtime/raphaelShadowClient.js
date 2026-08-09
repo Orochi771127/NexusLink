@@ -6,7 +6,7 @@ export function createRaphaelShadowClient({ hostedRuntime, embeddedRuntime, time
   return Object.freeze({
     async compare(rawRequest, { signal } = {}) {
       const request = freezeTurnContext(rawRequest);
-      if (request.consent.cloudProcessing !== true || request.consent.careProcessing === "device") return { requestId: request.requestId, shadowAttempted: false, reason: "cloud_not_consented", decision: null };
+      if (request.consent.careProcessing !== "not_care") return { requestId: request.requestId, shadowAttempted: false, reason: "care_not_enabled_for_shadow", decision: null };
       if (!seen.has(request.idempotencyKey)) seen.set(request.idempotencyKey, runShadow(request, { signal, hostedRuntime, embeddedRuntime, timeoutMs, now }));
       return seen.get(request.idempotencyKey);
     },
