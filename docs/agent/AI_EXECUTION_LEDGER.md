@@ -7790,3 +7790,62 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Required reading: companion art policy in `AGENTS.md`／`CLAUDE.md`,
   `docs/design/GLOBAL_3D_PRESENTATION_CONTRACT_V1.md`, Sprite Pipeline and Web
   3D asset rules, both promoted manifests and this lane.
+
+### 2026-08-09 - Codex - Global 3D Gameplay Pilots R1 Publication - PUBLISHED / DEPLOYED
+
+- Status: `PUBLISHED / DEPLOYED`; implementation PR `#188` passed its required
+  check, squash-merged to protected `main` as `17be4afe80607ffeb3a65a4c634380481bea4cfa`,
+  and the post-merge release and Pages workflows both completed successfully.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `GLOBAL_3D_GAMEPLAY_PILOTS_R1_PUBLICATION`.
+- GitHub proof: PR `#188`; pre-merge `web-release-gate` PASS; post-merge Nexus
+  Link Release Gate run `31314630875` PASS; Pages run `31314630391` PASS. The
+  repo-native local gate also passed 28/28 required checks, 449/449 JavaScript
+  syntax checks and zero accessibility warnings.
+- Runtime proof: Chromium at 390x844 rendered the approved Greyshade and Rift
+  GLBs in symmetric resonance with opposite spin direction and decoded all
+  eight Greyshade runtime strips; 390x664 explicit Three disable created zero
+  Three canvases; synthetic context loss／restore preserved snapshot authority.
+- Public proof: `https://orochi771127.github.io/NexusLink/` returned HTTP 200.
+  All 18 promoted binary assets were downloaded from Pages and matched their
+  manifest byte lengths, format signatures and SHA-256 values. Both public
+  manifests report `runtime-promoted-owner-approved` and Owner approval true.
+- MCP proof: codebase-memory project
+  `C-Users-User-NexusLink_RaphaelAI_Workspace-NexusLink-global-3d-gameplay-pilots-r1`
+  was refreshed in moderate mode at the exact published tree and resolves the
+  `openStage -> prepareOrbitTopPilotScene -> createOrbitTopPilotScene` call
+  chain, the Expedition direction gate and session-only form trigger.
+- Boundaries still open: real-device D1/D2/D3/D6, moderated first-session
+  comprehension, Raphael private-blind review, legal／privacy／store-copy review
+  and Owner public-launch approval. This Pilot deployment does not close those
+  product-wide gates or authorize roster-wide batch expansion.
+- Branch / commit: `codex/global-3d-gameplay-pilots-r1-publication-proof` / this
+  publication-proof commit.
+- Next safe action: keep the Pilot as the reference-audited baseline. Open a
+  separately approved package before producing more tops, companion species or
+  Expedition attack animations.
+- Required reading: `docs/design/GLOBAL_3D_PRESENTATION_CONTRACT_V1.md`, both
+  promoted manifests, PR `#188`, release run `31314630875`, Pages run
+  `31314630391` and this lane.
+
+### 2026-08-09 - Codex - Global 3D Gameplay Pilots R1 Art Publication - PUBLISHED / PUBLIC HASH VERIFIED
+
+- Status: `PUBLISHED / PUBLIC HASH VERIFIED`; the Owner-approved Greyshade top,
+  Rift Echo top and corrected eight-direction Greyshade R2 walk set are live on
+  Pages and byte-for-byte identical to the promoted manifests.
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `GLOBAL_3D_GAMEPLAY_PILOTS_R1_PUBLICATION`.
+- Published pack: two GLBs, eight 4096x512 audit masters, eight 2048x256 runtime
+  strips and two provenance／approval manifests. Legacy Greyshade art remains;
+  all 512 masters remain outside runtime loading; the eight runtime strips
+  decode to a bounded 16 MiB at RGBA8.
+- Public result: 18/18 asset paths returned the expected format signature,
+  exact byte count and SHA-256. No downloaded third-party art, replacement of
+  another companion, baked UI, attack-animation batch or legacy deletion was
+  introduced.
+- Branch / commit: `codex/global-3d-gameplay-pilots-r1-publication-proof` / this
+  publication-proof commit.
+- Next safe action: human review remains the first gate for every future batch;
+  automated hash proof confirms integrity, not visual approval of new art.
+- Required reading: `docs/art/ART_PRODUCTION_INDEX.json`, both promoted
+  manifests, companion art policy, PR `#188` and this lane.
