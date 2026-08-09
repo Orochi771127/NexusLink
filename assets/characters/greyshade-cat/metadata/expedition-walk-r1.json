@@ -1,0 +1,341 @@
+{
+  "schemaVersion": 1,
+  "assetId": "greyshade-cat-expedition-walk-r1",
+  "companionId": "greyshade-cat",
+  "status": "runtime-promoted-owner-approved",
+  "ownerApproval": {
+    "approved": true,
+    "approvedOn": "2026-08-09",
+    "source": "Owner continuation after visual review in Codex task"
+  },
+  "artDirection": "bright 3D miniature with matte resin-clay character material",
+  "production": {
+    "generator": "ChatGPT image generation",
+    "normalizer": "tools/art/normalize_illustrated_sprite_grid.py",
+    "manifestBuilder": "tools/art/build_global_3d_pilot_manifests.py",
+    "license": "project-owned generated asset; no downloaded third-party art"
+  },
+  "grid": {
+    "directions": [
+      "north",
+      "northeast",
+      "east",
+      "southeast",
+      "south",
+      "southwest",
+      "west",
+      "northwest"
+    ],
+    "framesPerDirection": 8,
+    "anchor": {
+      "x": 0.5,
+      "y": 1.0
+    },
+    "fps": 10,
+    "sampling": "linear with mipmaps when supported"
+  },
+  "runtimeBudget": {
+    "loadedSheetSize": [
+      2048,
+      256
+    ],
+    "decodedBytesAllDirections": 16777216,
+    "decodedMiBAllDirections": 16.0,
+    "masterSheetsAreNotRuntimeLoaded": true
+  },
+  "legacyPolicy": {
+    "referenceAuditedSwap": true,
+    "legacyAssetsRetained": true,
+    "fallbackOwner": "greyshade-cat"
+  },
+  "directions": {
+    "north": {
+      "master": {
+        "path": "assets/characters/greyshade-cat/spritesheets/expedition/r1/master-512/greyshade-walk-north-master-4096x512-8f.png",
+        "bytes": 1207630,
+        "sha256": "67C3B743D3D99F1BE8C148EACA5BACFD122575CFE4089AF34E8AD633DA4F01D5",
+        "sheetSize": [
+          4096,
+          512
+        ],
+        "frameSize": [
+          512,
+          512
+        ],
+        "frameCount": 8,
+        "transparentFrameCorners": true,
+        "uniqueFrameHashes": 8,
+        "maxSoftEdgeRatio": 1.0199
+      },
+      "runtime": {
+        "path": "assets/characters/greyshade-cat/spritesheets/expedition/r1/runtime-256/greyshade-walk-north-runtime-2048x256-8f.png",
+        "bytes": 345530,
+        "sha256": "E2EF570183FA3583BF3094068CD3E18302BF64F65646CF6885AC4A79BFF32B31",
+        "sheetSize": [
+          2048,
+          256
+        ],
+        "frameSize": [
+          256,
+          256
+        ],
+        "frameCount": 8,
+        "transparentFrameCorners": true,
+        "uniqueFrameHashes": 8,
+        "maxSoftEdgeRatio": 1.0263
+      }
+    },
+    "northeast": {
+      "master": {
+        "path": "assets/characters/greyshade-cat/spritesheets/expedition/r1/master-512/greyshade-walk-northeast-master-4096x512-8f.png",
+        "bytes": 1509175,
+        "sha256": "E4262D8843335BC1685C1D1F133311D8A8ACE9FD436CD986879E4A4AD3FE6B6E",
+        "sheetSize": [
+          4096,
+          512
+        ],
+        "frameSize": [
+          512,
+          512
+        ],
+        "frameCount": 8,
+        "transparentFrameCorners": true,
+        "uniqueFrameHashes": 8,
+        "maxSoftEdgeRatio": 1.0294
+      },
+      "runtime": {
+        "path": "assets/characters/greyshade-cat/spritesheets/expedition/r1/runtime-256/greyshade-walk-northeast-runtime-2048x256-8f.png",
+        "bytes": 447575,
+        "sha256": "93EC3BEE8E8D5E362BBBDAD60ECC1A504F18651509C91AFE8D78AC9583DC16DD",
+        "sheetSize": [
+          2048,
+          256
+        ],
+        "frameSize": [
+          256,
+          256
+        ],
+        "frameCount": 8,
+        "transparentFrameCorners": true,
+        "uniqueFrameHashes": 8,
+        "maxSoftEdgeRatio": 1.03
+      }
+    },
+    "east": {
+      "master": {
+        "path": "assets/characters/greyshade-cat/spritesheets/expedition/r1/master-512/greyshade-walk-east-master-4096x512-8f.png",
+        "bytes": 1362006,
+        "sha256": "545ABFFE9EDCE958C409558391F8E11181DDD4ABF7EAFA9FE67C59D853532ECA",
+        "sheetSize": [
+          4096,
+          512
+        ],
+        "frameSize": [
+          512,
+          512
+        ],
+        "frameCount": 8,
+        "transparentFrameCorners": true,
+        "uniqueFrameHashes": 8,
+        "maxSoftEdgeRatio": 1.0378
+      },
+      "runtime": {
+        "path": "assets/characters/greyshade-cat/spritesheets/expedition/r1/runtime-256/greyshade-walk-east-runtime-2048x256-8f.png",
+        "bytes": 419682,
+        "sha256": "F3974F568CB4758FE177C18BF806768861B2620E3B5C15DE57817C1DDA3BD00D",
+        "sheetSize": [
+          2048,
+          256
+        ],
+        "frameSize": [
+          256,
+          256
+        ],
+        "frameCount": 8,
+        "transparentFrameCorners": true,
+        "uniqueFrameHashes": 8,
+        "maxSoftEdgeRatio": 1.0382
+      }
+    },
+    "southeast": {
+      "master": {
+        "path": "assets/characters/greyshade-cat/spritesheets/expedition/r1/master-512/greyshade-walk-southeast-master-4096x512-8f.png",
+        "bytes": 1714989,
+        "sha256": "8DF1BA9E84EC40224D2F3EF7163C1FD3E171402998186F9FADD87C3739A507D4",
+        "sheetSize": [
+          4096,
+          512
+        ],
+        "frameSize": [
+          512,
+          512
+        ],
+        "frameCount": 8,
+        "transparentFrameCorners": true,
+        "uniqueFrameHashes": 8,
+        "maxSoftEdgeRatio": 1.0305
+      },
+      "runtime": {
+        "path": "assets/characters/greyshade-cat/spritesheets/expedition/r1/runtime-256/greyshade-walk-southeast-runtime-2048x256-8f.png",
+        "bytes": 504742,
+        "sha256": "3C668BE7F618BD3823B05CA0868F830831E951132511AFDEFA41065E7B0C5128",
+        "sheetSize": [
+          2048,
+          256
+        ],
+        "frameSize": [
+          256,
+          256
+        ],
+        "frameCount": 8,
+        "transparentFrameCorners": true,
+        "uniqueFrameHashes": 8,
+        "maxSoftEdgeRatio": 1.0312
+      }
+    },
+    "south": {
+      "master": {
+        "path": "assets/characters/greyshade-cat/spritesheets/expedition/r1/master-512/greyshade-walk-south-master-4096x512-8f.png",
+        "bytes": 1304640,
+        "sha256": "B30C4FA55B00BBF1DECFBD3637B252972ECD7DFDB73B64C74012E1410FDC59DA",
+        "sheetSize": [
+          4096,
+          512
+        ],
+        "frameSize": [
+          512,
+          512
+        ],
+        "frameCount": 8,
+        "transparentFrameCorners": true,
+        "uniqueFrameHashes": 8,
+        "maxSoftEdgeRatio": 1.0206
+      },
+      "runtime": {
+        "path": "assets/characters/greyshade-cat/spritesheets/expedition/r1/runtime-256/greyshade-walk-south-runtime-2048x256-8f.png",
+        "bytes": 381001,
+        "sha256": "98DCD2EFDE3DE9943D5D8D815B45BCA15868D73BD39372341758ADE37D457568",
+        "sheetSize": [
+          2048,
+          256
+        ],
+        "frameSize": [
+          256,
+          256
+        ],
+        "frameCount": 8,
+        "transparentFrameCorners": true,
+        "uniqueFrameHashes": 8,
+        "maxSoftEdgeRatio": 1.0272
+      }
+    },
+    "southwest": {
+      "master": {
+        "path": "assets/characters/greyshade-cat/spritesheets/expedition/r1/master-512/greyshade-walk-southwest-master-4096x512-8f.png",
+        "bytes": 1771965,
+        "sha256": "2A3A3C5A64F64DEA8FCEB5FA1FCE538069048B84257B324B080611B2C5478C82",
+        "sheetSize": [
+          4096,
+          512
+        ],
+        "frameSize": [
+          512,
+          512
+        ],
+        "frameCount": 8,
+        "transparentFrameCorners": true,
+        "uniqueFrameHashes": 8,
+        "maxSoftEdgeRatio": 1.0281
+      },
+      "runtime": {
+        "path": "assets/characters/greyshade-cat/spritesheets/expedition/r1/runtime-256/greyshade-walk-southwest-runtime-2048x256-8f.png",
+        "bytes": 524446,
+        "sha256": "850317E476A5C7045AA8E3547C80BFF5F26E44BC532BAADA7A7964BABAE303B2",
+        "sheetSize": [
+          2048,
+          256
+        ],
+        "frameSize": [
+          256,
+          256
+        ],
+        "frameCount": 8,
+        "transparentFrameCorners": true,
+        "uniqueFrameHashes": 8,
+        "maxSoftEdgeRatio": 1.0299
+      }
+    },
+    "west": {
+      "master": {
+        "path": "assets/characters/greyshade-cat/spritesheets/expedition/r1/master-512/greyshade-walk-west-master-4096x512-8f.png",
+        "bytes": 1510014,
+        "sha256": "F5BD87AD48F492765B557F4D2CCCD015481684801D087D62ACCB46A55C68B958",
+        "sheetSize": [
+          4096,
+          512
+        ],
+        "frameSize": [
+          512,
+          512
+        ],
+        "frameCount": 8,
+        "transparentFrameCorners": true,
+        "uniqueFrameHashes": 8,
+        "maxSoftEdgeRatio": 1.0339
+      },
+      "runtime": {
+        "path": "assets/characters/greyshade-cat/spritesheets/expedition/r1/runtime-256/greyshade-walk-west-runtime-2048x256-8f.png",
+        "bytes": 459551,
+        "sha256": "14980C4CAE4E148716D5325611E85F53EFACEFC06A0AFF2309DBA8176EB469FB",
+        "sheetSize": [
+          2048,
+          256
+        ],
+        "frameSize": [
+          256,
+          256
+        ],
+        "frameCount": 8,
+        "transparentFrameCorners": true,
+        "uniqueFrameHashes": 8,
+        "maxSoftEdgeRatio": 1.0348
+      }
+    },
+    "northwest": {
+      "master": {
+        "path": "assets/characters/greyshade-cat/spritesheets/expedition/r1/master-512/greyshade-walk-northwest-master-4096x512-8f.png",
+        "bytes": 1519586,
+        "sha256": "E03793EB4804B8452EC0B68925A203BD87E52C4E92A67164E23B47B1B8C3DED6",
+        "sheetSize": [
+          4096,
+          512
+        ],
+        "frameSize": [
+          512,
+          512
+        ],
+        "frameCount": 8,
+        "transparentFrameCorners": true,
+        "uniqueFrameHashes": 8,
+        "maxSoftEdgeRatio": 1.0309
+      },
+      "runtime": {
+        "path": "assets/characters/greyshade-cat/spritesheets/expedition/r1/runtime-256/greyshade-walk-northwest-runtime-2048x256-8f.png",
+        "bytes": 456213,
+        "sha256": "E93FDD79C7C5D6E409FB66CC0E50AB118BD32A7283982A72141CA9028788CE74",
+        "sheetSize": [
+          2048,
+          256
+        ],
+        "frameSize": [
+          256,
+          256
+        ],
+        "frameCount": 8,
+        "transparentFrameCorners": true,
+        "uniqueFrameHashes": 8,
+        "maxSoftEdgeRatio": 1.0317
+      }
+    }
+  }
+}

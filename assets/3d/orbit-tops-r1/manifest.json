@@ -1,0 +1,116 @@
+{
+  "schemaVersion": 1,
+  "packId": "orbit-tops-r1",
+  "status": "runtime-promoted-owner-approved",
+  "generator": "tools/blender/build_orbit_top_pilots_r1.py",
+  "manifestBuilder": "tools/art/build_global_3d_pilot_manifests.py",
+  "blenderVersion": "5.2.0 LTS",
+  "ownerApproval": {
+    "approved": true,
+    "approvedOn": "2026-08-09",
+    "source": "Owner continuation after visual review in Codex task"
+  },
+  "physicsAuthority": "src/orbit/orbitPhysics.js",
+  "rendererAuthority": "presentation-only snapshot consumer",
+  "license": "project-owned Blender-generated assets; no downloaded third-party art",
+  "runtimePromotionAllowed": true,
+  "assets": [
+    {
+      "assetId": "greyshade-cat-orbit-top-r1",
+      "ownerType": "companion",
+      "ownerId": "greyshade-cat",
+      "path": "assets/3d/orbit-tops-r1/greyshade-cat-orbit-top-r1.glb",
+      "artStatus": "runtime-promoted-owner-approved",
+      "nodes": {
+        "base": "BaseForm",
+        "resonance": "ResonanceForm"
+      },
+      "coordinateFrame": "Blender Z-up authoring; glTF Y-up export",
+      "bottomContactZ": 0,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "spinAxisAuthoring": [
+        0,
+        0,
+        1
+      ],
+      "collider": {
+        "type": "deterministic-2d-circle",
+        "source": "src/orbit/orbitPhysics.js body.radius",
+        "meshIsAuthority": false
+      },
+      "runtimeStats": {
+        "bytes": 1355972,
+        "sha256": "34314A3BB2416598E5EDB3BE83901CDF777E562BE88256016EEAC371F371E62D",
+        "nodeCount": 42,
+        "meshCount": 39,
+        "primitiveCount": 39,
+        "vertexCount": 35395,
+        "triangleCount": 64688,
+        "materialCount": 5,
+        "textureCount": 0,
+        "requiredNodes": [
+          "BaseForm",
+          "OrbitTopRoot",
+          "ResonanceForm"
+        ],
+        "extensionsUsed": [
+          "KHR_materials_clearcoat",
+          "KHR_materials_transmission"
+        ]
+      }
+    },
+    {
+      "assetId": "rift-echo-orbit-top-r1",
+      "ownerType": "enemy",
+      "ownerId": "rift-echo",
+      "path": "assets/3d/orbit-tops-r1/rift-echo-orbit-top-r1.glb",
+      "artStatus": "runtime-promoted-owner-approved",
+      "nodes": {
+        "base": "BaseForm",
+        "resonance": "ResonanceForm"
+      },
+      "coordinateFrame": "Blender Z-up authoring; glTF Y-up export",
+      "bottomContactZ": 0,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "spinAxisAuthoring": [
+        0,
+        0,
+        1
+      ],
+      "collider": {
+        "type": "deterministic-2d-circle",
+        "source": "src/orbit/orbitPhysics.js body.radius",
+        "meshIsAuthority": false
+      },
+      "runtimeStats": {
+        "bytes": 666032,
+        "sha256": "6955F98805834F3623B63C708CAEAC08C851A1BBEA3AF84EBEB468680877302B",
+        "nodeCount": 34,
+        "meshCount": 31,
+        "primitiveCount": 31,
+        "vertexCount": 17789,
+        "triangleCount": 32440,
+        "materialCount": 5,
+        "textureCount": 0,
+        "requiredNodes": [
+          "BaseForm",
+          "OrbitTopRoot",
+          "ResonanceForm"
+        ],
+        "extensionsUsed": [
+          "KHR_materials_clearcoat",
+          "KHR_materials_transmission",
+          "KHR_materials_emissive_strength"
+        ]
+      }
+    }
+  ]
+}

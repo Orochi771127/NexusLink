@@ -164,9 +164,9 @@
 
 **Web Repo 允許**：HTML（單頁 `index.html`）／純 CSS（`styles.css`）／Vanilla JS（ES Modules，無 bundler）／PixiJS v8（CDN，`window.PIXI`）／localStorage（集中於 `saveManager.js`）／GitHub Pages。
 
-**Moonlake Live 3D Hybrid 修訂（2026-07-28 Owner 拍板）**：月湖營地正式採用「即時 3D 棲地環境 + 2D illustrated companion + DOM UI」的 RO 式 2.5D 組合。允許在棲地渲染邊界內，以**固定版本、CDN ES Module、無 npm、無 build step**方式載入 Three.js；其用途只限 GLB/glTF 場景、水面與瀑布流動、風吹草、天氣粒子、日月光照、3D 導航／遮擋投影。PixiJS 保留 2D 角色動畫、既有特效與其他頁面渲染權責，RaphaelCore、遊戲規則、store 與 save authority 不移入 Three.js。
+**Global 3D Presentation 修訂（2026-08-02 Owner 拍板）**：Three.js 由月湖單場景例外擴大為全遊戲可用的**逐場景 opt-in 呈現能力**。仍只允許固定版本 CDN ES Module、無 npm、無 build step；每個採用場景必須自行宣告 renderer lifecycle、snapshot 邊界、mobile budget、reduced-motion、context-loss 與 fallback。Three.js 可呈現 GLB/glTF 環境、道具、場景特效與經核准的 gameplay presentation model，但不得成為第二套遊戲狀態，RaphaelCore、simulation、collision、objective、store、save、Safety、Growth 與 reward authority 均不得移入 renderer。
 
-此修訂不授權全站改寫成 3D 引擎，也不授權 React Three Fiber、TypeScript、npm、bundler、後端或資料庫。完整 runtime／效能／fallback／輸入路由契約以 `docs/design/MOONLAKE_LIVE_3D_HYBRID_CONTRACT_V1.md` 為準。
+月湖仍遵守 `docs/design/MOONLAKE_LIVE_3D_HYBRID_CONTRACT_V1.md`；全域邊界、Blender 離線 GLB 管線與 Orbit Pilot 另服從 `docs/design/GLOBAL_3D_PRESENTATION_CONTRACT_V1.md`。此修訂不代表全站強制 3D 化、不授權 3D companion 全面替換，也不授權 React Three Fiber、TypeScript、npm、bundler、後端、資料庫或新物理權威。
 
 **絕對禁止**：前端框架（React／Vue／Svelte）、TypeScript、CSS 框架、後端／API／資料庫、LLM API、npm 套件（除非明確確認）、任何 build step。
 
@@ -176,7 +176,7 @@
 
 - `src/engine/` — 遊戲規則與狀態推導。禁止操作 DOM／Pixi 容器／直接寫 localStorage。
 - `src/pixi/` — 渲染與動畫。禁止含遊戲規則／寫 localStorage／操作 DOM。
-- `src/three/` — 經核准之即時 3D 棲地呈現與 world-to-screen 投影。禁止持有 gameplay／save／relationship／safety authority；不得直接操作 DOM UI。
+- `src/three/` — 經 scene profile 明示核准的即時 3D 呈現、GLB lifecycle 與 world-to-screen 投影。只讀 engine snapshot；禁止持有 gameplay／collision／outcome／save／relationship／Growth／Safety authority，且不得直接操作 DOM UI。
 - `src/ui/` — DOM UI。可呼叫 engine、接收 state patch；禁止硬寫核心規則。
 - `src/state/` — 狀態與持久化。寫入集中、舊存檔正規化、`QuotaExceededError` 不可崩潰。
 - `src/data/` — runtime 資料與映射。
