@@ -8332,3 +8332,47 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
   but standard Soul Talk still uses embedded RaphaelCore speech. No hosted
   speech cutover, player traffic, reward, Growth, memory write or gameplay
   mutation occurred.
+
+### 2026-08-10 - Codex - R2 Gameplay Pilots Protected-Main Publication - COMPLETED
+
+- Status: `COMPLETED`; implementation, protected-main integration, deployment
+  and public artifact verification are complete.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `GLOBAL_3D_GAMEPLAY_PILOTS_R2_PROMOTION_AND_ACTION_BATCH`.
+- Publication: PR `#192` merged by squash to `main` as
+  `af580ec0edb450e8fcc810c3d4aa8dac95748b15` after required PR run
+  `31325905338` completed successfully. No administrator bypass was used.
+- Post-merge gates: `Nexus Link Release Gate` run `31326153160` completed
+  successfully on the exact merge SHA, including the repo-native web release
+  gate and Raphael sovereign safety/contract suites. GitHub Pages run
+  `31326152910` built and deployed successfully.
+- Public proof: `https://orochi771127.github.io/NexusLink/` returned HTTP 200.
+  Public Crystalfin GLB, Greyshade south attack runtime sheet and Rift Root
+  Echo south attack runtime sheet each returned HTTP 200 and matched the local
+  `main` SHA-256 exactly.
+- Architecture result: Orbit physics/collision remains deterministic 2D
+  authority; Three.js remains a snapshot-only presentation consumer. Missing
+  GLB/sprite assets still fail closed to identity-correct 2D/procedural paths.
+- Branch / commit: `codex/global-3d-gameplay-pilots-r2-publication-proof` /
+  this documentation-only publication-proof commit.
+- Next safe action: refresh Codebase MCP from final `main`, verify the new R2
+  profile/scene symbols and report the final indexed project state.
+
+### 2026-08-10 - Codex - R2 Public Asset Integrity Proof - COMPLETED
+
+- Status: `COMPLETED`; the promoted visual package is present and byte-exact
+  on the public deployment.
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `GLOBAL_3D_GAMEPLAY_PILOTS_R2_PROMOTION_AND_ACTION_BATCH`.
+- Public hashes: Crystalfin GLB
+  `C77A77F1076B56C8E86EB0C411011B263EA8ED789421C87A2A5195C4EE3C2F5E`;
+  Greyshade south attack runtime sheet
+  `E58335B3816C8C5C02DA330F94AEA941D13EB29D55119F90BDADDDECCE2A0BB7`;
+  Rift Root Echo south attack runtime sheet
+  `7ED925F9EABFBC294F489E3E9B364121DD0DE17354ED91BE896994218E5A91FC`.
+- Scope confirmation: all 32 Greyshade R2 sheets, all four Rift Root Echo R2
+  sheets and the Crystalfin GLB remain project-generated, versioned, manifest
+  audited and backed by retained legacy/fallback paths. No third-party art pack
+  or unapproved skin was introduced.
+- Branch / commit: `codex/global-3d-gameplay-pilots-r2-publication-proof` /
+  this documentation-only publication-proof commit.
