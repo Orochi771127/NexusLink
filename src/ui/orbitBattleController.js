@@ -222,9 +222,14 @@ export function createOrbitBattleController({
     const loadToken = orbitTopPilotLoadToken;
     const playerProfile = getOrbitTopProfile(activeCompanionId);
     const enemyProfile = getOrbitTopProfile("rift-echo");
-    if (!playerProfile || !enemyProfile || !overlayEl) return;
+    const battleEl = overlayEl?.querySelector(".orbit-battle");
+    if (!playerProfile || !enemyProfile || !overlayEl) {
+      if (battleEl) battleEl.dataset.orbitTopPilotStatus = "profiles_missing";
+      return;
+    }
+    if (battleEl) battleEl.dataset.orbitTopPilotStatus = "loading";
     const controller = await createOrbitTopPilotScene({
-      stageEl: overlayEl.querySelector(".orbit-stage"),
+      stageEl: overlayEl.querySelector(".orbit-battle .orbit-stage"),
       playerProfile,
       enemyProfile
     });
@@ -233,6 +238,11 @@ export function createOrbitBattleController({
       return;
     }
     orbitTopPilotScene = controller;
+    if (battleEl) {
+      battleEl.dataset.orbitTopPilotStatus = controller.ready
+        ? "ready"
+        : controller.reason || "fallback";
+    }
     draw();
   }
 
@@ -658,9 +668,6 @@ export function createOrbitBattleController({
         ? createOrbitTopCombatFormConfig(state.activeCompanionId)
         : null
     });
-    if (campSliceEnabled && session.combatForms?.player?.enabled) {
-      void prepareOrbitTopPilotScene(state.activeCompanionId);
-    }
     if (campSliceEnabled && session.embodiment) {
       overlayEl.querySelector(".orbit-battle .orbit-stats").textContent =
         `${formatAttunementLine(attunement)}　正式階段：${session.embodiment.formalStageLabel || "未就緒"}`;
@@ -682,6 +689,9 @@ export function createOrbitBattleController({
     pullStart = null;
     pullNow = null;
     resizeCanvas();
+    if (campSliceEnabled && session.combatForms?.player?.enabled) {
+      void prepareOrbitTopPilotScene(state.activeCompanionId);
+    }
     startLoop();
     if (statusText) {
       statusText.textContent = campSliceEnabled
@@ -1193,7 +1203,7 @@ export function createOrbitBattleController({
 
   function resizeCanvas() {
     if (!canvas) return;
-    const stage = overlayEl.querySelector(".orbit-stage");
+    const stage = overlayEl.querySelector(".orbit-battle .orbit-stage");
     const w = Math.min(390, stage?.clientWidth || 360);
     const topRect = overlayEl
       .querySelector(".orbit-battle .orbit-hud-top")
@@ -1844,7 +1854,11 @@ export function createOrbitBattleController({
       const actorKey = body.id === "avatar" ? "player" : "dummy";
       const combatFormActor = session?.combatForms?.[actorKey];
       const topProfile = combatFormActor?.enabled
-        ? getOrbitTopProfile(body.id === "avatar" ? "greyshade-cat" : "rift-echo")
+        ? getOrbitTopProfile(
+            body.id === "avatar"
+              ? store.getState().activeCompanionId
+              : "rift-echo"
+          )
         : null;
       drawOrbitClayBody(ctx, {
         x: sx,

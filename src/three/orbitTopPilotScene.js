@@ -139,13 +139,19 @@ export async function createOrbitTopPilotScene({
   }
   if (!supportsWebGl()) return disabledController("webgl_unavailable");
   const candidateMode = params.get(profile.candidateQuery) === "1";
-  const playerUrl = candidateMode
-    ? playerProfile?.model?.candidateGlbPath
-    : playerProfile?.model?.glbPath;
-  const enemyUrl = candidateMode
-    ? enemyProfile?.model?.candidateGlbPath
-    : enemyProfile?.model?.glbPath;
-  if (!playerUrl || !enemyUrl) {
+  const candidateUrlsFor = (actorProfile) => {
+    const approvedUrl = actorProfile?.model?.glbPath;
+    const candidateUrl = actorProfile?.model?.candidateGlbPath;
+    const candidateIsReviewable =
+      candidateMode && actorProfile?.artStatus === "candidate-awaiting-human";
+    const ordered = candidateIsReviewable
+      ? [candidateUrl, approvedUrl]
+      : [approvedUrl];
+    return [...new Set(ordered.filter(Boolean))];
+  };
+  const playerUrls = candidateUrlsFor(playerProfile);
+  const enemyUrls = candidateUrlsFor(enemyProfile);
+  if (!playerUrls.length || !enemyUrls.length) {
     return disabledController(
       candidateMode ? "candidate_paths_missing" : "approved_assets_missing"
     );
@@ -198,13 +204,30 @@ export async function createOrbitTopPilotScene({
     const arena = addPresentationArena(THREE, scene);
 
     const loader = new GLTFLoader();
-    const [playerGltf, enemyGltf] = await withTimeout(
-      Promise.all([loader.loadAsync(playerUrl), loader.loadAsync(enemyUrl)]),
+    const loadFirstAvailable = async (urls, actorLabel) => {
+      let lastError = null;
+      for (const url of urls) {
+        try {
+          return { gltf: await loader.loadAsync(url), url };
+        } catch (error) {
+          lastError = error;
+        }
+      }
+      throw new Error(
+        `orbit_top_${actorLabel}_glb_unavailable`,
+        lastError ? { cause: lastError } : undefined
+      );
+    };
+    const [playerAsset, enemyAsset] = await withTimeout(
+      Promise.all([
+        loadFirstAvailable(playerUrls, "player"),
+        loadFirstAvailable(enemyUrls, "enemy")
+      ]),
       ASSET_TIMEOUT_MS,
       "orbit_top_glb_timeout"
     );
-    player = configureModel(playerGltf.scene, playerProfile);
-    enemy = configureModel(enemyGltf.scene, enemyProfile);
+    player = configureModel(playerAsset.gltf.scene, playerProfile);
+    enemy = configureModel(enemyAsset.gltf.scene, enemyProfile);
     scene.add(player.root, enemy.root);
 
     const state = {
@@ -218,12 +241,33 @@ export async function createOrbitTopPilotScene({
       enemy,
       frameCount: 0,
       lastSnapshotElapsed: 0,
-      candidateMode
+      candidateMode,
+      loadedUrls: Object.freeze({
+        player: playerAsset.url,
+        enemy: enemyAsset.url
+      })
     };
+    const observedStageCanvas = stageEl.querySelector(".orbit-canvas");
     const resize = () => {
-      const width = Math.max(1, stageEl.clientWidth || 1);
-      const height = Math.max(1, stageEl.clientHeight || 1);
+      const stageCanvas = observedStageCanvas;
+      const stageCanvasRect = stageCanvas?.getBoundingClientRect?.();
+      const inlineWidth = Number.parseFloat(stageCanvas?.style?.width || "");
+      const inlineHeight = Number.parseFloat(stageCanvas?.style?.height || "");
+      const width = Math.max(
+        1,
+        stageCanvasRect?.width ||
+        (Number.isFinite(inlineWidth) ? inlineWidth : 0) ||
+        stageCanvas?.clientWidth || stageEl.clientWidth || 1
+      );
+      const height = Math.max(
+        1,
+        stageCanvasRect?.height ||
+        (Number.isFinite(inlineHeight) ? inlineHeight : 0) ||
+        stageCanvas?.clientHeight || stageEl.clientHeight || 1
+      );
       renderer.setSize(width, height, false);
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
       camera.aspect = width / height;
       camera.updateProjectionMatrix();
     };
@@ -231,6 +275,7 @@ export async function createOrbitTopPilotScene({
       ? new ResizeObserver(resize)
       : null;
     resizeObserver?.observe(stageEl);
+    if (observedStageCanvas) resizeObserver?.observe(observedStageCanvas);
     globalThis.addEventListener?.("resize", resize);
     resize();
 
@@ -278,6 +323,7 @@ export async function createOrbitTopPilotScene({
           ready: !state.disposed && !state.contextLost,
           authority: "snapshot-only",
           candidateMode: state.candidateMode,
+          loadedUrls: state.loadedUrls,
           frameCount: state.frameCount,
           lastSnapshotElapsed: state.lastSnapshotElapsed,
           playerForm: state.player.currentForm,

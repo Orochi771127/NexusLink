@@ -1,0 +1,69 @@
+{
+  "schemaVersion": 1,
+  "packId": "orbit-tops-r2",
+  "status": "runtime-promoted-owner-approved",
+  "generator": "tools/blender/build_crystalfin_orbit_top_r2.py",
+  "manifestBuilder": "tools/art/build_global_3d_pilot_r2_manifests.py",
+  "blenderVersion": "5.2.0 LTS",
+  "ownerApproval": {
+    "approved": true,
+    "approvedOn": "2026-08-10",
+    "source": "Owner accepted R2 visual direction and authorized strict self-review, promotion and protected-main publication in Codex task"
+  },
+  "physicsAuthority": "src/orbit/orbitPhysics.js",
+  "rendererAuthority": "presentation-only snapshot consumer",
+  "license": "project-owned Blender-generated asset; no downloaded third-party art",
+  "runtimePromotionAllowed": true,
+  "assets": [
+    {
+      "assetId": "crystalfin-seahorse-orbit-top-r2",
+      "ownerType": "companion",
+      "ownerId": "crystalfin-seahorse",
+      "path": "assets/3d/orbit-tops-r2/crystalfin-seahorse-orbit-top-r2.glb",
+      "artStatus": "runtime-promoted-owner-approved",
+      "nodes": {
+        "base": "BaseForm",
+        "resonance": "ResonanceForm",
+        "colliderProxy": "ColliderProxy_Deterministic2D"
+      },
+      "coordinateFrame": "Blender Z-up authoring; glTF Y-up export",
+      "bottomContactZ": 0,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "spinAxisAuthoring": [
+        0,
+        0,
+        1
+      ],
+      "collider": {
+        "type": "deterministic-2d-circle",
+        "source": "src/orbit/orbitPhysics.js body.radius",
+        "meshIsAuthority": false
+      },
+      "runtimeStats": {
+        "bytes": 1172824,
+        "sha256": "C77A77F1076B56C8E86EB0C411011B263EA8ED789421C87A2A5195C4EE3C2F5E",
+        "nodeCount": 53,
+        "meshCount": 49,
+        "primitiveCount": 49,
+        "vertexCount": 30431,
+        "triangleCount": 46232,
+        "materialCount": 6,
+        "textureCount": 0,
+        "requiredNodes": [
+          "BaseForm",
+          "OrbitTopRoot",
+          "ResonanceForm"
+        ],
+        "extensionsUsed": [
+          "KHR_materials_clearcoat",
+          "KHR_materials_transmission",
+          "KHR_materials_ior"
+        ]
+      }
+    }
+  ]
+}

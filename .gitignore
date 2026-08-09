@@ -21,6 +21,8 @@ output/**
 
 # Regenerated QA caches and local evaluator reports.
 docs/qa/__pycache__/
+tools/**/__pycache__/
+*.pyc
 docs/qa/_raphael_autonomy_eval_output.json
 docs/qa/_raphael_standoff_eval_output.json
 docs/qa/_wording_quality_output.json

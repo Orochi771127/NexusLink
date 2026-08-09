@@ -27,6 +27,15 @@ const GREYSHADE_RESONANCE = Object.freeze({
   signalReach: 0.91
 });
 
+const CRYSTALFIN_RESONANCE = Object.freeze({
+  collisionRadius: 0.95,
+  inertia: 0.95,
+  speedCap: 1.05,
+  spinRetention: 1.05,
+  turnAuthority: 1,
+  signalReach: 1
+});
+
 const RIFT_RESONANCE = Object.freeze({
   collisionRadius: 1.08,
   inertia: 1.05,
@@ -73,6 +82,46 @@ const PROFILES = Object.freeze({
       resin: "#55dff4",
       core: "#86f4ff",
       trim: "#d6bd77"
+    })
+  }),
+  "crystalfin-seahorse": Object.freeze({
+    schemaVersion: ORBIT_TOP_PROFILE_SCHEMA_VERSION,
+    id: "crystalfin-seahorse-orbit-top-r2",
+    ownerType: "companion",
+    ownerId: "crystalfin-seahorse",
+    displayName: "Crystalfin Seahorse Orbit Top R2 Pilot",
+    artStatus: "runtime-promoted-owner-approved",
+    materialFamily: "nexus-clay-resin-miniature-v1",
+    model: Object.freeze({
+      glbPath: "assets/3d/orbit-tops-r2/crystalfin-seahorse-orbit-top-r2.glb",
+      candidateGlbPath:
+        "output/global-3d-gameplay-pilots-r2/blender/crystalfin-seahorse-orbit-top-r2.glb",
+      baseNode: "BaseForm",
+      resonanceNode: "ResonanceForm",
+      colliderProxyNode: "ColliderProxy_Deterministic2D",
+      spinAxis: Object.freeze([0, 0, 1]),
+      bottomContactZ: 0,
+      visualScale: 1
+    }),
+    forms: Object.freeze({
+      base: Object.freeze({
+        id: "base",
+        label: "Base form",
+        physics: BASE_PHYSICS
+      }),
+      resonance: Object.freeze({
+        id: "resonance",
+        label: "Crystalfin resonance form",
+        physics: CRYSTALFIN_RESONANCE
+      })
+    }),
+    palette: Object.freeze({
+      clay: "#237fc0",
+      deepClay: "#0f3d77",
+      resin: "#43d8fa",
+      core: "#1fc5f5",
+      ivory: "#e9e2be",
+      trim: "#ddb85c"
     })
   }),
   "rift-echo": Object.freeze({

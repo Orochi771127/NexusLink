@@ -1,0 +1,106 @@
+{
+  "schemaVersion": 1,
+  "assetId": "rift-root-echo-expedition-actions-r2",
+  "enemyId": "rift-root-echo",
+  "status": "runtime-promoted-owner-approved",
+  "ownerApproval": {
+    "approved": true,
+    "approvedOn": "2026-08-10",
+    "source": "Owner accepted R2 visual direction and authorized strict self-review, promotion and protected-main publication in Codex task"
+  },
+  "artDirection": "indigo resin-clay root-shadow with cyan resonance droplets",
+  "license": "project-owned generated assets; no downloaded third-party art",
+  "anchor": {
+    "x": 0.5,
+    "y": 1
+  },
+  "runtimeBudget": {
+    "decodedBytes": 3670016,
+    "decodedMiB": 3.5,
+    "masterSheetsAreNotRuntimeLoaded": true
+  },
+  "actions": {
+    "move": {
+      "frames": 8,
+      "fps": 10,
+      "loop": true,
+      "master": {
+        "path": "assets/enemies/rift-root-echo/expedition/r2/master-512/rift-root-echo-move-south-master-4096x512-8f.png",
+        "bytes": 1576842,
+        "sha256": "E05C3CFAF740DAF324A0B9CF51BEF8828E1162C6EF4475AE9C72AA7B3BBB528C",
+        "sheetSize": [
+          4096,
+          512
+        ],
+        "frameSize": [
+          512,
+          512
+        ],
+        "frameCount": 8,
+        "transparentFrameCorners": true,
+        "uniqueFrameHashes": 8,
+        "maxSoftEdgeRatio": 1.1281,
+        "greenFringeRatio": 0.001995
+      },
+      "runtime": {
+        "path": "assets/enemies/rift-root-echo/expedition/r2/runtime-256/rift-root-echo-move-south-runtime-2048x256-8f.png",
+        "bytes": 492499,
+        "sha256": "8B562480357B5E1EAB7DAAFE9E6D761F545C89F77A4C8FBFD01336D83EACF9E2",
+        "sheetSize": [
+          2048,
+          256
+        ],
+        "frameSize": [
+          256,
+          256
+        ],
+        "frameCount": 8,
+        "transparentFrameCorners": true,
+        "uniqueFrameHashes": 8,
+        "maxSoftEdgeRatio": 1.1484,
+        "greenFringeRatio": 0.002838
+      }
+    },
+    "attack": {
+      "frames": 6,
+      "fps": 10,
+      "loop": false,
+      "master": {
+        "path": "assets/enemies/rift-root-echo/expedition/r2/master-512/rift-root-echo-attack-south-master-3072x512-6f.png",
+        "bytes": 1252835,
+        "sha256": "094BC9550406900A1186692E997594E73693465F024586F7A53EAAD841C85F5C",
+        "sheetSize": [
+          3072,
+          512
+        ],
+        "frameSize": [
+          512,
+          512
+        ],
+        "frameCount": 6,
+        "transparentFrameCorners": true,
+        "uniqueFrameHashes": 6,
+        "maxSoftEdgeRatio": 1.0951,
+        "greenFringeRatio": 0.002476
+      },
+      "runtime": {
+        "path": "assets/enemies/rift-root-echo/expedition/r2/runtime-256/rift-root-echo-attack-south-runtime-1536x256-6f.png",
+        "bytes": 385966,
+        "sha256": "7ED925F9EABFBC294F489E3E9B364121DD0DE17354ED91BE896994218E5A91FC",
+        "sheetSize": [
+          1536,
+          256
+        ],
+        "frameSize": [
+          256,
+          256
+        ],
+        "frameCount": 6,
+        "transparentFrameCorners": true,
+        "uniqueFrameHashes": 6,
+        "maxSoftEdgeRatio": 1.1217,
+        "greenFringeRatio": 0.003025
+      }
+    }
+  }
+}
