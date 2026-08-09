@@ -9,6 +9,7 @@ import { buildEventReflection, composeMemoryReflection } from "../engine/soulTal
 import { getCompanionById } from "../data/companionRegistry.js";
 import { loadPreferenceStore, replacePreferenceStore } from "../ai/companionPreferenceStore.js";
 import { appendTranscriptTurn } from "../ai/dialogue/soulTalkTranscriptJournal.js";
+import { createSoulTalkShadowObserver } from "../ai/runtime/soulTalkShadowObserver.js";
 import { qs, restoreViewportAfterKeyboard } from "../utils/dom.js";
 import AudioManager from "../audio/audioManager.js";
 
@@ -32,7 +33,12 @@ const TRACE_ECHO_LINES = Object.freeze([
   "又一道很淡的光留在了岸邊，是你們一起攢的。"
 ]);
 
-export function createSoulTalkController({ store, saveCurrentState, saveCriticalState = saveCurrentState }) {
+export function createSoulTalkController({
+  store,
+  saveCurrentState,
+  saveCriticalState = saveCurrentState,
+  shadowObserver = createSoulTalkShadowObserver()
+}) {
   const chatLog = qs("#chat-log");
   const quickReplyRow = qs("#quick-reply-row");
   const messageInput = qs("#message-input");
@@ -47,6 +53,7 @@ export function createSoulTalkController({ store, saveCurrentState, saveCritical
   const pageLoadedAt = Date.now();
   let crossSessionReflected = false;
   let lastQuickReplies = [];
+  let shadowStateVersion = 0;
   // 玩家剛送出的訊息文字：renderChat 據此把該行錨定在可視區頂端（見 scrollChatLog）。
   let scrollAnchorText = null;
   // 上次渲染的內容簽章：內容沒變就跳過重建，避免捲動位置被無關 state 變動重置。
@@ -281,6 +288,20 @@ export function createSoulTalkController({ store, saveCurrentState, saveCritical
     lastQuickReplies = safetyTurn ? [] : result?.coreResult?.quickReplies || [];
     if (safetyTurn || result?.firstTraceCreated) saveCriticalState();
     else saveCurrentState();
+    shadowStateVersion += 1;
+    if (!safetyTurn && typeof shadowObserver?.observe === "function") {
+      const liveState = store.getState();
+      try {
+        const shadowRun = shadowObserver.observe({
+          message,
+          coreResult: result?.coreResult,
+          state: projectShadowState(liveState),
+          companion,
+          stateVersion: shadowStateVersion
+        });
+        void Promise.resolve(shadowRun).catch(() => { /* Shadow failure must never alter the live Soul Talk turn. */ });
+      } catch { /* An injected observer must remain non-authoritative and fail closed. */ }
+    }
     renderQuickReplies(lastQuickReplies);
     renderChat();
     // store.subscribe may render the reply before the quick-reply row reaches
@@ -319,6 +340,18 @@ export function createSoulTalkController({ store, saveCurrentState, saveCritical
   function cloneSerializable(value) {
     if (typeof structuredClone === "function") return structuredClone(value);
     return JSON.parse(JSON.stringify(value));
+  }
+
+  function projectShadowState(state = {}) {
+    return Object.freeze({
+      activeCompanionId: state.activeCompanionId || null,
+      locationId: state.currentLocationId || state.locationId || "moonlake",
+      bond: Number(state.bond) || 0,
+      trust: Number(state.trust) || 0,
+      defense: Number(state.defense) || 0,
+      energy: Number(state.energy) || 0,
+      mood: typeof state.mood === "string" ? state.mood : "calm"
+    });
   }
 
   function recordSoulTalkTranscript(playerText, turnResult, companion) {
