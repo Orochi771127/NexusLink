@@ -8025,3 +8025,33 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
   two commits/pushes and stacked Draft PRs. Exact-head CI must rebuild the OIDC,
   API and broker together before merge; visible Soul Talk cutover remains a
   later package.
+
+### 2026-08-10 - Codex - Raphael HMAX Local Session Broker V1 - REVIEWED / COMMITTED
+
+- Status: `REVIEWED / COMMITTED`; the branch was rebased onto the exact merged
+  shadow baseline and contains no live Soul Talk authority change.
+- Dependency publication: shadow PR #190 was squash-merged to protected `main`
+  as `a5627d0229f573947c3bfbb339760b8508c0d93f`. Post-main release workflow
+  `31324961055` and Pages deployment `31324960708` both completed successfully.
+- Nexus implementation commit: `c50f9ce` on
+  `codex/raphael-hmax-local-session-broker-v1`; it adds only the loopback
+  session provider plus scoped QA/E2E harnesses. No GROUNDWORK state, save,
+  Pixi, asset, tool or script file is changed.
+- Hard gates: broker provider `4/4`, runtime contract `15/15`, HMAX shadow
+  `21/21`, psychology safety `14/14`, sealed conversation `48/48` with zero
+  hard failures, and autonomy `32/32` with advisory `trusted:false` all PASS.
+  Human private-blind review remains `not_run` and these counts are not a
+  naturalness or public-launch claim.
+- Full Web release gate: the first clean run was truthfully `27/28` because the
+  pre-existing Companion Growth browser gate hit one 30-second readiness
+  timeout. No product code was changed for that result. A second clean full run
+  passed `28/28`, including `455/455` JavaScript syntax checks and zero
+  accessibility warnings.
+- Cross-repo security review found and fixed the HMAX-side pairing log issue
+  before publication: plaintext now lives only in mode-`0600` container tmpfs,
+  is deleted before session issuance and is absent from Docker logs. Exact
+  rebuilt container E2E remains the HMAX PR's required remote gate.
+- Boundary: hosted output remains invisible and cannot be applied; local
+  safety/policy/boundary/Care routes still issue zero network requests. No
+  player traffic, visible HMAX speech, memory write, reward, Growth, gameplay
+  mutation or Soul Talk cutover is authorized.
