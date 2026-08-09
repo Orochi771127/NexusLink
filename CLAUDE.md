@@ -115,6 +115,8 @@ Initial Bond 已接入：fresh save 固定呈現 `greyshade-cat` / `blazetail-ki
 - **跨運行時邊界**：「無構建步驟（Zero-build）」與「禁止 Bundler」僅約束 Web current runtime。Unity is an approved and existing parallel native habitat loadable greybox scene / tool-validation prototype and target runtime. Its current implementation maturity must be described from the Unity repository evidence; it is not yet the complete production game unless the repository proves otherwise。
 - **渲染分層**：PixiJS 不再被描述為唯一 renderer；PixiJS 繼續負責 2D、角色、特效或 legacy layer。Three.js／GLB 3D habitat 是經核准的 Web runtime 能力。Moonlake 3D Source v2 is the canonical scene-authoring workspace. Web `assets/3d/moonlake` contains runtime-exported or candidate assets and is not the complete source workspace.
 - **架構本質**：Web Repo 是一個打開 `index.html`（或經簡易 local server）就能直接運行的前端遊戲，並保留向後兼容性。不得藉此授權 React、TS、npm 擴張。
+- **Global 3D Presentation**：Three.js 是全遊戲逐場景 opt-in 的 presentation capability；固定版本 CDN ES Module，無 npm、無 build step。每個場景都服從 `docs/design/GLOBAL_3D_PRESENTATION_CONTRACT_V1.md` 的 read-only snapshot、lifecycle、mobile budget、reduced-motion、context-loss 與 fallback 契約；月湖另受 Moonlake contract 約束。
+- **Blender 邊界**：Blender 只作離線建模、pivot／collider proxy 驗證與 GLB 匯出，不是 runtime、遊戲狀態權威或網站 build step。
 - localStorage（集中於 `src/state/saveManager.js`）
 - GitHub Pages（純靜態部署）
 
@@ -133,14 +135,14 @@ Initial Bond 已接入：fresh save 固定呈現 `greyshade-cat` / `blazetail-ki
 ## 4. 架構規範（解耦三層，不可破壞）
 
 ### 渲染分層
-- **Three.js habitat canvas**（`src/three/`）：僅在核准的 Moonlake Live 3D Hybrid 啟用；3D 場景、GLB、光照、瀑布／水面、風吹植被、天氣與 world-to-screen 投影。
+- **Three.js scene canvas**（`src/three/`）：只在 scene profile 明示 opt-in；呈現 3D 場景、GLB、光照、環境／玩法模型與 world-to-screen 投影，不擁有 simulation truth。
 - **PixiJS canvas**（`src/pixi/`）：2D illustrated companion、棲地痕跡、互動特效、非 3D habitat 的既有背景與其他 Pixi 頁面。
 - **DOM UI**（`src/ui/` + `styles.css`）：HUD、面板、對話框、導覽、戰鬥/地圖/圖鑑 modal。
 
 ### 解耦原則（硬規則）
 - **UI 不可直接操作 Pixi／Three 容器**；**Pixi／Three 不可直接操作 DOM UI**。
 - 跨層通訊只能透過 `src/utils/eventBus.js` 或 store 訂閱。
-- Three.js 不得持有或改寫 save、relationship、Growth、Safety、RaphaelCore、battle 或 reward authority；場景可視狀態只接受現有 environment state 的唯讀投影。
+- Three.js 不得持有或改寫 simulation、collision、objective、outcome、save、relationship、Growth、Safety、RaphaelCore、battle 或 reward authority；場景可視狀態只接受 engine／state 的 serializable 唯讀投影。缺少 scene opt-in 時必須保持停用。
 - State 變更一律透過 `src/state/store.js` 的 `setState` / `updateState` / `replaceState`，禁止直接 mutate state 物件。
 
 ### 效能規範
@@ -150,6 +152,11 @@ Initial Bond 已接入：fresh save 固定呈現 `greyshade-cat` / `blazetail-ki
 - Companion 最終螢幕位置仍必須 snap，並維持 bottom-center baseline，避免動畫切換時腳底滑動。
 - Runtime 可以使用 downscaled export，不代表所有動畫永遠都要全載 512；必須控制同時載入的 sheet 數量，避免 mobile GPU memory 壓力。
 - 既有的 object pool（營火 spark）、resize RAF 節流、WebGL context guard 不可拆除。
+
+### Blender / GLB 離線產線
+- Blender 只作離線建模、材質、pivot／bottom contact、collider proxy、預覽與 GLB 匯出；不得成為 browser runtime 或部署 build step。
+- `.blend` source、確定性 export script、版本、授權、hash、triangle／material／texture／draw-call 報告與 runtime fallback 必須隨 promoted package 可追溯。
+- Blender rigid body 只能作視覺參考；browser gameplay physics 仍由 pure engine 決定，除非另有 Owner 核准的 authority migration contract。
 
 ### Companion 美術規格（root 主版本）
 - 新 companion 預設為 illustrated / painterly / high-detail，不是 chunky pixel art，也不是 nearest-neighbor pixel-perfect pipeline。

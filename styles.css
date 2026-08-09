@@ -3793,6 +3793,7 @@ body.orbit-active #page-layer {
 
 .orbit-stage {
   flex: 1;
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -3801,6 +3802,8 @@ body.orbit-active #page-layer {
 }
 
 .orbit-canvas {
+  position: relative;
+  z-index: 1;
   display: block;
   width: min(390px, 100%);
   height: auto;
@@ -3810,6 +3813,21 @@ body.orbit-active #page-layer {
   box-shadow: 0 18px 36px rgba(52, 73, 58, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.28);
   touch-action: none;
   cursor: crosshair;
+}
+
+.orbit-three-canvas {
+  position: absolute;
+  z-index: 2;
+  display: block;
+  width: min(390px, calc(100% - 24px));
+  aspect-ratio: 390 / 420;
+  height: auto;
+  border-radius: 16px;
+  pointer-events: none;
+}
+
+.orbit-three-canvas[data-ready="false"] {
+  visibility: hidden;
 }
 
 .orbit-actions {

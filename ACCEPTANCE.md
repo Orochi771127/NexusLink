@@ -203,11 +203,23 @@
 - 通過：`main.js` / `style.css` / `script.js` 原封不動；`node --check script.js` 仍通過。
 
 **H5 — 技術邊界未被破壞**
-- 通過：無新增 React/Vue/Svelte/React Three Fiber/TS/CSS 框架/後端/DB/LLM API/npm 套件/build step。Moonlake 若啟用 Three.js，只能是合約指定的固定版本 CDN ES Module，且不得持有 gameplay/save/safety authority。
+- 通過：無新增 React/Vue/Svelte/React Three Fiber/TS/CSS 框架/後端/DB/LLM API/npm 套件/build step。Three.js 只能使用合約指定的固定版本 CDN ES Module、逐場景 opt-in，且不得持有 simulation／collision／outcome／gameplay／save／Safety authority。
 
 **H6 — Moonlake Live 3D Hybrid 邊界**
 - 驗法：讀 `docs/design/MOONLAKE_LIVE_3D_HYBRID_CONTRACT_V1.md`，檢查 renderer ownership、DOM/Pixi/Three 分層、CDN 版本、fallback、context-loss、reduced-motion 與 mobile quality tier。
 - 通過：月湖基礎場景是可從不同 world position 投影的真 3D GLB/glTF，而非單張 raster 假 3D；角色仍為 bottom-center 2D illustrated sprite；3D renderer 關閉或失敗時不阻斷 Soul Talk、HUD、存檔與 companion interaction。
+
+**H7 — Global 3D 逐場景註冊與 fallback**
+- 驗法：讀 `docs/design/GLOBAL_3D_PRESENTATION_CONTRACT_V1.md` 與 scene profile；刻意使 Three module、GLB 與 WebGL context 分別失敗，再切換場景／重建 context。
+- 通過：未知場景預設 Three disabled；已核准場景宣告 snapshot、DPR／quality、reduced-motion、teardown 與 fallback。每一種失敗都回到可玩 Pixi／Canvas／static surface，且沒有第二套 state、重複 canvas、listener 或 animation loop。
+
+**H8 — Blender 是可追溯的離線 GLB 產線**
+- 驗法：檢查 `.blend` source、export script、manifest 與 GLB audit。
+- 通過：manifest 記錄 Blender 版本、source、author／license、human approval、pivot／bottom contact、collider proxy、triangle／material／texture／draw-call／size、SHA-256 與 fallback；網站不執行 Blender、沒有新增 build step，Blender rigid body 不成為 gameplay authority。
+
+**H9 — 3D mobile budget、reduced motion 與輸入權責**
+- 驗法：在 390×844、390×664、desktop、reduced-motion、touch、keyboard 與 context loss 下測 opt-in scene。
+- 通過：DPR 有上限、ticker 無每幀資產配置、模型／draw-call 在 scene budget 內；reduced motion 保留位置、form、spin direction、collision 與 objective truth；Three canvas 不攔截 DOM controls，HUD／label／44px targets 仍可用。
 
 ---
 
@@ -350,7 +362,7 @@
 
 ## 驗收判定
 
-- **GROUNDWORK TASK_PACK**：H1–H5 + I 全過；若碰 companion art / sheet / renderer，另跑 G1–G7。
+- **GROUNDWORK TASK_PACK**：H1–H5 + I 全過；若碰 Three／Blender／GLB，另跑 H7–H9；若碰 companion art / sheet / renderer，另跑 G1–G7。
 - **EXPERIENCE TASK_PACK**：對應 A–F 的指定條 + H1–H5 + I 全過；若碰 companion art / sheet / renderer，另跑 G1–G7。
 - **戰鬥改造**：E1–E6 + D（全）+ H + I。
 - **裂變事件**：D1–D6 全過（尤其 D3–D5）+ C1 + H + I。
@@ -361,7 +373,7 @@
 - **Companion Growth / 心相養成**：N1–N11 + C1–C2 + D1–D2 + D6 + H1–H5 + I 全過。
 - **共鳴圈 R2 棲地／反思／旅路星圖**：E7–E15 + N13–N15 + C1–C2 + D1–D2 + D6 + H1–H5 + I 全過；Reflection production activation 仍須另案 GROUNDWORK provenance gate。
 - **Heartcore Orbit D0 文件重定版**：Orbit／Growth 契約與 O12–O17 的取消、保留、權限與驗法必須互相一致；D0 不宣稱 O12–O17 runtime 已實作。
-- **Heartcore Orbit 後續實作包**：依實作範圍通過 O1–O17、D（全）、H 與 I；若碰正式形態資產／renderer promotion，另跑 G1–G7 與 human visual gate。
+- **Heartcore Orbit 後續實作包**：依實作範圍通過 O1–O17、D（全）、H 與 I；若碰 session-only resonance form 另跑 O15A；若碰正式形態資產／renderer promotion，另跑 G1–G7、H7–H9 與 human visual gate。
 - **Future Resonance Practice / 未來共鳴對練**：N12 目前只驗設計邊界，不是 implementation-ready gate；另開 sealed contract 與 O-series assertions 後才可施工。真正線上 PvP 另需 backend／privacy／anti-cheat 授權包。
 
 任一 D 條（安全紅線）未過 → 整個 TASK_PACK 不通過，無論其他多漂亮。
@@ -538,6 +550,11 @@
 - 驗法：以三個 canonical stage 投影多種 objective 的 Orbit profile，比較 normalized total budget；覆蓋未解鎖、夥伴拒絕、缺少／部分資產、512 illustrated 規格、species motion、mobile GPU 與 reduced-motion。
 - 通過：三階可改 silhouette、inertia、turn authority、field／signal 範圍或 objective affordance，但每階總預算一致，且不存在對所有 objective 都更優的高階型態。canonical stage 必須在 session 前已合法解鎖；Orbit 不得用 BondAffinity、dialogueCount、勝場或戰中高潮直接升階。
 - 夥伴可保留目前形態並完成內容；缺少 human-approved、runtime-ready 正式資產時，只能顯示 aura／軌跡／符號提示，不得以舊概念圖、外部參考或尺寸放大假裝完成形態。`ThunderPup` 是獨立夥伴 ID，不得被推定為其他夥伴的後續進化。
+
+**O15A — 對局內共鳴變形是 session-only combat form，不是 Growth**
+- 驗法：讓玩家與敵方分別在合法 resonance window 切換 `base ↔ resonance`，比較切換前後 normalized budget、30／60／120 Hz replay、save／Growth／relationship diff、renderer fallback 與 session teardown。
+- 通過：兩方使用同一 deterministic combat-form state machine；共鳴形態可改 bounded silhouette、radius、inertia、turn authority、spin retention 與 objective affordance，但 total energy／profile budget 相等，不直接增加 Impact、winner、reward 或 Growth evidence。結束／撤退／重開後一律回到 base，主存檔零 form／stage 寫入；Canvas 與 Three 讀相同 form truth。
+- 命名邊界：combat form 不得稱為三階覺醒、永久進化或正式 stage advance。Formal Growth stage 仍獨立服從 O15、N-series、asset readiness 與 companion willingness。
 
 **O16 — 四種父 outcome、失敗語意與記憶寫入皆為安全、非懲罰**
 - 驗法：覆蓋 `stabilized`、`recovered`、`retreated`、`overwhelmed_but_safe` 及其 subtype；對失敗、撤退、重播、首次完成前後做 relationship／Growth／stage／memory／path／vault 深比較。

@@ -12,6 +12,11 @@ import {
   getIllustratedCompanionAssetById
 } from "../data/assetManifest.js";
 import { getExpeditionGameplayVisualProfile } from "../data/gameplayVisualProfiles.js";
+import {
+  EXPEDITION_WALK_DIRECTIONS,
+  getExpeditionSpritePilotProfile,
+  isExpeditionSpritePilotRequested
+} from "../data/expeditionSpriteProfiles.js";
 
 function drawRoundedRect(g, x, y, w, h, r, fill) {
   g.roundRect(x, y, w, h, r).fill(fill);
@@ -99,6 +104,7 @@ function attachIllustratedCompanion(PIXI, node, companionId) {
       sprite.scale.set(112 / frameHeight);
       sprite.y = 18;
       sprite.roundPixels = false;
+      sprite.visible = !node.__eightDirectionSprite;
       node.addChildAt(sprite, Math.min(1, node.children.length));
       const fallback = node.getChildByName?.("procedural_body_fallback");
       if (fallback) fallback.visible = false;
@@ -109,6 +115,103 @@ function attachIllustratedCompanion(PIXI, node, companionId) {
     .catch(() => null);
   node.__illustratedPromise = loading;
   return loading;
+}
+
+export function quantizeExpeditionWalkDirection(dx, dy, fallback = "south") {
+  if (!Number.isFinite(dx) || !Number.isFinite(dy) || Math.hypot(dx, dy) < 0.2) {
+    return EXPEDITION_WALK_DIRECTIONS.includes(fallback) ? fallback : "south";
+  }
+  const octants = [
+    "east",
+    "southeast",
+    "south",
+    "southwest",
+    "west",
+    "northwest",
+    "north",
+    "northeast"
+  ];
+  const normalized = (Math.atan2(dy, dx) + Math.PI * 2) % (Math.PI * 2);
+  return octants[Math.round(normalized / (Math.PI / 4)) % octants.length];
+}
+
+function attachEightDirectionCompanionPilot(PIXI, node, companionId) {
+  const profile = getExpeditionSpritePilotProfile(companionId);
+  if (
+    !profile ||
+    !isExpeditionSpritePilotRequested(companionId) ||
+    !PIXI?.Assets?.load
+  ) {
+    node.__eightDirectionPilotStatus = "not_requested";
+    return null;
+  }
+
+  node.__eightDirectionPilotStatus = "loading";
+  const loading = Promise.all(EXPEDITION_WALK_DIRECTIONS.map(async (direction) => {
+    const texture = await PIXI.Assets.load(profile.directions[direction]);
+    return [direction, sliceIdleTextures(PIXI, texture, profile)];
+  }))
+    .then((entries) => {
+      if (node.destroyed) return null;
+      const texturesByDirection = Object.fromEntries(entries);
+      if (EXPEDITION_WALK_DIRECTIONS.some((direction) => texturesByDirection[direction]?.length !== 8)) {
+        throw new Error("incomplete_eight_direction_candidate");
+      }
+      const sprite = new PIXI.AnimatedSprite(texturesByDirection.south);
+      sprite.name = "greyshade_eight_direction_candidate";
+      sprite.anchor.set(profile.anchor.x, profile.anchor.y);
+      sprite.scale.set(profile.onScreenHeight / profile.frameHeight);
+      sprite.animationSpeed = Math.max(0.01, profile.fps / 60);
+      sprite.loop = true;
+      sprite.y = 18;
+      sprite.roundPixels = false;
+      sprite.stop();
+      sprite.gotoAndStop(0);
+      node.addChildAt(sprite, Math.min(1, node.children.length));
+
+      const fallback = node.getChildByName?.("procedural_body_fallback");
+      if (fallback) fallback.visible = false;
+      if (node.__illustratedSprite) node.__illustratedSprite.visible = false;
+      node.__eightDirectionSprite = sprite;
+      node.__eightDirectionTextures = texturesByDirection;
+      node.__eightDirectionDirection = "south";
+      node.__eightDirectionPilotStatus = "ready";
+      return sprite;
+    })
+    .catch(() => {
+      node.__eightDirectionPilotStatus = "fallback";
+      return null;
+    });
+  node.__eightDirectionPilotPromise = loading;
+  return loading;
+}
+
+export function syncEightDirectionCompanionPilot(node, x, y) {
+  const previous = node?.__eightDirectionPilotPosition;
+  node.__eightDirectionPilotPosition = { x, y };
+  const sprite = node?.__eightDirectionSprite;
+  const texturesByDirection = node?.__eightDirectionTextures;
+  if (!sprite || !texturesByDirection) return false;
+
+  const dx = previous ? x - previous.x : 0;
+  const dy = previous ? y - previous.y : 0;
+  const moving = Number.isFinite(dx) && Number.isFinite(dy) && Math.hypot(dx, dy) >= 0.2;
+  const direction = quantizeExpeditionWalkDirection(
+    dx,
+    dy,
+    node.__eightDirectionDirection || "south"
+  );
+  if (direction !== node.__eightDirectionDirection) {
+    sprite.textures = texturesByDirection[direction];
+    node.__eightDirectionDirection = direction;
+  }
+  if (moving) {
+    if (!sprite.playing) sprite.play();
+  } else if (sprite.playing) {
+    sprite.stop();
+    sprite.gotoAndStop(0);
+  }
+  return true;
 }
 
 function attachRiftSilhouette(PIXI, node, enemy) {
@@ -387,6 +490,11 @@ export function createExpeditionScene(PIXI, region, session) {
   companion.x = session.companion.x;
   companion.y = session.companion.y;
   attachIllustratedCompanion(PIXI, companion, session.companionId);
+  attachEightDirectionCompanionPilot(PIXI, companion, session.companionId);
+  companion.__eightDirectionPilotPosition = {
+    x: session.companion.x,
+    y: session.companion.y
+  };
 
   root.addChild(ground);
   if (atmosphere) root.addChild(atmosphere);
@@ -430,9 +538,14 @@ export function syncExpeditionScene(sceneRoot, session, deltaMs = 16) {
 
   const companion = sceneRoot.__companionNode;
   if (companion) {
+    const usesEightDirectionPilot = syncEightDirectionCompanionPilot(
+      companion,
+      session.companion.x,
+      session.companion.y
+    );
     companion.x = session.companion.x;
     companion.y = session.companion.y;
-    companion.scale.x = session.companion.facing >= 0 ? 1 : -1;
+    companion.scale.x = usesEightDirectionPilot || session.companion.facing >= 0 ? 1 : -1;
     updateCompanionHpBar(companion, session.companion.hp, session.companion.hpMax, visual.palette);
   }
 

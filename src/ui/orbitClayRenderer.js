@@ -240,6 +240,137 @@ export function drawOrbitClayArena(ctx, {
   return false;
 }
 
+function roundedFinPath(ctx, radius, finLength, finWidth) {
+  ctx.beginPath();
+  ctx.moveTo(radius * 0.62, -finWidth * 0.5);
+  ctx.quadraticCurveTo(finLength * 0.88, -finWidth * 0.45, finLength, 0);
+  ctx.quadraticCurveTo(finLength * 0.88, finWidth * 0.45, radius * 0.62, finWidth * 0.5);
+  ctx.closePath();
+}
+
+function drawOrbitTopIdentity(ctx, {
+  x,
+  y,
+  radius,
+  variant,
+  spinAngle,
+  tilt,
+  wobbleAngle,
+  combatForm,
+  topProfile,
+  label,
+  fallbackTextColor
+}) {
+  if (!topProfile?.palette) return false;
+  const palette = topProfile.palette;
+  const isPlayer = variant === "player";
+  const resonance = combatForm === "resonance";
+
+  ctx.save();
+  ctx.fillStyle = "rgba(13, 23, 28, 0.34)";
+  ctx.beginPath();
+  ctx.ellipse(
+    x + radius * 0.12,
+    y + radius * 0.62,
+    radius * (resonance ? 1.16 : 0.94),
+    radius * 0.34,
+    0,
+    0,
+    Math.PI * 2
+  );
+  ctx.fill();
+  ctx.restore();
+
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.rotate(wobbleAngle);
+  ctx.scale(1 + tilt * 0.22, 1 - tilt * 0.28);
+
+  if (resonance) {
+    ctx.save();
+    ctx.rotate(spinAngle);
+    ctx.fillStyle = palette.resin;
+    ctx.shadowColor = palette.core;
+    ctx.shadowBlur = Math.max(8, radius * 0.85);
+    for (let index = 0; index < 4; index += 1) {
+      ctx.save();
+      ctx.rotate(index * Math.PI * 0.5);
+      roundedFinPath(ctx, radius, radius * 1.38, radius * 0.52);
+      ctx.fill();
+      ctx.restore();
+    }
+    ctx.restore();
+  }
+
+  const shell = ctx.createRadialGradient(
+    -radius * 0.34,
+    -radius * 0.38,
+    radius * 0.08,
+    0,
+    0,
+    radius
+  );
+  shell.addColorStop(0, "rgba(255,255,255,0.92)");
+  shell.addColorStop(0.34, palette.clay);
+  shell.addColorStop(1, isPlayer ? palette.stripe : "#171323");
+  ctx.fillStyle = shell;
+  ctx.beginPath();
+  ctx.arc(0, 0, radius, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = resonance ? palette.core : palette.trim;
+  ctx.lineWidth = Math.max(1.5, radius * 0.1);
+  ctx.stroke();
+
+  if (isPlayer) {
+    ctx.save();
+    ctx.rotate(spinAngle);
+    ctx.strokeStyle = palette.stripe;
+    ctx.lineWidth = Math.max(1.2, radius * 0.13);
+    ctx.lineCap = "round";
+    for (let index = 0; index < 3; index += 1) {
+      ctx.beginPath();
+      ctx.arc(0, 0, radius * (0.46 + index * 0.14), -0.5, 0.55);
+      ctx.stroke();
+    }
+    ctx.restore();
+    ctx.fillStyle = palette.core;
+    ctx.shadowColor = palette.core;
+    ctx.shadowBlur = resonance ? radius * 0.9 : radius * 0.45;
+    ctx.beginPath();
+    ctx.moveTo(0, radius * 0.38);
+    ctx.bezierCurveTo(-radius * 0.72, -radius * 0.05, -radius * 0.38, -radius * 0.52, 0, -radius * 0.2);
+    ctx.bezierCurveTo(radius * 0.38, -radius * 0.52, radius * 0.72, -radius * 0.05, 0, radius * 0.38);
+    ctx.fill();
+  } else {
+    ctx.fillStyle = "rgba(5, 4, 10, 0.98)";
+    ctx.shadowColor = palette.core;
+    ctx.shadowBlur = resonance ? radius * 0.85 : radius * 0.35;
+    ctx.beginPath();
+    ctx.arc(0, 0, radius * 0.42, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = palette.fault;
+    ctx.lineWidth = Math.max(1.2, radius * 0.08);
+    ctx.setLineDash([radius * 0.18, radius * 0.11]);
+    ctx.beginPath();
+    ctx.arc(0, 0, radius * 0.58, spinAngle, spinAngle + Math.PI * 2);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+  ctx.restore();
+
+  if (label) {
+    ctx.fillStyle = fallbackTextColor;
+    ctx.font = "11px sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText(
+      resonance ? `${label}・共鳴` : label,
+      x,
+      y - radius * (resonance ? 1.55 : 1) - 7
+    );
+  }
+  return true;
+}
+
 export function drawOrbitClayBody(ctx, {
   x,
   y,
@@ -249,12 +380,28 @@ export function drawOrbitClayBody(ctx, {
   spinAngle = 0,
   tilt = 0,
   wobbleAngle = 0,
+  combatForm = "base",
+  topProfile = null,
   label = ""
 }) {
   const { palette } = profile;
   const isPlayer = variant === "player";
   const core = isPlayer ? palette.cyan : palette.gold;
   const deep = isPlayer ? palette.resinDeep : "#b88745";
+
+  if (drawOrbitTopIdentity(ctx, {
+    x,
+    y,
+    radius,
+    variant,
+    spinAngle,
+    tilt,
+    wobbleAngle,
+    combatForm,
+    topProfile,
+    label,
+    fallbackTextColor: palette.text
+  })) return;
 
   ctx.save();
   ctx.fillStyle = palette.shadow;

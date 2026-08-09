@@ -173,6 +173,36 @@
       "licenseNote": "Project-owned generated derivatives; no third-party or downloaded web assets used."
     }
   ],
+  "globalGameplayPilots": [
+    {
+      "id": "GLOBAL-3D-GAMEPLAY-PILOTS-R1",
+      "title": "Greyshade and Rift Orbit tops plus Greyshade eight-direction Expedition walk",
+      "status": "runtime-promoted-owner-approved",
+      "verifiedOnDisk": "2026-08-09",
+      "artDirection": "Bright handcrafted 3D miniature with resin-clay forms, soft contact shadows, cyan memory light, and restrained warm-gold Cyber-Taoism accents",
+      "designRef": "docs/design/GLOBAL_3D_PRESENTATION_CONTRACT_V1.md",
+      "orbit": {
+        "manifest": "assets/3d/orbit-tops-r1/manifest.json",
+        "runtimeProfiles": "src/data/orbitTopProfiles.js",
+        "assetCount": 2,
+        "totalGlbBytes": 2022004,
+        "authority": "src/orbit/orbitPhysics.js deterministic 2D collider and fixed-step simulation; GLB meshes are presentation only"
+      },
+      "expedition": {
+        "manifest": "assets/characters/greyshade-cat/metadata/expedition-walk-r1.json",
+        "runtimeProfiles": "src/data/expeditionSpriteProfiles.js",
+        "directions": 8,
+        "framesPerDirection": 8,
+        "masterFrameSize": 512,
+        "runtimeFrameSize": 256,
+        "decodedRuntimeBytes": 16777216,
+        "anchor": "bottom-center (0.5, 1)",
+        "legacyAssetsRetained": true
+      },
+      "runtimeNote": "Moonlake camp Orbit uses the approved Three Pilot by default with Canvas fallback. Greyshade Expedition uses all eight approved 256 runtime strips by default while retaining the 512 masters for audit. Roster and attack-animation batch expansion have not started.",
+      "licenseNote": "Project-owned generated and Blender-authored assets. No third-party or downloaded web art was used."
+    }
+  ],
   "globalSpec": {
     "format": "transparent PNG (RGBA)",
     "frameSize": 512,

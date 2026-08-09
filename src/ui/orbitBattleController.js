@@ -12,6 +12,10 @@ import { getIllustratedCompanionAssetById } from "../data/assetManifest.js";
 import { getEvolutionLine } from "../data/evolutionLines.js";
 import { getOrbitGameplayVisualProfile } from "../data/gameplayVisualProfiles.js";
 import {
+  createOrbitTopCombatFormConfig,
+  getOrbitTopProfile
+} from "../data/orbitTopProfiles.js";
+import {
   getOrbitStageById,
   getOrbitPathLabel,
   MOONLAKE_CAMP_SLICE
@@ -24,6 +28,7 @@ import {
   retreatOrbitSession,
   selectOrbitEmbodiment,
   selectOrbitLaunchStance,
+  triggerOrbitCombatForm,
   triggerOrbitResonancePulse,
   stepOrbitSession
 } from "../orbit/orbitEngine.js";
@@ -70,6 +75,7 @@ import {
   drawOrbitManifestation,
   loadOrbitManifestationAsset
 } from "./orbitManifestationRenderer.js";
+import { createOrbitTopPilotScene } from "../three/orbitTopPilotScene.js";
 
 function formatOrbitStatsLine(stats) {
   return [
@@ -200,8 +206,35 @@ export function createOrbitBattleController({
   let companionEntryBridge = null;
   let companionSettlementReflection = null;
   let settlementReflectionSession = null;
+  let orbitTopPilotScene = null;
+  let orbitTopPilotLoadToken = 0;
   const visualProfile = getOrbitGameplayVisualProfile("moonlake");
   preloadOrbitGameplaySkin(visualProfile);
+
+  function disposeOrbitTopPilotScene() {
+    orbitTopPilotLoadToken += 1;
+    orbitTopPilotScene?.dispose?.();
+    orbitTopPilotScene = null;
+  }
+
+  async function prepareOrbitTopPilotScene(activeCompanionId) {
+    disposeOrbitTopPilotScene();
+    const loadToken = orbitTopPilotLoadToken;
+    const playerProfile = getOrbitTopProfile(activeCompanionId);
+    const enemyProfile = getOrbitTopProfile("rift-echo");
+    if (!playerProfile || !enemyProfile || !overlayEl) return;
+    const controller = await createOrbitTopPilotScene({
+      stageEl: overlayEl.querySelector(".orbit-stage"),
+      playerProfile,
+      enemyProfile
+    });
+    if (loadToken !== orbitTopPilotLoadToken || !active || view !== "battle") {
+      controller.dispose?.();
+      return;
+    }
+    orbitTopPilotScene = controller;
+    draw();
+  }
 
   const mapController = createOrbitMapController({
     onSelectStage: (stageId) => openStage(stageId),
@@ -307,6 +340,12 @@ export function createOrbitBattleController({
               data-orbit-action="pulse"
               disabled
             >可見改軌・發射後可用</button>
+            <button
+              type="button"
+              class="orbit-pulse-btn orbit-combat-form-btn"
+              data-orbit-action="combat-form"
+              disabled
+            >共鳴變形・發射後可用</button>
           </div>
           <p class="orbit-hint"></p>
         </div>
@@ -350,6 +389,7 @@ export function createOrbitBattleController({
       else if (action === "to-map") returnFromStage();
       else if (action === "again" && currentStageId) openStage(currentStageId);
       else if (action === "pulse") activateResonancePulse();
+      else if (action === "combat-form") activateCombatForm();
       else if (action === "confirm-attunement") confirmAttunementPlan();
       else if (action === "rest-attunement") restFromAttunement();
     });
@@ -388,6 +428,7 @@ export function createOrbitBattleController({
     resetOrbitCompanionBridge();
     clearOrbitManifestationAsset();
     stopLoop();
+    disposeOrbitTopPilotScene();
     session = null;
     dragging = false;
     renderControlDepth();
@@ -405,6 +446,7 @@ export function createOrbitBattleController({
 
   function openDuel() {
     ensureOverlay();
+    disposeOrbitTopPilotScene();
     manifestationLoadToken += 1;
     manifestationRenderAsset = null;
     resetOrbitCompanionBridge();
@@ -611,8 +653,14 @@ export function createOrbitBattleController({
       prototypeSlice: campSliceEnabled,
       nonPersistent: campSliceEnabled,
       attunement,
-      embodiment
+      embodiment,
+      combatForm: campSliceEnabled
+        ? createOrbitTopCombatFormConfig(state.activeCompanionId)
+        : null
     });
+    if (campSliceEnabled && session.combatForms?.player?.enabled) {
+      void prepareOrbitTopPilotScene(state.activeCompanionId);
+    }
     if (campSliceEnabled && session.embodiment) {
       overlayEl.querySelector(".orbit-battle .orbit-stats").textContent =
         `${formatAttunementLine(attunement)}　正式階段：${session.embodiment.formalStageLabel || "未就緒"}`;
@@ -652,6 +700,7 @@ export function createOrbitBattleController({
     manifestationRenderAsset = null;
     resetOrbitCompanionBridge();
     clearOrbitManifestationAsset();
+    disposeOrbitTopPilotScene();
     stopLoop();
     active = false;
     session = null;
@@ -714,6 +763,9 @@ export function createOrbitBattleController({
     const controls = overlayEl.querySelector("[data-orbit-control-depth]");
     const picker = overlayEl.querySelector(".orbit-stance-picker");
     const pulseBtn = overlayEl.querySelector('[data-orbit-action="pulse"]');
+    const combatFormBtn = overlayEl.querySelector(
+      '[data-orbit-action="combat-form"]'
+    );
     const attunementPanel = overlayEl.querySelector("[data-orbit-attunement-panel]");
     const attunementSummary = overlayEl.querySelector("[data-orbit-attunement-summary]");
     const manifestationPicker = overlayEl.querySelector(
@@ -736,6 +788,7 @@ export function createOrbitBattleController({
       !controls ||
       !picker ||
       !pulseBtn ||
+      !combatFormBtn ||
       !attunementPanel ||
       !attunementSummary ||
       !manifestationPicker ||
@@ -748,6 +801,7 @@ export function createOrbitBattleController({
     if (!enabled) {
       picker.replaceChildren();
       pulseBtn.disabled = true;
+      combatFormBtn.disabled = true;
       attunementPanel.hidden = true;
       manifestationPicker.hidden = true;
       manifestationActions.replaceChildren();
@@ -842,6 +896,33 @@ export function createOrbitBattleController({
         ? "本次發射的可見改軌已使用"
         : "使用本次發射唯一一次可見改軌"
     );
+
+    const playerForm = session.combatForms?.player;
+    const formAvailable =
+      session.phase === "spinning" &&
+      playerForm?.enabled === true &&
+      playerForm.current === "base" &&
+      playerForm.chargesRemaining > 0 &&
+      session.elapsed >= playerForm.windowOpensAt;
+    combatFormBtn.hidden = playerForm?.enabled !== true;
+    combatFormBtn.disabled = !formAvailable;
+    combatFormBtn.dataset.form = playerForm?.current || "base";
+    combatFormBtn.textContent =
+      playerForm?.current === "resonance"
+        ? "共鳴變形・維持中"
+        : playerForm?.chargesRemaining === 0
+          ? "共鳴變形・已用"
+          : session.phase === "aiming"
+            ? "共鳴變形・發射後可用"
+            : formAvailable
+              ? "共鳴變形・1/1"
+              : "共鳴變形・共振中";
+    combatFormBtn.setAttribute(
+      "aria-label",
+      playerForm?.current === "resonance"
+        ? "玩家陀螺目前處於本局限定的共鳴形態"
+        : "啟動本局唯一一次的玩家陀螺共鳴變形"
+    );
   }
 
   function chooseEmbodiment(modeId) {
@@ -917,6 +998,17 @@ export function createOrbitBattleController({
         )}；仍要實際掠過光點。`;
     overlayEl.querySelector(".orbit-battle .orbit-status").textContent =
       `可見改軌已用。${targetText}`;
+    renderControlDepth();
+    draw();
+  }
+
+  function activateCombatForm() {
+    if (!session || session.phase !== "spinning") return;
+    const before = session;
+    session = triggerOrbitCombatForm(session, "player", "manual_ui");
+    if (session === before) return;
+    overlayEl.querySelector(".orbit-battle .orbit-status").textContent =
+      "共鳴變形展開；這只在本局重新分配操控特性，不會寫入養成階段。";
     renderControlDepth();
     draw();
   }
@@ -1289,6 +1381,9 @@ export function createOrbitBattleController({
 
     if (!session) return;
 
+    orbitTopPilotScene?.update?.(session);
+    const useThreeBodies = orbitTopPilotScene?.ready === true;
+
     if (
       session.memoryMotes?.length > 0 ||
       session.resonanceZone
@@ -1322,7 +1417,7 @@ export function createOrbitBattleController({
       ctx.fillText("錨點", a.sx, a.sy - session.anchor.r * a.scale - 4);
     }
 
-    if (session.dummyEnabled) {
+    if (!useThreeBodies && session.dummyEnabled) {
       drawBody(
         session.dummy,
         cssW,
@@ -1334,13 +1429,15 @@ export function createOrbitBattleController({
     const embodimentLabel = session.embodimentMode === "formal_stage"
       ? `${session.embodiment?.companionName || "夥伴"}・${session.embodiment?.formalStageLabel || "心相"}`
       : "心核化身";
-    drawBody(
-      session.player,
-      cssW,
-      cssH,
-      "rgba(160, 220, 255, 0.95)",
-      embodimentLabel
-    );
+    if (!useThreeBodies) {
+      drawBody(
+        session.player,
+        cssW,
+        cssH,
+        "rgba(160, 220, 255, 0.95)",
+        embodimentLabel
+      );
+    }
     if (session.lastPulseFlash > 0) {
       drawResonancePulse(session, cssW, cssH);
     }
@@ -1744,6 +1841,11 @@ export function createOrbitBattleController({
         (2.8 + body.spin / 18) *
         (body.spinDirection || 1);
     if (!formalManifestation) {
+      const actorKey = body.id === "avatar" ? "player" : "dummy";
+      const combatFormActor = session?.combatForms?.[actorKey];
+      const topProfile = combatFormActor?.enabled
+        ? getOrbitTopProfile(body.id === "avatar" ? "greyshade-cat" : "rift-echo")
+        : null;
       drawOrbitClayBody(ctx, {
         x: sx,
         y: sy,
@@ -1753,6 +1855,8 @@ export function createOrbitBattleController({
         spinAngle: ang,
         tilt: hybridSpin ? body.tilt || 0 : 0,
         wobbleAngle,
+        combatForm: combatFormActor?.current || "base",
+        topProfile,
         label
       });
       return;

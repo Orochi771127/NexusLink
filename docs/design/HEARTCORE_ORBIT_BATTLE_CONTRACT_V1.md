@@ -1,7 +1,7 @@
-# 心核迴旋戰契約 V1.1（Heartcore Orbit Battle Contract）
+# 心核迴旋戰契約 V1.2（Heartcore Orbit Battle Contract）
 
-> **Status:** `ACTIVE DESIGN CONTRACT / R1–R10 + MOONLAKE 25-STAGE + PLAINS PROOF-STAGE RUNTIME IMPLEMENTED / D0 REBASELINED`
-> **Date:** 2026-08-01
+> **Status:** `ACTIVE DESIGN CONTRACT / R1–R10 + V1–V3 + MOONLAKE 25-STAGE + PLAINS PROOF-STAGE RUNTIME IMPLEMENTED / GLOBAL 3D PILOT R1 OWNER-APPROVED AND LOCALLY VERIFIED`
+> **Date:** 2026-08-09
 > **Owner:** Terence
 > **Authority:** 服從 `NEXUS_LINK_MASTER_CANON_v3.1.md`、`CLAUDE.md`、`AGENTS.md`、`ACCEPTANCE.md`。
 > **Sibling:** `docs/agent/HEARTCORE_ORBIT_BATTLE_AGENT_PROGRAM.md`（分階段實作指令）
@@ -30,6 +30,7 @@
 
 - 心核化身不再被限制為抽象小球；可呈現夥伴可辨識的 illustrated 自我投影，但碰撞由外層共鳴場承受，夥伴本體不是彈藥。
 - 正式 Growth stage 可改變 Orbit 的輪廓、慣性、碰撞體積與關卡 affordance，但只能是等總預算 sidegrade，不得形成垂直戰力。
+- Owner 另核准一種與 Growth 完全分離的對局內 `base ↔ resonance` combat form：它是 session-only、雙方同規則、等總預算的共鳴變形，結束即清除，不是正式進化或 stage advance。
 - 既有「每發一次共鳴脈衝 `1/1`」只保留為營火證明關與入門規則，不再是所有未來關卡的永久上限。
 - 一局不再固定 60–90 秒；正式目標區間改為約 35–75 秒，依追跡、解纏或守定目標調整。
 - 四個既有 outcome key 保留為安全上位分類，但可增加不帶羞辱或懲罰的玩法 subtype。
@@ -72,7 +73,7 @@
 | `src/orbit/` 固定 `1/120s` 模擬、拉曳發射、旋轉衰減、牆／柱／body 碰撞、speed cap、出場與核散 | 合息定軌的接受／可見改寫／休息／拒絕 shared-control policy |
 | 月湖五個 zone × 每區五關（25 關）＋平原一個 proof stage，以及 first-clear path／vault／Growth settlement | 界紋疾走的儲能／釋放場地機關 |
 | 三種 launch stance、營火證明關每發一次共鳴脈衝、30／60／120 Hz replay | 多共鳴時機、情緒動勢 snapshot、心相展開物理 sidegrade |
-| CPU／local ghost 對決、連戰休息 budget、四個安全 outcome family | Stage 2／3 approved form assets、場中形態 swap、正式 G4 stage advance |
+| CPU／local ghost 對決、連戰休息 budget、四個安全 outcome family；Moonlake camp 的玩家／敵方陀螺 3D Pilot 與 session-only combat form 已通過 Owner 視覺核准和本地 promotion QA | Stage 2／3 approved formal-stage assets、正式 G4 stage advance；3D 陀螺尚未批次擴到全角色／全關卡 |
 | 現行 Orbit 由純模擬＋Canvas 2D playfield＋DOM HUD 呈現 | Pixi Orbit renderer、Matter.js／Planck.js、Node／LLM 戰鬥 runtime |
 
 任何後續文件、PR 或發版說明都必須把左欄與右欄分開；D0 只建立右欄的實作契約，不將它們升格為 runtime-ready。
@@ -131,7 +132,8 @@
 | 合息定軌 | 發射前共同確認參與、方向、力度與可見改寫 | 服從度檢查、強制出場 |
 | 共繪軌跡 | 玩家提出意圖，夥伴確認後形成可預測 final plan | 偷偷射歪、隱藏命中率 |
 | 界紋疾走 | 將預先儲存的共鳴電荷沿符文邊界轉換為高速折返 | 碰牆免費增加能量 |
-| 心相展開 | 已擁有正式 stage 的可選場中表現／物理 sidegrade | 戰中刷出新進化、數值碾壓 |
+| 心相展開 | 已擁有正式 stage 的可選場中表現／物理 sidegrade | 戰中刷出新正式進化、數值碾壓 |
+| 對局共鳴變形 | 本局 `base ↔ resonance` 的 transient combat form；雙方同 state machine，結束即清除 | 三階覺醒、永久進化、存檔解鎖、敵方作弊型 buff |
 | 衝擊 Impact | 撞擊力度（關係投影） | ATK、攻擊力升級 |
 | 旋轉 Spin | 轉速／節奏穩定 | 轉速練等 |
 | 韌性 Guard | 抗擊退／抗核散 | 防禦裝等級 |
@@ -154,7 +156,7 @@
 2. **共繪軌跡**：玩家提供方向、力度區間與 stance。任何 companion rewrite 必須先畫進預覽或以短句說明，玩家確認後才形成 final launch plan。
 3. **拉動發射**：拉距決定初速區間，進場角與 stance 決定旋轉、傾斜及後續軌跡。
 4. **場中解纏**：旋轉衰減、碰撞轉移、記憶回收、守定錨點與界紋折返；可在關卡授權的共鳴時機做有限修正。
-5. **可選心相展開**：只可呈現該 companion 已正式擁有且 asset-ready 的 stage；夥伴可改寫或不展開，維持原形也必須可完成。
+5. **可選對局共鳴變形／心相展開**：stage data 可授權 session-only `base ↔ resonance` combat form；另有正式 stage 者才可使用對應心相展開。兩者皆須等預算、可拒絕／改寫、維持 base 也可完成，且不可在戰中產生永久 Growth。
 6. **返棲沉澱**：化身收回或安全解聚；夥伴給一句第一人稱短評，四個安全 outcome family 承接結算。
 
 時間不是評分門檻。追跡／連鎖回收關可短至約 35 秒；守定／多段解纏關可接近 75 秒。不得以倒數焦慮、每日效率或最佳農法迫使玩家選快解。
@@ -202,6 +204,15 @@
 - 場中展開只呈現**已持久解鎖**的 formal stage；不能靠 dialogueCount、BondAffinity、勝場、碰撞數或戰中 meter 直接升階，也不能繞過 Growth readiness／willingness。
 - 無 approved Stage 2／3 illustrated asset 時，只能顯示 aura、光紋、姿態與 session cue，不能放大／染色 Stage 1 冒充新形態。
 - 夥伴與玩家都可選擇維持當前形態；所有合法形態都必須能完成核心 objective，差異在路線與手感，不在通關資格。
+
+### 4.7.1 對局內共鳴變形／Session combat form
+
+- `combatForm` 只有 `base` 與 `resonance`；狀態屬於本次 Orbit session，不能寫入 save、Growth、formal stage、relationship、Codex 或 unlock。
+- 玩家與敵方使用同一 deterministic state machine、相同合法 resonance window、charge debit、cooldown／duration 規則與 fixed-step authority。敵方不得因 renderer、AI timing 或隱藏 profile 取得額外能量。
+- 每個 form profile 必須通過 normalized budget。可交換的維度限於 radius、inertia、turn authority、spin retention、field／signal 範圍與 objective affordance；不得直接改 Impact、reward、Growth evidence、winner 或 total energy budget。
+- 變形只由 engine 事件決定；Three／Canvas／Pixi 只能表演同一 `combatForm` truth。GLB 載入失敗時以 aura／輪廓 fallback 顯示，不得改變碰撞、timing 或 outcome。
+- `resonance` 不等於三階制的「共鳴成熟體」。正式 stage 仍由 Growth readiness、companion willingness 與 human-approved asset 擁有；本節不得用來繞過 O15／N-series。
+- Session resolved、retreated、aborted、owner changed 或 teardown 後必須回到 `base`，且 replay snapshot 能在 30／60／120 Hz 得到相同 form transition、碰撞與 outcome。
 
 ### 4.8 結局映射與 subtype
 
@@ -287,6 +298,8 @@ Subtype 只增加 objective、演出與短評精度；不能建立高低排名�
 
 Growth 備註：current runtime 已把 Orbit first-clear 映射為 `exploration` evidence，但它只是多樣 lived evidence 的其中一個 root；重玩、失敗、撤退、心相展開與 subtype 都不能額外增加 readiness。G4 stage offer／advance 與 G5 form asset 仍未實作。
 
+對局共鳴變形補充：session-only `combatForm` 不屬於 Growth source family；觸發、維持、結束或重玩都不能建立 evidence，也不能被 Codex 顯示為正式 stage。
+
 ---
 
 ## 9. D0 正式取消的舊限制
@@ -332,9 +345,9 @@ Growth 備註：current runtime 已把 Orbit first-clear 映射為 `exploration`
 
 ---
 
-## 12. 非目標（D0 明確不涵蓋）
+## 12. 非目標（D0 歷史邊界；後續另案依核准範圍施工）
 
-- 實作合息定軌、界紋疾走、情緒動勢或心相展開。
+- D0 當時不實作合息定軌、界紋疾走、情緒動勢或心相展開；其中 V1–V3 後續狀態以 current `main` 與 ledger 為準。2026-08-02 另核准的 session-only combat-form 3D Pilot 只涵蓋本契約 4.7.1，不包含正式 stage advance。
 - 修改 `src/**`、save／schema、`assets/**`、`pixiApp.js`、依賴、backend 或 network。
 - G4 覺醒邀請／stage advance、`thunder-pup` 或任何夥伴的 Stage 2／3 canon 與正式資產。
 - 完整 Steam 商業包裝、法務、即時 PvP、排行榜、賽季或 MMR。
@@ -349,7 +362,8 @@ Growth 備註：current runtime 已把 Orbit first-clear 映射為 `exploration`
 | Legacy R1–R10 | ✅ 現有拉曳、固定步物理、Moonlake 25 stages＋Plains proof stage、姿態／營火脈衝、CPU／ghost、settlement 與 mobile UI | O1–O11；不得把 open human／Safari gate 說成完成 |
 | D0 | ✅ 本次文件重定版 | Orbit／Growth／Acceptance／ledger 一致；O12–O17 存在；docs diff hygiene |
 | V1 | 合息定軌＋可見 rewrite＋界紋疾走的單關 non-persistent slice | O12–O14、O16–O17 + existing O7/O11；無 schema／asset |
-| V2 | 一隻 asset-ready companion 的心相展開 sidegrade | O15–O17 + N2/N5/N7/N11 + G1–G7；另取 GROUNDWORK／human art approval |
+| V2 | 一隻 asset-ready companion 的 formal-stage 心相展開 sidegrade | O15–O17 + N2/N5/N7/N11 + G1–G7；另取 GROUNDWORK／human art approval |
+| Global 3D Pilot R1 | ✅ Owner-approved／runtime-promoted：灰影貓玩家陀螺＋裂隙敵方陀螺的 session-only `base ↔ resonance` combat form、Three presentation／Canvas fallback | O15A／O17 + H7–H9 + Blender／GLB audit + human visual approval；不寫 Growth／save；批次擴充另案 |
 | V3 | session 前後 Companion Shell 表達橋接 | O12/O16/O17 + safety／memory／Core regression；Core 不進 simulation |
 | V4 | 多關調整、真機與真人手感 | O1–O17 + 30／60／120 Hz + mobile／Safari／GPU／reduced-motion／human gates |
 

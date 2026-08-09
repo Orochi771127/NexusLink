@@ -23,6 +23,11 @@ import {
 import { getOrbitPathLabel } from "../data/orbit/stages/index.js";
 import { companionLineForOutcome, mapOrbitResultToOutcome } from "./orbitOutcomes.js";
 import { applyOrbitBoundaryResonance } from "./orbitBoundaryResonance.js";
+import {
+  activateOrbitCombatForm,
+  createOrbitCombatFormState,
+  stepOrbitCombatForms
+} from "./orbitCombatForm.js";
 
 const MAX_SPIN_SECONDS = 45; // R6：場次更短促，避免長時間漂移感
 
@@ -106,7 +111,8 @@ function applyEmbodimentToPlayer(basePlayer, embodimentBase, option) {
  *  prototypeSlice?: boolean,
  *  nonPersistent?: boolean,
  *  attunement?: object,
- *  embodiment?: object
+ *  embodiment?: object,
+ *  combatForm?: object
  * }} opts
  */
 export function createOrbitSession(opts = {}) {
@@ -230,6 +236,42 @@ export function createOrbitSession(opts = {}) {
         selectedEmbodimentOption
       )
     : basePlayer;
+  const dummy = {
+    ...createBody({
+      id: "dummy",
+      x: dummyStart.x,
+      y: dummyStart.y,
+      vx: 0.12,
+      vy: 0.05,
+      spin: 36,
+      stability: Math.max(50, Math.min(140, dummyStability)),
+      radius: DUMMY_RADIUS,
+      team: "dummy",
+      physicsModel,
+      spinDirection: -1,
+      tilt: 0.06,
+      driveScale:
+        Number.isFinite(physicsTuning.dummyDriveScale)
+          ? physicsTuning.dummyDriveScale
+          : 0.35,
+      driveTargetSpeed:
+        Number.isFinite(physicsTuning.dummyDriveTargetSpeed)
+          ? physicsTuning.dummyDriveTargetSpeed
+          : 1.6,
+      speedCap:
+        Number.isFinite(physicsTuning.dummySpeedCap)
+          ? physicsTuning.dummySpeedCap
+          : 2.2
+    }),
+    out: !dummyEnabled,
+    spinPhase: dummyEnabled
+      ? HYBRID_SPIN_PHASES.launch
+      : HYBRID_SPIN_PHASES.stopped
+  };
+  const combatForms = createOrbitCombatFormState(opts.combatForm, {
+    player,
+    dummy
+  });
 
   return {
     phase: "aiming",
@@ -303,38 +345,8 @@ export function createOrbitSession(opts = {}) {
     stats: { ...stats },
     personaBias: opts.personaBias || "comfort",
     player,
-    dummy: {
-      ...createBody({
-        id: "dummy",
-        x: dummyStart.x,
-        y: dummyStart.y,
-        vx: 0.12,
-        vy: 0.05,
-        spin: 36,
-        stability: Math.max(50, Math.min(140, dummyStability)),
-        radius: DUMMY_RADIUS,
-        team: "dummy",
-        physicsModel,
-        spinDirection: -1,
-        tilt: 0.06,
-        driveScale:
-          Number.isFinite(physicsTuning.dummyDriveScale)
-            ? physicsTuning.dummyDriveScale
-            : 0.35,
-        driveTargetSpeed:
-          Number.isFinite(physicsTuning.dummyDriveTargetSpeed)
-            ? physicsTuning.dummyDriveTargetSpeed
-            : 1.6,
-        speedCap:
-          Number.isFinite(physicsTuning.dummySpeedCap)
-            ? physicsTuning.dummySpeedCap
-            : 2.2
-      }),
-      out: !dummyEnabled,
-      spinPhase: dummyEnabled
-        ? HYBRID_SPIN_PHASES.launch
-        : HYBRID_SPIN_PHASES.stopped
-    },
+    dummy,
+    combatForms,
     outcome: null,
     companionLine: null,
     lastHitFlash: 0,
@@ -620,6 +632,14 @@ export function triggerOrbitResonancePulse(session) {
       session.resonancePulse.flashSeconds || 0.36
     )
   };
+}
+
+/**
+ * Trigger the transient player combat form. This never writes Growth or save
+ * state and is ignored outside the stage-authored resonance window.
+ */
+export function triggerOrbitCombatForm(session, actorKey = "player") {
+  return activateOrbitCombatForm(session, actorKey, "manual");
 }
 
 /**
@@ -943,6 +963,7 @@ export function stepOrbitSession(session, dt) {
       ...next,
       elapsed: next.elapsed + PHYSICS_FIXED_DT
     };
+    next = stepOrbitCombatForms(next, PHYSICS_FIXED_DT);
 
     // 假對手緩慢繞場。放在固定步內，避免 30／60／120 Hz 觸發時機不同。
     if (

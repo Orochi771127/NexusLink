@@ -7562,3 +7562,231 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Branch / commit: `codex/raphael-sovereign-publication-proof` / this docs-only closure commit.
 - Next safe action: design and implement `RAPHAEL_HMAX_PRODUCTION_FOUNDATION_V1` in an isolated package, deploy only to private staging, then run shadow-only Nexus parity before any player-visible Hosted speech.
 - Required reading: `docs/qa/RAPHAEL_SOVEREIGN_REVIEW_REMEDIATION_R1_2026-08-09.md`, `docs/architecture/RAPHAEL_SOVEREIGN_COMPANION_PLATFORM_V1.md`, `docs/raphael/RAPHAEL_PSYCHOLOGY_INFORMED_SUPPORT_V1.md`, `docs/privacy/RAPHAEL_MEMORY_CONSENT_CONTRACT_V1.md`, `ACCEPTANCE.md` Q1-Q7, and this lane.
+### 2026-08-02 - Codex - Global 3D Gameplay Pilots R1 Architecture - IN PROGRESS
+
+- Status: `IN PROGRESS`; Owner approved the consolidated Orbit／Expedition Pilot
+  package, including scoped GROUNDWORK, implementation, verification and the
+  protected-main publication path after human visual approval.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `GLOBAL_3D_GAMEPLAY_PILOTS_R1`.
+- Layer: `GROUNDWORK + EXPERIENCE`; approved GROUNDWORK includes the technical
+  constitution, `index.html` import-map/lifecycle seam if required,
+  `assets/3d/**`, Greyshade directional assets, `tools/**` Blender source/export
+  scripts and `scripts/**` QA. State/save foundations remain out of scope.
+- Branch / commit: `codex/global-3d-gameplay-pilots-r1` / `uncommitted`;
+  isolated worktree
+  `C:\Users\User\NexusLink_RaphaelAI_Workspace\NexusLink-global-3d-gameplay-pilots-r1`.
+- Scope: safely upgrade the local `img2threejs` skill to 1.4.3; replace the
+  Moonlake-only renderer exception with a per-scene, presentation-only Three.js
+  contract; add an offline Blender-to-GLB source pipeline; create a Greyshade
+  player top and Rift opponent top Pilot with session-only base／resonance form
+  projection; retain `orbitPhysics` as deterministic fixed-step authority and
+  preserve a playable Canvas fallback.
+- Red-line check: resonance form is a transient combat-form state, never a
+  Companion Growth stage or save mutation; both bodies use the same collision,
+  spin, ring-out and energy-budget rules; no HP／DPS／equipment／rarity／loot
+  commerce／PvP authority; retreat and companion refusal remain non-punitive;
+  renderer and GLB metadata cannot author outcomes.
+- Non-goals: no global renderer migration, React／TypeScript／npm／build step,
+  backend, Rapier or full 6DOF rigid-body simulation; no permanent evolution,
+  roster-wide top batch, all-map conversion or deletion of current fallbacks.
+- Acceptance refs: `ACCEPTANCE.md` G/H/I and Orbit O1/O6-O9/O15/O17 plus new
+  global-3D, resonance-form, determinism, context-loss and mobile-budget
+  assertions locked in this package.
+- Required reading: `docs/strategy/NEXUS_LINK_MASTER_CANON_v3.1.md`,
+  `AGENTS.md`, `CLAUDE.md`, `ACCEPTANCE.md`,
+  `docs/design/HEARTCORE_ORBIT_BATTLE_CONTRACT_V1.md`,
+  `docs/design/MOONLAKE_LIVE_3D_HYBRID_CONTRACT_V1.md`, current
+  `src/orbit/**`, current Three lifecycle modules and this lane.
+
+### 2026-08-02 - Codex - Global 3D Gameplay Pilots R1 Visual Production - IN PROGRESS
+
+- Status: `IN PROGRESS`; Owner approved one Greyshade player top, one Rift
+  opponent top and a fully redone Greyshade eight-direction Expedition walk
+  Pilot in the shared bright 3D miniature + resin-clay art family.
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `GLOBAL_3D_GAMEPLAY_PILOTS_R1`.
+- Layer: `GROUNDWORK + EXPERIENCE`; versioned candidate sources and exports may
+  be created, but final runtime art promotion remains gated by human visual
+  approval and reference audit. Existing approved R3 foundations and legacy
+  Greyshade sheets stay intact until that gate passes.
+- Visual scope: top models require distinct readable silhouettes, bottom-axis
+  spin pivots, simple gameplay colliders, bright resin／clay materials and
+  clearly readable in-match resonance changes without becoming a permanent
+  character evolution. Expedition requires eight headings, eight frames per
+  walk cycle, 512x512 transparent frames, bottom-centre anchor, linear sampling
+  and feet-lock QC.
+- Tooling: `img2threejs 1.4.3` staged-pass review for top reconstruction,
+  Blender 5.2 LTS for offline modelling／validation／GLB export, and the Sprite
+  Pipeline for sheet layout, cleanup, metadata and QC. Generated art is a
+  project-owned candidate, not downloaded asset-pack art.
+- Red-line check: no weaponized companion body, rarity skin, collectible empty
+  slot, baked UI／text／scene, alternate-character fallback or nearest-neighbour
+  pixel-art regression. Reduced motion preserves form readability while
+  suppressing ornamental spin trails.
+- Non-goals: no roster-wide generation, attack-animation batch, Expedition map
+  replacement, Moonlake habitat rewrite, Spine rig or deletion of legacy art.
+- Verification pending: per-pass reference comparisons, Blender geometry／pivot
+  and GLB audit, multi-angle renders, sprite transparency／grid／anchor／feet-slip
+  checks, runtime phone／desktop screenshots, missing-asset fallback and Owner
+  visual approval.
+- Required reading: `docs/art/GAMEPLAY_SKIN_PACKAGE_V1.md`, companion art policy
+  in `AGENTS.md`／`CLAUDE.md`, Greyshade replacement protocol, current animation
+  manifests, Sprite Pipeline contract, `img2threejs 1.4.3` gates and this lane.
+
+### 2026-08-02 - Codex - Global 3D Gameplay Pilots R1 Architecture - VERIFIED LOCALLY / HUMAN ART GATE OPEN
+
+- Status: `VERIFIED LOCALLY / HUMAN ART GATE OPEN`; the technical Pilot is
+  complete in the isolated worktree, but no generated model or sprite has been
+  promoted into `assets/**` and no publication action is authorized until the
+  Owner accepts the visual candidates.
+- Lane: `Game Engineering And Architecture`.
+- Completed:
+  - safely replaced local `img2threejs` 1.4.1 with 1.4.3; 260 runnable tests
+    pass under UTF-8, while three Windows-only cases remain unavailable because
+    the current account lacks symbolic-link privilege (`WinError 1314`);
+  - added the global per-scene Three.js presentation contract and registry,
+    keeping store, save, input, collision, objectives, rewards, RaphaelCore and
+    deterministic physics outside the renderer;
+  - implemented one Greyshade player top and one Rift opponent top profile,
+    equal-budget base/resonance form projection, energy-preserving mass changes
+    and the same timed return-to-base state machine for both bodies;
+  - kept `src/orbit/orbitPhysics.js` as sole fixed-step collision authority;
+    both Canvas and Three presentations rotate player and opponent from the same
+    snapshot, and Canvas remains the asset/import/context-loss fallback;
+  - added an offline Blender 5.2 LTS source/export tool and repaired GLB export
+    visibility so both `BaseForm` and `ResonanceForm` are present in both GLBs;
+  - added query-gated Greyshade eight-direction Sprite Pilot loading with no
+    left/right mirroring, eight frames per heading and the existing illustrated
+    plus procedural fallback chain.
+- Red-line result: resonance transformation is session-only and writes no
+  Growth stage, bond, trust, save or reward; retreat/refusal semantics are
+  unchanged; no second physics engine, 6DOF authority, backend, npm dependency,
+  build step or renderer-wide migration was introduced.
+- Verification:
+  - JavaScript syntax checks PASS for all changed modules and QA;
+  - Orbit energy, hybrid physics, regression, feel, stage and combat-form suites
+    PASS, including exact 30/60/120 Hz replay;
+  - `orbit-three-presentation-boundary-cases.mjs` and
+    `orbit-top-blender-pilot-cases.mjs --require-candidates` PASS;
+  - Chromium verified Three namespace loading, both form nodes, snapshot-only
+    updates, WebGL context loss/restore, Canvas fallback and the R2 Pixi Pilot;
+    the R2 runtime result is 8 directions x 8 frames, 4096 source width,
+    bottom-centre anchor `(0.5, 1)` and no fallback overlap.
+- Known limitation: the `img2threejs` reference diagnostic did not meet its
+  silhouette/aspect staged-pass thresholds, so those reconstructions were not
+  promoted. The Blender candidates remain the auditable Pilot source instead.
+- Branch / commit: `codex/global-3d-gameplay-pilots-r1` / `uncommitted`; no push,
+  PR, protected-main merge, Pages deployment or production asset promotion.
+- Next safe action: Owner reviews the two top candidates and Greyshade R2
+  overview. After explicit visual approval, promote only the accepted exports,
+  rerun release/mobile fallback gates, then commit and publish through protected
+  main and refresh codebase-memory MCP.
+
+### 2026-08-02 - Codex - Global 3D Gameplay Pilots R1 Visual Production - CANDIDATES QC PASS / HUMAN APPROVAL REQUIRED
+
+- Status: `CANDIDATES QC PASS / HUMAN APPROVAL REQUIRED`; mechanical production
+  and runtime proof are complete, but visual acceptance is deliberately open.
+- Lane: `Game Art, UI, And Visual Production`.
+- Orbit candidates: Blender review renders, `.blend` sources and GLBs exist
+  under `output/global-3d-gameplay-pilots-r1/blender/` for
+  `greyshade-cat-orbit-top-r1` and `rift-echo-orbit-top-r1`. Both have distinct
+  silhouettes, base/resonance collections, bottom contact and deterministic 2D
+  collider metadata; neither is a formal runtime asset yet.
+- Expedition candidates:
+  - the first eight-direction batch was rejected during internal visual review
+    for realistic-tabby drift and a diagonal-frame tail fragment;
+  - a common Greyshade resin-clay Style Lock was created, then all eight walk
+    headings were regenerated as eight-phase 4x2 source grids;
+  - north was regenerated after an incorrect back-mounted heart was found, and
+    its chroma threshold was corrected after edge alpha caused scale drift;
+  - R2 now passes transparency, 512x512 frame, 4096x512 strip, 8x8 completeness,
+    pose-variation and bottom-centre-anchor audits.
+- Human review surfaces:
+  - `output/global-3d-gameplay-pilots-r1/sprites/greyshade-walk-8dir-r2/greyshade-walk-eight-direction-overview-r2.jpg`;
+  - `output/playwright/greyshade-r2-expedition-isolated-390px.png`;
+  - `output/playwright/orbit-three-isolated-candidate.png`;
+  - `output/playwright/orbit-mobile-canvas-fallback-390x844.png`.
+- Runtime visual result: the R2 cat appears over the approved bright resin-clay
+  Expedition foundation with transparent edges, correct northeast heading and
+  no illustrated/procedural double image. The Orbit Canvas and Three candidates
+  remain readable on phone-sized presentation surfaces.
+- Promotion gate: Owner must explicitly accept the Style Lock, both top models
+  and the R2 direction overview before any file enters `assets/**`. Legacy
+  Greyshade art and existing fallbacks remain intact until reference audit and
+  final release proof pass.
+- Branch / commit: `codex/global-3d-gameplay-pilots-r1` / `uncommitted`; all art
+  candidates remain in ignored `output/**` locations.
+
+### 2026-08-09 - Codex - Global 3D Gameplay Pilots R1 Architecture - VERIFIED / PUBLICATION IN PROGRESS
+
+- Status: `VERIFIED / PUBLICATION IN PROGRESS`; Owner continuation after the
+  visual review is recorded as acceptance of the two Orbit tops and Greyshade
+  eight-direction R2 walk Pilot. Runtime promotion is complete locally; the
+  protected-main publication evidence is being completed in this package.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `GLOBAL_3D_GAMEPLAY_PILOTS_R1`.
+- Completed:
+  - promoted two versioned GLBs through manifest-owned profiles while keeping
+    `src/orbit/orbitPhysics.js` and its fixed-step snapshot as sole collision,
+    form, outcome and replay authority;
+  - made the Moonlake camp Three Pilot and Greyshade Expedition sprite Pilot
+    the default approved presentations, with explicit `?orbit3dPilot=0` and
+    `?expedition8dirPilot=0` switches that preserve the prior fallbacks;
+  - added reproducible GLB／sprite manifest construction, SHA-256, node,
+    geometry, transparency, grid, pose-variation and memory-budget validation;
+  - preserved session-only symmetric `base ↔ resonance`, energy normalization,
+    retreat／refusal semantics and zero Growth／relationship／save authority in
+    the renderer.
+- Verification: manifest builder, promoted-asset QA, Orbit form／Three boundary／
+  Blender audits, eight-direction sprite QA and deterministic Orbit regressions
+  pass locally. Chromium at 390x844 loads both official GLBs, renders player and
+  enemy in resonance with opposite spin directions, decodes all eight 256 walk
+  strips and has no horizontal overflow. Synthetic WebGL context loss／restore
+  toggles readiness without changing authority; 390x664 with
+  `?orbit3dPilot=0` creates zero Three canvases and reaches the declared
+  fallback. Release-gate, PR, merge and deployment proof remain.
+- Risks / limitations: this is one Moonlake camp presentation Pilot, not an
+  all-stage or roster-wide renderer migration. Canvas／illustrated／procedural
+  fallback remains required. `img2threejs` reference diagnostics remain
+  non-promoted; the auditable Blender exports are the official source.
+- Branch / commit: `codex/global-3d-gameplay-pilots-r1` / this package commit.
+- Next safe action: finish phone／fallback and release validation, publish via
+  protected main, verify Pages and refresh codebase-memory MCP. Batch expansion
+  requires a separate approved package.
+- Required reading: `docs/design/GLOBAL_3D_PRESENTATION_CONTRACT_V1.md`,
+  `docs/design/HEARTCORE_ORBIT_BATTLE_CONTRACT_V1.md`, `ACCEPTANCE.md` H7-H9,
+  `assets/3d/orbit-tops-r1/manifest.json` and Greyshade Expedition manifest.
+
+### 2026-08-09 - Codex - Global 3D Gameplay Pilots R1 Visual Production - OWNER APPROVED / RUNTIME PROMOTED
+
+- Status: `OWNER APPROVED / RUNTIME PROMOTED`; only the reviewed Greyshade top,
+  Rift Echo top and corrected Greyshade eight-direction R2 walk set entered the
+  versioned runtime asset roots.
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `GLOBAL_3D_GAMEPLAY_PILOTS_R1`.
+- Promoted art:
+  - `assets/3d/orbit-tops-r1/`: two GLBs plus provenance, hash, structure,
+    triangle, material, extension, collider-proxy and approval manifest;
+  - `assets/characters/greyshade-cat/spritesheets/expedition/r1/master-512/`:
+    eight 4096x512, eight-frame audit masters;
+  - `assets/characters/greyshade-cat/spritesheets/expedition/r1/runtime-256/`:
+    eight 2048x256 runtime strips, 16 MiB decoded together at RGBA8;
+  - Greyshade metadata records all 64 master and 64 runtime frame hashes,
+    direction mapping, bottom-centre anchor and retained legacy fallback.
+- QC correction: the south source had non-zero corner alpha after its first
+  cleanup. It was re-keyed with edge contraction and despill, regenerated and
+  re-audited before promotion; all promoted frame corners are transparent.
+- Provenance: project-owned generated sprite derivatives and project-authored
+  Blender geometry; no downloaded asset-pack or third-party web art entered
+  the package.
+- Non-goals preserved: no legacy deletion, alternate-character fallback,
+  attack-animation batch, full roster production, skin shop, pixel-art
+  regression, Expedition map rewrite or new runtime dependency.
+- Branch / commit: `codex/global-3d-gameplay-pilots-r1` / this package commit.
+- Next safe action: after protected-main and public proof, treat this pack as
+  the reference-audited Pilot baseline. Any batch must repeat the species／form
+  review and may not infer approval from this Pilot.
+- Required reading: companion art policy in `AGENTS.md`／`CLAUDE.md`,
+  `docs/design/GLOBAL_3D_PRESENTATION_CONTRACT_V1.md`, Sprite Pipeline and Web
+  3D asset rules, both promoted manifests and this lane.

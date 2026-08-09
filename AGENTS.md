@@ -56,7 +56,9 @@ RaphaelCore is a Stateful Companion Cognition Agent: safety-gated, memory-bearin
 
 **Moonlake Live 3D Hybrid**：月湖營地使用 Three.js 載入 GLB/glTF 即時 3D 棲地。Three.js 負責 3D 環境、水面／瀑布、風吹植被、天氣、日月光照、導航與 world-to-screen 投影；PixiJS 負責 2D illustrated companion 動畫層呈現。
 
-絕對禁止：未經 Human 核准的 React、Vue、Svelte、React Three Fiber、TypeScript、CSS 框架、後端、資料庫、LLM API、未核准 npm 套件。 Web repo 維持無 build step。
+**Global 3D Presentation 受控能力（2026-08-02 Owner 核准）**：Three.js 可依 `docs/design/GLOBAL_3D_PRESENTATION_CONTRACT_V1.md` 在全遊戲逐場景 opt-in 使用固定版本 CDN ES Module 與 GLB/glTF。每個場景必須宣告 lifecycle、read-only snapshot、mobile budget、reduced-motion、context-loss 與 fallback；Three.js 不得持有 simulation、collision、objective、outcome、store、save、RaphaelCore、Safety、Growth 或 reward authority。月湖仍另受 `docs/design/MOONLAKE_LIVE_3D_HYBRID_CONTRACT_V1.md` 約束；illustrated companion 是否留在 Pixi 層由各 scene contract 決定，不因全域權限自動改成 3D。
+
+Blender 只可作離線建模、pivot／collider proxy 驗證與 GLB 匯出，不是 runtime 或網站 build step。絕對禁止：React、Vue、Svelte、React Three Fiber、TypeScript、CSS 框架、後端、資料庫、LLM API、未核准 npm 套件、任何 build step。全域可用不等於全站 renderer migration 或第二套遊戲狀態。
 
 ---
 
