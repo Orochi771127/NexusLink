@@ -8317,3 +8317,18 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
   pack or new dependency is included. Legacy assets remain intact.
 - Branch / commit: `codex/global-3d-gameplay-pilots-r2` / publication commit
   pending.
+### 2026-08-10 - Codex - Raphael HMAX Local Session Broker V1 - COMPLETED
+
+- PR #191 was squash-merged to protected `main` as
+  `18fc4c67456e78215e773ae951d13181ec9eeb96` after exact-head release workflow
+  `31325575667` passed.
+- Post-main release workflow `31325812067` and Pages deployment
+  `31325811502` both passed on that exact merge commit. Remote `main` resolves
+  to the same SHA.
+- Public artifact proof: the Pages copy of
+  `src/ai/runtime/localHmaxSessionBroker.js` returned HTTP 200, contained the
+  provider and loopback guard, and contained no `memory:write` authority.
+- Completion boundary: the provider and invisible shadow seam are published,
+  but standard Soul Talk still uses embedded RaphaelCore speech. No hosted
+  speech cutover, player traffic, reward, Growth, memory write or gameplay
+  mutation occurred.
