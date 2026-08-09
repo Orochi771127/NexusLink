@@ -1,0 +1,661 @@
+{
+  "schemaVersion": 1,
+  "assetId": "greyshade-cat-expedition-actions-r2",
+  "companionId": "greyshade-cat",
+  "status": "runtime-promoted-owner-approved",
+  "ownerApproval": {
+    "approved": true,
+    "approvedOn": "2026-08-10",
+    "source": "Owner accepted R2 visual direction and authorized strict self-review, promotion and protected-main publication in Codex task"
+  },
+  "artDirection": "bright 3D miniature with matte resin-clay character material",
+  "production": {
+    "generator": "ChatGPT image generation using R1 direction locks",
+    "chromaKeyer": "tools/art/key_chroma_sprite_sheet.py",
+    "normalizer": "tools/art/normalize_illustrated_sprite_grid.py",
+    "manifestBuilder": "tools/art/build_global_3d_pilot_r2_manifests.py",
+    "license": "project-owned generated assets; no downloaded third-party art"
+  },
+  "anchor": {
+    "x": 0.5,
+    "y": 1
+  },
+  "sampling": "linear with mipmaps when supported",
+  "runtimeBudget": {
+    "decodedBytesActiveDirection": 2621440,
+    "decodedMiBActiveDirection": 2.5,
+    "decodedBytesAllCachedDirections": 20971520,
+    "decodedMiBAllCachedDirections": 20.0,
+    "masterSheetsAreNotRuntimeLoaded": true,
+    "loadingPolicy": "lazy per action and current facing; cached per session"
+  },
+  "legacyPolicy": {
+    "r1WalkRetained": true,
+    "legacyAssetsRetained": true,
+    "fallbackOwner": "greyshade-cat"
+  },
+  "actions": {
+    "attack_basic": {
+      "frames": 6,
+      "fps": 10,
+      "loop": false,
+      "directions": {
+        "north": {
+          "master": {
+            "path": "assets/characters/greyshade-cat/spritesheets/expedition/r2/master-512/greyshade-attack-north-master-3072x512-6f.png",
+            "bytes": 1063913,
+            "sha256": "0D3C5AD06C9DA603AF8ADE744199F865C28247B62E6184877BD34E9F6847BB95",
+            "sheetSize": [
+              3072,
+              512
+            ],
+            "frameSize": [
+              512,
+              512
+            ],
+            "frameCount": 6,
+            "transparentFrameCorners": true,
+            "uniqueFrameHashes": 6,
+            "maxSoftEdgeRatio": 1.0565,
+            "greenFringeRatio": 0.000833
+          },
+          "runtime": {
+            "path": "assets/characters/greyshade-cat/spritesheets/expedition/r2/runtime-256/greyshade-attack-north-runtime-1536x256-6f.png",
+            "bytes": 304253,
+            "sha256": "4B65E1FE76C7A68DAFC206B4BE8FBAB8B87D5754CDAF7644492EAB1D93F1E3E0",
+            "sheetSize": [
+              1536,
+              256
+            ],
+            "frameSize": [
+              256,
+              256
+            ],
+            "frameCount": 6,
+            "transparentFrameCorners": true,
+            "uniqueFrameHashes": 6,
+            "maxSoftEdgeRatio": 1.0627,
+            "greenFringeRatio": 0.002809
+          }
+        },
+        "northeast": {
+          "master": {
+            "path": "assets/characters/greyshade-cat/spritesheets/expedition/r2/master-512/greyshade-attack-northeast-master-3072x512-6f.png",
+            "bytes": 1147628,
+            "sha256": "8840D57C3973A0E6C560FFC77AC296E47012939BB907D7E85905DFA097507F0F",
+            "sheetSize": [
+              3072,
+              512
+            ],
+            "frameSize": [
+              512,
+              512
+            ],
+            "frameCount": 6,
+            "transparentFrameCorners": true,
+            "uniqueFrameHashes": 6,
+            "maxSoftEdgeRatio": 1.0156,
+            "greenFringeRatio": 0.001212
+          },
+          "runtime": {
+            "path": "assets/characters/greyshade-cat/spritesheets/expedition/r2/runtime-256/greyshade-attack-northeast-runtime-1536x256-6f.png",
+            "bytes": 352227,
+            "sha256": "1984706BC02A1E7F43815882781D19DBEA8858477D0232419ACFF614FD00308F",
+            "sheetSize": [
+              1536,
+              256
+            ],
+            "frameSize": [
+              256,
+              256
+            ],
+            "frameCount": 6,
+            "transparentFrameCorners": true,
+            "uniqueFrameHashes": 6,
+            "maxSoftEdgeRatio": 1.0235,
+            "greenFringeRatio": 0.002671
+          }
+        },
+        "east": {
+          "master": {
+            "path": "assets/characters/greyshade-cat/spritesheets/expedition/r2/master-512/greyshade-attack-east-master-3072x512-6f.png",
+            "bytes": 733134,
+            "sha256": "4D45B2A961BE40730A1C5E3EC468EEFBFD4E5F10E17631BF447EDC46B8DD3DBB",
+            "sheetSize": [
+              3072,
+              512
+            ],
+            "frameSize": [
+              512,
+              512
+            ],
+            "frameCount": 6,
+            "transparentFrameCorners": true,
+            "uniqueFrameHashes": 6,
+            "maxSoftEdgeRatio": 1.0321,
+            "greenFringeRatio": 0.001558
+          },
+          "runtime": {
+            "path": "assets/characters/greyshade-cat/spritesheets/expedition/r2/runtime-256/greyshade-attack-east-runtime-1536x256-6f.png",
+            "bytes": 221251,
+            "sha256": "CE901FD2F142A99954F7DA74567883FF9A8B77D3083EE9008F896B0BC98FFDD7",
+            "sheetSize": [
+              1536,
+              256
+            ],
+            "frameSize": [
+              256,
+              256
+            ],
+            "frameCount": 6,
+            "transparentFrameCorners": true,
+            "uniqueFrameHashes": 6,
+            "maxSoftEdgeRatio": 1.0467,
+            "greenFringeRatio": 0.002875
+          }
+        },
+        "southeast": {
+          "master": {
+            "path": "assets/characters/greyshade-cat/spritesheets/expedition/r2/master-512/greyshade-attack-southeast-master-3072x512-6f.png",
+            "bytes": 1413998,
+            "sha256": "3ED5C6F07928FBFF58C97FB15766100C114CFB8EFC6DCC5F695F593DFF2B04B3",
+            "sheetSize": [
+              3072,
+              512
+            ],
+            "frameSize": [
+              512,
+              512
+            ],
+            "frameCount": 6,
+            "transparentFrameCorners": true,
+            "uniqueFrameHashes": 6,
+            "maxSoftEdgeRatio": 1.026,
+            "greenFringeRatio": 0.000873
+          },
+          "runtime": {
+            "path": "assets/characters/greyshade-cat/spritesheets/expedition/r2/runtime-256/greyshade-attack-southeast-runtime-1536x256-6f.png",
+            "bytes": 429751,
+            "sha256": "7EE8C88DB3D5F437C4CADC13D0F2847D6B485FD320A624792090D7C6D4A80D09",
+            "sheetSize": [
+              1536,
+              256
+            ],
+            "frameSize": [
+              256,
+              256
+            ],
+            "frameCount": 6,
+            "transparentFrameCorners": true,
+            "uniqueFrameHashes": 6,
+            "maxSoftEdgeRatio": 1.0313,
+            "greenFringeRatio": 0.002256
+          }
+        },
+        "south": {
+          "master": {
+            "path": "assets/characters/greyshade-cat/spritesheets/expedition/r2/master-512/greyshade-attack-south-master-3072x512-6f.png",
+            "bytes": 1035203,
+            "sha256": "641D4B31D103B1B5BA4B3E021C069315E8EF27C6AAFAE616FC36112F7114D887",
+            "sheetSize": [
+              3072,
+              512
+            ],
+            "frameSize": [
+              512,
+              512
+            ],
+            "frameCount": 6,
+            "transparentFrameCorners": true,
+            "uniqueFrameHashes": 6,
+            "maxSoftEdgeRatio": 1.02,
+            "greenFringeRatio": 0.000155
+          },
+          "runtime": {
+            "path": "assets/characters/greyshade-cat/spritesheets/expedition/r2/runtime-256/greyshade-attack-south-runtime-1536x256-6f.png",
+            "bytes": 298196,
+            "sha256": "E58335B3816C8C5C02DA330F94AEA941D13EB29D55119F90BDADDDECCE2A0BB7",
+            "sheetSize": [
+              1536,
+              256
+            ],
+            "frameSize": [
+              256,
+              256
+            ],
+            "frameCount": 6,
+            "transparentFrameCorners": true,
+            "uniqueFrameHashes": 6,
+            "maxSoftEdgeRatio": 1.0269,
+            "greenFringeRatio": 0.000102
+          }
+        },
+        "southwest": {
+          "master": {
+            "path": "assets/characters/greyshade-cat/spritesheets/expedition/r2/master-512/greyshade-attack-southwest-master-3072x512-6f.png",
+            "bytes": 1340419,
+            "sha256": "9582C334BF0C7263BC1970BF6CFE79417D530356EAD282995DAD7FEE8C093FD3",
+            "sheetSize": [
+              3072,
+              512
+            ],
+            "frameSize": [
+              512,
+              512
+            ],
+            "frameCount": 6,
+            "transparentFrameCorners": true,
+            "uniqueFrameHashes": 6,
+            "maxSoftEdgeRatio": 1.017,
+            "greenFringeRatio": 0.000809
+          },
+          "runtime": {
+            "path": "assets/characters/greyshade-cat/spritesheets/expedition/r2/runtime-256/greyshade-attack-southwest-runtime-1536x256-6f.png",
+            "bytes": 403094,
+            "sha256": "27B40A5FC5C11B0A86BF5D8EC47B561F38701F148F24BCF5B4A7153B14161B33",
+            "sheetSize": [
+              1536,
+              256
+            ],
+            "frameSize": [
+              256,
+              256
+            ],
+            "frameCount": 6,
+            "transparentFrameCorners": true,
+            "uniqueFrameHashes": 6,
+            "maxSoftEdgeRatio": 1.0226,
+            "greenFringeRatio": 0.002151
+          }
+        },
+        "west": {
+          "master": {
+            "path": "assets/characters/greyshade-cat/spritesheets/expedition/r2/master-512/greyshade-attack-west-master-3072x512-6f.png",
+            "bytes": 745024,
+            "sha256": "42A2DB1C3E58EFC852CAA0D857E9592F10D13C5A7AEAFFB9DE6DED3D041AB763",
+            "sheetSize": [
+              3072,
+              512
+            ],
+            "frameSize": [
+              512,
+              512
+            ],
+            "frameCount": 6,
+            "transparentFrameCorners": true,
+            "uniqueFrameHashes": 6,
+            "maxSoftEdgeRatio": 1.018,
+            "greenFringeRatio": 0.000905
+          },
+          "runtime": {
+            "path": "assets/characters/greyshade-cat/spritesheets/expedition/r2/runtime-256/greyshade-attack-west-runtime-1536x256-6f.png",
+            "bytes": 221087,
+            "sha256": "8ACC326D757D8A4C204671C0EFE25AD3D51F28259A0F88DDD09206D9BA1EA8DD",
+            "sheetSize": [
+              1536,
+              256
+            ],
+            "frameSize": [
+              256,
+              256
+            ],
+            "frameCount": 6,
+            "transparentFrameCorners": true,
+            "uniqueFrameHashes": 6,
+            "maxSoftEdgeRatio": 1.0313,
+            "greenFringeRatio": 0.001979
+          }
+        },
+        "northwest": {
+          "master": {
+            "path": "assets/characters/greyshade-cat/spritesheets/expedition/r2/master-512/greyshade-attack-northwest-master-3072x512-6f.png",
+            "bytes": 1144626,
+            "sha256": "9AE9BE9B1F5F530F7B1FB7DFA43551F15D425028A13EB8B44D4C747B0FED0DA6",
+            "sheetSize": [
+              3072,
+              512
+            ],
+            "frameSize": [
+              512,
+              512
+            ],
+            "frameCount": 6,
+            "transparentFrameCorners": true,
+            "uniqueFrameHashes": 6,
+            "maxSoftEdgeRatio": 1.0154,
+            "greenFringeRatio": 0.001025
+          },
+          "runtime": {
+            "path": "assets/characters/greyshade-cat/spritesheets/expedition/r2/runtime-256/greyshade-attack-northwest-runtime-1536x256-6f.png",
+            "bytes": 352505,
+            "sha256": "2EEAFEC918E4D33EFCDF7DD4962BE44E78B097747961DDDF1743E72AEE83DA8A",
+            "sheetSize": [
+              1536,
+              256
+            ],
+            "frameSize": [
+              256,
+              256
+            ],
+            "frameCount": 6,
+            "transparentFrameCorners": true,
+            "uniqueFrameHashes": 6,
+            "maxSoftEdgeRatio": 1.0236,
+            "greenFringeRatio": 0.003066
+          }
+        }
+      }
+    },
+    "hit": {
+      "frames": 4,
+      "fps": 12,
+      "loop": false,
+      "directions": {
+        "north": {
+          "master": {
+            "path": "assets/characters/greyshade-cat/spritesheets/expedition/r2/master-512/greyshade-hit-north-master-2048x512-4f.png",
+            "bytes": 686513,
+            "sha256": "DC45CBFEC682385D54A5FB0555471CCE2FA0EFE161E17E039B667EFFCA6E0AA8",
+            "sheetSize": [
+              2048,
+              512
+            ],
+            "frameSize": [
+              512,
+              512
+            ],
+            "frameCount": 4,
+            "transparentFrameCorners": true,
+            "uniqueFrameHashes": 4,
+            "maxSoftEdgeRatio": 1.0123,
+            "greenFringeRatio": 0.001088
+          },
+          "runtime": {
+            "path": "assets/characters/greyshade-cat/spritesheets/expedition/r2/runtime-256/greyshade-hit-north-runtime-1024x256-4f.png",
+            "bytes": 196924,
+            "sha256": "7097628D066073CCB2E79C79C64EB19521E8593913392B2C18E62596FC40C0B2",
+            "sheetSize": [
+              1024,
+              256
+            ],
+            "frameSize": [
+              256,
+              256
+            ],
+            "frameCount": 4,
+            "transparentFrameCorners": true,
+            "uniqueFrameHashes": 4,
+            "maxSoftEdgeRatio": 1.0215,
+            "greenFringeRatio": 0.002569
+          }
+        },
+        "northeast": {
+          "master": {
+            "path": "assets/characters/greyshade-cat/spritesheets/expedition/r2/master-512/greyshade-hit-northeast-master-2048x512-4f.png",
+            "bytes": 745027,
+            "sha256": "44F44347D17D5C4A7D226593B4D019A55096DD6B3637935EC14E42345B4845CD",
+            "sheetSize": [
+              2048,
+              512
+            ],
+            "frameSize": [
+              512,
+              512
+            ],
+            "frameCount": 4,
+            "transparentFrameCorners": true,
+            "uniqueFrameHashes": 4,
+            "maxSoftEdgeRatio": 1.0139,
+            "greenFringeRatio": 0.001244
+          },
+          "runtime": {
+            "path": "assets/characters/greyshade-cat/spritesheets/expedition/r2/runtime-256/greyshade-hit-northeast-runtime-1024x256-4f.png",
+            "bytes": 219086,
+            "sha256": "2551C720FE75FECD3F3105CC09518349E3E11C5172B89946B3695057ABB33E60",
+            "sheetSize": [
+              1024,
+              256
+            ],
+            "frameSize": [
+              256,
+              256
+            ],
+            "frameCount": 4,
+            "transparentFrameCorners": true,
+            "uniqueFrameHashes": 4,
+            "maxSoftEdgeRatio": 1.0223,
+            "greenFringeRatio": 0.002063
+          }
+        },
+        "east": {
+          "master": {
+            "path": "assets/characters/greyshade-cat/spritesheets/expedition/r2/master-512/greyshade-hit-east-master-2048x512-4f.png",
+            "bytes": 679813,
+            "sha256": "F3EFA3BCA1F3E958FECDE38CC2F2584FAFFB87148DCBA151030FDB81A976E465",
+            "sheetSize": [
+              2048,
+              512
+            ],
+            "frameSize": [
+              512,
+              512
+            ],
+            "frameCount": 4,
+            "transparentFrameCorners": true,
+            "uniqueFrameHashes": 4,
+            "maxSoftEdgeRatio": 1.0142,
+            "greenFringeRatio": 0.001638
+          },
+          "runtime": {
+            "path": "assets/characters/greyshade-cat/spritesheets/expedition/r2/runtime-256/greyshade-hit-east-runtime-1024x256-4f.png",
+            "bytes": 199608,
+            "sha256": "42D3A098A8A5718726085EE84DAA869F095ABEAD2928C3CF6D45ED53DBF3BB7E",
+            "sheetSize": [
+              1024,
+              256
+            ],
+            "frameSize": [
+              256,
+              256
+            ],
+            "frameCount": 4,
+            "transparentFrameCorners": true,
+            "uniqueFrameHashes": 4,
+            "maxSoftEdgeRatio": 1.0254,
+            "greenFringeRatio": 0.002309
+          }
+        },
+        "southeast": {
+          "master": {
+            "path": "assets/characters/greyshade-cat/spritesheets/expedition/r2/master-512/greyshade-hit-southeast-master-2048x512-4f.png",
+            "bytes": 925865,
+            "sha256": "5DFE24ED370C5663DE40074675BF9AC8F9085515CA14BB2532392937FB8E7D8B",
+            "sheetSize": [
+              2048,
+              512
+            ],
+            "frameSize": [
+              512,
+              512
+            ],
+            "frameCount": 4,
+            "transparentFrameCorners": true,
+            "uniqueFrameHashes": 4,
+            "maxSoftEdgeRatio": 1.0122,
+            "greenFringeRatio": 0.001138
+          },
+          "runtime": {
+            "path": "assets/characters/greyshade-cat/spritesheets/expedition/r2/runtime-256/greyshade-hit-southeast-runtime-1024x256-4f.png",
+            "bytes": 267332,
+            "sha256": "C9726971B0B687508FF8E1540A3503B9A4D23F78913577590533F50C4FB9F453",
+            "sheetSize": [
+              1024,
+              256
+            ],
+            "frameSize": [
+              256,
+              256
+            ],
+            "frameCount": 4,
+            "transparentFrameCorners": true,
+            "uniqueFrameHashes": 4,
+            "maxSoftEdgeRatio": 1.0208,
+            "greenFringeRatio": 0.002766
+          }
+        },
+        "south": {
+          "master": {
+            "path": "assets/characters/greyshade-cat/spritesheets/expedition/r2/master-512/greyshade-hit-south-master-2048x512-4f.png",
+            "bytes": 928542,
+            "sha256": "5F06641A1611099EABA89AD20A4CB18E8C7A3E1F6F1A698BBAB3C22DC89F3D23",
+            "sheetSize": [
+              2048,
+              512
+            ],
+            "frameSize": [
+              512,
+              512
+            ],
+            "frameCount": 4,
+            "transparentFrameCorners": true,
+            "uniqueFrameHashes": 4,
+            "maxSoftEdgeRatio": 1.0175,
+            "greenFringeRatio": 4.6e-05
+          },
+          "runtime": {
+            "path": "assets/characters/greyshade-cat/spritesheets/expedition/r2/runtime-256/greyshade-hit-south-runtime-1024x256-4f.png",
+            "bytes": 260496,
+            "sha256": "C4C1B65E80C3D11DAA10CED839031245463A55B8E849407894A04B318A731DA1",
+            "sheetSize": [
+              1024,
+              256
+            ],
+            "frameSize": [
+              256,
+              256
+            ],
+            "frameCount": 4,
+            "transparentFrameCorners": true,
+            "uniqueFrameHashes": 4,
+            "maxSoftEdgeRatio": 1.0242,
+            "greenFringeRatio": 1.2e-05
+          }
+        },
+        "southwest": {
+          "master": {
+            "path": "assets/characters/greyshade-cat/spritesheets/expedition/r2/master-512/greyshade-hit-southwest-master-2048x512-4f.png",
+            "bytes": 1021710,
+            "sha256": "6B835FE2F962979CFB2FEED511A06743CB10436574CC88FF8959546EE69F3FBB",
+            "sheetSize": [
+              2048,
+              512
+            ],
+            "frameSize": [
+              512,
+              512
+            ],
+            "frameCount": 4,
+            "transparentFrameCorners": true,
+            "uniqueFrameHashes": 4,
+            "maxSoftEdgeRatio": 1.0121,
+            "greenFringeRatio": 0.000738
+          },
+          "runtime": {
+            "path": "assets/characters/greyshade-cat/spritesheets/expedition/r2/runtime-256/greyshade-hit-southwest-runtime-1024x256-4f.png",
+            "bytes": 288795,
+            "sha256": "57B0047F8DDADACF9FB9F602A9BB78F28B4FC0FC834C19954FDC0F1AF307E6FA",
+            "sheetSize": [
+              1024,
+              256
+            ],
+            "frameSize": [
+              256,
+              256
+            ],
+            "frameCount": 4,
+            "transparentFrameCorners": true,
+            "uniqueFrameHashes": 4,
+            "maxSoftEdgeRatio": 1.0211,
+            "greenFringeRatio": 0.001315
+          }
+        },
+        "west": {
+          "master": {
+            "path": "assets/characters/greyshade-cat/spritesheets/expedition/r2/master-512/greyshade-hit-west-master-2048x512-4f.png",
+            "bytes": 702183,
+            "sha256": "F866874DD5FFED3218DC4ED6643A987B8381B6683E327B7072819CF6213ABF58",
+            "sheetSize": [
+              2048,
+              512
+            ],
+            "frameSize": [
+              512,
+              512
+            ],
+            "frameCount": 4,
+            "transparentFrameCorners": true,
+            "uniqueFrameHashes": 4,
+            "maxSoftEdgeRatio": 1.0151,
+            "greenFringeRatio": 0.001031
+          },
+          "runtime": {
+            "path": "assets/characters/greyshade-cat/spritesheets/expedition/r2/runtime-256/greyshade-hit-west-runtime-1024x256-4f.png",
+            "bytes": 204961,
+            "sha256": "BCDA9DB553710BC8806351157EFBA71C2E709FB3FB5A74A846BECB10116054B7",
+            "sheetSize": [
+              1024,
+              256
+            ],
+            "frameSize": [
+              256,
+              256
+            ],
+            "frameCount": 4,
+            "transparentFrameCorners": true,
+            "uniqueFrameHashes": 4,
+            "maxSoftEdgeRatio": 1.0249,
+            "greenFringeRatio": 0.001814
+          }
+        },
+        "northwest": {
+          "master": {
+            "path": "assets/characters/greyshade-cat/spritesheets/expedition/r2/master-512/greyshade-hit-northwest-master-2048x512-4f.png",
+            "bytes": 807595,
+            "sha256": "8F539A839CDFB3878A6CBF199CDED865D7AE229EAEE93F6CA0F86204FBA184A2",
+            "sheetSize": [
+              2048,
+              512
+            ],
+            "frameSize": [
+              512,
+              512
+            ],
+            "frameCount": 4,
+            "transparentFrameCorners": true,
+            "uniqueFrameHashes": 4,
+            "maxSoftEdgeRatio": 1.013,
+            "greenFringeRatio": 0.001322
+          },
+          "runtime": {
+            "path": "assets/characters/greyshade-cat/spritesheets/expedition/r2/runtime-256/greyshade-hit-northwest-runtime-1024x256-4f.png",
+            "bytes": 236662,
+            "sha256": "B6134F23636BAFD7DB644900E5A62AB7714B32B87835E1E212B08CBE1E8BC7A7",
+            "sheetSize": [
+              1024,
+              256
+            ],
+            "frameSize": [
+              256,
+              256
+            ],
+            "frameCount": 4,
+            "transparentFrameCorners": true,
+            "uniqueFrameHashes": 4,
+            "maxSoftEdgeRatio": 1.021,
+            "greenFringeRatio": 0.002492
+          }
+        }
+      }
+    }
+  }
+}

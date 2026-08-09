@@ -8055,3 +8055,265 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
   safety/policy/boundary/Care routes still issue zero network requests. No
   player traffic, visible HMAX speech, memory write, reward, Growth, gameplay
   mutation or Soul Talk cutover is authorized.
+
+### 2026-08-09 - Codex - Global 3D Gameplay Pilots R2 Architecture - IN PROGRESS
+
+- Status: `IN PROGRESS`; Owner asked to continue with the next separately
+  scoped Pilot package after R1 publication.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `GLOBAL_3D_GAMEPLAY_PILOTS_R2`.
+- Layer: `GROUNDWORK + EXPERIENCE`; GROUNDWORK is limited to versioned candidate
+  manifests, offline Blender/art tooling and QA. No state/save foundation is in
+  scope, and no new generated art may enter formal `assets/**` before Owner
+  visual approval.
+- Branch / commit: `codex/global-3d-gameplay-pilots-r2` / `uncommitted`;
+  isolated worktree
+  `C:\Users\User\NexusLink_RaphaelAI_Workspace\NexusLink-global-3d-gameplay-pilots-r2`.
+- Scope: add a query-gated Greyshade eight-direction `attack_basic` plus `hit`
+  Pilot; add one formal resin-clay Expedition rift enemy move/attack Pilot; add
+  a second-species `crystalfin-seahorse` player Orbit top with base/resonance
+  presentation profiles, Blender source and GLB audits.
+- Red-line check: Expedition actions remain restrained standoff gestures, not
+  enemy-HP-zero attacks; Orbit remains deterministic, session-only and
+  equal-budget with `src/orbit/orbitPhysics.js` as sole authority; no Growth,
+  relationship, reward, save, rarity, equipment or commerce mutation.
+- Non-goals: no roster-wide batch, no legacy deletion, no all-stage renderer
+  migration, no save/schema changes, no Rapier/6DOF authority and no unreviewed
+  promotion of candidate art.
+- Acceptance refs: `ACCEPTANCE.md` E1-E2, G1-G7, H7-H9, J1-J4 and Orbit
+  O15A/O17; 30/60/120 Hz replay, 390x844/390x664, reduced-motion, missing-asset
+  fallback and decoded-memory gates remain mandatory.
+- Required reading: `docs/design/GLOBAL_3D_PRESENTATION_CONTRACT_V1.md`,
+  `docs/design/HEARTCORE_ORBIT_BATTLE_CONTRACT_V1.md`, promoted R1 manifests,
+  `docs/assets/COMPANION_ANIMATION_CATALOG.md`,
+  `docs/art/SPECIES_MOTION_TRANSLATION.md` and this lane.
+
+### 2026-08-09 - Codex - Global 3D Gameplay Pilots R2 Visual Production - IN PROGRESS
+
+- Status: `IN PROGRESS`; all new images, sheets, Blender sources and GLBs begin
+  as review candidates under ignored `output/**` and cannot inherit R1 art
+  approval.
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `GLOBAL_3D_GAMEPLAY_PILOTS_R2`.
+- Visual scope: Greyshade keeps the approved bright resin-clay Style Lock while
+  gaining six-frame restrained `attack_basic` and four-frame `hit` actions;
+  the enemy follows the target art's dark indigo root-shadow silhouette with
+  readable resin volume and cyan resonance droplets; Crystalfin uses an
+  aquatic-hover/seahorse-derived top silhouette, not a feline shell.
+- Pipeline: whole-action generation from approved anchors, 512x512 transparent
+  masters, bottom-centre or stable hover datum, shared-scale normalization,
+  linear sampling, runtime downscale and bounded action loading; Blender GLB
+  output records pivots, hierarchy, collider intent, budgets and hashes.
+- Promotion gate: mechanical QC, browser screenshots and AI comparison package
+  are evidence only. Owner must explicitly accept each new visual family before
+  any candidate enters `assets/**` or becomes default runtime art.
+- Non-goals: no one-template quadruped batch, no permanent evolution form, no
+  baked UI/scene/text, no weapon/gore framing, no pixel-art regression and no
+  full-roster production.
+- Required reading: companion art policy, Greyshade replacement protocol,
+  Sprite Pipeline, Web 3D Asset Pipeline, `img2threejs 1.4.3`, imagegen rules,
+  both R1 manifests and this lane.
+
+### 2026-08-09 - Codex - Global 3D Gameplay Pilots R2 Architecture - VERIFIED
+
+- Status: `VERIFIED` locally at the candidate gate; no commit, push, PR, merge or
+  asset promotion was authorized or performed in this continuation.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `GLOBAL_3D_GAMEPLAY_PILOTS_R2`.
+- Branch / commit: `codex/global-3d-gameplay-pilots-r2` / `uncommitted` in the
+  isolated R2 worktree.
+- Implemented: query-gated Expedition action profiles and combat-log-driven
+  playback; Greyshade action restoration; resin-rift move/attack restoration;
+  Crystalfin base/resonance Orbit profile; per-actor candidate-to-approved GLB
+  fallback; runtime diagnostics that expose loaded URLs without changing
+  simulation authority.
+- Scope refinement: the opening entry named an eight-direction attack target.
+  The Pilot-before-batch gate intentionally stops at one south-facing
+  `attack_basic` and one south-facing `hit` sequence. Eight-direction movement
+  remains the approved R1 system and no action batch is authorized until the
+  Owner accepts this motion language.
+- Authority / red-line result: `src/orbit/orbitPhysics.js` remains the sole
+  deterministic authority; Crystalfin base and resonance both total the same
+  normalized budget of 6; candidate transforms are session-only; Expedition
+  presentation consumes existing combat facts and writes no relationship,
+  Growth, reward, save or safety state.
+- Browser evidence: 390x844 Expedition rendered the Greyshade and formal-rift
+  candidates with controls visible and no candidate request failures. The
+  isolated Three.js runtime harness loaded the Crystalfin R2 candidate plus the
+  approved Rift fallback, reported `snapshot-only`, rendered both base and
+  resonance player forms, and finished with 0 console errors and 0 warnings.
+  Loading the same harness without `orbit3dCandidate=1` failed closed with
+  `approved_assets_missing` and made no candidate model authoritative.
+- Automated verification: JS syntax checks; R2 candidate cases; Orbit
+  combat-form cases including exact 30/60/120 Hz replay; R1 eight-direction
+  regression; global 3D promotion regression; Expedition behavior matrix
+  `32/32`; strict img2three sculpt-spec quality validation; `git diff --check`.
+- Remaining gate: Owner visual approval of all R2 candidate families, followed
+  by a separately authorized GROUNDWORK promotion package. Do not copy ignored
+  `output/**` into `assets/**` or remove fallbacks before that gate.
+
+### 2026-08-09 - Codex - Global 3D Gameplay Pilots R2 Visual Production - VERIFIED
+
+- Status: `VERIFIED` as review candidates only; human approval remains false
+  and runtime promotion remains disallowed.
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `GLOBAL_3D_GAMEPLAY_PILOTS_R2`.
+- Candidate package: six-frame Greyshade restrained resonance gesture,
+  four-frame controlled recoil, eight-frame resin-root enemy move, six-frame
+  enemy resonance pulse, and Crystalfin Blender/GLB base plus in-match
+  resonance form. Sprite masters are 512x512 transparent frames with
+  bottom-centre anchors and 256 runtime exports; no pixel-art or baked UI.
+- Crystalfin result: aquatic-hover identity is translated into a radial resin
+  top using the spiral tail, sapphire core, ivory plates and crystal-fin fan.
+  It is not a feline shell and not a literal free-swimming seahorse mesh. The
+  resonance form expands the fin silhouette while retaining the same physics
+  budget and deterministic 2D collider authority.
+- Mechanical QC: all sheets divide exactly, have transparent corners and
+  recorded anchors; the GLB is below the 2 MiB Pilot budget and contains
+  `OrbitTopRoot`, `BaseForm`, `ResonanceForm` and
+  `ColliderProxy_Deterministic2D`; Blender 5.2 source, four review renders,
+  img2three spec, PBR extraction report and reference comparison remain under
+  ignored `output/global-3d-gameplay-pilots-r2/**`.
+- Honest visual risks for Owner review: the enemy candidate is more saturated
+  and bulky than the target root-shadow; Crystalfin's gold trim is understated;
+  the base-to-resonance silhouette change reads clearly in isolated runtime but
+  is intentionally restrained. These are review decisions, not mechanical
+  failures.
+- Next safe action: Owner accepts, rejects or requests revision for the four
+  2D action families and the Crystalfin base/resonance pair. Only an explicit
+  acceptance may open a promotion package; batch generation remains blocked.
+
+### 2026-08-09 - Codex - R2 Promotion And Greyshade Directional Action Batch - IN PROGRESS
+
+- Status: `IN PROGRESS`; Owner accepted the reviewed R2 visual direction, opened
+  the promotion/action-batch package, and explicitly authorized commit, push,
+  protected-main PR integration and post-merge Codebase MCP refresh after strict
+  asset-by-asset self-review.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `GLOBAL_3D_GAMEPLAY_PILOTS_R2_PROMOTION_AND_ACTION_BATCH`.
+- Layer: `GROUNDWORK + EXPERIENCE`; GROUNDWORK is limited to versioned promoted
+  assets, manifests, reproducible Blender/art tooling and QA. No save, store,
+  default-state or safety foundation is in scope.
+- Files touched: `assets/characters/greyshade-cat/spritesheets/expedition/r2/**`,
+  `assets/enemies/rift-root-echo/expedition/r2/**`, `assets/3d/orbit-tops-r2/**`,
+  `src/data/expeditionActionSpriteProfiles.js`, `src/data/orbitTopProfiles.js`,
+  `src/pixi/expeditionScene.js`, `src/three/orbitTopPilotScene.js`, scoped QA,
+  art/Blender tooling and this ledger.
+- Red-line check: Expedition action art remains a restrained boundary/resonance
+  exchange and never introduces HP-zero domination; Orbit physics stays solely
+  authoritative in `src/orbit/orbitPhysics.js`; resonance form changes remain
+  equal-budget, deterministic and session-only, with no Growth, relationship,
+  reward, rarity, equipment, commerce or save mutation.
+- Non-goals: no legacy deletion, no alternate-character fallback, no roster-wide
+  species batch, no all-screen Three.js migration, no backend/build dependency,
+  no remote PvP and no permanent evolution-form save state.
+- Acceptance refs: `ACCEPTANCE.md` E1-E2, G1-G7, H7-H9, J1-J4 and Orbit
+  O15A/O17; exact sprite division, alpha/anchor/identity/continuity audits,
+  decoded-memory budget, missing-asset fallback, reduced motion, 390x844,
+  390x664, desktop and exact 30/60/120 Hz replay are mandatory before publish.
+- Branch / commit: `codex/global-3d-gameplay-pilots-r2` / `uncommitted` in the
+  isolated R2 worktree.
+- Required reading: `docs/design/GLOBAL_3D_PRESENTATION_CONTRACT_V1.md`,
+  `docs/design/HEARTCORE_ORBIT_BATTLE_CONTRACT_V1.md`, both R1 manifests,
+  `docs/assets/COMPANION_ANIMATION_CATALOG.md`, companion art policy, Sprite
+  Pipeline, imagegen, Web 3D Asset Pipeline, Game Playtest and this lane.
+
+### 2026-08-09 - Codex - R2 Promotion And Greyshade Directional Action Art - IN PROGRESS
+
+- Status: `IN PROGRESS`; reviewed south-facing Greyshade actions, Rift Root Echo
+  motion and Crystalfin Orbit forms are the Owner-approved style/motion anchors.
+  Every promoted raster/GLB must pass individual visual and mechanical review
+  before it can enter the publication commit.
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `GLOBAL_3D_GAMEPLAY_PILOTS_R2_PROMOTION_AND_ACTION_BATCH`.
+- Visual scope: preserve the bright 3D miniature resin-clay Style Lock; retain
+  Greyshade identity and eight-direction walk perspective while producing
+  direction-aware six-frame `attack_basic` and four-frame `hit`; promote the
+  reviewed root-shadow enemy move/attack family and aquatic Crystalfin
+  base/resonance top without copying the feline shell.
+- Asset contract: transparent 512x512 audit frames, bottom-centre anchor (or
+  stable hover datum), exact divisible sheets no larger than 4096px per edge,
+  linear runtime sampling, bounded runtime-256 exports, provenance, hashes,
+  decoded-memory accounting and retained legacy/fallback paths.
+- Review gate: inspect every frame/sheet/render for transparent corners, clipped
+  silhouette, unwanted UI/text/background, identity drift, direction error,
+  foot/hover sliding, duplicate frames and discontinuous motion. Mechanical QC
+  alone is insufficient; browser evidence must also match the approved target.
+- Non-goals: no chunky pixel art, baked scene/UI, weapon/gore framing, one-shape
+  species templating, skin shop or removal/upscale of legacy Greyshade art.
+- Branch / commit: `codex/global-3d-gameplay-pilots-r2` / `uncommitted`.
+- Required reading: companion art policy, Greyshade replacement protocol,
+  `docs/art/SPECIES_MOTION_TRANSLATION.md`, both promoted R1 manifests, Sprite
+  Pipeline/imagegen rules and this lane.
+
+### 2026-08-10 - Codex - R2 Gameplay Pilots Runtime Promotion - VERIFIED
+
+- Status: `VERIFIED`; the scoped runtime package is ready for protected-PR CI.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `GLOBAL_3D_GAMEPLAY_PILOTS_R2_PROMOTION_AND_ACTION_BATCH`.
+- Completed: promoted Greyshade eight-direction `attack_basic`/`hit` profiles
+  with per-direction lazy loading and stale-request protection; promoted the
+  Rift Root Echo move/attack profile; promoted the Crystalfin Seahorse GLB and
+  kept the R1 Rift Echo GLB as the opponent; added explicit Orbit 3D runtime
+  telemetry and retained deterministic 2D fallback.
+- Runtime correction found during strict review: the generic `.orbit-stage`
+  selector could bind the hidden map stage, leaving the WebGL canvas at
+  `0x0` despite a ready controller. The battle path is now scoped to
+  `.orbit-battle .orbit-stage`; the Three canvas follows the authoritative 2D
+  arena dimensions and is centered over it. Crystalfin fallback now resolves
+  from `activeCompanionId` instead of hard-coding Greyshade.
+- Authority / red-line result: `src/orbit/orbitPhysics.js` remains the sole
+  simulation and collision authority; Three.js consumes snapshots only.
+  Player and opponent resonance forms retain equal bounded budgets, identical
+  timed return-to-base behavior and exact 30/60/120 Hz replay. No HP-zero,
+  reward, Growth, save, relationship, roster or permanent-form mutation was
+  added.
+- Focused validation: manifest rebuild `PASS`; R2 promotion cases `PASS`;
+  Orbit form cases `PASS`; Greyshade eight-direction cases `PASS`; R1 global
+  promotion cases `PASS`; Expedition behavior `32/32 PASS`; Hybrid Orbit
+  physics `PASS`; syntax/compile and `git diff --check` `PASS`.
+- Browser validation: five cases `PASS` at 390x844, 390x664 and 1280x800,
+  including reduced motion and forced sprite/GLB failure. The positive Orbit
+  case requires both Crystalfin R2 and Rift Echo R1 GLBs to return HTTP 200,
+  one ready non-zero Three canvas to cover the arena, and no page/console
+  errors. The forced GLB failure removes Three and preserves the correct
+  Crystalfin 2D fallback.
+- Release-runner note: two complete local runs each passed 27/28 required
+  checks but hit a different 30-second Playwright readiness timeout. The two
+  timed-out gates passed immediately in isolation: map first-session `32/32`
+  and companion Growth `156/156`. This is recorded as runner flake, not hidden
+  as a clean 28/28; protected PR CI remains mandatory before merge.
+- Branch / commit: `codex/global-3d-gameplay-pilots-r2` / publication commit
+  pending.
+- Next safe action: stage only this package, push the branch, open the
+  protected PR, require green checks, then merge and verify Pages before the
+  final publication ledger entry and Codebase MCP refresh.
+
+### 2026-08-10 - Codex - R2 Asset-By-Asset Art Audit - VERIFIED
+
+- Status: `VERIFIED`; human-approved visual direction plus strict Codex
+  mechanical and runtime review completed.
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `GLOBAL_3D_GAMEPLAY_PILOTS_R2_PROMOTION_AND_ACTION_BATCH`.
+- Reviewed assets: all 32 Greyshade action sheets (16 master-512 and 16
+  runtime-256), all four Rift Root Echo sheets (two master and two runtime),
+  the Crystalfin base/resonance GLB, its four Blender review renders, and all
+  current five-case runtime screenshots. The first north-facing hit source was
+  rejected for wrong perspective and regenerated before promotion.
+- Mechanical audit: every raster has an exact divisible grid, transparent
+  corners, cleared seams/edges, no clipped silhouette, no green fringe or
+  baked UI/text/background, non-duplicate pose progression and the declared
+  frame count. Greyshade active-direction decoded memory is 2.5 MiB; the
+  bounded all-direction session cache is 20.0 MiB. The GLB is 1,172,824 bytes,
+  46,232 triangles, texture-free, contains `BaseForm`, `ResonanceForm` and the
+  non-authoritative `ColliderProxy_Deterministic2D`, and stays under 2 MiB.
+- Visual result: the bright miniature resin-clay expedition scene remains
+  coherent on phone and desktop; Greyshade identity/directional silhouette is
+  retained; the root-shadow enemy remains distinct; Crystalfin reads as its
+  own aquatic top rather than a feline skin. Runtime screenshots show no
+  horizontal overflow, clipping, white blocks, zero-sized WebGL surface or
+  fallback identity substitution.
+- Provenance: all promoted art is project-generated; no downloaded third-party
+  pack or new dependency is included. Legacy assets remain intact.
+- Branch / commit: `codex/global-3d-gameplay-pilots-r2` / publication commit
+  pending.

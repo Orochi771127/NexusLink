@@ -59,12 +59,22 @@ function ok(name) {
   console.log(`PASS  ${name}`);
 }
 
-assert.deepEqual(ORBIT_TOP_PROFILE_IDS, ["greyshade-cat", "rift-echo"]);
+assert.deepEqual(ORBIT_TOP_PROFILE_IDS, [
+  "greyshade-cat",
+  "crystalfin-seahorse",
+  "rift-echo"
+]);
 for (const id of ORBIT_TOP_PROFILE_IDS) {
   const profile = getOrbitTopProfile(id);
-  assert.equal(profile.artStatus, "runtime-promoted-owner-approved");
-  assert.ok(profile.model.glbPath.startsWith("assets/3d/orbit-tops-r1/"));
-  assert.ok(profile.model.glbPath.endsWith(".glb"));
+  if (id === "crystalfin-seahorse") {
+    assert.equal(profile.artStatus, "runtime-promoted-owner-approved");
+    assert.ok(profile.model.glbPath.startsWith("assets/3d/orbit-tops-r2/"));
+    assert.ok(profile.model.candidateGlbPath.includes("global-3d-gameplay-pilots-r2"));
+  } else {
+    assert.equal(profile.artStatus, "runtime-promoted-owner-approved");
+    assert.ok(profile.model.glbPath.startsWith("assets/3d/orbit-tops-r1/"));
+    assert.ok(profile.model.glbPath.endsWith(".glb"));
+  }
   assert.ok(profile.model.candidateGlbPath.endsWith(".glb"));
   assert.equal(hasEqualOrbitCombatFormBudget(profile.forms), true);
   assert.equal(orbitCombatFormBudget(profile.forms.base.physics), 6);
@@ -73,7 +83,16 @@ for (const id of ORBIT_TOP_PROFILE_IDS) {
   assert.equal("winner" in profile.forms.resonance.physics, false);
   assert.equal("reward" in profile.forms.resonance.physics, false);
 }
-ok("player and Rift top assets have distinct identity and equal form budgets");
+ok("approved tops keep distinct identity and equal form budgets");
+
+const crystalfinConfig = createOrbitTopCombatFormConfig("crystalfin-seahorse");
+assert.equal(crystalfinConfig.enabled, true);
+assert.equal(crystalfinConfig.player.profileId, "crystalfin-seahorse-orbit-top-r2");
+assert.equal(
+  getOrbitTopProfile("crystalfin-seahorse").model.colliderProxyNode,
+  "ColliderProxy_Deterministic2D"
+);
+ok("Crystalfin R2 top uses the same session-only combat-form contract");
 
 function createPilotSession() {
   return createOrbitSession({

@@ -17,6 +17,11 @@ import {
   getExpeditionSpritePilotProfile,
   isExpeditionSpritePilotRequested
 } from "../data/expeditionSpriteProfiles.js";
+import {
+  getExpeditionCompanionActionPilotProfile,
+  getExpeditionEnemyActionPilotProfile,
+  isExpeditionActionPilotRequested
+} from "../data/expeditionActionSpriteProfiles.js";
 
 function drawRoundedRect(g, x, y, w, h, r, fill) {
   g.roundRect(x, y, w, h, r).fill(fill);
@@ -76,6 +81,251 @@ function sliceIdleTextures(PIXI, texture, definition) {
       frameHeight
     )
   }));
+}
+
+function createCandidateAnimatedSprite(PIXI, texture, definition, profile, name) {
+  const textures = sliceIdleTextures(PIXI, texture, definition);
+  if (textures.length !== definition.frameCount) {
+    throw new Error(`incomplete_candidate_action:${name}`);
+  }
+  const sprite = new PIXI.AnimatedSprite(textures);
+  sprite.name = name;
+  sprite.anchor.set(profile.anchor.x, profile.anchor.y);
+  sprite.scale.set(profile.onScreenHeight / definition.frameHeight);
+  sprite.animationSpeed = Math.max(0.01, definition.fps / 60);
+  sprite.loop = definition.loop === true;
+  sprite.y = 18;
+  sprite.roundPixels = false;
+  sprite.visible = false;
+  sprite.stop();
+  sprite.gotoAndStop(0);
+  return sprite;
+}
+
+function restoreCompanionBasePresentation(node) {
+  const walk = node?.__eightDirectionSprite;
+  const illustrated = node?.__illustratedSprite;
+  const fallback = node?.getChildByName?.("procedural_body_fallback");
+  if (walk) walk.visible = true;
+  if (illustrated) illustrated.visible = !walk;
+  if (fallback) fallback.visible = !walk && !illustrated;
+  node.__candidateActionPlaying = null;
+}
+
+function attachCompanionActionPilot(PIXI, node, companionId) {
+  const profile = getExpeditionCompanionActionPilotProfile(companionId);
+  if (!profile || !isExpeditionActionPilotRequested() || !PIXI?.Assets?.load) {
+    node.__candidateActionPilotStatus = "not_requested";
+    return null;
+  }
+  node.__candidateActionPIXI = PIXI;
+  node.__candidateActionProfile = profile;
+  node.__candidateActionSprites = Object.create(null);
+  node.__candidateActionLoadPromises = Object.create(null);
+  node.__candidateActionPilotStatus = "ready";
+  node.__candidateActionPilotPromise = Promise.resolve(node.__candidateActionSprites);
+  return node.__candidateActionPilotPromise;
+}
+
+function resolveCompanionActionDefinition(profile, actionId, facing) {
+  const base = profile?.actions?.[actionId];
+  if (!base?.directions) return null;
+  const direction = base.directions[facing]
+    ? facing
+    : base.fallbackDirection || "south";
+  const sheet = base.directions[direction];
+  if (!sheet) return null;
+  return { definition: { ...base, sheet }, direction };
+}
+
+function startCompanionActionSprite(node, sprite, requestKey, actionId) {
+  if (!sprite || node.destroyed || node.__candidateActionRequest !== requestKey) return;
+  const sprites = node.__candidateActionSprites;
+  Object.values(sprites).forEach((candidate) => {
+    candidate.stop();
+    candidate.visible = candidate === sprite;
+  });
+  if (node.__eightDirectionSprite) node.__eightDirectionSprite.visible = false;
+  if (node.__illustratedSprite) node.__illustratedSprite.visible = false;
+  const fallback = node.getChildByName?.("procedural_body_fallback");
+  if (fallback) fallback.visible = false;
+  node.__candidateActionPlaying = actionId;
+  sprite.loop = false;
+  sprite.onComplete = () => {
+    sprite.visible = false;
+    sprite.stop();
+    sprite.gotoAndStop(0);
+    if (!node.destroyed) restoreCompanionBasePresentation(node);
+  };
+  sprite.gotoAndPlay(0);
+}
+
+function ensureCompanionActionSprite(node, actionId, facing) {
+  const profile = node?.__candidateActionProfile;
+  const PIXI = node?.__candidateActionPIXI;
+  const resolved = resolveCompanionActionDefinition(profile, actionId, facing);
+  if (!resolved || !PIXI?.Assets?.load) return null;
+  const key = `${actionId}:${resolved.direction}`;
+  if (node.__candidateActionSprites[key]) {
+    return Promise.resolve({ key, sprite: node.__candidateActionSprites[key] });
+  }
+  if (node.__candidateActionLoadPromises[key]) {
+    return node.__candidateActionLoadPromises[key];
+  }
+
+  node.__candidateActionPilotStatus = "loading";
+  const loading = PIXI.Assets.load(resolved.definition.sheet)
+    .then((texture) => {
+      if (node.destroyed) return null;
+      const sprite = createCandidateAnimatedSprite(
+        PIXI,
+        texture,
+        resolved.definition,
+        profile,
+        `greyshade_action_${actionId}_${resolved.direction}`
+      );
+      node.addChildAt(sprite, Math.min(1, node.children.length));
+      node.__candidateActionSprites[key] = sprite;
+      node.__candidateActionPilotStatus = "ready";
+      return { key, sprite };
+    })
+    .catch(() => {
+      node.__candidateActionPilotStatus = "fallback";
+      restoreCompanionBasePresentation(node);
+      return null;
+    })
+    .finally(() => {
+      delete node.__candidateActionLoadPromises[key];
+    });
+  node.__candidateActionLoadPromises[key] = loading;
+  return loading;
+}
+
+export function playCompanionActionPilot(node, actionId) {
+  if (!node?.__candidateActionProfile) return false;
+  const facing = node.__eightDirectionDirection || "south";
+  const resolved = resolveCompanionActionDefinition(
+    node.__candidateActionProfile,
+    actionId,
+    facing
+  );
+  if (!resolved) return false;
+  const requestKey = `${actionId}:${resolved.direction}`;
+  node.__candidateActionRequest = requestKey;
+  const loading = ensureCompanionActionSprite(node, actionId, facing);
+  if (!loading) return false;
+  loading.then((entry) => {
+    if (entry) startCompanionActionSprite(node, entry.sprite, requestKey, actionId);
+  });
+  return true;
+}
+
+function restoreEnemyMovePresentation(node) {
+  const move = node?.__candidateEnemyActionSprites?.move;
+  if (move) move.visible = true;
+  node.__candidateEnemyActionPlaying = null;
+}
+
+function attachEnemyActionPilot(PIXI, node, enemyId) {
+  const profile = getExpeditionEnemyActionPilotProfile(enemyId);
+  if (!profile || !isExpeditionActionPilotRequested() || !PIXI?.Assets?.load) {
+    node.__candidateEnemyPilotStatus = "not_requested";
+    return null;
+  }
+  node.__candidateEnemyPilotStatus = "loading";
+  const loading = Promise.all(Object.entries(profile.actions).map(async ([actionId, definition]) => {
+    const texture = await PIXI.Assets.load(definition.sheet);
+    return [
+      actionId,
+      createCandidateAnimatedSprite(
+        PIXI,
+        texture,
+        definition,
+        profile,
+        `rift_root_echo_candidate_${actionId}`
+      )
+    ];
+  }))
+    .then((entries) => {
+      if (node.destroyed) return null;
+      const sprites = Object.fromEntries(entries);
+      Object.values(sprites).forEach((sprite) => {
+        sprite.y = 22;
+        node.addChildAt(sprite, Math.min(1, node.children.length));
+      });
+      sprites.move.visible = true;
+      const fallback = node.getChildByName?.("procedural_rift_fallback");
+      if (fallback) fallback.visible = false;
+      if (node.__riftSprite) node.__riftSprite.visible = false;
+      node.__candidateEnemyActionSprites = sprites;
+      node.__candidateEnemyPilotStatus = "ready";
+      return sprites;
+    })
+    .catch(() => {
+      node.__candidateEnemyPilotStatus = "fallback";
+      return null;
+    });
+  node.__candidateEnemyPilotPromise = loading;
+  return loading;
+}
+
+export function syncEnemyActionPilot(node, x, y) {
+  const previous = node?.__candidateEnemyPosition;
+  node.__candidateEnemyPosition = { x, y };
+  const move = node?.__candidateEnemyActionSprites?.move;
+  if (!move || node.__candidateEnemyActionPlaying) return false;
+  const moving = previous && Number.isFinite(x) && Number.isFinite(y) &&
+    Math.hypot(x - previous.x, y - previous.y) >= 0.2;
+  if (moving) {
+    if (!move.playing) move.play();
+  } else if (move.playing) {
+    move.stop();
+    move.gotoAndStop(0);
+  }
+  return true;
+}
+
+export function playEnemyActionPilot(node, actionId = "attack") {
+  const sprites = node?.__candidateEnemyActionSprites;
+  const sprite = sprites?.[actionId];
+  if (!sprite) return false;
+  Object.values(sprites).forEach((candidate) => {
+    candidate.stop();
+    candidate.visible = candidate === sprite;
+  });
+  node.__candidateEnemyActionPlaying = actionId;
+  sprite.loop = false;
+  sprite.onComplete = () => {
+    sprite.visible = false;
+    sprite.stop();
+    sprite.gotoAndStop(0);
+    if (!node.destroyed) restoreEnemyMovePresentation(node);
+  };
+  sprite.gotoAndPlay(0);
+  return true;
+}
+
+export function syncExpeditionActionEvents(sceneRoot, session) {
+  if (!isExpeditionActionPilotRequested()) return 0;
+  const combatLog = Array.isArray(session?.combatLog) ? session.combatLog : [];
+  const previousCount = Math.min(
+    Number(sceneRoot?.__candidateActionCombatLogLength) || 0,
+    combatLog.length
+  );
+  const newEntries = combatLog.slice(previousCount);
+  newEntries.forEach((entry) => {
+    if (entry?.who === "companion") {
+      playCompanionActionPilot(sceneRoot.__companionNode, "attack_basic");
+      return;
+    }
+    if (entry?.who === "enemy") {
+      const enemyNode = sceneRoot.__enemyLayer?.getChildByName?.(`enemy_${entry.target}`);
+      playEnemyActionPilot(enemyNode, "attack");
+      playCompanionActionPilot(sceneRoot.__companionNode, "hit");
+    }
+  });
+  sceneRoot.__candidateActionCombatLogLength = combatLog.length;
+  return newEntries.length;
 }
 
 function attachIllustratedCompanion(PIXI, node, companionId) {
@@ -226,6 +476,7 @@ function attachRiftSilhouette(PIXI, node, enemy) {
       const maxEdge = Math.max(texture.width || 1, texture.height || 1);
       sprite.scale.set(58 / maxEdge);
       sprite.y = -5;
+      sprite.visible = !node.__candidateEnemyActionSprites;
       node.addChildAt(sprite, Math.min(1, node.children.length));
       const fallback = node.getChildByName?.("procedural_rift_fallback");
       if (fallback) fallback.visible = false;
@@ -418,6 +669,8 @@ function buildEnemyNode(PIXI, enemy, visual) {
   node.x = enemy.x;
   node.y = enemy.y;
   attachRiftSilhouette(PIXI, node, enemy);
+  attachEnemyActionPilot(PIXI, node, enemy.enemyId);
+  node.__candidateEnemyPosition = { x: enemy.x, y: enemy.y };
   return node;
 }
 
@@ -491,6 +744,7 @@ export function createExpeditionScene(PIXI, region, session) {
   companion.y = session.companion.y;
   attachIllustratedCompanion(PIXI, companion, session.companionId);
   attachEightDirectionCompanionPilot(PIXI, companion, session.companionId);
+  attachCompanionActionPilot(PIXI, companion, session.companionId);
   companion.__eightDirectionPilotPosition = {
     x: session.companion.x,
     y: session.companion.y
@@ -506,6 +760,9 @@ export function createExpeditionScene(PIXI, region, session) {
   root.__atmosphereLayer = atmosphere;
   root.__PIXI = PIXI;
   root.__visualProfile = visual;
+  root.__candidateActionCombatLogLength = Array.isArray(session.combatLog)
+    ? session.combatLog.length
+    : 0;
   attachFoundationSprite(PIXI, root, ground, obstacles, region, visual);
 
   return root;
@@ -577,10 +834,13 @@ export function syncExpeditionScene(sceneRoot, session, deltaMs = 16) {
       }
       node.x = enemy.x;
       node.y = enemy.y;
+      syncEnemyActionPilot(node, enemy.x, enemy.y);
       updateHpBar(node, enemy.hp, enemy.hpMax, visual.palette);
       node.alpha = enemy.state === "alert" ? 1 : 0.72;
     });
   }
+
+  syncExpeditionActionEvents(sceneRoot, session);
 
   const lootLayer = sceneRoot.__lootLayer;
   if (lootLayer) {
