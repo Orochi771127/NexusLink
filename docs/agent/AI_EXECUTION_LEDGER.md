@@ -7946,3 +7946,82 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Required reading: the preceding `IN PROGRESS` entry, changed runtime and QA
   files, external final holdout/Web-gate evidence, HMAX synthetic staging
   status and this completion entry.
+
+### 2026-08-09 - Codex - Raphael HMAX Local Session Broker V1 - IN PROGRESS
+
+- Status: `IN PROGRESS`; stacked isolated branch based on the published local
+  shadow seam. No visible hosted speech or player traffic is authorized.
+- Lane: `Raphael Core, Companion Reasoning, And Soul Talk`.
+- Task name: `RAPHAEL_HMAX_LOCAL_SESSION_BROKER_V1`.
+- Scope: add a loopback-only, in-memory session-token provider for a separately
+  running HMAX broker. The provider may exchange one short-lived, one-time
+  owner pairing code, but it must never persist that code, the broker token or
+  an upstream HMAX credential.
+- Safety boundary: local safety, acute medical, abuse, dependency, boundary and
+  Care terminals remain before configuration, pairing and fetch. Hosted output
+  stays comparison-only and cannot affect speech, memory, reward, Growth,
+  effects, save state or UI.
+- Groundwork boundary: no `index.html`, state/save foundation, Pixi, assets,
+  tools or scripts are changed. No dependency or Web build step is introduced.
+- Worktrees / branches: Nexus Link
+  `codex/raphael-hmax-local-session-broker-v1`; HMAX
+  `codex/hmax-local-session-broker-v1`. Both are isolated from the primary
+  checkouts; the Nexus branch is intentionally stacked on PR #190.
+- Required evidence: token lifecycle and replay cases, exact-origin and
+  loopback checks, upstream-secret isolation, expired-session fail-closed,
+  existing shadow/safety regressions, full HMAX suite and scoped diff review.
+- Required reading: the preceding local-shadow completion entry, PR #190,
+  `ACCEPTANCE.md` Q1-Q7, the HMAX persistent-synthetic staging ledger and the
+  new broker threat boundary.
+
+### 2026-08-09 - Codex - Raphael HMAX Local Shadow Client V1 - PUBLISHED FOR REVIEW
+
+- Status: `PUBLISHED FOR REVIEW`; implementation commit
+  `2e73dffeeccb83748a93b3416e18e5d08b2143e4` was pushed to
+  `codex/raphael-hmax-local-shadow-v1` and Draft PR
+  [#190](https://github.com/Orochi771127/NexusLink/pull/190) targets protected
+  `main`.
+- Exact-head GitHub proof: `web-release-gate` passed in workflow run
+  `31320739697`; the PR is `MERGEABLE` / `CLEAN` and remains Draft.
+- Publication boundary: source review only. No merge, Pages deployment, player
+  traffic, visible hosted speech, memory proposal application or Soul Talk
+  cutover occurred.
+
+### 2026-08-09 - Codex - Raphael HMAX Local Session Broker V1 - VERIFIED PRE-COMMIT
+
+- Status: `VERIFIED PRE-COMMIT`; the package is implemented in the stacked
+  isolated branch and intentionally remains uncommitted pending the next
+  explicit publication decision.
+- Lane: `Raphael Core, Companion Reasoning, And Soul Talk`.
+- Implemented: a loopback-only, no-storage pairing provider that deduplicates
+  concurrent pairing, caches only the opaque broker token in memory, rejects
+  non-loopback endpoints and non-turn authority, and plugs into the existing
+  shadow-only HMAX adapter without changing Soul Talk's visible authority.
+- Nexus proof: broker-provider cases `4/4`, runtime contract `15/15`, existing
+  HMAX shadow `21/21`, psychological safety `14/14`, new-file syntax PASS and
+  `git diff --check` PASS.
+- Browser release proof: all functional required checks passed, including
+  `455/455` JavaScript syntax checks and zero accessibility warnings. The
+  aggregate is truthfully `27/28` only because `runtime_tree_clean` requires a
+  commit and this package is intentionally pre-commit; gate-generated tracked
+  snapshots were restored immediately afterward.
+- Real cross-repo proof: a synthetic Nexus `1.0.0-draft.1` turn crossed the
+  temporary `127.0.0.1:8790` broker into the running private HMAX stack and
+  returned Core `0.2.0-adapter-parity-v1` with `modelTrusted:false`, no direct
+  game mutation and zero memory/effect proposals. The temporary container was
+  removed; existing HMAX `127.0.0.1:8787` remained healthy.
+- Known environment distinction: the already-running OIDC container predates
+  this package's minimum-scope request shape, so that single compatibility
+  probe used its old allowlisted synthetic token format in a disposable test
+  runner. The committed design requests only `turn + memory:read`, never
+  `memory:write`; rebuilding that exact topology remains an exact-head CI/local
+  compose proof after publication.
+- Safety boundary: browser receives no HMAX JWT, OIDC bootstrap secret or
+  upstream credential. High-risk/policy/boundary/Care turns still make zero
+  pairing or hosted requests, and hosted output remains invisible.
+- Branches: Nexus `codex/raphael-hmax-local-session-broker-v1`; HMAX
+  `codex/hmax-local-session-broker-v1`; both uncommitted for this package.
+- Next safe action: review both scoped diffs, then explicitly authorize their
+  two commits/pushes and stacked Draft PRs. Exact-head CI must rebuild the OIDC,
+  API and broker together before merge; visible Soul Talk cutover remains a
+  later package.
