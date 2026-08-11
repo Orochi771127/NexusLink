@@ -13,6 +13,8 @@ const GREYSHADE_WALK_RUNTIME_ROOT =
   "./assets/characters/greyshade-cat/spritesheets/expedition/r1/runtime-256";
 const BLAZETAIL_WALK_RUNTIME_ROOT =
   "./assets/characters/blazetail-kit/spritesheets/expedition/r3/runtime-256";
+const CRYSTALFIN_WALK_RUNTIME_ROOT =
+  "./assets/characters/crystalfin-seahorse/spritesheets/expedition/r4/runtime-256";
 
 const EXPEDITION_SPRITE_PROFILES = Object.freeze({
   "greyshade-cat": Object.freeze({
@@ -52,6 +54,26 @@ const EXPEDITION_SPRITE_PROFILES = Object.freeze({
       EXPEDITION_WALK_DIRECTIONS.map((direction) => [
         direction,
         `${BLAZETAIL_WALK_RUNTIME_ROOT}/blazetail-walk-${direction}-runtime-2048x256-8f.png`
+      ])
+    ))
+  }),
+  "crystalfin-seahorse": Object.freeze({
+    companionId: "crystalfin-seahorse",
+    artStatus: "runtime-promoted-owner-approved",
+    runtimePromotion: true,
+    localPilotQuery: "expedition8dirPilot",
+    frameWidth: 256,
+    frameHeight: 256,
+    frameCount: 8,
+    columns: 8,
+    rows: 1,
+    fps: 10,
+    onScreenHeight: 112,
+    anchor: Object.freeze({ x: 0.5, y: 1 }),
+    directions: Object.freeze(Object.fromEntries(
+      EXPEDITION_WALK_DIRECTIONS.map((direction) => [
+        direction,
+        `${CRYSTALFIN_WALK_RUNTIME_ROOT}/crystalfin-walk-${direction}-runtime-2048x256-8f.png`
       ])
     ))
   })

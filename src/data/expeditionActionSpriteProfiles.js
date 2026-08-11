@@ -14,6 +14,8 @@ const R2_ENEMY_RUNTIME_ROOT =
   "./assets/enemies/rift-root-echo/expedition/r2/runtime-256";
 const R3_BLAZETAIL_RUNTIME_ROOT =
   "./assets/characters/blazetail-kit/spritesheets/expedition/r3/runtime-256";
+const R4_CRYSTALFIN_RUNTIME_ROOT =
+  "./assets/characters/crystalfin-seahorse/spritesheets/expedition/r4/runtime-256";
 const ACTION_DIRECTIONS = Object.freeze([
   "north",
   "northeast",
@@ -98,6 +100,40 @@ const COMPANION_PROFILES = Object.freeze({
         directions: directionSheets("hit", 4, R3_BLAZETAIL_RUNTIME_ROOT, "blazetail"),
         fallbackDirection: "south",
         presentationMeaning: "brief resilient recoil without injury spectacle"
+      })
+    })
+  }),
+  "crystalfin-seahorse": Object.freeze({
+    ownerType: "companion",
+    ownerId: "crystalfin-seahorse",
+    artStatus: "runtime-promoted-owner-approved",
+    runtimePromotion: true,
+    anchor: Object.freeze({ x: 0.5, y: 1 }),
+    onScreenHeight: 112,
+    actions: Object.freeze({
+      attack_basic: Object.freeze({
+        frameWidth: 256,
+        frameHeight: 256,
+        frameCount: 6,
+        columns: 6,
+        rows: 1,
+        fps: 10,
+        loop: false,
+        directions: directionSheets("attack", 6, R4_CRYSTALFIN_RUNTIME_ROOT, "crystalfin"),
+        fallbackDirection: "south",
+        presentationMeaning: "restrained current-pulse boundary gesture"
+      }),
+      hit: Object.freeze({
+        frameWidth: 256,
+        frameHeight: 256,
+        frameCount: 4,
+        columns: 4,
+        rows: 1,
+        fps: 12,
+        loop: false,
+        directions: directionSheets("hit", 4, R4_CRYSTALFIN_RUNTIME_ROOT, "crystalfin"),
+        fallbackDirection: "south",
+        presentationMeaning: "brief displaced-current recoil without injury spectacle"
       })
     })
   })
