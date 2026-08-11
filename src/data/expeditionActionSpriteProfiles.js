@@ -12,6 +12,8 @@ const R2_GREYSHADE_RUNTIME_ROOT =
   "./assets/characters/greyshade-cat/spritesheets/expedition/r2/runtime-256";
 const R2_ENEMY_RUNTIME_ROOT =
   "./assets/enemies/rift-root-echo/expedition/r2/runtime-256";
+const R3_BLAZETAIL_RUNTIME_ROOT =
+  "./assets/characters/blazetail-kit/spritesheets/expedition/r3/runtime-256";
 const ACTION_DIRECTIONS = Object.freeze([
   "north",
   "northeast",
@@ -23,10 +25,10 @@ const ACTION_DIRECTIONS = Object.freeze([
   "northwest"
 ]);
 
-function directionSheets(action, frameCount) {
+function directionSheets(action, frameCount, runtimeRoot = R2_GREYSHADE_RUNTIME_ROOT, ownerPrefix = "greyshade") {
   return Object.freeze(Object.fromEntries(ACTION_DIRECTIONS.map((direction) => [
     direction,
-    `${R2_GREYSHADE_RUNTIME_ROOT}/greyshade-${action}-${direction}-runtime-${256 * frameCount}x256-${frameCount}f.png`
+    `${runtimeRoot}/${ownerPrefix}-${action}-${direction}-runtime-${256 * frameCount}x256-${frameCount}f.png`
   ])));
 }
 
@@ -62,6 +64,40 @@ const COMPANION_PROFILES = Object.freeze({
         directions: directionSheets("hit", 4),
         fallbackDirection: "south",
         presentationMeaning: "brief boundary recoil without injury spectacle"
+      })
+    })
+  }),
+  "blazetail-kit": Object.freeze({
+    ownerType: "companion",
+    ownerId: "blazetail-kit",
+    artStatus: "runtime-promoted-owner-approved",
+    runtimePromotion: true,
+    anchor: Object.freeze({ x: 0.5, y: 1 }),
+    onScreenHeight: 112,
+    actions: Object.freeze({
+      attack_basic: Object.freeze({
+        frameWidth: 256,
+        frameHeight: 256,
+        frameCount: 6,
+        columns: 6,
+        rows: 1,
+        fps: 10,
+        loop: false,
+        directions: directionSheets("attack", 6, R3_BLAZETAIL_RUNTIME_ROOT, "blazetail"),
+        fallbackDirection: "south",
+        presentationMeaning: "warm boundary-setting warding gesture"
+      }),
+      hit: Object.freeze({
+        frameWidth: 256,
+        frameHeight: 256,
+        frameCount: 4,
+        columns: 4,
+        rows: 1,
+        fps: 12,
+        loop: false,
+        directions: directionSheets("hit", 4, R3_BLAZETAIL_RUNTIME_ROOT, "blazetail"),
+        fallbackDirection: "south",
+        presentationMeaning: "brief resilient recoil without injury spectacle"
       })
     })
   })

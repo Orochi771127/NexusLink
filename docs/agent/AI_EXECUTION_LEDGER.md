@@ -8355,6 +8355,59 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
   GLB/sprite assets still fail closed to identity-correct 2D/procedural paths.
 - Branch / commit: `codex/global-3d-gameplay-pilots-r2-publication-proof` /
   this documentation-only publication-proof commit.
+
+### 2026-08-11 - Codex - Blazetail R3 Cross-Mode Batch - IN PROGRESS
+
+- Status: `IN PROGRESS`; Owner approved the full candidate, GROUNDWORK
+  promotion, runtime integration, protected PR/main publication and Codebase
+  MCP refresh workflow.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `GLOBAL_3D_GAMEPLAY_BATCH_R3_BLAZETAIL_CROSS_MODE`.
+- Layer: `GROUNDWORK + EXPERIENCE`; authorized GROUNDWORK is restricted to
+  Blazetail Expedition R3 assets/metadata, the Orbit Tops R3 package and the
+  package-specific Blender/art tooling. No state/save/index/pixiApp change is
+  authorized.
+- Runtime scope: add profile-driven Blazetail eight-direction Expedition
+  locomotion and directional `attack_basic`/`hit`, plus a presentation-only
+  Blazetail `BaseForm`/`ResonanceForm` Orbit top. Preserve same-owner fallback,
+  stale-request protection, lazy loading and deterministic 2D Orbit authority.
+- Red-line check: no HP-zero domination, reward, relationship, Growth, save,
+  permanent evolution, rarity, equipment or roster mutation. Resonance remains
+  an equal-budget, reversible, session-only combat form for both sides.
+- Non-goals: no all-roster batch, legacy deletion, alternate-character
+  fallback, global renderer migration, backend, dependency or remote PvP.
+- Branch / worktree: `codex/global-3d-gameplay-batch-r3` /
+  `C:\Users\User\NexusLink_RaphaelAI_Workspace\NexusLink-global-3d-gameplay-batch-r3`.
+- Acceptance refs: `ACCEPTANCE.md` E1-E2, G1-G7, H7-H9, J1-J4 and Orbit
+  O15A/O17; strict asset, mobile, fallback and exact 30/60/120 Hz gates apply.
+- Required reading: `docs/design/GLOBAL_3D_PRESENTATION_CONTRACT_V1.md`,
+  `docs/design/HEARTCORE_ORBIT_BATTLE_CONTRACT_V1.md`, Blazetail Character Lock,
+  `docs/art/SPECIES_MOTION_TRANSLATION.md`, both promoted Orbit manifests,
+  Generate2dsprite 2D asset rules, img2threejs 1.4.3 and this lane.
+
+### 2026-08-11 - Codex - Blazetail R3 Visual Production - IN PROGRESS
+
+- Status: `IN PROGRESS`; Owner approved the bright miniature resin-clay
+  Blazetail direction and requires a visual gate before new candidates enter
+  runtime asset roots.
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `GLOBAL_3D_GAMEPLAY_BATCH_R3_BLAZETAIL_CROSS_MODE`.
+- Identity lock: preserve the juvenile fox proportions, paired upright ears,
+  warm amber eyes, cream facial/chest fur, single oversized flame-tail, gold
+  spiral markings and orange diamond chest core. Never drift to wolf, dog,
+  cat, adult fox, multiple tails, black-charred body or photoreal fire.
+- Candidate scope: retain and audit the four existing cardinal walk masters;
+  stage four diagonal eight-frame walk masters, eight directional six-frame
+  restrained resonance attacks, eight directional four-frame boundary recoils,
+  bounded runtime-256 exports, and one Blazetail base/resonance Orbit GLB with
+  multi-angle Blender review renders.
+- Art gate: every sheet/frame/render must pass identity, direction, baseline,
+  alpha, grid, continuity, edge, memory/budget and phone readability review.
+  Mechanical QC does not equal human visual approval; candidates remain under
+  `output/` until the Owner accepts the review package.
+- Provenance: project-generated only; no downloaded art pack or new dependency.
+- Branch / worktree: `codex/global-3d-gameplay-batch-r3` /
+  `C:\Users\User\NexusLink_RaphaelAI_Workspace\NexusLink-global-3d-gameplay-batch-r3`.
 - Next safe action: refresh Codebase MCP from final `main`, verify the new R2
   profile/scene symbols and report the final indexed project state.
 
@@ -8376,3 +8429,123 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
   or unapproved skin was introduced.
 - Branch / commit: `codex/global-3d-gameplay-pilots-r2-publication-proof` /
   this documentation-only publication-proof commit.
+
+### 2026-08-11 - Codex - Blazetail R3 Human Asset Gate - BLOCKED
+
+- Status: `BLOCKED`; implementation is intentionally paused at the mandatory
+  Owner visual gate. No candidate has entered `assets/**`, no runtime profile
+  has changed and no commit/push/PR/main publication has occurred.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `GLOBAL_3D_GAMEPLAY_BATCH_R3_BLAZETAIL_CROSS_MODE`.
+- Candidate proof: the staged Orbit GLB is 637,592 bytes, contains 33 meshes,
+  10 materials and all required `OrbitTopRoot`, `BaseForm`, `ResonanceForm`,
+  `ColliderProxy_Deterministic2D` and socket nodes. The manifest records
+  20,128 estimated triangles and keeps `src/orbit/orbitPhysics.js` as sole
+  physics authority.
+- Boundary proof: form nodes are presentation-only; no save, Growth,
+  relationship, reward, winner, collision or objective authority was added.
+  Canvas and same-owner fallback integration has not yet been modified.
+- Next safe action: after explicit Owner approval of the attached R3 visual
+  gate, finish the remaining eight-direction attack/hit batch, promote only
+  approved assets, add Blazetail data profiles, run focused/full/mobile/
+  fallback/release gates, then use the already granted protected publication
+  workflow.
+- Branch / commit: `codex/global-3d-gameplay-batch-r3` / no commit at this
+  mandatory visual gate.
+
+### 2026-08-11 - Codex - Blazetail R3 Calibration Review - BLOCKED
+
+- Status: `BLOCKED`; candidate calibration passed Codex mechanical review and
+  now awaits Owner visual judgment. Mechanical pass is not human promotion.
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `GLOBAL_3D_GAMEPLAY_BATCH_R3_BLAZETAIL_CROSS_MODE`.
+- Staged review package:
+  `output/character-pilots/blazetail-kit-r3/BLazetail_R3_HUMAN_GATE.jpg`.
+  It contains four new diagonal eight-frame walks, a southeast six-frame
+  restrained attack calibration, a northwest four-frame safe recoil
+  calibration, and base/resonance Orbit renders.
+- Mechanical result: all six normalized strips have exact 512-pixel frames,
+  declared frame counts, transparent corners, one connected body silhouette
+  per frame and bottom-centre alignment. The optional magenta chroma path and
+  largest-component cleanup are default-off for legacy/FX callers. The first
+  attack generation was rejected for a visible cell-edge fragment and was not
+  selected.
+- Visual self-review: single-tail Blazetail identity, juvenile fox silhouette,
+  warm orange/cream/gold palette and front/rear diagonal headings are retained.
+  The first Blender material/tail pass was rejected as too pale and tube-like;
+  the retained pass is brighter, tapered, orange-gold resin/clay and keeps the
+  face/core visible from top and three-quarter views.
+- Remaining human choice: approve this visual language as the batch authority,
+  or request a specific revision before the other fourteen directional action
+  sheets are generated. Until then `runtimePromotionAllowed:false` remains
+  unchanged.
+- Branch / commit: `codex/global-3d-gameplay-batch-r3` / no commit at this
+  mandatory visual gate.
+
+### 2026-08-11 - Codex - Blazetail R3 Cross-Mode Runtime - VERIFIED
+
+- Status: `VERIFIED`; the Owner approved the R3 visual gate and the approved
+  Blazetail-only package has been promoted and integrated. Protected-main
+  publication remains the next step of this already-authorized workflow.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `GLOBAL_3D_GAMEPLAY_BATCH_R3_BLAZETAIL_CROSS_MODE`.
+- Runtime result: `blazetail-kit` now has an eight-direction Expedition walk
+  profile, directional `attack_basic` and `hit` profiles, and its own bounded
+  adventure-behaviour profile. All paths stay under the canonical owner root;
+  no `flametail-fox` profile, cross-character fallback, fresh-save unlock or
+  state migration was added.
+- Orbit result: the Blazetail GLB is presentation-only and exposes
+  `OrbitTopRoot`, `BaseForm`, `ResonanceForm`,
+  `ColliderProxy_Deterministic2D`, `Socket_SpinAxis`, `Socket_Trail` and
+  `Socket_Impact`. Base/resonance motion budgets both sum to `6.0`; timed
+  resonance and return-to-base use the same player/opponent state machine.
+  `src/orbit/orbitPhysics.js` remains the sole collision and outcome authority.
+- Automated proof: R3 focused cases, prior R1/R2 promotion suites, every
+  `orbit-*-cases.mjs` suite and exact 30/60/120 Hz deterministic replays pass.
+  Real Chromium R3 QA passes 5/5 across 390x844, 390x664, 1280x800, reduced
+  motion, Three.js, missing-GLB Canvas fallback and missing-R3 same-owner
+  Expedition fallback. Two unrelated full-gate browser probes that initially
+  hit local-server timeout/import failures both pass when rerun against a
+  stable local HTTP server.
+- Red-line result: no HP-zero combat, save, relationship, reward, Growth,
+  permanent evolution, rarity, equipment, roster or remote-PvP authority was
+  introduced. Resonance remains equal-budget, reversible and session-only.
+- Changed runtime families: `src/data/companionAdventureProfiles.js`,
+  `src/data/expeditionSpriteProfiles.js`,
+  `src/data/expeditionActionSpriteProfiles.js`,
+  `src/data/orbitTopProfiles.js` and the package-specific QA suites.
+- Branch / commit: `codex/global-3d-gameplay-batch-r3` / this entry's final
+  package commit.
+
+### 2026-08-11 - Codex - Blazetail R3 Asset Promotion - VERIFIED
+
+- Status: `VERIFIED`; Owner-approved project-generated art is promoted under
+  the canonical Blazetail asset roots. Legacy and fallback assets remain
+  intact; no downloaded art pack or new dependency is included.
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `GLOBAL_3D_GAMEPLAY_BATCH_R3_BLAZETAIL_CROSS_MODE`.
+- Expedition package: 24 illustrated resin-clay strips / 144 total frames:
+  eight directions x eight walk frames, eight directions x six restrained
+  attack frames, and eight directions x four safe hit/recoil frames. Both
+  512-master and 256-runtime exports pass exact-grid, alpha-corner, safe-edge,
+  bottom-centre anchor, non-duplicate-pose and decoded-dimension checks.
+- Visual audit: every retained sheet preserves the juvenile fox silhouette,
+  paired upright ears, cream facial/chest fur, warm amber expression, one
+  oversized flame-tail, gold spiral markings and orange diamond heart core.
+  Directional headings remain readable without detached weapons, injury,
+  death, baked UI/text/background or edge fragments.
+- Mobile budget: a current-facing walk direction is lazy loaded; all eight
+  runtime walk directions total 16 MiB decoded. One active attack/hit direction
+  totals 2.5 MiB decoded and the bounded all-direction action cache totals
+  20 MiB. The 512 masters are never requested by runtime.
+- Orbit package: the Blender-built GLB is 637,592 bytes with 33 meshes, 10
+  materials and an estimated 20,128 triangles. Its bright orange-gold
+  resin/clay base and resonance forms retain Blazetail identity at phone scale;
+  the included collider proxy is explicitly non-authoritative.
+- Review evidence: the complete walk, attack and hit contact sheets and all
+  five browser screenshots were visually inspected after mechanical QC.
+- Changed asset/tool families: `assets/characters/blazetail-kit/**`,
+  `assets/3d/orbit-tops-r3/**`, package-specific art processors/promotion tool
+  and `tools/blender/build_blazetail_orbit_top_r3.py`.
+- Branch / commit: `codex/global-3d-gameplay-batch-r3` / this entry's final
+  package commit.

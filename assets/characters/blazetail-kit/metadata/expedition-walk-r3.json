@@ -1,0 +1,351 @@
+{
+  "schemaVersion": 1,
+  "companionId": "blazetail-kit",
+  "status": "runtime-promoted-owner-approved",
+  "ownerApproval": {
+    "approved": true,
+    "approvedOn": "2026-08-11",
+    "source": "Owner explicitly stated Blazetail R3 passed in the Codex task"
+  },
+  "artDirection": "bright premium 3D storybook miniature with rounded resin-clay materials",
+  "production": {
+    "generator": "ChatGPT image generation with Blazetail R3 direction locks",
+    "chromaKeyer": "tools/art/key_chroma_sprite_sheet.py",
+    "normalizer": "tools/art/normalize_illustrated_sprite_grid.py",
+    "manifestBuilder": "tools/art/promote_blazetail_r3_assets.py",
+    "license": "project-owned generated assets; no downloaded third-party art"
+  },
+  "anchor": {
+    "x": 0.5,
+    "y": 1
+  },
+  "sampling": "linear with mipmaps when supported",
+  "qualityGate": {
+    "visualAudit": "24 promoted sheets / 144 frames reviewed at contact-sheet and source resolution",
+    "checks": [
+      "canonical juvenile Blazetail identity",
+      "exactly one flame tail",
+      "direction readability",
+      "no detached combat FX",
+      "transparent safe edges",
+      "bottom-center anchor stability"
+    ],
+    "result": "passed"
+  },
+  "legacyPolicy": {
+    "legacyAssetsRetained": true,
+    "fallbackOwner": "blazetail-kit",
+    "crossOwnerFallbackAllowed": false
+  },
+  "assetId": "blazetail-kit-expedition-walk-r3",
+  "grid": {
+    "directions": [
+      "north",
+      "northeast",
+      "east",
+      "southeast",
+      "south",
+      "southwest",
+      "west",
+      "northwest"
+    ],
+    "framesPerDirection": 8,
+    "fps": 10
+  },
+  "runtimeBudget": {
+    "decodedBytesAllDirections": 16777216,
+    "decodedMiBAllDirections": 16,
+    "masterSheetsAreNotRuntimeLoaded": true,
+    "loadingPolicy": "lazy current-facing sheet; cached per session"
+  },
+  "directions": {
+    "north": {
+      "master": {
+        "path": "assets/characters/blazetail-kit/spritesheets/expedition/r3/master-512/blazetail-walk-north-master-4096x512-8f.png",
+        "bytes": 1551454,
+        "sha256": "60E30D9821358039DA067F8EA2AA472D79CECB9A17AC626D73B278E40F7B79B4",
+        "sheetSize": [
+          4096,
+          512
+        ],
+        "frameSize": [
+          512,
+          512
+        ],
+        "frameCount": 8,
+        "transparentFrameCorners": true,
+        "bottomCenterSafe": true,
+        "uniqueFrameHashes": 8
+      },
+      "runtime": {
+        "path": "assets/characters/blazetail-kit/spritesheets/expedition/r3/runtime-256/blazetail-walk-north-runtime-2048x256-8f.png",
+        "bytes": 463386,
+        "sha256": "DCCE5946CE35CBB807DB4BA7774E0975D8E2254E12203FA0B35E1CDD68118235",
+        "sheetSize": [
+          2048,
+          256
+        ],
+        "frameSize": [
+          256,
+          256
+        ],
+        "frameCount": 8,
+        "transparentFrameCorners": true,
+        "bottomCenterSafe": true,
+        "uniqueFrameHashes": 8
+      }
+    },
+    "northeast": {
+      "master": {
+        "path": "assets/characters/blazetail-kit/spritesheets/expedition/r3/master-512/blazetail-walk-northeast-master-4096x512-8f.png",
+        "bytes": 1711050,
+        "sha256": "A9C2C1D68BC4A0DBBB3E69E7EE00E04AB46752322DA95B2BD7ED9E12CAE21257",
+        "sheetSize": [
+          4096,
+          512
+        ],
+        "frameSize": [
+          512,
+          512
+        ],
+        "frameCount": 8,
+        "transparentFrameCorners": true,
+        "bottomCenterSafe": true,
+        "uniqueFrameHashes": 8
+      },
+      "runtime": {
+        "path": "assets/characters/blazetail-kit/spritesheets/expedition/r3/runtime-256/blazetail-walk-northeast-runtime-2048x256-8f.png",
+        "bytes": 523492,
+        "sha256": "18358E8C4534A87A28A65B84492E8FC13A0D3735B3F126D042E1443C57E9839F",
+        "sheetSize": [
+          2048,
+          256
+        ],
+        "frameSize": [
+          256,
+          256
+        ],
+        "frameCount": 8,
+        "transparentFrameCorners": true,
+        "bottomCenterSafe": true,
+        "uniqueFrameHashes": 8
+      }
+    },
+    "east": {
+      "master": {
+        "path": "assets/characters/blazetail-kit/spritesheets/expedition/r3/master-512/blazetail-walk-east-master-4096x512-8f.png",
+        "bytes": 1696781,
+        "sha256": "15A7DCEC5590E987254D831F4525DC7EA51CD8F06E325A9479C6317000753F91",
+        "sheetSize": [
+          4096,
+          512
+        ],
+        "frameSize": [
+          512,
+          512
+        ],
+        "frameCount": 8,
+        "transparentFrameCorners": true,
+        "bottomCenterSafe": true,
+        "uniqueFrameHashes": 8
+      },
+      "runtime": {
+        "path": "assets/characters/blazetail-kit/spritesheets/expedition/r3/runtime-256/blazetail-walk-east-runtime-2048x256-8f.png",
+        "bytes": 519418,
+        "sha256": "76969DC373A607770D91E8C643BDD0671E11FFCD3C8D8D303F90644318367794",
+        "sheetSize": [
+          2048,
+          256
+        ],
+        "frameSize": [
+          256,
+          256
+        ],
+        "frameCount": 8,
+        "transparentFrameCorners": true,
+        "bottomCenterSafe": true,
+        "uniqueFrameHashes": 8
+      }
+    },
+    "southeast": {
+      "master": {
+        "path": "assets/characters/blazetail-kit/spritesheets/expedition/r3/master-512/blazetail-walk-southeast-master-4096x512-8f.png",
+        "bytes": 1971110,
+        "sha256": "80EF11FAF5669080064529970BB5CCDB2E1E14E01A8E9F2A0582095C88D42559",
+        "sheetSize": [
+          4096,
+          512
+        ],
+        "frameSize": [
+          512,
+          512
+        ],
+        "frameCount": 8,
+        "transparentFrameCorners": true,
+        "bottomCenterSafe": true,
+        "uniqueFrameHashes": 8
+      },
+      "runtime": {
+        "path": "assets/characters/blazetail-kit/spritesheets/expedition/r3/runtime-256/blazetail-walk-southeast-runtime-2048x256-8f.png",
+        "bytes": 595754,
+        "sha256": "298A742F3FDD9798DEE138C596642FA4248309544B5BB94FC70EEE9DE68E0765",
+        "sheetSize": [
+          2048,
+          256
+        ],
+        "frameSize": [
+          256,
+          256
+        ],
+        "frameCount": 8,
+        "transparentFrameCorners": true,
+        "bottomCenterSafe": true,
+        "uniqueFrameHashes": 8
+      }
+    },
+    "south": {
+      "master": {
+        "path": "assets/characters/blazetail-kit/spritesheets/expedition/r3/master-512/blazetail-walk-south-master-4096x512-8f.png",
+        "bytes": 1882609,
+        "sha256": "D653B564F2D97DCE836F39BE46CE469B96D5500B953C751267F698061C350D70",
+        "sheetSize": [
+          4096,
+          512
+        ],
+        "frameSize": [
+          512,
+          512
+        ],
+        "frameCount": 8,
+        "transparentFrameCorners": true,
+        "bottomCenterSafe": true,
+        "uniqueFrameHashes": 8
+      },
+      "runtime": {
+        "path": "assets/characters/blazetail-kit/spritesheets/expedition/r3/runtime-256/blazetail-walk-south-runtime-2048x256-8f.png",
+        "bytes": 556252,
+        "sha256": "7831AB77552E27ACE4B609B3A91D1D0B71C4C6AB8EC4CF2D4AF0AD97276937F6",
+        "sheetSize": [
+          2048,
+          256
+        ],
+        "frameSize": [
+          256,
+          256
+        ],
+        "frameCount": 8,
+        "transparentFrameCorners": true,
+        "bottomCenterSafe": true,
+        "uniqueFrameHashes": 8
+      }
+    },
+    "southwest": {
+      "master": {
+        "path": "assets/characters/blazetail-kit/spritesheets/expedition/r3/master-512/blazetail-walk-southwest-master-4096x512-8f.png",
+        "bytes": 2052416,
+        "sha256": "FD60EF215BC095EE378C8F7E70F6CF5BE3BC056761AC9CEBB55D051B5BD3D591",
+        "sheetSize": [
+          4096,
+          512
+        ],
+        "frameSize": [
+          512,
+          512
+        ],
+        "frameCount": 8,
+        "transparentFrameCorners": true,
+        "bottomCenterSafe": true,
+        "uniqueFrameHashes": 8
+      },
+      "runtime": {
+        "path": "assets/characters/blazetail-kit/spritesheets/expedition/r3/runtime-256/blazetail-walk-southwest-runtime-2048x256-8f.png",
+        "bytes": 608155,
+        "sha256": "9D46AEB3523A12BFD687922909109F0992A8E6B80CF40A1685D2120A62D170AD",
+        "sheetSize": [
+          2048,
+          256
+        ],
+        "frameSize": [
+          256,
+          256
+        ],
+        "frameCount": 8,
+        "transparentFrameCorners": true,
+        "bottomCenterSafe": true,
+        "uniqueFrameHashes": 8
+      }
+    },
+    "west": {
+      "master": {
+        "path": "assets/characters/blazetail-kit/spritesheets/expedition/r3/master-512/blazetail-walk-west-master-4096x512-8f.png",
+        "bytes": 1688962,
+        "sha256": "61087035DD2454D7606BEA0DE53AED4FC6FE2F96BBF0A9B9F7128A2E9C2F4C0F",
+        "sheetSize": [
+          4096,
+          512
+        ],
+        "frameSize": [
+          512,
+          512
+        ],
+        "frameCount": 8,
+        "transparentFrameCorners": true,
+        "bottomCenterSafe": true,
+        "uniqueFrameHashes": 8
+      },
+      "runtime": {
+        "path": "assets/characters/blazetail-kit/spritesheets/expedition/r3/runtime-256/blazetail-walk-west-runtime-2048x256-8f.png",
+        "bytes": 516592,
+        "sha256": "71173C24430C22EE15502B747D73D26E3071E8309B05505F51B11F94099A0F22",
+        "sheetSize": [
+          2048,
+          256
+        ],
+        "frameSize": [
+          256,
+          256
+        ],
+        "frameCount": 8,
+        "transparentFrameCorners": true,
+        "bottomCenterSafe": true,
+        "uniqueFrameHashes": 8
+      }
+    },
+    "northwest": {
+      "master": {
+        "path": "assets/characters/blazetail-kit/spritesheets/expedition/r3/master-512/blazetail-walk-northwest-master-4096x512-8f.png",
+        "bytes": 1707169,
+        "sha256": "0B20935E0592699BDC9CDDA871F927F917CEA926805698DD2C63346869188A1E",
+        "sheetSize": [
+          4096,
+          512
+        ],
+        "frameSize": [
+          512,
+          512
+        ],
+        "frameCount": 8,
+        "transparentFrameCorners": true,
+        "bottomCenterSafe": true,
+        "uniqueFrameHashes": 8
+      },
+      "runtime": {
+        "path": "assets/characters/blazetail-kit/spritesheets/expedition/r3/runtime-256/blazetail-walk-northwest-runtime-2048x256-8f.png",
+        "bytes": 520049,
+        "sha256": "2DD4D66BAC987812277B430CFB25FD421AECBFD06F878D6F47C9D71E53A7B4CD",
+        "sheetSize": [
+          2048,
+          256
+        ],
+        "frameSize": [
+          256,
+          256
+        ],
+        "frameCount": 8,
+        "transparentFrameCorners": true,
+        "bottomCenterSafe": true,
+        "uniqueFrameHashes": 8
+      }
+    }
+  }
+}

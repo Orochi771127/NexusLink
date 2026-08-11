@@ -36,6 +36,16 @@ const CRYSTALFIN_RESONANCE = Object.freeze({
   signalReach: 1
 });
 
+// Equal-budget motion sidegrade: the six multipliers sum to the base budget (6.0).
+const BLAZETAIL_RESONANCE = Object.freeze({
+  collisionRadius: 0.93,
+  inertia: 0.94,
+  speedCap: 1.1,
+  spinRetention: 1.03,
+  turnAuthority: 1.08,
+  signalReach: 0.92
+});
+
 const RIFT_RESONANCE = Object.freeze({
   collisionRadius: 1.08,
   inertia: 1.05,
@@ -122,6 +132,49 @@ const PROFILES = Object.freeze({
       core: "#1fc5f5",
       ivory: "#e9e2be",
       trim: "#ddb85c"
+    })
+  }),
+  "blazetail-kit": Object.freeze({
+    schemaVersion: ORBIT_TOP_PROFILE_SCHEMA_VERSION,
+    id: "blazetail-kit-orbit-top-r3",
+    ownerType: "companion",
+    ownerId: "blazetail-kit",
+    displayName: "Blazetail Kit Orbit Top R3",
+    artStatus: "runtime-promoted-owner-approved",
+    materialFamily: "nexus-clay-resin-miniature-v1",
+    model: Object.freeze({
+      glbPath: "assets/3d/orbit-tops-r3/blazetail-kit-orbit-top-r3.glb",
+      candidateGlbPath:
+        "output/character-pilots/blazetail-kit-r3/orbit/renders/blazetail-kit-orbit-top-r3.glb",
+      baseNode: "BaseForm",
+      resonanceNode: "ResonanceForm",
+      colliderProxyNode: "ColliderProxy_Deterministic2D",
+      spinSocketNode: "Socket_SpinAxis",
+      trailSocketNode: "Socket_Trail",
+      impactSocketNode: "Socket_Impact",
+      spinAxis: Object.freeze([0, 0, 1]),
+      bottomContactZ: 0,
+      visualScale: 1
+    }),
+    forms: Object.freeze({
+      base: Object.freeze({
+        id: "base",
+        label: "Base form",
+        physics: BASE_PHYSICS
+      }),
+      resonance: Object.freeze({
+        id: "resonance",
+        label: "Blazetail resonance form",
+        physics: BLAZETAIL_RESONANCE
+      })
+    }),
+    palette: Object.freeze({
+      clay: "#e9671d",
+      deepClay: "#8f2f12",
+      resin: "#ff9b2f",
+      core: "#ffd36b",
+      ivory: "#f6e1bd",
+      trim: "#d8a63f"
     })
   }),
   "rift-echo": Object.freeze({
