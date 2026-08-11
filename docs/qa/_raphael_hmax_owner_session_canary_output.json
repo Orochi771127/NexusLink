@@ -1,0 +1,118 @@
+{
+  "package": "RAPHAEL_HMAX_OWNER_SESSION_CANARY_RUN_V1",
+  "evidenceClass": "synthetic_owner_session",
+  "browser": "chromium",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "hmax": {
+    "service": "raphael-hmax",
+    "phase": "core-release-pinned-v1",
+    "coreVersion": "0.2.1-safety-closure-v2",
+    "loopbackOnly": true,
+    "deterministicSyntheticModel": true
+  },
+  "session": {
+    "pairingArtifact": "tmpfs_0600_consumed",
+    "opaqueBrowserSession": true,
+    "persistentCredential": false,
+    "upstreamCredentialExposed": false
+  },
+  "consoleErrors": [],
+  "checks": {
+    "exact_pair_then_turn_sequence": true,
+    "owner_candidate_selected_and_applied": true,
+    "response_is_untrusted_speech_only": true,
+    "diagnostics_exclude_input_and_speech": true,
+    "ordinary_raw_and_hosted_speech_not_persisted": true,
+    "high_risk_policy_boundary_care_zero_hosted_request": true,
+    "system_terminal_rendered": true,
+    "no_console_errors": true,
+    "pairing_artifact_consumed": true
+  },
+  "metrics": {
+    "ordinaryTurnLatencyMs": 1123.0,
+    "brokerPostCount": 2,
+    "ordinaryBrokerPostCount": 2,
+    "chatLengthAfterOrdinary": 5,
+    "chatLengthFinal": 13,
+    "consoleErrorCount": 0
+  },
+  "diagnosticReasons": [
+    "candidate_selected",
+    "candidate_applied"
+  ],
+  "decisionMetadata": [
+    {
+      "coreVersion": "0.2.1-safety-closure-v2",
+      "modelTrusted": false,
+      "directGameMutation": false,
+      "rawInputPersisted": false,
+      "rawInputExported": false,
+      "memoryProposalCount": 0,
+      "effectProposalCount": 0,
+      "speechRole": "companion",
+      "speechFinal": true,
+      "speechLength": 24
+    }
+  ],
+  "diagnosticEvents": [
+    {
+      "reason": "candidate_selected",
+      "errorCode": null,
+      "attempted": true,
+      "selected": true,
+      "applied": false,
+      "audit": {
+        "displayedHostedSpeech": false,
+        "appliedHostedEffects": false,
+        "committedHostedMemory": false,
+        "directGameMutation": false
+      }
+    },
+    {
+      "reason": "candidate_applied",
+      "errorCode": null,
+      "attempted": true,
+      "selected": true,
+      "applied": true,
+      "audit": {
+        "displayedHostedSpeech": true,
+        "appliedHostedEffects": false,
+        "committedHostedMemory": false,
+        "directGameMutation": false
+      }
+    }
+  ],
+  "localRouteProofs": [
+    {
+      "route": "high_risk",
+      "hostedPostDelta": 0
+    },
+    {
+      "route": "policy_terminal",
+      "hostedPostDelta": 0
+    },
+    {
+      "route": "boundary",
+      "hostedPostDelta": 0
+    },
+    {
+      "route": "private_care",
+      "hostedPostDelta": 0
+    }
+  ],
+  "humanGates": {
+    "ownerFeelCheck": "not_run",
+    "privateBlindReview": "not_run",
+    "realPlayerTraffic": false
+  },
+  "rollout": {
+    "publicIngress": false,
+    "playerTraffic": false,
+    "generalSoulTalkCutover": false,
+    "realModel": false
+  },
+  "ok": true
+}

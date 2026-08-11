@@ -617,3 +617,7 @@
 **Q8 — HMAX Soul Talk owner canary 必須預設關閉且 speech-only**
 - 驗法：在真實 Chromium 分別覆蓋設定不存在、owner／consent／visible approval 缺失、kill-switch、普通成功、timeout、面板關閉、下一回合、companion／投影狀態變更、invalid response、hosted boundary、Care／boundary／policy／high-risk，並比對 embedded baseline 的 chat 長度、gameplay projection、localStorage 與 hosted request 次數。
 - 通過：預設與所有 gate-failure 為 0 visible HMAX speech；本機安全／Care／boundary／policy terminal 為 0 hosted request；合格 owner canary 只原子替換同一筆 final companion line，不 append 第二筆，memory/effect proposal、reward、Growth、relationship/game delta 都為 0；raw input／candidate speech 不進 diagnostic 或 durable save；timeout、Abort、close、kill 或 stale 永遠保留已存在的唯一 embedded reply。
+
+**Q9 — HMAX Owner session canary 使用一次性 broker 並保留 human gate**
+- 驗法：從 exact HMAX／Core pin 啟動 loopback synthetic stack，使用真實 Chromium 由一次性 Owner pairing artifact 換取短效 opaque broker session，再經 broker 呼叫 HMAX；測試輸入限人工撰寫的 synthetic fixtures。
+- 通過：配對碼與 opaque session 不進 stdout、repo、URL、localStorage 或 save；網路順序只允許一次 pair + 一次 eligible turn；HMAX response 必須 `trusted:false`、0 memory/effect proposal、0 direct game mutation；高風險／policy／boundary／private Care 各自 0 hosted request；raw input、candidate speech 與 credential 不進 tracked evidence；automated synthetic Owner session 必須與 human Owner feel-check、real-model quality、private-blind 及 public cutover 分開標示。
