@@ -31,11 +31,21 @@ Nexus Link safety/raw-data closure PR
 [31482046644](https://github.com/Orochi771127/NexusLink/actions/runs/31482046644)
 均成功。
 
-目前 `codex/raphael-hmax-soul-talk-shadow-canary-v1` 以 `ba4b94c` 為乾淨基線，
-新增預設關閉、Owner-only、loopback-only 的 HMAX speech canary。Embedded Core
-仍先完成 safety 與所有 gameplay mutation；HMAX 最多只可替換同一筆 final
-companion speech。完整操作與非目標見
+Owner-only canary 已由 PR [#199](https://github.com/Orochi771127/NexusLink/pull/199)
+合併為 Nexus `main` `cbab82dc79c6c9477f5554262ece603b82e3a919`；post-main Web
+workflow `31487760594` 與 Pages workflow `31487759936` 成功。設定仍預設不存在／
+關閉。Embedded Core 仍先完成 safety 與所有 gameplay mutation；HMAX 最多只可
+替換同一筆 final companion speech。完整操作與非目標見
 `docs/handoff/RAPHAEL_HMAX_SOUL_TALK_SHADOW_CANARY_V1.md`。
+
+`RAPHAEL_HMAX_OWNER_SESSION_CANARY_RUN_V1` 再以 exact HMAX main 與 Core 0.2.1
+跑通真實 Chromium → one-time local broker → HMAX → Core critics → Soul Talk
+speech-only reducer；普通合成回合約 1.12 秒，四種 local terminal/Care probes 均
+為 0 hosted request，console errors 0。這是 automated synthetic Owner-session
+證據，不是 human Owner feel-check 或真實模型品質證據。過程找出的 HMAX repeat-up
+TLS/probe lifecycle 缺口已由 PR #10 合併為 `4ae1af2f`，post-main workflow
+`31503394192` 通過完整 `hosted-boundaries` 與 `operator-private-infrastructure`。
+細節見 `docs/handoff/RAPHAEL_HMAX_OWNER_SESSION_CANARY_RUN_V1.md`。
 
 本候選補上組合式正在發生暴力／虐待、虛構轉現實危險、監視確信的安全路由，
 並讓 Care、caution、support-sensitive 與高風險回合都不能產生關係獎勵、
@@ -50,10 +60,11 @@ storage `22/22`, Growth browser `156/156`, Soul Talk `11/11`,
 HUD `13/13`; sealed conversation evaluator `48/48`; autonomy evaluator `32/32`;
 engine full suite `45/45`, closure suite `7/7`, release-artifact suite `10/10`.
 HMAX canary contract `28/28`, canary Chromium `15/15`, existing shadow contract
-`21/21` and shadow Chromium `8/8` are green. The final clean engine artifact is
-the release-eligible digest recorded above. Human blind review, real-device checks,
-Owner feel-check, professional psychological review and legal/privacy review remain
-`not_run`.
+`21/21` and shadow Chromium `8/8` are green. The real loopback synthetic Owner
+session is also green; HMAX lifecycle tests are `37/37` and repeat-up/persistence/
+broker probes pass. The final clean engine artifact is the release-eligible digest
+recorded above. Human blind review, real-device checks, human Owner feel-check,
+professional psychological review and legal/privacy review remain `not_run`.
 
 完整 Web gate 曾在 Growth controller-ready 等待出現 timeout。最新 main 重驗時，
 診斷明確捕捉到 Python HTTP/1.0 loopback server 在大量 ES module reload 後回傳
@@ -72,12 +83,12 @@ not authorize broad visible-speech cutover, player traffic or model training.
 
 | 欄位 | 值 |
 |------|-----|
-| `last_updated` | 2026-08-11（HMAX Soul Talk owner-only shadow/canary V1） |
-| `last_agent` | Codex（HMAX Soul Talk shadow/canary V1） |
-| `active_branch` | `codex/raphael-hmax-soul-talk-shadow-canary-v1` |
-| `runtime_baseline` | `ba4b94c407bcedf75ada79f4be74d62a12e19df1`（PR #196 merge；post-main Web + Pages green） |
+| `last_updated` | 2026-08-11（HMAX Owner Session Canary Run V1） |
+| `last_agent` | Codex（HMAX Owner Session Canary Run V1） |
+| `active_branch` | `codex/raphael-hmax-owner-session-canary-run-v1` |
+| `runtime_baseline` | `cbab82dc79c6c9477f5554262ece603b82e3a919`（PR #199 merge；post-main Web + Pages green） |
 | `rc_closure_commit` | `220e2fdbefaa4a2a7ecc2e853f68869bc4560d81`；乾淨 checkout exact-commit Web **17/17**、sealed holdout **48/48** |
-| `publication` | HMAX PR #9 與 Nexus PR #196 已合併且 post-main green；本 canary branch 尚須自己的 protected PR，且即使合併仍預設關閉、不是公開 cutover |
+| `publication` | HMAX PR #9/#10、Nexus PR #196/#199 已合併且 post-main green；本 owner-session evidence 走獨立 protected PR，且即使合併仍預設關閉、不是公開 cutover |
 | `workspace` | `C:\Users\User\NexusLink_RaphaelAI_Workspace\NexusLink` |
 | `do_not_touch` | `AIForgeNexus2\NexusLink`（舊 checkout，易與本工作區分叉） |
 

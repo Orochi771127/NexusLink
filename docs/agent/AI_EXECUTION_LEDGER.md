@@ -8901,3 +8901,88 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
   approvals remain open human gates.
 - Branch / commit: `codex/raphael-hmax-soul-talk-shadow-canary-v1` / this
   entry's final package commit.
+
+### 2026-08-11 - Codex - Raphael HMAX Owner Session Canary Run V1 - IN PROGRESS
+
+- Status: `IN PROGRESS`; the Owner authorized a private local owner-session
+  canary run after the HMAX and Nexus Link foundations plus the disabled
+  Soul Talk canary were merged with green post-main checks.
+- Lane: `Raphael Core, Companion Reasoning, And Soul Talk`.
+- Task name: `RAPHAEL_HMAX_OWNER_SESSION_CANARY_RUN_V1`.
+- Layer: `EXPERIENCE`; the package is limited to operator/QA evidence and, only
+  if a real-browser gap is found, the existing `src/ai/runtime/**` and Soul
+  Talk seam. No GROUNDWORK state, save, Pixi, asset, tool or script change is
+  authorized or expected.
+- Baseline: isolated Nexus branch
+  `codex/raphael-hmax-owner-session-canary-run-v1` from merged `main`
+  `cbab82dc79c6c9477f5554262ece603b82e3a919`; exact HMAX `main`
+  `0d88041cf8361be44d891f5822165c7eadda4b21` will be used for the operator
+  stack rather than the older already-running container image.
+- Run boundary: loopback-only Docker/WSL2, synthetic identity, deterministic
+  synthetic model and one ephemeral Owner broker session. There is no real
+  player, public ingress, cloud endpoint, real-model claim, durable player
+  memory, model training or general Soul Talk cutover.
+- Red-line constraints: high-risk, policy-terminal, boundary and private Care
+  turns must produce zero HMAX request; ordinary candidate speech remains
+  `trusted:false` and may replace only the exact current companion line.
+  HMAX cannot write memory/effects, reward, Growth, relationship, gameplay or
+  save authority. Timeout, abort, close, stale state and kill-switch retain the
+  already-applied embedded reply exactly once.
+- Acceptance: verify the exact Core/HMAX pin and loopback topology; acquire a
+  short opaque broker session without persisting or logging credentials; run
+  a real Chromium Soul Talk turn through browser -> broker -> HMAX -> Core
+  critics; capture only metadata diagnostics; re-run safety/contract/browser
+  and full Web gates; report automated owner-session evidence separately from
+  the still-open human Owner feel-check and private-blind gates.
+- Required reading: `AGENTS.md`, Raphael handoff/status, Lane 3 closure and
+  canary entries, `RAPHAEL_HMAX_SOUL_TALK_SHADOW_CANARY_V1.md`, HMAX persistent
+  synthetic staging/session-broker runbooks and the conversation evaluation
+  evidence contract.
+- Branch / commit: `codex/raphael-hmax-owner-session-canary-run-v1` /
+  `uncommitted`.
+
+### 2026-08-11 - Codex - Raphael HMAX Owner Session Canary Run V1 - VERIFIED PRE-COMMIT
+
+- Status: `VERIFIED PRE-COMMIT`; the synthetic loopback Owner session completed
+  successfully on the isolated Nexus branch. No publication, player rollout,
+  public ingress or Soul Talk default change has occurred.
+- Lane: `Raphael Core, Companion Reasoning, And Soul Talk`.
+- Task name: `RAPHAEL_HMAX_OWNER_SESSION_CANARY_RUN_V1`.
+- Exact runtime proof: Chromium `390x844` exchanged one tmpfs/0600 pairing
+  artifact for one short opaque in-memory broker session, then issued exactly
+  one eligible HMAX turn against Core `0.2.1-safety-closure-v2`. The candidate
+  was selected and atomically applied in `1123 ms`; browser console errors were
+  `0`.
+- Authority/privacy proof: response remained `trusted:false`; direct game
+  mutation, memory proposals and effect proposals were all `0`; diagnostics
+  contain neither input nor speech; tracked evidence contains no raw turn,
+  candidate speech, pairing code, session or upstream bearer. High-risk,
+  diagnosis policy-terminal, dependency boundary and private Care probes each
+  produced `0` hosted requests.
+- HMAX dependency closure found three repeat-run defects: TLS consumers were
+  not recreated after certificate rotation, fixed idempotency identifiers
+  collided with durable Redis, and `compose run probe` could reuse a stale
+  worktree image. The separate local HMAX branch now recreates the bounded
+  consumer set, namespaces probe IDs and builds the probe image; HMAX `37/37`,
+  focused policy `8/8`, static `40 code / 8 JSON`, audit `0`, two consecutive
+  `persistent:up`, persistence verify and broker verify all pass locally.
+- Evidence classification: `synthetic_owner_session`. The deterministic
+  synthetic model is transport/authority proof only. Human Owner feel-check,
+  private blind, real-model quality, real-device matrix, psychological review,
+  legal/privacy review and public cutover remain `not_run` or false.
+- Final Nexus regression: HMAX canary `28/28`, broker contract `4/4`, shadow
+  contract `21/21`, sealed conversation holdout `48/48` with
+  `humanBlindReview:not_run`, and Web release gate `32/32` required PASS.
+  JavaScript syntax is `462/462`, `allAutomatedRequiredOk:true`, and the gate
+  reports `runtimeTreeClean:true` on exact baseline `cbab82d`.
+- HMAX publication proof: lifecycle closure commit `1ffec59` entered protected
+  PR #10, both required checks passed, and the PR merged as
+  `4ae1af2f06fce64abf813a907945904bb23da3bd`. Post-main workflow
+  `31503394192` passed `hosted-boundaries` and
+  `operator-private-infrastructure`.
+- Publication order: the HMAX lifecycle gate is complete; publish this Nexus
+  metadata-only QA/handoff package through its separate protected PR. Even
+  after both merges the canary stays absent or disabled for players until a
+  separately authorized real-model human gate.
+- Branch / commit: `codex/raphael-hmax-owner-session-canary-run-v1` /
+  this entry's final package commit.
