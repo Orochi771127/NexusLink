@@ -8655,7 +8655,7 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Lane: `Game Art, UI, And Visual Production`.
 - Task name: `GLOBAL_3D_GAMEPLAY_BATCH_R4_CRYSTALFIN_EXPEDITION_COMPLETION`.
 - Asset result: 48 promoted PNG strips cover eight directions x walk/attack/hit
-  in both 512-master and 256-runtime forms. The source review covers 94 frames:
+  in both 512-master and 256-runtime forms. The source review covers 90 frames:
   40 authored hover frames, 30 authored current-pulse frames and 20 authored
   recovery frames, with west-facing variants produced by deterministic mirror
   of their same-owner east-facing counterparts.
