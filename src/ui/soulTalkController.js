@@ -10,6 +10,12 @@ import { getCompanionById } from "../data/companionRegistry.js";
 import { loadPreferenceStore, replacePreferenceStore } from "../ai/companionPreferenceStore.js";
 import { appendTranscriptTurn } from "../ai/dialogue/soulTalkTranscriptJournal.js";
 import { isPrivateCareStrategy } from "../ai/dialogue/reflectiveCarePolicy.js";
+import {
+  captureSoulTalkSpeechIdentity,
+  createSoulTalkCanaryResolver,
+  isSoulTalkSpeechIdentityCurrent,
+  replaceSoulTalkSpeechCandidate
+} from "../ai/runtime/soulTalkCanaryResolver.js";
 import { createSoulTalkShadowObserver } from "../ai/runtime/soulTalkShadowObserver.js";
 import { qs, restoreViewportAfterKeyboard } from "../utils/dom.js";
 import AudioManager from "../audio/audioManager.js";
@@ -38,7 +44,8 @@ export function createSoulTalkController({
   store,
   saveCurrentState,
   saveCriticalState = saveCurrentState,
-  shadowObserver = createSoulTalkShadowObserver()
+  shadowObserver = createSoulTalkShadowObserver(),
+  canaryResolver = createSoulTalkCanaryResolver()
 }) {
   const chatLog = qs("#chat-log");
   const quickReplyRow = qs("#quick-reply-row");
@@ -55,6 +62,10 @@ export function createSoulTalkController({
   let crossSessionReflected = false;
   let lastQuickReplies = [];
   let shadowStateVersion = 0;
+  let canaryTurnOwner = 0;
+  let activeCanaryController = null;
+  let activePanelManager = null;
+  let releaseSoulTalkCloseListener = null;
   // 玩家剛送出的訊息文字：renderChat 據此把該行錨定在可視區頂端（見 scrollChatLog）。
   let scrollAnchorText = null;
   // 上次渲染的內容簽章：內容沒變就跳過重建，避免捲動位置被無關 state 變動重置。
@@ -85,6 +96,23 @@ export function createSoulTalkController({
 
   function bind() {
     ensureWaveformShell();
+
+    // Abort in the capture phase as well as through PanelManager's close
+    // notification. This covers the drawer control/backdrop before any late
+    // hosted promise can settle, while PanelManager still owns the actual UI.
+    document.addEventListener("click", (event) => {
+      if (activePanelManager?.getActivePanel?.() !== "soulTalk") return;
+      if (event.target?.closest?.("[data-panel-close]")) cancelPendingHostedTurn();
+    }, true);
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && activePanelManager?.getActivePanel?.() === "soulTalk") {
+        cancelPendingHostedTurn();
+      }
+    }, true);
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "hidden") cancelPendingHostedTurn();
+    });
+    window.addEventListener("pagehide", cancelPendingHostedTurn);
 
     // pointerdown 階段不奪走輸入框焦點：st-focus 模式下若先 blur，drawer
     // 會在 click 前位移 180ms，按鈕從手指下方移走而造成靜默送出失敗。
@@ -146,6 +174,7 @@ export function createSoulTalkController({
   }
 
   function openSoulTalk(panelManager) {
+    bindCanaryPanelOwner(panelManager);
     ensureWaveformShell();
     resolveActiveCompanion();
     setSoulTalkState("idle");
@@ -177,6 +206,7 @@ export function createSoulTalkController({
   }
 
   function handlePlayerMessage(message, options = {}) {
+    const turnOwner = beginHostedTurn();
     const companion = resolveActiveCompanion();
     const companionName = companion?.name || "夥伴";
     // Capture the complete pre-turn relationship before adding the player chat
@@ -290,18 +320,23 @@ export function createSoulTalkController({
     if (safetyTurn || result?.firstTraceCreated) saveCriticalState();
     else saveCurrentState();
     shadowStateVersion += 1;
-    if (!safetyTurn && typeof shadowObserver?.observe === "function") {
+    if (!safetyTurn) {
       const liveState = store.getState();
-      try {
-        const shadowRun = shadowObserver.observe({
-          message,
-          coreResult: result?.coreResult,
-          state: projectShadowState(liveState),
-          companion,
-          stateVersion: shadowStateVersion
-        });
-        void Promise.resolve(shadowRun).catch(() => { /* Shadow failure must never alter the live Soul Talk turn. */ });
-      } catch { /* An injected observer must remain non-authoritative and fail closed. */ }
+      const speechIdentity = captureSoulTalkSpeechIdentity(liveState, {
+        companionId: companion?.id || liveState.activeCompanionId || null,
+        stateVersion: shadowStateVersion,
+        turnOwner,
+        replyRole: result?.applied?.replyRole,
+        replyText: result?.applied?.replyText
+      });
+      scheduleHostedSpeechCandidate({
+        message,
+        coreResult: result?.coreResult,
+        companion,
+        stateVersion: shadowStateVersion,
+        turnOwner,
+        speechIdentity
+      });
     }
     renderQuickReplies(lastQuickReplies);
     renderChat();
@@ -336,6 +371,113 @@ export function createSoulTalkController({
       }
     }, 720);
     return result;
+  }
+
+  function beginHostedTurn() {
+    activeCanaryController?.abort();
+    activeCanaryController = null;
+    canaryTurnOwner += 1;
+    return canaryTurnOwner;
+  }
+
+  function cancelPendingHostedTurn() {
+    activeCanaryController?.abort();
+    activeCanaryController = null;
+    canaryTurnOwner += 1;
+  }
+
+  function bindCanaryPanelOwner(panelManager) {
+    if (!panelManager || activePanelManager === panelManager) return;
+    releaseSoulTalkCloseListener?.();
+    activePanelManager = panelManager;
+    releaseSoulTalkCloseListener = panelManager.registerOnClose?.("soulTalk", () => {
+      cancelPendingHostedTurn();
+    }) || null;
+  }
+
+  function isCanaryOwnerCurrent(turnOwner, speechIdentity) {
+    return turnOwner === canaryTurnOwner
+      && activePanelManager?.getActivePanel?.() === "soulTalk"
+      && soulTalkModal?.hidden !== true
+      && isSoulTalkSpeechIdentityCurrent(store.getState(), speechIdentity);
+  }
+
+  function scheduleHostedSpeechCandidate({
+    message,
+    coreResult,
+    companion,
+    stateVersion,
+    turnOwner,
+    speechIdentity
+  }) {
+    if (!speechIdentity || typeof canaryResolver?.resolve !== "function") {
+      observeShadow({ message, coreResult, companion, stateVersion });
+      return;
+    }
+
+    const controller = new AbortController();
+    activeCanaryController = controller;
+    let canaryRun;
+    try {
+      canaryRun = canaryResolver.resolve({
+        message,
+        coreResult,
+        state: projectShadowState(store.getState()),
+        companion,
+        stateVersion,
+        turnOwner,
+        signal: controller.signal,
+        isCurrent: () => isCanaryOwnerCurrent(turnOwner, speechIdentity)
+      });
+    } catch {
+      return;
+    }
+
+    void Promise.resolve(canaryRun).then((canaryResult) => {
+      if (activeCanaryController === controller) activeCanaryController = null;
+      if (!canaryResult?.configured) {
+        observeShadow({ message, coreResult, companion, stateVersion });
+        return;
+      }
+      if (!canaryResult.selected) {
+        return;
+      }
+      if (!isCanaryOwnerCurrent(turnOwner, speechIdentity)) {
+        canaryResolver.reportApplication?.(canaryResult, { applied: false, reason: "candidate_stale_before_reducer" });
+        return;
+      }
+
+      let applied = false;
+      store.updateState((state) => {
+        applied = replaceSoulTalkSpeechCandidate(state, speechIdentity, canaryResult.speech);
+      });
+      if (applied) {
+        saveCurrentState();
+        renderChat();
+        scrollChatLog();
+      }
+      canaryResolver.reportApplication?.(canaryResult, {
+        applied,
+        reason: applied ? "candidate_applied" : "candidate_stale_before_reducer"
+      });
+    }).catch(() => {
+      if (activeCanaryController === controller) activeCanaryController = null;
+      /* The already-applied embedded reply remains the single fallback. */
+    });
+  }
+
+  function observeShadow({ message, coreResult, companion, stateVersion }) {
+    if (typeof shadowObserver?.observe !== "function") return;
+    try {
+      const shadowRun = shadowObserver.observe({
+        message,
+        coreResult,
+        state: projectShadowState(store.getState()),
+        companion,
+        stateVersion
+      });
+      void Promise.resolve(shadowRun).catch(() => { /* Shadow failure must never alter the live Soul Talk turn. */ });
+    } catch { /* An injected observer must remain non-authoritative and fail closed. */ }
   }
 
   function cloneSerializable(value) {

@@ -8789,6 +8789,43 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Branch / commit: `codex/global-3d-gameplay-batch-r4` / this entry's final
   package commit.
 
+### 2026-08-11 - Codex - Raphael HMAX Soul Talk Shadow Canary V1 - IN PROGRESS
+
+- Status: `IN PROGRESS`; the Owner authorized a separate shadow/canary package
+  after HMAX PR #9 and Nexus PR #196 merged with green post-main verification.
+  The package starts from Nexus `main`
+  `ba4b94c407bcedf75ada79f4be74d62a12e19df1` in an isolated clean worktree.
+- Lane: `Raphael Core, Companion Reasoning, And Soul Talk`.
+- Task name: `RAPHAEL_HMAX_SOUL_TALK_SHADOW_CANARY_V1`.
+- Layer: `EXPERIENCE`; the expected runtime work is limited to the existing
+  Soul Talk controller and `src/ai/runtime/**` seam plus QA/handoff evidence.
+  No state schema, save key, default state, Pixi, asset or app-shell GROUNDWORK
+  change is authorized or currently required.
+- Authorized behavior: retain the existing invisible owner-only shadow mode and
+  add a separately gated owner-only canary that may select final HMAX companion
+  speech only after the embedded Core has completed local safety and gameplay
+  mutation. Hosted memory/effect proposals remain forbidden and HMAX may never
+  execute the Nexus reducer.
+- Red-line constraints: local safety, policy-terminal, boundary and Care routes
+  make zero hosted request. Timeout, abort, invalid contract, kill switch,
+  changed companion, changed Soul Talk turn or stale state produce exactly one
+  embedded fallback. HMAX output remains `trusted:false`; high-risk system text,
+  reward, Growth, durable memory and gameplay state cannot be replaced.
+- Rollout boundary: configuration is absent/disabled by default, loopback-only,
+  ephemeral-token-only and owner-only. No public player traffic, production
+  endpoint, broad visible-speech cutover, external LLM provider or model
+  training is part of this package.
+- Acceptance: 8-second maximum, immutable request, idempotent one-request
+  behavior, no late apply, exact companion/turn/state identity, speech-only
+  atomic reducer, no hosted raw-data persistence, deterministic Node cases,
+  real Chromium default/shadow/canary/fallback/safety proof and the full Web
+  release gate.
+- Required reading: Master Canon safety red lines, `AGENTS.md`, Raphael handoff
+  and status, `RAPHAEL_SOVEREIGN_COMPANION_PLATFORM_V1.md`, the existing local
+  HMAX shadow/session suites and the latest Lane 3 safety-closure entries.
+- Branch / commit: `codex/raphael-hmax-soul-talk-shadow-canary-v1` /
+  `uncommitted`.
+
 ### 2026-08-11 - Codex - Crystalfin R4 Asset Promotion - COMPLETED
 
 - Status: `COMPLETED`; the project-generated Crystalfin R4 package passed
@@ -8823,3 +8860,44 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
   scene/UI/text, dependency or cross-owner fallback.
 - Branch / commit: `codex/global-3d-gameplay-batch-r4` / this entry's final
   package commit.
+
+### 2026-08-11 - Codex - Raphael HMAX Soul Talk Shadow Canary V1 - COMPLETED
+
+- Status: `COMPLETED`; implemented on the isolated branch
+  `codex/raphael-hmax-soul-talk-shadow-canary-v1` from Nexus `main`
+  `ba4b94c407bcedf75ada79f4be74d62a12e19df1`. HMAX PR #9 was merged as
+  `0d88041cf8361be44d891f5822165c7eadda4b21` with post-main workflow
+  `31481421683 PASS`; Nexus PR #196 was merged as
+  `ba4b94c407bcedf75ada79f4be74d62a12e19df1` with post-main Web workflow
+  `31482048084 PASS` and Pages workflow `31482046644 PASS`.
+- Lane: `Raphael Core, Companion Reasoning, And Soul Talk`.
+- Task name: `RAPHAEL_HMAX_SOUL_TALK_SHADOW_CANARY_V1`.
+- Layer: `EXPERIENCE`; changed only the Soul Talk/runtime seam, QA, acceptance,
+  status and handoff evidence. No `index.html`, state schema, save key,
+  `defaultState`, Pixi, asset, tool or script GROUNDWORK file was changed.
+- Runtime result: embedded RaphaelCore still completes local safety and all
+  gameplay mutation first. A disabled-by-default, Owner-only, loopback-only
+  canary may replace one exact current companion line after strict response,
+  role/dependency, constitution, turn/page/companion/state and kill-switch
+  checks. HMAX cannot apply memory, effects, reward, Growth or a game reducer.
+- Safety/privacy result: policy-terminal, boundary and private Care routes make
+  zero hosted request. Timeout, abort, invalid contract, panel exit, stale
+  state, companion change and in-flight disable preserve exactly one embedded
+  fallback. Hosted speech is not made durable; diagnostics exclude input and
+  speech. Access-token acquisition remains an in-memory operator callback.
+- Focused verification: HMAX canary contract `28/28 PASS`; canary Chromium
+  `15/15 PASS` at `390x844` with zero console errors; existing shadow contract
+  `21/21 PASS`; existing shadow Chromium `8/8 PASS`.
+- Full verification: Web release gate `32/32` required PASS,
+  `allAutomatedRequiredOk:true`, JavaScript syntax `462/462`. Canonical evidence
+  was generated `2026-08-11T19:29:43+0800` in a clean single-writer HTTP/1.1
+  keep-alive run. The unchanged Growth browser assertions passed `156/156`;
+  the earlier HTTP/1.0 reload timeout is classified as a Windows test-transport
+  flake, not an application failure.
+- Rollout boundary: configuration remains absent/disabled by default. No public
+  player traffic, production endpoint, general visible-speech cutover, model
+  training or external provider fallback is enabled. Real-device, Owner
+  feel-check, private blind, psychological, legal/privacy and public-launch
+  approvals remain open human gates.
+- Branch / commit: `codex/raphael-hmax-soul-talk-shadow-canary-v1` / this
+  entry's final package commit.

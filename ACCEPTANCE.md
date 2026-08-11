@@ -613,3 +613,7 @@
 **Q7 — Policy terminal 隱私與跨 runtime authority parity**
 - 驗法：對 diagnosis／therapist role／medication／reality grounding／memory refusal 開啟所有 external flags，並檢查 debug、dialogue、evolution trace 與 Engine-style decision interop。
 - 通過：policy terminal 保留非臨床 `riskLevel:none`，但與高風險同樣阻斷 recall、session cache、raw-input debug、Hermes／advisor request、animation、memory、trace、reward 與 relationship delta；Nexus Link、standalone engine 與 HMAX 的 V1 decision 一律宣告 `authority.gameMutation:NexusLinkReducer`，其他值 fail-closed。
+
+**Q8 — HMAX Soul Talk owner canary 必須預設關閉且 speech-only**
+- 驗法：在真實 Chromium 分別覆蓋設定不存在、owner／consent／visible approval 缺失、kill-switch、普通成功、timeout、面板關閉、下一回合、companion／投影狀態變更、invalid response、hosted boundary、Care／boundary／policy／high-risk，並比對 embedded baseline 的 chat 長度、gameplay projection、localStorage 與 hosted request 次數。
+- 通過：預設與所有 gate-failure 為 0 visible HMAX speech；本機安全／Care／boundary／policy terminal 為 0 hosted request；合格 owner canary 只原子替換同一筆 final companion line，不 append 第二筆，memory/effect proposal、reward、Growth、relationship/game delta 都為 0；raw input／candidate speech 不進 diagnostic 或 durable save；timeout、Abort、close、kill 或 stale 永遠保留已存在的唯一 embedded reply。
