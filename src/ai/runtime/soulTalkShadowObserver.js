@@ -96,6 +96,7 @@ export function createHmaxShadowTurnRequest({
   stateVersion = 0,
   instanceId = "shadow-fixture",
   turnSequence = 1,
+  mode = "shadow",
   now = () => Date.now()
 } = {}) {
   const sequence = Number.isSafeInteger(turnSequence) && turnSequence > 0 ? turnSequence : 1;
@@ -103,6 +104,7 @@ export function createHmaxShadowTurnRequest({
   const suffix = `${instanceId}-${sequence}`;
   const companionId = companion?.id || state.activeCompanionId || "greyshade-cat";
   const timestamp = new Date(Number(coreResult.now) || now()).toISOString();
+  const requestMode = mode === "canary" ? "canary" : "shadow";
 
   return freezeTurnContext({
     contractVersion: RAPHAEL_CONTRACT_VERSION,
@@ -110,7 +112,7 @@ export function createHmaxShadowTurnRequest({
     idempotencyKey: `idem-${suffix}`.slice(0, 128),
     client: {
       productId: "nexus-link",
-      clientVersion: "shadow-v1",
+      clientVersion: `${requestMode}-v1`,
       instanceId: String(instanceId).slice(0, 128),
       locale: "zh-TW"
     },
@@ -120,7 +122,7 @@ export function createHmaxShadowTurnRequest({
     },
     input: {
       text: String(message || ""),
-      source: "soul_talk_shadow",
+      source: `soul_talk_${requestMode}`,
       timestamp
     },
     context: {

@@ -16,18 +16,26 @@ PR [#4](https://github.com/Orochi771127/raphael-ai-engine/pull/4) 合併為 engi
 `sha256:0f87b9cf05518d19ebcdf1267ed98ba035cd07fe78dd4840cbd2a4e391245f22`，
 `releaseEligible:true`。
 
-HMAX 的 POSIX archive pin 已提交至 Draft PR
-[#9](https://github.com/Orochi771127/raphael-HMAX/pull/9)，head
-`4a0e8cbb3e0c271b3c2caf60c45b8e1744d5fa3a` 的 required CI
-[31476458637](https://github.com/Orochi771127/raphael-HMAX/actions/runs/31476458637)
-兩個 job 均成功；它仍是 `staging_candidate`，**尚未合併、未部署、無玩家流量**。
+HMAX POSIX archive pin 的 PR
+[#9](https://github.com/Orochi771127/raphael-HMAX/pull/9) 已合併為 HMAX `main`
+`0d88041cf8361be44d891f5822165c7eadda4b21`；post-main workflow
+[31481421683](https://github.com/Orochi771127/raphael-HMAX/actions/runs/31481421683)
+兩個 required job 均成功。這是 production foundation / digest pin 的合併證據，
+不是玩家流量或心語 visible-speech 核准。
 
-Nexus Link client 候選位於 `codex/raphael-safety-raw-data-closure-v2`，已刷新至
-最新 `origin/main` `9531dbccb7956c15e379dcff0488837dde4e587d`；實作 commit
-`1814f3e07e3b36537f64632f7a52c7cc8c755d3e` 已推送並開啟 protected Draft PR
-[#196](https://github.com/Orochi771127/NexusLink/pull/196)。本次 publication-evidence
-文件更新會成為 PR 的最終 head，必須由 strict exact-head Web release gate 驗證後
-才能另行評估合併。主要髒工作樹與其他資產工作均未混入。
+Nexus Link safety/raw-data closure PR
+[#196](https://github.com/Orochi771127/NexusLink/pull/196) 已合併為 `main`
+`ba4b94c407bcedf75ada79f4be74d62a12e19df1`。post-main Web release workflow
+[31482048084](https://github.com/Orochi771127/NexusLink/actions/runs/31482048084)
+與同 SHA 的 Pages workflow
+[31482046644](https://github.com/Orochi771127/NexusLink/actions/runs/31482046644)
+均成功。
+
+目前 `codex/raphael-hmax-soul-talk-shadow-canary-v1` 以 `ba4b94c` 為乾淨基線，
+新增預設關閉、Owner-only、loopback-only 的 HMAX speech canary。Embedded Core
+仍先完成 safety 與所有 gameplay mutation；HMAX 最多只可替換同一筆 final
+companion speech。完整操作與非目標見
+`docs/handoff/RAPHAEL_HMAX_SOUL_TALK_SHADOW_CANARY_V1.md`。
 
 本候選補上組合式正在發生暴力／虐待、虛構轉現實危險、監視確信的安全路由，
 並讓 Care、caution、support-sensitive 與高風險回合都不能產生關係獎勵、
@@ -36,24 +44,27 @@ Growth 或耐久記憶。新的 Soul Talk transcript 只存在於目前頁面 se
 raw chat 欄位與 conversation-derived memory bundles 會被移除。舊版已存在裝置上的
 legacy transcript 不會被自動刪除或上傳，仍只提供玩家明示匯出與清除。
 
-Automated evidence: Nexus focused closure `7/7`, web release gate `28/28`,
-JS syntax `459/459`, storage `22/22`, Growth state `25/25`, Soul Talk `11/11`,
+Automated evidence: Nexus focused closure `7/7`; the current canary candidate Web
+release gate is `32/32` with `allAutomatedRequiredOk:true`, JS syntax `462/462`,
+storage `22/22`, Growth browser `156/156`, Soul Talk `11/11`,
 HUD `13/13`; sealed conversation evaluator `48/48`; autonomy evaluator `32/32`;
 engine full suite `45/45`, closure suite `7/7`, release-artifact suite `10/10`.
-The final clean engine artifact is the release-eligible digest recorded above;
-HMAX remains a separately reviewed staging pin, not a production or live-speech
-approval. Human blind review, real-device checks, Owner feel-check, professional
-psychological review and legal/privacy review remain `not_run`.
+HMAX canary contract `28/28`, canary Chromium `15/15`, existing shadow contract
+`21/21` and shadow Chromium `8/8` are green. The final clean engine artifact is
+the release-eligible digest recorded above. Human blind review, real-device checks,
+Owner feel-check, professional psychological review and legal/privacy review remain
+`not_run`.
 
 完整 Web gate 曾在 Growth controller-ready 等待出現 timeout。最新 main 重驗時，
 診斷明確捕捉到 Python HTTP/1.0 loopback server 在大量 ES module reload 後回傳
 `net::ERR_NO_BUFFER_SPACE`；沒有 app page error。未放寬任何斷言，改用乾淨的
-HTTP/1.1 keep-alive loopback server 後，Growth browser `156/156 PASS`，完整 gate
-`28/28 PASS`。這個 Windows 測試傳輸 flake 仍保留為 release-engineering 訊號。
+HTTP/1.1 keep-alive loopback server 後，Growth browser `156/156 PASS`，目前完整
+gate `32/32 PASS`。這個 Windows 測試傳輸 flake 仍保留為 release-engineering 訊號。
 
 Soul Talk visible speech therefore still comes from the embedded Nexus Link
-RaphaelCore path. HMAX remains invisible shadow infrastructure; this package
-does not authorize a visible-speech cutover, player traffic or model training.
+RaphaelCore path by default. The new canary is absent/disabled unless an Owner
+explicitly supplies all loopback consent/approval/token gates. This package does
+not authorize broad visible-speech cutover, player traffic or model training.
 
 ---
 
@@ -61,12 +72,12 @@ does not authorize a visible-speech cutover, player traffic or model training.
 
 | 欄位 | 值 |
 |------|-----|
-| `last_updated` | 2026-07-22（Ironflow Hackers Stage 1 runtime publication；**當前操作真相以 current `main` HEAD + `docs/agent/AI_EXECUTION_LEDGER.md` 為準**） |
-| `last_agent` | Codex（Ironflow Stage 1 runtime publication） |
-| `active_branch` | `main`（2026-07-02 起單線開發，integrate 分支已退役） |
-| `runtime_baseline` | `209baaf871d91e188baf56e9e0e5b999c56bccac`（PR #116 已發布 Ironflow Stage 1 runtime；asset `de2f438`、runtime `f459526`、evidence `8efb391`） |
+| `last_updated` | 2026-08-11（HMAX Soul Talk owner-only shadow/canary V1） |
+| `last_agent` | Codex（HMAX Soul Talk shadow/canary V1） |
+| `active_branch` | `codex/raphael-hmax-soul-talk-shadow-canary-v1` |
+| `runtime_baseline` | `ba4b94c407bcedf75ada79f4be74d62a12e19df1`（PR #196 merge；post-main Web + Pages green） |
 | `rc_closure_commit` | `220e2fdbefaa4a2a7ecc2e853f68869bc4560d81`；乾淨 checkout exact-commit Web **17/17**、sealed holdout **48/48** |
-| `publication` | PR #116 已於 2026-07-22 通過 final PR HEAD `8efb391` 的 strict required `web-release-gate`，並合併至 `main`；merge commit `209baaf871d91e188baf56e9e0e5b999c56bccac` |
+| `publication` | HMAX PR #9 與 Nexus PR #196 已合併且 post-main green；本 canary branch 尚須自己的 protected PR，且即使合併仍預設關閉、不是公開 cutover |
 | `workspace` | `C:\Users\User\NexusLink_RaphaelAI_Workspace\NexusLink` |
 | `do_not_touch` | `AIForgeNexus2\NexusLink`（舊 checkout，易與本工作區分叉） |
 

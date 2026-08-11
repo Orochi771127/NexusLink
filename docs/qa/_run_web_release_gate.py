@@ -687,6 +687,25 @@ def run_safety_terminal_ui(base_url: str):
     return result
 
 
+def run_hmax_runtime_contract(node: str, name: str, path: str):
+    result = run_command(name, [node, path], timeout=30)
+    payload = result.get("json") or {}
+    result["ok"] = result["exit_code"] == 0 and payload.get("ok") is True
+    return result
+
+
+def run_hmax_runtime_browser(base_url: str, name: str, path: str):
+    result = run_command(
+        name,
+        [sys.executable, path],
+        env={"NEXUS_QA_BASE": base_url},
+        timeout=180,
+    )
+    payload = result.get("json") or {}
+    result["ok"] = result["exit_code"] == 0 and payload.get("ok") is True
+    return result
+
+
 def run_accessibility_probe(base_url: str):
     screenshot_dir = Path(tempfile.mkdtemp(prefix="nexus_web_release_"))
     viewports = [
@@ -978,6 +997,10 @@ def summarize(report):
     required.append(report["checks"]["raphaelPersonaBoundary"]["ok"])
     required.append(report["checks"]["safetyTerminalInvariant"]["ok"])
     required.append(report["checks"]["safetyTerminalUi"]["ok"])
+    required.append(report["checks"]["raphaelHmaxLocalShadowContract"]["ok"])
+    required.append(report["checks"]["raphaelHmaxLocalShadowUi"]["ok"])
+    required.append(report["checks"]["raphaelHmaxSoulTalkCanaryContract"]["ok"])
+    required.append(report["checks"]["raphaelHmaxSoulTalkCanaryUi"]["ok"])
     required.append(report["checks"]["accessibilityProbe"]["ok"])
     required.extend(item["ok"] for item in report["checks"]["browserGates"])
     accessibility_warnings = []
@@ -1047,6 +1070,29 @@ def main():
         report["checks"]["i18nCompleteness"] = run_i18n_completeness(node)
         report["checks"]["sessionOwnerGuard"] = run_session_owner_guard(node)
         report["checks"]["onboardingCodexRegression"] = run_onboarding_codex_regression(node)
+        # Run the two HMAX browser contracts before the long Chromium matrix.
+        # On Windows, placing them at the tail can exhaust transient browser/socket
+        # resources even with a keep-alive server and produce a false 30s timeout.
+        report["checks"]["raphaelHmaxLocalShadowContract"] = run_hmax_runtime_contract(
+            node,
+            "raphael_hmax_local_shadow_contract",
+            "docs/qa/raphael-hmax-local-shadow-cases.mjs",
+        )
+        report["checks"]["raphaelHmaxLocalShadowUi"] = run_hmax_runtime_browser(
+            report["baseUrl"],
+            "raphael_hmax_local_shadow_ui",
+            "docs/qa/_run_raphael_hmax_local_shadow_browser.py",
+        )
+        report["checks"]["raphaelHmaxSoulTalkCanaryContract"] = run_hmax_runtime_contract(
+            node,
+            "raphael_hmax_soul_talk_canary_contract",
+            "docs/qa/raphael-hmax-soul-talk-canary-cases.mjs",
+        )
+        report["checks"]["raphaelHmaxSoulTalkCanaryUi"] = run_hmax_runtime_browser(
+            report["baseUrl"],
+            "raphael_hmax_soul_talk_canary_ui",
+            "docs/qa/_run_raphael_hmax_soul_talk_canary_browser.py",
+        )
         report["checks"]["companionGrowthUi"] = run_companion_growth_browser(report["baseUrl"])
         report["checks"]["crystalLifecycle"] = run_crystal_lifecycle(node)
         report["checks"]["mapFirstSession"] = run_map_first_session(node)
