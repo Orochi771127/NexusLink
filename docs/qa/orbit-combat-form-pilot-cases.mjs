@@ -62,6 +62,7 @@ function ok(name) {
 assert.deepEqual(ORBIT_TOP_PROFILE_IDS, [
   "greyshade-cat",
   "crystalfin-seahorse",
+  "blazetail-kit",
   "rift-echo"
 ]);
 for (const id of ORBIT_TOP_PROFILE_IDS) {
@@ -70,6 +71,11 @@ for (const id of ORBIT_TOP_PROFILE_IDS) {
     assert.equal(profile.artStatus, "runtime-promoted-owner-approved");
     assert.ok(profile.model.glbPath.startsWith("assets/3d/orbit-tops-r2/"));
     assert.ok(profile.model.candidateGlbPath.includes("global-3d-gameplay-pilots-r2"));
+  } else if (id === "blazetail-kit") {
+    assert.equal(profile.artStatus, "runtime-promoted-owner-approved");
+    assert.ok(profile.model.glbPath.startsWith("assets/3d/orbit-tops-r3/"));
+    assert.ok(profile.model.candidateGlbPath.includes("blazetail-kit-r3"));
+    assert.equal(profile.model.colliderProxyNode, "ColliderProxy_Deterministic2D");
   } else {
     assert.equal(profile.artStatus, "runtime-promoted-owner-approved");
     assert.ok(profile.model.glbPath.startsWith("assets/3d/orbit-tops-r1/"));

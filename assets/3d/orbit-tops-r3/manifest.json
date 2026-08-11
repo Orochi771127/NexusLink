@@ -1,0 +1,73 @@
+{
+  "schemaVersion": 1,
+  "packId": "orbit-tops-r3",
+  "status": "runtime-promoted-owner-approved",
+  "generator": "tools/blender/build_blazetail_orbit_top_r3.py",
+  "manifestBuilder": "tools/art/promote_blazetail_r3_assets.py",
+  "blenderVersion": "5.2.0 LTS",
+  "ownerApproval": {
+    "approved": true,
+    "approvedOn": "2026-08-11",
+    "source": "Owner explicitly stated Blazetail R3 passed in the Codex task"
+  },
+  "physicsAuthority": "src/orbit/orbitPhysics.js",
+  "rendererAuthority": "presentation-only snapshot consumer",
+  "runtimePromotionAllowed": true,
+  "license": "project-owned Blender-generated asset; no downloaded third-party art",
+  "assets": [
+    {
+      "assetId": "blazetail-kit-orbit-top-r3",
+      "ownerType": "companion",
+      "ownerId": "blazetail-kit",
+      "path": "assets/3d/orbit-tops-r3/blazetail-kit-orbit-top-r3.glb",
+      "artStatus": "runtime-promoted-owner-approved",
+      "nodes": {
+        "base": "BaseForm",
+        "resonance": "ResonanceForm",
+        "colliderProxy": "ColliderProxy_Deterministic2D",
+        "spinSocket": "Socket_SpinAxis",
+        "trailSocket": "Socket_Trail",
+        "impactSocket": "Socket_Impact"
+      },
+      "coordinateFrame": "Blender Z-up authoring; glTF Y-up export",
+      "bottomContactZ": 0,
+      "spinAxisAuthoring": [
+        0,
+        0,
+        1
+      ],
+      "collider": {
+        "type": "deterministic-2d-circle",
+        "source": "src/orbit/orbitPhysics.js body.radius",
+        "meshIsAuthority": false
+      },
+      "formContract": "reversible equal-budget session state; never persisted as Growth",
+      "runtimeStats": {
+        "bytes": 637592,
+        "sha256": "BE6A34E2ABA1774A920E9132666D50385479F41786D434630FC873FA84E6736C",
+        "nodeCount": 40,
+        "meshCount": 33,
+        "primitiveCount": 33,
+        "vertexCount": 16039,
+        "triangleCount": 28608,
+        "materialCount": 10,
+        "textureCount": 0,
+        "requiredNodes": [
+          "BaseForm",
+          "ColliderProxy_Deterministic2D",
+          "OrbitTopRoot",
+          "ResonanceForm",
+          "Socket_Impact",
+          "Socket_SpinAxis",
+          "Socket_Trail"
+        ],
+        "extensionsUsed": [
+          "KHR_materials_clearcoat",
+          "KHR_materials_transmission",
+          "KHR_materials_emissive_strength",
+          "KHR_materials_ior"
+        ]
+      }
+    }
+  ]
+}

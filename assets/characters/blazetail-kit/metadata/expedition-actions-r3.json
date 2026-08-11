@@ -1,0 +1,641 @@
+{
+  "schemaVersion": 1,
+  "companionId": "blazetail-kit",
+  "status": "runtime-promoted-owner-approved",
+  "ownerApproval": {
+    "approved": true,
+    "approvedOn": "2026-08-11",
+    "source": "Owner explicitly stated Blazetail R3 passed in the Codex task"
+  },
+  "artDirection": "bright premium 3D storybook miniature with rounded resin-clay materials",
+  "production": {
+    "generator": "ChatGPT image generation with Blazetail R3 direction locks",
+    "chromaKeyer": "tools/art/key_chroma_sprite_sheet.py",
+    "normalizer": "tools/art/normalize_illustrated_sprite_grid.py",
+    "manifestBuilder": "tools/art/promote_blazetail_r3_assets.py",
+    "license": "project-owned generated assets; no downloaded third-party art"
+  },
+  "anchor": {
+    "x": 0.5,
+    "y": 1
+  },
+  "sampling": "linear with mipmaps when supported",
+  "qualityGate": {
+    "visualAudit": "24 promoted sheets / 144 frames reviewed at contact-sheet and source resolution",
+    "checks": [
+      "canonical juvenile Blazetail identity",
+      "exactly one flame tail",
+      "direction readability",
+      "no detached combat FX",
+      "transparent safe edges",
+      "bottom-center anchor stability"
+    ],
+    "result": "passed"
+  },
+  "legacyPolicy": {
+    "legacyAssetsRetained": true,
+    "fallbackOwner": "blazetail-kit",
+    "crossOwnerFallbackAllowed": false
+  },
+  "assetId": "blazetail-kit-expedition-actions-r3",
+  "runtimeBudget": {
+    "decodedBytesActiveDirection": 2621440,
+    "decodedMiBActiveDirection": 2.5,
+    "decodedBytesAllCachedDirections": 20971520,
+    "decodedMiBAllCachedDirections": 20,
+    "masterSheetsAreNotRuntimeLoaded": true,
+    "loadingPolicy": "lazy per action and current facing; cached per session"
+  },
+  "actions": {
+    "attack_basic": {
+      "frames": 6,
+      "fps": 10,
+      "loop": false,
+      "directions": {
+        "north": {
+          "master": {
+            "path": "assets/characters/blazetail-kit/spritesheets/expedition/r3/master-512/blazetail-attack-north-master-3072x512-6f.png",
+            "bytes": 1134599,
+            "sha256": "0F8FAFC70C45D11068FF538904B759EED7A8AC5A3C00807C7F0D63ECB1D0BF43",
+            "sheetSize": [
+              3072,
+              512
+            ],
+            "frameSize": [
+              512,
+              512
+            ],
+            "frameCount": 6,
+            "transparentFrameCorners": true,
+            "bottomCenterSafe": true,
+            "uniqueFrameHashes": 6
+          },
+          "runtime": {
+            "path": "assets/characters/blazetail-kit/spritesheets/expedition/r3/runtime-256/blazetail-attack-north-runtime-1536x256-6f.png",
+            "bytes": 347496,
+            "sha256": "3BDC20C77E5FE4B6581EFB4FACB95F53ED7C045F0B97D3911C2083A5184CB120",
+            "sheetSize": [
+              1536,
+              256
+            ],
+            "frameSize": [
+              256,
+              256
+            ],
+            "frameCount": 6,
+            "transparentFrameCorners": true,
+            "bottomCenterSafe": true,
+            "uniqueFrameHashes": 6
+          }
+        },
+        "northeast": {
+          "master": {
+            "path": "assets/characters/blazetail-kit/spritesheets/expedition/r3/master-512/blazetail-attack-northeast-master-3072x512-6f.png",
+            "bytes": 1067305,
+            "sha256": "6AE611BEF4EE8D06394CF4686CA82601B70DB5E684926C5333DB08AC7D957A73",
+            "sheetSize": [
+              3072,
+              512
+            ],
+            "frameSize": [
+              512,
+              512
+            ],
+            "frameCount": 6,
+            "transparentFrameCorners": true,
+            "bottomCenterSafe": true,
+            "uniqueFrameHashes": 6
+          },
+          "runtime": {
+            "path": "assets/characters/blazetail-kit/spritesheets/expedition/r3/runtime-256/blazetail-attack-northeast-runtime-1536x256-6f.png",
+            "bytes": 327875,
+            "sha256": "D3796FA75BA3A79BEFA331C030A0D9E95AB6E694C93FEDD5590504394B2D6DAA",
+            "sheetSize": [
+              1536,
+              256
+            ],
+            "frameSize": [
+              256,
+              256
+            ],
+            "frameCount": 6,
+            "transparentFrameCorners": true,
+            "bottomCenterSafe": true,
+            "uniqueFrameHashes": 6
+          }
+        },
+        "east": {
+          "master": {
+            "path": "assets/characters/blazetail-kit/spritesheets/expedition/r3/master-512/blazetail-attack-east-master-3072x512-6f.png",
+            "bytes": 1031463,
+            "sha256": "F2B2E560020F9F714D7338CC550057B08E87BC2F4B75EFCF5B199C3BDC3D8659",
+            "sheetSize": [
+              3072,
+              512
+            ],
+            "frameSize": [
+              512,
+              512
+            ],
+            "frameCount": 6,
+            "transparentFrameCorners": true,
+            "bottomCenterSafe": true,
+            "uniqueFrameHashes": 6
+          },
+          "runtime": {
+            "path": "assets/characters/blazetail-kit/spritesheets/expedition/r3/runtime-256/blazetail-attack-east-runtime-1536x256-6f.png",
+            "bytes": 316973,
+            "sha256": "CDFF4DDF25D1BA430657A264867A9F7DFBE079E77FB2627D3A85CBF57E3A0CF7",
+            "sheetSize": [
+              1536,
+              256
+            ],
+            "frameSize": [
+              256,
+              256
+            ],
+            "frameCount": 6,
+            "transparentFrameCorners": true,
+            "bottomCenterSafe": true,
+            "uniqueFrameHashes": 6
+          }
+        },
+        "southeast": {
+          "master": {
+            "path": "assets/characters/blazetail-kit/spritesheets/expedition/r3/master-512/blazetail-attack-southeast-master-3072x512-6f.png",
+            "bytes": 1090103,
+            "sha256": "2834E7F732E5579158CF2DC39B6FCA705054763A237EDC64271E6067C11D06B7",
+            "sheetSize": [
+              3072,
+              512
+            ],
+            "frameSize": [
+              512,
+              512
+            ],
+            "frameCount": 6,
+            "transparentFrameCorners": true,
+            "bottomCenterSafe": true,
+            "uniqueFrameHashes": 6
+          },
+          "runtime": {
+            "path": "assets/characters/blazetail-kit/spritesheets/expedition/r3/runtime-256/blazetail-attack-southeast-runtime-1536x256-6f.png",
+            "bytes": 332985,
+            "sha256": "87C19791786838782876E3C8E73BE661B8B3594FE24C4EBBFE91650B6E704100",
+            "sheetSize": [
+              1536,
+              256
+            ],
+            "frameSize": [
+              256,
+              256
+            ],
+            "frameCount": 6,
+            "transparentFrameCorners": true,
+            "bottomCenterSafe": true,
+            "uniqueFrameHashes": 6
+          }
+        },
+        "south": {
+          "master": {
+            "path": "assets/characters/blazetail-kit/spritesheets/expedition/r3/master-512/blazetail-attack-south-master-3072x512-6f.png",
+            "bytes": 1288457,
+            "sha256": "037556AED712F95FB4F6A9092E1A2DA1814925502E7D60BA1C24AE995D10DDA9",
+            "sheetSize": [
+              3072,
+              512
+            ],
+            "frameSize": [
+              512,
+              512
+            ],
+            "frameCount": 6,
+            "transparentFrameCorners": true,
+            "bottomCenterSafe": true,
+            "uniqueFrameHashes": 6
+          },
+          "runtime": {
+            "path": "assets/characters/blazetail-kit/spritesheets/expedition/r3/runtime-256/blazetail-attack-south-runtime-1536x256-6f.png",
+            "bytes": 380273,
+            "sha256": "AA390437AA7A5AF58A2B8C9AECA95CC78B2013F4B7BD9464306A53A7CC219E66",
+            "sheetSize": [
+              1536,
+              256
+            ],
+            "frameSize": [
+              256,
+              256
+            ],
+            "frameCount": 6,
+            "transparentFrameCorners": true,
+            "bottomCenterSafe": true,
+            "uniqueFrameHashes": 6
+          }
+        },
+        "southwest": {
+          "master": {
+            "path": "assets/characters/blazetail-kit/spritesheets/expedition/r3/master-512/blazetail-attack-southwest-master-3072x512-6f.png",
+            "bytes": 1317385,
+            "sha256": "CF45C8ACA173A3AB6709864FC8D8937079BE3B06A0BCFF3B3E8A418C61B1D212",
+            "sheetSize": [
+              3072,
+              512
+            ],
+            "frameSize": [
+              512,
+              512
+            ],
+            "frameCount": 6,
+            "transparentFrameCorners": true,
+            "bottomCenterSafe": true,
+            "uniqueFrameHashes": 6
+          },
+          "runtime": {
+            "path": "assets/characters/blazetail-kit/spritesheets/expedition/r3/runtime-256/blazetail-attack-southwest-runtime-1536x256-6f.png",
+            "bytes": 390981,
+            "sha256": "E7FC75B8CE31B023954EDA09BB728ACFC7B8B9FC56FB1A137FEFA2FBD6D82708",
+            "sheetSize": [
+              1536,
+              256
+            ],
+            "frameSize": [
+              256,
+              256
+            ],
+            "frameCount": 6,
+            "transparentFrameCorners": true,
+            "bottomCenterSafe": true,
+            "uniqueFrameHashes": 6
+          }
+        },
+        "west": {
+          "master": {
+            "path": "assets/characters/blazetail-kit/spritesheets/expedition/r3/master-512/blazetail-attack-west-master-3072x512-6f.png",
+            "bytes": 1329780,
+            "sha256": "AF9E2E0F9D3B7926D1FB7DB4824A1E025F57C10239F00F86F2A83D2B73991286",
+            "sheetSize": [
+              3072,
+              512
+            ],
+            "frameSize": [
+              512,
+              512
+            ],
+            "frameCount": 6,
+            "transparentFrameCorners": true,
+            "bottomCenterSafe": true,
+            "uniqueFrameHashes": 6
+          },
+          "runtime": {
+            "path": "assets/characters/blazetail-kit/spritesheets/expedition/r3/runtime-256/blazetail-attack-west-runtime-1536x256-6f.png",
+            "bytes": 405615,
+            "sha256": "D860F79CC6DCA617394D9C36ADF135FBD2B04D07E080BB361996150D5EBC5797",
+            "sheetSize": [
+              1536,
+              256
+            ],
+            "frameSize": [
+              256,
+              256
+            ],
+            "frameCount": 6,
+            "transparentFrameCorners": true,
+            "bottomCenterSafe": true,
+            "uniqueFrameHashes": 6
+          }
+        },
+        "northwest": {
+          "master": {
+            "path": "assets/characters/blazetail-kit/spritesheets/expedition/r3/master-512/blazetail-attack-northwest-master-3072x512-6f.png",
+            "bytes": 1166484,
+            "sha256": "3F01A80132A84B5409E8A96C499110214D0AB70B9111CB0190E53897DD9CEAF1",
+            "sheetSize": [
+              3072,
+              512
+            ],
+            "frameSize": [
+              512,
+              512
+            ],
+            "frameCount": 6,
+            "transparentFrameCorners": true,
+            "bottomCenterSafe": true,
+            "uniqueFrameHashes": 6
+          },
+          "runtime": {
+            "path": "assets/characters/blazetail-kit/spritesheets/expedition/r3/runtime-256/blazetail-attack-northwest-runtime-1536x256-6f.png",
+            "bytes": 358098,
+            "sha256": "98B46DAFA641FF1ED6DA74A2A16B1FE24E7FFEF2E9A86DFAEBB1859C0CD31662",
+            "sheetSize": [
+              1536,
+              256
+            ],
+            "frameSize": [
+              256,
+              256
+            ],
+            "frameCount": 6,
+            "transparentFrameCorners": true,
+            "bottomCenterSafe": true,
+            "uniqueFrameHashes": 6
+          }
+        }
+      }
+    },
+    "hit": {
+      "frames": 4,
+      "fps": 12,
+      "loop": false,
+      "directions": {
+        "north": {
+          "master": {
+            "path": "assets/characters/blazetail-kit/spritesheets/expedition/r3/master-512/blazetail-hit-north-master-2048x512-4f.png",
+            "bytes": 742617,
+            "sha256": "02C32C746FF90563CEB2C57C9E59D5EA9CA8F7F03837BAFD7C09FCB071BF0503",
+            "sheetSize": [
+              2048,
+              512
+            ],
+            "frameSize": [
+              512,
+              512
+            ],
+            "frameCount": 4,
+            "transparentFrameCorners": true,
+            "bottomCenterSafe": true,
+            "uniqueFrameHashes": 4
+          },
+          "runtime": {
+            "path": "assets/characters/blazetail-kit/spritesheets/expedition/r3/runtime-256/blazetail-hit-north-runtime-1024x256-4f.png",
+            "bytes": 222351,
+            "sha256": "77C2D093C23B07B0415E0D8D69F0848DABB79759A037FB9C48540BF8516DE4A4",
+            "sheetSize": [
+              1024,
+              256
+            ],
+            "frameSize": [
+              256,
+              256
+            ],
+            "frameCount": 4,
+            "transparentFrameCorners": true,
+            "bottomCenterSafe": true,
+            "uniqueFrameHashes": 4
+          }
+        },
+        "northeast": {
+          "master": {
+            "path": "assets/characters/blazetail-kit/spritesheets/expedition/r3/master-512/blazetail-hit-northeast-master-2048x512-4f.png",
+            "bytes": 904978,
+            "sha256": "ABFED908B6ED149574822203EBA79877969FBA39F94957B41A1AD9CFA77E40F2",
+            "sheetSize": [
+              2048,
+              512
+            ],
+            "frameSize": [
+              512,
+              512
+            ],
+            "frameCount": 4,
+            "transparentFrameCorners": true,
+            "bottomCenterSafe": true,
+            "uniqueFrameHashes": 4
+          },
+          "runtime": {
+            "path": "assets/characters/blazetail-kit/spritesheets/expedition/r3/runtime-256/blazetail-hit-northeast-runtime-1024x256-4f.png",
+            "bytes": 274446,
+            "sha256": "5F1F87652149DD3E1A83E0CE26B035D765EAD489A9AA9300838896D34D7972E3",
+            "sheetSize": [
+              1024,
+              256
+            ],
+            "frameSize": [
+              256,
+              256
+            ],
+            "frameCount": 4,
+            "transparentFrameCorners": true,
+            "bottomCenterSafe": true,
+            "uniqueFrameHashes": 4
+          }
+        },
+        "east": {
+          "master": {
+            "path": "assets/characters/blazetail-kit/spritesheets/expedition/r3/master-512/blazetail-hit-east-master-2048x512-4f.png",
+            "bytes": 957859,
+            "sha256": "3A44AE1C8F5C9852A9DE6910E43C0146284BB5094E8B84DA8692F6282FA174F1",
+            "sheetSize": [
+              2048,
+              512
+            ],
+            "frameSize": [
+              512,
+              512
+            ],
+            "frameCount": 4,
+            "transparentFrameCorners": true,
+            "bottomCenterSafe": true,
+            "uniqueFrameHashes": 4
+          },
+          "runtime": {
+            "path": "assets/characters/blazetail-kit/spritesheets/expedition/r3/runtime-256/blazetail-hit-east-runtime-1024x256-4f.png",
+            "bytes": 284589,
+            "sha256": "AC6AD92140D7B98BE0F14C2C5E937D9B6A5AD200F030A2AE92D80719506A93F5",
+            "sheetSize": [
+              1024,
+              256
+            ],
+            "frameSize": [
+              256,
+              256
+            ],
+            "frameCount": 4,
+            "transparentFrameCorners": true,
+            "bottomCenterSafe": true,
+            "uniqueFrameHashes": 4
+          }
+        },
+        "southeast": {
+          "master": {
+            "path": "assets/characters/blazetail-kit/spritesheets/expedition/r3/master-512/blazetail-hit-southeast-master-2048x512-4f.png",
+            "bytes": 898489,
+            "sha256": "0A2372B7C5DF059BB636D6DEE3BDBD19E787F068B8654FEE25DD30DA61609F79",
+            "sheetSize": [
+              2048,
+              512
+            ],
+            "frameSize": [
+              512,
+              512
+            ],
+            "frameCount": 4,
+            "transparentFrameCorners": true,
+            "bottomCenterSafe": true,
+            "uniqueFrameHashes": 4
+          },
+          "runtime": {
+            "path": "assets/characters/blazetail-kit/spritesheets/expedition/r3/runtime-256/blazetail-hit-southeast-runtime-1024x256-4f.png",
+            "bytes": 268887,
+            "sha256": "3F5EF5A409FB655DA7A798EC74C1A8B8CFF67FB74A748BEF18CAA7DF66B95CA8",
+            "sheetSize": [
+              1024,
+              256
+            ],
+            "frameSize": [
+              256,
+              256
+            ],
+            "frameCount": 4,
+            "transparentFrameCorners": true,
+            "bottomCenterSafe": true,
+            "uniqueFrameHashes": 4
+          }
+        },
+        "south": {
+          "master": {
+            "path": "assets/characters/blazetail-kit/spritesheets/expedition/r3/master-512/blazetail-hit-south-master-2048x512-4f.png",
+            "bytes": 991317,
+            "sha256": "EF0D68814C4A31E33D046902D99F436B533D28823BC430750FF44506F61B244B",
+            "sheetSize": [
+              2048,
+              512
+            ],
+            "frameSize": [
+              512,
+              512
+            ],
+            "frameCount": 4,
+            "transparentFrameCorners": true,
+            "bottomCenterSafe": true,
+            "uniqueFrameHashes": 4
+          },
+          "runtime": {
+            "path": "assets/characters/blazetail-kit/spritesheets/expedition/r3/runtime-256/blazetail-hit-south-runtime-1024x256-4f.png",
+            "bytes": 292663,
+            "sha256": "B461A8687F5D7E46C784A813F50AD9223D5EAB938DB7F1519AAC5AA010EDC7F2",
+            "sheetSize": [
+              1024,
+              256
+            ],
+            "frameSize": [
+              256,
+              256
+            ],
+            "frameCount": 4,
+            "transparentFrameCorners": true,
+            "bottomCenterSafe": true,
+            "uniqueFrameHashes": 4
+          }
+        },
+        "southwest": {
+          "master": {
+            "path": "assets/characters/blazetail-kit/spritesheets/expedition/r3/master-512/blazetail-hit-southwest-master-2048x512-4f.png",
+            "bytes": 1009524,
+            "sha256": "C174D8692D64CB6B92C1034999676334E2D2D5FE512BE3D8926155F9D658D5ED",
+            "sheetSize": [
+              2048,
+              512
+            ],
+            "frameSize": [
+              512,
+              512
+            ],
+            "frameCount": 4,
+            "transparentFrameCorners": true,
+            "bottomCenterSafe": true,
+            "uniqueFrameHashes": 4
+          },
+          "runtime": {
+            "path": "assets/characters/blazetail-kit/spritesheets/expedition/r3/runtime-256/blazetail-hit-southwest-runtime-1024x256-4f.png",
+            "bytes": 297140,
+            "sha256": "EEC0AB1B37A30D32807606260184F48F54B6A215C72CB00561601F16367B6A20",
+            "sheetSize": [
+              1024,
+              256
+            ],
+            "frameSize": [
+              256,
+              256
+            ],
+            "frameCount": 4,
+            "transparentFrameCorners": true,
+            "bottomCenterSafe": true,
+            "uniqueFrameHashes": 4
+          }
+        },
+        "west": {
+          "master": {
+            "path": "assets/characters/blazetail-kit/spritesheets/expedition/r3/master-512/blazetail-hit-west-master-2048x512-4f.png",
+            "bytes": 775071,
+            "sha256": "3208E0D13AA5621DB7F030F21896BAB1C3A08BEAB3C9AE32B05AC94A4C801EBF",
+            "sheetSize": [
+              2048,
+              512
+            ],
+            "frameSize": [
+              512,
+              512
+            ],
+            "frameCount": 4,
+            "transparentFrameCorners": true,
+            "bottomCenterSafe": true,
+            "uniqueFrameHashes": 4
+          },
+          "runtime": {
+            "path": "assets/characters/blazetail-kit/spritesheets/expedition/r3/runtime-256/blazetail-hit-west-runtime-1024x256-4f.png",
+            "bytes": 233066,
+            "sha256": "A97B263D3326795D798C71936F071126820C7BC1E0D0525F3EDAFC8E448FFAE6",
+            "sheetSize": [
+              1024,
+              256
+            ],
+            "frameSize": [
+              256,
+              256
+            ],
+            "frameCount": 4,
+            "transparentFrameCorners": true,
+            "bottomCenterSafe": true,
+            "uniqueFrameHashes": 4
+          }
+        },
+        "northwest": {
+          "master": {
+            "path": "assets/characters/blazetail-kit/spritesheets/expedition/r3/master-512/blazetail-hit-northwest-master-2048x512-4f.png",
+            "bytes": 896928,
+            "sha256": "6AE0CF8D2CFB9014174150B922AE28A49995034CDA4172497D924DDE29B5F160",
+            "sheetSize": [
+              2048,
+              512
+            ],
+            "frameSize": [
+              512,
+              512
+            ],
+            "frameCount": 4,
+            "transparentFrameCorners": true,
+            "bottomCenterSafe": true,
+            "uniqueFrameHashes": 4
+          },
+          "runtime": {
+            "path": "assets/characters/blazetail-kit/spritesheets/expedition/r3/runtime-256/blazetail-hit-northwest-runtime-1024x256-4f.png",
+            "bytes": 270028,
+            "sha256": "5553FC04EFEA1209458B0D7683B56175DD4CE2AF913C598A11BE3CC875137989",
+            "sheetSize": [
+              1024,
+              256
+            ],
+            "frameSize": [
+              256,
+              256
+            ],
+            "frameCount": 4,
+            "transparentFrameCorners": true,
+            "bottomCenterSafe": true,
+            "uniqueFrameHashes": 4
+          }
+        }
+      }
+    }
+  }
+}

@@ -16,6 +16,16 @@ export const COMPANION_ADVENTURE_PROFILES = Object.freeze({
     exploreRadius: 420,
     /** 低血量脫離阈值（Phase C 用）。 */
     retreatHpRatio: 0.35
+  }),
+  "blazetail-kit": Object.freeze({
+    id: "blazetail-kit",
+    label: "Blazetail Kit",
+    // Brisk and expressive, but still able to refuse pressure and retreat.
+    aggression: 0.52,
+    curiosity: 0.76,
+    riskAversion: 0.48,
+    exploreRadius: 400,
+    retreatHpRatio: 0.42
   })
 });
 
