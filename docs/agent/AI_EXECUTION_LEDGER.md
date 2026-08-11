@@ -8517,6 +8517,64 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Branch / commit: `codex/global-3d-gameplay-batch-r3` / this entry's final
   package commit.
 
+### 2026-08-11 - Codex - Crystalfin R4 Expedition Completion - IN PROGRESS
+
+- Status: `IN PROGRESS`; Owner approved the Crystalfin Expedition completion
+  package, including a mandatory visual calibration gate before any new raster
+  candidate may enter `assets/**` or runtime profiles.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `GLOBAL_3D_GAMEPLAY_BATCH_R4_CRYSTALFIN_EXPEDITION_COMPLETION`.
+- Layer: `GROUNDWORK + EXPERIENCE`; pre-approval work is restricted to ignored
+  `output/character-pilots/crystalfin-seahorse-r4/**`, this ledger and
+  package-local review/QC tooling. Promotion GROUNDWORK opens only after a new
+  explicit Owner visual acceptance.
+- Runtime target after approval: eight-direction Crystalfin hover travel,
+  directional restrained `attack_basic` and safe `hit`/recovery, canonical
+  `crystalfin-seahorse` profiles, same-owner fallback and bounded 256 runtime
+  loading. The already-promoted R2 Orbit top remains read-only.
+- Red-line check: no save, default state, Growth, permanent evolution,
+  relationship, reward, HP-zero, rarity, equipment, unlock, enemy family,
+  remote PvP or Orbit physics change. `src/orbit/orbitPhysics.js` stays sole
+  Orbit authority.
+- Non-goals: no Crystalfin GLB rebuild, no other companion, no enemy expansion,
+  no global renderer migration, no dependency, and no `index.html`, state,
+  save, `pixiApp` or legacy-asset deletion.
+- Branch / worktree: `codex/global-3d-gameplay-batch-r4` /
+  `C:\Users\User\NexusLink_RaphaelAI_Workspace\NexusLink-global-3d-gameplay-batch-r4`.
+- Acceptance refs: `ACCEPTANCE.md` E1-E2, G1-G7, H7-H9, J1-J4 and Orbit
+  O15A/O17 regression only; exact grid/alpha/hover-datum/identity, phone,
+  fallback and release gates remain mandatory after promotion authorization.
+- Required reading: `docs/design/GLOBAL_3D_PRESENTATION_CONTRACT_V1.md`,
+  `docs/design/HEARTCORE_ORBIT_BATTLE_CONTRACT_V1.md`, Crystalfin Character
+  Lock, `docs/art/SPECIES_MOTION_TRANSLATION.md`, R2 Orbit manifest,
+  Generate2dsprite rules and the latest R2/R3 ledger entries.
+
+### 2026-08-11 - Codex - Crystalfin R4 Visual Calibration - IN PROGRESS
+
+- Status: `IN PROGRESS`; new art starts as project-generated review candidates
+  only and has no inherited runtime approval from the older catalog sheets or
+  the separately approved R2 Orbit top.
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `GLOBAL_3D_GAMEPLAY_BATCH_R4_CRYSTALFIN_EXPEDITION_COMPLETION`.
+- Identity lock: preserve the juvenile upright S-body, rounded forehead and
+  short snout, large deep-blue/cyan eye, pale segmented belly, one curled tail,
+  sapphire crystal crown/fins and blue diamond chest core. Never drift into a
+  dragon, horse, fish, mermaid, winged creature or legged quadruped.
+- Motion language: stable invisible datum beneath the lowest tail curl, gentle
+  fin-led hover, tail coil/uncoil and water-resistance timing. Locomotion has no
+  footsteps or floor impact; attack is a restrained current pulse; hit is a
+  displaced-current sink and living recovery rather than injury spectacle.
+- Calibration scope: front, rear, side and diagonal hover readability plus one
+  compact attack and one safe recoil/recovery sample, all authored as separate
+  multi-row action grids on solid magenta before deterministic transparency,
+  alignment and review-sheet assembly.
+- Visual gate: inspect identity, material/style match to the bright miniature
+  resin-clay R3 family, direction, hover datum, tail continuity, crystal edge
+  safety, scale, alpha and lack of baked scene/UI/text/detached FX. Mechanical
+  QC cannot open promotion without explicit Owner acceptance.
+- Branch / commit: `codex/global-3d-gameplay-batch-r4` / no commit at the
+  candidate calibration stage.
+
 ### 2026-08-11 - Codex - Blazetail R3 Asset Promotion - VERIFIED
 
 - Status: `VERIFIED`; Owner-approved project-generated art is promoted under
@@ -8548,4 +8606,77 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
   `assets/3d/orbit-tops-r3/**`, package-specific art processors/promotion tool
   and `tools/blender/build_blazetail_orbit_top_r3.py`.
 - Branch / commit: `codex/global-3d-gameplay-batch-r3` / this entry's final
+  package commit.
+
+### 2026-08-11 - Codex - Crystalfin R4 Expedition Runtime - VERIFIED
+
+- Status: `VERIFIED`; the Owner delegated the visual acceptance decision to a
+  strict Codex self-review and authorized commit, push, PR, protected-main
+  merge, Pages verification and Codebase MCP publication when every gate was
+  green. The retained Crystalfin-only package passed that gate.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `GLOBAL_3D_GAMEPLAY_BATCH_R4_CRYSTALFIN_EXPEDITION_COMPLETION`.
+- Runtime result: canonical `crystalfin-seahorse` now owns eight-direction
+  Expedition hover travel plus directional `attack_basic` current-pulse and
+  safe `hit`/recovery profiles. The final browser gate exposed that sprite
+  readiness alone did not make the map launchable, so the missing bounded
+  adventure profile was added with quiet, curious and risk-averse behaviour;
+  unknown companions still fail closed and no unlock rule was changed.
+- Loading truth: the current pilot attachment preloads all eight 256 walk
+  strips (16 MiB decoded) for the scene session. Action strips remain lazy per
+  action and facing (2.5 MiB for one attack/hit direction, 20 MiB if all eight
+  directions become cached). Runtime never requests the 512 masters.
+- Automated proof: syntax checks pass for all touched runtime modules;
+  Crystalfin R4, Blazetail R3, prior promotion and gameplay-skin suites pass;
+  Expedition behaviour remains 32/32; and every Orbit regression harness,
+  including exact 30/60/120 Hz deterministic cases, passes.
+- Real-browser proof: headless Chromium passes 3/3 at 390x844, 430x932 and
+  1280x800. Each case boots with Crystalfin as the active/unlocked fixture,
+  enters `plains_windrest`, receives all eight walk strips with HTTP 200, has
+  no Crystalfin request failure/page error, no horizontal overflow, no HUD
+  overlap and no sub-44-pixel mobile action target.
+- Red-line result: no HP-zero combat, save/default-state/normalizer, Growth,
+  permanent evolution, relationship, reward, unlock, roster, enemy family,
+  remote-PvP or Orbit-physics authority changed. The promoted R2 Crystalfin
+  Orbit top remains the unchanged read-only regression anchor.
+- Changed runtime/test families: `src/data/companionAdventureProfiles.js`,
+  `src/data/expeditionSpriteProfiles.js`,
+  `src/data/expeditionActionSpriteProfiles.js` and
+  `docs/qa/global-3d-gameplay-batch-r4-cases.mjs`.
+- Branch / commit: `codex/global-3d-gameplay-batch-r4` / this entry's final
+  package commit.
+
+### 2026-08-11 - Codex - Crystalfin R4 Asset Promotion - COMPLETED
+
+- Status: `COMPLETED`; the project-generated Crystalfin R4 package passed
+  mechanical, visual, phone-runtime and provenance review and is promoted only
+  beneath the canonical `crystalfin-seahorse` owner root. No third-party art
+  pack or new dependency is present.
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `GLOBAL_3D_GAMEPLAY_BATCH_R4_CRYSTALFIN_EXPEDITION_COMPLETION`.
+- Asset result: 48 promoted PNG strips cover eight directions x walk/attack/hit
+  in both 512-master and 256-runtime forms. The source review covers 94 frames:
+  40 authored hover frames, 30 authored current-pulse frames and 20 authored
+  recovery frames, with west-facing variants produced by deterministic mirror
+  of their same-owner east-facing counterparts.
+- Mechanical proof: every retained source frame is 512x512 RGBA with zero
+  exact duplicate frames, zero edge-alpha pixels, zero visible magenta and a
+  stable bottom-centre hover datum. Promotion re-verifies hashes, exact strip
+  grids, transparent corners, safe bottom bounds, pose variation and decoded
+  size; the successful run reports eight directions and 48 promoted sheets.
+- Visual proof: the complete contact sheet and real 390x844/1280x800 runtime
+  captures were inspected at original resolution. The package retains the
+  juvenile upright S-body, short snout, single curled tail, pale segmented
+  belly, sapphire crown/fins and blue chest core. Hover stays fin/tail-led,
+  current pulse is restrained, and recovery reads as displacement rather than
+  injury, death or HP spectacle.
+- Asset governance: both metadata manifests record Owner authorization,
+  project-owned generation, same-owner-only fallback, preserved legacy assets,
+  actual loading policy and explicit memory budgets. The deterministic
+  fail-closed promotion tool is retained at
+  `tools/art/promote_crystalfin_r4_assets.py`.
+- Non-goals preserved: no Crystalfin GLB rebuild, R2 Orbit replacement, other
+  companion/enemy art, global renderer migration, legacy deletion, baked
+  scene/UI/text, dependency or cross-owner fallback.
+- Branch / commit: `codex/global-3d-gameplay-batch-r4` / this entry's final
   package commit.

@@ -26,6 +26,16 @@ export const COMPANION_ADVENTURE_PROFILES = Object.freeze({
     riskAversion: 0.48,
     exploreRadius: 400,
     retreatHpRatio: 0.42
+  }),
+  "crystalfin-seahorse": Object.freeze({
+    id: "crystalfin-seahorse",
+    label: "Crystalfin Seahorse",
+    // Quiet and sensitive: it reads the current before committing to contact.
+    aggression: 0.28,
+    curiosity: 0.74,
+    riskAversion: 0.7,
+    exploreRadius: 390,
+    retreatHpRatio: 0.48
   })
 });
 
