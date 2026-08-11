@@ -6,7 +6,7 @@
 
 ---
 
-## 2026-08-11 候選真相 / Candidate truth
+## 2026-08-12 候選真相 / Candidate truth
 
 `RAPHAEL_SAFETY_AND_RAW_DATA_CLOSURE_V2` 的 canonical engine 已先經 protected
 PR [#4](https://github.com/Orochi771127/raphael-ai-engine/pull/4) 合併為 engine
@@ -47,6 +47,22 @@ TLS/probe lifecycle 缺口已由 PR #10 合併為 `4ae1af2f`，post-main workflo
 `31503394192` 通過完整 `hosted-boundaries` 與 `operator-private-infrastructure`。
 細節見 `docs/handoff/RAPHAEL_HMAX_OWNER_SESSION_CANARY_RUN_V1.md`。
 
+該 Owner-session evidence 已由 Nexus PR
+[#200](https://github.com/Orochi771127/NexusLink/pull/200) 合併為 `main`
+`b7a14f817226ed9d59067eeb21f0308cfef98f85`；post-main Web workflow
+[31504327184](https://github.com/Orochi771127/NexusLink/actions/runs/31504327184)
+與 Pages workflow
+[31504326042](https://github.com/Orochi771127/NexusLink/actions/runs/31504326042)
+均成功。這仍不啟用玩家 canary。
+
+`RAPHAEL_CRISIS_CONTINUITY_AND_HMAX_NO_REMOTE_V1` 候選修正高風險後續回合：
+自傷、過量／急性醫療、正在發生的暴力、危險妄想／躁期、飲食與物質危險
+一旦進入本機 system terminal，含糊的「已請人過來」、道謝、話題切換或重新載入
+都不能解除 `safeHarborMode`。只有明確已完成的急診／醫護／警消／可信任真人接手
+可解除；解除當回合本身仍是本機 terminal，零 HMAX request、零 reward／Growth／
+relationship delta、零 durable memory／anchor／trace、零原始輸入持久化。下一個安全
+回合才恢復 ordinary flow。
+
 本候選補上組合式正在發生暴力／虐待、虛構轉現實危險、監視確信的安全路由，
 並讓 Care、caution、support-sensitive 與高風險回合都不能產生關係獎勵、
 Growth 或耐久記憶。新的 Soul Talk transcript 只存在於目前頁面 session；Care
@@ -54,17 +70,23 @@ Growth 或耐久記憶。新的 Soul Talk transcript 只存在於目前頁面 se
 raw chat 欄位與 conversation-derived memory bundles 會被移除。舊版已存在裝置上的
 legacy transcript 不會被自動刪除或上傳，仍只提供玩家明示匯出與清除。
 
-Automated evidence: Nexus focused closure `7/7`; the current canary candidate Web
-release gate is `32/32` with `allAutomatedRequiredOk:true`, JS syntax `462/462`,
-storage `22/22`, Growth browser `156/156`, Soul Talk `11/11`,
+Automated evidence: Nexus focused closure `7/7`; crisis-continuity/no-remote
+focused suite `89/89`; the exact final candidate aggregate Web release gate is
+`32/33` with JS syntax `463/463`, storage `22/22`, Soul Talk `11/11`,
 HUD `13/13`; sealed conversation evaluator `48/48`; autonomy evaluator `32/32`;
 engine full suite `45/45`, closure suite `7/7`, release-artifact suite `10/10`.
-HMAX canary contract `28/28`, canary Chromium `15/15`, existing shadow contract
-`21/21` and shadow Chromium `8/8` are green. The real loopback synthetic Owner
+HMAX canary contract `29/29`, canary Chromium `19/19`, existing shadow contract
+`22/22` and shadow Chromium `8/8` are green. The real loopback synthetic Owner
 session is also green; HMAX lifecycle tests are `37/37` and repeat-up/persistence/
 broker probes pass. The final clean engine artifact is the release-eligible digest
 recorded above. Human blind review, real-device checks, human Owner feel-check,
 professional psychological review and legal/privacy review remain `not_run`.
+
+Final-candidate aggregate 的唯一失敗是 Windows 長矩陣後 Growth
+controller-ready timeout；同一 candidate 隨即以乾淨獨立 server/browser 重跑
+Growth `156/156 PASS`、console errors `0`。較早的同包 aggregate 曾 `33/33`
+成功，但發生在最後的 caution-latch 邊界修正前，因此不冒充 exact-final 證據。
+Protected PR 的乾淨 CI 仍是合併硬門檻；CI 未全綠不得合併。
 
 完整 Web gate 曾在 Growth controller-ready 等待出現 timeout。最新 main 重驗時，
 診斷明確捕捉到 Python HTTP/1.0 loopback server 在大量 ES module reload 後回傳
@@ -83,12 +105,12 @@ not authorize broad visible-speech cutover, player traffic or model training.
 
 | 欄位 | 值 |
 |------|-----|
-| `last_updated` | 2026-08-11（HMAX Owner Session Canary Run V1） |
-| `last_agent` | Codex（HMAX Owner Session Canary Run V1） |
-| `active_branch` | `codex/raphael-hmax-owner-session-canary-run-v1` |
-| `runtime_baseline` | `cbab82dc79c6c9477f5554262ece603b82e3a919`（PR #199 merge；post-main Web + Pages green） |
+| `last_updated` | 2026-08-12（Crisis Continuity And HMAX No Remote V1） |
+| `last_agent` | Codex（Crisis Continuity And HMAX No Remote V1） |
+| `active_branch` | `codex/raphael-crisis-continuity-hmax-no-remote-v1` |
+| `runtime_baseline` | `b7a14f817226ed9d59067eeb21f0308cfef98f85`（PR #200 merge；post-main Web + Pages green） |
 | `rc_closure_commit` | `220e2fdbefaa4a2a7ecc2e853f68869bc4560d81`；乾淨 checkout exact-commit Web **17/17**、sealed holdout **48/48** |
-| `publication` | HMAX PR #9/#10、Nexus PR #196/#199 已合併且 post-main green；本 owner-session evidence 走獨立 protected PR，且即使合併仍預設關閉、不是公開 cutover |
+| `publication` | HMAX PR #9/#10、Nexus PR #196/#199/#200 已合併且 post-main green；本 crisis-continuity candidate 尚待 protected PR，且即使合併仍預設關閉、不是公開 cutover |
 | `workspace` | `C:\Users\User\NexusLink_RaphaelAI_Workspace\NexusLink` |
 | `do_not_touch` | `AIForgeNexus2\NexusLink`（舊 checkout，易與本工作區分叉） |
 

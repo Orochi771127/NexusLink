@@ -5,6 +5,7 @@ import {
 } from "../engine/habitatTraceEngine.js";
 import { buildMilestoneMemory, findNewBondMilestone, getMilestoneLine } from "../engine/bondMilestoneEngine.js";
 import { shouldBlockMilestone } from "./stateMutationPolicy.js";
+import { isSafetyTerminalDecision } from "./safetyShield.js";
 import { dispatchRaphaelAnimationCue } from "./raphaelAnimationBridge.js";
 import { mergeCompanionAnchors } from "./dialogue/companionAnchorPolicy.js";
 import { updateTurnCounter, pruneCompanionAnchors } from "./memory/memoryLifecycleEngine.js";
@@ -23,8 +24,8 @@ export function applyRaphaelCoreResult(
   const traceDecision = coreResult.traceDecision || {};
   const output = coreResult.output || {};
 
-  const isSafetyTerminal = Boolean(
-    coreResult.safety?.isHighRisk || coreResult.perception?.safety?.isHighRisk
+  const isSafetyTerminal = isSafetyTerminalDecision(
+    coreResult.safety || coreResult.perception?.safety || {}
   );
   if (!isSafetyTerminal) {
     state.lastMessage = coreResult.input?.normalizedInput || coreResult.inputText || state.lastMessage;

@@ -1,12 +1,12 @@
 # Machine-readable Raphael AI status. Human narrative: RAPHAEL_AI_HANDOFF.md
 # Current operational truth = current main HEAD + AI_EXECUTION_LEDGER Lane 3.
 # Historical automated counts are retained for provenance but are not current PASS evidence.
-last_updated: "2026-08-11"
-last_agent: "Codex (Raphael HMAX Owner Session Canary Run V1)"
+last_updated: "2026-08-12"
+last_agent: "Codex (Raphael Crisis Continuity And HMAX No Remote V1)"
 
 branch:
-  active: "codex/raphael-hmax-owner-session-canary-run-v1"
-  runtime_baseline_commit: "cbab82dc79c6c9477f5554262ece603b82e3a919"
+  active: "codex/raphael-crisis-continuity-hmax-no-remote-v1"
+  runtime_baseline_commit: "b7a14f817226ed9d59067eeb21f0308cfef98f85"
   safety_raw_data_closure_candidate_baseline: "9531dbccb7956c15e379dcff0488837dde4e587d"
   safety_raw_data_closure_candidate_commit: "1814f3e07e3b36537f64632f7a52c7cc8c755d3e"
   safety_raw_data_closure_pr: 196
@@ -31,6 +31,10 @@ branch:
   hmax_owner_lifecycle_pr_head: "1ffec59ecb9478ce662973d423c25b13bc26af6c"
   hmax_owner_lifecycle_merge_commit: "4ae1af2f06fce64abf813a907945904bb23da3bd"
   hmax_owner_lifecycle_post_main_ci: "31503394192 PASS"
+  hmax_owner_session_evidence_pr: 200
+  hmax_owner_session_evidence_merge_commit: "b7a14f817226ed9d59067eeb21f0308cfef98f85"
+  hmax_owner_session_evidence_post_main_ci: "31504327184 PASS"
+  hmax_owner_session_evidence_pages_deploy: "31504326042 PASS"
   ironflow_asset_commit: "de2f438b176d7d82dad98ab2983c08d3536b6965"
   ironflow_runtime_commit: "f45952636d1479e90a81ede905658b4aef864de9"
   ironflow_evidence_commit: "8efb3913eb3a3a680ede8bbca6f0d433d638334c"
@@ -46,16 +50,16 @@ branch:
   growth_g31_publication_state: "merged_to_main_via_pr_114"
   ironflow_publication_state: "merged_to_main_via_pr_116"
   publication_mode: "protected_pull_request_with_strict_required_gate"
-  note: "Engine PR #4, HMAX PR #9/#10, Nexus PR #196 and disabled-by-default canary PR #199 are merged with green post-main evidence. This branch records one synthetic loopback Owner session against the pre-fix HMAX baseline and the separately published repeat-up lifecycle closure; it does not authorize real-model quality claims or public Soul Talk cutover."
+  note: "Engine PR #4, HMAX PR #9/#10, Nexus PR #196/#199/#200 are merged with green post-main evidence. This candidate closes local crisis continuity and prevents HMAX requests until explicit completed real-world handoff; it does not authorize real-model quality claims, players or public Soul Talk cutover."
 
 workspace: "C:\\Users\\User\\NexusLink_RaphaelAI_Workspace\\NexusLink"
 do_not_touch: "AIForgeNexus2\\NexusLink"
 
 stage:
   current: "7"
-  label: "Raphael Stage 7 plus merged Safety And Raw Data Closure V2 and disabled HMAX canary foundation; one synthetic Owner session is locally proven while human launch gates remain open"
-  release_readiness: "hmax_lifecycle_main_green_synthetic_owner_session_evidence_candidate_not_public_cutover_approved"
-  next: "publish this Nexus metadata-only evidence package through the protected PR gate; keep the canary absent/disabled and open a separate real-model human Owner feel-check before any 10-person rollout"
+  label: "Raphael Stage 7 plus merged Safety And Raw Data Closure V2 and disabled HMAX canary foundation; crisis continuity is a protected-PR candidate while human launch gates remain open"
+  release_readiness: "crisis_continuity_product_checks_green_protected_ci_pending_not_public_cutover_approved"
+  next: "publish crisis continuity through protected PR and verify post-main Web/Pages; only then open engine single-sovereign safety path and HMAX context closure"
 
 runtime_connections:
   soul_talk: "src/ui/soulTalkController.js -> runRaphaelCore() -> applyRaphaelCoreResult(); live runtime path"
@@ -76,6 +80,7 @@ capabilities:
   companion_growth_g31: "Heart Phase completion is a candidate-first critical-save care source; explicit accepted rewrite may seal consent anchor; live owners are exploration/standoff/care, but non-standoff readiness and G4 offer/stage advance remain absent"
   ironflow_stage1: "ThunderPup, WaveCub, Starflame Phoenix, Star Foal and Goldenspark Wyrm are full-runtime, Codex-visible and voice-distinct; fresh saves remain locked, Initial Bond is unchanged, and Expedition remains fail-closed"
   safety_raw_data_closure_v2: "candidate closes compositional active-abuse, fiction-to-real-risk and surveillance-certainty routing; Care/caution/support-sensitive/high-risk turns are excluded from relationship reward, Growth and durable memory"
+  crisis_continuity_hmax_no_remote_v1: "after an acute local terminal, ambiguous/help/thanks/topic-switch/reload turns remain local system policy terminals with zero HMAX request and zero relationship/memory side effects until an explicit completed real-world handoff; the release turn is also terminal"
   raw_transcript_policy: "new Soul Talk transcript is session-memory only; Care/system-terminal turns are excluded even from that session journal; persistence/cloud projection removes raw chat fields and conversation-derived memory bundles"
   hmax_soul_talk_canary: "embedded Core applies safety and gameplay first; an owner-approved loopback HMAX decision may replace one exact companion line only after turn/page/companion/state stale checks; one synthetic browser-to-broker-to-HMAX session passed locally with no hosted memory, effect or game mutation"
 
@@ -84,12 +89,14 @@ qa:
   safety_raw_data_web_gate: "latest-origin/main rerun 28/28 automated required PASS; JS syntax 459/459; accessibility warnings 0; Soul Talk 11/11; HUD 13/13; storage 22/22; Growth browser 156/156. Python HTTP/1.0 reloads reproduced net::ERR_NO_BUFFER_SPACE without app errors; unchanged assertions passed on a clean HTTP/1.1 keep-alive loopback server."
   safety_raw_data_conversation_eval: "sealed automated evidence 48/48 hard PASS, zero quality flags and zero console errors; humanBlindReview:not_run"
   safety_raw_data_autonomy_eval: "32/32 automated PASS; trusted:false advisory invariant and hard gate PASS"
+  crisis_continuity_hmax_no_remote: "89/89 PASS across 8 acute categories, 3 ambiguous follow-ups per category, explicit release, persisted safe-harbor reload, strict release phrases and zero canary/shadow fetch or token acquisition"
+  crisis_continuity_conversation_eval: "sealed stateful automated evidence 48/48 hard PASS; 2 reviewed quality flags are expected repeated system-terminal copy in H10-3/H10-4; humanBlindReview:not_run"
   safety_raw_data_engine_artifact: "10/10 artifact tests PASS; final engine main b0a12512; clean digest sha256:0f87b9cf05518d19ebcdf1267ed98ba035cd07fe78dd4840cbd2a4e391245f22; releaseEligible:true"
-  hmax_soul_talk_canary_contract: "28/28 PASS: default-off, owner/consent/visible/kill gates, local terminal zero-network, strict response, role/dependency and acute-danger/medication candidate rejection, idempotency, timeout, stale/kill-in-flight, loopback and speech-only reducer"
-  hmax_soul_talk_canary_browser: "15/15 PASS in real Chromium at 390x844: default-off, one-line visible replacement, no durable raw speech, gameplay parity, timeout, high-risk zero-network, panel-close, kill-switch and state-stale rejection"
+  hmax_soul_talk_canary_contract: "29/29 PASS: default-off, owner/consent/visible/kill gates, high-risk and persisted safe-harbor zero-network, strict response, role/dependency and acute-danger/medication candidate rejection, idempotency, timeout, stale/kill-in-flight, loopback and speech-only reducer"
+  hmax_soul_talk_canary_browser: "19/19 PASS in real Chromium at 390x844: default-off, one-line visible replacement, no durable raw speech, gameplay parity, timeout, acute and follow-up crisis zero-network, explicit local release, raw crisis non-persistence, panel-close, kill-switch and state-stale rejection"
   hmax_owner_session_canary: "PASS in real Chromium at 390x844 against loopback HMAX/Core 0.2.1: exactly one pair plus one eligible turn; candidate selected/applied in 1123 ms; trusted:false; memory/effect/direct game mutation 0; high-risk/policy/boundary/private Care each 0 hosted request; no raw input/speech/credential in tracked evidence; console errors 0"
   hmax_repeat_up_lifecycle: "HMAX PR #10 merged as 4ae1af2 with post-main workflow 31503394192 PASS: 37/37 local full suite, 8/8 focused policy, static 40 code / 8 JSON, audit 0; two consecutive persistent:up runs, persistence verify and broker verify PASS after bounded TLS consumer recreation, per-run probe IDs and fresh probe image build"
-  hmax_local_shadow_regression: "21/21 Node and 8/8 real Chromium PASS; hosted shadow speech remains invisible and mutation-free"
+  hmax_local_shadow_regression: "22/22 Node and 8/8 real Chromium PASS; persisted safe-harbor remains zero-network and hosted shadow speech remains invisible and mutation-free"
   rc_closure_exact_commit: "220e2fd: web 17/17 PASS from clean tracked tree at 2026-07-16T15:27:55+0800; sealed holdout 48/48 at 2026-07-16T15:27:58+0800"
   safety_terminal_invariant: "56/56 PASS in the required gate: all 16 full-runtime personas at energy 0/7/10 + 7 fail-closed mutations + 1 caution regulation case"
   sealed_holdout_v1: "48/48 PASS on exact closure commit 220e2fd (runtime baseline c756337), 0 quality flags, 0 console errors; humanBlindReview:not_run; auxiliary evidence only"
@@ -97,7 +104,7 @@ qa:
   mutation_regressions: "7/7 fail-closed in focused suite, including truncation, boundary template, missing redirect and relationship/growth mutation attempts"
   dialogue_policy: "21/21 PASS and required by the web release gate; boundary policy cannot be truncated by preference repair"
   constitution_policy: "5/5 PASS and required by the web release gate"
-  web_release_gate: "Owner-session evidence candidate 32/32 automated required PASS on runtime baseline cbab82d; allAutomatedRequiredOk:true; JS syntax 462/462; HMAX shadow Node/UI and canary Node/UI are all required and green; canonical evidence generated 2026-08-11T22:20:31+0800 on a single-writer HTTP/1.1 keep-alive loopback run; docs/QA-only worktree changes were present and runtimeTreeClean:true"
+  web_release_gate: "Exact final crisis-continuity candidate aggregate is 32/33 on runtime baseline b7a14f8: JS syntax 463/463 and every product-specific crisis/HMAX/live-playtest check passed; the sole Windows long-matrix failure was Growth controller-ready timeout. The same final candidate then passed Growth 156/156 with console errors 0 on a clean isolated server/browser. An earlier pre-caution-boundary candidate aggregate passed 33/33 but is not exact-final proof; protected PR CI remains the merge gate."
   safety_terminal_ui: "7/7 PASS in the required G2 gate: full system reply, zero chips/SFX/relationship/growth delta, immediate critical save"
   companion_growth_state: "23/23; 14-field per-companion mirror, idempotent migration, A/B isolation, all established-companion offline recovery and reload"
   companion_growth_g3_engine: "16/16 deterministic key, safety provenance, alias, replay-50, compaction, stale-readiness and typed-deferral assertions"
@@ -172,7 +179,7 @@ constraints:
   external_llm_in_runtime: false
   ai_may_commit: false
   advisory_only: "training bundles / Nuwa / gateway are trusted:false; RaphaelCore final authority"
-  high_risk_terminal: "canonical full system reply; no quick replies, reward, relationship/growth delta, emotional memory, trace or preference write"
+  high_risk_terminal: "canonical full system reply; no quick replies, reward, relationship/growth delta, emotional memory, trace or preference write; ambiguous subsequent turns and release turn remain local zero-remote terminals until explicit completed real-world handoff"
   care_positioning: "companion dialogue, never therapist / diagnosis / crisis service"
   expedition_positioning: "Prototype + partial bridge; not sealed and not commercial-ready"
 
@@ -188,5 +195,6 @@ follow_ups:
   - "Keep Expedition coreIntegrated:false until formal intent, full critics/voice and approved memoryWriter integration exist"
   - "Implement G3.2 Reflection/Echo Sorting plus an independent chapter life-event source before G4, with immutable provenance and no legacy-memory attribution guess"
   - "Open G4 only after a non-standoff readiness path is proven; then add companion-initiated stage offer, deferrable ritual and atomic stage advance"
-  - "HMAX repeat-up lifecycle closure is main-green via PR #10; publish this Nexus metadata-only evidence through its separate protected PR without enabling players"
+  - "Publish crisis continuity through its separate protected PR and verify post-main Web/Pages without enabling players"
+  - "Only after that merge, open engine single-sovereign safety path plus HMAX persona/scene/support-card context closure"
   - "Keep HMAX canary absent/disabled for players; separately approve a real-model human Owner feel-check before any 10-person rollout"

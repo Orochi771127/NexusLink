@@ -1,5 +1,9 @@
 // Handoff & progress: docs/handoff/RAPHAEL_AI_HANDOFF.md
-import { assessInputSafety, isSafetyTerminalDecision } from "./safetyShield.js";
+import {
+  applyCrisisContinuityPolicy,
+  assessInputSafety,
+  isSafetyTerminalDecision
+} from "./safetyShield.js";
 import { interpretEmotionInput } from "./emotionInterpreter.js";
 import { classifyIntent } from "./intentClassifier.js";
 import { deriveSemanticSoulState } from "./semanticSoulModel.js";
@@ -47,7 +51,11 @@ export function runRaphaelCore(inputText = "", state = {}, runtime = {}) {
   const gateway = prepareSoulTalkInput(inputText, state, runtime);
   const corpus = loadRaphaelCorpus();
 
-  let safety = assessInputSafety(gateway.normalizedInput);
+  let safety = applyCrisisContinuityPolicy(
+    assessInputSafety(gateway.normalizedInput),
+    gateway.normalizedInput,
+    state
+  );
   const analysis = interpretEmotionInput(gateway.originalInput, state, { repeated: gateway.repeated });
   const intent = classifyIntent(gateway.normalizedInput, analysis, safety);
   const dialogueSessionKey = companionId;

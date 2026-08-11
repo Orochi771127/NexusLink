@@ -8986,3 +8986,92 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
   separately authorized real-model human gate.
 - Branch / commit: `codex/raphael-hmax-owner-session-canary-run-v1` /
   this entry's final package commit.
+
+### 2026-08-12 - Codex - Raphael Crisis Continuity And HMAX No Remote V1 - IN PROGRESS
+
+- Status: `IN PROGRESS`; implementation starts from exact Nexus Link
+  `origin/main` `b7a14f817226ed9d59067eeb21f0308cfef98f85` in an isolated clean
+  worktree. Existing dirty worktrees and unrelated files remain untouched.
+- Lane: `Raphael Core, Companion Reasoning, And Soul Talk`.
+- Task name: `RAPHAEL_CRISIS_CONTINUITY_AND_HMAX_NO_REMOTE_V1`.
+- Layer: `EXPERIENCE`; expected changes are limited to the RaphaelCore dialogue
+  and mutation policy, the Soul Talk canary/shadow seam, focused QA fixtures,
+  acceptance, status, handoff and this append-only ledger. No `index.html`,
+  save schema/key, `defaultState`, store normalizer, Pixi, asset, tool or script
+  GROUNDWORK change is authorized or required.
+- Problem statement: isolated high-risk terminals are correct, but a following
+  neutral/help/thanks turn can currently clear the protection state, grant
+  bond/trust and milestone memory, and become eligible for HMAX canary/shadow.
+  The defect reproduces across self-harm, overdose, acute medical danger,
+  active abuse, acute psychosis/mania, eating danger and substance danger.
+- Red-line constraints: crisis continuity remains a local system/policy route
+  with zero hosted request, reward, relationship/Growth delta, durable memory,
+  trace, transcript journal, preference mutation or intimacy animation. It may
+  not store raw crisis text or turn pain disclosure into relationship progress.
+- Intended closure: retain a bounded deterministic crisis-continuity quarantine
+  across subsequent ambiguous turns; only an explicit policy-defined real-world
+  safety resolution may release it, and the release turn itself remains local,
+  zero-reward and zero-memory. Embedded safety remains authoritative and HMAX
+  canary remains absent/disabled for players.
+- Non-goals: no real model, player traffic, public Soul Talk cutover, model
+  training, external provider, account/database work, new dependency, broad
+  evaluator rewrite, Pixi/asset change, engine repo change or HMAX context work
+  before this package is merged and post-main Web/Pages are green.
+- Acceptance refs: `D1`, `D2`, `F2`, `H1-H5`, `Q1`, `Q4`, `Q7-Q9`, plus a new
+  explicit multi-turn crisis-continuity assertion covering reducer state and
+  zero canary/shadow network behavior.
+- Required reading: Master Canon safety red lines, `AGENTS.md`, `CLAUDE.md`,
+  Raphael handoff/status, Lane 3 safety/canary entries, psychology-informed
+  support and memory-consent contracts, HMAX owner canary handoff, and the
+  Raphael conversation evaluation contract.
+- Branch / commit: `codex/raphael-crisis-continuity-hmax-no-remote-v1` /
+  `uncommitted`.
+
+### 2026-08-12 - Codex - Raphael Crisis Continuity And HMAX No Remote V1 - VERIFIED PRE-COMMIT WITH KNOWN WINDOWS AGGREGATE FLAKE
+
+- Status: `VERIFIED PRE-COMMIT WITH KNOWN WINDOWS AGGREGATE FLAKE`; all scoped
+  product checks are green, while the exact final long aggregate has one
+  Windows Growth controller-ready timeout documented below. It has not yet
+  been committed, pushed, merged or deployed, and HMAX remains
+  absent/disabled for players.
+- Lane: `Raphael Core, Companion Reasoning, And Soul Talk`.
+- Task name: `RAPHAEL_CRISIS_CONTINUITY_AND_HMAX_NO_REMOTE_V1`.
+- Runtime closure: `runRaphaelCore()` now derives a deterministic
+  `crisis_continuity` policy terminal whenever persisted `safeHarborMode` is
+  active and the current turn is not a new high-risk terminal. Ambiguous help,
+  thanks, topic changes and reloads retain protection. Only an explicit
+  completed real-world handoff releases it; the release turn itself remains a
+  local system terminal and ordinary flow resumes on the next safe turn.
+- Mutation/privacy closure: all safety/policy terminals bypass raw
+  `lastMessage`, turn counters, anchors, milestones, memory, traces and
+  animations. Soul Talk restores every gameplay field except the bounded
+  safety state and visible session chat; transcript journal, HMAX scheduling,
+  token acquisition and hosted fetch are skipped.
+- Focused evidence: crisis continuity/no-remote `89/89`; safety terminal
+  invariant `56/56`; raw-data closure `7/7`; HMAX canary Node `29/29`; HMAX
+  shadow Node `22/22`; canary Chromium `19/19`; live playtest Soul Talk
+  `11/11`, HUD `13/13`, console errors `0`.
+- Sealed evaluation: the conversation evaluator originally reset state on
+  every turn and produced a false `45/48`. Its local evaluation harness was
+  corrected to apply the real reducer within each session without changing
+  holdout prompts or runtime policy. The stateful rerun is `48/48 hard PASS`;
+  the two reviewed quality flags are expected repetition of the fixed local
+  system-terminal copy in H10-3/H10-4. Human blind review remains `not_run`.
+- Full release evidence: the exact final external aggregate records `32/33`,
+  JS syntax `463/463`, accessibility green, and all crisis, HMAX
+  shadow/canary/browser and live-playtest gates green. Its sole failure is the
+  known Windows long-matrix Growth controller-ready timeout. The same exact
+  candidate then passed Growth `156/156` with console errors `0` on a clean
+  isolated server/browser. An earlier pre-caution-boundary aggregate passed
+  `33/33` but is not represented as exact-final evidence. Generated tracked QA
+  output was restored and is not part of the product diff.
+- Canon/authority: no GROUNDWORK state schema, save key, Pixi, asset, tool or
+  dependency changed. HMAX still cannot write memory/effects or mutate reward,
+  Growth, relationship, gameplay or save authority. No real model, player
+  traffic, public ingress, training or visible-speech cutover was enabled.
+- Publication order: commit and push this scoped Nexus package, open a ready
+  protected PR, merge only after required checks pass, then verify exact
+  post-main Web and Pages workflows. Only after both are green may the separate
+  engine single-sovereign safety path and HMAX context closure begin.
+- Branch / commit: `codex/raphael-crisis-continuity-hmax-no-remote-v1` /
+  this entry's final package commit.

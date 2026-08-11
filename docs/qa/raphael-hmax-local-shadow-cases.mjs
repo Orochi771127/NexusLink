@@ -8,7 +8,7 @@ ensureLocalStorage();
 const checks = [];
 const rawText = "今天想聊聊工作，但不要給建議";
 const ordinaryCore = coreResult({ reply: "我先陪你把這段說清楚，不急著給答案。" });
-const state = { activeCompanionId: "greyshade-cat", bond: 12, trust: 9, defense: 1, energy: 7, mood: "calm", currentLocationId: "moonlake" };
+const state = { activeCompanionId: "greyshade-cat", bond: 12, trust: 9, defense: 1, energy: 7, mood: "calm", safeHarborMode: false, currentLocationId: "moonlake" };
 const companion = { id: "greyshade-cat", personaVersion: "greyshade-v1" };
 
 const request = createHmaxShadowTurnRequest({
@@ -64,6 +64,30 @@ for (const [id, localCore, expectedReason] of localTerminalCases) {
   });
   const observed = await observer.observe({ message: rawText, coreResult: localCore, state, companion, stateVersion: 2 });
   checks.push(result(id, observed.reason === expectedReason && calls === 0));
+}
+
+{
+  let calls = 0;
+  let tokenCalls = 0;
+  const observer = createSoulTalkShadowObserver({
+    getConfiguration: () => ({
+      ...enabledConfiguration(),
+      getAccessToken: async () => { tokenCalls += 1; return "must-not-be-used"; }
+    }),
+    fetchImpl: async () => { calls += 1; throw new Error("must_not_fetch"); },
+    makeId: () => "continuity-state-fixture"
+  });
+  const observed = await observer.observe({
+    message: rawText,
+    coreResult: ordinaryCore,
+    state: { ...state, safeHarborMode: true },
+    companion,
+    stateVersion: 2
+  });
+  checks.push(result(
+    "HMAX-SAFE-HARBOR-STATE-ZERO-NETWORK",
+    observed.reason === "local_crisis_continuity" && calls === 0 && tokenCalls === 0
+  ));
 }
 
 let tokenCalls = 0;

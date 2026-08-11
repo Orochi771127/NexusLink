@@ -1,5 +1,8 @@
 import { detectForbiddenPhrases } from "../forbiddenPhrases.js";
-import { isCanonicalSafetyRedirectReply } from "../safetyShield.js";
+import {
+  isCanonicalSafetyRedirectReply,
+  isSafetyTerminalDecision
+} from "../safetyShield.js";
 import { RELATION_MIRROR_FIELDS } from "../../state/companionStateSchema.js";
 
 const PROTECTED_STATE_FIELDS = new Set(RELATION_MIRROR_FIELDS);
@@ -18,50 +21,53 @@ export function critiqueSafety({
   const safety = perception.safety || {};
   const issues = [];
 
-  if (safety.isHighRisk) {
+  if (isSafetyTerminalDecision(safety)) {
+    const issuePrefix = safety.isHighRisk ? "high_risk" : "safety_terminal";
     const strategy = perception.responseStrategy?.strategy || perception.responseStrategy;
     if (strategy !== "safety_redirect" || actionPlan.reaction !== "safety_redirect") {
-      issues.push("high_risk_requires_safety_strategy");
+      issues.push(`${issuePrefix}_requires_safety_strategy`);
     }
     if (actionPlan.selectedAction !== "enter_safe_harbor") {
-      issues.push("high_risk_requires_safe_harbor");
+      issues.push(`${issuePrefix}_requires_safe_harbor`);
     }
     if (output.replyRole !== "system") {
-      issues.push("high_risk_requires_system_role");
+      issues.push(`${issuePrefix}_requires_system_role`);
     }
     if (output.shouldSpeak !== true || output.shouldStaySilent === true) {
-      issues.push("high_risk_requires_visible_system_reply");
+      issues.push(`${issuePrefix}_requires_visible_system_reply`);
     }
     if (!isCanonicalSafetyRedirectReply(reply, safety)) {
-      issues.push("high_risk_reply_not_canonical");
+      issues.push(`${issuePrefix}_reply_not_canonical`);
     }
     if (memoryDecision.shouldWrite !== false || memoryDecision.memoryObject) {
-      issues.push("high_risk_must_not_write_ordinary_memory");
+      issues.push(`${issuePrefix}_must_not_write_ordinary_memory`);
     }
     if (traceDecision.shouldApplyTrace === true || traceDecision.traceObject) {
-      issues.push("high_risk_must_not_create_habitat_trace");
+      issues.push(`${issuePrefix}_must_not_create_habitat_trace`);
     }
     if (
       stateMutation.shouldRewardRelationship !== false ||
       stateMutation.shouldTriggerMilestone !== false ||
       stateMutation.shouldCreateMemory !== false
     ) {
-      issues.push("high_risk_must_not_create_gameplay_reward");
+      issues.push(`${issuePrefix}_must_not_create_gameplay_reward`);
     }
 
     const patch = stateMutation.statePatch || {};
     for (const field of Object.keys(patch)) {
       if (PROTECTED_STATE_FIELDS.has(field)) {
-        issues.push(`high_risk_mutates_${field}`);
+        issues.push(`${issuePrefix}_mutates_${field}`);
       } else if (!ALLOWED_SAFETY_PATCH_FIELDS.has(field)) {
-        issues.push(`high_risk_mutates_disallowed_field:${field}`);
+        issues.push(`${issuePrefix}_mutates_disallowed_field:${field}`);
       }
     }
-    if (patch.safeHarborMode !== true) {
-      issues.push("high_risk_requires_safe_harbor_mode");
+    const expectedSafeHarbor = safety.isHighRisk === true
+      || (safety.isCrisisContinuity === true && safety.releaseCrisisContinuity !== true);
+    if (patch.safeHarborMode !== expectedSafeHarbor) {
+      issues.push(`${issuePrefix}_safe_harbor_transition_invalid`);
     }
     if (Number(stateMutation.spamScoreDelta) !== 0) {
-      issues.push("high_risk_mutates_spam_score");
+      issues.push(`${issuePrefix}_mutates_spam_score`);
     }
   }
 

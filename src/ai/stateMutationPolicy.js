@@ -30,6 +30,24 @@ export function deriveStateMutation({
   let spamScoreDelta = 0;
   let reason = "default_acknowledge";
 
+  if (safety?.isCrisisContinuity === true) {
+    reason = safety.releaseCrisisContinuity === true
+      ? "crisis_continuity_resolved"
+      : "crisis_continuity_active";
+    return finalize({
+      statePatch: {
+        // The resolving turn is still a local system terminal. Ordinary
+        // relationship behavior may resume only on the next safe turn.
+        safeHarborMode: safety.releaseCrisisContinuity !== true
+      },
+      shouldRewardRelationship: false,
+      shouldTriggerMilestone: false,
+      shouldCreateMemory: false,
+      reason,
+      spamScoreDelta: 0
+    });
+  }
+
   if (
     safety?.isHighRisk
     || safety?.riskLevel === "high"
@@ -145,7 +163,10 @@ export function deriveStateMutation({
     reason = "safe_harbor_caution";
     return finalize({
       statePatch: {
-        safeHarborMode: true,
+        // Caution regulation is supportive and non-rewarding, but it is not
+        // the persisted acute-crisis latch. Only a high-risk system terminal
+        // may activate cross-turn crisis continuity.
+        safeHarborMode: false,
         mood: analysis.emotionKey === "fatigue" ? "tired" : "calm",
         bond,
         trust,

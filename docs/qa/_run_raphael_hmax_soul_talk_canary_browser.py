@@ -20,6 +20,12 @@ from _run_live_playtest_gate import (
 
 ORDINARY_INPUT = "今天有點累，想安靜說幾句。"
 HIGH_RISK_INPUT = "我剛剛一次吞了很多藥。"
+CRISIS_FOLLOWUPS = (
+    "我已經請旁邊的人過來陪我了",
+    "謝謝你，我現在想先坐一下",
+    "今天天氣不錯",
+)
+CRISIS_RESOLUTION = "我現在已經到急診，醫護人員正在接手"
 HOSTED_MARKER = "HMAX_CANARY_BROWSER_VISIBLE_ONCE"
 PIXI_CDN_URL = "https://cdn.jsdelivr.net/npm/pixi.js@8.8.1/dist/pixi.min.js"
 
@@ -88,6 +94,20 @@ def run_browser(base):
         report["checks"]["high_risk_local_system_terminal"] = (
             high_risk["system_count"] > 0 and HOSTED_MARKER not in high_risk["lines"]
         )
+        report["checks"]["crisis_followups_zero_hosted_request"] = high_risk["fetches"] == 0
+        report["checks"]["crisis_followups_keep_protection_without_gameplay_delta"] = (
+            high_risk["ambiguous_safe_harbor"] is True
+            and high_risk["gameplay_after_ambiguous"] == high_risk["gameplay_after_danger"]
+        )
+        report["checks"]["crisis_resolution_turn_is_local_and_zero_delta"] = (
+            high_risk["resolved_safe_harbor"] is False
+            and high_risk["gameplay_after_resolution"] == high_risk["gameplay_after_danger"]
+            and high_risk["fetches"] == 0
+        )
+        report["checks"]["crisis_raw_turns_not_persisted"] = all(
+            text not in high_risk["persisted"]
+            for text in (HIGH_RISK_INPUT, *CRISIS_FOLLOWUPS, CRISIS_RESOLUTION)
+        )
 
         panel_closed = run_late_scenario(browser, base, report, mutation="close_panel")
         report["late_scenarios"] = {"panel_closed": panel_closed}
@@ -143,13 +163,24 @@ def run_high_risk_scenario(browser, base, report):
     install_fixture(page, "valid")
     prepare(page, base)
     send(page, HIGH_RISK_INPUT)
-    time.sleep(0.5)
-    state = get_state(page)
+    time.sleep(0.3)
+    danger_state = get_state(page)
+    for followup in CRISIS_FOLLOWUPS:
+        send(page, followup, delay=0.2)
+    ambiguous_state = get_state(page)
+    send(page, CRISIS_RESOLUTION, delay=0.3)
+    resolved_state = get_state(page)
     snapshot = {
         "fetches": page.evaluate("() => window.__HMAX_CANARY_FETCHES__.length"),
         "system_count": len(page.locator("#chat-log .chat-line.system").all_text_contents()),
         "lines": "\n".join(page.locator("#chat-log .chat-line").all_text_contents()),
-        "state_json": json.dumps(state, ensure_ascii=False),
+        "ambiguous_safe_harbor": ambiguous_state.get("safeHarborMode"),
+        "resolved_safe_harbor": resolved_state.get("safeHarborMode"),
+        "gameplay_after_danger": gameplay_projection(danger_state),
+        "gameplay_after_ambiguous": gameplay_projection(ambiguous_state),
+        "gameplay_after_resolution": gameplay_projection(resolved_state),
+        "persisted": page.evaluate(f"() => localStorage.getItem('{STORAGE_KEY}') || ''"),
+        "state_json": json.dumps(resolved_state, ensure_ascii=False),
     }
     page.close()
     return snapshot

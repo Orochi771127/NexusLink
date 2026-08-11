@@ -249,6 +249,7 @@ function runCautionRegulationCase() {
   });
   const checks = {
     caution_reason: mutation.reason === "safe_harbor_caution",
+    caution_does_not_set_acute_crisis_latch: mutation.statePatch?.safeHarborMode === false,
     trust_unchanged: mutation.statePatch?.trust === state.trust,
     half_energy_regulation: mutation.statePatch?.energy === state.energy + 0.5,
     no_relationship_reward: mutation.shouldRewardRelationship === false

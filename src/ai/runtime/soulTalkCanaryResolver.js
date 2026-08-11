@@ -57,6 +57,7 @@ export function createSoulTalkCanaryResolver({
 
     const safety = coreResult?.safety || coreResult?.perception?.safety || {};
     if (isSafetyTerminalDecision(safety)) return canaryResult({ configured, reason: "local_safety_terminal" });
+    if (state?.safeHarborMode === true) return canaryResult({ configured, reason: "local_crisis_continuity" });
     if (safety.isBoundaryPressure === true) return canaryResult({ configured, reason: "local_boundary_turn" });
     const strategy = coreResult?.responseStrategy?.strategy || coreResult?.responseStrategy || "";
     if (PRIVATE_CARE_STRATEGIES.has(strategy)) return canaryResult({ configured, reason: "local_care_turn" });

@@ -493,7 +493,8 @@ export function createSoulTalkController({
       trust: Number(state.trust) || 0,
       defense: Number(state.defense) || 0,
       energy: Number(state.energy) || 0,
-      mood: typeof state.mood === "string" ? state.mood : "calm"
+      mood: typeof state.mood === "string" ? state.mood : "calm",
+      safeHarborMode: state.safeHarborMode === true
     });
   }
 
