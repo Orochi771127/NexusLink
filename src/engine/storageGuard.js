@@ -11,6 +11,19 @@ export const STORAGE_LIMITS = Object.freeze({
   traceMaxAgeMs: 1000 * 60 * 60 * 24 * 14
 });
 
+const RAW_TRANSCRIPT_STATE_FIELDS = new Set([
+  "chatHistory",
+  "lastMessage",
+  "reactionPreview"
+]);
+
+const CLOUD_EXCLUDED_COMPANION_CONTENT = new Set([
+  "memories",
+  "habitatTraces",
+  "emotionalMemories",
+  "companionAnchors"
+]);
+
 export function sanitizeMemory(memory, now = Date.now()) {
   return {
     id: String(memory?.id || `mem_${now}`),
@@ -138,22 +151,27 @@ export function pruneStateForStorage(state, now = Date.now(), limits = STORAGE_L
     limits.companionAnchors
   );
 
-  const chatHistory = applyRollingLimit(
-    (state.chatHistory || []).map((entry) => ({
-      role: entry?.role || "companion",
-      text: String(entry?.text || "").slice(0, limits.chatTextMaxLength)
-    })),
-    limits.chatHistory
-  );
+  const durableState = omitFields(state, RAW_TRANSCRIPT_STATE_FIELDS);
+  const companionStates = sanitizeCompanionStatePreviews(durableState.companionStates);
 
   return {
-    ...state,
+    ...durableState,
+    ...(companionStates ? { companionStates } : {}),
     memories,
     habitatTraces,
     emotionalMemories,
-    companionAnchors,
-    chatHistory
+    companionAnchors
   };
+}
+
+/**
+ * Existing Firebase save sync predates Raphael's account/memory consent
+ * contract. Until the hosted MemoryPort exists, cloud sync receives gameplay
+ * state only: no raw turn fields and no conversation-derived memory bundles.
+ */
+export function pruneStateForCloudSync(state, now = Date.now()) {
+  const durable = pruneStateForStorage(state, now);
+  return omitFields(durable, CLOUD_EXCLUDED_COMPANION_CONTENT);
 }
 
 export function estimateSaveSizeKB(state) {
@@ -195,4 +213,35 @@ function sanitizeExcerpt(value, maxLength) {
   }
 
   return `${slice}...`;
+}
+
+function omitFields(source = {}, fields = new Set()) {
+  if (!source || typeof source !== "object" || Array.isArray(source)) return {};
+  return Object.fromEntries(
+    Object.entries(source).filter(([key]) => !fields.has(key))
+  );
+}
+
+function sanitizeCompanionStatePreviews(companionStates) {
+  if (!companionStates || typeof companionStates !== "object" || Array.isArray(companionStates)) {
+    return companionStates;
+  }
+  const byId = companionStates.byId;
+  if (!byId || typeof byId !== "object" || Array.isArray(byId)) return companionStates;
+  return {
+    ...companionStates,
+    byId: Object.fromEntries(
+      Object.entries(byId).map(([companionId, record]) => [
+        companionId,
+        record && typeof record === "object" && !Array.isArray(record)
+          ? {
+              ...record,
+              relationship: record.relationship && typeof record.relationship === "object"
+                ? { ...record.relationship, reactionPreview: "" }
+                : record.relationship
+            }
+          : record
+      ])
+    )
+  };
 }

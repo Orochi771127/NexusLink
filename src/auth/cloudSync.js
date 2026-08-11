@@ -1,5 +1,6 @@
 import { app } from "./firebaseConfig.js";
 import { getCurrentUser } from "./authManager.js";
+import { pruneStateForCloudSync } from "../engine/storageGuard.js";
 import {
   getFirestore,
   doc,
@@ -28,14 +29,15 @@ export async function pushState(stateData) {
   if (!user) return { ok: false, error: "No user" };
 
   try {
+    const cloudSafeState = pruneStateForCloudSync(stateData);
     const docRef = doc(db, "users", user.uid, "saves", "main");
-    // 我們將整份 stateData 原封不動存放，並加上 server timestamp 以便未來比對
+    // Replace the complete save document so legacy raw fields cannot survive a merge.
     await setDoc(docRef, {
-      save_data: stateData,
-      client_last_seen: stateData.lastSeenAt || Date.now(),
+      save_data: cloudSafeState,
+      client_last_seen: cloudSafeState.lastSeenAt || Date.now(),
       updated_at: serverTimestamp(),
       version: "v1"
-    }, { merge: true }); // 使用 merge 避免覆蓋其他可能的 meta 欄位
+    });
     
     return { ok: true };
   } catch (error) {
@@ -59,7 +61,14 @@ export async function pullState() {
 
     if (docSnap.exists()) {
       const data = docSnap.data();
-      return { ok: true, data: data.save_data, serverTimestamp: data.updated_at };
+      return {
+        ok: true,
+        // Apply the same privacy projection on read so a pre-V2 cloud save
+        // cannot reintroduce raw/conversation-derived fields before its first
+        // replacement write.
+        data: pruneStateForCloudSync(data.save_data || {}),
+        serverTimestamp: data.updated_at
+      };
     } else {
       return { ok: true, data: null }; // 雲端無存檔
     }

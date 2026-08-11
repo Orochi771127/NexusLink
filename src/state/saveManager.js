@@ -1,6 +1,6 @@
 import { createDefaultState, normalizeState } from "./store.js";
 import { getEmergencyStorageLimits, pruneStateForStorage } from "../engine/storageGuard.js";
-import { clearTranscriptJournal } from "../ai/dialogue/soulTalkTranscriptJournal.js";
+import { clearAllTranscriptData } from "../ai/dialogue/soulTalkTranscriptJournal.js";
 
 export const STORAGE_KEY = "nexusLinkR2State:v1";
 const LEGACY_STORAGE_KEYS = ["nexusLinkPrototypeState", "nexusLinkState"];
@@ -67,7 +67,7 @@ export function clearState() {
       localStorage.removeItem(key);
     }
     // 心語 transcript journal 與主存檔分開存；刪檔時必須一併清掉。
-    clearTranscriptJournal();
+    clearAllTranscriptData();
   } catch (error) {
     console.warn("Failed to clear NexusLink save", error);
   }

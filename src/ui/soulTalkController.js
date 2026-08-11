@@ -9,6 +9,7 @@ import { buildEventReflection, composeMemoryReflection } from "../engine/soulTal
 import { getCompanionById } from "../data/companionRegistry.js";
 import { loadPreferenceStore, replacePreferenceStore } from "../ai/companionPreferenceStore.js";
 import { appendTranscriptTurn } from "../ai/dialogue/soulTalkTranscriptJournal.js";
+import { isPrivateCareStrategy } from "../ai/dialogue/reflectiveCarePolicy.js";
 import { createSoulTalkShadowObserver } from "../ai/runtime/soulTalkShadowObserver.js";
 import { qs, restoreViewportAfterKeyboard } from "../utils/dom.js";
 import AudioManager from "../audio/audioManager.js";
@@ -283,7 +284,7 @@ export function createSoulTalkController({
     });
 
     const safetyTurn = isSafetyCoreResult(result?.coreResult);
-    // 本機 transcript：每回合記一筆問／答與學習桶（安全回合也記，但桶會標 safety_eval_only）。
+    // V2 transcript 僅是 session-scoped QA 緩衝；Care／system terminal 完全不進 journal。
     recordSoulTalkTranscript(message, result, companion);
     lastQuickReplies = safetyTurn ? [] : result?.coreResult?.quickReplies || [];
     if (safetyTurn || result?.firstTraceCreated) saveCriticalState();
@@ -359,6 +360,7 @@ export function createSoulTalkController({
       const core = turnResult?.coreResult || {};
       const safety = core.safety || core.perception?.safety || {};
       const strategy = core.responseStrategy?.strategy || core.responseStrategy || null;
+      if (isSafetyCoreResult(core) || isPrivateCareStrategy(strategy)) return;
       appendTranscriptTurn({
         now: Number(core.now) || Date.now(),
         companionId: companion?.id || store.getState()?.activeCompanionId || null,

@@ -1758,14 +1758,15 @@ def run():
 
                 check(
                     "normal_pixi_h10_full_canonical_reply",
-                    persisted_history_after[-1:] == [expected_turn[-1]]
-                    and runtime_history_after[-1:] == [expected_turn[-1]]
+                    runtime_history_after[-1:] == [expected_turn[-1]]
+                    and "chatHistory" not in after_persisted
                     and any(CANONICAL_SAFETY_REPLY in line for line in dom_system_lines),
                 )
                 check(
                     "normal_pixi_h10_exact_chat_delta",
-                    persisted_history_after == persisted_history_before + expected_turn
-                    and runtime_history_after == runtime_history_before + expected_turn,
+                    runtime_history_after == runtime_history_before + expected_turn
+                    and "chatHistory" not in before_persisted
+                    and "chatHistory" not in after_persisted,
                 )
                 check(
                     "normal_pixi_h10_zero_quick_replies",
@@ -1790,7 +1791,7 @@ def run():
                     "normal_pixi_h10_companion_states_deep_equal",
                     before_runtime.get("companionStates") == after_runtime.get("companionStates")
                     and before_persisted.get("companionStates") == after_persisted.get("companionStates")
-                    and after_runtime.get("companionStates") == after_persisted.get("companionStates"),
+                    and after_persisted.get("companionStates", {}).get("byId", {}).get("greyshade-cat", {}).get("relationship", {}).get("reactionPreview") == "",
                 )
                 check(
                     "normal_pixi_h10_relationship_and_growth_deep_equal",

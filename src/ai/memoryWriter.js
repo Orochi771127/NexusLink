@@ -7,7 +7,8 @@ const BLOCKED_MEMORY_REASONS = new Set([
   "dependency_pressure",
   "pressure_command",
   "repeated_spam",
-  "noise_or_empty"
+  "noise_or_empty",
+  "psychology_support_session_only"
 ]);
 
 export function buildMemoryDecision({
@@ -52,7 +53,7 @@ export function buildMemoryDecision({
   }
 
   let memoryType = "emotional_expression";
-  let sanitizedExcerpt = buildExcerpt(gateway.normalizedInput);
+  let sanitizedExcerpt = "";
   let baseObject = sedimentation.memoryObject;
 
   if (intent.intent === SOUL_TALK_INTENTS.APOLOGY) {
@@ -70,6 +71,7 @@ export function buildMemoryDecision({
       });
   } else if (intent.intent === SOUL_TALK_INTENTS.GRATITUDE) {
     memoryType = "gratitude";
+    sanitizedExcerpt = "玩家分享了一段感謝。";
   } else if (stateMutation.reason === "safe_harbor_caution") {
     memoryType = "safe_harbor_summary";
     sanitizedExcerpt = sanitizeExcerpt(gateway.normalizedInput, "一段需要放慢的情緒。");
@@ -77,6 +79,10 @@ export function buildMemoryDecision({
 
   if (!baseObject) {
     return emptyDecision("no_emotion_match", sedimentation);
+  }
+
+  if (!sanitizedExcerpt) {
+    sanitizedExcerpt = buildStructuredMemorySummary({ baseObject, memoryType });
   }
 
   const memoryObject = {
@@ -109,6 +115,16 @@ function buildExcerpt(text, max = 80) {
   const trimmed = String(text || "").trim();
   if (!trimmed) return "";
   return trimmed.length > max ? `${trimmed.slice(0, max)}…` : trimmed;
+}
+
+function buildStructuredMemorySummary({ baseObject = {}, memoryType = "emotional_expression" } = {}) {
+  if (memoryType === "gratitude") return "玩家分享了一段感謝。";
+  const theme = String(baseObject.theme || baseObject.label || "日常情緒")
+    .replace(/[\r\n。！？!?]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 24);
+  return `玩家分享了與「${theme || "日常情緒"}」相關的日常情緒。`;
 }
 
 function sanitizeExcerpt(text, fallback) {

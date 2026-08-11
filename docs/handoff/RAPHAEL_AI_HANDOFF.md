@@ -6,6 +6,55 @@
 
 ---
 
+## 2026-08-11 候選真相 / Candidate truth
+
+`RAPHAEL_SAFETY_AND_RAW_DATA_CLOSURE_V2` 的 canonical engine 已先經 protected
+PR [#4](https://github.com/Orochi771127/raphael-ai-engine/pull/4) 合併為 engine
+`main` `b0a12512e03fa977e06b62881ffefdfa1be237a1`，post-main CI
+[31473915189](https://github.com/Orochi771127/raphael-ai-engine/actions/runs/31473915189)
+成功。兩次 clean build 的 Core artifact 逐位元組一致，artifact digest 為
+`sha256:0f87b9cf05518d19ebcdf1267ed98ba035cd07fe78dd4840cbd2a4e391245f22`，
+`releaseEligible:true`。
+
+HMAX 的 POSIX archive pin 已提交至 Draft PR
+[#9](https://github.com/Orochi771127/raphael-HMAX/pull/9)，head
+`4a0e8cbb3e0c271b3c2caf60c45b8e1744d5fa3a` 的 required CI
+[31476458637](https://github.com/Orochi771127/raphael-HMAX/actions/runs/31476458637)
+兩個 job 均成功；它仍是 `staging_candidate`，**尚未合併、未部署、無玩家流量**。
+
+Nexus Link client 候選位於 `codex/raphael-safety-raw-data-closure-v2`，已刷新至
+最新 `origin/main` `9531dbccb7956c15e379dcff0488837dde4e587d` 並完成提交前驗證；
+本段記錄的是 publication-ready 候選，protected Draft PR 與 exact-head CI 仍待
+本包後續步驟完成。主要髒工作樹與其他資產工作均未混入。
+
+本候選補上組合式正在發生暴力／虐待、虛構轉現實危險、監視確信的安全路由，
+並讓 Care、caution、support-sensitive 與高風險回合都不能產生關係獎勵、
+Growth 或耐久記憶。新的 Soul Talk transcript 只存在於目前頁面 session；Care
+與 system safety terminal 連 session journal 都不進入。寫入本機或未來雲端前，
+raw chat 欄位與 conversation-derived memory bundles 會被移除。舊版已存在裝置上的
+legacy transcript 不會被自動刪除或上傳，仍只提供玩家明示匯出與清除。
+
+Automated evidence: Nexus focused closure `7/7`, web release gate `28/28`,
+JS syntax `459/459`, storage `22/22`, Growth state `25/25`, Soul Talk `11/11`,
+HUD `13/13`; sealed conversation evaluator `48/48`; autonomy evaluator `32/32`;
+engine full suite `45/45`, closure suite `7/7`, release-artifact suite `10/10`.
+The final clean engine artifact is the release-eligible digest recorded above;
+HMAX remains a separately reviewed staging pin, not a production or live-speech
+approval. Human blind review, real-device checks, Owner feel-check, professional
+psychological review and legal/privacy review remain `not_run`.
+
+完整 Web gate 曾在 Growth controller-ready 等待出現 timeout。最新 main 重驗時，
+診斷明確捕捉到 Python HTTP/1.0 loopback server 在大量 ES module reload 後回傳
+`net::ERR_NO_BUFFER_SPACE`；沒有 app page error。未放寬任何斷言，改用乾淨的
+HTTP/1.1 keep-alive loopback server 後，Growth browser `156/156 PASS`，完整 gate
+`28/28 PASS`。這個 Windows 測試傳輸 flake 仍保留為 release-engineering 訊號。
+
+Soul Talk visible speech therefore still comes from the embedded Nexus Link
+RaphaelCore path. HMAX remains invisible shadow infrastructure; this package
+does not authorize a visible-speech cutover, player traffic or model training.
+
+---
+
 ## Meta
 
 | 欄位 | 值 |

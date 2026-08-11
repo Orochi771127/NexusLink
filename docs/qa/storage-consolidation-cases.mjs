@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+
 const values = new Map();
 let failWrites = false;
 
@@ -19,6 +21,8 @@ globalThis.localStorage = {
 };
 
 const { loadState, saveState, STORAGE_KEY } = await import("../../src/state/saveManager.js");
+const { pruneStateForCloudSync } = await import("../../src/engine/storageGuard.js");
+const { sanitizeConversationDebugTraceForLog } = await import("../../src/ai/dialogue/conversationDebugTrace.js");
 
 const LEGACY_PREFS = "nexusLinkCompanionPrefs:v1";
 const LEGACY_AUDIO = "nexusLinkAudioMuted:v1";
@@ -57,6 +61,19 @@ check("offline timestamp preserved during load", loaded.lastSeenAt === 178260000
 check("preference key retained before canonical write", values.has(LEGACY_PREFS));
 check("audio key retained before canonical write", values.has(LEGACY_AUDIO));
 
+loaded.chatHistory = [
+  { role: "player", text: "這是不得持久化的玩家原句" },
+  { role: "companion", text: "這是不得持久化的完整回覆" }
+];
+loaded.lastMessage = "這是不得持久化的玩家原句";
+loaded.reactionPreview = "這是不得持久化的完整回覆";
+loaded.memories = [{ id: "m1", text: "legacy raw memory text" }];
+loaded.emotionalMemories = [{ id: "e1", theme: "日常", excerpt: "legacy raw excerpt" }];
+loaded.companionAnchors = [{ id: "a1", kind: "preference", key: "tea", detail: "烏龍茶" }];
+if (loaded.companionStates?.byId?.["greyshade-cat"]?.relationship) {
+  loaded.companionStates.byId["greyshade-cat"].relationship.reactionPreview = "nested raw reply";
+}
+
 failWrites = true;
 const failedSave = saveState(loaded);
 check("failed canonical write reports failure", failedSave.ok === false);
@@ -69,6 +86,29 @@ const canonical = JSON.parse(values.get(STORAGE_KEY));
 check("canonical write succeeds", successfulSave.ok === true);
 check("canonical save contains preferences", canonical.companionPreferences.companions["greyshade-cat"]?.replyLengthBias === "short");
 check("canonical save contains audio mute", canonical.settings.audioMuted === true);
+check("canonical save excludes raw chat history", !Object.prototype.hasOwnProperty.call(canonical, "chatHistory"));
+check("canonical save excludes raw last message", !Object.prototype.hasOwnProperty.call(canonical, "lastMessage"));
+check("canonical save excludes raw reaction preview", !Object.prototype.hasOwnProperty.call(canonical, "reactionPreview"));
+check(
+  "canonical save blanks nested companion reaction preview without breaking schema",
+  canonical.companionStates?.byId?.["greyshade-cat"]?.relationship?.reactionPreview === ""
+);
+const cloudSafe = pruneStateForCloudSync(loaded, 1782600000100);
+check("cloud sync excludes chat transcript fields", !Object.prototype.hasOwnProperty.call(cloudSafe, "chatHistory") && !Object.prototype.hasOwnProperty.call(cloudSafe, "lastMessage"));
+check("cloud sync excludes conversation-derived memory bundles", !["memories", "habitatTraces", "emotionalMemories", "companionAnchors"].some((key) => Object.prototype.hasOwnProperty.call(cloudSafe, key)));
+const cloudSyncSource = readFileSync(new URL("../../src/auth/cloudSync.js", import.meta.url), "utf8");
+check(
+  "cloud pull applies the cloud-safe projector before exposing legacy data",
+  /data:\s*pruneStateForCloudSync\(data\.save_data\s*\|\|\s*\{\}\)/.test(cloudSyncSource)
+);
+const safeDebugLog = sanitizeConversationDebugTraceForLog({
+  input: "raw player input",
+  finalReply: "raw companion reply",
+  prefill: { source: "session", usedPrefillDetail: "raw recalled detail", groundedByPrefill: true },
+  quickReplies: [{ label: "raw authored label", intent: "quiet", actionType: "send", topic: "care" }]
+});
+check("debug log redacts raw input reply and recalled detail", safeDebugLog.input === "[redacted]" && safeDebugLog.finalReply === "[redacted]" && safeDebugLog.prefill.usedPrefillDetail === null);
+check("debug log omits quick-reply labels", !Object.prototype.hasOwnProperty.call(safeDebugLog.quickReplies[0] || {}, "label"));
 check("preference key removed only after success", !values.has(LEGACY_PREFS));
 check("audio key removed only after success", !values.has(LEGACY_AUDIO));
 
