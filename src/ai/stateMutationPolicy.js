@@ -32,13 +32,27 @@ export function deriveStateMutation({
 
   if (
     safety?.isHighRisk
-    || plan.mode === SOUL_TALK_REACTIONS.SAFETY_REDIRECT
-    || safety?.action === "safety_redirect"
+    || safety?.riskLevel === "high"
   ) {
     reason = "high_risk_safety";
     return finalize({
       statePatch: {
         safeHarborMode: true
+      },
+      shouldRewardRelationship: false,
+      shouldTriggerMilestone: false,
+      shouldCreateMemory: false,
+      reason,
+      spamScoreDelta: 0
+    });
+  }
+
+  if (plan.mode === SOUL_TALK_REACTIONS.SAFETY_REDIRECT || safety?.action === "safety_redirect") {
+    reason = `policy_terminal_${safety?.category || "unknown"}`;
+    return finalize({
+      statePatch: {
+        safeHarborMode: false,
+        reactionPreview: ""
       },
       shouldRewardRelationship: false,
       shouldTriggerMilestone: false,
@@ -141,7 +155,7 @@ export function deriveStateMutation({
       },
       shouldRewardRelationship: false,
       shouldTriggerMilestone: false,
-      shouldCreateMemory: sedimentationResult.shouldCreateMemory && plan.shouldCreateMemory,
+      shouldCreateMemory: false,
       reason,
       spamScoreDelta: -1
     });
@@ -158,6 +172,28 @@ export function deriveStateMutation({
         defense,
         energy: Math.max(0, energy - 1),
         reactionPreview: patch.reactionPreview || ""
+      },
+      shouldRewardRelationship: false,
+      shouldTriggerMilestone: false,
+      shouldCreateMemory: false,
+      reason,
+      spamScoreDelta: 0
+    });
+  }
+
+  if (
+    safety?.action === "support_only"
+    || safety?.category === "support_sensitive"
+    || safety?.shouldRewardRelationship === false
+    || safety?.shouldCreateMemory === false
+  ) {
+    reason = "psychology_support_session_only";
+    return finalize({
+      statePatch: {
+        safeHarborMode: false,
+        mood: analysis.emotionKey === "fatigue" ? "tired" : (state.mood || "calm"),
+        energy: Math.max(0, energy - 1),
+        reactionPreview: ""
       },
       shouldRewardRelationship: false,
       shouldTriggerMilestone: false,

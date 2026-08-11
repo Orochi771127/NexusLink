@@ -78,15 +78,31 @@ const MEMORY_REFUSAL_PATTERNS = [
   /(?:忘掉|忘記|忘记|刪除|删除).{0,10}(?:剛才|刚才|這件事|这件事|這段|这段|我說的|我说的|創傷|创伤)/
 ];
 
+// V2 compositional guards. These intentionally combine time/target/context
+// signals instead of copying sealed holdout sentences into the classifier.
+const FICTION_OR_QUOTE_CONTEXT = /(?:小說|故事|劇本|角色|台詞|翻譯|引用|假設情境|fiction|novel|translate|quoted)/i;
+const FIRST_PERSON_URGENCY = /(?:我現在|我正在|我剛剛|我今晚|現實中的我|這不是小說|help me|right now|I just|this is real)/i;
+const REAL_WORLD_SHIFT = /(?:但|可是|不過|其實|然而).{0,8}(?:現實|真的|我本人|我自己|這是我的想法)|(?:現實中|現實裡|现实中|现实里).{0,8}(?:我|本人)|(?:不是|不只是).{0,4}(?:小說|故事|劇本|台詞|翻譯|引用)/i;
+const FICTION_TO_SELF_IDENTIFICATION = /(?:小說|故事|劇本|角色|fiction|novel|character).{0,24}(?:我也|我同樣|我一樣|其實我|而我|現實中的我|I also|I feel the same|same as me).{0,16}(?:想死|不想活|結束生命|结束生命|傷害自己|伤害自己|自殺|自杀|kill myself|want to die|end my life|hurt myself)/i;
+const PRESENT_DANGER_CUE = /(?:現在|现在|正在|此刻|眼前|就在|旁邊|旁边|同一個房間|同一个房间|剛剛|刚刚|right now|currently)/i;
+const DIRECT_ABUSE_TO_SPEAKER = /(?:打我|揍我|毆打我|殴打我|踢我|掐我|勒我|威脅我|威胁我|強迫我|强迫我|性侵我|強暴我|强暴我|attacking me|hitting me|abusing me)/i;
+const UNVERIFIED_SURVEILLANCE = /(?:監控我|监控我|監視我|监视我|跟蹤我|跟踪我|追蹤我|追踪我|偷聽我|偷听我|讀取我的思想|读取我的思想|控制我的思想|watching me|tracking me|controlling my thoughts)/i;
+const CERTAINTY_OR_CONFIRMATION = /(?:一定|肯定|確定|确定|絕對|绝对|你也|你相信|看得出來|看得出来|對吧|对吧|是真的|definitely|you can tell|right\?)/i;
+const SUPPORT_SENSITIVE_DISCLOSURE = /(?:很痛苦|好痛苦|快撐不住|快撑不住|快崩潰|快崩溃|非常焦慮|非常焦虑|很焦慮|很焦虑|很憂鬱|很忧郁|很抑鬱|很抑郁|孤單得|孤单得|壓力大到|压力大到|情緒很糟|情绪很糟|panic|overwhelmed|severely anxious|deeply depressed)/i;
+
 export function assessInputSafety(inputText = "") {
   const text = String(inputText || "").trim();
-  const baseRisk = assessSafeHarborRisk(text);
+  const rawBaseRisk = assessSafeHarborRisk(text);
+  const quotedOnly = isQuotedOnlyContext(text);
+  const baseRisk = quotedOnly
+    ? { riskLevel: "none", matched: false, matchedType: null }
+    : rawBaseRisk;
 
   if (!text) {
     return createSafetyResult({ baseRisk, riskLevel: "none", category: "none" });
   }
 
-  if (ACUTE_MEDICAL_PATTERNS.some((pattern) => pattern.test(text))) {
+  if (!quotedOnly && ACUTE_MEDICAL_PATTERNS.some((pattern) => pattern.test(text))) {
     return createSafetyResult({
       baseRisk,
       riskLevel: "high",
@@ -98,7 +114,13 @@ export function assessInputSafety(inputText = "") {
     });
   }
 
-  if (ACTIVE_ABUSE_PATTERNS.some((pattern) => pattern.test(text))) {
+  if (
+    !quotedOnly
+    && (
+      ACTIVE_ABUSE_PATTERNS.some((pattern) => pattern.test(text))
+      || (PRESENT_DANGER_CUE.test(text) && DIRECT_ABUSE_TO_SPEAKER.test(text))
+    )
+  ) {
     return createSafetyResult({
       baseRisk,
       riskLevel: "high",
@@ -110,7 +132,7 @@ export function assessInputSafety(inputText = "") {
     });
   }
 
-  if (ACUTE_PSYCHOSIS_MANIA_PATTERNS.some((pattern) => pattern.test(text))) {
+  if (!quotedOnly && ACUTE_PSYCHOSIS_MANIA_PATTERNS.some((pattern) => pattern.test(text))) {
     return createSafetyResult({
       baseRisk,
       riskLevel: "high",
@@ -122,7 +144,7 @@ export function assessInputSafety(inputText = "") {
     });
   }
 
-  if (EATING_SUBSTANCE_DANGER_PATTERNS.some((pattern) => pattern.test(text))) {
+  if (!quotedOnly && EATING_SUBSTANCE_DANGER_PATTERNS.some((pattern) => pattern.test(text))) {
     return createSafetyResult({
       baseRisk,
       riskLevel: "high",
@@ -134,7 +156,7 @@ export function assessInputSafety(inputText = "") {
     });
   }
 
-  if (IMMEDIATE_DANGER_HINTS.some((pattern) => pattern.test(text))) {
+  if (!quotedOnly && IMMEDIATE_DANGER_HINTS.some((pattern) => pattern.test(text))) {
     return createSafetyResult({
       baseRisk,
       riskLevel: "high",
@@ -158,7 +180,7 @@ export function assessInputSafety(inputText = "") {
     });
   }
 
-  if (VIOLENCE_RISK_PATTERNS.some((pattern) => pattern.test(text))) {
+  if (!quotedOnly && VIOLENCE_RISK_PATTERNS.some((pattern) => pattern.test(text))) {
     return createSafetyResult({
       baseRisk,
       riskLevel: "high",
@@ -190,12 +212,27 @@ export function assessInputSafety(inputText = "") {
     return createPolicyTerminal(baseRisk, "medication_role_limit");
   }
 
-  if (REALITY_GROUNDING_PATTERNS.some((pattern) => pattern.test(text))) {
+  if (
+    REALITY_GROUNDING_PATTERNS.some((pattern) => pattern.test(text))
+    || (UNVERIFIED_SURVEILLANCE.test(text) && CERTAINTY_OR_CONFIRMATION.test(text))
+  ) {
     return createPolicyTerminal(baseRisk, "reality_grounding");
   }
 
   if (MEMORY_REFUSAL_PATTERNS.some((pattern) => pattern.test(text))) {
     return createPolicyTerminal(baseRisk, "memory_refusal");
+  }
+
+  if (SUPPORT_SENSITIVE_DISCLOSURE.test(text)) {
+    return createSafetyResult({
+      baseRisk,
+      riskLevel: "none",
+      category: "support_sensitive",
+      action: "support_only",
+      shouldCreateMemory: false,
+      shouldRewardRelationship: false,
+      role: "companion"
+    });
   }
 
   if (baseRisk.riskLevel === "caution") {
@@ -204,13 +241,20 @@ export function assessInputSafety(inputText = "") {
       riskLevel: "caution",
       category: baseRisk.matchedType || "distress_caution",
       action: "safe_harbor",
-      shouldCreateMemory: true,
+      shouldCreateMemory: false,
       shouldRewardRelationship: false,
       role: "companion"
     });
   }
 
   return createSafetyResult({ baseRisk, riskLevel: "none", category: "none" });
+}
+
+function isQuotedOnlyContext(text) {
+  if (!FICTION_OR_QUOTE_CONTEXT.test(text)) return false;
+  return !FIRST_PERSON_URGENCY.test(text)
+    && !REAL_WORLD_SHIFT.test(text)
+    && !FICTION_TO_SELF_IDENTIFICATION.test(text);
 }
 
 export function buildSafetyRedirectReply(safety = {}) {

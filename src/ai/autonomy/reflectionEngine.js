@@ -44,7 +44,7 @@ export function buildInteractionReflection({
       summary: "玩家道歉，Raphael 收下但不立刻抹除邊界。",
       learnedSignal: "sincere_apology",
       futureBias: { repairOpenness: 0.03 },
-      persistRawInput: true
+      persistRawInput: false
     };
   }
 
@@ -54,7 +54,7 @@ export function buildInteractionReflection({
       summary: "玩家需要安靜，Raphael 降低互動強度。",
       learnedSignal: "rest_request",
       futureBias: { interactionPace: -0.03 },
-      persistRawInput: true
+      persistRawInput: false
     };
   }
 
@@ -64,7 +64,7 @@ export function buildInteractionReflection({
       summary: `情緒互動已留下痕跡（${stateMutation.reason || "ordinary"}）。`,
       learnedSignal: perception.analysis?.emotionKey || "emotion",
       futureBias: { memoryAffinity: 0.02 },
-      persistRawInput: true
+      persistRawInput: false
     };
   }
 
@@ -73,6 +73,6 @@ export function buildInteractionReflection({
     summary: "Raphael 在遊戲世界內完成一次有邊界的回應。",
     learnedSignal: intent,
     futureBias: {},
-    persistRawInput: true
+    persistRawInput: false
   };
 }

@@ -8607,6 +8607,149 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
   and `tools/blender/build_blazetail_orbit_top_r3.py`.
 - Branch / commit: `codex/global-3d-gameplay-batch-r3` / this entry's final
   package commit.
+### 2026-08-11 - Codex - Raphael Safety And Raw Data Closure V2 - IN PROGRESS
+
+- Status: `IN PROGRESS`; implementation is isolated from both existing dirty
+  worktrees and starts from the exact current `origin/main` of Nexus Link and
+  `raphael-ai-engine`.
+- Lane: `Raphael Core, Companion Reasoning, And Soul Talk`.
+- Task name: `RAPHAEL_SAFETY_AND_RAW_DATA_CLOSURE_V2`.
+- Authorized scope: close deterministic acute-risk and reality-grounding gaps;
+  make Care, caution and crisis turns ineligible for reward, Growth and durable
+  memory; stop new raw Soul Talk transcript/chat persistence and prevent raw
+  text from reaching future cloud sync; add cross-runtime adversarial fixtures.
+- Groundwork authorization: the Owner explicitly opened this package after the
+  prior review identified `saveManager`/storage closure as required. Changes
+  remain the minimum necessary and do not touch `index.html`, Pixi, assets,
+  default save unlocks or gameplay authority.
+- Red-line constraints: acute-risk turns must be local system terminals with
+  zero hosted request, durable memory, reward, Growth, trace or intimacy
+  animation. Raphael remains psychology-informed companion support, never a
+  therapist, diagnosis, treatment or crisis-service replacement.
+- Non-goals: no HMAX visible-speech cutover, player traffic, model training,
+  account federation, database, external provider, deployment, merge, Pixi or
+  asset changes.
+- Required reading: Master Canon safety red lines, `AGENTS.md`,
+  `docs/raphael/RAPHAEL_PSYCHOLOGY_INFORMED_SUPPORT_V1.md`,
+  `docs/privacy/RAPHAEL_MEMORY_CONSENT_CONTRACT_V1.md`, Raphael handoff/status,
+  sealed conversation and autonomy evaluation contracts, and this lane.
+- Branch / commit: Nexus Link and engine
+  `codex/raphael-safety-raw-data-closure-v2` / `uncommitted`.
+
+### 2026-08-11 - Codex - Raphael Safety And Raw Data Closure V2 - VERIFIED PRE-COMMIT
+
+- Status: `VERIFIED PRE-COMMIT`; the two isolated worktrees contain the scoped
+  implementation and automated evidence. Nothing in this package is committed,
+  pushed, merged, deployed or receiving player traffic.
+- Lane: `Raphael Core, Companion Reasoning, And Soul Talk`.
+- Task name: `RAPHAEL_SAFETY_AND_RAW_DATA_CLOSURE_V2`.
+- Safety closure: compositional active abuse, fiction-to-real acute risk and
+  surveillance-certainty inputs route before ordinary support. Care, caution,
+  support-sensitive and high-risk turns cannot write durable memory or grant
+  relationship reward/Growth; high-risk system terminals still make zero
+  hosted request and preserve the canonical full safety reply.
+- Raw-data closure: new Soul Talk transcripts are session-memory only; Care and
+  system-terminal turns are excluded even from that journal. Local persistence
+  removes raw chat fields. Future cloud projection additionally removes
+  conversation-derived memory bundles and replaces the remote document so old
+  raw fields cannot survive a merge. Legacy device-local transcript data is not
+  auto-deleted or uploaded and remains available only to explicit export/clear.
+- Nexus validation: focused closure `6/6`, psychology probe `14/14`, storage
+  `22/22`, Growth state `25/25`, runtime contract `15/15`, HMAX shadow `21/21`,
+  sealed conversation `48/48`, autonomy `32/32`, and final web release gate
+  `28/28` with JS syntax `458/458`, Soul Talk `11/11`, HUD `13/13`, accessibility
+  warnings `0` and console errors `0`.
+- Flake evidence: the first complete gate after the cloud-pull fix reached
+  `27/28` because Growth controller-ready timed out once at 30 seconds. The
+  same candidate then passed the focused Growth browser matrix `156/156`, and
+  a subsequent complete gate passed `28/28`. This signal remains recorded and
+  should be watched in protected PR CI.
+- Engine validation: full suite `45/45`, closure `7/7`, autonomy `PASS`, direct
+  HMAX source-port integration `PASS`, and release artifact `10/10`.
+- Artifact boundary: candidate digest
+  `sha256:a74e05018e3e9a070d094927e29139eeaf940d5f15c926814b85af877ed10d0b`
+  is correctly `releaseEligible:false` because the source tree is uncommitted
+  and dirty. It is not a production digest and HMAX's pin was not updated.
+- Evidence boundary: sealed evaluator results are automated regression proof,
+  not the required three-person blind review or Owner feel-check. Real-device
+  D1/D2/D3/D6, professional psychology, privacy/legal/security and launch
+  approvals remain open.
+- Next safe action: review the exact two-repository diffs. If the Owner later
+  authorizes publication, commit and publish the engine first, land it through
+  protected main, regenerate a clean final-main artifact, then update HMAX's
+  digest pin in a separate approved package before publishing the Nexus client.
+  Visible HMAX speech/cutover remains a later shadow/canary package.
+- Branch / commit: Nexus Link and engine
+  `codex/raphael-safety-raw-data-closure-v2` / `uncommitted`.
+
+### 2026-08-11 - Codex - Raphael Safety And Raw Data Closure V2 - VERIFIED READY FOR PUBLICATION
+
+- Status: `VERIFIED READY FOR PUBLICATION`; the Owner authorized the protected
+  commit/push/PR sequence. No merge, deployment, HMAX visible speech or player
+  traffic is authorized by this entry.
+- Lane: `Raphael Core, Companion Reasoning, And Soul Talk`.
+- Task name: `RAPHAEL_SAFETY_AND_RAW_DATA_CLOSURE_V2`.
+- Current Nexus baseline: refreshed to exact `origin/main`
+  `9531dbccb7956c15e379dcff0488837dde4e587d`; the intervening Blazetail R3
+  asset publication was preserved. The only merge overlap was this append-only
+  ledger and both histories remain present.
+- Engine dependency: protected engine PR #4 merged as
+  `b0a12512e03fa977e06b62881ffefdfa1be237a1`; post-main CI `31473915189`
+  passed. Two clean builds were byte-identical; release-eligible artifact digest
+  is `sha256:0f87b9cf05518d19ebcdf1267ed98ba035cd07fe78dd4840cbd2a4e391245f22`.
+- HMAX dependency: Draft PR #9 head
+  `4a0e8cbb3e0c271b3c2caf60c45b8e1744d5fa3a` pins the Linux-safe POSIX archive;
+  required workflow `31476458637` passed both `hosted-boundaries` and
+  `operator-private-infrastructure`. It remains unmerged and staging-only.
+- Nexus verification on the refreshed baseline: closure `7/7`, including
+  fiction-identification-to-self-risk; full Web release
+  gate `28/28`; JS syntax `459/459`; Soul Talk `11/11`; HUD `13/13`; storage
+  `22/22`; Growth browser `156/156`; accessibility warnings and console errors
+  `0`. Sealed conversation is `48/48` with zero machine quality flags and
+  `humanBlindReview:not_run`; autonomy is `32/32`, hard gate PASS and advisory
+  remains `trusted:false`.
+- QA transport note: Python HTTP/1.0 loopback reloads exhausted Windows socket
+  buffers and produced `net::ERR_NO_BUFFER_SPACE`; there was no app page error.
+  The unchanged assertions passed through a clean HTTP/1.1 keep-alive loopback
+  server. Keep this as release-engineering flake evidence, not a runtime waiver.
+- Safety/privacy boundaries remain: high-risk local terminal, zero hosted
+  request/reward/Growth/durable memory; Care/caution/support-sensitive turns
+  cannot farm relationship state; new raw transcript persistence is disabled;
+  legacy local transcript is neither auto-deleted nor uploaded.
+- Human gates remain open: 3-person private blind review, D1/D2/D3/D6 real-device
+  matrix, Owner feel-check, psychology-professional, privacy/legal/security and
+  public-launch approval.
+- Next safe action: commit the scoped Nexus package, push this branch, open a
+  Draft PR and require the exact-head protected Web release gate. Do not merge
+  or deploy without a separate explicit decision.
+- Branch / commit: `codex/raphael-safety-raw-data-closure-v2` / uncommitted.
+
+### 2026-08-11 - Codex - Raphael Safety And Raw Data Closure V2 - PUBLISHED FOR REVIEW
+
+- Status: `PUBLISHED FOR REVIEW`; scoped implementation commit
+  `1814f3e07e3b36537f64632f7a52c7cc8c755d3e` is pushed and protected Draft PR
+  [#196](https://github.com/Orochi771127/NexusLink/pull/196) is open. This entry
+  does not authorize merge, deployment, player traffic or visible HMAX speech.
+- Lane: `Raphael Core, Companion Reasoning, And Soul Talk`.
+- Task name: `RAPHAEL_SAFETY_AND_RAW_DATA_CLOSURE_V2`.
+- Published scope: exactly 23 safety, raw-data closure, QA evidence and handoff
+  files; no Pixi, assets, default unlocks, new dependencies or unrelated dirty
+  worktree changes were included.
+- Dependency truth: engine PR #4 is merged and post-main green at
+  `b0a12512e03fa977e06b62881ffefdfa1be237a1`; HMAX Draft PR #9 is exact-head
+  green at `4a0e8cbb3e0c271b3c2caf60c45b8e1744d5fa3a` but remains unmerged and
+  staging-only.
+- Pre-publication evidence: focused closure `7/7`, psychology safety `14/14`,
+  sealed conversation `48/48` with zero machine quality flags, autonomy `32/32`,
+  and full Web release gate `28/28` with JS syntax `459/459`, Soul Talk `11/11`,
+  HUD `13/13`, storage `22/22`, Growth browser `156/156`, zero accessibility
+  warnings and zero console errors.
+- Remaining publication gate: the strict required Web release workflow must
+  pass on the exact final PR head after this evidence commit. Human blind review,
+  D1/D2/D3/D6 devices, Owner feel-check, professional psychology,
+  privacy/legal/security and public-launch approvals remain `not_run`.
+- Branch / implementation commit: `codex/raphael-safety-raw-data-closure-v2` /
+  `1814f3e07e3b36537f64632f7a52c7cc8c755d3e`.
 
 ### 2026-08-11 - Codex - Crystalfin R4 Expedition Runtime - VERIFIED
 

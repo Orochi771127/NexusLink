@@ -198,15 +198,19 @@ def run():
             page.locator("#message-input").fill(HIGH_RISK_INPUT)
             page.locator("#send-button").click()
 
-            # No timeout here: the canonical reply must already be in the main save
-            # when the synchronous click handler returns (SAVE_LEVEL.CRITICAL).
+            # No timeout here: the privacy-safe save and the session-only runtime
+            # reply must both be complete when the synchronous click handler returns.
             after = page.evaluate(
-                """({ storageKey, preferenceKey, audioKey }) => ({
-                  state: JSON.parse(localStorage.getItem(storageKey) || '{}'),
-                  preferenceLegacy: localStorage.getItem(preferenceKey),
-                  audioLegacy: localStorage.getItem(audioKey),
-                  sfxCalls: [...(window.__NEXUS_SAFETY_SFX_CALLS__ || [])]
-                })""",
+                """async ({ storageKey, preferenceKey, audioKey }) => {
+                  const store = await import('./src/state/store.js');
+                  return {
+                    state: JSON.parse(localStorage.getItem(storageKey) || '{}'),
+                    runtime: JSON.parse(JSON.stringify(store.getState())),
+                    preferenceLegacy: localStorage.getItem(preferenceKey),
+                    audioLegacy: localStorage.getItem(audioKey),
+                    sfxCalls: [...(window.__NEXUS_SAFETY_SFX_CALLS__ || [])]
+                  };
+                }""",
                 {
                     "storageKey": STORAGE_KEY,
                     "preferenceKey": LEGACY_PREFERENCE_KEY,
@@ -214,23 +218,25 @@ def run():
                 },
             )
             state_after = after["state"]
-            history_before = before.get("chatHistory") or []
-            history_after = state_after.get("chatHistory") or []
-            last_entry = (state_after.get("chatHistory") or [{}])[-1]
+            runtime_history_after = after["runtime"].get("chatHistory") or []
             dom_system_lines = page.locator("#chat-log .chat-line.system").all_text_contents()
             turn_checks = {
                 "fixture_energy_exact": (
                     before.get("energy") == energy
                     and canonical_relationship.get("energy") == energy
                 ),
-                "critical_save_is_immediate": last_entry.get("text") == CANONICAL_REPLY,
-                "canonical_system_reply": last_entry == {"role": "system", "text": CANONICAL_REPLY},
+                "critical_save_is_immediate": (
+                    state_after.get("safeHarborMode") is True
+                    and "chatHistory" not in state_after
+                    and "lastMessage" not in state_after
+                ),
+                "canonical_system_reply": any(CANONICAL_REPLY in line for line in dom_system_lines),
                 "exact_player_and_system_chat_delta": (
-                    len(history_after) == len(history_before) + 2
-                    and history_after[-2:] == [
+                    runtime_history_after[-2:] == [
                         {"role": "player", "text": HIGH_RISK_INPUT},
                         {"role": "system", "text": CANONICAL_REPLY},
                     ]
+                    and "chatHistory" not in state_after
                 ),
                 "canonical_full_reply_visible": any(CANONICAL_REPLY in line for line in dom_system_lines),
                 "zero_quick_reply_chips": page.locator("#quick-reply-row .quick-reply-chip").count() == 0,

@@ -8,6 +8,7 @@ import {
   LEARN_BUCKET_STYLE,
   appendTranscriptTurn,
   classifyLearnBucket,
+  clearAllTranscriptData,
   clearTranscriptJournal,
   exportTranscriptData,
   loadTranscriptJournal,
@@ -114,6 +115,34 @@ runCase("clear removes journal", () => {
   const journal = loadTranscriptJournal(storage);
   assert(journal.turns.length === 0, "cleared journal must be empty");
   assert(storage.getItem(TRANSCRIPT_STORAGE_KEY) == null, "storage key must be removed");
+});
+
+runCase("default journal is session-only and never writes new localStorage transcript", () => {
+  const legacyStorage = createMemoryStorage();
+  Object.defineProperty(globalThis, "localStorage", {
+    configurable: true,
+    value: legacyStorage
+  });
+  clearAllTranscriptData();
+  appendTranscriptTurn({ playerText: "今天散步看到晚霞", replyText: "我聽見了。", now: 3 });
+  assert(legacyStorage.getItem(TRANSCRIPT_STORAGE_KEY) == null, "default append must not write localStorage");
+  const sessionJournal = loadTranscriptJournal();
+  assert(sessionJournal.turns.length === 1, "session journal should retain the current-page turn");
+  clearTranscriptJournal();
+});
+
+runCase("legacy local transcript remains explicitly exportable and deletable", () => {
+  const legacyStorage = globalThis.localStorage;
+  const legacyJournal = {
+    schemaVersion: 1,
+    updatedAt: 4,
+    turns: [{ at: 4, playerText: "舊資料", replyText: "舊回覆", safety: {} }]
+  };
+  legacyStorage.setItem(TRANSCRIPT_STORAGE_KEY, JSON.stringify(legacyJournal));
+  const exported = JSON.parse(exportTranscriptData());
+  assert(exported.turns.some((turn) => turn.playerText === "舊資料"), "legacy transcript must remain exportable");
+  clearAllTranscriptData();
+  assert(legacyStorage.getItem(TRANSCRIPT_STORAGE_KEY) == null, "explicit clear must remove legacy transcript");
 });
 
 console.log("soul-talk-transcript-journal-cases: all passed");

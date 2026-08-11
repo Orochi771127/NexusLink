@@ -7,12 +7,14 @@
  * - 與 authored 語料（aiforge-raphael-corpus / voice packs）分開：那些是「手寫回覆庫」；
  *   本 journal 是「真實對答觀察紀錄」。
  *
- * 存成獨立 localStorage key，避免撐爆主存檔 schema／quota；刪除存檔時一併清空。
+ * V2 起只保留於本次頁面 session；不再新增 localStorage transcript。
+ * 舊 localStorage key 不會自動刪除或上傳，Owner 仍可明示匯出／清除。
  */
 
 export const TRANSCRIPT_STORAGE_KEY = "nexusLinkSoulTalkTranscript:v1";
 export const TRANSCRIPT_MAX_TURNS = 120;
 export const TRANSCRIPT_SCHEMA_VERSION = 1;
+const SESSION_TRANSCRIPT_STORAGE = createMemoryStorage();
 
 /** 日常風格候選：可進離線改進池（仍需人工核准）。 */
 export const LEARN_BUCKET_STYLE = "style_candidate";
@@ -133,13 +135,29 @@ export function clearTranscriptJournal(storage = getDefaultStorage()) {
   return createEmptyJournal();
 }
 
+export function loadLegacyTranscriptJournal(storage = getLegacyStorage()) {
+  return loadTranscriptJournal(storage);
+}
+
+export function clearAllTranscriptData() {
+  clearTranscriptJournal(SESSION_TRANSCRIPT_STORAGE);
+  const legacyStorage = getLegacyStorage();
+  if (legacyStorage) clearTranscriptJournal(legacyStorage);
+  return createEmptyJournal();
+}
+
 /** 匯出給 Owner 離線複查：含桶計數與禁學說明，不上傳。 */
-export function exportTranscriptData(storage = getDefaultStorage()) {
-  const journal = loadTranscriptJournal(storage);
+export function exportTranscriptData(storage) {
+  const journal = storage
+    ? loadTranscriptJournal(storage)
+    : mergeJournals(
+        loadTranscriptJournal(SESSION_TRANSCRIPT_STORAGE),
+        loadLegacyTranscriptJournal()
+      );
   const payload = {
     schemaVersion: TRANSCRIPT_SCHEMA_VERSION,
     exportedAt: new Date().toISOString(),
-    source: TRANSCRIPT_STORAGE_KEY,
+    source: storage ? TRANSCRIPT_STORAGE_KEY : "session_plus_legacy_local_export",
     purpose: "offline_review_only",
     policy: {
       autoFineTune: false,
@@ -210,9 +228,39 @@ function countBuckets(turns = []) {
 }
 
 function getDefaultStorage() {
+  return SESSION_TRANSCRIPT_STORAGE;
+}
+
+function getLegacyStorage() {
   try {
     return typeof localStorage !== "undefined" ? localStorage : null;
   } catch {
     return null;
   }
+}
+
+function createMemoryStorage() {
+  const values = new Map();
+  return {
+    getItem(key) {
+      return values.get(String(key)) ?? null;
+    },
+    setItem(key, value) {
+      values.set(String(key), String(value));
+    },
+    removeItem(key) {
+      values.delete(String(key));
+    }
+  };
+}
+
+function mergeJournals(...journals) {
+  const turns = journals
+    .flatMap((journal) => journal?.turns || [])
+    .sort((a, b) => Number(a?.at || 0) - Number(b?.at || 0))
+    .slice(-TRANSCRIPT_MAX_TURNS);
+  return normalizeJournal({
+    turns,
+    updatedAt: turns.at(-1)?.at || null
+  });
 }

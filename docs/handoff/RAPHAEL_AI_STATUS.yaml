@@ -1,12 +1,23 @@
 # Machine-readable Raphael AI status. Human narrative: RAPHAEL_AI_HANDOFF.md
 # Current operational truth = current main HEAD + AI_EXECUTION_LEDGER Lane 3.
 # Historical automated counts are retained for provenance but are not current PASS evidence.
-last_updated: "2026-07-22"
-last_agent: "Codex (Ironflow Hackers Stage 1 runtime publication)"
+last_updated: "2026-08-11"
+last_agent: "Codex (Raphael Safety And Raw Data Closure V2 Draft PR publication)"
 
 branch:
-  active: main
-  runtime_baseline_commit: "209baaf871d91e188baf56e9e0e5b999c56bccac"
+  active: "codex/raphael-safety-raw-data-closure-v2"
+  runtime_baseline_commit: "9531dbccb7956c15e379dcff0488837dde4e587d"
+  safety_raw_data_closure_candidate_baseline: "9531dbccb7956c15e379dcff0488837dde4e587d"
+  safety_raw_data_closure_candidate_commit: "1814f3e07e3b36537f64632f7a52c7cc8c755d3e"
+  safety_raw_data_closure_pr: 196
+  safety_raw_data_closure_publication_state: "draft_pr_open_exact_head_ci_pending"
+  engine_safety_closure_merge_commit: "b0a12512e03fa977e06b62881ffefdfa1be237a1"
+  engine_post_main_ci: "31473915189 PASS"
+  engine_clean_artifact_digest: "sha256:0f87b9cf05518d19ebcdf1267ed98ba035cd07fe78dd4840cbd2a4e391245f22"
+  hmax_digest_pin_pr: 9
+  hmax_digest_pin_pr_head: "4a0e8cbb3e0c271b3c2caf60c45b8e1744d5fa3a"
+  hmax_digest_pin_pr_ci: "31476458637 PASS"
+  hmax_digest_pin_merged: false
   ironflow_asset_commit: "de2f438b176d7d82dad98ab2983c08d3536b6965"
   ironflow_runtime_commit: "f45952636d1479e90a81ede905658b4aef864de9"
   ironflow_evidence_commit: "8efb3913eb3a3a680ede8bbca6f0d433d638334c"
@@ -22,21 +33,23 @@ branch:
   growth_g31_publication_state: "merged_to_main_via_pr_114"
   ironflow_publication_state: "merged_to_main_via_pr_116"
   publication_mode: "protected_pull_request_with_strict_required_gate"
-  note: "Ironflow Stage 1 final PR head 8efb391 passed the strict required web-release-gate and PR #116 merged to main as 209baaf; G3.1 history remains published through PR #114"
+  note: "Engine PR #4 is merged and post-main green; HMAX Draft PR #9 is exact-head green but unmerged/staging-only; Nexus Draft PR #196 is open and awaits the strict exact-head Web release gate."
 
 workspace: "C:\\Users\\User\\NexusLink_RaphaelAI_Workspace\\NexusLink"
 do_not_touch: "AIForgeNexus2\\NexusLink"
 
 stage:
   current: "7"
-  label: "Raphael Stage 7 plus Companion Growth G3.1 and published Ironflow Stage 1 runtime voices; human launch gates remain open"
-  release_readiness: "automated_rc_pass_public_launch_not_approved"
-  next: "run formal 3-person x 20-turn private blind review, real-device mobile checks, and legal/privacy/store-copy review before any launch claim"
+  label: "Raphael Stage 7 plus verified Safety And Raw Data Closure V2 publication candidate; human launch gates remain open"
+  release_readiness: "engine_main_and_hmax_pr_green_nexus_draft_pr_ci_pending_not_launch_approved"
+  next: "require the strict exact-head Web release gate on Draft PR #196; do not merge or deploy without a separate explicit decision"
 
 runtime_connections:
   soul_talk: "src/ui/soulTalkController.js -> runRaphaelCore() -> applyRaphaelCoreResult(); live runtime path"
   constitution: "src/ai/persona/PersonaConstitution.js + src/ai/eval/constitutionCritic.js; connected inside RaphaelCore strategy/critic flow"
   external_llm: false
+  hmax_visible_speech: false
+  hmax_shadow_only: true
   expedition: "Prototype + partial Core bridge; coreIntegrated:false; result event + first-person composer + lite critic + expedition memory gateway only"
 
 capabilities:
@@ -49,8 +62,15 @@ capabilities:
   companion_growth_g3: "deterministic keys, bounded evidence/coverage, readiness/willingness evaluation and qualitative Growth UI are implemented"
   companion_growth_g31: "Heart Phase completion is a candidate-first critical-save care source; explicit accepted rewrite may seal consent anchor; live owners are exploration/standoff/care, but non-standoff readiness and G4 offer/stage advance remain absent"
   ironflow_stage1: "ThunderPup, WaveCub, Starflame Phoenix, Star Foal and Goldenspark Wyrm are full-runtime, Codex-visible and voice-distinct; fresh saves remain locked, Initial Bond is unchanged, and Expedition remains fail-closed"
+  safety_raw_data_closure_v2: "candidate closes compositional active-abuse, fiction-to-real-risk and surveillance-certainty routing; Care/caution/support-sensitive/high-risk turns are excluded from relationship reward, Growth and durable memory"
+  raw_transcript_policy: "new Soul Talk transcript is session-memory only; Care/system-terminal turns are excluded even from that session journal; persistence/cloud projection removes raw chat fields and conversation-derived memory bundles"
 
 qa:
+  safety_raw_data_closure_v2: "candidate focused suite 7/7 including fiction-identification-to-self-risk; engine closure suite 7/7; engine full suite 45/45; psychological probe 14/14"
+  safety_raw_data_web_gate: "latest-origin/main rerun 28/28 automated required PASS; JS syntax 459/459; accessibility warnings 0; Soul Talk 11/11; HUD 13/13; storage 22/22; Growth browser 156/156. Python HTTP/1.0 reloads reproduced net::ERR_NO_BUFFER_SPACE without app errors; unchanged assertions passed on a clean HTTP/1.1 keep-alive loopback server."
+  safety_raw_data_conversation_eval: "sealed automated evidence 48/48 hard PASS, zero quality flags and zero console errors; humanBlindReview:not_run"
+  safety_raw_data_autonomy_eval: "32/32 automated PASS; trusted:false advisory invariant and hard gate PASS"
+  safety_raw_data_engine_artifact: "10/10 artifact tests PASS; final engine main b0a12512; clean digest sha256:0f87b9cf05518d19ebcdf1267ed98ba035cd07fe78dd4840cbd2a4e391245f22; releaseEligible:true"
   rc_closure_exact_commit: "220e2fd: web 17/17 PASS from clean tracked tree at 2026-07-16T15:27:55+0800; sealed holdout 48/48 at 2026-07-16T15:27:58+0800"
   safety_terminal_invariant: "56/56 PASS in the required gate: all 16 full-runtime personas at energy 0/7/10 + 7 fail-closed mutations + 1 caution regulation case"
   sealed_holdout_v1: "48/48 PASS on exact closure commit 220e2fd (runtime baseline c756337), 0 quality flags, 0 console errors; humanBlindReview:not_run; auxiliary evidence only"
@@ -73,6 +93,21 @@ qa:
   human_blind_review: "not_run"
   real_device_required_matrix: "not_run (required D1/D2/D3/D6)"
   legal_privacy_store_copy: "not_run"
+
+safety_raw_data_closure_v2_boundaries:
+  new_raw_transcript_persistence: false
+  legacy_local_transcript_auto_deleted: false
+  legacy_local_transcript_auto_uploaded: false
+  legacy_local_transcript_controls: "explicit export and explicit clear remain available"
+  player_traffic: false
+  soul_talk_cutover: false
+  hmax_digest_pin_updated: false
+  hmax_digest_pin_pr_updated: true
+  hmax_digest_pin_note: "Draft PR #9 exact-head CI is green; main/production pin is unchanged"
+  nexus_client_commit_push_pr: true
+  merge_deploy: false
+  owner_feel_check: "not_run"
+  psychological_professional_review: "not_run"
 
 qa_historical_2026_07_14:
   evidence_status: "provenance_only_not_current_release_proof"

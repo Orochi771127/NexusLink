@@ -66,5 +66,35 @@ export function logConversationDebugTrace(trace, runtime = {}) {
   const params = new URLSearchParams(window.location.search);
   if (params.get("raphaelDebug") !== "1" && params.get("raphaelSmoke") !== "1") return;
 
-  console.debug("[RaphaelDialogueTrace]", trace);
+  console.debug("[RaphaelDialogueTrace]", sanitizeConversationDebugTraceForLog(trace));
+}
+
+export function sanitizeConversationDebugTraceForLog(trace = {}) {
+  return {
+    input: "[redacted]",
+    nlu: {
+      topic: trace.nlu?.topic || null,
+      dialogueAct: trace.nlu?.dialogueAct || null,
+      constraints: Array.isArray(trace.nlu?.constraints) ? [...trace.nlu.constraints] : [],
+      preferredResponse: trace.nlu?.preferredResponse || null,
+      userNeed: trace.nlu?.userNeed || null
+    },
+    responseStrategy: trace.responseStrategy || null,
+    selectedTemplateId: trace.selectedTemplateId || null,
+    antiLoopDecision: trace.antiLoopDecision || null,
+    variantSelection: trace.variantSelection || null,
+    autonomy: trace.autonomy || null,
+    finalReply: "[redacted]",
+    prefill: {
+      source: trace.prefill?.source || null,
+      groundedByPrefill: Boolean(trace.prefill?.groundedByPrefill),
+      usedPrefillDetail: null
+    },
+    quickReplies: (trace.quickReplies || []).map((item) => ({
+      intent: item?.intent || null,
+      actionType: item?.actionType || null,
+      topic: item?.topic || null,
+      responseStrategyHint: item?.responseStrategyHint || null
+    }))
+  };
 }

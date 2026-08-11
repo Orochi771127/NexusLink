@@ -172,6 +172,9 @@ def run():
         # Storage persistence
         state_before_reload = get_state(page)
         chat_len = len(state_before_reload.get("chatHistory") or [])
+        persisted_before_reload = page.evaluate(
+            f"() => JSON.parse(localStorage.getItem('{STORAGE_KEY}') || '{{}}')"
+        )
         page.reload(wait_until="networkidle")
         time.sleep(2)
         state_after_reload2 = get_state(page)
@@ -182,7 +185,18 @@ def run():
             ),
             "chat_len_before": chat_len,
             "chat_len_after_reload": len(state_after_reload2.get("chatHistory") or []),
-            "persisted": len(state_after_reload2.get("chatHistory") or []) >= chat_len,
+            "raw_transcript_persisted": any(
+                key in persisted_before_reload
+                for key in ("chatHistory", "lastMessage", "reactionPreview")
+            ),
+            "persisted": (
+                chat_len > 0
+                and not any(
+                    key in persisted_before_reload
+                    for key in ("chatHistory", "lastMessage", "reactionPreview")
+                )
+                and len(state_after_reload2.get("chatHistory") or []) < chat_len
+            ),
         }
 
         open_soul_talk(page)
@@ -494,7 +508,10 @@ def invoke_touch(page, touch_type="touch"):
 
 def get_state(page):
     return page.evaluate(
-        f"() => JSON.parse(localStorage.getItem('{STORAGE_KEY}') || '{{}}')"
+        """async () => {
+          const store = await import('./src/state/store.js');
+          return JSON.parse(JSON.stringify(store.getState()));
+        }"""
     )
 
 

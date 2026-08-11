@@ -29,16 +29,16 @@
       "dialogueAct": "correcting_raphael",
       "preferredResponse": "acknowledge_generic_failure",
       "constraints": [],
-      "strategy": "share",
-      "reply": "先不用急著下結論，事情好像拐了一個彎。",
+      "strategy": "acknowledge_generic_failure",
+      "reply": "你說得對，我剛剛的回覆太像同一句模板。我會改成先聽懂你的主題再回。",
       "checks": {
         "dialogue_act_ok": true,
         "nuance_ok": true,
         "no_generic": true,
-        "mentions_ok": false
+        "mentions_ok": true
       },
       "forbiddenPhraseDetected": false,
-      "pass": false
+      "pass": true
     },
     {
       "id": "NLU-3",
@@ -70,8 +70,8 @@
       "dialogueAct": "asking_for_help",
       "preferredResponse": "practical_explanation",
       "constraints": [],
-      "strategy": "share",
-      "reply": "我想確認一下：你現在最想先處理的是Raphael 理解層這塊嗎——你若只想停在這裡，也完全可以。",
+      "strategy": "practical_explanation",
+      "reply": "自然語言理解會經過 intent、semanticFrame、response pack 幾層；如果都 miss，才會掉到 generic fallback——你若只想停在這裡，也完全可以。",
       "checks": {
         "topic_ok": true,
         "dialogue_act_ok": true,
@@ -90,8 +90,8 @@
       "constraints": [
         "no_advice"
       ],
-      "strategy": "invite",
-      "reply": "我先接住你提到的被人否定——若你想多待一會兒或再丟一句，我在。",
+      "strategy": "practical_clarification",
+      "reply": "先對準你說的「被人否定」——沒有大事也可以講；想從感覺開始也行。",
       "checks": {
         "topic_ok": true,
         "constraint_ok": true,
@@ -108,7 +108,7 @@
       "dialogueAct": "asking_exploration",
       "preferredResponse": "exploration_invite",
       "constraints": [],
-      "strategy": "invite",
+      "strategy": "exploration_invite",
       "reply": "關於我們可以去外面的地圖看看嗎。",
       "checks": {
         "topic_ok": true,
@@ -125,8 +125,8 @@
       "dialogueAct": "asking_memory",
       "preferredResponse": "memory_reference",
       "constraints": [],
-      "strategy": "question",
-      "reply": "我想確認一下：你現在最想先處理的是初醒這塊嗎？",
+      "strategy": "memory_reference",
+      "reply": "我記得。那時候心核剛亮起，聲音還很輕。",
       "checks": {
         "topic_ok": true,
         "dialogue_act_ok": true,
@@ -156,8 +156,8 @@
   ],
   "summary": {
     "total": 8,
-    "passed": 7,
-    "failed": 1,
+    "passed": 8,
+    "failed": 0,
     "forbidden_count": 0,
     "console_error_count": 0
   }
