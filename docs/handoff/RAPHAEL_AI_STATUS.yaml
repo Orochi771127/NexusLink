@@ -2,14 +2,15 @@
 # Current operational truth = current main HEAD + AI_EXECUTION_LEDGER Lane 3.
 # Historical automated counts are retained for provenance but are not current PASS evidence.
 last_updated: "2026-08-11"
-last_agent: "Codex (Raphael Safety And Raw Data Closure V2 publication candidate)"
+last_agent: "Codex (Raphael Safety And Raw Data Closure V2 Draft PR publication)"
 
 branch:
   active: "codex/raphael-safety-raw-data-closure-v2"
   runtime_baseline_commit: "9531dbccb7956c15e379dcff0488837dde4e587d"
   safety_raw_data_closure_candidate_baseline: "9531dbccb7956c15e379dcff0488837dde4e587d"
-  safety_raw_data_closure_candidate_commit: null
-  safety_raw_data_closure_publication_state: "verified_pre_commit_publication_authorized"
+  safety_raw_data_closure_candidate_commit: "1814f3e07e3b36537f64632f7a52c7cc8c755d3e"
+  safety_raw_data_closure_pr: 196
+  safety_raw_data_closure_publication_state: "draft_pr_open_exact_head_ci_pending"
   engine_safety_closure_merge_commit: "b0a12512e03fa977e06b62881ffefdfa1be237a1"
   engine_post_main_ci: "31473915189 PASS"
   engine_clean_artifact_digest: "sha256:0f87b9cf05518d19ebcdf1267ed98ba035cd07fe78dd4840cbd2a4e391245f22"
@@ -32,7 +33,7 @@ branch:
   growth_g31_publication_state: "merged_to_main_via_pr_114"
   ironflow_publication_state: "merged_to_main_via_pr_116"
   publication_mode: "protected_pull_request_with_strict_required_gate"
-  note: "Engine PR #4 is merged and post-main green; HMAX Draft PR #9 is exact-head green but unmerged/staging-only; the Nexus client candidate is refreshed to current origin/main 9531dbc and awaits protected Draft PR publication."
+  note: "Engine PR #4 is merged and post-main green; HMAX Draft PR #9 is exact-head green but unmerged/staging-only; Nexus Draft PR #196 is open and awaits the strict exact-head Web release gate."
 
 workspace: "C:\\Users\\User\\NexusLink_RaphaelAI_Workspace\\NexusLink"
 do_not_touch: "AIForgeNexus2\\NexusLink"
@@ -40,8 +41,8 @@ do_not_touch: "AIForgeNexus2\\NexusLink"
 stage:
   current: "7"
   label: "Raphael Stage 7 plus verified Safety And Raw Data Closure V2 publication candidate; human launch gates remain open"
-  release_readiness: "engine_main_and_hmax_pr_green_nexus_pre_commit_not_launch_approved"
-  next: "commit/push the scoped Nexus client, open a Draft protected PR, require exact-head web-release-gate, and do not merge or deploy without a separate decision"
+  release_readiness: "engine_main_and_hmax_pr_green_nexus_draft_pr_ci_pending_not_launch_approved"
+  next: "require the strict exact-head Web release gate on Draft PR #196; do not merge or deploy without a separate explicit decision"
 
 runtime_connections:
   soul_talk: "src/ui/soulTalkController.js -> runRaphaelCore() -> applyRaphaelCoreResult(); live runtime path"
@@ -103,7 +104,7 @@ safety_raw_data_closure_v2_boundaries:
   hmax_digest_pin_updated: false
   hmax_digest_pin_pr_updated: true
   hmax_digest_pin_note: "Draft PR #9 exact-head CI is green; main/production pin is unchanged"
-  nexus_client_commit_push_pr: false
+  nexus_client_commit_push_pr: true
   merge_deploy: false
   owner_feel_check: "not_run"
   psychological_professional_review: "not_run"

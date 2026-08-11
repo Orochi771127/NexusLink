@@ -23,9 +23,11 @@ HMAX 的 POSIX archive pin 已提交至 Draft PR
 兩個 job 均成功；它仍是 `staging_candidate`，**尚未合併、未部署、無玩家流量**。
 
 Nexus Link client 候選位於 `codex/raphael-safety-raw-data-closure-v2`，已刷新至
-最新 `origin/main` `9531dbccb7956c15e379dcff0488837dde4e587d` 並完成提交前驗證；
-本段記錄的是 publication-ready 候選，protected Draft PR 與 exact-head CI 仍待
-本包後續步驟完成。主要髒工作樹與其他資產工作均未混入。
+最新 `origin/main` `9531dbccb7956c15e379dcff0488837dde4e587d`；實作 commit
+`1814f3e07e3b36537f64632f7a52c7cc8c755d3e` 已推送並開啟 protected Draft PR
+[#196](https://github.com/Orochi771127/NexusLink/pull/196)。本次 publication-evidence
+文件更新會成為 PR 的最終 head，必須由 strict exact-head Web release gate 驗證後
+才能另行評估合併。主要髒工作樹與其他資產工作均未混入。
 
 本候選補上組合式正在發生暴力／虐待、虛構轉現實危險、監視確信的安全路由，
 並讓 Care、caution、support-sensitive 與高風險回合都不能產生關係獎勵、

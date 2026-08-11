@@ -8665,3 +8665,30 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
   Draft PR and require the exact-head protected Web release gate. Do not merge
   or deploy without a separate explicit decision.
 - Branch / commit: `codex/raphael-safety-raw-data-closure-v2` / uncommitted.
+
+### 2026-08-11 - Codex - Raphael Safety And Raw Data Closure V2 - PUBLISHED FOR REVIEW
+
+- Status: `PUBLISHED FOR REVIEW`; scoped implementation commit
+  `1814f3e07e3b36537f64632f7a52c7cc8c755d3e` is pushed and protected Draft PR
+  [#196](https://github.com/Orochi771127/NexusLink/pull/196) is open. This entry
+  does not authorize merge, deployment, player traffic or visible HMAX speech.
+- Lane: `Raphael Core, Companion Reasoning, And Soul Talk`.
+- Task name: `RAPHAEL_SAFETY_AND_RAW_DATA_CLOSURE_V2`.
+- Published scope: exactly 23 safety, raw-data closure, QA evidence and handoff
+  files; no Pixi, assets, default unlocks, new dependencies or unrelated dirty
+  worktree changes were included.
+- Dependency truth: engine PR #4 is merged and post-main green at
+  `b0a12512e03fa977e06b62881ffefdfa1be237a1`; HMAX Draft PR #9 is exact-head
+  green at `4a0e8cbb3e0c271b3c2caf60c45b8e1744d5fa3a` but remains unmerged and
+  staging-only.
+- Pre-publication evidence: focused closure `7/7`, psychology safety `14/14`,
+  sealed conversation `48/48` with zero machine quality flags, autonomy `32/32`,
+  and full Web release gate `28/28` with JS syntax `459/459`, Soul Talk `11/11`,
+  HUD `13/13`, storage `22/22`, Growth browser `156/156`, zero accessibility
+  warnings and zero console errors.
+- Remaining publication gate: the strict required Web release workflow must
+  pass on the exact final PR head after this evidence commit. Human blind review,
+  D1/D2/D3/D6 devices, Owner feel-check, professional psychology,
+  privacy/legal/security and public-launch approvals remain `not_run`.
+- Branch / implementation commit: `codex/raphael-safety-raw-data-closure-v2` /
+  `1814f3e07e3b36537f64632f7a52c7cc8c755d3e`.
