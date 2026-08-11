@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "characterId": "wavecub",
+  "displayName": { "zh": "浪花幼獅", "en": "WaveCub" },
+  "faction": "ironflow-hackers",
+  "element": "water",
+  "currentRuntimeFormStageId": "initial_awakened",
+  "runtimeFormSwapReady": false,
+  "designBoard": "assets/reference/formal-evolution-r1/lineage-boards/wavecub/wavecub_three-stage-lineage-board_r2.png",
+  "sameOwnerFallback": "assets/characters/wavecub/portrait/wavecub_portrait_512x512.png",
+  "stages": [
+    {
+      "stageId": "initial_awakened",
+      "ordinal": 1,
+      "name": { "zh": "浪花幼獅", "en": "WaveCub" },
+      "nameStatus": "current-canon",
+      "artStatus": "runtime-ready",
+      "humanApproved": true,
+      "portrait": "assets/characters/wavecub/portrait/wavecub_portrait_512x512.png",
+      "designIntent": "White-blue lion cub with a short cobalt wave fringe, round ears, cyan current lines, chest core and one slim tail ending in a water-wisp."
+    },
+    {
+      "stageId": "resonant_mature",
+      "ordinal": 2,
+      "name": { "zh": "潮鏈獅衛", "en": "Tidelink Lion Warden" },
+      "nameStatus": "owner-review",
+      "artStatus": "owner-review",
+      "humanApproved": false,
+      "productionMaster": null,
+      "designIntent": "Cute quadruped tide lion with larger paws, one solid cobalt wave mane, turquoise shoulder blocks, coral-magenta accents and one attached slim wave-tip tail."
+    },
+    {
+      "stageId": "final_awakened",
+      "ordinal": 3,
+      "name": { "zh": "深潮引航獅", "en": "Deepcurrent Lion Wayfinder" },
+      "nameStatus": "owner-review",
+      "artStatus": "owner-review",
+      "humanApproved": false,
+      "productionMaster": null,
+      "designIntent": "Upright anthropomorphic tide-lion wayfinder retaining the lion face, round ears and aqua eyes, with exactly two pawed arms, two digitigrade legs, one slim wave tail and a compact cobalt-turquoise mane."
+    }
+  ],
+  "surfaceReadiness": { "portrait": "review-board-only", "expedition": "not-produced", "orbit": "not-produced", "animationSet": "not-produced" }
+}

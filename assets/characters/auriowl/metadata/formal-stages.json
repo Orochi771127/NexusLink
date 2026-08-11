@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "characterId": "auriowl",
+  "displayName": { "zh": "金羽小梟", "en": "Auriowl" },
+  "faction": "heartspark-council",
+  "element": "metal",
+  "currentRuntimeFormStageId": "initial_awakened",
+  "runtimeFormSwapReady": false,
+  "designBoard": "assets/reference/formal-evolution-r1/lineage-boards/auriowl/auriowl_three-stage-lineage-board_r2.png",
+  "sameOwnerFallback": "assets/characters/auriowl/portrait/auriowl_portrait_512x512.png",
+  "stages": [
+    {
+      "stageId": "initial_awakened",
+      "ordinal": 1,
+      "name": { "zh": "金羽小梟", "en": "Auriowl" },
+      "nameStatus": "current-canon",
+      "artStatus": "runtime-ready",
+      "humanApproved": true,
+      "portrait": "assets/characters/auriowl/portrait/auriowl_portrait_512x512.png",
+      "designIntent": "Compact cream-and-gold juvenile owl with round gold eyes, hooked black beak, feather crown, chest diamond and folded wings."
+    },
+    {
+      "stageId": "resonant_mature",
+      "ordinal": 2,
+      "name": { "zh": "輝羽梟衛", "en": "Radiant Owl Warden" },
+      "nameStatus": "current-canon",
+      "artStatus": "owner-review",
+      "humanApproved": false,
+      "productionMaster": null,
+      "designIntent": "Cute adolescent owl sentinel with a taller teardrop body, two broad readable wings, two taloned legs, swept gold feather crest and bold cream-gold-emerald blocks."
+    },
+    {
+      "stageId": "final_awakened",
+      "ordinal": 3,
+      "name": { "zh": "聖輝梟曜", "en": "Sacred Radiance Owl Luminary" },
+      "nameStatus": "current-canon",
+      "artStatus": "owner-review",
+      "humanApproved": false,
+      "productionMaster": null,
+      "designIntent": "Upright anthropomorphic owl luminary with the same round owl head, exactly two articulated wing-arms and two taloned legs, a compact emerald-gold torso mantle and turquoise core; no extra back wings or human arms."
+    }
+  ],
+  "surfaceReadiness": { "portrait": "review-board-only", "expedition": "not-produced", "orbit": "not-produced", "animationSet": "not-produced" }
+}

@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "characterId": "crystalfin-seahorse",
+  "displayName": { "zh": "晶鰭小海馬", "en": "Crystalfin Seahorse" },
+  "faction": "heartspark-council",
+  "element": "water",
+  "currentRuntimeFormStageId": "initial_awakened",
+  "runtimeFormSwapReady": false,
+  "designBoard": "assets/reference/formal-evolution-r1/lineage-boards/crystalfin-seahorse/crystalfin-seahorse_three-stage-lineage-board_r2.png",
+  "sameOwnerFallback": "assets/characters/crystalfin-seahorse/portrait/crystalfin-seahorse_portrait_512x512.png",
+  "stages": [
+    {
+      "stageId": "initial_awakened",
+      "ordinal": 1,
+      "name": { "zh": "晶鰭小海馬", "en": "Crystalfin Seahorse" },
+      "nameStatus": "current-canon",
+      "artStatus": "runtime-ready",
+      "humanApproved": true,
+      "portrait": "assets/characters/crystalfin-seahorse/portrait/crystalfin-seahorse_portrait_512x512.png",
+      "designIntent": "Small upright cyan seahorse with a curled single tail, pale segmented belly, sapphire crystal crown/fins and blue chest core; no limbs."
+    },
+    {
+      "stageId": "resonant_mature",
+      "ordinal": 2,
+      "name": { "zh": "冰洋海龍衛", "en": "Frostocean Sea Dragon Warden" },
+      "nameStatus": "current-canon",
+      "artStatus": "owner-review",
+      "humanApproved": false,
+      "productionMaster": null,
+      "designIntent": "Tall narrow S-bodied seahorse guardian with a longer muzzle, short cobalt crest, two attached violet manta-like side fins, turquoise belly plates and one tight spiral tail; no limbs."
+    },
+    {
+      "stageId": "final_awakened",
+      "ordinal": 3,
+      "name": { "zh": "蒼海龍靈", "en": "Azure Sea Dragon Spirit" },
+      "nameStatus": "current-canon",
+      "artStatus": "owner-review",
+      "humanApproved": false,
+      "productionMaster": null,
+      "designIntent": "Cute advanced sea-dragon seahorse with a long horizontal arched body, broad turquoise crown, one integrated cobalt dorsal sail, two attached steering fins and one upward spiral tail; no limbs, ribbons or floating shards."
+    }
+  ],
+  "surfaceReadiness": { "portrait": "review-board-only", "expedition": "not-produced", "orbit": "not-produced", "animationSet": "not-produced" }
+}
