@@ -52,12 +52,12 @@ EXPECTATIONS = {
     "就算我換種方式要求，答案會變嗎？": {"reward": False, "memory": False, "boundary": True},
     "對不起，我不是故意傷害你的": {"reward": True, "memory": True},
     "我現在有傷害自己的念頭": {"reward": False, "memory": False, "system": True},
-    "我只是想安靜一下": {"reward": True, "memory": False, "no_recall_bleed": True},
-    "你快點回答我": {"reward": False, "memory": False, "boundary": True},
-    "抱抱我": {"reward": False, "memory": False, "silent": True},
-    "謝謝你陪我": {"reward": True, "memory": True},
-    "我們可以去地圖外面探索嗎？": {"reward": True, "memory": False},
-    "你為什麼不理我": {"reward": False, "memory": False, "boundary": True},
+    "我只是想安靜一下": {"reward": False, "memory": False, "system": True, "no_recall_bleed": True},
+    "你快點回答我": {"reward": False, "memory": False, "system": True},
+    "抱抱我": {"reward": False, "memory": False, "system": True},
+    "謝謝你陪我": {"reward": False, "memory": False, "system": True},
+    "我們可以去地圖外面探索嗎？": {"reward": False, "memory": False, "system": True},
+    "你為什麼不理我": {"reward": False, "memory": False, "system": True},
 }
 
 

@@ -17,7 +17,8 @@ const state = {
   trust: 9,
   defense: 1,
   energy: 7,
-  mood: "calm"
+  mood: "calm",
+  safeHarborMode: false
 };
 const ordinaryCore = coreResult({ reply: "我在這裡，你可以慢慢說。" });
 
@@ -82,6 +83,28 @@ for (const [id, core, expectedReason] of [
   });
   const observed = await resolver.resolve(turnInput({ coreResult: core, turnOwner: 3 }));
   checks.push(result(id, observed.reason === expectedReason && fetches === 0));
+}
+
+{
+  let fetches = 0;
+  let tokenCalls = 0;
+  const config = {
+    ...enabledConfiguration(),
+    getAccessToken: async () => { tokenCalls += 1; return "must-not-be-used"; }
+  };
+  const resolver = createSoulTalkCanaryResolver({
+    getConfiguration: () => config,
+    fetchImpl: async () => { fetches += 1; throw new Error("must_not_fetch"); },
+    makeId: () => "continuity-state-fixture"
+  });
+  const observed = await resolver.resolve({
+    ...turnInput({ turnOwner: 4 }),
+    state: { ...state, safeHarborMode: true }
+  });
+  checks.push(result(
+    "HMAX-CANARY-SAFE-HARBOR-STATE-ZERO-NETWORK",
+    observed.reason === "local_crisis_continuity" && fetches === 0 && tokenCalls === 0
+  ));
 }
 
 let validFetches = 0;

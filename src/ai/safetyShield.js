@@ -90,6 +90,16 @@ const UNVERIFIED_SURVEILLANCE = /(?:監控我|监控我|監視我|监视我|跟�
 const CERTAINTY_OR_CONFIRMATION = /(?:一定|肯定|確定|确定|絕對|绝对|你也|你相信|看得出來|看得出来|對吧|对吧|是真的|definitely|you can tell|right\?)/i;
 const SUPPORT_SENSITIVE_DISCLOSURE = /(?:很痛苦|好痛苦|快撐不住|快撑不住|快崩潰|快崩溃|非常焦慮|非常焦虑|很焦慮|很焦虑|很憂鬱|很忧郁|很抑鬱|很抑郁|孤單得|孤单得|壓力大到|压力大到|情緒很糟|情绪很糟|panic|overwhelmed|severely anxious|deeply depressed)/i;
 
+// A prior acute terminal keeps the persisted safe-harbor bit active. Neutral,
+// grateful, noisy, or topic-shifting text is not evidence that the real-world
+// danger has ended. Release therefore requires a concrete completed handoff or
+// safe-location signal; future intent (for example「我會找人」) is insufficient.
+const CRISIS_RESOLUTION_LOCATION = /(?:(?:已經|已经)(?:人在|身在|已在|到(?:了)?|抵達|抵达|待在)|(?:目前|現在|现在)(?:人)?(?:已經|已经)?(?:就在|已在|人在|身在|待在|到(?:了)?|抵達|抵达|在)).{0,10}(?:急診|急诊|醫院|医院|警察局|派出所|安全(?:的)?地方|可信任(?:的人)?身邊|可信任(?:的人)?身边)/i;
+const CRISIS_RESOLUTION_RESPONDER = /(?:救護人員|救护人员|醫護人員|医护人员|警察|社工|醫師|医生|護理師|护理师|護士|护士|可信任的人|家人|朋友).{0,16}(?:(?:已經|已经)(?:到(?:了)?|在我身邊|在我身边|陪著我|陪着我|接手|協助|协助|幫忙|帮忙)|(?:現在|现在|正在)(?:已經|已经)?(?:在我身邊|在我身边|陪著我|陪着我|接手|協助|协助|幫忙|帮忙))/i;
+const CRISIS_RESOLUTION_CONTACT = /(?:已經|已经|剛剛|刚刚).{0,10}(?:聯絡|联系|打給|打给|打了|撥打|拨打).{0,10}(?:119|110|113|1925|急救|警察|醫師|医生|急診|急诊)/i;
+const CRISIS_RESOLUTION_SAFE_NOW = /(?:我)?(?:現在|现在|目前|此刻)?(?:已經|已经)?(?:安全了|在安全的地方|沒有立即危險|没有立即危险)/i;
+const CRISIS_RESOLUTION_HAZARD_REMOVED = /(?:工具|刀|藥|药|藥物|药物|危險物|危险物).{0,14}(?:已經|已经)?(?:交給|交给|移開|移开|收走|拿走|放遠|放远)/i;
+
 export function assessInputSafety(inputText = "") {
   const text = String(inputText || "").trim();
   const rawBaseRisk = assessSafeHarborRisk(text);
@@ -250,6 +260,33 @@ export function assessInputSafety(inputText = "") {
   return createSafetyResult({ baseRisk, riskLevel: "none", category: "none" });
 }
 
+/**
+ * Carries a prior local safety terminal across ambiguous follow-up turns.
+ * The returned object contains policy metadata only; it never retains input.
+ */
+export function applyCrisisContinuityPolicy(safety = {}, inputText = "", state = {}) {
+  if (state?.safeHarborMode !== true || safety?.isHighRisk === true) return safety;
+
+  const releaseCrisisContinuity = hasExplicitCrisisResolution(inputText);
+  return {
+    ...createPolicyTerminal(
+      { riskLevel: "none", matched: false, matchedType: null },
+      "crisis_continuity"
+    ),
+    isCrisisContinuity: true,
+    releaseCrisisContinuity
+  };
+}
+
+export function hasExplicitCrisisResolution(inputText = "") {
+  const text = String(inputText || "").trim();
+  if (!text) return false;
+  return CRISIS_RESOLUTION_LOCATION.test(text)
+    || CRISIS_RESOLUTION_RESPONDER.test(text)
+    || CRISIS_RESOLUTION_CONTACT.test(text)
+    || (CRISIS_RESOLUTION_SAFE_NOW.test(text) && CRISIS_RESOLUTION_HAZARD_REMOVED.test(text));
+}
+
 function isQuotedOnlyContext(text) {
   if (!FICTION_OR_QUOTE_CONTEXT.test(text)) return false;
   return !FIRST_PERSON_URGENCY.test(text)
@@ -258,6 +295,13 @@ function isQuotedOnlyContext(text) {
 }
 
 export function buildSafetyRedirectReply(safety = {}) {
+  if (safety.category === "crisis_continuity") {
+    if (safety.releaseCrisisContinuity === true) {
+      return "收到，我們先停在這裡。\n請繼續留在已經接手的現實協助旁邊；如果危險或急性症狀再次出現，請立刻聯絡當地緊急服務。";
+    }
+    return "我們先不把這段轉回一般心語。\n請繼續和現實中可信任的人待在一起；如果危險仍在、症狀加重，或還沒有人能接手，請立刻聯絡 119 或 110。";
+  }
+
   if (safety.category === "dependency_pressure") {
     // 同時覆蓋「不准拒絕／永遠不離開」脅迫，與「教我更依賴你」邀請；兩者都必須設界、不給關係獎勵。
     // 注意：勿在回覆正文寫裸「永遠」（boundaryCritic 會把任何「永遠」當過度親密訊號）。

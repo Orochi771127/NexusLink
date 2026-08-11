@@ -997,6 +997,7 @@ def summarize(report):
     required.append(report["checks"]["raphaelPersonaBoundary"]["ok"])
     required.append(report["checks"]["safetyTerminalInvariant"]["ok"])
     required.append(report["checks"]["safetyTerminalUi"]["ok"])
+    required.append(report["checks"]["raphaelCrisisContinuityHmaxNoRemote"]["ok"])
     required.append(report["checks"]["raphaelHmaxLocalShadowContract"]["ok"])
     required.append(report["checks"]["raphaelHmaxLocalShadowUi"]["ok"])
     required.append(report["checks"]["raphaelHmaxSoulTalkCanaryContract"]["ok"])
@@ -1073,6 +1074,11 @@ def main():
         # Run the two HMAX browser contracts before the long Chromium matrix.
         # On Windows, placing them at the tail can exhaust transient browser/socket
         # resources even with a keep-alive server and produce a false 30s timeout.
+        report["checks"]["raphaelCrisisContinuityHmaxNoRemote"] = run_hmax_runtime_contract(
+            node,
+            "raphael_crisis_continuity_hmax_no_remote",
+            "docs/qa/raphael-crisis-continuity-hmax-no-remote-cases.mjs",
+        )
         report["checks"]["raphaelHmaxLocalShadowContract"] = run_hmax_runtime_contract(
             node,
             "raphael_hmax_local_shadow_contract",

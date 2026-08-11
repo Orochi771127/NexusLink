@@ -22,6 +22,7 @@ export function createSoulTalkShadowObserver({
     async observe({ message, coreResult, state = {}, companion = null, stateVersion = 0 } = {}) {
       const safety = coreResult?.safety || coreResult?.perception?.safety || {};
       if (isSafetyTerminalDecision(safety)) return skipped("local_safety_terminal");
+      if (state?.safeHarborMode === true) return skipped("local_crisis_continuity");
       if (safety.isBoundaryPressure === true) return skipped("local_boundary_turn");
 
       const strategy = coreResult?.responseStrategy?.strategy || coreResult?.responseStrategy || "";
