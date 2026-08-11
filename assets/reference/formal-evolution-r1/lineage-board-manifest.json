@@ -1,0 +1,111 @@
+{
+  "schemaVersion": 1,
+  "packageId": "formal-evolution-roster-11-r1",
+  "supersededBy": "assets/reference/formal-evolution-r1/lineage-board-manifest-r2.json",
+  "currentVisualAuthority": false,
+  "generatedAt": "2026-08-11",
+  "generator": "OpenAI imagegen via Codex built-in image generation",
+  "purpose": "three-stage identity and silhouette review",
+  "runtimeAuthority": false,
+  "defaultArtStatus": "owner-review",
+  "humanApproved": false,
+  "boards": [
+    {
+      "characterId": "greyshade-cat",
+      "path": "assets/reference/formal-evolution-r1/lineage-boards/greyshade-cat/greyshade-cat_three-stage-lineage-board_r1.png",
+      "dimensions": [1774, 887],
+      "sha256": "57d78feec73743b984f7ad204ee942bbb5a8bce3f45488c7db287645bce322a1",
+      "qc": "pass-for-owner-review",
+      "productionNote": "Translate lakeglow traces to separate optional VFX where needed; retain natural feline body and same-owner Stage 1 fallback."
+    },
+    {
+      "characterId": "auriowl",
+      "path": "assets/reference/formal-evolution-r1/lineage-boards/auriowl/auriowl_three-stage-lineage-board_r1.png",
+      "dimensions": [1821, 864],
+      "sha256": "e235ccf8c97f607893e6f8f34826f3534767cf13dbbab16bf9b8166fc4a9e39b",
+      "qc": "pass-for-owner-review",
+      "productionNote": "Stage 3 needs a separate compact folded-wing mobile idle; broad review-board wings are not the default runtime silhouette."
+    },
+    {
+      "characterId": "sprigfawn",
+      "path": "assets/reference/formal-evolution-r1/lineage-boards/sprigfawn/sprigfawn_three-stage-lineage-board_r1.png",
+      "dimensions": [1536, 1024],
+      "sha256": "0bea2ba74b0d3adb9fde69e4c8554e7be08496b5d7636c599e734bb524a1c2c8",
+      "qc": "pass-for-owner-review",
+      "productionNote": "Antler branch count and safe area must be frozen before animation; no full-tree or adult elk drift."
+    },
+    {
+      "characterId": "crystalfin-seahorse",
+      "path": "assets/reference/formal-evolution-r1/lineage-boards/crystalfin-seahorse/crystalfin-seahorse_three-stage-lineage-board_r1.png",
+      "dimensions": [1536, 1024],
+      "sha256": "234383b9deabac8f8d3fa8cc47c789ced9cdbbd54e625156c15bf606f7183b91",
+      "qc": "pass-for-owner-review",
+      "productionNote": "Freeze crown and fin groups as attached anatomy; keep one curled tail and no limb drift in every frame."
+    },
+    {
+      "characterId": "blazetail-kit",
+      "path": "assets/reference/formal-evolution-r1/lineage-boards/blazetail-kit/blazetail-kit_three-stage-lineage-board_r1.png",
+      "dimensions": [1774, 887],
+      "sha256": "4f4b1fdee8e6cc29974e4a4b665b4fa4c9af27e8ae7edb5590b762bd83953f8e",
+      "qc": "pass-for-owner-review",
+      "productionNote": "Owner Stage 2／3 clothing and flame motifs are preserved. Production must re-author robe overlap for quadruped animation and keep exactly one tail."
+    },
+    {
+      "characterId": "starstripe-cub",
+      "path": "assets/reference/formal-evolution-r1/lineage-boards/starstripe-cub/starstripe-cub_three-stage-lineage-board_r1.png",
+      "dimensions": [1536, 1024],
+      "sha256": "286997dda2c52c60a58a83e3876b7a8e590651c5b6b90eee37df69c88f3e928e",
+      "qc": "pass-for-owner-review",
+      "productionNote": "Crystal ridges must remain attached anatomy accents, preserve stripe grouping and never expand into a full armor shell."
+    },
+    {
+      "characterId": "thunder-pup",
+      "path": "assets/reference/formal-evolution-r1/lineage-boards/thunder-pup/thunder-pup_three-stage-lineage-board_r1.png",
+      "dimensions": [1536, 1024],
+      "sha256": "bac6fe5ad792a1751d1ca8a4844d7bb4e449ab0839dd664132a13edc8e2093c6",
+      "qc": "pass-for-owner-review",
+      "productionNote": "Stage 3 is the most mature read in the set; production must retain large expressive eyes and companion-scale proportions to avoid dire-wolf drift."
+    },
+    {
+      "characterId": "wavecub",
+      "path": "assets/reference/formal-evolution-r1/lineage-boards/wavecub/wavecub_three-stage-lineage-board_r1.png",
+      "dimensions": [1650, 953],
+      "sha256": "c08a647267ed07a771bef856fb4c9651ddb775c40180c1334472e890dc9cfe7a",
+      "qc": "pass-for-owner-review",
+      "productionNote": "The route-finding halo is separate VFX, not baked into the transparent body master; keep one slim wisp tail."
+    },
+    {
+      "characterId": "starflame-phoenix",
+      "path": "assets/reference/formal-evolution-r1/lineage-boards/starflame-phoenix/starflame-phoenix_three-stage-lineage-board_r1.png",
+      "dimensions": [1823, 863],
+      "sha256": "63e0ee210f0fdc467d0874a8a61d640ab7898f8e04f3f2f04d4fefe36dd2f2b6",
+      "qc": "pass-for-owner-review",
+      "productionNote": "Stage 3 requires a folded-wing grounded mobile idle in addition to this open protective display; preserve two talons and avian motion."
+    },
+    {
+      "characterId": "star-foal",
+      "path": "assets/reference/formal-evolution-r1/lineage-boards/star-foal/star-foal_three-stage-lineage-board_r1.png",
+      "dimensions": [1774, 887],
+      "sha256": "1ba43961bc87fb48d4f29e0b0e6550d534143fe2e6156322ba1dae2c5e6f50ff",
+      "qc": "pass-for-owner-review",
+      "productionNote": "The luminous ground boundary is review-board VFX only. Production body masters must be transparent and keep the star tip physically joined to one tail."
+    },
+    {
+      "characterId": "goldenspark-wyrm",
+      "path": "assets/reference/formal-evolution-r1/lineage-boards/goldenspark-wyrm/goldenspark-wyrm_three-stage-lineage-board_r1.png",
+      "dimensions": [1881, 836],
+      "sha256": "7f7f9978669ca739ba84e4af1ba8b3380f9678d2136d0fbb08fb3c90aad4fb8c",
+      "qc": "pass-for-owner-review",
+      "productionNote": "Keep the gear physically attached to one tail; any circular analysis field is separate VFX. No wings or full robot shell."
+    }
+  ],
+  "qcSummary": {
+    "expectedBoards": 11,
+    "foundBoards": 11,
+    "allReadable": true,
+    "allThreeFormsVisible": true,
+    "textOrUiDetectedByHumanReview": false,
+    "runtimeTransparentMasters": 0,
+    "ownerApprovalRequired": true
+  }
+}

@@ -1,0 +1,98 @@
+{
+  "schemaVersion": 1,
+  "packageId": "formal-evolution-roster-11-r2",
+  "runtimeAuthority": false,
+  "formalStageOrder": [
+    "initial_awakened",
+    "resonant_mature",
+    "final_awakened"
+  ],
+  "formalStageLabels": {
+    "initial_awakened": { "zh": "初醒夥伴", "en": "Initial Awakened" },
+    "resonant_mature": { "zh": "共鳴成熟體", "en": "Resonant Mature" },
+    "final_awakened": { "zh": "終局覺醒體", "en": "Final Awakened" }
+  },
+  "statusOrder": [
+    "reference-only",
+    "concept-draft",
+    "owner-review",
+    "owner-approved",
+    "runtime-ready"
+  ],
+  "characters": [
+    {
+      "characterId": "greyshade-cat",
+      "faction": "neutral-heart-core-life",
+      "element": "neutral",
+      "metadata": "assets/characters/greyshade-cat/metadata/formal-stages.json"
+    },
+    {
+      "characterId": "auriowl",
+      "faction": "heartspark-council",
+      "element": "metal",
+      "metadata": "assets/characters/auriowl/metadata/formal-stages.json"
+    },
+    {
+      "characterId": "sprigfawn",
+      "faction": "heartspark-council",
+      "element": "wood",
+      "metadata": "assets/characters/sprigfawn/metadata/formal-stages.json"
+    },
+    {
+      "characterId": "crystalfin-seahorse",
+      "faction": "heartspark-council",
+      "element": "water",
+      "metadata": "assets/characters/crystalfin-seahorse/metadata/formal-stages.json"
+    },
+    {
+      "characterId": "blazetail-kit",
+      "faction": "heartspark-council",
+      "element": "fire",
+      "metadata": "assets/characters/blazetail-kit/metadata/formal-stages.json"
+    },
+    {
+      "characterId": "starstripe-cub",
+      "faction": "heartspark-council",
+      "element": "earth",
+      "metadata": "assets/characters/starstripe-cub/metadata/formal-stages.json"
+    },
+    {
+      "characterId": "thunder-pup",
+      "faction": "ironflow-hackers",
+      "element": "wood",
+      "metadata": "assets/characters/thunder-pup/metadata/formal-stages.json"
+    },
+    {
+      "characterId": "wavecub",
+      "faction": "ironflow-hackers",
+      "element": "water",
+      "metadata": "assets/characters/wavecub/metadata/formal-stages.json"
+    },
+    {
+      "characterId": "starflame-phoenix",
+      "faction": "ironflow-hackers",
+      "element": "fire",
+      "metadata": "assets/characters/starflame-phoenix/metadata/formal-stages.json"
+    },
+    {
+      "characterId": "star-foal",
+      "faction": "ironflow-hackers",
+      "element": "earth",
+      "metadata": "assets/characters/star-foal/metadata/formal-stages.json"
+    },
+    {
+      "characterId": "goldenspark-wyrm",
+      "faction": "ironflow-hackers",
+      "element": "metal",
+      "metadata": "assets/characters/goldenspark-wyrm/metadata/formal-stages.json"
+    }
+  ],
+  "referenceCatalog": "assets/reference/formal-evolution-r1/reference-lineage-index.json",
+  "reviewManifest": "assets/reference/formal-evolution-r1/lineage-board-manifest-r2.json",
+  "silhouetteRules": "docs/art/FORMAL_EVOLUTION_SILHOUETTE_RULES_R2.md",
+  "notes": [
+    "This index organizes art and naming review only; it is not save-state or runtime stage authority.",
+    "All later forms remain same-owner-only and fall back to the character's approved Stage 1 art until separately promoted.",
+    "An egg or origin form shown in a reference sheet is originState data, never a fourth formalStage entry."
+  ]
+}

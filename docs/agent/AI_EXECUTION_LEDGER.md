@@ -9075,3 +9075,231 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
   engine single-sovereign safety path and HMAX context closure begin.
 - Branch / commit: `codex/raphael-crisis-continuity-hmax-no-remote-v1` /
   this entry's final package commit.
+### 2026-08-11 - Codex - Formal Evolution Roster 11 R1 Art Package - IN PROGRESS
+
+- Status: `IN PROGRESS`; the Owner confirmed the two newly supplied Blazetail
+  images as Stage 2 and Stage 3 identity references and authorized a cute but
+  still heroic redesign plus classification/indexing of the seven earlier
+  evolution sheets.
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `FORMAL_EVOLUTION_ROSTER_11_R1`.
+- Layer: `GROUNDWORK` for new `assets/**` reference staging and metadata; no
+  current runtime art is replaced. Work is isolated on
+  `codex/formal-evolution-roster-11-r1` from exact `origin/main`
+  `b7a14f817226ed9d59067eeb21f0308cfef98f85`.
+- Scope: define review-stage Stage 2／Stage 3 names and design locks for
+  Greyshade Cat, the five formal Heartspark Council companions and the five
+  formal Ironflow Hackers companions; copy and fingerprint the two explicit
+  Blazetail references; classify the seven earlier sheets as reference-only;
+  generate one coherent three-stage lineage review board per formal character.
+- Art boundary: existing Stage 1 portraits and character locks remain identity
+  authority. New work must remain illustrated／painterly, cute but capable,
+  species-correct and companion-first; no chunky pixel runtime art, adult boss
+  drift, humanoid war-form, heavy equipment progression or cross-character
+  fallback. The miniature resin-clay rule remains an environment rule, not a
+  forced replacement for canonical 2D companion presentation.
+- Approval boundary: all new Stage 2／Stage 3 outputs remain `owner-review` and
+  reference-only until the Owner approves their names and silhouettes. This
+  package does not claim G4 stage advance, a live form swap, 512 animation-set
+  completion, Expedition sprites or Orbit embodiment completion.
+- Required reading: `AGENTS.md`,
+  `docs/design/COMPANION_GROWTH_CONTRACT_V1.md`, the two Stage 1 roster indexes,
+  both species-motion translation specs and all ten formal faction character
+  locks; Greyshade uses its current owner portrait and existing evolution lore.
+- Branch / commit: `codex/formal-evolution-roster-11-r1` / `uncommitted`.
+
+### 2026-08-12 - Codex - Formal Evolution Roster 11 R2 Visual Direction - VERIFIED PRE-COMMIT
+
+- Status: `VERIFIED PRE-COMMIT`; this entry closes the R2 art-lane
+  `IN PROGRESS` record. Eleven R2 boards were generated and individually
+  reviewed at original resolution after the Owner required clearer evolution,
+  bolder color, higher cuteness and sprite-sheet-aware later forms.
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `FORMAL_EVOLUTION_ROSTER_11_R2`.
+- Result: every board has exactly three readable stages, keeps the Stage 1
+  species, face, palette, heart-core and signature appendage, and changes
+  structure rather than only scale, tint or VFX. Controlled anthropomorphic
+  Stage 3 forms retain animal heads and valid limb counts.
+- Blazetail result: Stage 2 and Stage 3 follow the supplied Owner references as
+  upright anthropomorphic fox forms. The red-gold warm-flame and dark
+  cyan-magenta Cyber-Taoist identities are preserved without pixel rendering.
+- Rework evidence: Greyshade was regenerated to remove dense translucent fur;
+  Auriowl was regenerated to remove an extra wing pair; Crystalfin was
+  regenerated so Stage 3 uses a distinct horizontal sea-dragon body axis.
+- Sprite boundary: non-Blazetail later forms use compact proportions, clear
+  joints, separable limbs and single tails, solid color blocks and bounded
+  ornament. This is design readiness only, not a completed sprite sheet.
+- Validation: all 11 PNGs decode, all edges are below 4096 px, all required
+  anatomy is within frame, and no board contains text, labels, UI or scenery.
+- Runtime boundary: boards remain opaque review art; no production master,
+  animation set, Orbit form or runtime swap was enabled.
+- Branch / commit: `codex/formal-evolution-roster-11-r1` / pre-commit.
+
+### 2026-08-12 - Codex - Formal Evolution Roster 11 R2 Index Contract - VERIFIED PRE-COMMIT
+
+- Status: `VERIFIED PRE-COMMIT`; this entry closes the R2 engineering/index
+  `IN PROGRESS` record.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `FORMAL_EVOLUTION_ROSTER_11_R2`.
+- Index result: all 11 per-character `designBoard` fields now point to their R2
+  sibling; R1 boards and hashes remain preserved as superseded history. Stage 2
+  and Stage 3 design intent now matches the approved quadruped or controlled
+  anthropomorphic anatomy instead of the rejected R1 descriptions.
+- Validation: 11 characters, 33 ordered stage records and 11 R2 board paths
+  pass JSON parsing; all 11 manifest SHA-256 values match; every later form
+  remains `owner-review` and `humanApproved:false`; every character remains
+  `runtimeFormSwapReady:false`.
+- Protected boundary: no `src/**`, current Stage 1 portrait, registry,
+  save/state, Growth reducer, Expedition runtime or Orbit runtime file changed.
+- Open gate: transparent 512x512 masters, direction sheets, animation frames,
+  Owner approval and Growth G4 form-swap authority remain future packages.
+- Branch / commit: `codex/formal-evolution-roster-11-r1` / pre-commit.
+
+### 2026-08-12 - Codex - Formal Evolution Roster 11 R2 Silhouette Revision - IN PROGRESS
+
+- Status: `IN PROGRESS`; Owner review rejected R1's tendency to read as the
+  same animal merely growing larger or gaining glow. R2 must provide clear
+  monster-evolution silhouette change while retaining the same individual,
+  species, face anchors, palette, heart-core and signature motif.
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `FORMAL_EVOLUTION_ROSTER_11_R2`.
+- Scope: retain all R1 files as historical review evidence; generate sibling R2
+  three-stage boards for the same 11 formal characters; enforce at least three
+  structural design changes at Stage 2 and three further changes at Stage 3;
+  re-run original-resolution anatomy, crop and identity review.
+- Blazetail authority: the supplied Owner pixel image 1 is Stage 2 and image 2
+  is Stage 3. R2 may only translate those exact forms into non-pixel illustrated
+  art; it may not replace their robe, palette or flame concept.
+- Owner clarification: anthropomorphic evolution is allowed. Blazetail Stage 2
+  and Stage 3 are explicitly upright anthropomorphic fox forms and must follow
+  the supplied references instead of remaining four-foot foxes in clothing.
+- Red lines: no species-identity erasure, unrelated human／creature replacement,
+  giant boss, accidental extra limb／tail／wing, detached required anatomy,
+  heavy equipment progression or runtime promotion. Existing Stage 1 runtime
+  art remains untouched.
+- Required reading: `AGENTS.md`,
+  `docs/design/COMPANION_GROWTH_CONTRACT_V1.md`, all current character locks,
+  both species-motion translations, R1 QC and
+  `docs/art/FORMAL_EVOLUTION_SILHOUETTE_RULES_R2.md`.
+- Branch / commit: `codex/formal-evolution-roster-11-r1` / `uncommitted`.
+
+### 2026-08-12 - Codex - Formal Evolution Roster 11 R2 Index Revision - IN PROGRESS
+
+- Status: `IN PROGRESS`; R2 will update review metadata only after all 11 new
+  boards pass. R1 paths and hashes remain preserved as superseded review
+  evidence.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `FORMAL_EVOLUTION_ROSTER_11_R2`.
+- Scope: add a versioned R2 board manifest and QC record, then point each
+  per-character design-board field to R2 only after image and hash validation.
+- Runtime boundary: no `evolutionLines.js`, registry, manifest, save/state,
+  Growth reducer, Pixi, Expedition or Orbit runtime edit; all later forms stay
+  `owner-review`, `humanApproved:false` and `runtimeFormSwapReady:false`.
+- Publication boundary: no commit, push, PR or main merge until the complete R2
+  visual and structural gate passes.
+- Branch / commit: `codex/formal-evolution-roster-11-r1` / `uncommitted`.
+
+### 2026-08-11 - Codex - Formal Evolution Roster 11 R1 Art Package - VERIFIED PRE-COMMIT
+
+- Status: `VERIFIED PRE-COMMIT`; 11 three-stage lineage boards were generated,
+  copied into project-owned reference staging and individually reviewed at
+  original resolution. They pass for Owner review only; no runtime promotion
+  or human approval is claimed.
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `FORMAL_EVOLUTION_ROSTER_11_R1`.
+- Art result: the set covers Greyshade, five Heartspark Council and five
+  Ironflow Hackers characters. Every board shows exactly three same-character
+  forms left-to-right, preserves species and Stage 1 identity, keeps major
+  anatomy inside the image, and contains no generated text, UI or weapon.
+- Blazetail result: the Owner-confirmed Stage 2 red／gold guardian robe and warm
+  flame are preserved; the Owner-confirmed Stage 3 dark Cyber-Taoist robe,
+  cyan eyes and cyan／magenta resonance flame are preserved. Both remain orange
+  quadruped foxes with one tail and a cute but capable face.
+- Source catalog: seven earlier Owner sheets plus the two Blazetail references
+  are copied and fingerprinted. Sheets 01 and 03 remain preserved as probable
+  revision pairs for three broad thunder families; 15 provisional lineage IDs
+  are reference-only and create zero registry entries.
+- QC: all 11 PNG boards decode; dimensions and SHA-256 are sealed in
+  `assets/reference/formal-evolution-r1/lineage-board-manifest.json`. Human
+  review found no crop, text/UI, species swap or identity-loss failure. Notes
+  explicitly separate broad wing poses, route／ground fields and analysis rings
+  from future transparent body masters.
+- Open human gate: approve/revise five proposed Ironflow later-form names and
+  all 22 later-form silhouettes; specifically decide whether ThunderPup Stage 3
+  should be rounder and whether Auriowl／Phoenix default Stage 3 wings should be
+  more compact. Only then open 512 transparent-master production.
+- Branch / commit: `codex/formal-evolution-roster-11-r1` / `uncommitted`.
+
+### 2026-08-11 - Codex - Formal Evolution Roster 11 R1 Index Contract - VERIFIED PRE-COMMIT
+
+- Status: `VERIFIED PRE-COMMIT`; the non-runtime folder and metadata contract
+  is complete on the isolated branch.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `FORMAL_EVOLUTION_ROSTER_11_R1`.
+- Index result: 11 character metadata files contain exactly 33 ordered stage
+  records and 22 later forms. Stable IDs are `initial_awakened`,
+  `resonant_mature`, `final_awakened`; all later forms are `owner-review`,
+  `humanApproved:false`, and every character remains
+  `runtimeFormSwapReady:false` with same-owner Stage 1 fallback.
+- Automated proof: `FORMAL_EVOLUTION_INDEX_QA PASS` reports
+  `characters=11; stages=33; laterForms=22; boards=11; catalogSources=9;
+  provisionalLineages=15`. A separate SHA-256 audit reports `20/20 PASS` for
+  nine Owner sources and 11 generated boards; `git diff --check` passes.
+- Protected runtime proof: no current Stage 1 art, `evolutionLines.js`,
+  registry, manifest, save/state, Pixi, Growth reducer, Expedition or Orbit
+  runtime file was modified. G4 stage willingness／advance and G5 production
+  art remain unimplemented and are not misrepresented.
+- Publication state: work is local and uncommitted. Commit／push／PR／main merge
+  were not performed because the required Owner visual and naming gate remains
+  open.
+- Branch / commit: `codex/formal-evolution-roster-11-r1` / `uncommitted`.
+
+### 2026-08-11 - Codex - Formal Evolution Roster 11 R1 Index Contract - IN PROGRESS
+
+- Status: `IN PROGRESS`; a parallel engineering/index lane records the
+  machine-readable identity and path contract without enabling unfinished
+  evolution in the live game.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `FORMAL_EVOLUTION_ROSTER_11_R1`.
+- Scope: add a non-runtime formal-evolution asset index, per-character stage
+  metadata, stable stage IDs (`initial_awakened`, `resonant_mature`,
+  `final_awakened`), provenance hashes, review status and planned surface paths.
+  Earlier sheets are catalogued with provisional lineage IDs and explicit
+  deduplication／overlap notes; they are not added to `companionRegistry`.
+- Runtime boundary: do not edit `saveManager`, `store`, `defaultState`, Pixi,
+  registry, manifest, `evolutionLines.js`, Growth reducers, G4 willingness
+  gates, Expedition or Orbit runtime. Stage 1 remains the only loaded form and
+  same-owner Stage 1 fallback remains mandatory until separate approval and
+  asset-readiness promotion.
+- Acceptance: all JSON parses; every indexed file exists; hashes match; all 11
+  formal IDs have exactly three ordered stage records; all new later-stage
+  records are `owner-review` with `humanApproved:false`; the seven-source
+  catalog remains `reference-only`; current Stage 1 runtime files are untouched.
+- Branch / commit: `codex/formal-evolution-roster-11-r1` / `uncommitted`.
+
+### 2026-08-11 - Codex - Formal Evolution Roster 11 R1 Index Contract - VERIFIED PRE-COMMIT CLOSURE
+
+- Status: `VERIFIED PRE-COMMIT`; this closing entry supersedes the immediately
+  preceding `IN PROGRESS` state. The verified counts, SHA-256 audit, protected
+  runtime boundary and open Owner gate are recorded in the full verification
+  entry above.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `FORMAL_EVOLUTION_ROSTER_11_R1`.
+- Final local proof: 11 characters, 33 formal-stage records, 22 review-only
+  later forms, 11 lineage boards, nine fingerprinted Owner sources and 15
+  provisional reference-only lineages; JSON/index QA and `20/20` hash audit
+  pass, with no current runtime or Stage 1 file modified.
+- Branch / commit: `codex/formal-evolution-roster-11-r1` / `uncommitted`.
+
+### 2026-08-12 - Codex - Formal Evolution Roster 11 R2 - VERIFIED PRE-COMMIT CLOSURE
+
+- Status: `VERIFIED PRE-COMMIT`; this chronological closing entry supersedes
+  both R2 `IN PROGRESS` records. The detailed art and engineering verification
+  entries above record the anatomy decisions, regenerated failures and full
+  package boundary.
+- Lanes: `Game Art, UI, And Visual Production`; `Game Engineering And
+  Architecture`.
+- Final local proof: 11 readable R2 boards, 11 matching SHA-256 values, 11
+  metadata links to `_r2.png`, 33 ordered stage records, all later forms still
+  review-only, and no runtime or current Stage 1 asset modified.
+- Branch / commit: `codex/formal-evolution-roster-11-r1` / pre-commit.

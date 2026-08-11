@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "characterId": "thunder-pup",
+  "displayName": { "zh": "雷霆幼狼", "en": "ThunderPup" },
+  "faction": "ironflow-hackers",
+  "element": "wood",
+  "secondaryMotifs": ["lightning", "shadow", "signal-trace"],
+  "currentRuntimeFormStageId": "initial_awakened",
+  "runtimeFormSwapReady": false,
+  "designBoard": "assets/reference/formal-evolution-r1/lineage-boards/thunder-pup/thunder-pup_three-stage-lineage-board_r2.png",
+  "sameOwnerFallback": "assets/characters/thunder-pup/portrait/thunder-pup_portrait_512x512.png",
+  "stages": [
+    {
+      "stageId": "initial_awakened",
+      "ordinal": 1,
+      "name": { "zh": "雷霆幼狼", "en": "ThunderPup" },
+      "nameStatus": "current-canon",
+      "artStatus": "runtime-ready",
+      "humanApproved": true,
+      "portrait": "assets/characters/thunder-pup/portrait/thunder-pup_portrait_512x512.png",
+      "designIntent": "Compact charcoal wolf pup with cyan eyes and circuit cracks, violet crystal ridge and tail bolt, circular chest core and canine stance."
+    },
+    {
+      "stageId": "resonant_mature",
+      "ordinal": 2,
+      "name": { "zh": "時痕雷狼", "en": "Temporal Trace Wolf" },
+      "nameStatus": "owner-review",
+      "artStatus": "owner-review",
+      "humanApproved": false,
+      "productionMaster": null,
+      "designIntent": "Cute quadruped signal-tracker wolf with a compact lean body, solid cobalt neck crest, short attached back ridge, cyan shoulder bands and one magenta-tip bolt tail."
+    },
+    {
+      "stageId": "final_awakened",
+      "ordinal": 3,
+      "name": { "zh": "群星雷影狼", "en": "Starnexus Thunder Wolf" },
+      "nameStatus": "owner-review",
+      "artStatus": "owner-review",
+      "humanApproved": false,
+      "productionMaster": null,
+      "designIntent": "Upright anthropomorphic thunder-wolf sentinel retaining the wolf face, ears and cyan eyes, with exactly two pawed arms, two digitigrade legs, one lightning tail and bold cobalt-magenta crystal shoulder wedges."
+    }
+  ],
+  "surfaceReadiness": { "portrait": "review-board-only", "expedition": "not-produced", "orbit": "not-produced", "animationSet": "not-produced" }
+}

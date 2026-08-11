@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "characterId": "starstripe-cub",
+  "displayName": { "zh": "星紋小虎", "en": "Starstripe Cub" },
+  "faction": "heartspark-council",
+  "element": "earth",
+  "currentRuntimeFormStageId": "initial_awakened",
+  "runtimeFormSwapReady": false,
+  "designBoard": "assets/reference/formal-evolution-r1/lineage-boards/starstripe-cub/starstripe-cub_three-stage-lineage-board_r2.png",
+  "sameOwnerFallback": "assets/characters/starstripe-cub/portrait/starstripe-cub_portrait_512x512.png",
+  "stages": [
+    {
+      "stageId": "initial_awakened",
+      "ordinal": 1,
+      "name": { "zh": "星紋小虎", "en": "Starstripe Cub" },
+      "nameStatus": "current-canon",
+      "artStatus": "runtime-ready",
+      "humanApproved": true,
+      "portrait": "assets/characters/starstripe-cub/portrait/starstripe-cub_portrait_512x512.png",
+      "designIntent": "Stocky blue-white tiger cub with large paws, blue tiger stripes, forehead tuft, blue eyes and a gold-mounted star heart-core."
+    },
+    {
+      "stageId": "resonant_mature",
+      "ordinal": 2,
+      "name": { "zh": "晶岩虎衛", "en": "Crystalrock Tiger Warden" },
+      "nameStatus": "current-canon",
+      "artStatus": "owner-review",
+      "humanApproved": false,
+      "productionMaster": null,
+      "designIntent": "Cute quadruped crystal tiger with broader shoulders, larger paws, solid cobalt crystal shoulder caps, short attached back ridge and one turquoise-tip banded tail."
+    },
+    {
+      "stageId": "final_awakened",
+      "ordinal": 3,
+      "name": { "zh": "星地虎御", "en": "Stellar Earth Tiger Aegis" },
+      "nameStatus": "current-canon",
+      "artStatus": "owner-review",
+      "humanApproved": false,
+      "productionMaster": null,
+      "designIntent": "Upright anthropomorphic tiger aegis retaining the same round tiger head, ears, blue eyes and stripes, with exactly two pawed arms, two digitigrade legs, one banded tail and limited cyan-violet crystal mantle pieces."
+    }
+  ],
+  "surfaceReadiness": { "portrait": "review-board-only", "expedition": "not-produced", "orbit": "not-produced", "animationSet": "not-produced" }
+}

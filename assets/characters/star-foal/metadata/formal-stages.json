@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "characterId": "star-foal",
+  "displayName": { "zh": "幼星駒", "en": "Star Foal" },
+  "faction": "ironflow-hackers",
+  "element": "earth",
+  "currentRuntimeFormStageId": "initial_awakened",
+  "runtimeFormSwapReady": false,
+  "designBoard": "assets/reference/formal-evolution-r1/lineage-boards/star-foal/star-foal_three-stage-lineage-board_r2.png",
+  "sameOwnerFallback": "assets/characters/star-foal/portrait/star-foal_portrait_512x512.png",
+  "stages": [
+    {
+      "stageId": "initial_awakened",
+      "ordinal": 1,
+      "name": { "zh": "幼星駒", "en": "Star Foal" },
+      "nameStatus": "current-canon",
+      "artStatus": "runtime-ready",
+      "humanApproved": true,
+      "portrait": "assets/characters/star-foal/portrait/star-foal_portrait_512x512.png",
+      "designIntent": "Cream juvenile foal with green eyes, four hooves, gold-orange flame-star mane, constellation lines, chest core and a star tail tip."
+    },
+    {
+      "stageId": "resonant_mature",
+      "ordinal": 2,
+      "name": { "zh": "軌光星駒", "en": "Tracklight Star Steed" },
+      "nameStatus": "owner-review",
+      "artStatus": "owner-review",
+      "humanApproved": false,
+      "productionMaster": null,
+      "designIntent": "Cute quadruped pathfinder colt with a longer neck, three-lock gold mane, teal-gold shoulder blocks, four cyan-cuffed hooves and one physically attached turquoise star-tip tail."
+    },
+    {
+      "stageId": "final_awakened",
+      "ordinal": 3,
+      "name": { "zh": "定界星駿", "en": "Boundary-Anchor Star Steed" },
+      "nameStatus": "owner-review",
+      "artStatus": "owner-review",
+      "humanApproved": false,
+      "productionMaster": null,
+      "designIntent": "Advanced but cute quadruped astral courser with an emerald-cobalt-gold crown mane, stronger chest, violet fetlock accents, four clear hooves and one thick attached cyan-violet star-flame tail."
+    }
+  ],
+  "surfaceReadiness": { "portrait": "review-board-only", "expedition": "not-produced", "orbit": "not-produced", "animationSet": "not-produced" }
+}

@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "characterId": "greyshade-cat",
+  "displayName": { "zh": "灰影貓", "en": "Greyshade Cat" },
+  "faction": "neutral-heart-core-life",
+  "element": "neutral",
+  "currentRuntimeFormStageId": "initial_awakened",
+  "runtimeFormSwapReady": false,
+  "designBoard": "assets/reference/formal-evolution-r1/lineage-boards/greyshade-cat/greyshade-cat_three-stage-lineage-board_r2.png",
+  "sameOwnerFallback": "assets/characters/greyshade-cat/portrait/greyshade-cat_portrait_512x512.png",
+  "stages": [
+    {
+      "stageId": "initial_awakened",
+      "ordinal": 1,
+      "name": { "zh": "灰影貓", "en": "Greyshade Cat" },
+      "nameStatus": "current-canon",
+      "artStatus": "runtime-ready",
+      "humanApproved": true,
+      "portrait": "assets/characters/greyshade-cat/portrait/greyshade-cat_portrait_512x512.png",
+      "designIntent": "Small silver-grey tabby companion with gold eyes and blue heart-core pendant; grounded feline identity remains authoritative."
+    },
+    {
+      "stageId": "resonant_mature",
+      "ordinal": 2,
+      "name": { "zh": "暮影貓", "en": "Duskshade Cat" },
+      "nameStatus": "current-canon",
+      "artStatus": "owner-review",
+      "humanApproved": false,
+      "productionMaster": null,
+      "designIntent": "Cute quadruped dusk-cat guardian with swept navy ear tufts, a solid crescent cheek ruff, bold indigo shoulder blocks and one attached cyan crescent-tip tail; compact and sprite-sheet readable."
+    },
+    {
+      "stageId": "final_awakened",
+      "ordinal": 3,
+      "name": { "zh": "湖華貓", "en": "Lakeglow Cat" },
+      "nameStatus": "current-canon",
+      "artStatus": "owner-review",
+      "humanApproved": false,
+      "productionMaster": null,
+      "designIntent": "Cute quadruped lake-spirit cat with a layered silver-blue wave mane, cobalt shoulder and haunch blocks, turquoise core, simple foreleg fur crests and one broad cyan-violet wave-tip tail; no wings, extra tails or particle mantle."
+    }
+  ],
+  "surfaceReadiness": { "portrait": "review-board-only", "expedition": "not-produced", "orbit": "not-produced", "animationSet": "not-produced" }
+}

@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "characterId": "goldenspark-wyrm",
+  "displayName": { "zh": "金光幼龍", "en": "Goldenspark Wyrm" },
+  "faction": "ironflow-hackers",
+  "element": "metal",
+  "currentRuntimeFormStageId": "initial_awakened",
+  "runtimeFormSwapReady": false,
+  "designBoard": "assets/reference/formal-evolution-r1/lineage-boards/goldenspark-wyrm/goldenspark-wyrm_three-stage-lineage-board_r2.png",
+  "sameOwnerFallback": "assets/characters/goldenspark-wyrm/portrait/goldenspark-wyrm_portrait_512x512.png",
+  "stages": [
+    {
+      "stageId": "initial_awakened",
+      "ordinal": 1,
+      "name": { "zh": "金光幼龍", "en": "Goldenspark Wyrm" },
+      "nameStatus": "current-canon",
+      "artStatus": "runtime-ready",
+      "humanApproved": true,
+      "portrait": "assets/characters/goldenspark-wyrm/portrait/goldenspark-wyrm_portrait_512x512.png",
+      "designIntent": "Low-slung wingless gold dragon whelp with green eyes, metallic scale seams, dorsal ridge, circular chest core and one functional gear-tail tip."
+    },
+    {
+      "stageId": "resonant_mature",
+      "ordinal": 2,
+      "name": { "zh": "金脈龍衛", "en": "Goldcircuit Wyrm Warden" },
+      "nameStatus": "owner-review",
+      "artStatus": "owner-review",
+      "humanApproved": false,
+      "productionMaster": null,
+      "designIntent": "Cute quadruped circuit wyrm with a longer low body, stronger jaw, solid teal dorsal plates, navy shoulder and hip scales, four clawed feet and one attached gear-tip tail."
+    },
+    {
+      "stageId": "final_awakened",
+      "ordinal": 3,
+      "name": { "zh": "鎏光界龍", "en": "Gilded Boundary Wyrm" },
+      "nameStatus": "owner-review",
+      "artStatus": "owner-review",
+      "humanApproved": false,
+      "productionMaster": null,
+      "designIntent": "Upright anthropomorphic gold dragon analyst retaining the cute dragon head, green eyes and wingless scales, with exactly two clawed arms, two digitigrade legs, one attached gear-tip tail and limited teal-cobalt-gold plates."
+    }
+  ],
+  "surfaceReadiness": { "portrait": "review-board-only", "expedition": "not-produced", "orbit": "not-produced", "animationSet": "not-produced" }
+}
