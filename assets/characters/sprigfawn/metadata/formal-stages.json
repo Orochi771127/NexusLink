@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "characterId": "sprigfawn",
+  "displayName": { "zh": "芽角小鹿", "en": "Sprigfawn" },
+  "faction": "heartspark-council",
+  "element": "wood",
+  "currentRuntimeFormStageId": "initial_awakened",
+  "runtimeFormSwapReady": false,
+  "designBoard": "assets/reference/formal-evolution-r1/lineage-boards/sprigfawn/sprigfawn_three-stage-lineage-board_r2.png",
+  "sameOwnerFallback": "assets/characters/sprigfawn/portrait/sprigfawn_portrait_512x512.png",
+  "stages": [
+    {
+      "stageId": "initial_awakened",
+      "ordinal": 1,
+      "name": { "zh": "芽角小鹿", "en": "Sprigfawn" },
+      "nameStatus": "current-canon",
+      "artStatus": "runtime-ready",
+      "humanApproved": true,
+      "portrait": "assets/characters/sprigfawn/portrait/sprigfawn_portrait_512x512.png",
+      "designIntent": "Chestnut juvenile fawn with bright green eyes, small budding branch antlers, fawn spots, fresh vines and emerald chest gem."
+    },
+    {
+      "stageId": "resonant_mature",
+      "ordinal": 2,
+      "name": { "zh": "風林鹿衛", "en": "Galegrove Stag Warden" },
+      "nameStatus": "current-canon",
+      "artStatus": "owner-review",
+      "humanApproved": false,
+      "productionMaster": null,
+      "designIntent": "Cute quadruped grove stag with longer compact legs, branched living antlers, solid emerald leaf mantle, chartreuse markings and four clear hooves; no loose vines or full-tree crown."
+    },
+    {
+      "stageId": "final_awakened",
+      "ordinal": 3,
+      "name": { "zh": "聖林鹿靈", "en": "Sacred Grove Stag Spirit" },
+      "nameStatus": "current-canon",
+      "artStatus": "owner-review",
+      "humanApproved": false,
+      "productionMaster": null,
+      "designIntent": "Upright anthropomorphic cervid grove guardian retaining the fawn face, ears and living antlers, with exactly two hoof-like hands, two digitigrade hooved legs, one short tail and a compact leaf mantle."
+    }
+  ],
+  "surfaceReadiness": { "portrait": "review-board-only", "expedition": "not-produced", "orbit": "not-produced", "animationSet": "not-produced" }
+}

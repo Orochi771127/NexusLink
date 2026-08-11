@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "characterId": "blazetail-kit",
+  "displayName": { "zh": "焰尾狐（幼態：焰尾小狐）", "en": "Blazetail Kit" },
+  "faction": "heartspark-council",
+  "element": "fire",
+  "currentRuntimeFormStageId": "initial_awakened",
+  "runtimeFormSwapReady": false,
+  "designBoard": "assets/reference/formal-evolution-r1/lineage-boards/blazetail-kit/blazetail-kit_three-stage-lineage-board_r2.png",
+  "sameOwnerFallback": "assets/characters/blazetail-kit/portrait/blazetail-kit_portrait_512x512.png",
+  "stages": [
+    {
+      "stageId": "initial_awakened",
+      "ordinal": 1,
+      "name": { "zh": "焰尾小狐", "en": "Blazetail Kit" },
+      "nameStatus": "current-canon",
+      "artStatus": "runtime-ready",
+      "humanApproved": true,
+      "portrait": "assets/characters/blazetail-kit/portrait/blazetail-kit_portrait_512x512.png",
+      "designIntent": "Compact orange juvenile fox with huge ears, warm amber eyes, cream cheek/chest fur, one flame tail, gold spiral markings and orange heart-core gem."
+    },
+    {
+      "stageId": "resonant_mature",
+      "ordinal": 2,
+      "name": { "zh": "星焰狐衛", "en": "Starflame Fox Warden" },
+      "nameStatus": "current-canon",
+      "artStatus": "owner-review",
+      "humanApproved": false,
+      "reference": "assets/reference/formal-evolution-r1/blazetail-kit/resonant_mature/owner-reference-stage2.jpg",
+      "productionMaster": null,
+      "designIntent": "Owner-confirmed Stage 2 form: the same cute orange fox evolves into an upright anthropomorphic fox guardian with fox head, ears, muzzle, hands and feet, a red-and-gold Cyber-Taoist robe, warm yellow-orange crown flame and one large integrated flame tail; heroic without losing fox identity."
+    },
+    {
+      "stageId": "final_awakened",
+      "ordinal": 3,
+      "name": { "zh": "永焰狐曜", "en": "Eternal Flame Fox Luminary" },
+      "nameStatus": "current-canon",
+      "artStatus": "owner-review",
+      "humanApproved": false,
+      "reference": "assets/reference/formal-evolution-r1/blazetail-kit/final_awakened/owner-reference-stage3.jpg",
+      "productionMaster": null,
+      "designIntent": "Owner-confirmed Stage 3 form: the same orange fox remains an upright anthropomorphic fox luminary with bright cyan eyes, dark navy Cyber-Taoist robe, cyan and restrained magenta circuit trim, cyan-magenta resonance flame crown and one orange-to-cyan flame tail; cute and cool, never an unrelated human or nine-tailed fox."
+    }
+  ],
+  "surfaceReadiness": { "portrait": "review-board-only", "expedition": "not-produced", "orbit": "not-produced", "animationSet": "not-produced" }
+}

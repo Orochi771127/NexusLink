@@ -1,0 +1,94 @@
+{
+  "schemaVersion": 1,
+  "packageId": "formal-evolution-reference-catalog-r1",
+  "runtimeAuthority": false,
+  "defaultStatus": "reference-only",
+  "sources": [
+    {
+      "sourceId": "owner-evolution-sheet-01",
+      "path": "assets/reference/formal-evolution-r1/attachment-catalog/source/owner-evolution-sheet-01.jpg",
+      "sha256": "deb693d5464923527a44d568d338b9d5c8850298aa5dd061c39ac0597c77b825",
+      "classification": "legacy-thunder-lineage-sheet",
+      "relationship": "Probable earlier revision of the three thunder families developed further in owner-evolution-sheet-03; preserve both until Owner resolves lineage equivalence."
+    },
+    {
+      "sourceId": "owner-evolution-sheet-02",
+      "path": "assets/reference/formal-evolution-r1/attachment-catalog/source/owner-evolution-sheet-02.jpg",
+      "sha256": "e9b01c859815c7ba701ab80d224ca345fa68c95e7e130fa4eb27bba55a03f6c6",
+      "classification": "rift-antagonist-lineage-sheet",
+      "relationship": "Three corruption／rift antagonist families; not companion registry entries."
+    },
+    {
+      "sourceId": "owner-evolution-sheet-03",
+      "path": "assets/reference/formal-evolution-r1/attachment-catalog/source/owner-evolution-sheet-03.jpg",
+      "sha256": "ec4cd8e11032149d3533f2e05afd8c9b61d0ec706b78d08747d20314ee8bb0a4",
+      "classification": "revised-thunder-lineage-sheet",
+      "relationship": "Probable newer design pass for the same three broad thunder families as sheet 01; reference candidates only."
+    },
+    {
+      "sourceId": "owner-evolution-sheet-04",
+      "path": "assets/reference/formal-evolution-r1/attachment-catalog/source/owner-evolution-sheet-04.jpg",
+      "sha256": "4bfcd7a28bf622d05ef2cf8c8ee6aa496095b4bb0dfddb0a304bb79c5b654030",
+      "classification": "unassigned-three-lineage-sheet",
+      "relationship": "Verdant owl, ironwing avian and crystal arcanist concepts; none are automatically mapped to current formal characters."
+    },
+    {
+      "sourceId": "owner-evolution-sheet-05",
+      "path": "assets/reference/formal-evolution-r1/attachment-catalog/source/owner-evolution-sheet-05.jpg",
+      "sha256": "0493fae141db8f04f5fbe179303589d28735c1228c2898929e62bfaaa351d819",
+      "classification": "unassigned-celestial-wingcat-lineage",
+      "relationship": "One luminous winged-cat lineage; potential future candidate, not Greyshade replacement."
+    },
+    {
+      "sourceId": "owner-evolution-sheet-06",
+      "path": "assets/reference/formal-evolution-r1/attachment-catalog/source/owner-evolution-sheet-06.jpg",
+      "sha256": "3c2f3de192de5c780c61db2c2a83d3a86fc2efca6e194de6ee9379b9c8eff13b",
+      "classification": "unassigned-long-ear-lineages",
+      "relationship": "Two long-ear lineages, one cyber-glitch and one verdant-aether; exact species and faction remain unresolved."
+    },
+    {
+      "sourceId": "owner-evolution-sheet-07",
+      "path": "assets/reference/formal-evolution-r1/attachment-catalog/source/owner-evolution-sheet-07.jpg",
+      "sha256": "27b0154054b982921ce6892c44d5f4d8ee31a45c31ce24734ad4a6d24cf490e2",
+      "classification": "frost-lineage-sheet",
+      "relationship": "Three frost families; the echo family may overlap the legacy IceTalon test carrier, but no mapping is approved."
+    },
+    {
+      "sourceId": "blazetail-owner-stage2",
+      "path": "assets/reference/formal-evolution-r1/blazetail-kit/resonant_mature/owner-reference-stage2.jpg",
+      "sha256": "0cab8feecaef5e326ff1273b6afde6d30897a18140c1d57c95578fd97c3b4c94",
+      "classification": "explicit-stage-reference",
+      "relationship": "Owner-confirmed Blazetail Kit Stage 2 reference; red-gold robe and warm flame vocabulary are authoritative motifs, while pixel rendering is not runtime style."
+    },
+    {
+      "sourceId": "blazetail-owner-stage3",
+      "path": "assets/reference/formal-evolution-r1/blazetail-kit/final_awakened/owner-reference-stage3.jpg",
+      "sha256": "945453e5885fb94cb1b4f2d6d68a01acc28d42f6ee5ae57459ab2bc091786307",
+      "classification": "explicit-stage-reference",
+      "relationship": "Owner-confirmed Blazetail Kit Stage 3 reference; cyan-magenta resonance flame and dark Cyber-Taoist robe are authoritative motifs, while pixel rendering is not runtime style."
+    }
+  ],
+  "provisionalLineages": [
+    { "lineageId": "ref-thunder-mirage", "sources": ["owner-evolution-sheet-01", "owner-evolution-sheet-03"], "status": "reference-only", "possibleOverlap": "thunder-pup", "mappingApproved": false },
+    { "lineageId": "ref-thunder-echo", "sources": ["owner-evolution-sheet-01", "owner-evolution-sheet-03"], "status": "reference-only", "possibleOverlap": "thunder-pup", "mappingApproved": false },
+    { "lineageId": "ref-thunder-primordial", "sources": ["owner-evolution-sheet-01", "owner-evolution-sheet-03"], "status": "reference-only", "possibleOverlap": "goldenspark-wyrm", "mappingApproved": false },
+    { "lineageId": "ref-rift-fallen-ember", "sources": ["owner-evolution-sheet-02"], "status": "reference-only", "candidateRole": "rift-antagonist", "mappingApproved": false },
+    { "lineageId": "ref-rift-abyss-reverie", "sources": ["owner-evolution-sheet-02"], "status": "reference-only", "candidateRole": "rift-antagonist", "mappingApproved": false },
+    { "lineageId": "ref-rift-nihil-devourer", "sources": ["owner-evolution-sheet-02"], "status": "reference-only", "candidateRole": "rift-antagonist", "mappingApproved": false },
+    { "lineageId": "ref-verdant-owl", "sources": ["owner-evolution-sheet-04"], "status": "reference-only", "possibleOverlap": "auriowl", "mappingApproved": false },
+    { "lineageId": "ref-ironwing-hawk", "sources": ["owner-evolution-sheet-04"], "status": "reference-only", "mappingApproved": false },
+    { "lineageId": "ref-crystal-arcanist", "sources": ["owner-evolution-sheet-04"], "status": "reference-only", "mappingApproved": false },
+    { "lineageId": "ref-aurora-wingcat", "sources": ["owner-evolution-sheet-05"], "status": "reference-only", "possibleOverlap": "none; do not replace greyshade-cat", "mappingApproved": false },
+    { "lineageId": "ref-glitch-long-ear", "sources": ["owner-evolution-sheet-06"], "status": "reference-only", "mappingApproved": false },
+    { "lineageId": "ref-verdant-long-ear", "sources": ["owner-evolution-sheet-06"], "status": "reference-only", "mappingApproved": false },
+    { "lineageId": "ref-frost-mirage", "sources": ["owner-evolution-sheet-07"], "status": "reference-only", "mappingApproved": false },
+    { "lineageId": "ref-frost-echo", "sources": ["owner-evolution-sheet-07"], "status": "reference-only", "possibleOverlap": "ice-talon", "mappingApproved": false },
+    { "lineageId": "ref-frost-remnant", "sources": ["owner-evolution-sheet-07"], "status": "reference-only", "mappingApproved": false }
+  ],
+  "rules": [
+    "No provisional lineage is a companionRegistry entry.",
+    "Eggs are originState references and do not add a fourth formal evolution stage.",
+    "Possible overlap is a review hint, not an approved identity merge.",
+    "Source sheets may guide motif and silhouette only; runtime assets require project-native transparent production masters and human approval."
+  ]
+}

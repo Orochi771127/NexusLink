@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "characterId": "starflame-phoenix",
+  "displayName": { "zh": "星焰鳳凰", "en": "Starflame Phoenix" },
+  "faction": "ironflow-hackers",
+  "element": "fire",
+  "currentRuntimeFormStageId": "initial_awakened",
+  "runtimeFormSwapReady": false,
+  "designBoard": "assets/reference/formal-evolution-r1/lineage-boards/starflame-phoenix/starflame-phoenix_three-stage-lineage-board_r2.png",
+  "sameOwnerFallback": "assets/characters/starflame-phoenix/portrait/starflame-phoenix_portrait_512x512.png",
+  "stages": [
+    {
+      "stageId": "initial_awakened",
+      "ordinal": 1,
+      "name": { "zh": "星焰鳳凰", "en": "Starflame Phoenix" },
+      "nameStatus": "current-canon",
+      "artStatus": "runtime-ready",
+      "humanApproved": true,
+      "portrait": "assets/characters/starflame-phoenix/portrait/starflame-phoenix_portrait_512x512.png",
+      "designIntent": "Round orange-red grounded phoenix chick with short talons, small beak, cyan face circuits, chest core and a large attached flame-feather tail fan."
+    },
+    {
+      "stageId": "resonant_mature",
+      "ordinal": 2,
+      "name": { "zh": "星燼鳳衛", "en": "Star-Ember Phoenix Warden" },
+      "nameStatus": "owner-review",
+      "artStatus": "owner-review",
+      "humanApproved": false,
+      "productionMaster": null,
+      "designIntent": "Cute avian starfire warden with a taller compact body, exactly two broad layered wings, two taloned legs, swept gold crest and bold orange-red-turquoise feather blocks."
+    },
+    {
+      "stageId": "final_awakened",
+      "ordinal": 3,
+      "name": { "zh": "長明星凰", "en": "Everlight Star Phoenix" },
+      "nameStatus": "owner-review",
+      "artStatus": "owner-review",
+      "humanApproved": false,
+      "productionMaster": null,
+      "designIntent": "Upright anthropomorphic phoenix guardian retaining the avian head and beak, with exactly two articulated wing-arms, two taloned legs, one attached flame tail fan and no additional back wings or human arms."
+    }
+  ],
+  "surfaceReadiness": { "portrait": "review-board-only", "expedition": "not-produced", "orbit": "not-produced", "animationSet": "not-produced" }
+}
