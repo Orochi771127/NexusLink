@@ -162,13 +162,22 @@
 - **Unity**: Unity is an approved and existing parallel native habitat loadable greybox scene / tool-validation prototype and target runtime. Its current implementation maturity must be described from the Unity repository evidence; it is not yet the complete production game unless the repository proves otherwise.
 - **Moonlake 3D Source**: Moonlake 3D Source v2 is the canonical scene-authoring workspace. Web `assets/3d/moonlake` contains runtime-exported or candidate assets and is not the complete source workspace.
 
-**Web Repo 允許**：HTML（單頁 `index.html`）／純 CSS（`styles.css`）／Vanilla JS（ES Modules，無 bundler）／PixiJS v8（CDN，`window.PIXI`）／localStorage（集中於 `saveManager.js`）／GitHub Pages。
+**Web Repo 允許**：HTML（單頁 `index.html`）／純 CSS（`styles.css`）／Vanilla JS（ES Modules）／TypeScript／npm 依賴／bundler 與 build step／PixiJS v8（CDN，`window.PIXI`）／localStorage（集中於 `saveManager.js`）／GitHub Pages。
 
-**Global 3D Presentation 修訂（2026-08-02 Owner 拍板）**：Three.js 由月湖單場景例外擴大為全遊戲可用的**逐場景 opt-in 呈現能力**。仍只允許固定版本 CDN ES Module、無 npm、無 build step；每個採用場景必須自行宣告 renderer lifecycle、snapshot 邊界、mobile budget、reduced-motion、context-loss 與 fallback。Three.js 可呈現 GLB/glTF 環境、道具、場景特效與經核准的 gameplay presentation model，但不得成為第二套遊戲狀態，RaphaelCore、simulation、collision、objective、store、save、Safety、Growth 與 reward authority 均不得移入 renderer。
+**Global 3D Presentation 修訂（2026-08-02 Owner 拍板）**：Three.js 由月湖單場景例外擴大為全遊戲可用的**逐場景 opt-in 呈現能力**。版本必須鎖定（固定版本 CDN ES Module 或鎖定版本 npm 依賴）；每個採用場景必須自行宣告 renderer lifecycle、snapshot 邊界、mobile budget、reduced-motion、context-loss 與 fallback。Three.js 可呈現 GLB/glTF 環境、道具、場景特效與經核准的 gameplay presentation model，但不得成為第二套遊戲狀態，RaphaelCore、simulation、collision、objective、store、save、Safety、Growth 與 reward authority 均不得移入 renderer。
 
-月湖仍遵守 `docs/design/MOONLAKE_LIVE_3D_HYBRID_CONTRACT_V1.md`；全域邊界、Blender 離線 GLB 管線與 Orbit Pilot 另服從 `docs/design/GLOBAL_3D_PRESENTATION_CONTRACT_V1.md`。此修訂不代表全站強制 3D 化、不授權 3D companion 全面替換，也不授權 React Three Fiber、TypeScript、npm、bundler、後端、資料庫或新物理權威。
+月湖仍遵守 `docs/design/MOONLAKE_LIVE_3D_HYBRID_CONTRACT_V1.md`；全域邊界、Blender 離線 GLB 管線與 Orbit Pilot 另服從 `docs/design/GLOBAL_3D_PRESENTATION_CONTRACT_V1.md`。此修訂不代表全站強制 3D 化、不授權 3D companion 全面替換，也不授權 React Three Fiber、後端、資料庫或新物理權威。
 
-**絕對禁止**：前端框架（React／Vue／Svelte）、TypeScript、CSS 框架、後端／API／資料庫、LLM API、npm 套件（除非明確確認）、任何 build step。
+**絕對禁止**：前端框架（React／Vue／Svelte）、CSS 框架、後端／API／資料庫、LLM API。
+
+**建置工具鏈修訂（2026-08-12 Owner 拍板）**：TypeScript、npm 依賴與 bundler／build step 自本日起解除禁令。原禁令的用意是保證「打開 `index.html` 就能跑、GitHub Pages 從 `main / root` 直接部署、不引入依賴供應鏈」；解除後這三件事不再自動成立，因此改以下列條件約束而非全面禁止：
+
+- 引入 build step 的 PR 必須同時說明部署路徑（提交建置產物，或改用 GitHub Actions 部署），不得讓 Pages 靜默失效。
+- npm 依賴必須鎖定版本，並在 PR 說明用途；依賴數量應維持在可審查的範圍。
+- RaphaelCore、simulation、collision、objective、store、save、Safety、Growth 與 reward authority 的歸屬不因工具鏈變更而移動。
+- 前端框架、CSS 框架、後端、資料庫與 LLM API 的禁令**不受本次修訂影響**，仍然全面禁止。
+
+此修訂取代 2026-07-28 與 2026-08-02 兩次修訂中「無 npm、無 build step」的字面限制，但保留其 authority 邊界與 fallback 要求。
 
 > 商業化不等於換技術棧。上架前優先為「將既有系統的品質與連貫性做到位」，非引入新技術。
 

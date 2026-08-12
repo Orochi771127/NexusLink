@@ -110,12 +110,12 @@ Initial Bond 已接入：fresh save 固定呈現 `greyshade-cat` / `blazetail-ki
 ## 3. 技術邊界（硬限制；受控例外須由 Owner 明文修訂）
 
 ### 1. 核心技術棧與禁令
-- **絕對禁止**：未經 Human 核准的框架（React / Vue / Svelte）、TypeScript、Node.js 依賴（npm install）擴張。
-- **允許清單**：Vanilla JavaScript (ES Modules)、HTML5、CSS3、DOM 操作、Canvas API、PixiJS、Three.js、GLB / glTF。
-- **跨運行時邊界**：「無構建步驟（Zero-build）」與「禁止 Bundler」僅約束 Web current runtime。Unity is an approved and existing parallel native habitat loadable greybox scene / tool-validation prototype and target runtime. Its current implementation maturity must be described from the Unity repository evidence; it is not yet the complete production game unless the repository proves otherwise。
+- **絕對禁止**：未經 Human 核准的框架（React / Vue / Svelte）擴張。
+- **允許清單**：Vanilla JavaScript (ES Modules)、TypeScript、HTML5、CSS3、DOM 操作、Canvas API、PixiJS、Three.js、GLB / glTF、npm 依賴與 bundler／build step。
+- **跨運行時邊界**：Unity is an approved and existing parallel native habitat loadable greybox scene / tool-validation prototype and target runtime. Its current implementation maturity must be described from the Unity repository evidence; it is not yet the complete production game unless the repository proves otherwise。
 - **渲染分層**：PixiJS 不再被描述為唯一 renderer；PixiJS 繼續負責 2D、角色、特效或 legacy layer。Three.js／GLB 3D habitat 是經核准的 Web runtime 能力。Moonlake 3D Source v2 is the canonical scene-authoring workspace. Web `assets/3d/moonlake` contains runtime-exported or candidate assets and is not the complete source workspace.
-- **架構本質**：Web Repo 是一個打開 `index.html`（或經簡易 local server）就能直接運行的前端遊戲，並保留向後兼容性。不得藉此授權 React、TS、npm 擴張。
-- **Global 3D Presentation**：Three.js 是全遊戲逐場景 opt-in 的 presentation capability；固定版本 CDN ES Module，無 npm、無 build step。每個場景都服從 `docs/design/GLOBAL_3D_PRESENTATION_CONTRACT_V1.md` 的 read-only snapshot、lifecycle、mobile budget、reduced-motion、context-loss 與 fallback 契約；月湖另受 Moonlake contract 約束。
+- **架構本質**：Web Repo 目前是一個打開 `index.html`（或經簡易 local server）就能直接運行的前端遊戲，並保留向後兼容性。引入 build step 後，「直接開啟 index.html 即可運行」不再是自動成立的保證，必須明文說明開發與部署路徑；不得藉此授權 React／Vue／Svelte 擴張。
+- **Global 3D Presentation**：Three.js 是全遊戲逐場景 opt-in 的 presentation capability；版本必須固定（CDN ES Module 或鎖定版本的 npm 依賴皆可）。每個場景都服從 `docs/design/GLOBAL_3D_PRESENTATION_CONTRACT_V1.md` 的 read-only snapshot、lifecycle、mobile budget、reduced-motion、context-loss 與 fallback 契約；月湖另受 Moonlake contract 約束。
 - **Blender 邊界**：Blender 只作離線建模、pivot／collider proxy 驗證與 GLB 匯出，不是 runtime、遊戲狀態權威或網站 build step。
 - localStorage（集中於 `src/state/saveManager.js`）
 - GitHub Pages（純靜態部署）
@@ -123,12 +123,9 @@ Initial Bond 已接入：fresh save 固定呈現 `greyshade-cat` / `blazetail-ki
 ### 絕對禁止引入
 - React / Vue / Svelte 或任何前端框架
 - React Three Fiber 或其他框架式 3D renderer
-- TypeScript
 - Tailwind 或任何 CSS 框架
 - 後端伺服器 / API 服務 / 資料庫（SQL / NoSQL / Firebase）
 - LLM API（OpenAI / Anthropic / Gemini）—— Soul Talk 現階段是規則式回應池，不是真 LLM
-- npm 套件（除非 human 明確要求並確認）
-- 任何需要 build step 的工具鏈（Vite / Webpack / Rollup）
 
 ---
 
