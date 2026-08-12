@@ -1391,6 +1391,49 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 2 - Game Art, UI, And Visual Production
 
+### 2026-08-13 - Claude Code - Far Shore Curiosity Copy - COMPLETED
+
+- Status: `COMPLETED`; two narration lines added to the `explore` gentle
+  invitation. Copy only — no system, threshold, asset or state change.
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `TP-FAR-SHORE-CURIOSITY`.
+- Branch / commit: `content/far-shore-curiosity` / this package commit.
+- Scope: the `explore` array in `src/ui/gentleInvitationController.js`.
+- Context: `MOONLAKE_WORLD_EDGES` gives `far_bank_center` / `far_bank_left` /
+  `far_bank_right` empty edge lists — they are isolated nodes, and the bridge
+  terminates at `bridge_far` with no edge onward. The far bank is therefore
+  visible but unwalkable. Owner chose to keep it unreachable and narrate the
+  gap instead of connecting it.
+- Work performed:
+  - Added two lines to the `explore` rotation that frame the unreachable far
+    bank as something the companion privately wonders about, not as locked
+    content. No quest marker, no counter, no unlock hint.
+  - Both lines deliberately avoid asserting the companion's map position.
+    `deriveGentleInvitation` reads only companion vitals and time of day; it
+    has no access to roaming state, so any line claiming "on the bridge" could
+    render while the companion stands on the platform. The existing
+    `explore` copy follows the same rule.
+- Why this file and not a new initiative moment: `deriveInitiativeMoment` was
+  the obvious home, but `companionInitiativeCases.js` case `INIT-MOMENT-004`
+  asserts that a calm, low-bond daytime state returns `null` — "敢於無聊" is a
+  tested design value. Adding a daytime gaze moment would have broken it. The
+  `explore` invitation already fires for exactly the target audience
+  (`!isNight && energy >= 5 && bond < 45 && calm|warm`), so this needed copy,
+  not a new system.
+- Verification:
+  - `node --check src/ui/gentleInvitationController.js` passes.
+  - `node docs/qa/dependency-invitation-boundary-cases.mjs` — all passed.
+  - `node docs/qa/first-session-motivation-cases.mjs` — 8/8.
+  - No engine file touched, so `deriveInitiativeMoment` behaviour and its
+    red-line eval set are unchanged by construction.
+- Problems / risks: none identified. Narration lines stay TC by existing
+  design (`// 敘事句維持中文`), consistent with first-trace and trace-echo.
+- Next safe action: none required. If the far bank is later made walkable,
+  remove these two lines in the same package that adds the edge, or they will
+  contradict the map.
+- Required reading: `src/three/moonlakeLive3dConfig.js` (`MOONLAKE_WORLD_EDGES`),
+  `src/engine/gentleInvitationEngine.js` (`deriveGentleInvitation` gate 4).
+
 ### 2026-08-12 - Claude Code - Ironflow Hackers Stage 2/3 Name Canon - COMPLETED
 
 - Status: `COMPLETED`; Owner approved the ten drafted Stage 2 / Stage 3 names
