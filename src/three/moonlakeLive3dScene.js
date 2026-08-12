@@ -1476,8 +1476,15 @@ function updateWeather(state, weatherId, deltaSeconds, motionScale) {
   positions.needsUpdate = true;
 }
 
+// `active` must be checked alongside `ready`. Deactivating the scene hides the
+// 3D canvas and switches both occluders off (`syncHybridRendererVisibility`),
+// but `ready` stays true — so without this guard the roaming controller keeps
+// receiving valid screen positions and walks the companion across the habitat
+// with no depth occlusion. That is reachable through the `frame_timeout`
+// static fallback, where the scene loaded but missed the 2s stable-frame
+// budget: unlike `live3d_unavailable`, `ready` is true there.
 function projectWorldToScreen(THREE, state, point) {
-  if (!state.ready || state.contextLost || !point) return null;
+  if (!state.ready || !state.active || state.contextLost || !point) return null;
   if (state.visibleGlbCandidate) {
     return projectMoonlakeCameraPoint(THREE, state, point);
   }

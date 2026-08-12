@@ -58,6 +58,61 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-08-13 - Claude Code - Moonlake Projection Honours Scene Deactivation - COMPLETED
+
+- Status: `COMPLETED`; closes a gate mismatch where the companion could roam
+  the habitat with both depth occluders switched off.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `TP-OCCLUSION-GATE-PROJECTION`.
+- Branch / commit: `fix/occlusion-gate-projection` / this package commit.
+- Scope: one guard clause in `projectWorldToScreen`
+  (`src/three/moonlakeLive3dScene.js`). No config, asset, save or UI change.
+- Defect: `syncHybridRendererVisibility` disables both occluders together —
+  `layers.layerOcclusion.visible = !useStaticBackdrop` and
+  `moonlakeDepthOcclusion.setActive(useLive3d)` — and calls
+  `live3d.setActive(false)`. But `setActive` only writes `state.active`, while
+  `projectWorldToScreen` guarded on `state.ready` / `state.contextLost` only.
+  Projection therefore kept returning valid screen positions after the scene
+  was deactivated, `motionController` kept calling
+  `placeCompanionAtOpaqueFoot`, and the companion walked the waypoint graph in
+  front of tents, lanterns and rocks it should pass behind.
+- Reachability: `firstSessionPresentationController` resolves
+  `resolveScene("static", live3d.ready ? "frame_timeout" : "live3d_unavailable")`.
+  The two reasons behave differently. `live3d_unavailable` was already safe —
+  `ready` is false, so projection returned null and the companion stayed put.
+  `frame_timeout` is the exposed path: the scene loaded (`ready === true`) but
+  missed the `STABLE_FRAME_TIMEOUT_MS = 2_000` stable-frame budget. On a
+  mid-range phone with a cold GLB cache that is a plausible two seconds.
+  `resolveScene` latches on first call, so the session stays static once hit.
+- Work performed: added `!state.active` to the existing guard, so a
+  deactivated scene refuses to project. This makes `frame_timeout` behave like
+  `live3d_unavailable`, which was already the safe fallback.
+- Blast radius: `projectWorldToScreen` has exactly one consumer,
+  `projectMoonlakeWorldPoint` in `app.js`, which feeds only the roaming
+  controller. `state.active` defaults to `true`, so initialisation is
+  unaffected; the only other deactivation is `sceneBridge.mountExpedition`,
+  where the habitat is hidden and `canRoam` is already false.
+- Verification:
+  - `node --check src/three/moonlakeLive3dScene.js` passes.
+  - `moonlake-living-habitat-r3-cases`, `companion-renderer-lifecycle-cases`,
+    `global-3d-gameplay-batch-r4-cases`, `global-3d-gameplay-promotion-cases`
+    — all pass.
+- Problems / risks: the fix stops roaming in `frame_timeout` mode rather than
+  restoring occlusion there. The companion stands still on the static backdrop
+  instead of walking unoccluded. Option B — keeping `layers.layerOcclusion`
+  visible in static mode so the companion can still roam — was rejected for
+  now because nobody has visually confirmed that the Pixi occlusion layer
+  aligns with the static backdrop image.
+- Not verified: no visual reproduction. The defect is established from the
+  code path and from the fact that the source itself names the two fallback
+  reasons separately; the two-second timeout was not forced in a browser.
+- Next safe action: if the habitat should stay animated during the static
+  fallback, verify Pixi occluder alignment against the static backdrop on a
+  real device, then consider option B on top of this guard.
+- Required reading: `src/three/moonlakeLive3dScene.js` (`projectWorldToScreen`,
+  `setActive`), `src/app.js` (`syncHybridRendererVisibility`),
+  `src/ui/firstSessionPresentationController.js` (`resolveScene`).
+
 ### 2026-08-12 - Claude Code - Non-Standoff Readiness Proof (G4 Precondition) - VERIFIED
 
 - Status: `VERIFIED`; `resonant_mature` readiness is now **proven reachable
