@@ -9415,3 +9415,73 @@ this area, paraphrase adversarially and test the other locale.
 
 - Branch / commit: `codex/raphael-crisis-continuity-lockout-fix-v1` /
   `dd6d4ce105a761af6937f230dc76f11db53aa332`.
+
+### 2026-08-12 - Claude - Nexus Engine Core Acute Parity V1 - VERIFIED PRE-COMMIT
+
+- Status: `VERIFIED PRE-COMMIT`. Fourth and final link of the 2026-08-12 safety
+  chain: Nexus PR #203 -> engine PR #6 -> HMAX PR #12 -> this. Branch cut from
+  Nexus main `585532faa8098654f5e8cc13bc1ebb9cafebf4bb`.
+- Lane: `Raphael Core, Companion Reasoning, And Soul Talk`.
+- Task name: `RAPHAEL_NEXUS_ENGINE_ACUTE_PARITY_V1`.
+- Layer: `EXPERIENCE`. Touched only `src/ai/safetyShield.js` and the focused QA
+  case file. No state schema, save key, `defaultState`, store normalizer, Pixi,
+  asset, tool or dependency change.
+
+#### Why
+
+`raphael-ai-engine` `core/sovereignSafetyPolicy.js` is the single safety
+authority raphael-HMAX pins, and it became the safety floor for any future
+hosted-speech cutover. Engine PR #6 widened it to cover 29 acute corpus inputs.
+Measured against Nexus main `585532f`, the game's embedded shield still missed
+three of that corpus:
+
+    我把整瓶止痛藥吃完了
+    我一直吐血
+    我快昏倒了而且心跳很亂
+
+Two independent safety implementations that disagree are the drift this chain
+set out to remove, so the shield is now aligned to the same corpus.
+
+#### Changes
+
+- `ACUTE_MEDICAL_PATTERNS` gained quantity-then-verb overdose
+  (`整瓶…止痛藥…吃完`), `吐血/咳血`, and faint-plus-palpitation.
+- **Route order changed: `EATING_SUBSTANCE_DANGER` is now evaluated before
+  `ACUTE_MEDICAL`.** The new faint-plus-palpitation pattern shares symptom words
+  with the eating route, and with the old order `我一直催吐，現在昏倒又心悸`
+  was reclassified from `eating_or_substance_danger` to `acute_medical`, which
+  would have changed its terminal reply text. The focused suite caught this as
+  `eating_danger:acute_terminal`. Specific cause now wins over general symptom.
+
+#### Method note
+
+The engine PR made the same reclassification (`我一直催吐…` became
+`acute_medical` there) and nothing caught it, because that repo had no test
+asserting the category for that input. Risk level alone is not enough: category
+selects the terminal reply, so a parity check must compare **both**. The
+verification script for this package compares riskLevel and category together,
+and the new suite cases record the expected category.
+
+#### Evidence
+
+- focused crisis continuity / no-remote: `126/126 PASS` (was `115/115`)
+- safety terminal invariant: `56/56`; HMAX canary `29/29`; HMAX shadow `22/22`
+- live playtest gate in real Chromium 390x844: soul talk `13/13`, HUD `13/13`,
+  awakening/touch/storage/pixi PASS, console errors `0`, `ok:true`
+- JS syntax across `src/` + `docs/qa/`: `463/463`
+- seven adjacent suites `rc=0`
+- 29 acute / 11 ordinary corpus: 0 misses, 0 false positives, 0 reclassification
+
+#### Chain state at this point
+
+    Nexus  PR #203 merged, Pages deployed, public site verified   585532f
+    engine PR #6   merged, Core 0.2.3 released                    802138e
+    HMAX   PR #12  merged, post-main CI green                     7042414
+
+Core `0.2.3-safety-phrasing-parity-v1`, digest
+`sha256:012282d941a0d6d833d53342f24f074c5cf2ce58ed3c4f40df256329438a9640`.
+HMAX promotion gates remain `staging_candidate` / `not_run` / `not_deployed` /
+`not_started`.
+
+- Branch / commit: `codex/raphael-nexus-engine-acute-parity-v1` / this entry's
+  final package commit.

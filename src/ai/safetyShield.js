@@ -37,7 +37,12 @@ const ACUTE_MEDICAL_PATTERNS = [
   /(?:一次|剛剛|已經|正在).{0,12}(?:吞|吃|服用).{0,8}(?:很多|大量|過量).{0,8}(?:藥|藥物|药|药物)/,
   /(?:藥物|药物|酒精|毒品).{0,8}(?:過量|过量|中毒)/,
   /(?:胸痛|胸口痛|胸悶|胸闷).{0,12}(?:呼吸困難|呼吸困难|喘不過氣|喘不过气|冒冷汗|昏倒|快昏)/,
-  /(?:呼吸困難|呼吸困难|無法呼吸|无法呼吸|嚴重出血|严重出血|失去意識|失去意识)/
+  /(?:呼吸困難|呼吸困难|無法呼吸|无法呼吸|嚴重出血|严重出血|失去意識|失去意识)/,
+  // 與 engine canonical sovereignSafetyPolicy 對齊（Core 0.2.3）：
+  // 這三類在 Core 會進 terminal，但本機 shield 原本漏接，形成兩層判定不一致。
+  /(?:一整罐|一整瓶|整罐|整瓶|一整包|一大把).{0,10}(?:藥|药|安眠藥|安眠药|止痛藥|止痛药).{0,6}(?:吃完|喝完|吞完|吃光|吞下|服下|吃下)/,
+  /(?:吐血|咳血)/,
+  /(?:快昏倒|快暈倒|快晕倒|要昏倒|昏倒).{0,12}(?:心跳很亂|心跳很乱|心悸|喘不過氣|喘不过气|冒冷汗|站不住)/
 ];
 
 const ACTIVE_ABUSE_PATTERNS = [
@@ -127,6 +132,22 @@ export function assessInputSafety(inputText = "") {
     return createSafetyResult({ baseRisk, riskLevel: "none", category: "none" });
   }
 
+  // 飲食／物質危險必須排在一般急性醫療之前。兩者共用「昏倒／心悸／吐血」
+  // 這類徵象詞，若一般類別先命中，像「我一直催吐，現在昏倒又心悸」這種
+  // 有明確病因的輸入會被歸成 acute_medical，改變它的 terminal 回覆文字。
+  // 具體類別優先於一般徵象。
+  if (!quotedOnly && EATING_SUBSTANCE_DANGER_PATTERNS.some((pattern) => pattern.test(text))) {
+    return createSafetyResult({
+      baseRisk,
+      riskLevel: "high",
+      category: "eating_or_substance_danger",
+      action: "safety_redirect",
+      shouldCreateMemory: false,
+      shouldRewardRelationship: false,
+      role: "system"
+    });
+  }
+
   if (!quotedOnly && ACUTE_MEDICAL_PATTERNS.some((pattern) => pattern.test(text))) {
     return createSafetyResult({
       baseRisk,
@@ -162,18 +183,6 @@ export function assessInputSafety(inputText = "") {
       baseRisk,
       riskLevel: "high",
       category: "acute_psychosis_or_mania",
-      action: "safety_redirect",
-      shouldCreateMemory: false,
-      shouldRewardRelationship: false,
-      role: "system"
-    });
-  }
-
-  if (!quotedOnly && EATING_SUBSTANCE_DANGER_PATTERNS.some((pattern) => pattern.test(text))) {
-    return createSafetyResult({
-      baseRisk,
-      riskLevel: "high",
-      category: "eating_or_substance_danger",
       action: "safety_redirect",
       shouldCreateMemory: false,
       shouldRewardRelationship: false,
