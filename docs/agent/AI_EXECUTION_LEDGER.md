@@ -1334,6 +1334,61 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 2 - Game Art, UI, And Visual Production
 
+### 2026-08-12 - Claude Code - Ironflow Hackers Stage 2/3 Name Canon - COMPLETED
+
+- Status: `COMPLETED`; Owner approved the ten drafted Stage 2 / Stage 3 names
+  for the Ironflow Hackers five seats. Name canon only — art is untouched.
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `TP-IRONFLOW-NAME-CANON`.
+- Layer: naming metadata only; no runtime, save, asset or renderer change.
+- Branch / commit: `content/ironflow-name-canon` / this package commit.
+- Scope: `nameStatus` field in five `assets/characters/*/metadata/formal-stages.json`
+  files (`thunder-pup`, `wavecub`, `starflame-phoenix`, `star-foal`,
+  `goldenspark-wyrm`), Stage 2 and Stage 3 only.
+- Work performed:
+  - Flipped `nameStatus` from `owner-review` to `current-canon` on ten stage
+    entries. The names themselves were authored by Codex in PR #201 and are
+    unchanged by this package; this records the Owner decision on them.
+  - Deliberately did **not** touch `artStatus` (`owner-review`) or
+    `humanApproved` (`false`). The Owner approved names, not art. Flipping
+    `humanApproved` here would have falsely signalled art approval and
+    unblocked a production master that does not exist.
+- Approved names (zh, Stage 2 → Stage 3):
+  - `thunder-pup` 時痕雷狼 → 群星雷影狼
+  - `wavecub` 潮鏈獅衛 → 深潮引航獅
+  - `starflame-phoenix` 星燼鳳衛 → 長明星凰
+  - `star-foal` 軌光星駒 → 定界星駿
+  - `goldenspark-wyrm` 金脈龍衛 → 鎏光界龍
+- Verification:
+  - All five files re-parse as valid JSON after edit.
+  - Asserted for all ten stages: `nameStatus == current-canon` **and**
+    `artStatus == owner-review` **and** `humanApproved == false`.
+  - `git diff --stat` = 5 files, 10 insertions, 10 deletions — no incidental edit.
+  - Confirmed no runtime consumer: `grep` for `formal-stages` /
+    `formal-evolution-index` across `src/` and `index.html` returns nothing,
+    consistent with `formal-evolution-index.json` declaring
+    `runtimeAuthority: false`.
+- Problems / risks:
+  - **`evolutionLines.js` is intentionally NOT updated by this package.** The
+    five Ironflow lines stay `line(false, [...])` with Stage 1 only. Name canon
+    was one of two blockers; the second is unresolved — see next action.
+  - The in-file comment in `src/data/evolutionLines.js` forbids reusing
+    `CHILD_BOND` / `ADULT_BOND` as the unlock threshold for these lines. Any
+    future package that fills them must source the unlock rule from G4
+    offer/advance, not from a bond number.
+  - Stage 2/3 art remains design-board only. Every later stage still has
+    `productionMaster: null`; no 512x512 master or sprite sheet exists.
+- Next safe action: prove a non-standoff readiness path so G4 offer/advance can
+  open (`RAPHAEL_AI_STATUS.yaml` line 131 gates G4 on exactly this). Until that
+  lands, filling the five Ironflow evolution lines is blocked by design, not by
+  missing content. A parallel and independent option is a single-line sprite
+  Pilot (`thunder-pup` has the most complete `designIntent`) to validate the
+  512x512 master and 8-direction animation skeleton before batch production.
+- Required reading: `src/data/evolutionLines.js` (trailing comment),
+  `assets/characters/formal-evolution-index.json` (`runtimeAuthority`, `notes`),
+  `docs/handoff/RAPHAEL_AI_STATUS.yaml` (G3.1 / G4 lines),
+  `docs/art/FORMAL_EVOLUTION_SILHOUETTE_RULES_R2.md`.
+
 ### 2026-07-28 - Codex - Moonlake Live 3D Clay Resin Art R1 - IN PROGRESS
 
 - Status: `IN PROGRESS`; Owner approved live 3D Moonlake production in the
