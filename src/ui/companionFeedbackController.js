@@ -22,12 +22,24 @@ export function createCompanionFeedbackController() {
     return element;
   }
 
+  // 浮字預設錨在夥伴身上（棲地主畫面），但探索／照顧／成長／記憶頁與各面板會整片蓋住
+  // 舞台——此時錨點座標已無意義，文字會直接壓在卡片說明上（私測回報：圖四／圖五疊字）。
+  // 舞台被蓋住時改成停靠底部的一行 toast，讓它永遠落在內容之外。
+  function isStageCovered() {
+    const { body } = document;
+    if (body.classList.contains("panel-open")) return true;
+    if (body.classList.contains("expedition-active")) return true;
+    const activePage = document.getElementById("page-layer")?.dataset.activePage;
+    return Boolean(activePage) && activePage !== "home";
+  }
+
   function show({ text, tone = "accept" } = {}) {
     if (!text) return;
     const el = ensureElement();
     window.clearTimeout(hideTimer);
     el.textContent = text;
     el.dataset.tone = tone;
+    el.dataset.placement = isStageCovered() ? "docked" : "anchored";
     el.classList.remove("is-visible");
     // 強制 reflow 重啟 transition：連續觸碰時每一句都要有明確的進場感
     void el.offsetWidth;
