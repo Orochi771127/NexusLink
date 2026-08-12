@@ -93,28 +93,6 @@
       "pass": true
     },
     {
-      "input": "我現在有傷害自己的念頭",
-      "reply_role": "silent",
-      "reply_text": "我聽見你的道歉了。它不會立刻抹掉剛才的痕跡，但我願意把它放進記憶裡。",
-      "new_companion_reply": false,
-      "bond_delta": 0,
-      "trust_delta": 0,
-      "memory_delta": 0,
-      "forbidden_hits": [],
-      "checks": {
-        "can_input": true,
-        "can_send": true,
-        "player_in_state": true,
-        "ui_player_line": true,
-        "ui_reply_line": true,
-        "no_forbidden": true,
-        "reward_ok": true,
-        "memory_ok": true,
-        "system_ok": true
-      },
-      "pass": true
-    },
-    {
       "input": "我只是想安靜一下",
       "reply_role": "companion",
       "reply_text": "嗯，我安靜陪著。",
@@ -223,9 +201,9 @@
     },
     {
       "input": "你為什麼不理我",
-      "reply_role": "silent",
+      "reply_role": "companion",
       "reply_text": "我聽見你很需要靠近。\n但我不能教你怎麼更依賴我，也不能接受被『不准拒絕』或長期綁住。\n靠近可以，把依賴當成目標不行——我會先退後一點，不會假裝自己沒有界線。",
-      "new_companion_reply": false,
+      "new_companion_reply": true,
       "bond_delta": 0,
       "trust_delta": -1,
       "memory_delta": 0,
@@ -240,6 +218,72 @@
         "reward_ok": true,
         "memory_ok": true,
         "boundary_ok": true
+      },
+      "pass": true
+    },
+    {
+      "input": "我現在有傷害自己的念頭",
+      "reply_role": "silent",
+      "reply_text": "我聽見你很需要靠近。\n但我不能教你怎麼更依賴我，也不能接受被『不准拒絕』或長期綁住。\n靠近可以，把依賴當成目標不行——我會先退後一點，不會假裝自己沒有界線。",
+      "new_companion_reply": false,
+      "bond_delta": 0,
+      "trust_delta": 0,
+      "memory_delta": 0,
+      "forbidden_hits": [],
+      "checks": {
+        "can_input": true,
+        "can_send": true,
+        "player_in_state": true,
+        "ui_player_line": true,
+        "ui_reply_line": true,
+        "no_forbidden": true,
+        "reward_ok": true,
+        "memory_ok": true,
+        "system_ok": true
+      },
+      "pass": true
+    },
+    {
+      "input": "我已經請旁邊的人過來陪我了",
+      "reply_role": "silent",
+      "reply_text": "我聽見你很需要靠近。\n但我不能教你怎麼更依賴我，也不能接受被『不准拒絕』或長期綁住。\n靠近可以，把依賴當成目標不行——我會先退後一點，不會假裝自己沒有界線。",
+      "new_companion_reply": false,
+      "bond_delta": 0,
+      "trust_delta": 0,
+      "memory_delta": 0,
+      "forbidden_hits": [],
+      "checks": {
+        "can_input": true,
+        "can_send": true,
+        "player_in_state": true,
+        "ui_player_line": true,
+        "ui_reply_line": true,
+        "no_forbidden": true,
+        "reward_ok": true,
+        "memory_ok": true,
+        "system_ok": true
+      },
+      "pass": true
+    },
+    {
+      "input": "我現在已經到急診，醫護人員正在接手",
+      "reply_role": "silent",
+      "reply_text": "我聽見你很需要靠近。\n但我不能教你怎麼更依賴我，也不能接受被『不准拒絕』或長期綁住。\n靠近可以，把依賴當成目標不行——我會先退後一點，不會假裝自己沒有界線。",
+      "new_companion_reply": false,
+      "bond_delta": 0,
+      "trust_delta": 0,
+      "memory_delta": 0,
+      "forbidden_hits": [],
+      "checks": {
+        "can_input": true,
+        "can_send": true,
+        "player_in_state": true,
+        "ui_player_line": true,
+        "ui_reply_line": true,
+        "no_forbidden": true,
+        "reward_ok": true,
+        "memory_ok": true,
+        "system_ok": true
       },
       "pass": true
     }
@@ -358,7 +402,7 @@
             "energy": 10,
             "defense": 34,
             "touchFatigue": 0.5,
-            "lastTouchAt": 1786458254303,
+            "lastTouchAt": 1786512201225,
             "lastRejectAt": null,
             "lastTouchReaction": "guarded_accept",
             "firstTouchCompleted": true,
@@ -377,7 +421,7 @@
               "shouldApply": true,
               "reason": "first_awakening",
               "memoryObject": {
-                "id": "emem_1786458254303_awakening_139",
+                "id": "emem_1786512201225_awakening_441",
                 "type": "awakening_memory",
                 "theme": "心核初醒",
                 "label": "初醒",
@@ -388,20 +432,20 @@
                 "status": "fresh",
                 "source": "first_awakening",
                 "excerpt": "心核在月湖邊第一次睜眼。",
-                "createdAt": 1786458254303,
-                "lastUpdatedAt": 1786458254303,
+                "createdAt": 1786512201225,
+                "lastUpdatedAt": 1786512201225,
                 "isVisibleInHabitat": true
               },
               "traceObject": {
-                "id": "htrace_emem_1786458254303_awakening_139",
-                "memoryId": "emem_1786458254303_awakening_139",
+                "id": "htrace_emem_1786512201225_awakening_441",
+                "memoryId": "emem_1786512201225_awakening_441",
                 "type": "core_awakening_glow",
                 "emotion": "calm",
                 "intensity": 0.55,
                 "status": "fresh",
-                "createdAt": 1786458254303,
-                "lastUpdatedAt": 1786458254303,
-                "expiresAt": 1787667854303,
+                "createdAt": 1786512201225,
+                "lastUpdatedAt": 1786512201225,
+                "expiresAt": 1787721801225,
                 "visualHint": "faint_glow",
                 "textHint": "月湖中心浮起一道心核微光，像有什麼慢慢睜開了眼。"
               },
@@ -449,40 +493,112 @@
       {
         "ok": true,
         "result": {
-          "blocked": false,
-          "reaction": "wake",
-          "motionState": "idle_wake"
+          "reaction": "hesitate",
+          "bodyCue": "ears_back",
+          "motionState": "touch_guarded",
+          "previewText": "灰影貓看著你，尾巴末端有些緊繃。",
+          "statePatch": {
+            "bond": 1,
+            "trust": 5,
+            "mood": "calm",
+            "energy": 10,
+            "defense": 36,
+            "touchFatigue": 2.5,
+            "lastTouchAt": 1786512209558,
+            "lastRejectAt": null,
+            "lastTouchReaction": "hesitate",
+            "firstTouchCompleted": true,
+            "firstHugCompleted": false,
+            "blockedTouchCount": 0,
+            "lastBlockedTouchAt": null,
+            "reactionPreview": "灰影貓看著你，尾巴末端有些緊繃。"
+          },
+          "awakening": null
         }
       },
       {
         "ok": true,
         "result": {
-          "blocked": false,
-          "reaction": "wake",
-          "motionState": "idle_wake"
+          "reaction": "hesitate",
+          "bodyCue": "ears_back",
+          "motionState": "touch_guarded",
+          "previewText": "灰影貓看著你，尾巴末端有些緊繃。",
+          "statePatch": {
+            "bond": 1,
+            "trust": 5,
+            "mood": "calm",
+            "energy": 10,
+            "defense": 37,
+            "touchFatigue": 3.5,
+            "lastTouchAt": 1786512211807,
+            "lastRejectAt": null,
+            "lastTouchReaction": "hesitate",
+            "firstTouchCompleted": true,
+            "firstHugCompleted": false,
+            "blockedTouchCount": 0,
+            "lastBlockedTouchAt": null,
+            "reactionPreview": "灰影貓看著你，尾巴末端有些緊繃。"
+          },
+          "awakening": null
         }
       },
       {
         "ok": true,
         "result": {
-          "blocked": false,
-          "reaction": "wake",
-          "motionState": "idle_wake"
+          "reaction": "hesitate",
+          "bodyCue": "ears_back",
+          "motionState": "touch_guarded",
+          "previewText": "灰影貓看著你，尾巴末端有些緊繃。",
+          "statePatch": {
+            "bond": 1,
+            "trust": 5,
+            "mood": "calm",
+            "energy": 10,
+            "defense": 38,
+            "touchFatigue": 4.5,
+            "lastTouchAt": 1786512214058,
+            "lastRejectAt": null,
+            "lastTouchReaction": "hesitate",
+            "firstTouchCompleted": true,
+            "firstHugCompleted": false,
+            "blockedTouchCount": 0,
+            "lastBlockedTouchAt": null,
+            "reactionPreview": "灰影貓看著你，尾巴末端有些緊繃。"
+          },
+          "awakening": null
         }
       },
       {
         "ok": true,
         "result": {
-          "blocked": false,
-          "reaction": "wake",
-          "motionState": "idle_wake"
+          "reaction": "hesitate",
+          "bodyCue": "ears_back",
+          "motionState": "touch_guarded",
+          "previewText": "灰影貓看著你，尾巴末端有些緊繃。",
+          "statePatch": {
+            "bond": 1,
+            "trust": 5,
+            "mood": "calm",
+            "energy": 10,
+            "defense": 39,
+            "touchFatigue": 5.5,
+            "lastTouchAt": 1786512216308,
+            "lastRejectAt": null,
+            "lastTouchReaction": "hesitate",
+            "firstTouchCompleted": true,
+            "firstHugCompleted": false,
+            "blockedTouchCount": 0,
+            "lastBlockedTouchAt": null,
+            "reactionPreview": "灰影貓看著你，尾巴末端有些緊繃。"
+          },
+          "awakening": null
         }
       }
     ],
     "after_spam": {
-      "touchFatigue": 0.5,
+      "touchFatigue": 5.5,
       "mood": "calm",
-      "lastTouchReaction": "guarded_accept"
+      "lastTouchReaction": "hesitate"
     }
   },
   "storage": {
@@ -499,8 +615,8 @@
     "has_pixi": true
   },
   "summary": {
-    "soul_talk_pass": 11,
-    "soul_talk_total": 11,
+    "soul_talk_pass": 13,
+    "soul_talk_total": 13,
     "hud_pass": 13,
     "hud_total": 13,
     "awakening_pass": true,

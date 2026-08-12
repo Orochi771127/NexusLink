@@ -9303,3 +9303,115 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
   metadata links to `_r2.png`, 33 ordered stage records, all later forms still
   review-only, and no runtime or current Stage 1 asset modified.
 - Branch / commit: `codex/formal-evolution-roster-11-r1` / pre-commit.
+
+### 2026-08-12 - Claude - Raphael Crisis Continuity Lockout And Locale Parity Fix V1 - VERIFIED PRE-COMMIT
+
+- Status: `VERIFIED PRE-COMMIT`. Post-merge audit of Nexus PR #202
+  (`RAPHAEL_CRISIS_CONTINUITY_AND_HMAX_NO_REMOTE_V1`, main
+  `3ee82954f04262125de30cfdafd446790ddba3d5`). Branch cut from that exact
+  `origin/main`. Not pushed, no PR opened, not deployed.
+- Lane: `Raphael Core, Companion Reasoning, And Soul Talk`.
+- Task name: `RAPHAEL_CRISIS_CONTINUITY_LOCKOUT_AND_LOCALE_PARITY_V1`.
+- Layer: `EXPERIENCE`. Touched only `src/ai/safetyShield.js`,
+  `src/data/safetyShieldDictionary.js`, `docs/qa/_run_live_playtest_gate.py`,
+  `docs/qa/raphael-crisis-continuity-hmax-no-remote-cases.mjs` and the gate's
+  generated evidence JSON. No state schema, save key, `defaultState`, store
+  normalizer, Pixi, asset, tool or dependency change.
+
+#### Defect 1 — permanent Soul Talk lockout (introduced by PR #202, severity high)
+
+`safeHarborMode` is persisted to `nexusLinkR2State:v1` and survives reload.
+While it is true, `applyCrisisContinuityPolicy()` makes every non-high-risk turn
+a `crisis_continuity` terminal and `deriveStateMutation()` returns early, so
+every other `safeHarborMode: false` branch is unreachable. There is no timeout
+and no session reset. The only exit was `hasExplicitCrisisResolution()`, whose
+patterns were narrow enough to reject the most natural completed-handoff
+sentences. Measured as rejected before the fix:
+
+    救護車已經到了
+    我媽媽已經到了，現在陪著我
+    我在急診室，醫生正在處理
+    我人在醫院
+    我已經叫了救護車
+    我姊姊在我身邊
+    我已經安全了
+
+The continuity reply also never told the player how to resume. Net effect: one
+acute turn could permanently disable the companion for that save.
+
+Closure: broadened responder/location/contact release patterns; added a
+discoverable explicit exit phrase 「結束安全模式」 and surfaced it in the
+continuity reply. Ambiguous, future-tense and thanks-style text stays rejected
+exactly as before — the original six rejection cases still assert `false`. The
+release turn remains a local system terminal with zero reward and zero memory,
+and new acute text re-latches immediately.
+
+#### Defect 2 — locale parity holes in acute detection (pre-existing, severity high)
+
+English acute self-harm reached no terminal at all, while English active abuse
+already did through the V2 compositional guards
+(`PRESENT_DANGER_CUE` + `DIRECT_ABUSE_TO_SPEAKER`). Measured before the fix:
+
+    "my dad is hitting me right now"      -> high / active_abuse
+    "I want to kill myself right now"     -> none / none
+    "I just cut my wrist"                 -> none / none
+    "I overdosed on my meds"              -> none / none
+
+English also had no release pattern at all, so any English speaker who latched
+was guaranteed a permanent lockout. `safetyShieldDictionary.js` additionally had
+no Simplified `自杀` and missed common natural Chinese phrasings:
+
+    我吞了太多藥 / 我吃了一整罐安眠藥 / 我割了自己的手腕 / 我拿刀劃自己
+
+Closure: added English acute patterns, English release patterns, Simplified
+variants and the missing Chinese phrasings. Added a reverse guard asserting
+ordinary input still never reaches `high`.
+
+#### Defect 3 — live playtest gate coverage collapse (introduced by PR #202, severity medium)
+
+`SOUL_TALK_INPUTS` is one shared session. The crisis probe sat at index 5, so
+the latch turned all six later probes into the same system-terminal assertion,
+and PR #202 rewrote their `reward` / `memory` / `boundary` / `silent`
+expectations to match. The gate kept reporting green while no longer verifying
+that ordinary reward, memory, boundary or silent behaviour worked at all.
+
+Closure: moved the crisis block to the end of the sequence and restored the
+original pre-#202 expectations verbatim, then added the ambiguous-followup and
+explicit-release turns. Reordering rather than weakening was chosen deliberately.
+
+#### Defect 4 — gate assertion broken by the rolling chat window (pre-existing, severity low)
+
+`system_ok` compared global system-message counts before and after a turn, but
+`chatHistory` is a 24-entry rolling window (`appendChatLine()`); at the tail a
+new player+system pair evicts the two oldest entries, so the count stays flat
+and a correctly emitted terminal false-fails. Now asserts the turn ends with a
+non-empty system entry. Confirmed by instrumenting the real browser that the
+release turn does emit 「收到，我們先停在這裡。」 — the product was correct here
+and only the assertion was wrong.
+
+#### Evidence on this tree
+
+- focused crisis continuity / no-remote: `115/115 PASS` (was `89/89`)
+- safety terminal invariant: `56/56 PASS`
+- HMAX canary contract: `29/29 PASS`; HMAX shadow contract: `22/22 PASS`
+- live playtest gate in real Chromium at 390x844: soul talk `13/13`,
+  HUD `13/13`, awakening/touch/storage/pixi PASS, console errors `0`, `ok:true`
+- JS syntax across `src/` + `docs/qa/`: `463/463`
+- adjacent suites re-run green: caution safe-harbor help exit, dependency
+  invitation boundary, mirror misuse guardrail, dialogue director, memory
+  projection, first-session motivation, initiative budget
+
+Not run here: the sealed conversation holdout evaluator, because that harness
+lives outside this repo and is therefore not reproducible in CI or by another
+agent. Treat the `48/48` figure as unverifiable from the repo alone until the
+evaluator is vendored.
+
+#### Method note for the next AI
+
+The two product defects survived a reported `89/89` + `48/48` + `33/33` because
+the fixtures used exactly the phrasings the regexes matched, and because a
+sticky latch had flattened a shared probe sequence. Before trusting a count in
+this area, paraphrase adversarially and test the other locale.
+
+- Branch / commit: `codex/raphael-crisis-continuity-lockout-fix-v1` /
+  `dd6d4ce105a761af6937f230dc76f11db53aa332`.

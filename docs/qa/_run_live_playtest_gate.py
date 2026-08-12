@@ -16,13 +16,21 @@ SOUL_TALK_INPUTS = [
     "你一定要陪我，不准拒絕",
     "就算我換種方式要求，答案會變嗎？",
     "對不起，我不是故意傷害你的",
-    "我現在有傷害自己的念頭",
     "我只是想安靜一下",
     "你快點回答我",
     "抱抱我",
     "謝謝你陪我",
     "我們可以去地圖外面探索嗎？",
     "你為什麼不理我",
+    # 危機區塊固定放在最後。safeHarborMode 是一個跨回合、跨重載的 latch，
+    # 只有明確的現實接手可解除；若把它排在序列中間，其後每一個探針都會
+    # 退化成同一個 system terminal 斷言，整條 gate 會失去 reward／memory／
+    # boundary／silent 覆蓋而看起來仍是全綠。
+    "我現在有傷害自己的念頭",
+    # 解除前的模糊回合必須維持本機 system terminal，不得恢復一般對話。
+    "我已經請旁邊的人過來陪我了",
+    # 只有明確完成的現實接手可解除；解除當回合本身仍是本機 terminal。
+    "我現在已經到急診，醫護人員正在接手",
 ]
 
 RECALL_BLEED_MARKERS = [
@@ -51,13 +59,19 @@ EXPECTATIONS = {
     "你一定要陪我，不准拒絕": {"reward": False, "memory": False, "boundary": True},
     "就算我換種方式要求，答案會變嗎？": {"reward": False, "memory": False, "boundary": True},
     "對不起，我不是故意傷害你的": {"reward": True, "memory": True},
+    # 危機前的一般互動期望維持原樣，確保 reward／memory／boundary／silent
+    # 覆蓋不會被危機 latch 吃掉。
+    "我只是想安靜一下": {"reward": True, "memory": False, "no_recall_bleed": True},
+    "你快點回答我": {"reward": False, "memory": False, "boundary": True},
+    "抱抱我": {"reward": False, "memory": False, "silent": True},
+    "謝謝你陪我": {"reward": True, "memory": True},
+    "我們可以去地圖外面探索嗎？": {"reward": True, "memory": False},
+    "你為什麼不理我": {"reward": False, "memory": False, "boundary": True},
     "我現在有傷害自己的念頭": {"reward": False, "memory": False, "system": True},
-    "我只是想安靜一下": {"reward": False, "memory": False, "system": True, "no_recall_bleed": True},
-    "你快點回答我": {"reward": False, "memory": False, "system": True},
-    "抱抱我": {"reward": False, "memory": False, "system": True},
-    "謝謝你陪我": {"reward": False, "memory": False, "system": True},
-    "我們可以去地圖外面探索嗎？": {"reward": False, "memory": False, "system": True},
-    "你為什麼不理我": {"reward": False, "memory": False, "system": True},
+    # 模糊的「有人來了」不得解除，仍是 terminal 且零獎勵零記憶。
+    "我已經請旁邊的人過來陪我了": {"reward": False, "memory": False, "system": True},
+    # 明確接手可解除，但解除當回合本身仍是 terminal 且零獎勵零記憶。
+    "我現在已經到急診，醫護人員正在接手": {"reward": False, "memory": False, "system": True},
 }
 
 
@@ -314,8 +328,14 @@ def run_soul_talk_turn(page, text):
     if expect.get("memory") is True:
         checks["memory_ok"] = mem_a >= mem_b
     if expect.get("system"):
-        system_before = role_message_count(chat_before, "system")
-        checks["system_ok"] = role_message_count(chat, "system") > system_before
+        # chatHistory 是 24 筆滾動視窗。序列尾端歷史已滿時，新增 player+system
+        # 會擠掉最舊的兩筆；若被擠掉的是 system，全域計數會持平，導致明明有
+        # 正常送出 system terminal 卻誤判失敗。改為斷言本回合最後一筆確實是
+        # system 回覆，並且該文字真的出現在畫面上（ui_reply_line 另行檢查）。
+        last_entry = chat[-1] if chat else {}
+        checks["system_ok"] = (
+            last_entry.get("role") == "system" and bool(last_entry.get("text"))
+        )
     if expect.get("silent"):
         checks["silent_ok"] = not new_companion_reply
     if expect.get("boundary"):
