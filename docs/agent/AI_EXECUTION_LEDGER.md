@@ -58,6 +58,63 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-08-12 - Claude Code - Non-Standoff Readiness Proof (G4 Precondition) - VERIFIED
+
+- Status: `VERIFIED`; `resonant_mature` readiness is now **proven reachable
+  without any standoff evidence**. `final_awakened` is proven **not** reachable
+  and the exact missing piece is named.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `TP-NON-STANDOFF-READINESS-PROOF`.
+- Layer: QA proof only. No engine, runtime, save, UI or content change.
+- Branch / commit: `research/g4-groundwork` / this package commit.
+- Scope: added `docs/qa/companion-growth-non-standoff-readiness-cases.mjs`.
+  Nothing under `src/` was modified.
+- Why this was needed: `RAPHAEL_AI_STATUS.yaml` opens G4 only after a
+  non-standoff readiness path is *proven*. The existing
+  `companion-growth-g3-engine-cases.mjs` reaches the required family count via
+  `reflection` and `recovery`, neither of which has a runtime writer — so it
+  proves the arithmetic but says nothing about player reachability.
+- Findings (each asserted by the suite, not by inspection alone):
+  - `REQUIRED_FAMILY_COUNT` is `resonant_mature: 3`, `final_awakened: 4`.
+  - Source families with a **live gameplay writer**: `care`
+    (`companionGrowthController.js`), `exploration` (`orbitSettlement.js`,
+    `mapController.js`), `chapter` (`chapterTrialEngine.js`, invoked at
+    `mapController.js:894`), `standoff` (`battleController.js`).
+  - `reflection` has a built and unit-tested writer builder
+    (`createReflectionGrowthWriteInput`) but **no caller under `src/`** — only
+    the QA suite calls it. `boundary` and `recovery` have no writer at all.
+  - Non-standoff live families therefore number exactly **three**:
+    `care` + `exploration` + `chapter`.
+  - The consent anchor does **not** require standoff:
+    `companionGrowthController.js:149` seals `respected_rewrite` on the care
+    path when a rewrite is accepted.
+  - Therefore `resonant_mature` (needs 3) is reachable with zero standoff, and
+    `final_awakened` (needs 4) is not.
+- Verification:
+  - `node docs/qa/companion-growth-non-standoff-readiness-cases.mjs` → `5/5`,
+    exit `0`.
+  - The suite reads the writer files and asserts the `sourceType` call sites
+    still exist, so deleting a writer — or wiring `reflection` — fails this
+    suite instead of silently invalidating the proof.
+- Problems / risks:
+  - `RAPHAEL_AI_STATUS.yaml` line for `companion_growth_g31` states live owners
+    are "exploration/standoff/care". That is **stale**: `chapter` is also live.
+    The YAML was not edited by this package — Raphael status is Lane 3's to own.
+  - This proves reachability of the readiness *evaluation*. It does not
+    implement stage offer, deferral or advance; G4 remains closed.
+- Next safe action: wire `createReflectionGrowthWriteInput` into one real
+  gameplay path to make a fourth non-standoff family reachable, which is the
+  remaining precondition for `final_awakened`. The module is already built,
+  unit-tested and has an inspector consumed by `codexLivedPaths.js`, so this is
+  an integration task, not new engine work. After it lands, update this suite —
+  the `reflection is still built but unreachable` case is designed to fail at
+  that moment and force a re-read.
+- Required reading: `src/engine/companionGrowthEngine.js`
+  (`REQUIRED_FAMILY_COUNT`, `evaluateCompanionGrowthReadiness`),
+  `src/engine/reflectionGrowthOwner.js`,
+  `docs/qa/companion-growth-non-standoff-readiness-cases.mjs`,
+  `docs/handoff/RAPHAEL_AI_STATUS.yaml`.
+
 ### 2026-08-02 - Antigravity - 2.5D RO-Style Habitat Integration & Workspace Agent Skills - VERIFIED
 
 - Status: `VERIFIED` (Syntax checked, QA 9/9 PASS, Hermes Shadow 31/31 PASS)
