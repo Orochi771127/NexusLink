@@ -52,13 +52,13 @@ RaphaelCore is a Stateful Companion Cognition Agent: safety-gated, memory-bearin
 
 理解這是一個雙引擎架構（Web + Unity），但請針對 Web repo 提出相容的 vanilla JS 實作方案，或者告知此功能更適合在 Unity 中實作。
 
-允許：HTML / 純 CSS（`styles.css`）/ Vanilla JS（ES Modules，無 build step）/ PixiJS v8（CDN）/ Three.js（CDN ES Module） / GLB / localStorage（集中於 `saveManager.js`，key=`nexusLinkR2State:v1`）/ GitHub Pages。
+允許：HTML / 純 CSS（`styles.css`）/ Vanilla JS（ES Modules）/ TypeScript / npm 依賴 / bundler、build step / PixiJS v8（CDN）/ Three.js（CDN ES Module 或鎖定版本 npm） / GLB / localStorage（集中於 `saveManager.js`，key=`nexusLinkR2State:v1`）/ GitHub Pages。
 
 **Moonlake Live 3D Hybrid**：月湖營地使用 Three.js 載入 GLB/glTF 即時 3D 棲地。Three.js 負責 3D 環境、水面／瀑布、風吹植被、天氣、日月光照、導航與 world-to-screen 投影；PixiJS 負責 2D illustrated companion 動畫層呈現。
 
 **Global 3D Presentation 受控能力（2026-08-02 Owner 核准）**：Three.js 可依 `docs/design/GLOBAL_3D_PRESENTATION_CONTRACT_V1.md` 在全遊戲逐場景 opt-in 使用固定版本 CDN ES Module 與 GLB/glTF。每個場景必須宣告 lifecycle、read-only snapshot、mobile budget、reduced-motion、context-loss 與 fallback；Three.js 不得持有 simulation、collision、objective、outcome、store、save、RaphaelCore、Safety、Growth 或 reward authority。月湖仍另受 `docs/design/MOONLAKE_LIVE_3D_HYBRID_CONTRACT_V1.md` 約束；illustrated companion 是否留在 Pixi 層由各 scene contract 決定，不因全域權限自動改成 3D。
 
-Blender 只可作離線建模、pivot／collider proxy 驗證與 GLB 匯出，不是 runtime 或網站 build step。絕對禁止：React、Vue、Svelte、React Three Fiber、TypeScript、CSS 框架、後端、資料庫、LLM API、未核准 npm 套件、任何 build step。全域可用不等於全站 renderer migration 或第二套遊戲狀態。
+Blender 只可作離線建模、pivot／collider proxy 驗證與 GLB 匯出，不是 runtime，也不得成為網站部署管線的一環。絕對禁止：React、Vue、Svelte、React Three Fiber、CSS 框架、後端、資料庫、LLM API。全域可用不等於全站 renderer migration 或第二套遊戲狀態。
 
 ---
 
@@ -76,7 +76,7 @@ Blender 只可作離線建模、pivot／collider proxy 驗證與 GLB 匯出，�
 - 此分工是協作資源策略，不是產品情感憲法。
 - 圖像生成輸出的資產需經 human 確認後才能進 `assets/`。
 - Spine 動畫僅後期高階選項，非 MVP 主線。
-- Game Studio 只做任務分類與工作流輔助，不可把 Nexus Link 導回 Phaser、React、TypeScript、npm 或任何 build step。
+- Game Studio 只做任務分類與工作流輔助，不可把 Nexus Link 導回 Phaser 或 React。
 - Sprite Pipeline 可用於動畫一致性、切格、對齊、anchor、QC；套用時必須遵守 Nexus Link illustrated `512×512` companion 規格，不得回退成 chunky pixel art 預設。
 - Generate 2D Sprite 可用於 AI 圖像生成；Nexus Link 預設 `art_style` 應是 project-native / clean_hd / illustrated，不是 `pixel_art`。
 - 不得主動產 `64×64` chunky pixel art companion，除非 human 明確要求 legacy pixel asset。

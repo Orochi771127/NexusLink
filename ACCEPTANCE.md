@@ -203,7 +203,7 @@
 - 通過：`main.js` / `style.css` / `script.js` 原封不動；`node --check script.js` 仍通過。
 
 **H5 — 技術邊界未被破壞**
-- 通過：無新增 React/Vue/Svelte/React Three Fiber/TS/CSS 框架/後端/DB/LLM API/npm 套件/build step。Three.js 只能使用合約指定的固定版本 CDN ES Module、逐場景 opt-in，且不得持有 simulation／collision／outcome／gameplay／save／Safety authority。
+- 通過：無新增 React/Vue/Svelte/React Three Fiber/CSS 框架/後端/DB/LLM API。Three.js 版本必須鎖定（CDN ES Module 或鎖定版本 npm 依賴）、逐場景 opt-in，且不得持有 simulation／collision／outcome／gameplay／save／Safety authority。TypeScript、npm 依賴與 build step 自 2026-08-12 canon 修訂起解除禁令，但引入 build step 的 PR 必須同時說明部署路徑如何維持可用。
 
 **H6 — Moonlake Live 3D Hybrid 邊界**
 - 驗法：讀 `docs/design/MOONLAKE_LIVE_3D_HYBRID_CONTRACT_V1.md`，檢查 renderer ownership、DOM/Pixi/Three 分層、CDN 版本、fallback、context-loss、reduced-motion 與 mobile quality tier。
@@ -215,7 +215,7 @@
 
 **H8 — Blender 是可追溯的離線 GLB 產線**
 - 驗法：檢查 `.blend` source、export script、manifest 與 GLB audit。
-- 通過：manifest 記錄 Blender 版本、source、author／license、human approval、pivot／bottom contact、collider proxy、triangle／material／texture／draw-call／size、SHA-256 與 fallback；網站不執行 Blender、沒有新增 build step，Blender rigid body 不成為 gameplay authority。
+- 通過：manifest 記錄 Blender 版本、source、author／license、human approval、pivot／bottom contact、collider proxy、triangle／material／texture／draw-call／size、SHA-256 與 fallback；網站不執行 Blender、Blender 不成為部署管線的一環，Blender rigid body 不成為 gameplay authority。
 
 **H9 — 3D mobile budget、reduced motion 與輸入權責**
 - 驗法：在 390×844、390×664、desktop、reduced-motion、touch、keyboard 與 context loss 下測 opt-in scene。
@@ -572,7 +572,7 @@
 
 **P1 — Web Runtime (Current active commercial runtime)**
 - 驗法：啟動 Web Server，檢查 `index.html` 進入點。
-- 通過：Vanilla JS + 雙引擎（PixiJS 負責 2D/UI、Three.js 負責 3D 背景）架構完整運行。無建置工具（Bundler）、無 npm 安裝包、無 React/Vue。Web 必須作為首發商業主線，不得顯示為「即將廢棄」或「過渡期」。
+- 通過：雙引擎（PixiJS 負責 2D/UI、Three.js 負責 3D 背景）架構完整運行。無 React/Vue。若已引入建置工具，`index.html` 進入點與 GitHub Pages 部署必須仍然可用且有明文記錄。Web 必須作為首發商業主線，不得顯示為「即將廢棄」或「過渡期」。
 
 **P2 — Moonlake 3D Source (Canonical scene-content source)**
 - 驗法：檢查 `C:\Users\User\Pictures\新增資料夾\月湖3D\Design System R2` 來源工作區。

@@ -221,16 +221,20 @@ Allowed stack:
 - HTML
 - CSS
 - Vanilla JavaScript / ES Modules
+- TypeScript
+- npm dependencies
+- build step / bundler
 - PixiJS v8 via CDN
 - localStorage
 - GitHub Pages
 
+If a build step is introduced, GitHub Pages can no longer deploy from `main / root`
+unchanged — either the built output is committed, or Pages switches to an Actions-based
+deploy. Decide that before adding the first bundler.
+
 Do not add without explicit approval:
 
 - React / Vue / Svelte
-- TypeScript
-- npm dependencies
-- build step
 - backend / database / API
 - LLM API
 - second Pixi app
