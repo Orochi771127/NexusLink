@@ -1462,6 +1462,28 @@ canvas {
   transform: translateY(calc(-100% - 8px));
 }
 
+/* 舞台被頁面／面板蓋住時（companionFeedbackController.isStageCovered）改為底部停靠：
+   置中、滿寬、貼在底部導覽列上方，並帶回可讀底框——因為背後不再是夜湖，而是卡片文字。 */
+.companion-feedback[data-placement="docked"] {
+  left: 14px;
+  right: 14px;
+  top: auto;
+  bottom: calc(var(--bottom-safe, 0px) + var(--nav-block-h, 104px) + 12px);
+  transform: translateY(8px);
+  padding: 9px 13px;
+  border: 1px solid rgba(124, 231, 255, 0.28);
+  border-radius: 12px;
+  /* 不透明：底下是卡片文字而非夜湖，半透明會讓兩層字互相穿透。 */
+  background: rgb(6, 14, 30);
+  box-shadow: 0 -6px 18px rgba(2, 6, 16, 0.55);
+  text-align: center;
+  text-shadow: none;
+}
+
+.companion-feedback[data-placement="docked"].is-visible {
+  transform: translateY(0);
+}
+
 .companion-feedback[data-tone="guarded"],
 .companion-feedback[data-tone="refusal"] {
   color: rgba(216, 226, 240, 0.94);
@@ -1475,6 +1497,11 @@ canvas {
   .companion-feedback {
     transform: translateY(calc(-100% - 8px));
     transition: opacity 200ms ease;
+  }
+
+  /* 停靠版沒有「從夥伴身上往上浮」的語意，不套用抬升位移。 */
+  .companion-feedback[data-placement="docked"] {
+    transform: none;
   }
 }
 
@@ -3415,6 +3442,21 @@ body.panel-open .dev-reaction-lab {
 .map-toast.is-visible {
   opacity: 1;
   transform: translateY(0);
+}
+
+/* 未顯示時收合成 0 高。舊版只把 opacity 歸零，結果上一次的探索結果仍佔著
+   ~125px 版位，地圖與心域遠征入口之間會留下一塊看不見的空洞（私測回報）。
+   保留元素在 DOM 內，role="status" 的即時播報不受影響。 */
+.map-toast:not(.is-visible),
+html[data-ui="v2"] .map-toast:not(.is-visible) {
+  height: 0;
+  min-height: 0;
+  margin-top: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  border-top-width: 0;
+  border-bottom-width: 0;
+  overflow: hidden;
 }
 
 .map-toast.toast-success { border-color: rgba(74, 222, 128, 0.35); box-shadow: 0 0 14px rgba(74, 222, 128, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.08); }

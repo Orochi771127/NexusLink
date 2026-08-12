@@ -2,12 +2,16 @@
    月湖為當前所在，其餘區域為遠方鎖定；無完成度 %、無倒數、無 FOMO。
    全 CSS/SVG 佔位，不匯入任何底圖 PNG（之後若批准底圖再以獨立 pack 換上）。 */
 
+/* 面板本身就是捲動容器。舊版把 overflow 交給內層 .atlas-legend，7 個區域需要
+   441px 卻只分到 ~155px，等於只看得到 2.5 列、最後一列還被切一半（私測回報）。 */
 html[data-ui="v2"] .atlas-modal {
   width: min(420px, calc(100vw - 28px));
   top: calc(var(--top-safe) + 108px);
   bottom: calc(var(--bottom-safe) + var(--nav-block-h, 104px) + 16px);
   max-height: none;
-  overflow: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
   display: flex;
   flex-direction: column;
   scrollbar-width: thin;
@@ -168,14 +172,13 @@ html[data-ui="v2"] .atlas-region--completed .atlas-region-tag {
 /* 圖例 */
 html[data-ui="v2"] .atlas-legend {
   display: grid;
-  flex: 1 1 auto;
-  min-height: 88px;
-  overflow-y: auto;
+  flex: 0 0 auto;
+  min-height: 0;
+  overflow: visible;
   gap: 7px;
   margin: 14px 0 4px;
   padding: 0;
   list-style: none;
-  scrollbar-width: thin;
 }
 html[data-ui="v2"] .atlas-region {
   display: grid;

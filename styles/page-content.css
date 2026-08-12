@@ -67,25 +67,28 @@ html[data-ui="v2"] .page-view::after {
   content: none;
 }
 
+/* 標題列：eyebrow 佔滿第一列，第二列為 標題 | 章節藥丸 | 開啟心語。
+   三欄都在流內排版——舊版把「開啟心語」做成 position:absolute + padding-right:58px
+   的固定保留寬，但按鈕實寬 66px（中文四字），會壓到藥丸與下方第一張卡片。
+   改為真正的 grid 欄位後，寬度由內容決定，任何語言／字級都不會再疊字。 */
 html[data-ui="v2"] .page-view__header {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 2px 12px;
-  align-items: end;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: 2px 8px;
+  align-items: center;
   margin-bottom: 14px;
-  padding-right: 58px;
 }
 
 html[data-ui="v2"] .page-soul-talk-action {
-  position: absolute;
-  top: 0;
-  right: 0;
+  position: relative;
+  align-self: center;
+  justify-self: end;
   display: inline-grid;
   place-items: center;
   min-width: 52px;
-  min-height: 44px;
-  padding: 0 8px;
+  min-height: 34px;
+  padding: 5px 8px;
   border: 1px solid rgba(124, 231, 255, 0.34);
   border-radius: 14px;
   color: var(--v3-cyan-300, #7ce7ff);
@@ -95,6 +98,14 @@ html[data-ui="v2"] .page-soul-talk-action {
   font-weight: 700;
   letter-spacing: 0.04em;
   cursor: pointer;
+}
+
+/* 視覺框收到 34px 以免撐高標題列，觸控命中範圍仍補到 44px（iOS 最小目標）。
+   只往上下補：寬度本來就有 66px，左右外擴會讓 header 的 scrollWidth 溢出。 */
+html[data-ui="v2"] .page-soul-talk-action::after {
+  position: absolute;
+  inset: -5px 0;
+  content: "";
 }
 
 html[data-ui="v2"] .page-soul-talk-action:hover,
