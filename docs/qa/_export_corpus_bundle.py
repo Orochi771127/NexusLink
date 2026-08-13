@@ -82,12 +82,26 @@ def load_companion_packs(companion_dir):
     return packs
 
 
+class CorpusSourceMissing(RuntimeError):
+    """The upstream corpus is not where this exporter expects it."""
+
+
 def load_all_response_packs():
     response_packs = {}
     templates_by_companion = {}
 
+    # Previously this returned empty dicts, and main() then overwrote the bundle
+    # with zero companion dialogue while printing a success line. The export is
+    # the only source of every companion's Soul Talk lines, so a missing upstream
+    # must stop the run rather than silently produce an empty bundle.
     if not PACKS_ROOT.exists():
-        return response_packs, templates_by_companion
+        raise CorpusSourceMissing(
+            f"response pack source not found: {PACKS_ROOT}\n"
+            f"  The exporter reads companion dialogue from <corpus>/response_packs/<companion>/*.json.\n"
+            f"  Refusing to write {OUT_PATH.name}, because doing so would replace every\n"
+            f"  companion's lines with an empty bundle.\n"
+            f"  Restore the directory in {CORPUS_ROOT.name}, or point PACKS_ROOT at its new location."
+        )
 
     for companion_dir in sorted(PACKS_ROOT.iterdir()):
         if not companion_dir.is_dir():
@@ -112,6 +126,15 @@ def main():
 
     pack_count = sum(len(packs) for packs in response_packs.values())
     template_count = sum(len(doc.get("templates", [])) for doc in templates_by_companion.values())
+
+    # Second guard: the directory can exist and still yield nothing (empty, or a
+    # layout change). Writing that out is the same data loss as the missing-root
+    # case, so refuse it too rather than trusting the directory check alone.
+    if pack_count == 0:
+        raise CorpusSourceMissing(
+            f"found {PACKS_ROOT} but it yielded 0 companion packs.\n"
+            f"  Refusing to overwrite {OUT_PATH.name} with an empty bundle."
+        )
 
     bundle = {
         "version": "1.2.0-multi-companion-packs",
