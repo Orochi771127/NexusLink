@@ -17,6 +17,9 @@ const defaultState = {
     }
   ],
   defense: 35,
+  // 邊界壓力計：由 semanticSoulModel 每回合重算，UI 綁定用。
+  boundaryPressure: 0,
+  boundaryBand: "open",
   touchFatigue: 0,
   lastTouchAt: null,
   lastRejectAt: null,

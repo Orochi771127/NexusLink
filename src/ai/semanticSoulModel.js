@@ -1,6 +1,29 @@
 import { clamp } from "../utils/clamp.js";
 
+// 邊界壓力的展示分級。數值本身早就在算，但沒有任何表面看得到它，玩家因此
+// 只能在被拒絕的當下才知道自己越線了。分級是給 UI 的「邊界壓力計」用的，
+// 讓挫折變成可讀的機制，而不是突如其來的冷淡。
+export const BOUNDARY_BANDS = Object.freeze({
+  OPEN: "open",
+  NARROWING: "narrowing",
+  GUARDED: "guarded"
+});
+
+export const BOUNDARY_BAND_THRESHOLDS = Object.freeze({
+  narrowing: 0.45,
+  guarded: 0.72
+});
+
+export function deriveBoundaryBand(boundaryPressure = 0) {
+  const pressure = clamp(Number(boundaryPressure) || 0, 0, 1);
+  if (pressure >= BOUNDARY_BAND_THRESHOLDS.guarded) return BOUNDARY_BANDS.GUARDED;
+  if (pressure >= BOUNDARY_BAND_THRESHOLDS.narrowing) return BOUNDARY_BANDS.NARROWING;
+  return BOUNDARY_BANDS.OPEN;
+}
+
 export function deriveSemanticSoulState(state = {}, analysis = {}) {
+  const boundaryPressure = deriveBoundaryPressure(state, analysis);
+
   return {
     bond: clamp(state.bond ?? 0, 0, 100),
     trust: clamp(state.trust ?? 0, 0, 100),
@@ -9,7 +32,8 @@ export function deriveSemanticSoulState(state = {}, analysis = {}) {
     joySorrow: deriveJoySorrow(state, analysis),
     fearCourage: deriveFearCourage(state),
     bondAffinity: deriveBondAffinity(state),
-    boundaryPressure: deriveBoundaryPressure(state, analysis),
+    boundaryPressure,
+    boundaryBand: deriveBoundaryBand(boundaryPressure),
     stability: deriveStability(state),
     recentTouchCount: clamp((state.blockedTouchCount || 0) + (state.spamScore || 0), 0, 999),
     lastInteraction: {

@@ -1,3 +1,5 @@
+import { isLoadBearingMemory } from "../ai/memoryRecallPolicy.js";
+
 export const STORAGE_LIMITS = Object.freeze({
   memories: 50,
   habitatTraces: 50,
@@ -10,6 +12,19 @@ export const STORAGE_LIMITS = Object.freeze({
   companionAnchorDetailMaxLength: 48,
   traceMaxAgeMs: 1000 * 60 * 60 * 24 * 14
 });
+
+// 情緒記憶滿載時的保留權重。強度是主軸；已沉澱／已轉化的記憶代表走過來的過程，
+// 比同強度的新鮮情緒更值得留下；已封存／已放下的則優先讓位。
+export const RETENTION_STATUS_BONUS = Object.freeze({
+  transformed: 0.35,
+  settled: 0.2,
+  fresh: 0,
+  archived: -0.1,
+  released: -0.25
+});
+
+export const RETENTION_RECENCY_WINDOW_MS = 1000 * 60 * 60 * 24 * 25;
+export const RETENTION_RECENCY_WEIGHT = 0.25;
 
 const RAW_TRANSCRIPT_STATE_FIELDS = new Set([
   "chatHistory",
@@ -71,8 +86,12 @@ export function sanitizeEmotionalMemory(memory, now = Date.now()) {
 
   const allowedStatuses = new Set(["fresh", "settled", "transformed", "archived", "released"]);
 
+  // type 與 memoryType 是承重記憶的身分依據（awakening_memory / apology）。
+  // 過去被 sanitize 丟掉，存檔往返一次就只剩 theme/source 撐著保護判定。
   return {
     id: String(memory.id || `emem_${now}`),
+    type: String(memory.type || "").slice(0, 40),
+    memoryType: String(memory.memoryType || "").slice(0, 40),
     theme: String(memory.theme || "未命名情緒").slice(0, 20),
     label: String(memory.label || "情緒回聲").slice(0, 40),
     emotion: String(memory.emotion || "unknown").slice(0, 32),
@@ -117,6 +136,53 @@ export function applyRollingLimit(list, limit) {
   return list.slice(-limit);
 }
 
+export function memoryRetentionWeight(memory, now = Date.now()) {
+  if (!memory) return Number.NEGATIVE_INFINITY;
+
+  const intensity = Number.isFinite(memory.intensity)
+    ? Math.max(0, Math.min(1, memory.intensity))
+    : 0.4;
+  const statusBonus = RETENTION_STATUS_BONUS[memory.status] ?? 0;
+  const createdAt = Number.isFinite(memory.createdAt) ? memory.createdAt : now;
+  const age = Math.max(0, now - createdAt);
+  const recency =
+    RETENTION_RECENCY_WEIGHT * (1 - Math.min(1, age / RETENTION_RECENCY_WINDOW_MS));
+
+  return intensity + statusBonus + recency;
+}
+
+// 取代情緒記憶的 FIFO 淘汰。承重記憶（初醒、道歉／衝突修復、羈絆里程碑）永不因
+// 容量被丟棄；其餘依保留權重競爭剩餘名額。回傳仍保持原本的寫入先後順序，
+// 因為 findNewBondMilestone 與棲地痕跡都依賴這個順序。
+export function applyWeightedRetention(list, limit, now = Date.now()) {
+  if (!Array.isArray(list)) return [];
+  if (!Number.isFinite(limit) || limit <= 0) return [];
+  if (list.length <= limit) return list;
+
+  const loadBearing = [];
+  const ordinary = [];
+  list.forEach((memory, index) => {
+    (isLoadBearingMemory(memory) ? loadBearing : ordinary).push({ memory, index });
+  });
+
+  // 承重記憶本身就超過上限時，仍必須守住容量：保留最新的那些。
+  if (loadBearing.length >= limit) {
+    return loadBearing.slice(-limit).map((entry) => entry.memory);
+  }
+
+  const kept = ordinary
+    .slice()
+    .sort((left, right) => {
+      const delta = memoryRetentionWeight(right.memory, now) - memoryRetentionWeight(left.memory, now);
+      return delta !== 0 ? delta : right.index - left.index;
+    })
+    .slice(0, limit - loadBearing.length);
+
+  return [...loadBearing, ...kept]
+    .sort((left, right) => left.index - right.index)
+    .map((entry) => entry.memory);
+}
+
 export function isTraceActive(trace, now = Date.now()) {
   if (!trace) return false;
   if (trace.expiresAt !== null && Number.isFinite(trace.expiresAt) && trace.expiresAt < now) return false;
@@ -137,11 +203,12 @@ export function pruneStateForStorage(state, now = Date.now(), limits = STORAGE_L
     limits.habitatTraces
   );
 
-  const emotionalMemories = applyRollingLimit(
+  const emotionalMemories = applyWeightedRetention(
     (state.emotionalMemories || [])
       .map((memory) => sanitizeEmotionalMemory(memory, now))
       .filter(Boolean),
-    limits.emotionalMemories
+    limits.emotionalMemories,
+    now
   );
 
   const companionAnchors = applyRollingLimit(

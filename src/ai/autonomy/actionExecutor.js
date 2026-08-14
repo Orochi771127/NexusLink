@@ -48,6 +48,10 @@ export function executeAutonomousAction({
   if (!coerced.shouldRewardRelationship) {
     stateMutation.shouldRewardRelationship = false;
     stateMutation.shouldTriggerMilestone = false;
+    // shouldRewardRelationship 只擋里程碑，擋不住 statePatch 裡的 bond+1——
+    // applyStatePatch 會照寫。不獎勵的回合必須真的不推進關係，但邊界路徑的
+    // trust 扣分要留著，所以只封住「上升」，不動「下降」。
+    holdRelationshipFloorOnly(stateMutation.statePatch, state);
   }
   if (!coerced.shouldCreateMemory) {
     stateMutation.shouldCreateMemory = false;
@@ -96,7 +100,11 @@ export function executeAutonomousAction({
   let shouldSpeak = coerced.shouldSpeak;
   let shouldStaySilent = !shouldSpeak;
 
-  if (coerced.selectedAction === "stay_silent" || coerced.selectedAction === "body_cue_only") {
+  if (
+    coerced.selectedAction === "stay_silent" ||
+    coerced.selectedAction === "body_cue_only" ||
+    coerced.selectedAction === "lower_interaction_intensity"
+  ) {
     shouldSpeak = false;
     shouldStaySilent = true;
     reply = "";
@@ -174,6 +182,18 @@ export function executeAutonomousAction({
     forbiddenPhraseDetected: sanitized.forbiddenPhraseDetected,
     policyValidation: validation
   };
+}
+
+function holdRelationshipFloorOnly(statePatch, state = {}) {
+  if (!statePatch || typeof statePatch !== "object") return;
+
+  for (const key of ["bond", "trust"]) {
+    if (!Object.prototype.hasOwnProperty.call(statePatch, key)) continue;
+    const current = Number(state[key]) || 0;
+    const proposed = Number(statePatch[key]);
+    if (!Number.isFinite(proposed)) continue;
+    statePatch[key] = Math.min(proposed, current);
+  }
 }
 
 function trimToShortReply(text) {

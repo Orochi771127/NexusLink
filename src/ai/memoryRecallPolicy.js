@@ -42,8 +42,21 @@ export function isConflictApologyMemory(memory) {
   );
 }
 
+export function isBondMilestoneMemory(memory) {
+  if (!memory) return false;
+  return memory.source === "bond" || /^bond_milestone_/.test(String(memory.id || ""));
+}
+
 export function isProtectedFromImplicitRecall(memory) {
   return isAwakeningMemory(memory) || isConflictApologyMemory(memory);
+}
+
+// 承重記憶：關係史本身，不得因容量上限被淘汰。
+// 初醒與道歉／衝突／邊界修復同時受隱性召回保護；羈絆里程碑不受召回保護
+// （它本來就該被自然提起），但一旦被淘汰，findNewBondMilestone 會重新觸發
+// 同一階里程碑，違反 bondMilestoneEngine 的「只增、不可重來」契約。
+export function isLoadBearingMemory(memory) {
+  return isProtectedFromImplicitRecall(memory) || isBondMilestoneMemory(memory);
 }
 
 export function isExplicitRecallRequest(inputText = "") {

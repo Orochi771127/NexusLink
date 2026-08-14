@@ -402,6 +402,28 @@ def run_crystal_lifecycle(node: str):
     return result
 
 
+def run_memory_scar_retention(node: str):
+    result = run_command(
+        "memory_scar_retention",
+        [node, "docs/qa/memory-scar-retention-cases.mjs"],
+        timeout=30,
+    )
+    payload = result.get("json") or {}
+    result["ok"] = result["exit_code"] == 0 and payload.get("failed") == 0
+    return result
+
+
+def run_energy_boundary_teeth(node: str):
+    result = run_command(
+        "energy_boundary_teeth",
+        [node, "docs/qa/energy-boundary-teeth-cases.mjs"],
+        timeout=30,
+    )
+    payload = result.get("json") or {}
+    result["ok"] = result["exit_code"] == 0 and payload.get("failed") == 0
+    return result
+
+
 def run_map_first_session(node: str):
     result = run_command(
         "map_first_session",
@@ -1101,6 +1123,8 @@ def main():
         )
         report["checks"]["companionGrowthUi"] = run_companion_growth_browser(report["baseUrl"])
         report["checks"]["crystalLifecycle"] = run_crystal_lifecycle(node)
+        report["checks"]["memoryScarRetention"] = run_memory_scar_retention(node)
+        report["checks"]["energyBoundaryTeeth"] = run_energy_boundary_teeth(node)
         report["checks"]["mapFirstSession"] = run_map_first_session(node)
         report["checks"]["mapFirstSessionUi"] = run_map_first_session_ui(report["baseUrl"])
         report["checks"]["assetIntegrity"] = run_asset_integrity(node)

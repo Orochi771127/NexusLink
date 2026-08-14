@@ -9,6 +9,7 @@ import { isSafetyTerminalDecision } from "./safetyShield.js";
 import { dispatchRaphaelAnimationCue } from "./raphaelAnimationBridge.js";
 import { mergeCompanionAnchors } from "./dialogue/companionAnchorPolicy.js";
 import { updateTurnCounter, pruneCompanionAnchors } from "./memory/memoryLifecycleEngine.js";
+import { deriveBoundaryBand, deriveBoundaryPressure } from "./semanticSoulModel.js";
 
 const NON_REWARDING_MODES = new Set(["safety_redirect", "withdraw", "reject"]);
 
@@ -58,6 +59,9 @@ export function applyRaphaelCoreResult(
   }
 
   if (!isSafetyTerminal) {
+    // 邊界壓力在突變後重算，讓「邊界壓力計」顯示的是這一回合之後的真實讀數。
+    state.boundaryPressure = deriveBoundaryPressure(state, coreResult.analysis || {});
+    state.boundaryBand = deriveBoundaryBand(state.boundaryPressure);
     state.habitatRepairFactor = calculateHabitatRepairFactor(state.emotionalMemories);
     state.reactionPreview =
       mutation.statePatch?.reactionPreview ||
