@@ -1,13 +1,13 @@
 # COMPANION_GROWTH_CONTRACT_V1.md
 # 心核夥伴養成與覺醒契約 v1
 
-> **狀態**：`ACTIVE DESIGN CONTRACT / G1 + G2 + G3 + G3.1 CARE SOURCE IMPLEMENTED / ORBIT D0 CROSS-CONTRACT REBASELINED / G4+ NOT YET IMPLEMENTED`
+> **狀態**：`ACTIVE DESIGN CONTRACT / G1 + G2 + G3 + G3.1 CARE SOURCE IMPLEMENTED / ORBIT D0 CROSS-CONTRACT REBASELINED / ART-ONLY FORMAL FORMS EXIST / GROWTH G4+ RUNTIME NOT IMPLEMENTED`
 >
-> **Owner direction**：2026-07-17 已核准此契約與 G1 session-only 切片；2026-07-18 核准 G2 GROUNDWORK；2026-07-22 核准 G3／G3.1 EXPERIENCE；2026-08-01 核准 Orbit D0 文件重定版。現已接入 per-companion 持久狀態、正式 key factory、bounded evidence／coverage、readiness／willingness、質性 Growth UI，以及由 Heart Phase completion 擁有的 `care` source。現行 live source owner 為 exploration、emotional standoff、care；Orbit first-clear 沿用 `exploration` family，不另開可農 `orbit` family。夥伴改寫只有在玩家第二次明示接受後才可封存 `respected_rewrite` consent anchor。三-family readiness 現在可經包含 standoff 的流程形成，但不對峙路徑仍未完成；G4 覺醒邀請／stage advance、G5 形態資產與 Orbit 心相展開 runtime 尚未實作。涉及 `assets/**` 或 `pixiApp.js` 時，仍須依 GROUNDWORK 核准範圍施工。
+> **Owner direction**：2026-07-17 已核准此契約與 G1 session-only 切片；2026-07-18 核准 G2 GROUNDWORK；2026-07-22 核准 G3／G3.1 EXPERIENCE；2026-08-01 核准 Orbit D0 文件重定版；2026-08-14 核准 EVO-00 文件重對齊（本輪只改契約／驗收／handoff／Ledger，不改 Runtime）。現已接入 per-companion 持久狀態、正式 key factory、bounded evidence／coverage、readiness／willingness、質性 Growth UI，以及由 Heart Phase completion 擁有的 `care` source。現行 live source owner 為 exploration、emotional standoff、care；Orbit first-clear 沿用 `exploration` family，不另開可農 `orbit` family。夥伴改寫只有在玩家第二次明示接受後才可封存 `respected_rewrite` consent anchor。三-family readiness 現在可經包含 standoff 的流程形成，但**第三階段不對峙路徑仍未完整可達**；**Reflection production provenance 尚未正式啟用**。**Growth G4**（覺醒邀請／rewrite／defer／accept／stage advance）尚未實作。11 隻角色的 22 個進化形態資產已完成，但仍是 **art-only**：`runtimeAuthority=false`、`runtimeFormSwapReady=false`；save／store／registry／Pixi／renderer 尚未正式接線。`evolutionLines.js` 不得成為正式 stage runtime authority。涉及 `assets/**` 或 `pixiApp.js` 時，仍須依 GROUNDWORK 核准範圍施工。
 >
-> **權威關係**：本文件服從 `NEXUS_LINK_MASTER_CANON_v3.1.md`，是 Companion Growth／心核夥伴養成的現行**設計與驗收 SSOT**。G1 提供當頁、可逆的質性心相觀察，phase／session 本身不持久；G2 提供 per-companion relationship／growth truth、migration 與 Codex 隔離；G3 提供正式 evidence foundation、readiness／willingness 評估與質性痕跡呈現；G3.1 只讓確實完成並存檔成功的 Heart Phase care moment 寫入一個 deterministic root。G3／G3.1 都不會自動升階，也不等於正式覺醒玩法已完成。`docs/r2-canon/R2_EVOLUTION_SYSTEM.md` 的等級、勝場、道具、五階與能力雷達只保留為歷史參考，不得作新實作依據。
+> **權威關係**：本文件服從 `NEXUS_LINK_MASTER_CANON_v3.1.md`，是 Companion Growth／心核夥伴養成的現行**設計與驗收 SSOT**。G1 提供當頁、可逆的質性心相觀察，phase／session 本身不持久；G2 提供 per-companion relationship／growth truth、migration 與 Codex 隔離；G3 提供正式 evidence foundation、readiness／willingness 評估與質性痕跡呈現；G3.1 只讓確實完成並存檔成功的 Heart Phase care moment 寫入一個 deterministic root。G3／G3.1 都不會自動升階，也不等於正式覺醒玩法已完成。正式進化 Runtime 的可測 assertion 使用 `ACCEPTANCE.md` 的 **SOV-01～SOV-12** 命名空間，避免與 Art G4（Texture Sampling）混淆。`docs/r2-canon/R2_EVOLUTION_SYSTEM.md` 的等級、勝場、道具、五階與能力雷達只保留為歷史參考，不得作新實作依據。
 >
-> **不涵蓋**：`src/ai/evolution/**` 是 Raphael 自我評估／patch 管線，不是夥伴養成；G2 只把既有高風險 terminal state 收緊為完整 relationship 零變化，不改 RaphaelCore canonical reply、人格或記憶權限。
+> **不涵蓋**：`src/ai/evolution/**` 是 Raphael 自我評估／patch 管線，不是夥伴正式形態進化 Runtime；`src/ai/awakening/raphaelAwakeningGate.js` 的 `getAwakeningStage` 只描述第一次觸碰的 dormant／stirring／awakened，不是 formal stage。G2 只把既有高風險 terminal state 收緊為完整 relationship 零變化，不改 RaphaelCore canonical reply、人格或記憶權限。
 
 ---
 
@@ -27,19 +27,25 @@
 
 ---
 
-## 2. 2026-08-01 runtime 真相
+## 2. 2026-08-14 runtime 真相（EVO-00 重對齊）
 
-本契約不把 transitional UI 誤稱為已完成的養成系統。
+本契約不把 transitional UI、美術包或 schema 佔位欄位誤稱為已完成的正式進化 Runtime。
 
 | 現況 | 判定 |
 |---|---|
-| `evolutionLines.js` 的每條角色線已有 3 個 stage | 三段資料形狀保留；`bondThreshold` 只剩 compatibility data。G3 readiness gate 已存在；G3.1 已補 care family 與明示接受改寫的 consent anchor，但不對峙路徑仍缺獨立 source，且 G4 stage offer／advance 未接入 |
+| Growth G1／G2／G3／G3.1 | **已實作**。per-companion 狀態、evidence foundation、readiness／willingness、care source owner 已接入。 |
+| Reflection production provenance | **尚未正式啟用**。`reflectionGrowthOwner.js` 已有 fail-closed（`source_owner_unverifiable`），但 G3.2 production 路徑仍未成為 live source owner。 |
+| 第三階段不對峙路徑 | **尚未完整可達**。Care + Exploration + Reflection + Chapter 是契約允許的組合，但 Reflection production 未啟用，故不能宣稱不靠 standoff 的 Stage 3 readiness 已完整可玩。 |
+| Growth G4 offer／rewrite／defer／accept／stage advance | **尚未實作**。G2 schema 已有 `offeredStage`／`deferredAt` 佔位欄位，這只是資料形狀，不是邀請流程。 |
+| 11 隻角色 × 22 個進化形態資產 | **美術包已完成，仍是 art-only**。索引：`assets/characters/formal-evolution-index.json`、`assets/characters/formal-evolution-animation-r4.json`。176 張 2048×2048 sheet、2816 格。 |
+| `runtimeAuthority` / `runtimeFormSwapReady` | **兩者皆為 `false`**。EVO-00～EVO-05 不得把它們改成 `true`。 |
+| save／store／registry／Pixi／renderer | **尚未正式接線**到 Stage 2／3 形態。現行 live fallback 仍是 Stage 1 illustrated runtime。 |
+| `evolutionLines.js` | **compatibility data only**。`bondThreshold` 與舊五階標籤不得成為 11 隻正式角色的 stage catalog authority。 |
 | `codexController` 讀指定 companion 的 formal stage／legacy display floor | 已隔離；inactive archive 有明示，top-level bond 不會解鎖另一隻夥伴 |
-| `companionStates.byId` 保存 relationship／growth；14 個頂層欄位是 active mirror | G2 已接入；A→B→A 原子封存／hydrate，未知 id fail closed，仍只用主存檔 key |
-| 舊 memory / milestone 多數沒有 `companionId` | 不可把舊歷史複製給整個 roster，也不可臆測逐筆歸屬 |
-| Growth 頁已有 Heart Phase 與四種質性練習 | phase、當頁觀察與未完成改寫仍是 session-only；接受並完成的練習可寫一個 care root，玩家接受夥伴改寫時可封存 consent anchor。休息、拒絕、延後、安全中止與存檔失敗全為零 evidence；遠征碎晶／crafting 不掛在 Growth |
-| Orbit first-clear 已可寫 `exploration` evidence；stage 目前未投影進 Orbit 物理 | D0 只允許未來把已擁有 stage 投影為 normalized sidegrade；shared-control、情緒動勢、心相展開與 Stage 2／3 form runtime 仍未接入 |
-| registry 只有單一角色 portrait／animation manifest | 尚無正式 Stage 2／3 形態資產對照；不可假裝已換形 |
+| `companionStates.byId` 保存 relationship／growth；頂層欄位是 active mirror | G2 已接入；A→B→A 原子封存／hydrate，未知 id fail closed，仍只用主存檔 key |
+| 舊 memory / milestone 多數沒有 `companionId` | 不可把舊歷史複製給整個 roster，也不可臆測逐筆歸屬；legacy unverifiable provenance 必須 fail closed |
+| Growth 頁已有 Heart Phase 與四種質性練習 | phase、當頁觀察與未完成改寫仍是 session-only；接受並完成的練習可寫一個 care root。休息、拒絕、延後、安全中止與存檔失敗全為零 evidence |
+| Orbit first-clear 已可寫 `exploration` evidence；stage 目前未投影進 Orbit 物理 | D0 只允許未來把已擁有 stage 投影為 normalized sidegrade；Stage 2／3 form runtime 仍未接入 |
 | `growthHint` 只有 action effect 寫入，無 consumer／normalizer | 非正式狀態，不可據此宣稱養成已完成 |
 
 現行 0／25／70 門檻只用來解釋舊圖鑑的可見結果。正式遷移依 §7.2 分開保存 active companion 的一次性 stage floor 與 inactive veteran 的 display-only Codex reveal floor；新玩家或新成長紀錄不得再以 bond 單獨晉階。
@@ -133,6 +139,29 @@ Willingness 另外檢查（G3 已固定 typed enum／profile gate 並納入 muta
 - Orbit 的 `BondAffinity`、JoySorrow、dialogueCount、勝場、碰撞數、連鎖數、界紋電荷或戰中 meter 都不是 readiness／willingness gate。場中「心相展開」只能呈現進場前已持久解鎖且夥伴當場願意使用的 stage；不得在 Orbit session 內建立 stage offer 或 advance。
 
 正式 UI 不顯示精確門檻、差幾點、最佳行動或倒數，只顯示質性線索與實際發生過的證據。
+
+### 5.2 Growth G4 詞彙（尚未實作；EVO-00 先鎖定語意）
+
+> **命名空間**：本節的 **Growth G4** 是「覺醒邀請與 stage advance」。它不是 `ACCEPTANCE.md` §G 的 **Art G4（Texture Sampling）**。後續可測 assertion 一律使用 **SOV-01～SOV-12**。
+>
+> 下列詞彙是契約定義，不是已完成 Runtime。G2 schema 的 `offeredStage`／`deferredAt` 只是佔位欄位。
+
+| 詞彙 | 白話意思 | 契約規則 |
+|---|---|---|
+| **offer** | 夥伴主動提出「要不要一起走向下一階」 | 只能由 readiness + willingness 同時成立時發出；玩家不能按下強制進化。一次只能對 **exact-next-stage** 發出。 |
+| **rewrite** | 夥伴接受方向，但改寫儀式怎麼進行 | 改寫後仍須玩家第二次明示接受才可封存；未接受的 rewrite 是 session-only，零 stage mutation。 |
+| **defer** | 玩家或夥伴說「改天／還不是時候」 | 必須 **no-penalty**。不扣 bond／trust、不產生 missed flag、不設期限、不進 evidence。 |
+| **accept** | 玩家明示接受目前這一次合法 offer | 必須先通過 **critical-save**，存檔成功後才能把 visible stage 發布給 UI／renderer。 |
+| **re-offer** | 延後之後，在新的合法當場 context 再次提出 | 必須是 **lawful re-offer**：新 context 或明示零懲罰的 regulation／repair 後重新評估；離線等待本身不能自動變 willing。 |
+| **exact-next-stage** | 只能前進目前的下一階 | `initial_awakened → resonant_mature` 或 `resonant_mature → final_awakened`。禁止跳階、禁止跨角色、禁止把 Stage 1 直接寫成終局。 |
+| **idempotency** | 同一合法 accept 重複提交不會再升一階 | 已完成 stage 的重複 accept 必須回傳已完成結果，不得再寫 evidence、不得再播演出、不得再改 renderer。 |
+| **stale-offer rejection** | 過期、錯伴侶、錯 stage、錯 generation 的邀請必須拒絕 | 例如：切換夥伴後仍送出舊 offer、stage 已變、save 已前進、offer token 不匹配。拒絕時零 stage mutation。 |
+| **no-penalty defer** | 延後不是失敗 | 關係、stage、evidence、readiness coverage 完全不變；UI 不得顯示倒數、紅點或「錯過進化」。 |
+| **critical-save boundary** | 可見換形之前必須先存檔成功 | 順序固定：讀取 immutable current state → 建立並驗證獨立 candidate state → 將 candidate 傳入 critical persistence → 儲存成功後才把 candidate 發布成 canonical in-memory state → 最後發布 UI／Pixi intent。儲存失敗時直接丟棄 candidate；canonical state、store、localStorage 與畫面從頭到尾都維持舊 stage，不依賴事後 rollback 才恢復安全。 |
+| **renderer fallback** | 畫面載入失敗時不能弄髒已存檔的 stage | 同角色同 stage 近似 action → 同角色 Stage 1 明示 fallback → 最後安全姿勢。**禁止跨角色**。fallback 不回寫較低 stage。 |
+| **legacy provenance fail-closed** | 舊資料無法證明主人時，不准猜 | 缺 `companionId`、缺 sealed safety provenance、跨角色、原文推測，一律 `source_owner_unverifiable`。不得用 `activeCompanionId` 或 UI 現況補洞。 |
+| **safeHarbor terminal** | 安全港一開始就終止所有進化副作用 | 禁止 gameplay mutation、save、reward、memory、relationship、Growth evidence、evolution offer、stage advance、VFX telegraph、delayed callbacks、renderer transition、autonomous invitation。退出安全港也不得復活舊 offer。 |
+| **high-risk evidence exclusion** | 高風險回合永遠不是成長證據，也不能開邀請 | `growthSafetyExcluded=true` 在 source event 建立時封存，後代事件不能洗成 false。high-risk 前後完整 companion／growth／stage 必須完全不變。 |
 
 ---
 
@@ -383,17 +412,18 @@ projectOrbitEmbodimentProfile({
 
 | Phase | Layer | 內容 | 最低 gate／退出條件 |
 |---|---|---|---|
-| G0 | Docs | 本契約、Acceptance、legacy 與 agent/art 路由 | 文件一致；G1／G2／G3／G3.1 Care Source 已接入，G4+ 未實作的 runtime truth 明確；review findings 已封口 |
+| G0 | Docs | 本契約、Acceptance、legacy 與 agent/art 路由 | 文件一致；G1／G2／G3／G3.1 Care Source 已接入，**Growth G4+ Runtime 未實作**；EVO-00 已把 art-only 資產與 SOV 命名空間寫入契約 |
 | G1 | EXPERIENCE | **已實作**：只從本 session 合法事件衍生 qualitative tendency；Growth view model，不新增持久 schema | N2／N3／N4／N5／N8／N11 的 presentation subset + M1–M5 + H + I；4 種 practice、390×844、reduced motion |
 | G2 | GROUNDWORK | **已實作**：`companionStates`／full mirror inventory／normalize／migration／single-key save；active mirror 原子切換 | N1／N3／N9／N10／N11 + H + I；11-companion ring、veteran、corrupt、idempotent 全過 |
-| G3 | EXPERIENCE | 正式 key factory、evidence writer、coverage／compaction、readiness／willingness、Growth UI | ✅ Evidence Foundation 已接入；N1–N11 + safety／alias／repeat-50／compaction／source-owner browser tests 全過；不包含 G4 stage offer／advance |
+| G3 | EXPERIENCE | 正式 key factory、evidence writer、coverage／compaction、readiness／willingness、Growth UI | ✅ Evidence Foundation 已接入；N1–N11 + safety／alias／repeat-50／compaction／source-owner browser tests 全過；不包含 Growth G4 stage offer／advance |
 | G3.1 | EXPERIENCE | Heart Phase completion 成為 care source owner；夥伴改寫需第二次明示接受 | ✅ candidate-first critical save、canonical result validation、A/B owner guard、全域 safety session invalidation、root／anchor dedupe 已接入；零 relationship／reward mutation |
-| G3.2 | EXPERIENCE | Reflection／Echo Sorting source owner + 不依賴 standoff 的獨立章節生活事件 | 下一個安全切片；先封 immutable provenance、零記憶臆測與 source-owner gate，再考慮 G4 offer |
-| Orbit D0 | Docs | **本次重定版**：已擁有 formal stage 可投影為 normalized Orbit sidegrade；心相展開不得戰中升階 | O12–O17 + N2／N5／N7／N11 的文件一致性；不改 runtime／schema／assets |
-| G4 | EXPERIENCE | 夥伴主動 stage offer、可延後的覺醒儀式、heart-phase 表現 | N2／N3／N5／N7／N8／N11 + H + I；無強制、無 FOMO、無獎勵、可再提出 |
-| G5 | GROUNDWORK + ART | 一隻 companion 的完整 Stage 2 視覺資產、renderer switch 與可選 Orbit manifestation profile | N2／N11 + O15–O17 + G1–G7 + H + I；512 asset readiness、normalized physics、mobile memory、真機與 human art gate |
+| G3.2 | EXPERIENCE | Reflection／Echo Sorting source owner + 不依賴 standoff 的獨立章節生活事件 | **尚未正式啟用**；對應未來 EVO-01。先封 immutable provenance、零記憶臆測與 source-owner gate，再考慮 Growth G4 offer |
+| Orbit D0 | Docs | 已擁有 formal stage 可投影為 normalized Orbit sidegrade；心相展開不得戰中升階 | O12–O17 + N2／N5／N7／N11 的文件一致性；不改 runtime／schema／assets |
+| **Growth G4** | EXPERIENCE | 夥伴主動 stage offer、rewrite、defer、accept、exact-next-stage、idempotent advance | **尚未實作**。對應 EVO-02／EVO-03。驗收使用 SOV-01～SOV-08、SOV-10；不得與 Art G4 混淆 |
+| G5 art-only | ART | 11 隻 × 22 形態 Sprite Sheet 已完成機械 QC | **美術完成、Runtime 未接線**。`runtimeAuthority=false`、`runtimeFormSwapReady=false`。這不是 renderer promotion |
+| G5 runtime | GROUNDWORK + RENDERER | catalog adapter、Pixi stage-aware loader、canary、promotion | **尚未實作**。對應 EVO-04／EVO-05／EVO-06。驗收使用 SOV-09、SOV-11、SOV-12 與 Art G1–G7 |
 
-G1 不得偷偷建立 localStorage 欄位；G2 只完成每隻夥伴的狀態地基；G3／G3.1 只完成 evidence/readiness/willingness 與 care source，不得把它宣稱為完整正式覺醒玩法已上線。G4 開工前必須先證明 readiness 有不依賴 standoff 的產品路徑。
+G1 不得偷偷建立 localStorage 欄位；G2 只完成每隻夥伴的狀態地基；G3／G3.1 只完成 evidence/readiness/willingness 與 care source，不得把它宣稱為完整正式覺醒玩法已上線。**Growth G4 開工前必須先證明 readiness 有不依賴 standoff 的產品路徑**（EVO-01）。11 隻進化資產存在，不構成 Growth G4 或 renderer 已完成。
 
 表中的 subset 只是各 phase 的最低退出 gate，不取代回歸責任；任何 merge／runtime-complete 宣告仍須重跑 N1–N11、相關既有 Acceptance、web gate 與 human/mobile gate。
 
@@ -430,3 +460,43 @@ Companion Growth 只有在以下條件同時成立時，才能稱為 runtime-com
 - Orbit 的場中心相展開只呈現進場前已解鎖且當場願意使用的 stage；BondAffinity、JoySorrow、dialogueCount、命中、碰撞、勝負與 meter 都不能建立 stage offer／advance。
 - Orbit failure／retreat／replay 不刪記憶、不降 stage／coverage、不扣 relationship，也不形成額外 evidence；合法 first-clear 只沿 `exploration` family 去重一次。
 - `ACCEPTANCE.md` N1–N11、既有安全紅線、web gate 與 human/mobile gate 全部通過。
+- 正式進化 Runtime 另須通過 `ACCEPTANCE.md` **SOV-01～SOV-12**。文件寫入 SOV 不等於 Runtime 已完成。
+
+---
+
+## 12. 文件衝突（EVO-00 記錄；本次不改 Canon／AGENTS／CLAUDE）
+
+這些衝突必須讓後續 AI 看見。EVO-00 **禁止**修改 `NEXUS_LINK_MASTER_CANON_v3.1.md`、`AGENTS.md`、`CLAUDE.md`。若認為必須改那些檔，停在建議階段。
+
+1. **工具鏈允許 vs 本窗口範圍**：`origin/main` 的 `CLAUDE.md` 與 `AGENTS.md` 已允許 TypeScript、npm 依賴與 bundler／build step。但 EVO-00～EVO-06 **不進行工具鏈遷移**。允許現有 Vanilla JS ES Modules、JSDoc／`// @ts-check`、以及執行專案已存在且已核准的測試／QA scripts。未授權：新增 TypeScript 編譯流程、新增或更換 bundler、新增 npm runtime／dev dependency、修改 `package.json` 或 lockfile、把 JavaScript 全面遷移成 TypeScript、改變 GitHub Pages deployment root、建立新的 `dist` 發佈權威、改變 PixiJS／Three.js 載入方式。工具鏈升級應另開獨立 `BUILD-*` TASK_PACK。
+2. **兩個 G4**：`ACCEPTANCE.md` §G 的 G4 是 Texture Sampling（Art G4）。本契約的 G4 是 Awakening Invitation（Growth G4）。後續一律用 Art G4／Growth G4，或直接寫 SOV-xx。
+3. **`src/ai/evolution/**`**：Raphael 自我改進提案／patch 管線，不是 companion formal-form evolution runtime。
+4. **`src/data/evolutionLines.js`**：圖鑑 compatibility data，不是 11 隻正式角色的 stage catalog authority。
+5. **`getAwakeningStage`**：位於 `src/ai/awakening/raphaelAwakeningGate.js`，描述第一次觸碰的 dormant／stirring／awakened，不是 `initial_awakened`／`resonant_mature`／`final_awakened`。
+6. **auriowl Owner Lock**：`FORMAL_EVOLUTION_OWNER_LOCK_R2.md` 刻意排除 `auriowl` 的視覺鎖定（金羽戰鷹視覺改向，技術 ID 仍為 `auriowl`）。R4 動畫包含 11 隻。ID 不得改名；小梟是否當 canary 留給人類決定。
+
+---
+
+## 13. EVO TASK_PACK 對照（文件計畫；僅 EVO-00 已授權）
+
+| Pack | 目標 | Groundwork 觸點 | 對應 SOV |
+|---|---|---|---|
+| **EVO-00** | 契約重對齊、SOV 命名空間、handoff、Ledger | 只改文件 | 把 SOV 寫成可測契約；不實作 Runtime |
+| **EVO-01** | Reflection owner／safety provenance；證明不依賴 standoff 的 Stage 3 路徑可達 | `reflectionGrowthOwner.js`、memory／trace owner、safety provenance | SOV-07、SOV-10 |
+| **EVO-02** | 純狀態機：offer／rewrite／defer／accept／exact-next-stage／idempotency | `companionGrowthEngine.js`；禁止碰 DOM／Pixi／save | SOV-01～SOV-06 |
+| **EVO-03** | UI + critical-save；存檔成功才發布可見 stage | `companionGrowthController.js`、`saveManager.js`、`store.js`、Growth UI | SOV-03、SOV-05、SOV-08 |
+| **EVO-04** | 正式 catalog 與 Sprite Sheet manifest adapter | 新 catalog module；**不得**讓 `evolutionLines.js` 成為 authority；stage-aware／row-aware adapter | SOV-04、SOV-12 |
+| **EVO-05** | Renderer canary（建議 `greyshade-cat`／`auriowl`／`crystalfin-seahorse`，人類可改） | `spriteSheetAnimationLoader.js`、Pixi；同角色 fallback | SOV-09、SOV-12 |
+| **EVO-06** | 完整 QA 與 promotion 決策 | 旗標改 `true` 必須獨立 Owner／Groundwork，不可藏在別包 | SOV-11 與回歸 N／H／I／Art G |
+
+**PR 漂移**：EVO-01 開工前必須重新 fetch `origin/main`，重查 [PR #215](https://github.com/Orochi771127/NexusLink/pull/215)（會改 `defaultState.js`／`store.js`／memory／energy／boundary）與 [PR #216](https://github.com/Orochi771127/NexusLink/pull/216)（會改 `AGENTS.md`）。不得把 EVO-00 的舊基準直接當成 EVO-01 的永久基準。
+
+---
+
+## 14. 本窗口工具鏈範圍（不是長期憲法）
+
+這不是「Nexus Link 永遠不能用 TypeScript／npm／build」。這是為了讓進化 Runtime 的錯誤能被單獨定位。
+
+- **允許**：Vanilla JS ES Modules；JSDoc 與 `// @ts-check`；執行已存在的 npm scripts／QA；現有 local server。
+- **未授權**：新增編譯／bundler／runtime 或 dev dependency；改 lockfile；改 Pages 部署根；把進化模組單獨做成 TypeScript 雙軌。
+- 若發現現有已核准工具鏈可直接使用，先回報 `package.json`、lockfile、build script、CI、Pages 與 canon 依據，不得自行擴張。

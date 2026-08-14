@@ -19,6 +19,8 @@ import { LANGUAGE_CHANGED_EVENT, t } from "../i18n/i18n.js";
 export function createInteractionHintController({
   store,
   isPanelOpen,
+  isHomeActive,
+  isPresentationActive,
   isOnboardingActive,
   getCompanionTouchTarget,
   onCompanionTouch
@@ -26,6 +28,7 @@ export function createInteractionHintController({
   let el = null;
   let trackingFrame = null;
   let interactionInFlight = false;
+  let surfaceObserver = null;
 
   function ensureElement() {
     if (el) return el;
@@ -47,7 +50,9 @@ export function createInteractionHintController({
   function shouldShow(state) {
     if (!state?.onboarding?.completed) return false; // onboarding 進行中：不顯示
     if (state.firstTouchCompleted) return false; // 已學會怎麼摸 → 永久停止打擾
+    if (typeof isHomeActive === "function" && !isHomeActive()) return false;
     if (typeof isPanelOpen === "function" && isPanelOpen()) return false;
+    if (typeof isPresentationActive === "function" && isPresentationActive()) return false;
     if (typeof isOnboardingActive === "function" && isOnboardingActive()) return false;
     return true;
   }
@@ -75,6 +80,21 @@ export function createInteractionHintController({
     EventBus.on(LANGUAGE_CHANGED_EVENT, () => {
       if (el) el.setAttribute("aria-label", t("fl.hintTouch"));
     });
+    // PageRouter / PanelManager project their active surface onto body classes.
+    // Observe that presentation state so the hint hides/restores immediately
+    // without turning the animation frame used for position tracking into a
+    // second UI-state polling loop.
+    if (typeof MutationObserver === "function" && document.body) {
+      surfaceObserver = new MutationObserver(render);
+      surfaceObserver.observe(document.body, {
+        attributes: true,
+        attributeFilter: ["class", "data-first-session-loader"]
+      });
+      surfaceObserver.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ["class", "data-first-session-loader"]
+      });
+    }
     render();
   }
 
@@ -127,6 +147,13 @@ export function createInteractionHintController({
   return {
     bind,
     render,
+    dispose() {
+      surfaceObserver?.disconnect();
+      surfaceObserver = null;
+      stopTracking();
+      el?.remove();
+      el = null;
+    },
     getDiagnostics() {
       if (!el) return null;
       const bounds = el.getBoundingClientRect();
