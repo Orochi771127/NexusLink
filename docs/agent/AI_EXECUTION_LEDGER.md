@@ -9744,8 +9744,8 @@ HMAX promotion gates remain `staging_candidate` / `not_run` / `not_deployed` /
   22 later forms, 176 sheets and 2,816 passing cells.
 - Safe next action: publish this scoped asset package through PR to protected
   `main`; do not treat publication as Growth G4 or runtime-form activation.
-- Branch / commit: `codex/auriowl-wargle-evolution-pilot-r1` / included by the
-  completion commit for this package.
+- Branch / commit: `codex/auriowl-wargle-evolution-pilot-r1` /
+  `4778854f5ef08be45eee187f4a2e303adf54acbf` (complete scoped asset package).
 
 ### 2026-08-14 - Codex - Formal Evolution Animation R4 - VERIFIED PRE-PUBLISH
 
@@ -9774,8 +9774,8 @@ HMAX promotion gates remain `staging_candidate` / `not_run` / `not_deployed` /
 - Runtime boundary: all manifests retain `runtimeAuthority:false` and
   `runtimeFormSwapReady:false`. Save/store/registry/Pixi/Growth G4/Orbit/
   Expedition/RaphaelCore and Stage 1 assets are unchanged.
-- Branch / commit: `codex/auriowl-wargle-evolution-pilot-r1` / included by the
-  completion commit for this package.
+- Branch / commit: `codex/auriowl-wargle-evolution-pilot-r1` /
+  `4778854f5ef08be45eee187f4a2e303adf54acbf` (complete scoped asset package).
 
 ### 2026-08-13 - Codex - Remaining Twenty Formal Evolution Animation Batch R3 - IN PROGRESS
 
