@@ -5,6 +5,8 @@
 > 每條都標明：對應憲法、驗法（瀏覽器 / DevTools / 讀碼）、通過標準。
 > Fable 完成任一 TASK_PACK 後，在開工計畫指定的 Acceptance refs 上逐條自評，human 複驗。
 > 測試環境：`python -m http.server 5173` → `http://localhost:5173`，存檔 key = `nexusLinkR2State:v1`。
+>
+> **G4 命名空間（EVO-00）**：本檔 §G 的 **G4 是 Art G4／Texture Sampling**。Companion Growth 契約的 G4 是 **Growth G4／Awakening Invitation**，尚未實作。正式進化 Runtime 的獨立驗收使用本檔文末 **SOV-01～SOV-12**。文件寫入 SOV 不等於 Runtime 已完成。
 
 ---
 
@@ -174,8 +176,9 @@
 **G3 — Anchor、snap、scale 計算正確**
 - 通過：companion anchor = bottom-center（概念上 `x: 0.5, y: 1`）；final on-screen position snap 保留；scale 以 `frameHeight` 計算，不以整張 `sheetHeight` 計算。
 
-**G4 — Texture sampling 符合 illustrated pipeline**
+**G4 — Texture sampling 符合 illustrated pipeline（Art G4；不是 Growth G4）**
 - 通過：illustrated companion runtime 使用 linear sampling + mipmaps；清晰度來自 512 高解析母版縮小顯示，不靠 nearest-neighbor。
+- 命名空間：此條只驗美術取樣。覺醒邀請／stage advance 見文末 SOV-01～SOV-12，狀態為尚未實作。
 
 **G5 — Sheet 尺寸與 grid 可驗證**
 - 通過：任一 sprite sheet edge `<= 4096 px`；`sheet_width / cols` 與 `sheet_height / rows` 都是整數。
@@ -197,7 +200,7 @@
 - 通過：`saveManager.js` 仍為 `nexusLinkR2State:v1`；無其他模組直接 `localStorage.setItem`。
 
 **H3 — 效能紀律**
-- 通過：ticker 內無新增的昂貴操作 / 每幀 new-destroy；illustrated companion sampling 遵守 G4，companion position snap 遵守 G3；spark pool / resize 節流 / webgl guard 未被拆。
+- 通過：ticker 內無新增的昂貴操作 / 每幀 new-destroy；illustrated companion sampling 遵守 **Art G4（Texture Sampling）**，companion position snap 遵守 Art G3；spark pool / resize 節流 / webgl guard 未被拆。
 
 **H4 — LOCKED 屍體未被刪改**
 - 通過：`main.js` / `style.css` / `script.js` 原封不動；`node --check script.js` 仍通過。
@@ -371,6 +374,7 @@
 - **商業章節 / 旅痕 / 未來同行規格**：L1–L9 + D6 + H5 全過。
 - **黑鐵駭客五席 runtime promotion**：L10–L13 + D1–D2 + G1–G7 + H1–H5 + I 全過；仍須另完成真機、人工與 Owner launch gates 才可宣稱 launch-ready。
 - **Companion Growth / 心相養成**：N1–N11 + C1–C2 + D1–D2 + D6 + H1–H5 + I 全過。
+- **正式進化 Runtime（Growth G4 offer／stage／renderer）**：SOV-01～SOV-12 是獨立命名空間。EVO-00 只把契約寫成可測 assertion；**目前全部尚未實作或僅部分地基存在，不得宣稱 Runtime 通過**。後續 EVO pack 依各條標示的實作包逐條轉綠。
 - **共鳴圈 R2 棲地／反思／旅路星圖**：E7–E15 + N13–N15 + C1–C2 + D1–D2 + D6 + H1–H5 + I 全過；Reflection production activation 仍須另案 GROUNDWORK provenance gate。
 - **Heartcore Orbit D0 文件重定版**：Orbit／Growth 契約與 O12–O17 的取消、保留、權限與驗法必須互相一致；D0 不宣稱 O12–O17 runtime 已實作。
 - **Heartcore Orbit 後續實作包**：依實作範圍通過 O1–O17、D（全）、H 與 I；若碰 session-only resonance form 另跑 O15A；若碰正式形態資產／renderer promotion，另跑 G1–G7、H7–H9 與 human visual gate。
@@ -406,6 +410,8 @@
 ---
 
 ## N. Companion Growth / 心相養成契約
+
+> Growth 契約的「G4 覺醒邀請」**尚未實作**。請不要把本節 N1–N15 的已實作地基，讀成正式換形 Runtime 已完成。正式進化的獨立 assertion 在文末 **SOV-01～SOV-12**。
 
 **N1 — 成長屬於每一隻夥伴，不是全域戰力**
 - 驗法：準備兩隻已解鎖夥伴 A／B，寫入不同 relationship、growth 與身體狀態，執行 A→B→A、reload 與快速連換。
@@ -492,9 +498,9 @@
 - 驗法：`orbit-duel-cases.mjs`；連戰 budget 拒戰。
 - 通過：無網路 matchmaking；勝負不改 bond／trust；過熱可休息。
 
-**O5 — 遠征微光可匯流，但不農場、不開 G4**
+**O5 — 遠征微光可匯流，但不農場、不開 Growth G4／SOV stage offer**
 - 驗法：`orbit-settlement-cases.mjs`；首次通關寫 vault shards＋exploration evidence。
-- 通過：Orbit 每個 stage 僅首次通關寫 vault shard＋exploration evidence，重玩零永久獎勵；安全港零 evidence。Expedition 現有局內採集與重複結算保持原樣，不由 Orbit first-clear gate 截斷，且 `coreIntegrated:false` 不變。
+- 通過：Orbit 每個 stage 僅首次通關寫 vault shard＋exploration evidence，重玩零永久獎勵；安全港零 evidence。Expedition 現有局內採集與重複結算保持原樣，不由 Orbit first-clear gate 截斷，且 `coreIntegrated:false` 不變。此條的「不開 G4」是指不開啟覺醒邀請／stage advance，不是 Art G4 Texture Sampling。
 
 **O6 — 敗北情緒預設惜敗陪伴；可撤退且零懲罰進度**
 - 驗法：prototype／duel harness 的 outcome 映射；手動撤退。
@@ -625,3 +631,140 @@
 **Q10 — 高風險後續回合維持本機危機連續性**
 - 驗法：對自傷／他傷、藥物過量、急性醫療、正在發生的暴力、危險妄想／躁期、飲食疾患與物質危險，先觸發本機 system safety terminal，再連續輸入「已請人過來」、道謝、一般閒聊、重新載入後的一般句子、含糊的「現在安全了」及明確已完成的急診／醫護接手敘述；同步攔截 shadow、owner canary 與瀏覽器 fetch／token 取得。
 - 通過：在明確已完成的現實支援接手前，`safeHarborMode` 跨回合與重新載入維持；含糊、未來式、道謝或話題切換不能解除。所有連續性回合與解除當回合都必須是本機 system policy terminal，0 hosted request、0 token、0 reward／Growth／relationship delta、0 durable memory／anchor／trace、0 intimacy animation／quick reply，且原始文字不進 `lastMessage`、chat transcript、diagnostic 或 durable save；只有下一個安全回合才可恢復 ordinary flow。
+
+---
+
+## SOV. Formal Stage Offer / Visible Evolution Runtime（正式進化 Runtime）
+
+> **這不是 Art G4，也不是把 Growth G4 寫成已完成。**
+>
+> 本節是 2026-08-14 EVO-00 新增的獨立命名空間，專門驗「夥伴主動邀請 → 玩家改寫／延後／接受 → 只前進下一階 → 先存檔再換形 → renderer 失敗不弄髒存檔」。
+>
+> 每一條都標示目前狀態：`implemented`／`partial`／`not implemented`。
+> **EVO-00 沒有修改 Runtime。下列 assertion 現在是契約，不是已通過的測試。**
+>
+> 對應設計 SSOT：`docs/design/COMPANION_GROWTH_CONTRACT_V1.md` §5.2。
+
+**SOV-01 — Companion-led offer**
+- 白話契約：下一階只能由夥伴主動提出。玩家可以準備共同生活，但不能按下「強制進化」。
+- 可自動測試 assertion：
+  1. `readiness.ok !== true` 或 `willingness.ok !== true` 時，`evaluateStageOffer(...)`（未來純函式）回傳 `offeredStage: null`，且不寫 `growth.offeredStage`。
+  2. 任何 UI／action payload 帶 `forceEvolve: true` 或直接指定非下一階 `targetStage`，必須被拒絕，state deep-equal 於呼叫前。
+  3. offer token／generation 必須綁定 `companionId + currentStage + targetStage`；缺欄位 fail closed。
+- 失敗時應保持的狀態：`growth.stage`、`offeredStage`、evidence、relationship、renderer intent 全不變。
+- 預計實作包：EVO-02（純規則）＋ EVO-03（UI 發布）。
+- 目前狀態：`not implemented`。G2 只有 `offeredStage: null` 佔位欄位；沒有 offer 函式。
+
+**SOV-02 — Rewrite and defer**
+- 白話契約：夥伴可以改寫這次儀式怎麼進行；玩家或夥伴都可以說改天。改寫與延後都不是失敗。
+- 可自動測試 assertion：
+  1. rewrite 在玩家第二次明示接受前，不得寫 `growth.stage`，也不得寫新的 stage audit evidence。
+  2. defer 只可寫 provenance 型 `deferredAt`（或等價 audit），不得寫 coverage／consumedRootKeys／stage。
+  3. rewrite／defer 不得建立 reward、memory、relationship delta。
+- 失敗時應保持的狀態：canonical `growth.stage` 維持舊值；session rewrite 可丟棄；無 FOMO flag。
+- 預計實作包：EVO-02 ＋ EVO-03。
+- 目前狀態：`not implemented`。Heart Phase rewrite 是 care practice 的既有行為，不是 formal stage offer rewrite。
+
+**SOV-03 — No-penalty defer and lawful re-offer**
+- 白話契約：延後不扣分、不倒數、不會永久錯過。之後只有在新的合法當場 context，牠才可以再邀請。
+- 可自動測試 assertion：
+  1. defer 前後 `bond`、`trust`、`stage`、evidence keys、coverage 完全相同。
+  2. 不得寫 missed／expired／cooldown／deadline 欄位。
+  3. 只把時鐘推進 30 天或只改 `lastSeenAt`，`willingness` 不得從 unwilling 變成 willing。
+  4. 新的合法 regulation／repair／completed lived event 之後，才允許重新評估並發出新 offer token；舊 token 必須 stale-reject。
+- 失敗時應保持的狀態：舊 offer 失效但不懲罰；stage 不前進。
+- 預計實作包：EVO-02 ＋ EVO-03。N5 已覆蓋 Growth 練習的零懲罰延後，但尚未覆蓋 formal stage invitation。
+- 目前狀態：`not implemented`（N5 地基 `partial` 於練習層，非正式進化邀請層）。
+
+**SOV-04 — Exact-next-stage only**
+- 白話契約：一次只能走到「現在的下一階」。不能跳去終局，也不能把 A 的成長寫到 B。
+- 可自動測試 assertion：
+  1. 合法遷移表只有：`initial_awakened → resonant_mature`、`resonant_mature → final_awakened`。
+  2. `initial_awakened → final_awakened`、`resonant_mature → initial_awakened`、未知 stage、空 stage 全部 reject。
+  3. payload 的 `companionId` 與 active canonical record 不一致時 reject。
+  4. `evolutionLines.js` 的舊五階／`bondThreshold` 不得被 accept 路徑讀取為 authority。
+- 失敗時應保持的狀態：`growth.stage` 維持呼叫前的合法值；不建立跨角色 record。
+- 預計實作包：EVO-02 ＋ EVO-04（catalog 對照）。
+- 目前狀態：`not implemented`。
+
+**SOV-05 — Idempotent accept**
+- 白話契約：同一隻夥伴、同一階、同一合法邀請，重複按接受不會再升一階，也不會再播一次進化。
+- 可自動測試 assertion：
+  1. 第一次合法 accept 使 `growth.stage` 變成 exact-next-stage，並消耗該 offer token。
+  2. 以同一 token／同一 target 再提交 20 次，stage、consumedRootKeys、evidence 長度與 renderer intent count 不再增加。
+  3. 已完成 `final_awakened` 的 accept 回傳 `already_complete`（或等價），零 mutation。
+- 失敗時應保持的狀態：第一次成功後的 canonical 狀態保持；重複提交不得製造第二個 stage audit。
+- 預計實作包：EVO-02 ＋ EVO-03。
+- 目前狀態：`not implemented`。G2／G3 的 evidence idempotency 不是 stage accept idempotency。
+
+**SOV-06 — SafeHarbor terminal**
+- 白話契約：安全港一打開，進化相關的所有後續動作都必須立刻停住，而且不能在事後補做。
+- 可自動測試 assertion：
+  1. `safeHarborMode === true` 時，offer／rewrite／defer／accept／re-offer／stage advance／VFX telegraph／delayed callback／renderer transition 全部 no-op。
+  2. 安全港期間若 queue 了舊 offer，退出後也不得 flush。
+  3. 完整 gameplay state（relationship、growth、memory、trace、save payload）deep-equal 於進入前，只允許既有 safety UI/mode。
+- 失敗時應保持的狀態：舊 stage、舊 offer 皆不得復活為可見換形。
+- 預計實作包：EVO-02（engine 短路）＋ EVO-03（controller）。N3 已覆蓋 Growth evidence／session 終止，但還沒有 formal stage offer 路徑可測。
+- 目前狀態：`partial`（安全終端地基已存在；正式進化路徑尚未存在，故本 SOV 未通過）。
+
+**SOV-07 — High-risk and safety evidence exclusion**
+- 白話契約：危機回合不能變成成長證據，也不能變成進化邀請的理由。
+- 可自動測試 assertion：
+  1. `safety.isHighRisk`、`strategyId === "safety_redirect"`、`actionId === "enter_safe_harbor"`、system-role safety reply 建立的 event，`growthSafetyExcluded === true` 且不可洗成 false。
+  2. 上述 event 不得寫 evidence、不得改變 readiness、不得發出 offer。
+  3. delayed flush 在 UI/mode 已清除後仍須拒絕。
+- 失敗時應保持的狀態：growth／stage／offer 與 high-risk 前完全相同。
+- 預計實作包：EVO-01 補 production provenance；EVO-02 把同一 ban 接到 offer 路徑。N3／N4 已覆蓋 evidence writer。
+- 目前狀態：`partial`（evidence 層已有；offer／stage 層 `not implemented`）。
+
+**SOV-08 — Critical-save before visible stage publication**
+- 白話契約：先把下一階安全寫進存檔，成功了才能讓畫面換形。存檔失敗時，玩家看到的仍是舊樣子。
+- 可自動測試 assertion：
+  1. accept 的固定順序：讀取 immutable current state → 純函式建立並驗證獨立 candidate state → `saveCurrentState(candidateState)`（或等價 critical persistence）→ 成功後才發布 candidate 為 canonical in-memory state → 最後 emit UI／Pixi intent。
+  2. mock save 失敗時：candidate 被丟棄；in-memory canonical、store 與 localStorage 從頭到尾維持舊 stage，無 Pixi intent，UI 不得顯示新形態文案。實作不得依賴先污染 canonical state 再 rollback 才恢復安全。
+  3. save 成功但後續 UI 例外時，reload 後 stage 仍為已存的新值（可見層失敗不回寫舊 stage）。此條與 SOV-09 互補。
+- 失敗時應保持的狀態：save 失敗＝舊 stage；save 成功＝新 stage 已持久，即使畫面稍後失敗。
+- 預計實作包：EVO-03。G3.1 care writer 已有 candidate-first critical save，但尚未用於 formal stage accept。
+- 目前狀態：`not implemented`。
+
+**SOV-09 — Renderer failure does not corrupt saved stage**
+- 白話契約：圖片或動畫載入失敗，不能把已經存好的下一階改回去，也不能換成別隻夥伴的身體。
+- 可自動測試 assertion：
+  1. 故意讓 Stage 2／3 manifest 或 sheet 404／decode 失敗：`growth.stage` 維持已存值。
+  2. fallback 順序只允許：同角色同 stage 近似 action → 同角色 Stage 1 明示 fallback → 安全姿勢。
+  3. 任何跨 `companionId` 的 sheet／portrait 解析都必須 throw／fail closed，不得 silent swap。
+  4. fallback 不得把 `runtimeFormSwapReady` 偷偷寫成 true。
+- 失敗時應保持的狀態：canonical stage 不變；畫面停在安全姿勢或 Stage 1 fallback。
+- 預計實作包：EVO-05。
+- 目前狀態：`not implemented`。現行 loader 只服務 Stage 1 illustrated runtime。
+
+**SOV-10 — Legacy unverifiable provenance fails closed**
+- 白話契約：舊記憶如果講不清是哪一隻夥伴、安不安全，就不能拿來當進化證據，更不能猜給現在這隻。
+- 可自動測試 assertion：
+  1. 缺 `companionId`、跨 companion、缺 sealed safety provenance、未知 ID、原文推測，一律 `source_owner_unverifiable`。
+  2. 不得以 `activeCompanionId`、目前 UI、Soul Talk 文字內容補 owner。
+  3. 此類輸入零 evidence、零 offer、零 stage mutation。
+- 失敗時應保持的狀態：既有 growth record 不變；不建立新 root。
+- 預計實作包：EVO-01。`reflectionGrowthOwner.js` 測試已覆蓋 fail-closed 形狀，但 production 路徑尚未正式啟用。
+- 目前狀態：`partial`（模組與 QA 存在；production 未啟用，故不得標 `implemented`）。
+
+**SOV-11 — Runtime flags remain false before full promotion**
+- 白話契約：在 Owner 明確核准完整 promotion 之前，進化資產不能假裝自己已經是遊戲內的正式身體。
+- 可自動測試 assertion：
+  1. `assets/characters/formal-evolution-index.json` 的 `runtimeAuthority === false`。
+  2. `assets/characters/formal-evolution-animation-r4.json` 的 `runtimeAuthority === false` 且 `runtimeFormSwapReady === false`。
+  3. 未來 registry／Pixi loader 在兩旗標為 false 時，不得選中 Stage 2／3 manifest 作為 live animation authority。
+  4. EVO-00～EVO-05 的 diff 不得把這兩個旗標改成 true。改 true 只能發生在獨立 promotion pack，並重跑 SOV + Art G1–G7 + H + I。
+- 失敗時應保持的狀態：Stage 1 維持 live fallback；存檔 stage 可存在但不驅動錯誤形態。
+- 預計實作包：EVO-00 記錄現況；EVO-04／EVO-05 接 loader guard；EVO-06 才討論 promotion。
+- 目前狀態：`partial`。2026-08-14 於 `origin/main` `8b5360f` **唯讀確認兩旗標皆為 false**；尚未有 runtime guard 測試。不得把本條標成完整 `implemented`。
+
+**SOV-12 — Same-companion fallback only**
+- 白話契約：萬一新形態播不了，只能退回「同一隻夥伴」比較安全的樣子，絕對不能變成另一隻。
+- 可自動測試 assertion：
+  1. fallback resolver 的輸出 `companionId` 必須等於輸入 `companionId`。
+  2. 用 `greyshade-cat` 的失敗 manifest 不得解析出 `auriowl`／`crystalfin-seahorse` 或其他角色的 sheet。
+  3. 11 隻角色各抽一個負向案例：缺 sheet、缺 row、錯 action 名稱，全部 same-companion 或安全姿勢。
+- 失敗時應保持的狀態：錯誤角色資產零載入；canonical stage 不變。
+- 預計實作包：EVO-04（adapter）＋ EVO-05（renderer canary）。
+- 目前狀態：`not implemented`。
