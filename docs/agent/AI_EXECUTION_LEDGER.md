@@ -58,6 +58,37 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-08-15 - Codex - EVO-00 Critical-Save Contract Correction - VERIFIED
+
+- Status: `VERIFIED`; this append-only correction tightens the docs-only EVO-00 persistence contract and does not implement Runtime.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `EVO-00_CRITICAL_SAVE_CONTRACT_CORRECTION`.
+- Branch / commit: `codex/grok-formal-evolution-runtime-r1` / pending local publication commit.
+- Correction: the prior EVO-00 wording could be read as mutating canonical `growth.stage` before persistence and rolling it back on failure. The authoritative sequence is now immutable current state → independent candidate → validate and persist candidate → publish candidate as canonical in-memory state only after persistence succeeds → emit UI／Pixi intent last. Save failure discards the candidate; canonical state, store, localStorage and renderer remain untouched throughout.
+- Scope: `ACCEPTANCE.md` SOV-08, Growth Contract §5.2, the Cursor Grok handoff, and this append-only ledger entry only. No Runtime, state, save, store, Pixi, assets or flags changed.
+- Verification: `git diff --check`; SOV-01～SOV-12 uniqueness; targeted text audit confirms the formal-stage critical-save contract no longer requires pre-save canonical mutation.
+- Next safe action: publish the corrected EVO-00 docs package, then begin EVO-01 only from a freshly checked main／PR baseline.
+
+### 2026-08-14 - Cursor Grok - EVO-00 Formal Evolution Contract Realignment - COMPLETED
+
+- Status: `COMPLETED` locally as a docs-only package; Owner-approved EVO-00 remains uncommitted and unpushed by instruction.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `EVO-00_FORMAL_EVOLUTION_CONTRACT_REALIGNMENT`.
+- Branch / commit: `codex/grok-formal-evolution-runtime-r1` / uncommitted.
+- Worktree baseline: created clean from `origin/main` at `8b5360fabeab08c71291dbf35537fad11d939e03`. The dirty primary checkout was not touched, stashed, or modified.
+- Ledger protocol: this file is append-only. This entry does not delete or rewrite historical rows. If it is later found wrong, append a `CORRECTION` or `SUPERSEDED` entry; do not roll back by deleting ledger text.
+- Work performed:
+  - Realigned `docs/design/COMPANION_GROWTH_CONTRACT_V1.md` to current origin/main truth: G1–G3.1 implemented; Reflection production provenance not enabled; non-standoff Stage 3 path not fully reachable; Growth G4 offer／rewrite／defer／accept／stage advance not implemented; 11×22 art-only forms exist; `runtimeAuthority=false`; `runtimeFormSwapReady=false`; save／store／registry／Pixi／renderer not wired; `evolutionLines.js` is not stage catalog authority.
+  - Locked Growth G4 vocabulary in contract §5.2 and mapped EVO-01～EVO-06 plus document conflicts without editing Master Canon, `AGENTS.md`, or `CLAUDE.md`.
+  - Added `ACCEPTANCE.md` SOV-01～SOV-12 as a separate namespace from Art G4 Texture Sampling. Every SOV has a plain-language contract, an automatable assertion, a failure-state, a future EVO pack, and `implemented`／`partial`／`not implemented`. Growth G4 is not marked implemented.
+  - Created `docs/handoff/CURSOR_GROK_EVOLUTION_HANDOFF.md` as an operational handoff, not canon.
+- Changed files in this lane: the four allowlisted docs above. No `src/**`, `assets/**`, flags, package, or GROUNDWORK runtime files.
+- Verification: docs-only. `git status --short`, allowlist check, `git diff --check`, SOV-01～SOV-12 uniqueness, and flag non-mutation. No Runtime, browser, or device suite was run.
+- Explicit non-claim: EVO-00 是文件與驗收契約包，沒有修改 Runtime，因此本包沒有宣稱 Runtime 測試通過。
+- Problems / risks: PR #215 remains OPEN and will touch `defaultState.js`／`store.js`／memory／energy／boundary before EVO-01／EVO-03. PR #216 remains OPEN draft and will touch `AGENTS.md`. origin/main already allows TypeScript／npm／bundler in both `CLAUDE.md` and `AGENTS.md`; this EVO window still does not authorize a toolchain migration.
+- Next safe action: Owner reviews the four EVO-00 checks. Do not start EVO-01 until a new approval that re-fetches main and re-audits PR #215／#216.
+- Required reading: `docs/handoff/CURSOR_GROK_EVOLUTION_HANDOFF.md`, Growth Contract §2／§5.2／§12／§13, `ACCEPTANCE.md` SOV-01～SOV-12.
+
 ### 2026-08-14 - Codex - Moonlake Spatial Coherence And Night Warmth R1 - COMPLETED
 
 - Status: `COMPLETED` locally; Owner-approved package is implemented and verified in an isolated worktree. Per instruction it remains uncommitted and unpushed.
@@ -1487,6 +1518,21 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 2 - Game Art, UI, And Visual Production
 
+### 2026-08-14 - Cursor Grok - EVO-00 Formal Evolution Art-Only Read Confirm - COMPLETED
+
+- Status: `COMPLETED` as a read-only confirmation only. No art work was performed.
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `EVO-00_FORMAL_EVOLUTION_CONTRACT_REALIGNMENT`.
+- Branch / commit: `codex/grok-formal-evolution-runtime-r1` / uncommitted.
+- Work performed:
+  - Read-only confirmation from existing indexes: 11 characters, 22 later forms, 176 sheets, 2816 frames.
+  - Read-only confirmation that `runtimeAuthority` and `runtimeFormSwapReady` remain `false` on `assets/characters/formal-evolution-index.json` and `assets/characters/formal-evolution-animation-r4.json`.
+  - No files under `assets/**` were modified.
+  - No renderer promotion was attempted.
+- Verification: JSON flag read on worktree HEAD `8b5360fabeab08c71291dbf35537fad11d939e03`. The 176-sheet mechanical QC was not rerun.
+- Non-claim: this entry does not claim a new art QC pass, Owner in-motion feel-check, or runtime-ready forms.
+- Next safe action: keep flags false. Renderer canary remains EVO-05 and needs a separate Owner approval.
+
 ### 2026-08-14 - Codex - Moonlake Spatial Coherence And Night Warmth R1 - COMPLETED
 
 - Status: `COMPLETED` locally; visual package is implemented and browser-verified, with no commit or push.
@@ -2152,6 +2198,35 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Next safe action: after merge, review the public Pages build on a physical phone before declaring store-ready visual quality.
 
 ## Lane 3 - Raphael Core, Companion Reasoning, And Soul Talk
+
+### 2026-08-15 - Codex - EVO-00 Critical-Save Contract Correction - VERIFIED
+
+- Status: `VERIFIED`; docs-only correction, with no RaphaelCore, memory, Growth writer or formal-stage Runtime mutation.
+- Lane: `Raphael Core, Companion Reasoning, And Soul Talk`.
+- Task name: `EVO-00_CRITICAL_SAVE_CONTRACT_CORRECTION`.
+- Branch / commit: `codex/grok-formal-evolution-runtime-r1` / pending local publication commit.
+- Correction: SOV-08 now requires an independent candidate to be persisted before any canonical in-memory or visible-stage publication. A failed save discards the candidate and never exposes a transient new stage to subscribers, UI, renderer or delayed callbacks.
+- Verification: docs-only `git diff --check` and targeted contract text audit. Runtime remains unimplemented and both formal evolution runtime flags remain `false`.
+- Next safe action: future EVO-03 must prove this order with injected save failure and subscriber／renderer assertions; EVO-01 remains the next authorized design slice after main／PR re-audit.
+
+### 2026-08-14 - Cursor Grok - EVO-00 Formal Evolution Contract Realignment - COMPLETED
+
+- Status: `COMPLETED` locally as docs-only; uncommitted and unpushed by Owner instruction.
+- Lane: `Raphael Core, Companion Reasoning, And Soul Talk`.
+- Task name: `EVO-00_FORMAL_EVOLUTION_CONTRACT_REALIGNMENT`.
+- Branch / commit: `codex/grok-formal-evolution-runtime-r1` / uncommitted.
+- Ledger protocol: append-only. Do not delete this or older entries on rollback; append `CORRECTION`／`SUPERSEDED` instead.
+- Work performed:
+  - Documented that Growth G4 companion-led offer／rewrite／defer／accept is not implemented, and must not be confused with Raphael self-improvement under `src/ai/evolution/**` or first-touch `getAwakeningStage`.
+  - Recorded that `evaluateCompanionGrowthReadiness`／`evaluateCompanionGrowthWillingness` exist, but do not yet emit a formal stage offer.
+  - Recorded that `reflectionGrowthOwner.js` already fail-closes with `source_owner_unverifiable` in module／QA form, while production provenance is still not enabled. That gap is the intended EVO-01 slice, not a completed G4.
+  - Added SOV-06／SOV-07／SOV-10 as testable contracts for safeHarbor terminal, high-risk exclusion, and legacy provenance fail-closed. SOV-06 and SOV-07 are `partial` because safety terminals exist but the formal offer path does not. SOV-10 is `partial` because the module exists but production is not enabled.
+- Changed files: Growth Contract, `ACCEPTANCE.md` SOV block, handoff, and this ledger. No RaphaelCore, memory writer, or awakening-gate runtime edits.
+- Verification: docs-only; no Soul Talk, HMAX, or Growth browser canary was rerun.
+- Explicit non-claim: EVO-00 是文件與驗收契約包，沒有修改 Runtime，因此本包沒有宣稱 Runtime 測試通過。
+- Problems / risks: PR #215 will move memory／energy／boundary truth before EVO-01. Do not treat current `8b5360f` as a frozen EVO-01 baseline.
+- Next safe action: wait for Owner review. If EVO-01 is later approved, re-fetch main, re-read `AGENTS.md`／`CLAUDE.md`, and re-audit Reflection owner plus PR #215 impact before editing `src/**`.
+- Required reading: Growth Contract §5.2／§12, `ACCEPTANCE.md` SOV-01～SOV-12, `src/engine/reflectionGrowthOwner.js`, `src/engine/companionGrowthEngine.js`.
 
 ### 2026-08-03 - Claude Code - TP-WORLD-BARK-AND-DIALOGUE-DIRECTOR-R1 - VERIFIED
 
