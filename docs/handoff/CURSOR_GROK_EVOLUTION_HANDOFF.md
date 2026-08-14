@@ -5,7 +5,7 @@
 > 權威順序仍是：Master Canon → `AGENTS.md`／`CLAUDE.md` → Growth Contract → `ACCEPTANCE.md` → Ledger → 本檔。
 > 若本檔與上位文件衝突，以上位文件為準，並追加 Ledger `CORRECTION`／`SUPERSEDED`，不得默默改 Canon。
 >
-> 最後更新：2026-08-14（EVO-00 文件包；未 commit、未 push）
+> 最後更新：2026-08-15（EVO-00 candidate-first／commit-late 契約修正；基準 `076a65f`）
 
 ---
 
@@ -21,28 +21,55 @@
 - 程式要從哪個函式開始讀
 - 下一包能不能開工（預設：**不能**，要等 Owner 核准 EVO-01）
 
-它**不**授權：commit、push、PR、merge、改 `src/**`／`assets/**`、把 runtime flags 改成 true、開始 EVO-01。
+它**不**授權：push、PR、merge、改未核准 Groundwork、改 `assets/**`、把 runtime flags 改成 true、開始 EVO-03。
+
+Owner 已授權本隔離 branch 在通過後建立本地 EVO-00／EVO-01／EVO-02 commit，並在 EVO-02 後停下。
 
 ---
 
-## 2. 基準（本次重新驗證）
+## 2. 基準（2026-08-15 重新驗證）
 
 | 項目 | 值 | 驗證方式 |
 |---|---|---|
-| 工作性質 | 隔離 worktree，不是平常 dirty 工作區 | `git worktree add` |
+| 工作性質 | 隔離 worktree | 既有路徑 |
 | Branch | `codex/grok-formal-evolution-runtime-r1` | `git branch --show-current` |
-| Worktree | `C:\Users\User\NexusLink_RaphaelAI_Workspace\NexusLink-grok-formal-evolution-runtime-r1` | 路徑存在且乾淨建立 |
-| 基準 remote | `origin/main` | fetch 後 `git rev-parse origin/main` |
-| HEAD | `8b5360fabeab08c71291dbf35537fad11d939e03` | `Merge pull request #214`（moonlake-spatial-night） |
-| 平常工作區 | **禁止碰** | `C:\Users\User\NexusLink_RaphaelAI_Workspace\NexusLink` 仍有 dirty files |
+| Worktree | `C:\Users\User\NexusLink_RaphaelAI_Workspace\NexusLink-grok-formal-evolution-runtime-r1` | 目前施工區 |
+| 基準 remote | `origin/main` | `git ls-remote origin refs/heads/main` |
+| HEAD | `076a65f610caba0c0090fecc15c43bf936e84906` | Merge PR #218 First Touch |
+| origin/main | 同 HEAD | `0 / 0` |
+| Git status at window start | clean | `git status --short` |
+| 平常工作區 | **禁止碰** | 不進入 dirty checkout |
 
-EVO-00 開工當下重新確認：
+已合併、不得重做：
 
-- worktree 路徑原先不存在
-- 本地與遠端都沒有 `codex/grok-formal-evolution-runtime-r1`
-- 沒有使用、沒有 stash、沒有修改平常工作區
+- EVO-00 原文：PR #217 / commit `0820fa5`
+- First Touch：PR #218
+- **不要回到 `8b5360f`**
 
-**不要把這個 HEAD 當成 EVO-01 的永久基準。** 見 §8 PR 漂移。
+PR 漂移（開工時仍未合併）：
+
+- [#215](https://github.com/Orochi771127/NexusLink/pull/215) OPEN，head `7bb2913`。會改 `defaultState.js`、`store.js`、`storageGuard.js`、memory／energy／boundary。
+- [#216](https://github.com/Orochi771127/NexusLink/pull/216) OPEN + draft，head `abfc9e9`。會改 `AGENTS.md`。
+
+---
+
+## 2.1 EVO-00 CORRECTION：candidate-first / commit-late
+
+先前可能被讀成：validate offer → 先寫 canonical `growth.stage` → save → 失敗再 rollback。
+
+這不安全。正式契約改為：
+
+1. 讀取 immutable current state
+2. 純函式建立獨立 candidate
+3. 驗證 companionId／currentStage／exact-next-stage／offer token／generation／readiness／willingness／safety provenance
+4. 把 candidate 傳入 critical persistence
+5. 失敗：丟棄 candidate；canonical／store／localStorage／UI／Pixi 從頭到尾不變
+6. 成功：才發布 canonical in-memory → 才通知 UI → 最後才通知 renderer
+7. renderer 失敗：已存新 stage 不回退；同角色 fallback；禁止跨角色；可重試
+
+這仍是文件契約。**Formal stage accept Runtime 尚未實作。**
+
+---
 
 ---
 
@@ -140,7 +167,7 @@ Orbit／Expedition 不得成為 Growth 或 stage authority。
 - high-risk 與 `growthSafetyExcluded` 不得當 evidence，也不得開邀請。
 - 延後零懲罰，無 FOMO、無倒數、無錯過旗標。
 - 一次只前進 exact-next-stage。
-- 存檔成功前，canonical in-memory state 與畫面都不得發布新 stage：先建立獨立 candidate，儲存 candidate 成功後才 commit canonical state，再通知 UI／renderer；失敗時丟棄 candidate，不依賴事後 rollback。
+- 存檔成功前，canonical in-memory state 與畫面都不得發布新 stage：必須 candidate-first／commit-late（見 §2.1 與 Growth Contract §5.3）。失敗時丟棄 candidate，不依賴事後 rollback。
 - renderer 失敗不得回寫或污染已存 stage。
 - fallback 只允許同一隻夥伴。
 - 舊資料無法證明主人時 fail closed，不准用 `activeCompanionId` 猜。

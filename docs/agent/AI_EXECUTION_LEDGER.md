@@ -58,6 +58,18 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-08-15 - Cursor Grok - EVO-00 Candidate-First Commit-Late Seal - VERIFIED
+
+- Status: `VERIFIED`; docs-only correction of the already-merged EVO-00 contract. No Runtime.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `EVO-00_CRITICAL_SAVE_CONTRACT_CORRECTION`.
+- Branch / commit: `codex/grok-formal-evolution-runtime-r1` / pending local `docs(growth): define formal evolution sovereignty contract`.
+- Baseline: `076a65f` (`origin/main`, PR #217 and #218 already merged). Did not return to `8b5360f`.
+- Correction: Growth Contract §5.3 and `ACCEPTANCE.md` SOV-08 now require independent candidate state, field-level validation, persist-candidate-first, publish-canonical-then-UI-then-renderer, and renderer-failure-does-not-rollback. Canonical `growth.stage` must not be mutated before persistence.
+- Ledger protocol: append-only. The earlier EVO-00 COMPLETED row and Codex's 2026-08-15 correction row are retained.
+- Verification: `git diff --check`; SOV-01～SOV-12 uniqueness; text audit finds no formal-evolution contract requiring pre-save canonical mutation.
+- Next safe action: local EVO-00 docs commit, then EVO-01 if GO.
+
 ### 2026-08-15 - Codex - EVO-00 Critical-Save Contract Correction - VERIFIED
 
 - Status: `VERIFIED`; this append-only correction tightens the docs-only EVO-00 persistence contract and does not implement Runtime.
@@ -2306,6 +2318,16 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Next safe action: after merge, review the public Pages build on a physical phone before declaring store-ready visual quality.
 
 ## Lane 3 - Raphael Core, Companion Reasoning, And Soul Talk
+
+### 2026-08-15 - Cursor Grok - EVO-00 Candidate-First Commit-Late Seal - VERIFIED
+
+- Status: `VERIFIED`; docs-only. No RaphaelCore, memory writer, or formal-stage Runtime change.
+- Lane: `Raphael Core, Companion Reasoning, And Soul Talk`.
+- Task name: `EVO-00_CRITICAL_SAVE_CONTRACT_CORRECTION`.
+- Branch / commit: `codex/grok-formal-evolution-runtime-r1` / pending local docs commit.
+- Correction: SOV-08 and Growth Contract §5.3 now name independent candidate state, persist-before-publish, and renderer-failure-does-not-rollback. This is still not a Runtime implementation.
+- Ledger protocol: append-only; previous COMPLETED and Codex VERIFIED rows remain.
+- Next safe action: EVO-01 Reflection owner, without guessing owner from `activeCompanionId`.
 
 ### 2026-08-15 - Codex - EVO-00 Critical-Save Contract Correction - VERIFIED
 

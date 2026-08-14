@@ -151,17 +151,29 @@ Willingness 另外檢查（G3 已固定 typed enum／profile gate 並納入 muta
 | **offer** | 夥伴主動提出「要不要一起走向下一階」 | 只能由 readiness + willingness 同時成立時發出；玩家不能按下強制進化。一次只能對 **exact-next-stage** 發出。 |
 | **rewrite** | 夥伴接受方向，但改寫儀式怎麼進行 | 改寫後仍須玩家第二次明示接受才可封存；未接受的 rewrite 是 session-only，零 stage mutation。 |
 | **defer** | 玩家或夥伴說「改天／還不是時候」 | 必須 **no-penalty**。不扣 bond／trust、不產生 missed flag、不設期限、不進 evidence。 |
-| **accept** | 玩家明示接受目前這一次合法 offer | 必須先通過 **critical-save**，存檔成功後才能把 visible stage 發布給 UI／renderer。 |
+| **accept** | 玩家明示接受目前這一次合法 offer | 必須走 **candidate-first / commit-late**：先建立獨立 candidate，critical persistence 成功後才發布 canonical in-memory state，再通知 UI，最後才通知 renderer。 |
 | **re-offer** | 延後之後，在新的合法當場 context 再次提出 | 必須是 **lawful re-offer**：新 context 或明示零懲罰的 regulation／repair 後重新評估；離線等待本身不能自動變 willing。 |
 | **exact-next-stage** | 只能前進目前的下一階 | `initial_awakened → resonant_mature` 或 `resonant_mature → final_awakened`。禁止跳階、禁止跨角色、禁止把 Stage 1 直接寫成終局。 |
 | **idempotency** | 同一合法 accept 重複提交不會再升一階 | 已完成 stage 的重複 accept 必須回傳已完成結果，不得再寫 evidence、不得再播演出、不得再改 renderer。 |
 | **stale-offer rejection** | 過期、錯伴侶、錯 stage、錯 generation 的邀請必須拒絕 | 例如：切換夥伴後仍送出舊 offer、stage 已變、save 已前進、offer token 不匹配。拒絕時零 stage mutation。 |
 | **no-penalty defer** | 延後不是失敗 | 關係、stage、evidence、readiness coverage 完全不變；UI 不得顯示倒數、紅點或「錯過進化」。 |
-| **critical-save boundary** | 可見換形之前必須先存檔成功 | 順序固定：讀取 immutable current state → 建立並驗證獨立 candidate state → 將 candidate 傳入 critical persistence → 儲存成功後才把 candidate 發布成 canonical in-memory state → 最後發布 UI／Pixi intent。儲存失敗時直接丟棄 candidate；canonical state、store、localStorage 與畫面從頭到尾都維持舊 stage，不依賴事後 rollback 才恢復安全。 |
-| **renderer fallback** | 畫面載入失敗時不能弄髒已存檔的 stage | 同角色同 stage 近似 action → 同角色 Stage 1 明示 fallback → 最後安全姿勢。**禁止跨角色**。fallback 不回寫較低 stage。 |
+| **critical-save boundary** | 可見換形之前必須先把獨立 candidate 存檔成功 | 正式進化 accept **禁止**先改 canonical `growth.stage` 再靠 rollback 救回。完整順序見下方 §5.3。 |
+| **renderer fallback** | 畫面載入失敗時不能弄髒已存檔的 stage | 同角色同 stage 近似 action → 同角色 Stage 1 明示 fallback → 最後安全姿勢。**禁止跨角色**。fallback 不回寫較低 stage；已成功保存的新 canonical stage 不因 renderer 失敗而倒退。 |
 | **legacy provenance fail-closed** | 舊資料無法證明主人時，不准猜 | 缺 `companionId`、缺 sealed safety provenance、跨角色、原文推測，一律 `source_owner_unverifiable`。不得用 `activeCompanionId` 或 UI 現況補洞。 |
 | **safeHarbor terminal** | 安全港一開始就終止所有進化副作用 | 禁止 gameplay mutation、save、reward、memory、relationship、Growth evidence、evolution offer、stage advance、VFX telegraph、delayed callbacks、renderer transition、autonomous invitation。退出安全港也不得復活舊 offer。 |
 | **high-risk evidence exclusion** | 高風險回合永遠不是成長證據，也不能開邀請 | `growthSafetyExcluded=true` 在 source event 建立時封存，後代事件不能洗成 false。high-risk 前後完整 companion／growth／stage 必須完全不變。 |
+
+### 5.3 Candidate-first / commit-late（Growth G4 accept；尚未實作 Runtime）
+
+這是 SOV-08 的契約時序。G3.1 care writer 已用類似模式，但 **formal stage accept 尚未接線**。不得把本節寫成 Runtime 已完成。
+
+1. 讀取 immutable current state。不得在這一步改 `growth.stage`。
+2. 由純函式建立**獨立** candidate state。candidate 與 canonical 不得共享可變參照。
+3. 驗證 candidate，至少包含：`companionId`、`currentStage`、`exact-next-stage`、offer token、generation、readiness、willingness、safety provenance。任一項失敗則丟棄 candidate，canonical 完全不變。
+4. 將整個 candidate state 傳入 critical persistence。尚未成功前，store、localStorage、UI、Pixi 都仍看到舊 stage。
+5. persistence 失敗：丟棄 candidate；canonical in-memory、store、localStorage、UI、Pixi 從頭到尾維持舊值。**不依賴**先污染再 rollback。
+6. persistence 成功：才把 candidate 發布成 canonical in-memory state → 才通知 UI → **最後**才通知 renderer。
+7. renderer 失敗：已成功保存的新 canonical stage **不回退**；畫面改走同角色安全 fallback；禁止跨角色；保留可重試 renderer 狀態。
 
 ---
 

@@ -718,12 +718,13 @@
 - 目前狀態：`partial`（evidence 層已有；offer／stage 層 `not implemented`）。
 
 **SOV-08 — Critical-save before visible stage publication**
-- 白話契約：先把下一階安全寫進存檔，成功了才能讓畫面換形。存檔失敗時，玩家看到的仍是舊樣子。
+- 白話契約：下一階先活在獨立 candidate 裡。存檔成功後，記憶體、畫面才跟著換。存檔失敗時，遊戲從頭到尾都還是舊樣子，不靠事後復原。
 - 可自動測試 assertion：
-  1. accept 的固定順序：讀取 immutable current state → 純函式建立並驗證獨立 candidate state → `saveCurrentState(candidateState)`（或等價 critical persistence）→ 成功後才發布 candidate 為 canonical in-memory state → 最後 emit UI／Pixi intent。
-  2. mock save 失敗時：candidate 被丟棄；in-memory canonical、store 與 localStorage 從頭到尾維持舊 stage，無 Pixi intent，UI 不得顯示新形態文案。實作不得依賴先污染 canonical state 再 rollback 才恢復安全。
-  3. save 成功但後續 UI 例外時，reload 後 stage 仍為已存的新值（可見層失敗不回寫舊 stage）。此條與 SOV-09 互補。
-- 失敗時應保持的狀態：save 失敗＝舊 stage；save 成功＝新 stage 已持久，即使畫面稍後失敗。
+  1. accept 必須是 candidate-first / commit-late，不得先寫 canonical `growth.stage`：
+     讀取 immutable current state → 純函式建立獨立 candidate → 驗證 `companionId`、`currentStage`、exact-next-stage、offer token、generation、readiness、willingness、safety provenance → 將 **candidate** 傳入 critical persistence → persistence 成功後才把 candidate 發布成 canonical in-memory state → 才通知 UI → **最後**才通知 renderer。
+  2. mock save 失敗：candidate 被丟棄；canonical in-memory、store、localStorage、UI、Pixi 與呼叫前 deep-equal。測試必須證明中間沒有任何 subscriber／UI／renderer 觀察到新 stage。禁止「先改 canonical 再 rollback」。
+  3. save 成功、後續 UI 或 renderer 失敗：reload 後 `growth.stage` 仍為已存的新值。renderer 只走同角色安全 fallback，並保留可重試狀態。此條與 SOV-09／SOV-12 互補。
+- 失敗時應保持的狀態：save 失敗＝舊 stage 從未被發布；save 成功＝新 stage 已持久，即使畫面稍後失敗也不倒退。
 - 預計實作包：EVO-03。G3.1 care writer 已有 candidate-first critical save，但尚未用於 formal stage accept。
 - 目前狀態：`not implemented`。
 
