@@ -350,6 +350,10 @@ async function bootstrap() {
   const interactionHintController = createInteractionHintController({
     store,
     isPanelOpen: () => panelManager.isPanelOpen(),
+    isHomeActive: () => pageRouter?.getActivePage?.() === "home",
+    isPresentationActive: () => (
+      document.documentElement.dataset.firstSessionLoader !== "complete"
+    ),
     isOnboardingActive: () => onboardingController?.isActive?.(),
     getCompanionTouchTarget: () => sceneApi?.getCompanionTouchTarget?.(),
     onCompanionTouch: (touchType) => sceneApi?.requestCompanionTouch?.(touchType)
@@ -1113,10 +1117,29 @@ async function bootScene(
     const bounds = getCompanionVisualBounds();
     if (!bounds) return null;
     const { x, y, width, height } = bounds;
+    const canvas = app.canvas || app.view;
+    const canvasBounds = canvas?.getBoundingClientRect?.();
+    const screenWidth = Number(app.screen?.width);
+    const screenHeight = Number(app.screen?.height);
+    if (
+      !canvasBounds
+      || !Number.isFinite(screenWidth)
+      || !Number.isFinite(screenHeight)
+      || screenWidth <= 0
+      || screenHeight <= 0
+      || canvasBounds.width <= 0
+      || canvasBounds.height <= 0
+    ) {
+      return null;
+    }
+    const scaleX = canvasBounds.width / screenWidth;
+    const scaleY = canvasBounds.height / screenHeight;
+    const viewportWidth = width * scaleX;
+    const viewportHeight = height * scaleY;
     return {
-      x: x + width / 2,
-      y: y + height / 2,
-      size: Math.min(118, Math.max(68, Math.max(width, height) * 1.12))
+      x: canvasBounds.left + (x + width / 2) * scaleX,
+      y: canvasBounds.top + (y + height / 2) * scaleY,
+      size: Math.min(118, Math.max(68, Math.max(viewportWidth, viewportHeight) * 1.12))
     };
   }
 
