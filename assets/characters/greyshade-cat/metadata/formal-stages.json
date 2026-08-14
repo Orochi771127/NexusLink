@@ -1,7 +1,10 @@
 {
   "schemaVersion": 1,
   "characterId": "greyshade-cat",
-  "displayName": { "zh": "灰影貓", "en": "Greyshade Cat" },
+  "displayName": {
+    "zh": "灰影貓",
+    "en": "Greyshade Cat"
+  },
   "faction": "neutral-heart-core-life",
   "element": "neutral",
   "currentRuntimeFormStageId": "initial_awakened",
@@ -12,7 +15,10 @@
     {
       "stageId": "initial_awakened",
       "ordinal": 1,
-      "name": { "zh": "灰影貓", "en": "Greyshade Cat" },
+      "name": {
+        "zh": "灰影貓",
+        "en": "Greyshade Cat"
+      },
       "nameStatus": "current-canon",
       "artStatus": "runtime-ready",
       "humanApproved": true,
@@ -22,23 +28,40 @@
     {
       "stageId": "resonant_mature",
       "ordinal": 2,
-      "name": { "zh": "暮影貓", "en": "Duskshade Cat" },
+      "name": {
+        "zh": "暮影貓",
+        "en": "Duskshade Cat"
+      },
       "nameStatus": "current-canon",
-      "artStatus": "owner-review",
-      "humanApproved": false,
-      "productionMaster": null,
-      "designIntent": "Cute quadruped dusk-cat guardian with swept navy ear tufts, a solid crescent cheek ruff, bold indigo shoulder blocks and one attached cyan crescent-tip tail; compact and sprite-sheet readable."
+      "artStatus": "owner-approved",
+      "humanApproved": true,
+      "productionMaster": "assets/characters/greyshade-cat/formal-stages/resonant_mature/greyshade-cat_resonant_mature_master_512x512_r3.png",
+      "productionMasterSha256": "5c2df5cc117558cdf5ed3ea1cc80856387932a6cb4fec1a994320bb2bab66e42",
+      "designIntent": "Cute quadruped dusk-cat guardian with swept navy ear tufts, a solid crescent cheek ruff, bold indigo shoulder blocks and one attached cyan crescent-tip tail; compact and sprite-sheet readable.",
+      "animationManifest": "assets/characters/greyshade-cat/formal-stages/resonant_mature/animation-r3/animation-manifest.json",
+      "animationStatus": "strict-self-qc-pass-runtime-not-wired"
     },
     {
       "stageId": "final_awakened",
       "ordinal": 3,
-      "name": { "zh": "湖華貓", "en": "Lakeglow Cat" },
+      "name": {
+        "zh": "湖華貓",
+        "en": "Lakeglow Cat"
+      },
       "nameStatus": "current-canon",
-      "artStatus": "owner-review",
-      "humanApproved": false,
-      "productionMaster": null,
-      "designIntent": "Cute quadruped lake-spirit cat with a layered silver-blue wave mane, cobalt shoulder and haunch blocks, turquoise core, simple foreleg fur crests and one broad cyan-violet wave-tip tail; no wings, extra tails or particle mantle."
+      "artStatus": "owner-approved",
+      "humanApproved": true,
+      "productionMaster": "assets/characters/greyshade-cat/formal-stages/final_awakened/greyshade-cat_final_awakened_master_512x512_r3.png",
+      "productionMasterSha256": "3bb08143d9d07ac01906e7aa4130be85a3da510779956416b0354d66e901e275",
+      "designIntent": "Cute quadruped lake-spirit cat with a layered silver-blue wave mane, cobalt shoulder and haunch blocks, turquoise core, simple foreleg fur crests and one broad cyan-violet wave-tip tail; no wings, extra tails or particle mantle.",
+      "animationManifest": "assets/characters/greyshade-cat/formal-stages/final_awakened/animation-r3/animation-manifest.json",
+      "animationStatus": "strict-self-qc-pass-runtime-not-wired"
     }
   ],
-  "surfaceReadiness": { "portrait": "review-board-only", "expedition": "not-produced", "orbit": "not-produced", "animationSet": "not-produced" }
+  "surfaceReadiness": {
+    "portrait": "stage2-stage3-production-masters-ready",
+    "expedition": "not-produced",
+    "orbit": "not-produced",
+    "animationSet": "stage2-stage3-strict-self-qc-pass-runtime-not-wired"
+  }
 }

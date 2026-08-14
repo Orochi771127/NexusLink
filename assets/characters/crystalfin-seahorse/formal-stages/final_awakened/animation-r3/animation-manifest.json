@@ -1,0 +1,87 @@
+{
+  "schemaVersion": 1,
+  "packageId": "crystalfin-seahorse-final_awakened-animation-r3",
+  "characterId": "crystalfin-seahorse",
+  "stageId": "final_awakened",
+  "rigFamily": "horizontal-aquatic-hover",
+  "status": "strict-self-qc-pass",
+  "runtimeAuthority": false,
+  "runtimeFormSwapReady": false,
+  "frame": {
+    "size": [
+      512,
+      512
+    ],
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    },
+    "sampling": "linear-with-mipmaps"
+  },
+  "directions": {
+    "cardinalRows": [
+      "south",
+      "west",
+      "north",
+      "east"
+    ],
+    "diagonalRows": [
+      "southwest",
+      "northwest",
+      "northeast",
+      "southeast"
+    ]
+  },
+  "actions": {
+    "idle": {
+      "cardinal": "idle/crystalfin-seahorse_final_awakened_idle_cardinal_4x4_r3.png",
+      "diagonal": "idle/crystalfin-seahorse_final_awakened_idle_diagonal_4x4_r3.png",
+      "framesPerDirection": 4,
+      "status": "strict-self-qc-pass"
+    },
+    "walk": {
+      "cardinal": "walk/crystalfin-seahorse_final_awakened_walk_cardinal_4x4_r3.png",
+      "diagonal": "walk/crystalfin-seahorse_final_awakened_walk_diagonal_4x4_r3.png",
+      "framesPerDirection": 4,
+      "status": "strict-self-qc-pass"
+    },
+    "attack": {
+      "cardinal": "attack/crystalfin-seahorse_final_awakened_attack_cardinal_4x4_r3.png",
+      "diagonal": "attack/crystalfin-seahorse_final_awakened_attack_diagonal_4x4_r3.png",
+      "framesPerDirection": 4,
+      "status": "strict-self-qc-pass"
+    },
+    "recovery": {
+      "cardinal": "recovery/crystalfin-seahorse_final_awakened_recovery_cardinal_4x4_r3.png",
+      "diagonal": "recovery/crystalfin-seahorse_final_awakened_recovery_diagonal_4x4_r3.png",
+      "framesPerDirection": 4,
+      "status": "strict-self-qc-pass"
+    }
+  },
+  "turnaround": {
+    "sheet": "turnaround/crystalfin-seahorse_final_awakened_turnaround_8dir_r3.png",
+    "directionsRoot": "turnaround/directions"
+  },
+  "qc": {
+    "transparentSheetAudit": "pass",
+    "normalizedContactSheetReview": "pass",
+    "transparentCheckerContactReview": "pass",
+    "transparentDarkBackgroundHaloReview": "pass",
+    "finMembraneIntegrityReview": "pass",
+    "backgroundSpillReview": "pass",
+    "minimumCellMarginPx": 92,
+    "actionFrameCount": 128,
+    "emptyFrames": 0,
+    "edgeTouchingFrames": 0,
+    "detachedFragmentFailures": 0,
+    "note": "Regenerated from solid green sources; the diagonal swim uses an open tail curve to preserve a single continuous silhouette. Passed raw, normalized, transparent mechanical, checker-background, and dark-background halo review.",
+    "checkerBackgroundVisualReview": "pass",
+    "darkBackgroundVisualReview": "pass",
+    "identityAndAnatomyReview": "pass"
+  },
+  "notes": [
+    "Art asset package only; runtime references and Growth G4 remain disabled.",
+    "All eight 4x4 action sheets passed transparent-sheet mechanical QC and checker/dark-background visual review.",
+    "Owner motion feel-check and runtime reference audit remain separate promotion gates."
+  ]
+}

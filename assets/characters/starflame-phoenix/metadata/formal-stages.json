@@ -1,7 +1,10 @@
 {
   "schemaVersion": 1,
   "characterId": "starflame-phoenix",
-  "displayName": { "zh": "星焰鳳凰", "en": "Starflame Phoenix" },
+  "displayName": {
+    "zh": "星焰鳳凰",
+    "en": "Starflame Phoenix"
+  },
   "faction": "ironflow-hackers",
   "element": "fire",
   "currentRuntimeFormStageId": "initial_awakened",
@@ -12,7 +15,10 @@
     {
       "stageId": "initial_awakened",
       "ordinal": 1,
-      "name": { "zh": "星焰鳳凰", "en": "Starflame Phoenix" },
+      "name": {
+        "zh": "星焰鳳凰",
+        "en": "Starflame Phoenix"
+      },
       "nameStatus": "current-canon",
       "artStatus": "runtime-ready",
       "humanApproved": true,
@@ -22,23 +28,40 @@
     {
       "stageId": "resonant_mature",
       "ordinal": 2,
-      "name": { "zh": "星燼鳳衛", "en": "Star-Ember Phoenix Warden" },
+      "name": {
+        "zh": "星燼鳳衛",
+        "en": "Star-Ember Phoenix Warden"
+      },
       "nameStatus": "current-canon",
-      "artStatus": "owner-review",
-      "humanApproved": false,
-      "productionMaster": null,
-      "designIntent": "Cute avian starfire warden with a taller compact body, exactly two broad layered wings, two taloned legs, swept gold crest and bold orange-red-turquoise feather blocks."
+      "artStatus": "owner-approved",
+      "humanApproved": true,
+      "productionMaster": "assets/characters/starflame-phoenix/formal-stages/resonant_mature/starflame-phoenix_resonant_mature_master_512x512_r3.png",
+      "productionMasterSha256": "4546b3c6bd482dbc64dde4114d3f4cdb553f8c06cdc99c00cc0f8acea4e1ea89",
+      "designIntent": "Cute avian starfire warden with a taller compact body, exactly two broad layered wings, two taloned legs, swept gold crest and bold orange-red-turquoise feather blocks.",
+      "animationManifest": "assets/characters/starflame-phoenix/formal-stages/resonant_mature/animation-r3/animation-manifest.json",
+      "animationStatus": "strict-self-qc-pass-runtime-not-wired"
     },
     {
       "stageId": "final_awakened",
       "ordinal": 3,
-      "name": { "zh": "長明星凰", "en": "Everlight Star Phoenix" },
+      "name": {
+        "zh": "長明星凰",
+        "en": "Everlight Star Phoenix"
+      },
       "nameStatus": "current-canon",
-      "artStatus": "owner-review",
-      "humanApproved": false,
-      "productionMaster": null,
-      "designIntent": "Upright anthropomorphic phoenix guardian retaining the avian head and beak, with exactly two articulated wing-arms, two taloned legs, one attached flame tail fan and no additional back wings or human arms."
+      "artStatus": "owner-approved",
+      "humanApproved": true,
+      "productionMaster": "assets/characters/starflame-phoenix/formal-stages/final_awakened/starflame-phoenix_final_awakened_master_512x512_r3.png",
+      "productionMasterSha256": "0a1ea53814385d44260f6a08258f775c525eb50a726bcf8722f833d9a1acb80d",
+      "designIntent": "Upright anthropomorphic phoenix guardian retaining the avian head and beak, with exactly two articulated wing-arms, two taloned legs, one attached flame tail fan and no additional back wings or human arms.",
+      "animationManifest": "assets/characters/starflame-phoenix/formal-stages/final_awakened/animation-r3/animation-manifest.json",
+      "animationStatus": "strict-self-qc-pass-runtime-not-wired"
     }
   ],
-  "surfaceReadiness": { "portrait": "review-board-only", "expedition": "not-produced", "orbit": "not-produced", "animationSet": "not-produced" }
+  "surfaceReadiness": {
+    "portrait": "stage2-stage3-production-masters-ready",
+    "expedition": "not-produced",
+    "orbit": "not-produced",
+    "animationSet": "stage2-stage3-strict-self-qc-pass-runtime-not-wired"
+  }
 }

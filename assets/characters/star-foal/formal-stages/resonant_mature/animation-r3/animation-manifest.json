@@ -1,0 +1,84 @@
+{
+  "schemaVersion": 1,
+  "packageId": "star-foal-resonant_mature-animation-r3",
+  "characterId": "star-foal",
+  "stageId": "resonant_mature",
+  "rigFamily": "quadruped-equine",
+  "status": "strict-self-qc-pass",
+  "runtimeAuthority": false,
+  "runtimeFormSwapReady": false,
+  "frame": {
+    "size": [
+      512,
+      512
+    ],
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    },
+    "sampling": "linear-with-mipmaps"
+  },
+  "directions": {
+    "cardinalRows": [
+      "south",
+      "west",
+      "north",
+      "east"
+    ],
+    "diagonalRows": [
+      "southwest",
+      "northwest",
+      "northeast",
+      "southeast"
+    ]
+  },
+  "actions": {
+    "idle": {
+      "cardinal": "idle/star-foal_resonant_mature_idle_cardinal_4x4_r3.png",
+      "diagonal": "idle/star-foal_resonant_mature_idle_diagonal_4x4_r3.png",
+      "framesPerDirection": 4,
+      "status": "strict-self-qc-pass"
+    },
+    "walk": {
+      "cardinal": "walk/star-foal_resonant_mature_walk_cardinal_4x4_r3.png",
+      "diagonal": "walk/star-foal_resonant_mature_walk_diagonal_4x4_r3.png",
+      "framesPerDirection": 4,
+      "status": "strict-self-qc-pass"
+    },
+    "attack": {
+      "cardinal": "attack/star-foal_resonant_mature_attack_cardinal_4x4_r3.png",
+      "diagonal": "attack/star-foal_resonant_mature_attack_diagonal_4x4_r3.png",
+      "framesPerDirection": 4,
+      "status": "strict-self-qc-pass"
+    },
+    "recovery": {
+      "cardinal": "recovery/star-foal_resonant_mature_recovery_cardinal_4x4_r3.png",
+      "diagonal": "recovery/star-foal_resonant_mature_recovery_diagonal_4x4_r3.png",
+      "framesPerDirection": 4,
+      "status": "strict-self-qc-pass"
+    }
+  },
+  "turnaround": {
+    "sheet": "turnaround/star-foal_resonant_mature_turnaround_8dir_r3.png",
+    "directionsRoot": "turnaround/directions"
+  },
+  "notes": [
+    "Art asset package only; runtime references and Growth G4 remain disabled.",
+    "All eight 4x4 action sheets passed transparent-sheet mechanical QC and checker/dark-background visual review.",
+    "Owner motion feel-check and runtime reference audit remain separate promotion gates."
+  ],
+  "qc": {
+    "transparentSheetAudit": "pass",
+    "normalizedContactSheetReview": "pass",
+    "transparentContactSheetReview": "pass",
+    "minimumCellMarginPx": 92,
+    "emptyFrames": 0,
+    "edgeTouchingFrames": 0,
+    "detachedFragmentFailures": 0,
+    "note": "Passed raw, normalized, transparent mechanical, and transparent contact-sheet review.",
+    "actionFrameCount": 128,
+    "checkerBackgroundVisualReview": "pass",
+    "darkBackgroundVisualReview": "pass",
+    "identityAndAnatomyReview": "pass"
+  }
+}

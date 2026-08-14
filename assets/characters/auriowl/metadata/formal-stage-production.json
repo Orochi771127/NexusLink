@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "packageId": "formal-evolution-auriowl-r3",
+  "characterId": "auriowl",
+  "technicalIdUnchanged": true,
+  "runtimeAuthority": false,
+  "runtimeFormSwapReady": false,
+  "anchor": { "x": 0.5, "y": 1 },
+  "sampling": "linear-with-mipmaps",
+  "frameSize": [512, 512],
+  "directions": ["south", "southwest", "west", "northwest", "north", "northeast", "east", "southeast"],
+  "actions": ["idle", "walk", "attack", "recovery"],
+  "framesPerDirection": 4,
+  "stages": {
+    "resonant_mature": {
+      "master": "assets/characters/auriowl/formal-stages/resonant_mature/auriowl_resonant_mature_master_512x512_r3.png",
+      "sha256": "ab5023d263879b85128c3a83d9489e80926603bdbcbce4ac6aee5a350d4890bc",
+      "animationSet": "pilot-qc-candidate",
+      "pilotManifest": "assets/characters/auriowl/formal-stages/resonant_mature/pilot/pilot-manifest.json",
+      "rigFamily": "grounded-avian"
+    },
+    "final_awakened": {
+      "master": "assets/characters/auriowl/formal-stages/final_awakened/auriowl_final_awakened_master_512x512_r3.png",
+      "sha256": "6e1ea29333cb27caf191dd1945ebe06912a8fd8539ab01ac87c202015ca6b5df",
+      "animationSet": "batch-qc-candidate",
+      "animationManifest": "assets/characters/auriowl/formal-stages/final_awakened/animation-r3/animation-manifest.json",
+      "rigFamily": "upright-wing-arm-avian"
+    }
+  },
+  "notes": [
+    "These Owner-approved transparent masters are production inputs, not current runtime form-swap authority.",
+    "Stage 2 and Stage 3 require independent species-correct animation sets before runtime promotion.",
+    "The Stage 3 wing-arms are the only arm pair; no additional back wings or human arms are permitted."
+  ]
+}

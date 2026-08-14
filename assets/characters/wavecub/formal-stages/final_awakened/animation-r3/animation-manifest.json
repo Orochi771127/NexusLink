@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 1,
+  "packageId": "wavecub-final_awakened-animation-r3",
+  "characterId": "wavecub",
+  "stageId": "final_awakened",
+  "rigFamily": "upright-feline",
+  "status": "strict-self-qc-pass",
+  "runtimeAuthority": false,
+  "runtimeFormSwapReady": false,
+  "frame": {
+    "size": [
+      512,
+      512
+    ],
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    },
+    "sampling": "linear-with-mipmaps"
+  },
+  "directions": {
+    "cardinalRows": [
+      "south",
+      "west",
+      "north",
+      "east"
+    ],
+    "diagonalRows": [
+      "southwest",
+      "northwest",
+      "northeast",
+      "southeast"
+    ]
+  },
+  "actions": {
+    "idle": {
+      "cardinal": "idle/wavecub_final_awakened_idle_cardinal_4x4_r3.png",
+      "diagonal": "idle/wavecub_final_awakened_idle_diagonal_4x4_r3.png",
+      "framesPerDirection": 4,
+      "status": "strict-self-qc-pass"
+    },
+    "walk": {
+      "cardinal": "walk/wavecub_final_awakened_walk_cardinal_4x4_r3.png",
+      "diagonal": "walk/wavecub_final_awakened_walk_diagonal_4x4_r3.png",
+      "framesPerDirection": 4,
+      "status": "strict-self-qc-pass"
+    },
+    "attack": {
+      "cardinal": "attack/wavecub_final_awakened_attack_cardinal_4x4_r3.png",
+      "diagonal": "attack/wavecub_final_awakened_attack_diagonal_4x4_r3.png",
+      "framesPerDirection": 4,
+      "status": "strict-self-qc-pass"
+    },
+    "recovery": {
+      "cardinal": "recovery/wavecub_final_awakened_recovery_cardinal_4x4_r3.png",
+      "diagonal": "recovery/wavecub_final_awakened_recovery_diagonal_4x4_r3.png",
+      "framesPerDirection": 4,
+      "status": "strict-self-qc-pass"
+    }
+  },
+  "turnaround": {
+    "sheet": "turnaround/wavecub_final_awakened_turnaround_8dir_r3.png",
+    "directionsRoot": "turnaround/directions"
+  },
+  "qc": {
+    "sheetEdgeMaximum": 4096,
+    "actionSheetSize": [
+      2048,
+      2048
+    ],
+    "actionFrameCount": 128,
+    "emptyFrames": 0,
+    "edgeTouchFrames": 0,
+    "minimumTransparentCellMarginPx": 92,
+    "transparentSheetAudit": "pass",
+    "normalizedContactSheetReview": "pass",
+    "checkerBackgroundVisualReview": "pass",
+    "darkBackgroundVisualReview": "pass",
+    "identityAndAnatomyReview": "pass"
+  },
+  "notes": [
+    "Art asset package only; runtime references and Growth G4 remain disabled.",
+    "All eight 4x4 action sheets passed transparent-sheet mechanical QC and checker/dark-background visual review.",
+    "Owner motion feel-check and runtime reference audit remain separate promotion gates."
+  ]
+}

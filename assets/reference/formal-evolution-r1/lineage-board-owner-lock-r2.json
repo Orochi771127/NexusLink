@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "packageId": "formal-evolution-roster-11-r2-owner-lock-10",
+  "approvedAt": "2026-08-13",
+  "approvalScope": "Stage 2 and Stage 3 lineage design only",
+  "runtimeAuthority": false,
+  "runtimeFormSwapReady": false,
+  "productionMastersRequired": true,
+  "approvedBoards": [
+    { "characterId": "greyshade-cat", "path": "assets/reference/formal-evolution-r1/lineage-boards/greyshade-cat/greyshade-cat_three-stage-lineage-board_r2.png", "sha256": "9bc58d231b16e22d9bdc927f20357b8fcbf5a8d1ba83bb7a039f7b3d8c87f5fb" },
+    { "characterId": "sprigfawn", "path": "assets/reference/formal-evolution-r1/lineage-boards/sprigfawn/sprigfawn_three-stage-lineage-board_r2.png", "sha256": "dc95deafdef7b41b85a1f9d219c8eac34d88c0f90d3942c3f662c335c11a178f" },
+    { "characterId": "crystalfin-seahorse", "path": "assets/reference/formal-evolution-r1/lineage-boards/crystalfin-seahorse/crystalfin-seahorse_three-stage-lineage-board_r2.png", "sha256": "2429603da8eee140e2b2469a016c689d804f74f99ec97f37690882c00a4b8636" },
+    { "characterId": "blazetail-kit", "path": "assets/reference/formal-evolution-r1/lineage-boards/blazetail-kit/blazetail-kit_three-stage-lineage-board_r2.png", "sha256": "a2987f02e22275407d3baa03dd22d68e84d6d6965729414ceef4d7f91de967b3" },
+    { "characterId": "starstripe-cub", "path": "assets/reference/formal-evolution-r1/lineage-boards/starstripe-cub/starstripe-cub_three-stage-lineage-board_r2.png", "sha256": "7a7d9dbfe56106e1f26e33294de03dfed76cf52f3d36a868b7ce6d78b2afa9b0" },
+    { "characterId": "thunder-pup", "path": "assets/reference/formal-evolution-r1/lineage-boards/thunder-pup/thunder-pup_three-stage-lineage-board_r2.png", "sha256": "dcc3203bd7f852568c375b6bde1bb1c6acf66053b451d50fd0fa2af4970d106f" },
+    { "characterId": "wavecub", "path": "assets/reference/formal-evolution-r1/lineage-boards/wavecub/wavecub_three-stage-lineage-board_r2.png", "sha256": "5abefcf622963b84e053312b3784c4e37f032d8dfc3bf6c775140e99608f50cb" },
+    { "characterId": "starflame-phoenix", "path": "assets/reference/formal-evolution-r1/lineage-boards/starflame-phoenix/starflame-phoenix_three-stage-lineage-board_r2.png", "sha256": "ea55634e4c1347140ac3ba11121d351671f38428fe5db83575bfb2b172a2477b" },
+    { "characterId": "star-foal", "path": "assets/reference/formal-evolution-r1/lineage-boards/star-foal/star-foal_three-stage-lineage-board_r2.png", "sha256": "b22e82687989414170638d3eb89a24a1e44cc965b187d37fcb037903991debdd" },
+    { "characterId": "goldenspark-wyrm", "path": "assets/reference/formal-evolution-r1/lineage-boards/goldenspark-wyrm/goldenspark-wyrm_three-stage-lineage-board_r2.png", "sha256": "ff3342e82441383496d1c39d231720060e1367545cb4aa96670abe26beaf067e" }
+  ],
+  "excludedForRevision": {
+    "characterId": "auriowl",
+    "reason": "Owner replaced the owl visual lineage with the supplied Golden War Hawk Stage 1 identity; R2 owl board remains historical review evidence only.",
+    "replacementPackage": "formal-evolution-golden-war-hawk-r3"
+  },
+  "notes": [
+    "Owner approval locks identity, silhouette, palette and Stage 2/3 design direction only.",
+    "Approved design boards are opaque review art, not 512x512 transparent production masters.",
+    "All ten characters retain same-owner Stage 1 runtime fallback until separate production and runtime gates pass."
+  ]
+}
