@@ -58,6 +58,45 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-08-15 - Cursor Grok - EVO-04 Self-Audit - VERIFIED
+
+- Status: `VERIFIED` after fail-closed corrections. Still catalog-only; renderer unwired.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `EVO-04_FORMAL_EVOLUTION_CATALOG_ADAPTER`.
+- Branch / commit: `codex/grok-formal-evolution-runtime-r1` / pending local `feat(growth): catalog formal evolution forms without live swap`.
+- Work performed:
+  - Reject catalog forms whose manifest path belongs to another companion.
+  - Reject rig families that do not belong to that companion, so an owl cannot be given a feline walk plan.
+  - Missing rows, foreign filenames, and corrupt manifests fall back to the same companion's Stage 1 instead of returning another body.
+- Verification: EVO-04 10/10; EVO-01／02／03 and G2／G3 rerun before commit.
+- Next safe action: local commit if Owner asked. Do not start EVO-05. Do not push. Do not change flags.
+- Required reading: `assetBelongsToCompanion`, `COMPANION_ALLOWED_RIGS`, EVO-04 QA tamper case.
+
+### 2026-08-15 - Cursor Grok - EVO-04 Formal Evolution Catalog Adapter - VERIFIED
+
+- Status: `VERIFIED` as catalog + adapter only. Renderer, flags, and live form-swap remain unwired.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `EVO-04_FORMAL_EVOLUTION_CATALOG_ADAPTER`.
+- Branch / commit: `codex/grok-formal-evolution-runtime-r1` / uncommitted on `4c33dd4`.
+- Work performed:
+  - Added `src/engine/formalEvolutionCatalog.js`: 11-companion / 22-form lookup from existing indexes, exact-next alignment, row-aware manifest parse, same-companion fallback, Stage 2／3 motion families.
+  - Live animation source stays `stage1-illustrated-runtime` even if flags are forged true. Did not rewrite `assets/**`, Pixi loader, `animationProfile.js` live path, `companionRegistry.js`, save schema, or flags.
+  - Did not import the catalog from `animationProfile.js`, to keep the Pixi load chain from pulling Growth engines.
+- Verification: EVO-04 9/9; EVO-01 9/9; EVO-02 15/15; EVO-03 9/9; `node --check`; `git diff --check`. No asset or flag edits.
+- Problems / risks: catalog can see R4 paths but must not be described as live swap. `auriowl` Owner Lock still needs a human canary decision in EVO-05. Browser / Pixi not run.
+- Next safe action: stop. Do not start EVO-05 until a separate approval. Do not push. Do not change flags.
+- Required reading: `src/engine/formalEvolutionCatalog.js`, EVO-04 QA, SOV-04／SOV-11／SOV-12.
+
+### 2026-08-15 - Cursor Grok - EVO-04 Formal Evolution Catalog Adapter - IN PROGRESS
+
+- Status: `IN PROGRESS`. Owner instruction: start EVO-04 catalog + adapter only. EVO-05 renderer is not in this pack.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `EVO-04_FORMAL_EVOLUTION_CATALOG_ADAPTER`.
+- Branch / commit: `codex/grok-formal-evolution-runtime-r1` / `4c33dd4` (EVO-03 + merged #215).
+- Scope: new pure catalog module; Stage 2／3 motion-family lookup; same-companion fallback resolver. Treat `runtimeAuthority`／`runtimeFormSwapReady` as false. Do not rewrite `assets/**`, Pixi live loader, `pixiApp.js`, save schema, or flags.
+- Next safe action: finish catalog tests, stop before renderer canary.
+- Required reading: `assets/characters/formal-evolution-index.json`, `formal-evolution-animation-r4.json`, SOV-04／SOV-11／SOV-12, species motion docs.
+
 ### 2026-08-15 - Cursor Grok - EVO-03 Self-Audit And PR 215 Impact - VERIFIED
 
 - Status: `VERIFIED` as EVO-03 self-audit + PR #215 impact audit. Local commit of EVO-03 follows this entry. Renderer, catalog, flags, and live Reflection remain unwired.

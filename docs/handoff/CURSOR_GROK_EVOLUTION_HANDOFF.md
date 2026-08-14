@@ -5,7 +5,7 @@
 > 權威順序仍是：Master Canon → `AGENTS.md`／`CLAUDE.md` → Growth Contract → `ACCEPTANCE.md` → Ledger → 本檔。
 > 若本檔與上位文件衝突，以上位文件為準，並追加 Ledger `CORRECTION`／`SUPERSEDED`，不得默默改 Canon。
 >
-> 最後更新：2026-08-15（EVO-03 critical-save + Growth UI；形態 renderer 未接）
+> 最後更新：2026-08-15（EVO-04 catalog＋adapter；形態 renderer 未接）
 
 ---
 
@@ -146,12 +146,13 @@ EVO-00 **沒有**修改 `assets/**`，也 **沒有**重新執行 176 張 sheet �
 - **G3.2 Reflection verifier／consumer（有限）**：sealed fixture 可寫 `reflection` evidence。production source creation／save roundtrip 尚未完成（`memoryWriter.js` 未寫 owner／sealed safety）。
 - **EVO-02 純 G4 狀態機**：`src/engine/companionFormalEvolutionTransitionEngine.js` 可產出獨立 candidate（offer／rewrite／defer／accept）。
 - **EVO-03 critical-save + Growth UI**：`formalOffer` 可活過 schema；accept 先存檔再發布。renderer intent 仍是 no-op。
+- **EVO-04 catalog＋adapter**：`src/engine/formalEvolutionCatalog.js` 可查出 11 隻 Stage 2／3 路徑、動作家族與同角色 fallback。flags 為 false 時不得選 R4 當 live。
 
 ### 尚未完成（不得寫成已完成）
 
-- **live Reflection production source creation**：`memoryWriter.js` 尚未在建立記憶時寫 `companionId`／`safetyProvenance`；`storageGuard` 仍會剝掉這些欄位。這與 PR #215 重疊。
+- **live Reflection production source creation**：`memoryWriter.js` 尚未在建立記憶時寫 `companionId`／`safetyProvenance`。#215 已合進 main，但仍沒有 live owner 戳記。
 - **第三階段不對峙路徑的完整可玩 live path**：只有 sealed fixture 證明；不得宣稱 live Soul Talk Reflection 已有完整 Stage 3 production path。
-- **Growth G4 renderer／catalog**：尚未接 Pixi 或 R4 形態。Stage 1 illustrated runtime 仍是 live fallback。
+- **Growth G4 renderer**：尚未接 Pixi 或真正換形。Stage 1 illustrated runtime 仍是 live fallback。
 - **runtime flags**：仍必須是 false。
 - **`evolutionLines.js`**：不是正式 stage catalog authority。
 

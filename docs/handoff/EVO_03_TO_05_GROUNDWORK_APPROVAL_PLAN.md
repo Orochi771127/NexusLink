@@ -2,7 +2,7 @@
 
 > 這是操作核准文件，不是 Canon，也不是授權開工。
 >
-> 目前隔離 branch 的 EVO-03 critical-save 已通過自審與 PR #215 impact audit，準備本地 commit。**沒有 Owner 對 EVO-04／EVO-05 的精確檔案核准前，不得開始 catalog／renderer。不得 push。**
+> 目前隔離 branch 已合進含 #215 的 `main`，並開工 EVO-04 catalog＋adapter。**沒有 Owner 對 EVO-05 的精確檔案核准前，不得開始 renderer canary。不得改 flags、不得 push。**
 >
 > 基準：`codex/grok-formal-evolution-runtime-r1`，EVO-02 純引擎已本地完成，並另有 EVO-02.5 correction。`runtimeAuthority` 與 `runtimeFormSwapReady` 仍必須是 `false`。EVO-03～05 **不包含** flags promotion。
 >

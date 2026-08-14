@@ -685,7 +685,7 @@
   4. `evolutionLines.js` 的舊五階／`bondThreshold` 不得被 accept 路徑讀取為 authority。
 - 失敗時應保持的狀態：`growth.stage` 維持呼叫前的合法值；不建立跨角色 record。
 - 預計實作包：EVO-02 ＋ EVO-04（catalog 對照）。
-- 目前狀態：`partial`（EVO-02 純函式鎖定兩段 exact-next-stage，並拒絕跨角色 token。未接 catalog／renderer）。
+- 目前狀態：`partial`（EVO-02 純函式鎖定兩段 exact-next-stage，並拒絕跨角色 token。EVO-04 catalog 對照同一張表，且不讀 `evolutionLines.js`。未接 renderer）。
 
 **SOV-05 — Idempotent accept**
 - 白話契約：同一隻夥伴、同一階、同一合法邀請，重複按接受不會再升一階，也不會再播一次進化。
@@ -758,7 +758,7 @@
   4. EVO-00～EVO-05 的 diff 不得把這兩個旗標改成 true。改 true 只能發生在獨立 promotion pack，並重跑 SOV + Art G1–G7 + H + I。
 - 失敗時應保持的狀態：Stage 1 維持 live fallback；存檔 stage 可存在但不驅動錯誤形態。
 - 預計實作包：EVO-00 記錄現況；EVO-04／EVO-05 接 loader guard；EVO-06 才討論 promotion。
-- 目前狀態：`partial`。2026-08-14 於 `origin/main` `8b5360f` **唯讀確認兩旗標皆為 false**；尚未有 runtime guard 測試。不得把本條標成完整 `implemented`。
+- 目前狀態：`partial`。2026-08-15 EVO-04 catalog／adapter 在兩旗標為 false（或被偽造為 true）時，都不得選 Stage 2／3 當 live animation authority。尚未接 Pixi loader。不得把本條標成完整 `implemented`。
 
 **SOV-12 — Same-companion fallback only**
 - 白話契約：萬一新形態播不了，只能退回「同一隻夥伴」比較安全的樣子，絕對不能變成另一隻。
@@ -768,4 +768,4 @@
   3. 11 隻角色各抽一個負向案例：缺 sheet、缺 row、錯 action 名稱，全部 same-companion 或安全姿勢。
 - 失敗時應保持的狀態：錯誤角色資產零載入；canonical stage 不變。
 - 預計實作包：EVO-04（adapter）＋ EVO-05（renderer canary）。
-- 目前狀態：`not implemented`。
+- 目前狀態：`partial`（EVO-04 adapter：11 隻負向案例與跨角色 manifest 都只能退回同一隻 Stage 1。尚未接 Pixi 載圖／canary）。
