@@ -5,7 +5,7 @@
 > 權威順序仍是：Master Canon → `AGENTS.md`／`CLAUDE.md` → Growth Contract → `ACCEPTANCE.md` → Ledger → 本檔。
 > 若本檔與上位文件衝突，以上位文件為準，並追加 Ledger `CORRECTION`／`SUPERSEDED`，不得默默改 Canon。
 >
-> 最後更新：2026-08-15（EVO-02 純進化 transition engine 已本地完成；停在 EVO-03 Groundwork 核准前）
+> 最後更新：2026-08-15（EVO-02.5 correction：provenance／11 隻 roster／token／growth-state identity）
 
 ---
 
@@ -100,8 +100,8 @@ Non-goals: 不開始 offer／stage advance／renderer；不改 runtime flags；�
 
 ### 誠實邊界（不是 STOP，也不是完整 live persist）
 
-GO 判定：資料完整時可寫合法 reflection evidence；舊資料 fail closed；Stage 3 用 fixture 證明。
-不得宣稱：live Soul Talk 記憶跨存檔後仍可被 Reflection 使用。那需要改 `storageGuard.js`／可能的 schema，且與 PR #215 重疊，必須另開 Groundwork。
+GO 判定：sealed fixture 資料完整時可寫合法 reflection evidence；舊資料 fail closed。
+**誠實狀態：** Reflection provenance verifier／consumer 與 fixture path 已完成；production source creation／save roundtrip 尚未完成。`memoryWriter.js` 尚未在 source 建立時寫 `companionId`／`safetyProvenance`。不得宣稱 live Soul Talk Reflection 已有完整 Stage 3 production path。
 
 ---
 
@@ -143,13 +143,13 @@ EVO-00 **沒有**修改 `assets/**`，也 **沒有**重新執行 176 張 sheet �
 - **G2** per-companion `companionStates`、migration、Codex 隔離
 - **G3** evidence foundation、`evaluateCompanionGrowthReadiness`、`evaluateCompanionGrowthWillingness`
 - **G3.1** Heart Phase care source owner、candidate-first critical save
-- **G3.2 Reflection writer（有限）**：production fail-closed writer 已接線；合法 in-session sealed source 可寫 `reflection` evidence。live persist owner 尚未完成。
+- **G3.2 Reflection verifier／consumer（有限）**：sealed fixture 可寫 `reflection` evidence。production source creation／save roundtrip 尚未完成（`memoryWriter.js` 未寫 owner／sealed safety）。
 - **EVO-02 純 G4 狀態機**：`src/engine/companionFormalEvolutionTransitionEngine.js` 可產出獨立 candidate（offer／rewrite／defer／accept）。不存檔、不發布、無 renderer。
 
 ### 尚未完成（不得寫成已完成）
 
-- **live Reflection persist owner**：`storageGuard` 仍剝掉 memory／trace 的 `companionId` 與 sealed safety provenance。現有存檔路徑 fail closed。
-- **第三階段不對峙路徑的完整可玩 live persist**：fixture 已證明 Care＋Exploration＋Reflection＋Chapter 可達 Stage 3 readiness；live 記憶目前無法安全跨存檔保留 owner。
+- **live Reflection production source creation**：`memoryWriter.js` 尚未在建立記憶時寫 `companionId`／`safetyProvenance`；`storageGuard` 仍會剝掉這些欄位。這與 PR #215 重疊。
+- **第三階段不對峙路徑的完整可玩 live path**：只有 sealed fixture 證明；不得宣稱 live Soul Talk Reflection 已有完整 Stage 3 production path。
 - **Growth G4 Runtime**：offer／accept 尚未接 UI、critical-save、store 發布或 renderer。`formalOffer` 尚未進入 schema；normalize 會剝掉 token。
 - **save／store／registry／Pixi／renderer 接線**：未做。Stage 1 illustrated runtime 仍是 live fallback。
 - **runtime flags**：仍必須是 false。
@@ -167,9 +167,9 @@ G2 schema 已有 `offeredStage`、`deferredAt` 佔位欄位。這只代表資料
 | Willingness | 同上 | `evaluateCompanionGrowthWillingness` | 已實作；還不會發出 Growth G4 offer |
 | Growth UI VM | `src/ui/companionGrowthController.js` | `getViewModel` | 已實作質性 VM；無 stage offer UI |
 | Safety provenance helper | `src/engine/companionGrowthEngine.js` | `validateSafetyProvenance` | 內部函式 |
-| Reflection owner | `src/engine/reflectionGrowthOwner.js` | `createOwnedSafeReflectionSource`／`createReflectionGrowthWriteInput` | production writer 已接線；live persist owner 未完成 |
+| Reflection owner | `src/engine/reflectionGrowthOwner.js` | `createOwnedSafeReflectionSource`／`createReflectionGrowthWriteInput` | verifier／consumer；production source creation 未完成 |
 | Formal evolution transition | `src/engine/companionFormalEvolutionTransitionEngine.js` | `decideFormalEvolutionTransition` | 純函式；回傳 candidate；不存檔 |
-| Reflection production writer | `src/ui/companionGrowthController.js` | `writeReflectionPracticeIntoDraft` | 不寫 relationship／reward／玩家原文；不開始 offer |
+| Reflection evidence consumer | `src/ui/companionGrowthController.js` | `writeReflectionPracticeIntoDraft` | 消費已封存來源；不寫 relationship／reward／玩家原文；不開始 offer |
 | Memory Echo 轉接 | `src/ui/pageRouter.js` | `recordCompletedReflectionPractice` | 只做 provenance 轉接；缺資料 fail closed |
 | Sprite controller | `src/pixi/spriteSheetAnimationLoader.js` | `createSpriteAnimationController` | **未 export**；Stage 1 loader。R4 manifest 不可硬塞進來 |
 | 第一次觸碰覺醒 | `src/ai/awakening/raphaelAwakeningGate.js` | `getAwakeningStage` | dormant／stirring／awakened，**不是** formal stage |

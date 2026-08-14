@@ -58,6 +58,24 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-08-15 - Cursor Grok - EVO-02.5 Provenance And Roster Correction - VERIFIED
+
+- Status: `VERIFIED` as an append-only follow-up correction on EVO-01／EVO-02. Formal evolution Runtime remains unwired. EVO-03 was not started.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `EVO-02.5_EVOLUTION_PROVENANCE_AND_ROSTER_CORRECTION`.
+- Branch / commit: `codex/grok-formal-evolution-runtime-r1` / pending local `fix(growth): close evolution provenance and roster gaps`.
+- Baseline: keep `d572f40` / `58cdb0a` / `6267967`. No rebase, amend, cherry-pick of PR #215／#216, Groundwork, runtime flags, or EVO-03.
+- Work performed:
+  - `createOwnedSafeReflectionSource` now validates caller-explicit `safetyFacts` before `sealGrowthSafetyProvenance`. Empty object, missing boolean／strategyId／actionId, string booleans, and unknown extra fields fail closed. Missing fields are not filled as `false`／`null`.
+  - Formal evolution now uses `FORMAL_EVOLUTION_COMPANION_ID_SET`. `decideFormalEvolutionTransition`／`createFormalEvolutionOfferToken`／`parseFormalEvolutionOfferToken` reject any id outside the formal 11. Test carriers and `star-energy-boarlet` fail with `not_formal_evolution_companion`. `companionRegistry` and assets were not modified.
+  - `already_accepted` requires an existing `formalOffer.status === "consumed"` whose token matches `input.offerToken`. Target stage without a matching consumed token is `stale_offer`.
+  - If `input.state` is provided, `state.companionStates.byId[companionId].growth` must exist and JSON-equal `input.growth`; otherwise `growth_state_mismatch`. `attachGrowth` no longer silently skips a missing companion path.
+  - Docs／SOV／handoff／plan honesty: Reflection provenance verifier／consumer and fixture path are done; production source creation／save roundtrip are not. `memoryWriter.js` and `storageGuard.js` were not changed.
+- Verification: `node --check` on changed JS／MJS; EVO-01 9/9; EVO-02 15/15; non-standoff 5/5; reflection owner 18/18; G2 state 25/25; G3 engine 16/16; G3 runtime 16/16; G1 session 17/17; `git diff --check`; uncommitted paths stay inside the allowlist; `runtimeAuthority` and `runtimeFormSwapReady` remain `false`.
+- Problems / risks: live Soul Talk still does not stamp owner／sealed safety at memory creation. `docs/qa/companion-growth-non-standoff-readiness-cases.mjs` still contains leftover “production writer” wording; that file was outside this correction allowlist.
+- Next safe action: stop. Do not start EVO-03. Formal-offer save can still be a later Groundwork; live Reflection Stage 3 production needs a separate `memoryWriter` + `storageGuard` pack overlapping PR #215.
+- Required reading: `src/engine/reflectionGrowthOwner.js`, `src/engine/companionFormalEvolutionTransitionEngine.js`, SOV-07／SOV-10, Growth Contract G3.2, `docs/handoff/EVO_03_TO_05_GROUNDWORK_APPROVAL_PLAN.md` §10.5.
+
 ### 2026-08-15 - Cursor Grok - EVO-02 Pure Formal Evolution Transition Engine - VERIFIED
 
 - Status: `VERIFIED` as a pure-engine package. Formal evolution Runtime remains unwired.
@@ -2352,6 +2370,18 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Next safe action: after merge, review the public Pages build on a physical phone before declaring store-ready visual quality.
 
 ## Lane 3 - Raphael Core, Companion Reasoning, And Soul Talk
+
+### 2026-08-15 - Cursor Grok - EVO-02.5 Provenance And Roster Correction - VERIFIED
+
+- Status: `VERIFIED` as a fail-closed correction. No RaphaelCore, Soul Talk reply, `memoryWriter.js`, or `storageGuard.js` change.
+- Lane: `Raphael Core, Companion Reasoning, And Soul Talk`.
+- Task name: `EVO-02.5_EVOLUTION_PROVENANCE_AND_ROSTER_CORRECTION`.
+- Branch / commit: `codex/grok-formal-evolution-runtime-r1` / pending local `fix(growth): close evolution provenance and roster gaps`.
+- Correction: empty／partial／wrong-type `safetyFacts` can no longer be sealed as complete safe provenance. Formal evolution is limited to the formal 11 companions. Unissued tokens at the target stage are `stale_offer`, not `already_accepted`.
+- Honest status: Reflection provenance verifier／consumer and sealed fixture path are complete; production source creation／save roundtrip are not. Do not describe live Soul Talk Reflection as a complete Stage 3 production path.
+- Verification: EVO-01 9/9 including the seven explicit-safetyFacts checks; high-risk／system safety reply／safety mode／safe harbor remain excluded; reflection owner 18/18.
+- Next safe action: do not expand this window into `memoryWriter.js`. If Owner wants live Reflection persist, that is a separate Groundwork overlapping PR #215, not EVO-03.
+- Required reading: `src/engine/reflectionGrowthOwner.js` `inspectExplicitSafetyFacts`, SOV-10, Growth Contract §2 Reflection production provenance row.
 
 ### 2026-08-15 - Cursor Grok - EVO-02 Pure Formal Evolution Transition Engine - VERIFIED
 

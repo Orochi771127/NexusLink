@@ -14,9 +14,11 @@ import {
 } from "../../src/engine/companionGrowthEngine.js";
 import {
   FORMAL_EVOLUTION_COMPANION_IDS,
+  FORMAL_EVOLUTION_COMPANION_ID_SET,
   FORMAL_EVOLUTION_EXACT_NEXT,
   createFormalEvolutionOfferToken,
-  decideFormalEvolutionTransition
+  decideFormalEvolutionTransition,
+  parseFormalEvolutionOfferToken
 } from "../../src/engine/companionFormalEvolutionTransitionEngine.js";
 
 const COMPANION_ID = "greyshade-cat";
@@ -240,7 +242,14 @@ await runCase("safeHarbor and high-risk leave growth deep-equal", () => {
   const offered = decide(ready.growth, { action: "offer" });
   const before = JSON.stringify(offered.candidateGrowth);
 
-  const harborState = { safeHarborMode: true };
+  const harborState = {
+    safeHarborMode: true,
+    companionStates: {
+      byId: {
+        [COMPANION_ID]: { growth: offered.candidateGrowth }
+      }
+    }
+  };
   const harbor = decide(offered.candidateGrowth, {
     action: "accept",
     offerToken: offered.offer.token,
@@ -275,7 +284,7 @@ await runCase("legacy unverifiable provenance and unknown ids fail closed", () =
     action: "offer",
     companionId: "not-a-companion"
   });
-  assertEqual(unknownCompanion.reason, "unknown_companion", "unknown companion");
+  assertEqual(unknownCompanion.reason, "not_formal_evolution_companion", "unknown companion");
 
   const force = decide(ready.growth, { action: "offer", forceEvolve: true });
   assertEqual(force.reason, "force_evolve_forbidden", "no force evolve");
@@ -314,6 +323,94 @@ await runCase("exact next table only contains the two lawful hops", () => {
     resonant_mature: "final_awakened",
     final_awakened: null
   }, "exact next table");
+});
+
+await runCase("test carriers and roadmap ids cannot receive a formal evolution token", () => {
+  assertEqual(FORMAL_EVOLUTION_COMPANION_ID_SET.size, 11, "set size");
+  const rejected = [
+    "flame-flicker",
+    "ice-talon",
+    "stone-shard",
+    "vine-twist",
+    "crystal-rabbit",
+    "star-energy-boarlet"
+  ];
+  for (const companionId of rejected) {
+    assertEqual(FORMAL_EVOLUTION_COMPANION_ID_SET.has(companionId), false, `${companionId} not in set`);
+    assertEqual(createFormalEvolutionOfferToken({
+      companionId,
+      currentStage: "initial_awakened",
+      targetStage: "resonant_mature",
+      generation: "gen-1"
+    }), null, `${companionId} token`);
+    assertEqual(parseFormalEvolutionOfferToken(
+      `fev1:${companionId}:initial_awakened:resonant_mature:gen-1`
+    ), null, `${companionId} parse`);
+    const decided = decide(seedReadyGrowth().growth, { action: "offer", companionId });
+    assertEqual(decided.reason, "not_formal_evolution_companion", `${companionId} decide`);
+  }
+});
+
+await runCase("unissued token at target stage is stale, not already accepted", () => {
+  const ready = seedReadyGrowth({ stage: "resonant_mature", chapterNo: 6, families: 4 });
+  const forged = createFormalEvolutionOfferToken({
+    companionId: COMPANION_ID,
+    currentStage: "initial_awakened",
+    targetStage: "resonant_mature",
+    generation: "never-issued"
+  });
+  const result = decide(ready.growth, {
+    action: "accept",
+    offerToken: forged,
+    chapterNo: 6,
+    at: BASE_TIME + 20
+  });
+  assertEqual(result.ok, false, "unissued reject");
+  assertEqual(result.reason, "stale_offer", "unissued reason");
+  assertEqual(result.changed, false, "unissued unchanged");
+  assertEqual(result.candidateGrowth.stage, "resonant_mature", "stage stays");
+});
+
+await runCase("provided state must own the same growth or fail closed", () => {
+  const ready = seedReadyState();
+  const detached = decide(ready.growth, {
+    action: "offer",
+    state: { companionStates: { byId: {} } }
+  });
+  assertEqual(detached.reason, "growth_state_mismatch", "missing companion state");
+
+  const other = seedReadyGrowth({ companionId: OTHER_ID });
+  const crossed = decide(ready.growth, {
+    action: "offer",
+    state: {
+      companionStates: {
+        byId: {
+          [OTHER_ID]: { growth: other.growth }
+        }
+      }
+    }
+  });
+  assertEqual(crossed.reason, "growth_state_mismatch", "cross-companion state");
+
+  const mismatched = decide(ready.growth, {
+    action: "offer",
+    state: {
+      companionStates: {
+        byId: {
+          [COMPANION_ID]: { growth: { ...ready.growth, stage: "resonant_mature" } }
+        }
+      }
+    }
+  });
+  assertEqual(mismatched.reason, "growth_state_mismatch", "detached growth");
+
+  const offered = decide(ready.growth, { action: "offer", state: ready.state });
+  assertEqual(offered.ok, true, "matching state accepted");
+  assertEqual(
+    offered.candidateState.companionStates.byId[COMPANION_ID].growth.offeredStage,
+    "resonant_mature",
+    "candidateState follows candidateGrowth"
+  );
 });
 
 report();

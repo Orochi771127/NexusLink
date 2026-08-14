@@ -1,8 +1,9 @@
 /**
- * EVO-01 — Reflection owner production path and non-standoff Stage 3 fixture.
+ * EVO-01 — Reflection provenance verifier／consumer and sealed Stage 3 fixture.
  *
- * 這份測試證明：資料完整時，Reflection 可以成為合法 Growth evidence；
+ * 這份測試證明：資料完整的 sealed fixture 可以成為合法 Growth evidence；
  * 缺主人／缺安全 provenance／舊資料則 fail closed，不准用 active companion 去猜。
+ * 這不是 live Soul Talk production source creation。
  */
 
 import { createDefaultState, normalizeState } from "../../src/state/store.js";
@@ -54,7 +55,7 @@ await runCase("owned source stamps companionId at creation and rejects activeCom
   assertEqual(inferred.reason, "active_companion_inference_forbidden", "inference reason");
 });
 
-await runCase("complete sealed memory becomes legal reflection evidence via production writer", () => {
+await runCase("complete sealed fixture memory becomes legal reflection evidence via consumer", () => {
   const state = freshState();
   const owned = createOwnedSafeReflectionSource({
     companionId: COMPANION_ID,
@@ -237,7 +238,72 @@ await runCase("storageGuard still strips live memory owner, so save-roundtrip so
   assertEqual(found.reason, "source_owner_unverifiable", "post-normalize fail closed");
 });
 
-await runCase("Care + Exploration + Reflection + Chapter reach Stage 3 without standoff", () => {
+await runCase("explicit safetyFacts cannot be synthesized from empty or partial data", () => {
+  const base = {
+    companionId: COMPANION_ID,
+    originType: "memory",
+    id: "emem_owned_01",
+    createdAt: BASE_TIME
+  };
+  const empty = createOwnedSafeReflectionSource({ ...base, safetyFacts: {} });
+  assertEqual(empty.ok, false, "empty facts");
+  assertEqual(empty.reason, "source_safety_unverifiable", "empty reason");
+
+  const missingBoolean = createOwnedSafeReflectionSource({
+    ...base,
+    safetyFacts: {
+      isHighRisk: false,
+      strategyId: null,
+      actionId: null,
+      systemRoleSafetyReply: false,
+      safetyModeActive: false
+    }
+  });
+  assertEqual(missingBoolean.ok, false, "missing boolean");
+
+  const missingStrategy = createOwnedSafeReflectionSource({
+    ...base,
+    safetyFacts: {
+      isHighRisk: false,
+      actionId: null,
+      systemRoleSafetyReply: false,
+      safetyModeActive: false,
+      safeHarborModeActive: false
+    }
+  });
+  assertEqual(missingStrategy.ok, false, "missing strategyId");
+
+  const missingAction = createOwnedSafeReflectionSource({
+    ...base,
+    safetyFacts: {
+      isHighRisk: false,
+      strategyId: null,
+      systemRoleSafetyReply: false,
+      safetyModeActive: false,
+      safeHarborModeActive: false
+    }
+  });
+  assertEqual(missingAction.ok, false, "missing actionId");
+
+  const stringBoolean = createOwnedSafeReflectionSource({
+    ...base,
+    safetyFacts: { ...safeFacts(), isHighRisk: "false" }
+  });
+  assertEqual(stringBoolean.ok, false, "string boolean");
+
+  const extraField = createOwnedSafeReflectionSource({
+    ...base,
+    safetyFacts: { ...safeFacts(), guessedOwner: COMPANION_ID }
+  });
+  assertEqual(extraField.ok, false, "unknown extra field");
+
+  const complete = createOwnedSafeReflectionSource({ ...base, safetyFacts: safeFacts() });
+  assertEqual(complete.ok, true, "complete safe facts");
+  assertEqual(complete.record.safetyProvenance.complete, true, "sealed complete");
+  assertEqual(complete.record.safetyProvenance.excluded, false, "sealed safe");
+});
+
+await runCase("Care + Exploration + Reflection + Chapter Stage 3 is a sealed fixture proof", () => {
   const state = seedOwnedMemory();
   writeFamily(state, "care", {
     chapterNo: 1,
@@ -255,7 +321,7 @@ await runCase("Care + Exploration + Reflection + Chapter reach Stage 3 without s
     branchFamily: "presence"
   }, "steadfastness", null, BASE_TIME + 3);
   const reflection = controller.writeReflectionPracticeIntoDraft(state, reflectionInput(state, BASE_TIME + 4));
-  assertEqual(reflection.accepted, true, "reflection production write");
+  assertEqual(reflection.accepted, true, "sealed fixture reflection write");
 
   const growth = state.companionStates.byId[COMPANION_ID].growth;
   assertEqual(growth.offeredStage, null, "fixture creates no offer");

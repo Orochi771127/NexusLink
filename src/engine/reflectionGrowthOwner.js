@@ -279,19 +279,10 @@ export function createOwnedSafeReflectionSource(input = {}) {
   const createdAt = normalizePositiveTimestamp(input.createdAt);
   if (!createdAt) return sourceFailure("source_timestamp_unverifiable");
 
-  if (!isPlainObject(input.safetyFacts)) return sourceFailure("source_safety_unverifiable");
-  const sealed = sealGrowthSafetyProvenance({
-    isHighRisk: input.safetyFacts.isHighRisk === true,
-    strategyId: Object.prototype.hasOwnProperty.call(input.safetyFacts, "strategyId")
-      ? input.safetyFacts.strategyId
-      : null,
-    actionId: Object.prototype.hasOwnProperty.call(input.safetyFacts, "actionId")
-      ? input.safetyFacts.actionId
-      : null,
-    systemRoleSafetyReply: input.safetyFacts.systemRoleSafetyReply === true,
-    safetyModeActive: input.safetyFacts.safetyModeActive === true,
-    safeHarborModeActive: input.safetyFacts.safeHarborModeActive === true
-  });
+  // 必須先驗證呼叫端明示的原始 facts，不可把缺欄位補成 false／null 再封成 complete。
+  const explicitSafety = inspectExplicitSafetyFacts(input.safetyFacts);
+  if (!explicitSafety.ok) return sourceFailure("source_safety_unverifiable");
+  const sealed = sealGrowthSafetyProvenance(explicitSafety.facts);
   if (sealed.excluded !== false || sealed.complete !== true) {
     return sourceFailure("source_safety_unverifiable");
   }
@@ -397,6 +388,43 @@ function inspectOwnedSafeSourceRecord(record, companionId, originType, at) {
   return {
     ok: true,
     safetyProvenance: record.safetyProvenance
+  };
+}
+
+function inspectExplicitSafetyFacts(rawFacts) {
+  if (!isPlainObject(rawFacts)) return safetyFailure("source_safety_unverifiable");
+  const keys = Object.keys(rawFacts);
+  if (keys.some((key) => !SAFETY_FACT_KEYS.has(key))) {
+    return safetyFailure("source_safety_unverifiable");
+  }
+  for (const key of SAFETY_FACT_KEYS) {
+    if (!Object.prototype.hasOwnProperty.call(rawFacts, key)) {
+      return safetyFailure("source_safety_unverifiable");
+    }
+  }
+  const booleanFields = [
+    "isHighRisk",
+    "systemRoleSafetyReply",
+    "safetyModeActive",
+    "safeHarborModeActive"
+  ];
+  if (!booleanFields.every((field) => typeof rawFacts[field] === "boolean")) {
+    return safetyFailure("source_safety_unverifiable");
+  }
+  if (!isNullableMachineLabel(rawFacts.strategyId)
+    || !isNullableMachineLabel(rawFacts.actionId)) {
+    return safetyFailure("source_safety_unverifiable");
+  }
+  return {
+    ok: true,
+    facts: Object.freeze({
+      isHighRisk: rawFacts.isHighRisk,
+      strategyId: rawFacts.strategyId,
+      actionId: rawFacts.actionId,
+      systemRoleSafetyReply: rawFacts.systemRoleSafetyReply,
+      safetyModeActive: rawFacts.safetyModeActive,
+      safeHarborModeActive: rawFacts.safeHarborModeActive
+    })
   };
 }
 

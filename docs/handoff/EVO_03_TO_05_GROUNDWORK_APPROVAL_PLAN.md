@@ -4,7 +4,9 @@
 >
 > 目前隔離 branch 已停在 EVO-02。**沒有 Owner 對本檔的精確檔案核准前，不得開始 EVO-03 Runtime。**
 >
-> 基準：`codex/grok-formal-evolution-runtime-r1`，EVO-02 純引擎已本地完成。`runtimeAuthority` 與 `runtimeFormSwapReady` 仍必須是 `false`。EVO-03～05 **不包含** flags promotion。
+> 基準：`codex/grok-formal-evolution-runtime-r1`，EVO-02 純引擎已本地完成，並另有 EVO-02.5 correction。`runtimeAuthority` 與 `runtimeFormSwapReady` 仍必須是 `false`。EVO-03～05 **不包含** flags promotion。
+>
+> EVO-02.5 誠實狀態：Reflection 是 verifier／consumer + sealed fixture，不是 live Soul Talk production source creation。EVO-03 可以把正式 accept 存進 schema；**不能**順便假裝 live Reflection Stage 3 已可玩。live owner 需要 `memoryWriter.js` + `storageGuard.js`，且與 PR #215 重疊，應另開 Groundwork。
 
 ---
 
@@ -190,6 +192,15 @@ Rollback：還原 EVO-03 commit；不刪存檔 key；不改 flags。
 - 跨角色 sheet 解析 fail closed
 - 三隻 canary 手動視覺（人類）
 - 手機 GPU／lazy load
+
+---
+
+## 10.5 EVO-02.5 之後：EVO-03 與 PR #215 怎麼排
+
+- **EVO-03 可以繼續當獨立 Groundwork**：它要的是 `formalOffer` schema、critical-save、UI。它**不需要**改 `memoryWriter.js`。
+- **不要把 EVO-03 當成 live Reflection Stage 3 完工包。** 玩家實際 Soul Talk 寫入的記憶仍沒有 owner／sealed safety；那是另一個 Groundwork，而且會碰到 `storageGuard.js` 與 PR #215。
+- **若目標是「第三階段不對峙路徑可真實遊玩」**：應先處理或等待 PR #215，再另開 `memoryWriter` + `storageGuard` owner Groundwork。不要把這件事塞進 EVO-03。
+- **若目標只是「正式進化邀請可存檔」**：仍可先做 EVO-03，但必須繼續避開 `storageGuard.js`，並假設 #215 可能同時改同一條 save 管線。
 
 ---
 

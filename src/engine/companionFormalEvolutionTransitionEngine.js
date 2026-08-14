@@ -1,4 +1,3 @@
-import { isKnownCompanionId } from "../data/companionRegistry.js";
 import {
   COMPANION_GROWTH_SOURCE_TYPES,
   evaluateCompanionGrowthReadiness,
@@ -41,6 +40,8 @@ export const FORMAL_EVOLUTION_COMPANION_IDS = Object.freeze([
   "goldenspark-wyrm"
 ]);
 
+export const FORMAL_EVOLUTION_COMPANION_ID_SET = new Set(FORMAL_EVOLUTION_COMPANION_IDS);
+
 const ACTION_SET = new Set(FORMAL_EVOLUTION_ACTIONS);
 const STAGE_SET = new Set(Object.keys(FORMAL_EVOLUTION_EXACT_NEXT));
 const TOKEN_VERSION = "fev1";
@@ -60,14 +61,19 @@ const SAFETY_FACT_KEYS = Object.freeze([
  */
 export function decideFormalEvolutionTransition(input = {}) {
   if (!isPlainObject(input)) return failure("invalid_input");
-  const currentGrowth = cloneJson(input.growth);
-  const currentState = input.state == null ? null : cloneJson(input.state);
-  if (!currentGrowth) return failure("invalid_growth_state");
+  if (!isPlainObject(input.growth)) return failure("invalid_growth_state");
 
   const companionId = input.companionId;
-  if (!isKnownCompanionId(companionId)) {
-    return unchangedFailure("unknown_companion", currentGrowth, currentState);
+  if (!FORMAL_EVOLUTION_COMPANION_ID_SET.has(companionId)) {
+    return failure("not_formal_evolution_companion");
   }
+
+  const identity = inspectGrowthStateIdentity(input.state, input.growth, companionId);
+  if (!identity.ok) return failure(identity.reason);
+
+  const currentGrowth = cloneJson(input.growth);
+  const currentState = input.state == null ? null : cloneJson(input.state);
+
   if (input.forceEvolve === true) {
     return unchangedFailure("force_evolve_forbidden", currentGrowth, currentState);
   }
@@ -113,7 +119,7 @@ export function createFormalEvolutionOfferToken({
   targetStage,
   generation
 } = {}) {
-  if (!isKnownCompanionId(companionId) || !STAGE_SET.has(currentStage)) return null;
+  if (!FORMAL_EVOLUTION_COMPANION_ID_SET.has(companionId) || !STAGE_SET.has(currentStage)) return null;
   if (FORMAL_EVOLUTION_EXACT_NEXT[currentStage] !== targetStage) return null;
   const normalizedGeneration = normalizeGeneration(generation);
   if (!normalizedGeneration) return null;
@@ -169,6 +175,7 @@ function decideOffer(input, currentGrowth, currentState, at, safety) {
       action: "offer",
       reason: "offer_already_open",
       changed: false,
+      companionId: input.companionId,
       currentGrowth,
       currentState,
       nextGrowth: currentGrowth,
@@ -199,6 +206,7 @@ function decideOffer(input, currentGrowth, currentState, at, safety) {
     action: "offer",
     reason: "offer_opened",
     changed: true,
+    companionId: input.companionId,
     currentGrowth,
     currentState,
     nextGrowth,
@@ -223,6 +231,7 @@ function decideRewrite(input, currentGrowth, currentState, at, safety) {
     action: "rewrite",
     reason: "rewrite_pending",
     changed: true,
+    companionId: input.companionId,
     currentGrowth,
     currentState,
     nextGrowth,
@@ -250,6 +259,7 @@ function decideDefer(input, currentGrowth, currentState, at, safety) {
     action: "defer",
     reason: "offer_deferred",
     changed: true,
+    companionId: input.companionId,
     currentGrowth,
     currentState,
     nextGrowth,
@@ -270,6 +280,7 @@ function decideAccept(input, currentGrowth, currentState, at, safety) {
       action: "accept",
       reason: "already_accepted",
       changed: false,
+      companionId: input.companionId,
       currentGrowth,
       currentState,
       nextGrowth: currentGrowth,
@@ -277,15 +288,7 @@ function decideAccept(input, currentGrowth, currentState, at, safety) {
     });
   }
   if (currentGrowth.stage === parsed.targetStage) {
-    return success({
-      action: "accept",
-      reason: "already_complete",
-      changed: false,
-      currentGrowth,
-      currentState,
-      nextGrowth: currentGrowth,
-      offer: existing || parsed
-    });
+    return unchangedFailure("stale_offer", currentGrowth, currentState);
   }
   if (currentGrowth.stage === "final_awakened") {
     return unchangedFailure("final_stage_complete", currentGrowth, currentState);
@@ -324,15 +327,16 @@ function decideAccept(input, currentGrowth, currentState, at, safety) {
     consumedToken: existing.token,
     safetySeal: safety.sealed.seal
   };
-  return success({
-    action: "accept",
-    reason: "stage_candidate_ready",
-    changed: true,
-    currentGrowth,
-    currentState,
-    nextGrowth,
-    offer: nextGrowth.formalOffer
-  });
+    return success({
+      action: "accept",
+      reason: "stage_candidate_ready",
+      changed: true,
+      companionId: input.companionId,
+      currentGrowth,
+      currentState,
+      nextGrowth,
+      offer: nextGrowth.formalOffer
+    });
 }
 
 function inspectReadinessAndWillingness(input, growth) {
@@ -420,10 +424,22 @@ function createNextWindowCoverage(stage, at) {
   };
 }
 
+function inspectGrowthStateIdentity(state, growth, companionId) {
+  if (state == null) return { ok: true };
+  if (!isPlainObject(state)) return { ok: false, reason: "growth_state_mismatch" };
+  const stateGrowth = state.companionStates?.byId?.[companionId]?.growth;
+  if (!isPlainObject(stateGrowth)) return { ok: false, reason: "growth_state_mismatch" };
+  if (JSON.stringify(stateGrowth) !== JSON.stringify(growth)) {
+    return { ok: false, reason: "growth_state_mismatch" };
+  }
+  return { ok: true };
+}
+
 function success({
   action,
   reason,
   changed,
+  companionId,
   currentGrowth,
   currentState,
   nextGrowth,
@@ -437,7 +453,7 @@ function success({
     action,
     offer: offer ? cloneJson(offer) : null,
     candidateGrowth: cloneJson(nextGrowth),
-    candidateState: attachGrowth(currentState, offer?.companionId, nextGrowth),
+    candidateState: attachGrowth(currentState, companionId, nextGrowth),
     candidateTransition: changed && action === "accept"
       ? {
         fromStage: currentGrowth.stage,
@@ -483,9 +499,8 @@ function failure(reason) {
 }
 
 function attachGrowth(state, companionId, growth) {
-  if (!state || !companionId) return cloneJson(state);
+  if (state == null) return null;
   const nextState = cloneJson(state);
-  if (!nextState.companionStates?.byId?.[companionId]) return nextState;
   nextState.companionStates.byId[companionId].growth = cloneJson(growth);
   return nextState;
 }
