@@ -674,7 +674,7 @@
   4. 新的合法 regulation／repair／completed lived event 之後，才允許重新評估並發出新 offer token；舊 token 必須 stale-reject。
 - 失敗時應保持的狀態：舊 offer 失效但不懲罰；stage 不前進。
 - 預計實作包：EVO-02 ＋ EVO-03。N5 已覆蓋 Growth 練習的零懲罰延後，但尚未覆蓋 formal stage invitation。
-- 目前狀態：`partial`（EVO-02 純函式已證明零懲罰 defer、舊 token stale、需新 lived context 才能再邀請。未接 Runtime UI／save）。
+- 目前狀態：`partial`（EVO-02 純函式已證明零懲罰 defer、舊 token stale、需新 lived context 才能再邀請。EVO-03 Growth UI 可延後並把 deferred offer 存檔。未接 renderer）。
 
 **SOV-04 — Exact-next-stage only**
 - 白話契約：一次只能走到「現在的下一階」。不能跳去終局，也不能把 A 的成長寫到 B。
@@ -695,7 +695,7 @@
   3. 已完成 `final_awakened` 的 accept 回傳 `already_complete`（或等價），零 mutation。
 - 失敗時應保持的狀態：第一次成功後的 canonical 狀態保持；重複提交不得製造第二個 stage audit。
 - 預計實作包：EVO-02 ＋ EVO-03。
-- 目前狀態：`partial`（EVO-02 純函式：同一 token 接受 20 次不再升階、不新增 transition／renderer intent。未接 save／UI，candidate 尚未成為 canonical Runtime state）。
+- 目前狀態：`partial`（EVO-02 純函式：同一 token 接受 20 次不再升階。EVO-03：同一 token 重複 accept 不再存檔、不再發布。未接 renderer，不得標完整 `implemented`）。
 
 **SOV-06 — SafeHarbor terminal**
 - 白話契約：安全港一打開，進化相關的所有後續動作都必須立刻停住，而且不能在事後補做。
@@ -725,8 +725,8 @@
   2. mock save 失敗：candidate 被丟棄；canonical in-memory、store、localStorage、UI、Pixi 與呼叫前 deep-equal。測試必須證明中間沒有任何 subscriber／UI／renderer 觀察到新 stage。禁止「先改 canonical 再 rollback」。
   3. save 成功、後續 UI 或 renderer 失敗：reload 後 `growth.stage` 仍為已存的新值。renderer 只走同角色安全 fallback，並保留可重試狀態。此條與 SOV-09／SOV-12 互補。
 - 失敗時應保持的狀態：save 失敗＝舊 stage 從未被發布；save 成功＝新 stage 已持久，即使畫面稍後失敗也不倒退。
-- 預計實作包：EVO-03。G3.1 care writer 已有 candidate-first critical save，但尚未用於 formal stage accept。
-- 目前狀態：`not implemented`。
+- 預計實作包：EVO-03。G3.1 care writer 已有 candidate-first critical save；EVO-03 已把同一順序接到 formal accept。
+- 目前狀態：`partial`（EVO-03 Node 測試證明 mock save 失敗時 subscriber／canonical 從未看到新 stage；save 成功後 UI throw，reload-shaped normalize 仍是新 stage。renderer intent 仍是 no-op，尚未接 Pixi。不得標完整 `implemented`）。
 
 **SOV-09 — Renderer failure does not corrupt saved stage**
 - 白話契約：圖片或動畫載入失敗，不能把已經存好的下一階改回去，也不能換成別隻夥伴的身體。

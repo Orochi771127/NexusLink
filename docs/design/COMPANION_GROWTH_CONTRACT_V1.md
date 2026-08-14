@@ -36,7 +36,7 @@
 | Growth G1／G2／G3／G3.1 | **已實作**。per-companion 狀態、evidence foundation、readiness／willingness、care source owner 已接入。 |
 | Reflection production provenance | **verifier／consumer 與 fixture path 已完成；production source creation／save roundtrip 尚未完成。** `createOwnedSafeReflectionSource` 必須明示完整 `safetyFacts` 與 `companionId`，禁止用空物件合成 complete safe provenance，也禁止用 `state`／`activeCompanionId` 推測。`writeReflectionPracticeIntoDraft` 可消費已封存來源。`memoryWriter.js` 尚未寫 owner／sealed safety；`storageGuard` 仍會剝掉這些欄位。這需要另開 Groundwork（且與 PR #215 重疊）。 |
 | 第三階段不對峙路徑 | **sealed fixture 已證明** Care + Exploration + Reflection + Chapter 可達 Stage 3 readiness。不得宣稱 live Soul Talk Reflection 已有完整 Stage 3 production path，也不得把此條讀成 Growth G4 已完成。 |
-| Growth G4 offer／rewrite／defer／accept／stage advance | **EVO-02 純函式已存在，Runtime 未接線**。`decideFormalEvolutionTransition` 回傳獨立 candidate，不存檔、不發布 store、不通知 UI／renderer。G2 schema 的 `offeredStage`／`deferredAt` 仍是可持久欄位；`formalOffer` token 目前只活在純引擎 candidate 裡，normalize 會剝掉，這是 EVO-03 Groundwork。 |
+| Growth G4 offer／rewrite／defer／accept／stage advance | **EVO-03 critical-save + Growth UI 已接入；形態 renderer 未接。** `formalOffer` token 可活過 `normalizeGrowth`。accept 先存檔，成功才發布可見 stage；失敗則 canonical／store 從頭到尾不變。renderer intent 仍是 no-op，Stage 1 illustrated runtime 仍是 live fallback。不得宣稱完整覺醒玩法或 live Reflection Stage 3 已完成。 |
 | 11 隻角色 × 22 個進化形態資產 | **美術包已完成，仍是 art-only**。索引：`assets/characters/formal-evolution-index.json`、`assets/characters/formal-evolution-animation-r4.json`。176 張 2048×2048 sheet、2816 格。 |
 | `runtimeAuthority` / `runtimeFormSwapReady` | **兩者皆為 `false`**。EVO-00～EVO-05 不得把它們改成 `true`。 |
 | save／store／registry／Pixi／renderer | **尚未正式接線**到 Stage 2／3 形態。現行 live fallback 仍是 Stage 1 illustrated runtime。 |
@@ -163,9 +163,9 @@ Willingness 另外檢查（G3 已固定 typed enum／profile gate 並納入 muta
 | **safeHarbor terminal** | 安全港一開始就終止所有進化副作用 | 禁止 gameplay mutation、save、reward、memory、relationship、Growth evidence、evolution offer、stage advance、VFX telegraph、delayed callbacks、renderer transition、autonomous invitation。退出安全港也不得復活舊 offer。 |
 | **high-risk evidence exclusion** | 高風險回合永遠不是成長證據，也不能開邀請 | `growthSafetyExcluded=true` 在 source event 建立時封存，後代事件不能洗成 false。high-risk 前後完整 companion／growth／stage 必須完全不變。 |
 
-### 5.3 Candidate-first / commit-late（Growth G4 accept；尚未實作 Runtime）
+### 5.3 Candidate-first / commit-late（Growth G4 accept；EVO-03 已接 critical-save）
 
-這是 SOV-08 的契約時序。G3.1 care writer 已用類似模式，但 **formal stage accept 尚未接線**。不得把本節寫成 Runtime 已完成。
+這是 SOV-08 的契約時序。G3.1 care writer 與 EVO-03 formal accept 都走同一條：先存檔，成功才發布。**形態 renderer 仍未接線**，不得把本節寫成完整覺醒 Runtime 已完成。
 
 1. 讀取 immutable current state。不得在這一步改 `growth.stage`。
 2. 由純函式建立**獨立** candidate state。candidate 與 canonical 不得共享可變參照。
@@ -431,7 +431,7 @@ projectOrbitEmbodimentProfile({
 | G3.1 | EXPERIENCE | Heart Phase completion 成為 care source owner；夥伴改寫需第二次明示接受 | ✅ candidate-first critical save、canonical result validation、A/B owner guard、全域 safety session invalidation、root／anchor dedupe 已接入；零 relationship／reward mutation |
 | G3.2 | EXPERIENCE | Reflection／Echo Sorting source owner + 不依賴 standoff 的獨立章節生活事件 | **partial（EVO-01）**：provenance verifier／consumer 與 sealed fixture path 已完成；production source creation／save roundtrip 尚未完成。不開始 Growth G4 Runtime |
 | Orbit D0 | Docs | 已擁有 formal stage 可投影為 normalized Orbit sidegrade；心相展開不得戰中升階 | O12–O17 + N2／N5／N7／N11 的文件一致性；不改 runtime／schema／assets |
-| **Growth G4** | EXPERIENCE | 夥伴主動 stage offer、rewrite、defer、accept、exact-next-stage、idempotent advance | **partial（EVO-02 純函式）**。Runtime UI／critical-save 對應 EVO-03。不得與 Art G4 混淆 |
+| **Growth G4** | EXPERIENCE | 夥伴主動 stage offer、rewrite、defer、accept、exact-next-stage、idempotent advance | **partial（EVO-03）**：schema 持久化 `formalOffer`、candidate-first critical-save、Growth UI 邀請／延後／接受已接入。renderer／catalog 仍未做，flags 仍為 false |
 | G5 art-only | ART | 11 隻 × 22 形態 Sprite Sheet 已完成機械 QC | **美術完成、Runtime 未接線**。`runtimeAuthority=false`、`runtimeFormSwapReady=false`。這不是 renderer promotion |
 | G5 runtime | GROUNDWORK + RENDERER | catalog adapter、Pixi stage-aware loader、canary、promotion | **尚未實作**。對應 EVO-04／EVO-05／EVO-06。驗收使用 SOV-09、SOV-11、SOV-12 與 Art G1–G7 |
 
@@ -496,7 +496,7 @@ Companion Growth 只有在以下條件同時成立時，才能稱為 runtime-com
 | **EVO-00** | 契約重對齊、SOV 命名空間、handoff、Ledger | 只改文件 | 把 SOV 寫成可測契約；不實作 Runtime |
 | **EVO-01** | Reflection owner／safety provenance；證明不依賴 standoff 的 Stage 3 路徑可達 | `reflectionGrowthOwner.js`、Growth controller writer、pageRouter Memory Echo 轉接。**未改** `storageGuard`／store／schema／saveManager | SOV-07、SOV-10 |
 | **EVO-02** | 純狀態機：offer／rewrite／defer／accept／exact-next-stage／idempotency | `companionFormalEvolutionTransitionEngine.js`；禁止碰 DOM／Pixi／save。`formalOffer` 尚未進入 schema | SOV-01～SOV-07 |
-| **EVO-03** | UI + critical-save；存檔成功才發布可見 stage | `companionGrowthController.js`、`saveManager.js`、`store.js`、Growth UI | SOV-03、SOV-05、SOV-08 |
+| **EVO-03** | UI + critical-save；存檔成功才發布可見 stage | `companionStateSchema.js` 持久化 `formalOffer`；`companionGrowthController.js`／Growth UI；沿用既有 `saveCandidateState`。未改 `storageGuard.js`／Pixi／flags | SOV-03、SOV-05、SOV-08 |
 | **EVO-04** | 正式 catalog 與 Sprite Sheet manifest adapter | 新 catalog module；**不得**讓 `evolutionLines.js` 成為 authority；stage-aware／row-aware adapter | SOV-04、SOV-12 |
 | **EVO-05** | Renderer canary（建議 `greyshade-cat`／`auriowl`／`crystalfin-seahorse`，人類可改） | `spriteSheetAnimationLoader.js`、Pixi；同角色 fallback | SOV-09、SOV-12 |
 | **EVO-06** | 完整 QA 與 promotion 決策 | 旗標改 `true` 必須獨立 Owner／Groundwork，不可藏在別包 | SOV-11 與回歸 N／H／I／Art G |

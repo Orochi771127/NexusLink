@@ -58,6 +58,47 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-08-15 - Cursor Grok - EVO-03 Self-Audit And PR 215 Impact - VERIFIED
+
+- Status: `VERIFIED` as EVO-03 self-audit + PR #215 impact audit. Local commit of EVO-03 follows this entry. Renderer, catalog, flags, and live Reflection remain unwired.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `EVO-03_FORMAL_EVOLUTION_CRITICAL_SAVE`.
+- Branch / commit: `codex/grok-formal-evolution-runtime-r1` / local `feat(growth): persist formal evolution offers with critical save` on `478041e`.
+- Work performed:
+  - Self-audit found Growth UI could hide an invite while a forged click still offered, because `commitFormalEvolutionTransition` rebuilt willingness without Heart Phase `currentMoment`. `pageRouter` now passes `deriveHeartPhaseSnapshot`; rest／decline map to `companion_deferred` and do not persist.
+  - Added prune + `saveState`／`loadState` roundtrip proof. `sanitizeCompanionStatePreviews` still only clears `reactionPreview`; `formalOffer` survives current `storageGuard`.
+  - PR #215 (`7bb2913`, OPEN, not draft): memory weighted retention, `boundaryPressure`／`boundaryBand` top-level store fields, energy withdrawal. **Does not** touch `companionStateSchema.js`, Growth controller, or `pageRouter`. **Not cherry-picked.** EVO-03 can persist independently. Later merge may touch `store.js`／`defaultState.js`／`storageGuard.js` alongside this branch, but this pack did not edit those files.
+- Verification: EVO-03 9/9; EVO-01 9/9; EVO-02 15/15; non-standoff 5/5; reflection owner 18/18; G2 state 25/25; G3 engine 16/16; G3 runtime 16/16; G1 session 17/17; `node --check`; `git diff --check`. Flags remain false. Browser Growth UI was not run.
+- Problems / risks: GROUNDWORK schema imports EXPERIENCE transition engine (no cycle today). No 11-companion runtime UI matrix. Live Soul Talk still does not stamp owner／sealed safety at creation.
+- Next safe action: stop after the local commit. Do not push. Do not start EVO-04／EVO-05. Do not treat this as live Stage 3 Reflection or form-swap Runtime.
+- Required reading: `commitFormalEvolutionTransition`, `normalizeFormalOffer`, EVO-03 QA, PR #215 file list.
+
+### 2026-08-15 - Cursor Grok - EVO-03 Formal Evolution Critical Save - VERIFIED
+
+- Status: `VERIFIED` as critical-save + Growth UI. Renderer, catalog, flags, and live Reflection remain unwired.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `EVO-03_FORMAL_EVOLUTION_CRITICAL_SAVE`.
+- Branch / commit: `codex/grok-formal-evolution-runtime-r1` / uncommitted on `478041e`.
+- Work performed:
+  - `normalizeGrowth` now keeps a valid `formalOffer`. Missing／invalid tokens fail closed; old saves do not invent a token.
+  - `commitFormalEvolutionTransition` saves the candidate first, then publishes. Save failure never notifies store subscribers of the new stage.
+  - Growth UI can hear／accept／defer a companion-led invite without `index.html` changes. Renderer intent stays null.
+  - Did not change `saveManager.js`、`store.js`、`defaultState.js`、`storageGuard.js`、`memoryWriter.js`、Pixi、assets, or runtime flags.
+- Verification: EVO-03 7/7; EVO-01 9/9; EVO-02 15/15; non-standoff 5/5; reflection owner 18/18; G2 state 25/25; G3 engine 16/16; G3 runtime 16/16; G1 session 17/17; `git diff --check`; flags remain false.
+- Problems / risks: no browser Growth UI pass in this pack. Live Reflection still needs `memoryWriter` + `storageGuard` overlapping PR #215. EVO-04／EVO-05 not started.
+- Next safe action: local EVO-03 commit if Owner asks. Do not start EVO-04 until a separate approval. Do not treat this as live Stage 3 Reflection.
+- Required reading: `src/state/companionStateSchema.js` `normalizeFormalOffer`, `commitFormalEvolutionTransition`, SOV-08, EVO-03 QA.
+
+### 2026-08-15 - Cursor Grok - EVO-03 Formal Evolution Critical Save - IN PROGRESS
+
+- Status: `IN PROGRESS`. Owner instruction: continue from the Groundwork plan. EVO-04／EVO-05 are not in this pack.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `EVO-03_FORMAL_EVOLUTION_CRITICAL_SAVE`.
+- Branch / commit: `codex/grok-formal-evolution-runtime-r1` / `478041e`.
+- Scope: persist `formalOffer` through schema, candidate-first accept, Growth UI offer／defer／accept. Avoid `index.html`, `storageGuard.js`, `memoryWriter.js`, Pixi, assets, runtime flags, and PR #215／#216.
+- Next safe action: finish the pack, verify, then stop. Do not start EVO-04.
+- Required reading: `docs/handoff/EVO_03_TO_05_GROUNDWORK_APPROVAL_PLAN.md`, SOV-03／SOV-05／SOV-08, G3.1 `saveCandidateState` order.
+
 ### 2026-08-15 - Cursor Grok - EVO-02.5 Provenance And Roster Correction - VERIFIED
 
 - Status: `VERIFIED` as an append-only follow-up correction on EVO-01／EVO-02. Formal evolution Runtime remains unwired. EVO-03 was not started.
@@ -2370,6 +2411,27 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Next safe action: after merge, review the public Pages build on a physical phone before declaring store-ready visual quality.
 
 ## Lane 3 - Raphael Core, Companion Reasoning, And Soul Talk
+
+### 2026-08-15 - Cursor Grok - PR 215 Impact Audit For EVO-03 - VERIFIED
+
+- Status: `VERIFIED` as read-only impact audit. No cherry-pick, rebase, or merge of PR #215. No RaphaelCore, Soul Talk, `memoryWriter.js`, or `storageGuard.js` change in this pack.
+- Lane: `Raphael Core, Companion Reasoning, And Soul Talk`.
+- Task name: `EVO-03_FORMAL_EVOLUTION_CRITICAL_SAVE`.
+- Branch / commit: `codex/grok-formal-evolution-runtime-r1` / local EVO-03 commit on `478041e`.
+- Work performed: Re-read PR #215 at head `7bb29136c448181ca252ec179860da114c60503a`. It keeps load-bearing emotional memories through prune, preserves `type`／`memoryType`, and adds boundary pressure bands plus energy withdrawal. It does not strip `companionStates.growth` and does not implement live Reflection owner stamping.
+- Honest status: EVO-03 persist of `formalOffer` can ship beside #215. Live Reflection Stage 3 production still needs a separate `memoryWriter` + `storageGuard` Groundwork after #215, not inside EVO-03.
+- Next safe action: do not merge #215 from this isolation branch. If Owner later wants live Reflection persist, reopen Groundwork against the then-current #215／main state.
+- Required reading: PR #215 `storageGuard.js` weighted retention, `memoryRecallPolicy.js` `isLoadBearingMemory`, SOV-10.
+
+### 2026-08-15 - Cursor Grok - EVO-03 Formal Evolution Critical Save - VERIFIED
+
+- Status: `VERIFIED` for Growth invite persist only. No RaphaelCore, Soul Talk, or `memoryWriter.js` change.
+- Lane: `Raphael Core, Companion Reasoning, And Soul Talk`.
+- Task name: `EVO-03_FORMAL_EVOLUTION_CRITICAL_SAVE`.
+- Branch / commit: `codex/grok-formal-evolution-runtime-r1` / uncommitted on `478041e`.
+- Work performed: Formal accept now uses candidate-first save. High-risk and safeHarbor still fail closed before persist. Live Soul Talk Reflection still has no production source creation.
+- Next safe action: do not start EVO-04. If Owner wants live Reflection Stage 3, that remains a separate Groundwork overlapping PR #215.
+- Required reading: SOV-08, Growth Contract G4 row.
 
 ### 2026-08-15 - Cursor Grok - EVO-02.5 Provenance And Roster Correction - VERIFIED
 

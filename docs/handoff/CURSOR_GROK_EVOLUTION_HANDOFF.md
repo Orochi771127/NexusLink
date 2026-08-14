@@ -5,7 +5,7 @@
 > 權威順序仍是：Master Canon → `AGENTS.md`／`CLAUDE.md` → Growth Contract → `ACCEPTANCE.md` → Ledger → 本檔。
 > 若本檔與上位文件衝突，以上位文件為準，並追加 Ledger `CORRECTION`／`SUPERSEDED`，不得默默改 Canon。
 >
-> 最後更新：2026-08-15（EVO-02.5 correction：provenance／11 隻 roster／token／growth-state identity）
+> 最後更新：2026-08-15（EVO-03 critical-save + Growth UI；形態 renderer 未接）
 
 ---
 
@@ -144,14 +144,14 @@ EVO-00 **沒有**修改 `assets/**`，也 **沒有**重新執行 176 張 sheet �
 - **G3** evidence foundation、`evaluateCompanionGrowthReadiness`、`evaluateCompanionGrowthWillingness`
 - **G3.1** Heart Phase care source owner、candidate-first critical save
 - **G3.2 Reflection verifier／consumer（有限）**：sealed fixture 可寫 `reflection` evidence。production source creation／save roundtrip 尚未完成（`memoryWriter.js` 未寫 owner／sealed safety）。
-- **EVO-02 純 G4 狀態機**：`src/engine/companionFormalEvolutionTransitionEngine.js` 可產出獨立 candidate（offer／rewrite／defer／accept）。不存檔、不發布、無 renderer。
+- **EVO-02 純 G4 狀態機**：`src/engine/companionFormalEvolutionTransitionEngine.js` 可產出獨立 candidate（offer／rewrite／defer／accept）。
+- **EVO-03 critical-save + Growth UI**：`formalOffer` 可活過 schema；accept 先存檔再發布。renderer intent 仍是 no-op。
 
 ### 尚未完成（不得寫成已完成）
 
 - **live Reflection production source creation**：`memoryWriter.js` 尚未在建立記憶時寫 `companionId`／`safetyProvenance`；`storageGuard` 仍會剝掉這些欄位。這與 PR #215 重疊。
 - **第三階段不對峙路徑的完整可玩 live path**：只有 sealed fixture 證明；不得宣稱 live Soul Talk Reflection 已有完整 Stage 3 production path。
-- **Growth G4 Runtime**：offer／accept 尚未接 UI、critical-save、store 發布或 renderer。`formalOffer` 尚未進入 schema；normalize 會剝掉 token。
-- **save／store／registry／Pixi／renderer 接線**：未做。Stage 1 illustrated runtime 仍是 live fallback。
+- **Growth G4 renderer／catalog**：尚未接 Pixi 或 R4 形態。Stage 1 illustrated runtime 仍是 live fallback。
 - **runtime flags**：仍必須是 false。
 - **`evolutionLines.js`**：不是正式 stage catalog authority。
 
@@ -221,7 +221,7 @@ Orbit／Expedition 不得成為 Growth 或 stage authority。
 
 | PR | 狀態 | 為何重要 |
 |---|---|---|
-| [#215](https://github.com/Orochi771127/NexusLink/pull/215) `feat/raphael-continuity-and-boundary` | **OPEN**，head `7bb29136c448181ca252ec179860da114c60503a` | 會改 `defaultState.js`、`store.js`、記憶、能量、邊界。直接影響未來 EVO-01／EVO-03 |
+| [#215](https://github.com/Orochi771127/NexusLink/pull/215) `feat/raphael-continuity-and-boundary` | **OPEN**，head `7bb29136c448181ca252ec179860da114c60503a`（2026-08-15 再查） | 改 `storageGuard.js` 情緒記憶保留、`store.js`／`defaultState.js` 頂層 `boundaryPressure`／`boundaryBand`、能量撤退。**不改** Growth schema／controller。EVO-03 **未 cherry-pick**；可並行。live Reflection owner 仍要另開 `memoryWriter` + `storageGuard` Groundwork。 |
 | [#216](https://github.com/Orochi771127/NexusLink/pull/216) `cursor/setup-dev-environment-0511` | **OPEN + isDraft:true**，head `abfc9e99e30ad97cfd0ce440d6ef3313fd03ddd3` | 會改 `AGENTS.md`。若在 EVO-00 期間合併，下一包必須重讀協作規範 |
 
 兩者的 `web-release-gate` 先前盤點報告為通過。**本次 EVO-00 沒有重新跑 CI logs**；「gate 通過」列為歷史報告，見 §10。

@@ -1,5 +1,9 @@
 import { DEFAULT_COMPANION_ID, isKnownCompanionId } from "../data/companionRegistry.js";
 import { resolveCanonicalCompanionId } from "../data/companionRuntimePolicy.js";
+import {
+  FORMAL_EVOLUTION_EXACT_NEXT,
+  parseFormalEvolutionOfferToken
+} from "../engine/companionFormalEvolutionTransitionEngine.js";
 import { clamp } from "../utils/clamp.js";
 
 export const COMPANION_STATE_SCHEMA_VERSION = 1;
@@ -45,8 +49,10 @@ export const GROWTH_SOURCE_TYPES = Object.freeze([
 
 const STAGE_RANK = new Map(COMPANION_GROWTH_STAGES.map((stage, index) => [stage, index]));
 const SOURCE_TYPE_SET = new Set(GROWTH_SOURCE_TYPES);
+const FORMAL_OFFER_STATUSES = new Set(["open", "deferred", "consumed"]);
 const MAX_EVIDENCE_DETAILS = 24;
 const MAX_CONSUMED_ROOT_KEYS = 48;
+const MAX_FORMAL_OFFER_SEAL = 160;
 
 export function createDefaultRelationshipState(overrides = {}) {
   const source = overrides && typeof overrides === "object" ? overrides : {};
@@ -86,6 +92,7 @@ export function createDefaultGrowthState({
     offeredStage: null,
     deferredAt: null,
     lastGrowthEventAt: null,
+    formalOffer: null,
     migration: normalizeMigration(migration, { companionId })
   };
 }
@@ -451,16 +458,69 @@ function normalizeGrowth(rawGrowth, companionId, now, sourceCompanionId = compan
     .filter(Boolean))
     .slice(-MAX_EVIDENCE_DETAILS);
   const expectedOffer = getNextStage(stage);
+  const offeredStage = growth.offeredStage === expectedOffer ? expectedOffer : null;
   return {
     stage,
     evidence,
     coverage: normalizeCoverage(growth.coverage, stage, now),
     consumedRootKeys: normalizeStringList(growth.consumedRootKeys, MAX_CONSUMED_ROOT_KEYS),
-    offeredStage: growth.offeredStage === expectedOffer ? expectedOffer : null,
+    offeredStage,
     deferredAt: normalizeOptionalTimestamp(growth.deferredAt),
     lastGrowthEventAt: normalizeOptionalTimestamp(growth.lastGrowthEventAt),
+    formalOffer: normalizeFormalOffer(growth.formalOffer, companionId, stage, offeredStage),
     migration
   };
+}
+
+function normalizeFormalOffer(rawOffer, companionId, stage, offeredStage) {
+  if (rawOffer == null) return null;
+  if (!rawOffer || typeof rawOffer !== "object" || Array.isArray(rawOffer)) return null;
+  const status = rawOffer.status;
+  if (!FORMAL_OFFER_STATUSES.has(status)) return null;
+  const parsed = parseFormalEvolutionOfferToken(rawOffer.token);
+  if (!parsed || parsed.companionId !== companionId) return null;
+  if (rawOffer.companionId !== companionId) return null;
+  if (rawOffer.currentStage !== parsed.currentStage || rawOffer.targetStage !== parsed.targetStage) {
+    return null;
+  }
+  if (rawOffer.generation !== parsed.generation) return null;
+  if (FORMAL_EVOLUTION_EXACT_NEXT[parsed.currentStage] !== parsed.targetStage) return null;
+  if (typeof rawOffer.rewritePending !== "boolean") return null;
+  const safetySeal = normalizeText(rawOffer.safetySeal, "", MAX_FORMAL_OFFER_SEAL);
+  if (!safetySeal) return null;
+
+  if (status === "open") {
+    if (stage !== parsed.currentStage || offeredStage !== parsed.targetStage) return null;
+  } else if (status === "deferred") {
+    if (stage !== parsed.currentStage || offeredStage !== null) return null;
+  } else if (stage !== parsed.targetStage || offeredStage !== null) {
+    return null;
+  }
+
+  const normalized = {
+    status,
+    token: rawOffer.token,
+    companionId,
+    currentStage: parsed.currentStage,
+    targetStage: parsed.targetStage,
+    generation: parsed.generation,
+    issuedAt: normalizeOptionalTimestamp(rawOffer.issuedAt),
+    rewritePending: status === "open" ? rawOffer.rewritePending : false,
+    safetySeal
+  };
+  if (status === "open" && rawOffer.rewrittenAt != null) {
+    normalized.rewrittenAt = normalizeOptionalTimestamp(rawOffer.rewrittenAt);
+  }
+  if (status === "deferred") {
+    normalized.deferredAt = normalizeOptionalTimestamp(rawOffer.deferredAt);
+  }
+  if (status === "consumed") {
+    const consumedToken = normalizeText(rawOffer.consumedToken, "", 180);
+    if (consumedToken !== rawOffer.token) return null;
+    normalized.consumedToken = consumedToken;
+    normalized.acceptedAt = normalizeOptionalTimestamp(rawOffer.acceptedAt);
+  }
+  return normalized;
 }
 
 function normalizeEvidence(rawEvidence, companionId) {

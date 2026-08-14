@@ -612,6 +612,28 @@ html[data-ui="v2"] .growth-rewrite-actions button:focus-visible {
   outline-offset: 2px;
 }
 
+html[data-ui="v2"] .growth-formal-evolution {
+  display: grid;
+  gap: 8px;
+  margin: 0 0 14px;
+  padding: 12px 14px;
+  border: 1px solid rgba(169, 152, 255, 0.22);
+  border-radius: 16px;
+  background: rgba(12, 18, 42, 0.42);
+}
+
+html[data-ui="v2"] .growth-formal-evolution > strong {
+  font-family: var(--v3-font-serif, serif);
+  font-size: 0.88rem;
+}
+
+html[data-ui="v2"] .growth-formal-evolution > p {
+  margin: 0;
+  color: rgba(247, 242, 231, 0.82);
+  font-size: 0.78rem;
+  line-height: 1.55;
+}
+
 html[data-ui="v2"] .growth-response--rest,
 html[data-ui="v2"] .growth-response--decline,
 html[data-ui="v2"] .growth-response--safety {

@@ -20,7 +20,10 @@ import { qs, qsa } from "../utils/dom.js";
 import EventBus from "../utils/eventBus.js";
 import { t, getLanguage, LANGUAGE_CHANGED_EVENT } from "../i18n/i18n.js";
 import { getTrustStagePresentation } from "./bondPresentation.js";
-import { createGrowthSafetyFacts } from "./companionGrowthController.js";
+import {
+  commitFormalEvolutionTransition,
+  createGrowthSafetyFacts
+} from "./companionGrowthController.js";
 
 const PAGE_ACTIONS = new Set(["home", "explore", "care", "grow", "memory"]);
 const MEMORY_LIMIT = MEMORY_PROJECTION_LIMIT;
@@ -356,6 +359,11 @@ export function createPageRouter({
         willingnessId: "not_evaluated",
         copyKey: "growth.persisted.signal.forming"
       },
+      formalEvolution: {
+        kind: "none",
+        targetStage: null,
+        copyKey: null
+      },
       livedEvidence: {
         rows: [],
         empty: true,
@@ -473,6 +481,7 @@ export function createPageRouter({
         </ul>
       `
       : `<p class="growth-lived-evidence-empty">${t(growthViewModel.livedEvidence?.emptyCopyKey || "growth.persisted.evidenceEmpty")}</p>`;
+    const formalEvolutionMarkup = renderFormalEvolutionMarkup(growthViewModel.formalEvolution);
     body.innerHTML = `
       <div class="page-focus-card page-focus-card--growth" data-growth-phase="${escapeHtml(phase.id)}">
         <span class="page-orb" aria-hidden="true">✧</span>
@@ -504,6 +513,7 @@ export function createPageRouter({
       <div class="page-action-grid page-action-grid--growth-practice" aria-label="${t("growth.session.practiceAria")}">
         ${practiceButtons}
       </div>
+      ${formalEvolutionMarkup}
       <section class="growth-lived-evidence" data-growth-lived-evidence
         aria-labelledby="growth-lived-evidence-title">
         <header>
@@ -663,6 +673,28 @@ export function createPageRouter({
     }
     store.replaceState(candidateState);
     return writeResult;
+  }
+
+  async function recordFormalEvolutionAction(action, extra = {}) {
+    if (typeof saveCandidateState !== "function") {
+      return { ok: false, changed: false, reason: "formal_evolution_save_unavailable" };
+    }
+    const state = store.getState();
+    const companionId = extra.companionId || state.activeCompanionId;
+    const currentSession = growthSessions.get(companionId)
+      || createCompanionGrowthSession(companionId);
+    return commitFormalEvolutionTransition({
+      currentState: state,
+      saveCandidateState,
+      publishState: (candidateState) => store.replaceState(candidateState),
+      notifyRenderer: () => null,
+      action,
+      companionId,
+      at: Date.now(),
+      rewriteAccepted: extra.rewriteAccepted === true,
+      safetyFacts: createGrowthSafetyFacts(state),
+      currentMoment: deriveHeartPhaseSnapshot(state, currentSession)
+    });
   }
 
   function assertCareWriteCompleted(writeResult) {
@@ -846,6 +878,42 @@ export function createPageRouter({
           render();
           pageBodies.grow
             ?.querySelector(`[data-growth-practice="${resolution.result.practiceId}"]`)
+            ?.focus({ preventScroll: true });
+        }
+      } else if (
+        action === "growth-formal-offer"
+        || action === "growth-formal-accept"
+        || action === "growth-formal-defer"
+        || action === "growth-formal-rewrite-accept"
+      ) {
+        const state = store.getState();
+        const companionId = state.activeCompanionId || "greyshade-cat";
+        const formalAction = action === "growth-formal-offer"
+          ? "offer"
+          : action === "growth-formal-defer"
+            ? "defer"
+            : "accept";
+        const result = await recordFormalEvolutionAction(formalAction, {
+          companionId,
+          rewriteAccepted: action === "growth-formal-rewrite-accept"
+        });
+        growthHandled = true;
+        if (result?.reason === "safe_harbor_terminal" || result?.reason === "safety_excluded") {
+          statusText.textContent = t("growth.session.safetyStatus");
+          render();
+        } else if (result?.reason === "formal_evolution_save_failed") {
+          const error = new Error("Formal evolution save failed");
+          error.code = "SAVE_FAILED";
+          throw error;
+        } else if (result?.ok !== true && result?.reason !== "already_accepted" && result?.reason !== "offer_already_open") {
+          statusText.textContent = t("growth.formal.notNow");
+          render();
+        } else {
+          growthCompleted = true;
+          statusText.textContent = t(formalEvolutionStatusKey(result));
+          render();
+          pageBodies.grow?.querySelector("[data-growth-formal-evolution]")
+            ?.querySelector("button")
             ?.focus({ preventScroll: true });
         }
       } else if (action === "observe-body") {
@@ -1149,6 +1217,78 @@ function renderCrystalWeavingCard(
     </section>
     <p class="page-soft-note">${t("memory.crystalNoDaily")}</p>
   `;
+}
+
+function renderFormalEvolutionMarkup(formalEvolution) {
+  const kind = formalEvolution?.kind;
+  if (!kind || kind === "none") return "";
+  if (kind === "complete") {
+    return `
+      <section class="growth-formal-evolution" data-growth-formal-evolution="${escapeHtml(kind)}">
+        <strong>${t("growth.formal.title")}</strong>
+        <p>${t("growth.formal.complete")}</p>
+      </section>
+    `;
+  }
+  if (kind === "can_invite") {
+    return `
+      <section class="growth-formal-evolution" data-growth-formal-evolution="${escapeHtml(kind)}">
+        <strong>${t("growth.formal.title")}</strong>
+        <p>${t("growth.formal.canInvite")}</p>
+        <div class="growth-rewrite-actions" role="group" aria-label="${t("growth.formal.actionsAria")}">
+          <button type="button" data-page-action="growth-formal-offer">
+            <strong>${t("growth.formal.offer.label")}</strong>
+            <span>${t("growth.formal.offer.copy")}</span>
+          </button>
+        </div>
+      </section>
+    `;
+  }
+  if (kind === "rewrite_pending") {
+    return `
+      <section class="growth-formal-evolution" data-growth-formal-evolution="${escapeHtml(kind)}">
+        <strong>${t("growth.formal.title")}</strong>
+        <p>${t("growth.formal.rewritePending")}</p>
+        <div class="growth-rewrite-actions" role="group" aria-label="${t("growth.formal.actionsAria")}">
+          <button type="button" data-page-action="growth-formal-rewrite-accept">
+            <strong>${t("growth.formal.rewriteAccept.label")}</strong>
+            <span>${t("growth.formal.rewriteAccept.copy")}</span>
+          </button>
+          <button type="button" data-page-action="growth-formal-defer">
+            <strong>${t("growth.formal.defer.label")}</strong>
+            <span>${t("growth.formal.defer.copy")}</span>
+          </button>
+        </div>
+      </section>
+    `;
+  }
+  return `
+    <section class="growth-formal-evolution" data-growth-formal-evolution="${escapeHtml(kind)}">
+      <strong>${t("growth.formal.title")}</strong>
+      <p>${t("growth.formal.open")}</p>
+      <div class="growth-rewrite-actions" role="group" aria-label="${t("growth.formal.actionsAria")}">
+        <button type="button" data-page-action="growth-formal-accept">
+          <strong>${t("growth.formal.accept.label")}</strong>
+          <span>${t("growth.formal.accept.copy")}</span>
+        </button>
+        <button type="button" data-page-action="growth-formal-defer">
+          <strong>${t("growth.formal.defer.label")}</strong>
+          <span>${t("growth.formal.defer.copy")}</span>
+        </button>
+      </div>
+    </section>
+  `;
+}
+
+function formalEvolutionStatusKey(result) {
+  if (result?.reason === "offer_opened" || result?.reason === "offer_already_open") {
+    return "growth.formal.status.offered";
+  }
+  if (result?.reason === "offer_deferred") return "growth.formal.status.deferred";
+  if (result?.reason === "rewrite_pending") return "growth.formal.status.rewritePending";
+  if (result?.reason === "already_accepted") return "growth.formal.status.alreadyAccepted";
+  if (result?.reason === "stage_candidate_ready") return "growth.formal.status.accepted";
+  return "growth.formal.status.offered";
 }
 
 function getMemoryStatusLabel(status) {

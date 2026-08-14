@@ -14,6 +14,7 @@ import {
   createReflectionGrowthWriteInput,
   findReflectableCanonicalSource
 } from "../engine/reflectionGrowthOwner.js";
+import { decideFormalEvolutionTransition } from "../engine/companionFormalEvolutionTransitionEngine.js";
 
 const GROWTH_PROFILE = Object.freeze({
   minimumChapterByStage: Object.freeze({
@@ -109,6 +110,7 @@ export function createCompanionGrowthController() {
         labelKey: `growth.persisted.stage.${normalizeStage(growth?.stage)}`
       }),
       relationshipSignal: deriveRelationshipSignal(growth, readiness, willingness),
+      formalEvolution: deriveFormalEvolutionView(growth, readiness, willingness),
       livedEvidence: deriveLivedEvidence(growth?.evidence),
       currentMoment: Object.freeze({
         observedTendencyIds: Object.freeze([
@@ -194,11 +196,104 @@ export function createCompanionGrowthController() {
     return writeIntoDraft(draft, prepared.writeInput);
   }
 
+  function applyFormalEvolutionIntoDraft(draft, input = {}) {
+    return applyFormalEvolutionTransition(draft, input);
+  }
+
   return Object.freeze({
     writeIntoDraft,
     writeCarePracticeIntoDraft,
     writeReflectionPracticeIntoDraft,
+    applyFormalEvolutionIntoDraft,
     getViewModel
+  });
+}
+
+export async function commitFormalEvolutionTransition({
+  currentState,
+  saveCandidateState,
+  publishState = null,
+  notifyRenderer = null,
+  action,
+  companionId,
+  at = Date.now(),
+  generation = null,
+  offerToken = null,
+  rewriteAccepted = false,
+  safetyFacts = null,
+  willingnessContext = null,
+  currentMoment = null
+} = {}) {
+  if (!currentState || typeof currentState !== "object") {
+    return frozenCommit({
+      ok: false,
+      reason: "invalid_growth_state",
+      changed: false,
+      published: false,
+      persistRequested: false
+    });
+  }
+  if (typeof saveCandidateState !== "function") {
+    return frozenCommit({
+      ok: false,
+      reason: "formal_evolution_save_unavailable",
+      changed: false,
+      published: false,
+      persistRequested: false
+    });
+  }
+
+  const candidateState = cloneJson(currentState);
+  const applied = applyFormalEvolutionTransition(candidateState, {
+    action,
+    companionId,
+    at,
+    generation,
+    offerToken,
+    rewriteAccepted,
+    safetyFacts,
+    willingnessContext,
+    currentMoment
+  });
+  if (!applied.ok) {
+    return frozenCommit({
+      ...applied,
+      published: false,
+      persistRequested: false
+    });
+  }
+  if (!applied.changed) {
+    return frozenCommit({
+      ...applied,
+      published: false,
+      persistRequested: false
+    });
+  }
+
+  const saveResult = await saveCandidateState(candidateState);
+  if (saveResult?.ok !== true) {
+    return frozenCommit({
+      ok: false,
+      accepted: false,
+      changed: false,
+      reason: "formal_evolution_save_failed",
+      action,
+      offer: applied.offer || null,
+      candidateGrowth: cloneJson(currentState.companionStates?.byId?.[applied.companionId]?.growth),
+      published: false,
+      persistRequested: true,
+      rendererIntent: null
+    });
+  }
+
+  if (typeof publishState === "function") publishState(candidateState);
+  if (typeof notifyRenderer === "function") notifyRenderer(null);
+
+  return frozenCommit({
+    ...applied,
+    published: true,
+    persistRequested: true,
+    rendererIntent: null
   });
 }
 
@@ -216,6 +311,124 @@ export function createGrowthSafetyFacts(state = {}, overrides = {}) {
   facts.safeHarborModeActive = state?.safeHarborMode === true
     || overrides?.safeHarborModeActive === true;
   return Object.freeze(facts);
+}
+
+function applyFormalEvolutionTransition(draft, input = {}) {
+  if (!draft || typeof draft !== "object") {
+    return frozenCommit({
+      ok: false,
+      reason: "invalid_growth_state",
+      changed: false
+    });
+  }
+  const companionId = input.companionId || draft.activeCompanionId;
+  const growth = draft.companionStates?.byId?.[companionId]?.growth;
+  if (!growth) {
+    return frozenCommit({
+      ok: false,
+      reason: "missing_companion_growth",
+      changed: false
+    });
+  }
+
+  const at = Number.isFinite(input.at) && input.at > 0 ? input.at : Date.now();
+  const action = input.action;
+  const existingOffer = growth.formalOffer;
+  const generation = input.generation
+    || (action === "offer" && existingOffer?.status === "open" ? existingOffer.generation : `g${at}`);
+  const offerToken = input.offerToken
+    || ((action === "accept") ? existingOffer?.token : null);
+  const rewriteAccepted = input.rewriteAccepted === true;
+
+  const decision = decideFormalEvolutionTransition({
+    action,
+    companionId,
+    growth,
+    state: draft,
+    chapterNo: normalizeChapterNo(draft?.chapterProgress?.current),
+    profile: GROWTH_PROFILE,
+    willingnessContext: input.willingnessContext || buildWillingnessContext(draft, input.currentMoment),
+    safetyFacts: input.safetyFacts || createGrowthSafetyFacts(draft),
+    generation,
+    at,
+    offerToken,
+    rewriteAccepted,
+    forceEvolve: input.forceEvolve === true
+  });
+
+  if (decision.ok === true && decision.changed === true && decision.candidateGrowth) {
+    draft.companionStates.byId[companionId].growth = cloneJson(decision.candidateGrowth);
+  }
+
+  return frozenCommit({
+    ok: decision.ok === true,
+    accepted: decision.accepted === true,
+    changed: decision.changed === true,
+    reason: decision.reason,
+    action: decision.action,
+    companionId,
+    offer: decision.offer,
+    candidateGrowth: decision.candidateGrowth,
+    rendererIntent: null
+  });
+}
+
+function deriveFormalEvolutionView(growth, readiness, willingness) {
+  const stage = normalizeStage(growth?.stage);
+  const offer = growth?.formalOffer;
+  if (stage === "final_awakened") {
+    return Object.freeze({
+      kind: "complete",
+      targetStage: null,
+      copyKey: "growth.formal.complete"
+    });
+  }
+  if (offer?.status === "open" && offer.rewritePending === true) {
+    return Object.freeze({
+      kind: "rewrite_pending",
+      targetStage: offer.targetStage || null,
+      copyKey: "growth.formal.rewritePending"
+    });
+  }
+  if (offer?.status === "open") {
+    return Object.freeze({
+      kind: "open",
+      targetStage: offer.targetStage || null,
+      copyKey: "growth.formal.open"
+    });
+  }
+  if (readiness?.ready === true && willingness?.state === "willing") {
+    return Object.freeze({
+      kind: "can_invite",
+      targetStage: readiness.targetStage || null,
+      copyKey: "growth.formal.canInvite"
+    });
+  }
+  return Object.freeze({
+    kind: "none",
+    targetStage: null,
+    copyKey: null
+  });
+}
+
+function frozenCommit(value) {
+  return Object.freeze({
+    ok: value.ok === true,
+    accepted: value.accepted === true,
+    changed: value.changed === true,
+    reason: value.reason || "invalid_input",
+    action: value.action || null,
+    companionId: value.companionId || null,
+    offer: value.offer || null,
+    candidateGrowth: value.candidateGrowth || null,
+    published: value.published === true,
+    persistRequested: value.persistRequested === true,
+    rendererIntent: value.rendererIntent ?? null
+  });
+}
+
+function cloneJson(value) {
+  return JSON.parse(JSON.stringify(value));
 }
 
 function buildWillingnessContext(state = {}, currentMoment = null) {
