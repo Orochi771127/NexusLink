@@ -1568,6 +1568,114 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Acceptance refs: `ACCEPTANCE.md` H1-H6, H9 and I; Moonlake contract sections 4, 6 and 8.
 - Required reading completed: latest Lane 2 far-shore handoff (`MOONLAKE_WORLD_EDGES`, `deriveGentleInvitation` gate 4), active habitat entry in `ART_PRODUCTION_INDEX.json`, Moonlake same-composition/day-night contract, and current live-diorama shader/lighting path.
 
+### 2026-08-14 - Codex - First Touch State Projection R1 - VERIFIED
+
+- Status: `VERIFIED` for scoped static and real-Chromium evidence. Real-device
+  Safari/Chrome review remains a human gate; no release claim is made.
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `FIRST_TOUCH_STATE_PROJECTION_R1`.
+- Layer: `EXPERIENCE` only. No GROUNDWORK, asset, state/save schema, gameplay,
+  RaphaelCore, dependency, build, or deployment file was changed.
+- Branch / commit: `codex/first-touch-state-projection-r1` / base
+  `e44047d3aaa6a3bcb45d20da47e173e1d498e3ac`; all work is intentionally
+  uncommitted and unpushed under the Owner's current instruction.
+- Work performed:
+  - Added Home/page/panel/first-session-presentation projection to the existing
+    first-touch affordance. Body/root attribute changes now trigger an
+    event-driven re-render, while the existing animation frame remains limited
+    to following the moving companion's position.
+  - The hint stays hidden while the opening presentation, Explore, Care,
+    Growth, Memory, Soul Talk, or Settings owns the surface; it returns on Home
+    only while first touch is incomplete, and permanently stops after the
+    existing touch pipeline marks completion.
+  - Converted Pixi renderer-space visual bounds through the actual canvas DOM
+    rectangle and screen scale. This fixes centered desktop stages without
+    changing companion placement, renderer authority, or touch rules.
+  - Added focused deterministic and real-Chromium regressions. Existing CSS was
+    sufficient; no styling file needed modification.
+- Verification:
+  - `node --check` passed for `src/app.js` and
+    `src/ui/interactionHintController.js`; `git diff --check` passed.
+  - Focused source contract: `7/7` passed, including Home-only state,
+    presentation ownership, event-driven projection, viewport coordinates,
+    non-interception, completion stop, and reduced motion.
+  - Focused Chromium: desktop 1440x900, mobile 390x844, mobile 320x720, and
+    mobile 390x844 reduced-motion all passed with zero page/console errors.
+    Desktop stage bounds were x=480..960; hint x=745.578 and projected target
+    x=745.592 (0.014px delta). Reduced motion reported `animationName:none`.
+  - Desktop and 390x844 both passed Explore/Care/Growth/Memory and
+    Soul Talk/Settings hide-restore checks. Hidden hints computed
+    `pointer-events:none`; the desktop test also proved first touch persisted
+    and the affordance stayed hidden afterward.
+  - `public-first-session-repair-r1-cases.mjs`: `13/13` passed.
+  - Full web release gate was executed twice with evidence directed to a temp
+    file. Both runs reached `32/33` required checks with no accessibility
+    warnings: run 1 used mismatched runner base/port values and the live
+    playtest later hit `ERR_CONNECTION_REFUSED`; run 2 used a matched 5273
+    base/port, its live playtest passed, and only
+    `raphael_hmax_local_shadow_ui` hit a transient 30s wait timeout. The exact
+    HMAX browser check was immediately rerun standalone and passed all 8
+    assertions with `console_error_count:0` and `ok:true`. No failing gameplay
+    assertion is attributable to this package, but the aggregate runner is
+    reported honestly as not producing one all-green invocation.
+- Problems / risks:
+  - The surface projection uses the existing `page-open` / `panel-open` body
+    classes and `data-first-session-loader` root state as presentation
+    contracts. A future router/loader rewrite must preserve or update this
+    bridge and the focused QA together.
+  - Real iOS Safari and Android Chrome physical-device review is still open.
+    Browser automation proves geometry and interaction ownership, not hand feel.
+- Next safe action: human reviews the four focused screenshots and performs the
+  real-device Home/page/panel/touch matrix. If accepted, explicitly authorize a
+  separate commit/push step; do not modify GROUNDWORK or publish from this
+  uncommitted checkpoint without that instruction.
+- Changed files: `src/app.js`, `src/ui/interactionHintController.js`,
+  `docs/qa/first-touch-state-projection-r1-cases.mjs`,
+  `docs/qa/first_touch_state_projection_r1_browser.py`, and this ledger.
+- Required reading: the `IN PROGRESS` entry immediately below and its listed
+  canon, source, acceptance, visual, and copy references.
+
+### 2026-08-14 - Codex - First Touch State Projection R1 - IN PROGRESS
+
+- Status: `IN PROGRESS`; Owner approved `FIRST_TOUCH_STATE_PROJECTION_R1` and
+  authorized work from the latest `origin/main` in an isolated worktree.
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `FIRST_TOUCH_STATE_PROJECTION_R1`.
+- Layer: `EXPERIENCE` only. No GROUNDWORK file, asset, save/state schema,
+  gameplay rule, RaphaelCore policy, dependency, or build/deploy path is in scope.
+- Branch / commit: `codex/first-touch-state-projection-r1` / base
+  `e44047d3aaa6a3bcb45d20da47e173e1d498e3ac`; work remains uncommitted and
+  must not be pushed under the current authorization.
+- Scope:
+  - Show the first-touch affordance only on the Home habitat while onboarding
+    is complete, first touch is incomplete, and no page or panel covers Home.
+  - Hide and restore it from event-driven UI-surface changes, without making
+    the affordance a per-frame visibility poll.
+  - Convert Pixi renderer-space companion bounds to DOM viewport coordinates
+    so the affordance stays aligned when the desktop game stage is centered.
+- Expected files: `src/ui/interactionHintController.js`, `src/app.js`, focused
+  QA under `docs/qa/`, and this ledger. CSS changes are allowed only if runtime
+  evidence proves they are necessary.
+- Red-line check: the touch still routes through the existing
+  `touchReactionEngine` path and may be guarded or rejected; no dependency
+  detection, safety reward, FOMO, urgency, forced acceptance, or relationship
+  mutation is added. Reduced motion must keep an equivalent static cue.
+- Non-goals: no first-session redesign, new copy, new visual system, companion
+  movement change, Moonlake 3D change, state migration, localStorage change,
+  asset promotion, dependency installation, commit, push, PR, or deployment.
+- Acceptance refs: `ACCEPTANCE.md` C1-C2, D6, H1-H5, H9, I, K4, K7, M1-M3,
+  and M5, plus the Anti-AI-Slop UX gate responsive/reduced-motion evidence.
+- Planned verification: focused static contract checks; real Chromium at
+  desktop, 390x844, 320px-wide, and reduced motion; page/panel hide-restore;
+  permanent hide after first touch; then first-session smoke and the complete
+  local web release gate. Human real-device review remains a separate gate.
+- Required reading: `src/ui/interactionHintController.js`, `src/ui/pageRouter.js`,
+  `src/ui/panelManager.js`, the `src/app.js` touch-target bridge,
+  `src/three/moonlakeLive3dConfig.js`, `src/engine/gentleInvitationEngine.js`,
+  `docs/production/ANTI_AI_SLOP_UX_GATE.md`,
+  `docs/design/NEXUS_LINK_V3_VISUAL_SYSTEM.md`,
+  `docs/content/NEXUSLINK_COPYWRITING_FINAL_PASS.md`, `ACCEPTANCE.md` sections
+  C/D/H/I/K/M, and this lane.
 
 ### 2026-08-13 - Claude Code - Far Shore Curiosity Copy - COMPLETED
 
