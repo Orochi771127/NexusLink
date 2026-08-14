@@ -1226,6 +1226,8 @@ async function bootScene(
       y: Number(local.y),
       scale: Number(screen.scale) || 1,
       referenceScale390: Number(screen.referenceScale390) || 1,
+      navigationX390: Number(screen.navigationX390),
+      navigationY390: Number(screen.navigationY390),
       depth: Number(screen.depth),
       surface: screen.surface || null,
       routeId: screen.routeId || null,
@@ -1264,7 +1266,9 @@ async function bootScene(
         currentMotionState = motionState;
         devPanelController?.renderReadout();
       }, {
-        canAmbientWalk: !panelManager.isPanelOpen() && !onboardingController?.isActive?.(),
+        canAmbientWalk: !panelManager.isPanelOpen()
+          && !onboardingController?.isActive?.()
+          && hasCompletedFirstLoop(store.getState()),
         isSleeping,
         activeHabitatId: environmentLayer.profileId,
         companionId: currentCreature.id,
@@ -1509,6 +1513,11 @@ async function bootScene(
     getCompanionTouchTarget,
     requestCompanionTouch
   };
+}
+
+function hasCompletedFirstLoop(state) {
+  const firstLoop = state?.onboarding?.firstLoop;
+  return Boolean(firstLoop?.completedAt || firstLoop?.skippedAt);
 }
 
 function setPixiEnvironmentVisibility(layers, visible, environmentLayer = null) {

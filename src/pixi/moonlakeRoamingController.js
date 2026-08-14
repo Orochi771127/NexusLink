@@ -1,4 +1,5 @@
 import {
+  MOONLAKE_NAVIGATION_SAFETY,
   MOONLAKE_WORLD_EDGES,
   MOONLAKE_WORLD_WAYPOINTS
 } from "../three/moonlakeLive3dConfig.js";
@@ -13,7 +14,7 @@ const BRIDGE_SPEED_PER_SECOND = 0.64;
 const DIRECTION_HYSTERESIS = 0.16;
 const IDLE_DWELL_MIN_MS = 2_500;
 const IDLE_DWELL_MAX_MS = 8_000;
-const ORIGIN_ID = "platform_center";
+const ORIGIN_ID = MOONLAKE_NAVIGATION_SAFETY.homeWaypointId;
 
 const REQUIRED_DIRECTIONAL_ANIMATIONS = Object.freeze([
   "left_walk",

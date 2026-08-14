@@ -44,9 +44,23 @@ export function getMoonlakeProjectedFootSafety(projected, {
     };
   }
 
-  const pointX390 = x / referenceScale390;
-  const pointY390 = y / referenceScale390;
+  const navigationX390 = Number(projected?.navigationX390);
+  const navigationY390 = Number(projected?.navigationY390);
+  const pointX390 = Number.isFinite(navigationX390)
+    ? navigationX390
+    : x / referenceScale390;
+  const pointY390 = Number.isFinite(navigationY390)
+    ? navigationY390
+    : y / referenceScale390;
   const clearanceRadiusPx390 = getMoonlakeCollisionRadiusPx390(companionId, area);
+  const walkableSurface = MOONLAKE_NAVIGATION_SAFETY.walkableSurfaces
+    .filter((surface) => surface.areas.includes(area))
+    .find((surface) => containsWalkableSurface(
+      pointX390,
+      pointY390,
+      clearanceRadiusPx390,
+      surface
+    ));
   const violations = MOONLAKE_NAVIGATION_SAFETY.footprints
     .filter((footprint) => footprint.areas.includes(area))
     .filter((footprint) => intersectsFootprint(
@@ -58,11 +72,16 @@ export function getMoonlakeProjectedFootSafety(projected, {
     .map((footprint) => footprint.id);
 
   return {
-    safe: violations.length === 0,
-    reason: violations.length === 0 ? "clear" : "prop_clearance",
+    safe: Boolean(walkableSurface) && violations.length === 0,
+    reason: !walkableSurface
+      ? "outside_walkable_surface"
+      : violations.length === 0
+        ? "clear"
+        : "prop_clearance",
     pointX390,
     pointY390,
     clearanceRadiusPx390,
+    walkableSurfaceId: walkableSurface?.id || null,
     violations
   };
 }
@@ -103,6 +122,50 @@ function intersectsFootprint(x, y, clearance, footprint) {
     x - Number(footprint.x390),
     y - Number(footprint.y390)
   ) <= radius;
+}
+
+function containsWalkableSurface(x, y, clearance, surface) {
+  if (surface.shape === "ellipse") {
+    const radiusX = Math.max(1, Number(surface.radiusXPx390) - clearance);
+    const radiusY = Math.max(1, Number(surface.radiusYPx390) - clearance * 0.56);
+    const normalizedX = (x - Number(surface.x390)) / radiusX;
+    const normalizedY = (y - Number(surface.y390)) / radiusY;
+    return normalizedX * normalizedX + normalizedY * normalizedY <= 1;
+  }
+  if (surface.shape === "polyline") {
+    const points = Array.isArray(surface.points) ? surface.points : [];
+    const radius = Math.max(1, Number(surface.radiusPx390) - clearance);
+    for (let index = 0; index < points.length - 1; index += 1) {
+      const from = points[index];
+      const to = points[index + 1];
+      if (distanceToSegment(
+        x,
+        y,
+        Number(from.x390),
+        Number(from.y390),
+        Number(to.x390),
+        Number(to.y390)
+      ) <= radius) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+function distanceToSegment(pointX, pointY, fromX, fromY, toX, toY) {
+  const dx = toX - fromX;
+  const dy = toY - fromY;
+  const lengthSquared = dx * dx + dy * dy;
+  if (lengthSquared <= 0.000001) return Math.hypot(pointX - fromX, pointY - fromY);
+  const progress = Math.min(1, Math.max(
+    0,
+    ((pointX - fromX) * dx + (pointY - fromY) * dy) / lengthSquared
+  ));
+  return Math.hypot(
+    pointX - (fromX + dx * progress),
+    pointY - (fromY + dy * progress)
+  );
 }
 
 function lerp(from, to, progress) {

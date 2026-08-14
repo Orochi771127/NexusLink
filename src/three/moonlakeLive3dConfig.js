@@ -252,9 +252,38 @@ export const MOONLAKE_COMPANION_PRESENTATION = Object.freeze({
 });
 
 export const MOONLAKE_NAVIGATION_SAFETY = Object.freeze({
-  id: "moonlake-nav-collision-scale-r3-3",
+  id: "moonlake-spatial-coherence-r1",
+  homeWaypointId: "platform_center",
   segmentSamples: 18,
   bridgeCollisionMultiplier: 0.76,
+  // Positive walkable surfaces make the illustrated habitat behave like a
+  // fixed-camera 3D set: a point is valid only when the companion's full foot
+  // clearance fits on the stone plaza or the authored bridge corridor.
+  // Foreground grass is intentionally absent, so it cannot become walkable
+  // merely because it does not overlap a prop footprint.
+  walkableSurfaces: Object.freeze([
+    Object.freeze({
+      id: "central-stone-plaza",
+      shape: "ellipse",
+      x390: 200,
+      y390: 456,
+      radiusXPx390: 115,
+      radiusYPx390: 74,
+      areas: Object.freeze(["platform", "near_ground"])
+    }),
+    Object.freeze({
+      id: "platform-bridge-corridor",
+      shape: "polyline",
+      radiusPx390: 40,
+      points: Object.freeze([
+        Object.freeze({ x390: 252, y390: 460 }),
+        Object.freeze({ x390: 269, y390: 384 }),
+        Object.freeze({ x390: 265, y390: 332 }),
+        Object.freeze({ x390: 259, y390: 289 })
+      ]),
+      areas: Object.freeze(["platform", "bridge", "fishing_spot"])
+    })
+  ]),
   footprints: Object.freeze([
     Object.freeze({
       id: "lantern-front-left-base",
@@ -468,13 +497,29 @@ export const MOONLAKE_INTERACTION_HOTSPOTS = Object.freeze([
   })
 ]);
 
+export const MOONLAKE_NIGHT_WARMTH = Object.freeze({
+  id: "moonlake-night-warmth-r1",
+  // Coordinates are authored against the same top-origin visual master as the
+  // interaction hotspots. They target the two visible lantern bulbs, not the
+  // collision bases lower down the posts.
+  persistentLanterns: Object.freeze([
+    Object.freeze({ id: "lantern-front-left", imageX: 0.382, imageY: 0.557 }),
+    Object.freeze({ id: "lantern-front-right", imageX: 0.658, imageY: 0.557 })
+  ]),
+  plazaPool: Object.freeze({ imageX: 0.52, imageY: 0.57 }),
+  preservesDayGeometry: true,
+  stateAuthority: false
+});
+
 export const MOONLAKE_WORLD_WAYPOINTS = Object.freeze({
   platform_center: Object.freeze({ x: 0, y: 0.28, z: 1.2, area: "platform" }),
   platform_left: Object.freeze({ x: -0.7, y: 0.24, z: 1.0, area: "platform" }),
   platform_right: Object.freeze({ x: 1.35, y: 0.24, z: 0.7, area: "platform" }),
-  near_ground_center: Object.freeze({ x: 0, y: 0.08, z: 4.45, area: "near_ground" }),
-  near_ground_left: Object.freeze({ x: -0.55, y: 0.08, z: 6.3, area: "near_ground" }),
-  near_ground_right: Object.freeze({ x: 1.03, y: 0.08, z: 6.1, area: "near_ground" }),
+  // These three nodes are the lower half of the same stone plaza. Their old
+  // z=4.45..6.3 positions projected into the foreground bushes.
+  near_ground_center: Object.freeze({ x: 0, y: 0.08, z: 2.65, area: "near_ground" }),
+  near_ground_left: Object.freeze({ x: -0.72, y: 0.08, z: 2.78, area: "near_ground" }),
+  near_ground_right: Object.freeze({ x: 0.72, y: 0.08, z: 2.72, area: "near_ground" }),
   bridge_near: Object.freeze({ x: 2.2, y: 0.2, z: -3.2, area: "bridge" }),
   bridge_mid: Object.freeze({
     x: 2.2,
@@ -540,4 +585,3 @@ export const MOONLAKE_2D5_RO_CONFIG = Object.freeze({
     "Back", "Back-Left", "Left", "Front-Left"
   ])
 });
-
