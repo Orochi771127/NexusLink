@@ -18,6 +18,8 @@ import {
   RELATION_MIRROR_FIELDS
 } from "./companionStateSchema.js";
 
+const BOUNDARY_BAND_VALUES = new Set(["open", "narrowing", "guarded"]);
+
 let state = createDefaultState();
 const listeners = new Set();
 
@@ -134,6 +136,10 @@ export function normalizeState(rawState = {}) {
     energy: clamp(relationshipTargetState.energy, 0, 10),
     spamScore: clamp(targetState.spamScore, 0, 999),
     defense: clamp(relationshipTargetState.defense ?? baseState.defense, 0, 100),
+    boundaryPressure: clamp(relationshipTargetState.boundaryPressure ?? 0, 0, 1),
+    boundaryBand: BOUNDARY_BAND_VALUES.has(relationshipTargetState.boundaryBand)
+      ? relationshipTargetState.boundaryBand
+      : "open",
     touchFatigue: clamp(relationshipTargetState.touchFatigue ?? baseState.touchFatigue, 0, 10),
     lastTouchAt: relationshipTargetState.lastTouchAt ?? null,
     lastRejectAt: relationshipTargetState.lastRejectAt ?? null,

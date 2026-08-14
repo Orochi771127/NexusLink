@@ -9,6 +9,19 @@ const NON_REWARDING_MODES = new Set([
   SOUL_TALK_REACTIONS.REJECT
 ]);
 
+// energy 見底時牠會退開，而不是繼續用更短的句子討好。低於這條線就不再累積關係。
+export const ENERGY_WITHDRAWAL_THRESHOLD = 1;
+
+// 被動路徑（輕應答、低能量）不得在高邊界壓力下推進關係：一邊被推、一邊變親近，
+// 就是把 bond 變成回合計數器的原因。道歉／感謝／情緒表達等主動修復不受此限。
+export const BOND_BOUNDARY_PRESSURE_CEILING = 0.6;
+
+function canDeepenBondPassively(semanticSoul = {}, sedimentationResult = {}) {
+  const pressure = Number(semanticSoul.boundaryPressure) || 0;
+  if (pressure >= BOND_BOUNDARY_PRESSURE_CEILING) return false;
+  return sedimentationResult.inputQuality === "meaningful_candidate";
+}
+
 export function deriveStateMutation({
   state = {},
   gateway = {},
@@ -304,13 +317,35 @@ export function deriveStateMutation({
     });
   }
 
+  // energy 見底：牠退開。過去這裡仍然 bond+1 且 shouldRewardRelationship:true，
+  // 等於 energy 只是裝飾品，關係照樣前進——那正是「隨叫隨到的討好型系統」。
+  if (energy <= ENERGY_WITHDRAWAL_THRESHOLD) {
+    reason = "energy_depleted_withdrawal";
+    return finalize({
+      statePatch: {
+        safeHarborMode: false,
+        mood: "distant",
+        bond,
+        trust,
+        defense: clamp(defense + 1, 0, 100),
+        energy: 0,
+        reactionPreview: "牠把自己收得很小，呼吸慢下來，暫時沒有力氣回應。"
+      },
+      shouldRewardRelationship: false,
+      shouldTriggerMilestone: false,
+      shouldCreateMemory: false,
+      reason,
+      spamScoreDelta: 0
+    });
+  }
+
   if (energy <= 2) {
     reason = "low_energy_fallback";
     return finalize({
       statePatch: {
         safeHarborMode: false,
         mood: "tired",
-        bond: bond + 1,
+        bond: bond + (canDeepenBondPassively(semanticSoul, sedimentationResult) ? 1 : 0),
         trust,
         defense,
         energy: Math.max(0, energy - 1),
@@ -325,11 +360,12 @@ export function deriveStateMutation({
   }
 
   reason = "light_acknowledge";
+  const passiveBond = canDeepenBondPassively(semanticSoul, sedimentationResult);
   return finalize({
     statePatch: {
       safeHarborMode: false,
       mood: "warm",
-      bond: bond + 1,
+      bond: bond + (passiveBond ? 1 : 0),
       trust,
       defense,
       energy: Math.max(0, energy - 1),
