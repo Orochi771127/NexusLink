@@ -58,6 +58,22 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-08-15 - Cursor Grok - EVO-02 Pure Formal Evolution Transition Engine - VERIFIED
+
+- Status: `VERIFIED` as a pure-engine package. Formal evolution Runtime remains unwired.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `EVO-02_PURE_FORMAL_EVOLUTION_TRANSITION_ENGINE`.
+- Branch / commit: `codex/grok-formal-evolution-runtime-r1` / pending local `feat(growth): add pure formal evolution transition engine`.
+- Baseline: EVO-01 `58cdb0a` on EVO-00 `d572f40` / `076a65f`. origin/main unchanged. PR #215 OPEN; PR #216 OPEN draft.
+- Work performed:
+  - Added `src/engine/companionFormalEvolutionTransitionEngine.js`: offer／rewrite／defer／accept, exact-next-stage, stale token, idempotent accept, injected time／generation.
+  - Returns an independent candidate envelope. No save, store publish, UI, Pixi, assets, or flag changes.
+  - `formalOffer` lives only on the candidate; `normalizeGrowth` will still strip it until EVO-03 schema Groundwork.
+- Verification: EVO-02 12/12; G3 engine 16/16; G3 runtime 16/16; EVO-01 8/8; `git diff --check`; `node --check`. Flags remain false.
+- SOV: 01–07 marked `partial` (pure-engine). SOV-08／09／11／12 unchanged and not greened.
+- Next safe action: stop. Do not start EVO-03 until Owner approves `docs/handoff/EVO_03_TO_05_GROUNDWORK_APPROVAL_PLAN.md`.
+- Required reading: the new transition engine, EVO-02 tests, Growth Contract G4 row, SOV-01～SOV-08.
+
 ### 2026-08-15 - Cursor Grok - EVO-01 Reflection Owner And Safety Provenance - VERIFIED
 
 - Status: `VERIFIED` for the bounded production writer and fail-closed fixture path. Not a complete formal-evolution Runtime.
@@ -2336,6 +2352,17 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Next safe action: after merge, review the public Pages build on a physical phone before declaring store-ready visual quality.
 
 ## Lane 3 - Raphael Core, Companion Reasoning, And Soul Talk
+
+### 2026-08-15 - Cursor Grok - EVO-02 Pure Formal Evolution Transition Engine - VERIFIED
+
+- Status: `VERIFIED` as pure logic only. No RaphaelCore, Soul Talk, memory writer, or visible stage publication.
+- Lane: `Raphael Core, Companion Reasoning, And Soul Talk`.
+- Task name: `EVO-02_PURE_FORMAL_EVOLUTION_TRANSITION_ENGINE`.
+- Branch / commit: `codex/grok-formal-evolution-runtime-r1` / pending local EVO-02 commit.
+- Work performed: Companion-led offer／rewrite／defer／accept now exist as a pure decision envelope. High-risk, safeHarbor, system safety reply, and missing provenance fail closed before any candidate stage change.
+- Verification: focused engine tests plus existing Growth safety regressions. No Soul Talk or HMAX suite was rerun.
+- Next safe action: do not wire accept into save／UI until EVO-03 Groundwork approval. Do not guess memory owner to manufacture readiness.
+- Required reading: `src/engine/companionFormalEvolutionTransitionEngine.js`, SOV-01～SOV-08.
 
 ### 2026-08-15 - Cursor Grok - EVO-01 Reflection Owner And Safety Provenance - VERIFIED
 

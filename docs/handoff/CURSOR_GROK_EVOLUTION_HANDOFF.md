@@ -5,7 +5,7 @@
 > 權威順序仍是：Master Canon → `AGENTS.md`／`CLAUDE.md` → Growth Contract → `ACCEPTANCE.md` → Ledger → 本檔。
 > 若本檔與上位文件衝突，以上位文件為準，並追加 Ledger `CORRECTION`／`SUPERSEDED`，不得默默改 Canon。
 >
-> 最後更新：2026-08-15（EVO-01 Reflection owner／safety provenance 有限接線；基準仍為 `076a65f` + 本地 EVO-00 commit）
+> 最後更新：2026-08-15（EVO-02 純進化 transition engine 已本地完成；停在 EVO-03 Groundwork 核准前）
 
 ---
 
@@ -144,12 +144,13 @@ EVO-00 **沒有**修改 `assets/**`，也 **沒有**重新執行 176 張 sheet �
 - **G3** evidence foundation、`evaluateCompanionGrowthReadiness`、`evaluateCompanionGrowthWillingness`
 - **G3.1** Heart Phase care source owner、candidate-first critical save
 - **G3.2 Reflection writer（有限）**：production fail-closed writer 已接線；合法 in-session sealed source 可寫 `reflection` evidence。live persist owner 尚未完成。
+- **EVO-02 純 G4 狀態機**：`src/engine/companionFormalEvolutionTransitionEngine.js` 可產出獨立 candidate（offer／rewrite／defer／accept）。不存檔、不發布、無 renderer。
 
 ### 尚未完成（不得寫成已完成）
 
 - **live Reflection persist owner**：`storageGuard` 仍剝掉 memory／trace 的 `companionId` 與 sealed safety provenance。現有存檔路徑 fail closed。
 - **第三階段不對峙路徑的完整可玩 live persist**：fixture 已證明 Care＋Exploration＋Reflection＋Chapter 可達 Stage 3 readiness；live 記憶目前無法安全跨存檔保留 owner。
-- **Growth G4**：offer／rewrite／defer／accept／re-offer／exact-next-stage／idempotent accept／stale-offer rejection **尚未實作**。
+- **Growth G4 Runtime**：offer／accept 尚未接 UI、critical-save、store 發布或 renderer。`formalOffer` 尚未進入 schema；normalize 會剝掉 token。
 - **save／store／registry／Pixi／renderer 接線**：未做。Stage 1 illustrated runtime 仍是 live fallback。
 - **runtime flags**：仍必須是 false。
 - **`evolutionLines.js`**：不是正式 stage catalog authority。
@@ -166,7 +167,8 @@ G2 schema 已有 `offeredStage`、`deferredAt` 佔位欄位。這只代表資料
 | Willingness | 同上 | `evaluateCompanionGrowthWillingness` | 已實作；還不會發出 Growth G4 offer |
 | Growth UI VM | `src/ui/companionGrowthController.js` | `getViewModel` | 已實作質性 VM；無 stage offer UI |
 | Safety provenance helper | `src/engine/companionGrowthEngine.js` | `validateSafetyProvenance` | 內部函式 |
-| Reflection owner | `src/engine/reflectionGrowthOwner.js` | `createOwnedSafeReflectionSource`／`createReflectionGrowthWriteInput`／fail-closed `source_owner_unverifiable` | production writer 已接線；live persist owner 未完成 |
+| Reflection owner | `src/engine/reflectionGrowthOwner.js` | `createOwnedSafeReflectionSource`／`createReflectionGrowthWriteInput` | production writer 已接線；live persist owner 未完成 |
+| Formal evolution transition | `src/engine/companionFormalEvolutionTransitionEngine.js` | `decideFormalEvolutionTransition` | 純函式；回傳 candidate；不存檔 |
 | Reflection production writer | `src/ui/companionGrowthController.js` | `writeReflectionPracticeIntoDraft` | 不寫 relationship／reward／玩家原文；不開始 offer |
 | Memory Echo 轉接 | `src/ui/pageRouter.js` | `recordCompletedReflectionPractice` | 只做 provenance 轉接；缺資料 fail closed |
 | Sprite controller | `src/pixi/spriteSheetAnimationLoader.js` | `createSpriteAnimationController` | **未 export**；Stage 1 loader。R4 manifest 不可硬塞進來 |
@@ -186,7 +188,7 @@ G2 schema 已有 `offeredStage`、`deferredAt` 佔位欄位。這只代表資料
 |---|---|---|---|
 | **EVO-00** | 本包：契約、SOV、handoff、Ledger | 四份文件 | 改 Runtime／assets／Canon |
 | **EVO-01** | Reflection owner 正式啟用；證明不靠 standoff 的 Stage 3 路徑 | memory／trace owner、safety provenance、`reflectionGrowthOwner.js`、controller／pageRouter 轉接。**未改** storageGuard／store／schema | 開始 offer／換形；猜 owner |
-| **EVO-02** | 純 G4 狀態機 | `companionGrowthEngine.js` 新純函式 | DOM、Pixi、save、assets |
+| **EVO-02** | 純 G4 狀態機 | `companionFormalEvolutionTransitionEngine.js`；禁止碰 DOM／Pixi／save。`formalOffer` 尚未進 schema | DOM、Pixi、save、assets、flags |
 | **EVO-03** | UI＋critical-save | controller、store、saveManager、Growth UI | 改 flags、改 Pixi loader |
 | **EVO-04** | 正式 catalog＋R4 adapter | 新 catalog；stage-aware／row-aware adapter | 讓 `evolutionLines.js` 當 authority；把 R4 硬塞進舊 flat loader |
 | **EVO-05** | Renderer canary | `spriteSheetAnimationLoader.js`、Pixi | 一次開 11 隻；跨角色 fallback |
@@ -246,8 +248,8 @@ EVO-00 可以在目前 `origin/main` 上做，因為本包只改文件。
 | MCP project name | `C-Users-User-NexusLink_RaphaelAI_Workspace-NexusLink-grok-formal-evolution-runtime-r1` |
 | root path | `C:\Users\User\NexusLink_RaphaelAI_Workspace\NexusLink-grok-formal-evolution-runtime-r1` |
 | status | `ready` |
-| nodes | 20389 |
-| edges | 43309 |
+| nodes | 20466 |
+| edges | 43546 |
 | persistence | `.codebase-memory/graph.db.zst` 已寫入；**未 commit**（本包禁止 commit） |
 
 已能在此 project 查到：
@@ -348,3 +350,17 @@ EVO-00 是文件與驗收契約包，沒有修改 Runtime，因此本包沒有�
 未改：Master Canon、`AGENTS.md`、`CLAUDE.md`、`index.html`、`saveManager.js`、`store.js`、`defaultState.js`、`companionStateSchema.js`、`storageGuard.js`、`pixiApp.js`、`assets/**`、package／lockfile、runtime flags。
 
 SOV-01～SOV-06、SOV-08、SOV-09、SOV-11、SOV-12 不因本包變綠。正式進化 Runtime 仍未標 `implemented`。
+
+---
+
+## 14. EVO-02 實際改了哪些檔
+
+1. `src/engine/companionFormalEvolutionTransitionEngine.js`（新建純函式）
+2. `docs/qa/evo-02-formal-evolution-transition-cases.mjs`
+3. `docs/design/COMPANION_GROWTH_CONTRACT_V1.md`
+4. `ACCEPTANCE.md`（SOV-01～SOV-07 依純引擎標 `partial`；SOV-08／09／11／12 不變綠）
+5. 本檔
+6. `docs/agent/AI_EXECUTION_LEDGER.md`（只追加）
+7. `docs/handoff/EVO_03_TO_05_GROUNDWORK_APPROVAL_PLAN.md`（停工核准計畫，未開始 Runtime）
+
+未改：store、saveManager、schema、index.html、Pixi、assets、flags。`formalOffer` 尚未進入持久 schema。

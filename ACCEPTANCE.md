@@ -653,7 +653,7 @@
   3. offer token／generation 必須綁定 `companionId + currentStage + targetStage`；缺欄位 fail closed。
 - 失敗時應保持的狀態：`growth.stage`、`offeredStage`、evidence、relationship、renderer intent 全不變。
 - 預計實作包：EVO-02（純規則）＋ EVO-03（UI 發布）。
-- 目前狀態：`not implemented`。G2 只有 `offeredStage: null` 佔位欄位；沒有 offer 函式。
+- 目前狀態：`partial`（EVO-02 純函式 `decideFormalEvolutionTransition` 已能在 readiness／willingness 成立時開出綁定 token 的 offer；未接 UI／save／renderer，故非正式進化 Runtime `implemented`）。
 
 **SOV-02 — Rewrite and defer**
 - 白話契約：夥伴可以改寫這次儀式怎麼進行；玩家或夥伴都可以說改天。改寫與延後都不是失敗。
@@ -663,7 +663,7 @@
   3. rewrite／defer 不得建立 reward、memory、relationship delta。
 - 失敗時應保持的狀態：canonical `growth.stage` 維持舊值；session rewrite 可丟棄；無 FOMO flag。
 - 預計實作包：EVO-02 ＋ EVO-03。
-- 目前狀態：`not implemented`。Heart Phase rewrite 是 care practice 的既有行為，不是 formal stage offer rewrite。
+- 目前狀態：`partial`（EVO-02 純函式：rewrite 在第二次明示接受前不改 stage；defer 只寫 `deferredAt`／offer provenance。未接 Runtime UI）。
 
 **SOV-03 — No-penalty defer and lawful re-offer**
 - 白話契約：延後不扣分、不倒數、不會永久錯過。之後只有在新的合法當場 context，牠才可以再邀請。
@@ -674,7 +674,7 @@
   4. 新的合法 regulation／repair／completed lived event 之後，才允許重新評估並發出新 offer token；舊 token 必須 stale-reject。
 - 失敗時應保持的狀態：舊 offer 失效但不懲罰；stage 不前進。
 - 預計實作包：EVO-02 ＋ EVO-03。N5 已覆蓋 Growth 練習的零懲罰延後，但尚未覆蓋 formal stage invitation。
-- 目前狀態：`not implemented`（N5 地基 `partial` 於練習層，非正式進化邀請層）。
+- 目前狀態：`partial`（EVO-02 純函式已證明零懲罰 defer、舊 token stale、需新 lived context 才能再邀請。未接 Runtime UI／save）。
 
 **SOV-04 — Exact-next-stage only**
 - 白話契約：一次只能走到「現在的下一階」。不能跳去終局，也不能把 A 的成長寫到 B。
@@ -685,7 +685,7 @@
   4. `evolutionLines.js` 的舊五階／`bondThreshold` 不得被 accept 路徑讀取為 authority。
 - 失敗時應保持的狀態：`growth.stage` 維持呼叫前的合法值；不建立跨角色 record。
 - 預計實作包：EVO-02 ＋ EVO-04（catalog 對照）。
-- 目前狀態：`not implemented`。
+- 目前狀態：`partial`（EVO-02 純函式鎖定兩段 exact-next-stage，並拒絕跨角色 token。未接 catalog／renderer）。
 
 **SOV-05 — Idempotent accept**
 - 白話契約：同一隻夥伴、同一階、同一合法邀請，重複按接受不會再升一階，也不會再播一次進化。
@@ -695,7 +695,7 @@
   3. 已完成 `final_awakened` 的 accept 回傳 `already_complete`（或等價），零 mutation。
 - 失敗時應保持的狀態：第一次成功後的 canonical 狀態保持；重複提交不得製造第二個 stage audit。
 - 預計實作包：EVO-02 ＋ EVO-03。
-- 目前狀態：`not implemented`。G2／G3 的 evidence idempotency 不是 stage accept idempotency。
+- 目前狀態：`partial`（EVO-02 純函式：同一 token 接受 20 次不再升階、不新增 transition／renderer intent。未接 save／UI，candidate 尚未成為 canonical Runtime state）。
 
 **SOV-06 — SafeHarbor terminal**
 - 白話契約：安全港一打開，進化相關的所有後續動作都必須立刻停住，而且不能在事後補做。
@@ -705,7 +705,7 @@
   3. 完整 gameplay state（relationship、growth、memory、trace、save payload）deep-equal 於進入前，只允許既有 safety UI/mode。
 - 失敗時應保持的狀態：舊 stage、舊 offer 皆不得復活為可見換形。
 - 預計實作包：EVO-02（engine 短路）＋ EVO-03（controller）。N3 已覆蓋 Growth evidence／session 終止，但還沒有 formal stage offer 路徑可測。
-- 目前狀態：`partial`（安全終端地基已存在；正式進化路徑尚未存在，故本 SOV 未通過）。
+- 目前狀態：`partial`（安全終端地基存在；EVO-02 純函式在 `safeHarborMode` 時對 offer／rewrite／defer／accept 短路且 growth deep-equal。VFX／delayed callback／save flush 仍未接 Runtime）。
 
 **SOV-07 — High-risk and safety evidence exclusion**
 - 白話契約：危機回合不能變成成長證據，也不能變成進化邀請的理由。
@@ -715,7 +715,7 @@
   3. delayed flush 在 UI/mode 已清除後仍須拒絕。
 - 失敗時應保持的狀態：growth／stage／offer 與 high-risk 前完全相同。
 - 預計實作包：EVO-01 補 production provenance；EVO-02 把同一 ban 接到 offer 路徑。N3／N4 已覆蓋 evidence writer。
-- 目前狀態：`partial`（evidence 層與 EVO-01 Reflection production writer 已排除 high-risk／safeHarbor／system safety reply，且 exclusion 不可被後代事件洗成 false；formal offer／stage 層仍 `not implemented`。不得把本條標成完整 formal evolution Runtime `implemented`）。
+- 目前狀態：`partial`（evidence 層、EVO-01 Reflection writer，以及 EVO-02 offer／accept 路徑皆排除 high-risk／safeHarbor／system safety reply。未接完整 Runtime，不得標 `implemented`）。
 
 **SOV-08 — Critical-save before visible stage publication**
 - 白話契約：下一階先活在獨立 candidate 裡。存檔成功後，記憶體、畫面才跟著換。存檔失敗時，遊戲從頭到尾都還是舊樣子，不靠事後復原。
@@ -747,7 +747,7 @@
   3. 此類輸入零 evidence、零 offer、零 stage mutation。
 - 失敗時應保持的狀態：既有 growth record 不變；不建立新 root。
 - 預計實作包：EVO-01。`reflectionGrowthOwner.js` 與 production writer 已 fail-closed 接線；live persist owner schema 仍未完成。
-- 目前狀態：`partial`（production fail-closed writer 已接線：缺 owner／缺 sealed safety／跨角色／未知 ID／`activeCompanionId` 推測皆零 evidence。現有 `storageGuard` 仍剝掉 live memory／trace owner，故存檔路徑也 fail closed。不得標完整 `implemented`：尚未有可持久的合法 live owner schema，也沒有 formal offer）。
+- 目前狀態：`partial`（production fail-closed writer 已接線：缺 owner／缺 sealed safety／跨角色／未知 ID／`activeCompanionId` 推測皆零 evidence。現有 `storageGuard` 仍剝掉 live memory／trace owner，故存檔路徑也 fail closed。EVO-02 純引擎對缺 provenance 的 offer／accept 同樣 fail closed。不得標完整 `implemented`：尚未有可持久的合法 live owner schema，也尚未接 formal offer Runtime）。
 
 **SOV-11 — Runtime flags remain false before full promotion**
 - 白話契約：在 Owner 明確核准完整 promotion 之前，進化資產不能假裝自己已經是遊戲內的正式身體。
