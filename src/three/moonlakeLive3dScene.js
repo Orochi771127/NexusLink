@@ -2,6 +2,7 @@ import {
   MOONLAKE_CAMERA,
   MOONLAKE_INTERACTION_HOTSPOTS,
   MOONLAKE_LIVE3D_ASSET,
+  MOONLAKE_NIGHT_WARMTH,
   MOONLAKE_VISUAL_MASTER,
   MOONLAKE_VISIBLE_GLB_CANDIDATE,
   MOONLAKE_VISUAL_WALKWAY,
@@ -337,6 +338,7 @@ function configureVisualTexture(THREE, texture) {
 }
 
 function createVisualBackdrop(THREE, texture) {
+  const [leftLantern, rightLantern] = MOONLAKE_NIGHT_WARMTH.persistentLanterns;
   const uniforms = {
     map: { value: texture },
     time: { value: 0 },
@@ -348,6 +350,18 @@ function createVisualBackdrop(THREE, texture) {
     crystalCenter: { value: new THREE.Vector2(0.5, 0.5) },
     waterPulse: { value: 0 },
     waterCenter: { value: new THREE.Vector2(0.5, 0.5) },
+    nightLanternLeftCenter: {
+      value: new THREE.Vector2(leftLantern.imageX, 1 - leftLantern.imageY)
+    },
+    nightLanternRightCenter: {
+      value: new THREE.Vector2(rightLantern.imageX, 1 - rightLantern.imageY)
+    },
+    nightPlazaCenter: {
+      value: new THREE.Vector2(
+        MOONLAKE_NIGHT_WARMTH.plazaPool.imageX,
+        1 - MOONLAKE_NIGHT_WARMTH.plazaPool.imageY
+      )
+    },
     viewportAspect: { value: MOONLAKE_VISUAL_MASTER.imageAspect },
     imageAspect: { value: MOONLAKE_VISUAL_MASTER.imageAspect }
   };
@@ -374,6 +388,9 @@ function createVisualBackdrop(THREE, texture) {
       "uniform vec2 crystalCenter;",
       "uniform float waterPulse;",
       "uniform vec2 waterCenter;",
+      "uniform vec2 nightLanternLeftCenter;",
+      "uniform vec2 nightLanternRightCenter;",
+      "uniform vec2 nightPlazaCenter;",
       "uniform float viewportAspect;",
       "uniform float imageAspect;",
       "varying vec2 vUv;",
@@ -386,6 +403,11 @@ function createVisualBackdrop(THREE, texture) {
       "",
       "float radialMask(vec2 uv, vec2 center, float radius, float feather) {",
       "  return 1.0 - smoothstep(radius - feather, radius + feather, distance(uv, center));",
+      "}",
+      "",
+      "float ellipseMask(vec2 uv, vec2 center, vec2 radius, float feather) {",
+      "  float normalizedDistance = length((uv - center) / max(radius, vec2(0.0001)));",
+      "  return 1.0 - smoothstep(1.0 - feather, 1.0 + feather, normalizedDistance);",
       "}",
       "",
       "vec2 coverUv(vec2 uv) {",
@@ -440,11 +462,22 @@ function createVisualBackdrop(THREE, texture) {
       "  float waterRing = 1.0 - smoothstep(0.004, 0.014, abs(waterDistance - waterRingRadius));",
       "  color += vec3(0.035, 0.18, 0.24) * waterRing * waterPulse * waterMask * 0.72;",
       "",
-      "  vec3 nightColor = color * vec3(0.34, 0.46, 0.68) * 0.78 + vec3(0.006, 0.014, 0.045);",
+      "  vec3 nightColor = color * vec3(0.46, 0.55, 0.72) * 0.86 + vec3(0.012, 0.024, 0.055);",
       "  float cyanCrystal = smoothstep(0.12, 0.48, color.b - color.r) * smoothstep(0.35, 0.74, color.g);",
       "  float warmMetal = smoothstep(0.03, 0.26, color.r - color.b) * smoothstep(0.30, 0.72, color.r);",
       "  nightColor += cyanCrystal * vec3(0.01, 0.13, 0.25) * 0.56;",
       "  nightColor += warmMetal * vec3(0.10, 0.045, 0.008) * 0.20;",
+      "  float leftLampCore = ellipseMask(imageUv, nightLanternLeftCenter, vec2(0.018, 0.025), 0.42);",
+      "  float rightLampCore = ellipseMask(imageUv, nightLanternRightCenter, vec2(0.018, 0.025), 0.42);",
+      "  float leftLampHalo = ellipseMask(imageUv, nightLanternLeftCenter, vec2(0.065, 0.052), 0.58);",
+      "  float rightLampHalo = ellipseMask(imageUv, nightLanternRightCenter, vec2(0.065, 0.052), 0.58);",
+      "  float plazaWarmth = ellipseMask(imageUv, nightPlazaCenter, vec2(0.235, 0.105), 0.48);",
+      "  float nightLampFlicker = 0.96 + sin(time * 4.8) * 0.04;",
+      "  float nightLampCore = min(1.0, leftLampCore + rightLampCore);",
+      "  float nightLampHalo = min(1.0, leftLampHalo + rightLampHalo);",
+      "  nightColor += vec3(0.72, 0.29, 0.055) * nightLampCore * nightLampFlicker;",
+      "  nightColor += vec3(0.30, 0.115, 0.018) * nightLampHalo * (0.48 + nightLampFlicker * 0.12);",
+      "  nightColor += vec3(0.13, 0.062, 0.014) * plazaWarmth * 0.42;",
       "  color = mix(color, nightColor, nightMix);",
       "  color *= 1.0 - rainStrength * 0.055;",
       "  gl_FragColor = vec4(color, 1.0);",
@@ -1545,6 +1578,13 @@ export function projectMoonlakeVisualPoint(point, viewport = {}) {
   const displayScale = walkway
     ? lerp(genericScale, walkway.scale, routeWeight)
     : genericScale;
+  // Navigation geometry is authored once against the 390x844 acceptance
+  // viewport. Preserve that canonical projection alongside the live screen
+  // projection so cover-cropping on short phones or desktop cannot move the
+  // logical foot out of its stone/bridge surface.
+  const navigationAspect = 390 / 844;
+  const navigationX = 0.5 + (imageX - 0.5) * (imageAspect / navigationAspect);
+  const navigationY = imageY;
   let screenX = imageX;
   let screenY = imageY;
   if (viewportAspect < imageAspect) {
@@ -1556,6 +1596,8 @@ export function projectMoonlakeVisualPoint(point, viewport = {}) {
     x: screenX * width,
     y: screenY * height,
     referenceScale390: width / 390,
+    navigationX390: navigationX * 390,
+    navigationY390: navigationY * 844,
     depth: clamp((imageY - 0.28) / 0.42, 0, 1),
     scale: displayScale,
     surface: walkway?.surface || "ground",
@@ -1725,6 +1767,9 @@ function buildDiagnostics(state) {
     environment: {
       weather: state.lastWeather,
       nightMix: state.lastNightMix,
+      nightWarmthProfile: MOONLAKE_NIGHT_WARMTH.id,
+      persistentLanterns: MOONLAKE_NIGHT_WARMTH.persistentLanterns.length,
+      dayGeometryPreserved: MOONLAKE_NIGHT_WARMTH.preservesDayGeometry,
       rainVisible: state.weather.rain.visible,
       mistVisible: state.weather.mist.visible
     },

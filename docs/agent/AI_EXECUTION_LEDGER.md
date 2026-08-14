@@ -58,6 +58,47 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-08-14 - Codex - Moonlake Spatial Coherence And Night Warmth R1 - COMPLETED
+
+- Status: `COMPLETED` locally; Owner-approved package is implemented and verified in an isolated worktree. Per instruction it remains uncommitted and unpushed.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `MOONLAKE_SPATIAL_COHERENCE_AND_NIGHT_WARMTH_R1`.
+- Branch / commit: `codex/moonlake-spatial-night-r1` / none.
+- Worktree baseline: created clean from `origin/main` at `e44047d3aaa6a3bcb45d20da47e173e1d498e3ac`; `HEAD...origin/main = 0/0` before edits. The dirty primary checkout and separate uncommitted First Touch worktree were not touched.
+- Work completed:
+  - `MOONLAKE_NAVIGATION_SAFETY.homeWaypointId` is now the roaming origin SSOT (`platform_center`). Ambient roaming stays blocked until `onboarding.firstLoop.completedAt` or `skippedAt`, so the companion remains on the central ring through First Touch -> Talk -> Trace.
+  - Added positive `central-stone-plaza` and `platform-bridge-corridor` walkable surfaces. A foot is safe only when the companion-specific collision radius fits inside an authored surface and clears all eight prop footprints; foreground foliage now fails closed as `outside_walkable_surface`.
+  - Re-authored the three old foreground `near_ground_*` waypoints onto the lower stone plaza. Existing bridge/fishing topology and the isolated far bank remain unchanged.
+  - Projection now carries canonical 390x844 navigation coordinates separately from live screen coordinates. Cover cropping on 390x664 and desktop no longer changes collision truth.
+- Changed files in this lane: `src/app.js`, `src/pixi/moonlakeNavigationSafety.js`, `src/pixi/moonlakeRoamingController.js`, `src/three/moonlakeLive3dConfig.js`, `src/three/moonlakeLive3dScene.js`, `docs/qa/moonlake-nav-collision-scale-r3-3-cases.mjs`, `docs/qa/moonlake-spatial-coherence-night-warmth-r1-browser.py`, and this ledger. No GROUNDWORK file changed.
+- Verification:
+  - Node syntax and `git diff --check` pass; locked `script.js` still passes `node --check`.
+  - Deterministic navigation: 16 companions, 144 reachable waypoint checks, 256 directed-edge checks, 18 extra short-phone/desktop waypoint checks, all pass. The reported bush sample `(174,557)` is rejected; home anchor is safe.
+  - Real Chromium: the unfinished First Loop remains at `platform_center` for more than the former 2.5-second dwell (`distanceTravelled=0`, no target); all nine reachable waypoints are safe at 390x844, 390x664, 1440x900 and reduced-motion 390x844, with zero page/console errors.
+  - Twelve focused Moonlake/First Session suites pass, including live roaming, bridge clearance/compositing, occlusion, fishing, habitat rhythm, visible-GLB fallback truth and public First Session repair.
+  - Raphael workflow companions remain green: psychological safety `14/14`, runtime contract `15/15`.
+  - Repo-native aggregate release gate reported `31/33`: its HMAX Soul Talk and Growth browser canaries timed out only inside the long aggregate run. Both were rerun independently without code changes and passed (`HMAX ok:true`; Growth `156/156`). This is recorded as aggregate-run resource/timing flake evidence, not misreported as a clean 33/33 aggregate run.
+- Problems / risks: collision geometry is intentionally calibrated to the current Owner-approved visual master. Any future background composition swap or shipping-visible GLB promotion must re-author and re-prove the surfaces. Automated Chromium does not replace real-device or human visual review.
+- Red-line result: no Safety, reward, memory, Growth, relationship, battle or persistence authority changed; no FOMO/timer/dependency behaviour added.
+- Next safe action: human review the staged screenshots and a real 390x844 device walk. If accepted, request separate explicit authorization before commit/push/PR.
+
+
+### 2026-08-14 - Codex - Moonlake Spatial Coherence And Night Warmth R1 - IN PROGRESS
+
+- Status: `IN PROGRESS`; Owner approved `MOONLAKE_SPATIAL_COHERENCE_AND_NIGHT_WARMTH_R1` and authorized implementation in an isolated worktree without commit or push.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `MOONLAKE_SPATIAL_COHERENCE_AND_NIGHT_WARMTH_R1`.
+- Layer: `EXPERIENCE`; no GROUNDWORK files are authorized or expected.
+- Branch / commit: `codex/moonlake-spatial-night-r1` / uncommitted by Owner instruction.
+- Files expected: `src/three/moonlakeLive3dConfig.js`, `src/pixi/moonlakeNavigationSafety.js`, `src/pixi/moonlakeRoamingController.js` only if the route API needs it, `src/app.js`, focused `docs/qa/*`, and this ledger. `assets/**`, `index.html`, `src/pixi/pixiApp.js`, save/default/normalize files, `tools/**` and `scripts/**` are explicit non-targets.
+- Engineering diagnosis: authored prop footprints are only negative collision. They reject tents, lantern bases, rocks and bridge crystals but do not prove that a projected foot is inside stone plaza or bridge geometry; foreground foliage therefore remains logically walkable. The home waypoint is correct, but ambient roaming can begin before the First Touch -> Talk -> Trace loop is complete.
+- Work planned: add positive projected walkable surfaces with companion-radius containment, move the three near-ground waypoints back onto the plaza stone, validate every sampled route against both walkable surface and prop clearance, and keep pre-first-loop roaming at the authored `platform_center` home anchor.
+- Red-line check: no Safety, `safeHarborMode`, reward, memory, Growth, relationship, battle or persistence authority changes. Roaming remains interruptible, non-rewarding companion expression; first-loop gating adds no pressure, timer, FOMO or dependency behaviour.
+- Non-goals: no free-camera/open-world navigation, no pointer-to-walk system, no physics engine, no far-bank unlock, no companion conversion to 3D, no new dependency, no asset generation/promotion, and no First Touch state-schema work from the separate uncommitted package.
+- Acceptance refs: `ACCEPTANCE.md` H1-H6, H9, I and K9; `MOONLAKE_LIVE_3D_HYBRID_CONTRACT_V1.md` sections 5-8.
+- Required reading completed: latest Lane 1 projection-deactivation handoff (`projectWorldToScreen`, `setActive`, `syncHybridRendererVisibility`, `resolveScene`), Moonlake and Global 3D contracts, habitat master/profile contracts, current navigation/roaming/projection code and active art index truth.
+
+
 ### 2026-08-13 - Claude Code - Moonlake Projection Honours Scene Deactivation - COMPLETED
 
 - Status: `COMPLETED`; closes a gate mismatch where the companion could roam
@@ -1445,6 +1486,42 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Next safe action: publish through the required PR gate, merge to `main`, then refresh the codebase MCP index.
 
 ## Lane 2 - Game Art, UI, And Visual Production
+
+### 2026-08-14 - Codex - Moonlake Spatial Coherence And Night Warmth R1 - COMPLETED
+
+- Status: `COMPLETED` locally; visual package is implemented and browser-verified, with no commit or push.
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `MOONLAKE_SPATIAL_COHERENCE_AND_NIGHT_WARMTH_R1`.
+- Branch / commit: `codex/moonlake-spatial-night-r1` / none.
+- Visual work completed:
+  - Kept the same approved day geometry, camera, bridge, tents, foliage and companion layering. No asset or full-scene night plate was created or modified.
+  - Corrected the active live-diorama path at its real cause: the full-screen `ShaderMaterial` does not receive the existing Three PointLight. Night now has a less crushed cool ambient grade plus shader-native persistent emission at the two visible front lantern bulbs and a restrained warm pool across the central plaza.
+  - Interaction lamp pulses remain additive and independent; persistent lamps do not require a tap. Day remains unchanged when `nightMix=0`, and reduced motion keeps the static illumination while reducing only ornamental motion.
+  - Added `moonlake-night-warmth-r1` diagnostics (`persistentLanterns=2`, same-day-geometry truth) so later QA can detect regression without visual guesswork.
+- Browser evidence:
+  - 390x844, 390x664, 1440x900 and reduced-motion 390x844 screenshots pass with zero page/console errors.
+  - 390x844 pixel probes: left lamp mean RGB approximately `(244.6,148.2,99.2)`, right lamp `(248.2,159.4,101.7)`; both are visibly warm. Mean night luminance is approximately `39.2` versus day `58.1`, so night is more readable but remains recognizably night.
+  - Evidence root: `output/playwright/moonlake-spatial-coherence-night-warmth-r1/` (`night-warmth-390x844.png`, `night-short-phone-390x664.png`, `night-desktop-1440x900.png`, `night-reduced-motion-390x844.png`, `day-reference-390x844.png`, `results.json`).
+- Art/asset truth: `ART_PRODUCTION_INDEX.json` remains unchanged; the active Owner-approved R2 visual master remains authoritative; no staged/human-pending art was promoted and visible GLB remains `shippingDefault:false`.
+- Problems / risks: warmth is mechanically measured and visually inspected by Codex, but final emotional warmth remains a human art-direction judgment. Real OLED/LCD device brightness and outdoor/night viewing were not tested.
+- Next safe action: human compare the day/night evidence on at least one real phone. Any repaint, emissive plate promotion or visible-GLB switch remains a separate GROUNDWORK/Owner gate.
+
+
+### 2026-08-14 - Codex - Moonlake Spatial Coherence And Night Warmth R1 - IN PROGRESS
+
+- Status: `IN PROGRESS`; paired visual lane for the Owner-approved `MOONLAKE_SPATIAL_COHERENCE_AND_NIGHT_WARMTH_R1` package.
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `MOONLAKE_SPATIAL_COHERENCE_AND_NIGHT_WARMTH_R1`.
+- Layer: `EXPERIENCE`; code-driven lighting and composition calibration only, with no GROUNDWORK asset edit.
+- Branch / commit: `codex/moonlake-spatial-night-r1` / uncommitted by Owner instruction.
+- Files expected: `src/three/moonlakeLive3dScene.js`, `src/three/moonlakeLive3dConfig.js`, focused visual/browser QA under `docs/qa/*`, and this ledger.
+- Visual diagnosis: the active Owner-approved visual master is a full-screen `ShaderMaterial` with `toneMapped:false`; it does not receive the existing Three PointLight. Night currently applies a strong cool multiplicative grade, while warm lantern emission appears only as a short interaction pulse. This explains the cold, underlit night and apparently unlit lamps.
+- Work planned: preserve identical day/night geometry and camera, lift night ambient readability conservatively, add two persistent night lantern cores with soft warm pools across the central plaza, keep interaction pulses additive, and prove day/night, reduced-motion, phone/short-phone/desktop behaviour by browser screenshot plus pixel measurements.
+- Red-line check: atmosphere only. No timed reward window, scarcity, login pressure, mood punishment, state write or companion-authority change.
+- Non-goals: no repaint, no new night plate, no promoted/generated asset, no visible-GLB default change, no duplicated Pixi props, no UI redesign, and no far-bank connection. The far shore remains deliberately visible but unreachable.
+- Acceptance refs: `ACCEPTANCE.md` H1-H6, H9 and I; Moonlake contract sections 4, 6 and 8.
+- Required reading completed: latest Lane 2 far-shore handoff (`MOONLAKE_WORLD_EDGES`, `deriveGentleInvitation` gate 4), active habitat entry in `ART_PRODUCTION_INDEX.json`, Moonlake same-composition/day-night contract, and current live-diorama shader/lighting path.
+
 
 ### 2026-08-13 - Claude Code - Far Shore Curiosity Copy - COMPLETED
 

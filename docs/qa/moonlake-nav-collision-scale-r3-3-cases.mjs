@@ -38,7 +38,9 @@ const projectWorldPoint = (point) => projectMoonlakeVisualPoint(
   { width: 390, height: 844 }
 );
 
-assert.equal(MOONLAKE_NAVIGATION_SAFETY.id, "moonlake-nav-collision-scale-r3-3");
+assert.equal(MOONLAKE_NAVIGATION_SAFETY.id, "moonlake-spatial-coherence-r1");
+assert.equal(MOONLAKE_NAVIGATION_SAFETY.homeWaypointId, "platform_center");
+assert.equal(MOONLAKE_NAVIGATION_SAFETY.walkableSurfaces.length, 2);
 assert.equal(MOONLAKE_NAVIGATION_SAFETY.footprints.length, 8);
 assert.deepEqual(
   Object.keys(MOONLAKE_COMPANION_PRESENTATION)
@@ -112,11 +114,51 @@ const oldUnsafeLeftRoute = isMoonlakeRouteSegmentSafe(
 );
 assert.equal(oldUnsafeLeftRoute, false, "the retired route must reproduce the lamp collision");
 
+const foregroundBushSafety = getMoonlakeProjectedFootSafety(
+  { x: 174, y: 557, referenceScale390: 1 },
+  { companionId: "greyshade-cat", area: "near_ground" }
+);
+assert.equal(foregroundBushSafety.safe, false);
+assert.equal(foregroundBushSafety.reason, "outside_walkable_surface");
+
+const platformCenterSafety = getMoonlakeProjectedFootSafety(
+  projectWorldPoint(MOONLAKE_WORLD_WAYPOINTS.platform_center),
+  { companionId: "greyshade-cat", area: "platform" }
+);
+assert.equal(platformCenterSafety.safe, true);
+assert.equal(platformCenterSafety.walkableSurfaceId, "central-stone-plaza");
+
+const responsiveViewports = [
+  { width: 390, height: 664 },
+  { width: 1440, height: 900 }
+];
+let responsiveWaypointChecks = 0;
+for (const viewport of responsiveViewports) {
+  for (const [waypointId, waypoint] of Object.entries(MOONLAKE_WORLD_WAYPOINTS)) {
+    if ((MOONLAKE_WORLD_EDGES[waypointId] || []).length === 0) continue;
+    const projected = projectMoonlakeVisualPoint(waypoint, viewport);
+    const safety = getMoonlakeProjectedFootSafety(projected, {
+      companionId: "stone-shard",
+      area: waypoint.area
+    });
+    assert.equal(
+      safety.safe,
+      true,
+      `${viewport.width}x${viewport.height} ${waypointId}: ${safety.reason}`
+    );
+    responsiveWaypointChecks += 1;
+  }
+}
+
 console.log(JSON.stringify({
   pass: true,
   companionCount: COMPANION_IDS.length,
+  walkableSurfaces: MOONLAKE_NAVIGATION_SAFETY.walkableSurfaces.length,
   authoredFootprints: MOONLAKE_NAVIGATION_SAFETY.footprints.length,
   checkedWaypoints: waypointResults.length,
   checkedDirectedEdges: edgeResults.length,
-  retiredLampCollisionReproduced: !oldUnsafeLeftRoute
+  retiredLampCollisionReproduced: !oldUnsafeLeftRoute,
+  foregroundBushRejected: !foregroundBushSafety.safe,
+  homeAnchorSafe: platformCenterSafety.safe,
+  responsiveWaypointChecks
 }));
