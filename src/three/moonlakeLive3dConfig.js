@@ -34,6 +34,83 @@ export const MOONLAKE_VISIBLE_GLB_CANDIDATE = Object.freeze({
   ])
 });
 
+/**
+ * Moonlake HD-2.5D Production Hero Slice v0 -- feature-gated candidate.
+ *
+ * Shares the existing `moonlakeVisibleGlb` gate so there is still exactly one
+ * switch; value "2" selects this asset, value "1" keeps the untouched r4-0
+ * candidate above. shippingDefault stays false: this is NOT promoted.
+ *
+ * Unlike r4-0 this asset carries authored clay/resin materials exported from
+ * the Blender source, so the runtime's name-token material substitution is
+ * skipped for it (`preserveAuthoredMaterials`). Water / waterfall / backdrop
+ * meshes still resolve to the hidden-token list so the live animated rig
+ * continues to own them.
+ */
+export const MOONLAKE_HD25D_HERO_SLICE_CANDIDATE = Object.freeze({
+  id: "moonlake-hd25d-hero-slice-v0",
+  queryParam: "moonlakeVisibleGlb",
+  queryValue: "2",
+  shippingDefault: false,
+  rasterRole: "loading-reduced-capability-renderer-failure-fallback",
+  preserveAuthoredMaterials: true,
+  asset: Object.freeze({
+    glb: "./assets/3d/moonlake/moonlake_hd25d_hero_slice_v0.glb",
+    sha256: "EB9A7F4072189A63DC8612FD03A12AF896FC5C51489E027903F202254861AF09",
+    bytes: 1_922_456,
+    triangles: 48_424,
+    meshCount: 87,
+    materialCount: 28,
+    textureCount: 0,
+    sourceCoordinateSystem: "blender-z-up",
+    runtimeCoordinateSystem: "three-y-up"
+  }),
+  // Solved against the 390x844 ACCEPTANCE viewport, not a generic 9:16 crop:
+  // at that aspect a 30 deg vertical FOV gives only 14.12 deg horizontally, so
+  // the rig is placed to land the platform centre 60% down frame with +/-6.0 m
+  // of horizontal coverage.
+  camera: Object.freeze({
+    position: Object.freeze({ x: 0, y: 30.435, z: 35.677 }),
+    target: Object.freeze({ x: 0, y: 0.6, z: -2.51 }),
+    fov: 30,
+    pitchDeg: 38,
+    yawDeg: 0,
+    portraitSafeAspect: "9:16",
+    acceptanceViewport: Object.freeze({ width: 390, height: 844 }),
+    horizontalHalfCoverageMeters: 6.0,
+    freeCameraAllowed: false
+  }),
+  // Companion screen budget: 8-12% of viewport height at 390x844.
+  companionPresentation: Object.freeze({
+    worldHeightMeters: 2.6,
+    approxViewportHeightPct: 10.1,
+    footAnchor: 0.102
+  }),
+  hiddenMeshTokens: Object.freeze([
+    "backdrop",
+    "water"
+  ])
+});
+
+/**
+ * Approved greyshade-cat illustrated walk sheets already present in the repo.
+ * 2048x1024 = 4 columns x 2 rows of 512px frames. No frame here is invented;
+ * absence of a direction must fall back to the single-sprite presentation.
+ */
+export const MOONLAKE_COMPANION_DIRECTION_SHEETS = Object.freeze({
+  id: "greyshade-cat-illustrated-walk-4dir",
+  columns: 4,
+  rows: 2,
+  frames: 8,
+  fps: 8,
+  directions: Object.freeze({
+    front: "./assets/characters/greyshade-cat/spritesheets/illustrated/walk/greyshade-cat_walk_front_512x512_8f.png",
+    back: "./assets/characters/greyshade-cat/spritesheets/illustrated/walk/greyshade-cat_walk_back_512x512_8f.png",
+    left: "./assets/characters/greyshade-cat/spritesheets/illustrated/walk/greyshade-cat_walk_left_512x512_8f.png",
+    right: "./assets/characters/greyshade-cat/spritesheets/illustrated/walk/greyshade-cat_walk_right_512x512_8f.png"
+  })
+});
+
 export const MOONLAKE_DEPTH_OCCLUDERS = Object.freeze([
   Object.freeze({
     id: "bridge-rails",

@@ -4,6 +4,8 @@ import {
   MOONLAKE_LIVE3D_ASSET,
   MOONLAKE_VISUAL_MASTER,
   MOONLAKE_VISIBLE_GLB_CANDIDATE,
+  MOONLAKE_HD25D_HERO_SLICE_CANDIDATE,
+  MOONLAKE_COMPANION_DIRECTION_SHEETS,
   MOONLAKE_VISUAL_WALKWAY,
   MOONLAKE_WATERFALLS
 } from "./moonlakeLive3dConfig.js";
@@ -30,12 +32,21 @@ export async function createMoonlakeLive3dScene({
   const params = new URLSearchParams(window.location.search);
   if (params.get("live3d") === "0") return createDisabledController("query_disabled");
   if (!supportsWebGl()) return createDisabledController("webgl_unavailable");
-  const visibleGlbCandidate = params.get(
-    MOONLAKE_VISIBLE_GLB_CANDIDATE.queryParam
-  ) === MOONLAKE_VISIBLE_GLB_CANDIDATE.queryValue;
-  const renderMode = visibleGlbCandidate
-    ? "visible_glb_candidate"
-    : "owner_approved_live_diorama";
+  // One gate, two candidate values. "1" keeps the untouched r4-0 candidate;
+  // "2" selects the HD-2.5D Hero Slice v0. Neither is the shipping default.
+  const glbGateValue = params.get(MOONLAKE_VISIBLE_GLB_CANDIDATE.queryParam);
+  const heroSliceCandidate =
+    glbGateValue === MOONLAKE_HD25D_HERO_SLICE_CANDIDATE.queryValue;
+  const visibleGlbCandidate =
+    glbGateValue === MOONLAKE_VISIBLE_GLB_CANDIDATE.queryValue || heroSliceCandidate;
+  const activeCandidate = heroSliceCandidate
+    ? MOONLAKE_HD25D_HERO_SLICE_CANDIDATE
+    : MOONLAKE_VISIBLE_GLB_CANDIDATE;
+  const renderMode = heroSliceCandidate
+    ? "hd25d_hero_slice_candidate"
+    : visibleGlbCandidate
+      ? "visible_glb_candidate"
+      : "owner_approved_live_diorama";
 
   let canvas = null;
   let renderer = null;
@@ -76,7 +87,7 @@ export async function createMoonlakeLive3dScene({
     scene.fog = new THREE.FogExp2(0x9fc9dd, 0.012);
 
     const cameraProfile = visibleGlbCandidate
-      ? MOONLAKE_VISIBLE_GLB_CANDIDATE.camera
+      ? activeCandidate.camera
       : MOONLAKE_CAMERA;
     const camera = new THREE.PerspectiveCamera(
       cameraProfile.fov,
@@ -130,28 +141,40 @@ export async function createMoonlakeLive3dScene({
     const weather = createWeather(THREE, quality);
     habitatRoot.add(weather.root);
 
+    const activeAsset = heroSliceCandidate
+      ? MOONLAKE_HD25D_HERO_SLICE_CANDIDATE.asset
+      : MOONLAKE_LIVE3D_ASSET;
     const loader = new GLTFLoader();
     const gltf = await withTimeout(
-      loader.loadAsync(MOONLAKE_LIVE3D_ASSET.glb),
+      loader.loadAsync(activeAsset.glb),
       ASSET_TIMEOUT_MS,
       "moonlake_glb_timeout"
     );
     const model = gltf.scene;
-    model.name = "moonlake_clay_resin_r3";
+    model.name = heroSliceCandidate
+      ? "moonlake_hd25d_hero_slice_v0"
+      : "moonlake_clay_resin_r3";
     const modelDiagnostics = configureModel(
       THREE,
       model,
       quality,
-      visibleGlbCandidate
+      visibleGlbCandidate,
+      activeCandidate
     );
     habitatRoot.add(model);
 
+    // Presentation only. The billboard owns no position of its own: the
+    // existing navigation owner pushes world coordinates in via
+    // setCompanionWorldPosition(). It stays hidden until something actually
+    // drives it, which is what guarantees a single visible companion across
+    // the Pixi and Three.js render modes.
     const roBillboardCompanion = createROBillboardCompanion({
       THREE,
       scene: habitatRoot,
-      texturePath: "./assets/companions/greyshade_cat/idle.png"
+      texturePath: "./assets/companions/greyshade_cat/idle.png",
+      directionSheets: heroSliceCandidate ? MOONLAKE_COMPANION_DIRECTION_SHEETS : null
     });
-    roBillboardCompanion.setPosition(0, 0.28, 1.2); // Position at platform center
+    roBillboardCompanion.setVisible(false);
 
     const state = {
       active: true,
@@ -222,6 +245,13 @@ export async function createMoonlakeLive3dScene({
       resize,
       update(ticker) {
         roBillboardCompanion.updateFacing(camera);
+        if (roBillboardCompanion.visible) {
+          const deltaSeconds = Math.min(
+            0.05,
+            Math.max(0, Number(ticker?.deltaMS) || 16.67) / 1000
+          );
+          roBillboardCompanion.advance(deltaSeconds);
+        }
         updateScene(state, ticker, getEnvironmentState, getWeather);
       },
       getCompanionScreenPosition() {
@@ -231,8 +261,22 @@ export async function createMoonlakeLive3dScene({
           state.size?.height || window.innerHeight
         );
       },
+      /**
+       * Called by the existing navigation owner. Receiving a real world
+       * position is what makes the Three.js billboard the active companion
+       * presentation; until then it stays hidden so it can never
+       * double-render against the Pixi companion.
+       */
       setCompanionWorldPosition(x, y, z) {
+        if (!Number.isFinite(x) || !Number.isFinite(y) || !Number.isFinite(z)) return;
         roBillboardCompanion.setPosition(x, y, z);
+        roBillboardCompanion.setVisible(true);
+      },
+      setCompanionFacing(radians) {
+        roBillboardCompanion.setFacingAngle(radians);
+      },
+      setCompanionVisible(visible) {
+        roBillboardCompanion.setVisible(visible);
       },
       getROBillboardCompanion() {
         return roBillboardCompanion;
@@ -257,6 +301,7 @@ export async function createMoonlakeLive3dScene({
         state.disposed = true;
         resizeObserver?.disconnect();
         window.removeEventListener("resize", resize);
+        roBillboardCompanion.dispose();
         disposeObjectTree(habitatRoot);
         disposeObjectTree(visualBackdrop.mesh);
         visualBackdrop.texture.dispose();
@@ -307,6 +352,18 @@ function createDisabledController(reason) {
     setActive() {},
     resize() {},
     update() {},
+    // The live controller exposes these; the disabled controller must expose
+    // the same shape or a fallback turns a renderer failure into a TypeError
+    // at the first navigation update.
+    getCompanionScreenPosition() {
+      return { x: 0, y: 0, visible: false };
+    },
+    setCompanionWorldPosition() {},
+    setCompanionFacing() {},
+    setCompanionVisible() {},
+    getROBillboardCompanion() {
+      return null;
+    },
     projectWorldToScreen() {
       return null;
     },
@@ -1261,7 +1318,8 @@ function createWeather(THREE, quality) {
   return { root, rain, rainSeeds, mist, mistMaterial };
 }
 
-function configureModel(THREE, model, quality, visibleGlbCandidate) {
+function configureModel(THREE, model, quality, visibleGlbCandidate, candidate) {
+  const activeCandidate = candidate || MOONLAKE_VISIBLE_GLB_CANDIDATE;
   model.userData.structuralSource = true;
   model.userData.runtimeReskinned = true;
   model.userData.visibleGlbCandidate = visibleGlbCandidate;
@@ -1271,7 +1329,7 @@ function configureModel(THREE, model, quality, visibleGlbCandidate) {
   model.traverse((node) => {
     if (!node.isMesh) return;
     const normalizedName = String(node.name || "").toLowerCase();
-    const intentionallyHidden = MOONLAKE_VISIBLE_GLB_CANDIDATE
+    const intentionallyHidden = activeCandidate
       .hiddenMeshTokens
       .some((token) => normalizedName.includes(token));
     node.visible = visibleGlbCandidate && !intentionallyHidden;
@@ -1282,6 +1340,9 @@ function configureModel(THREE, model, quality, visibleGlbCandidate) {
       ? node.material
       : [node.material];
     if (!visibleGlbCandidate || intentionallyHidden) return;
+    // The Hero Slice ships authored clay/resin materials from the Blender
+    // source, so the name-token substitution below would throw them away.
+    if (activeCandidate.preserveAuthoredMaterials) return;
     sourceMaterials.filter(Boolean).forEach((material) => retiredMaterials.add(material));
     const replacement = sourceMaterials.map((_, index) => (
       createVisibleGlbCandidateMaterial(THREE, normalizedName, index)
@@ -1704,6 +1765,14 @@ function buildDiagnostics(state) {
       role: state.visibleGlbCandidate
         ? MOONLAKE_VISIBLE_GLB_CANDIDATE.rasterRole
         : MOONLAKE_VISUAL_MASTER.sourceRole
+    },
+    heroSliceCandidate: {
+      id: MOONLAKE_HD25D_HERO_SLICE_CANDIDATE.id,
+      enabled: state.renderMode === "hd25d_hero_slice_candidate",
+      shippingDefault: MOONLAKE_HD25D_HERO_SLICE_CANDIDATE.shippingDefault,
+      gate: `${MOONLAKE_HD25D_HERO_SLICE_CANDIDATE.queryParam}=${MOONLAKE_HD25D_HERO_SLICE_CANDIDATE.queryValue}`,
+      asset: { ...MOONLAKE_HD25D_HERO_SLICE_CANDIDATE.asset },
+      preserveAuthoredMaterials: MOONLAKE_HD25D_HERO_SLICE_CANDIDATE.preserveAuthoredMaterials
     },
     visibleGlbCandidate: {
       ...MOONLAKE_VISIBLE_GLB_CANDIDATE,
