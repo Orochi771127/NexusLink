@@ -7158,3 +7158,95 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
   assets, GLB, bridge depth plate, fallbacks and legacy art remain unchanged.
 - Remaining human proof: real iOS Safari remains a release-level device check;
   the local mobile browser and automated Chromium matrices are green.
+
+### 2026-07-30 - Codex - Moonlake Visible GLB Authoring R4.1A - IN PROGRESS
+
+- Status: `IN PROGRESS`; Owner approved
+  `TP-MOONLAKE-VISIBLE-GLB-AUTHORING-R4.1A`.
+- Lane: `Game Engineering And Architecture`.
+- Layer: `GROUNDWORK`; this package adds a parallel Blender-authored GLB and
+  deterministic authoring/validation tools. It does not replace the shipping
+  visual or modify runtime integration.
+- Isolation: the primary `main` worktree still contains the completed but
+  uncommitted R4.0 feasibility package. R4.1A is isolated in
+  `C:\Users\User\NexusLink_RaphaelAI_Workspace\NexusLink-moonlake-r4-1a` on
+  `codex/moonlake-visible-glb-r4-1a` from clean `b8c76be`; no R4.0 file was
+  stashed, moved, overwritten or mixed into this worktree.
+- Planned files: new `tools/moonlake/` author/validator scripts, new parallel
+  `assets/3d/moonlake/moonlake_visible_r4_1.glb`, focused audit/evidence,
+  authoring spec, and this ledger.
+- Asset contract: preserve
+  `assets/3d/moonlake/moonlake_clay_resin_r3.glb` byte-for-byte; create a
+  continuous bridge, explicit walkable/collision nodes, stable semantic names,
+  shared clay/resin materials, applied transforms and a fixed portrait camera.
+- Acceptance: GLB `<=15 MB`, approximately `<=75k` rendered triangles, no
+  disconnected bridge deck, both endpoints overlap land, reusable materials,
+  mobile portrait review renders, and human visual review before any R4.1B
+  runtime wiring.
+- Red-line / isolation: no `src/**`, `index.html`, save/state, relationship,
+  Growth, reward, RaphaelCore, Safety, dependency, backend, build step,
+  free-camera, companion asset or shipping-default change.
+- Branch: `codex/moonlake-visible-glb-r4-1a`; commit, push and publication
+  remain unauthorized.
+
+### 2026-07-30 - Codex - Moonlake Visible GLB Authoring R4.1A - IN PROGRESS
+
+- Status: `IN PROGRESS`; the visual gate is the Owner-approved R2 composition,
+  not merely a technically valid GLB.
+- Lane: `Game Art, UI, And Visual Production`.
+- Target: polished clay/resin miniature geometry with two framed waterfall
+  cliffs, central circular platform, blue/ivory and purple/ivory tents, dense
+  foreground foliage, restrained Cyber-Taoist cyan/gold accents and one
+  continuous authored bridge.
+- Non-goals: no runtime material patching to conceal asset defects, no 3D
+  companion conversion, no R2/R3 deletion, no default-mode flip and no claim
+  of commercial-ready quality before portrait renders pass human review.
+
+### 2026-07-30 - Codex - Moonlake Visible GLB Authoring R4.1A - VERIFIED / OWNER VISUAL GATE OPEN
+
+- Status: `VERIFIED`; the authoring, export and mechanical asset-QA scope is
+  complete. Runtime wiring remains intentionally unopened until Owner visual
+  approval.
+- Lane: `Game Engineering And Architecture`.
+- Completed: added a reproducible Blender 5.2 authoring script, a focused GLB
+  contract validator, a deterministic Node contract test, an authoring spec,
+  evidence and the parallel
+  `assets/3d/moonlake/moonlake_visible_r4_1.glb`.
+- Final asset: `1,089,460` bytes; SHA-256
+  `D0DC9FF8DDE98213BC51A3D75B513D5D978393473CC2AAF4C19A51669CCAE8F2`;
+  `104` nodes, `58` meshes, `62` primitives, `19,116` imported triangles,
+  `14` shared materials, one fixed camera, zero embedded images/textures,
+  five navigation nodes and five collision nodes.
+- Bridge proof: eighteen authored planks; `2.25 m` width; maximum measured
+  inter-plank gap `0.009436 m`; near/far land overlap `0.6 m` / `1.1 m`;
+  semantic near/mid/far nodes and one continuous bridge collider passed.
+- Validation: the R4.1 contract test, Blender semantic/geometry validator,
+  legacy Moonlake GLB audit, Python syntax compilation and `git diff --check`
+  pass.
+- Preservation: R3 remains byte-identical at SHA-256
+  `60423EDAA8C15C519A8A596BC8DF007662E46F9D575C56571F3AA4E611C4B1A6`;
+  no prior asset was changed or deleted and no `src/**` file was touched.
+- Remaining gate: Owner must approve the four `390x844` fixed-camera review
+  renders before a separately authorized R4.1B may wire the asset into runtime
+  and repeat the sixteen-companion matrices.
+- Branch: `codex/moonlake-visible-glb-r4-1a` at uncommitted worktree state;
+  no commit, push, merge, deployment or publication was performed.
+
+### 2026-07-30 - Codex - Moonlake Visible GLB Authoring R4.1A - AWAITING OWNER REVIEW
+
+- Status: `AWAITING OWNER REVIEW`; mechanical QC passes, but that does not
+  promote the asset to runtime or establish commercial-ready visual quality.
+- Lane: `Game Art, UI, And Visual Production`.
+- Review set: day/clear, dusk/mist, night/clear and day/rain-proxy fixed
+  portrait renders at `390x844` were produced from the authored camera.
+- Visual outcome: the two waterfall cliffs, continuous centered bridge,
+  circular companion platform, paired tents and foreground foliage read as
+  one coherent clay/resin diorama. The previous detached pale fragment and
+  oversized brown bridge-extension blocks are not part of this authored
+  composition.
+- Honest limitation: the authored 3D surface is deliberately lightweight and
+  visually simpler than the premium R2 raster master. Owner comparison against
+  R2 remains the decisive quality gate.
+- Next safe action after explicit visual approval: open R4.1B to integrate the
+  parallel GLB behind an explicit runtime mode, then rerun all sixteen
+  companions across bridge paths, time/weather states and mobile viewports.
