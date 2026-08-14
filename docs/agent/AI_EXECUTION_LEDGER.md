@@ -9695,3 +9695,246 @@ HMAX promotion gates remain `staging_candidate` / `not_run` / `not_deployed` /
 
 - Branch / commit: `codex/raphael-nexus-engine-acute-parity-v1` / this entry's
   final package commit.
+### 2026-08-13 - Codex - Formal Evolution Owner Lock 10 And Golden War Hawk R3 Pilot - IN PROGRESS
+
+- Status: `IN PROGRESS`; Owner approved the existing R2 Stage 2 and Stage 3
+  designs for ten lineages and directed the Metal-seat `auriowl` lineage to be
+  redesigned from an owl into the supplied Golden War Hawk identity before
+  transparent-master and directional-animation production begins.
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `FORMAL_EVOLUTION_OWNER_LOCK_10_AND_GOLDEN_WAR_HAWK_R3_PILOT`.
+- Layer: `GROUNDWORK + art production`; this package may update versioned
+  `assets/reference/**`, formal-stage metadata and staged production assets,
+  but it does not enable Growth G4 stage advance or runtime form swapping.
+- Locked set: `greyshade-cat`, `sprigfawn`, `crystalfin-seahorse`,
+  `blazetail-kit`, `starstripe-cub`, `thunder-pup`, `wavecub`,
+  `starflame-phoenix`, `star-foal`, and `goldenspark-wyrm`.
+- Golden War Hawk boundary: retain canonical technical ID `auriowl` so saves,
+  unlocks, relationship state and Growth evidence remain attached to the same
+  companion. Preserve the supplied Stage 1 hawk crest, hooked beak, gold eyes,
+  cream-gold palette, diamond chest core, solar shoulder disc, two wings and
+  two taloned legs across Stage 2 and Stage 3.
+- Production order: seal the ten R2 boards as `owner-approved` design locks;
+  generate and inspect the Golden War Hawk R3 lineage board; then stage clean
+  512x512 transparent masters and an eight-direction idle / walk / attack /
+  recovery pilot using bottom-center anchors and species-correct avian motion.
+- Red lines: no new companion ID or duplicate state; no Stage 1 runtime asset
+  deletion; no G4 willingness / advance implementation; no unapproved runtime
+  swap; no extra wings, legs, arms or tails; no one-skeleton-for-all-species
+  shortcut. Shared pipeline and QC rules do not override species anatomy.
+- Non-goals: no save schema, registry, Pixi, Orbit physics, Expedition gameplay,
+  package dependency, or public-site change in this package.
+- Required reading: `AGENTS.md`,
+  `docs/design/COMPANION_GROWTH_CONTRACT_V1.md`,
+  `docs/art/FORMAL_EVOLUTION_ASSET_SPEC_V1.md`,
+  `docs/art/FORMAL_EVOLUTION_LINEAGE_BOARD_QC_R2.md`, the applicable character
+  locks and species-motion translations, plus the `imagegen`,
+  `generate2dsprite`, and `sprite-pipeline` skill instructions.
+- Branch / commit: `codex/auriowl-wargle-evolution-pilot-r1` / `uncommitted`.
+
+### 2026-08-14 - Codex - Remaining Formal Evolution Animation R4 - COMPLETED PRE-PUBLISH
+
+- Status: `COMPLETED PRE-PUBLISH`; the preceding R4 in-progress package reached
+  its complete 22-form acceptance target and passed final visual and mechanical
+  review. The authorized GitHub publication steps follow this ledger write.
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `FORMAL_EVOLUTION_REMAINING_6_PLUS_AURIOWL_PILOT_FINALIZATION_R4`.
+- Final evidence: `docs/art/FORMAL_EVOLUTION_ANIMATION_R4_QC.md` and
+  `assets/characters/formal-evolution-animation-r4.json` record 11 characters,
+  22 later forms, 176 sheets and 2,816 passing cells.
+- Safe next action: publish this scoped asset package through PR to protected
+  `main`; do not treat publication as Growth G4 or runtime-form activation.
+- Branch / commit: `codex/auriowl-wargle-evolution-pilot-r1` / included by the
+  completion commit for this package.
+
+### 2026-08-14 - Codex - Formal Evolution Animation R4 - VERIFIED PRE-PUBLISH
+
+- Status: `VERIFIED PRE-PUBLISH`; the complete eleven-character Stage 2 / Stage
+  3 animation asset package passed the production gates and is ready for the
+  authorized protected-main publication flow.
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `FORMAL_EVOLUTION_ANIMATION_R4_COMPLETE`.
+- Layer: `GROUNDWORK + art production`; writes are limited to approved formal
+  stage assets, manifests, roster indexes, QC evidence and this ledger.
+- Delivered scope: 11 characters, 22 later forms, 176 action sheets and 2,816
+  512x512 RGBA cells. Each form provides eight-direction idle, movement,
+  attack and recovery through cardinal and diagonal 4x4 sheets.
+- Repair result: 44 sheets that failed strict detached-fragment QC were rebuilt
+  from retained normalized sources, filtered to the largest connected body,
+  foot/bottom anchored and re-audited. No rejected intermediate was promoted.
+- Mechanical QC: 176/176 sheets and 2,816/2,816 cells pass; missing files,
+  malformed dimensions, empty cells, cell-edge contact and detached-fragment
+  failures are all zero.
+- Visual QC: all 22 forms were reviewed on checker and dark backgrounds for
+  lineage identity, stage distinction, direction, anatomy, body scale, anchor,
+  crop and chroma spill. No half-body crop, missing fin, severed tail, clipped
+  flame, baked background/UI or blocking artifact remains.
+- Evidence: `docs/art/FORMAL_EVOLUTION_ANIMATION_R4_QC.md` and
+  `assets/characters/formal-evolution-animation-r4.json`.
+- Runtime boundary: all manifests retain `runtimeAuthority:false` and
+  `runtimeFormSwapReady:false`. Save/store/registry/Pixi/Growth G4/Orbit/
+  Expedition/RaphaelCore and Stage 1 assets are unchanged.
+- Branch / commit: `codex/auriowl-wargle-evolution-pilot-r1` / included by the
+  completion commit for this package.
+
+### 2026-08-13 - Codex - Remaining Twenty Formal Evolution Animation Batch R3 - IN PROGRESS
+
+- Status: `IN PROGRESS`; Owner accepted the Auriowl Stage 2 Pilot direction and
+  authorized production of the remaining twenty later-form animation sets.
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `FORMAL_EVOLUTION_REMAINING_20_ANIMATION_BATCH_R3`.
+- Layer: `GROUNDWORK + EXPERIENCE`; scoped writes are limited to formal-stage
+  animation assets, their manifests, QC evidence and this ledger.
+- Scope: Auriowl Stage 3 plus Stage 2 and Stage 3 for `greyshade-cat`,
+  `sprigfawn`, `crystalfin-seahorse`, `blazetail-kit`, `starstripe-cub`,
+  `thunder-pup`, `wavecub`, `starflame-phoenix`, `star-foal` and
+  `goldenspark-wyrm`. The already-produced Auriowl Stage 2 Pilot is the QC and
+  action-vocabulary baseline, not a literal shared skeleton.
+- Required output per form: eight directions; idle, walk, attack and recovery;
+  four frames per direction; transparent `512x512` cells; bottom-center datum;
+  cardinal and diagonal delivery sheets no larger than 4096 px on either edge.
+- Red lines: no save, store, companion registry, Pixi, Growth reducer, G4,
+  safety, Orbit, Expedition or Stage 1 asset change. Evolution stays
+  relationship-shaped and non-power-ranked. Species anatomy and refusal-safe
+  recovery semantics override batch convenience.
+- Non-goals: no runtime references, deployment, commit, push or PR in this
+  production package.
+- Branch / commit: `codex/auriowl-wargle-evolution-pilot-r1` / `uncommitted`.
+
+### 2026-08-13 - Codex - Formal Evolution Owner Lock 10 And Golden War Hawk R3 Pilot - VERIFIED PRE-COMMIT
+
+- Status: `VERIFIED PRE-COMMIT`; the ten non-Auriowl R2 Stage 2/3 designs are
+  sealed as Owner-approved design locks, and the Golden War Hawk R3 review
+  package plus Stage 1 eight-direction four-action Pilot are complete in review
+  staging. No runtime form swap is enabled.
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `FORMAL_EVOLUTION_OWNER_LOCK_10_AND_GOLDEN_WAR_HAWK_R3_PILOT`.
+- Owner-lock result: ten metadata records now use `owner-approved` and
+  `humanApproved:true` for both later forms. The exact approved R2 paths and
+  SHA-256 values are sealed by
+  `assets/reference/formal-evolution-r1/lineage-board-owner-lock-r2.json`.
+  `auriowl` is explicitly excluded and its old owl board remains historical.
+- Golden War Hawk result: copied and fingerprinted the 1024x1280 Owner Stage 1
+  reference; generated a three-form R3 production candidate that preserves the
+  hawk beak, gold eyes, swept crest, cream-gold body, diamond core and solar
+  shoulder disc. Stage 3 uses two wing-arms and two taloned legs with no extra
+  back wings. The canonical technical ID stays `auriowl`.
+- Pilot result: generated three transparent 512x512 master candidates and a
+  Stage 1 eight-direction Pilot with four frames each for idle, walk, compact
+  body-only attack and recovery. Accepted sheets are 2048x2048 RGBA, use a
+  bottom-center feet datum and shared scale, and remain below the 4096 edge cap.
+- QC result: accepted turnaround, idle, walk and recovery sheets have empty
+  edge-touch lists. Over-wide or incorrectly spaced generations were rejected
+  and retained as evidence. Diagonal attack was generated as four 2x2
+  direction-specific grids, each passed edge rejection, then was
+  deterministically normalized to a 352 px subject-height target and assembled
+  into one 2048x2048 transparent delivery sheet. Full findings are in
+  `output/formal-evolution-pilots/auriowl-r3/QC_REPORT.md`.
+- Known limitation: slight magenta chroma fringe remains at extreme zoom on
+  some feather tips. Review staging passes; runtime promotion still requires a
+  final despill or native-alpha pass plus Owner visual approval. Stage 2 and
+  Stage 3 do not have animation sets yet, and the upright Stage 3 requires its
+  own rig.
+- Runtime boundary verified: no save schema, registry, Pixi, Growth reducer,
+  G4 willingness/advance, Orbit, Expedition, current Stage 1 runtime asset or
+  package dependency changed. `runtimeFormSwapReady` remains false.
+- Next safe action: Owner reviews the R3 lineage board and accepted Pilot. If
+  approved, open a separate GROUNDWORK promotion package to copy only accepted
+  final-alpha outputs into `assets/characters/auriowl/**`, then begin the next
+  species-specific Pilot using the same QC contract rather than the same
+  literal skeleton.
+- Branch / commit: `codex/auriowl-wargle-evolution-pilot-r1` / `uncommitted`.
+
+### 2026-08-13 - Codex - Formal Evolution Production R3 Masters And Auriowl Stage 2 Pilot - VERIFIED PRE-COMMIT
+
+- Status: `VERIFIED PRE-COMMIT`; all eleven approved lineages now have staged
+  Stage 2 and Stage 3 production masters, and Auriowl Stage 2 has a mechanically
+  complete eight-direction four-action Pilot candidate. Nothing is wired into
+  runtime.
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `FORMAL_EVOLUTION_PRODUCTION_R3_MASTERS_AND_AURIOWL_STAGE2_PILOT`.
+- Layer: `GROUNDWORK + EXPERIENCE`; Owner authorized the planned formal-stage
+  asset production. No save, store, registry, Pixi, Growth reducer, Orbit,
+  Expedition or safety file changed.
+- Master result: twenty-two promoted files are exactly `512x512` RGBA PNGs
+  with transparent corners, non-empty alpha and no alpha contact with the
+  frame edge. Each later-stage metadata record contains its production path
+  and SHA-256 fingerprint. Runtime form-swap readiness remains false.
+- Pilot result: Auriowl Stage 2 contains a mechanically checked eight-direction
+  turnaround and cardinal/diagonal idle, walk, attack and recovery sheets.
+  There are 128 action frames in `512x512` cells; action sheets are
+  `2048x2048`, minimum cell margin is 46 px, and there are zero empty or
+  output-edge-touch frames.
+- Visual caveat: directions preserve the Golden War Hawk identity but show
+  small generated feather-layout and proportion drift. The candidate validates
+  action readability, sheets and anchors; it still needs Owner motion review
+  and may need paintover or rig correction before animation approval.
+- Rejection discipline: direct idle sources with reversed direction order or
+  bottom-edge contact were rejected. Large-motion sources that crossed their
+  implicit source grid were chroma-cleaned, isolated per cell and normalized
+  to a fixed foot datum before output-cell QC; rejected/intermediate material
+  remains ignored under `output/` only.
+- Evidence: `docs/art/FORMAL_EVOLUTION_PRODUCTION_R3_QC.md`,
+  `assets/characters/formal-evolution-production-r3.json`, and
+  `assets/characters/auriowl/formal-stages/resonant_mature/pilot/pilot-manifest.json`.
+- Remaining gate: Owner motion feel-check, Auriowl Stage 3 rig Pilot, then
+  species-specific batching for the other twenty forms. Runtime reference
+  audit and Growth G4 remain separate packages.
+- Branch / commit: `codex/auriowl-wargle-evolution-pilot-r1` / `uncommitted`.
+
+### 2026-08-14 - Codex - Crystalfin Stage 2 And Stage 3 Green-Source Animation Repair R3 - VERIFIED PRE-COMMIT
+
+- Status: `VERIFIED PRE-COMMIT`; the prior Crystalfin Stage 2 and Stage 3
+  animation candidates were rejected because keyed blue/cyan sources damaged
+  fin color and left visible cyan spill. They were not promoted.
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `CRYSTALFIN_STAGE2_STAGE3_GREEN_SOURCE_ANIMATION_REPAIR_R3`.
+- Layer: `GROUNDWORK + art production`; writes are limited to the two formal
+  animation packages, their asset metadata and QC evidence. No runtime
+  reference or Growth G4 form swap is enabled.
+- Repair result: regenerated all sixteen cardinal/diagonal idle, swim, attack
+  and recovery delivery sheets from solid-green sources. Stage 2 retains its
+  upright seahorse body and attached pearl-silver fins. Stage 3 retains the
+  horizontal sea-dragon body, attached silver side fins and integrated cobalt
+  dorsal sail. The Stage 3 diagonal swim uses an open S/C tail curve after
+  tightly curled candidates repeatedly produced a disconnected tail tip.
+- Mechanical QC: `16/16` transparent sheets and `256/256` cells pass; minimum
+  transparent cell margin is `92 px`; empty frames, edge touches and detached
+  fragment failures are all zero. Each delivery sheet is `2048x2048`, with
+  `512x512` cells and linear-sampling metadata.
+- Visual QC: reviewed the complete normalized contact sheet and the transparent
+  package on both checker and dark-gray backgrounds. The fins remain complete;
+  no blue rectangle, isolated dot, clipped body part, diffuse cyan halo or
+  background spill remains visible.
+- Publication boundary: the accepted packages are asset candidates under
+  `assets/characters/crystalfin-seahorse/formal-stages/**/animation-r3/`.
+  `runtimeFormSwapReady` remains false, and Expedition, Orbit, save state,
+  registry and Growth reducers are unchanged.
+- Branch / commit: `codex/auriowl-wargle-evolution-pilot-r1` / `uncommitted`.
+### 2026-08-14 - Codex - Remaining Formal Evolution Animation Completion R4 - IN PROGRESS
+
+- Status: `IN PROGRESS`; Owner authorized completing the six missing later-form
+  animation packages, finalizing the accepted Auriowl Stage 2 Pilot to the same
+  strict package contract, then publishing only after a full 22-form audit.
+- Lane: `Game Art, UI, And Visual Production`.
+- Task name: `FORMAL_EVOLUTION_REMAINING_6_PLUS_AURIOWL_PILOT_FINALIZATION_R4`.
+- Layer: `GROUNDWORK + art production`; authorized writes are limited to
+  formal-stage assets, manifests, roster indexes, QC evidence and this ledger.
+- Planned batches: Auriowl Stage 2 finalization and Stage 3; Greyshade Cat
+  Stage 2/3; Sprigfawn Stage 2/3; Blazetail Kit Stage 2. Each form requires
+  eight direction rows, idle/movement/attack/recovery, four frames per
+  direction, transparent 512x512 cells and species-correct motion.
+- Strict gates: raw and normalized visual review; transparent mechanical audit;
+  checker and dark-background review; identity, anatomy, crop, edge, empty-cell,
+  detached-fragment and chroma-spill rejection. Failed outputs remain under
+  ignored quarantine and may not enter `assets/**`.
+- Final acceptance target: 22/22 later forms, 176 action sheets and 2,816
+  frames with parseable manifests and zero mechanical failures. Runtime stage
+  authority remains disabled (`runtimeFormSwapReady:false`).
+- Red lines: no save/store/registry/Pixi/Growth reducer/G4/Orbit/Expedition/
+  RaphaelCore/safety mutation; no deletion or replacement of Stage 1 or legacy
+  Greyshade assets; no shared literal skeleton across species.
+- Publication authorization: after all gates pass, commit the scoped package,
+  push the current branch, open a PR to protected `main`, merge after required
+  checks pass, verify remote `main`, then refresh the Codebase MCP graph.
+- Branch / commit: `codex/auriowl-wargle-evolution-pilot-r1` / `uncommitted`.

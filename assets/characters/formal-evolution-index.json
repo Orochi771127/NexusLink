@@ -8,9 +8,18 @@
     "final_awakened"
   ],
   "formalStageLabels": {
-    "initial_awakened": { "zh": "初醒夥伴", "en": "Initial Awakened" },
-    "resonant_mature": { "zh": "共鳴成熟體", "en": "Resonant Mature" },
-    "final_awakened": { "zh": "終局覺醒體", "en": "Final Awakened" }
+    "initial_awakened": {
+      "zh": "初醒夥伴",
+      "en": "Initial Awakened"
+    },
+    "resonant_mature": {
+      "zh": "共鳴成熟體",
+      "en": "Resonant Mature"
+    },
+    "final_awakened": {
+      "zh": "終局覺醒體",
+      "en": "Final Awakened"
+    }
   },
   "statusOrder": [
     "reference-only",
@@ -89,10 +98,13 @@
   ],
   "referenceCatalog": "assets/reference/formal-evolution-r1/reference-lineage-index.json",
   "reviewManifest": "assets/reference/formal-evolution-r1/lineage-board-manifest-r2.json",
+  "ownerApprovalLock": "assets/reference/formal-evolution-r1/lineage-board-owner-lock-r2.json",
+  "productionManifest": "assets/characters/formal-evolution-production-r3.json",
   "silhouetteRules": "docs/art/FORMAL_EVOLUTION_SILHOUETTE_RULES_R2.md",
   "notes": [
     "This index organizes art and naming review only; it is not save-state or runtime stage authority.",
     "All later forms remain same-owner-only and fall back to the character's approved Stage 1 art until separately promoted.",
     "An egg or origin form shown in a reference sheet is originState data, never a fourth formalStage entry."
-  ]
+  ],
+  "animationManifest": "assets/characters/formal-evolution-animation-r4.json"
 }

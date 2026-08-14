@@ -1,7 +1,10 @@
 {
   "schemaVersion": 1,
   "characterId": "blazetail-kit",
-  "displayName": { "zh": "焰尾狐（幼態：焰尾小狐）", "en": "Blazetail Kit" },
+  "displayName": {
+    "zh": "焰尾狐（幼態：焰尾小狐）",
+    "en": "Blazetail Kit"
+  },
   "faction": "heartspark-council",
   "element": "fire",
   "currentRuntimeFormStageId": "initial_awakened",
@@ -12,7 +15,10 @@
     {
       "stageId": "initial_awakened",
       "ordinal": 1,
-      "name": { "zh": "焰尾小狐", "en": "Blazetail Kit" },
+      "name": {
+        "zh": "焰尾小狐",
+        "en": "Blazetail Kit"
+      },
       "nameStatus": "current-canon",
       "artStatus": "runtime-ready",
       "humanApproved": true,
@@ -22,25 +28,42 @@
     {
       "stageId": "resonant_mature",
       "ordinal": 2,
-      "name": { "zh": "星焰狐衛", "en": "Starflame Fox Warden" },
+      "name": {
+        "zh": "星焰狐衛",
+        "en": "Starflame Fox Warden"
+      },
       "nameStatus": "current-canon",
-      "artStatus": "owner-review",
-      "humanApproved": false,
+      "artStatus": "owner-approved",
+      "humanApproved": true,
       "reference": "assets/reference/formal-evolution-r1/blazetail-kit/resonant_mature/owner-reference-stage2.jpg",
-      "productionMaster": null,
-      "designIntent": "Owner-confirmed Stage 2 form: the same cute orange fox evolves into an upright anthropomorphic fox guardian with fox head, ears, muzzle, hands and feet, a red-and-gold Cyber-Taoist robe, warm yellow-orange crown flame and one large integrated flame tail; heroic without losing fox identity."
+      "productionMaster": "assets/characters/blazetail-kit/formal-stages/resonant_mature/blazetail-kit_resonant_mature_master_512x512_r3.png",
+      "productionMasterSha256": "6450153e6567312903da359d3f7d679d057297fc6aa2d7169da16fef5f6731c0",
+      "designIntent": "Owner-confirmed Stage 2 form: the same cute orange fox evolves into an upright anthropomorphic fox guardian with fox head, ears, muzzle, hands and feet, a red-and-gold Cyber-Taoist robe, warm yellow-orange crown flame and one large integrated flame tail; heroic without losing fox identity.",
+      "animationManifest": "assets/characters/blazetail-kit/formal-stages/resonant_mature/animation-r3/animation-manifest.json",
+      "animationStatus": "strict-self-qc-pass-runtime-not-wired"
     },
     {
       "stageId": "final_awakened",
       "ordinal": 3,
-      "name": { "zh": "永焰狐曜", "en": "Eternal Flame Fox Luminary" },
+      "name": {
+        "zh": "永焰狐曜",
+        "en": "Eternal Flame Fox Luminary"
+      },
       "nameStatus": "current-canon",
-      "artStatus": "owner-review",
-      "humanApproved": false,
+      "artStatus": "owner-approved",
+      "humanApproved": true,
       "reference": "assets/reference/formal-evolution-r1/blazetail-kit/final_awakened/owner-reference-stage3.jpg",
-      "productionMaster": null,
-      "designIntent": "Owner-confirmed Stage 3 form: the same orange fox remains an upright anthropomorphic fox luminary with bright cyan eyes, dark navy Cyber-Taoist robe, cyan and restrained magenta circuit trim, cyan-magenta resonance flame crown and one orange-to-cyan flame tail; cute and cool, never an unrelated human or nine-tailed fox."
+      "productionMaster": "assets/characters/blazetail-kit/formal-stages/final_awakened/blazetail-kit_final_awakened_master_512x512_r3.png",
+      "productionMasterSha256": "1f6e2fa59a45e27f3bd4024313fe971b63e12e0b809102235d24093becd513e3",
+      "designIntent": "Owner-confirmed Stage 3 form: the same orange fox remains an upright anthropomorphic fox luminary with bright cyan eyes, dark navy Cyber-Taoist robe, cyan and restrained magenta circuit trim, cyan-magenta resonance flame crown and one orange-to-cyan flame tail; cute and cool, never an unrelated human or nine-tailed fox.",
+      "animationManifest": "assets/characters/blazetail-kit/formal-stages/final_awakened/animation-r3/animation-manifest.json",
+      "animationStatus": "strict-self-qc-pass-runtime-not-wired"
     }
   ],
-  "surfaceReadiness": { "portrait": "review-board-only", "expedition": "not-produced", "orbit": "not-produced", "animationSet": "not-produced" }
+  "surfaceReadiness": {
+    "portrait": "stage2-stage3-production-masters-ready",
+    "expedition": "not-produced",
+    "orbit": "not-produced",
+    "animationSet": "stage2-stage3-strict-self-qc-pass-runtime-not-wired"
+  }
 }

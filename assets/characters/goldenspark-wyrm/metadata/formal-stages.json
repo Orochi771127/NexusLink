@@ -1,7 +1,10 @@
 {
   "schemaVersion": 1,
   "characterId": "goldenspark-wyrm",
-  "displayName": { "zh": "金光幼龍", "en": "Goldenspark Wyrm" },
+  "displayName": {
+    "zh": "金光幼龍",
+    "en": "Goldenspark Wyrm"
+  },
   "faction": "ironflow-hackers",
   "element": "metal",
   "currentRuntimeFormStageId": "initial_awakened",
@@ -12,7 +15,10 @@
     {
       "stageId": "initial_awakened",
       "ordinal": 1,
-      "name": { "zh": "金光幼龍", "en": "Goldenspark Wyrm" },
+      "name": {
+        "zh": "金光幼龍",
+        "en": "Goldenspark Wyrm"
+      },
       "nameStatus": "current-canon",
       "artStatus": "runtime-ready",
       "humanApproved": true,
@@ -22,23 +28,40 @@
     {
       "stageId": "resonant_mature",
       "ordinal": 2,
-      "name": { "zh": "金脈龍衛", "en": "Goldcircuit Wyrm Warden" },
+      "name": {
+        "zh": "金脈龍衛",
+        "en": "Goldcircuit Wyrm Warden"
+      },
       "nameStatus": "current-canon",
-      "artStatus": "owner-review",
-      "humanApproved": false,
-      "productionMaster": null,
-      "designIntent": "Cute quadruped circuit wyrm with a longer low body, stronger jaw, solid teal dorsal plates, navy shoulder and hip scales, four clawed feet and one attached gear-tip tail."
+      "artStatus": "owner-approved",
+      "humanApproved": true,
+      "productionMaster": "assets/characters/goldenspark-wyrm/formal-stages/resonant_mature/goldenspark-wyrm_resonant_mature_master_512x512_r3.png",
+      "productionMasterSha256": "1ee4042b33fc9832ac76802b66a5199bacb9b01c0f4436cdf3e4910fbfa12a1f",
+      "designIntent": "Cute quadruped circuit wyrm with a longer low body, stronger jaw, solid teal dorsal plates, navy shoulder and hip scales, four clawed feet and one attached gear-tip tail.",
+      "animationManifest": "assets/characters/goldenspark-wyrm/formal-stages/resonant_mature/animation-r3/animation-manifest.json",
+      "animationStatus": "strict-self-qc-pass-runtime-not-wired"
     },
     {
       "stageId": "final_awakened",
       "ordinal": 3,
-      "name": { "zh": "鎏光界龍", "en": "Gilded Boundary Wyrm" },
+      "name": {
+        "zh": "鎏光界龍",
+        "en": "Gilded Boundary Wyrm"
+      },
       "nameStatus": "current-canon",
-      "artStatus": "owner-review",
-      "humanApproved": false,
-      "productionMaster": null,
-      "designIntent": "Upright anthropomorphic gold dragon analyst retaining the cute dragon head, green eyes and wingless scales, with exactly two clawed arms, two digitigrade legs, one attached gear-tip tail and limited teal-cobalt-gold plates."
+      "artStatus": "owner-approved",
+      "humanApproved": true,
+      "productionMaster": "assets/characters/goldenspark-wyrm/formal-stages/final_awakened/goldenspark-wyrm_final_awakened_master_512x512_r3.png",
+      "productionMasterSha256": "c80d30d6d3e6cfb21a395ad091785ab606be0536a4377d8b34a7227cc4e9418b",
+      "designIntent": "Upright anthropomorphic gold dragon analyst retaining the cute dragon head, green eyes and wingless scales, with exactly two clawed arms, two digitigrade legs, one attached gear-tip tail and limited teal-cobalt-gold plates.",
+      "animationManifest": "assets/characters/goldenspark-wyrm/formal-stages/final_awakened/animation-r3/animation-manifest.json",
+      "animationStatus": "strict-self-qc-pass-runtime-not-wired"
     }
   ],
-  "surfaceReadiness": { "portrait": "review-board-only", "expedition": "not-produced", "orbit": "not-produced", "animationSet": "not-produced" }
+  "surfaceReadiness": {
+    "portrait": "stage2-stage3-production-masters-ready",
+    "expedition": "not-produced",
+    "orbit": "not-produced",
+    "animationSet": "stage2-stage3-strict-self-qc-pass-runtime-not-wired"
+  }
 }

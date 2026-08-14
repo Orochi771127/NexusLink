@@ -1,44 +1,67 @@
 {
   "schemaVersion": 1,
   "characterId": "auriowl",
-  "displayName": { "zh": "金羽小梟", "en": "Auriowl" },
+  "displayName": {
+    "zh": "金羽戰鷹",
+    "en": "Golden War Hawk"
+  },
   "faction": "heartspark-council",
   "element": "metal",
   "currentRuntimeFormStageId": "initial_awakened",
   "runtimeFormSwapReady": false,
-  "designBoard": "assets/reference/formal-evolution-r1/lineage-boards/auriowl/auriowl_three-stage-lineage-board_r2.png",
+  "designBoard": "assets/reference/formal-evolution-r3/auriowl/lineage-boards/auriowl_golden-war-hawk_three-stage-lineage-board_r3.png",
   "sameOwnerFallback": "assets/characters/auriowl/portrait/auriowl_portrait_512x512.png",
   "stages": [
     {
       "stageId": "initial_awakened",
       "ordinal": 1,
-      "name": { "zh": "金羽小梟", "en": "Auriowl" },
+      "name": {
+        "zh": "金羽戰鷹",
+        "en": "Golden War Hawk"
+      },
       "nameStatus": "current-canon",
       "artStatus": "runtime-ready",
       "humanApproved": true,
       "portrait": "assets/characters/auriowl/portrait/auriowl_portrait_512x512.png",
-      "designIntent": "Compact cream-and-gold juvenile owl with round gold eyes, hooked black beak, feather crown, chest diamond and folded wings."
+      "designIntent": "Compact cream-and-gold juvenile war hawk with large gold eyes, hooked black beak, swept feather crown, diamond chest core, solar shoulder disc, two folded wings and two taloned legs."
     },
     {
       "stageId": "resonant_mature",
       "ordinal": 2,
-      "name": { "zh": "輝羽梟衛", "en": "Radiant Owl Warden" },
+      "name": {
+        "zh": "曜羽鷹衛",
+        "en": "Sunplume Hawk Warden"
+      },
       "nameStatus": "current-canon",
-      "artStatus": "owner-review",
-      "humanApproved": false,
-      "productionMaster": null,
-      "designIntent": "Cute adolescent owl sentinel with a taller teardrop body, two broad readable wings, two taloned legs, swept gold feather crest and bold cream-gold-emerald blocks."
+      "artStatus": "owner-approved",
+      "humanApproved": true,
+      "productionMaster": "assets/characters/auriowl/formal-stages/resonant_mature/auriowl_resonant_mature_master_512x512_r3.png",
+      "productionMasterSha256": "ab5023d263879b85128c3a83d9489e80926603bdbcbce4ac6aee5a350d4890bc",
+      "designIntent": "Cute adolescent war-hawk sentinel with a taller teardrop body, two broad readable wings, two taloned legs, swept gold feather crest, diamond core, solar shoulder disc and bold cream-gold-cobalt blocks.",
+      "animationManifest": "assets/characters/auriowl/formal-stages/resonant_mature/animation-r3/animation-manifest.json",
+      "animationStatus": "strict-self-qc-pass-runtime-not-wired"
     },
     {
       "stageId": "final_awakened",
       "ordinal": 3,
-      "name": { "zh": "聖輝梟曜", "en": "Sacred Radiance Owl Luminary" },
+      "name": {
+        "zh": "聖曜鷹皇",
+        "en": "Sacred Dawn Hawk Sovereign"
+      },
       "nameStatus": "current-canon",
-      "artStatus": "owner-review",
-      "humanApproved": false,
-      "productionMaster": null,
-      "designIntent": "Upright anthropomorphic owl luminary with the same round owl head, exactly two articulated wing-arms and two taloned legs, a compact emerald-gold torso mantle and turquoise core; no extra back wings or human arms."
+      "artStatus": "owner-approved",
+      "humanApproved": true,
+      "productionMaster": "assets/characters/auriowl/formal-stages/final_awakened/auriowl_final_awakened_master_512x512_r3.png",
+      "productionMasterSha256": "6e1ea29333cb27caf191dd1945ebe06912a8fd8539ab01ac87c202015ca6b5df",
+      "designIntent": "Upright anthropomorphic war-hawk sovereign with the same hawk face, hooked beak, swept crest, gold eyes, diamond core and solar shoulder disc; exactly two articulated wing-arms and two taloned legs, with no extra back wings or human arms.",
+      "animationManifest": "assets/characters/auriowl/formal-stages/final_awakened/animation-r3/animation-manifest.json",
+      "animationStatus": "strict-self-qc-pass-runtime-not-wired"
     }
   ],
-  "surfaceReadiness": { "portrait": "review-board-only", "expedition": "not-produced", "orbit": "not-produced", "animationSet": "not-produced" }
+  "surfaceReadiness": {
+    "portrait": "stage2-stage3-production-masters-ready",
+    "expedition": "not-produced",
+    "orbit": "not-produced",
+    "animationSet": "stage2-stage3-strict-self-qc-pass-runtime-not-wired"
+  }
 }

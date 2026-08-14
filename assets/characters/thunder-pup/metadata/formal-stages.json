@@ -1,10 +1,17 @@
 {
   "schemaVersion": 1,
   "characterId": "thunder-pup",
-  "displayName": { "zh": "雷霆幼狼", "en": "ThunderPup" },
+  "displayName": {
+    "zh": "雷霆幼狼",
+    "en": "ThunderPup"
+  },
   "faction": "ironflow-hackers",
   "element": "wood",
-  "secondaryMotifs": ["lightning", "shadow", "signal-trace"],
+  "secondaryMotifs": [
+    "lightning",
+    "shadow",
+    "signal-trace"
+  ],
   "currentRuntimeFormStageId": "initial_awakened",
   "runtimeFormSwapReady": false,
   "designBoard": "assets/reference/formal-evolution-r1/lineage-boards/thunder-pup/thunder-pup_three-stage-lineage-board_r2.png",
@@ -13,7 +20,10 @@
     {
       "stageId": "initial_awakened",
       "ordinal": 1,
-      "name": { "zh": "雷霆幼狼", "en": "ThunderPup" },
+      "name": {
+        "zh": "雷霆幼狼",
+        "en": "ThunderPup"
+      },
       "nameStatus": "current-canon",
       "artStatus": "runtime-ready",
       "humanApproved": true,
@@ -23,23 +33,40 @@
     {
       "stageId": "resonant_mature",
       "ordinal": 2,
-      "name": { "zh": "時痕雷狼", "en": "Temporal Trace Wolf" },
+      "name": {
+        "zh": "時痕雷狼",
+        "en": "Temporal Trace Wolf"
+      },
       "nameStatus": "current-canon",
-      "artStatus": "owner-review",
-      "humanApproved": false,
-      "productionMaster": null,
-      "designIntent": "Cute quadruped signal-tracker wolf with a compact lean body, solid cobalt neck crest, short attached back ridge, cyan shoulder bands and one magenta-tip bolt tail."
+      "artStatus": "owner-approved",
+      "humanApproved": true,
+      "productionMaster": "assets/characters/thunder-pup/formal-stages/resonant_mature/thunder-pup_resonant_mature_master_512x512_r3.png",
+      "productionMasterSha256": "85c5204b6c25ebee14e4f721c25c8ba19b8f912352095edc9bcdeae02d3a1fe6",
+      "designIntent": "Cute quadruped signal-tracker wolf with a compact lean body, solid cobalt neck crest, short attached back ridge, cyan shoulder bands and one magenta-tip bolt tail.",
+      "animationManifest": "assets/characters/thunder-pup/formal-stages/resonant_mature/animation-r3/animation-manifest.json",
+      "animationStatus": "strict-self-qc-pass-runtime-not-wired"
     },
     {
       "stageId": "final_awakened",
       "ordinal": 3,
-      "name": { "zh": "群星雷影狼", "en": "Starnexus Thunder Wolf" },
+      "name": {
+        "zh": "群星雷影狼",
+        "en": "Starnexus Thunder Wolf"
+      },
       "nameStatus": "current-canon",
-      "artStatus": "owner-review",
-      "humanApproved": false,
-      "productionMaster": null,
-      "designIntent": "Upright anthropomorphic thunder-wolf sentinel retaining the wolf face, ears and cyan eyes, with exactly two pawed arms, two digitigrade legs, one lightning tail and bold cobalt-magenta crystal shoulder wedges."
+      "artStatus": "owner-approved",
+      "humanApproved": true,
+      "productionMaster": "assets/characters/thunder-pup/formal-stages/final_awakened/thunder-pup_final_awakened_master_512x512_r3.png",
+      "productionMasterSha256": "37e63db93af9e79b7a638d3fa31d9bc8e25714ef50ac33043ed0116ac8e86150",
+      "designIntent": "Upright anthropomorphic thunder-wolf sentinel retaining the wolf face, ears and cyan eyes, with exactly two pawed arms, two digitigrade legs, one lightning tail and bold cobalt-magenta crystal shoulder wedges.",
+      "animationManifest": "assets/characters/thunder-pup/formal-stages/final_awakened/animation-r3/animation-manifest.json",
+      "animationStatus": "strict-self-qc-pass-runtime-not-wired"
     }
   ],
-  "surfaceReadiness": { "portrait": "review-board-only", "expedition": "not-produced", "orbit": "not-produced", "animationSet": "not-produced" }
+  "surfaceReadiness": {
+    "portrait": "stage2-stage3-production-masters-ready",
+    "expedition": "not-produced",
+    "orbit": "not-produced",
+    "animationSet": "stage2-stage3-strict-self-qc-pass-runtime-not-wired"
+  }
 }

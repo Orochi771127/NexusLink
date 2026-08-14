@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "packageId": "formal-evolution-production-r3",
+  "characterCount": 11,
+  "laterFormMasterCount": 22,
+  "runtimeAuthority": false,
+  "runtimeFormSwapReady": false,
+  "frameContract": {
+    "masterSize": [512, 512],
+    "format": "RGBA PNG",
+    "anchor": { "x": 0.5, "y": 1 },
+    "sampling": "linear-with-mipmaps",
+    "sheetEdgeMaximum": 4096,
+    "directions": ["south", "southwest", "west", "northwest", "north", "northeast", "east", "southeast"],
+    "actions": ["idle", "walk", "attack", "recovery"],
+    "framesPerDirection": 4
+  },
+  "scope": {
+    "masterPortraits": "complete",
+    "directionalTurnarounds": "auriowl-stage2-pilot-qc-candidate",
+    "animationSets": "partial-batch-production-crystalfin-stage2-stage3-strict-self-qc-pass-runtime-not-wired",
+    "orbitManifestations": "separate-surface-not-in-this-package",
+    "growthG4StageAdvance": "not-implemented"
+  },
+  "characters": [
+    { "characterId": "greyshade-cat", "faction": "neutral-heart-core-life", "rigs": { "resonant_mature": "quadruped-feline", "final_awakened": "quadruped-feline" } },
+    { "characterId": "auriowl", "faction": "heartspark-council", "rigs": { "resonant_mature": "grounded-avian", "final_awakened": "upright-wing-arm-avian" } },
+    { "characterId": "sprigfawn", "faction": "heartspark-council", "rigs": { "resonant_mature": "quadruped-cervid", "final_awakened": "upright-cervid" } },
+    { "characterId": "crystalfin-seahorse", "faction": "heartspark-council", "rigs": { "resonant_mature": "upright-aquatic-hover", "final_awakened": "horizontal-aquatic-hover" } },
+    { "characterId": "blazetail-kit", "faction": "heartspark-council", "rigs": { "resonant_mature": "upright-vulpine-robed", "final_awakened": "upright-vulpine-robed" } },
+    { "characterId": "starstripe-cub", "faction": "heartspark-council", "rigs": { "resonant_mature": "quadruped-feline", "final_awakened": "upright-feline" } },
+    { "characterId": "thunder-pup", "faction": "ironflow-hackers", "rigs": { "resonant_mature": "quadruped-canine", "final_awakened": "upright-canine" } },
+    { "characterId": "wavecub", "faction": "ironflow-hackers", "rigs": { "resonant_mature": "quadruped-feline", "final_awakened": "upright-feline" } },
+    { "characterId": "starflame-phoenix", "faction": "ironflow-hackers", "rigs": { "resonant_mature": "grounded-avian", "final_awakened": "upright-wing-arm-avian" } },
+    { "characterId": "star-foal", "faction": "ironflow-hackers", "rigs": { "resonant_mature": "quadruped-equine", "final_awakened": "quadruped-equine" } },
+    { "characterId": "goldenspark-wyrm", "faction": "ironflow-hackers", "rigs": { "resonant_mature": "quadruped-wingless-saurian", "final_awakened": "upright-wingless-saurian" } }
+  ],
+  "metadataContract": "Each later-stage record in assets/characters/<id>/metadata/formal-stages.json contains the productionMaster path and SHA-256.",
+  "notes": [
+    "All 22 masters passed 512x512, RGBA, transparent-corner and non-edge-touch mechanical QC.",
+    "Owner-approved masters are animation inputs; no later form is runtime-ready until its species-correct directional animation set and runtime reference audit pass.",
+    "One shared QC contract does not imply one shared skeleton."
+  ]
+}

@@ -1,0 +1,247 @@
+{
+  "schemaVersion": 1,
+  "packageId": "formal-evolution-animation-r4",
+  "characterCount": 11,
+  "formCount": 22,
+  "sheetCount": 176,
+  "frameCount": 2816,
+  "status": "strict-self-qc-pass-runtime-not-wired",
+  "runtimeAuthority": false,
+  "runtimeFormSwapReady": false,
+  "frameContract": {
+    "format": "RGBA PNG",
+    "frameSize": [
+      512,
+      512
+    ],
+    "sheetSize": [
+      2048,
+      2048
+    ],
+    "grid": {
+      "columns": 4,
+      "rows": 4
+    },
+    "anchor": {
+      "x": 0.5,
+      "y": 1
+    },
+    "sampling": "linear-with-mipmaps",
+    "actions": [
+      "idle",
+      "walk",
+      "attack",
+      "recovery"
+    ],
+    "families": [
+      "cardinal",
+      "diagonal"
+    ],
+    "framesPerDirection": 4
+  },
+  "forms": [
+    {
+      "characterId": "auriowl",
+      "stageId": "resonant_mature",
+      "rigFamily": "grounded-avian",
+      "manifest": "assets/characters/auriowl/formal-stages/resonant_mature/animation-r3/animation-manifest.json",
+      "status": "strict-self-qc-pass",
+      "sheetCount": 8,
+      "frameCount": 128
+    },
+    {
+      "characterId": "auriowl",
+      "stageId": "final_awakened",
+      "rigFamily": "upright-wing-arm-avian",
+      "manifest": "assets/characters/auriowl/formal-stages/final_awakened/animation-r3/animation-manifest.json",
+      "status": "strict-self-qc-pass",
+      "sheetCount": 8,
+      "frameCount": 128
+    },
+    {
+      "characterId": "blazetail-kit",
+      "stageId": "resonant_mature",
+      "rigFamily": "upright-vulpine-robed",
+      "manifest": "assets/characters/blazetail-kit/formal-stages/resonant_mature/animation-r3/animation-manifest.json",
+      "status": "strict-self-qc-pass",
+      "sheetCount": 8,
+      "frameCount": 128
+    },
+    {
+      "characterId": "blazetail-kit",
+      "stageId": "final_awakened",
+      "rigFamily": "upright-vulpine",
+      "manifest": "assets/characters/blazetail-kit/formal-stages/final_awakened/animation-r3/animation-manifest.json",
+      "status": "strict-self-qc-pass",
+      "sheetCount": 8,
+      "frameCount": 128
+    },
+    {
+      "characterId": "crystalfin-seahorse",
+      "stageId": "resonant_mature",
+      "rigFamily": "upright-aquatic-hover",
+      "manifest": "assets/characters/crystalfin-seahorse/formal-stages/resonant_mature/animation-r3/animation-manifest.json",
+      "status": "strict-self-qc-pass",
+      "sheetCount": 8,
+      "frameCount": 128
+    },
+    {
+      "characterId": "crystalfin-seahorse",
+      "stageId": "final_awakened",
+      "rigFamily": "horizontal-aquatic-hover",
+      "manifest": "assets/characters/crystalfin-seahorse/formal-stages/final_awakened/animation-r3/animation-manifest.json",
+      "status": "strict-self-qc-pass",
+      "sheetCount": 8,
+      "frameCount": 128
+    },
+    {
+      "characterId": "goldenspark-wyrm",
+      "stageId": "resonant_mature",
+      "rigFamily": "quadruped-wingless-saurian",
+      "manifest": "assets/characters/goldenspark-wyrm/formal-stages/resonant_mature/animation-r3/animation-manifest.json",
+      "status": "strict-self-qc-pass",
+      "sheetCount": 8,
+      "frameCount": 128
+    },
+    {
+      "characterId": "goldenspark-wyrm",
+      "stageId": "final_awakened",
+      "rigFamily": "upright-wingless-saurian",
+      "manifest": "assets/characters/goldenspark-wyrm/formal-stages/final_awakened/animation-r3/animation-manifest.json",
+      "status": "strict-self-qc-pass",
+      "sheetCount": 8,
+      "frameCount": 128
+    },
+    {
+      "characterId": "greyshade-cat",
+      "stageId": "resonant_mature",
+      "rigFamily": "quadruped-feline",
+      "manifest": "assets/characters/greyshade-cat/formal-stages/resonant_mature/animation-r3/animation-manifest.json",
+      "status": "strict-self-qc-pass",
+      "sheetCount": 8,
+      "frameCount": 128
+    },
+    {
+      "characterId": "greyshade-cat",
+      "stageId": "final_awakened",
+      "rigFamily": "quadruped-feline",
+      "manifest": "assets/characters/greyshade-cat/formal-stages/final_awakened/animation-r3/animation-manifest.json",
+      "status": "strict-self-qc-pass",
+      "sheetCount": 8,
+      "frameCount": 128
+    },
+    {
+      "characterId": "sprigfawn",
+      "stageId": "resonant_mature",
+      "rigFamily": "quadruped-cervid",
+      "manifest": "assets/characters/sprigfawn/formal-stages/resonant_mature/animation-r3/animation-manifest.json",
+      "status": "strict-self-qc-pass",
+      "sheetCount": 8,
+      "frameCount": 128
+    },
+    {
+      "characterId": "sprigfawn",
+      "stageId": "final_awakened",
+      "rigFamily": "upright-cervid",
+      "manifest": "assets/characters/sprigfawn/formal-stages/final_awakened/animation-r3/animation-manifest.json",
+      "status": "strict-self-qc-pass",
+      "sheetCount": 8,
+      "frameCount": 128
+    },
+    {
+      "characterId": "star-foal",
+      "stageId": "resonant_mature",
+      "rigFamily": "quadruped-equine",
+      "manifest": "assets/characters/star-foal/formal-stages/resonant_mature/animation-r3/animation-manifest.json",
+      "status": "strict-self-qc-pass",
+      "sheetCount": 8,
+      "frameCount": 128
+    },
+    {
+      "characterId": "star-foal",
+      "stageId": "final_awakened",
+      "rigFamily": "quadruped-equine",
+      "manifest": "assets/characters/star-foal/formal-stages/final_awakened/animation-r3/animation-manifest.json",
+      "status": "strict-self-qc-pass",
+      "sheetCount": 8,
+      "frameCount": 128
+    },
+    {
+      "characterId": "starflame-phoenix",
+      "stageId": "resonant_mature",
+      "rigFamily": "grounded-avian",
+      "manifest": "assets/characters/starflame-phoenix/formal-stages/resonant_mature/animation-r3/animation-manifest.json",
+      "status": "strict-self-qc-pass",
+      "sheetCount": 8,
+      "frameCount": 128
+    },
+    {
+      "characterId": "starflame-phoenix",
+      "stageId": "final_awakened",
+      "rigFamily": "upright-avian-wing-arms",
+      "manifest": "assets/characters/starflame-phoenix/formal-stages/final_awakened/animation-r3/animation-manifest.json",
+      "status": "strict-self-qc-pass",
+      "sheetCount": 8,
+      "frameCount": 128
+    },
+    {
+      "characterId": "starstripe-cub",
+      "stageId": "resonant_mature",
+      "rigFamily": "quadruped-feline",
+      "manifest": "assets/characters/starstripe-cub/formal-stages/resonant_mature/animation-r3/animation-manifest.json",
+      "status": "strict-self-qc-pass",
+      "sheetCount": 8,
+      "frameCount": 128
+    },
+    {
+      "characterId": "starstripe-cub",
+      "stageId": "final_awakened",
+      "rigFamily": "upright-feline",
+      "manifest": "assets/characters/starstripe-cub/formal-stages/final_awakened/animation-r3/animation-manifest.json",
+      "status": "strict-self-qc-pass",
+      "sheetCount": 8,
+      "frameCount": 128
+    },
+    {
+      "characterId": "thunder-pup",
+      "stageId": "resonant_mature",
+      "rigFamily": "quadruped-canine",
+      "manifest": "assets/characters/thunder-pup/formal-stages/resonant_mature/animation-r3/animation-manifest.json",
+      "status": "strict-self-qc-pass",
+      "sheetCount": 8,
+      "frameCount": 128
+    },
+    {
+      "characterId": "thunder-pup",
+      "stageId": "final_awakened",
+      "rigFamily": "upright-canine",
+      "manifest": "assets/characters/thunder-pup/formal-stages/final_awakened/animation-r3/animation-manifest.json",
+      "status": "strict-self-qc-pass",
+      "sheetCount": 8,
+      "frameCount": 128
+    },
+    {
+      "characterId": "wavecub",
+      "stageId": "resonant_mature",
+      "rigFamily": "quadruped-feline",
+      "manifest": "assets/characters/wavecub/formal-stages/resonant_mature/animation-r3/animation-manifest.json",
+      "status": "strict-self-qc-pass",
+      "sheetCount": 8,
+      "frameCount": 128
+    },
+    {
+      "characterId": "wavecub",
+      "stageId": "final_awakened",
+      "rigFamily": "upright-feline",
+      "manifest": "assets/characters/wavecub/formal-stages/final_awakened/animation-r3/animation-manifest.json",
+      "status": "strict-self-qc-pass",
+      "sheetCount": 8,
+      "frameCount": 128
+    }
+  ],
+  "qcDocument": "docs/art/FORMAL_EVOLUTION_ANIMATION_R4_QC.md",
+  "notes": [
+    "This is a production art index, not live Growth stage authority.",
+    "No save, registry, renderer, Expedition, Orbit, or G4 stage-advance wiring is enabled by this package."
+  ]
+}

@@ -1,7 +1,10 @@
 {
   "schemaVersion": 1,
   "characterId": "sprigfawn",
-  "displayName": { "zh": "芽角小鹿", "en": "Sprigfawn" },
+  "displayName": {
+    "zh": "芽角小鹿",
+    "en": "Sprigfawn"
+  },
   "faction": "heartspark-council",
   "element": "wood",
   "currentRuntimeFormStageId": "initial_awakened",
@@ -12,7 +15,10 @@
     {
       "stageId": "initial_awakened",
       "ordinal": 1,
-      "name": { "zh": "芽角小鹿", "en": "Sprigfawn" },
+      "name": {
+        "zh": "芽角小鹿",
+        "en": "Sprigfawn"
+      },
       "nameStatus": "current-canon",
       "artStatus": "runtime-ready",
       "humanApproved": true,
@@ -22,23 +28,40 @@
     {
       "stageId": "resonant_mature",
       "ordinal": 2,
-      "name": { "zh": "風林鹿衛", "en": "Galegrove Stag Warden" },
+      "name": {
+        "zh": "風林鹿衛",
+        "en": "Galegrove Stag Warden"
+      },
       "nameStatus": "current-canon",
-      "artStatus": "owner-review",
-      "humanApproved": false,
-      "productionMaster": null,
-      "designIntent": "Cute quadruped grove stag with longer compact legs, branched living antlers, solid emerald leaf mantle, chartreuse markings and four clear hooves; no loose vines or full-tree crown."
+      "artStatus": "owner-approved",
+      "humanApproved": true,
+      "productionMaster": "assets/characters/sprigfawn/formal-stages/resonant_mature/sprigfawn_resonant_mature_master_512x512_r3.png",
+      "productionMasterSha256": "9d809cb9271cba6b3cc1e95043c5d1add330840f9ef67d488d24b169a8c61d58",
+      "designIntent": "Cute quadruped grove stag with longer compact legs, branched living antlers, solid emerald leaf mantle, chartreuse markings and four clear hooves; no loose vines or full-tree crown.",
+      "animationManifest": "assets/characters/sprigfawn/formal-stages/resonant_mature/animation-r3/animation-manifest.json",
+      "animationStatus": "strict-self-qc-pass-runtime-not-wired"
     },
     {
       "stageId": "final_awakened",
       "ordinal": 3,
-      "name": { "zh": "聖林鹿靈", "en": "Sacred Grove Stag Spirit" },
+      "name": {
+        "zh": "聖林鹿靈",
+        "en": "Sacred Grove Stag Spirit"
+      },
       "nameStatus": "current-canon",
-      "artStatus": "owner-review",
-      "humanApproved": false,
-      "productionMaster": null,
-      "designIntent": "Upright anthropomorphic cervid grove guardian retaining the fawn face, ears and living antlers, with exactly two hoof-like hands, two digitigrade hooved legs, one short tail and a compact leaf mantle."
+      "artStatus": "owner-approved",
+      "humanApproved": true,
+      "productionMaster": "assets/characters/sprigfawn/formal-stages/final_awakened/sprigfawn_final_awakened_master_512x512_r3.png",
+      "productionMasterSha256": "d2e2da4bee3aa030515a662e3a8782d3539fc774b8ce00b77143a51805e3be1f",
+      "designIntent": "Upright anthropomorphic cervid grove guardian retaining the fawn face, ears and living antlers, with exactly two hoof-like hands, two digitigrade hooved legs, one short tail and a compact leaf mantle.",
+      "animationManifest": "assets/characters/sprigfawn/formal-stages/final_awakened/animation-r3/animation-manifest.json",
+      "animationStatus": "strict-self-qc-pass-runtime-not-wired"
     }
   ],
-  "surfaceReadiness": { "portrait": "review-board-only", "expedition": "not-produced", "orbit": "not-produced", "animationSet": "not-produced" }
+  "surfaceReadiness": {
+    "portrait": "stage2-stage3-production-masters-ready",
+    "expedition": "not-produced",
+    "orbit": "not-produced",
+    "animationSet": "stage2-stage3-strict-self-qc-pass-runtime-not-wired"
+  }
 }
