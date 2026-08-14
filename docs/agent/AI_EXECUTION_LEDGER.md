@@ -58,6 +58,24 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-08-15 - Cursor Grok - EVO-01 Reflection Owner And Safety Provenance - VERIFIED
+
+- Status: `VERIFIED` for the bounded production writer and fail-closed fixture path. Not a complete formal-evolution Runtime.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `EVO-01_REFLECTION_OWNER_AND_SAFETY_PROVENANCE`.
+- Branch / commit: `codex/grok-formal-evolution-runtime-r1` / pending local `feat(growth): seal reflection owner and safety provenance`.
+- Baseline: local EVO-00 `d572f40` on `076a65f` (`origin/main` unchanged). PR #215 OPEN `7bb2913`; PR #216 OPEN draft `abfc9e9`. Did not cherry-pick either PR. Did not touch `storageGuard.js`／store／schema／saveManager.
+- Work performed:
+  - `createOwnedSafeReflectionSource` stamps `companionId` at creation and rejects `state`／`activeCompanionId` inference.
+  - Production writer `writeReflectionPracticeIntoDraft` plus Memory Echo provenance adapter in `pageRouter.js`.
+  - Fail closed for missing owner, missing sealed safety, cross-companion, unknown ID, high-risk, safeHarbor, and legacy unverifiable records.
+  - Stage 3 readiness fixture: Care + Exploration + Reflection + Chapter, no standoff, no offer／stage advance.
+- Changed files: `src/engine/reflectionGrowthOwner.js`, `src/ui/companionGrowthController.js`, `src/ui/pageRouter.js`, `docs/qa/evo-01-reflection-production-cases.mjs`, `docs/qa/companion-growth-non-standoff-readiness-cases.mjs`, Growth Contract, `ACCEPTANCE.md` SOV-07／SOV-10, handoff, this ledger.
+- Verification: EVO-01 production 8/8; reflection owner 18/18; non-standoff 5/5; G3 engine 16/16; G3 runtime 16/16; G2 state 25/25; G1 session 17/17; `git diff --check`; `node --check`; flags remain false.
+- Honest gap: live Soul Talk memories still lose owner／sealed safety in `storageGuard`. In-session sealed sources work; save-roundtrip sources fail closed. This is intended, not a silent owner guess.
+- Next safe action: local EVO-01 commit, then EVO-02 pure transition engine if worktree is clean. Do not start EVO-03.
+- Required reading: Growth Contract §2／G3.2, `ACCEPTANCE.md` SOV-07／SOV-10, `docs/handoff/CURSOR_GROK_EVOLUTION_HANDOFF.md` §2.2, `src/engine/reflectionGrowthOwner.js`.
+
 ### 2026-08-15 - Cursor Grok - EVO-00 Candidate-First Commit-Late Seal - VERIFIED
 
 - Status: `VERIFIED`; docs-only correction of the already-merged EVO-00 contract. No Runtime.
@@ -2318,6 +2336,18 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 - Next safe action: after merge, review the public Pages build on a physical phone before declaring store-ready visual quality.
 
 ## Lane 3 - Raphael Core, Companion Reasoning, And Soul Talk
+
+### 2026-08-15 - Cursor Grok - EVO-01 Reflection Owner And Safety Provenance - VERIFIED
+
+- Status: `VERIFIED` for fail-closed Reflection evidence ownership. No RaphaelCore, no Soul Talk reply change, no formal stage offer.
+- Lane: `Raphael Core, Companion Reasoning, And Soul Talk`.
+- Task name: `EVO-01_REFLECTION_OWNER_AND_SAFETY_PROVENANCE`.
+- Branch / commit: `codex/grok-formal-evolution-runtime-r1` / pending local EVO-01 commit.
+- Work performed: Memory Echo may now attempt a Growth reflection write only when the source already has sealed `companionId` and safety provenance. Legacy／sanitized Soul Talk memories remain zero evidence. Reflection writer copies no player text, relationship, or reward.
+- Verification: production writer, owner, high-risk／safeHarbor, legacy fail-closed, and non-standoff Stage 3 fixture tests passed. SOV-07／SOV-10 remain `partial`.
+- Problems / risks: persisting live memory owner requires Groundwork on `storageGuard.js` and likely schema／store, overlapping PR #215. Do not infer owner from `activeCompanionId`.
+- Next safe action: EVO-02 pure transition engine. Do not start offer UI or critical-save for formal stage.
+- Required reading: `src/engine/reflectionGrowthOwner.js`, `src/ui/companionGrowthController.js`, `src/ui/pageRouter.js` Memory Echo adapter, SOV-07／SOV-10.
 
 ### 2026-08-15 - Cursor Grok - EVO-00 Candidate-First Commit-Late Seal - VERIFIED
 

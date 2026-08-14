@@ -250,6 +250,126 @@ export function inspectCanonicalReflectionSource({
   });
 }
 
+/**
+ * 建立「一開始就有主人」的反思來源。
+ * companionId 必須由呼叫端明示傳入；禁止帶 state／activeCompanionId 來猜。
+ * 這是新建來源，不是幫舊資料補洞。
+ */
+export function createOwnedSafeReflectionSource(input = {}) {
+  if (!isPlainObject(input)) return sourceFailure("invalid_input");
+  if (Object.prototype.hasOwnProperty.call(input, "state")
+    || Object.prototype.hasOwnProperty.call(input, "activeCompanionId")) {
+    return sourceFailure("active_companion_inference_forbidden");
+  }
+  if (Object.keys(input).some((key) => RAW_TEXT_INPUT_KEYS.has(key))) {
+    return sourceFailure("raw_player_text_forbidden");
+  }
+
+  const companionId = input.companionId;
+  if (!isKnownCompanionId(companionId)) return sourceFailure("unknown_companion");
+
+  const originType = input.originType;
+  if (originType !== "memory" && originType !== "trace") {
+    return sourceFailure("invalid_origin_type");
+  }
+
+  const id = input.id;
+  if (!isCanonicalReflectionId(originType, id)) return sourceFailure("invalid_source_id");
+
+  const createdAt = normalizePositiveTimestamp(input.createdAt);
+  if (!createdAt) return sourceFailure("source_timestamp_unverifiable");
+
+  if (!isPlainObject(input.safetyFacts)) return sourceFailure("source_safety_unverifiable");
+  const sealed = sealGrowthSafetyProvenance({
+    isHighRisk: input.safetyFacts.isHighRisk === true,
+    strategyId: Object.prototype.hasOwnProperty.call(input.safetyFacts, "strategyId")
+      ? input.safetyFacts.strategyId
+      : null,
+    actionId: Object.prototype.hasOwnProperty.call(input.safetyFacts, "actionId")
+      ? input.safetyFacts.actionId
+      : null,
+    systemRoleSafetyReply: input.safetyFacts.systemRoleSafetyReply === true,
+    safetyModeActive: input.safetyFacts.safetyModeActive === true,
+    safeHarborModeActive: input.safetyFacts.safeHarborModeActive === true
+  });
+  if (sealed.excluded !== false || sealed.complete !== true) {
+    return sourceFailure("source_safety_unverifiable");
+  }
+
+  const status = input.status || "settled";
+  const statuses = originType === "memory" ? MEMORY_STATUSES : TRACE_STATUSES;
+  if (!statuses.has(status)) return sourceFailure("source_not_reflectable");
+
+  const record = {
+    id,
+    companionId,
+    status,
+    createdAt,
+    growthSafetyExcluded: false,
+    safetyProvenance: sealed
+  };
+  if (originType === "memory") {
+    record.source = "owned_reflection_source";
+    record.excerpt = "";
+  } else {
+    record.memoryId = input.memoryId == null ? null : input.memoryId;
+    record.expiresAt = Number.isFinite(input.expiresAt) ? input.expiresAt : createdAt + 14 * 24 * 60 * 60 * 1000;
+    record.textHint = "";
+  }
+
+  const inspection = inspectOwnedSafeSourceRecord(record, companionId, originType, createdAt + 1);
+  if (!inspection.ok) return sourceFailure(inspection.reason);
+
+  return deepFreeze({
+    ok: true,
+    reason: "owned_source_created",
+    originType,
+    originId: id,
+    record
+  });
+}
+
+/**
+ * 找出目前這隻夥伴已經封存、可被回看的來源。
+ * 不會把 activeCompanionId 當成缺漏 owner 的答案。
+ */
+export function findReflectableCanonicalSource({
+  state = {},
+  companionId = null,
+  at = null
+} = {}) {
+  if (!isKnownCompanionId(companionId)) return sourceFailure("unknown_companion");
+
+  const inspectedAt = normalizePositiveTimestamp(at) || Number.MAX_SAFE_INTEGER;
+  const memories = Array.isArray(state?.emotionalMemories) ? state.emotionalMemories : [];
+  for (let index = memories.length - 1; index >= 0; index -= 1) {
+    const id = memories[index]?.id;
+    if (!id) continue;
+    const inspected = inspectCanonicalReflectionSource({
+      state,
+      companionId,
+      memoryId: id,
+      at: inspectedAt
+    });
+    if (inspected.ok) return inspected;
+  }
+
+  const traces = Array.isArray(state?.habitatTraces) ? state.habitatTraces : [];
+  for (let index = traces.length - 1; index >= 0; index -= 1) {
+    const id = traces[index]?.id;
+    if (!id) continue;
+    const inspected = inspectCanonicalReflectionSource({
+      state,
+      companionId,
+      traceId: id,
+      at: inspectedAt
+    });
+    if (inspected.ok) return inspected;
+  }
+
+  return sourceFailure("source_owner_unverifiable");
+}
+
 function inspectOwnedSafeSourceRecord(record, companionId, originType, at) {
   if (!isPlainObject(record) || record.companionId !== companionId) {
     return sourceFailure("source_owner_unverifiable");

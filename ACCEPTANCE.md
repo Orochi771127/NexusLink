@@ -715,7 +715,7 @@
   3. delayed flush 在 UI/mode 已清除後仍須拒絕。
 - 失敗時應保持的狀態：growth／stage／offer 與 high-risk 前完全相同。
 - 預計實作包：EVO-01 補 production provenance；EVO-02 把同一 ban 接到 offer 路徑。N3／N4 已覆蓋 evidence writer。
-- 目前狀態：`partial`（evidence 層已有；offer／stage 層 `not implemented`）。
+- 目前狀態：`partial`（evidence 層與 EVO-01 Reflection production writer 已排除 high-risk／safeHarbor／system safety reply，且 exclusion 不可被後代事件洗成 false；formal offer／stage 層仍 `not implemented`。不得把本條標成完整 formal evolution Runtime `implemented`）。
 
 **SOV-08 — Critical-save before visible stage publication**
 - 白話契約：下一階先活在獨立 candidate 裡。存檔成功後，記憶體、畫面才跟著換。存檔失敗時，遊戲從頭到尾都還是舊樣子，不靠事後復原。
@@ -746,8 +746,8 @@
   2. 不得以 `activeCompanionId`、目前 UI、Soul Talk 文字內容補 owner。
   3. 此類輸入零 evidence、零 offer、零 stage mutation。
 - 失敗時應保持的狀態：既有 growth record 不變；不建立新 root。
-- 預計實作包：EVO-01。`reflectionGrowthOwner.js` 測試已覆蓋 fail-closed 形狀，但 production 路徑尚未正式啟用。
-- 目前狀態：`partial`（模組與 QA 存在；production 未啟用，故不得標 `implemented`）。
+- 預計實作包：EVO-01。`reflectionGrowthOwner.js` 與 production writer 已 fail-closed 接線；live persist owner schema 仍未完成。
+- 目前狀態：`partial`（production fail-closed writer 已接線：缺 owner／缺 sealed safety／跨角色／未知 ID／`activeCompanionId` 推測皆零 evidence。現有 `storageGuard` 仍剝掉 live memory／trace owner，故存檔路徑也 fail closed。不得標完整 `implemented`：尚未有可持久的合法 live owner schema，也沒有 formal offer）。
 
 **SOV-11 — Runtime flags remain false before full promotion**
 - 白話契約：在 Owner 明確核准完整 promotion 之前，進化資產不能假裝自己已經是遊戲內的正式身體。

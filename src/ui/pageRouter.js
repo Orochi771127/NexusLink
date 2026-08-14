@@ -20,6 +20,7 @@ import { qs, qsa } from "../utils/dom.js";
 import EventBus from "../utils/eventBus.js";
 import { t, getLanguage, LANGUAGE_CHANGED_EVENT } from "../i18n/i18n.js";
 import { getTrustStagePresentation } from "./bondPresentation.js";
+import { createGrowthSafetyFacts } from "./companionGrowthController.js";
 
 const PAGE_ACTIONS = new Set(["home", "explore", "care", "grow", "memory"]);
 const MEMORY_LIMIT = MEMORY_PROJECTION_LIMIT;
@@ -639,6 +640,31 @@ export function createPageRouter({
     return writeResult;
   }
 
+  async function recordCompletedReflectionPractice(companionId) {
+    if (typeof companionGrowthController?.writeReflectionPracticeIntoDraft !== "function") {
+      return { accepted: false, changed: false, reason: "reflection_source_owner_unavailable" };
+    }
+    if (typeof saveCandidateState !== "function") {
+      return { accepted: false, changed: false, reason: "reflection_save_unavailable" };
+    }
+
+    const candidateState = cloneState(store.getState());
+    const writeResult = companionGrowthController.writeReflectionPracticeIntoDraft(candidateState, {
+      companionId,
+      createdAt: Date.now(),
+      safetyFacts: createGrowthSafetyFacts(candidateState)
+    });
+    // 缺主人／缺安全 provenance 時 fail closed：不寫 evidence，也不把這次回聲整理變成錯誤。
+    if (!writeResult?.changed) return writeResult;
+
+    const saveResult = await saveCandidateState(candidateState);
+    if (saveResult?.ok !== true) {
+      return { accepted: false, changed: false, reason: "reflection_save_failed" };
+    }
+    store.replaceState(candidateState);
+    return writeResult;
+  }
+
   function assertCareWriteCompleted(writeResult) {
     if (writeResult?.accepted || IDEMPOTENT_CARE_WRITE_REASONS.has(writeResult?.reason)) return;
     const error = new Error(`Companion Growth care evidence rejected: ${writeResult?.reason || "unknown"}`);
@@ -854,6 +880,10 @@ export function createPageRouter({
           const error = new Error("First-session page action is unavailable");
           error.code = actionResult.error ? "SAVE_FAILED" : "ACTION_UNAVAILABLE";
           throw error;
+        }
+        if (button.dataset.navAction === "memory" && button.dataset.choice === "memory_echo") {
+          const currentState = store.getState();
+          await recordCompletedReflectionPractice(currentState.activeCompanionId);
         }
         render();
       } else {

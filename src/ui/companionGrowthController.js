@@ -10,6 +10,10 @@ import {
   HEART_PHASE_PRACTICES,
   isCanonicalHeartPhaseResult
 } from "../engine/companionGrowthSessionEngine.js";
+import {
+  createReflectionGrowthWriteInput,
+  findReflectableCanonicalSource
+} from "../engine/reflectionGrowthOwner.js";
 
 const GROWTH_PROFILE = Object.freeze({
   minimumChapterByStage: Object.freeze({
@@ -151,7 +155,51 @@ export function createCompanionGrowthController() {
     });
   }
 
-  return Object.freeze({ writeIntoDraft, writeCarePracticeIntoDraft, getViewModel });
+  /**
+   * Echo Sorting / Reflection source owner.
+   * 只寫已經封存主人與安全 provenance 的來源；缺資料就 fail closed，
+   * 不會用目前 active companion 去猜。
+   */
+  function writeReflectionPracticeIntoDraft(draft, {
+    companionId,
+    memoryId = null,
+    traceId = null,
+    resolutionId = "shared_understanding",
+    createdAt = Date.now(),
+    safetyFacts = null
+  } = {}) {
+    let resolvedMemoryId = memoryId;
+    let resolvedTraceId = traceId;
+    if (!resolvedMemoryId && !resolvedTraceId) {
+      const found = findReflectableCanonicalSource({
+        state: draft,
+        companionId,
+        at: createdAt
+      });
+      if (!found.ok) return rejectedWrite(found.reason);
+      if (found.originType === "memory") resolvedMemoryId = found.originId;
+      else resolvedTraceId = found.originId;
+    }
+
+    const prepared = createReflectionGrowthWriteInput({
+      state: draft,
+      companionId,
+      memoryId: resolvedMemoryId,
+      traceId: resolvedTraceId,
+      resolutionId,
+      completedAt: createdAt,
+      safetyFacts: safetyFacts || createGrowthSafetyFacts(draft)
+    });
+    if (!prepared.ok) return rejectedWrite(prepared.reason);
+    return writeIntoDraft(draft, prepared.writeInput);
+  }
+
+  return Object.freeze({
+    writeIntoDraft,
+    writeCarePracticeIntoDraft,
+    writeReflectionPracticeIntoDraft,
+    getViewModel
+  });
 }
 
 export function createGrowthSafetyFacts(state = {}, overrides = {}) {

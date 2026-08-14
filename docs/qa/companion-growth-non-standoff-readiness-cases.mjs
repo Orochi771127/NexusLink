@@ -3,9 +3,10 @@
  *
  * `docs/handoff/RAPHAEL_AI_STATUS.yaml` gates G4 offer/stage-advance on a
  * *proven* non-standoff readiness path. `companion-growth-g3-engine-cases.mjs`
- * already proves the readiness arithmetic, but it reaches the required family
- * count using `reflection` and `recovery` — neither of which has a runtime
- * writer, so that proof says nothing about what a player can actually reach.
+ * already proves the readiness arithmetic, but it used to reach the required
+ * family count using unwired `reflection` / `recovery`. EVO-01 wires reflection
+ * through the Growth controller and owner; this suite now treats reflection as
+ * a live source family while still excluding standoff from the product path.
  *
  * This suite closes that gap. It only uses source families that are written
  * from a real gameplay path today, and it asserts those call sites still exist
@@ -39,15 +40,16 @@ const RUNTIME_WRITERS = Object.freeze([
   { sourceType: "exploration", file: "src/orbit/orbitSettlement.js", standoff: false },
   { sourceType: "exploration", file: "src/ui/mapController.js", standoff: false },
   { sourceType: "chapter", file: "src/engine/chapterTrialEngine.js", standoff: false },
+  { sourceType: "reflection", file: "src/engine/reflectionGrowthOwner.js", standoff: false },
   { sourceType: "standoff", file: "src/ui/battleController.js", standoff: true }
 ]);
 
-/** Built and unit-tested, but not called from any `src/` gameplay path. */
-const UNWIRED_SOURCE_TYPES = Object.freeze(["reflection", "boundary", "recovery"]);
+/** Built as data families, but not yet called from a gameplay source owner. */
+const UNWIRED_SOURCE_TYPES = Object.freeze(["boundary", "recovery"]);
 
 const cases = [];
 
-await runCase("live runtime writers are exactly the four expected families", () => {
+await runCase("live runtime writers include the non-standoff families plus standoff", () => {
   for (const { sourceType, file } of RUNTIME_WRITERS) {
     const source = readFileSync(join(REPO_ROOT, file), "utf8");
     assert(
@@ -57,7 +59,7 @@ await runCase("live runtime writers are exactly the four expected families", () 
   }
 
   const live = [...new Set(RUNTIME_WRITERS.map((entry) => entry.sourceType))].sort();
-  assertDeepEqual(live, ["care", "chapter", "exploration", "standoff"], "live source families");
+  assertDeepEqual(live, ["care", "chapter", "exploration", "reflection", "standoff"], "live source families");
 
   for (const sourceType of UNWIRED_SOURCE_TYPES) {
     assert(
@@ -67,19 +69,30 @@ await runCase("live runtime writers are exactly the four expected families", () 
   }
 });
 
-await runCase("reflection is still built but unreachable, so it cannot count yet", () => {
+await runCase("reflection production writer is wired and no longer unreachable", () => {
   const owner = readFileSync(join(REPO_ROOT, "src/engine/reflectionGrowthOwner.js"), "utf8");
+  const controller = readFileSync(join(REPO_ROOT, "src/ui/companionGrowthController.js"), "utf8");
   assert(
     owner.includes("export function createReflectionGrowthWriteInput"),
     "reflection writer builder disappeared"
   );
-
-  // The builder exists, but nothing under src/ calls it — only the QA suite does.
-  // Wiring it is the single remaining step to a 4-family non-standoff path.
-  const callers = RUNTIME_WRITERS.filter(({ file }) =>
-    readFileSync(join(REPO_ROOT, file), "utf8").includes("createReflectionGrowthWriteInput")
+  assert(
+    controller.includes("writeReflectionPracticeIntoDraft"),
+    "reflection production writer missing from Growth controller"
   );
-  assertEqual(callers.length, 0, "reflection is now wired — update this suite and the ledger");
+  assert(
+    controller.includes("createReflectionGrowthWriteInput"),
+    "controller no longer calls the owner"
+  );
+  const router = readFileSync(join(REPO_ROOT, "src/ui/pageRouter.js"), "utf8");
+  assert(
+    router.includes("recordCompletedReflectionPractice"),
+    "Memory Echo production caller missing from pageRouter"
+  );
+  assert(
+    router.includes("writeReflectionPracticeIntoDraft"),
+    "pageRouter no longer forwards Memory Echo to the Growth writer"
+  );
 });
 
 await runCase("care + exploration + chapter reaches resonant_mature without any standoff", () => {
@@ -114,9 +127,9 @@ await runCase("the same evidence cannot reach final_awakened — it needs a four
   });
 
   assertEqual(readiness.targetStage, "final_awakened", "target stage");
-  assertEqual(readiness.ready, false, "final_awakened must not be reachable on three families");
+  assertEqual(readiness.ready, false, "three live families still cannot open Stage 3");
   assertEqual(readiness.reason, "source_family_diversity_incomplete", "blocking reason");
-  assertEqual(readiness.familyCount, 3, "families available without standoff");
+  assertEqual(readiness.familyCount, 3, "families available without sealed reflection");
   assertEqual(readiness.requiredFamilyCount, 4, "required families for final_awakened");
 });
 

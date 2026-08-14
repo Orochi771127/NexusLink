@@ -5,7 +5,7 @@
 > 權威順序仍是：Master Canon → `AGENTS.md`／`CLAUDE.md` → Growth Contract → `ACCEPTANCE.md` → Ledger → 本檔。
 > 若本檔與上位文件衝突，以上位文件為準，並追加 Ledger `CORRECTION`／`SUPERSEDED`，不得默默改 Canon。
 >
-> 最後更新：2026-08-15（EVO-00 candidate-first／commit-late 契約修正；基準 `076a65f`）
+> 最後更新：2026-08-15（EVO-01 Reflection owner／safety provenance 有限接線；基準仍為 `076a65f` + 本地 EVO-00 commit）
 
 ---
 
@@ -19,7 +19,7 @@
 - 美術包有多少、Runtime 接了沒有
 - Growth 哪些層級已完成、哪些沒有
 - 程式要從哪個函式開始讀
-- 下一包能不能開工（預設：**不能**，要等 Owner 核准 EVO-01）
+- 下一包能不能開工（預設：**EVO-02 可在 EVO-01 全過後進入**；EVO-03 必須另開 Groundwork 核准）
 
 它**不**授權：push、PR、merge、改未核准 Groundwork、改 `assets/**`、把 runtime flags 改成 true、開始 EVO-03。
 
@@ -71,6 +71,40 @@ PR 漂移（開工時仍未合併）：
 
 ---
 
+## 2.2 EVO-01 A 檔：精確 allowlist 與 pageRouter 轉接理由
+
+Task name: `EVO-01 Reflection Owner And Safety Provenance`
+Layer: EXPERIENCE
+Red-line: 不引入依賴偵測；不把 safetyShield 當獎勵；safeHarbor／high-risk 零 evidence；不猜 owner。
+Non-goals: 不開始 offer／stage advance／renderer；不改 runtime flags；不改 `storageGuard`／store／schema／saveManager。
+
+### 為什麼可以改 `src/ui/pageRouter.js`
+
+- 它不是 `CLAUDE.md` §5.1 Groundwork 禁區（不是 `index.html`、`saveManager.js`、`store.js`、`defaultState.js`、`companionStateSchema.js`、`pixiApp.js`、`assets/**`、`tools/**`、`scripts/**`）。
+- 圖譜追蹤後，Memory Echo 的 production caller 在 `handlePageAction` 的 `memory_echo` commit 成功之後。
+- 本次只做 provenance 轉接：呼叫 `writeReflectionPracticeIntoDraft`；缺主人／缺 sealed safety 時 fail closed、不丟錯、不猜 `activeCompanionId` 當 source owner。
+- 既有 `memory_echo` 的 trust 效果仍走 `actionEffectEngine`；Reflection writer 本身不寫 relationship／reward／原始玩家文字。
+- 沿用 G3.1 care 既有的 candidate-first save helper，不修改 `saveManager.js` 或 save schema。
+
+### 精確 allowlist
+
+- `src/engine/reflectionGrowthOwner.js`
+- `src/ui/companionGrowthController.js`
+- `src/ui/pageRouter.js`（僅 provenance 轉接）
+- `docs/qa/evo-01-reflection-production-cases.mjs`
+- `docs/qa/companion-growth-non-standoff-readiness-cases.mjs`
+- `docs/design/COMPANION_GROWTH_CONTRACT_V1.md`
+- `ACCEPTANCE.md`
+- 本檔
+- `docs/agent/AI_EXECUTION_LEDGER.md`（只追加）
+
+### 誠實邊界（不是 STOP，也不是完整 live persist）
+
+GO 判定：資料完整時可寫合法 reflection evidence；舊資料 fail closed；Stage 3 用 fixture 證明。
+不得宣稱：live Soul Talk 記憶跨存檔後仍可被 Reflection 使用。那需要改 `storageGuard.js`／可能的 schema，且與 PR #215 重疊，必須另開 Groundwork。
+
+---
+
 ---
 
 ## 3. 已知資產數量（本次重新驗證）
@@ -109,11 +143,12 @@ EVO-00 **沒有**修改 `assets/**`，也 **沒有**重新執行 176 張 sheet �
 - **G2** per-companion `companionStates`、migration、Codex 隔離
 - **G3** evidence foundation、`evaluateCompanionGrowthReadiness`、`evaluateCompanionGrowthWillingness`
 - **G3.1** Heart Phase care source owner、candidate-first critical save
+- **G3.2 Reflection writer（有限）**：production fail-closed writer 已接線；合法 in-session sealed source 可寫 `reflection` evidence。live persist owner 尚未完成。
 
 ### 尚未完成（不得寫成已完成）
 
-- **G3.2 / Reflection production provenance**：`src/engine/reflectionGrowthOwner.js` 已有 fail-closed（`source_owner_unverifiable`），QA 在 `docs/qa/reflection-growth-owner-cases.mjs`；production 路徑尚未正式啟用。
-- **第三階段不對峙路徑**：契約允許 Care＋Exploration＋Reflection＋Chapter；Reflection production 未啟用，故尚未完整可達。
+- **live Reflection persist owner**：`storageGuard` 仍剝掉 memory／trace 的 `companionId` 與 sealed safety provenance。現有存檔路徑 fail closed。
+- **第三階段不對峙路徑的完整可玩 live persist**：fixture 已證明 Care＋Exploration＋Reflection＋Chapter 可達 Stage 3 readiness；live 記憶目前無法安全跨存檔保留 owner。
 - **Growth G4**：offer／rewrite／defer／accept／re-offer／exact-next-stage／idempotent accept／stale-offer rejection **尚未實作**。
 - **save／store／registry／Pixi／renderer 接線**：未做。Stage 1 illustrated runtime 仍是 live fallback。
 - **runtime flags**：仍必須是 false。
@@ -131,7 +166,9 @@ G2 schema 已有 `offeredStage`、`deferredAt` 佔位欄位。這只代表資料
 | Willingness | 同上 | `evaluateCompanionGrowthWillingness` | 已實作；還不會發出 Growth G4 offer |
 | Growth UI VM | `src/ui/companionGrowthController.js` | `getViewModel` | 已實作質性 VM；無 stage offer UI |
 | Safety provenance helper | `src/engine/companionGrowthEngine.js` | `validateSafetyProvenance` | 內部函式 |
-| Reflection owner | `src/engine/reflectionGrowthOwner.js` | fail-closed `source_owner_unverifiable` | 模組存在；production 未啟用 |
+| Reflection owner | `src/engine/reflectionGrowthOwner.js` | `createOwnedSafeReflectionSource`／`createReflectionGrowthWriteInput`／fail-closed `source_owner_unverifiable` | production writer 已接線；live persist owner 未完成 |
+| Reflection production writer | `src/ui/companionGrowthController.js` | `writeReflectionPracticeIntoDraft` | 不寫 relationship／reward／玩家原文；不開始 offer |
+| Memory Echo 轉接 | `src/ui/pageRouter.js` | `recordCompletedReflectionPractice` | 只做 provenance 轉接；缺資料 fail closed |
 | Sprite controller | `src/pixi/spriteSheetAnimationLoader.js` | `createSpriteAnimationController` | **未 export**；Stage 1 loader。R4 manifest 不可硬塞進來 |
 | 第一次觸碰覺醒 | `src/ai/awakening/raphaelAwakeningGate.js` | `getAwakeningStage` | dormant／stirring／awakened，**不是** formal stage |
 | Raphael 自我改進 | `src/ai/evolution/**` | （提案管線） | **不是**換形 Runtime |
@@ -141,14 +178,14 @@ G2 schema 已有 `offeredStage`、`deferredAt` 佔位欄位。這只代表資料
 
 ---
 
-## 6. 預計 EVO-01～EVO-06（僅計畫；只有 EVO-00 已核准完成）
+## 6. 預計 EVO-01～EVO-06（EVO-00 文件已封存；EVO-01 本窗口施工）
 
 施工順序刻意是：契約 → provenance → 純狀態 → 存檔／UI → 動畫轉接 → Renderer → QA／promotion。
 
 | Pack | 做什麼 | Groundwork 觸點 | 禁止 |
 |---|---|---|---|
 | **EVO-00** | 本包：契約、SOV、handoff、Ledger | 四份文件 | 改 Runtime／assets／Canon |
-| **EVO-01** | Reflection owner 正式啟用；證明不靠 standoff 的 Stage 3 路徑 | memory／trace owner、safety provenance、`reflectionGrowthOwner.js` | 開始 offer／換形 |
+| **EVO-01** | Reflection owner 正式啟用；證明不靠 standoff 的 Stage 3 路徑 | memory／trace owner、safety provenance、`reflectionGrowthOwner.js`、controller／pageRouter 轉接。**未改** storageGuard／store／schema | 開始 offer／換形；猜 owner |
 | **EVO-02** | 純 G4 狀態機 | `companionGrowthEngine.js` 新純函式 | DOM、Pixi、save、assets |
 | **EVO-03** | UI＋critical-save | controller、store、saveManager、Growth UI | 改 flags、改 Pixi loader |
 | **EVO-04** | 正式 catalog＋R4 adapter | 新 catalog；stage-aware／row-aware adapter | 讓 `evolutionLines.js` 當 authority；把 R4 硬塞進舊 flat loader |
@@ -209,8 +246,8 @@ EVO-00 可以在目前 `origin/main` 上做，因為本包只改文件。
 | MCP project name | `C-Users-User-NexusLink_RaphaelAI_Workspace-NexusLink-grok-formal-evolution-runtime-r1` |
 | root path | `C:\Users\User\NexusLink_RaphaelAI_Workspace\NexusLink-grok-formal-evolution-runtime-r1` |
 | status | `ready` |
-| nodes | 20329 |
-| edges | 43379 |
+| nodes | 20389 |
+| edges | 43309 |
 | persistence | `.codebase-memory/graph.db.zst` 已寫入；**未 commit**（本包禁止 commit） |
 
 已能在此 project 查到：
@@ -231,7 +268,7 @@ EVO-00 可以在目前 `origin/main` 上做，因為本包只改文件。
    - `ACCEPTANCE.md` **SOV-01～SOV-12**
    - `docs/agent/AI_EXECUTION_LEDGER.md` 最新 Lane 1／Lane 3（以及 Lane 2 的唯讀資產確認）
    - 本檔
-5. **停住**，把完成回報交給 Owner。沒有新的核准就不要開 EVO-01。
+5. **停住 EVO-03**。EVO-01 全過後可進 EVO-02 純邏輯。沒有新的 Groundwork 核准就不要開 EVO-03。
 
 PNG 不進呼叫圖。資產正確性靠 git、manifest、既有 QC 文件、SHA／尺寸／格線；不要用 MCP 假裝驗證了 176 張圖。
 
@@ -251,7 +288,7 @@ PNG 不進呼叫圖。資產正確性靠 git、manifest、既有 QC 文件、SHA
 - `createSpriteAnimationController` 未 export，服務 Stage 1
 - `origin/main` 的 `CLAUDE.md` **與** `AGENTS.md` 都已允許 TypeScript／npm／bundler（這點修正了「只有 CLAUDE.md 允許」的較舊說法）
 - EVO-00 只改四份允許清單文件
-- 本 worktree Codebase MCP：project `C-Users-User-NexusLink_RaphaelAI_Workspace-NexusLink-grok-formal-evolution-runtime-r1`，status=`ready`，nodes=20329，edges=43379
+- 本 worktree Codebase MCP：project `C-Users-User-NexusLink_RaphaelAI_Workspace-NexusLink-grok-formal-evolution-runtime-r1`，status=`ready`，nodes=20389，edges=43309（EVO-01 重索引；EVO-00 當時為 20329／43379）
 
 ### 歷史報告，尚未在本包重新驗證
 
@@ -291,3 +328,23 @@ EVO-00 是文件與驗收契約包，沒有修改 Runtime，因此本包沒有�
 - Ledger 只有追加
 - `SOV-01`～`SOV-12` 完整且無重號
 - 每條 SOV 都有 implementation status，且 Growth G4 未標成 `implemented`
+
+---
+
+## 13. EVO-01 實際改了哪些檔
+
+允許清單：
+
+1. `src/engine/reflectionGrowthOwner.js`
+2. `src/ui/companionGrowthController.js`
+3. `src/ui/pageRouter.js`（僅 Memory Echo provenance 轉接；見 §2.2）
+4. `docs/qa/evo-01-reflection-production-cases.mjs`
+5. `docs/qa/companion-growth-non-standoff-readiness-cases.mjs`
+6. `docs/design/COMPANION_GROWTH_CONTRACT_V1.md`
+7. `ACCEPTANCE.md`（SOV-07／SOV-10 依實際接線標 `partial`）
+8. `docs/handoff/CURSOR_GROK_EVOLUTION_HANDOFF.md`
+9. `docs/agent/AI_EXECUTION_LEDGER.md`（只追加）
+
+未改：Master Canon、`AGENTS.md`、`CLAUDE.md`、`index.html`、`saveManager.js`、`store.js`、`defaultState.js`、`companionStateSchema.js`、`storageGuard.js`、`pixiApp.js`、`assets/**`、package／lockfile、runtime flags。
+
+SOV-01～SOV-06、SOV-08、SOV-09、SOV-11、SOV-12 不因本包變綠。正式進化 Runtime 仍未標 `implemented`。
