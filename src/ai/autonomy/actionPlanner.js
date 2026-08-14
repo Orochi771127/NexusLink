@@ -1,6 +1,17 @@
 import { GOAL_WHITELIST } from "./goalManager.js";
 import { SOUL_TALK_INTENTS } from "../intentClassifier.js";
 import { SOUL_TALK_REACTIONS } from "../reactionPlanner.js";
+import { ENERGY_WITHDRAWAL_THRESHOLD } from "../stateMutationPolicy.js";
+
+// energy 見底時牠不再說話，只留身體語言。這些動作不累積關係。
+const NON_REWARDING_ACTIONS = Object.freeze([
+  "set_boundary",
+  "soft_refuse",
+  "enter_safe_harbor",
+  "lower_interaction_intensity"
+]);
+
+const SILENT_ACTIONS = Object.freeze(["stay_silent", "body_cue_only", "lower_interaction_intensity"]);
 
 const GOAL_ACTION_MAP = Object.freeze({
   [GOAL_WHITELIST.MAINTAIN_SAFETY]: {
@@ -137,9 +148,20 @@ export function planAutonomousAction({
   const reaction = plan.mode || mapping.reaction;
   let selectedAction = mapping.action;
 
-  if ((state.energy ?? 10) <= 2 && selectedAction !== "enter_safe_harbor") {
+  const energy = Number(state.energy ?? 10);
+
+  if (energy <= 2 && selectedAction !== "enter_safe_harbor") {
     mapping = { ...mapping, replyMode: "rest_short" };
     reason += "+low_energy_short";
+  }
+
+  // 安全與邊界仍優先：安全導向與拒絕是「必須說出口」的回應，不能被靜默蓋掉。
+  if (
+    energy <= ENERGY_WITHDRAWAL_THRESHOLD &&
+    !["enter_safe_harbor", "set_boundary", "soft_refuse"].includes(selectedAction)
+  ) {
+    selectedAction = "lower_interaction_intensity";
+    reason += "+energy_withdrawal";
   }
 
   if (selectedAction === "ask_clarifying_question" && !cooldown.allowClarifyingQuestion) {
@@ -151,8 +173,8 @@ export function planAutonomousAction({
     reason += "+explore_blocked";
   }
 
-  const shouldSpeak = selectedAction !== "stay_silent" && selectedAction !== "body_cue_only";
-  const shouldRewardRelationship = !["set_boundary", "soft_refuse", "enter_safe_harbor"].includes(selectedAction);
+  const shouldSpeak = !SILENT_ACTIONS.includes(selectedAction);
+  const shouldRewardRelationship = !NON_REWARDING_ACTIONS.includes(selectedAction);
   const shouldCreateMemory =
     shouldRewardRelationship &&
     plan.shouldCreateMemory !== false &&

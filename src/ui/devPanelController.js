@@ -202,6 +202,8 @@ export function createDevPanelController({ isEnabled, store, saveCurrentState, p
       trust: state.trust,
       energy: state.energy,
       defense: state.defense,
+      boundaryPressure: Number(state.boundaryPressure || 0).toFixed(3),
+      boundaryBand: state.boundaryBand || "open",
       touchFatigue: state.touchFatigue,
       safeHarborMode: Boolean(state.safeHarborMode),
       lastEmotionTag: state.lastEmotionTag || "",
