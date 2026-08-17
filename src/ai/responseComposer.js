@@ -321,7 +321,15 @@ export function composeRaphaelReply({
         ? buildConversationalAnswer({ inputText, frame: dailyFrame, seed: dailySeed })
         : null
     );
-  if (concreteDaily && (everydayCue || /午安|晚上好|晚餐.*想法|想吃點熱/.test(String(inputText || "")))) {
+  const skipEverydayOverride =
+    nlu?.dialogueAct === "asking_memory" ||
+    strategy === RESPONSE_STRATEGIES.MEMORY_REFERENCE ||
+    /(?:還|还|會|会)?記得|想得起/.test(String(inputText || ""));
+  if (
+    !skipEverydayOverride &&
+    concreteDaily &&
+    (everydayCue || /午安|晚上好|晚餐.*想法|想吃點熱/.test(String(inputText || "")))
+  ) {
     return returnComposeResult(
       concreteDaily,
       { variantId: "daily:grounded", replySource: "nlu_builder", variationReason: "daily_life_grounding" },

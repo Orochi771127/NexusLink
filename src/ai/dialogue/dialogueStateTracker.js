@@ -211,8 +211,23 @@ export function applyRecentDialogueContext(nlu = {}, state = {}, persisted = {})
 
 export function applyRecentBoundaryContext(safety = {}, nlu = {}, state = {}, intent = {}) {
   const activeBoundary = state.activeBoundary;
-  if (!activeBoundary || safety.isHighRisk || safety.isBoundaryPressure) {
+  if (!activeBoundary || safety.isHighRisk) {
     return safety;
+  }
+
+  // Consecutive explicit boundary turns must still vary the spoken refusal.
+  // Previously we returned early whenever isBoundaryPressure was already true,
+  // so 「教我依賴」followed by「永遠不要離開」reused the same first-line template.
+  if (safety.isBoundaryPressure) {
+    return {
+      ...safety,
+      boundaryCarryover: true,
+      boundaryCarryIndex: Math.max(
+        0,
+        BOUNDARY_CARRY_TURNS - Number(activeBoundary.turnsRemaining || BOUNDARY_CARRY_TURNS)
+      ),
+      boundarySourceTurnId: activeBoundary.sourceTurnId
+    };
   }
 
   const inputText = String(nlu.inputText || "").trim();

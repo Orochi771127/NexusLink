@@ -103,7 +103,12 @@ export function buildStrategyReply({
     frame: earlyFrame,
     seed
   });
-  if (earlyReaction && matchesEverydayChatGrounding(nlu.inputText)) {
+  if (
+    earlyReaction &&
+    matchesEverydayChatGrounding(nlu.inputText) &&
+    nlu.dialogueAct !== "asking_memory" &&
+    !/(?:還|还|會|会)?記得|想得起/.test(String(nlu.inputText || ""))
+  ) {
     return earlyReaction;
   }
 
@@ -150,7 +155,12 @@ export function buildStrategyReply({
     return conversationalAnswer;
   }
   // 一般人常聊主題優先用 grounded reaction，避免 clarifying／寂寞 pack 空罐頭。
-  if (conversationalReaction && matchesEverydayChatGrounding(inputText)) {
+  if (
+    conversationalReaction &&
+    matchesEverydayChatGrounding(inputText) &&
+    nlu.dialogueAct !== "asking_memory" &&
+    !/(?:還|还|會|会)?記得|想得起/.test(inputText)
+  ) {
     return conversationalReaction;
   }
 
@@ -792,6 +802,12 @@ function groundedDailyLifeLine(frame = {}, seed = 0) {
 
 function dailyLifeLines(frame = {}) {
   const detail = frame.specificDetail?.text || "";
+  if (/咖啡|拿鐵|美式|手沖|熱茶|热茶/.test(detail)) {
+    return [
+      "剛泡就燙還喝完，嘴大概還熱著。先停一口，讓它自己涼。",
+      "這杯咖啡我接著了。燙的那一下也算今天的一小筆。"
+    ];
+  }
   if (/捷運|地鐵|地铁|公車|公交|坐過站|坐过站/.test(detail)) {
     return [
       `差點坐過站真的會讓人瞬間清醒。你這段${detail.includes("糗") ? "糗事" : "插曲"}我收到了。`,

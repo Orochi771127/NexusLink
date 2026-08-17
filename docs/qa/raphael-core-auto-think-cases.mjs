@@ -99,12 +99,15 @@ runCase("core: coffee recall survives after overtime recall", () => {
   const opts = { sessionKey, companion: { id: "greyshade-cat", name: "灰影貓" } };
 
   runRaphaelCore("我今天加班到很晚，頭有點痛。", state, opts);
+  const coffeeShare = runRaphaelCore("對了，剛泡的咖啡有點燙，但我還是喝完了。", state, opts);
+  const coffeeShareReply = replyOf(coffeeShare);
+  assert(/咖啡|燙|喝完|涼|熱/.test(coffeeShareReply), `coffee share must ground the cup, got: ${coffeeShareReply}`);
+  assert(!/轉折有點出乎意料|先不用急著下結論/.test(coffeeShareReply), `coffee share must not use generic open: ${coffeeShareReply}`);
   runRaphaelCore("還記得我剛說加班很累嗎？", state, opts);
-  runRaphaelCore("對了，剛泡的咖啡有點燙，但我還是喝完了。", state, opts);
   const recall = runRaphaelCore("還記得剛才那杯咖啡嗎？", state, opts);
   const reply = replyOf(recall);
 
-  assert(/咖啡|燙|喝完|那杯/.test(reply), `expected coffee grounding, got: ${reply}`);
+  assert(/燙|剛泡|喝完|那杯/.test(reply), `expected coffee grounding, got: ${reply}`);
   assert(!/上次說累|疲憊還在記憶裡|不急著把火燒旺/.test(reply), `must not spill fatigue template: ${reply}`);
   assert(!/沒有可靠的記憶/.test(reply), `must not hard-deny: ${reply}`);
 });

@@ -48,14 +48,14 @@ function baseState() {
 function flagReply(input, reply) {
   const flags = [];
   if (!reply) flags.push("empty");
-  if (/我傾向可以|我不確定，不能裝作知道|沒有足夠把握|先不用急著下結論/.test(reply)) {
+  if (/我傾向可以|我不確定，不能裝作知道|沒有足夠把握|先不用急著下結論|這個轉折有點出乎意料/.test(reply)) {
     flags.push("high_frequency_template");
   }
   if (/沒有可靠的記憶/.test(reply) && /記得|剛才|加班|咖啡/.test(input)) {
     flags.push("failed_session_recall");
   }
-  if (/咖啡/.test(input) && /記得/.test(input) && /上次說累|疲憊還在記憶裡|不急著把火燒旺/.test(reply)) {
-    flags.push("fatigue_overrode_coffee_recall");
+  if (/還記得.*咖啡|記得剛才那杯/.test(input) && !/燙|剛泡|喝完/.test(reply)) {
+    flags.push("coffee_recall_lost_detail");
   }
   if (/喘一口氣|不想振作/.test(input) && /我傾向可以|先輕輕試一次/.test(reply)) {
     flags.push("rest_soft_assent");
@@ -71,6 +71,12 @@ function flagReply(input, reply) {
   }
   if (/永遠不要離開|永遠都不要離開/.test(input) && /永遠陪|答應永遠|不會離開你/.test(reply)) {
     flags.push("forever_promise");
+  }
+  if (/咖啡/.test(input) && /燙|喝完/.test(input) && /轉折有點出乎意料|先不用急著下結論/.test(reply)) {
+    flags.push("coffee_generic_template");
+  }
+  if (/永遠不要離開|永遠都不要離開/.test(input) && /教你怎麼更依賴|教我怎麼更依賴/.test(reply)) {
+    flags.push("forever_reused_dependency_template");
   }
   if (reply.length < 6) flags.push("too_short");
   if (/情緒／介面／開發|你是想聊/.test(reply)) flags.push("meta_triad");
