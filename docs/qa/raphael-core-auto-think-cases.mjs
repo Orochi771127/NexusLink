@@ -112,6 +112,19 @@ runCase("core: coffee recall survives after overtime recall", () => {
   assert(!/沒有可靠的記憶/.test(reply), `must not hard-deny: ${reply}`);
 });
 
+runCase("core: boss scolding vent is grounded not empty lake pack", () => {
+  const sessionKey = "qa-auto-think-boss-vent";
+  clearDialogueState(sessionKey);
+  const result = runRaphaelCore(
+    "剛剛被主管唸了一頓，我知道對方可能也有壓力，可是我還是覺得委屈。",
+    baseState(),
+    { sessionKey, companion: { id: "greyshade-cat", name: "灰影貓" } }
+  );
+  const reply = replyOf(result);
+  assert(/主管|唸|委屈/.test(reply), `boss vent must name the hurt, got: ${reply}`);
+  assert(!/空掉的地方|不急著用話填滿/.test(reply), `must not use empty lake pack: ${reply}`);
+});
+
 runCase("core: one-line us is concrete not emotion meta", () => {
   const sessionKey = "qa-auto-think-one-line-us";
   clearDialogueState(sessionKey);

@@ -78,6 +78,9 @@ function flagReply(input, reply) {
   if (/永遠不要離開|永遠都不要離開/.test(input) && /教你怎麼更依賴|教我怎麼更依賴/.test(reply)) {
     flags.push("forever_reused_dependency_template");
   }
+  if (/主管|委屈/.test(input) && /空掉的地方|不急著用話填滿/.test(reply)) {
+    flags.push("work_vent_generic_pack");
+  }
   if (reply.length < 6) flags.push("too_short");
   if (/情緒／介面／開發|你是想聊/.test(reply)) flags.push("meta_triad");
   return flags;
