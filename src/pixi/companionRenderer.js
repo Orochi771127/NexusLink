@@ -1,7 +1,8 @@
 import { applyResponsiveLayout, registerSceneEditorObject, WORLD_HEIGHT, WORLD_WIDTH } from "./pixiApp.js";
 import { FALLBACK_CREATURE } from "../engine/personalityProfile.js";
 import { SCENE_LAYOUT } from "../data/sceneLayout.js";
-import { createAnimatedCompanionNode, loadCompanionAnimationPack } from "./spriteSheetAnimationLoader.js";
+import { createAnimatedCompanionNode, loadCompanionAnimationPack, loadFormalEvolutionCanaryPack } from "./spriteSheetAnimationLoader.js";
+import { isEvo05CanaryCompanion, stampCanaryFallbackPresentation } from "../engine/formalEvolutionCanaryPlan.js";
 import { getActiveSceneProfile } from "../data/sceneProfiles/index.js";
 import {
   attachCompanionGroundShadow,
@@ -9,12 +10,22 @@ import {
   syncCompanionGroundShadow
 } from "./companionFootAndShadow.js";
 
-export async function createCreatureNode(creature, { bootOnly = true, onStatus = null } = {}) {
+export async function createCreatureNode(creature, { bootOnly = true, onStatus = null, presentation = null } = {}) {
   const reportStatus = (kind, message) => onStatus?.({ kind, message, companionId: creature.id });
+  const canaryAttempted = isEvo05CanaryCompanion(creature?.id)
+    && (presentation?.stage === "resonant_mature" || presentation?.stage === "final_awakened");
+  const canaryNode = await tryCreateFormalEvolutionCanaryNode(creature, {
+    bootOnly,
+    presentation,
+    reportStatus
+  });
+  if (canaryNode) return registerCompanionEditorObject(canaryNode);
+
   if (creature.animationsManifest) {
     const animationPack = await loadCompanionAnimationPack(creature.animationsManifest, { bootOnly });
     const animatedCompanion = createAnimatedCompanionNode(animationPack, creature);
     if (animatedCompanion) {
+      stampFallbackIfCanaryAttempted(animatedCompanion, creature, presentation, canaryAttempted);
       // 玩家可見的狀態行不寫技術詞（動畫 key / 載入）——牠只是「在這裡」。
       reportStatus("ready", `${creature.name}在月湖邊安靜待著。`);
       return registerCompanionEditorObject(animatedCompanion);
@@ -28,18 +39,23 @@ export async function createCreatureNode(creature, { bootOnly = true, onStatus =
       console.warn("Creature has no fallback image; using generic placeholder.");
     }
     reportStatus("placeholder", `${creature.name}以輪廓之姿來到棲地（正式造型製作中）。`);
-    return registerCompanionEditorObject(createCreaturePlaceholder(creature));
+    const placeholder = createCreaturePlaceholder(creature);
+    stampFallbackIfCanaryAttempted(placeholder, creature, presentation, canaryAttempted);
+    return registerCompanionEditorObject(placeholder);
   }
 
   try {
     const texture = await PIXI.Assets.load(creature.image);
     const spriteCreature = createCreatureSprite(texture, creature);
+    stampFallbackIfCanaryAttempted(spriteCreature, creature, presentation, canaryAttempted);
     reportStatus("ready", `${creature.name}已進入夜間湖畔棲地。`);
     return registerCompanionEditorObject(spriteCreature);
   } catch (error) {
     console.warn("Creature image load failed, fallback to placeholder:", error);
     reportStatus("fallback", `${creature.name}圖片載入失敗，已改用預設造型。`);
-    return registerCompanionEditorObject(createCreaturePlaceholder(creature));
+    const placeholder = createCreaturePlaceholder(creature);
+    stampFallbackIfCanaryAttempted(placeholder, creature, presentation, canaryAttempted);
+    return registerCompanionEditorObject(placeholder);
   }
 }
 
@@ -95,6 +111,48 @@ export function bindCompanionTap(companion, { isInteractionBlocked, onTouch }) {
     } catch (error) {
       console.warn("Companion touch interaction failed:", error);
     }
+  });
+}
+
+async function tryCreateFormalEvolutionCanaryNode(creature, { bootOnly, presentation, reportStatus }) {
+  const companionId = creature?.id;
+  const savedStage = presentation?.stage;
+  if (!isEvo05CanaryCompanion(companionId)) return null;
+  if (savedStage !== "resonant_mature" && savedStage !== "final_awakened") return null;
+
+  try {
+    const canary = await loadFormalEvolutionCanaryPack({
+      companionId,
+      savedStage,
+      bootOnly
+    });
+    if (!canary?.ok || !canary.pack) return null;
+
+    const node = createAnimatedCompanionNode(canary.pack, creature);
+    if (!node) return null;
+
+    // Pixi 只記下這次呈現怎麼走；它沒有權改存檔裡的階段。
+    node.__formalEvolutionPresentation = {
+      companionId,
+      savedStage,
+      presentationMode: canary.presentationMode,
+      retryable: canary.retryable === true,
+      usedFallback: false,
+      growthMutation: null
+    };
+    reportStatus("ready", `${creature.name}在月湖邊安靜待著。`);
+    return node;
+  } catch (error) {
+    console.warn("Formal evolution canary presentation failed; staying on Stage 1.", error);
+    return null;
+  }
+}
+
+function stampFallbackIfCanaryAttempted(node, creature, presentation, canaryAttempted) {
+  if (!node || !canaryAttempted) return;
+  node.__formalEvolutionPresentation = stampCanaryFallbackPresentation({
+    companionId: creature?.id,
+    savedStage: presentation?.stage
   });
 }
 

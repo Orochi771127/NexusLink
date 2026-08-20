@@ -24,6 +24,11 @@ import {
   commitFormalEvolutionTransition,
   createGrowthSafetyFacts
 } from "./companionGrowthController.js";
+import {
+  FORMAL_EVOLUTION_PRESENTATION_REFRESH_EVENT,
+  isEvo05CanaryCompanion,
+  shouldRefreshFormalEvolutionPresentation
+} from "../engine/formalEvolutionCanaryPlan.js";
 
 const PAGE_ACTIONS = new Set(["home", "explore", "care", "grow", "memory"]);
 const MEMORY_LIMIT = MEMORY_PROJECTION_LIMIT;
@@ -683,7 +688,7 @@ export function createPageRouter({
     const companionId = extra.companionId || state.activeCompanionId;
     const currentSession = growthSessions.get(companionId)
       || createCompanionGrowthSession(companionId);
-    return commitFormalEvolutionTransition({
+    const result = await commitFormalEvolutionTransition({
       currentState: state,
       saveCandidateState,
       publishState: (candidateState) => store.replaceState(candidateState),
@@ -695,6 +700,17 @@ export function createPageRouter({
       safetyFacts: createGrowthSafetyFacts(state),
       currentMoment: deriveHeartPhaseSnapshot(state, currentSession)
     });
+    if (
+      shouldRefreshFormalEvolutionPresentation(result)
+      && isEvo05CanaryCompanion(result.companionId)
+    ) {
+      EventBus.emit(FORMAL_EVOLUTION_PRESENTATION_REFRESH_EVENT, {
+        companionId: result.companionId,
+        stage: result.candidateGrowth?.stage || null,
+        retryable: true
+      });
+    }
+    return result;
   }
 
   function assertCareWriteCompleted(writeResult) {

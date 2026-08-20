@@ -58,6 +58,84 @@ Allowed status values: `PLANNED`, `IN PROGRESS`, `VERIFIED`, `COMPLETED`,
 
 ## Lane 1 - Game Engineering And Architecture
 
+### 2026-08-15 - Cursor Grok - Codex MCP Handoff And Stop - COMPLETED
+
+- Status: `COMPLETED` for handoff write-up. Implementation remains stopped. Browser visual remains `NOT VERIFIED`.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `EVO_LANE_CODEX_MCP_HANDOFF_AND_STOP`.
+- Branch / commit: `codex/grok-formal-evolution-runtime-r1` / uncommitted EVO-05／05.5 on `a7958b0`.
+- Scope: Owner asked to stop and write the whole EVO-00→05.5 lane into Codebase Memory so Codex can take over. No EVO-06. No flags. No commit/push.
+- Work performed:
+  - Indexed this worktree (`nodes: 20466`). `docs/` is excluded from moderate index, so narrative cannot live only in the graph.
+  - Wrote Architecture Decision Record via `manage_adr(mode: update)` on project `C-Users-User-NexusLink_RaphaelAI_Workspace-NexusLink-grok-formal-evolution-runtime-r1`. Codex first action: `manage_adr(mode: get)`.
+  - Ingested 3 narrative traces (EVO-03 accept, EVO-04 catalog, EVO-05 canary). Server note: runtime edge creation from traces is **not implemented**.
+  - Graph currently finds `decideFormalEvolutionTransition` in `companionFormalEvolutionTransitionEngine.js`, but `search_code` missed `selectLiveAnimationAuthority` / `planFormalEvolutionCanaryAttempt`. Do not treat the graph as proof those files are absent; they exist on disk.
+  - Refreshed `docs/handoff/CURSOR_GROK_EVOLUTION_HANDOFF.md` §0 plus §15–§18 so stale “stop before EVO-03 / #215 still OPEN” sentences cannot mislead Codex.
+- Verification: ADR `manage_adr(mode: get)` returns the full EVO-00→05.5 snapshot. Node QA from prior pack still 15/15. Visual still not verified.
+- Problems / risks: MCP graph is incomplete for this lane. ADR + this ledger + handoff §0 are the SSOT. Walk aliases are compatibility only, not a walking-gameplay task.
+- Next safe action: Codex reads ADR + handoff §0, then waits for Owner visual via `docs/qa/EVO_05_GREYSHADE_CANARY_MANUAL.md`. Do not start EVO-06. Local commit only if Owner asks.
+- Required reading: Codebase MCP ADR (`manage_adr` get), `docs/handoff/CURSOR_GROK_EVOLUTION_HANDOFF.md` §0, `docs/qa/EVO_05_GREYSHADE_CANARY_MANUAL.md`, `src/engine/formalEvolutionCanaryPlan.js`.
+
+### 2026-08-15 - Cursor Grok - EVO-05.5 Canary Hardening And Visual Gate - VERIFIED
+
+- Status: `VERIFIED` for Node hardening and the written habitat checklist. Browser visual remains `NOT VERIFIED` (Cursor browser could not reach local `localhost:5173`).
+- Lane: `Game Engineering And Architecture`.
+- Task name: `EVO-05_5_CANARY_HARDENING_AND_VISUAL_GATE`.
+- Branch / commit: `codex/grok-formal-evolution-runtime-r1` / uncommitted on `a7958b0`.
+- Scope: tightened EVO-05 fail-closed and retryable stamp; added Node-testable 404 prepare path; wrote greyshade habitat checklist. Did not change flags, `pixiApp.js`, `assets/**`, or start EVO-06.
+- Work performed:
+  - Foreign walk sheet now fails the whole canary instead of mixing bodies.
+  - Stage 1 fallback nodes stamp `__formalEvolutionPresentation.retryable`.
+  - `prepareFormalEvolutionCanaryLoad` proves HTTP 404 does not mutate caller `growth.stage`.
+  - Habitat QA helpers: `previewGreyshadeCanary` / `inspectGreyshadeCanary`.
+  - Checklist: `docs/qa/EVO_05_GREYSHADE_CANARY_MANUAL.md`. Local `python -m http.server 5173` was started for Owner visual.
+- Verification: EVO-05 15/15; `node --check` on touched JS. Cursor-hosted browser could not open localhost, so no screenshot evidence.
+- Problems / risks: `previewGreyshadeCanary` writes in-memory stage and may persist if a save runs; throwaway save only. Standoff still Stage 1. Do not treat this as visual PASS.
+- Next safe action: Owner runs the checklist at `http://localhost:5173`. Local commit only if Owner asks. Do not start EVO-06. Do not enable owl / seahorse canary.
+- Required reading: `docs/qa/EVO_05_GREYSHADE_CANARY_MANUAL.md`, `src/engine/formalEvolutionCanaryPlan.js`.
+
+### 2026-08-15 - Cursor Grok - EVO-05.5 Canary Hardening And Visual Gate - IN PROGRESS
+
+- Status: `IN PROGRESS`. Owner instruction: follow the post-audit next step. Tighten EVO-05 holes, write the greyshade habitat checklist, and attempt a local visual pass. Do not start EVO-06. Do not change flags.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `EVO-05_5_CANARY_HARDENING_AND_VISUAL_GATE`.
+- Branch / commit: `codex/grok-formal-evolution-runtime-r1` / uncommitted EVO-05 plus this hardening.
+- Scope: same-companion fail-closed, retryable stamp on Stage 1 fallback, Node-testable 404 prepare path, greyshade manual checklist, local habitat look. No `auriowl` / seahorse canary. No flag promotion.
+- Work performed: starting.
+- Verification: not yet.
+- Problems / risks: browser visual may still be blocked by onboarding or GPU. Do not claim visual PASS without a screenshot or Owner check.
+- Next safe action: finish hardening and the checklist, then stop unless visual evidence is obtained.
+- Required reading: previous EVO-05 VERIFIED entry, SOV-09／SOV-11／SOV-12.
+
+### 2026-08-15 - Cursor Grok - EVO-05 Greyshade Canary Renderer - VERIFIED
+
+- Status: `VERIFIED` as greyshade-only canary attempt. Not EVO-06 promotion, not live form-swap Runtime, not 11 companions.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `EVO-05_FORMAL_EVOLUTION_RENDERER_CANARY`.
+- Branch / commit: `codex/grok-formal-evolution-runtime-r1` / uncommitted on `a7958b0`.
+- Scope: canary = `greyshade-cat` only. Did not change `pixiApp.js`, `assets/**`, flags, `index.html`, save schema, `motionController.js`, or `auriowl` / seahorse canary.
+- Work performed:
+  - Added `src/engine/formalEvolutionCanaryPlan.js`: canary gate, lazy load plan (boot 1 idle sheet), same-companion fallback, zero `growthMutation`.
+  - Narrow Pixi path: `spriteSheetAnimationLoader.js` tries R4 idle for evolved greyshade; `companionRenderer.js` falls back to Stage 1 on failure without saving.
+  - `app.js` passes canonical `growth.stage` projection; `pageRouter.js` refreshes presentation only after a published greyshade accept. `commitFormalEvolutionTransition.rendererIntent` stays null.
+- Verification: EVO-05 10/10; EVO-04 10/10; EVO-03 9/9; EVO-02 15/15; EVO-01 9/9; G2 25/25; G3 engine 16/16; `node --check`; `git diff --check`. No asset or flag edits. Browser / Pixi visual, real 404 decode, and mobile GPU **NOT VERIFIED**.
+- Problems / risks: walking / attack on canary currently lazy-maps to cardinal south or stays idle if load fails. `auriowl` Owner Lock still excluded. This is not live authority promotion.
+- Next safe action: stop. Local commit only if Owner asks. Do not start EVO-06. Do not push. Do not change flags. Do not enable owl / seahorse canary without a separate approval.
+- Required reading: `src/engine/formalEvolutionCanaryPlan.js`, `docs/qa/evo-05-formal-evolution-canary-cases.mjs`, SOV-09／SOV-11／SOV-12.
+
+### 2026-08-15 - Cursor Grok - EVO-05 Greyshade Canary Renderer - IN PROGRESS
+
+- Status: `IN PROGRESS`. Owner instruction: continue the formal-evolution lane with EVO-05 renderer canary only.
+- Lane: `Game Engineering And Architecture`.
+- Task name: `EVO-05_FORMAL_EVOLUTION_RENDERER_CANARY`.
+- Branch / commit: `codex/grok-formal-evolution-runtime-r1` / `a7958b0` plus uncommitted EVO-05 work.
+- Scope: one canary only — `greyshade-cat`. Attempt R4 presentation when canonical `growth.stage` is already `resonant_mature` or `final_awakened`. Failure falls back to the same companion's Stage 1. Do not rewrite saved stage, flags, `pixiApp.js`, or `assets/**`.
+- Work performed: starting canary plan, lazy idle-only loader path, and habitat presentation refresh after a published accept.
+- Verification: not yet.
+- Problems / risks: this is a canary attempt, not EVO-06 promotion. `auriowl` Owner Lock remains excluded. Browser / Pixi visual check is manual and not claimed here.
+- Next safe action: finish the canary pack, verify Node tests, then stop. Do not start EVO-06. Do not push. Do not change flags.
+- Required reading: `docs/handoff/EVO_03_TO_05_GROUNDWORK_APPROVAL_PLAN.md` §4／§8／§9, `src/engine/formalEvolutionCatalog.js`, SOV-09／SOV-11／SOV-12.
+
 ### 2026-08-15 - Cursor Grok - EVO-04 Self-Audit - VERIFIED
 
 - Status: `VERIFIED` after fail-closed corrections. Still catalog-only; renderer unwired.

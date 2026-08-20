@@ -27,7 +27,8 @@ export const FORMAL_SHEET_FAMILIES = Object.freeze(["cardinal", "diagonal"]);
 export const FORMAL_SHEET_ACTIONS = Object.freeze(["idle", "walk", "attack", "recovery"]);
 export const LIVE_STAGE1_SOURCE = "stage1-illustrated-runtime";
 
-// 建議 canary 只是備註，這包不會啟用任何一隻。
+// 建議名單只是備註。EVO-05 實際啟用的 canary 在 formalEvolutionCanaryPlan.js，
+// 目前只有灰影貓。金羽小梟有 Owner Lock，不要當第一隻。
 export const FORMAL_EVOLUTION_CANARY_CANDIDATES = Object.freeze([
   "greyshade-cat",
   "auriowl",

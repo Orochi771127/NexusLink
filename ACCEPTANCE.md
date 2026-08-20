@@ -726,7 +726,7 @@
   3. save 成功、後續 UI 或 renderer 失敗：reload 後 `growth.stage` 仍為已存的新值。renderer 只走同角色安全 fallback，並保留可重試狀態。此條與 SOV-09／SOV-12 互補。
 - 失敗時應保持的狀態：save 失敗＝舊 stage 從未被發布；save 成功＝新 stage 已持久，即使畫面稍後失敗也不倒退。
 - 預計實作包：EVO-03。G3.1 care writer 已有 candidate-first critical save；EVO-03 已把同一順序接到 formal accept。
-- 目前狀態：`partial`（EVO-03 Node 測試證明 mock save 失敗時 subscriber／canonical 從未看到新 stage；save 成功後 UI throw，reload-shaped normalize 仍是新 stage。renderer intent 仍是 no-op，尚未接 Pixi。不得標完整 `implemented`）。
+- 目前狀態：`partial`（EVO-03 Node 測試證明 mock save 失敗時 subscriber／canonical 從未看到新 stage；save 成功後 UI throw，reload-shaped normalize 仍是新 stage。`commitFormalEvolutionTransition` 的 `rendererIntent` 仍是 no-op。EVO-05 在 pageRouter 於 **published accept 之後** 發呈現刷新事件；失敗不回寫 stage。不得標完整 `implemented`）。
 
 **SOV-09 — Renderer failure does not corrupt saved stage**
 - 白話契約：圖片或動畫載入失敗，不能把已經存好的下一階改回去，也不能換成別隻夥伴的身體。
@@ -737,7 +737,7 @@
   4. fallback 不得把 `runtimeFormSwapReady` 偷偷寫成 true。
 - 失敗時應保持的狀態：canonical stage 不變；畫面停在安全姿勢或 Stage 1 fallback。
 - 預計實作包：EVO-05。
-- 目前狀態：`not implemented`。現行 loader 只服務 Stage 1 illustrated runtime。
+- 目前狀態：`partial`（EVO-05／05.5：純函式與 prepare 路徑證明 404 不產生 `growthMutation`、不改呼叫端 `growth.stage`；跨角色 sheet fail closed；失敗節點可打 retryable stamp。loader 開場只載 idle。瀏覽器／Pixi 視覺與真機 GPU **NOT VERIFIED**。不是 11 隻 promotion。）
 
 **SOV-10 — Legacy unverifiable provenance fails closed**
 - 白話契約：舊記憶如果講不清是哪一隻夥伴、安不安全，就不能拿來當進化證據，更不能猜給現在這隻。
@@ -758,7 +758,7 @@
   4. EVO-00～EVO-05 的 diff 不得把這兩個旗標改成 true。改 true 只能發生在獨立 promotion pack，並重跑 SOV + Art G1–G7 + H + I。
 - 失敗時應保持的狀態：Stage 1 維持 live fallback；存檔 stage 可存在但不驅動錯誤形態。
 - 預計實作包：EVO-00 記錄現況；EVO-04／EVO-05 接 loader guard；EVO-06 才討論 promotion。
-- 目前狀態：`partial`。2026-08-15 EVO-04 catalog／adapter 在兩旗標為 false（或被偽造為 true）時，都不得選 Stage 2／3 當 live animation authority。尚未接 Pixi loader。不得把本條標成完整 `implemented`。
+- 目前狀態：`partial`。2026-08-15 EVO-04 catalog／adapter 與 EVO-05 灰影貓 canary 在兩旗標為 false（或被偽造為 true）時，都不得選 Stage 2／3 當 live animation authority。canary 只是試播，不是把 R4 升成 live。不得把本條標成完整 `implemented`。
 
 **SOV-12 — Same-companion fallback only**
 - 白話契約：萬一新形態播不了，只能退回「同一隻夥伴」比較安全的樣子，絕對不能變成另一隻。
@@ -768,4 +768,4 @@
   3. 11 隻角色各抽一個負向案例：缺 sheet、缺 row、錯 action 名稱，全部 same-companion 或安全姿勢。
 - 失敗時應保持的狀態：錯誤角色資產零載入；canonical stage 不變。
 - 預計實作包：EVO-04（adapter）＋ EVO-05（renderer canary）。
-- 目前狀態：`partial`（EVO-04 adapter：11 隻負向案例與跨角色 manifest 都只能退回同一隻 Stage 1。尚未接 Pixi 載圖／canary）。
+- 目前狀態：`partial`（EVO-04 adapter：11 隻負向案例與跨角色 manifest 都只能退回同一隻 Stage 1。EVO-05 灰影貓 canary 再把同一條規則接到 load plan：外來檔名不得進入 metadata。尚未做瀏覽器載圖／decode 手動驗）。

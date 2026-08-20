@@ -2,6 +2,13 @@ import { WORLD_HEIGHT, WORLD_WIDTH } from "./pixiApp.js";
 import { ANIMATION_NAMES, CORE_ANIMATION_NAMES } from "../engine/interactionController.js";
 import { ASSET_MANIFEST, ILLUSTRATED_COMPANION_RUNTIME_POLICY } from "../data/assetManifest.js";
 import { getAnimationProfileForCreature, getMoodIdleAnimationName, resolveMoodIdleAnimationName } from "../engine/animationProfile.js";
+import { FORMAL_EVOLUTION_ANIMATION_INDEX_PATH } from "../engine/formalEvolutionCatalog.js";
+import {
+  CANARY_BOOT_ANIMATION_NAME,
+  prepareFormalEvolutionCanaryLoad,
+  recordCanaryLoadOutcome,
+  toRuntimeAssetUrl
+} from "../engine/formalEvolutionCanaryPlan.js";
 import { attachCompanionGroundShadow, syncCompanionGroundShadow } from "./companionFootAndShadow.js";
 
 export const GREYSHADE_CAT_ANIMATIONS_PATH = ASSET_MANIFEST.characters.greyshadeCat.animations;
@@ -39,6 +46,111 @@ export function getPixiAnimationSpeed(definition) {
 // loads through loadCompanionAnimationPack below.
 export function loadGreyshadeCatAnimationPack() {
   return loadCompanionAnimationPack(GREYSHADE_CAT_ANIMATIONS_PATH);
+}
+
+let formalAnimationIndexPromise = null;
+
+async function fetchRuntimeJson(url) {
+  const response = await fetch(url, { cache: "no-cache" });
+  if (!response.ok) throw new Error(`HTTP ${response.status}`);
+  return response.json();
+}
+
+export function loadFormalEvolutionAnimationIndex(fetchJson = fetchRuntimeJson) {
+  if (!formalAnimationIndexPromise) {
+    formalAnimationIndexPromise = fetchJson(toRuntimeAssetUrl(FORMAL_EVOLUTION_ANIMATION_INDEX_PATH))
+      .catch((error) => {
+        formalAnimationIndexPromise = null;
+        throw error;
+      });
+  }
+  return formalAnimationIndexPromise;
+}
+
+/**
+ * EVO-05 canary：只在灰影貓、且存檔已是下一階時，試載 R4 idle。
+ * 失敗回傳 usedFallback，呼叫端必須改走同一隻 Stage 1，且不得改 growth.stage。
+ */
+export async function loadFormalEvolutionCanaryPack({
+  companionId,
+  savedStage,
+  animationIndex = null,
+  fetchJson = fetchRuntimeJson,
+  bootOnly = true
+} = {}) {
+  void bootOnly;
+  const prepared = await prepareFormalEvolutionCanaryLoad({
+    companionId,
+    savedStage,
+    animationIndex,
+    fetchJson
+  });
+  if (!prepared.ok || !prepared.loadPlan?.metadata) {
+    return {
+      ...prepared,
+      pack: null
+    };
+  }
+
+  try {
+    const status = {
+      metadataLoaded: true,
+      available: {},
+      missing: [],
+      errors: [],
+      policyWarnings: ["evo05-canary-attempt"]
+    };
+    const animations = new Map();
+    await loadAnimationDefinition({
+      animations,
+      metadata: prepared.loadPlan.metadata,
+      status,
+      name: CANARY_BOOT_ANIMATION_NAME
+    }).catch(() => null);
+
+    if (!animations.has(CANARY_BOOT_ANIMATION_NAME)) {
+      return {
+        ...recordCanaryLoadOutcome({
+          companionId,
+          savedStage,
+          ok: false,
+          reason: "canary_idle_load_failed"
+        }),
+        pack: null,
+        plan: prepared.loadPlan,
+        loadPlan: prepared.loadPlan
+      };
+    }
+
+    return {
+      ...recordCanaryLoadOutcome({
+        companionId,
+        savedStage,
+        ok: true,
+        reason: "canary_presentation_ready"
+      }),
+      pack: {
+        animations,
+        metadata: prepared.loadPlan.metadata,
+        status
+      },
+      plan: prepared.loadPlan,
+      loadPlan: prepared.loadPlan
+    };
+  } catch (error) {
+    return {
+      ...recordCanaryLoadOutcome({
+        companionId,
+        savedStage,
+        ok: false,
+        reason: "canary_load_failed"
+      }),
+      pack: null,
+      plan: prepared.plan,
+      loadPlan: prepared.loadPlan,
+      error: String(error?.message || error)
+    };
+  }
 }
 
 export async function loadCompanionAnimationPack(

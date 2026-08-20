@@ -24,6 +24,7 @@ import { createRaphaelAgentIntent } from "./ai/raphaelAgentAdapter.js";
 import { replacePreferenceStore } from "./ai/companionPreferenceStore.js";
 import { applyRaphaelAgentReduction, reduceRaphaelAgentIntent } from "./engine/raphaelIntentReducer.js";
 import * as store from "./state/store.js";
+import { getCompanionCodexGrowthPresentation } from "./state/companionStateSchema.js";
 import {
   applyDevQueryHooks,
   applyDevResetHook,
@@ -117,6 +118,9 @@ import {
   updateCompanionMotion
 } from "./pixi/motionController.js";
 import { resolveAnimationIntent } from "./engine/animationProfile.js";
+import {
+  FORMAL_EVOLUTION_PRESENTATION_REFRESH_EVENT
+} from "./engine/formalEvolutionCanaryPlan.js";
 
 const ENVIRONMENT_INTERACTION_EVENT = "ENVIRONMENT_INTERACTION";
 const COMPANION_ANIMATION_INTENT_EVENT = "COMPANION_ANIMATION_INTENT";
@@ -124,6 +128,17 @@ const ENVIRONMENT_EFFECT_LIFETIME_MS = 720;
 const FISHING_LINE_COLOR = 0xd9f7ff;
 let currentCreature = FALLBACK_CREATURE;
 let companionMotionController = null;
+
+function readFormalEvolutionPresentation(creature) {
+  const projection = getCompanionCodexGrowthPresentation(
+    store.getState()?.companionStates,
+    creature?.id
+  );
+  return {
+    companionId: creature?.id || null,
+    stage: projection?.formalStage || "initial_awakened"
+  };
+}
 
 function renderActiveHabitatName(habitatId) {
   const habitat = getHabitatById(normalizeHabitatId(habitatId));
@@ -1027,7 +1042,10 @@ async function bootScene(
   };
   let companionPositionCleanup = null;
   let companionSwapVersion = 0;
-  let companion = await createCreatureNode(currentCreature, { onStatus: reportCompanionStatus });
+  let companion = await createCreatureNode(currentCreature, {
+    onStatus: reportCompanionStatus,
+    presentation: readFormalEvolutionPresentation(currentCreature)
+  });
 
   async function performCompanionTouch(touchType, handleTouch) {
     if (
@@ -1175,7 +1193,8 @@ async function bootScene(
     const nextCompanion = await createCreatureNode(nextCreature, {
       onStatus: (payload) => {
         if (swapVersion === companionSwapVersion) reportCompanionStatus(payload);
-      }
+      },
+      presentation: readFormalEvolutionPresentation(nextCreature)
     });
     if (
       swapVersion !== companionSwapVersion
@@ -1193,6 +1212,14 @@ async function bootScene(
     statusText.textContent = `${nextCreature.name}來到了你身邊。`;
     return true;
   }
+
+  EventBus.on(FORMAL_EVOLUTION_PRESENTATION_REFRESH_EVENT, (payload) => {
+    const activeId = store.getState().activeCompanionId;
+    if (!payload?.companionId || payload.companionId !== activeId) return;
+    const creature = getCompanionById(activeId) || currentCreature;
+    if (!creature) return;
+    void swapCompanion(creature);
+  });
 
   async function switchHabitat(habitatId) {
     const normalizedId = normalizeHabitatId(habitatId);
@@ -1349,6 +1376,36 @@ async function bootScene(
         store.setState({ activeCompanionId: next.id });
         return swapCompanion(next);
       },
+      // QA only：讓灰影貓在已完成首輪的棲地試播下一階。可能被後續存檔寫入，請用拋棄式存檔。
+      previewGreyshadeCanary: async (stageId) => {
+        if (stageId !== "resonant_mature" && stageId !== "final_awakened") {
+          return { ok: false, reason: "unsupported_stage" };
+        }
+        const state = store.getState();
+        const companionId = state.activeCompanionId;
+        if (companionId !== "greyshade-cat") {
+          return { ok: false, reason: "not_greyshade_canary" };
+        }
+        const record = state.companionStates?.byId?.[companionId];
+        if (!record?.growth) return { ok: false, reason: "missing_growth" };
+        const nextState = JSON.parse(JSON.stringify(state));
+        nextState.companionStates.byId[companionId].growth.stage = stageId;
+        store.replaceState(nextState);
+        const creature = getCompanionById(companionId) || currentCreature;
+        const swapped = await swapCompanion(creature);
+        return {
+          ok: swapped === true,
+          companionId,
+          stage: stageId,
+          presentation: companion?.__formalEvolutionPresentation || null,
+          growthStage: store.getState().companionStates?.byId?.[companionId]?.growth?.stage || null
+        };
+      },
+      inspectGreyshadeCanary: () => ({
+        companionId: store.getState().activeCompanionId || null,
+        growthStage: store.getState().companionStates?.byId?.[store.getState().activeCompanionId]?.growth?.stage || null,
+        presentation: companion?.__formalEvolutionPresentation || null
+      }),
       // QA：腳底基準（motion.base）對十字投影目標（__placementTarget）。
       getFootPlacement() {
         const target = companion?.__placementTarget || null;

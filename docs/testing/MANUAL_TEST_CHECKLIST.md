@@ -47,6 +47,15 @@ python -m http.server 5173
 - [ ] Active companion 使用 illustrated / high-resolution 呈現與 linear sampling；不得用 nearest-neighbor 當新品質標準。
 - [ ] Greyshade 既有 legacy accepted frame 可例外，但不可 fallback 成其他角色美術。
 - [ ] 角色腳底／bottom-center anchor 穩定，動畫切換時不滑動或跳位。
+
+### EVO-05 灰影貓 canary（不是完整換形）
+
+對照：`docs/qa/EVO_05_GREYSHADE_CANARY_MANUAL.md`。這不是 EVO-06，也不是 11 隻換形。
+
+- [ ] 灰影貓存檔已是下一階時，棲地試播同一隻新形態；失敗仍是灰影貓 Stage 1。
+- [ ] 不會變成金羽小梟或其他角色。
+- [ ] 兩個 runtime flags 仍為 `false`。
+
 - [ ] HUD 顯示 active companion 名稱、心情、能量、羈絆與信任，數值不得為 `NaN`。
 - [ ] 點擊 HUD 可開啟角色面板，X、背景與 Escape 均可關閉。
 - [ ] 設定面板可切換音訊、畫質、文字大小、低動態與語言，操作後不產生第二份設定存檔。

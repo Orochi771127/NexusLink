@@ -5,7 +5,84 @@
 > 權威順序仍是：Master Canon → `AGENTS.md`／`CLAUDE.md` → Growth Contract → `ACCEPTANCE.md` → Ledger → 本檔。
 > 若本檔與上位文件衝突，以上位文件為準，並追加 Ledger `CORRECTION`／`SUPERSEDED`，不得默默改 Canon。
 >
-> 最後更新：2026-08-15（EVO-04 catalog＋adapter；形態 renderer 未接）
+> 最後更新：2026-08-15（**停工交給 Codex**。HEAD=`a7958b0` EVO-04 已 commit；EVO-05／05.5 未提交。先讀 §0，再讀 Codebase MCP ADR。）
+
+---
+
+## 0. 現況快照（2026-08-15 Cursor Grok 停工；Codex 從這裡讀）
+
+**先讀這節。下面 §2～§14 有過期句子（例如「#215 仍 OPEN」「不要開 EVO-03」），那些是當時窗口的歷史，不是現在的指令。**
+
+| 項目 | 現值 |
+|---|---|
+| Worktree | `C:\Users\User\NexusLink_RaphaelAI_Workspace\NexusLink-grok-formal-evolution-runtime-r1` |
+| Branch | `codex/grok-formal-evolution-runtime-r1` |
+| HEAD | `a7958b0` `feat(growth): catalog formal evolution forms without live swap`（EVO-04） |
+| 未提交 | EVO-05 灰影貓棲地 canary ＋ EVO-05.5 自審加固。**Owner 未要求 commit／push。** |
+| Codebase MCP 專案名 | `C-Users-User-NexusLink_RaphaelAI_Workspace-NexusLink-grok-formal-evolution-runtime-r1` |
+| MCP 第一個動作 | `manage_adr(mode: get)`。ADR 才是這條 lane 的敘事 SSOT。`docs/` 在 moderate 索引時被排除。 |
+| 畫面 | **NOT VERIFIED**。Cursor 託管瀏覽器連不到本機 `localhost:5173`。 |
+
+### 誠實產品邊界（回報時必須照抄）
+
+- **EVO-03** = 邀請可存檔 ＋ candidate-first accept。**不是**換形 Runtime。
+- **EVO-04** = 11 隻 Stage 2／3 **目錄與對照**。`selectLiveAnimationAuthority` 一律回 `stage1-illustrated-runtime`。
+- **EVO-05** = 僅 `greyshade-cat` 棲地 **試播** R4 idle。失敗退回**同一隻** Stage 1。不改存檔 stage。不改 flags。
+- Care＋Exploration＋Reflection＋Chapter Stage 3 仍是 **sealed fixture proof**，不是 live Soul Talk Stage 3。
+- `evolutionLines.js` 不是正式 stage authority。
+- 灰影貓不得 fallback 到其他角色美術。
+- 兩支 flags 必須保持 `false`：`runtimeAuthority`、`runtimeFormSwapReady`。
+- **不要開始 EVO-06。不要一次開 11 隻。不要把金羽小梟當 canary（Owner Lock）。**
+
+### 已封存 commit（不要改寫歷史）
+
+1. `d572f40` EVO-00 契約／SOV
+2. `58cdb0a` EVO-01 Reflection verifier／consumer（sealed fixture，不是 live Stage 3）
+3. `6267967` EVO-02 純狀態機
+4. `478041e` EVO-02.5 roster／provenance 缺口
+5. `84e45b5` EVO-03 邀請 critical-save ＋ Growth UI
+6. `4c33dd4` **merge** PR #215 進本 branch（不是 cherry-pick）
+7. `a7958b0` EVO-04 catalog；live 仍 Stage 1
+
+### PR #215（已 MERGED，不要再當 OPEN）
+
+- URL：https://github.com/Orochi771127/NexusLink/pull/215
+- Merge：`3b9624e`；本 branch 經 `4c33dd4` 合入。
+- Codex 審查 P1 **未修**：能量見底可能把 caution／求助出口靜音。應**另開小修 PR**，不要塞進化包。
+- live Reflection owner 仍要另開 `memoryWriter` + `storageGuard` Groundwork。
+
+### 為什麼會提到「走路」（不是在做走路玩法）
+
+Stage 1 的 `animations.json` 是扁平名字：`idle_calm`、`left_walk`。R4 美術包是 4×4 大圖：idle／walk／attack／recovery。棲地舊程式仍可能呼叫 `left_walk`。Canary 只做**名字對照**，讓舊 motion 不會因為缺別名而亂抓圖。若對照失敗或 walk sheet 變成別隻身體，整包 canary 失敗，退回同一隻 Stage 1。**沒有改 `motionController.js`。玩家要驗的仍是：還是不是同一隻灰影貓的 idle。**
+
+### EVO-05／05.5 未提交檔
+
+新建：`src/engine/formalEvolutionCanaryPlan.js`、`docs/qa/evo-05-formal-evolution-canary-cases.mjs`、`docs/qa/EVO_05_GREYSHADE_CANARY_MANUAL.md`
+
+修改：`src/app.js`、`src/pixi/companionRenderer.js`、`src/pixi/spriteSheetAnimationLoader.js`、`src/ui/pageRouter.js`、`src/engine/formalEvolutionCatalog.js`（註解）、`ACCEPTANCE.md`、`docs/design/COMPANION_GROWTH_CONTRACT_V1.md`、`docs/testing/MANUAL_TEST_CHECKLIST.md`、`docs/agent/AI_EXECUTION_LEDGER.md`
+
+**沒動：** `pixiApp.js`、`assets/**`、flags、`index.html`、save schema、`motionController.js`。
+
+關鍵接線：
+
+- 階段投影用 `getCompanionCodexGrowthPresentation(...).formalStage`，**不要用** `revealStage`。
+- Canary 僅 `greyshade-cat` 且 canonical `growth.stage` 已是 `resonant_mature`／`final_awakened`。
+- 開場只載 R4 idle cardinal south 4 格，不是 176 張。
+- `commitFormalEvolutionTransition.rendererIntent` 仍是 null；refresh 在 `pageRouter` 且僅灰影貓 published accept。
+- 對峙 `standoffCircleRenderer.js` 仍走 Stage 1 pack。
+- QA helper `previewGreyshadeCanary` 會改記憶體 `growth.stage`，可能被自動存檔；必須拋棄式／無痕。
+
+### 驗證（Grok 最後一次）
+
+EVO-05 **15/15**（含 05.5）；EVO-04 10/10；EVO-03 9/9；EVO-02 15/15；EVO-01 9/9；G2 25/25；G3 engine 16/16。瀏覽器畫面 **NOT VERIFIED**。自審：**PASS WITH RISKS**。
+
+### Codex 安全下一步（順序不可跳）
+
+1. 在這個 worktree 讀 ADR：`manage_adr(mode: get)`。
+2. 讀 Ledger Lane 1 最新 `EVO-05.5 VERIFIED` 與本節。
+3. **等 Terence 用** `docs/qa/EVO_05_GREYSHADE_CANARY_MANUAL.md` 看畫面。不要自己宣稱 visual PASS。
+4. 只有 Terence 明確要求才本地 commit。建議訊息：`feat(growth): canary greyshade formal evolution presentation without live swap`
+5. 不要 EVO-06、不要改 flags、不要 push／PR／merge、不要開海馬或金羽小梟 canary。
 
 ---
 
@@ -216,7 +293,7 @@ Orbit／Expedition 不得成為 Growth 或 stage authority。
 
 ---
 
-## 8. PR #215／#216 潛在影響（本次重新驗證仍為未合併）
+## 8. PR #215／#216 潛在影響（**§0 已更新：#215 已 MERGED**。以下是 EVO-00 當時紀錄，勿當現況）
 
 查詢時間：2026-08-14 EVO-00 開工前 `gh pr view`。
 
@@ -271,7 +348,7 @@ EVO-00 可以在目前 `origin/main` 上做，因為本包只改文件。
    - `ACCEPTANCE.md` **SOV-01～SOV-12**
    - `docs/agent/AI_EXECUTION_LEDGER.md` 最新 Lane 1／Lane 3（以及 Lane 2 的唯讀資產確認）
    - 本檔
-5. **停住 EVO-03**。EVO-01 全過後可進 EVO-02 純邏輯。沒有新的 Groundwork 核准就不要開 EVO-03。
+5. **（過期）停住 EVO-03**。這是 EVO-00 窗口的指令。2026-08-15 現況：EVO-03／04 已 commit，EVO-05 未提交。改看 §0 與 §18。
 
 PNG 不進呼叫圖。資產正確性靠 git、manifest、既有 QC 文件、SHA／尺寸／格線；不要用 MCP 假裝驗證了 176 張圖。
 
@@ -365,3 +442,81 @@ SOV-01～SOV-06、SOV-08、SOV-09、SOV-11、SOV-12 不因本包變綠。正式�
 7. `docs/handoff/EVO_03_TO_05_GROUNDWORK_APPROVAL_PLAN.md`（停工核准計畫，未開始 Runtime）
 
 未改：store、saveManager、schema、index.html、Pixi、assets、flags。`formalOffer` 尚未進入持久 schema。
+
+> 歷史註記：上句是 EVO-02 停工當下的真相。EVO-03 之後 `formalOffer` 已進 schema 並可 critical-save。以 §0 與下列 §15～§18 為準。
+
+---
+
+## 15. EVO-03 實際改了哪些檔（已 commit `84e45b5`）
+
+目標：邀請可存檔；accept 採 candidate-first。**不是換形。**
+
+1. `src/state/companionStateSchema.js` — `formalOffer` 活過 `normalizeGrowth`
+2. `src/ui/companionGrowthController.js` — `commitFormalEvolutionTransition`：clone → decide → `saveCandidateState` → 成功才 `publishState`。存檔失敗 `formal_evolution_save_failed`，subscribers 看不到新 stage。`rendererIntent` 保持 null。
+3. `src/ui/pageRouter.js` — Growth UI 動態插入，**沒改** `index.html`
+4. `docs/qa/evo-03-formal-evolution-runtime-cases.mjs` — 9/9
+5. Growth Contract、ACCEPTANCE、Ledger、本檔
+
+未改：Pixi loader、assets、flags、`pixiApp.js`。
+
+---
+
+## 16. EVO-04 實際改了哪些檔（已 commit `a7958b0`）
+
+目標：11 隻 Stage 2／3 目錄對照。**live 動畫權威仍是 Stage 1。**
+
+1. `src/engine/formalEvolutionCatalog.js`（新建）
+   - 讀現有 `assets/characters/formal-evolution-index.json` 與 `formal-evolution-animation-r4.json`，**不改寫 assets**
+   - `selectLiveAnimationAuthority` 即使 flags 被偽造 true，也一律 `stage1-illustrated-runtime`／`formalSheetsSelected: false`
+   - `assetBelongsToCompanion` 拒絕灰影貓指向金羽小梟路徑
+   - `COMPANION_ALLOWED_RIGS` 防止鳥型套四足
+   - 缺圖／外來 sheet → `resolveSameCompanionFallback`
+2. `docs/qa/evo-04-formal-evolution-catalog-cases.mjs` — 10/10
+
+當時**沒有**把 catalog 接進 `animationProfile.js` live path（以免 Growth 引擎被 Pixi 拉進來）。EVO-05 後來經 canary plan 接到棲地 Pixi；不要再經 `animationProfile` 擴散。
+
+---
+
+## 17. EVO-05／05.5 實際改了哪些檔（**未提交**，疊在 `a7958b0`）
+
+目標：灰影貓棲地試播。不是 EVO-06，不是 11 隻換形。
+
+新建：
+
+- `src/engine/formalEvolutionCanaryPlan.js`
+  - 啟用 ID **只有** `greyshade-cat`
+  - `planFormalEvolutionCanaryAttempt`、`prepareFormalEvolutionCanaryLoad({ fetchJson })`、`stampCanaryFallbackPresentation`
+  - 外來 walk sheet 讓**整包** canary 失敗（05.5），避免身體混種
+- `docs/qa/evo-05-formal-evolution-canary-cases.mjs` — 15/15
+- `docs/qa/EVO_05_GREYSHADE_CANARY_MANUAL.md`
+
+修改：
+
+- `src/app.js` — 把 `formalStage` 投影進 `createCreatureNode`；聽 `FORMAL_EVOLUTION_PRESENTATION_REFRESH`；QA：`previewGreyshadeCanary`／`inspectGreyshadeCanary`
+- `src/pixi/companionRenderer.js` — 試 canary，失敗同角色 Stage 1，並 stamp retryable
+- `src/pixi/spriteSheetAnimationLoader.js` — 載 R4 idle 4 格；不可把 4×4 sheet 硬塞進 Stage 1 flat loader
+- `src/ui/pageRouter.js` — 僅灰影貓 **published** accept 後 refresh
+- `src/engine/formalEvolutionCatalog.js` — 註解：實際 canary 是灰影貓
+- ACCEPTANCE SOV-08／09／11／12 標 partial、Growth Contract、手動清單、Ledger
+
+沒動：`pixiApp.js`、`assets/**`、flags、`index.html`、save schema、`motionController.js`。
+
+對峙仍 Stage 1。畫面 NOT VERIFIED。
+
+---
+
+## 18. Codex 用 Codebase MCP 接手（取代 §9 過期步驟）
+
+`docs/` 在 moderate 索引時被排除。`search_code` 目前可能找不到未提交的 `formalEvolutionCanaryPlan.js`／甚至已 commit 的 `formalEvolutionCatalog.js`。**不要只靠圖譜當施工現況。**
+
+必做：
+
+1. 確認 worktree 就是這條路徑，不要索引平常 dirty checkout。
+2. `manage_adr({ project: "C-Users-User-NexusLink_RaphaelAI_Workspace-NexusLink-grok-formal-evolution-runtime-r1", mode: "get" })`
+3. 讀本檔 §0 與 Ledger Lane 1 最新 EVO-05.5。
+4. 直接 Read 檔案：`src/engine/formalEvolutionCanaryPlan.js`、`src/engine/formalEvolutionCatalog.js`、`src/engine/companionFormalEvolutionTransitionEngine.js`。
+5. 圖譜目前較穩的符號：`decideFormalEvolutionTransition`、`createFormalEvolutionOfferToken`（在 `companionFormalEvolutionTransitionEngine.js`）。
+6. `ingest_traces` 已寫入 3 條敘事 trace，但伺服器回 `Runtime edge creation from traces not yet implemented`，**不會長出呼叫邊**。
+7. 不要對 PNG 建呼叫圖。不要把 visual 寫成 PASS。
+
+禁止：EVO-06、改 flags、commit／push（除非 Terence 明文要求）、開金羽小梟／海馬 canary、把 #215 P1 塞進進化包。

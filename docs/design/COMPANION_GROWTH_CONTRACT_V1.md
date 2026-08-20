@@ -36,10 +36,10 @@
 | Growth G1／G2／G3／G3.1 | **已實作**。per-companion 狀態、evidence foundation、readiness／willingness、care source owner 已接入。 |
 | Reflection production provenance | **verifier／consumer 與 fixture path 已完成；production source creation／save roundtrip 尚未完成。** `createOwnedSafeReflectionSource` 必須明示完整 `safetyFacts` 與 `companionId`，禁止用空物件合成 complete safe provenance，也禁止用 `state`／`activeCompanionId` 推測。`writeReflectionPracticeIntoDraft` 可消費已封存來源。`memoryWriter.js` 尚未寫 owner／sealed safety；`storageGuard` 仍會剝掉這些欄位。這需要另開 Groundwork（且與 PR #215 重疊）。 |
 | 第三階段不對峙路徑 | **sealed fixture 已證明** Care + Exploration + Reflection + Chapter 可達 Stage 3 readiness。不得宣稱 live Soul Talk Reflection 已有完整 Stage 3 production path，也不得把此條讀成 Growth G4 已完成。 |
-| Growth G4 offer／rewrite／defer／accept／stage advance | **EVO-03 邀請可存檔；EVO-04 catalog 可查出 11 隻 Stage 2／3 路徑。形態 renderer 未接。** accept 先存檔，成功才發布可見 stage。catalog／adapter 在 flags 為 false 時不得選 R4 當 live 身體。不得宣稱完整覺醒玩法或 live Reflection Stage 3 已完成。 |
+| Growth G4 offer／rewrite／defer／accept／stage advance | **EVO-03 邀請可存檔；EVO-04 catalog 可查出 11 隻 Stage 2／3 路徑。EVO-05 僅灰影貓 canary 試播，不是完整換形 Runtime。** accept 先存檔，成功才發布可見 stage。catalog／adapter／canary 在 flags 為 false 時不得選 R4 當 live 身體。不得宣稱完整覺醒玩法或 live Reflection Stage 3 已完成。 |
 | 11 隻角色 × 22 個進化形態資產 | **美術包已完成，仍是 art-only**。索引：`assets/characters/formal-evolution-index.json`、`assets/characters/formal-evolution-animation-r4.json`。176 張 2048×2048 sheet、2816 格。 |
 | `runtimeAuthority` / `runtimeFormSwapReady` | **兩者皆為 `false`**。EVO-00～EVO-05 不得把它們改成 `true`。 |
-| save／store／registry／Pixi／renderer | **save／schema 已接邀請；catalog 已存在但仍非 live。** Pixi／loader 尚未用 Stage 2／3。現行 live fallback 仍是 Stage 1 illustrated runtime。 |
+| save／store／registry／Pixi／renderer | **save／schema 已接邀請；catalog 已存在；EVO-05 僅灰影貓 canary 試播。** live 權威仍是 Stage 1 illustrated runtime。失敗退回同一隻 Stage 1，不回寫 stage。 |
 | `evolutionLines.js` | **compatibility data only**。`bondThreshold` 與舊五階標籤不得成為 11 隻正式角色的 stage catalog authority。 |
 | `codexController` 讀指定 companion 的 formal stage／legacy display floor | 已隔離；inactive archive 有明示，top-level bond 不會解鎖另一隻夥伴 |
 | `companionStates.byId` 保存 relationship／growth；頂層欄位是 active mirror | G2 已接入；A→B→A 原子封存／hydrate，未知 id fail closed，仍只用主存檔 key |
@@ -165,7 +165,7 @@ Willingness 另外檢查（G3 已固定 typed enum／profile gate 並納入 muta
 
 ### 5.3 Candidate-first / commit-late（Growth G4 accept；EVO-03 已接 critical-save）
 
-這是 SOV-08 的契約時序。G3.1 care writer 與 EVO-03 formal accept 都走同一條：先存檔，成功才發布。**形態 renderer 仍未接線**，不得把本節寫成完整覺醒 Runtime 已完成。
+這是 SOV-08 的契約時序。G3.1 care writer 與 EVO-03 formal accept 都走同一條：先存檔，成功才發布。**EVO-05 只讓灰影貓在已發布的下一階上試播新形態**；flags 仍為 false，不得把本節寫成完整覺醒 Runtime 或 11 隻 promotion 已完成。
 
 1. 讀取 immutable current state。不得在這一步改 `growth.stage`。
 2. 由純函式建立**獨立** candidate state。candidate 與 canonical 不得共享可變參照。
@@ -431,9 +431,9 @@ projectOrbitEmbodimentProfile({
 | G3.1 | EXPERIENCE | Heart Phase completion 成為 care source owner；夥伴改寫需第二次明示接受 | ✅ candidate-first critical save、canonical result validation、A/B owner guard、全域 safety session invalidation、root／anchor dedupe 已接入；零 relationship／reward mutation |
 | G3.2 | EXPERIENCE | Reflection／Echo Sorting source owner + 不依賴 standoff 的獨立章節生活事件 | **partial（EVO-01）**：provenance verifier／consumer 與 sealed fixture path 已完成；production source creation／save roundtrip 尚未完成。不開始 Growth G4 Runtime |
 | Orbit D0 | Docs | 已擁有 formal stage 可投影為 normalized Orbit sidegrade；心相展開不得戰中升階 | O12–O17 + N2／N5／N7／N11 的文件一致性；不改 runtime／schema／assets |
-| **Growth G4** | EXPERIENCE | 夥伴主動 stage offer、rewrite、defer、accept、exact-next-stage、idempotent advance | **partial（EVO-03＋EVO-04）**：邀請可存檔；catalog 可查出 11 隻 Stage 2／3 路徑與動作家族。renderer 未接，flags 仍為 false |
-| G5 art-only | ART | 11 隻 × 22 形態 Sprite Sheet 已完成機械 QC | **美術完成、Runtime 未接線**。`runtimeAuthority=false`、`runtimeFormSwapReady=false`。這不是 renderer promotion |
-| G5 runtime | GROUNDWORK + RENDERER | catalog adapter、Pixi stage-aware loader、canary、promotion | **partial（EVO-04 catalog only）**。目錄／同角色 fallback／flags 守衛已有純函式。Pixi loader／canary 仍是 EVO-05。不得把 R4 當 live authority。 |
+| **Growth G4** | EXPERIENCE | 夥伴主動 stage offer、rewrite、defer、accept、exact-next-stage、idempotent advance | **partial（EVO-03＋EVO-04＋EVO-05 canary）**：邀請可存檔；catalog 可查出 11 隻 Stage 2／3 路徑。灰影貓可試播，flags 仍為 false，不是完整換形 |
+| G5 art-only | ART | 11 隻 × 22 形態 Sprite Sheet 已完成機械 QC | **美術完成、Runtime 未 promotion**。`runtimeAuthority=false`、`runtimeFormSwapReady=false`。這不是 renderer promotion |
+| G5 runtime | GROUNDWORK + RENDERER | catalog adapter、Pixi stage-aware loader、canary、promotion | **partial（EVO-04 catalog ＋ EVO-05 灰影貓 canary）**。失敗同角色 Stage 1 fallback。不得把 R4 當 live authority。金羽小梟／海馬尚未核准。EVO-06 才討論 promotion。 |
 
 G1 不得偷偷建立 localStorage 欄位；G2 只完成每隻夥伴的狀態地基；G3／G3.1 只完成 evidence/readiness/willingness 與 care source，不得把它宣稱為完整正式覺醒玩法已上線。**Growth G4 開工前必須先證明 readiness 有不依賴 standoff 的產品路徑**（EVO-01）。11 隻進化資產存在，不構成 Growth G4 或 renderer 已完成。
 
@@ -498,7 +498,7 @@ Companion Growth 只有在以下條件同時成立時，才能稱為 runtime-com
 | **EVO-02** | 純狀態機：offer／rewrite／defer／accept／exact-next-stage／idempotency | `companionFormalEvolutionTransitionEngine.js`；禁止碰 DOM／Pixi／save。`formalOffer` 尚未進入 schema | SOV-01～SOV-07 |
 | **EVO-03** | UI + critical-save；存檔成功才發布可見 stage | `companionStateSchema.js` 持久化 `formalOffer`；`companionGrowthController.js`／Growth UI；沿用既有 `saveCandidateState`。未改 `storageGuard.js`／Pixi／flags | SOV-03、SOV-05、SOV-08 |
 | **EVO-04** | 正式 catalog 與 Sprite Sheet manifest adapter | 新 catalog module；**不得**讓 `evolutionLines.js` 成為 authority；stage-aware／row-aware adapter | SOV-04、SOV-12 |
-| **EVO-05** | Renderer canary（建議 `greyshade-cat`／`auriowl`／`crystalfin-seahorse`，人類可改） | `spriteSheetAnimationLoader.js`、Pixi；同角色 fallback | SOV-09、SOV-12 |
+| **EVO-05** | Renderer canary（本包只開 `greyshade-cat`；`auriowl` Owner Lock 排除） | `formalEvolutionCanaryPlan.js`、`spriteSheetAnimationLoader.js`、`companionRenderer.js`；同角色 fallback；不改 flags／`pixiApp.js`／assets | SOV-09、SOV-12 |
 | **EVO-06** | 完整 QA 與 promotion 決策 | 旗標改 `true` 必須獨立 Owner／Groundwork，不可藏在別包 | SOV-11 與回歸 N／H／I／Art G |
 
 **PR 漂移**：EVO-01 開工前必須重新 fetch `origin/main`，重查 [PR #215](https://github.com/Orochi771127/NexusLink/pull/215)（會改 `defaultState.js`／`store.js`／memory／energy／boundary）與 [PR #216](https://github.com/Orochi771127/NexusLink/pull/216)（會改 `AGENTS.md`）。不得把 EVO-00 的舊基準直接當成 EVO-01 的永久基準。
