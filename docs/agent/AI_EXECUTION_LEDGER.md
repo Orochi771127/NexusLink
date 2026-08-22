@@ -10241,3 +10241,68 @@ HMAX promotion gates remain `staging_candidate` / `not_run` / `not_deployed` /
   `codex/championship-domain-r1` or implement the executable research slice
   until the next explicit Owner Gate authorizes it.
 - Branch / commit: `codex/championship-r1-owner-gate` / this publication commit.
+
+### 2026-08-23 - Codex Multi-Agent V2 - Championship Web Parity R2 Checkpoint 1 - VERIFIED LOCAL CANDIDATE
+
+- Status: `VERIFIED LOCAL CANDIDATE`; this checkpoint implements bounded R2
+  architecture, Field Kernel, lazy mode lifecycle, and one project-native,
+  session-only Raising Home gameplay slice. It does not pass R2-A or R2-B and
+  is not a complete ROM-parity or complete-game claim.
+- Lane: `Game Engineering, Presentation, QA, Research, Architecture, And Governance`.
+- Task name: `CHAMPIONSHIP_WEB_PARITY_R2_CHECKPOINT_1`.
+- Multi-agent execution: Field Kernel, mode lifecycle, canonical architecture,
+  and independent integration/browser/security QA were separated across
+  bounded agents. The final independent review reached `P0=0`, `P1=0`, and
+  `P2=0` after registry, accessibility, lifecycle, privacy, input, and history
+  findings were repaired and rechecked.
+- Runtime result: immutable CM/HM/BM field definitions and sanitized count-only
+  inventories preserve 40 CM, 30 HM, and 12 physical BM records. HM remains
+  exactly 128x128 and only OOB/DATR-bit-0 blocking executes. Other HM bits and
+  all CM/BM source collision semantics remain unknown. The 12-physical versus
+  11-addressable BM conflict remains explicitly blocked.
+- Mode result: 22 lazy project-native lifecycle shells are registered. The
+  network family is gate-disabled and the verified stub is non-routable, even
+  through hostile raw-registry injection: the router rejects both reserved
+  families before registry lookup, load, or shell entry. Router events are
+  bounded to 128 and the session command budget to 256 while
+  duplicate/revision checks remain active.
+- Raising result: one authored 24x14 CM Raising Home provides deterministic
+  one-tile movement, resident selection, invitation/refusal, spatial care,
+  training/refusal, rest, pause, condition meters, accessible position/distance
+  guidance, and project-native Pixi vector presentation. Runtime commands use
+  strict command IDs and expected revisions; event history is bounded to 48
+  while sequence IDs remain session-monotonic. Observer failures are isolated
+  from accepted domain transitions and recorded only as bounded diagnostics.
+- Lifecycle and authority: the standalone route is default-off, DOM-authoritative,
+  Pixi-optional, and zero-write. Production save, store, navigation, cloud,
+  network, relationship state, Standoff, Orbit, RaphaelCore, assets, scripts,
+  tools, and the production Pixi composition root remain unchanged. The browser
+  global exposes only read-only inspection, presentation diagnostics, and
+  disposal. Early pagehide, context loss, partial Pixi construction failure,
+  return-from-placeholder, and repeated disposal fail safely.
+- Network evidence: gameplay/backend Storage, fetch, XHR, IndexedDB, and beacon
+  calls remain zero. The enabled Pixi path makes exactly one allowlisted,
+  SRI-pinned static script request; this is presentation asset egress, not a
+  zero-total-network-request claim or backend authority.
+- Validation: R2 Node QA passed `52/52`; official Chromium QA passed `54/54`;
+  the independent canonical viewport matrix passed `7/7`; Node syntax passed
+  for all R2 JavaScript modules; context-loss and post-application presenter
+  failure injection passed; raw-registry reserved-family bypass, throwing
+  observers, ring-buffer sequence rollover, hostile-command, private-path,
+  trailing-whitespace, reparse-point, forbidden-binary, and standalone 64-hex
+  leakage scans passed. Applicable R1 Node regression cases passed `33/33`,
+  and the accepted R1 Chromium gate remained `66/66`. The obsolete R1-only
+  new-file path assertion is not an R2 scope gate.
+- Performance boundary: synchronous Pixi presentation workload remained below
+  the 16.67 ms budget in headless Chromium. Headless rAF pacing was about
+  33.3 ms and is correctly recorded as `INCONCLUSIVE_HEADLESS_LIMITED`, not as
+  proof of release-device 60 fps.
+- Remaining gates: complete 216x40 structural animation registry, full CM
+  definitions, HM Hunt/collection, resolution of the BM blocker, Arena/Battle,
+  the remaining page families, versioned in-memory then separately authorized
+  production save, production navigation, human IP/art/accessibility review,
+  physical-device performance, and any network/backend integration.
+- Publication boundary: this entry accompanies the local checkpoint commit. No
+  push, PR, merge, deployment, or remote-main update is authorized by it.
+- Branch / comparison base: `codex/championship-web-parity-r2` /
+  `3264be80f76547fd05ef8dd622e94700fdb2206b`.
