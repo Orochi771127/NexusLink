@@ -75,7 +75,7 @@ test("synthetic schema capacity validates exact accepted forensic scales", () =>
   }
 });
 
-test("duplicates, broken references, forbidden fields, and version drift fail closed", () => {
+test("duplicates, broken references, forbidden fields, accessors, and version drift fail closed", () => {
   const duplicate = structuredClone(fixture);
   duplicate.entities.push(structuredClone(duplicate.entities[0]));
   assert.equal(validateChampionshipCatalog(duplicate).valid, false);
@@ -107,6 +107,30 @@ test("duplicates, broken references, forbidden fields, and version drift fail cl
   const future = structuredClone(fixture);
   future.schemaVersion = 2;
   assert.equal(validateChampionshipCatalog(future).valid, false);
+
+  let bundleReads = 0;
+  const accessorBundle = structuredClone(fixture);
+  Object.defineProperty(accessorBundle, "schemaVersion", {
+    enumerable: true,
+    get() {
+      bundleReads += 1;
+      return 1;
+    }
+  });
+  assert.equal(validateChampionshipCatalog(accessorBundle).valid, false);
+  assert.equal(bundleReads, 0, "validator must reject an accessor without invoking or rereading it");
+
+  const hostileProxy = new Proxy({}, { getPrototypeOf() { throw null; } });
+  let hostileResult;
+  assert.doesNotThrow(() => { hostileResult = validateChampionshipCatalog(hostileProxy); });
+  assert.equal(hostileResult.valid, false);
+
+  const revocable = Proxy.revocable({}, {});
+  revocable.revoke();
+  let revokedResult;
+  assert.doesNotThrow(() => { revokedResult = validateChampionshipCatalog(revocable.proxy); });
+  assert.equal(revokedResult.valid, false);
+  assert.equal(validateChampionshipCatalog(fixture, null).valid, false);
 });
 
 test("every schema-required record field and runtime rule array fails closed when omitted", () => {
@@ -140,6 +164,31 @@ test("catalog envelope digest mismatch and duplicate animation slots fail closed
   const synthetic = createSyntheticScaleCatalog(fixture);
   synthetic.regularMainAnimationSlots[39].rawSlot = 0;
   assert.equal(validateChampionshipCatalog(synthetic, { requireScale: true }).valid, false);
+
+  let envelopeReads = 0;
+  const accessorEnvelope = structuredClone(envelope);
+  Object.defineProperty(accessorEnvelope, "schemaVersion", {
+    enumerable: true,
+    get() {
+      envelopeReads += 1;
+      return 1;
+    }
+  });
+  assert.equal(validateChampionshipCatalogEnvelope(accessorEnvelope).valid, false);
+  assert.equal(envelopeReads, 0, "envelope validator must reject an accessor without invoking or rereading it");
+
+  let optionReads = 0;
+  const accessorOptions = {};
+  Object.defineProperty(accessorOptions, "computedRecordsDigestSha256", {
+    enumerable: true,
+    get() {
+      optionReads += 1;
+      return envelope.recordsDigestSha256;
+    }
+  });
+  assert.equal(validateChampionshipCatalogEnvelope(envelope, accessorOptions).valid, false);
+  assert.equal(optionReads, 0, "validator options must also remain plain data");
+  assert.equal(validateChampionshipCatalogEnvelope(envelope, null).valid, false);
 });
 
 test("canonical serialization is key-order stable and rejects non-finite data", () => {

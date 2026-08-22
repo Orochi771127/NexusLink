@@ -63,14 +63,16 @@ function requireReference(ids, value, label, errors) {
 
 export function validateChampionshipCatalog(bundle, options = {}) {
   const errors = [];
-  if (!bundle || typeof bundle !== "object" || Array.isArray(bundle)) {
-    return { valid: false, errors: ["Catalog bundle must be an object"], digest: null };
-  }
   try {
-    clonePlainData(bundle);
+    if (!bundle || typeof bundle !== "object" || Array.isArray(bundle)) {
+      return { valid: false, errors: ["Catalog bundle must be an object"], digest: null };
+    }
+    bundle = clonePlainData(bundle);
+    options = clonePlainData(options);
+    if (!options || typeof options !== "object" || Array.isArray(options)) throw new TypeError("Catalog validator options must be an object");
     assertPublicCatalogShape(bundle);
-  } catch (error) {
-    errors.push(error.message);
+  } catch {
+    return { valid: false, errors: ["Catalog bundle contains unsafe or invalid plain data"], digest: null };
   }
   const allowedBundleKeys = new Set([
     "schemaVersion", "rulesetId", "authority", "forensicCatalogExpectations",
@@ -194,13 +196,15 @@ export function validateChampionshipCatalog(bundle, options = {}) {
 export function validateChampionshipCatalogEnvelope(envelope, options = {}) {
   const errors = [];
   try {
-    clonePlainData(envelope);
+    if (!envelope || typeof envelope !== "object" || Array.isArray(envelope)) {
+      return { valid: false, errors: ["Catalog envelope must be an object"] };
+    }
+    envelope = clonePlainData(envelope);
+    options = clonePlainData(options);
+    if (!options || typeof options !== "object" || Array.isArray(options)) throw new TypeError("Catalog envelope validator options must be an object");
     assertPublicCatalogShape(envelope);
-  } catch (error) {
-    errors.push(error.message);
-  }
-  if (!envelope || typeof envelope !== "object" || Array.isArray(envelope)) {
-    return { valid: false, errors: ["Catalog envelope must be an object"] };
+  } catch {
+    return { valid: false, errors: ["Catalog envelope contains unsafe or invalid plain data"] };
   }
   const allowed = new Set(["schemaVersion", "catalogKind", "authority", "generatorVersion", "expectedForensicRecordCount", "recordStrideBytes", "recordsDigestSha256", "records"]);
   for (const key of Object.keys(envelope)) if (!allowed.has(key)) errors.push(`Unsupported catalog envelope field: ${key}`);

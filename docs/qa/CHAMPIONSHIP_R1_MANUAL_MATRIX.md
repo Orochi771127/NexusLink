@@ -152,7 +152,7 @@ Manual screenshot review found and repaired two issues that the initial automati
 
 The final screenshots were re-reviewed after both repairs.
 
-Security self-review found and repaired six candidate-blocking defects before commit:
+Security self-review found and repaired six candidate-blocking defects before the first candidate commit:
 
 1. the dynamic Pixi loader lacked SRI and trusted an arbitrary pre-existing global;
 2. the Owner Gate change-manifest test ignored staged and committed changes;
@@ -161,7 +161,9 @@ Security self-review found and repaired six candidate-blocking defects before co
 5. private-path rejection did not cover forward-slash drives, UNC, `file:` URLs, or POSIX absolute paths;
 6. accepted command IDs and event history had no disposable-session bound, while held input could repeat movement.
 
-Each repair has a deterministic negative vector. The final independent Agent G review remains mandatory on the exact committed candidate.
+The first independent Agent G review then rejected candidate `a83ce740` because the two exported catalog validators caught an accessor rejection but continued reading the original hostile input. The validators now replace their inputs and options with plain-data clones, return immediately on clone/shape failure, and cover one-shot accessors plus a non-Error hostile-proxy failure. The rejected SHA is not a delivery candidate.
+
+Each repair has a deterministic negative vector. The final independent Agent G review remains mandatory on the replacement exact committed candidate.
 
 Repository web release gate:
 
