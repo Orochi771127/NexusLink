@@ -10306,3 +10306,51 @@ HMAX promotion gates remain `staging_candidate` / `not_run` / `not_deployed` /
   push, PR, merge, deployment, or remote-main update is authorized by it.
 - Branch / comparison base: `codex/championship-web-parity-r2` /
   `3264be80f76547fd05ef8dd622e94700fdb2206b`.
+
+### 2026-08-23 - Codex Multi-Agent V2 - Championship Web Parity R2-A - VERIFIED LOCAL PASS
+
+- Status: `VERIFIED LOCAL PASS`; Gate R2-A now has the strict common field
+  schema; sanitized 40 CM, 30 HM, 12 physical BM, 22 page-family, and 216 by 40
+  animation structural registries; per-record evidence grades; hostile boundary
+  tests; and an explicit BM blocker. This remains a local data/schema milestone,
+  not a complete-game or source-animation parity claim.
+- Lane: `Game Engineering, Data Contracts, Evidence, Security, And QA`.
+- Task name: `CHAMPIONSHIP_WEB_PARITY_R2_A_ANIMATION_REGISTRY`.
+- Runtime result: 216 deterministic project-local resource ordinals each expose
+  exactly 40 structural slot records, producing 8,640 unique associations. Every
+  association remains `mappingStatus:UNKNOWN`, `projectClipId:null`,
+  `executable:false`, and `originalContentIncluded:false`.
+- Identity boundary: IDs `nexus:championship:r2:regular-resource:001..216` are
+  sanitized project ordinals only. They do not claim source filenames, ROM
+  identities, playable roster membership, lifecycle forms, eligibility,
+  ownership, or asset mappings.
+- Evidence boundary: R2 records use `VERIFIED_STRUCTURE_ONLY`; the accepted
+  sanitized source finding remains `ANIM-R1-STRUCT-001` with
+  `sourceFindingStatus:VERIFIED_BINARY`. Its parity scope is only resource count
+  and slot cardinality. Slot names, animation meanings, frames, timing,
+  mirroring, layers, offsets, events, fallbacks, and behavior remain unknown.
+- Security result: independent adversarial review reached `P0=0`, `P1=0`, and
+  `P2=0` after repairing evidence-grade conflation and array-index accessor
+  execution. Resource, slot, and evidence index getters are rejected with zero
+  getter reads; a one-million-element array stops at the bounded length gate;
+  throwing, revoked, and transparent Proxies return the generic frozen invalid
+  result. JavaScript's portable Proxy reflection limitation remains documented
+  and is not treated as an external-input security guarantee.
+- Validation: the animation registry gate passed `12/12`; the complete R2 Node
+  matrix passed `64/64`; `git diff --check`, syntax, static isolation, path,
+  digest, payload, authority, and repository-pollution checks passed. No browser
+  gameplay or renderer behavior changed in R2-A, so this data-only gate does not
+  claim new visual or physical-device proof.
+- Integration boundary: no renderer, Pixi, DOM, runtime session, asset, save,
+  storage, network, production navigation, RaphaelCore, Standoff, or Orbit
+  integration was added. BM remains blocked by the 12-physical-versus-11-
+  addressable conflict.
+- Remaining gates: R2-B versioned in-memory save, migration/conflict/failure
+  recovery and remount proof; complete CM definitions; R2-C HM Hunt/collection;
+  Arena/Battle; remaining page families; separately authorized production save
+  and navigation; human IP/art/accessibility review; device performance; and
+  any network/backend integration.
+- Publication boundary: local commit only. No push, PR, merge, deployment, or
+  remote-main update is authorized by this entry.
+- Branch / comparison base: `codex/championship-web-parity-r2` /
+  `b3f5a5099420fc7f2a5df5089a246601a6d69599`.
