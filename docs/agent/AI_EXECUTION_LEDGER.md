@@ -10198,3 +10198,46 @@ HMAX promotion gates remain `staging_candidate` / `not_run` / `not_deployed` /
   push the current branch, open a PR to protected `main`, merge after required
   checks pass, verify remote `main`, then refresh the Codebase MCP graph.
 - Branch / commit: `codex/auriowl-wargle-evolution-pilot-r1` / `uncommitted`.
+
+### 2026-08-22 - Codex - YDIJ Championship R1 Owner Gate Planning Package - VERIFIED PRE-COMMIT
+
+- Status: `VERIFIED PRE-COMMIT`; Phase 0 was accepted by the Owner, and the
+  nine-document next-gate package has completed independent baseline,
+  reverse/schema, architecture, presentation and QA review with `P0=0`,
+  `P1=0`, `P2=0`. Phase 1 implementation has not started.
+- Lane: `Research, Architecture, And Governance`.
+- Task name: `YDIJ_CHAMPIONSHIP_R1_OWNER_GATE_PLANNING_PACKAGE`.
+- Layer: documentation and evidence planning only. The package records the
+  current-main baseline, separately disposes the four commits ahead of the old
+  audited feature checkout, defines the bounded Championship research domain,
+  proposes scalable project-native schemas, assigns non-overlapping Agent A-G
+  workpacks, and lists the exact proposed Phase 1 tree and GROUNDWORK impact.
+- Baseline: fetched `origin/main@3b9624e82b6a3a050d0f99a57c3c64ea2ceca810`;
+  the old `feature/2d5-ro-habitat-agent-skills` checkout is 57 commits behind
+  and four ahead. No ahead commit is a Championship dependency: one is exact
+  patch-equivalent upstream, one is functionally incorporated/superseded, and
+  two remain an ordered, separate Raphael bugfix pair.
+- Locked architecture: standalone, default-off, ES-module research slice;
+  memory-only deterministic session; read-only cloned/frozen Heartlake profile
+  projection; zero save, queue, cloud, root-store, relationship, Standoff,
+  Orbit or RaphaelCore mutation; production integration and persistence remain
+  unauthorized.
+- Evidence/IP boundary: only individually accepted verified rules may claim
+  original parity. `HIGH_CONFIDENCE` and `UNKNOWN_REQUIRES_TRACE` remain private
+  forensic evidence and cannot enter public executable rules. ROMs, ROM slices,
+  raw tables, original text/assets and private golden payloads are excluded
+  from the public repository; reverse outputs must live under an absolute
+  checkout-external `<PRIVATE_RE_ROOT>`.
+- Validation: current-main focused dialogue and storage suites passed (13/13
+  and 22/22). The documentation package passed exact-name/count, Markdown fence,
+  forbidden-path and source/destination SHA-256 checks. Three independent
+  read-only review lanes reached zero findings after repeated re-review.
+- Publication scope: nine Markdown files under
+  `docs/research/championship-r1/owner-gate-2026-08-22/` plus this append-only
+  ledger entry. No ROM, private Phase 0 bundle, baseline archive, downloaded
+  attachment, asset, runtime module, schema implementation, test implementation,
+  save file, bootstrap file or existing gameplay file is included.
+- Next gate: Owner review of this package. Do not create
+  `codex/championship-domain-r1` or implement the executable research slice
+  until the next explicit Owner Gate authorizes it.
+- Branch / commit: `codex/championship-r1-owner-gate` / this publication commit.
