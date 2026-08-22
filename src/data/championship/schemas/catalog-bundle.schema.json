@@ -1,0 +1,299 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nexuslink.local/schemas/championship/catalog-bundle.schema.json",
+  "title": "NexusLink Championship R1 catalog bundle",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion", "rulesetId", "authority", "forensicCatalogExpectations", "productScaleTargets", "initialSlice", "catalogDigests",
+    "entities", "actions", "gates", "cages", "shopRecords", "titleMatches",
+    "eligibilityRules", "teams", "battlePresets", "battleFields",
+    "regularMainAnimationSlots", "fixtureEconomy"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "rulesetId": { "const": "championship-research-r1" },
+    "authority": { "const": "NEXUS_PRODUCT" },
+    "forensicCatalogExpectations": { "$ref": "#/$defs/scaleExpectations" },
+    "productScaleTargets": { "$ref": "#/$defs/productScaleTargets" },
+    "initialSlice": { "$ref": "#/$defs/initialSlice" },
+    "catalogDigests": { "$ref": "#/$defs/catalogDigests" },
+    "entities": { "type": "array", "items": { "$ref": "#/$defs/entity" } },
+    "actions": { "type": "array", "items": { "$ref": "#/$defs/battleAction" } },
+    "gates": { "type": "array", "items": { "$ref": "#/$defs/gate" } },
+    "cages": { "type": "array", "items": { "$ref": "#/$defs/cage" } },
+    "shopRecords": { "type": "array", "items": { "$ref": "#/$defs/shopRecord" } },
+    "titleMatches": { "type": "array", "items": { "$ref": "#/$defs/titleMatch" } },
+    "eligibilityRules": { "type": "array", "items": { "$ref": "#/$defs/eligibilityRule" } },
+    "teams": { "type": "array", "items": { "$ref": "#/$defs/team" } },
+    "battlePresets": { "type": "array", "items": { "$ref": "#/$defs/battlePreset" } },
+    "battleFields": { "type": "array", "items": { "$ref": "#/$defs/battleField" } },
+    "regularMainAnimationSlots": {
+      "type": "array",
+      "maxItems": 40,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["rawSlot", "semanticStatus"],
+        "properties": {
+          "rawSlot": { "type": "integer", "minimum": 0, "maximum": 39 },
+          "semanticStatus": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "fixtureEconomy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source", "wallet"],
+      "properties": {
+        "source": { "const": "RESEARCH_FIXTURE" },
+        "wallet": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "syntheticTestOnly": { "type": "boolean" }
+  },
+  "$defs": {
+    "nexusId": { "type": "string", "pattern": "^nexus:[a-z0-9][a-z0-9:_-]+$" },
+    "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "catalogEnvelope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schemaVersion", "catalogKind", "authority", "generatorVersion", "expectedForensicRecordCount", "recordStrideBytes", "recordsDigestSha256", "records"],
+      "properties": {
+        "schemaVersion": { "const": 1 }, "catalogKind": { "$ref": "#/$defs/nexusId" }, "authority": { "const": "NEXUS_PRODUCT" },
+        "generatorVersion": { "type": "string", "minLength": 3 }, "expectedForensicRecordCount": { "type": ["integer", "null"], "minimum": 0 },
+        "recordStrideBytes": { "type": ["integer", "null"], "minimum": 1 }, "recordsDigestSha256": { "$ref": "#/$defs/sha256" },
+        "records": { "type": "array" }
+      }
+    },
+    "productScaleTargets": {
+      "type": "object", "additionalProperties": false, "required": ["minimumAddressableCapacity", "maximumRecords"],
+      "properties": {
+        "minimumAddressableCapacity": {
+          "type": "object", "additionalProperties": false,
+          "required": ["entities", "actions", "gates", "cages", "shopRecords", "titleMatches", "opponentTeams", "battlePresets"],
+          "properties": { "entities": { "const": 224 }, "actions": { "const": 596 }, "gates": { "const": 16 }, "cages": { "const": 40 }, "shopRecords": { "const": 118 }, "titleMatches": { "const": 62 }, "opponentTeams": { "const": 152 }, "battlePresets": { "const": 456 } }
+        },
+        "maximumRecords": { "type": "null" }
+      }
+    },
+    "initialSlice": {
+      "type": "object", "additionalProperties": false,
+      "required": ["creatureSpeciesIds", "huntGateIds", "shopRecordIds", "arenaMatchIds", "battleActionIds"],
+      "properties": {
+        "creatureSpeciesIds": { "type": "array", "minItems": 3, "maxItems": 3, "uniqueItems": true, "items": { "$ref": "#/$defs/nexusId" } },
+        "huntGateIds": { "type": "array", "minItems": 1, "maxItems": 1, "items": { "$ref": "#/$defs/nexusId" } },
+        "shopRecordIds": { "type": "array", "items": { "$ref": "#/$defs/nexusId" } },
+        "arenaMatchIds": { "type": "array", "minItems": 1, "maxItems": 1, "items": { "$ref": "#/$defs/nexusId" } },
+        "battleActionIds": { "type": "array", "minItems": 2, "maxItems": 3, "uniqueItems": true, "items": { "$ref": "#/$defs/nexusId" } }
+      }
+    },
+    "catalogDigests": {
+      "type": "object", "additionalProperties": false,
+      "required": ["entities", "actions", "gates", "cages", "shopRecords", "titleMatches", "eligibilityRules", "teams", "battlePresets", "battleFields"],
+      "properties": { "entities": { "$ref": "#/$defs/sha256" }, "actions": { "$ref": "#/$defs/sha256" }, "gates": { "$ref": "#/$defs/sha256" }, "cages": { "$ref": "#/$defs/sha256" }, "shopRecords": { "$ref": "#/$defs/sha256" }, "titleMatches": { "$ref": "#/$defs/sha256" }, "eligibilityRules": { "$ref": "#/$defs/sha256" }, "teams": { "$ref": "#/$defs/sha256" }, "battlePresets": { "$ref": "#/$defs/sha256" }, "battleFields": { "$ref": "#/$defs/sha256" } }
+    },
+    "scaleExpectations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["entities", "actions", "gates", "cages", "shopRecords", "titleMatches", "teams", "battlePresets", "eligibilityRules", "battleFields", "regularMainAnimationSlots"],
+      "properties": {
+        "entities": { "const": 224 }, "actions": { "const": 596 },
+        "gates": { "const": 16 }, "cages": { "const": 40 },
+        "shopRecords": { "const": 118 }, "titleMatches": { "const": 62 },
+        "teams": { "const": 152 }, "battlePresets": { "const": 456 },
+        "eligibilityRules": { "const": 45 }, "battleFields": { "const": 11 },
+        "regularMainAnimationSlots": { "const": 40 }
+      }
+    },
+    "evidenceRule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value", "ruleAuthority", "evidenceStatus", "executable", "originalParityClaim", "evidenceRefs"],
+      "properties": {
+        "value": { "$ref": "#/$defs/ruleValue" },
+        "ruleAuthority": { "enum": ["NEXUS_ADAPTATION", "VERIFIED_YDIJ_RULE"] },
+        "evidenceStatus": { "enum": ["NEXUS_RESEARCH_RULE", "VERIFIED_BINARY", "VERIFIED_CROSSCHECK"] },
+        "executable": { "type": "boolean" },
+        "originalParityClaim": { "type": "boolean" },
+        "evidenceRefs": { "type": "array", "items": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9:_-]{2,95}$" } }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "ruleAuthority": { "const": "NEXUS_ADAPTATION" } }, "required": ["ruleAuthority"] },
+          "then": {
+            "properties": {
+              "evidenceStatus": { "const": "NEXUS_RESEARCH_RULE" },
+              "executable": { "const": true },
+              "originalParityClaim": { "const": false }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "ruleAuthority": { "const": "VERIFIED_YDIJ_RULE" } }, "required": ["ruleAuthority"] },
+          "then": {
+            "properties": {
+              "evidenceStatus": { "enum": ["VERIFIED_BINARY", "VERIFIED_CROSSCHECK"] },
+              "originalParityClaim": { "const": true },
+              "evidenceRefs": { "minItems": 1 }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "executable": { "const": false } }, "required": ["executable"] },
+          "then": { "properties": { "value": { "type": "null" } } },
+          "else": { "properties": { "value": { "not": { "type": "null" } } } }
+        }
+      ]
+    },
+    "ruleValue": {
+      "oneOf": [
+        { "type": "object", "additionalProperties": false, "required": ["kind"], "properties": { "kind": { "enum": ["SINGLE_OPPONENT", "FIXED_TURN", "RESEARCH_OPEN", "SINGLE_RESEARCH_HABITAT", "PLAYER_SELECTION", "FIXED_ALTERNATING", "RESEARCH_HINTS", "NONE"] } } },
+        { "type": "object", "additionalProperties": false, "required": ["kind", "magnitude"], "properties": { "kind": { "const": "DAMAGE" }, "magnitude": { "type": "integer", "minimum": 0 } } },
+        { "type": "object", "additionalProperties": false, "required": ["kind", "amount"], "properties": { "kind": { "const": "HP" }, "amount": { "type": "integer", "minimum": 1 } } },
+        { "type": "object", "additionalProperties": false, "required": ["kind", "actionIds"], "properties": { "kind": { "const": "ACTION_LOADOUT" }, "actionIds": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/$defs/nexusId" } } } },
+        { "type": "object", "additionalProperties": false, "required": ["kind", "cellSize", "width", "height", "playerStart", "encounterPoint", "obstacles"], "properties": { "kind": { "const": "GRID_COLLISION" }, "cellSize": { "const": 1 }, "width": { "type": "integer", "minimum": 1 }, "height": { "type": "integer", "minimum": 1 }, "playerStart": { "$ref": "#/$defs/point" }, "encounterPoint": { "$ref": "#/$defs/point" }, "obstacles": { "type": "array", "items": { "$ref": "#/$defs/rect" } } } },
+        { "type": "object", "additionalProperties": false, "required": ["fieldId"], "properties": { "fieldId": { "$ref": "#/$defs/nexusId" } } },
+        { "type": "object", "additionalProperties": false, "required": ["ruleId"], "properties": { "ruleId": { "$ref": "#/$defs/nexusId" } } },
+        { "type": "object", "additionalProperties": false, "required": ["teamId"], "properties": { "teamId": { "$ref": "#/$defs/nexusId" } } },
+        { "type": "object", "additionalProperties": false, "required": ["available"], "properties": { "available": { "type": "boolean" } } },
+        { "type": "object", "additionalProperties": false, "required": ["count"], "properties": { "count": { "type": "integer", "minimum": 0 } } },
+        { "type": "object", "additionalProperties": false, "required": ["maximum"], "properties": { "maximum": { "type": "integer", "minimum": 0 } } },
+        { "type": "object", "additionalProperties": false, "required": ["amount"], "properties": { "amount": { "type": "integer", "minimum": 0 } } },
+        { "type": "object", "additionalProperties": false, "required": ["allowed"], "properties": { "allowed": { "type": "boolean" } } },
+        { "type": "object", "additionalProperties": false, "required": ["committable"], "properties": { "committable": { "const": false } } }
+      ]
+    },
+    "aggregateParity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "blockingFindingIds"],
+      "properties": {
+        "status": { "enum": ["RESEARCH_NON_PARITY", "VERIFIED_BEHAVIOR", "BLOCKED_UNKNOWN"] },
+        "blockingFindingIds": { "type": "array", "items": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9:_-]{2,95}$" } }
+      },
+      "allOf": [
+        { "if": { "properties": { "status": { "const": "BLOCKED_UNKNOWN" } } }, "then": { "properties": { "blockingFindingIds": { "minItems": 1 } } }, "else": { "properties": { "blockingFindingIds": { "maxItems": 0 } } } }
+      ]
+    },
+    "entity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["speciesId", "displayNameKey", "assetRef", "formKind", "huntProfileRef", "arenaFixtureRef", "sourceAuthority"],
+      "properties": {
+        "speciesId": { "$ref": "#/$defs/nexusId" },
+        "displayNameKey": { "type": "string", "minLength": 1 },
+        "displayName": { "type": "string", "minLength": 1 },
+        "assetRef": { "$ref": "#/$defs/nexusId" },
+        "formKind": { "type": "string", "minLength": 1 },
+        "huntProfileRef": { "type": ["string", "null"] },
+        "arenaFixtureRef": { "type": ["string", "null"] },
+        "sourceAuthority": { "const": "NEXUS_PRODUCT" }
+      }
+    },
+    "battleAction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["actionId", "displayNameKey", "targetRule", "timelineRules", "effectRules", "aggregateParity"],
+      "properties": {
+        "actionId": { "$ref": "#/$defs/nexusId" },
+        "displayNameKey": { "type": "string", "minLength": 1 },
+        "displayName": { "type": "string", "minLength": 1 },
+        "targetRule": { "$ref": "#/$defs/evidenceRule" },
+        "timelineRules": { "type": "array", "items": { "$ref": "#/$defs/evidenceRule" } },
+        "effectRules": { "type": "array", "items": { "$ref": "#/$defs/evidenceRule" } },
+        "aggregateParity": { "$ref": "#/$defs/aggregateParity" }
+      }
+    },
+    "gate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["gateId", "fieldDefinitionId", "displayNameKey", "ecologyTags", "presentationRef", "admissionRule", "fieldSelectionRule"],
+      "properties": {
+        "gateId": { "$ref": "#/$defs/nexusId" }, "fieldDefinitionId": { "$ref": "#/$defs/nexusId" },
+        "displayNameKey": { "type": "string" }, "displayName": { "type": "string" },
+        "ecologyTags": { "type": "array", "items": { "type": "string" } },
+        "presentationRef": { "$ref": "#/$defs/nexusId" },
+        "admissionRule": { "$ref": "#/$defs/evidenceRule" }, "fieldSelectionRule": { "$ref": "#/$defs/evidenceRule" }
+      }
+    },
+    "cage": {
+      "type": "object", "additionalProperties": false,
+      "required": ["environmentId", "fieldDefinitionId", "projectNativePresentationRef", "topologyRule", "dynamicSurfaceRules"],
+      "properties": {
+        "environmentId": { "$ref": "#/$defs/nexusId" }, "fieldDefinitionId": { "$ref": "#/$defs/nexusId" },
+        "projectNativePresentationRef": { "$ref": "#/$defs/nexusId" },
+        "topologyRule": { "$ref": "#/$defs/evidenceRule" },
+        "dynamicSurfaceRules": { "type": "array", "items": { "$ref": "#/$defs/evidenceRule" } }
+      }
+    },
+    "shopRecord": {
+      "type": "object", "additionalProperties": false,
+      "required": ["shopRecordId", "category", "subcategory", "itemId", "nameKey", "descriptionKey", "commitDomain", "availabilityRule", "initialStockRule", "capacityRule", "priceRule", "evidenceRefs"],
+      "properties": {
+        "shopRecordId": { "$ref": "#/$defs/nexusId" }, "category": { "enum": ["TRAINING_GOOD", "HUNT_ITEM", "PLUGIN", "CAGE"] },
+        "subcategory": { "type": "string" }, "itemId": { "$ref": "#/$defs/nexusId" },
+        "nameKey": { "type": "string" }, "displayName": { "type": "string" }, "descriptionKey": { "type": "string" },
+        "commitDomain": { "enum": ["INVENTORY", "CAGE_OWNERSHIP"] },
+        "availabilityRule": { "$ref": "#/$defs/evidenceRule" }, "initialStockRule": { "$ref": "#/$defs/evidenceRule" },
+        "capacityRule": { "$ref": "#/$defs/evidenceRule" }, "priceRule": { "$ref": "#/$defs/evidenceRule" },
+        "evidenceRefs": { "type": "array", "items": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9:_-]{2,95}$" } }
+      }
+    },
+    "titleMatch": {
+      "type": "object", "additionalProperties": false,
+      "required": ["matchId", "nameKey", "descriptionKey", "eligibilityRuleId", "battleFieldId", "playerPresetId", "opponentPresetId", "entryRule", "opponentSelectionRule", "fieldSelectionRule", "resultContractRule", "tutorialRule", "aggregateParity"],
+      "properties": {
+        "matchId": { "$ref": "#/$defs/nexusId" }, "nameKey": { "type": "string" }, "displayName": { "type": "string" }, "descriptionKey": { "type": "string" },
+        "eligibilityRuleId": { "$ref": "#/$defs/nexusId" }, "battleFieldId": { "$ref": "#/$defs/nexusId" },
+        "playerPresetId": { "$ref": "#/$defs/nexusId" }, "opponentPresetId": { "$ref": "#/$defs/nexusId" },
+        "entryRule": { "$ref": "#/$defs/evidenceRule" }, "opponentSelectionRule": { "$ref": "#/$defs/evidenceRule" },
+        "fieldSelectionRule": { "$ref": "#/$defs/evidenceRule" }, "resultContractRule": { "$ref": "#/$defs/evidenceRule" },
+        "tutorialRule": { "$ref": "#/$defs/evidenceRule" }, "aggregateParity": { "$ref": "#/$defs/aggregateParity" }
+      }
+    },
+    "eligibilityRule": {
+      "type": "object", "additionalProperties": false,
+      "required": ["ruleId", "conditionTextKey", "predicateRule"],
+      "properties": { "ruleId": { "$ref": "#/$defs/nexusId" }, "conditionTextKey": { "type": "string" }, "predicateRule": { "$ref": "#/$defs/evidenceRule" } }
+    },
+    "team": {
+      "type": "object", "additionalProperties": false,
+      "required": ["teamId", "nameKey", "descriptionKey", "memberPresetIds", "evidenceRefs"],
+      "properties": {
+        "teamId": { "$ref": "#/$defs/nexusId" }, "nameKey": { "type": "string" }, "descriptionKey": { "type": "string" },
+        "memberPresetIds": { "type": "array", "minItems": 3, "maxItems": 3, "items": { "type": ["string", "null"] } },
+        "evidenceRefs": { "type": "array", "items": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9:_-]{2,95}$" } }
+      }
+    },
+    "battlePreset": {
+      "type": "object", "additionalProperties": false,
+      "required": ["presetId", "speciesId", "displayNameKey", "arenaStatRules", "actionLoadoutRules", "opponentPolicyRule", "aggregateParity"],
+      "properties": {
+        "presetId": { "$ref": "#/$defs/nexusId" }, "speciesId": { "$ref": "#/$defs/nexusId" }, "displayNameKey": { "type": "string" },
+        "arenaStatRules": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/evidenceRule" } },
+        "actionLoadoutRules": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/evidenceRule" } },
+        "opponentPolicyRule": { "$ref": "#/$defs/evidenceRule" }, "aggregateParity": { "$ref": "#/$defs/aggregateParity" }
+      }
+    },
+    "battleField": {
+      "type": "object", "additionalProperties": false,
+      "required": ["battleFieldId", "projectNativePresentationRef", "encounterSpeciesId", "topologyRule", "presentationLayerRules"],
+      "properties": {
+        "battleFieldId": { "$ref": "#/$defs/nexusId" }, "projectNativePresentationRef": { "$ref": "#/$defs/nexusId" },
+        "encounterSpeciesId": { "$ref": "#/$defs/nexusId" },
+        "topologyRule": { "$ref": "#/$defs/evidenceRule" },
+        "presentationLayerRules": { "type": "array", "items": { "$ref": "#/$defs/evidenceRule" } }
+      }
+    },
+    "point": {
+      "type": "object", "additionalProperties": false, "required": ["x", "y"],
+      "properties": { "x": { "type": "integer", "minimum": 0 }, "y": { "type": "integer", "minimum": 0 } }
+    },
+    "rect": {
+      "type": "object", "additionalProperties": false, "required": ["x", "y", "width", "height"],
+      "properties": { "x": { "type": "integer", "minimum": 0 }, "y": { "type": "integer", "minimum": 0 }, "width": { "type": "integer", "minimum": 1 }, "height": { "type": "integer", "minimum": 1 } }
+    }
+  }
+}

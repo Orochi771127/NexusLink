@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "catalogKind": "nexus:championship:catalog:entities",
+  "authority": "NEXUS_PRODUCT",
+  "generatorVersion": "championship-r1-manual-1",
+  "expectedForensicRecordCount": 224,
+  "recordStrideBytes": null,
+  "recordsDigestSha256": "2eb3599d46106a1aa4456beac333ca92acbba0a7f30a77b90d3623648a93fbd1",
+  "records": [
+    { "speciesId": "nexus:creature:greyshade-cat", "displayNameKey": "championship.creature.greyshadeCat", "displayName": "Greyshade Cat", "assetRef": "nexus:shape:greyshade-cat-r1", "formKind": "BASE", "huntProfileRef": "nexus:championship:gate:moonlit-reed", "arenaFixtureRef": "nexus:championship:preset:greyshade-player", "sourceAuthority": "NEXUS_PRODUCT" },
+    { "speciesId": "nexus:creature:blazetail-kit", "displayNameKey": "championship.creature.blazetailKit", "displayName": "Blazetail Kit", "assetRef": "nexus:shape:blazetail-kit-r1", "formKind": "BASE", "huntProfileRef": "nexus:championship:gate:moonlit-reed", "arenaFixtureRef": "nexus:championship:preset:blazetail-opponent", "sourceAuthority": "NEXUS_PRODUCT" },
+    { "speciesId": "nexus:creature:crystalfin-seahorse", "displayNameKey": "championship.creature.crystalfinSeahorse", "displayName": "Crystalfin Seahorse", "assetRef": "nexus:shape:crystalfin-seahorse-r1", "formKind": "BASE", "huntProfileRef": null, "arenaFixtureRef": null, "sourceAuthority": "NEXUS_PRODUCT" }
+  ]
+}

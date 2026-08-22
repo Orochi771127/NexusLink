@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1, "catalogKind": "nexus:championship:catalog:cages", "authority": "NEXUS_PRODUCT", "generatorVersion": "championship-r1-manual-1",
+  "expectedForensicRecordCount": 40, "recordStrideBytes": null, "recordsDigestSha256": "365c668d5e3436ea99bf429cf4d7d00453b2d078bc882cf5e7099ab61c2437d3",
+  "records": [{
+    "environmentId": "nexus:championship:cage:willow-observatory", "fieldDefinitionId": "nexus:championship:field:moonlit-reed", "projectNativePresentationRef": "nexus:shape:willow-observatory-r1",
+    "topologyRule": { "value": { "kind": "SINGLE_RESEARCH_HABITAT" }, "ruleAuthority": "NEXUS_ADAPTATION", "evidenceStatus": "NEXUS_RESEARCH_RULE", "executable": true, "originalParityClaim": false, "evidenceRefs": [] },
+    "dynamicSurfaceRules": []
+  }]
+}

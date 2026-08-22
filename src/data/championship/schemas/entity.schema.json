@@ -1,0 +1,1 @@
+{ "$schema": "https://json-schema.org/draft/2020-12/schema", "$id": "https://nexuslink.local/schemas/championship/entity.schema.json", "$ref": "catalog-bundle.schema.json#/$defs/entity" }

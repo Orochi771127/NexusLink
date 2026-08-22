@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "catalogKind": "nexus:championship:catalog:battle-actions",
+  "authority": "NEXUS_PRODUCT",
+  "generatorVersion": "championship-r1-manual-1",
+  "expectedForensicRecordCount": 596,
+  "recordStrideBytes": 104,
+  "recordsDigestSha256": "21cad4bed516526b57470f73102211fde7119e6e2b9bd02bc715079023c61592",
+  "records": [
+    {
+      "actionId": "nexus:championship:action:comet-pounce", "displayNameKey": "championship.action.cometPounce", "displayName": "Comet Pounce",
+      "targetRule": { "value": { "kind": "SINGLE_OPPONENT" }, "ruleAuthority": "NEXUS_ADAPTATION", "evidenceStatus": "NEXUS_RESEARCH_RULE", "executable": true, "originalParityClaim": false, "evidenceRefs": [] },
+      "timelineRules": [{ "value": { "kind": "FIXED_TURN" }, "ruleAuthority": "NEXUS_ADAPTATION", "evidenceStatus": "NEXUS_RESEARCH_RULE", "executable": true, "originalParityClaim": false, "evidenceRefs": [] }],
+      "effectRules": [{ "value": { "kind": "DAMAGE", "magnitude": 18 }, "ruleAuthority": "NEXUS_ADAPTATION", "evidenceStatus": "NEXUS_RESEARCH_RULE", "executable": true, "originalParityClaim": false, "evidenceRefs": [] }],
+      "aggregateParity": { "status": "RESEARCH_NON_PARITY", "blockingFindingIds": [] }
+    },
+    {
+      "actionId": "nexus:championship:action:tide-arc", "displayNameKey": "championship.action.tideArc", "displayName": "Tide Arc",
+      "targetRule": { "value": { "kind": "SINGLE_OPPONENT" }, "ruleAuthority": "NEXUS_ADAPTATION", "evidenceStatus": "NEXUS_RESEARCH_RULE", "executable": true, "originalParityClaim": false, "evidenceRefs": [] },
+      "timelineRules": [{ "value": { "kind": "FIXED_TURN" }, "ruleAuthority": "NEXUS_ADAPTATION", "evidenceStatus": "NEXUS_RESEARCH_RULE", "executable": true, "originalParityClaim": false, "evidenceRefs": [] }],
+      "effectRules": [{ "value": { "kind": "DAMAGE", "magnitude": 14 }, "ruleAuthority": "NEXUS_ADAPTATION", "evidenceStatus": "NEXUS_RESEARCH_RULE", "executable": true, "originalParityClaim": false, "evidenceRefs": [] }],
+      "aggregateParity": { "status": "RESEARCH_NON_PARITY", "blockingFindingIds": [] }
+    }
+  ]
+}

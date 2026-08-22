@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "activeCompanionId": "greyshade-cat",
+  "unlockedCompanionIds": ["greyshade-cat"],
+  "settings": {
+    "locale": "en",
+    "reducedMotion": false
+  }
+}

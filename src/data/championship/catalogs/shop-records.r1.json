@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1, "catalogKind": "nexus:championship:catalog:shop-records", "authority": "NEXUS_PRODUCT", "generatorVersion": "championship-r1-manual-1",
+  "expectedForensicRecordCount": 118, "recordStrideBytes": null, "recordsDigestSha256": "0ecd5f374c05c74d4c4d0987530b144968ee30e3bd02e879522cc8ab2235534e",
+  "records": [
+    {
+      "shopRecordId": "nexus:championship:shop:reed-tonic", "category": "HUNT_ITEM", "subcategory": "RESEARCH_AID", "itemId": "nexus:championship:item:reed-tonic", "nameKey": "championship.item.reedTonic", "displayName": "Reed Tonic", "descriptionKey": "championship.item.reedTonic.description", "commitDomain": "INVENTORY",
+      "availabilityRule": { "value": { "available": true }, "ruleAuthority": "NEXUS_ADAPTATION", "evidenceStatus": "NEXUS_RESEARCH_RULE", "executable": true, "originalParityClaim": false, "evidenceRefs": [] },
+      "initialStockRule": { "value": { "count": 2 }, "ruleAuthority": "NEXUS_ADAPTATION", "evidenceStatus": "NEXUS_RESEARCH_RULE", "executable": true, "originalParityClaim": false, "evidenceRefs": [] },
+      "capacityRule": { "value": { "maximum": 9 }, "ruleAuthority": "NEXUS_ADAPTATION", "evidenceStatus": "NEXUS_RESEARCH_RULE", "executable": true, "originalParityClaim": false, "evidenceRefs": [] },
+      "priceRule": { "value": { "amount": 20 }, "ruleAuthority": "NEXUS_ADAPTATION", "evidenceStatus": "NEXUS_RESEARCH_RULE", "executable": true, "originalParityClaim": false, "evidenceRefs": [] }, "evidenceRefs": []
+    },
+    {
+      "shopRecordId": "nexus:championship:shop:willow-observatory", "category": "CAGE", "subcategory": "RESEARCH_ENVIRONMENT", "itemId": "nexus:championship:cage:willow-observatory", "nameKey": "championship.cage.willowObservatory", "displayName": "Willow Observatory", "descriptionKey": "championship.cage.willowObservatory.description", "commitDomain": "CAGE_OWNERSHIP",
+      "availabilityRule": { "value": { "available": true }, "ruleAuthority": "NEXUS_ADAPTATION", "evidenceStatus": "NEXUS_RESEARCH_RULE", "executable": true, "originalParityClaim": false, "evidenceRefs": [] },
+      "initialStockRule": { "value": { "count": 1 }, "ruleAuthority": "NEXUS_ADAPTATION", "evidenceStatus": "NEXUS_RESEARCH_RULE", "executable": true, "originalParityClaim": false, "evidenceRefs": [] },
+      "capacityRule": { "value": { "maximum": 1 }, "ruleAuthority": "NEXUS_ADAPTATION", "evidenceStatus": "NEXUS_RESEARCH_RULE", "executable": true, "originalParityClaim": false, "evidenceRefs": [] },
+      "priceRule": { "value": { "amount": 40 }, "ruleAuthority": "NEXUS_ADAPTATION", "evidenceStatus": "NEXUS_RESEARCH_RULE", "executable": true, "originalParityClaim": false, "evidenceRefs": [] }, "evidenceRefs": []
+    }
+  ]
+}

@@ -1,0 +1,131 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nexuslink.local/schemas/championship/research-state.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "revision", "session", "sourceProfileProjection", "economy", "hunt", "collection", "database", "arena", "results", "eventLog"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "revision": { "type": "integer", "minimum": 0 },
+    "session": { "$ref": "#/$defs/session" },
+    "sourceProfileProjection": { "$ref": "#/$defs/profileProjection" },
+    "economy": { "$ref": "#/$defs/economy" },
+    "hunt": { "$ref": "#/$defs/hunt" },
+    "collection": { "$ref": "#/$defs/collection" },
+    "database": { "$ref": "#/$defs/database" },
+    "arena": { "$ref": "#/$defs/arena" },
+    "results": { "type": "array", "items": { "$ref": "#/$defs/completionResult" } },
+    "eventLog": { "type": "array", "maxItems": 256, "items": { "$ref": "research-event.schema.json" } }
+  },
+  "$defs": {
+    "nexusIdOrNull": { "type": ["string", "null"], "pattern": "^nexus:[a-z0-9][a-z0-9:_-]+$" },
+    "numberMap": { "type": "object", "propertyNames": { "pattern": "^nexus:[a-z0-9][a-z0-9:_-]+$" }, "additionalProperties": { "type": "integer", "minimum": 0 } },
+    "booleanMap": { "type": "object", "propertyNames": { "pattern": "^nexus:[a-z0-9][a-z0-9:_-]+$" }, "additionalProperties": { "type": "boolean" } },
+    "session": {
+      "type": "object", "additionalProperties": false,
+      "required": ["sessionId", "rulesetId", "seed", "sequence", "phase", "committable", "persistencePolicy"],
+      "properties": {
+        "sessionId": { "type": "string", "minLength": 3 }, "rulesetId": { "const": "championship-research-r1" },
+        "seed": { "type": "integer", "minimum": 0 }, "sequence": { "type": "integer", "minimum": 0 },
+        "phase": { "enum": ["HEARTLAKE_PROFILE", "GATE_SELECT", "HUNT_FIELD", "WILD_ENCOUNTER", "CAPTURE", "COLLECTION", "SHOP", "ARENA", "BATTLE", "BATTLE_RESULT", "COMPLETE"] },
+        "committable": { "const": false }, "persistencePolicy": { "const": "MEMORY_ONLY_DISCARD_ON_EXIT" }
+      }
+    },
+    "profileProjection": {
+      "type": "object", "additionalProperties": false,
+      "required": ["activeCompanionId", "unlockedCompanionIds", "locale", "reducedMotion", "presentationRefs", "sourceDigest"],
+      "properties": {
+        "activeCompanionId": { "type": ["string", "null"] },
+        "unlockedCompanionIds": { "type": "array", "uniqueItems": true, "items": { "type": "string" } },
+        "locale": { "type": "string", "minLength": 1 }, "reducedMotion": { "type": "boolean" },
+        "presentationRefs": { "type": "object", "additionalProperties": { "type": "string", "pattern": "^nexus:" } },
+        "sourceDigest": { "type": "string", "pattern": "^fnv1a32:[a-f0-9]{8}$" }
+      }
+    },
+    "economy": {
+      "type": "object", "additionalProperties": false,
+      "required": ["source", "wallet", "inventoryByItemId", "cageOwnershipById", "shopAvailabilityByRecordId"],
+      "properties": {
+        "source": { "const": "RESEARCH_FIXTURE" }, "wallet": { "type": "integer", "minimum": 0 },
+        "inventoryByItemId": { "$ref": "#/$defs/numberMap" }, "cageOwnershipById": { "$ref": "#/$defs/booleanMap" },
+        "shopAvailabilityByRecordId": { "$ref": "#/$defs/numberMap" }
+      }
+    },
+    "runtimeField": {
+      "type": "object", "additionalProperties": false,
+      "required": ["fieldId", "projectNativePresentationRef", "encounterSpeciesId", "width", "height", "playerStart", "encounterPoint", "obstacles", "topologyRule", "presentationLayerRules"],
+      "properties": {
+        "fieldId": { "$ref": "catalog-bundle.schema.json#/$defs/nexusId" }, "projectNativePresentationRef": { "$ref": "catalog-bundle.schema.json#/$defs/nexusId" },
+        "encounterSpeciesId": { "$ref": "catalog-bundle.schema.json#/$defs/nexusId" }, "width": { "type": "integer", "minimum": 1 }, "height": { "type": "integer", "minimum": 1 },
+        "playerStart": { "$ref": "catalog-bundle.schema.json#/$defs/point" }, "encounterPoint": { "$ref": "catalog-bundle.schema.json#/$defs/point" },
+        "obstacles": { "type": "array", "items": { "$ref": "catalog-bundle.schema.json#/$defs/rect" } },
+        "topologyRule": { "$ref": "catalog-bundle.schema.json#/$defs/evidenceRule" }, "presentationLayerRules": { "type": "array", "items": { "$ref": "catalog-bundle.schema.json#/$defs/evidenceRule" } }
+      }
+    },
+    "encounter": {
+      "type": "object", "additionalProperties": false,
+      "required": ["encounterId", "speciesId", "presentationRef", "sourceAuthority", "status", "capturedInstanceId", "snapshot"],
+      "properties": {
+        "encounterId": { "type": "string" }, "speciesId": { "$ref": "catalog-bundle.schema.json#/$defs/nexusId" }, "presentationRef": { "$ref": "catalog-bundle.schema.json#/$defs/nexusId" },
+        "sourceAuthority": { "const": "NEXUS_PRODUCT" }, "status": { "enum": ["AVAILABLE", "CAPTURED_RESEARCH_ONLY"] }, "capturedInstanceId": { "type": ["string", "null"] },
+        "snapshot": { "type": "object", "additionalProperties": false, "required": ["speciesId", "formKind"], "properties": { "speciesId": { "$ref": "catalog-bundle.schema.json#/$defs/nexusId" }, "formKind": { "type": "string" } } }
+      }
+    },
+    "hunt": {
+      "type": "object", "additionalProperties": false,
+      "required": ["gateId", "fieldId", "field", "hunterPosition", "encounter", "selectedToolIds", "lastCollision"],
+      "properties": {
+        "gateId": { "$ref": "#/$defs/nexusIdOrNull" }, "fieldId": { "$ref": "#/$defs/nexusIdOrNull" },
+        "field": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/runtimeField" }] },
+        "hunterPosition": { "oneOf": [{ "type": "null" }, { "$ref": "catalog-bundle.schema.json#/$defs/point" }] },
+        "encounter": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/encounter" }] },
+        "selectedToolIds": { "type": "array", "uniqueItems": true, "items": { "$ref": "catalog-bundle.schema.json#/$defs/nexusId" } },
+        "lastCollision": { "oneOf": [{ "type": "null" }, { "type": "object", "additionalProperties": false, "required": ["direction", "candidate"], "properties": { "direction": { "enum": ["up", "down", "left", "right"] }, "candidate": { "$ref": "catalog-bundle.schema.json#/$defs/point" } } }] }
+      }
+    },
+    "capturedInstance": {
+      "type": "object", "additionalProperties": false,
+      "required": ["instanceId", "speciesId", "sourceEncounterId", "authority", "playerOwned", "relationshipAuthority", "persistencePolicy", "capturedSnapshot"],
+      "properties": {
+        "instanceId": { "type": "string" }, "speciesId": { "$ref": "catalog-bundle.schema.json#/$defs/nexusId" }, "sourceEncounterId": { "type": "string" },
+        "authority": { "const": "RESEARCH_FIXTURE" }, "playerOwned": { "const": false }, "relationshipAuthority": { "const": "NONE" },
+        "persistencePolicy": { "const": "MEMORY_ONLY_DISCARD_ON_EXIT" },
+        "capturedSnapshot": { "type": "object", "additionalProperties": false, "required": ["speciesId", "formKind"], "properties": { "speciesId": { "$ref": "catalog-bundle.schema.json#/$defs/nexusId" }, "formKind": { "type": "string" } } }
+      }
+    },
+    "collection": {
+      "type": "object", "additionalProperties": false, "required": ["authority", "capacity", "instanceOrder", "instancesById"],
+      "properties": {
+        "authority": { "const": "RESEARCH_FIXTURE" }, "capacity": { "type": "integer", "minimum": 0 }, "instanceOrder": { "type": "array", "uniqueItems": true, "items": { "type": "string" } },
+        "instancesById": { "type": "object", "additionalProperties": { "$ref": "#/$defs/capturedInstance" } }
+      }
+    },
+    "database": { "type": "object", "additionalProperties": false, "required": ["seenSpeciesIds"], "properties": { "seenSpeciesIds": { "type": "array", "uniqueItems": true, "items": { "$ref": "catalog-bundle.schema.json#/$defs/nexusId" } } } },
+    "combatant": {
+      "type": "object", "additionalProperties": false, "required": ["presetId", "speciesId", "hp", "maxHp", "actionIds"],
+      "properties": { "presetId": { "$ref": "catalog-bundle.schema.json#/$defs/nexusId" }, "speciesId": { "$ref": "catalog-bundle.schema.json#/$defs/nexusId" }, "hp": { "type": "integer", "minimum": 0 }, "maxHp": { "type": "integer", "minimum": 1 }, "actionIds": { "type": "array", "minItems": 1, "items": { "$ref": "catalog-bundle.schema.json#/$defs/nexusId" } } }
+    },
+    "battleSession": {
+      "type": "object", "additionalProperties": false,
+      "required": ["battleId", "round", "turn", "status", "player", "opponent", "timeline", "authority", "parityStatus"],
+      "properties": {
+        "battleId": { "type": "string" }, "round": { "type": "integer", "minimum": 0 }, "turn": { "enum": ["PLAYER", "COMPLETE"] }, "status": { "enum": ["ACTIVE", "PLAYER_WIN", "OPPONENT_WIN"] },
+        "player": { "$ref": "#/$defs/combatant" }, "opponent": { "$ref": "#/$defs/combatant" },
+        "timeline": { "type": "array", "items": { "type": "object", "additionalProperties": false, "required": ["round", "actor", "actionId", "damage", "targetHp"], "properties": { "round": { "type": "integer", "minimum": 1 }, "actor": { "enum": ["PLAYER", "OPPONENT"] }, "actionId": { "$ref": "catalog-bundle.schema.json#/$defs/nexusId" }, "damage": { "type": "integer", "minimum": 0 }, "targetHp": { "type": "integer", "minimum": 0 } } } },
+        "authority": { "const": "NEXUS_ADAPTATION" }, "parityStatus": { "const": "RESEARCH_NON_PARITY" }
+      }
+    },
+    "battleResult": {
+      "type": "object", "additionalProperties": false, "required": ["battleId", "outcome", "rounds", "authority", "rankWrite", "badgeWrite", "committable", "persistenceAttempted"],
+      "properties": { "battleId": { "type": "string" }, "outcome": { "enum": ["PLAYER_WIN", "OPPONENT_WIN"] }, "rounds": { "type": "integer", "minimum": 1 }, "authority": { "const": "RESEARCH_FIXTURE" }, "rankWrite": { "const": false }, "badgeWrite": { "const": false }, "committable": { "const": false }, "persistenceAttempted": { "const": false } }
+    },
+    "arena": {
+      "type": "object", "additionalProperties": false, "required": ["matchId", "match", "battleSession", "battleResult"],
+      "properties": { "matchId": { "$ref": "#/$defs/nexusIdOrNull" }, "match": { "oneOf": [{ "type": "null" }, { "$ref": "catalog-bundle.schema.json#/$defs/titleMatch" }] }, "battleSession": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/battleSession" }] }, "battleResult": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/battleResult" }] } }
+    },
+    "completionResult": {
+      "type": "object", "additionalProperties": false, "required": ["authority", "outcome", "rankWrite", "badgeWrite", "committable", "persistenceAttempted"],
+      "properties": { "authority": { "const": "RESEARCH_FIXTURE" }, "outcome": { "enum": ["PLAYER_WIN", "OPPONENT_WIN"] }, "rankWrite": { "const": false }, "badgeWrite": { "const": false }, "committable": { "const": false }, "persistenceAttempted": { "const": false } }
+    }
+  }
+}

@@ -1,0 +1,5 @@
+{
+  "schemaVersion": 1, "catalogKind": "nexus:championship:catalog:eligibility-rules", "authority": "NEXUS_PRODUCT", "generatorVersion": "championship-r1-manual-1",
+  "expectedForensicRecordCount": 45, "recordStrideBytes": null, "recordsDigestSha256": "8ff827e7bcd333e1de5ad07138705b2ff30c66283078f4ba6b80fce2f4cb8685",
+  "records": [{ "ruleId": "nexus:championship:eligibility:research-open", "conditionTextKey": "championship.eligibility.researchOpen", "predicateRule": { "value": { "allowed": true }, "ruleAuthority": "NEXUS_ADAPTATION", "evidenceStatus": "NEXUS_RESEARCH_RULE", "executable": true, "originalParityClaim": false, "evidenceRefs": [] } }]
+}

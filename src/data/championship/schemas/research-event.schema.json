@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nexuslink.local/schemas/championship/research-event.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["eventId", "sessionId", "sequence", "at", "domain", "type", "payload", "parityStatus", "evidenceRefs"],
+  "properties": {
+    "eventId": { "type": "string", "minLength": 3 },
+    "sessionId": { "type": "string", "minLength": 3 },
+    "sequence": { "type": "integer", "minimum": 1 },
+    "at": { "type": "number" },
+    "domain": { "const": "championship" },
+    "type": { "enum": ["PROFILE_ACCEPTED", "GATE_SELECTED", "HUNTER_MOVED", "HUNTER_BLOCKED", "WILD_ENCOUNTER_STARTED", "CAPTURE_PREPARED", "CAPTURE_COMPLETED", "COLLECTION_OPENED", "SHOP_OPENED", "RESEARCH_PURCHASED", "ARENA_OPENED", "BATTLE_STARTED", "BATTLE_TURN_RESOLVED", "BATTLE_COMPLETED", "RESEARCH_COMPLETED"] },
+    "payload": {
+      "oneOf": [
+        { "type": "object", "additionalProperties": false, "maxProperties": 0 },
+        { "type": "object", "additionalProperties": false, "required": ["gateId", "fieldId"], "properties": { "gateId": { "$ref": "catalog-bundle.schema.json#/$defs/nexusId" }, "fieldId": { "$ref": "catalog-bundle.schema.json#/$defs/nexusId" } } },
+        { "type": "object", "additionalProperties": false, "required": ["direction", "position"], "properties": { "direction": { "enum": ["up", "down", "left", "right"] }, "position": { "$ref": "catalog-bundle.schema.json#/$defs/point" } } },
+        { "type": "object", "additionalProperties": false, "required": ["speciesId"], "properties": { "speciesId": { "$ref": "catalog-bundle.schema.json#/$defs/nexusId" } } },
+        { "type": "object", "additionalProperties": false, "required": ["instanceId"], "properties": { "instanceId": { "type": "string", "minLength": 3 } } },
+        { "type": "object", "additionalProperties": false, "required": ["shopRecordId"], "properties": { "shopRecordId": { "$ref": "catalog-bundle.schema.json#/$defs/nexusId" } } },
+        { "type": "object", "additionalProperties": false, "required": ["round", "playerHp", "opponentHp"], "properties": { "round": { "type": "integer", "minimum": 1 }, "playerHp": { "type": "integer", "minimum": 0 }, "opponentHp": { "type": "integer", "minimum": 0 } } },
+        { "type": "object", "additionalProperties": false, "required": ["outcome"], "properties": { "outcome": { "enum": ["PLAYER_WIN", "OPPONENT_WIN"] } } }
+      ]
+    },
+    "parityStatus": { "const": "RESEARCH_NON_PARITY" },
+    "evidenceRefs": { "type": "array", "items": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9:_-]{2,95}$" } }
+  }
+}

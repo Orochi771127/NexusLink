@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1, "catalogKind": "nexus:championship:catalog:battle-fields", "authority": "NEXUS_PRODUCT", "generatorVersion": "championship-r1-manual-1",
+  "expectedForensicRecordCount": 11, "recordStrideBytes": null, "recordsDigestSha256": "9339e1338d8ec5a083bcdd5021560f5afe5a093a12c0d3d02fc27c41e8794d73",
+  "records": [{
+    "battleFieldId": "nexus:championship:field:moonlit-reed", "projectNativePresentationRef": "nexus:shape:moonlit-reed-field-r1", "encounterSpeciesId": "nexus:creature:blazetail-kit",
+    "topologyRule": { "value": { "kind": "GRID_COLLISION", "cellSize": 1, "width": 12, "height": 8, "playerStart": { "x": 1, "y": 4 }, "encounterPoint": { "x": 10, "y": 3 }, "obstacles": [{ "x": 4, "y": 1, "width": 1, "height": 4 }, { "x": 7, "y": 4, "width": 2, "height": 1 }, { "x": 2, "y": 6, "width": 3, "height": 1 }] }, "ruleAuthority": "NEXUS_ADAPTATION", "evidenceStatus": "NEXUS_RESEARCH_RULE", "executable": true, "originalParityClaim": false, "evidenceRefs": [] }, "presentationLayerRules": []
+  }]
+}

@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1, "catalogKind": "nexus:championship:catalog:gates", "authority": "NEXUS_PRODUCT", "generatorVersion": "championship-r1-manual-1",
+  "expectedForensicRecordCount": 16, "recordStrideBytes": null, "recordsDigestSha256": "e0e0eb0d719ef01758d4bd5736b79cd8cf171039177eb859e3869a0c8ef0ac7c",
+  "records": [{
+    "gateId": "nexus:championship:gate:moonlit-reed", "fieldDefinitionId": "nexus:championship:field:moonlit-reed", "displayNameKey": "championship.gate.moonlitReed", "displayName": "Moonlit Reed Gate", "ecologyTags": ["wetland", "moonlight"], "presentationRef": "nexus:shape:moonlit-reed-gate-r1",
+    "admissionRule": { "value": { "kind": "RESEARCH_OPEN" }, "ruleAuthority": "NEXUS_ADAPTATION", "evidenceStatus": "NEXUS_RESEARCH_RULE", "executable": true, "originalParityClaim": false, "evidenceRefs": [] },
+    "fieldSelectionRule": { "value": { "fieldId": "nexus:championship:field:moonlit-reed" }, "ruleAuthority": "NEXUS_ADAPTATION", "evidenceStatus": "NEXUS_RESEARCH_RULE", "executable": true, "originalParityClaim": false, "evidenceRefs": [] }
+  }]
+}

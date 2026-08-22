@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1, "catalogKind": "nexus:championship:catalog:battle-presets", "authority": "NEXUS_PRODUCT", "generatorVersion": "championship-r1-manual-1",
+  "expectedForensicRecordCount": 456, "recordStrideBytes": null, "recordsDigestSha256": "6319e927ef005be8c6579fb5b361795ddfdd8df2e5c3e85bc2839cf2f213e26c",
+  "records": [
+    {
+      "presetId": "nexus:championship:preset:greyshade-player", "speciesId": "nexus:creature:greyshade-cat", "displayNameKey": "championship.preset.greyshadePlayer",
+      "arenaStatRules": [{ "value": { "kind": "HP", "amount": 72 }, "ruleAuthority": "NEXUS_ADAPTATION", "evidenceStatus": "NEXUS_RESEARCH_RULE", "executable": true, "originalParityClaim": false, "evidenceRefs": [] }],
+      "actionLoadoutRules": [{ "value": { "kind": "ACTION_LOADOUT", "actionIds": ["nexus:championship:action:comet-pounce", "nexus:championship:action:tide-arc"] }, "ruleAuthority": "NEXUS_ADAPTATION", "evidenceStatus": "NEXUS_RESEARCH_RULE", "executable": true, "originalParityClaim": false, "evidenceRefs": [] }],
+      "opponentPolicyRule": { "value": { "kind": "PLAYER_SELECTION" }, "ruleAuthority": "NEXUS_ADAPTATION", "evidenceStatus": "NEXUS_RESEARCH_RULE", "executable": true, "originalParityClaim": false, "evidenceRefs": [] },
+      "aggregateParity": { "status": "RESEARCH_NON_PARITY", "blockingFindingIds": [] }
+    },
+    {
+      "presetId": "nexus:championship:preset:blazetail-opponent", "speciesId": "nexus:creature:blazetail-kit", "displayNameKey": "championship.preset.blazetailOpponent",
+      "arenaStatRules": [{ "value": { "kind": "HP", "amount": 58 }, "ruleAuthority": "NEXUS_ADAPTATION", "evidenceStatus": "NEXUS_RESEARCH_RULE", "executable": true, "originalParityClaim": false, "evidenceRefs": [] }],
+      "actionLoadoutRules": [{ "value": { "kind": "ACTION_LOADOUT", "actionIds": ["nexus:championship:action:tide-arc"] }, "ruleAuthority": "NEXUS_ADAPTATION", "evidenceStatus": "NEXUS_RESEARCH_RULE", "executable": true, "originalParityClaim": false, "evidenceRefs": [] }],
+      "opponentPolicyRule": { "value": { "kind": "FIXED_ALTERNATING" }, "ruleAuthority": "NEXUS_ADAPTATION", "evidenceStatus": "NEXUS_RESEARCH_RULE", "executable": true, "originalParityClaim": false, "evidenceRefs": [] },
+      "aggregateParity": { "status": "RESEARCH_NON_PARITY", "blockingFindingIds": [] }
+    }
+  ]
+}

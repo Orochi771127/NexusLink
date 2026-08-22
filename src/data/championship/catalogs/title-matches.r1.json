@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1, "catalogKind": "nexus:championship:catalog:title-matches", "authority": "NEXUS_PRODUCT", "generatorVersion": "championship-r1-manual-1",
+  "expectedForensicRecordCount": 62, "recordStrideBytes": null, "recordsDigestSha256": "8eecef7dcd9fd9c3a48957f9647c37bffc516d5bde41a36f9ad4f028b3d7bf60",
+  "records": [{
+    "matchId": "nexus:championship:match:reedlight-trial", "nameKey": "championship.match.reedlightTrial", "displayName": "Reedlight Trial", "descriptionKey": "championship.match.reedlightTrial.description", "eligibilityRuleId": "nexus:championship:eligibility:research-open", "battleFieldId": "nexus:championship:field:moonlit-reed", "playerPresetId": "nexus:championship:preset:greyshade-player", "opponentPresetId": "nexus:championship:preset:blazetail-opponent",
+    "entryRule": { "value": { "ruleId": "nexus:championship:eligibility:research-open" }, "ruleAuthority": "NEXUS_ADAPTATION", "evidenceStatus": "NEXUS_RESEARCH_RULE", "executable": true, "originalParityClaim": false, "evidenceRefs": [] },
+    "opponentSelectionRule": { "value": { "teamId": "nexus:championship:team:reedlight" }, "ruleAuthority": "NEXUS_ADAPTATION", "evidenceStatus": "NEXUS_RESEARCH_RULE", "executable": true, "originalParityClaim": false, "evidenceRefs": [] },
+    "fieldSelectionRule": { "value": { "fieldId": "nexus:championship:field:moonlit-reed" }, "ruleAuthority": "NEXUS_ADAPTATION", "evidenceStatus": "NEXUS_RESEARCH_RULE", "executable": true, "originalParityClaim": false, "evidenceRefs": [] },
+    "resultContractRule": { "value": { "committable": false }, "ruleAuthority": "NEXUS_ADAPTATION", "evidenceStatus": "NEXUS_RESEARCH_RULE", "executable": true, "originalParityClaim": false, "evidenceRefs": [] },
+    "tutorialRule": { "value": { "kind": "RESEARCH_HINTS" }, "ruleAuthority": "NEXUS_ADAPTATION", "evidenceStatus": "NEXUS_RESEARCH_RULE", "executable": true, "originalParityClaim": false, "evidenceRefs": [] },
+    "aggregateParity": { "status": "RESEARCH_NON_PARITY", "blockingFindingIds": [] }
+  }]
+}

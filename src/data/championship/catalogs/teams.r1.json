@@ -1,0 +1,5 @@
+{
+  "schemaVersion": 1, "catalogKind": "nexus:championship:catalog:teams", "authority": "NEXUS_PRODUCT", "generatorVersion": "championship-r1-manual-1",
+  "expectedForensicRecordCount": 152, "recordStrideBytes": null, "recordsDigestSha256": "80019563f9bf6fdabbd1fbe775889a08d59ac17285f095c55fd63f2531689593",
+  "records": [{ "teamId": "nexus:championship:team:reedlight", "nameKey": "championship.team.reedlight", "descriptionKey": "championship.team.reedlight.description", "memberPresetIds": ["nexus:championship:preset:blazetail-opponent", null, null], "evidenceRefs": [] }]
+}
