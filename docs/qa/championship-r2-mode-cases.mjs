@@ -20,6 +20,7 @@ import {
   createChampionshipModeRegistry
 } from "../../src/championship/modes/championshipModeRegistry.js";
 import { createChampionshipModeShell } from "../../src/championship/modes/createChampionshipModeShell.js";
+import { createChampionshipR2Session } from "../../src/championship/r2/createChampionshipR2Session.js";
 
 const ROOT = new URL("../../", import.meta.url);
 
@@ -32,37 +33,42 @@ function command(router, commandId, values = {}) {
   };
 }
 
+function canonicalModeDefinition(modeId, load, overrides = {}) {
+  return {
+    modeId,
+    activationPolicy: CHAMPIONSHIP_MODE_ACTIVATION_POLICIES.ENABLED,
+    authority: "PROJECT_NATIVE_SHELL",
+    parityScope: "VERIFIED_FAMILY_PRESENCE_ONLY",
+    simulationAuthority: false,
+    rendererAuthority: false,
+    persistenceAuthority: false,
+    load,
+    ...overrides
+  };
+}
+
+function rawRegistryForEntry(entry, modeId, load = entry.load) {
+  return {
+    list() {
+      return [entry];
+    },
+    get(requestedModeId) {
+      return requestedModeId === modeId ? entry : null;
+    },
+    async load(requestedModeId) {
+      if (requestedModeId !== modeId) throw new Error("unexpected mode ID");
+      return load();
+    }
+  };
+}
+
 function createHostileReservedRegistry(modeId) {
   const calls = {
     list: 0,
     get: 0,
     load: 0,
-    shellEnter: 0,
-    inheritedAuthorityRead: 0,
-    accessorAuthorityRead: 0
+    shellEnter: 0
   };
-  const inheritedAuthority = {};
-  Object.defineProperty(inheritedAuthority, "familyId", {
-    get() {
-      calls.inheritedAuthorityRead += 1;
-      throw new Error("inherited family authority must not be read");
-    }
-  });
-  const entry = Object.create(inheritedAuthority);
-  Object.defineProperties(entry, {
-    modeId: { value: modeId, enumerable: true },
-    activationPolicy: {
-      value: CHAMPIONSHIP_MODE_ACTIVATION_POLICIES.ENABLED,
-      enumerable: true
-    },
-    authority: {
-      enumerable: true,
-      get() {
-        calls.accessorAuthorityRead += 1;
-        throw new Error("accessor authority must not be read");
-      }
-    }
-  });
   const shell = {
     modeId,
     enter() {
@@ -77,6 +83,7 @@ function createHostileReservedRegistry(modeId) {
       return { modeId, lifecycle: "CREATED", revision: 0 };
     }
   };
+  const entry = canonicalModeDefinition(modeId, async () => shell);
   const registry = {
     list() {
       calls.list += 1;
@@ -130,6 +137,153 @@ test("registry exposes exactly 22 project-native family shells without raw famil
     assert.equal(typeof entry.load, "function");
     assert.doesNotMatch(entry.modeId, /overlay|ovl|rom/i);
   }
+});
+
+test("official factory canonicalizes minimal definitions for router compatibility and detaches caller mutation", async () => {
+  let loadCount = 0;
+  const modeId = "championship:mode:factory-minimal";
+  const callerDefinition = {
+    modeId,
+    load: async () => {
+      loadCount += 1;
+      return createChampionshipModeShell({ modeId });
+    }
+  };
+  const registry = createChampionshipModeRegistry([callerDefinition]);
+  const factoryList = registry.list();
+  const factoryEntry = factoryList[0];
+  assert.equal(Object.isFrozen(factoryList), true);
+  assert.equal(Object.isFrozen(factoryEntry), true);
+  assert.notEqual(factoryEntry, callerDefinition);
+  assert.deepEqual(Object.keys(factoryEntry), [
+    "modeId",
+    "activationPolicy",
+    "authority",
+    "parityScope",
+    "simulationAuthority",
+    "rendererAuthority",
+    "persistenceAuthority",
+    "load"
+  ]);
+  assert.equal(factoryEntry.modeId, modeId);
+  assert.equal(factoryEntry.activationPolicy, CHAMPIONSHIP_MODE_ACTIVATION_POLICIES.ENABLED);
+  assert.equal(factoryEntry.authority, "PROJECT_NATIVE_SHELL");
+  assert.equal(factoryEntry.parityScope, "VERIFIED_FAMILY_PRESENCE_ONLY");
+  assert.equal(factoryEntry.simulationAuthority, false);
+  assert.equal(factoryEntry.rendererAuthority, false);
+  assert.equal(factoryEntry.persistenceAuthority, false);
+  assert.equal(typeof factoryEntry.load, "function");
+
+  const router = createChampionshipModeRouter({ registry });
+  callerDefinition.modeId = "championship:mode:caller-mutated";
+  callerDefinition.load = async () => {
+    throw new Error("mutated caller loader must not be retained");
+  };
+  callerDefinition.networkAuthority = true;
+  assert.equal(registry.get(modeId), factoryEntry);
+  assert.deepEqual(router.getSnapshot().registeredModeIds, [modeId]);
+  assert.deepEqual(router.listModes(), [{
+    modeId,
+    activationPolicy: CHAMPIONSHIP_MODE_ACTIVATION_POLICIES.ENABLED,
+    authority: "PROJECT_NATIVE_SHELL",
+    parityScope: "VERIFIED_FAMILY_PRESENCE_ONLY",
+    simulationAuthority: false,
+    rendererAuthority: false,
+    persistenceAuthority: false
+  }]);
+  const entered = await router.enter(command(router, "factory-minimal:enter", { modeId }));
+  assert.equal(entered.accepted, true);
+  assert.equal(loadCount, 1);
+});
+
+test("official factory rejects hostile definition shapes without executing metadata getters", () => {
+  const modeId = "championship:mode:factory-hostile";
+  const loader = async () => createChampionshipModeShell({ modeId });
+  const getterReads = { activationPolicy: 0, authority: 0, parityScope: 0 };
+  const accessorEntry = canonicalModeDefinition(modeId, loader);
+  for (const key of Object.keys(getterReads)) {
+    Object.defineProperty(accessorEntry, key, {
+      enumerable: true,
+      get() {
+        getterReads[key] += 1;
+        throw new Error(`factory must not execute ${key} getter`);
+      }
+    });
+  }
+  assert.throws(() => createChampionshipModeRegistry([accessorEntry]), /activationPolicy must be an own data property/);
+  assert.deepEqual(getterReads, { activationPolicy: 0, authority: 0, parityScope: 0 });
+
+  let inheritedReads = 0;
+  const inheritedPrototype = {};
+  Object.defineProperty(inheritedPrototype, "authority", {
+    get() {
+      inheritedReads += 1;
+      return "PROJECT_NATIVE_SHELL";
+    }
+  });
+  const inheritedEntry = Object.create(inheritedPrototype);
+  Object.defineProperties(inheritedEntry, Object.getOwnPropertyDescriptors({ modeId, load: loader }));
+  assert.throws(() => createChampionshipModeRegistry([inheritedEntry]), /cannot inherit registry authority/);
+  assert.equal(inheritedReads, 0);
+
+  const hiddenEntry = { modeId, load: loader };
+  Object.defineProperty(hiddenEntry, "load", { value: loader, enumerable: false });
+  assert.throws(() => createChampionshipModeRegistry([hiddenEntry]), /load cannot be hidden/);
+
+  const symbolEntry = { modeId, load: loader, [Symbol("authority")]: true };
+  assert.throws(() => createChampionshipModeRegistry([symbolEntry]), /cannot contain symbol keys/);
+
+  assert.throws(
+    () => createChampionshipModeRegistry([{ modeId, load: loader, networkAuthority: true }]),
+    /unexpected key: networkAuthority/
+  );
+
+  const revocable = Proxy.revocable({ modeId, load: loader }, {});
+  revocable.revoke();
+  assert.throws(() => createChampionshipModeRegistry([revocable.proxy]));
+});
+
+test("factory and raw registry reject oversized definition arrays before distant index accessors", () => {
+  let factoryDistantReads = 0;
+  const oversizedFactoryDefinitions = new Array(1_000_000);
+  Object.defineProperty(oversizedFactoryDefinitions, "999999", {
+    enumerable: true,
+    get() {
+      factoryDistantReads += 1;
+      throw new Error("factory distant index must not be read");
+    }
+  });
+  assert.throws(
+    () => createChampionshipModeRegistry(oversizedFactoryDefinitions),
+    /cannot exceed 256 definitions/
+  );
+  assert.equal(factoryDistantReads, 0);
+
+  let rawDistantReads = 0;
+  const oversizedRawDefinitions = new Array(1_000_000);
+  Object.defineProperty(oversizedRawDefinitions, "999999", {
+    enumerable: true,
+    get() {
+      rawDistantReads += 1;
+      throw new Error("raw registry distant index must not be read");
+    }
+  });
+  const rawRegistry = {
+    list() {
+      return oversizedRawDefinitions;
+    },
+    get() {
+      return null;
+    },
+    async load() {
+      return null;
+    }
+  };
+  assert.throws(
+    () => createChampionshipModeRouter({ registry: rawRegistry }),
+    /cannot exceed 256 definitions/
+  );
+  assert.equal(rawDistantReads, 0);
 });
 
 test("enabled lazy loaders resolve lifecycle shells while network and stub families cannot activate", async () => {
@@ -196,11 +350,297 @@ test("router rejects enabled family 9 and 20 shells from hostile raw registries 
       list: 1,
       get: 0,
       load: 0,
-      shellEnter: 0,
-      inheritedAuthorityRead: 0,
-      accessorAuthorityRead: 0
+      shellEnter: 0
     });
   }
+});
+
+test("captured registry authority rejects rogue unlisted modes before caller lookup, load, or shell enter", async () => {
+  const listedModeId = "championship:mode:listed-authority";
+  const rogueModeId = "championship:mode:rogue-unlisted";
+  const calls = { get: 0, load: 0, shellEnter: 0 };
+  const listedEntry = canonicalModeDefinition(listedModeId, async () => null);
+  const rogueEntry = canonicalModeDefinition(rogueModeId, async () => null);
+  const shell = {
+    modeId: listedModeId,
+    enter() {
+      calls.shellEnter += 1;
+    },
+    suspend() {},
+    resume() {},
+    exit() {},
+    dispose() {},
+    getSnapshot() {
+      return { modeId: listedModeId, lifecycle: "CREATED", revision: 0 };
+    }
+  };
+  const registry = {
+    list() {
+      return [listedEntry];
+    },
+    get(modeId) {
+      calls.get += 1;
+      return modeId === listedModeId ? listedEntry : rogueEntry;
+    },
+    async load(modeId) {
+      calls.load += 1;
+      if (modeId !== listedModeId) throw new Error("rogue load must not run");
+      return shell;
+    }
+  };
+  const router = createChampionshipModeRouter({ registry });
+  const before = router.getSnapshot();
+  const rejected = await router.enter(command(router, "captured:unlisted", { modeId: rogueModeId }));
+  assert.equal(rejected.accepted, false);
+  assert.match(rejected.message, /Unknown Championship mode/);
+  assert.equal(router.getSnapshot(), before);
+  assert.deepEqual(calls, { get: 0, load: 0, shellEnter: 0 });
+
+  const reused = await router.enter(command(router, "captured:unlisted", { modeId: listedModeId }));
+  assert.equal(reused.accepted, true);
+  assert.deepEqual(calls, { get: 0, load: 1, shellEnter: 1 });
+});
+
+test("captured disabled policies reject custom listed modes before live registry access", async () => {
+  for (const activationPolicy of [
+    CHAMPIONSHIP_MODE_ACTIVATION_POLICIES.NETWORK_GATE_REQUIRED,
+    CHAMPIONSHIP_MODE_ACTIVATION_POLICIES.NON_ROUTABLE_STUB
+  ]) {
+    const suffix = activationPolicy === CHAMPIONSHIP_MODE_ACTIVATION_POLICIES.NETWORK_GATE_REQUIRED
+      ? "network-disabled"
+      : "non-routable";
+    const disabledModeId = `championship:mode:custom-${suffix}`;
+    const fallbackModeId = `championship:mode:fallback-${suffix}`;
+    const calls = { get: 0, load: 0, shellEnter: 0 };
+    const disabledEntry = canonicalModeDefinition(
+      disabledModeId,
+      async () => null,
+      { activationPolicy }
+    );
+    const fallbackEntry = canonicalModeDefinition(fallbackModeId, async () => null);
+    const entries = new Map([
+      [disabledModeId, disabledEntry],
+      [fallbackModeId, fallbackEntry]
+    ]);
+    const fallbackShell = {
+      modeId: fallbackModeId,
+      enter() {
+        calls.shellEnter += 1;
+      },
+      suspend() {},
+      resume() {},
+      exit() {},
+      dispose() {},
+      getSnapshot() {
+        return { modeId: fallbackModeId, lifecycle: "CREATED", revision: 0 };
+      }
+    };
+    const registry = {
+      list() {
+        return [disabledEntry, fallbackEntry];
+      },
+      get(modeId) {
+        calls.get += 1;
+        return entries.get(modeId) ?? null;
+      },
+      async load(modeId) {
+        calls.load += 1;
+        if (modeId !== fallbackModeId) throw new Error("disabled load must not run");
+        return fallbackShell;
+      }
+    };
+    const router = createChampionshipModeRouter({ registry });
+    disabledEntry.activationPolicy = CHAMPIONSHIP_MODE_ACTIVATION_POLICIES.ENABLED;
+    const before = router.getSnapshot();
+    const commandId = `captured:${suffix}`;
+    const rejected = await router.enter(command(router, commandId, { modeId: disabledModeId }));
+    assert.equal(rejected.accepted, false);
+    assert.match(rejected.message, /not activatable/);
+    assert.equal(router.getSnapshot(), before);
+    assert.deepEqual(calls, { get: 0, load: 0, shellEnter: 0 });
+
+    const reused = await router.enter(command(router, commandId, { modeId: fallbackModeId }));
+    assert.equal(reused.accepted, true);
+    assert.deepEqual(calls, { get: 0, load: 1, shellEnter: 1 });
+  }
+});
+
+test("live registry get identity and metadata cannot replace captured authority", async () => {
+  const modeId = "championship:mode:identity-authority";
+  const calls = { get: 0, load: 0, shellEnter: 0, metadataGetterReads: 0 };
+  const listedEntry = canonicalModeDefinition(modeId, async () => null);
+  const imposterEntry = canonicalModeDefinition(modeId, async () => null);
+  const shell = {
+    modeId,
+    enter() {
+      calls.shellEnter += 1;
+    },
+    suspend() {},
+    resume() {},
+    exit() {},
+    dispose() {},
+    getSnapshot() {
+      return { modeId, lifecycle: "CREATED", revision: 0 };
+    }
+  };
+  const registry = {
+    list() {
+      return [listedEntry];
+    },
+    get() {
+      calls.get += 1;
+      return imposterEntry;
+    },
+    async load() {
+      calls.load += 1;
+      return shell;
+    }
+  };
+  const router = createChampionshipModeRouter({ registry });
+  for (const entry of [listedEntry, imposterEntry]) {
+    for (const key of ["activationPolicy", "authority", "parityScope"]) {
+      Object.defineProperty(entry, key, {
+        configurable: true,
+        enumerable: true,
+        get() {
+          calls.metadataGetterReads += 1;
+          throw new Error(`live ${key} must not override captured metadata`);
+        }
+      });
+    }
+  }
+  const entered = await router.enter(command(router, "captured:identity", { modeId }));
+  assert.equal(entered.accepted, true);
+  assert.deepEqual(calls, { get: 0, load: 1, shellEnter: 1, metadataGetterReads: 0 });
+});
+
+test("router publishes detached deep-frozen canonical DTOs and session listing never rereads caller entries", () => {
+  const modeId = CHAMPIONSHIP_MODE_IDS.HUNT_CAPTURE;
+  const entry = canonicalModeDefinition(modeId, async () => createChampionshipModeShell({ modeId }));
+  const registry = rawRegistryForEntry(entry, modeId);
+  const router = createChampionshipModeRouter({ registry });
+  const session = createChampionshipR2Session({ sessionId: "detached-mode-list", modeRegistry: registry });
+  const routerModes = router.listModes();
+  const snapshot = router.getSnapshot();
+
+  assert.equal(Object.isFrozen(routerModes), true);
+  assert.equal(Object.isFrozen(routerModes[0]), true);
+  assert.notEqual(routerModes[0], entry);
+  assert.deepEqual(Object.keys(routerModes[0]), [
+    "modeId",
+    "activationPolicy",
+    "authority",
+    "parityScope",
+    "simulationAuthority",
+    "rendererAuthority",
+    "persistenceAuthority"
+  ]);
+  assert.equal("load" in routerModes[0], false);
+  assert.equal(Object.isFrozen(snapshot), true);
+  assert.equal(Object.isFrozen(snapshot.registeredModeIds), true);
+  assert.deepEqual(snapshot.registeredModeIds, [modeId]);
+
+  const getterReads = { activationPolicy: 0, authority: 0, parityScope: 0 };
+  for (const key of Object.keys(getterReads)) {
+    Object.defineProperty(entry, key, {
+      configurable: true,
+      enumerable: true,
+      get() {
+        getterReads[key] += 1;
+        throw new Error(`caller ${key} accessor must not be read after capture`);
+      }
+    });
+  }
+
+  const sessionModes = session.listModes();
+  assert.deepEqual(getterReads, { activationPolicy: 0, authority: 0, parityScope: 0 });
+  assert.equal(Object.isFrozen(sessionModes), true);
+  assert.equal(Object.isFrozen(sessionModes[0]), true);
+  assert.deepEqual(sessionModes, [{
+    modeId,
+    activationPolicy: CHAMPIONSHIP_MODE_ACTIVATION_POLICIES.ENABLED,
+    authority: "PROJECT_NATIVE_SHELL",
+    parityScope: "VERIFIED_FAMILY_PRESENCE_ONLY"
+  }]);
+  assert.deepEqual(router.listModes(), routerModes);
+  assert.deepEqual(router.getSnapshot().registeredModeIds, [modeId]);
+  assert.throws(() => {
+    routerModes[0].authority = "CALLER_MUTATION";
+  }, TypeError);
+});
+
+test("registry definition metadata accessors fail closed with zero getter reads", () => {
+  const modeId = CHAMPIONSHIP_MODE_IDS.HUNT_CAPTURE;
+  const entry = canonicalModeDefinition(modeId, async () => createChampionshipModeShell({ modeId }));
+  const getterReads = { activationPolicy: 0, authority: 0, parityScope: 0 };
+  for (const key of Object.keys(getterReads)) {
+    Object.defineProperty(entry, key, {
+      enumerable: true,
+      get() {
+        getterReads[key] += 1;
+        return key === "activationPolicy"
+          ? CHAMPIONSHIP_MODE_ACTIVATION_POLICIES.ENABLED
+          : key === "authority"
+            ? "PROJECT_NATIVE_SHELL"
+            : "VERIFIED_FAMILY_PRESENCE_ONLY";
+      }
+    });
+  }
+  assert.throws(
+    () => createChampionshipModeRouter({ registry: rawRegistryForEntry(entry, modeId) }),
+    /activationPolicy must be an own data property/
+  );
+  assert.deepEqual(getterReads, { activationPolicy: 0, authority: 0, parityScope: 0 });
+});
+
+test("registry definitions fail closed on inherited, hidden, symbol, extra, and revoked-proxy shapes", () => {
+  const modeId = CHAMPIONSHIP_MODE_IDS.HUNT_CAPTURE;
+  const loader = async () => createChampionshipModeShell({ modeId });
+
+  let inheritedReads = 0;
+  const inheritedAuthority = {};
+  Object.defineProperty(inheritedAuthority, "authority", {
+    get() {
+      inheritedReads += 1;
+      return "PROJECT_NATIVE_SHELL";
+    }
+  });
+  const inheritedEntry = Object.create(inheritedAuthority);
+  Object.defineProperties(inheritedEntry, Object.getOwnPropertyDescriptors(canonicalModeDefinition(modeId, loader)));
+  assert.throws(
+    () => createChampionshipModeRouter({ registry: rawRegistryForEntry(inheritedEntry, modeId, loader) }),
+    /cannot inherit registry authority/
+  );
+  assert.equal(inheritedReads, 0);
+
+  const hiddenEntry = canonicalModeDefinition(modeId, loader);
+  Object.defineProperty(hiddenEntry, "authority", {
+    value: "PROJECT_NATIVE_SHELL",
+    enumerable: false
+  });
+  assert.throws(
+    () => createChampionshipModeRouter({ registry: rawRegistryForEntry(hiddenEntry, modeId, loader) }),
+    /authority cannot be hidden/
+  );
+
+  const symbolEntry = canonicalModeDefinition(modeId, loader);
+  symbolEntry[Symbol("hidden-authority")] = true;
+  assert.throws(
+    () => createChampionshipModeRouter({ registry: rawRegistryForEntry(symbolEntry, modeId, loader) }),
+    /cannot contain symbol keys/
+  );
+
+  const extraEntry = canonicalModeDefinition(modeId, loader, { networkAuthority: true });
+  assert.throws(
+    () => createChampionshipModeRouter({ registry: rawRegistryForEntry(extraEntry, modeId, loader) }),
+    /unexpected key: networkAuthority/
+  );
+
+  const revocable = Proxy.revocable(canonicalModeDefinition(modeId, loader), {});
+  revocable.revoke();
+  assert.throws(
+    () => createChampionshipModeRouter({ registry: rawRegistryForEntry(revocable.proxy, modeId, loader) })
+  );
 });
 
 test("registry boundary rejects inherited or accessor public methods without reading them", () => {
@@ -217,7 +657,7 @@ test("registry boundary rejects inherited or accessor public methods without rea
     list: { value: () => [{ modeId: CHAMPIONSHIP_MODE_IDS.HUNT_CAPTURE }] },
     load: { value: async () => createChampionshipModeShell({ modeId: CHAMPIONSHIP_MODE_IDS.HUNT_CAPTURE }) }
   });
-  assert.throws(() => createChampionshipModeRouter({ registry: inheritedRegistry }), /get must be an own data property/);
+  assert.throws(() => createChampionshipModeRouter({ registry: inheritedRegistry }), /cannot inherit registry authority/);
   assert.equal(inheritedReads, 0);
 
   let accessorReads = 0;
@@ -389,6 +829,26 @@ test("mode event history is bounded while accepted command IDs remain duplicate-
   assert.equal(duplicate.code, "CHAMPIONSHIP_MODE_DUPLICATE_COMMAND");
   assert.equal(router.getSnapshot(), beforeDuplicate);
   assert.equal((await router.dispose(command(router, "history:dispose"))).accepted, true);
+});
+
+test("router retains the exact 256-command budget and keeps dispose available after exhaustion", async () => {
+  const router = createChampionshipModeRouter();
+  const modeId = CHAMPIONSHIP_MODE_IDS.RAISING_HOME;
+  for (let index = 0; index < 128; index += 1) {
+    assert.equal((await router.enter(command(router, `budget:enter:${index}`, { modeId }))).accepted, true);
+    assert.equal((await router.exit(command(router, `budget:exit:${index}`))).accepted, true);
+  }
+  const atBudget = router.getSnapshot();
+  assert.equal(atBudget.revision, 256);
+  const exhausted = await router.enter(command(router, "budget:exhausted", { modeId }));
+  assert.equal(exhausted.accepted, false);
+  assert.equal(exhausted.code, "CHAMPIONSHIP_MODE_COMMAND_BUDGET_EXHAUSTED");
+  assert.equal(router.getSnapshot(), atBudget);
+
+  const disposed = await router.dispose(command(router, "budget:dispose"));
+  assert.equal(disposed.accepted, true);
+  assert.equal(disposed.snapshot.revision, 257);
+  assert.equal(disposed.snapshot.lifecycle, "DISPOSED");
 });
 
 test("zero-write save port denies every persistence request and router never calls it", async () => {

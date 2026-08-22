@@ -31,6 +31,23 @@ export const CHAMPIONSHIP_MODE_ACTIVATION_POLICIES = deepFreeze({
   NON_ROUTABLE_STUB: "NON_ROUTABLE_VERIFIED_STUB"
 });
 
+const MODE_ID_PATTERN = /^championship:mode:[a-z0-9-]+$/;
+const MODE_REGISTRY_DEFINITION_LIMIT = 256;
+const DEFINITION_REQUIRED_KEYS = Object.freeze(["modeId", "load"]);
+const DEFINITION_ALLOWED_KEYS = new Set([
+  "modeId",
+  "activationPolicy",
+  "authority",
+  "parityScope",
+  "simulationAuthority",
+  "rendererAuthority",
+  "persistenceAuthority",
+  "load"
+]);
+const ACTIVATION_POLICIES = new Set(Object.values(CHAMPIONSHIP_MODE_ACTIVATION_POLICIES));
+const CANONICAL_AUTHORITY = "PROJECT_NATIVE_SHELL";
+const CANONICAL_PARITY_SCOPE = "VERIFIED_FAMILY_PRESENCE_ONLY";
+
 function createLazyShellLoader(modeId) {
   return async function loadProjectNativeModeShell() {
     const module = await import("./createChampionshipModeShell.js");
@@ -48,12 +65,152 @@ function defaultActivationPolicy(modeId) {
   return CHAMPIONSHIP_MODE_ACTIVATION_POLICIES.ENABLED;
 }
 
+function readSafePrototype(value, boundaryName) {
+  try {
+    return Object.getPrototypeOf(value);
+  } catch {
+    throw new TypeError(`${boundaryName} prototype could not be inspected safely`);
+  }
+}
+
+function readSafeOwnKeys(value, boundaryName) {
+  try {
+    return Reflect.ownKeys(value);
+  } catch {
+    throw new TypeError(`${boundaryName} keys could not be inspected safely`);
+  }
+}
+
+function readSafeDescriptor(value, key, boundaryName) {
+  try {
+    return Object.getOwnPropertyDescriptor(value, key);
+  } catch {
+    throw new TypeError(`${boundaryName}.${String(key)} could not be inspected safely`);
+  }
+}
+
+function captureDefinitionInput(entry, index) {
+  const boundaryName = `Championship mode definition ${index}`;
+  let isArray;
+  try {
+    isArray = Array.isArray(entry);
+  } catch {
+    throw new TypeError(`${boundaryName} could not be inspected safely`);
+  }
+  if (!entry || typeof entry !== "object" || isArray) {
+    throw new TypeError(`${boundaryName} must be a plain object`);
+  }
+  const prototype = readSafePrototype(entry, boundaryName);
+  if (prototype !== Object.prototype && prototype !== null) {
+    throw new TypeError(`${boundaryName} cannot inherit registry authority`);
+  }
+
+  const captured = Object.create(null);
+  for (const key of readSafeOwnKeys(entry, boundaryName)) {
+    if (typeof key !== "string") throw new TypeError(`${boundaryName} cannot contain symbol keys`);
+    if (!DEFINITION_ALLOWED_KEYS.has(key)) throw new TypeError(`${boundaryName} contains an unexpected key: ${key}`);
+    const descriptor = readSafeDescriptor(entry, key, boundaryName);
+    if (!descriptor || descriptor.get || descriptor.set || !("value" in descriptor)) {
+      throw new TypeError(`${boundaryName}.${key} must be an own data property`);
+    }
+    if (!descriptor.enumerable) throw new TypeError(`${boundaryName}.${key} cannot be hidden`);
+    captured[key] = descriptor.value;
+  }
+  for (const key of DEFINITION_REQUIRED_KEYS) {
+    if (!Object.prototype.hasOwnProperty.call(captured, key)) {
+      throw new TypeError(`${boundaryName}.${key} must be an own data property`);
+    }
+  }
+
+  const { modeId, load } = captured;
+  if (typeof modeId !== "string" || !MODE_ID_PATTERN.test(modeId)) {
+    throw new TypeError(`${boundaryName} has an invalid mode ID`);
+  }
+  if (typeof load !== "function") throw new TypeError(`Championship mode ${modeId} requires a lazy loader`);
+
+  const lockedPolicy = defaultActivationPolicy(modeId);
+  const requestedPolicy = Object.prototype.hasOwnProperty.call(captured, "activationPolicy")
+    ? captured.activationPolicy
+    : lockedPolicy;
+  if (!ACTIVATION_POLICIES.has(requestedPolicy)) {
+    throw new TypeError(`Championship mode ${modeId} has an invalid activation policy`);
+  }
+  if (
+    lockedPolicy !== CHAMPIONSHIP_MODE_ACTIVATION_POLICIES.ENABLED
+    && requestedPolicy !== lockedPolicy
+  ) throw new Error(`Championship mode activation policy is locked: ${modeId}`);
+  const activationPolicy = lockedPolicy === CHAMPIONSHIP_MODE_ACTIVATION_POLICIES.ENABLED
+    ? requestedPolicy
+    : lockedPolicy;
+
+  if (
+    Object.prototype.hasOwnProperty.call(captured, "authority")
+    && captured.authority !== CANONICAL_AUTHORITY
+  ) throw new TypeError(`Championship mode ${modeId} has invalid authority`);
+  if (
+    Object.prototype.hasOwnProperty.call(captured, "parityScope")
+    && captured.parityScope !== CANONICAL_PARITY_SCOPE
+  ) throw new TypeError(`Championship mode ${modeId} has invalid parity scope`);
+  for (const key of ["simulationAuthority", "rendererAuthority", "persistenceAuthority"]) {
+    if (Object.prototype.hasOwnProperty.call(captured, key) && captured[key] !== false) {
+      throw new TypeError(`Championship mode ${modeId}.${key} must be false`);
+    }
+  }
+
+  return {
+    modeId,
+    activationPolicy,
+    authority: CANONICAL_AUTHORITY,
+    parityScope: CANONICAL_PARITY_SCOPE,
+    simulationAuthority: false,
+    rendererAuthority: false,
+    persistenceAuthority: false,
+    sourceLoader: load
+  };
+}
+
+function captureDefinitionInputs(definitions) {
+  let isArray;
+  try {
+    isArray = Array.isArray(definitions);
+  } catch {
+    throw new TypeError("Championship mode registry definitions could not be inspected safely");
+  }
+  if (!isArray) throw new TypeError("Championship mode registry requires a definition array");
+  if (readSafePrototype(definitions, "Championship mode registry definitions") !== Array.prototype) {
+    throw new TypeError("Championship mode registry definitions must use the standard array prototype");
+  }
+  const lengthDescriptor = readSafeDescriptor(definitions, "length", "Championship mode registry definitions");
+  const length = lengthDescriptor?.value;
+  if (!Number.isSafeInteger(length) || length < 1) {
+    throw new TypeError("Championship mode registry requires at least one definition");
+  }
+  if (length > MODE_REGISTRY_DEFINITION_LIMIT) {
+    throw new TypeError(`Championship mode registry cannot exceed ${MODE_REGISTRY_DEFINITION_LIMIT} definitions`);
+  }
+  const expectedKeys = new Set(["length", ...Array.from({ length }, (_, index) => String(index))]);
+  const ownKeys = readSafeOwnKeys(definitions, "Championship mode registry definitions");
+  if (ownKeys.some((key) => typeof key !== "string" || !expectedKeys.has(key)) || ownKeys.length !== expectedKeys.size) {
+    throw new TypeError("Championship mode registry definitions must be dense and cannot contain extra, hidden, or symbol keys");
+  }
+
+  const captured = [];
+  for (let index = 0; index < length; index += 1) {
+    const descriptor = readSafeDescriptor(definitions, String(index), "Championship mode registry definitions");
+    if (!descriptor || descriptor.get || descriptor.set || !("value" in descriptor) || !descriptor.enumerable) {
+      throw new TypeError(`Championship mode registry definitions.${index} must be an enumerable data property`);
+    }
+    captured.push(captureDefinitionInput(descriptor.value, index));
+  }
+  return captured;
+}
+
 function definition(modeId) {
   return Object.freeze({
     modeId,
     activationPolicy: defaultActivationPolicy(modeId),
-    authority: "PROJECT_NATIVE_SHELL",
-    parityScope: "VERIFIED_FAMILY_PRESENCE_ONLY",
+    authority: CANONICAL_AUTHORITY,
+    parityScope: CANONICAL_PARITY_SCOPE,
     simulationAuthority: false,
     rendererAuthority: false,
     persistenceAuthority: false,
@@ -63,39 +220,29 @@ function definition(modeId) {
 
 const DEFAULT_DEFINITIONS = Object.values(CHAMPIONSHIP_MODE_IDS).map(definition);
 
-function assertDefinition(entry) {
-  if (!entry || typeof entry !== "object") throw new TypeError("Championship mode definition must be an object");
-  if (typeof entry.modeId !== "string" || !/^championship:mode:[a-z0-9-]+$/.test(entry.modeId)) {
-    throw new TypeError("Championship mode definition has an invalid mode ID");
-  }
-  if (typeof entry.load !== "function") throw new TypeError(`Championship mode ${entry.modeId} requires a lazy loader`);
-  if (!Object.values(CHAMPIONSHIP_MODE_ACTIVATION_POLICIES).includes(
-    entry.activationPolicy ?? CHAMPIONSHIP_MODE_ACTIVATION_POLICIES.ENABLED
-  )) throw new TypeError(`Championship mode ${entry.modeId} has an invalid activation policy`);
-}
-
 export function createChampionshipModeRegistry(definitions = DEFAULT_DEFINITIONS) {
-  if (!Array.isArray(definitions) || definitions.length === 0) {
-    throw new TypeError("Championship mode registry requires at least one definition");
-  }
-  const entries = definitions.map((entry) => {
-    assertDefinition(entry);
-    const lockedPolicy = defaultActivationPolicy(entry.modeId);
-    const requestedPolicy = entry.activationPolicy ?? lockedPolicy;
-    if (
-      lockedPolicy !== CHAMPIONSHIP_MODE_ACTIVATION_POLICIES.ENABLED
-      && requestedPolicy !== lockedPolicy
-    ) throw new Error(`Championship mode activation policy is locked: ${entry.modeId}`);
-    const activationPolicy = lockedPolicy === CHAMPIONSHIP_MODE_ACTIVATION_POLICIES.ENABLED
-      ? requestedPolicy
-      : lockedPolicy;
-    const sourceLoader = entry.load;
-    return Object.freeze({
-      ...entry,
+  const entries = captureDefinitionInputs(definitions).map((captured) => {
+    const {
+      modeId,
       activationPolicy,
+      authority,
+      parityScope,
+      simulationAuthority,
+      rendererAuthority,
+      persistenceAuthority,
+      sourceLoader
+    } = captured;
+    return Object.freeze({
+      modeId,
+      activationPolicy,
+      authority,
+      parityScope,
+      simulationAuthority,
+      rendererAuthority,
+      persistenceAuthority,
       async load() {
         if (activationPolicy !== CHAMPIONSHIP_MODE_ACTIVATION_POLICIES.ENABLED) {
-          throw new Error(`Championship mode is not activatable: ${entry.modeId} (${activationPolicy})`);
+          throw new Error(`Championship mode is not activatable: ${modeId} (${activationPolicy})`);
         }
         return sourceLoader();
       }

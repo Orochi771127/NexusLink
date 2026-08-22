@@ -39,6 +39,8 @@ function validateEnvelope(command) {
 export function createRaisingHomeRuntime(options = {}) {
   let snapshot = createRaisingHomeInitialState(options);
   let disposed = false;
+  let notifying = false;
+  let notificationSnapshot = null;
   let observerFailureCount = 0;
   let lastObserverFailureRevision = null;
   const listeners = new Set();
@@ -52,6 +54,13 @@ export function createRaisingHomeRuntime(options = {}) {
       return deepFreeze({ disposed, observerFailureCount, lastObserverFailureRevision });
     },
     dispatch(command) {
+      if (notifying) {
+        return rejection(
+          notificationSnapshot,
+          "RAISING_HOME_NOTIFICATION_BUSY",
+          "Raising Home observer notification is in progress"
+        );
+      }
       if (disposed) return deepFreeze({ accepted: false, code: "RAISING_HOME_DISPOSED", snapshot: null });
       try {
         const envelope = clonePlainData(command);
@@ -71,14 +80,22 @@ export function createRaisingHomeRuntime(options = {}) {
         snapshot = next;
         acceptedCommandIds.add(commandId);
         const publication = deepFreeze({ accepted: true, code: "RAISING_HOME_OK", snapshot, persistenceAttempted: false, playerStatePatch: null });
-        for (const listener of [...listeners]) {
-          try {
-            listener(publication);
-          } catch {
-            // Observer failures cannot roll back an already accepted domain transition.
-            observerFailureCount = Math.min(OBSERVER_FAILURE_LIMIT, observerFailureCount + 1);
-            lastObserverFailureRevision = snapshot.revision;
+        const notificationListeners = [...listeners];
+        notifying = true;
+        notificationSnapshot = publication.snapshot;
+        try {
+          for (const listener of notificationListeners) {
+            try {
+              listener(publication);
+            } catch {
+              // Observer failures cannot roll back an already accepted domain transition.
+              observerFailureCount = Math.min(OBSERVER_FAILURE_LIMIT, observerFailureCount + 1);
+              lastObserverFailureRevision = publication.snapshot.revision;
+            }
           }
+        } finally {
+          notificationSnapshot = null;
+          notifying = false;
         }
         return publication;
       } catch (error) {

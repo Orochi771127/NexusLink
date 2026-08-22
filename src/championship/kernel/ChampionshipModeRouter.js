@@ -4,6 +4,7 @@ import {
   stableDigest
 } from "../contracts/championshipContracts.js";
 import {
+  CHAMPIONSHIP_MODE_ACTIVATION_POLICIES,
   CHAMPIONSHIP_MODE_IDS,
   championshipModeRegistry
 } from "../modes/championshipModeRegistry.js";
@@ -40,7 +41,21 @@ const COMMAND_TYPES = new Set(Object.values(CHAMPIONSHIP_MODE_COMMANDS));
 const MODE_METHODS = ["enter", "suspend", "resume", "exit", "dispose", "getSnapshot"];
 const MODE_EVENT_LOG_LIMIT = 128;
 const MODE_COMMAND_ID_LIMIT = 256;
+const MODE_REGISTRY_DEFINITION_LIMIT = 256;
 const MODE_ID_PATTERN = /^championship:mode:[a-z0-9-]+$/;
+const REGISTRY_REQUIRED_KEYS = Object.freeze(["list", "get", "load"]);
+const REGISTRY_ALLOWED_KEYS = new Set(["size", "has", ...REGISTRY_REQUIRED_KEYS]);
+const MODE_DEFINITION_KEYS = Object.freeze([
+  "modeId",
+  "activationPolicy",
+  "authority",
+  "parityScope",
+  "simulationAuthority",
+  "rendererAuthority",
+  "persistenceAuthority",
+  "load"
+]);
+const MODE_ACTIVATION_POLICIES = new Set(Object.values(CHAMPIONSHIP_MODE_ACTIVATION_POLICIES));
 
 function readOwnDataProperty(value, key, boundaryName) {
   if (!value || (typeof value !== "object" && typeof value !== "function")) {
@@ -58,43 +73,151 @@ function readOwnDataProperty(value, key, boundaryName) {
   return descriptor.value;
 }
 
-function captureRegistry(registry) {
-  if (!registry || typeof registry !== "object" || Array.isArray(registry)) {
-    throw new TypeError("Championship mode registry is invalid");
+function readSafePrototype(value, boundaryName) {
+  try {
+    return Object.getPrototypeOf(value);
+  } catch {
+    throw new TypeError(`${boundaryName} prototype could not be inspected safely`);
   }
-  const list = readOwnDataProperty(registry, "list", "Championship mode registry");
-  const get = readOwnDataProperty(registry, "get", "Championship mode registry");
-  const load = readOwnDataProperty(registry, "load", "Championship mode registry");
-  if (typeof list !== "function" || typeof get !== "function" || typeof load !== "function") {
-    throw new TypeError("Championship mode registry is invalid");
-  }
+}
 
-  const listed = Reflect.apply(list, registry, []);
+function readSafeOwnKeys(value, boundaryName) {
+  try {
+    return Reflect.ownKeys(value);
+  } catch {
+    throw new TypeError(`${boundaryName} keys could not be inspected safely`);
+  }
+}
+
+function assertPlainBoundaryObject(value, boundaryName) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    throw new TypeError(`${boundaryName} must be a plain object`);
+  }
+  const prototype = readSafePrototype(value, boundaryName);
+  if (prototype !== Object.prototype && prototype !== null) {
+    throw new TypeError(`${boundaryName} cannot inherit registry authority`);
+  }
+}
+
+function captureExactDataRecord(value, boundaryName, requiredKeys, allowedKeys = new Set(requiredKeys)) {
+  assertPlainBoundaryObject(value, boundaryName);
+  const ownKeys = readSafeOwnKeys(value, boundaryName);
+  const captured = Object.create(null);
+  for (const key of ownKeys) {
+    if (typeof key !== "string") throw new TypeError(`${boundaryName} cannot contain symbol keys`);
+    if (!allowedKeys.has(key)) throw new TypeError(`${boundaryName} contains an unexpected key: ${key}`);
+    const descriptor = Object.getOwnPropertyDescriptor(value, key);
+    if (!descriptor || descriptor.get || descriptor.set || !("value" in descriptor)) {
+      throw new TypeError(`${boundaryName}.${key} must be an own data property`);
+    }
+    if (!descriptor.enumerable) throw new TypeError(`${boundaryName}.${key} cannot be hidden`);
+    captured[key] = descriptor.value;
+  }
+  for (const key of requiredKeys) {
+    if (!Object.prototype.hasOwnProperty.call(captured, key)) {
+      throw new TypeError(`${boundaryName}.${key} must be an own data property`);
+    }
+  }
+  return captured;
+}
+
+function captureDefinition(entry, index) {
+  const boundaryName = `Championship mode definition ${index}`;
+  const captured = captureExactDataRecord(entry, boundaryName, MODE_DEFINITION_KEYS);
+  if (typeof captured.modeId !== "string" || !MODE_ID_PATTERN.test(captured.modeId)) {
+    throw new TypeError(`${boundaryName} has an invalid mode ID`);
+  }
+  if (!MODE_ACTIVATION_POLICIES.has(captured.activationPolicy)) {
+    throw new TypeError(`${boundaryName} has an invalid activation policy`);
+  }
+  if (captured.authority !== "PROJECT_NATIVE_SHELL") {
+    throw new TypeError(`${boundaryName} has invalid authority`);
+  }
+  if (captured.parityScope !== "VERIFIED_FAMILY_PRESENCE_ONLY") {
+    throw new TypeError(`${boundaryName} has invalid parity scope`);
+  }
+  for (const key of ["simulationAuthority", "rendererAuthority", "persistenceAuthority"]) {
+    if (captured[key] !== false) throw new TypeError(`${boundaryName}.${key} must be false`);
+  }
+  if (typeof captured.load !== "function") throw new TypeError(`${boundaryName}.load must be a function`);
+
+  const activationPolicy = captured.modeId === CHAMPIONSHIP_MODE_IDS.NETWORK_ARENA_SHELL
+    ? CHAMPIONSHIP_MODE_ACTIVATION_POLICIES.NETWORK_GATE_REQUIRED
+    : captured.modeId === CHAMPIONSHIP_MODE_IDS.RESERVED_SHELL
+      ? CHAMPIONSHIP_MODE_ACTIVATION_POLICIES.NON_ROUTABLE_STUB
+      : captured.activationPolicy;
+  return deepFreeze({
+    modeId: captured.modeId,
+    activationPolicy,
+    authority: captured.authority,
+    parityScope: captured.parityScope,
+    simulationAuthority: captured.simulationAuthority,
+    rendererAuthority: captured.rendererAuthority,
+    persistenceAuthority: captured.persistenceAuthority
+  });
+}
+
+function captureDenseDefinitionList(listed) {
   if (!Array.isArray(listed)) throw new TypeError("Championship mode registry list must be an array");
+  if (readSafePrototype(listed, "Championship mode registry list") !== Array.prototype) {
+    throw new TypeError("Championship mode registry list must use the standard array prototype");
+  }
   const length = readOwnDataProperty(listed, "length", "Championship mode registry list");
   if (!Number.isSafeInteger(length) || length < 1) {
     throw new TypeError("Championship mode registry requires at least one definition");
   }
+  if (length > MODE_REGISTRY_DEFINITION_LIMIT) {
+    throw new TypeError(`Championship mode registry cannot exceed ${MODE_REGISTRY_DEFINITION_LIMIT} definitions`);
+  }
+  const expectedKeys = new Set(["length", ...Array.from({ length }, (_, index) => String(index))]);
+  const ownKeys = readSafeOwnKeys(listed, "Championship mode registry list");
+  if (ownKeys.some((key) => typeof key !== "string" || !expectedKeys.has(key)) || ownKeys.length !== expectedKeys.size) {
+    throw new TypeError("Championship mode registry list must be dense and cannot contain extra, hidden, or symbol keys");
+  }
 
   const entries = [];
-  const registeredModeIds = [];
-  const seenModeIds = new Set();
   for (let index = 0; index < length; index += 1) {
-    const entry = readOwnDataProperty(listed, String(index), "Championship mode registry list");
-    const modeId = readOwnDataProperty(entry, "modeId", `Championship mode definition ${index}`);
-    if (typeof modeId !== "string" || !MODE_ID_PATTERN.test(modeId)) {
-      throw new TypeError(`Championship mode definition ${index} has an invalid mode ID`);
+    const descriptor = Object.getOwnPropertyDescriptor(listed, String(index));
+    if (!descriptor || descriptor.get || descriptor.set || !("value" in descriptor) || !descriptor.enumerable) {
+      throw new TypeError(`Championship mode registry list.${index} must be an enumerable data property`);
     }
-    if (seenModeIds.has(modeId)) throw new TypeError("Championship mode IDs must be unique");
-    seenModeIds.add(modeId);
-    entries.push(entry);
-    registeredModeIds.push(modeId);
+    const captured = captureDefinition(descriptor.value, index);
+    entries.push(captured);
+  }
+  return entries;
+}
+
+function captureRegistry(registry) {
+  const capturedRegistry = captureExactDataRecord(
+    registry,
+    "Championship mode registry",
+    REGISTRY_REQUIRED_KEYS,
+    REGISTRY_ALLOWED_KEYS
+  );
+  const { list, get, load } = capturedRegistry;
+  if (typeof list !== "function" || typeof get !== "function" || typeof load !== "function") {
+    throw new TypeError("Championship mode registry is invalid");
+  }
+
+  let listed;
+  try {
+    listed = Reflect.apply(list, registry, []);
+  } catch {
+    throw new TypeError("Championship mode registry list could not be evaluated safely");
+  }
+  const entries = captureDenseDefinitionList(listed);
+  const seenModeIds = new Set();
+  for (const entry of entries) {
+    if (seenModeIds.has(entry.modeId)) throw new TypeError("Championship mode IDs must be unique");
+    seenModeIds.add(entry.modeId);
   }
 
   const capturedEntries = Object.freeze(entries);
+  const capturedById = new Map(entries.map((entry) => [entry.modeId, entry]));
   return Object.freeze({
-    registeredModeIds: Object.freeze(registeredModeIds),
+    registeredModeIds: Object.freeze(entries.map((entry) => entry.modeId)),
     list: () => capturedEntries,
+    lookup: (modeId) => capturedById.get(modeId) ?? null,
     get: (modeId) => Reflect.apply(get, registry, [modeId]),
     load: (modeId) => Reflect.apply(load, registry, [modeId])
   });
@@ -311,8 +434,11 @@ export class ChampionshipModeRouter {
       case CHAMPIONSHIP_MODE_COMMANDS.ENTER: {
         if (this.#snapshot.lifecycle !== "IDLE") throw new Error("A mode can only enter while the router is idle");
         assertRouterOwnedModeIsRoutable(command.modeId);
-        const definition = this.#registry.get(command.modeId);
-        if (!definition) throw new Error(`Unknown Championship mode: ${command.modeId}`);
+        const capturedDefinition = this.#registry.lookup(command.modeId);
+        if (!capturedDefinition) throw new Error(`Unknown Championship mode: ${command.modeId}`);
+        if (capturedDefinition.activationPolicy !== CHAMPIONSHIP_MODE_ACTIVATION_POLICIES.ENABLED) {
+          throw new Error(`Championship mode is not activatable: ${command.modeId} (${capturedDefinition.activationPolicy})`);
+        }
         let mode = this.#loadedModes.get(command.modeId);
         let newlyLoaded = false;
         if (!mode) {

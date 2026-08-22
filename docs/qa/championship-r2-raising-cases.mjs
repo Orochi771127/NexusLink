@@ -138,6 +138,142 @@ test("listener failure cannot turn an accepted domain transition into a rejectio
   });
 });
 
+test("synchronous listener dispatch fails busy while every observer revision stays monotonic", () => {
+  const runtime = createRaisingHomeRuntime({ sessionId: "raising-test-listener-reentry" });
+  const deliveries = [];
+  const nestedResults = [];
+  runtime.subscribe((publication) => {
+    deliveries.push(["first", publication.snapshot.revision]);
+    const attemptNestedDispatch = (depth) => {
+      nestedResults.push(runtime.dispatch({
+        type: RAISING_HOME_COMMANDS.ADVANCE,
+        minutes: 5,
+        commandId: `listener:nested:${publication.snapshot.revision}:${depth}`,
+        expectedRevision: publication.snapshot.revision
+      }));
+      if (depth < 3) attemptNestedDispatch(depth + 1);
+    };
+    attemptNestedDispatch(1);
+  });
+  runtime.subscribe((publication) => {
+    deliveries.push(["second", publication.snapshot.revision]);
+  });
+
+  const first = runtime.dispatch(runtimeCommand(runtime, "listener:outer:1", { type: RAISING_HOME_COMMANDS.ADVANCE, minutes: 5 }));
+  const second = runtime.dispatch(runtimeCommand(runtime, "listener:outer:2", { type: RAISING_HOME_COMMANDS.ADVANCE, minutes: 5 }));
+
+  assert.equal(first.accepted, true);
+  assert.equal(second.accepted, true);
+  assert.deepEqual(deliveries, [["first", 1], ["second", 1], ["first", 2], ["second", 2]]);
+  assert.equal(nestedResults.length, 6);
+  assert.deepEqual(nestedResults.map((result) => result.code), Array(6).fill("RAISING_HOME_NOTIFICATION_BUSY"));
+  assert.deepEqual(nestedResults.map((result) => result.snapshot.revision), [1, 1, 1, 2, 2, 2]);
+  assert.equal(nestedResults.every((result) => result.accepted === false && Object.isFrozen(result)), true);
+  assert.equal(runtime.getSnapshot().revision, 2);
+  assert.deepEqual(runtime.getDiagnostics(), {
+    disposed: false,
+    observerFailureCount: 0,
+    lastObserverFailureRevision: null
+  });
+});
+
+test("throwing reentrant listener cannot roll back acceptance or consume the busy command ID", () => {
+  const runtime = createRaisingHomeRuntime({ sessionId: "raising-test-throw-reentry" });
+  const healthyRevisions = [];
+  let busyResult = null;
+  const unsubscribeThrowingListener = runtime.subscribe((publication) => {
+    busyResult = runtime.dispatch({
+      type: RAISING_HOME_COMMANDS.ADVANCE,
+      minutes: 5,
+      commandId: "listener:throw-reentry:retry",
+      expectedRevision: publication.snapshot.revision
+    });
+    throw new Error("injected throw after reentrant dispatch");
+  });
+  runtime.subscribe((publication) => {
+    healthyRevisions.push(publication.snapshot.revision);
+  });
+
+  const accepted = runtime.dispatch(runtimeCommand(runtime, "listener:throw-reentry:outer", { type: RAISING_HOME_COMMANDS.ADVANCE, minutes: 5 }));
+  assert.equal(accepted.accepted, true);
+  assert.equal(accepted.snapshot.revision, 1);
+  assert.equal(busyResult.code, "RAISING_HOME_NOTIFICATION_BUSY");
+  assert.equal(busyResult.snapshot, accepted.snapshot);
+  assert.deepEqual(healthyRevisions, [1]);
+  assert.deepEqual(runtime.getDiagnostics(), {
+    disposed: false,
+    observerFailureCount: 1,
+    lastObserverFailureRevision: 1
+  });
+
+  unsubscribeThrowingListener();
+  const retried = runtime.dispatch({
+    type: RAISING_HOME_COMMANDS.ADVANCE,
+    minutes: 5,
+    commandId: "listener:throw-reentry:retry",
+    expectedRevision: 1
+  });
+  assert.equal(retried.accepted, true, "a busy rejection must not consume its command ID");
+  assert.equal(retried.snapshot.revision, 2);
+  assert.deepEqual(healthyRevisions, [1, 2]);
+  assert.deepEqual(runtime.getDiagnostics(), {
+    disposed: false,
+    observerFailureCount: 1,
+    lastObserverFailureRevision: 1
+  });
+});
+
+test("unsubscribe during notification affects only later publications", () => {
+  const runtime = createRaisingHomeRuntime({ sessionId: "raising-test-listener-unsubscribe" });
+  const deliveries = [];
+  let unsubscribeSecond = () => {};
+  runtime.subscribe((publication) => {
+    deliveries.push(["first", publication.snapshot.revision]);
+    unsubscribeSecond();
+  });
+  unsubscribeSecond = runtime.subscribe((publication) => {
+    deliveries.push(["second", publication.snapshot.revision]);
+  });
+
+  assert.equal(runtime.dispatch(runtimeCommand(runtime, "listener:unsubscribe:1", { type: RAISING_HOME_COMMANDS.ADVANCE, minutes: 5 })).accepted, true);
+  assert.equal(runtime.dispatch(runtimeCommand(runtime, "listener:unsubscribe:2", { type: RAISING_HOME_COMMANDS.ADVANCE, minutes: 5 })).accepted, true);
+  assert.deepEqual(deliveries, [["first", 1], ["second", 1], ["first", 2]]);
+});
+
+test("dispose during notification preserves the accepted publication and bounded observer diagnostics", () => {
+  const runtime = createRaisingHomeRuntime({ sessionId: "raising-test-listener-dispose" });
+  const deliveries = [];
+  let busyAfterDispose = null;
+  runtime.subscribe((publication) => {
+    deliveries.push(["disposer", publication.snapshot.revision]);
+    runtime.dispose();
+  });
+  runtime.subscribe((publication) => {
+    deliveries.push(["remaining", publication.snapshot.revision]);
+    busyAfterDispose = runtime.dispatch({
+      type: RAISING_HOME_COMMANDS.ADVANCE,
+      minutes: 5,
+      commandId: "listener:disposed-reentry",
+      expectedRevision: publication.snapshot.revision
+    });
+    throw new Error("injected observer failure after dispose");
+  });
+
+  const accepted = runtime.dispatch(runtimeCommand(runtime, "listener:dispose:outer", { type: RAISING_HOME_COMMANDS.ADVANCE, minutes: 5 }));
+  assert.equal(accepted.accepted, true);
+  assert.equal(accepted.snapshot.revision, 1);
+  assert.deepEqual(deliveries, [["disposer", 1], ["remaining", 1]]);
+  assert.equal(busyAfterDispose.code, "RAISING_HOME_NOTIFICATION_BUSY");
+  assert.equal(busyAfterDispose.snapshot, accepted.snapshot);
+  assert.equal(runtime.getSnapshot(), null);
+  assert.deepEqual(runtime.getDiagnostics(), {
+    disposed: true,
+    observerFailureCount: 1,
+    lastObserverFailureRevision: 1
+  });
+  assert.equal(runtime.dispatch({ type: RAISING_HOME_COMMANDS.ADVANCE }).code, "RAISING_HOME_DISPOSED");
+});
+
 test("runtime command identity is duplicate-safe while the gameplay event log stays bounded", () => {
   const runtime = createRaisingHomeRuntime({ sessionId: "raising-test-history" });
   for (let index = 0; index < 60; index += 1) {

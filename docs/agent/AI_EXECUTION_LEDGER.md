@@ -10329,18 +10329,23 @@ HMAX promotion gates remain `staging_candidate` / `not_run` / `not_deployed` /
   `sourceFindingStatus:VERIFIED_BINARY`. Its parity scope is only resource count
   and slot cardinality. Slot names, animation meanings, frames, timing,
   mirroring, layers, offsets, events, fallbacks, and behavior remain unknown.
-- Security result: independent adversarial review reached `P0=0`, `P1=0`, and
-  `P2=0` after repairing evidence-grade conflation and array-index accessor
-  execution. Resource, slot, and evidence index getters are rejected with zero
-  getter reads; a one-million-element array stops at the bounded length gate;
-  throwing, revoked, and transparent Proxies return the generic frozen invalid
-  result. JavaScript's portable Proxy reflection limitation remains documented
-  and is not treated as an external-input security guarantee.
-- Validation: the animation registry gate passed `12/12`; the complete R2 Node
-  matrix passed `64/64`; `git diff --check`, syntax, static isolation, path,
-  digest, payload, authority, and repository-pollution checks passed. No browser
-  gameplay or renderer behavior changed in R2-A, so this data-only gate does not
-  claim new visual or physical-device proof.
+- Security result: the first independent review repaired evidence-grade
+  conflation and array-index accessor execution. Fixed-SHA Agent G review then
+  stopped commit `1aa7a69` with two additional P2 findings: caller-owned mode
+  metadata survived capture, and synchronous Raising observer reentry could
+  publish revisions out of order. The replacement review found and stopped one
+  further P1: captured mode metadata was not yet the actual ENTER allowlist.
+  The final repair makes captured, detached metadata the only route authority,
+  rejects unlisted or disabled modes before caller lookup/load, canonicalizes
+  minimal factory definitions, bounds definition arrays to 256, and rejects
+  synchronous observer reentry without state advancement. Final pre-commit
+  Agent G review reached `P0=0`, `P1=0`, and `P2=0`.
+- Validation: the animation registry gate passed `12/12`; the expanded complete
+  R2 Node matrix passed `78/78`; official Chromium QA passed `54/54` after the
+  final repair; and `git diff --check`, syntax, static isolation, path, digest,
+  payload, authority, and repository-pollution checks passed. The browser gate
+  confirms existing R2 gameplay behavior and zero production mutation; R2-A
+  itself still adds no new visual content or physical-device proof.
 - Integration boundary: no renderer, Pixi, DOM, runtime session, asset, save,
   storage, network, production navigation, RaphaelCore, Standoff, or Orbit
   integration was added. BM remains blocked by the 12-physical-versus-11-
