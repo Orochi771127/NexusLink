@@ -24,3 +24,7 @@ docs/qa/__pycache__/
 docs/qa/_raphael_autonomy_eval_output.json
 docs/qa/_raphael_standoff_eval_output.json
 docs/qa/_wording_quality_output.json
+
+# Cursor / agent debug traces
+.cursor/debug-*.log
+debug-*.log
