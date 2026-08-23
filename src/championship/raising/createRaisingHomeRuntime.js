@@ -1,5 +1,6 @@
 import { clonePlainData, deepFreeze } from "../contracts/championshipContracts.js";
 import { createRaisingHomeInitialState, reduceRaisingHome } from "./raisingHomeDefinition.js";
+import { captureRaisingHomeSnapshotR2 } from "./raisingHomePersistenceR2.js";
 
 const ACCEPTED_COMMAND_ID_LIMIT = 256;
 const OBSERVER_FAILURE_LIMIT = 256;
@@ -37,7 +38,15 @@ function validateEnvelope(command) {
 }
 
 export function createRaisingHomeRuntime(options = {}) {
-  let snapshot = createRaisingHomeInitialState(options);
+  const initialSnapshotDescriptor = options && typeof options === "object"
+    ? Object.getOwnPropertyDescriptor(options, "initialSnapshot")
+    : null;
+  if (initialSnapshotDescriptor?.get || initialSnapshotDescriptor?.set) {
+    throw new TypeError("Raising Home initialSnapshot must be an own data property");
+  }
+  let snapshot = initialSnapshotDescriptor && initialSnapshotDescriptor.value !== undefined
+    ? captureRaisingHomeSnapshotR2(initialSnapshotDescriptor.value)
+    : createRaisingHomeInitialState(options);
   let disposed = false;
   let notifying = false;
   let notificationSnapshot = null;

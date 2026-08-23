@@ -146,6 +146,239 @@ def run_fallback(browser, base_url, report, width, height, reduced_motion=False,
     context.close()
 
 
+def run_save_remount_lifecycle(browser, base_url, report):
+    context = browser.new_context(viewport={"width": 390, "height": 844}, reduced_motion="reduce")
+    install_boundary_canary(context)
+    page = context.new_page()
+    errors = attach_errors(page)
+    requests = []
+    page.on("request", lambda request: requests.append({"url": request.url, "resourceType": request.resource_type}))
+    page.route(PIXI_CDN, lambda route: route.abort("failed"))
+    page.goto(f"{base_url}/research/championship-r2/index.html?championshipR2=1", wait_until="domcontentloaded")
+    page.wait_for_function("() => Boolean(window.__NEXUS_CHAMPIONSHIP_R2__)")
+    production_before = page.evaluate(f"() => localStorage.getItem({json.dumps(STORAGE_KEY)})")
+    cycle_evidence = []
+
+    for cycle in range(1, 21):
+        page.get_by_role("button", name="Advance 5 min", exact=True).click()
+        dirty = page.evaluate("() => window.__NEXUS_CHAMPIONSHIP_R2__.inspect()")
+        save_button = page.get_by_role("button", name="Save", exact=True)
+        dirty_ready = dirty["raisingSave"]["phase"] == "DIRTY" and dirty["raisingSave"]["dirty"] and save_button.is_enabled()
+        save_button.click()
+        saved = page.evaluate("() => window.__NEXUS_CHAMPIONSHIP_R2__.inspect()")
+        saved_exact = (
+            saved["raisingSave"]["phase"] == "SAVED"
+            and not saved["raisingSave"]["dirty"]
+            and saved["raisingSave"]["savedStateRevision"] == saved["raisingHome"]["revision"]
+            and saved["raisingSave"]["savedStateDigest"] == saved["raisingSave"]["runtimeDigest"]
+        )
+        expected_state = {
+            "revision": saved["raisingHome"]["revision"],
+            "tick": saved["raisingHome"]["tick"],
+            "caretakerPosition": saved["raisingHome"]["caretakerPosition"],
+            "selectedResidentId": saved["raisingHome"]["selectedResidentId"],
+            "runtimeDigest": saved["raisingSave"]["runtimeDigest"],
+            "savedStateDigest": saved["raisingSave"]["savedStateDigest"],
+        }
+        page.get_by_role("button", name="Remount session", exact=True).click()
+        page.wait_for_function(
+            """expected => {
+              const snapshot = window.__NEXUS_CHAMPIONSHIP_R2__?.inspect();
+              return snapshot?.lifecycle?.active
+                && snapshot.lifecycle.remountCount === expected
+                && snapshot.raisingSave?.phase === 'RESTORED';
+            }""",
+            arg=cycle,
+        )
+        restored = page.evaluate("() => window.__NEXUS_CHAMPIONSHIP_R2__.inspect()")
+        restored_exact = (
+            restored["raisingHome"]["revision"] == expected_state["revision"]
+            and restored["raisingHome"]["tick"] == expected_state["tick"]
+            and restored["raisingHome"]["caretakerPosition"] == expected_state["caretakerPosition"]
+            and restored["raisingHome"]["selectedResidentId"] == expected_state["selectedResidentId"]
+            and restored["raisingSave"]["runtimeDigest"] == expected_state["runtimeDigest"]
+            and restored["raisingSave"]["savedStateDigest"] == expected_state["savedStateDigest"]
+            and restored["raisingSave"]["phase"] == "RESTORED"
+            and not restored["raisingSave"]["dirty"]
+        )
+        cycle_evidence.append({
+            "cycle": cycle,
+            "dirtyReady": dirty_ready,
+            "savedExact": saved_exact,
+            "restoredExact": restored_exact,
+            "revision": restored["raisingHome"]["revision"],
+            "tick": restored["raisingHome"]["tick"],
+            "digest": restored["raisingSave"]["runtimeDigest"],
+        })
+
+    final = page.evaluate("() => window.__NEXUS_CHAMPIONSHIP_R2__.inspect()")
+    production_after_cycles = page.evaluate(f"() => localStorage.getItem({json.dumps(STORAGE_KEY)})")
+    calls = page.evaluate("() => window.__R2_BOUNDARY_CALLS__")
+    external_requests = external_resource_requests(requests, base_url)
+    check(
+        report,
+        "save_remount_20_actual_button_cycles_restore_exact_state",
+        len(cycle_evidence) == 20 and all(
+            entry["dirtyReady"] and entry["savedExact"] and entry["restoredExact"]
+            for entry in cycle_evidence
+        ),
+        cycle_evidence,
+    )
+    check(
+        report,
+        "save_remount_20_cycles_dispose_and_port_accounting",
+        final["lifecycle"] == {"mountCount": 21, "disposeCount": 20, "remountCount": 20, "active": True}
+        and final["raisingSaveBoundary"]["memoryCommits"] == 20
+        and final["raisingSaveBoundary"]["readRequests"] == 21
+        and final["raisingSaveBoundary"]["browserStorageWrites"] == 0
+        and final["raisingSaveBoundary"]["persistentWrites"] == 0
+        and final["raisingSaveBoundary"]["networkMutations"] == 0,
+        {"lifecycle": final["lifecycle"], "boundary": final["raisingSaveBoundary"]},
+    )
+    check(
+        report,
+        "save_remount_focus_returns_to_remount_control",
+        page.evaluate("() => document.activeElement?.dataset.persistenceAction === 'remount'"),
+    )
+    check(report, "save_remount_production_save_unchanged", production_before == production_after_cycles)
+    check(report, "save_remount_zero_browser_storage_or_network_mutations", all(not values for values in calls.values()), calls)
+    check(
+        report,
+        "save_remount_only_one_allowlisted_pixi_attempt",
+        external_requests == [{"url": PIXI_CDN, "resourceType": "script"}],
+        external_requests,
+    )
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    page.screenshot(path=str(OUTPUT_DIR / "championship-r2-save-remount-cycle-20.png"), full_page=True)
+
+    saved_before_refresh = final["raisingHome"]
+    page.reload(wait_until="domcontentloaded")
+    page.wait_for_function("() => Boolean(window.__NEXUS_CHAMPIONSHIP_R2__)")
+    refreshed = page.evaluate("() => window.__NEXUS_CHAMPIONSHIP_R2__.inspect()")
+    production_after_refresh = page.evaluate(f"() => localStorage.getItem({json.dumps(STORAGE_KEY)})")
+    check(
+        report,
+        "browser_refresh_loses_realm_local_save",
+        saved_before_refresh["revision"] == 20
+        and saved_before_refresh["tick"] == 20
+        and refreshed["raisingHome"]["revision"] == 0
+        and refreshed["raisingHome"]["tick"] == 0
+        and refreshed["raisingSave"]["phase"] == "DIRTY"
+        and refreshed["raisingSaveBoundary"]["slotCount"] == 0
+        and refreshed["lifecycle"] == {"mountCount": 1, "disposeCount": 0, "remountCount": 0, "active": True},
+        {"beforeRefresh": saved_before_refresh, "afterRefresh": refreshed},
+    )
+    check(report, "browser_refresh_production_save_still_unchanged", production_before == production_after_refresh)
+    page.screenshot(path=str(OUTPUT_DIR / "championship-r2-refresh-loss.png"), full_page=True)
+    page.evaluate("() => window.__NEXUS_CHAMPIONSHIP_R2__.dispose()")
+    check(report, "save_remount_final_dispose_clears_mount", page.locator("#championship-r2-root").evaluate("root => root.childElementCount") == 0)
+    check(report, "save_remount_no_console_errors", errors == [], errors)
+    context.close()
+
+
+def run_save_failure_retry_export(browser, base_url, report):
+    context = browser.new_context(viewport={"width": 390, "height": 844}, has_touch=True)
+    install_boundary_canary(context)
+    page = context.new_page()
+    errors = attach_errors(page)
+    requests = []
+    page.on("request", lambda request: requests.append({"url": request.url, "resourceType": request.resource_type}))
+    page.route(PIXI_CDN, lambda route: route.abort("failed"))
+    page.goto(
+        f"{base_url}/research/championship-r2/index.html?championshipR2=1&r2SaveFailure=once",
+        wait_until="domcontentloaded",
+    )
+    page.wait_for_function("() => Boolean(window.__NEXUS_CHAMPIONSHIP_R2__)")
+    production_before = page.evaluate(f"() => localStorage.getItem({json.dumps(STORAGE_KEY)})")
+    page.get_by_role("button", name="Advance 5 min", exact=True).click()
+    page.get_by_role("button", name="Save", exact=True).click()
+    failed = page.evaluate("() => window.__NEXUS_CHAMPIONSHIP_R2__.inspect()")
+    failed_ui = page.locator(".r2-save-status")
+    check(
+        report,
+        "save_failure_is_assertive_never_success",
+        failed["raisingSave"]["phase"] == "SAVE_FAILED"
+        and failed["raisingSave"]["lastCode"] == "CHAMPIONSHIP_R2_SAVE_INJECTED_FAILURE"
+        and failed["raisingSave"]["dirty"]
+        and failed["raisingSave"]["canRetry"]
+        and failed_ui.get_attribute("role") == "alert"
+        and failed_ui.get_attribute("aria-live") == "assertive"
+        and "is-failure" in (failed_ui.get_attribute("class") or "")
+        and "is-success" not in (failed_ui.get_attribute("class") or "")
+        and page.get_by_role("button", name="Retry", exact=True).is_enabled()
+        and page.get_by_role("button", name="Export recovery", exact=True).is_enabled()
+        and page.get_by_role("button", name="Remount session", exact=True).is_disabled(),
+        {"status": failed["raisingSave"], "class": failed_ui.get_attribute("class"), "text": failed_ui.text_content()},
+    )
+
+    page.get_by_role("button", name="Export recovery", exact=True).click()
+    recovery = page.locator("#r2-recovery-json")
+    recovery_serialized = recovery.input_value()
+    recovery_document = json.loads(recovery_serialized)
+    exported = page.evaluate("() => window.__NEXUS_CHAMPIONSHIP_R2__.inspect()")
+    check(
+        report,
+        "save_failure_export_recovery_ui_contains_verified_dirty_state",
+        recovery.is_visible()
+        and recovery.get_attribute("readonly") is not None
+        and recovery_document["schemaVersion"] == 2
+        and recovery_document["payload"]["stateRevision"] == failed["raisingHome"]["revision"]
+        and exported["raisingSave"]["phase"] == "SAVE_FAILED"
+        and exported["raisingSave"]["dirty"],
+        {"bytes": len(recovery_serialized.encode("utf-8")), "status": exported["raisingSave"]},
+    )
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    page.screenshot(path=str(OUTPUT_DIR / "championship-r2-save-failure-export.png"), full_page=True)
+
+    page.get_by_role("button", name="Retry", exact=True).click()
+    retried = page.evaluate("() => window.__NEXUS_CHAMPIONSHIP_R2__.inspect()")
+    retry_ui = page.locator(".r2-save-status")
+    check(
+        report,
+        "save_retry_same_realm_commits_without_false_failure",
+        retried["raisingSave"]["phase"] == "SAVED"
+        and not retried["raisingSave"]["dirty"]
+        and not retried["raisingSave"]["canRetry"]
+        and retried["raisingSaveBoundary"]["injectedFailures"] == 1
+        and retried["raisingSaveBoundary"]["memoryCommits"] == 1
+        and retry_ui.get_attribute("role") == "status"
+        and retry_ui.get_attribute("aria-live") == "polite"
+        and "is-failure" not in (retry_ui.get_attribute("class") or "")
+        and page.get_by_role("button", name="Retry", exact=True).is_disabled()
+        and page.get_by_role("button", name="Remount session", exact=True).is_enabled(),
+        {"status": retried["raisingSave"], "boundary": retried["raisingSaveBoundary"]},
+    )
+    page.get_by_role("button", name="Remount session", exact=True).click()
+    page.wait_for_function("""() => {
+      const snapshot = window.__NEXUS_CHAMPIONSHIP_R2__?.inspect();
+      return snapshot?.lifecycle?.remountCount === 1 && snapshot.raisingSave?.phase === 'RESTORED';
+    }""")
+    restored = page.evaluate("() => window.__NEXUS_CHAMPIONSHIP_R2__.inspect()")
+    check(
+        report,
+        "save_retry_then_actual_remount_restores_state",
+        restored["raisingHome"]["revision"] == retried["raisingHome"]["revision"]
+        and restored["raisingHome"]["tick"] == retried["raisingHome"]["tick"]
+        and restored["raisingSave"]["runtimeDigest"] == retried["raisingSave"]["runtimeDigest"]
+        and restored["raisingSave"]["phase"] == "RESTORED",
+        {"before": retried, "after": restored},
+    )
+    calls = page.evaluate("() => window.__R2_BOUNDARY_CALLS__")
+    production_after = page.evaluate(f"() => localStorage.getItem({json.dumps(STORAGE_KEY)})")
+    check(report, "save_failure_flow_zero_storage_or_network_mutations", all(not values for values in calls.values()), calls)
+    check(report, "save_failure_flow_production_save_unchanged", production_before == production_after)
+    check(
+        report,
+        "save_failure_flow_only_allowlisted_pixi_attempt",
+        external_resource_requests(requests, base_url) == [{"url": PIXI_CDN, "resourceType": "script"}],
+        external_resource_requests(requests, base_url),
+    )
+    page.screenshot(path=str(OUTPUT_DIR / "championship-r2-save-retry-restored.png"), full_page=True)
+    page.evaluate("() => window.__NEXUS_CHAMPIONSHIP_R2__.dispose()")
+    check(report, "save_failure_flow_no_console_errors", errors == [], errors)
+    context.close()
+
+
 def run_dom_spatial_care(browser, base_url, report):
     context = browser.new_context(viewport={"width": 390, "height": 844})
     page = context.new_page()
@@ -276,6 +509,25 @@ def run_pixi(browser, base_url, report):
     p95 = ordered[int(len(ordered) * 0.95)]
     workload = page.evaluate("() => window.__NEXUS_CHAMPIONSHIP_R2__.getPresentationDiagnostics()")
     check(report, "pixi_render_workload_under_16_67ms", workload["averageMs"] <= 16.67 and workload["p95Ms"] <= 16.67, {"workload": workload, "headlessRafMeasurement": {"medianMs": median, "p95Ms": p95, "releaseConclusion": "INCONCLUSIVE_HEADLESS_LIMITED"}})
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    page.screenshot(path=str(OUTPUT_DIR / "championship-r2-pixi-1280x900.png"), full_page=True)
+    before_context_loss = page.evaluate("() => window.__NEXUS_CHAMPIONSHIP_R2__.inspect().raisingHome.revision")
+    page.evaluate("""() => {
+      const canvas = document.querySelector('.r2-canvas-host canvas');
+      canvas.dispatchEvent(new Event('webglcontextlost', { cancelable: true }));
+    }""")
+    page.get_by_role("button", name="Advance 5 min", exact=True).click()
+    after_context_loss = page.evaluate("() => window.__NEXUS_CHAMPIONSHIP_R2__.inspect().raisingHome.revision")
+    check(
+        report,
+        "pixi_context_loss_keeps_dom_gameplay_and_save_authority_outside_canvas",
+        canvas.is_hidden()
+        and page.locator(".r2-canvas-fallback").is_visible()
+        and "context was lost" in page.locator(".r2-canvas-fallback").text_content()
+        and after_context_loss == before_context_loss + 1
+        and page.get_by_role("button", name="Save", exact=True).is_enabled(),
+        {"beforeRevision": before_context_loss, "afterRevision": after_context_loss},
+    )
     check(report, "pixi_zero_storage_api_mutation_calls", all(not values for values in page.evaluate("() => window.__R2_BOUNDARY_CALLS__").values()))
     external_requests = external_resource_requests(requests, base_url)
     check(
@@ -284,8 +536,7 @@ def run_pixi(browser, base_url, report):
         external_requests == [{"url": PIXI_CDN, "resourceType": "script"}],
         external_requests,
     )
-    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    page.screenshot(path=str(OUTPUT_DIR / "championship-r2-pixi-1280x900.png"), full_page=True)
+    page.screenshot(path=str(OUTPUT_DIR / "championship-r2-pixi-context-loss.png"), full_page=True)
     page.evaluate("() => window.__NEXUS_CHAMPIONSHIP_R2__.dispose()")
     check(report, "pixi_dispose_removes_canvas", page.locator("canvas").count() == 0)
     check(report, "pixi_no_console_errors", errors == [], errors)
@@ -310,6 +561,8 @@ def main():
             run_fallback(browser, base_url, report, 390, 844)
             run_fallback(browser, base_url, report, 1280, 900)
             run_fallback(browser, base_url, report, 390, 844, reduced_motion=True, font_scale=2.0)
+            run_save_remount_lifecycle(browser, base_url, report)
+            run_save_failure_retry_export(browser, base_url, report)
             run_dom_spatial_care(browser, base_url, report)
             run_landscape_touch(browser, base_url, report)
             run_motion_preference_invariance(browser, base_url, report)

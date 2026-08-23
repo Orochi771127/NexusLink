@@ -1,6 +1,21 @@
 export { createChampionshipR2Session } from "./createChampionshipR2Session.js";
 export { createRaisingHomeRuntime } from "../raising/createRaisingHomeRuntime.js";
 export {
+  RAISING_HOME_ADAPTATION_REF_R2,
+  RAISING_HOME_PERSISTENCE_LIMITS_R2,
+  RAISING_HOME_SAVE_KIND_R2,
+  RAISING_HOME_SAVE_SCHEMA_VERSION_R2,
+  captureRaisingHomeSnapshotR2,
+  createRaisingHomeSaveDocumentR2,
+  deserializeRaisingHomeSaveR2,
+  digestCanonicalRaisingHomeDataR2,
+  migrateRaisingHomeSaveV1ToV2,
+  projectRaisingHomeDurableStateR2,
+  restoreRaisingHomeSnapshotR2,
+  serializeCanonicalRaisingHomeDataR2,
+  serializeRaisingHomeSaveR2
+} from "../raising/raisingHomePersistenceR2.js";
+export {
   RAISING_HOME_COMMANDS,
   RAISING_HOME_FIELD,
   RAISING_HOME_KERNEL_FIELD_DEFINITION,
@@ -35,3 +50,11 @@ export {
   assertChampionshipSavePort,
   createNoopChampionshipSavePort
 } from "../kernel/ChampionshipSavePort.js";
+export {
+  CHAMPIONSHIP_SAVE_PORT_R2_KIND,
+  CHAMPIONSHIP_SAVE_PORT_R2_POLICY,
+  assertChampionshipSavePortR2,
+  createChampionshipSaveFailureControllerR2,
+  createChampionshipSavePortR2
+} from "../kernel/ChampionshipSavePortR2.js";
+export { createChampionshipSaveCoordinatorR2 } from "../kernel/ChampionshipSaveCoordinatorR2.js";

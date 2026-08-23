@@ -1,5 +1,22 @@
 import { formatRaisingHomeClock, RAISING_HOME_COMMANDS } from "../../raising/raisingHomeDefinition.js";
 
+const SAVE_PHASE_COPY = Object.freeze({
+  DIRTY: "Unsaved Raising changes are held in this page session.",
+  CLEAN: "The in-memory save matches the current Raising state.",
+  SAVED: "Saved in memory for this page session.",
+  RESTORED: "Restored from this page session's in-memory save.",
+  RECOVERED: "Recovered the last good in-memory Raising save.",
+  DISPOSED: "This Raising save session is disposed."
+});
+
+const SAVE_FAILURE_COPY = Object.freeze({
+  CHAMPIONSHIP_R2_SAVE_INJECTED_FAILURE: "Save failed in the research failure simulation. Raising changes remain unsaved.",
+  CHAMPIONSHIP_R2_SAVE_QUOTA_EXCEEDED: "Save failed because the in-memory quota was exceeded. Raising changes remain unsaved.",
+  CHAMPIONSHIP_R2_SAVE_REVISION_CONFLICT: "Save failed because the in-memory revision changed. Raising changes remain unsaved.",
+  CHAMPIONSHIP_R2_SAVE_IDEMPOTENCY_CONFLICT: "Save failed because the request identity conflicted. Raising changes remain unsaved.",
+  CHAMPIONSHIP_R2_SAVE_COORDINATOR_DISPOSED: "Save failed because this Raising session is disposed."
+});
+
 function node(tag, className = "", text = undefined) {
   const element = document.createElement(tag);
   if (className) element.className = className;
@@ -39,7 +56,15 @@ function spatialSummary(state, resident) {
   return `Caretaker tile ${state.caretakerPosition.x}, ${state.caretakerPosition.y}. ${resident.name} tile ${resident.position.x}, ${resident.position.y}. Distance ${distance}. ${route}`;
 }
 
-export function createRaisingHomeDomView({ root, onCommand, onModeRequest = null }) {
+export function createRaisingHomeDomView({
+  root,
+  onCommand,
+  onModeRequest = null,
+  onSave = null,
+  onRetry = null,
+  onExportRecovery = null,
+  onRemount = null
+}) {
   if (!(root instanceof HTMLElement)) throw new TypeError("Raising Home requires a DOM root");
   if (typeof onCommand !== "function") throw new TypeError("Raising Home requires an onCommand callback");
   root.replaceChildren();
@@ -119,14 +144,70 @@ export function createRaisingHomeDomView({ root, onCommand, onModeRequest = null
   );
   actions.append(actionGrid, timeGrid);
 
+  const persistenceEnabled = [onSave, onRetry, onExportRecovery, onRemount].some((callback) => typeof callback === "function");
+  let saveCard = null;
+  let saveStatus = null;
+  let saveCode = null;
+  let saveButton = null;
+  let retryButton = null;
+  let exportButton = null;
+  let remountButton = null;
+  let recoveryOutput = null;
+  let recoveryText = null;
+  let latestSaveStatus = null;
+  let persistenceBusy = null;
+
+  if (persistenceEnabled) {
+    saveCard = node("section", "r2-card r2-save-card");
+    saveCard.setAttribute("aria-labelledby", "r2-save-title");
+    const saveEyebrow = node("p", "r2-card__eyebrow", "REALM-LOCAL SAVE");
+    const saveTitle = node("h2", "r2-save-title", "Save and remount");
+    saveTitle.id = "r2-save-title";
+    const saveBoundary = node("p", "r2-save-boundary", "Schema v2 · memory only · browser refresh clears this state");
+    saveStatus = node("p", "r2-save-status", "Reading in-memory save status…");
+    saveStatus.setAttribute("role", "status");
+    saveStatus.setAttribute("aria-live", "polite");
+    saveStatus.setAttribute("aria-atomic", "true");
+    saveCode = node("code", "r2-save-code", "CHAMPIONSHIP_R2_SAVE_STATUS_PENDING");
+    const saveControls = node("div", "r2-save-controls");
+    saveButton = commandButton("Save", "", "primary");
+    retryButton = commandButton("Retry", "", "ember");
+    exportButton = commandButton("Export recovery", "", "water");
+    remountButton = commandButton("Remount session", "", "quiet");
+    for (const button of [saveButton, retryButton, exportButton, remountButton]) delete button.dataset.command;
+    saveButton.dataset.persistenceAction = "save";
+    retryButton.dataset.persistenceAction = "retry";
+    exportButton.dataset.persistenceAction = "export";
+    remountButton.dataset.persistenceAction = "remount";
+    saveControls.append(saveButton, retryButton, exportButton, remountButton);
+
+    recoveryOutput = node("div", "r2-recovery-output");
+    recoveryOutput.hidden = true;
+    const recoveryLabel = node("label", "r2-recovery-label", "Recovery JSON — copy this before refreshing");
+    recoveryLabel.htmlFor = "r2-recovery-json";
+    recoveryText = node("textarea", "r2-recovery-text");
+    recoveryText.id = "r2-recovery-json";
+    recoveryText.readOnly = true;
+    recoveryText.rows = 7;
+    recoveryText.spellcheck = false;
+    recoveryOutput.append(recoveryLabel, recoveryText);
+    saveCard.append(saveEyebrow, saveTitle, saveBoundary, saveStatus, saveCode, saveControls, recoveryOutput);
+  }
+
   const feedback = node("section", "r2-feedback");
   feedback.setAttribute("role", "status");
   feedback.setAttribute("aria-live", "polite");
-  hud.append(residence, actions, feedback);
+  hud.append(residence, actions, ...(saveCard ? [saveCard] : []), feedback);
   layout.append(modeRail, playColumn, hud);
   root.append(topbar, layout);
 
   function dispatchFromButton(event) {
+    const persistenceButton = event.target.closest("[data-persistence-action]");
+    if (persistenceButton instanceof HTMLButtonElement && root.contains(persistenceButton)) {
+      const callbacks = { save: onSave, retry: onRetry, export: onExportRecovery, remount: onRemount };
+      callbacks[persistenceButton.dataset.persistenceAction]?.();
+      return;
+    }
     const button = event.target.closest("[data-command]");
     if (!(button instanceof HTMLButtonElement) || !root.contains(button)) return;
     const command = { type: button.dataset.command };
@@ -143,6 +224,33 @@ export function createRaisingHomeDomView({ root, onCommand, onModeRequest = null
 
   root.addEventListener("click", dispatchFromButton);
   window.addEventListener("keydown", onKeyDown);
+
+  function updatePersistenceControls() {
+    if (!saveCard) return;
+    const busy = persistenceBusy !== null;
+    saveButton.disabled = busy || !latestSaveStatus?.dirty;
+    retryButton.disabled = busy || !latestSaveStatus?.canRetry;
+    exportButton.disabled = busy || !latestSaveStatus?.canExportRecovery;
+    remountButton.disabled = busy || Boolean(latestSaveStatus?.dirty);
+    saveCard.setAttribute("aria-busy", String(busy));
+  }
+
+  function presentStatus(message, { tone = "neutral" } = {}) {
+    if (!saveStatus) return;
+    saveStatus.classList.remove("is-success", "is-failure", "is-busy", "is-neutral");
+    saveStatus.classList.add(`is-${tone}`);
+    saveStatus.setAttribute("role", tone === "failure" ? "alert" : "status");
+    saveStatus.setAttribute("aria-live", tone === "failure" ? "assertive" : "polite");
+    saveStatus.textContent = message;
+  }
+
+  function statusMessage(status) {
+    if (status.phase === "SAVE_FAILED") {
+      return SAVE_FAILURE_COPY[status.lastCode]
+        ?? "Save failed. Raising changes remain unsaved; use Retry or export the recovery JSON.";
+    }
+    return SAVE_PHASE_COPY[status.phase] ?? "In-memory save status is unavailable.";
+  }
 
   return Object.freeze({
     canvasHost,
@@ -171,6 +279,66 @@ export function createRaisingHomeDomView({ root, onCommand, onModeRequest = null
       if (pauseButton) pauseButton.textContent = state.paused ? "Resume rhythm" : "Pause rhythm";
       root.dataset.paused = String(state.paused);
       root.dataset.revision = String(state.revision);
+    },
+    renderSaveStatus(status) {
+      if (!saveCard || !status || typeof status !== "object") return;
+      latestSaveStatus = status;
+      root.dataset.savePhase = String(status.phase);
+      saveCode.textContent = String(status.lastCode);
+      if (persistenceBusy === null) {
+        const tone = status.phase === "SAVE_FAILED"
+          ? "failure"
+          : ["CLEAN", "SAVED", "RESTORED", "RECOVERED"].includes(status.phase)
+            ? "success"
+            : "neutral";
+        presentStatus(statusMessage(status), { tone });
+      }
+      updatePersistenceControls();
+    },
+    setPersistenceBusy(operation, busy) {
+      if (!saveCard) return;
+      persistenceBusy = busy ? operation : null;
+      if (busy) {
+        saveStatus.classList.remove("is-success", "is-failure", "is-neutral");
+        saveStatus.classList.add("is-busy");
+        saveStatus.setAttribute("role", "status");
+        saveStatus.setAttribute("aria-live", "polite");
+        saveStatus.textContent = operation === "remount" ? "Disposing and remounting this page session…" : "Checking the in-memory save boundary…";
+      } else if (latestSaveStatus) {
+        const tone = latestSaveStatus.phase === "SAVE_FAILED"
+          ? "failure"
+          : ["CLEAN", "SAVED", "RESTORED", "RECOVERED"].includes(latestSaveStatus.phase)
+            ? "success"
+            : "neutral";
+        presentStatus(statusMessage(latestSaveStatus), { tone });
+      }
+      updatePersistenceControls();
+    },
+    reportPersistencePublication(operation, publication) {
+      if (!saveCard || !publication || typeof publication !== "object") return;
+      if (!publication.accepted) {
+        saveCode.textContent = String(publication.code ?? "CHAMPIONSHIP_R2_SAVE_OPERATION_FAILED");
+        presentStatus(
+          SAVE_FAILURE_COPY[publication.code] ?? `${operation === "remount" ? "Remount" : "Save"} failed. Raising changes remain unsaved.`,
+          { tone: "failure" }
+        );
+      }
+      if (operation === "export" && publication.accepted && typeof publication.serialized === "string") {
+        recoveryText.value = publication.serialized;
+        recoveryOutput.hidden = false;
+        recoveryText.focus({ preventScroll: true });
+        recoveryText.select();
+      }
+    },
+    reportPersistenceException(operation, error) {
+      if (!saveCard) return;
+      saveCode.textContent = "CHAMPIONSHIP_R2_SAVE_UI_EXCEPTION";
+      const detail = error instanceof Error && error.message ? ` ${error.message}` : "";
+      presentStatus(`${operation === "remount" ? "Remount" : "Save"} failed.${detail}`, { tone: "failure" });
+    },
+    focusPersistenceControl(controlName = "save") {
+      const controls = { save: saveButton, retry: retryButton, export: exportButton, remount: remountButton };
+      controls[controlName]?.focus({ preventScroll: true });
     },
     setCanvasReady() {
       fallback.hidden = true;

@@ -112,6 +112,20 @@ button:focus-visible { outline: 3px solid #f5dd96; outline-offset: 3px; }
 .r2-meter--violet meter { accent-color: var(--violet); }
 .r2-action-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.5rem; margin-top: 0.7rem; }
 .r2-time-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.5rem; margin-top: 0.5rem; }
+.r2-save-title { margin: 0.35rem 0 0.2rem; font-family: Georgia, "Times New Roman", serif; font-size: 1.25rem; font-weight: 500; }
+.r2-save-boundary { margin: 0 0 0.8rem; color: var(--muted); font-size: 0.72rem; line-height: 1.45; }
+.r2-save-status { min-height: 3.25rem; margin: 0; padding: 0.7rem 0.8rem; border: 1px solid var(--line); border-radius: 0.8rem; background: rgba(5, 22, 31, 0.72); line-height: 1.45; }
+.r2-save-status.is-success { border-color: rgba(114, 213, 181, 0.48); color: #d9f5e9; }
+.r2-save-status.is-failure { border-color: rgba(241, 138, 93, 0.72); background: rgba(111, 43, 34, 0.38); color: #ffe4d9; }
+.r2-save-status.is-busy { border-color: rgba(240, 208, 131, 0.5); color: #f8e7b5; }
+.r2-save-status.is-neutral { color: #d4e7df; }
+.r2-save-code { display: block; margin-top: 0.45rem; color: var(--muted); font-size: 0.62rem; overflow-wrap: anywhere; }
+.r2-save-controls { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(9rem, 100%), 1fr)); gap: 0.5rem; margin-top: 0.75rem; }
+.r2-save-controls .r2-command { min-width: 0; min-height: 3rem; overflow-wrap: anywhere; }
+.r2-save-controls .r2-command:disabled { cursor: not-allowed; opacity: 0.5; transform: none; }
+.r2-recovery-output { margin-top: 0.8rem; }
+.r2-recovery-label { display: block; margin-bottom: 0.4rem; color: #d9f5e9; font-size: 0.72rem; font-weight: 700; }
+.r2-recovery-text { display: block; width: 100%; max-width: 100%; min-height: 8rem; resize: vertical; padding: 0.7rem; border: 1px solid rgba(89, 191, 208, 0.55); border-radius: 0.75rem; background: #041117; color: #d8f1ed; font: 0.68rem/1.45 ui-monospace, SFMono-Regular, Consolas, monospace; overflow-wrap: normal; }
 .r2-feedback { min-height: 5.5rem; color: #d4e7df; line-height: 1.5; }
 
 @media (max-width: 980px) {

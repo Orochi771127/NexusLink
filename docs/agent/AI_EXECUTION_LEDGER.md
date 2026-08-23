@@ -10359,3 +10359,42 @@ HMAX promotion gates remain `staging_candidate` / `not_run` / `not_deployed` /
   remote-main update is authorized by this entry.
 - Branch / comparison base: `codex/championship-web-parity-r2` /
   `b3f5a5099420fc7f2a5df5089a246601a6d69599`.
+
+### 2026-08-23 - Codex Multi-Agent V2 - Championship R2-B Save And Remount - IN PROGRESS
+
+- Status: `IN PROGRESS`; the Owner accepted exact local baseline
+  `2532c1858439d03d1e8458b78327117bdf6a2c9a` with `P0=0`, `P1=0`,
+  `P2=0`, R2 Node `78/78`, R2 Chromium `54/54`, and a clean worktree,
+  then authorized the bounded R2-B Save/Remount subgate.
+- Lane: `Game Engineering, Presentation, Security, QA, Research, Architecture,
+  And Governance`.
+- Task name: `CHAMPIONSHIP_R2_B_SAVE_REMOUNT_SUBGATE`.
+- Layer: isolated Championship R2 experience/research slice. No production
+  `saveManager`, save queue, storage API, cloud, backend, network, RaphaelCore,
+  Emotional Standoff, Heartcore Orbit, production navigation, assets, tools,
+  or scripts are authorized. The existing zero-write `ChampionshipSavePort`
+  remains unchanged and continues to protect the mode-router boundary.
+- Planned runtime result: a separate versioned in-memory R2 save port and
+  serialized save coordinator at the R2 session composition root; schema v2;
+  deterministic serialization and digest; pure v1-to-v2 migration; exact
+  validation; revision conflict and idempotency handling; injected quota and
+  generic-failure atomicity; last-good recovery; explicit dirty, retry, and
+  export-recovery state; same-JavaScript-realm dispose/remount restoration;
+  and browser-refresh loss.
+- Planned presentation result: accessible DOM-authoritative Save, Retry, and
+  Export recovery controls. Pixi remains presentation-only and receives only
+  read-only Raising snapshots.
+- Required proof: deterministic Node cases plus real Chromium interaction for
+  twenty action-save-dispose-remount-restore cycles, failure/retry/export UI,
+  keyboard, touch, portrait, landscape, desktop, 200-percent text, reduced
+  motion, DOM fallback, Pixi failure/context loss, disposal cleanup,
+  screenshots, zero browser storage writes, zero production-save changes, and
+  zero network mutations.
+- Parallel read-only preparation: the ROM/Hunt evidence auditor may classify
+  existing evidence for R2-C but may not implement Hunt or invent unresolved
+  semantics. Agent G will review a detached exact commit only after the local
+  candidate passes all pre-commit gates.
+- Maximum allowed success claim: `R2-B SAVE/REMOUNT SUBGATE PASS`. Complete
+  R2-B, complete game, push, PR, merge, deployment, and remote-main update
+  remain unauthorized.
+- Branch / commit: `codex/championship-web-parity-r2` / `uncommitted`.
