@@ -226,3 +226,30 @@ Acceptance refs:  <對應 ACCEPTANCE.md 的哪幾條>
 - `docs/agent/AI_WORKFLOW.md` — Gate 流程。
 - `docs/agent/TASK_TEMPLATE.md` — 任務模板。
 - `docs/testing/MANUAL_TEST_CHECKLIST.md` — 手動測試清單。
+
+---
+
+## Cursor Cloud specific instructions
+
+> 本節僅供未來 Cloud Agent 快速上手「開發環境如何跑／測」；不覆蓋上位 canon，也不是產品規範。
+> 前提：啟動時的 update script 已跑過（已安裝 Playwright + Chromium）。
+
+### 專案本質與跑法
+- 純靜態前端（Vanilla JS ES Modules），**沒有 `package.json`、沒有 build step、沒有 bundler**。依賴只有 CDN 的 PixiJS v8 與 Three.js（見 `index.html`），runtime 無後端／DB／LLM。
+- Dev run（見 `README.md` "Run Locally"）：`python3 -m http.server 5173`，開 `http://127.0.0.1:5173/index.html`。
+- **必須用 HTTP 供應，不能用 `file://`**（ES modules + CORS）；**需要對外網路存取 jsDelivr CDN**，否則 Pixi/Three 載入失敗，遊戲會顯示載入失敗提示。
+
+### Lint / Test / Build
+- **沒有 ESLint**：syntax gate = 對 `src/**/*.js` 與 `docs/qa/*.mjs` 跑 `node --check`，已包在下方 release gate 內。
+- **沒有 build**：靜態站，無需建置。
+- 完整測試（release gate，CI 等同物，見 `.github/workflows/release-gate.yml`）：
+  `python3 docs/qa/_run_web_release_gate.py --base http://127.0.0.1:5238 --port 5238 --output /tmp/web-release-gate.json`
+  成功判準：輸出 JSON 的 `summary.allAutomatedRequiredOk == true`。
+- 額外 safety 套件：`node docs/qa/raphael-psychological-safety-v1-cases.mjs`、`node docs/qa/raphael-runtime-contract-v1-cases.mjs`。
+- 單一 Node 套件可直接跑，例如 `node docs/qa/companion-growth-state-cases.mjs`。
+
+### 非顯而易見的注意事項（gotchas）
+- release gate runner **會自己啟動一個 http.server**（用 `--port` 指定的埠）；若該埠已被占用會直接報錯中止。請用一個乾淨、且**與你的 dev server（5173）不同**的埠，例如 5238。
+- runner 以 PATH 上的 `node` 解析執行；本 VM 的 Node 22 可跑全部 gate（CI 用 Node 24，但無版本鎖）。
+- release gate 執行後會改寫受追蹤的測試輸出檔（例如 `docs/qa/_live_playtest_gate_output.json`）。這是測試產物，**提交前請 `git checkout --` 還原**，不要一起 commit。
+- 三個根目錄 legacy stub `main.js` / `style.css` / `script.js` 是 LOCKED，`node --check script.js` 是刻意保留的 CI gate；勿刪。
